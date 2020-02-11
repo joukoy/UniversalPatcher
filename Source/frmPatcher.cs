@@ -33,16 +33,35 @@ namespace UinversalPatcher
             if (BinFile.Length > 1)
             {
                 txtBaseFile.Text = BinFile;
+                labelBinSize.Text = new System.IO.FileInfo(txtBaseFile.Text).Length.ToString();
+
             }
         }
 
         private void btnModFile_Click(object sender, EventArgs e)
         {
-            string BinFile;
+            string BinFile="";
             if (radioCreate.Checked)
                 BinFile = SelectFile();
             else
-                BinFile = SelectFile("PACTH files (*.patch)|*.patch|ALL files(*.*) | *.*");
+            {
+                try 
+                {
+                    BinFile = SelectFile("PACTH files (*.patch)|*.patch|ALL files(*.*) | *.*");
+
+                    string line;
+                    StreamReader sr = new StreamReader(BinFile);
+                    line = sr.ReadLine();
+                    Logger("Patch is for bin size: " + line);
+                    line = sr.ReadLine();
+                    Logger(line);
+                    sr.Close();
+                }
+                catch(Exception ex)
+                {
+                    Logger("Error: " + ex.Message);
+                }
+            }
             if (BinFile.Length > 1)
             {
                 txtModifierFile.Text = BinFile;
