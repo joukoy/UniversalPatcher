@@ -1,4 +1,4 @@
-﻿namespace UinversalPatcher
+﻿namespace UniversalPatcher
 {
     partial class FrmPatcher
     {
@@ -40,8 +40,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.labelDescr = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.radioCreate = new System.Windows.Forms.RadioButton();
             this.radioApply = new System.Windows.Forms.RadioButton();
+            this.radioCreate = new System.Windows.Forms.RadioButton();
+            this.btnSettings = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -150,9 +151,20 @@
             this.groupBox1.Controls.Add(this.radioCreate);
             this.groupBox1.Location = new System.Drawing.Point(14, 8);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(646, 43);
+            this.groupBox1.Size = new System.Drawing.Size(481, 43);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
+            // 
+            // radioApply
+            // 
+            this.radioApply.AutoSize = true;
+            this.radioApply.Location = new System.Drawing.Point(120, 16);
+            this.radioApply.Name = "radioApply";
+            this.radioApply.Size = new System.Drawing.Size(82, 17);
+            this.radioApply.TabIndex = 1;
+            this.radioApply.TabStop = true;
+            this.radioApply.Text = "Apply Patch";
+            this.radioApply.UseVisualStyleBackColor = true;
             // 
             // radioCreate
             // 
@@ -167,22 +179,22 @@
             this.radioCreate.UseVisualStyleBackColor = true;
             this.radioCreate.CheckedChanged += new System.EventHandler(this.radioCreate_CheckedChanged);
             // 
-            // radioApply
+            // btnSettings
             // 
-            this.radioApply.AutoSize = true;
-            this.radioApply.Location = new System.Drawing.Point(120, 16);
-            this.radioApply.Name = "radioApply";
-            this.radioApply.Size = new System.Drawing.Size(82, 17);
-            this.radioApply.TabIndex = 1;
-            this.radioApply.TabStop = true;
-            this.radioApply.Text = "Apply Patch";
-            this.radioApply.UseVisualStyleBackColor = true;
+            this.btnSettings.Location = new System.Drawing.Point(585, 15);
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Size = new System.Drawing.Size(77, 26);
+            this.btnSettings.TabIndex = 13;
+            this.btnSettings.Text = "Settings";
+            this.btnSettings.UseVisualStyleBackColor = true;
+            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
             // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(672, 445);
+            this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.labelDescr);
             this.Controls.Add(this.label1);
@@ -220,5 +232,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton radioApply;
         private System.Windows.Forms.RadioButton radioCreate;
+        private System.Windows.Forms.Button btnSettings;
     }
 }

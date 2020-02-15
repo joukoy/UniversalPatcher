@@ -10,7 +10,7 @@ using System.IO;
 using static upatcher;
 using System.Text.RegularExpressions;
 
-namespace UinversalPatcher
+namespace UniversalPatcher
 {
     public partial class FrmPatcher : Form
     {
@@ -121,6 +121,21 @@ namespace UinversalPatcher
             return true;
         }
 
+        private void CompareBlock(byte[] OrgFile, byte[] ModFile, uint Start, uint End)
+        {
+            Logger("Comparing: " + Start.ToString("X") + " - " + End.ToString("X"));
+            for (uint i = Start; i < End; i++)
+            {
+                if (OrgFile[i] != ModFile[i])
+                {
+                    PatchAddr.Add(i);
+                    PatchData.Add(ModFile[i]);
+                    txtResult.AppendText(i.ToString("X1") + ":" + OrgFile[i].ToString("X1") + "=>" + ModFile[i].ToString("X1") + Environment.NewLine);
+                }
+
+            }
+
+        }
         public void CompareBins()
         {
             try
@@ -136,16 +151,28 @@ namespace UinversalPatcher
                 byte[] OrgFile = ReadBin(txtBaseFile.Text, 0, (uint)fsize);
                 byte[] ModFile = ReadBin(txtModifierFile.Text, 0, (uint)fsize);
                 labelBinSize.Text = fsize.ToString();
-                
-                for (uint i = 0; i < fsize; i++)
-                {
-                    if (OrgFile[i] != ModFile[i])
-                    {
-                        PatchAddr.Add(i);
-                        PatchData.Add(ModFile[i]);
-                        txtResult.AppendText(i.ToString("X1") + ":" + OrgFile[i].ToString("X1") + "=>" + ModFile[i].ToString("X1") + Environment.NewLine);
-                    }
 
+                if (Exclude == null ||  Exclude.Count == 0)
+                    CompareBlock(OrgFile, ModFile, 0, (uint)fsize);
+                else
+                {
+                    int Block = 0;
+                    uint PrevEnd = 0;
+                    foreach (ExcludeBlock EB  in Exclude)
+                    {
+                        Block++;
+                        if (Block == 1 && EB.Start > 0) // Compare from 0 to start of first exclude
+                        {
+                            CompareBlock(OrgFile, ModFile, 0, EB.Start);
+                        }
+                        else if (Block <= Exclude.Count)
+                            CompareBlock(OrgFile, ModFile, PrevEnd, EB.Start); //Compare from previous exclude block to start of next exclude block
+                        else
+                            CompareBlock(OrgFile, ModFile, PrevEnd, (uint)fsize);
+                        PrevEnd = EB.End;
+                        Logger("Excluding: " + EB.Start.ToString("X") + " - " + EB.End.ToString("X"));
+                    }
+                    CompareBlock(OrgFile, ModFile, PrevEnd, (uint)fsize);
                 }
 
             }
@@ -271,6 +298,19 @@ namespace UinversalPatcher
                 txtPatchName.Visible = false;
                 labelDescr.Visible = false;
             }
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            frmSettings frmS = new frmSettings();
+            if (frmS.ShowDialog() == DialogResult.OK)
+            {
+                foreach (ExcludeBlock EB in Exclude) 
+                {
+                    Logger("Exclude: " + EB.Start.ToString("X") + " - " + EB.End.ToString("X"));
+                }
+            }
+
         }
     }
 }

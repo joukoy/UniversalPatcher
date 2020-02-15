@@ -5,8 +5,6 @@ using System.Windows.Forms;
 using System.Text.RegularExpressions;
 public class upatcher
 {
-
-
     public struct Patch
     {
         public string Name;
@@ -14,6 +12,13 @@ public class upatcher
         public string Description;
     }
 
+    public struct ExcludeBlock
+    {
+        public uint Start;
+        public uint End;
+    }
+
+    public static List<ExcludeBlock> Exclude;
 
     public static string SelectFile(string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*")
     {
