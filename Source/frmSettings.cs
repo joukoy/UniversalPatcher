@@ -30,6 +30,15 @@ namespace UniversalPatcher
             listView1.Columns[0].Width = 250;
             listView1.Columns[1].Width = 250;
             listView1.FullRowSelect = true;
+            if (Exclude != null)
+            {
+                foreach(ExcludeBlock EB in Exclude)
+                {
+                    var item = new ListViewItem(EB.Start.ToString("X"));
+                    item.SubItems.Add(EB.End.ToString("X"));
+                    listView1.Items.Add(item);
+                }
+            }
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
