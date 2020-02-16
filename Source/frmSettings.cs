@@ -32,7 +32,7 @@ namespace UniversalPatcher
             listView1.FullRowSelect = true;
             if (Exclude != null)
             {
-                foreach(ExcludeBlock EB in Exclude)
+                foreach (ExcludeBlock EB in Exclude)
                 {
                     var item = new ListViewItem(EB.Start.ToString("X"));
                     item.SubItems.Add(EB.End.ToString("X"));
@@ -86,8 +86,8 @@ namespace UniversalPatcher
                 {
                     uint x = 0;
                     uint y = 0;
-                    UInt32.TryParse(listView1.Items[i].Text, out x);
-                    UInt32.TryParse(listView1.Items[j].Text, out y);
+                    UInt32.TryParse(listView1.Items[i].Text, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x);
+                    UInt32.TryParse(listView1.Items[j].Text, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out y);
                     if (x > y)
                     {
                         string tmp1 = listView1.Items[j].Text;
@@ -116,11 +116,8 @@ namespace UniversalPatcher
             sw.Close();
         }
 
-        private void btnLoad_Click(object sender, EventArgs e)
+        public void LoadFile(string FileName)
         {
-            string FileName = SelectFile("INI files (*.ini)|*.ini|All files (*.*)|*.*");
-            if (FileName.Length < 1)
-                return;
             StreamReader sr = new StreamReader(FileName);
             string line;
             while ((line = sr.ReadLine()) != null)
@@ -135,13 +132,20 @@ namespace UniversalPatcher
             }
             sr.Close();
         }
+        private void btnLoad_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectFile("INI files (*.ini)|*.ini|All files (*.*)|*.*");
+            if (FileName.Length < 1)
+                return;
+            LoadFile(FileName);
+        }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnOK_Click(object sender, EventArgs e)
+        public void ApplyList()
         {
             SortList();
             Exclude = new List<ExcludeBlock>();
@@ -152,10 +156,14 @@ namespace UniversalPatcher
                 UInt32.TryParse(listView1.Items[i].Text, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out EB.Start);
                 UInt32.TryParse(listView1.Items[i].SubItems[1].Text, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out EB.End);
 
-                Exclude.Add(EB);                
+                Exclude.Add(EB);
             }
             this.DialogResult = DialogResult.OK;
             this.Close();
+        }
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            ApplyList();
         }
     }
 }

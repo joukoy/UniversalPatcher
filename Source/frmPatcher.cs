@@ -25,6 +25,22 @@ namespace UniversalPatcher
 
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
+            this.Show();
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length > 1 && File.Exists(args[1]) )
+            {
+                //&& Path.GetExtension(args[0]) == ".ini"
+                Logger(args[1]);
+                frmSettings frmS = new frmSettings();
+                //frmS.Show();
+                frmS.LoadFile(args[1]);
+                frmS.ApplyList();
+                foreach (ExcludeBlock EB in Exclude)
+                {
+                    Logger("Exclude: " + EB.Start.ToString("X") + " - " + EB.End.ToString("X"));
+                }
+            }
+
         }
 
         private void btnOrgFile_Click(object sender, EventArgs e)
@@ -130,7 +146,7 @@ namespace UniversalPatcher
                 {
                     PatchAddr.Add(i);
                     PatchData.Add(ModFile[i]);
-                    txtResult.AppendText(i.ToString("X1") + ":" + OrgFile[i].ToString("X1") + "=>" + ModFile[i].ToString("X1") + Environment.NewLine);
+                    txtResult.AppendText(i.ToString("X6") + ": " + OrgFile[i].ToString("X2") + " => " + ModFile[i].ToString("X2") + Environment.NewLine);
                 }
 
             }
@@ -169,10 +185,11 @@ namespace UniversalPatcher
                             CompareBlock(OrgFile, ModFile, PrevEnd, EB.Start); //Compare from previous exclude block to start of next exclude block
                         else
                             CompareBlock(OrgFile, ModFile, PrevEnd, (uint)fsize);
-                        PrevEnd = EB.End;
+                        PrevEnd = EB.End + 1;
                         Logger("Excluding: " + EB.Start.ToString("X") + " - " + EB.End.ToString("X"));
                     }
-                    CompareBlock(OrgFile, ModFile, PrevEnd, (uint)fsize);
+                    if (PrevEnd < fsize)
+                        CompareBlock(OrgFile, ModFile, PrevEnd, (uint)fsize);
                 }
 
             }
