@@ -72,7 +72,7 @@
   </Segment>
   <Segment>
     <Name>Speedometer</Name>
-    <Addresses>1feb0-1feaf</Addresses>
+    <Addresses>1feb0-1ffdf</Addresses>
     <CSA1>130736</CSA1>
     <CSA2>0</CSA2>
     <CSMethod1>3</CSMethod1>
