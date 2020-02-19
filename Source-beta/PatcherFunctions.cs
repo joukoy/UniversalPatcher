@@ -120,17 +120,15 @@ public class upatcher
         for (int p = 0; p < Parts.Length; p++)
         {
             string[] StartEnd = Parts[p].Split('-');
-            for (int se = 0; se < StartEnd.Length; se++)
+            uint StartAddr;
+            uint EndAddr;
+            UInt32.TryParse(StartEnd[0], System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out StartAddr);
+            UInt32.TryParse(StartEnd[1], System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out EndAddr);
+            if (p == 0)
+                StartAddr += 2;
+            for (uint i = StartAddr; i < EndAddr; i += 2)
             {
-                uint StartAddr;
-                uint EndAddr;
-                UInt32.TryParse(StartEnd[0], System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out StartAddr);
-                UInt32.TryParse(StartEnd[1], System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out EndAddr);
-
-                for (uint i = StartAddr + 2; i < EndAddr; i += 2)
-                {
-                    sum += BEToUint16(Data, i);
-                }
+                sum += BEToUint16(Data, i);
             }
         }
         sum = (sum & 0xFFFF);
@@ -145,17 +143,16 @@ public class upatcher
         for (int p = 0; p < Parts.Length; p++)
         {
             string[] StartEnd = Parts[p].Split('-');
-            for (int se = 0; se < StartEnd.Length; se++)
-            {
-                uint StartAddr;
-                uint EndAddr;
-                UInt32.TryParse(StartEnd[0], System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out StartAddr);
-                UInt32.TryParse(StartEnd[1], System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out EndAddr);
+            uint StartAddr;
+            uint EndAddr;
+            UInt32.TryParse(StartEnd[0], System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out StartAddr);
+            UInt32.TryParse(StartEnd[1], System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out EndAddr);
 
-                for (uint i = StartAddr + 2; i < EndAddr; i += 1)
-                {
-                    sum += (uint)(Data[i]*256) + Data[i+1];
-                }
+            if (p == 0)
+                StartAddr += 2;
+            for (uint i = StartAddr; i < EndAddr; i += 1)
+            {
+                sum += (uint)(Data[i]*256) + Data[i+1];
             }
         }
         sum = (sum & 0xFFFF);

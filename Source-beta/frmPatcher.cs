@@ -46,6 +46,7 @@ namespace UniversalPatcher
 
         private void GetFileInfo(string FileName)
         {
+            Logger(Environment.NewLine + Path.GetFileName(FileName));
             uint fsize = (uint)new FileInfo(FileName).Length;
             buf = ReadBin(FileName, 0, fsize);
             foreach(Segment S in Segments)
