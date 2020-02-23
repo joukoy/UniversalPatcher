@@ -18,7 +18,7 @@ namespace UniversalPatcher
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrmPatcher());
+            Application.Run(new FrmMain());
         }
     }
 }

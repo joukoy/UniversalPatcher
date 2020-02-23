@@ -32,7 +32,7 @@ namespace UniversalPatcher
             listView1.FullRowSelect = true;
             if (Exclude != null)
             {
-                foreach (ExcludeBlock EB in Exclude)
+                foreach (Block EB in Exclude)
                 {
                     var item = new ListViewItem(EB.Start.ToString("X"));
                     item.SubItems.Add(EB.End.ToString("X"));
@@ -148,8 +148,8 @@ namespace UniversalPatcher
         public void ApplyList()
         {
             SortList();
-            Exclude = new List<ExcludeBlock>();
-            ExcludeBlock EB = new ExcludeBlock();
+            Exclude = new List<Block>();
+            Block EB = new Block();
 
             for (int i = 0; i < listView1.Items.Count; i++)
             {

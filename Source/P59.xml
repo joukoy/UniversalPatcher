@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<ArrayOfSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Segment>
+    <Name>OS</Name>
+    <Addresses>0-4FF,502-3FFF,20000-DFFFE</Addresses>
+    <Address>0</Address>
+    <CSA1>500</CSA1>
+    <CSA2 />
+    <CSMethod1>3</CSMethod1>
+    <CSMethod2>0</CSMethod2>
+    <Complement1>2</Complement1>
+    <Complement2>0</Complement2>
+    <PNAddr>504:4:int</PNAddr>
+    <VerAddr>508:2:text</VerAddr>
+    <SegNrAddr>508:2:text</SegNrAddr>
+  </Segment>
+  <Segment>
+    <Name>EngineCal</Name>
+    <Address>1300</Address>
+    <CSA1>#0:2</CSA1>
+    <CSA2 />
+    <CSMethod1>3</CSMethod1>
+    <CSMethod2>0</CSMethod2>
+    <Complement1>2</Complement1>
+    <Complement2>0</Complement2>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#8:2:text</SegNrAddr>
+  </Segment>
+  <Segment>
+    <Name>EngineDiag</Name>
+    <Address>1308</Address>
+    <CSA1>#0:2</CSA1>
+    <CSA2 />
+    <CSMethod1>3</CSMethod1>
+    <CSMethod2>0</CSMethod2>
+    <Complement1>2</Complement1>
+    <Complement2>0</Complement2>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#8:2:text</SegNrAddr>
+  </Segment>
+  <Segment>
+    <Name>TransCal</Name>
+    <Address>1316</Address>
+    <CSA1>#0:2</CSA1>
+    <CSA2 />
+    <CSMethod1>3</CSMethod1>
+    <CSMethod2>0</CSMethod2>
+    <Complement1>2</Complement1>
+    <Complement2>0</Complement2>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#8:2:text</SegNrAddr>
+  </Segment>
+  <Segment>
+    <Name>TransDiag</Name>
+    <Address>1324</Address>
+    <CSA1>#0:2</CSA1>
+    <CSA2 />
+    <CSMethod1>3</CSMethod1>
+    <CSMethod2>0</CSMethod2>
+    <Complement1>2</Complement1>
+    <Complement2>0</Complement2>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#8:2:text</SegNrAddr>
+  </Segment>
+  <Segment>
+    <Name>Fuel</Name>
+    <Address>1332</Address>
+    <CSA1>#0:2</CSA1>
+    <CSA2 />
+    <CSMethod1>3</CSMethod1>
+    <CSMethod2>0</CSMethod2>
+    <Complement1>2</Complement1>
+    <Complement2>0</Complement2>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#8:2:text</SegNrAddr>
+  </Segment>
+  <Segment>
+    <Name>System</Name>
+    <Address>1340</Address>
+    <CSA1>#0:2</CSA1>
+    <CSA2 />
+    <CSMethod1>3</CSMethod1>
+    <CSMethod2>0</CSMethod2>
+    <Complement1>2</Complement1>
+    <Complement2>0</Complement2>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#8:2:text</SegNrAddr>
+  </Segment>
+  <Segment>
+    <Name>Speedometer</Name>
+    <Address>1348</Address>
+    <CSA1>#0:2</CSA1>
+    <CSA2 />
+    <CSMethod1>3</CSMethod1>
+    <CSMethod2>0</CSMethod2>
+    <Complement1>2</Complement1>
+    <Complement2>0</Complement2>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#8:2:text</SegNrAddr>
+  </Segment>
+  <Segment>
+    <Name>Eeprom_data</Name>
+    <Addresses>4000-8000</Addresses>
+    <Address>0</Address>
+    <CSA1 />
+    <CSA2 />
+    <CSMethod1>0</CSMethod1>
+    <CSMethod2>0</CSMethod2>
+    <Complement1>2</Complement1>
+    <Complement2>0</Complement2>
+    <PNAddr />
+    <VerAddr />
+    <SegNrAddr />
+  </Segment>
+</ArrayOfSegment>
