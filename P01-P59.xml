@@ -2,12 +2,12 @@
 <ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SegmentConfig>
     <Name>OS</Name>
-    <Addresses>0-4FF,500-3FFF,20000-DFFFE</Addresses>
+    <Addresses>0-4FF,500-3FFF,20000-1@</Addresses>
     <CSA1>500:2:hex</CSA1>
     <CSA2 />
     <CSMethod1>4</CSMethod1>
     <CSMethod2>0</CSMethod2>
-    <CSA1Block>0-4FF,502-3FFF,20000-DFFFE</CSA1Block>
+    <CSA1Block>0-4FF,502-3FFF,20000-1@</CSA1Block>
     <CSA2Block />
     <Complement1>2</Complement1>
     <Complement2>0</Complement2>
