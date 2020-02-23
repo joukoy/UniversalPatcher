@@ -223,7 +223,7 @@ public class upatcher
                 //Read End address from bin at this address
                 B.End = BEToUint32(buf, B.End);
             }
-            if (StartEnd.Length > 1 && StartEnd[1].EndsWith("#"))
+            if (StartEnd.Length > 1 && StartEnd[1].EndsWith("@"))
             {
                 //Address is relative to end of bin
                 B.End = (uint)buf.Length - 1;

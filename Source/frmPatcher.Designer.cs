@@ -43,12 +43,14 @@
             this.radioApply = new System.Windows.Forms.RadioButton();
             this.radioCreate = new System.Windows.Forms.RadioButton();
             this.btnSettings = new System.Windows.Forms.Button();
+            this.btnSegments = new System.Windows.Forms.Button();
+            this.btnCheckSums = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOrgFile
             // 
-            this.btnOrgFile.Location = new System.Drawing.Point(14, 55);
+            this.btnOrgFile.Location = new System.Drawing.Point(12, 29);
             this.btnOrgFile.Name = "btnOrgFile";
             this.btnOrgFile.Size = new System.Drawing.Size(100, 25);
             this.btnOrgFile.TabIndex = 1;
@@ -58,7 +60,7 @@
             // 
             // btnModFile
             // 
-            this.btnModFile.Location = new System.Drawing.Point(14, 86);
+            this.btnModFile.Location = new System.Drawing.Point(12, 60);
             this.btnModFile.Name = "btnModFile";
             this.btnModFile.Size = new System.Drawing.Size(100, 25);
             this.btnModFile.TabIndex = 2;
@@ -68,22 +70,22 @@
             // 
             // txtBaseFile
             // 
-            this.txtBaseFile.Location = new System.Drawing.Point(120, 58);
+            this.txtBaseFile.Location = new System.Drawing.Point(118, 34);
             this.txtBaseFile.Name = "txtBaseFile";
-            this.txtBaseFile.Size = new System.Drawing.Size(542, 20);
+            this.txtBaseFile.Size = new System.Drawing.Size(597, 20);
             this.txtBaseFile.TabIndex = 3;
             // 
             // txtModifierFile
             // 
-            this.txtModifierFile.Location = new System.Drawing.Point(122, 89);
+            this.txtModifierFile.Location = new System.Drawing.Point(118, 65);
             this.txtModifierFile.Name = "txtModifierFile";
-            this.txtModifierFile.Size = new System.Drawing.Size(540, 20);
+            this.txtModifierFile.Size = new System.Drawing.Size(595, 20);
             this.txtModifierFile.TabIndex = 4;
             this.txtModifierFile.TextChanged += new System.EventHandler(this.txtModifierFile_TextChanged);
             // 
             // btnCompare
             // 
-            this.btnCompare.Location = new System.Drawing.Point(14, 117);
+            this.btnCompare.Location = new System.Drawing.Point(12, 117);
             this.btnCompare.Name = "btnCompare";
             this.btnCompare.Size = new System.Drawing.Size(97, 25);
             this.btnCompare.TabIndex = 5;
@@ -94,17 +96,17 @@
             // txtResult
             // 
             this.txtResult.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtResult.Location = new System.Drawing.Point(14, 148);
+            this.txtResult.Location = new System.Drawing.Point(12, 148);
             this.txtResult.Multiline = true;
             this.txtResult.Name = "txtResult";
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtResult.Size = new System.Drawing.Size(648, 234);
+            this.txtResult.Size = new System.Drawing.Size(705, 234);
             this.txtResult.TabIndex = 6;
             // 
             // btnSave
             // 
             this.btnSave.Enabled = false;
-            this.btnSave.Location = new System.Drawing.Point(585, 400);
+            this.btnSave.Location = new System.Drawing.Point(640, 400);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(77, 32);
             this.btnSave.TabIndex = 7;
@@ -115,9 +117,9 @@
             // txtPatchName
             // 
             this.txtPatchName.Enabled = false;
-            this.txtPatchName.Location = new System.Drawing.Point(14, 412);
+            this.txtPatchName.Location = new System.Drawing.Point(12, 412);
             this.txtPatchName.Name = "txtPatchName";
-            this.txtPatchName.Size = new System.Drawing.Size(565, 20);
+            this.txtPatchName.Size = new System.Drawing.Size(622, 20);
             this.txtPatchName.TabIndex = 8;
             // 
             // labelBinSize
@@ -141,7 +143,7 @@
             // labelDescr
             // 
             this.labelDescr.AutoSize = true;
-            this.labelDescr.Location = new System.Drawing.Point(11, 391);
+            this.labelDescr.Location = new System.Drawing.Point(9, 391);
             this.labelDescr.Name = "labelDescr";
             this.labelDescr.Size = new System.Drawing.Size(92, 13);
             this.labelDescr.TabIndex = 11;
@@ -151,9 +153,9 @@
             // 
             this.groupBox1.Controls.Add(this.radioApply);
             this.groupBox1.Controls.Add(this.radioCreate);
-            this.groupBox1.Location = new System.Drawing.Point(14, 8);
+            this.groupBox1.Location = new System.Drawing.Point(14, -10);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(481, 43);
+            this.groupBox1.Size = new System.Drawing.Size(225, 38);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             // 
@@ -183,19 +185,43 @@
             // 
             // btnSettings
             // 
-            this.btnSettings.Location = new System.Drawing.Point(585, 15);
+            this.btnSettings.Location = new System.Drawing.Point(557, 2);
             this.btnSettings.Name = "btnSettings";
             this.btnSettings.Size = new System.Drawing.Size(77, 26);
             this.btnSettings.TabIndex = 13;
             this.btnSettings.Text = "Settings";
             this.btnSettings.UseVisualStyleBackColor = true;
+            this.btnSettings.Visible = false;
             this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+            // 
+            // btnSegments
+            // 
+            this.btnSegments.Location = new System.Drawing.Point(650, 6);
+            this.btnSegments.Name = "btnSegments";
+            this.btnSegments.Size = new System.Drawing.Size(67, 26);
+            this.btnSegments.TabIndex = 14;
+            this.btnSegments.Text = "Segments";
+            this.btnSegments.UseVisualStyleBackColor = true;
+            this.btnSegments.Visible = false;
+            this.btnSegments.Click += new System.EventHandler(this.btnSegments_Click);
+            // 
+            // btnCheckSums
+            // 
+            this.btnCheckSums.Location = new System.Drawing.Point(641, 118);
+            this.btnCheckSums.Name = "btnCheckSums";
+            this.btnCheckSums.Size = new System.Drawing.Size(76, 24);
+            this.btnCheckSums.TabIndex = 15;
+            this.btnCheckSums.Text = "Checksums";
+            this.btnCheckSums.UseVisualStyleBackColor = true;
+            this.btnCheckSums.Click += new System.EventHandler(this.btnCheckSums_Click);
             // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(672, 445);
+            this.ClientSize = new System.Drawing.Size(729, 445);
+            this.Controls.Add(this.btnCheckSums);
+            this.Controls.Add(this.btnSegments);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.labelDescr);
@@ -235,5 +261,7 @@
         private System.Windows.Forms.RadioButton radioApply;
         private System.Windows.Forms.RadioButton radioCreate;
         private System.Windows.Forms.Button btnSettings;
+        private System.Windows.Forms.Button btnSegments;
+        private System.Windows.Forms.Button btnCheckSums;
     }
 }

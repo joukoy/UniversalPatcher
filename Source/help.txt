@@ -1,7 +1,11 @@
 Examples: 
-0-4FF,1000-4000
+
+Segment addressess:
+0-4FF,1000-4000 = direct addresses
 @500 = Read segment address from $500
+0-2@ = From beginning of file to 2 bytes from end of file
+
+Checksum & info addressess:
 #0:2:Hex = Beginning of segment, word, show as Hex
 #4:2:Int = 4 bytes from segment start, Word, Show as integer
 #8:4:Text = 8 bytes from segment start, Dword, show as text
-0-2# = From beginning of file to 2 bytes from end of file
