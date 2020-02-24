@@ -20,9 +20,9 @@ public class upatcher
 
     public struct BinFile
     {
-        public Block[] SegmentBlocks;
-        public Block[] CS1Blocks;
-        public Block[] CS2Blocks;
+        public List<Block> SegmentBlocks;
+        public List<Block> CS1Blocks;
+        public List<Block> CS2Blocks;
         public AddressData CS1Address;
         public AddressData CS2Address;
         public AddressData PNaddr;
@@ -56,7 +56,7 @@ public class upatcher
 
     public static List<SegmentConfig> Segments = new List<SegmentConfig>();
 
-    public struct  AddressData
+    public struct AddressData
     {
         public uint Address;
         public ushort Bytes;
@@ -174,36 +174,101 @@ public class upatcher
         return Result;
     }
 
-    public static bool ParseSegmentAddresses(string Line, SegmentConfig S, byte[] buf, out Block[] Blocks)
+    public static bool ParseSegmentAddresses(string Line, SegmentConfig S, byte[] buf, out List<Block> Blocks)
     {
+        Blocks = new List<Block>();
+
         if (Line == null || Line == "")
         {
             //It is ok to have empty address (for CS, not for segment)
-            Blocks = new Block[1];
-            Blocks[0].End = 0;
-            Blocks[0].Start = 0;
+            Block B = new Block();
+            B.End = 0;
+            B.Start = 0;
+            Blocks.Add(B);
             return true;
         }
         string[] Parts = Line.Split(',');
-        Blocks = new Block[Parts.Length];
         int i = 0;
         
         foreach (string Part in Parts)
         {
             string[] StartEnd = Part.Split('-');
             Block B = new Block();
+            int Offset = 0;
+            bool isWord = false;
+            ushort Multiple = 1;
+
+            if (StartEnd[0].Contains(">"))
+            {
+                string[] SO = StartEnd[0].Split('>');
+                StartEnd[0] = SO[0];
+                uint x;
+                if (!HexToUint(SO[1], out x))
+                    return false;
+                Offset = (int)x;
+            }
+            if (StartEnd[0].Contains("<"))
+            {
+                string[] SO = StartEnd[0].Split('<');
+                StartEnd[0] = SO[0];
+                uint x;
+                if (!HexToUint(SO[1], out x))
+                    return false;
+                Offset = ~(int)x;
+            }
+
+
+            if (StartEnd[0].Contains("*"))
+            {
+                string[] SM = StartEnd[0].Split('*');
+                StartEnd[0] = SM[0];
+                UInt16.TryParse(SM[1],out Multiple);
+            }
+
+            if (StartEnd[0].Contains(":2"))
+            {
+                string[] SW = StartEnd[0].Split(':');
+                StartEnd[0] = SW[0];
+                isWord = true;
+            }
+
+            if (StartEnd.Length > 1 && StartEnd[1].Contains(":2"))
+            {
+                string[] EW = StartEnd[1].Split(':');
+                StartEnd[1] = EW[0];
+                isWord = true;
+            }
+
+
             if (!HexToUint(StartEnd[0].Replace("@", ""), out B.Start))
             {
-                Blocks[i].Start = 0;
-                Blocks[i].End = 0;
+                B.End = 0;
                 return false;
             }
             if (StartEnd[0].StartsWith("@"))
             {
-                //Read address from bin at this address
-                uint tmp = B.Start;
-                B.Start = BEToUint32(buf, B.Start);
-                B.End = BEToUint32(buf, tmp + 4);
+                uint tmpStart = B.Start;
+                for (int m=1; m<=Multiple; m++)
+                {                
+                    //Read address from bin at this address
+                    
+                    if (isWord)
+                    { 
+                        B.Start = BEToUint16(buf, tmpStart);
+                        B.End = BEToUint16(buf, tmpStart + 2);
+                        tmpStart += 4;
+                    }
+                    else
+                    {
+                        B.Start = BEToUint32(buf, tmpStart);
+                        B.End = BEToUint32(buf, tmpStart + 4);
+                        tmpStart += 8;
+                    }
+                    B.Start += (uint)Offset;
+                    B.End += (uint)Offset;
+                    if (Multiple>1)
+                        Blocks.Add(B);
+                }
             }
             else
             {
@@ -212,19 +277,24 @@ public class upatcher
                 if (B.End >= buf.Length)    //Make 1MB config work with 512kB bin
                     B.End = (uint)buf.Length - 1;
             }
-            if (StartEnd.Length>1 && StartEnd[1].StartsWith("@"))
-            {
-                //Read End address from bin at this address
-                B.End = BEToUint32(buf, B.End);
+            if (Multiple < 2)
+                { 
+                if (StartEnd.Length>1 && StartEnd[1].StartsWith("@"))
+                {
+                    //Read End address from bin at this address
+                    B.End = BEToUint32(buf, B.End);
+                }
+                if (StartEnd.Length > 1 && StartEnd[1].EndsWith("@"))
+                {
+                    //Address is relative to end of bin
+                    uint end;
+                    if (HexToUint(StartEnd[1].Replace("@",""), out end) )
+                    B.End = (uint)buf.Length - end;
+                }
+                B.Start += (uint)Offset;
+                B.End += (uint)Offset;
+                Blocks.Add(B);
             }
-            if (StartEnd.Length > 1 && StartEnd[1].EndsWith("@"))
-            {
-                //Address is relative to end of bin
-                uint end;
-                if (HexToUint(StartEnd[1].Replace("@",""), out end) )
-                B.End = (uint)buf.Length - end;
-            }
-            Blocks[i] = B;
             i++;
         }
         return true;
@@ -236,9 +306,7 @@ public class upatcher
         for (int i=0; i< Segments.Count;i++)
         {
             SegmentConfig S = Segments[i];
-            Block[] B = new Block[1];
-            B[0].Start = 0;
-            B[0].End = 0;
+            List<Block> B = new List<Block>();
             if (!ParseSegmentAddresses(S.Addresses, S, buf, out B))
                 return;
             binfile[i].SegmentBlocks = B ;
@@ -294,13 +362,13 @@ public class upatcher
         }
     }
 
-    public static uint CalculateChecksum(byte[] Data, AddressData CSAddress, Block[] CSBlocks, short Method, short Complement, ushort Bytes)
+    public static uint CalculateChecksum(byte[] Data, AddressData CSAddress, List<Block> CSBlocks, short Method, short Complement, ushort Bytes)
     {
         uint sum = 0;
         uint BufSize = 0;
         List<Block> Blocks = new List<Block>();
         
-        for (int p = 0; p < CSBlocks.Length; p++)
+        for (int p = 0; p < CSBlocks.Count; p++)
         {
             Block B = new Block();
             B.Start = CSBlocks[p].Start;

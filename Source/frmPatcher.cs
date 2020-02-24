@@ -92,7 +92,7 @@ namespace UniversalPatcher
                 {
                     SegmentConfig S = Segments[i];
                     string tmp = "";
-                    for (int s = 0; s < binfile[i].SegmentBlocks.Length; s++)
+                    for (int s = 0; s < binfile[i].SegmentBlocks.Count; s++)
                     {
                         if (s > 0)
                             tmp += ", ";
@@ -115,7 +115,7 @@ namespace UniversalPatcher
                     if (S.CS1Method != CSMethod_None)
                     {
                         string tmp = "";
-                        for (int s = 0; s < binfile[i].CS1Blocks.Length; s++)
+                        for (int s = 0; s < binfile[i].CS1Blocks.Count; s++)
                         {
                             if (s > 0)
                                 tmp += ", ";
@@ -137,7 +137,7 @@ namespace UniversalPatcher
                     if (S.CS2Method != CSMethod_None)
                     {
                         string tmp = "";
-                        for (int s = 0; s < binfile[i].CS2Blocks.Length; s++)
+                        for (int s = 0; s < binfile[i].CS2Blocks.Count; s++)
                         {
                             if (s > 0)
                                 tmp += ", ";
@@ -309,7 +309,7 @@ namespace UniversalPatcher
                         if (Selections[Snr])
                         {
                             Logger("Comparing segment " + S.Name, false);
-                            for (int p=0;p<basefile[Snr].SegmentBlocks.Length ;p++)
+                            for (int p=0;p<basefile[Snr].SegmentBlocks.Count ;p++)
                             {
                                 uint Start = basefile[Snr].SegmentBlocks[p].Start;
                                 uint End = basefile[Snr].SegmentBlocks[p].End;
