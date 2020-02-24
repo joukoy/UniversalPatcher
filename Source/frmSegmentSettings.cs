@@ -100,7 +100,7 @@ namespace UniversalPatcher
                 S.CS1Complement = 0;
             if (radioCS1Complement1.Checked)
                 S.CS1Complement = 1;
-            if (radioCS2Complement2.Checked)
+            if (radioCS1Complement2.Checked)
                 S.CS1Complement = 2;
 
             if (radioCS2Complement0.Checked)

@@ -385,7 +385,7 @@ public class upatcher
 
         if (Bytes == 1)
             sum = (sum & 0xFF);
-        if (Bytes == 2)
+        if (Bytes ==  2 || Bytes == 0) //Bytes = 0 if not saving
         { 
             sum = (sum & 0xFFFF);
             if (Method == CSMethod_crc16 || Method == CSMethod_crc32)

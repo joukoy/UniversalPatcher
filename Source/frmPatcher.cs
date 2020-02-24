@@ -121,13 +121,17 @@ namespace UniversalPatcher
                                 tmp += ", ";
                             tmp += binfile[i].CS1Blocks[s].Start.ToString("X4") + " - " + binfile[i].CS1Blocks[s].End.ToString("X4");
                         }
-
                         string CS1Calc = CalculateChecksum(buf, binfile[i].CS1Address, binfile[i].CS1Blocks, S.CS1Method, S.CS1Complement, binfile[i].CS1Address.Bytes).ToString("X4");
-                        string CS1 = ReadInfo(buf,binfile[i].CS1Address);
-                        if (CS1 == CS1Calc)
-                            Logger(" Checksum 1: [" + tmp + "] " + CS1 + " [OK]");
+                        if (binfile[i].CS1Address.Bytes == 0)
+                            Logger(" Checksum1: [" + tmp + "] " + CS1Calc);
                         else
-                            Logger(" Checksum 1: [" + tmp + "] " + CS1 + ", Calculated: " + CS1Calc + " [Fail]");
+                        { 
+                            string CS1 = ReadInfo(buf,binfile[i].CS1Address);
+                            if (CS1 == CS1Calc)
+                                Logger(" Checksum 1: [" + tmp + "] " + CS1 + " [OK]");
+                            else
+                                Logger(" Checksum 1: [" + tmp + "] " + CS1 + ", Calculated: " + CS1Calc + " [Fail]");
+                        }
                     }
 
                     if (S.CS2Method != CSMethod_None)
@@ -140,11 +144,16 @@ namespace UniversalPatcher
                             tmp += binfile[i].CS2Blocks[s].Start.ToString("X4") + " - " + binfile[i].CS2Blocks[s].End.ToString("X4") ;
                         }
                         string CS2Calc = CalculateChecksum(buf, binfile[i].CS2Address, binfile[i].CS2Blocks, S.CS2Method, S.CS2Complement, binfile[i].CS2Address.Bytes).ToString("X4");
-                        string CS2 = ReadInfo(buf, binfile[i].CS2Address);
-                        if (CS2 == CS2Calc)
-                            Logger(" Checksum 2: [" + tmp + "] " + CS2 + " [OK]");
+                        if (binfile[i].CS2Address.Bytes == 0)
+                            Logger(" Checksum1: [" + tmp + "] " + CS2Calc);
                         else
-                            Logger(" Checksum 2: [" + tmp + "] " + CS2 + ", Calculated: " + CS2Calc + " [Fail]");
+                        {
+                            string CS2 = ReadInfo(buf, binfile[i].CS2Address);
+                            if (CS2 == CS2Calc)
+                                Logger(" Checksum 2: [" + tmp + "] " + CS2 + " [OK]");
+                            else
+                                Logger(" Checksum 2: [" + tmp + "] " + CS2 + ", Calculated: " + CS2Calc + " [Fail]");
+                        }
                     }
 
 
@@ -488,22 +497,28 @@ namespace UniversalPatcher
                             Logger(" Checksum 1: " + CS1.ToString("X4") + " [OK]");
                         else
                         {
-                            if (basefile[i].CS1Address.Bytes == 1)
-                                buf[basefile[i].CS1Address.Address] = (byte)CS1Calc;
-                            else if (basefile[i].CS1Address.Bytes == 2)
-                            { 
-                                buf[basefile[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF00) >> 8);
-                                buf[basefile[i].CS1Address.Address + 1] = (byte)(CS1Calc & 0xFF);
-                            }
-                            else if (basefile[i].CS1Address.Bytes == 4)
+                            if (basefile[i].CS1Address.Bytes == 0)
                             {
-                                buf[basefile[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF000000) >> 24);
-                                buf[basefile[i].CS1Address.Address + 1] = (byte)((CS1Calc & 0xFF0000) >> 16);
-                                buf[basefile[i].CS1Address.Address + 2] = (byte)((CS1Calc & 0xFF00) >> 8);
-                                buf[basefile[i].CS1Address.Address + 3] = (byte)(CS1Calc & 0xFF);
-
+                                Logger(" Checksum 1: " + CS1Calc.ToString("X4") + " [Not saved]");
                             }
-                            Logger(" Checksum 1: " + CS1.ToString("X4") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
+                            else { 
+                                if (basefile[i].CS1Address.Bytes == 1)
+                                    buf[basefile[i].CS1Address.Address] = (byte)CS1Calc;
+                                else if (basefile[i].CS1Address.Bytes == 2)
+                                { 
+                                    buf[basefile[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF00) >> 8);
+                                    buf[basefile[i].CS1Address.Address + 1] = (byte)(CS1Calc & 0xFF);
+                                }
+                                else if (basefile[i].CS1Address.Bytes == 4)
+                                {
+                                    buf[basefile[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF000000) >> 24);
+                                    buf[basefile[i].CS1Address.Address + 1] = (byte)((CS1Calc & 0xFF0000) >> 16);
+                                    buf[basefile[i].CS1Address.Address + 2] = (byte)((CS1Calc & 0xFF00) >> 8);
+                                    buf[basefile[i].CS1Address.Address + 3] = (byte)(CS1Calc & 0xFF);
+
+                                }
+                                Logger(" Checksum 1: " + CS1.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
+                            }
                         }
                     }
 
@@ -511,39 +526,46 @@ namespace UniversalPatcher
                     {
                         uint CS2 = 0;
                         uint CS2Calc = CalculateChecksum(buf, basefile[i].CS2Address, basefile[i].CS2Blocks, S.CS2Method, S.CS2Complement, basefile[i].CS2Address.Bytes);
-                        if (basefile[i].CS2Address.Bytes == 1)
-                        {
-                            CS2 = buf[basefile[i].CS2Address.Address];
-                        }
-                        else if (basefile[i].CS2Address.Bytes == 2)
-                        {
-                            CS2 = BEToUint16(buf, basefile[i].CS2Address.Address);
-                        }
-                        else if (basefile[i].CS2Address.Bytes == 4)
-                        {
-                            CS2 = BEToUint32(buf, basefile[i].CS2Address.Address);
-                        }
-                        if (CS2 == CS2Calc)
-                            Logger(" Checksum 2: " + CS2.ToString("X4") + " [OK]");
-                        else
-                        {
                             if (basefile[i].CS2Address.Bytes == 1)
-                                buf[basefile[i].CS2Address.Address] = (byte)CS2Calc;
+                            {
+                                CS2 = buf[basefile[i].CS2Address.Address];
+                            }
                             else if (basefile[i].CS2Address.Bytes == 2)
                             {
-                                buf[basefile[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF00) >> 8);
-                                buf[basefile[i].CS2Address.Address + 1] = (byte)(CS2Calc & 0xFF);
+                                CS2 = BEToUint16(buf, basefile[i].CS2Address.Address);
                             }
                             else if (basefile[i].CS2Address.Bytes == 4)
                             {
-                                buf[basefile[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF000000) >> 24);
-                                buf[basefile[i].CS2Address.Address + 1] = (byte)((CS2Calc & 0xFF0000) >> 16);
-                                buf[basefile[i].CS2Address.Address + 2] = (byte)((CS2Calc & 0xFF00) >> 8);
-                                buf[basefile[i].CS2Address.Address + 3] = (byte)(CS2Calc & 0xFF);
-
+                                CS2 = BEToUint32(buf, basefile[i].CS2Address.Address);
                             }
-                            Logger(" Checksum 2: " + CS2.ToString("X4") + " => " + CS2Calc.ToString("X4") + " [Fixed]");
-                        }
+                            if (CS2 == CS2Calc)
+                                Logger(" Checksum 2: " + CS2.ToString("X4") + " [OK]");
+                            else
+                            {
+                                if (basefile[i].CS2Address.Bytes == 0)
+                                {
+                                    Logger(" Checksum 2: " + CS2Calc.ToString("X4") + " [Not saved]");
+                                }
+                                else
+                                {
+                                    if (basefile[i].CS2Address.Bytes == 1)
+                                        buf[basefile[i].CS2Address.Address] = (byte)CS2Calc;
+                                    else if (basefile[i].CS2Address.Bytes == 2)
+                                    {
+                                        buf[basefile[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF00) >> 8);
+                                        buf[basefile[i].CS2Address.Address + 1] = (byte)(CS2Calc & 0xFF);
+                                    }
+                                    else if (basefile[i].CS2Address.Bytes == 4)
+                                    {
+                                        buf[basefile[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF000000) >> 24);
+                                        buf[basefile[i].CS2Address.Address + 1] = (byte)((CS2Calc & 0xFF0000) >> 16);
+                                        buf[basefile[i].CS2Address.Address + 2] = (byte)((CS2Calc & 0xFF00) >> 8);
+                                        buf[basefile[i].CS2Address.Address + 3] = (byte)(CS2Calc & 0xFF);
+
+                                    }
+                                    Logger(" Checksum 2: " + CS2.ToString("X") + " => " + CS2Calc.ToString("X4") + " [Fixed]");
+                                }
+                            }
                     }
 
 
