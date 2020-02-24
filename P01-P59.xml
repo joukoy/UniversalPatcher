@@ -2,15 +2,15 @@
 <ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SegmentConfig>
     <Name>OS</Name>
-    <Addresses>0-4FF,500-3FFF,20000-1@</Addresses>
-    <CSA1>500:2:hex</CSA1>
-    <CSA2 />
-    <CSMethod1>4</CSMethod1>
-    <CSMethod2>0</CSMethod2>
-    <CSA1Block>0-4FF,502-3FFF,20000-1@</CSA1Block>
-    <CSA2Block />
-    <Complement1>2</Complement1>
-    <Complement2>0</Complement2>
+    <Addresses>0-4FF,500-3FFF,20000-2@</Addresses>
+    <CS1Address>500:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>0</CS2Method>
+    <CS1Blocks>0-4FF,502-3FFF,20000-2@</CS1Blocks>
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
     <PNAddr>504:4:int</PNAddr>
     <VerAddr>508:2:text</VerAddr>
     <SegNrAddr>503:1:int</SegNrAddr>
@@ -18,14 +18,14 @@
   <SegmentConfig>
     <Name>EngineCal</Name>
     <Addresses>@514</Addresses>
-    <CSA1>#0:2:hex</CSA1>
-    <CSA2 />
-    <CSMethod1>4</CSMethod1>
-    <CSMethod2>0</CSMethod2>
-    <CSA1Block>@514</CSA1Block>
-    <CSA2Block />
-    <Complement1>2</Complement1>
-    <Complement2>0</Complement2>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>0</CS2Method>
+    <CS1Blocks>@514</CS1Blocks>
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
     <PNAddr>#4:3:int</PNAddr>
     <VerAddr>#8:2:text</VerAddr>
     <SegNrAddr>#3:1:int</SegNrAddr>
@@ -33,14 +33,14 @@
   <SegmentConfig>
     <Name>EngineDiag</Name>
     <Addresses>@51C</Addresses>
-    <CSA1>#0:2:hex</CSA1>
-    <CSA2 />
-    <CSMethod1>4</CSMethod1>
-    <CSMethod2>0</CSMethod2>
-    <CSA1Block>@51C</CSA1Block>
-    <CSA2Block />
-    <Complement1>2</Complement1>
-    <Complement2>0</Complement2>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>0</CS2Method>
+    <CS1Blocks>@51C</CS1Blocks>
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
     <PNAddr>#4:3:int</PNAddr>
     <VerAddr>#8:2:text</VerAddr>
     <SegNrAddr>#3:1:int</SegNrAddr>
@@ -48,14 +48,14 @@
   <SegmentConfig>
     <Name>TransCal</Name>
     <Addresses>@524</Addresses>
-    <CSA1>#0:2:hex</CSA1>
-    <CSA2 />
-    <CSMethod1>4</CSMethod1>
-    <CSMethod2>0</CSMethod2>
-    <CSA1Block>@524</CSA1Block>
-    <CSA2Block />
-    <Complement1>2</Complement1>
-    <Complement2>0</Complement2>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>0</CS2Method>
+    <CS1Blocks>@524</CS1Blocks>
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
     <PNAddr>#4:3:int</PNAddr>
     <VerAddr>#8:2:text</VerAddr>
     <SegNrAddr>#3:1:int</SegNrAddr>
@@ -63,14 +63,14 @@
   <SegmentConfig>
     <Name>TransDiag</Name>
     <Addresses>@52C</Addresses>
-    <CSA1>#0:2:hex</CSA1>
-    <CSA2 />
-    <CSMethod1>4</CSMethod1>
-    <CSMethod2>0</CSMethod2>
-    <CSA1Block>@52C</CSA1Block>
-    <CSA2Block />
-    <Complement1>2</Complement1>
-    <Complement2>0</Complement2>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>0</CS2Method>
+    <CS1Blocks>@52C</CS1Blocks>
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
     <PNAddr>#4:3:int</PNAddr>
     <VerAddr>#8:2:text</VerAddr>
     <SegNrAddr>#3:1:int</SegNrAddr>
@@ -78,14 +78,14 @@
   <SegmentConfig>
     <Name>Fuel</Name>
     <Addresses>@534</Addresses>
-    <CSA1>#0:2:hex</CSA1>
-    <CSA2 />
-    <CSMethod1>4</CSMethod1>
-    <CSMethod2>0</CSMethod2>
-    <CSA1Block>@534</CSA1Block>
-    <CSA2Block />
-    <Complement1>2</Complement1>
-    <Complement2>0</Complement2>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>0</CS2Method>
+    <CS1Blocks>@534</CS1Blocks>
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
     <PNAddr>#4:3:int</PNAddr>
     <VerAddr>#8:2:text</VerAddr>
     <SegNrAddr>#3:1:int</SegNrAddr>
@@ -93,14 +93,14 @@
   <SegmentConfig>
     <Name>System</Name>
     <Addresses>@53C</Addresses>
-    <CSA1>#0:2:hex</CSA1>
-    <CSA2 />
-    <CSMethod1>4</CSMethod1>
-    <CSMethod2>0</CSMethod2>
-    <CSA1Block>@53C</CSA1Block>
-    <CSA2Block />
-    <Complement1>2</Complement1>
-    <Complement2>0</Complement2>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>0</CS2Method>
+    <CS1Blocks>@53C</CS1Blocks>
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
     <PNAddr>#4:3:int</PNAddr>
     <VerAddr>#8:2:text</VerAddr>
     <SegNrAddr>#3:1:int</SegNrAddr>
@@ -108,14 +108,14 @@
   <SegmentConfig>
     <Name>Speedometer</Name>
     <Addresses>@544</Addresses>
-    <CSA1>#0:2:hex</CSA1>
-    <CSA2 />
-    <CSMethod1>4</CSMethod1>
-    <CSMethod2>0</CSMethod2>
-    <CSA1Block>@544</CSA1Block>
-    <CSA2Block />
-    <Complement1>2</Complement1>
-    <Complement2>0</Complement2>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>0</CS2Method>
+    <CS1Blocks>@544</CS1Blocks>
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
     <PNAddr>#4:3:int</PNAddr>
     <VerAddr>#8:2:text</VerAddr>
     <SegNrAddr>#3:1:int</SegNrAddr>
@@ -123,12 +123,12 @@
   <SegmentConfig>
     <Name>Eeprom_data</Name>
     <Addresses>4000-8000</Addresses>
-    <CSA1 />
-    <CSA2 />
-    <CSMethod1>0</CSMethod1>
-    <CSMethod2>0</CSMethod2>
-    <Complement1>2</Complement1>
-    <Complement2>0</Complement2>
+    <CS1Address />
+    <CS2Address />
+    <CS1Method>0</CS1Method>
+    <CS2Method>0</CS2Method>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
     <PNAddr />
     <VerAddr />
     <SegNrAddr />
