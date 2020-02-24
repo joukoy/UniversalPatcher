@@ -69,7 +69,6 @@
             this.txtVerAddr = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.txtNrAddr = new System.Windows.Forms.TextBox();
-            this.btnOK = new System.Windows.Forms.Button();
             this.txtCS1Block = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -302,7 +301,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(368, 457);
+            this.btnSave.Location = new System.Drawing.Point(454, 457);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 35);
             this.btnSave.TabIndex = 31;
@@ -336,13 +335,13 @@
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(81, 25);
             this.btnAdd.TabIndex = 28;
-            this.btnAdd.Text = "Add/edit";
+            this.btnAdd.Text = "Apply";
             this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
             // btnLoad
             // 
-            this.btnLoad.Location = new System.Drawing.Point(288, 457);
+            this.btnLoad.Location = new System.Drawing.Point(374, 457);
             this.btnLoad.Name = "btnLoad";
             this.btnLoad.Size = new System.Drawing.Size(74, 35);
             this.btnLoad.TabIndex = 30;
@@ -489,16 +488,6 @@
             this.txtNrAddr.Size = new System.Drawing.Size(72, 20);
             this.txtNrAddr.TabIndex = 9;
             // 
-            // btnOK
-            // 
-            this.btnOK.Location = new System.Drawing.Point(450, 457);
-            this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(81, 34);
-            this.btnOK.TabIndex = 33;
-            this.btnOK.Text = "OK";
-            this.btnOK.UseVisualStyleBackColor = true;
-            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
-            // 
             // txtCS1Block
             // 
             this.txtCS1Block.Location = new System.Drawing.Point(196, 202);
@@ -540,7 +529,6 @@
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtCS1Block);
-            this.Controls.Add(this.btnOK);
             this.Controls.Add(this.txtNrAddr);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.txtVerAddr);
@@ -622,7 +610,6 @@
         private System.Windows.Forms.TextBox txtVerAddr;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox txtNrAddr;
-        private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.TextBox txtCS1Block;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label8;
