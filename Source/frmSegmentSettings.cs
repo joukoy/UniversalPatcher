@@ -60,55 +60,55 @@ namespace UniversalPatcher
             else*/
                 S.Addresses = txtSegmentAddress.Text;
 
-            S.CSA1 = txtCSA1.Text;
-            S.CSA2 = txtCSA2.Text;
-            S.CSA1Block = txtCS1Block.Text;
-            S.CSA2Block = txtCS2Block.Text;
+            S.CS1Address = txtCS1Address.Text;
+            S.CS2Address = txtCS2Address.Text;
+            S.CS1Blocks = txtCS1Block.Text;
+            S.CS2Blocks = txtCS2Block.Text;
            
             S.PNAddr = txtPNAddr.Text;
             S.VerAddr = txtVerAddr.Text;
             S.SegNrAddr = txtNrAddr.Text;
 
-            if (radioNone.Checked)
-                S.CSMethod1 = CSMethod_None;
-            if (radioCrc16.Checked)
-                S.CSMethod1 = CSMethod_crc16;
-            if (radioCrc32.Checked)
-                S.CSMethod1 = CSMethod_crc32;
-            if (radioSUM.Checked)
-                S.CSMethod1 = CSMethod_Bytesum;
-            if (radioWordSum.Checked)
-                S.CSMethod1 = CSMethod_Wordsum;
-            if (radioDwordSum.Checked)
-                S.CSMethod1 = CSMethod_Dwordsum;
+            if (radioCS1None.Checked)
+                S.CS1Method = CSMethod_None;
+            if (radioCS1Crc16.Checked)
+                S.CS1Method = CSMethod_crc16;
+            if (radioCS1Crc32.Checked)
+                S.CS1Method = CSMethod_crc32;
+            if (radioCS1SUM.Checked)
+                S.CS1Method = CSMethod_Bytesum;
+            if (radioCS1WordSum.Checked)
+                S.CS1Method = CSMethod_Wordsum;
+            if (radioCS1DwordSum.Checked)
+                S.CS1Method = CSMethod_Dwordsum;
 
-            if (radio2None.Checked)
-                S.CSMethod2 = CSMethod_None;
-            if (radio2Crc16.Checked)
-                S.CSMethod2 = CSMethod_crc16;
-            if (radio2Crc32.Checked)
-                S.CSMethod2 = CSMethod_crc32;
-            if (radio2SUM.Checked)
-                S.CSMethod2 = CSMethod_Bytesum;
-            if (radio2WordSum.Checked)
-                S.CSMethod2 = CSMethod_Wordsum;
-            if (radio2DwordSum.Checked)
-                S.CSMethod2 = CSMethod_Dwordsum;
+            if (radioCS2None.Checked)
+                S.CS2Method = CSMethod_None;
+            if (radioCS2Crc16.Checked)
+                S.CS2Method = CSMethod_crc16;
+            if (radioCS2Crc32.Checked)
+                S.CS2Method = CSMethod_crc32;
+            if (radioCS2SUM.Checked)
+                S.CS2Method = CSMethod_Bytesum;
+            if (radioCS2WordSum.Checked)
+                S.CS2Method = CSMethod_Wordsum;
+            if (radioCS2DwordSum.Checked)
+                S.CS2Method = CSMethod_Dwordsum;
 
 
-            if (radioComplement0.Checked)
-                S.Complement1 = 0;
-            if (radioComplement1.Checked)
-                S.Complement1 = 1;
-            if (radioComplement2.Checked)
-                S.Complement1 = 2;
+            if (radioCS1Complement0.Checked)
+                S.CS1Complement = 0;
+            if (radioCS1Complement1.Checked)
+                S.CS1Complement = 1;
+            if (radioCS2Complement2.Checked)
+                S.CS1Complement = 2;
 
-            if (radio2Complement0.Checked)
-                S.Complement2 = 0;
-            if (radio2Complement1.Checked)
-                S.Complement2 = 1;
-            if (radio2Complement2.Checked)
-                S.Complement2 = 2;
+            if (radioCS2Complement0.Checked)
+                S.CS2Complement = 0;
+            if (radioCS2Complement1.Checked)
+                S.CS2Complement = 1;
+            if (radioCS2Complement2.Checked)
+                S.CS2Complement = 2;
 
             if (isNew)
             {
@@ -139,56 +139,64 @@ namespace UniversalPatcher
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
-            string FileName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
-            if (FileName.Length < 1)
-                return;
+            try { 
+                string FileName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
+                if (FileName.Length < 1)
+                    return;
 
-            using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                {
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentConfig>));
+                    writer.Serialize(stream, Segments);
+                    stream.Close();
+                }
+            }
+            catch (Exception ex)
             {
-                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentConfig>));
-                writer.Serialize(stream, Segments);
-                stream.Close();
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        public void LoadFile(string FileName)
+        {
+            try
+            {
+                Segments.Clear();
+
+                System.Xml.Serialization.XmlSerializer reader =
+                    new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentConfig>));
+                System.IO.StreamReader file = new System.IO.StreamReader(FileName);
+                Segments = (List<SegmentConfig>)reader.Deserialize(file);
+                file.Close();
+
+                listSegments.Items.Clear();
+                foreach (SegmentConfig S in Segments)
+                {
+                    var item = new ListViewItem(S.Name);
+                    if (S.Addresses != null)
+                        item.SubItems.Add(S.Addresses);
+                    else
+                        item.SubItems.Add("");
+                    listSegments.Items.Add(item);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
 
         }
 
         private void btnLoad_Click(object sender, EventArgs e)
         {
-            Segments.Clear();
             string FileName = SelectFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
             if (FileName.Length < 1)
                 return;
-
-            System.Xml.Serialization.XmlSerializer reader =
-                new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentConfig>));
-            System.IO.StreamReader file = new System.IO.StreamReader(FileName);
-            Segments = (List<SegmentConfig>)reader.Deserialize(file);
-            file.Close();
-
-            listSegments.Items.Clear();
-            foreach (SegmentConfig S in Segments)
-            {
-                var item = new ListViewItem(S.Name);
-                if (S.Addresses != null)
-                    item.SubItems.Add(S.Addresses);
-                else
-                    item.SubItems.Add("");
-                listSegments.Items.Add(item);
-            }
-
+            LoadFile(FileName);
         }
 
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void listSegments_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -200,49 +208,49 @@ namespace UniversalPatcher
                 {
                     txtSegmentName.Text = S.Name;
                     txtSegmentAddress.Text = S.Addresses;
-                    txtCSA1.Text = S.CSA1;
-                    txtCSA2.Text = S.CSA2;
-                    txtCS1Block.Text = S.CSA1Block;
-                    txtCS2Block.Text = S.CSA2Block;
+                    txtCS1Address.Text = S.CS1Address;
+                    txtCS2Address.Text = S.CS2Address;
+                    txtCS1Block.Text = S.CS1Blocks;
+                    txtCS2Block.Text = S.CS2Blocks;
                     txtPNAddr.Text = S.PNAddr;
                     txtVerAddr.Text = S.VerAddr;
                     txtNrAddr.Text = S.SegNrAddr;
-                    if (S.CSMethod1 == CSMethod_None)
-                        radioNone.Checked = true;
-                    if (S.CSMethod1 == CSMethod_crc16)
-                        radioCrc16.Checked = true;
-                    if (S.CSMethod1 == CSMethod_crc32)
-                        radioCrc32.Checked = true;
-                    if (S.CSMethod1 == CSMethod_Bytesum)
-                        radioSUM.Checked = true;
-                    if (S.CSMethod1 == CSMethod_Wordsum)
-                        radioWordSum.Checked = true;
-                    if (S.CSMethod1 == CSMethod_Dwordsum)
-                        radioDwordSum.Checked = true;
-                    if (S.CSMethod2 == CSMethod_None)
-                        radio2None.Checked = true;
-                    if (S.CSMethod2 == CSMethod_crc16)
-                        radio2Crc16.Checked = true;
-                    if (S.CSMethod2 == CSMethod_crc32)
-                        radio2Crc32.Checked = true;
-                    if (S.CSMethod2 == CSMethod_Bytesum)
-                        radio2SUM.Checked = true;
-                    if (S.CSMethod2 == CSMethod_Wordsum)
-                        radio2WordSum.Checked = true;
-                    if (S.CSMethod2 == CSMethod_Dwordsum)
-                        radio2DwordSum.Checked = true;
-                    if (S.Complement1 == 0)
-                        radioComplement0.Checked = true;
-                    if (S.Complement1 == 1)
-                        radioComplement1.Checked = true;
-                    if (S.Complement1 == 2)
-                        radioComplement2.Checked = true;
-                    if (S.Complement2 == 0)
-                        radio2Complement0.Checked = true;
-                    if (S.Complement2 == 1)
-                        radio2Complement1.Checked = true;
-                    if (S.Complement2 == 2)
-                        radio2Complement2.Checked = true;
+                    if (S.CS1Method == CSMethod_None)
+                        radioCS1None.Checked = true;
+                    if (S.CS1Method == CSMethod_crc16)
+                        radioCS1Crc16.Checked = true;
+                    if (S.CS1Method == CSMethod_crc32)
+                        radioCS1Crc32.Checked = true;
+                    if (S.CS1Method == CSMethod_Bytesum)
+                        radioCS1SUM.Checked = true;
+                    if (S.CS1Method == CSMethod_Wordsum)
+                        radioCS1WordSum.Checked = true;
+                    if (S.CS1Method == CSMethod_Dwordsum)
+                        radioCS1DwordSum.Checked = true;
+                    if (S.CS2Method == CSMethod_None)
+                        radioCS2None.Checked = true;
+                    if (S.CS2Method == CSMethod_crc16)
+                        radioCS2Crc16.Checked = true;
+                    if (S.CS2Method == CSMethod_crc32)
+                        radioCS2Crc32.Checked = true;
+                    if (S.CS2Method == CSMethod_Bytesum)
+                        radioCS2SUM.Checked = true;
+                    if (S.CS2Method == CSMethod_Wordsum)
+                        radioCS2WordSum.Checked = true;
+                    if (S.CS2Method == CSMethod_Dwordsum)
+                        radioCS2DwordSum.Checked = true;
+                    if (S.CS1Complement == 0)
+                        radioCS1Complement0.Checked = true;
+                    if (S.CS1Complement == 1)
+                        radioCS1Complement1.Checked = true;
+                    if (S.CS1Complement == 2)
+                        radioCS1Complement2.Checked = true;
+                    if (S.CS2Complement == 0)
+                        radioCS2Complement0.Checked = true;
+                    if (S.CS2Complement == 1)
+                        radioCS2Complement1.Checked = true;
+                    if (S.CS2Complement == 2)
+                        radioCS2Complement2.Checked = true;
 
                 }
             }
@@ -263,9 +271,6 @@ namespace UniversalPatcher
             listSegments.SelectedItems[0].Remove();
         }
 
-        private void frmSegmentSettings_FormClosing(object sender, EventArgs e)
-        {
-        }
 
         private void btnOK_Click(object sender, EventArgs e)
         {

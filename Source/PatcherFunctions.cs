@@ -12,13 +12,13 @@ public class upatcher
         public string Description;
     }
 
-    public struct  Block
+    public struct Block
     {
         public uint Start;
         public uint End;
     }
 
-    public struct SegmentX
+    public struct BinFile
     {
         public Block[] SegmentBlocks;
         public Block[] CS1Blocks;
@@ -30,18 +30,18 @@ public class upatcher
         public AddressData SegNrAddr;
     }
 
-    public struct  SegmentConfig
+    public struct SegmentConfig
     {
         public string Name;     
         public string Addresses;    //Segment addresses, can be multiple parts
-        public string CSA1;           //Checksum 1 Address
-        public string CSA2;           //Checksum 2 Address
-        public short CSMethod1;     //Checksum 1 calculation method
-        public short CSMethod2;     //Checksum 2 calculation method
-        public string  CSA1Block;       //Calculate checksum 1 from these addresses
-        public string  CSA2Block;       //Calculate checksum 2 from these addresses
-        public short Complement1;   //Calculate 1's or 2's Complement from Checksum?
-        public short Complement2;   //Calculate 1's or 2's Complement from Checksum?
+        public string CS1Address;           //Checksum 1 Address
+        public string CS2Address;           //Checksum 2 Address
+        public short CS1Method;     //Checksum 1 calculation method
+        public short CS2Method;     //Checksum 2 calculation method
+        public string CS1Blocks;       //Calculate checksum 1 from these addresses
+        public string CS2Blocks;       //Calculate checksum 2 from these addresses
+        public short CS1Complement;   //Calculate 1's or 2's Complement from Checksum?
+        public short CS2Complement;   //Calculate 1's or 2's Complement from Checksum?
         public string PNAddr;
         public string VerAddr;
         public string SegNrAddr;
@@ -55,7 +55,6 @@ public class upatcher
     public const short CSMethod_Dwordsum = 5;
 
     public static List<SegmentConfig> Segments = new List<SegmentConfig>();
-    public static List<Block> Exclude;
 
     public struct  AddressData
     {
@@ -64,16 +63,42 @@ public class upatcher
         public ushort Type;
     }
 
-    public struct  SegmentAddress
-    {
-        public uint Start;
-        public uint End;
-    }
 
     public const ushort TypeText = 0;
     public const ushort TypeHex = 1;
     public const ushort TypeInt = 2;
 
+    public static string SelectFile(string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*")
+    {
+
+        OpenFileDialog fdlg = new OpenFileDialog();
+        fdlg.Title = "Select file";
+        fdlg.Filter = Filter;
+        fdlg.FilterIndex = 1;
+        fdlg.RestoreDirectory = true;
+        if (fdlg.ShowDialog() == DialogResult.OK)
+        {
+            return fdlg.FileName;
+        }
+        return "";
+
+    }
+    public static string SelectSaveFile(string Filter = "BIN files (*.bin)|*.bin")
+    {
+        SaveFileDialog saveFileDialog = new SaveFileDialog();
+        //saveFileDialog.Filter = "BIN files (*.bin)|*.bin";
+        saveFileDialog.Filter = Filter;
+        saveFileDialog.RestoreDirectory = true;
+        saveFileDialog.Title = "Save to file";
+
+        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        {
+            return saveFileDialog.FileName;
+        }
+        else
+            return "";
+
+    }
 
     public static bool HexToUint(string Hex, out uint x)
     {
@@ -148,37 +173,6 @@ public class upatcher
 
         return Result;
     }
-    public static string SelectFile(string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*")
-    {
-
-        OpenFileDialog fdlg = new OpenFileDialog();
-        fdlg.Title = "Select file";
-        fdlg.Filter = Filter;
-        fdlg.FilterIndex = 1;
-        fdlg.RestoreDirectory = true;
-        if (fdlg.ShowDialog() == DialogResult.OK)
-        {
-            return fdlg.FileName;
-        }
-        return "";
-
-    }
-    public static string SelectSaveFile(string Filter = "BIN files (*.bin)|*.bin")
-    {
-        SaveFileDialog saveFileDialog = new SaveFileDialog();
-        //saveFileDialog.Filter = "BIN files (*.bin)|*.bin";
-        saveFileDialog.Filter = Filter;
-        saveFileDialog.RestoreDirectory = true;
-        saveFileDialog.Title = "Save to file";
-
-        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-        {
-            return saveFileDialog.FileName;
-        }
-        else
-            return "";
-
-    }
 
     public static bool ParseSegmentAddresses(string Line, SegmentConfig S, byte[] buf, out Block[] Blocks)
     {
@@ -226,7 +220,9 @@ public class upatcher
             if (StartEnd.Length > 1 && StartEnd[1].EndsWith("@"))
             {
                 //Address is relative to end of bin
-                B.End = (uint)buf.Length - 1;
+                uint end;
+                if (HexToUint(StartEnd[1].Replace("@",""), out end) )
+                B.End = (uint)buf.Length - end;
             }
             Blocks[i] = B;
             i++;
@@ -234,9 +230,9 @@ public class upatcher
         return true;
     }
 
-    public static void GetSegmentAddresses(byte[] buf, out SegmentX[] SX)
+    public static void GetSegmentAddresses(byte[] buf, out BinFile[] binfile)
     {
-        SX = new SegmentX[Segments.Count];
+        binfile = new BinFile[Segments.Count];
         for (int i=0; i< Segments.Count;i++)
         {
             SegmentConfig S = Segments[i];
@@ -245,18 +241,18 @@ public class upatcher
             B[0].End = 0;
             if (!ParseSegmentAddresses(S.Addresses, S, buf, out B))
                 return;
-            SX[i].SegmentBlocks = B;
-            if (!ParseSegmentAddresses(S.CSA1Block, S, buf, out B))
+            binfile[i].SegmentBlocks = B ;
+            if (!ParseSegmentAddresses(S.CS1Blocks, S, buf, out B))
                 return;
-            SX[i].CS1Blocks = B;
-            if (!ParseSegmentAddresses(S.CSA2Block, S, buf, out B))
+            binfile[i].CS1Blocks = B;
+            if (!ParseSegmentAddresses(S.CS2Blocks, S, buf, out B))
                 return;
-            SX[i].CS2Blocks = B;
-            SX[i].CS1Address = ParseAddress(S.CSA1, SX[i].SegmentBlocks[0].Start);
-            SX[i].CS2Address = ParseAddress(S.CSA2, SX[i].SegmentBlocks[0].Start);
-            SX[i].PNaddr = ParseAddress(S.PNAddr, SX[i].SegmentBlocks[0].Start);
-            SX[i].VerAddr = ParseAddress(S.VerAddr, SX[i].SegmentBlocks[0].Start);
-            SX[i].SegNrAddr = ParseAddress(S.SegNrAddr, SX[i].SegmentBlocks[0].Start);
+            binfile[i].CS2Blocks = B;
+            binfile[i].CS1Address = ParseAddress(S.CS1Address, binfile[i].SegmentBlocks[0].Start);
+            binfile[i].CS2Address = ParseAddress(S.CS2Address, binfile[i].SegmentBlocks[0].Start);
+            binfile[i].PNaddr = ParseAddress(S.PNAddr, binfile[i].SegmentBlocks[0].Start);
+            binfile[i].VerAddr = ParseAddress(S.VerAddr, binfile[i].SegmentBlocks[0].Start);
+            binfile[i].SegNrAddr = ParseAddress(S.SegNrAddr, binfile[i].SegmentBlocks[0].Start);
         }
     }
     public static byte[] ReadBin(string FileName, uint FileOffset, uint Length)

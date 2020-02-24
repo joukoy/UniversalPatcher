@@ -29,40 +29,40 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.radioDwordSum = new System.Windows.Forms.RadioButton();
-            this.radioNone = new System.Windows.Forms.RadioButton();
-            this.radioWordSum = new System.Windows.Forms.RadioButton();
-            this.radioSUM = new System.Windows.Forms.RadioButton();
-            this.radioCrc32 = new System.Windows.Forms.RadioButton();
-            this.radioCrc16 = new System.Windows.Forms.RadioButton();
+            this.radioCS1DwordSum = new System.Windows.Forms.RadioButton();
+            this.radioCS1None = new System.Windows.Forms.RadioButton();
+            this.radioCS1WordSum = new System.Windows.Forms.RadioButton();
+            this.radioCS1SUM = new System.Windows.Forms.RadioButton();
+            this.radioCS1Crc32 = new System.Windows.Forms.RadioButton();
+            this.radioCS1Crc16 = new System.Windows.Forms.RadioButton();
             this.txtSegmentName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtSegmentAddress = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.radio2DwordSum = new System.Windows.Forms.RadioButton();
-            this.radio2None = new System.Windows.Forms.RadioButton();
-            this.radio2WordSum = new System.Windows.Forms.RadioButton();
-            this.radio2SUM = new System.Windows.Forms.RadioButton();
-            this.radio2Crc32 = new System.Windows.Forms.RadioButton();
-            this.radio2Crc16 = new System.Windows.Forms.RadioButton();
+            this.radioCS2DwordSum = new System.Windows.Forms.RadioButton();
+            this.radioCS2None = new System.Windows.Forms.RadioButton();
+            this.radioCS2WordSum = new System.Windows.Forms.RadioButton();
+            this.radioCS2SUM = new System.Windows.Forms.RadioButton();
+            this.radioCS2Crc32 = new System.Windows.Forms.RadioButton();
+            this.radioCS2Crc16 = new System.Windows.Forms.RadioButton();
             this.label4 = new System.Windows.Forms.Label();
-            this.txtCSA1 = new System.Windows.Forms.TextBox();
+            this.txtCS1Address = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.txtCSA2 = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.txtCS2Address = new System.Windows.Forms.TextBox();
+            this.btnSave = new System.Windows.Forms.Button();
             this.listSegments = new System.Windows.Forms.ListView();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnLoad = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.radioComplement2 = new System.Windows.Forms.RadioButton();
-            this.radioComplement1 = new System.Windows.Forms.RadioButton();
-            this.radioComplement0 = new System.Windows.Forms.RadioButton();
+            this.radioCS1Complement2 = new System.Windows.Forms.RadioButton();
+            this.radioCS1Complement1 = new System.Windows.Forms.RadioButton();
+            this.radioCS1Complement0 = new System.Windows.Forms.RadioButton();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.radio2Complement2 = new System.Windows.Forms.RadioButton();
-            this.radio2Complement1 = new System.Windows.Forms.RadioButton();
-            this.radio2Complement0 = new System.Windows.Forms.RadioButton();
+            this.radioCS2Complement2 = new System.Windows.Forms.RadioButton();
+            this.radioCS2Complement1 = new System.Windows.Forms.RadioButton();
+            this.radioCS2Complement0 = new System.Windows.Forms.RadioButton();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.txtPNAddr = new System.Windows.Forms.TextBox();
@@ -82,12 +82,12 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.radioDwordSum);
-            this.groupBox1.Controls.Add(this.radioNone);
-            this.groupBox1.Controls.Add(this.radioWordSum);
-            this.groupBox1.Controls.Add(this.radioSUM);
-            this.groupBox1.Controls.Add(this.radioCrc32);
-            this.groupBox1.Controls.Add(this.radioCrc16);
+            this.groupBox1.Controls.Add(this.radioCS1DwordSum);
+            this.groupBox1.Controls.Add(this.radioCS1None);
+            this.groupBox1.Controls.Add(this.radioCS1WordSum);
+            this.groupBox1.Controls.Add(this.radioCS1SUM);
+            this.groupBox1.Controls.Add(this.radioCS1Crc32);
+            this.groupBox1.Controls.Add(this.radioCS1Crc16);
             this.groupBox1.Location = new System.Drawing.Point(11, 316);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(131, 135);
@@ -95,68 +95,68 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Checksum 1 method";
             // 
-            // radioDwordSum
+            // radioCS1DwordSum
             // 
-            this.radioDwordSum.AutoSize = true;
-            this.radioDwordSum.Location = new System.Drawing.Point(6, 109);
-            this.radioDwordSum.Name = "radioDwordSum";
-            this.radioDwordSum.Size = new System.Drawing.Size(80, 17);
-            this.radioDwordSum.TabIndex = 15;
-            this.radioDwordSum.TabStop = true;
-            this.radioDwordSum.Text = "Dword Sum";
-            this.radioDwordSum.UseVisualStyleBackColor = true;
+            this.radioCS1DwordSum.AutoSize = true;
+            this.radioCS1DwordSum.Location = new System.Drawing.Point(6, 109);
+            this.radioCS1DwordSum.Name = "radioCS1DwordSum";
+            this.radioCS1DwordSum.Size = new System.Drawing.Size(80, 17);
+            this.radioCS1DwordSum.TabIndex = 15;
+            this.radioCS1DwordSum.TabStop = true;
+            this.radioCS1DwordSum.Text = "Dword Sum";
+            this.radioCS1DwordSum.UseVisualStyleBackColor = true;
             // 
-            // radioNone
+            // radioCS1None
             // 
-            this.radioNone.AutoSize = true;
-            this.radioNone.Checked = true;
-            this.radioNone.Location = new System.Drawing.Point(6, 19);
-            this.radioNone.Name = "radioNone";
-            this.radioNone.Size = new System.Drawing.Size(51, 17);
-            this.radioNone.TabIndex = 10;
-            this.radioNone.TabStop = true;
-            this.radioNone.Text = "None";
-            this.radioNone.UseVisualStyleBackColor = true;
+            this.radioCS1None.AutoSize = true;
+            this.radioCS1None.Checked = true;
+            this.radioCS1None.Location = new System.Drawing.Point(6, 19);
+            this.radioCS1None.Name = "radioCS1None";
+            this.radioCS1None.Size = new System.Drawing.Size(51, 17);
+            this.radioCS1None.TabIndex = 10;
+            this.radioCS1None.TabStop = true;
+            this.radioCS1None.Text = "None";
+            this.radioCS1None.UseVisualStyleBackColor = true;
             // 
-            // radioWordSum
+            // radioCS1WordSum
             // 
-            this.radioWordSum.AutoSize = true;
-            this.radioWordSum.Location = new System.Drawing.Point(6, 91);
-            this.radioWordSum.Name = "radioWordSum";
-            this.radioWordSum.Size = new System.Drawing.Size(75, 17);
-            this.radioWordSum.TabIndex = 14;
-            this.radioWordSum.Text = "Word Sum";
-            this.radioWordSum.UseVisualStyleBackColor = true;
+            this.radioCS1WordSum.AutoSize = true;
+            this.radioCS1WordSum.Location = new System.Drawing.Point(6, 91);
+            this.radioCS1WordSum.Name = "radioCS1WordSum";
+            this.radioCS1WordSum.Size = new System.Drawing.Size(75, 17);
+            this.radioCS1WordSum.TabIndex = 14;
+            this.radioCS1WordSum.Text = "Word Sum";
+            this.radioCS1WordSum.UseVisualStyleBackColor = true;
             // 
-            // radioSUM
+            // radioCS1SUM
             // 
-            this.radioSUM.AutoSize = true;
-            this.radioSUM.Location = new System.Drawing.Point(6, 72);
-            this.radioSUM.Name = "radioSUM";
-            this.radioSUM.Size = new System.Drawing.Size(73, 17);
-            this.radioSUM.TabIndex = 13;
-            this.radioSUM.Text = "Byte SUM";
-            this.radioSUM.UseVisualStyleBackColor = true;
+            this.radioCS1SUM.AutoSize = true;
+            this.radioCS1SUM.Location = new System.Drawing.Point(6, 72);
+            this.radioCS1SUM.Name = "radioCS1SUM";
+            this.radioCS1SUM.Size = new System.Drawing.Size(73, 17);
+            this.radioCS1SUM.TabIndex = 13;
+            this.radioCS1SUM.Text = "Byte SUM";
+            this.radioCS1SUM.UseVisualStyleBackColor = true;
             // 
-            // radioCrc32
+            // radioCS1Crc32
             // 
-            this.radioCrc32.AutoSize = true;
-            this.radioCrc32.Location = new System.Drawing.Point(6, 54);
-            this.radioCrc32.Name = "radioCrc32";
-            this.radioCrc32.Size = new System.Drawing.Size(59, 17);
-            this.radioCrc32.TabIndex = 12;
-            this.radioCrc32.Text = "CRC32";
-            this.radioCrc32.UseVisualStyleBackColor = true;
+            this.radioCS1Crc32.AutoSize = true;
+            this.radioCS1Crc32.Location = new System.Drawing.Point(6, 54);
+            this.radioCS1Crc32.Name = "radioCS1Crc32";
+            this.radioCS1Crc32.Size = new System.Drawing.Size(59, 17);
+            this.radioCS1Crc32.TabIndex = 12;
+            this.radioCS1Crc32.Text = "CRC32";
+            this.radioCS1Crc32.UseVisualStyleBackColor = true;
             // 
-            // radioCrc16
+            // radioCS1Crc16
             // 
-            this.radioCrc16.AutoSize = true;
-            this.radioCrc16.Location = new System.Drawing.Point(6, 36);
-            this.radioCrc16.Name = "radioCrc16";
-            this.radioCrc16.Size = new System.Drawing.Size(59, 17);
-            this.radioCrc16.TabIndex = 11;
-            this.radioCrc16.Text = "CRC16";
-            this.radioCrc16.UseVisualStyleBackColor = true;
+            this.radioCS1Crc16.AutoSize = true;
+            this.radioCS1Crc16.Location = new System.Drawing.Point(6, 36);
+            this.radioCS1Crc16.Name = "radioCS1Crc16";
+            this.radioCS1Crc16.Size = new System.Drawing.Size(59, 17);
+            this.radioCS1Crc16.TabIndex = 11;
+            this.radioCS1Crc16.Text = "CRC16";
+            this.radioCS1Crc16.UseVisualStyleBackColor = true;
             // 
             // txtSegmentName
             // 
@@ -192,12 +192,12 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.radio2DwordSum);
-            this.groupBox2.Controls.Add(this.radio2None);
-            this.groupBox2.Controls.Add(this.radio2WordSum);
-            this.groupBox2.Controls.Add(this.radio2SUM);
-            this.groupBox2.Controls.Add(this.radio2Crc32);
-            this.groupBox2.Controls.Add(this.radio2Crc16);
+            this.groupBox2.Controls.Add(this.radioCS2DwordSum);
+            this.groupBox2.Controls.Add(this.radioCS2None);
+            this.groupBox2.Controls.Add(this.radioCS2WordSum);
+            this.groupBox2.Controls.Add(this.radioCS2SUM);
+            this.groupBox2.Controls.Add(this.radioCS2Crc32);
+            this.groupBox2.Controls.Add(this.radioCS2Crc16);
             this.groupBox2.Location = new System.Drawing.Point(264, 316);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(124, 135);
@@ -205,68 +205,68 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Checksum 2 method";
             // 
-            // radio2DwordSum
+            // radioCS2DwordSum
             // 
-            this.radio2DwordSum.AutoSize = true;
-            this.radio2DwordSum.Location = new System.Drawing.Point(6, 109);
-            this.radio2DwordSum.Name = "radio2DwordSum";
-            this.radio2DwordSum.Size = new System.Drawing.Size(83, 17);
-            this.radio2DwordSum.TabIndex = 24;
-            this.radio2DwordSum.TabStop = true;
-            this.radio2DwordSum.Text = "Dword SUM";
-            this.radio2DwordSum.UseVisualStyleBackColor = true;
+            this.radioCS2DwordSum.AutoSize = true;
+            this.radioCS2DwordSum.Location = new System.Drawing.Point(6, 109);
+            this.radioCS2DwordSum.Name = "radioCS2DwordSum";
+            this.radioCS2DwordSum.Size = new System.Drawing.Size(83, 17);
+            this.radioCS2DwordSum.TabIndex = 24;
+            this.radioCS2DwordSum.TabStop = true;
+            this.radioCS2DwordSum.Text = "Dword SUM";
+            this.radioCS2DwordSum.UseVisualStyleBackColor = true;
             // 
-            // radio2None
+            // radioCS2None
             // 
-            this.radio2None.AutoSize = true;
-            this.radio2None.Checked = true;
-            this.radio2None.Location = new System.Drawing.Point(6, 19);
-            this.radio2None.Name = "radio2None";
-            this.radio2None.Size = new System.Drawing.Size(51, 17);
-            this.radio2None.TabIndex = 19;
-            this.radio2None.TabStop = true;
-            this.radio2None.Text = "None";
-            this.radio2None.UseVisualStyleBackColor = true;
+            this.radioCS2None.AutoSize = true;
+            this.radioCS2None.Checked = true;
+            this.radioCS2None.Location = new System.Drawing.Point(6, 19);
+            this.radioCS2None.Name = "radioCS2None";
+            this.radioCS2None.Size = new System.Drawing.Size(51, 17);
+            this.radioCS2None.TabIndex = 19;
+            this.radioCS2None.TabStop = true;
+            this.radioCS2None.Text = "None";
+            this.radioCS2None.UseVisualStyleBackColor = true;
             // 
-            // radio2WordSum
+            // radioCS2WordSum
             // 
-            this.radio2WordSum.AutoSize = true;
-            this.radio2WordSum.Location = new System.Drawing.Point(6, 91);
-            this.radio2WordSum.Name = "radio2WordSum";
-            this.radio2WordSum.Size = new System.Drawing.Size(75, 17);
-            this.radio2WordSum.TabIndex = 23;
-            this.radio2WordSum.Text = "Word Sum";
-            this.radio2WordSum.UseVisualStyleBackColor = true;
+            this.radioCS2WordSum.AutoSize = true;
+            this.radioCS2WordSum.Location = new System.Drawing.Point(6, 91);
+            this.radioCS2WordSum.Name = "radioCS2WordSum";
+            this.radioCS2WordSum.Size = new System.Drawing.Size(75, 17);
+            this.radioCS2WordSum.TabIndex = 23;
+            this.radioCS2WordSum.Text = "Word Sum";
+            this.radioCS2WordSum.UseVisualStyleBackColor = true;
             // 
-            // radio2SUM
+            // radioCS2SUM
             // 
-            this.radio2SUM.AutoSize = true;
-            this.radio2SUM.Location = new System.Drawing.Point(6, 71);
-            this.radio2SUM.Name = "radio2SUM";
-            this.radio2SUM.Size = new System.Drawing.Size(73, 17);
-            this.radio2SUM.TabIndex = 22;
-            this.radio2SUM.Text = "Byte SUM";
-            this.radio2SUM.UseVisualStyleBackColor = true;
+            this.radioCS2SUM.AutoSize = true;
+            this.radioCS2SUM.Location = new System.Drawing.Point(6, 71);
+            this.radioCS2SUM.Name = "radioCS2SUM";
+            this.radioCS2SUM.Size = new System.Drawing.Size(73, 17);
+            this.radioCS2SUM.TabIndex = 22;
+            this.radioCS2SUM.Text = "Byte SUM";
+            this.radioCS2SUM.UseVisualStyleBackColor = true;
             // 
-            // radio2Crc32
+            // radioCS2Crc32
             // 
-            this.radio2Crc32.AutoSize = true;
-            this.radio2Crc32.Location = new System.Drawing.Point(6, 53);
-            this.radio2Crc32.Name = "radio2Crc32";
-            this.radio2Crc32.Size = new System.Drawing.Size(59, 17);
-            this.radio2Crc32.TabIndex = 21;
-            this.radio2Crc32.Text = "CRC32";
-            this.radio2Crc32.UseVisualStyleBackColor = true;
+            this.radioCS2Crc32.AutoSize = true;
+            this.radioCS2Crc32.Location = new System.Drawing.Point(6, 53);
+            this.radioCS2Crc32.Name = "radioCS2Crc32";
+            this.radioCS2Crc32.Size = new System.Drawing.Size(59, 17);
+            this.radioCS2Crc32.TabIndex = 21;
+            this.radioCS2Crc32.Text = "CRC32";
+            this.radioCS2Crc32.UseVisualStyleBackColor = true;
             // 
-            // radio2Crc16
+            // radioCS2Crc16
             // 
-            this.radio2Crc16.AutoSize = true;
-            this.radio2Crc16.Location = new System.Drawing.Point(6, 36);
-            this.radio2Crc16.Name = "radio2Crc16";
-            this.radio2Crc16.Size = new System.Drawing.Size(59, 17);
-            this.radio2Crc16.TabIndex = 20;
-            this.radio2Crc16.Text = "CRC16";
-            this.radio2Crc16.UseVisualStyleBackColor = true;
+            this.radioCS2Crc16.AutoSize = true;
+            this.radioCS2Crc16.Location = new System.Drawing.Point(6, 36);
+            this.radioCS2Crc16.Name = "radioCS2Crc16";
+            this.radioCS2Crc16.Size = new System.Drawing.Size(59, 17);
+            this.radioCS2Crc16.TabIndex = 20;
+            this.radioCS2Crc16.Text = "CRC16";
+            this.radioCS2Crc16.UseVisualStyleBackColor = true;
             // 
             // label4
             // 
@@ -277,12 +277,12 @@
             this.label4.TabIndex = 7;
             this.label4.Text = "Checksum 1 Address (HEX):";
             // 
-            // txtCSA1
+            // txtCS1Address
             // 
-            this.txtCSA1.Location = new System.Drawing.Point(148, 248);
-            this.txtCSA1.Name = "txtCSA1";
-            this.txtCSA1.Size = new System.Drawing.Size(71, 20);
-            this.txtCSA1.TabIndex = 5;
+            this.txtCS1Address.Location = new System.Drawing.Point(148, 248);
+            this.txtCS1Address.Name = "txtCS1Address";
+            this.txtCS1Address.Size = new System.Drawing.Size(71, 20);
+            this.txtCS1Address.TabIndex = 5;
             // 
             // label5
             // 
@@ -292,24 +292,23 @@
             this.label5.Size = new System.Drawing.Size(141, 13);
             this.label5.TabIndex = 9;
             this.label5.Text = "Checksum 2 Address (HEX):";
-            this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
-            // txtCSA2
+            // txtCS2Address
             // 
-            this.txtCSA2.Location = new System.Drawing.Point(457, 251);
-            this.txtCSA2.Name = "txtCSA2";
-            this.txtCSA2.Size = new System.Drawing.Size(72, 20);
-            this.txtCSA2.TabIndex = 6;
+            this.txtCS2Address.Location = new System.Drawing.Point(457, 251);
+            this.txtCS2Address.Name = "txtCS2Address";
+            this.txtCS2Address.Size = new System.Drawing.Size(72, 20);
+            this.txtCS2Address.TabIndex = 6;
             // 
-            // button1
+            // btnSave
             // 
-            this.button1.Location = new System.Drawing.Point(368, 457);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 35);
-            this.button1.TabIndex = 31;
-            this.button1.Text = "Save";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnSave.Location = new System.Drawing.Point(368, 457);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 35);
+            this.btnSave.TabIndex = 31;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // listSegments
             // 
@@ -353,93 +352,93 @@
             // 
             // groupBox5
             // 
-            this.groupBox5.Controls.Add(this.radioComplement2);
-            this.groupBox5.Controls.Add(this.radioComplement1);
-            this.groupBox5.Controls.Add(this.radioComplement0);
+            this.groupBox5.Controls.Add(this.radioCS1Complement2);
+            this.groupBox5.Controls.Add(this.radioCS1Complement1);
+            this.groupBox5.Controls.Add(this.radioCS1Complement0);
             this.groupBox5.Location = new System.Drawing.Point(126, 316);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(132, 135);
             this.groupBox5.TabIndex = 19;
             this.groupBox5.TabStop = false;
             // 
-            // radioComplement2
+            // radioCS1Complement2
             // 
-            this.radioComplement2.AutoSize = true;
-            this.radioComplement2.Location = new System.Drawing.Point(6, 57);
-            this.radioComplement2.Name = "radioComplement2";
-            this.radioComplement2.Size = new System.Drawing.Size(99, 17);
-            this.radioComplement2.TabIndex = 18;
-            this.radioComplement2.TabStop = true;
-            this.radioComplement2.Text = "2\'s Complement";
-            this.radioComplement2.UseVisualStyleBackColor = true;
+            this.radioCS1Complement2.AutoSize = true;
+            this.radioCS1Complement2.Location = new System.Drawing.Point(6, 57);
+            this.radioCS1Complement2.Name = "radioCS1Complement2";
+            this.radioCS1Complement2.Size = new System.Drawing.Size(99, 17);
+            this.radioCS1Complement2.TabIndex = 18;
+            this.radioCS1Complement2.TabStop = true;
+            this.radioCS1Complement2.Text = "2\'s Complement";
+            this.radioCS1Complement2.UseVisualStyleBackColor = true;
             // 
-            // radioComplement1
+            // radioCS1Complement1
             // 
-            this.radioComplement1.AutoSize = true;
-            this.radioComplement1.Location = new System.Drawing.Point(6, 36);
-            this.radioComplement1.Name = "radioComplement1";
-            this.radioComplement1.Size = new System.Drawing.Size(99, 17);
-            this.radioComplement1.TabIndex = 17;
-            this.radioComplement1.TabStop = true;
-            this.radioComplement1.Text = "1\'s Complement";
-            this.radioComplement1.UseVisualStyleBackColor = true;
+            this.radioCS1Complement1.AutoSize = true;
+            this.radioCS1Complement1.Location = new System.Drawing.Point(6, 36);
+            this.radioCS1Complement1.Name = "radioCS1Complement1";
+            this.radioCS1Complement1.Size = new System.Drawing.Size(99, 17);
+            this.radioCS1Complement1.TabIndex = 17;
+            this.radioCS1Complement1.TabStop = true;
+            this.radioCS1Complement1.Text = "1\'s Complement";
+            this.radioCS1Complement1.UseVisualStyleBackColor = true;
             // 
-            // radioComplement0
+            // radioCS1Complement0
             // 
-            this.radioComplement0.AutoSize = true;
-            this.radioComplement0.Checked = true;
-            this.radioComplement0.Location = new System.Drawing.Point(6, 16);
-            this.radioComplement0.Name = "radioComplement0";
-            this.radioComplement0.Size = new System.Drawing.Size(28, 17);
-            this.radioComplement0.TabIndex = 16;
-            this.radioComplement0.TabStop = true;
-            this.radioComplement0.Text = "-";
-            this.radioComplement0.UseVisualStyleBackColor = true;
+            this.radioCS1Complement0.AutoSize = true;
+            this.radioCS1Complement0.Checked = true;
+            this.radioCS1Complement0.Location = new System.Drawing.Point(6, 16);
+            this.radioCS1Complement0.Name = "radioCS1Complement0";
+            this.radioCS1Complement0.Size = new System.Drawing.Size(28, 17);
+            this.radioCS1Complement0.TabIndex = 16;
+            this.radioCS1Complement0.TabStop = true;
+            this.radioCS1Complement0.Text = "-";
+            this.radioCS1Complement0.UseVisualStyleBackColor = true;
             // 
             // groupBox6
             // 
-            this.groupBox6.Controls.Add(this.radio2Complement2);
-            this.groupBox6.Controls.Add(this.radio2Complement1);
-            this.groupBox6.Controls.Add(this.radio2Complement0);
+            this.groupBox6.Controls.Add(this.radioCS2Complement2);
+            this.groupBox6.Controls.Add(this.radioCS2Complement1);
+            this.groupBox6.Controls.Add(this.radioCS2Complement0);
             this.groupBox6.Location = new System.Drawing.Point(383, 316);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(148, 135);
             this.groupBox6.TabIndex = 20;
             this.groupBox6.TabStop = false;
             // 
-            // radio2Complement2
+            // radioCS2Complement2
             // 
-            this.radio2Complement2.AutoSize = true;
-            this.radio2Complement2.Location = new System.Drawing.Point(6, 56);
-            this.radio2Complement2.Name = "radio2Complement2";
-            this.radio2Complement2.Size = new System.Drawing.Size(99, 17);
-            this.radio2Complement2.TabIndex = 27;
-            this.radio2Complement2.TabStop = true;
-            this.radio2Complement2.Text = "2\'s Complement";
-            this.radio2Complement2.UseVisualStyleBackColor = true;
+            this.radioCS2Complement2.AutoSize = true;
+            this.radioCS2Complement2.Location = new System.Drawing.Point(6, 56);
+            this.radioCS2Complement2.Name = "radioCS2Complement2";
+            this.radioCS2Complement2.Size = new System.Drawing.Size(99, 17);
+            this.radioCS2Complement2.TabIndex = 27;
+            this.radioCS2Complement2.TabStop = true;
+            this.radioCS2Complement2.Text = "2\'s Complement";
+            this.radioCS2Complement2.UseVisualStyleBackColor = true;
             // 
-            // radio2Complement1
+            // radioCS2Complement1
             // 
-            this.radio2Complement1.AutoSize = true;
-            this.radio2Complement1.Location = new System.Drawing.Point(6, 36);
-            this.radio2Complement1.Name = "radio2Complement1";
-            this.radio2Complement1.Size = new System.Drawing.Size(99, 17);
-            this.radio2Complement1.TabIndex = 26;
-            this.radio2Complement1.TabStop = true;
-            this.radio2Complement1.Text = "1\'s Complement";
-            this.radio2Complement1.UseVisualStyleBackColor = true;
+            this.radioCS2Complement1.AutoSize = true;
+            this.radioCS2Complement1.Location = new System.Drawing.Point(6, 36);
+            this.radioCS2Complement1.Name = "radioCS2Complement1";
+            this.radioCS2Complement1.Size = new System.Drawing.Size(99, 17);
+            this.radioCS2Complement1.TabIndex = 26;
+            this.radioCS2Complement1.TabStop = true;
+            this.radioCS2Complement1.Text = "1\'s Complement";
+            this.radioCS2Complement1.UseVisualStyleBackColor = true;
             // 
-            // radio2Complement0
+            // radioCS2Complement0
             // 
-            this.radio2Complement0.AutoSize = true;
-            this.radio2Complement0.Checked = true;
-            this.radio2Complement0.Location = new System.Drawing.Point(6, 19);
-            this.radio2Complement0.Name = "radio2Complement0";
-            this.radio2Complement0.Size = new System.Drawing.Size(28, 17);
-            this.radio2Complement0.TabIndex = 25;
-            this.radio2Complement0.TabStop = true;
-            this.radio2Complement0.Text = "-";
-            this.radio2Complement0.UseVisualStyleBackColor = true;
+            this.radioCS2Complement0.AutoSize = true;
+            this.radioCS2Complement0.Checked = true;
+            this.radioCS2Complement0.Location = new System.Drawing.Point(6, 19);
+            this.radioCS2Complement0.Name = "radioCS2Complement0";
+            this.radioCS2Complement0.Size = new System.Drawing.Size(28, 17);
+            this.radioCS2Complement0.TabIndex = 25;
+            this.radioCS2Complement0.TabStop = true;
+            this.radioCS2Complement0.Text = "-";
+            this.radioCS2Complement0.UseVisualStyleBackColor = true;
             // 
             // label6
             // 
@@ -458,7 +457,6 @@
             this.label7.Size = new System.Drawing.Size(108, 13);
             this.label7.TabIndex = 24;
             this.label7.Text = "Segment Ver address";
-            this.label7.Click += new System.EventHandler(this.label7_Click);
             // 
             // txtPNAddr
             // 
@@ -550,15 +548,15 @@
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.btnLoad);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.listSegments);
-            this.Controls.Add(this.txtCSA2);
+            this.Controls.Add(this.txtCS2Address);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.txtCSA1);
+            this.Controls.Add(this.txtCS1Address);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.txtSegmentAddress);
@@ -568,7 +566,6 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "frmSegmentSettings";
             this.Text = "Segment settings";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmSegmentSettings_FormClosing);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -585,40 +582,40 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.RadioButton radioWordSum;
-        private System.Windows.Forms.RadioButton radioSUM;
-        private System.Windows.Forms.RadioButton radioCrc32;
-        private System.Windows.Forms.RadioButton radioCrc16;
+        private System.Windows.Forms.RadioButton radioCS1WordSum;
+        private System.Windows.Forms.RadioButton radioCS1SUM;
+        private System.Windows.Forms.RadioButton radioCS1Crc32;
+        private System.Windows.Forms.RadioButton radioCS1Crc16;
         private System.Windows.Forms.TextBox txtSegmentName;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtSegmentAddress;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.RadioButton radio2WordSum;
-        private System.Windows.Forms.RadioButton radio2SUM;
-        private System.Windows.Forms.RadioButton radio2Crc32;
-        private System.Windows.Forms.RadioButton radio2Crc16;
+        private System.Windows.Forms.RadioButton radioCS2WordSum;
+        private System.Windows.Forms.RadioButton radioCS2SUM;
+        private System.Windows.Forms.RadioButton radioCS2Crc32;
+        private System.Windows.Forms.RadioButton radioCS2Crc16;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox txtCSA1;
+        private System.Windows.Forms.TextBox txtCS1Address;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox txtCSA2;
-        private System.Windows.Forms.RadioButton radioNone;
-        private System.Windows.Forms.RadioButton radio2None;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox txtCS2Address;
+        private System.Windows.Forms.RadioButton radioCS1None;
+        private System.Windows.Forms.RadioButton radioCS2None;
+        private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Button btnLoad;
         public System.Windows.Forms.ListView listSegments;
-        private System.Windows.Forms.RadioButton radioDwordSum;
-        private System.Windows.Forms.RadioButton radio2DwordSum;
+        private System.Windows.Forms.RadioButton radioCS1DwordSum;
+        private System.Windows.Forms.RadioButton radioCS2DwordSum;
         private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.RadioButton radioComplement2;
-        private System.Windows.Forms.RadioButton radioComplement1;
-        private System.Windows.Forms.RadioButton radioComplement0;
+        private System.Windows.Forms.RadioButton radioCS1Complement2;
+        private System.Windows.Forms.RadioButton radioCS1Complement1;
+        private System.Windows.Forms.RadioButton radioCS1Complement0;
         private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.RadioButton radio2Complement2;
-        private System.Windows.Forms.RadioButton radio2Complement1;
-        private System.Windows.Forms.RadioButton radio2Complement0;
+        private System.Windows.Forms.RadioButton radioCS2Complement2;
+        private System.Windows.Forms.RadioButton radioCS2Complement1;
+        private System.Windows.Forms.RadioButton radioCS2Complement0;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox txtPNAddr;

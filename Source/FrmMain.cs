@@ -16,17 +16,32 @@ namespace UniversalPatcher
             InitializeComponent();
         }
 
+        private frmSegmentSettings frmSS;
+        private FrmPatcher frmP;
+
         private void btnSegments_Click(object sender, EventArgs e)
         {
-            frmSegmentSettings frmSS = new frmSegmentSettings();
+
+            if (frmSS != null && frmSS.Visible)
+            {
+                frmSS.BringToFront();
+                return;
+            }
+            frmSS = new frmSegmentSettings();
+            frmSS.Show(this);
             frmSS.InitMe();
-            frmSS.Show();
+
         }
 
         private void btnPatcher_Click(object sender, EventArgs e)
         {
-            FrmPatcher FrmP = new FrmPatcher();
-            FrmP.Show();
+            if (frmP != null && frmP.Visible)
+            {
+                frmP.BringToFront();
+                return;
+            }
+            frmP = new FrmPatcher();
+            frmP.Show(this);
         }
     }
 }

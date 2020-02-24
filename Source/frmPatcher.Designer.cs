@@ -42,7 +42,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.radioApply = new System.Windows.Forms.RadioButton();
             this.radioCreate = new System.Windows.Forms.RadioButton();
-            this.btnSettings = new System.Windows.Forms.Button();
             this.btnSegments = new System.Windows.Forms.Button();
             this.btnCheckSums = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
@@ -183,17 +182,6 @@
             this.radioCreate.UseVisualStyleBackColor = true;
             this.radioCreate.CheckedChanged += new System.EventHandler(this.radioCreate_CheckedChanged);
             // 
-            // btnSettings
-            // 
-            this.btnSettings.Location = new System.Drawing.Point(557, 2);
-            this.btnSettings.Name = "btnSettings";
-            this.btnSettings.Size = new System.Drawing.Size(77, 26);
-            this.btnSettings.TabIndex = 13;
-            this.btnSettings.Text = "Settings";
-            this.btnSettings.UseVisualStyleBackColor = true;
-            this.btnSettings.Visible = false;
-            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
-            // 
             // btnSegments
             // 
             this.btnSegments.Location = new System.Drawing.Point(650, 6);
@@ -222,7 +210,6 @@
             this.ClientSize = new System.Drawing.Size(729, 445);
             this.Controls.Add(this.btnCheckSums);
             this.Controls.Add(this.btnSegments);
-            this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.labelDescr);
             this.Controls.Add(this.label1);
@@ -260,7 +247,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton radioApply;
         private System.Windows.Forms.RadioButton radioCreate;
-        private System.Windows.Forms.Button btnSettings;
         private System.Windows.Forms.Button btnSegments;
         private System.Windows.Forms.Button btnCheckSums;
     }
