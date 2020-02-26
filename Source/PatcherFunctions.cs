@@ -42,6 +42,8 @@ public class upatcher
         public string CS2Blocks;       //Calculate checksum 2 from these addresses
         public short CS1Complement;   //Calculate 1's or 2's Complement from Checksum?
         public short CS2Complement;   //Calculate 1's or 2's Complement from Checksum?
+        public bool CS1SwapBytes;
+        public bool CS2SwapBytes;
         public string PNAddr;
         public string VerAddr;
         public string SegNrAddr;
@@ -55,6 +57,10 @@ public class upatcher
     public const short CSMethod_Dwordsum = 5;
 
     public static List<SegmentConfig> Segments = new List<SegmentConfig>();
+
+    public static string LastXMLfolder;
+    public static string LastBinfolder;
+
 
     public struct AddressData
     {
@@ -76,8 +82,23 @@ public class upatcher
         fdlg.Filter = Filter;
         fdlg.FilterIndex = 1;
         fdlg.RestoreDirectory = true;
+        if (Filter.Contains("XML"))
+        { 
+            if (LastXMLfolder != null)
+                fdlg.InitialDirectory = LastXMLfolder;
+        }
+        else if (Filter.Contains("BIN"))
+        {
+            if (LastBinfolder != null)
+                fdlg.InitialDirectory = LastBinfolder;
+        }
+
         if (fdlg.ShowDialog() == DialogResult.OK)
         {
+            if (Filter.Contains("XML"))
+                LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
+            else if (Filter.Contains("BIN"))
+                LastBinfolder = Path.GetDirectoryName(fdlg.FileName);
             return fdlg.FileName;
         }
         return "";
@@ -116,9 +137,40 @@ public class upatcher
         return true; 
     }
 
-    public static AddressData ParseAddress (string Line, uint SegmentAddress)
+    public static AddressData ParseAddress (string Line, uint SegmentAddress, byte[] buf)
     {
         AddressData AD = new AddressData();
+
+        if (Line.StartsWith("GM-V6"))
+        {
+            //Custom handling: read OS:Segmentaddress pairs from file
+            uint BufSize = (uint)buf.Length;
+            uint GMOS;
+            if (BEToUint16(buf, BufSize - 2) == 0xFF) //Custom handling for GM V6, OS version is read from end-8 or end-8 depending last bytes of bin
+                GMOS = BEToUint32(buf, (BufSize - 8));
+            else
+                GMOS = BEToUint32(buf, (BufSize - 6));
+
+            string FileName = Path.Combine(Application.StartupPath, Line);
+            StreamReader sr = new StreamReader(FileName);
+            string OsLine;
+            while ((OsLine = sr.ReadLine()) != null)
+            {
+                //Custom handling: read OS:Segmentaddress pairs from file
+                string[] OsLineparts = OsLine.Split(':');
+                if (OsLineparts.Length == 2)
+                {
+                    if (OsLineparts[0] == GMOS.ToString())
+                    { 
+                        if (!HexToUint(OsLineparts[1], out AD.Address))
+                            return AD;
+                        AD.Bytes = 2;
+                        AD.Type = TypeHex;
+                    }
+                }
+            }
+            return AD;
+        }
 
         string[] Lineparts = Line.Split(':');
         if  (!HexToUint(Lineparts[0].Replace("#", ""), out AD.Address))
@@ -157,19 +209,23 @@ public class upatcher
                 Result = buf[AD.Address].ToString();
         }
         else if (AD.Bytes == 2)
+        { 
             if (AD.Type == TypeHex)
                 Result = BEToUint16(buf, AD.Address).ToString("X4");
             else if (AD.Type == TypeText)
                 Result = System.Text.Encoding.ASCII.GetString(buf, (int)AD.Address, AD.Bytes);
             else
                 Result = BEToUint16(buf, AD.Address).ToString();
+        }
         else
+        { 
             if (AD.Type == TypeHex)
                 Result = BEToUint32(buf, AD.Address).ToString("X4");
-        else if (AD.Type == TypeText)
-            Result = System.Text.Encoding.ASCII.GetString(buf, (int)AD.Address, AD.Bytes);
-        else
-            Result = BEToUint32(buf, AD.Address).ToString();
+            else if (AD.Type == TypeText)
+                Result = System.Text.Encoding.ASCII.GetString(buf, (int)AD.Address, AD.Bytes);
+            else
+                Result = BEToUint32(buf, AD.Address).ToString();
+        }
 
         return Result;
     }
@@ -264,10 +320,13 @@ public class upatcher
                         B.End = BEToUint32(buf, tmpStart + 4);
                         tmpStart += 8;
                     }
-                    B.Start += (uint)Offset;
-                    B.End += (uint)Offset;
                     if (Multiple>1)
+                    {
+                        // Have multiple start-end pairs
+                        B.Start += (uint)Offset;
+                        B.End += (uint)Offset;
                         Blocks.Add(B);
+                    }
                 }
             }
             else
@@ -278,7 +337,7 @@ public class upatcher
                     B.End = (uint)buf.Length - 1;
             }
             if (Multiple < 2)
-                { 
+            { 
                 if (StartEnd.Length>1 && StartEnd[1].StartsWith("@"))
                 {
                     //Read End address from bin at this address
@@ -316,11 +375,11 @@ public class upatcher
             if (!ParseSegmentAddresses(S.CS2Blocks, S, buf, out B))
                 return;
             binfile[i].CS2Blocks = B;
-            binfile[i].CS1Address = ParseAddress(S.CS1Address, binfile[i].SegmentBlocks[0].Start);
-            binfile[i].CS2Address = ParseAddress(S.CS2Address, binfile[i].SegmentBlocks[0].Start);
-            binfile[i].PNaddr = ParseAddress(S.PNAddr, binfile[i].SegmentBlocks[0].Start);
-            binfile[i].VerAddr = ParseAddress(S.VerAddr, binfile[i].SegmentBlocks[0].Start);
-            binfile[i].SegNrAddr = ParseAddress(S.SegNrAddr, binfile[i].SegmentBlocks[0].Start);
+            binfile[i].CS1Address = ParseAddress(S.CS1Address, binfile[i].SegmentBlocks[0].Start,buf);
+            binfile[i].CS2Address = ParseAddress(S.CS2Address, binfile[i].SegmentBlocks[0].Start, buf);
+            binfile[i].PNaddr = ParseAddress(S.PNAddr, binfile[i].SegmentBlocks[0].Start, buf);
+            binfile[i].VerAddr = ParseAddress(S.VerAddr, binfile[i].SegmentBlocks[0].Start, buf);
+            binfile[i].SegNrAddr = ParseAddress(S.SegNrAddr, binfile[i].SegmentBlocks[0].Start, buf);
         }
     }
     public static byte[] ReadBin(string FileName, uint FileOffset, uint Length)
@@ -362,7 +421,7 @@ public class upatcher
         }
     }
 
-    public static uint CalculateChecksum(byte[] Data, AddressData CSAddress, List<Block> CSBlocks, short Method, short Complement, ushort Bytes)
+    public static uint CalculateChecksum(byte[] Data, AddressData CSAddress, List<Block> CSBlocks, short Method, short Complement, ushort Bytes, Boolean SwapB)
     {
         uint sum = 0;
         uint BufSize = 0;
@@ -456,8 +515,14 @@ public class upatcher
         if (Bytes ==  2 || Bytes == 0) //Bytes = 0 if not saving
         { 
             sum = (sum & 0xFFFF);
-            if (Method == CSMethod_crc16 || Method == CSMethod_crc32)
+        }
+        if (SwapB)
+        {
+            if (Bytes == 2)
                 sum = (ushort)SwapBytes((ushort)sum);
+            else
+                sum = SwapBytes(sum);
+
         }
         return sum;
     }

@@ -73,6 +73,12 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.txtCS2Block = new System.Windows.Forms.TextBox();
+            this.btnHelp = new System.Windows.Forms.Button();
+            this.btnNewXML = new System.Windows.Forms.Button();
+            this.checkSwapBytes1 = new System.Windows.Forms.CheckBox();
+            this.checkSwapBytes2 = new System.Windows.Forms.CheckBox();
+            this.btnMoveUp = new System.Windows.Forms.Button();
+            this.btnMoveDown = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -89,7 +95,7 @@
             this.groupBox1.Controls.Add(this.radioCS1Crc16);
             this.groupBox1.Location = new System.Drawing.Point(11, 316);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(131, 135);
+            this.groupBox1.Size = new System.Drawing.Size(122, 135);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Checksum 1 method";
@@ -314,7 +320,7 @@
             this.listSegments.HideSelection = false;
             this.listSegments.Location = new System.Drawing.Point(2, 3);
             this.listSegments.Name = "listSegments";
-            this.listSegments.Size = new System.Drawing.Size(538, 141);
+            this.listSegments.Size = new System.Drawing.Size(461, 141);
             this.listSegments.TabIndex = 12;
             this.listSegments.UseCompatibleStateImageBehavior = false;
             this.listSegments.SelectedIndexChanged += new System.EventHandler(this.listSegments_SelectedIndexChanged);
@@ -354,9 +360,9 @@
             this.groupBox5.Controls.Add(this.radioCS1Complement2);
             this.groupBox5.Controls.Add(this.radioCS1Complement1);
             this.groupBox5.Controls.Add(this.radioCS1Complement0);
-            this.groupBox5.Location = new System.Drawing.Point(126, 316);
+            this.groupBox5.Location = new System.Drawing.Point(139, 316);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(132, 135);
+            this.groupBox5.Size = new System.Drawing.Size(119, 88);
             this.groupBox5.TabIndex = 19;
             this.groupBox5.TabStop = false;
             // 
@@ -399,9 +405,9 @@
             this.groupBox6.Controls.Add(this.radioCS2Complement2);
             this.groupBox6.Controls.Add(this.radioCS2Complement1);
             this.groupBox6.Controls.Add(this.radioCS2Complement0);
-            this.groupBox6.Location = new System.Drawing.Point(383, 316);
+            this.groupBox6.Location = new System.Drawing.Point(392, 316);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(148, 135);
+            this.groupBox6.Size = new System.Drawing.Size(139, 88);
             this.groupBox6.TabIndex = 20;
             this.groupBox6.TabStop = false;
             // 
@@ -520,11 +526,77 @@
             this.txtCS2Block.Size = new System.Drawing.Size(190, 20);
             this.txtCS2Block.TabIndex = 4;
             // 
+            // btnHelp
+            // 
+            this.btnHelp.Location = new System.Drawing.Point(12, 457);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(75, 33);
+            this.btnHelp.TabIndex = 37;
+            this.btnHelp.Text = "Help";
+            this.btnHelp.UseVisualStyleBackColor = true;
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
+            // 
+            // btnNewXML
+            // 
+            this.btnNewXML.Location = new System.Drawing.Point(286, 458);
+            this.btnNewXML.Name = "btnNewXML";
+            this.btnNewXML.Size = new System.Drawing.Size(82, 34);
+            this.btnNewXML.TabIndex = 38;
+            this.btnNewXML.Text = "New XML";
+            this.btnNewXML.UseVisualStyleBackColor = true;
+            this.btnNewXML.Click += new System.EventHandler(this.btnNewXML_Click);
+            // 
+            // checkSwapBytes1
+            // 
+            this.checkSwapBytes1.AutoSize = true;
+            this.checkSwapBytes1.Location = new System.Drawing.Point(145, 407);
+            this.checkSwapBytes1.Name = "checkSwapBytes1";
+            this.checkSwapBytes1.Size = new System.Drawing.Size(81, 17);
+            this.checkSwapBytes1.TabIndex = 16;
+            this.checkSwapBytes1.Text = "Swap bytes";
+            this.checkSwapBytes1.UseVisualStyleBackColor = true;
+            // 
+            // checkSwapBytes2
+            // 
+            this.checkSwapBytes2.AutoSize = true;
+            this.checkSwapBytes2.Location = new System.Drawing.Point(398, 410);
+            this.checkSwapBytes2.Name = "checkSwapBytes2";
+            this.checkSwapBytes2.Size = new System.Drawing.Size(82, 17);
+            this.checkSwapBytes2.TabIndex = 39;
+            this.checkSwapBytes2.Text = "Swap Bytes";
+            this.checkSwapBytes2.UseVisualStyleBackColor = true;
+            // 
+            // btnMoveUp
+            // 
+            this.btnMoveUp.Location = new System.Drawing.Point(468, 38);
+            this.btnMoveUp.Name = "btnMoveUp";
+            this.btnMoveUp.Size = new System.Drawing.Size(71, 26);
+            this.btnMoveUp.TabIndex = 40;
+            this.btnMoveUp.Text = "Move up";
+            this.btnMoveUp.UseVisualStyleBackColor = true;
+            this.btnMoveUp.Click += new System.EventHandler(this.btnMoveUp_Click);
+            // 
+            // btnMoveDown
+            // 
+            this.btnMoveDown.Location = new System.Drawing.Point(468, 69);
+            this.btnMoveDown.Name = "btnMoveDown";
+            this.btnMoveDown.Size = new System.Drawing.Size(71, 23);
+            this.btnMoveDown.TabIndex = 41;
+            this.btnMoveDown.Text = "Move down";
+            this.btnMoveDown.UseVisualStyleBackColor = true;
+            this.btnMoveDown.Click += new System.EventHandler(this.btnMoveDown_Click);
+            // 
             // frmSegmentSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(541, 502);
+            this.Controls.Add(this.btnMoveDown);
+            this.Controls.Add(this.btnMoveUp);
+            this.Controls.Add(this.checkSwapBytes2);
+            this.Controls.Add(this.checkSwapBytes1);
+            this.Controls.Add(this.btnNewXML);
+            this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.txtCS2Block);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label3);
@@ -614,5 +686,11 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox txtCS2Block;
+        private System.Windows.Forms.Button btnHelp;
+        private System.Windows.Forms.Button btnNewXML;
+        private System.Windows.Forms.CheckBox checkSwapBytes1;
+        private System.Windows.Forms.CheckBox checkSwapBytes2;
+        private System.Windows.Forms.Button btnMoveUp;
+        private System.Windows.Forms.Button btnMoveDown;
     }
 }

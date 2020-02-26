@@ -32,10 +32,11 @@ namespace UniversalPatcher
             listSegments.FullRowSelect = true;
             if (Segments == null)
                 return;
-            foreach (SegmentConfig S in Segments)
+            for (int s = 0; s < Segments.Count; s++)
             {
-                var item = new ListViewItem(S.Name);
-                item.SubItems.Add(S.Addresses);
+                var item = new ListViewItem(Segments[s].Name);
+                item.SubItems.Add(Segments[s].Addresses);
+                item.Tag = s;
                 listSegments.Items.Add(item);
             }
         }
@@ -94,7 +95,7 @@ namespace UniversalPatcher
                 S.CS2Method = CSMethod_Wordsum;
             if (radioCS2DwordSum.Checked)
                 S.CS2Method = CSMethod_Dwordsum;
-
+            S.CS1SwapBytes = checkSwapBytes1.Checked;
 
             if (radioCS1Complement0.Checked)
                 S.CS1Complement = 0;
@@ -109,12 +110,14 @@ namespace UniversalPatcher
                 S.CS2Complement = 1;
             if (radioCS2Complement2.Checked)
                 S.CS2Complement = 2;
+            S.CS2SwapBytes = checkSwapBytes2.Checked;
 
             if (isNew)
             {
                 Segments.Add(S);
                 var item = new ListViewItem(txtSegmentName.Text);
                 item.SubItems.Add(txtSegmentAddress.Text);
+                item.Tag = listSegments.Items.Count;
                 listSegments.Items.Add(item);
             }
             else
@@ -172,13 +175,14 @@ namespace UniversalPatcher
                 file.Close();
 
                 listSegments.Items.Clear();
-                foreach (SegmentConfig S in Segments)
+                for (int s = 0; s < Segments.Count; s ++)
                 {
-                    var item = new ListViewItem(S.Name);
-                    if (S.Addresses != null)
-                        item.SubItems.Add(S.Addresses);
+                    var item = new ListViewItem(Segments[s].Name);
+                    if (Segments[s].Addresses != null)
+                        item.SubItems.Add(Segments[s].Addresses);
                     else
                         item.SubItems.Add("");
+                    item.Tag = s;
                     listSegments.Items.Add(item);
                 }
             }
@@ -202,58 +206,54 @@ namespace UniversalPatcher
         {
             if (listSegments.SelectedItems.Count < 1)
                 return;
-            foreach (SegmentConfig S in Segments)
-            {
-                if (S.Name == listSegments.SelectedItems[0].Text)
-                {
-                    txtSegmentName.Text = S.Name;
-                    txtSegmentAddress.Text = S.Addresses;
-                    txtCS1Address.Text = S.CS1Address;
-                    txtCS2Address.Text = S.CS2Address;
-                    txtCS1Block.Text = S.CS1Blocks;
-                    txtCS2Block.Text = S.CS2Blocks;
-                    txtPNAddr.Text = S.PNAddr;
-                    txtVerAddr.Text = S.VerAddr;
-                    txtNrAddr.Text = S.SegNrAddr;
-                    if (S.CS1Method == CSMethod_None)
-                        radioCS1None.Checked = true;
-                    if (S.CS1Method == CSMethod_crc16)
-                        radioCS1Crc16.Checked = true;
-                    if (S.CS1Method == CSMethod_crc32)
-                        radioCS1Crc32.Checked = true;
-                    if (S.CS1Method == CSMethod_Bytesum)
-                        radioCS1SUM.Checked = true;
-                    if (S.CS1Method == CSMethod_Wordsum)
-                        radioCS1WordSum.Checked = true;
-                    if (S.CS1Method == CSMethod_Dwordsum)
-                        radioCS1DwordSum.Checked = true;
-                    if (S.CS2Method == CSMethod_None)
-                        radioCS2None.Checked = true;
-                    if (S.CS2Method == CSMethod_crc16)
-                        radioCS2Crc16.Checked = true;
-                    if (S.CS2Method == CSMethod_crc32)
-                        radioCS2Crc32.Checked = true;
-                    if (S.CS2Method == CSMethod_Bytesum)
-                        radioCS2SUM.Checked = true;
-                    if (S.CS2Method == CSMethod_Wordsum)
-                        radioCS2WordSum.Checked = true;
-                    if (S.CS2Method == CSMethod_Dwordsum)
-                        radioCS2DwordSum.Checked = true;
-                    if (S.CS1Complement == 0)
-                        radioCS1Complement0.Checked = true;
-                    if (S.CS1Complement == 1)
-                        radioCS1Complement1.Checked = true;
-                    if (S.CS1Complement == 2)
-                        radioCS1Complement2.Checked = true;
-                    if (S.CS2Complement == 0)
-                        radioCS2Complement0.Checked = true;
-                    if (S.CS2Complement == 1)
-                        radioCS2Complement1.Checked = true;
-                    if (S.CS2Complement == 2)
-                        radioCS2Complement2.Checked = true;
-
-                }
-            }
+            SegmentConfig S = Segments[(int)listSegments.SelectedItems[0].Tag];
+            txtSegmentName.Text = S.Name;
+            txtSegmentAddress.Text = S.Addresses;
+            txtCS1Address.Text = S.CS1Address;
+            txtCS2Address.Text = S.CS2Address;
+            txtCS1Block.Text = S.CS1Blocks;
+            txtCS2Block.Text = S.CS2Blocks;
+            txtPNAddr.Text = S.PNAddr;
+            txtVerAddr.Text = S.VerAddr;
+            txtNrAddr.Text = S.SegNrAddr;
+            checkSwapBytes1.Checked = S.CS1SwapBytes;
+            checkSwapBytes2.Checked = S.CS2SwapBytes;
+            if (S.CS1Method == CSMethod_None)
+                radioCS1None.Checked = true;
+            if (S.CS1Method == CSMethod_crc16)
+                radioCS1Crc16.Checked = true;
+            if (S.CS1Method == CSMethod_crc32)
+                radioCS1Crc32.Checked = true;
+            if (S.CS1Method == CSMethod_Bytesum)
+                radioCS1SUM.Checked = true;
+            if (S.CS1Method == CSMethod_Wordsum)
+                radioCS1WordSum.Checked = true;
+            if (S.CS1Method == CSMethod_Dwordsum)
+                radioCS1DwordSum.Checked = true;
+            if (S.CS2Method == CSMethod_None)
+                radioCS2None.Checked = true;
+            if (S.CS2Method == CSMethod_crc16)
+                radioCS2Crc16.Checked = true;
+            if (S.CS2Method == CSMethod_crc32)
+                radioCS2Crc32.Checked = true;
+            if (S.CS2Method == CSMethod_Bytesum)
+                radioCS2SUM.Checked = true;
+            if (S.CS2Method == CSMethod_Wordsum)
+                radioCS2WordSum.Checked = true;
+            if (S.CS2Method == CSMethod_Dwordsum)
+                radioCS2DwordSum.Checked = true;
+            if (S.CS1Complement == 0)
+                radioCS1Complement0.Checked = true;
+            if (S.CS1Complement == 1)
+                radioCS1Complement1.Checked = true;
+            if (S.CS1Complement == 2)
+                radioCS1Complement2.Checked = true;
+            if (S.CS2Complement == 0)
+                radioCS2Complement0.Checked = true;
+            if (S.CS2Complement == 1)
+                radioCS2Complement1.Checked = true;
+            if (S.CS2Complement == 2)
+                radioCS2Complement2.Checked = true;
 
         }
 
@@ -261,14 +261,8 @@ namespace UniversalPatcher
         {
             if (listSegments.SelectedItems.Count == 0)
                 return;
-            for (int s = 0; s < Segments.Count; s++)
-            {
-                if (Segments[s].Name == listSegments.SelectedItems[0].Text)
-                {
-                    Segments.RemoveAt(s);
-                }
-            }
-            listSegments.SelectedItems[0].Remove();
+            Segments.RemoveAt((int)listSegments.SelectedItems[0].Tag);
+            InitMe();
         }
 
 
@@ -280,6 +274,50 @@ namespace UniversalPatcher
 
         private void txtVerAddr_TextChanged(object sender, EventArgs e)
         {
+
+        }
+
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+            string HelpFile = System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "\\help.txt";
+            System.Diagnostics.Process.Start(@HelpFile);
+
+        }
+
+        private void btnNewXML_Click(object sender, EventArgs e)
+        {
+            Segments.Clear();
+            listSegments.Items.Clear();
+        }
+
+        private void btnMoveUp_Click(object sender, EventArgs e)
+        {
+            if (listSegments.SelectedItems.Count == 0)
+                return;
+            if (listSegments.SelectedItems[0].Text == Segments[0].Name)
+                return;
+            SegmentConfig Stmp = new SegmentConfig();
+            int CurrentSel = (int)listSegments.SelectedItems[0].Tag;
+            Stmp = Segments[CurrentSel - 1];
+            Segments[CurrentSel - 1] = Segments[CurrentSel];
+            Segments[CurrentSel] = Stmp;
+            InitMe();
+            listSegments.Items[CurrentSel - 1].Selected = true;
+        }
+
+        private void btnMoveDown_Click(object sender, EventArgs e)
+        {
+            if (listSegments.SelectedItems.Count == 0)
+                return;
+            if ((int)listSegments.SelectedItems[0].Tag == listSegments.Items.Count - 1)
+                return;
+            SegmentConfig Stmp = new SegmentConfig();
+            int CurrentSel = (int)listSegments.SelectedItems[0].Tag;
+            Stmp = Segments[CurrentSel + 1];
+            Segments[CurrentSel + 1] = Segments[CurrentSel];
+            Segments[CurrentSel] = Stmp;
+            InitMe();
+            listSegments.Items[CurrentSel + 1].Selected = true;
 
         }
     }
