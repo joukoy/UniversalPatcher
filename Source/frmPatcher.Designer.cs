@@ -44,6 +44,7 @@
             this.radioCreate = new System.Windows.Forms.RadioButton();
             this.btnSegments = new System.Windows.Forms.Button();
             this.btnCheckSums = new System.Windows.Forms.Button();
+            this.labelXML = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -203,11 +204,22 @@
             this.btnCheckSums.UseVisualStyleBackColor = true;
             this.btnCheckSums.Click += new System.EventHandler(this.btnCheckSums_Click);
             // 
+            // labelXML
+            // 
+            this.labelXML.AutoSize = true;
+            this.labelXML.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelXML.Location = new System.Drawing.Point(248, 6);
+            this.labelXML.Name = "labelXML";
+            this.labelXML.Size = new System.Drawing.Size(13, 16);
+            this.labelXML.TabIndex = 16;
+            this.labelXML.Text = "-";
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(729, 445);
+            this.Controls.Add(this.labelXML);
             this.Controls.Add(this.btnCheckSums);
             this.Controls.Add(this.btnSegments);
             this.Controls.Add(this.groupBox1);
@@ -249,5 +261,6 @@
         private System.Windows.Forms.RadioButton radioCreate;
         private System.Windows.Forms.Button btnSegments;
         private System.Windows.Forms.Button btnCheckSums;
+        private System.Windows.Forms.Label labelXML;
     }
 }

@@ -30,6 +30,7 @@ namespace UniversalPatcher
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
             this.Show();
+            labelXML.Text = Path.GetFileName(XMLFile);
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1 && File.Exists(args[1]) )
             {
@@ -67,6 +68,13 @@ namespace UniversalPatcher
         public void addCheckBoxes()
         {
             int i = 0;
+
+            for (i = 0; i < this.Controls.Count; i++)
+            {
+                if (this.Controls[i].Tag != null && (int)this.Controls[i].Tag > 0 && (int)this.Controls[i].Tag <= Segments.Count)
+                    this.Controls[i].Dispose();
+            }
+            i = 0;
             int Left = 12;
             for (int s = 0; s < Segments.Count; s++)
             {
@@ -85,6 +93,8 @@ namespace UniversalPatcher
 
         private void CheckSegmentCompatibility()
         {
+            labelXML.Text = Path.GetFileName(XMLFile);
+            addCheckBoxes();
             for (int s = 0; s < Segments.Count; s++)
             {
                 CheckBox chk = null;
@@ -114,6 +124,8 @@ namespace UniversalPatcher
 
         private void GetFileInfo(string FileName, ref BinFile[] binfile, ref byte[] buf)
         {
+            labelXML.Text = Path.GetFileName(XMLFile);
+            addCheckBoxes();
             try
             {
                 Logger(Environment.NewLine + Path.GetFileName(FileName));
@@ -154,7 +166,7 @@ namespace UniversalPatcher
                                 tmp += ", ";
                             tmp += binfile[i].CS1Blocks[s].Start.ToString("X4") + " - " + binfile[i].CS1Blocks[s].End.ToString("X4");
                         }
-                        string CS1Calc = CalculateChecksum(buf, binfile[i].CS1Address, binfile[i].CS1Blocks, S.CS1Method, S.CS1Complement, binfile[i].CS1Address.Bytes,S.CS1SwapBytes).ToString("X4");
+                        string CS1Calc = CalculateChecksum(buf, binfile[i].CS1Address, binfile[i].CS1Blocks,binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, binfile[i].CS1Address.Bytes,S.CS1SwapBytes).ToString("X4");
                         if (binfile[i].CS1Address.Bytes == 0)
                             Logger(" Checksum1: [" + tmp + "] " + CS1Calc);
                         else
@@ -176,7 +188,7 @@ namespace UniversalPatcher
                                 tmp += ", ";
                             tmp += binfile[i].CS2Blocks[s].Start.ToString("X4") + " - " + binfile[i].CS2Blocks[s].End.ToString("X4") ;
                         }
-                        string CS2Calc = CalculateChecksum(buf, binfile[i].CS2Address, binfile[i].CS2Blocks, S.CS2Method, S.CS2Complement, binfile[i].CS2Address.Bytes,S.CS2SwapBytes).ToString("X4");
+                        string CS2Calc = CalculateChecksum(buf, binfile[i].CS2Address, binfile[i].CS2Blocks, binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, binfile[i].CS2Address.Bytes,S.CS2SwapBytes).ToString("X4");
                         if (binfile[i].CS2Address.Bytes == 0)
                             Logger(" Checksum1: [" + tmp + "] " + CS2Calc);
                         else
@@ -191,7 +203,7 @@ namespace UniversalPatcher
 
 
                 }
-                if (txtBaseFile.Text != "" && txtModifierFile.Text != "")
+                if (radioCreate.Checked && txtBaseFile.Text != "" && txtModifierFile.Text != "")
                     CheckSegmentCompatibility();
             }
             catch (Exception ex)
@@ -239,6 +251,16 @@ namespace UniversalPatcher
                         Logger("Patch is for bin size: " + line);
                         line = sr.ReadLine();
                         Logger(line);
+                        line = sr.ReadLine();
+                        if (line.Contains(".xml"))
+                        {
+                            if (File.Exists(line))
+                            {
+                                if (frmSS == null)
+                                    frmSS = new frmSegmentSettings();
+                                frmSS.LoadFile(line);
+                            }
+                        }
                         sr.Close();
                     }
                 }
@@ -371,6 +393,7 @@ namespace UniversalPatcher
         }
          private void btnCompare_Click(object sender, EventArgs e)
         {
+            labelXML.Text = Path.GetFileName(XMLFile);
             PatchData = new List<uint>();
             PatchAddr = new List<uint>();
             txtResult.Text = "";
@@ -416,10 +439,13 @@ namespace UniversalPatcher
                 }
                 string PatchName = labelBinSize.Text + "-" + txtPatchName.Text;
                 string PatchFile = SelectSaveFile("PACTH files (*.patch)|*.patch|ALL files(*.*) | *.*");
+                if (PatchFile.Length < 1)
+                    return;
                 Logger("Saving to file: " + PatchFile);
                 StreamWriter sw = new StreamWriter(PatchFile);
                 sw.WriteLine(labelBinSize.Text);
                 sw.WriteLine(txtPatchName.Text);
+                sw.WriteLine(XMLFile);
                 for (int i = 0; i < PatchAddr.Count; i++)
                 {
                     sw.WriteLine(PatchAddr[i].ToString() + ":" + PatchData[i].ToString());
@@ -523,7 +549,7 @@ namespace UniversalPatcher
                     if (S.CS1Method != CSMethod_None)
                     {
                         uint CS1 = 0;
-                        uint CS1Calc = CalculateChecksum(Basebuf, basefile[i].CS1Address, basefile[i].CS1Blocks, S.CS1Method, S.CS1Complement, basefile[i].CS1Address.Bytes, S.CS1SwapBytes);
+                        uint CS1Calc = CalculateChecksum(Basebuf, basefile[i].CS1Address, basefile[i].CS1Blocks, basefile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, basefile[i].CS1Address.Bytes, S.CS1SwapBytes);
                         if (basefile[i].CS1Address.Bytes == 1)
                         {
                             CS1 = Basebuf[basefile[i].CS1Address.Address];
@@ -568,7 +594,7 @@ namespace UniversalPatcher
                     if (S.CS2Method != CSMethod_None)
                     {
                         uint CS2 = 0;
-                        uint CS2Calc = CalculateChecksum(Basebuf, basefile[i].CS2Address, basefile[i].CS2Blocks, S.CS2Method, S.CS2Complement, basefile[i].CS2Address.Bytes,S.CS2SwapBytes);
+                        uint CS2Calc = CalculateChecksum(Basebuf, basefile[i].CS2Address, basefile[i].CS2Blocks, basefile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, basefile[i].CS2Address.Bytes,S.CS2SwapBytes);
                             if (basefile[i].CS2Address.Bytes == 1)
                             {
                                 CS2 = Basebuf[basefile[i].CS2Address.Address];

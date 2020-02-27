@@ -155,6 +155,8 @@ namespace UniversalPatcher
                     writer.Serialize(stream, Segments);
                     stream.Close();
                 }
+                XMLFile = FileName;
+                labelXML.Text = Path.GetFileName(XMLFile);
             }
             catch (Exception ex)
             {
@@ -185,6 +187,8 @@ namespace UniversalPatcher
                     item.Tag = s;
                     listSegments.Items.Add(item);
                 }
+                XMLFile = FileName;
+                labelXML.Text = Path.GetFileName(XMLFile);
             }
             catch (Exception ex)
             {
@@ -197,7 +201,7 @@ namespace UniversalPatcher
         {
             string FileName = SelectFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
             if (FileName.Length < 1)
-                return;
+                return;            
             LoadFile(FileName);
         }
 
@@ -303,6 +307,7 @@ namespace UniversalPatcher
             Segments[CurrentSel] = Stmp;
             InitMe();
             listSegments.Items[CurrentSel - 1].Selected = true;
+            labelXML.Text = "";
         }
 
         private void btnMoveDown_Click(object sender, EventArgs e)

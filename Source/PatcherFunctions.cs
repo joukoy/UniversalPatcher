@@ -23,11 +23,13 @@ public class upatcher
         public List<Block> SegmentBlocks;
         public List<Block> CS1Blocks;
         public List<Block> CS2Blocks;
+        public List<Block> ExcludeBlocks;
         public AddressData CS1Address;
         public AddressData CS2Address;
         public AddressData PNaddr;
         public AddressData VerAddr;
         public AddressData SegNrAddr;
+
     }
 
     public struct SegmentConfig
@@ -60,7 +62,7 @@ public class upatcher
 
     public static string LastXMLfolder;
     public static string LastBinfolder;
-
+    public static string XMLFile;
 
     public struct AddressData
     {
@@ -137,7 +139,7 @@ public class upatcher
         return true; 
     }
 
-    public static AddressData ParseAddress (string Line, uint SegmentAddress, byte[] buf)
+    public static AddressData ParseAddress (string Line, uint SegmentAddress, byte[] buf, ref BinFile binfileSegment)
     {
         AddressData AD = new AddressData();
 
@@ -146,11 +148,18 @@ public class upatcher
             //Custom handling: read OS:Segmentaddress pairs from file
             uint BufSize = (uint)buf.Length;
             uint GMOS;
-            if (BEToUint16(buf, BufSize - 2) == 0xFF) //Custom handling for GM V6, OS version is read from end-8 or end-8 depending last bytes of bin
-                GMOS = BEToUint32(buf, (BufSize - 8));
+            uint OsAddr;
+            if (BEToUint16(buf, BufSize - 2) == 0xFF) //OS version is read from end-8 or end-6 depending last bytes of bin
+                OsAddr = BufSize - 8;
             else
-                GMOS = BEToUint32(buf, (BufSize - 6));
-
+                OsAddr = BufSize - 6;
+            GMOS = BEToUint32(buf, OsAddr);
+            Block B = new Block();
+            B.Start = OsAddr ;
+            B.End = OsAddr + 3;
+            if (binfileSegment.ExcludeBlocks == null)
+                binfileSegment.ExcludeBlocks = new List<Block>();
+            binfileSegment.ExcludeBlocks.Add(B);
             string FileName = Path.Combine(Application.StartupPath, Line);
             StreamReader sr = new StreamReader(FileName);
             string OsLine;
@@ -161,14 +170,18 @@ public class upatcher
                 if (OsLineparts.Length == 2)
                 {
                     if (OsLineparts[0] == GMOS.ToString())
-                    { 
+                    {
                         if (!HexToUint(OsLineparts[1], out AD.Address))
+                        {
+                            sr.Close();
                             return AD;
-                        AD.Bytes = 2;
+                        }
+                        AD.Bytes = 4;
                         AD.Type = TypeHex;
                     }
                 }
             }
+            sr.Close();
             return AD;
         }
 
@@ -348,7 +361,7 @@ public class upatcher
                     //Address is relative to end of bin
                     uint end;
                     if (HexToUint(StartEnd[1].Replace("@",""), out end) )
-                    B.End = (uint)buf.Length - end;
+                        B.End = (uint)buf.Length - end - 1;
                 }
                 B.Start += (uint)Offset;
                 B.End += (uint)Offset;
@@ -366,6 +379,7 @@ public class upatcher
         {
             SegmentConfig S = Segments[i];
             List<Block> B = new List<Block>();
+            binfile[i].ExcludeBlocks = B;
             if (!ParseSegmentAddresses(S.Addresses, S, buf, out B))
                 return;
             binfile[i].SegmentBlocks = B ;
@@ -375,11 +389,11 @@ public class upatcher
             if (!ParseSegmentAddresses(S.CS2Blocks, S, buf, out B))
                 return;
             binfile[i].CS2Blocks = B;
-            binfile[i].CS1Address = ParseAddress(S.CS1Address, binfile[i].SegmentBlocks[0].Start,buf);
-            binfile[i].CS2Address = ParseAddress(S.CS2Address, binfile[i].SegmentBlocks[0].Start, buf);
-            binfile[i].PNaddr = ParseAddress(S.PNAddr, binfile[i].SegmentBlocks[0].Start, buf);
-            binfile[i].VerAddr = ParseAddress(S.VerAddr, binfile[i].SegmentBlocks[0].Start, buf);
-            binfile[i].SegNrAddr = ParseAddress(S.SegNrAddr, binfile[i].SegmentBlocks[0].Start, buf);
+            binfile[i].CS1Address = ParseAddress(S.CS1Address, binfile[i].SegmentBlocks[0].Start,buf, ref binfile[i]);
+            binfile[i].CS2Address = ParseAddress(S.CS2Address, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
+            binfile[i].PNaddr = ParseAddress(S.PNAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
+            binfile[i].VerAddr = ParseAddress(S.VerAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
+            binfile[i].SegNrAddr = ParseAddress(S.SegNrAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
         }
     }
     public static byte[] ReadBin(string FileName, uint FileOffset, uint Length)
@@ -421,7 +435,7 @@ public class upatcher
         }
     }
 
-    public static uint CalculateChecksum(byte[] Data, AddressData CSAddress, List<Block> CSBlocks, short Method, short Complement, ushort Bytes, Boolean SwapB)
+    public static uint CalculateChecksum(byte[] Data, AddressData CSAddress, List<Block> CSBlocks,List<Block> ExcludeBlocks, short Method, short Complement, ushort Bytes, Boolean SwapB)
     {
         uint sum = 0;
         uint BufSize = 0;
@@ -437,6 +451,7 @@ public class upatcher
                 //Checksum  is located in this block
                 if (CSAddress.Address == B.Start)    //At beginning of segment
                 {
+                    //At beginning of segment
                     B.Start += CSAddress.Bytes;
                 }
                 else
@@ -448,6 +463,35 @@ public class upatcher
                     Blocks.Add(C);
                     BufSize += C.End - C.Start + 1;
                     B.Start = CSAddress.Address + CSAddress.Bytes; //Move block B to start after Checksum
+                }
+            }
+            foreach (Block ExcBlock in ExcludeBlocks)
+            {
+                if (ExcBlock.Start >= B.Start && ExcBlock.End <= B.End)
+                {
+                    //Excluded block in this block
+                    if (ExcBlock.Start == B.Start)    //At beginning of segment, move start of block
+                    {
+                        B.Start = ExcBlock.End + 1;
+                    }
+                    else
+                    {
+                        if (ExcBlock.End < B.End -1)
+                        {
+                            //Located at middle of block, create new block C, ending before excluded block
+                            Block C = new Block();
+                            C.Start = B.Start;
+                            C.End = ExcBlock.Start - 1;
+                            Blocks.Add(C);
+                            BufSize += C.End - C.Start + 1;
+                            B.Start = ExcBlock.End + 1; //Move block B to start after excluded block
+                        }
+                        else
+                        {
+                            //Exclude block at end of block, move end of block backwards
+                            B.End = ExcBlock.Start - 1;
+                        }
+                    }
                 }
             }
             Blocks.Add(B);
