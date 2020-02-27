@@ -62,6 +62,7 @@ public class upatcher
 
     public static string LastXMLfolder;
     public static string LastBinfolder;
+    public static string LastPatchfolder;
     public static string XMLFile;
 
     public struct AddressData
@@ -84,6 +85,11 @@ public class upatcher
         fdlg.Filter = Filter;
         fdlg.FilterIndex = 1;
         fdlg.RestoreDirectory = true;
+        if (Filter.Contains("PATCH"))
+        {
+            if (LastPatchfolder != null)
+                fdlg.InitialDirectory = LastPatchfolder;
+        }
         if (Filter.Contains("XML"))
         { 
             if (LastXMLfolder != null)
@@ -101,6 +107,9 @@ public class upatcher
                 LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
             else if (Filter.Contains("BIN"))
                 LastBinfolder = Path.GetDirectoryName(fdlg.FileName);
+            else if (Filter.Contains("PATCH"))
+                LastPatchfolder = Path.GetDirectoryName(fdlg.FileName);
+
             return fdlg.FileName;
         }
         return "";
@@ -113,9 +122,30 @@ public class upatcher
         saveFileDialog.Filter = Filter;
         saveFileDialog.RestoreDirectory = true;
         saveFileDialog.Title = "Save to file";
+        if (Filter.Contains("PATCH"))
+        {
+            if (LastPatchfolder != null)
+                saveFileDialog.InitialDirectory = LastPatchfolder;
+        }
+        if (Filter.Contains("XML"))
+        {
+            if (LastXMLfolder != null)
+                saveFileDialog.InitialDirectory = LastXMLfolder;
+        }
+        else if (Filter.Contains("BIN"))
+        {
+            if (LastBinfolder != null)
+                saveFileDialog.InitialDirectory = LastBinfolder;
+        }
 
         if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {
+            if (Filter.Contains("XML"))
+                LastXMLfolder = Path.GetDirectoryName(saveFileDialog.FileName);
+            else if (Filter.Contains("BIN"))
+                LastBinfolder = Path.GetDirectoryName(saveFileDialog.FileName);
+            else if (Filter.Contains("PATCH"))
+                LastPatchfolder = Path.GetDirectoryName(saveFileDialog.FileName);
             return saveFileDialog.FileName;
         }
         else
@@ -147,16 +177,17 @@ public class upatcher
         {
             //Custom handling: read OS:Segmentaddress pairs from file
             uint BufSize = (uint)buf.Length;
-            uint GMOS;
-            uint OsAddr;
+            uint GMOS = 0;
             if (BEToUint16(buf, BufSize - 2) == 0xFF) //OS version is read from end-8 or end-6 depending last bytes of bin
-                OsAddr = BufSize - 8;
+                binfileSegment.PNaddr.Address = BufSize - 8;
             else
-                OsAddr = BufSize - 6;
-            GMOS = BEToUint32(buf, OsAddr);
+                binfileSegment.PNaddr.Address = BufSize - 6;
+            GMOS = BEToUint32(buf, binfileSegment.PNaddr.Address);
+            binfileSegment.PNaddr.Bytes = 4;
+            binfileSegment.PNaddr.Type = TypeInt;
             Block B = new Block();
-            B.Start = OsAddr ;
-            B.End = OsAddr + 3;
+            B.Start = binfileSegment.PNaddr.Address;
+            B.End = binfileSegment.PNaddr.Address + 3;
             if (binfileSegment.ExcludeBlocks == null)
                 binfileSegment.ExcludeBlocks = new List<Block>();
             binfileSegment.ExcludeBlocks.Add(B);
@@ -182,7 +213,7 @@ public class upatcher
                 }
             }
             sr.Close();
-            return AD;
+            throw new Exception("Unsupported OS:  " + GMOS.ToString());
         }
 
         string[] Lineparts = Line.Split(':');
@@ -391,7 +422,8 @@ public class upatcher
             binfile[i].CS2Blocks = B;
             binfile[i].CS1Address = ParseAddress(S.CS1Address, binfile[i].SegmentBlocks[0].Start,buf, ref binfile[i]);
             binfile[i].CS2Address = ParseAddress(S.CS2Address, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
-            binfile[i].PNaddr = ParseAddress(S.PNAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
+            if (binfile[i].PNaddr.Bytes == 0)
+                binfile[i].PNaddr = ParseAddress(S.PNAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
             binfile[i].VerAddr = ParseAddress(S.VerAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
             binfile[i].SegNrAddr = ParseAddress(S.SegNrAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
         }

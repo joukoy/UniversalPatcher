@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
+using static upatcher;
 
 namespace UniversalPatcher
 {
@@ -42,6 +44,20 @@ namespace UniversalPatcher
             }
             frmP = new FrmPatcher();
             frmP.Show(this);
+        }
+
+        private void FrmMain_Load(object sender, EventArgs e)
+        {
+            if (!File.Exists(Path.Combine(Application.StartupPath, "Patches")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
+            if (!File.Exists(Path.Combine(Application.StartupPath, "BinFiles")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "BinFIles"));
+            if (!File.Exists(Path.Combine(Application.StartupPath, "XML")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
+
+            LastBinfolder = Path.Combine(Application.StartupPath, "BinFiles");
+            LastPatchfolder = Path.Combine(Application.StartupPath, "Patches");
+            LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
         }
     }
 }

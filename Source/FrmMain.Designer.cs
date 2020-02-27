@@ -73,6 +73,7 @@
             this.Controls.Add(this.btnSegments);
             this.Name = "FrmMain";
             this.Text = "Universal Patcher";
+            this.Load += new System.EventHandler(this.FrmMain_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 

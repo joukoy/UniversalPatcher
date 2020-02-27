@@ -254,11 +254,25 @@ namespace UniversalPatcher
                         line = sr.ReadLine();
                         if (line.Contains(".xml"))
                         {
+                            string tmpXML="";
                             if (File.Exists(line))
+                            {
+                                tmpXML = line;
+                            }                                
+                            else
+                            {
+                                if (File.Exists(Path.Combine(Application.StartupPath, "XML", Path.GetFileName(line))))
+                                    tmpXML = Path.Combine(Application.StartupPath, "XML", Path.GetFileName(line));
+                            }
+
+                            if (tmpXML != "")
                             {
                                 if (frmSS == null)
                                     frmSS = new frmSegmentSettings();
-                                frmSS.LoadFile(line);
+                                frmSS.LoadFile(tmpXML);
+                                labelXML.Text = Path.GetFileName(tmpXML);
+                                if (txtBaseFile.Text.Length > 1)
+                                    addCheckBoxes();
                             }
                         }
                         sr.Close();
