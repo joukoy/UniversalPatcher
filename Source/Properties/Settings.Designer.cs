@@ -22,5 +22,53 @@ namespace UniversalPatcher.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastXMLfolder {
+            get {
+                return ((string)(this["LastXMLfolder"]));
+            }
+            set {
+                this["LastXMLfolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastPATCHfolder {
+            get {
+                return ((string)(this["LastPATCHfolder"]));
+            }
+            set {
+                this["LastPATCHfolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastBINfolder {
+            get {
+                return ((string)(this["LastBINfolder"]));
+            }
+            set {
+                this["LastBINfolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public uint SuppressAfter {
+            get {
+                return ((uint)(this["SuppressAfter"]));
+            }
+            set {
+                this["SuppressAfter"] = value;
+            }
+        }
     }
 }

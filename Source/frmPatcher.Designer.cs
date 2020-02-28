@@ -45,7 +45,12 @@
             this.btnSegments = new System.Windows.Forms.Button();
             this.btnCheckSums = new System.Windows.Forms.Button();
             this.labelXML = new System.Windows.Forms.Label();
+            this.btnShowPatch = new System.Windows.Forms.Button();
+            this.numSuppress = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOrgFile
@@ -119,7 +124,7 @@
             this.txtPatchName.Enabled = false;
             this.txtPatchName.Location = new System.Drawing.Point(12, 412);
             this.txtPatchName.Name = "txtPatchName";
-            this.txtPatchName.Size = new System.Drawing.Size(622, 20);
+            this.txtPatchName.Size = new System.Drawing.Size(536, 20);
             this.txtPatchName.TabIndex = 8;
             // 
             // labelBinSize
@@ -169,6 +174,7 @@
             this.radioApply.TabStop = true;
             this.radioApply.Text = "Apply Patch";
             this.radioApply.UseVisualStyleBackColor = true;
+            this.radioApply.CheckedChanged += new System.EventHandler(this.radioApply_CheckedChanged);
             // 
             // radioCreate
             // 
@@ -214,11 +220,62 @@
             this.labelXML.TabIndex = 16;
             this.labelXML.Text = "-";
             // 
+            // btnShowPatch
+            // 
+            this.btnShowPatch.Enabled = false;
+            this.btnShowPatch.Location = new System.Drawing.Point(554, 400);
+            this.btnShowPatch.Name = "btnShowPatch";
+            this.btnShowPatch.Size = new System.Drawing.Size(80, 31);
+            this.btnShowPatch.TabIndex = 17;
+            this.btnShowPatch.Text = "Show patch";
+            this.btnShowPatch.UseVisualStyleBackColor = true;
+            this.btnShowPatch.Click += new System.EventHandler(this.btnShowPatch_Click);
+            // 
+            // numSuppress
+            // 
+            this.numSuppress.Location = new System.Drawing.Point(429, 123);
+            this.numSuppress.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.numSuppress.Name = "numSuppress";
+            this.numSuppress.Size = new System.Drawing.Size(42, 20);
+            this.numSuppress.TabIndex = 18;
+            this.numSuppress.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numSuppress.ValueChanged += new System.EventHandler(this.numSuppress_ValueChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(312, 125);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(111, 13);
+            this.label2.TabIndex = 19;
+            this.label2.Text = "Suppress output after:";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(477, 125);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(29, 13);
+            this.label3.TabIndex = 20;
+            this.label3.Text = "rows";
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(729, 445);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.numSuppress);
+            this.Controls.Add(this.btnShowPatch);
             this.Controls.Add(this.labelXML);
             this.Controls.Add(this.btnCheckSums);
             this.Controls.Add(this.btnSegments);
@@ -239,6 +296,7 @@
             this.Load += new System.EventHandler(this.FrmPatcher_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -262,5 +320,9 @@
         private System.Windows.Forms.Button btnSegments;
         private System.Windows.Forms.Button btnCheckSums;
         private System.Windows.Forms.Label labelXML;
+        private System.Windows.Forms.Button btnShowPatch;
+        private System.Windows.Forms.NumericUpDown numSuppress;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
     }
 }

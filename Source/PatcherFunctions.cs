@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+
 public class upatcher
 {
     public struct Patch
@@ -60,9 +61,6 @@ public class upatcher
 
     public static List<SegmentConfig> Segments = new List<SegmentConfig>();
 
-    public static string LastXMLfolder;
-    public static string LastBinfolder;
-    public static string LastPatchfolder;
     public static string XMLFile;
 
     public struct AddressData
@@ -86,30 +84,21 @@ public class upatcher
         fdlg.FilterIndex = 1;
         fdlg.RestoreDirectory = true;
         if (Filter.Contains("PATCH"))
-        {
-            if (LastPatchfolder != null)
-                fdlg.InitialDirectory = LastPatchfolder;
-        }
+            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
         if (Filter.Contains("XML"))
-        { 
-            if (LastXMLfolder != null)
-                fdlg.InitialDirectory = LastXMLfolder;
-        }
+            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
         else if (Filter.Contains("BIN"))
-        {
-            if (LastBinfolder != null)
-                fdlg.InitialDirectory = LastBinfolder;
-        }
+            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
 
         if (fdlg.ShowDialog() == DialogResult.OK)
         {
             if (Filter.Contains("XML"))
-                LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
+                UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
             else if (Filter.Contains("BIN"))
-                LastBinfolder = Path.GetDirectoryName(fdlg.FileName);
+                UniversalPatcher.Properties.Settings.Default.LastBINfolder = Path.GetDirectoryName(fdlg.FileName);
             else if (Filter.Contains("PATCH"))
-                LastPatchfolder = Path.GetDirectoryName(fdlg.FileName);
-
+                UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.GetDirectoryName(fdlg.FileName);
+            UniversalPatcher.Properties.Settings.Default.Save();
             return fdlg.FileName;
         }
         return "";
@@ -123,29 +112,21 @@ public class upatcher
         saveFileDialog.RestoreDirectory = true;
         saveFileDialog.Title = "Save to file";
         if (Filter.Contains("PATCH"))
-        {
-            if (LastPatchfolder != null)
-                saveFileDialog.InitialDirectory = LastPatchfolder;
-        }
+                saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
         if (Filter.Contains("XML"))
-        {
-            if (LastXMLfolder != null)
-                saveFileDialog.InitialDirectory = LastXMLfolder;
-        }
+            saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
         else if (Filter.Contains("BIN"))
-        {
-            if (LastBinfolder != null)
-                saveFileDialog.InitialDirectory = LastBinfolder;
-        }
+            saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
 
         if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {
             if (Filter.Contains("XML"))
-                LastXMLfolder = Path.GetDirectoryName(saveFileDialog.FileName);
+                UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.GetDirectoryName(saveFileDialog.FileName);
             else if (Filter.Contains("BIN"))
-                LastBinfolder = Path.GetDirectoryName(saveFileDialog.FileName);
+                UniversalPatcher.Properties.Settings.Default.LastBINfolder = Path.GetDirectoryName(saveFileDialog.FileName);
             else if (Filter.Contains("PATCH"))
-                LastPatchfolder = Path.GetDirectoryName(saveFileDialog.FileName);
+                UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.GetDirectoryName(saveFileDialog.FileName);
+            UniversalPatcher.Properties.Settings.Default.Save();
             return saveFileDialog.FileName;
         }
         else
@@ -178,10 +159,16 @@ public class upatcher
             //Custom handling: read OS:Segmentaddress pairs from file
             uint BufSize = (uint)buf.Length;
             uint GMOS = 0;
-            if (BEToUint16(buf, BufSize - 2) == 0xFF) //OS version is read from end-8 or end-6 depending last bytes of bin
-                binfileSegment.PNaddr.Address = BufSize - 8;
-            else
-                binfileSegment.PNaddr.Address = BufSize - 6;
+            binfileSegment.PNaddr.Address = 0;
+            for (int i=2; i<20;i++)
+            {
+                if (BEToUint16(buf, (uint)(BufSize - i)) == 0xA55A) //Read OS version from end of file, before bytes A5 5A
+                {
+                    binfileSegment.PNaddr.Address = (uint)(BufSize - (i + 4));
+                }
+            }
+            if (binfileSegment.PNaddr.Address == 0)
+                throw new Exception("OS id missing");
             GMOS = BEToUint32(buf, binfileSegment.PNaddr.Address);
             binfileSegment.PNaddr.Bytes = 4;
             binfileSegment.PNaddr.Type = TypeInt;
@@ -191,7 +178,7 @@ public class upatcher
             if (binfileSegment.ExcludeBlocks == null)
                 binfileSegment.ExcludeBlocks = new List<Block>();
             binfileSegment.ExcludeBlocks.Add(B);
-            string FileName = Path.Combine(Application.StartupPath, Line);
+            string FileName = Path.Combine(Application.StartupPath, "XML", Line);
             StreamReader sr = new StreamReader(FileName);
             string OsLine;
             while ((OsLine = sr.ReadLine()) != null)
@@ -202,13 +189,13 @@ public class upatcher
                 {
                     if (OsLineparts[0] == GMOS.ToString())
                     {
-                        if (!HexToUint(OsLineparts[1], out AD.Address))
+                        if (HexToUint(OsLineparts[1], out AD.Address))
                         {
                             sr.Close();
+                            AD.Bytes = 4;
+                            AD.Type = TypeHex;
                             return AD;
                         }
-                        AD.Bytes = 4;
-                        AD.Type = TypeHex;
                     }
                 }
             }

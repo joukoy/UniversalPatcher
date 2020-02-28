@@ -50,14 +50,17 @@ namespace UniversalPatcher
         {
             if (!File.Exists(Path.Combine(Application.StartupPath, "Patches")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
-            if (!File.Exists(Path.Combine(Application.StartupPath, "BinFiles")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "BinFIles"));
             if (!File.Exists(Path.Combine(Application.StartupPath, "XML")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
 
-            LastBinfolder = Path.Combine(Application.StartupPath, "BinFiles");
-            LastPatchfolder = Path.Combine(Application.StartupPath, "Patches");
-            LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
+            Properties.Settings.Default.LastBINfolder = Properties.Settings.Default.LastBINfolder;
+            Properties.Settings.Default.LastPATCHfolder = Properties.Settings.Default.LastPATCHfolder;
+            Properties.Settings.Default.LastXMLfolder = Properties.Settings.Default.LastXMLfolder;
+
+            if (Properties.Settings.Default.LastXMLfolder == "")
+                Properties.Settings.Default.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
+            if (Properties.Settings.Default.LastPATCHfolder == "")
+                Properties.Settings.Default.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
         }
     }
 }

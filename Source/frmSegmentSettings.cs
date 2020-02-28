@@ -283,8 +283,11 @@ namespace UniversalPatcher
 
         private void btnHelp_Click(object sender, EventArgs e)
         {
-            string HelpFile = System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "\\help.txt";
-            System.Diagnostics.Process.Start(@HelpFile);
+            string HelpFile = Path.Combine(Application.StartupPath, "help.txt");
+            if (File.Exists(HelpFile))
+                System.Diagnostics.Process.Start(@HelpFile);
+            else
+                MessageBox.Show("Missing helpfile", "File missing");
 
         }
 
