@@ -18,48 +18,14 @@ namespace UniversalPatcher
             InitializeComponent();
         }
 
-        public void InitMe()
-        {
-            listSegments.Clear();
-            listSegments.View = View.Details;
-            listSegments.Columns.Add("Segment");
-            listSegments.Columns.Add("Address");
-            listSegments.Columns.Add("");
-            listSegments.Columns[0].Width = 200;
-            listSegments.Columns[1].Width = 600;
-            //listSegments.MultiSelect = true;
-            //listSegments.CheckBoxes = true;
-            listSegments.FullRowSelect = true;
-            if (Segments == null)
-                return;
-            for (int s = 0; s < Segments.Count; s++)
-            {
-                var item = new ListViewItem(Segments[s].Name);
-                item.SubItems.Add(Segments[s].Addresses);
-                item.Tag = s;
-                listSegments.Items.Add(item);
-            }
-        }
+        private int CurrentSegment;
 
-
-        private void btnAdd_Click(object sender, EventArgs e)
+        private void btnApply_Click(object sender, EventArgs e)
         {
             SegmentConfig S = new SegmentConfig();
-            bool isNew = true;
-            foreach (SegmentConfig Se in Segments)
-            {
-                if (Se.Name == txtSegmentName.Text)
-                {
-                    isNew = false;
-                    S = Se;
-                }
-            }
 
             S.Name = txtSegmentName.Text;
-/*            if (txtSegmentAddress.Text.StartsWith("@"))
-                UInt32.TryParse(txtSegmentAddress.Text.Replace("@", ""), System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out S.Address);
-            else*/
-                S.Addresses = txtSegmentAddress.Text;
+            S.Addresses = txtSegmentAddress.Text;
 
             S.CS1Address = txtCS1Address.Text;
             S.CS2Address = txtCS2Address.Text;
@@ -69,6 +35,9 @@ namespace UniversalPatcher
             S.PNAddr = txtPNAddr.Text;
             S.VerAddr = txtVerAddr.Text;
             S.SegNrAddr = txtNrAddr.Text;
+            S.ExtraInfo = txtExtrainfo.Text;
+            S.Eeprom = chkEeprom.Checked;
+            S.Comment = txtComment.Text;
 
             if (radioCS1None.Checked)
                 S.CS1Method = CSMethod_None;
@@ -111,106 +80,13 @@ namespace UniversalPatcher
             if (radioCS2Complement2.Checked)
                 S.CS2Complement = 2;
             S.CS2SwapBytes = checkSwapBytes2.Checked;
-
-            if (isNew)
-            {
-                Segments.Add(S);
-                var item = new ListViewItem(txtSegmentName.Text);
-                item.SubItems.Add(txtSegmentAddress.Text);
-                item.Tag = listSegments.Items.Count;
-                listSegments.Items.Add(item);
-            }
-            else
-            {
-                for (int i = 0; i<Segments.Count; i++)
-                {
-                    if (Segments[i].Name == S.Name )
-                    {
-                        Segments[i] = S;
-                    }
-                }
-                for (int i = 0; i < listSegments.Items.Count; i++)
-                {
-                    if (listSegments.Items[i].SubItems[0].Text == S.Name)
-                    {
-                        listSegments.Items[i].SubItems[1].Text = txtSegmentAddress.Text;
-                    }
-
-                }
-            }
-
-
+            Segments[CurrentSegment] = S;
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        public void EditSegment(int SegNr)
         {
-            try { 
-                string FileName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
-                if (FileName.Length < 1)
-                    return;
-
-                using (FileStream stream = new FileStream(FileName, FileMode.Create))
-                {
-                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentConfig>));
-                    writer.Serialize(stream, Segments);
-                    stream.Close();
-                }
-                XMLFile = FileName;
-                labelXML.Text = Path.GetFileName(XMLFile);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        public void LoadFile(string FileName)
-        {
-            try
-            {
-                Segments.Clear();
-
-                System.Xml.Serialization.XmlSerializer reader =
-                    new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentConfig>));
-                System.IO.StreamReader file = new System.IO.StreamReader(FileName);
-                Segments = (List<SegmentConfig>)reader.Deserialize(file);
-                file.Close();
-
-                listSegments.Items.Clear();
-                for (int s = 0; s < Segments.Count; s ++)
-                {
-                    var item = new ListViewItem(Segments[s].Name);
-                    if (Segments[s].Addresses != null)
-                        item.SubItems.Add(Segments[s].Addresses);
-                    else
-                        item.SubItems.Add("");
-                    item.Tag = s;
-                    listSegments.Items.Add(item);
-                }
-                XMLFile = FileName;
-                labelXML.Text = Path.GetFileName(XMLFile);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-        }
-
-        private void btnLoad_Click(object sender, EventArgs e)
-        {
-            string FileName = SelectFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
-            if (FileName.Length < 1)
-                return;            
-            LoadFile(FileName);
-        }
-
-
-        private void listSegments_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (listSegments.SelectedItems.Count < 1)
-                return;
-            SegmentConfig S = Segments[(int)listSegments.SelectedItems[0].Tag];
+            CurrentSegment = SegNr;
+            SegmentConfig S = Segments[SegNr];
             txtSegmentName.Text = S.Name;
             txtSegmentAddress.Text = S.Addresses;
             txtCS1Address.Text = S.CS1Address;
@@ -220,6 +96,10 @@ namespace UniversalPatcher
             txtPNAddr.Text = S.PNAddr;
             txtVerAddr.Text = S.VerAddr;
             txtNrAddr.Text = S.SegNrAddr;
+            txtExtrainfo.Text = S.ExtraInfo;
+            chkEeprom.Checked = S.Eeprom;
+            txtComment.Text = S.Comment;
+
             checkSwapBytes1.Checked = S.CS1SwapBytes;
             checkSwapBytes2.Checked = S.CS2SwapBytes;
             if (S.CS1Method == CSMethod_None)
@@ -261,25 +141,6 @@ namespace UniversalPatcher
 
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            if (listSegments.SelectedItems.Count == 0)
-                return;
-            Segments.RemoveAt((int)listSegments.SelectedItems[0].Tag);
-            InitMe();
-        }
-
-
-        private void btnOK_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
-        }
-
-        private void txtVerAddr_TextChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private void btnHelp_Click(object sender, EventArgs e)
         {
@@ -291,42 +152,84 @@ namespace UniversalPatcher
 
         }
 
-        private void btnNewXML_Click(object sender, EventArgs e)
+        private void btnOK_Click(object sender, EventArgs e)
         {
-            Segments.Clear();
-            listSegments.Items.Clear();
+            btnApply_Click(sender, e);
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
 
-        private void btnMoveUp_Click(object sender, EventArgs e)
+        private string EditAddress(string OldAddress, bool extra=false)
         {
-            if (listSegments.SelectedItems.Count == 0)
-                return;
-            if (listSegments.SelectedItems[0].Text == Segments[0].Name)
-                return;
-            SegmentConfig Stmp = new SegmentConfig();
-            int CurrentSel = (int)listSegments.SelectedItems[0].Tag;
-            Stmp = Segments[CurrentSel - 1];
-            Segments[CurrentSel - 1] = Segments[CurrentSel];
-            Segments[CurrentSel] = Stmp;
-            InitMe();
-            listSegments.Items[CurrentSel - 1].Selected = true;
-            labelXML.Text = "";
+            frmEditAddress frmE = new frmEditAddress();
+            frmE.ParseAddress(OldAddress,extra);
+            string Res = OldAddress;
+            if (frmE.ShowDialog(this) == DialogResult.OK)
+            {
+                Res = frmE.Result;
+            }
+            return Res;
         }
 
-        private void btnMoveDown_Click(object sender, EventArgs e)
+        private string EditSegmentAddress(string OldAddress)
         {
-            if (listSegments.SelectedItems.Count == 0)
-                return;
-            if ((int)listSegments.SelectedItems[0].Tag == listSegments.Items.Count - 1)
-                return;
-            SegmentConfig Stmp = new SegmentConfig();
-            int CurrentSel = (int)listSegments.SelectedItems[0].Tag;
-            Stmp = Segments[CurrentSel + 1];
-            Segments[CurrentSel + 1] = Segments[CurrentSel];
-            Segments[CurrentSel] = Stmp;
-            InitMe();
-            listSegments.Items[CurrentSel + 1].Selected = true;
+            frmEditSegmentAddr frmE = new frmEditSegmentAddr();
+            frmE.StartMe(OldAddress);
+            string Res = OldAddress;
+            if (frmE.ShowDialog(this) == DialogResult.OK)
+            {
+                Res = frmE.Result;
+            }
+            return Res;
 
+        }
+        private void txtCS1Address_Doubleclick(object sender,EventArgs e)
+        {
+            txtCS1Address.Text = EditAddress(txtCS1Address.Text);
+        }
+
+        private void txtPNAddr_Doubleclick(object sender, EventArgs e)
+        {
+            txtPNAddr.Text = EditAddress(txtPNAddr.Text);
+        }
+
+        private void txtNrAddr_Doubleclick(object sender, EventArgs e)
+        {
+            txtNrAddr.Text = EditAddress(txtNrAddr.Text);
+        }
+
+        private void txtCS2Address_Doubleclick(object sender, EventArgs e)
+        {
+            txtCS2Address.Text = EditAddress(txtCS2Address.Text);
+        }
+
+        private void txtVerAddr_Doubleclick(object sender, EventArgs e)
+        {
+            txtVerAddr.Text = EditAddress(txtVerAddr.Text);
+        }
+
+        private void txtExtrainfo_Doubleclick(object sender, EventArgs e)
+        {
+            if (txtExtrainfo.Text.Length == 0)
+                txtExtrainfo.Text = EditAddress(txtExtrainfo.Text, true);
+            else
+                txtExtrainfo.Text += "," + EditAddress(txtExtrainfo.Text, true);
+        }
+
+
+        private void txtSegmentAddress_DoubleClick(object sender, EventArgs e)
+        {
+            txtSegmentAddress.Text = EditSegmentAddress(txtSegmentAddress.Text);
+        }
+
+        private void txtCS1Block_DoubleClick(object sender, EventArgs e)
+        {
+            txtCS1Block.Text = EditSegmentAddress(txtCS1Block.Text);
+        }
+
+        private void txtCS2Block_DoubleClick(object sender, EventArgs e)
+        {
+            txtCS2Block.Text = EditSegmentAddress(txtCS2Block.Text);
         }
     }
 }

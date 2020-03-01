@@ -50,11 +50,7 @@
             this.txtCS1Address = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.txtCS2Address = new System.Windows.Forms.TextBox();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.listSegments = new System.Windows.Forms.ListView();
-            this.btnDelete = new System.Windows.Forms.Button();
-            this.btnAdd = new System.Windows.Forms.Button();
-            this.btnLoad = new System.Windows.Forms.Button();
+            this.btnApply = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.radioCS1Complement2 = new System.Windows.Forms.RadioButton();
             this.radioCS1Complement1 = new System.Windows.Forms.RadioButton();
@@ -74,12 +70,14 @@
             this.label8 = new System.Windows.Forms.Label();
             this.txtCS2Block = new System.Windows.Forms.TextBox();
             this.btnHelp = new System.Windows.Forms.Button();
-            this.btnNewXML = new System.Windows.Forms.Button();
             this.checkSwapBytes1 = new System.Windows.Forms.CheckBox();
             this.checkSwapBytes2 = new System.Windows.Forms.CheckBox();
-            this.btnMoveUp = new System.Windows.Forms.Button();
-            this.btnMoveDown = new System.Windows.Forms.Button();
-            this.labelXML = new System.Windows.Forms.Label();
+            this.btnOK = new System.Windows.Forms.Button();
+            this.label9 = new System.Windows.Forms.Label();
+            this.txtExtrainfo = new System.Windows.Forms.TextBox();
+            this.chkEeprom = new System.Windows.Forms.CheckBox();
+            this.txtComment = new System.Windows.Forms.TextBox();
+            this.labelComment = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -94,7 +92,7 @@
             this.groupBox1.Controls.Add(this.radioCS1SUM);
             this.groupBox1.Controls.Add(this.radioCS1Crc32);
             this.groupBox1.Controls.Add(this.radioCS1Crc16);
-            this.groupBox1.Location = new System.Drawing.Point(12, 348);
+            this.groupBox1.Location = new System.Drawing.Point(13, 181);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(122, 135);
             this.groupBox1.TabIndex = 0;
@@ -166,7 +164,7 @@
             // 
             // txtSegmentName
             // 
-            this.txtSegmentName.Location = new System.Drawing.Point(197, 187);
+            this.txtSegmentName.Location = new System.Drawing.Point(198, 12);
             this.txtSegmentName.Name = "txtSegmentName";
             this.txtSegmentName.Size = new System.Drawing.Size(190, 20);
             this.txtSegmentName.TabIndex = 1;
@@ -174,7 +172,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 188);
+            this.label1.Location = new System.Drawing.Point(8, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(81, 13);
             this.label1.TabIndex = 2;
@@ -183,7 +181,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(7, 214);
+            this.label2.Location = new System.Drawing.Point(8, 39);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(134, 13);
             this.label2.TabIndex = 3;
@@ -191,10 +189,11 @@
             // 
             // txtSegmentAddress
             // 
-            this.txtSegmentAddress.Location = new System.Drawing.Point(197, 211);
+            this.txtSegmentAddress.Location = new System.Drawing.Point(198, 36);
             this.txtSegmentAddress.Name = "txtSegmentAddress";
             this.txtSegmentAddress.Size = new System.Drawing.Size(190, 20);
             this.txtSegmentAddress.TabIndex = 2;
+            this.txtSegmentAddress.DoubleClick += new System.EventHandler(this.txtSegmentAddress_DoubleClick);
             // 
             // groupBox2
             // 
@@ -204,7 +203,7 @@
             this.groupBox2.Controls.Add(this.radioCS2SUM);
             this.groupBox2.Controls.Add(this.radioCS2Crc32);
             this.groupBox2.Controls.Add(this.radioCS2Crc16);
-            this.groupBox2.Location = new System.Drawing.Point(265, 348);
+            this.groupBox2.Location = new System.Drawing.Point(266, 181);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(124, 135);
             this.groupBox2.TabIndex = 6;
@@ -277,7 +276,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(8, 283);
+            this.label4.Location = new System.Drawing.Point(9, 108);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(141, 13);
             this.label4.TabIndex = 7;
@@ -285,15 +284,16 @@
             // 
             // txtCS1Address
             // 
-            this.txtCS1Address.Location = new System.Drawing.Point(149, 280);
+            this.txtCS1Address.Location = new System.Drawing.Point(150, 105);
             this.txtCS1Address.Name = "txtCS1Address";
-            this.txtCS1Address.Size = new System.Drawing.Size(71, 20);
+            this.txtCS1Address.Size = new System.Drawing.Size(110, 20);
             this.txtCS1Address.TabIndex = 5;
+            this.txtCS1Address.DoubleClick += new System.EventHandler(this.txtCS1Address_Doubleclick);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(316, 287);
+            this.label5.Location = new System.Drawing.Point(263, 112);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(141, 13);
             this.label5.TabIndex = 9;
@@ -301,67 +301,28 @@
             // 
             // txtCS2Address
             // 
-            this.txtCS2Address.Location = new System.Drawing.Point(458, 283);
+            this.txtCS2Address.Location = new System.Drawing.Point(410, 109);
             this.txtCS2Address.Name = "txtCS2Address";
-            this.txtCS2Address.Size = new System.Drawing.Size(72, 20);
+            this.txtCS2Address.Size = new System.Drawing.Size(119, 20);
             this.txtCS2Address.TabIndex = 6;
+            this.txtCS2Address.DoubleClick += new System.EventHandler(this.txtCS2Address_Doubleclick);
             // 
-            // btnSave
+            // btnApply
             // 
-            this.btnSave.Location = new System.Drawing.Point(455, 489);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 35);
-            this.btnSave.TabIndex = 31;
-            this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // listSegments
-            // 
-            this.listSegments.HideSelection = false;
-            this.listSegments.Location = new System.Drawing.Point(3, 35);
-            this.listSegments.Name = "listSegments";
-            this.listSegments.Size = new System.Drawing.Size(461, 141);
-            this.listSegments.TabIndex = 12;
-            this.listSegments.UseCompatibleStateImageBehavior = false;
-            this.listSegments.SelectedIndexChanged += new System.EventHandler(this.listSegments_SelectedIndexChanged);
-            // 
-            // btnDelete
-            // 
-            this.btnDelete.Location = new System.Drawing.Point(450, 211);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(79, 25);
-            this.btnDelete.TabIndex = 29;
-            this.btnDelete.Text = "Delete";
-            this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-            // 
-            // btnAdd
-            // 
-            this.btnAdd.Location = new System.Drawing.Point(450, 182);
-            this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(81, 25);
-            this.btnAdd.TabIndex = 28;
-            this.btnAdd.Text = "Apply";
-            this.btnAdd.UseVisualStyleBackColor = true;
-            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
-            // 
-            // btnLoad
-            // 
-            this.btnLoad.Location = new System.Drawing.Point(375, 489);
-            this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(74, 35);
-            this.btnLoad.TabIndex = 30;
-            this.btnLoad.Text = "Load";
-            this.btnLoad.UseVisualStyleBackColor = true;
-            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            this.btnApply.Location = new System.Drawing.Point(452, 45);
+            this.btnApply.Name = "btnApply";
+            this.btnApply.Size = new System.Drawing.Size(77, 25);
+            this.btnApply.TabIndex = 28;
+            this.btnApply.Text = "Apply";
+            this.btnApply.UseVisualStyleBackColor = true;
+            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.radioCS1Complement2);
             this.groupBox5.Controls.Add(this.radioCS1Complement1);
             this.groupBox5.Controls.Add(this.radioCS1Complement0);
-            this.groupBox5.Location = new System.Drawing.Point(140, 348);
+            this.groupBox5.Location = new System.Drawing.Point(141, 181);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(119, 88);
             this.groupBox5.TabIndex = 19;
@@ -406,7 +367,7 @@
             this.groupBox6.Controls.Add(this.radioCS2Complement2);
             this.groupBox6.Controls.Add(this.radioCS2Complement1);
             this.groupBox6.Controls.Add(this.radioCS2Complement0);
-            this.groupBox6.Location = new System.Drawing.Point(393, 348);
+            this.groupBox6.Location = new System.Drawing.Point(394, 181);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(139, 88);
             this.groupBox6.TabIndex = 20;
@@ -449,7 +410,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(7, 309);
+            this.label6.Location = new System.Drawing.Point(8, 134);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(107, 13);
             this.label6.TabIndex = 23;
@@ -458,7 +419,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(316, 312);
+            this.label7.Location = new System.Drawing.Point(263, 137);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(108, 13);
             this.label7.TabIndex = 24;
@@ -466,23 +427,24 @@
             // 
             // txtPNAddr
             // 
-            this.txtPNAddr.Location = new System.Drawing.Point(149, 306);
+            this.txtPNAddr.Location = new System.Drawing.Point(150, 131);
             this.txtPNAddr.Name = "txtPNAddr";
-            this.txtPNAddr.Size = new System.Drawing.Size(71, 20);
+            this.txtPNAddr.Size = new System.Drawing.Size(110, 20);
             this.txtPNAddr.TabIndex = 7;
+            this.txtPNAddr.DoubleClick += new System.EventHandler(this.txtPNAddr_Doubleclick);
             // 
             // txtVerAddr
             // 
-            this.txtVerAddr.Location = new System.Drawing.Point(458, 309);
+            this.txtVerAddr.Location = new System.Drawing.Point(410, 134);
             this.txtVerAddr.Name = "txtVerAddr";
-            this.txtVerAddr.Size = new System.Drawing.Size(72, 20);
+            this.txtVerAddr.Size = new System.Drawing.Size(119, 20);
             this.txtVerAddr.TabIndex = 8;
-            this.txtVerAddr.TextChanged += new System.EventHandler(this.txtVerAddr_TextChanged);
+            this.txtVerAddr.DoubleClick += new System.EventHandler(this.txtVerAddr_Doubleclick);
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(7, 334);
+            this.label12.Location = new System.Drawing.Point(8, 159);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(127, 13);
             this.label12.TabIndex = 31;
@@ -490,22 +452,24 @@
             // 
             // txtNrAddr
             // 
-            this.txtNrAddr.Location = new System.Drawing.Point(149, 331);
+            this.txtNrAddr.Location = new System.Drawing.Point(150, 156);
             this.txtNrAddr.Name = "txtNrAddr";
-            this.txtNrAddr.Size = new System.Drawing.Size(72, 20);
+            this.txtNrAddr.Size = new System.Drawing.Size(110, 20);
             this.txtNrAddr.TabIndex = 9;
+            this.txtNrAddr.DoubleClick += new System.EventHandler(this.txtNrAddr_Doubleclick);
             // 
             // txtCS1Block
             // 
-            this.txtCS1Block.Location = new System.Drawing.Point(197, 234);
+            this.txtCS1Block.Location = new System.Drawing.Point(198, 59);
             this.txtCS1Block.Name = "txtCS1Block";
             this.txtCS1Block.Size = new System.Drawing.Size(190, 20);
             this.txtCS1Block.TabIndex = 3;
+            this.txtCS1Block.DoubleClick += new System.EventHandler(this.txtCS1Block_DoubleClick);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(7, 234);
+            this.label3.Location = new System.Drawing.Point(8, 59);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(174, 13);
             this.label3.TabIndex = 35;
@@ -514,7 +478,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(8, 260);
+            this.label8.Location = new System.Drawing.Point(9, 85);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(174, 13);
             this.label8.TabIndex = 36;
@@ -522,35 +486,26 @@
             // 
             // txtCS2Block
             // 
-            this.txtCS2Block.Location = new System.Drawing.Point(197, 257);
+            this.txtCS2Block.Location = new System.Drawing.Point(198, 82);
             this.txtCS2Block.Name = "txtCS2Block";
             this.txtCS2Block.Size = new System.Drawing.Size(190, 20);
             this.txtCS2Block.TabIndex = 4;
+            this.txtCS2Block.DoubleClick += new System.EventHandler(this.txtCS2Block_DoubleClick);
             // 
             // btnHelp
             // 
-            this.btnHelp.Location = new System.Drawing.Point(13, 489);
+            this.btnHelp.Location = new System.Drawing.Point(452, 75);
             this.btnHelp.Name = "btnHelp";
-            this.btnHelp.Size = new System.Drawing.Size(75, 33);
+            this.btnHelp.Size = new System.Drawing.Size(75, 27);
             this.btnHelp.TabIndex = 37;
             this.btnHelp.Text = "Help";
             this.btnHelp.UseVisualStyleBackColor = true;
             this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
-            // btnNewXML
-            // 
-            this.btnNewXML.Location = new System.Drawing.Point(287, 490);
-            this.btnNewXML.Name = "btnNewXML";
-            this.btnNewXML.Size = new System.Drawing.Size(82, 34);
-            this.btnNewXML.TabIndex = 38;
-            this.btnNewXML.Text = "New XML";
-            this.btnNewXML.UseVisualStyleBackColor = true;
-            this.btnNewXML.Click += new System.EventHandler(this.btnNewXML_Click);
-            // 
             // checkSwapBytes1
             // 
             this.checkSwapBytes1.AutoSize = true;
-            this.checkSwapBytes1.Location = new System.Drawing.Point(146, 439);
+            this.checkSwapBytes1.Location = new System.Drawing.Point(147, 272);
             this.checkSwapBytes1.Name = "checkSwapBytes1";
             this.checkSwapBytes1.Size = new System.Drawing.Size(81, 17);
             this.checkSwapBytes1.TabIndex = 16;
@@ -560,54 +515,79 @@
             // checkSwapBytes2
             // 
             this.checkSwapBytes2.AutoSize = true;
-            this.checkSwapBytes2.Location = new System.Drawing.Point(399, 442);
+            this.checkSwapBytes2.Location = new System.Drawing.Point(400, 275);
             this.checkSwapBytes2.Name = "checkSwapBytes2";
             this.checkSwapBytes2.Size = new System.Drawing.Size(82, 17);
             this.checkSwapBytes2.TabIndex = 39;
             this.checkSwapBytes2.Text = "Swap Bytes";
             this.checkSwapBytes2.UseVisualStyleBackColor = true;
             // 
-            // btnMoveUp
+            // btnOK
             // 
-            this.btnMoveUp.Location = new System.Drawing.Point(469, 70);
-            this.btnMoveUp.Name = "btnMoveUp";
-            this.btnMoveUp.Size = new System.Drawing.Size(71, 26);
-            this.btnMoveUp.TabIndex = 40;
-            this.btnMoveUp.Text = "Move up";
-            this.btnMoveUp.UseVisualStyleBackColor = true;
-            this.btnMoveUp.Click += new System.EventHandler(this.btnMoveUp_Click);
+            this.btnOK.Location = new System.Drawing.Point(452, 13);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(77, 26);
+            this.btnOK.TabIndex = 40;
+            this.btnOK.Text = "OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
-            // btnMoveDown
+            // label9
             // 
-            this.btnMoveDown.Location = new System.Drawing.Point(469, 101);
-            this.btnMoveDown.Name = "btnMoveDown";
-            this.btnMoveDown.Size = new System.Drawing.Size(71, 23);
-            this.btnMoveDown.TabIndex = 41;
-            this.btnMoveDown.Text = "Move down";
-            this.btnMoveDown.UseVisualStyleBackColor = true;
-            this.btnMoveDown.Click += new System.EventHandler(this.btnMoveDown_Click);
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(263, 159);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(54, 13);
+            this.label9.TabIndex = 41;
+            this.label9.Text = "Extra info:";
             // 
-            // labelXML
+            // txtExtrainfo
             // 
-            this.labelXML.AutoSize = true;
-            this.labelXML.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelXML.Location = new System.Drawing.Point(7, 9);
-            this.labelXML.Name = "labelXML";
-            this.labelXML.Size = new System.Drawing.Size(13, 16);
-            this.labelXML.TabIndex = 42;
-            this.labelXML.Text = "-";
+            this.txtExtrainfo.Location = new System.Drawing.Point(410, 159);
+            this.txtExtrainfo.Name = "txtExtrainfo";
+            this.txtExtrainfo.Size = new System.Drawing.Size(120, 20);
+            this.txtExtrainfo.TabIndex = 42;
+            this.txtExtrainfo.DoubleClick += new System.EventHandler(this.txtExtrainfo_Doubleclick);
+            // 
+            // chkEeprom
+            // 
+            this.chkEeprom.AutoSize = true;
+            this.chkEeprom.Location = new System.Drawing.Point(15, 322);
+            this.chkEeprom.Name = "chkEeprom";
+            this.chkEeprom.Size = new System.Drawing.Size(271, 17);
+            this.chkEeprom.TabIndex = 43;
+            this.chkEeprom.Text = "P01 or P59 Eeprom segment (other settings ignored)";
+            this.chkEeprom.UseVisualStyleBackColor = true;
+            // 
+            // txtComment
+            // 
+            this.txtComment.Location = new System.Drawing.Point(11, 362);
+            this.txtComment.Name = "txtComment";
+            this.txtComment.Size = new System.Drawing.Size(516, 20);
+            this.txtComment.TabIndex = 44;
+            // 
+            // labelComment
+            // 
+            this.labelComment.AutoSize = true;
+            this.labelComment.Location = new System.Drawing.Point(8, 342);
+            this.labelComment.Name = "labelComment";
+            this.labelComment.Size = new System.Drawing.Size(59, 13);
+            this.labelComment.TabIndex = 45;
+            this.labelComment.Text = "Comments:";
             // 
             // frmSegmentSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(541, 536);
-            this.Controls.Add(this.labelXML);
-            this.Controls.Add(this.btnMoveDown);
-            this.Controls.Add(this.btnMoveUp);
+            this.ClientSize = new System.Drawing.Size(541, 385);
+            this.Controls.Add(this.labelComment);
+            this.Controls.Add(this.txtComment);
+            this.Controls.Add(this.chkEeprom);
+            this.Controls.Add(this.txtExtrainfo);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.btnOK);
             this.Controls.Add(this.checkSwapBytes2);
             this.Controls.Add(this.checkSwapBytes1);
-            this.Controls.Add(this.btnNewXML);
             this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.txtCS2Block);
             this.Controls.Add(this.label8);
@@ -619,13 +599,9 @@
             this.Controls.Add(this.txtPNAddr);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.btnLoad);
-            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
-            this.Controls.Add(this.btnAdd);
-            this.Controls.Add(this.btnDelete);
-            this.Controls.Add(this.listSegments);
+            this.Controls.Add(this.btnApply);
             this.Controls.Add(this.txtCS2Address);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.txtCS1Address);
@@ -673,11 +649,7 @@
         private System.Windows.Forms.TextBox txtCS2Address;
         private System.Windows.Forms.RadioButton radioCS1None;
         private System.Windows.Forms.RadioButton radioCS2None;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnDelete;
-        private System.Windows.Forms.Button btnAdd;
-        private System.Windows.Forms.Button btnLoad;
-        public System.Windows.Forms.ListView listSegments;
+        private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.RadioButton radioCS1DwordSum;
         private System.Windows.Forms.RadioButton radioCS2DwordSum;
         private System.Windows.Forms.GroupBox groupBox5;
@@ -699,11 +671,13 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox txtCS2Block;
         private System.Windows.Forms.Button btnHelp;
-        private System.Windows.Forms.Button btnNewXML;
         private System.Windows.Forms.CheckBox checkSwapBytes1;
         private System.Windows.Forms.CheckBox checkSwapBytes2;
-        private System.Windows.Forms.Button btnMoveUp;
-        private System.Windows.Forms.Button btnMoveDown;
-        private System.Windows.Forms.Label labelXML;
+        private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox txtExtrainfo;
+        private System.Windows.Forms.CheckBox chkEeprom;
+        private System.Windows.Forms.TextBox txtComment;
+        private System.Windows.Forms.Label labelComment;
     }
 }

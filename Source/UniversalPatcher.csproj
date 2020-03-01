@@ -26,6 +26,7 @@
     <ApplicationVersion>0.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -59,6 +60,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="frmEditSegmentAddr.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditSegmentAddr.Designer.cs">
+      <DependentUpon>frmEditSegmentAddr.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditAddress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditAddress.Designer.cs">
+      <DependentUpon>frmEditAddress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GmEeprom.cs" />
+    <Compile Include="frmSegmenList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSegmenList.Designer.cs">
+      <DependentUpon>frmSegmenList.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,6 +100,15 @@
     <Compile Include="PatcherFunctions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="frmEditAddress.resx">
+      <DependentUpon>frmEditAddress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditSegmentAddr.resx">
+      <DependentUpon>frmEditSegmentAddr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSegmenList.resx">
+      <DependentUpon>frmSegmenList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </EmbeddedResource>

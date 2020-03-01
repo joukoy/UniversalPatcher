@@ -30,7 +30,7 @@ public class upatcher
         public AddressData PNaddr;
         public AddressData VerAddr;
         public AddressData SegNrAddr;
-
+        public List<AddressData> ExtraInfo;
     }
 
     public struct SegmentConfig
@@ -47,9 +47,12 @@ public class upatcher
         public short CS2Complement;   //Calculate 1's or 2's Complement from Checksum?
         public bool CS1SwapBytes;
         public bool CS2SwapBytes;
+        public bool Eeprom;         //Special case: P01 or P59 Eeprom segment
         public string PNAddr;
         public string VerAddr;
         public string SegNrAddr;
+        public string ExtraInfo;
+        public string Comment;
     }
 
     public const short CSMethod_None = 0;
@@ -65,11 +68,11 @@ public class upatcher
 
     public struct AddressData
     {
+        public string Name;
         public uint Address;
         public ushort Bytes;
         public ushort Type;
     }
-
 
     public const ushort TypeText = 0;
     public const ushort TypeHex = 1;
@@ -390,6 +393,43 @@ public class upatcher
         return true;
     }
 
+    public static List<AddressData> ParseExtraInfo(byte[] buf, string Line, uint SegmentAddress)
+    {
+        List<AddressData> LEX = new List<AddressData>();
+        if (Line == null || Line.Length == 0 || !Line.Contains(":"))
+            return LEX;
+
+        string[] LineParts = Line.Split(',');
+        foreach (string LinePart in LineParts )
+        {
+            AddressData E = new AddressData();
+            string[] AddrParts = LinePart.Split(':');
+            if (AddrParts.Length < 3)
+                return LEX;
+
+            E.Name = AddrParts[0];
+            if (!HexToUint(AddrParts[1].Replace("#", ""), out E.Address))
+                return LEX;
+
+            if (AddrParts[1].StartsWith("#"))
+            {
+                E.Address += SegmentAddress;
+            }
+
+            if (AddrParts.Length > 2)
+                UInt16.TryParse(AddrParts[2], out E.Bytes);
+            E.Type = TypeInt;
+            if (AddrParts.Length > 3)
+            {
+                if (AddrParts[3].ToLower() == "hex")
+                    E.Type = TypeHex;
+                else if (AddrParts[3].ToLower() == "text")
+                    E.Type = TypeText;
+            }
+            LEX.Add(E);
+        }
+        return LEX;
+    }
     public static void GetSegmentAddresses(byte[] buf, out BinFile[] binfile)
     {
         binfile = new BinFile[Segments.Count];
@@ -413,6 +453,7 @@ public class upatcher
                 binfile[i].PNaddr = ParseAddress(S.PNAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
             binfile[i].VerAddr = ParseAddress(S.VerAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
             binfile[i].SegNrAddr = ParseAddress(S.SegNrAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
+            binfile[i].ExtraInfo = ParseExtraInfo(buf, S.ExtraInfo, binfile[i].SegmentBlocks[0].Start);
         }
     }
     public static byte[] ReadBin(string FileName, uint FileOffset, uint Length)

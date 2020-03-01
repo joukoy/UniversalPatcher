@@ -18,20 +18,20 @@ namespace UniversalPatcher
             InitializeComponent();
         }
 
-        private frmSegmentSettings frmSS;
+        private frmSegmenList frmSL;
         private FrmPatcher frmP;
 
         private void btnSegments_Click(object sender, EventArgs e)
         {
 
-            if (frmSS != null && frmSS.Visible)
+            if (frmSL != null && frmSL.Visible)
             {
-                frmSS.BringToFront();
+                frmSL.BringToFront();
                 return;
             }
-            frmSS = new frmSegmentSettings();
-            frmSS.Show(this);
-            frmSS.InitMe();
+            frmSL = new frmSegmenList();
+            frmSL.Show(this);
+            frmSL.InitMe();
 
         }
 

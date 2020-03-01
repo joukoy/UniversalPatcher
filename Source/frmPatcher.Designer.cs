@@ -49,15 +49,17 @@
             this.numSuppress = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.btnLoad = new System.Windows.Forms.Button();
+            this.chkCompareAll = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOrgFile
             // 
-            this.btnOrgFile.Location = new System.Drawing.Point(12, 29);
+            this.btnOrgFile.Location = new System.Drawing.Point(12, 31);
             this.btnOrgFile.Name = "btnOrgFile";
-            this.btnOrgFile.Size = new System.Drawing.Size(100, 25);
+            this.btnOrgFile.Size = new System.Drawing.Size(78, 25);
             this.btnOrgFile.TabIndex = 1;
             this.btnOrgFile.Text = "Original file";
             this.btnOrgFile.UseVisualStyleBackColor = true;
@@ -65,9 +67,9 @@
             // 
             // btnModFile
             // 
-            this.btnModFile.Location = new System.Drawing.Point(12, 60);
+            this.btnModFile.Location = new System.Drawing.Point(12, 62);
             this.btnModFile.Name = "btnModFile";
-            this.btnModFile.Size = new System.Drawing.Size(100, 25);
+            this.btnModFile.Size = new System.Drawing.Size(78, 25);
             this.btnModFile.TabIndex = 2;
             this.btnModFile.Text = "Modified file";
             this.btnModFile.UseVisualStyleBackColor = true;
@@ -75,16 +77,16 @@
             // 
             // txtBaseFile
             // 
-            this.txtBaseFile.Location = new System.Drawing.Point(118, 34);
+            this.txtBaseFile.Location = new System.Drawing.Point(96, 34);
             this.txtBaseFile.Name = "txtBaseFile";
-            this.txtBaseFile.Size = new System.Drawing.Size(597, 20);
+            this.txtBaseFile.Size = new System.Drawing.Size(619, 20);
             this.txtBaseFile.TabIndex = 3;
             // 
             // txtModifierFile
             // 
-            this.txtModifierFile.Location = new System.Drawing.Point(118, 65);
+            this.txtModifierFile.Location = new System.Drawing.Point(96, 65);
             this.txtModifierFile.Name = "txtModifierFile";
-            this.txtModifierFile.Size = new System.Drawing.Size(595, 20);
+            this.txtModifierFile.Size = new System.Drawing.Size(617, 20);
             this.txtModifierFile.TabIndex = 4;
             this.txtModifierFile.TextChanged += new System.EventHandler(this.txtModifierFile_TextChanged);
             // 
@@ -92,7 +94,7 @@
             // 
             this.btnCompare.Location = new System.Drawing.Point(12, 117);
             this.btnCompare.Name = "btnCompare";
-            this.btnCompare.Size = new System.Drawing.Size(97, 25);
+            this.btnCompare.Size = new System.Drawing.Size(78, 25);
             this.btnCompare.TabIndex = 5;
             this.btnCompare.Text = "Compare";
             this.btnCompare.UseVisualStyleBackColor = true;
@@ -111,7 +113,7 @@
             // btnSave
             // 
             this.btnSave.Enabled = false;
-            this.btnSave.Location = new System.Drawing.Point(640, 400);
+            this.btnSave.Location = new System.Drawing.Point(640, 420);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(77, 32);
             this.btnSave.TabIndex = 7;
@@ -122,15 +124,15 @@
             // txtPatchName
             // 
             this.txtPatchName.Enabled = false;
-            this.txtPatchName.Location = new System.Drawing.Point(12, 412);
+            this.txtPatchName.Location = new System.Drawing.Point(107, 391);
             this.txtPatchName.Name = "txtPatchName";
-            this.txtPatchName.Size = new System.Drawing.Size(536, 20);
+            this.txtPatchName.Size = new System.Drawing.Size(606, 20);
             this.txtPatchName.TabIndex = 8;
             // 
             // labelBinSize
             // 
             this.labelBinSize.AutoSize = true;
-            this.labelBinSize.Location = new System.Drawing.Point(176, 123);
+            this.labelBinSize.Location = new System.Drawing.Point(150, 123);
             this.labelBinSize.Name = "labelBinSize";
             this.labelBinSize.Size = new System.Drawing.Size(10, 13);
             this.labelBinSize.TabIndex = 9;
@@ -139,7 +141,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(119, 123);
+            this.label1.Location = new System.Drawing.Point(93, 123);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(51, 13);
             this.label1.TabIndex = 10;
@@ -160,7 +162,7 @@
             this.groupBox1.Controls.Add(this.radioCreate);
             this.groupBox1.Location = new System.Drawing.Point(14, -10);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(225, 38);
+            this.groupBox1.Size = new System.Drawing.Size(208, 38);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             // 
@@ -191,22 +193,21 @@
             // 
             // btnSegments
             // 
-            this.btnSegments.Location = new System.Drawing.Point(650, 6);
+            this.btnSegments.Location = new System.Drawing.Point(618, 6);
             this.btnSegments.Name = "btnSegments";
-            this.btnSegments.Size = new System.Drawing.Size(67, 26);
+            this.btnSegments.Size = new System.Drawing.Size(99, 22);
             this.btnSegments.TabIndex = 14;
-            this.btnSegments.Text = "Segments";
+            this.btnSegments.Text = "Setup segments";
             this.btnSegments.UseVisualStyleBackColor = true;
-            this.btnSegments.Visible = false;
             this.btnSegments.Click += new System.EventHandler(this.btnSegments_Click);
             // 
             // btnCheckSums
             // 
-            this.btnCheckSums.Location = new System.Drawing.Point(641, 118);
+            this.btnCheckSums.Location = new System.Drawing.Point(456, 420);
             this.btnCheckSums.Name = "btnCheckSums";
-            this.btnCheckSums.Size = new System.Drawing.Size(76, 24);
+            this.btnCheckSums.Size = new System.Drawing.Size(92, 32);
             this.btnCheckSums.TabIndex = 15;
-            this.btnCheckSums.Text = "Checksums";
+            this.btnCheckSums.Text = "Fix checksums";
             this.btnCheckSums.UseVisualStyleBackColor = true;
             this.btnCheckSums.Click += new System.EventHandler(this.btnCheckSums_Click);
             // 
@@ -214,7 +215,7 @@
             // 
             this.labelXML.AutoSize = true;
             this.labelXML.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelXML.Location = new System.Drawing.Point(248, 6);
+            this.labelXML.Location = new System.Drawing.Point(228, 6);
             this.labelXML.Name = "labelXML";
             this.labelXML.Size = new System.Drawing.Size(13, 16);
             this.labelXML.TabIndex = 16;
@@ -223,7 +224,7 @@
             // btnShowPatch
             // 
             this.btnShowPatch.Enabled = false;
-            this.btnShowPatch.Location = new System.Drawing.Point(554, 400);
+            this.btnShowPatch.Location = new System.Drawing.Point(554, 421);
             this.btnShowPatch.Name = "btnShowPatch";
             this.btnShowPatch.Size = new System.Drawing.Size(80, 31);
             this.btnShowPatch.TabIndex = 17;
@@ -233,7 +234,7 @@
             // 
             // numSuppress
             // 
-            this.numSuppress.Location = new System.Drawing.Point(429, 123);
+            this.numSuppress.Location = new System.Drawing.Point(640, 123);
             this.numSuppress.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -252,26 +253,48 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(312, 125);
+            this.label2.Location = new System.Drawing.Point(523, 125);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(111, 13);
+            this.label2.Size = new System.Drawing.Size(113, 13);
             this.label2.TabIndex = 19;
-            this.label2.Text = "Suppress output after:";
+            this.label2.Text = "Suppress display after:";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(477, 125);
+            this.label3.Location = new System.Drawing.Point(688, 125);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(29, 13);
             this.label3.TabIndex = 20;
             this.label3.Text = "rows";
             // 
+            // btnLoad
+            // 
+            this.btnLoad.Location = new System.Drawing.Point(529, 6);
+            this.btnLoad.Name = "btnLoad";
+            this.btnLoad.Size = new System.Drawing.Size(83, 22);
+            this.btnLoad.TabIndex = 21;
+            this.btnLoad.Text = "Load config...";
+            this.btnLoad.UseVisualStyleBackColor = true;
+            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            // 
+            // chkCompareAll
+            // 
+            this.chkCompareAll.AutoSize = true;
+            this.chkCompareAll.Location = new System.Drawing.Point(248, 125);
+            this.chkCompareAll.Name = "chkCompareAll";
+            this.chkCompareAll.Size = new System.Drawing.Size(167, 17);
+            this.chkCompareAll.TabIndex = 22;
+            this.chkCompareAll.Text = "Compare all (ignore segments)";
+            this.chkCompareAll.UseVisualStyleBackColor = true;
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(729, 445);
+            this.ClientSize = new System.Drawing.Size(729, 458);
+            this.Controls.Add(this.chkCompareAll);
+            this.Controls.Add(this.btnLoad);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.numSuppress);
@@ -324,5 +347,7 @@
         private System.Windows.Forms.NumericUpDown numSuppress;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button btnLoad;
+        private System.Windows.Forms.CheckBox chkCompareAll;
     }
 }
