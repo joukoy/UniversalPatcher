@@ -187,8 +187,15 @@ namespace UniversalPatcher
         {
             txtCS1Address.Text = EditAddress(txtCS1Address.Text);
         }
-
+        private void btnCS1Addr_Click(object sender, EventArgs e)
+        {
+            txtCS1Address.Text = EditAddress(txtCS1Address.Text);
+        }
         private void txtPNAddr_Doubleclick(object sender, EventArgs e)
+        {
+            txtPNAddr.Text = EditAddress(txtPNAddr.Text);
+        }
+        private void btnPNAddr_Click(object sender, EventArgs e)
         {
             txtPNAddr.Text = EditAddress(txtPNAddr.Text);
         }
@@ -197,8 +204,16 @@ namespace UniversalPatcher
         {
             txtNrAddr.Text = EditAddress(txtNrAddr.Text);
         }
+        private void btnSegNrAddr_Click(object sender, EventArgs e)
+        {
+            txtNrAddr.Text = EditAddress(txtNrAddr.Text);
+        }
 
         private void txtCS2Address_Doubleclick(object sender, EventArgs e)
+        {
+            txtCS2Address.Text = EditAddress(txtCS2Address.Text);
+        }
+        private void btnCS2Addr_Click(object sender, EventArgs e)
         {
             txtCS2Address.Text = EditAddress(txtCS2Address.Text);
         }
@@ -207,8 +222,19 @@ namespace UniversalPatcher
         {
             txtVerAddr.Text = EditAddress(txtVerAddr.Text);
         }
+        private void btnVerAddr_Click(object sender, EventArgs e)
+        {
+            txtVerAddr.Text = EditAddress(txtVerAddr.Text);
+        }
 
         private void txtExtrainfo_Doubleclick(object sender, EventArgs e)
+        {
+            if (txtExtrainfo.Text.Length == 0)
+                txtExtrainfo.Text = EditAddress(txtExtrainfo.Text, true);
+            else
+                txtExtrainfo.Text += "," + EditAddress(txtExtrainfo.Text, true);
+        }
+        private void btnExtraAddr_Click(object sender, EventArgs e)
         {
             if (txtExtrainfo.Text.Length == 0)
                 txtExtrainfo.Text = EditAddress(txtExtrainfo.Text, true);
@@ -221,8 +247,16 @@ namespace UniversalPatcher
         {
             txtSegmentAddress.Text = EditSegmentAddress(txtSegmentAddress.Text);
         }
+        private void btnEditSegmentAddr_Click(object sender, EventArgs e)
+        {
+            txtSegmentAddress.Text = EditSegmentAddress(txtSegmentAddress.Text);
+        }
 
         private void txtCS1Block_DoubleClick(object sender, EventArgs e)
+        {
+            txtCS1Block.Text = EditSegmentAddress(txtCS1Block.Text);
+        }
+        private void btnCs1Block_Click(object sender, EventArgs e)
         {
             txtCS1Block.Text = EditSegmentAddress(txtCS1Block.Text);
         }
@@ -231,5 +265,10 @@ namespace UniversalPatcher
         {
             txtCS2Block.Text = EditSegmentAddress(txtCS2Block.Text);
         }
+        private void btnCs2block_Click(object sender, EventArgs e)
+        {
+            txtCS2Block.Text = EditSegmentAddress(txtCS2Block.Text);
+        }
+
     }
 }

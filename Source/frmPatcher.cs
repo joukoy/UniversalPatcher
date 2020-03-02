@@ -43,6 +43,20 @@ namespace UniversalPatcher
             addCheckBoxes();
             numSuppress.Value = Properties.Settings.Default.SuppressAfter;
 
+            if (!File.Exists(Path.Combine(Application.StartupPath, "Patches")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
+            if (!File.Exists(Path.Combine(Application.StartupPath, "XML")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
+
+            Properties.Settings.Default.LastBINfolder = Properties.Settings.Default.LastBINfolder;
+            Properties.Settings.Default.LastPATCHfolder = Properties.Settings.Default.LastPATCHfolder;
+            Properties.Settings.Default.LastXMLfolder = Properties.Settings.Default.LastXMLfolder;
+
+            if (Properties.Settings.Default.LastXMLfolder == "")
+                Properties.Settings.Default.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
+            if (Properties.Settings.Default.LastPATCHfolder == "")
+                Properties.Settings.Default.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
+
         }
 
         public void addCheckBoxes()

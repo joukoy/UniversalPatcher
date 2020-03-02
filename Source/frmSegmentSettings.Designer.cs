@@ -78,6 +78,15 @@
             this.chkEeprom = new System.Windows.Forms.CheckBox();
             this.txtComment = new System.Windows.Forms.TextBox();
             this.labelComment = new System.Windows.Forms.Label();
+            this.btnEditSegmentAddr = new System.Windows.Forms.Button();
+            this.btnCs1Block = new System.Windows.Forms.Button();
+            this.btnCs2block = new System.Windows.Forms.Button();
+            this.btnSegNrAddr = new System.Windows.Forms.Button();
+            this.btnPNAddr = new System.Windows.Forms.Button();
+            this.btnCS1Addr = new System.Windows.Forms.Button();
+            this.btnExtraAddr = new System.Windows.Forms.Button();
+            this.btnVerAddr = new System.Windows.Forms.Button();
+            this.btnCS2Addr = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -286,14 +295,14 @@
             // 
             this.txtCS1Address.Location = new System.Drawing.Point(150, 105);
             this.txtCS1Address.Name = "txtCS1Address";
-            this.txtCS1Address.Size = new System.Drawing.Size(110, 20);
+            this.txtCS1Address.Size = new System.Drawing.Size(86, 20);
             this.txtCS1Address.TabIndex = 5;
             this.txtCS1Address.DoubleClick += new System.EventHandler(this.txtCS1Address_Doubleclick);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(263, 112);
+            this.label5.Location = new System.Drawing.Point(274, 112);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(141, 13);
             this.label5.TabIndex = 9;
@@ -301,9 +310,9 @@
             // 
             // txtCS2Address
             // 
-            this.txtCS2Address.Location = new System.Drawing.Point(410, 109);
+            this.txtCS2Address.Location = new System.Drawing.Point(413, 108);
             this.txtCS2Address.Name = "txtCS2Address";
-            this.txtCS2Address.Size = new System.Drawing.Size(119, 20);
+            this.txtCS2Address.Size = new System.Drawing.Size(86, 20);
             this.txtCS2Address.TabIndex = 6;
             this.txtCS2Address.DoubleClick += new System.EventHandler(this.txtCS2Address_Doubleclick);
             // 
@@ -410,7 +419,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(8, 134);
+            this.label6.Location = new System.Drawing.Point(8, 133);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(107, 13);
             this.label6.TabIndex = 23;
@@ -419,7 +428,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(263, 137);
+            this.label7.Location = new System.Drawing.Point(274, 133);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(108, 13);
             this.label7.TabIndex = 24;
@@ -427,24 +436,24 @@
             // 
             // txtPNAddr
             // 
-            this.txtPNAddr.Location = new System.Drawing.Point(150, 131);
+            this.txtPNAddr.Location = new System.Drawing.Point(150, 127);
             this.txtPNAddr.Name = "txtPNAddr";
-            this.txtPNAddr.Size = new System.Drawing.Size(110, 20);
+            this.txtPNAddr.Size = new System.Drawing.Size(86, 20);
             this.txtPNAddr.TabIndex = 7;
             this.txtPNAddr.DoubleClick += new System.EventHandler(this.txtPNAddr_Doubleclick);
             // 
             // txtVerAddr
             // 
-            this.txtVerAddr.Location = new System.Drawing.Point(410, 134);
+            this.txtVerAddr.Location = new System.Drawing.Point(413, 130);
             this.txtVerAddr.Name = "txtVerAddr";
-            this.txtVerAddr.Size = new System.Drawing.Size(119, 20);
+            this.txtVerAddr.Size = new System.Drawing.Size(86, 20);
             this.txtVerAddr.TabIndex = 8;
             this.txtVerAddr.DoubleClick += new System.EventHandler(this.txtVerAddr_Doubleclick);
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(8, 159);
+            this.label12.Location = new System.Drawing.Point(8, 154);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(127, 13);
             this.label12.TabIndex = 31;
@@ -452,9 +461,9 @@
             // 
             // txtNrAddr
             // 
-            this.txtNrAddr.Location = new System.Drawing.Point(150, 156);
+            this.txtNrAddr.Location = new System.Drawing.Point(150, 150);
             this.txtNrAddr.Name = "txtNrAddr";
-            this.txtNrAddr.Size = new System.Drawing.Size(110, 20);
+            this.txtNrAddr.Size = new System.Drawing.Size(86, 20);
             this.txtNrAddr.TabIndex = 9;
             this.txtNrAddr.DoubleClick += new System.EventHandler(this.txtNrAddr_Doubleclick);
             // 
@@ -535,7 +544,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(263, 159);
+            this.label9.Location = new System.Drawing.Point(274, 154);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(54, 13);
             this.label9.TabIndex = 41;
@@ -543,9 +552,9 @@
             // 
             // txtExtrainfo
             // 
-            this.txtExtrainfo.Location = new System.Drawing.Point(410, 159);
+            this.txtExtrainfo.Location = new System.Drawing.Point(413, 153);
             this.txtExtrainfo.Name = "txtExtrainfo";
-            this.txtExtrainfo.Size = new System.Drawing.Size(120, 20);
+            this.txtExtrainfo.Size = new System.Drawing.Size(86, 20);
             this.txtExtrainfo.TabIndex = 42;
             this.txtExtrainfo.DoubleClick += new System.EventHandler(this.txtExtrainfo_Doubleclick);
             // 
@@ -563,7 +572,7 @@
             // 
             this.txtComment.Location = new System.Drawing.Point(11, 362);
             this.txtComment.Name = "txtComment";
-            this.txtComment.Size = new System.Drawing.Size(516, 20);
+            this.txtComment.Size = new System.Drawing.Size(522, 20);
             this.txtComment.TabIndex = 44;
             // 
             // labelComment
@@ -575,11 +584,110 @@
             this.labelComment.TabIndex = 45;
             this.labelComment.Text = "Comments:";
             // 
+            // btnEditSegmentAddr
+            // 
+            this.btnEditSegmentAddr.Location = new System.Drawing.Point(388, 36);
+            this.btnEditSegmentAddr.Name = "btnEditSegmentAddr";
+            this.btnEditSegmentAddr.Size = new System.Drawing.Size(27, 20);
+            this.btnEditSegmentAddr.TabIndex = 46;
+            this.btnEditSegmentAddr.Text = "..";
+            this.btnEditSegmentAddr.UseVisualStyleBackColor = true;
+            this.btnEditSegmentAddr.Click += new System.EventHandler(this.btnEditSegmentAddr_Click);
+            // 
+            // btnCs1Block
+            // 
+            this.btnCs1Block.Location = new System.Drawing.Point(388, 59);
+            this.btnCs1Block.Name = "btnCs1Block";
+            this.btnCs1Block.Size = new System.Drawing.Size(27, 20);
+            this.btnCs1Block.TabIndex = 47;
+            this.btnCs1Block.Text = "..";
+            this.btnCs1Block.UseVisualStyleBackColor = true;
+            this.btnCs1Block.Click += new System.EventHandler(this.btnCs1Block_Click);
+            // 
+            // btnCs2block
+            // 
+            this.btnCs2block.Location = new System.Drawing.Point(388, 82);
+            this.btnCs2block.Name = "btnCs2block";
+            this.btnCs2block.Size = new System.Drawing.Size(27, 20);
+            this.btnCs2block.TabIndex = 48;
+            this.btnCs2block.Text = "..";
+            this.btnCs2block.UseVisualStyleBackColor = true;
+            this.btnCs2block.Click += new System.EventHandler(this.btnCs2block_Click);
+            // 
+            // btnSegNrAddr
+            // 
+            this.btnSegNrAddr.Location = new System.Drawing.Point(236, 150);
+            this.btnSegNrAddr.Name = "btnSegNrAddr";
+            this.btnSegNrAddr.Size = new System.Drawing.Size(27, 20);
+            this.btnSegNrAddr.TabIndex = 51;
+            this.btnSegNrAddr.Text = "..";
+            this.btnSegNrAddr.UseVisualStyleBackColor = true;
+            this.btnSegNrAddr.Click += new System.EventHandler(this.btnSegNrAddr_Click);
+            // 
+            // btnPNAddr
+            // 
+            this.btnPNAddr.Location = new System.Drawing.Point(236, 127);
+            this.btnPNAddr.Name = "btnPNAddr";
+            this.btnPNAddr.Size = new System.Drawing.Size(27, 20);
+            this.btnPNAddr.TabIndex = 50;
+            this.btnPNAddr.Text = "..";
+            this.btnPNAddr.UseVisualStyleBackColor = true;
+            this.btnPNAddr.Click += new System.EventHandler(this.btnPNAddr_Click);
+            // 
+            // btnCS1Addr
+            // 
+            this.btnCS1Addr.Location = new System.Drawing.Point(236, 105);
+            this.btnCS1Addr.Name = "btnCS1Addr";
+            this.btnCS1Addr.Size = new System.Drawing.Size(27, 20);
+            this.btnCS1Addr.TabIndex = 49;
+            this.btnCS1Addr.Text = "..";
+            this.btnCS1Addr.UseVisualStyleBackColor = true;
+            this.btnCS1Addr.Click += new System.EventHandler(this.btnCS1Addr_Click);
+            // 
+            // btnExtraAddr
+            // 
+            this.btnExtraAddr.Location = new System.Drawing.Point(500, 152);
+            this.btnExtraAddr.Name = "btnExtraAddr";
+            this.btnExtraAddr.Size = new System.Drawing.Size(27, 20);
+            this.btnExtraAddr.TabIndex = 54;
+            this.btnExtraAddr.Text = "..";
+            this.btnExtraAddr.UseVisualStyleBackColor = true;
+            this.btnExtraAddr.Click += new System.EventHandler(this.btnExtraAddr_Click);
+            // 
+            // btnVerAddr
+            // 
+            this.btnVerAddr.Location = new System.Drawing.Point(500, 129);
+            this.btnVerAddr.Name = "btnVerAddr";
+            this.btnVerAddr.Size = new System.Drawing.Size(27, 20);
+            this.btnVerAddr.TabIndex = 53;
+            this.btnVerAddr.Text = "..";
+            this.btnVerAddr.UseVisualStyleBackColor = true;
+            this.btnVerAddr.Click += new System.EventHandler(this.btnVerAddr_Click);
+            // 
+            // btnCS2Addr
+            // 
+            this.btnCS2Addr.Location = new System.Drawing.Point(500, 107);
+            this.btnCS2Addr.Name = "btnCS2Addr";
+            this.btnCS2Addr.Size = new System.Drawing.Size(27, 20);
+            this.btnCS2Addr.TabIndex = 52;
+            this.btnCS2Addr.Text = "..";
+            this.btnCS2Addr.UseVisualStyleBackColor = true;
+            this.btnCS2Addr.Click += new System.EventHandler(this.btnCS2Addr_Click);
+            // 
             // frmSegmentSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(541, 385);
+            this.Controls.Add(this.btnExtraAddr);
+            this.Controls.Add(this.btnVerAddr);
+            this.Controls.Add(this.btnCS2Addr);
+            this.Controls.Add(this.btnSegNrAddr);
+            this.Controls.Add(this.btnPNAddr);
+            this.Controls.Add(this.btnCS1Addr);
+            this.Controls.Add(this.btnCs2block);
+            this.Controls.Add(this.btnCs1Block);
+            this.Controls.Add(this.btnEditSegmentAddr);
             this.Controls.Add(this.labelComment);
             this.Controls.Add(this.txtComment);
             this.Controls.Add(this.chkEeprom);
@@ -679,5 +787,14 @@
         private System.Windows.Forms.CheckBox chkEeprom;
         private System.Windows.Forms.TextBox txtComment;
         private System.Windows.Forms.Label labelComment;
+        private System.Windows.Forms.Button btnEditSegmentAddr;
+        private System.Windows.Forms.Button btnCs1Block;
+        private System.Windows.Forms.Button btnCs2block;
+        private System.Windows.Forms.Button btnSegNrAddr;
+        private System.Windows.Forms.Button btnPNAddr;
+        private System.Windows.Forms.Button btnCS1Addr;
+        private System.Windows.Forms.Button btnExtraAddr;
+        private System.Windows.Forms.Button btnVerAddr;
+        private System.Windows.Forms.Button btnCS2Addr;
     }
 }
