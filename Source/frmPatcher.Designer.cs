@@ -51,6 +51,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.btnLoad = new System.Windows.Forms.Button();
             this.chkCompareAll = new System.Windows.Forms.CheckBox();
+            this.chkAutodetect = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.SuspendLayout();
@@ -288,11 +289,22 @@
             this.chkCompareAll.Text = "Compare all (ignore segments)";
             this.chkCompareAll.UseVisualStyleBackColor = true;
             // 
+            // chkAutodetect
+            // 
+            this.chkAutodetect.AutoSize = true;
+            this.chkAutodetect.Location = new System.Drawing.Point(429, 10);
+            this.chkAutodetect.Name = "chkAutodetect";
+            this.chkAutodetect.Size = new System.Drawing.Size(94, 17);
+            this.chkAutodetect.TabIndex = 23;
+            this.chkAutodetect.Text = "Autodetect file";
+            this.chkAutodetect.UseVisualStyleBackColor = true;
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(729, 458);
+            this.Controls.Add(this.chkAutodetect);
             this.Controls.Add(this.chkCompareAll);
             this.Controls.Add(this.btnLoad);
             this.Controls.Add(this.label3);
@@ -349,5 +361,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnLoad;
         private System.Windows.Forms.CheckBox chkCompareAll;
+        private System.Windows.Forms.CheckBox chkAutodetect;
     }
 }

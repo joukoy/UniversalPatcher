@@ -10,6 +10,10 @@ using System.IO;
 using static upatcher;
 using System.Text.RegularExpressions;
 
+using System.Threading;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
 namespace UniversalPatcher
 {
     public partial class FrmPatcher : Form
@@ -34,7 +38,7 @@ namespace UniversalPatcher
             this.Show();
             labelXML.Text = Path.GetFileName(XMLFile);
             string[] args = Environment.GetCommandLineArgs();
-            if (args.Length > 1 && File.Exists(args[1]) )
+            if (args.Length > 1 && File.Exists(args[1]))
             {
                 Logger(args[1]);
                 frmSegmenList frmSL = new frmSegmenList();
@@ -64,7 +68,7 @@ namespace UniversalPatcher
             if (LastXML == XMLFile && chkSegments != null && chkSegments.Length == Segments.Count)
                 return;
             if (chkSegments != null)
-            { 
+            {
                 for (int s = 0; s < chkSegments.Length; s++)
                 {
                     chkSegments[s].Dispose();
@@ -95,7 +99,7 @@ namespace UniversalPatcher
             if (!radioCreate.Checked || txtBaseFile.Text == "" || txtModifierFile.Text == "")
                 return;
 
-            labelXML.Text = Path.GetFileName(XMLFile);            
+            labelXML.Text = Path.GetFileName(XMLFile);
             for (int s = 0; s < Segments.Count; s++)
             {
                 CheckBox chk = null;
@@ -125,10 +129,17 @@ namespace UniversalPatcher
 
         private void GetFileInfo(string FileName, ref BinFile[] binfile, ref byte[] buf)
         {
-            labelXML.Text = Path.GetFileName(XMLFile);
-            addCheckBoxes();
             try
             {
+                if (chkAutodetect.Checked)
+                {
+                    string ConfFile = Autodetect(FileName);
+                    ConfFile = Path.Combine(Application.StartupPath,"XML", ConfFile);
+                    frmSegmenList frmSL = new frmSegmenList();
+                    frmSL.LoadFile(ConfFile);
+                }
+                labelXML.Text = Path.GetFileName(XMLFile);
+                addCheckBoxes();
                 Logger(Environment.NewLine + Path.GetFileName(FileName));
                 uint fsize = (uint)new FileInfo(FileName).Length;
                 buf = ReadBin(FileName, 0, fsize);
@@ -144,7 +155,7 @@ namespace UniversalPatcher
                         Logger(GmEeprom.GetEEpromInfo(buf));
                     }
                     else
-                    { 
+                    {
                         string tmp = "";
                         for (int s = 0; s < binfile[i].SegmentBlocks.Count; s++)
                         {
@@ -152,7 +163,7 @@ namespace UniversalPatcher
                                 tmp += ", ";
                             tmp = binfile[i].SegmentBlocks[s].Start.ToString("X4") + " - " + binfile[i].SegmentBlocks[s].End.ToString("X4");
                         }
-                        Logger(S.Name.PadRight(11) + (" [" + tmp + "]").PadRight(15),false);
+                        Logger(S.Name.PadRight(11) + (" [" + tmp + "]").PadRight(15), false);
                         string PN = ReadInfo(buf, binfile[i].PNaddr);
                         if (PN.Length > 1)
                             Logger(", PN: " + PN.PadRight(9), false);
@@ -163,13 +174,13 @@ namespace UniversalPatcher
 
                         string SNr = ReadInfo(buf, binfile[i].SegNrAddr);
                         if (SNr.Length > 0)
-                            Logger(", Nr: " + SNr,false);
-                        if (binfile[i].ExtraInfo.Count > 0 )
+                            Logger(", Nr: " + SNr, false);
+                        if (binfile[i].ExtraInfo.Count > 0)
                         {
                             string ExtraI = "";
-                            for (int e=0; e < binfile[i].ExtraInfo.Count; e++)
+                            for (int e = 0; e < binfile[i].ExtraInfo.Count; e++)
                             {
-                                ExtraI += ", " + binfile[i].ExtraInfo[e].Name + ": " +  ReadInfo(buf, binfile[i].ExtraInfo[e]);
+                                ExtraI += ", " + binfile[i].ExtraInfo[e].Name + ": " + ReadInfo(buf, binfile[i].ExtraInfo[e]);
                             }
                             Logger(ExtraI);
                         }
@@ -177,14 +188,14 @@ namespace UniversalPatcher
                             Logger("");
                     }
                 }
-                for (int i=0; i< Segments.Count;i ++)
+                for (int i = 0; i < Segments.Count; i++)
                 {
                     SegmentConfig S = Segments[i];
                     Logger(S.Name);
                     if (S.Eeprom)
                     {
                         Logger(GmEeprom.GetKeyStatus(buf));
-                        
+
                     }
                     else
                     {
@@ -198,12 +209,12 @@ namespace UniversalPatcher
                                     tmp += ", ";
                                 tmp += binfile[i].CS1Blocks[s].Start.ToString("X4") + " - " + binfile[i].CS1Blocks[s].End.ToString("X4");
                             }
-                            string CS1Calc = CalculateChecksum(buf, binfile[i].CS1Address, binfile[i].CS1Blocks,binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, binfile[i].CS1Address.Bytes,S.CS1SwapBytes).ToString("X4");
+                            string CS1Calc = CalculateChecksum(buf, binfile[i].CS1Address, binfile[i].CS1Blocks, binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, binfile[i].CS1Address.Bytes, S.CS1SwapBytes).ToString("X4");
                             if (binfile[i].CS1Address.Bytes == 0)
                                 Logger(" Checksum1: [" + tmp + "] " + CS1Calc);
                             else
-                            { 
-                                string CS1 = ReadInfo(buf,binfile[i].CS1Address);
+                            {
+                                string CS1 = ReadInfo(buf, binfile[i].CS1Address);
                                 if (CS1 == CS1Calc)
                                     Logger(" Checksum 1: [" + tmp + "] " + CS1 + " [OK]");
                                 else
@@ -218,9 +229,9 @@ namespace UniversalPatcher
                             {
                                 if (s > 0)
                                     tmp += ", ";
-                                tmp += binfile[i].CS2Blocks[s].Start.ToString("X4") + " - " + binfile[i].CS2Blocks[s].End.ToString("X4") ;
+                                tmp += binfile[i].CS2Blocks[s].Start.ToString("X4") + " - " + binfile[i].CS2Blocks[s].End.ToString("X4");
                             }
-                            string CS2Calc = CalculateChecksum(buf, binfile[i].CS2Address, binfile[i].CS2Blocks, binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, binfile[i].CS2Address.Bytes,S.CS2SwapBytes).ToString("X4");
+                            string CS2Calc = CalculateChecksum(buf, binfile[i].CS2Address, binfile[i].CS2Blocks, binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, binfile[i].CS2Address.Bytes, S.CS2SwapBytes).ToString("X4");
                             if (binfile[i].CS2Address.Bytes == 0)
                                 Logger(" Checksum1: [" + tmp + "] " + CS2Calc);
                             else
@@ -252,7 +263,7 @@ namespace UniversalPatcher
             {
                 txtBaseFile.Text = Filename;
                 uint fsize = (uint)new System.IO.FileInfo(txtBaseFile.Text).Length;
-                labelBinSize.Text = fsize.ToString(); 
+                labelBinSize.Text = fsize.ToString();
                 basefile = new BinFile[Segments.Count];
                 Basebuf = new byte[fsize];
                 GetFileInfo(txtBaseFile.Text, ref basefile, ref Basebuf);
@@ -262,8 +273,8 @@ namespace UniversalPatcher
         private void btnModFile_Click(object sender, EventArgs e)
         {
             if (radioCreate.Checked)
-            { 
-                string Filename = SelectFile();                
+            {
+                string Filename = SelectFile();
                 if (Filename.Length > 1)
                 {
                     txtModifierFile.Text = Filename;
@@ -275,7 +286,7 @@ namespace UniversalPatcher
             }
             else
             {
-                try 
+                try
                 {
                     string Filename = SelectFile("PATCH files (*.patch)|*.patch|ALL files(*.*) | *.*");
                     if (Filename.Length > 1)
@@ -290,11 +301,11 @@ namespace UniversalPatcher
                         line = sr.ReadLine();
                         if (line.Contains(".xml"))
                         {
-                            string tmpXML="";
+                            string tmpXML = "";
                             if (File.Exists(line))
                             {
                                 tmpXML = line;
-                            }                                
+                            }
                             else
                             {
                                 if (File.Exists(Path.Combine(Application.StartupPath, "XML", Path.GetFileName(line))))
@@ -315,7 +326,7 @@ namespace UniversalPatcher
                         btnShowPatch.Enabled = true;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Logger("Error: " + ex.Message);
                 }
@@ -327,7 +338,8 @@ namespace UniversalPatcher
         {
             string line;
 
-            try { 
+            try
+            {
                 StreamReader sr = new StreamReader(txtModifierFile.Text);
                 uint LineNr = 0;
                 uint fsize = (uint)new System.IO.FileInfo(txtBaseFile.Text).Length;
@@ -353,11 +365,12 @@ namespace UniversalPatcher
                     else
                     {
                         string[] LineParts = line.Split(':');
-                        if (LineParts.Length >1) { 
+                        if (LineParts.Length > 1)
+                        {
                             uint Addr = uint.Parse(LineParts[0]);
                             uint Data = uint.Parse(LineParts[1]);
                             if (Addr > Basebuf.Length)
-                                throw new FileLoadException(String.Format("Address {0} out of range!",  Addr.ToString("X4")));
+                                throw new FileLoadException(String.Format("Address {0} out of range!", Addr.ToString("X4")));
                             if (Data > 0xff)
                                 throw new FileLoadException(String.Format("Data {0} out of range!", Data.ToString("X4")));
                             //Apply patchrow:
@@ -369,7 +382,7 @@ namespace UniversalPatcher
                 }
                 sr.Close();
                 if (LineNr >= 30)
-                { 
+                {
                     Logger("(Suppressing output)");
                     Logger("Total: " + LineNr.ToString() + " modifications");
                 }
@@ -386,8 +399,8 @@ namespace UniversalPatcher
 
         private void CompareBlock(byte[] OrgFile, byte[] ModFile, uint Start, uint End)
         {
-            Logger(" [" + Start.ToString("X") + " - " + End.ToString("X")+ "] ");
-            uint ModCount=0;
+            Logger(" [" + Start.ToString("X") + " - " + End.ToString("X") + "] ");
+            uint ModCount = 0;
             for (uint i = Start; i < End; i++)
             {
                 if (OrgFile[i] != ModFile[i])
@@ -396,14 +409,14 @@ namespace UniversalPatcher
                     PatchAddr.Add(i);
                     PatchData.Add(ModFile[i]);
                     if (ModCount < numSuppress.Value)
-                        Logger(i.ToString("X6") + ": " + OrgFile[i].ToString("X2") + " => " + ModFile[i].ToString("X2") );
+                        Logger(i.ToString("X6") + ": " + OrgFile[i].ToString("X2") + " => " + ModFile[i].ToString("X2"));
                 }
 
             }
             if (ModCount >= numSuppress.Value)
             {
                 Logger("(Suppressing output)");
-                Logger ("Total: " + ModCount.ToString() + " differences");
+                Logger("Total: " + ModCount.ToString() + " differences");
             }
 
         }
@@ -444,11 +457,11 @@ namespace UniversalPatcher
                         if (chkSegments[Snr].Enabled && chkSegments[Snr].Checked)
                         {
                             Logger("Comparing segment " + Segments[Snr].Name, false);
-                            for (int p=0;p<basefile[Snr].SegmentBlocks.Count ;p++)
+                            for (int p = 0; p < basefile[Snr].SegmentBlocks.Count; p++)
                             {
                                 uint Start = basefile[Snr].SegmentBlocks[p].Start;
                                 uint End = basefile[Snr].SegmentBlocks[p].End;
-                                CompareBlock(Basebuf, Modbuf,Start,End );
+                                CompareBlock(Basebuf, Modbuf, Start, End);
                             }
                             Logger("");
                         }
@@ -461,7 +474,7 @@ namespace UniversalPatcher
                 Logger("Error: " + ex.Message);
             }
         }
-         private void btnCompare_Click(object sender, EventArgs e)
+        private void btnCompare_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.SuppressAfter = (uint)numSuppress.Value;
             Properties.Settings.Default.Save();
@@ -471,10 +484,10 @@ namespace UniversalPatcher
             PatchData = new List<uint>();
             PatchAddr = new List<uint>();
             txtResult.Text = "";
-            if (radioCreate.Checked) 
+            if (radioCreate.Checked)
             {
                 CompareBins();
-                if (PatchAddr.Count>0)
+                if (PatchAddr.Count > 0)
                 {
                     btnShowPatch.Enabled = true;
                     btnSave.Enabled = true;
@@ -492,7 +505,7 @@ namespace UniversalPatcher
             {
                 btnShowPatch.Enabled = false;
                 if (ApplyPatch())
-                {                    
+                {
                     btnSave.Enabled = true;
                     btnSave.Text = "Save Bin";
                     txtPatchName.Enabled = true;
@@ -542,10 +555,10 @@ namespace UniversalPatcher
         {
             try
             {
-            string FileName = SelectSaveFile();
-            Logger("Saving to file: " + FileName);
-            WriteSegmentToFile(FileName, 0, (uint)Basebuf.Length, Basebuf);
-            Logger("Done.");
+                string FileName = SelectSaveFile();
+                Logger("Saving to file: " + FileName);
+                WriteSegmentToFile(FileName, 0, (uint)Basebuf.Length, Basebuf);
+                Logger("Done.");
             }
             catch (Exception ex)
             {
@@ -599,7 +612,7 @@ namespace UniversalPatcher
                 labelDescr.Visible = false;
                 this.Text = "Apply patch";
                 if (chkSegments != null)
-                { 
+                {
                     for (int s = 0; s < chkSegments.Length; s++)
                     {
                         chkSegments[s].Dispose();
@@ -644,7 +657,8 @@ namespace UniversalPatcher
                     {
                         Logger(GmEeprom.FixEepromKey(Basebuf));
                     }
-                    else { 
+                    else
+                    {
                         if (S.CS1Method != CSMethod_None)
                         {
                             uint CS1 = 0;
@@ -654,7 +668,7 @@ namespace UniversalPatcher
                                 CS1 = Basebuf[basefile[i].CS1Address.Address];
                             }
                             else if (basefile[i].CS1Address.Bytes == 2)
-                            { 
+                            {
                                 CS1 = BEToUint16(Basebuf, basefile[i].CS1Address.Address);
                             }
                             else if (basefile[i].CS1Address.Bytes == 4)
@@ -669,7 +683,8 @@ namespace UniversalPatcher
                                 {
                                     Logger(" Checksum 1: " + CS1Calc.ToString("X4") + " [Not saved]");
                                 }
-                                else { 
+                                else
+                                {
                                     if (basefile[i].CS1Address.Bytes == 1)
                                         Basebuf[basefile[i].CS1Address.Address] = (byte)CS1Calc;
                                     else if (basefile[i].CS1Address.Bytes == 2)
@@ -693,47 +708,47 @@ namespace UniversalPatcher
                         if (S.CS2Method != CSMethod_None)
                         {
                             uint CS2 = 0;
-                            uint CS2Calc = CalculateChecksum(Basebuf, basefile[i].CS2Address, basefile[i].CS2Blocks, basefile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, basefile[i].CS2Address.Bytes,S.CS2SwapBytes);
-                                if (basefile[i].CS2Address.Bytes == 1)
+                            uint CS2Calc = CalculateChecksum(Basebuf, basefile[i].CS2Address, basefile[i].CS2Blocks, basefile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, basefile[i].CS2Address.Bytes, S.CS2SwapBytes);
+                            if (basefile[i].CS2Address.Bytes == 1)
+                            {
+                                CS2 = Basebuf[basefile[i].CS2Address.Address];
+                            }
+                            else if (basefile[i].CS2Address.Bytes == 2)
+                            {
+                                CS2 = BEToUint16(Basebuf, basefile[i].CS2Address.Address);
+                            }
+                            else if (basefile[i].CS2Address.Bytes == 4)
+                            {
+                                CS2 = BEToUint32(Basebuf, basefile[i].CS2Address.Address);
+                            }
+                            if (CS2 == CS2Calc)
+                                Logger(" Checksum 2: " + CS2.ToString("X4") + " [OK]");
+                            else
+                            {
+                                if (basefile[i].CS2Address.Bytes == 0)
                                 {
-                                    CS2 = Basebuf[basefile[i].CS2Address.Address];
+                                    Logger(" Checksum 2: " + CS2Calc.ToString("X4") + " [Not saved]");
                                 }
-                                else if (basefile[i].CS2Address.Bytes == 2)
-                                {
-                                    CS2 = BEToUint16(Basebuf, basefile[i].CS2Address.Address);
-                                }
-                                else if (basefile[i].CS2Address.Bytes == 4)
-                                {
-                                    CS2 = BEToUint32(Basebuf, basefile[i].CS2Address.Address);
-                                }
-                                if (CS2 == CS2Calc)
-                                    Logger(" Checksum 2: " + CS2.ToString("X4") + " [OK]");
                                 else
                                 {
-                                    if (basefile[i].CS2Address.Bytes == 0)
+                                    if (basefile[i].CS2Address.Bytes == 1)
+                                        Basebuf[basefile[i].CS2Address.Address] = (byte)CS2Calc;
+                                    else if (basefile[i].CS2Address.Bytes == 2)
                                     {
-                                        Logger(" Checksum 2: " + CS2Calc.ToString("X4") + " [Not saved]");
+                                        Basebuf[basefile[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF00) >> 8);
+                                        Basebuf[basefile[i].CS2Address.Address + 1] = (byte)(CS2Calc & 0xFF);
                                     }
-                                    else
+                                    else if (basefile[i].CS2Address.Bytes == 4)
                                     {
-                                        if (basefile[i].CS2Address.Bytes == 1)
-                                            Basebuf[basefile[i].CS2Address.Address] = (byte)CS2Calc;
-                                        else if (basefile[i].CS2Address.Bytes == 2)
-                                        {
-                                            Basebuf[basefile[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF00) >> 8);
-                                            Basebuf[basefile[i].CS2Address.Address + 1] = (byte)(CS2Calc & 0xFF);
-                                        }
-                                        else if (basefile[i].CS2Address.Bytes == 4)
-                                        {
-                                            Basebuf[basefile[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF000000) >> 24);
-                                            Basebuf[basefile[i].CS2Address.Address + 1] = (byte)((CS2Calc & 0xFF0000) >> 16);
-                                            Basebuf[basefile[i].CS2Address.Address + 2] = (byte)((CS2Calc & 0xFF00) >> 8);
-                                            Basebuf[basefile[i].CS2Address.Address + 3] = (byte)(CS2Calc & 0xFF);
+                                        Basebuf[basefile[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF000000) >> 24);
+                                        Basebuf[basefile[i].CS2Address.Address + 1] = (byte)((CS2Calc & 0xFF0000) >> 16);
+                                        Basebuf[basefile[i].CS2Address.Address + 2] = (byte)((CS2Calc & 0xFF00) >> 8);
+                                        Basebuf[basefile[i].CS2Address.Address + 3] = (byte)(CS2Calc & 0xFF);
 
-                                        }
-                                        Logger(" Checksum 2: " + CS2.ToString("X") + " => " + CS2Calc.ToString("X4") + " [Fixed]");
                                     }
+                                    Logger(" Checksum 2: " + CS2.ToString("X") + " => " + CS2Calc.ToString("X4") + " [Fixed]");
                                 }
+                            }
                         }
 
                     }
@@ -760,7 +775,7 @@ namespace UniversalPatcher
 
             if (radioApply.Checked)
             {
-                int  i= 0;
+                int i = 0;
                 StreamReader sr = new StreamReader(txtModifierFile.Text);
                 string line;
                 while ((line = sr.ReadLine()) != null)
@@ -786,7 +801,7 @@ namespace UniversalPatcher
                     Logger(PatchAddr[i].ToString() + ":" + PatchData[i].ToString());
                 }
                 if (i >= numSuppress.Value)
-                    Logger("Total: " + PatchAddr.Count.ToString() + " rows, showing first "  + numSuppress.Value.ToString());
+                    Logger("Total: " + PatchAddr.Count.ToString() + " rows, showing first " + numSuppress.Value.ToString());
             }
 
         }
@@ -806,6 +821,31 @@ namespace UniversalPatcher
             frmSL.Dispose();
             labelXML.Text = Path.GetFileName(XMLFile);
             addCheckBoxes();
+        }
+
+        private string Autodetect(string FileName)
+        {
+            string PsScript = Path.Combine(Application.StartupPath, "XML", "autodetect.ps1");
+            if (!File.Exists(PsScript))
+                throw new Exception("Missing file: " + PsScript);
+            ProcessStartInfo processInfo = new ProcessStartInfo();
+            //processInfo.FileName = @"powershell.exe";
+            processInfo.FileName = @"cmd.exe";
+            processInfo.Arguments = " /c powershell -ExecutionPolicy Bypass -File " + PsScript + " \"" + FileName +"\"";
+            processInfo.RedirectStandardError = true;
+            processInfo.RedirectStandardOutput = true;
+            processInfo.UseShellExecute = false;
+            processInfo.CreateNoWindow = true;
+
+            //start powershell process using process start info
+            Process process = new Process();
+            process.StartInfo = processInfo;
+            process.Start();
+
+            string Res = process.StandardOutput.ReadToEnd();
+
+            return Res.Replace(Environment.NewLine,"");
+
         }
     }
 }
