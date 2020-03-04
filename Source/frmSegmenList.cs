@@ -20,6 +20,7 @@ namespace UniversalPatcher
 
         public void InitMe()
         {
+            labelXML.Text = Path.GetFileName(XMLFile);
             listSegments.Clear();
             listSegments.View = View.Details;
             listSegments.Columns.Add("Segment");

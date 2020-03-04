@@ -195,9 +195,9 @@
             // 
             // btnSegments
             // 
-            this.btnSegments.Location = new System.Drawing.Point(618, 6);
+            this.btnSegments.Location = new System.Drawing.Point(351, 420);
             this.btnSegments.Name = "btnSegments";
-            this.btnSegments.Size = new System.Drawing.Size(99, 22);
+            this.btnSegments.Size = new System.Drawing.Size(99, 32);
             this.btnSegments.TabIndex = 14;
             this.btnSegments.Text = "Setup segments";
             this.btnSegments.UseVisualStyleBackColor = true;
@@ -272,9 +272,9 @@
             // 
             // btnLoad
             // 
-            this.btnLoad.Location = new System.Drawing.Point(529, 6);
+            this.btnLoad.Location = new System.Drawing.Point(250, 420);
             this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(83, 22);
+            this.btnLoad.Size = new System.Drawing.Size(95, 32);
             this.btnLoad.TabIndex = 21;
             this.btnLoad.Text = "Load config...";
             this.btnLoad.UseVisualStyleBackColor = true;
@@ -295,18 +295,18 @@
             this.chkAutodetect.AutoSize = true;
             this.chkAutodetect.Checked = true;
             this.chkAutodetect.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutodetect.Location = new System.Drawing.Point(445, 10);
+            this.chkAutodetect.Location = new System.Drawing.Point(12, 421);
             this.chkAutodetect.Name = "chkAutodetect";
-            this.chkAutodetect.Size = new System.Drawing.Size(78, 17);
+            this.chkAutodetect.Size = new System.Drawing.Size(110, 17);
             this.chkAutodetect.TabIndex = 23;
-            this.chkAutodetect.Text = "Autodetect";
+            this.chkAutodetect.Text = "Autodetect config";
             this.chkAutodetect.UseVisualStyleBackColor = true;
             // 
             // btnAutodetect
             // 
-            this.btnAutodetect.Location = new System.Drawing.Point(17, 422);
+            this.btnAutodetect.Location = new System.Drawing.Point(135, 420);
             this.btnAutodetect.Name = "btnAutodetect";
-            this.btnAutodetect.Size = new System.Drawing.Size(109, 29);
+            this.btnAutodetect.Size = new System.Drawing.Size(109, 32);
             this.btnAutodetect.TabIndex = 24;
             this.btnAutodetect.Text = "Setup autodetect";
             this.btnAutodetect.UseVisualStyleBackColor = true;

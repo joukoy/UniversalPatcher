@@ -465,7 +465,7 @@ namespace UniversalPatcher
                 uint fsize2 = (uint)new System.IO.FileInfo(txtModifierFile.Text).Length;
                 if (fsize != fsize2)
                 {
-                    MessageBox.Show("Files are different size, will not compare!");
+                    Logger("Files are different size, will not compare!");
                     return;
                 }
                 basefile = new BinFile[Segments.Count];

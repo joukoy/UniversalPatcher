@@ -85,6 +85,7 @@ namespace UniversalPatcher
 
         public void EditSegment(int SegNr)
         {
+            labelXML.Text = Path.GetFileName(XMLFile);
             CurrentSegment = SegNr;
             SegmentConfig S = Segments[SegNr];
             txtSegmentName.Text = S.Name;
