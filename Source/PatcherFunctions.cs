@@ -6,6 +6,16 @@ using System.Text.RegularExpressions;
 
 public class upatcher
 {
+    public struct DetectRule
+    {
+        public string xml;
+        public ushort group;
+        public string grouplogic;   //and, or, xor
+        public string address;
+        public UInt64 data;
+        public string compare;        //==, <, >, !=      
+    }
+
     public struct Patch
     {
         public string Name;
@@ -63,6 +73,7 @@ public class upatcher
     public const short CSMethod_Dwordsum = 5;
 
     public static List<SegmentConfig> Segments = new List<SegmentConfig>();
+    public static List<DetectRule> DetectRules;
 
     public static string XMLFile;
 
@@ -135,6 +146,14 @@ public class upatcher
         else
             return "";
 
+    }
+
+    public static bool HexToUint64(string Hex, out UInt64 x)
+    {
+        x = 0;
+        if (!UInt64.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
+            return false;
+        return true;
     }
 
     public static bool HexToUint(string Hex, out uint x)
@@ -631,7 +650,13 @@ public class upatcher
         return sum;
     }
 
-
+    public static UInt64 BEToUint64(byte[] buf, uint offset)
+    {
+        byte[] tmp = new byte[8];
+        Array.Copy(buf, offset, tmp, 0, 8);
+        Array.Reverse(tmp);
+        return BitConverter.ToUInt64(tmp,0);
+    }
 
     public static uint BEToUint32(byte[] buf, uint offset)
     {

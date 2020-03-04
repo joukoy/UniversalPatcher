@@ -210,5 +210,10 @@ namespace UniversalPatcher
         {
 
         }
+
+        private void frmEditSegmentAddr_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

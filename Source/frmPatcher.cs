@@ -23,6 +23,13 @@ namespace UniversalPatcher
             InitializeComponent();
         }
 
+        private struct DetectGroup
+        {
+            public string Logic;
+            public uint Hits;
+            public uint Miss;
+        }
+
         private frmSegmenList frmSL;
         private static List<uint> PatchData;
         private static List<uint> PatchAddr;
@@ -46,6 +53,8 @@ namespace UniversalPatcher
             }
             addCheckBoxes();
             numSuppress.Value = Properties.Settings.Default.SuppressAfter;
+            if (numSuppress.Value == 0)
+                numSuppress.Value = 10;
 
             if (!File.Exists(Path.Combine(Application.StartupPath, "Patches")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
@@ -61,6 +70,15 @@ namespace UniversalPatcher
             if (Properties.Settings.Default.LastPATCHfolder == "")
                 Properties.Settings.Default.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
 
+            DetectRules = new List<DetectRule>();
+            string AutoDetectFile = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
+            if (File.Exists(AutoDetectFile))
+            {
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<DetectRule>));
+                System.IO.StreamReader file = new System.IO.StreamReader(AutoDetectFile);
+                DetectRules = (List<DetectRule>)reader.Deserialize(file);
+                file.Close();
+            }
         }
 
         public void addCheckBoxes()
@@ -131,18 +149,37 @@ namespace UniversalPatcher
         {
             try
             {
+                uint fsize = (uint)new FileInfo(FileName).Length;
+                buf = ReadBin(FileName, 0, fsize);
                 if (chkAutodetect.Checked)
                 {
-                    string ConfFile = Autodetect(FileName);
-                    ConfFile = Path.Combine(Application.StartupPath,"XML", ConfFile);
-                    frmSegmenList frmSL = new frmSegmenList();
-                    frmSL.LoadFile(ConfFile);
+                    string ConfFile = Autodetect(FileName, buf);
+                    Logger("Autodetect: " + ConfFile);
+                    if (ConfFile == "" || ConfFile.Contains(Environment.NewLine))
+                    {
+                        labelXML.Text = "";
+                        XMLFile = "";
+                        Segments.Clear();
+                    }
+                    else
+                    { 
+                        ConfFile = Path.Combine(Application.StartupPath,"XML", ConfFile);
+                        if (File.Exists(ConfFile)) { 
+                            frmSegmenList frmSL = new frmSegmenList();
+                            frmSL.LoadFile(ConfFile);
+                        }
+                        else
+                        {
+                            Logger("XML File not found");
+                            labelXML.Text = "";
+                            XMLFile = "";
+                            Segments.Clear();
+                        }
+                    }
                 }
                 labelXML.Text = Path.GetFileName(XMLFile);
                 addCheckBoxes();
                 Logger(Environment.NewLine + Path.GetFileName(FileName));
-                uint fsize = (uint)new FileInfo(FileName).Length;
-                buf = ReadBin(FileName, 0, fsize);
                 GetSegmentAddresses(buf, out binfile);
                 if (Segments.Count > 0)
                     Logger("Segments:");
@@ -579,6 +616,7 @@ namespace UniversalPatcher
             txtResult.AppendText(LogText);
             if (NewLine)
                 txtResult.AppendText(Environment.NewLine);
+            Application.DoEvents();
         }
         private void txtModifierFile_TextChanged(object sender, EventArgs e)
         {
@@ -598,6 +636,7 @@ namespace UniversalPatcher
                 btnSave.Text = "Save Patch";
                 txtPatchName.Visible = true;
                 labelDescr.Visible = true;
+                chkCompareAll.Visible = true;
                 this.Text = "Create patch";
                 addCheckBoxes();
                 CheckSegmentCompatibility();
@@ -610,6 +649,7 @@ namespace UniversalPatcher
                 btnSave.Text = "Save BIN";
                 txtPatchName.Visible = false;
                 labelDescr.Visible = false;
+                chkCompareAll.Visible = false;
                 this.Text = "Apply patch";
                 if (chkSegments != null)
                 {
@@ -823,29 +863,159 @@ namespace UniversalPatcher
             addCheckBoxes();
         }
 
-        private string Autodetect(string FileName)
+        private bool CheckRule(DetectRule DR, string FileName, byte[] buf)
         {
-            string PsScript = Path.Combine(Application.StartupPath, "XML", "autodetect.ps1");
-            if (!File.Exists(PsScript))
-                throw new Exception("Missing file: " + PsScript);
-            ProcessStartInfo processInfo = new ProcessStartInfo();
-            //processInfo.FileName = @"powershell.exe";
-            processInfo.FileName = @"cmd.exe";
-            processInfo.Arguments = " /c powershell -ExecutionPolicy Bypass -File " + PsScript + " \"" + FileName +"\"";
-            processInfo.RedirectStandardError = true;
-            processInfo.RedirectStandardOutput = true;
-            processInfo.UseShellExecute = false;
-            processInfo.CreateNoWindow = true;
+            try { 
+            
+                UInt64 Data = 0;
+                uint Addr = 0;
+                if (DR.address == "filesize")
+                {
+                    Data = (UInt64)new FileInfo(FileName).Length;
+                }
+                else
+                {
+                    string[] Parts = DR.address.Split(':');
+                    HexToUint(Parts[0].Replace("@", ""),out Addr);
+                    if (DR.address.StartsWith("@"))
+                        Addr = BEToUint32(buf, Addr);
+                    if (Parts[0].EndsWith("@"))
+                        Addr = (uint)buf.Length - Addr;
+                    if (Parts.Length == 1)
+                        Data = BEToUint16(buf, Addr);
+                    else
+                    {
+                        if (Parts[1] == "1")
+                            Data = (uint)buf[Addr];
+                        if (Parts[1] == "2")
+                            Data = (uint)BEToUint16(buf, Addr);
+                        if (Parts[1] == "4")
+                            Data = BEToUint32(buf, Addr);
+                        if (Parts[1] == "8")
+                            Data = BEToUint64(buf, Addr);
 
-            //start powershell process using process start info
-            Process process = new Process();
-            process.StartInfo = processInfo;
-            process.Start();
+                    }
+                }
 
-            string Res = process.StandardOutput.ReadToEnd();
+                //Logger(DR.xml + ": " + DR.address + ": " + DR.data.ToString("X") + DR.compare + "(" + DR.grouplogic + ") " + " [" + Addr.ToString("X") + ": " + Data.ToString("X") + "]");
 
-            return Res.Replace(Environment.NewLine,"");
+                if (DR.compare == "==")
+                {
+                    if (Data == DR.data)
+                        return true;
+                }
+                if (DR.compare == "<")
+                {
+                    if (Data < DR.data)
+                        return true;
+                }
+                if (DR.compare == ">")
+                {
+                    if (Data > DR.data)
+                        return true;
+                }
+                if (DR.compare == "!=")
+                {
+                    if (Data != DR.data)
+                        return true;
+                }
+                //Logger("Not match");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
 
+        private string Autodetect(string FileName, byte[] buf)
+        {
+            string Result = "";
+            
+            List<string> XmlList = new List<string>();
+            XmlList.Add(DetectRules[0].xml.ToLower());
+            for (int s = 0; s < DetectRules.Count; s++)
+            {
+                //Create list of XML files we know:
+                bool Found = false;
+                for (int x = 0; x < XmlList.Count; x++)
+                {
+                    if (XmlList[x] == DetectRules[s].xml.ToLower())
+                        Found = true;
+                }
+                if (!Found)
+                    XmlList.Add(DetectRules[s].xml.ToLower());
+            }
+            for (int x=0; x < XmlList.Count;x++)
+            {
+                uint MaxGroup = 0;
+                //Check if compatible with THIS xml
+                List<DetectRule> DRL = new List<DetectRule>();
+                for (int s = 0; s < DetectRules.Count; s++)
+                {                    
+                    if (XmlList[x] == DetectRules[s].xml.ToLower())
+                    {
+                        DRL.Add(DetectRules[s]);
+                        if (DetectRules[s].group > MaxGroup)
+                            MaxGroup = DetectRules[s].group;
+                    }
+                }
+                //Now all rules for this XML are in DRL (DetectRuleList)
+                DetectGroup[] DG = new DetectGroup[MaxGroup + 1];
+                for (int d = 1; d <= MaxGroup; d++)
+                {
+                    //Clear DG (needed?)
+                    DG[d].Hits = 0;
+                    DG[d].Miss = 0;
+                }
+                for (int d=0; d < DRL.Count; d++)
+                {
+                    //This list have only rules for one XML, lets go thru them
+                    DG[DRL[d].group].Logic = DRL[d].grouplogic;
+                    if (CheckRule(DRL[d], FileName, buf))
+                        //This check matches
+                        DG[DRL[d].group].Hits++;
+                    else
+                        DG[DRL[d].group].Miss++;
+                }
+                //Now we have array DG, where hits & misses are counted per group, for this XML
+                bool Detection = true;
+                for (int g = 1; g <= MaxGroup; g++)
+                {
+                    //If all groups match, then this XML, match.
+                    if (DG[g].Logic == "And")
+                    {
+                        //Logic = and => if any Miss, not detection
+                        if (DG[g].Miss > 0)
+                            Detection = false;
+                    }
+                    if (DG[g].Logic == "Or")
+                    {
+                        if (DG[g].Hits == 0)
+                            Detection = false;
+                    }
+                    if (DG[g].Logic == "Xor")
+                    {
+                        if (DG[g].Hits != 1)
+                            Detection = false;
+                    }
+                }
+                if (Detection)
+                {
+                    //All groups have hit (if grouplogic = or, only one hit per group is a hit)
+                    if (Result != "")
+                        Result += Environment.NewLine;
+                    Result += XmlList[x];
+                }
+            }
+            return Result.ToLower();
+        }
+
+        private void btnAutodetect_Click(object sender, EventArgs e)
+        {
+            frmAutodetect frmAD = new frmAutodetect();
+            frmAD.Show();
+            frmAD.InitMe();
         }
     }
 }

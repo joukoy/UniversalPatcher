@@ -60,6 +60,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="frmEditDetectAddress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditDetectAddress.Designer.cs">
+      <DependentUpon>frmEditDetectAddress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmAsk.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAsk.designer.cs">
+      <DependentUpon>frmAsk.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmAutodetect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAutodetect.Designer.cs">
+      <DependentUpon>frmAutodetect.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmEditSegmentAddr.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -100,8 +118,17 @@
     <Compile Include="PatcherFunctions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="frmAsk.resx">
+      <DependentUpon>frmAsk.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAutodetect.resx">
+      <DependentUpon>frmAutodetect.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmEditAddress.resx">
       <DependentUpon>frmEditAddress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditDetectAddress.resx">
+      <DependentUpon>frmEditDetectAddress.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmEditSegmentAddr.resx">
       <DependentUpon>frmEditSegmentAddr.cs</DependentUpon>

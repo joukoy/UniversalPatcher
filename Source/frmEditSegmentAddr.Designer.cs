@@ -321,6 +321,7 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "frmEditSegmentAddr";
             this.Text = "Edit Segment Address";
+            this.Load += new System.EventHandler(this.frmEditSegmentAddr_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numReadPairs)).EndInit();

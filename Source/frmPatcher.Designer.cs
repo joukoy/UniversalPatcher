@@ -52,6 +52,7 @@
             this.btnLoad = new System.Windows.Forms.Button();
             this.chkCompareAll = new System.Windows.Forms.CheckBox();
             this.chkAutodetect = new System.Windows.Forms.CheckBox();
+            this.btnAutodetect = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.SuspendLayout();
@@ -292,18 +293,31 @@
             // chkAutodetect
             // 
             this.chkAutodetect.AutoSize = true;
-            this.chkAutodetect.Location = new System.Drawing.Point(429, 10);
+            this.chkAutodetect.Checked = true;
+            this.chkAutodetect.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAutodetect.Location = new System.Drawing.Point(445, 10);
             this.chkAutodetect.Name = "chkAutodetect";
-            this.chkAutodetect.Size = new System.Drawing.Size(94, 17);
+            this.chkAutodetect.Size = new System.Drawing.Size(78, 17);
             this.chkAutodetect.TabIndex = 23;
-            this.chkAutodetect.Text = "Autodetect file";
+            this.chkAutodetect.Text = "Autodetect";
             this.chkAutodetect.UseVisualStyleBackColor = true;
+            // 
+            // btnAutodetect
+            // 
+            this.btnAutodetect.Location = new System.Drawing.Point(17, 422);
+            this.btnAutodetect.Name = "btnAutodetect";
+            this.btnAutodetect.Size = new System.Drawing.Size(109, 29);
+            this.btnAutodetect.TabIndex = 24;
+            this.btnAutodetect.Text = "Setup autodetect";
+            this.btnAutodetect.UseVisualStyleBackColor = true;
+            this.btnAutodetect.Click += new System.EventHandler(this.btnAutodetect_Click);
             // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(729, 458);
+            this.Controls.Add(this.btnAutodetect);
             this.Controls.Add(this.chkAutodetect);
             this.Controls.Add(this.chkCompareAll);
             this.Controls.Add(this.btnLoad);
@@ -362,5 +376,6 @@
         private System.Windows.Forms.Button btnLoad;
         private System.Windows.Forms.CheckBox chkCompareAll;
         private System.Windows.Forms.CheckBox chkAutodetect;
+        private System.Windows.Forms.Button btnAutodetect;
     }
 }
