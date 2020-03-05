@@ -38,6 +38,8 @@ namespace UniversalPatcher
             S.ExtraInfo = txtExtrainfo.Text;
             S.Eeprom = chkEeprom.Checked;
             S.Comment = txtComment.Text;
+            S.CheckWord = txtCheckWord.Text;
+            S.CheckwordLocations = txtCheckwordLocations.Text;
 
             if (radioCS1None.Checked)
                 S.CS1Method = CSMethod_None;
@@ -100,6 +102,8 @@ namespace UniversalPatcher
             txtExtrainfo.Text = S.ExtraInfo;
             chkEeprom.Checked = S.Eeprom;
             txtComment.Text = S.Comment;
+            txtCheckWord.Text = S.CheckWord;
+            txtCheckwordLocations.Text = S.CheckwordLocations;
 
             checkSwapBytes1.Checked = S.CS1SwapBytes;
             checkSwapBytes2.Checked = S.CS2SwapBytes;
@@ -271,5 +275,9 @@ namespace UniversalPatcher
             txtCS2Block.Text = EditSegmentAddress(txtCS2Block.Text);
         }
 
+        private void label10_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

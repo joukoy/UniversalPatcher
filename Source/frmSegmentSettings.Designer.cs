@@ -88,6 +88,10 @@
             this.btnVerAddr = new System.Windows.Forms.Button();
             this.btnCS2Addr = new System.Windows.Forms.Button();
             this.labelXML = new System.Windows.Forms.Label();
+            this.txtCheckWord = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.txtCheckwordLocations = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -102,7 +106,7 @@
             this.groupBox1.Controls.Add(this.radioCS1SUM);
             this.groupBox1.Controls.Add(this.radioCS1Crc32);
             this.groupBox1.Controls.Add(this.radioCS1Crc16);
-            this.groupBox1.Location = new System.Drawing.Point(11, 210);
+            this.groupBox1.Location = new System.Drawing.Point(11, 231);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(122, 135);
             this.groupBox1.TabIndex = 0;
@@ -213,7 +217,7 @@
             this.groupBox2.Controls.Add(this.radioCS2SUM);
             this.groupBox2.Controls.Add(this.radioCS2Crc32);
             this.groupBox2.Controls.Add(this.radioCS2Crc16);
-            this.groupBox2.Location = new System.Drawing.Point(264, 210);
+            this.groupBox2.Location = new System.Drawing.Point(264, 231);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(124, 135);
             this.groupBox2.TabIndex = 6;
@@ -332,7 +336,7 @@
             this.groupBox5.Controls.Add(this.radioCS1Complement2);
             this.groupBox5.Controls.Add(this.radioCS1Complement1);
             this.groupBox5.Controls.Add(this.radioCS1Complement0);
-            this.groupBox5.Location = new System.Drawing.Point(139, 210);
+            this.groupBox5.Location = new System.Drawing.Point(139, 231);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(119, 88);
             this.groupBox5.TabIndex = 19;
@@ -377,7 +381,7 @@
             this.groupBox6.Controls.Add(this.radioCS2Complement2);
             this.groupBox6.Controls.Add(this.radioCS2Complement1);
             this.groupBox6.Controls.Add(this.radioCS2Complement0);
-            this.groupBox6.Location = new System.Drawing.Point(392, 210);
+            this.groupBox6.Location = new System.Drawing.Point(392, 231);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(139, 88);
             this.groupBox6.TabIndex = 20;
@@ -515,7 +519,7 @@
             // checkSwapBytes1
             // 
             this.checkSwapBytes1.AutoSize = true;
-            this.checkSwapBytes1.Location = new System.Drawing.Point(145, 301);
+            this.checkSwapBytes1.Location = new System.Drawing.Point(145, 322);
             this.checkSwapBytes1.Name = "checkSwapBytes1";
             this.checkSwapBytes1.Size = new System.Drawing.Size(81, 17);
             this.checkSwapBytes1.TabIndex = 16;
@@ -525,7 +529,7 @@
             // checkSwapBytes2
             // 
             this.checkSwapBytes2.AutoSize = true;
-            this.checkSwapBytes2.Location = new System.Drawing.Point(398, 304);
+            this.checkSwapBytes2.Location = new System.Drawing.Point(398, 325);
             this.checkSwapBytes2.Name = "checkSwapBytes2";
             this.checkSwapBytes2.Size = new System.Drawing.Size(82, 17);
             this.checkSwapBytes2.TabIndex = 39;
@@ -562,7 +566,7 @@
             // chkEeprom
             // 
             this.chkEeprom.AutoSize = true;
-            this.chkEeprom.Location = new System.Drawing.Point(13, 351);
+            this.chkEeprom.Location = new System.Drawing.Point(13, 372);
             this.chkEeprom.Name = "chkEeprom";
             this.chkEeprom.Size = new System.Drawing.Size(271, 17);
             this.chkEeprom.TabIndex = 43;
@@ -571,7 +575,7 @@
             // 
             // txtComment
             // 
-            this.txtComment.Location = new System.Drawing.Point(9, 391);
+            this.txtComment.Location = new System.Drawing.Point(9, 412);
             this.txtComment.Name = "txtComment";
             this.txtComment.Size = new System.Drawing.Size(522, 20);
             this.txtComment.TabIndex = 44;
@@ -579,7 +583,7 @@
             // labelComment
             // 
             this.labelComment.AutoSize = true;
-            this.labelComment.Location = new System.Drawing.Point(6, 371);
+            this.labelComment.Location = new System.Drawing.Point(6, 392);
             this.labelComment.Name = "labelComment";
             this.labelComment.Size = new System.Drawing.Size(59, 13);
             this.labelComment.TabIndex = 45;
@@ -685,11 +689,48 @@
             this.labelXML.TabIndex = 55;
             this.labelXML.Text = "-";
             // 
+            // txtCheckWord
+            // 
+            this.txtCheckWord.Location = new System.Drawing.Point(148, 202);
+            this.txtCheckWord.Name = "txtCheckWord";
+            this.txtCheckWord.Size = new System.Drawing.Size(85, 20);
+            this.txtCheckWord.TabIndex = 56;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(7, 206);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(64, 13);
+            this.label10.TabIndex = 57;
+            this.label10.Text = "Checkword:";
+            this.label10.Click += new System.EventHandler(this.label10_Click);
+            // 
+            // txtCheckwordLocations
+            // 
+            this.txtCheckwordLocations.Location = new System.Drawing.Point(411, 205);
+            this.txtCheckwordLocations.Name = "txtCheckwordLocations";
+            this.txtCheckwordLocations.Size = new System.Drawing.Size(85, 20);
+            this.txtCheckwordLocations.TabIndex = 58;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(272, 208);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(109, 13);
+            this.label11.TabIndex = 59;
+            this.label11.Text = "Checkword locations:";
+            // 
             // frmSegmentSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(541, 421);
+            this.ClientSize = new System.Drawing.Size(535, 439);
+            this.Controls.Add(this.label11);
+            this.Controls.Add(this.txtCheckwordLocations);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.txtCheckWord);
             this.Controls.Add(this.labelXML);
             this.Controls.Add(this.btnExtraAddr);
             this.Controls.Add(this.btnVerAddr);
@@ -809,5 +850,9 @@
         private System.Windows.Forms.Button btnVerAddr;
         private System.Windows.Forms.Button btnCS2Addr;
         private System.Windows.Forms.Label labelXML;
+        private System.Windows.Forms.TextBox txtCheckWord;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox txtCheckwordLocations;
+        private System.Windows.Forms.Label label11;
     }
 }
