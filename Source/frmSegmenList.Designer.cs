@@ -40,6 +40,7 @@
             this.btnNewXML = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
+            this.txtStatus = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnMoveDown
@@ -162,11 +163,20 @@
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
+            // txtStatus
+            // 
+            this.txtStatus.Location = new System.Drawing.Point(243, 325);
+            this.txtStatus.Multiline = true;
+            this.txtStatus.Name = "txtStatus";
+            this.txtStatus.Size = new System.Drawing.Size(210, 35);
+            this.txtStatus.TabIndex = 54;
+            // 
             // frmSegmenList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(552, 364);
+            this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.btnNewXML);
@@ -200,5 +210,6 @@
         private System.Windows.Forms.Button btnNewXML;
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.TextBox txtStatus;
     }
 }

@@ -212,7 +212,7 @@ namespace UniversalPatcher
                         string SNr = ReadInfo(buf, binfile[i].SegNrAddr);
                         if (SNr.Length > 0)
                             Logger(", Nr: " + SNr, false);
-                        if (binfile[i].ExtraInfo.Count > 0)
+                        if (binfile[i].ExtraInfo != null && binfile[i].ExtraInfo.Count > 0)
                         {
                             string ExtraI = "";
                             for (int e = 0; e < binfile[i].ExtraInfo.Count; e++)
@@ -228,6 +228,7 @@ namespace UniversalPatcher
                 for (int i = 0; i < Segments.Count; i++)
                 {
                     SegmentConfig S = Segments[i];
+                    Logger("Checksums:");
                     Logger(S.Name);
                     if (S.Eeprom)
                     {

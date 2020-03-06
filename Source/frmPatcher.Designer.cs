@@ -117,7 +117,7 @@
             this.btnSave.Enabled = false;
             this.btnSave.Location = new System.Drawing.Point(640, 420);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(77, 32);
+            this.btnSave.Size = new System.Drawing.Size(72, 35);
             this.btnSave.TabIndex = 7;
             this.btnSave.Text = "Save patch";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -195,9 +195,9 @@
             // 
             // btnSegments
             // 
-            this.btnSegments.Location = new System.Drawing.Point(351, 420);
+            this.btnSegments.Location = new System.Drawing.Point(406, 420);
             this.btnSegments.Name = "btnSegments";
-            this.btnSegments.Size = new System.Drawing.Size(99, 32);
+            this.btnSegments.Size = new System.Drawing.Size(72, 35);
             this.btnSegments.TabIndex = 14;
             this.btnSegments.Text = "Setup segments";
             this.btnSegments.UseVisualStyleBackColor = true;
@@ -205,9 +205,9 @@
             // 
             // btnCheckSums
             // 
-            this.btnCheckSums.Location = new System.Drawing.Point(456, 420);
+            this.btnCheckSums.Location = new System.Drawing.Point(484, 420);
             this.btnCheckSums.Name = "btnCheckSums";
-            this.btnCheckSums.Size = new System.Drawing.Size(92, 32);
+            this.btnCheckSums.Size = new System.Drawing.Size(72, 35);
             this.btnCheckSums.TabIndex = 15;
             this.btnCheckSums.Text = "Fix checksums";
             this.btnCheckSums.UseVisualStyleBackColor = true;
@@ -226,9 +226,9 @@
             // btnShowPatch
             // 
             this.btnShowPatch.Enabled = false;
-            this.btnShowPatch.Location = new System.Drawing.Point(554, 421);
+            this.btnShowPatch.Location = new System.Drawing.Point(562, 420);
             this.btnShowPatch.Name = "btnShowPatch";
-            this.btnShowPatch.Size = new System.Drawing.Size(80, 31);
+            this.btnShowPatch.Size = new System.Drawing.Size(72, 35);
             this.btnShowPatch.TabIndex = 17;
             this.btnShowPatch.Text = "Show patch";
             this.btnShowPatch.UseVisualStyleBackColor = true;
@@ -272,11 +272,11 @@
             // 
             // btnLoad
             // 
-            this.btnLoad.Location = new System.Drawing.Point(250, 420);
+            this.btnLoad.Location = new System.Drawing.Point(328, 420);
             this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(95, 32);
+            this.btnLoad.Size = new System.Drawing.Size(72, 35);
             this.btnLoad.TabIndex = 21;
-            this.btnLoad.Text = "Load config...";
+            this.btnLoad.Text = "Load config";
             this.btnLoad.UseVisualStyleBackColor = true;
             this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
             // 
@@ -295,7 +295,7 @@
             this.chkAutodetect.AutoSize = true;
             this.chkAutodetect.Checked = true;
             this.chkAutodetect.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutodetect.Location = new System.Drawing.Point(12, 421);
+            this.chkAutodetect.Location = new System.Drawing.Point(12, 427);
             this.chkAutodetect.Name = "chkAutodetect";
             this.chkAutodetect.Size = new System.Drawing.Size(110, 17);
             this.chkAutodetect.TabIndex = 23;
@@ -304,9 +304,9 @@
             // 
             // btnAutodetect
             // 
-            this.btnAutodetect.Location = new System.Drawing.Point(135, 420);
+            this.btnAutodetect.Location = new System.Drawing.Point(250, 420);
             this.btnAutodetect.Name = "btnAutodetect";
-            this.btnAutodetect.Size = new System.Drawing.Size(109, 32);
+            this.btnAutodetect.Size = new System.Drawing.Size(72, 35);
             this.btnAutodetect.TabIndex = 24;
             this.btnAutodetect.Text = "Setup autodetect";
             this.btnAutodetect.UseVisualStyleBackColor = true;

@@ -40,12 +40,14 @@ namespace UniversalPatcher
 
         private void LoadXMLList()
         {
+            Logger("loading list...");
             comboXML.Items.Clear();
             for (int d=0;d<DetectRules.Count;d++)
             {
                 if (!comboXML.Items.Contains(DetectRules[d].xml.ToLower()))
                     comboXML.Items.Add(DetectRules[d].xml.ToLower());
             }
+            Logger("[OK]");
         }
 
         private void frmAutodetect_Load(object sender, EventArgs e)
@@ -122,6 +124,7 @@ namespace UniversalPatcher
         {
             try
             {
+                Logger("Saving file autodetect.xml");
                 string FileName = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
                 using (FileStream stream = new FileStream(FileName, FileMode.Create))
                 {
@@ -129,10 +132,11 @@ namespace UniversalPatcher
                     writer.Serialize(stream, DetectRules);
                     stream.Close();
                 }
+                Logger("[OK]");
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Logger(ex.Message);
             }
 
         }
@@ -235,5 +239,13 @@ namespace UniversalPatcher
             listRules.SelectedItems[0].SubItems[4].Text = comboGroupLogic.Text;
 
         }
+        public void Logger(string LogText, Boolean NewLine = true)
+        {
+            txtStatus.AppendText(LogText);
+            if (NewLine)
+                txtStatus.AppendText(Environment.NewLine);
+            Application.DoEvents();
+        }
     }
+
 }

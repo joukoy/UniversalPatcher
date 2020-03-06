@@ -60,6 +60,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="frmSearchSegment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSearchSegment.Designer.cs">
+      <DependentUpon>frmSearchSegment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmCheckword.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmCheckword.Designer.cs">
+      <DependentUpon>frmCheckword.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmEditDetectAddress.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -132,6 +144,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmEditSegmentAddr.resx">
       <DependentUpon>frmEditSegmentAddr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmCheckword.resx">
+      <DependentUpon>frmCheckword.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSearchSegment.resx">
+      <DependentUpon>frmSearchSegment.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmSegmenList.resx">
       <DependentUpon>frmSegmenList.cs</DependentUpon>

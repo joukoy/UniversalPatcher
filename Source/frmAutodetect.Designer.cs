@@ -49,6 +49,7 @@
             this.numGroup = new System.Windows.Forms.NumericUpDown();
             this.comboXML = new System.Windows.Forms.ComboBox();
             this.btnReplace = new System.Windows.Forms.Button();
+            this.txtStatus = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numGroup)).BeginInit();
             this.SuspendLayout();
@@ -111,7 +112,7 @@
             this.listRules.HideSelection = false;
             this.listRules.Location = new System.Drawing.Point(5, 193);
             this.listRules.Name = "listRules";
-            this.listRules.Size = new System.Drawing.Size(379, 148);
+            this.listRules.Size = new System.Drawing.Size(379, 131);
             this.listRules.TabIndex = 8;
             this.listRules.UseCompatibleStateImageBehavior = false;
             this.listRules.SelectedIndexChanged += new System.EventHandler(this.listRules_SelectedIndexChanged);
@@ -273,11 +274,20 @@
             this.btnReplace.UseVisualStyleBackColor = true;
             this.btnReplace.Click += new System.EventHandler(this.btnReplace_Click);
             // 
+            // txtStatus
+            // 
+            this.txtStatus.Location = new System.Drawing.Point(6, 330);
+            this.txtStatus.Multiline = true;
+            this.txtStatus.Name = "txtStatus";
+            this.txtStatus.Size = new System.Drawing.Size(378, 54);
+            this.txtStatus.TabIndex = 22;
+            // 
             // frmAutodetect
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(386, 350);
+            this.ClientSize = new System.Drawing.Size(386, 387);
+            this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.btnReplace);
             this.Controls.Add(this.comboXML);
             this.Controls.Add(this.numGroup);
@@ -331,5 +341,6 @@
         private System.Windows.Forms.NumericUpDown numGroup;
         private System.Windows.Forms.ComboBox comboXML;
         private System.Windows.Forms.Button btnReplace;
+        private System.Windows.Forms.TextBox txtStatus;
     }
 }

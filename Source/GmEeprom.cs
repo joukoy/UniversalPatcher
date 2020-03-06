@@ -83,7 +83,7 @@ namespace UniversalPatcher
             {
                 return "?";
             }
-            return ValidateVIN(System.Text.Encoding.ASCII.GetString(buf, (int)VINoffset + 33, 17));
+            return ValidateVIN(System.Text.Encoding.ASCII.GetString(buf, (int)VINoffset + 0x21, 17));
         }
 
         public static string ReadVIN(string FileName)
@@ -153,14 +153,13 @@ namespace UniversalPatcher
             }
 
             string PN = BEToUint32(buf, VINAddr + 4).ToString();
-            Ver = System.Text.Encoding.ASCII.GetString(buf, (int)VINAddr + 28, 4);
-            Ver = Regex.Replace(Ver, "[^a-zA-Z0-9]", ""); //Filter out all special chars
+            Ver = ReadTextBlock(buf, (int)VINAddr + 0x1C, 4);
 
             string Ret = " Hardware ".PadRight(20) + BEToUint32(buf, VINAddr + 4).ToString() + Environment.NewLine;
-            Ret += " Serial ".PadRight(20) + System.Text.Encoding.ASCII.GetString(buf, (int)VINAddr + 8, 12) + Environment.NewLine;
-            Ret += " Id ".PadRight(20) + BEToUint32(buf, VINAddr + 20).ToString() + Environment.NewLine;
-            Ret += " Id2 ".PadRight(20) + BEToUint32(buf, VINAddr + 24).ToString() + Environment.NewLine;
-            Ret += " Broadcast ".PadRight(20) + System.Text.Encoding.ASCII.GetString(buf, (int)VINAddr + 28, 4) + Environment.NewLine;
+            Ret += " Serial ".PadRight(20) + ReadTextBlock(buf, (int)VINAddr + 8, 12) + Environment.NewLine;
+            Ret += " Id ".PadRight(20) + BEToUint32(buf, VINAddr + 0x14).ToString() + Environment.NewLine;
+            Ret += " Id2 ".PadRight(20) + BEToUint32(buf, VINAddr + 0x18).ToString() + Environment.NewLine;
+            Ret += " Broadcast ".PadRight(20) + ReadTextBlock(buf, (int)VINAddr + 0x1C, 4) + Environment.NewLine;
             Ret += " PN ".PadRight(20) + PN + Environment.NewLine;
             Ret += " Ver ".PadRight(20) + Ver + Environment.NewLine;
             Ret += " VIN ".PadRight(20) + GetVIN(buf) + Environment.NewLine;

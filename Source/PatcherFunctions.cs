@@ -42,6 +42,8 @@ public class upatcher
         public AddressData SegNrAddr;
         public uint CheckwordAddr;
         public List<AddressData> ExtraInfo;
+        //public uint EepromAddr;
+        //public uint EepromDataAddr;
     }
 
     public struct SegmentConfig
@@ -64,8 +66,11 @@ public class upatcher
         public string SegNrAddr;
         public string ExtraInfo;
         public string Comment;
-        public string CheckWord;
-        public string CheckwordLocations;
+        public string CheckWords;
+        public string EepromAddresses;  //Possible start addresses for Eepom segment
+        public string EepromSearchfor;  //search if this found/not found in segment
+        public string EepromSearchfrom; //Search above in these addresses
+        public bool EepromSearchNot;     //Search where NOT found
     }
 
     public const short CSMethod_None = 0;
@@ -175,6 +180,14 @@ public class upatcher
         return true; 
     }
 
+    public static string ReadTextBlock(byte[] buf, int Address,int Bytes )
+    {       
+        string Result = System.Text.Encoding.ASCII.GetString(buf, (int)Address, Bytes);
+        Result = Regex.Replace(Result, "[^a-zA-Z0-9]", "");
+        return Result;
+    }
+
+
     public static AddressData ParseAddress (string Line, uint SegmentAddress, byte[] buf, ref BinFile binfileSegment)
     {
         AddressData AD = new AddressData();
@@ -229,13 +242,24 @@ public class upatcher
         }
 
         string[] Lineparts = Line.Split(':');
-        if  (!HexToUint(Lineparts[0].Replace("#", ""), out AD.Address))
+        uint CWAddr = 0;
+        bool Negative = false;
+        if (Lineparts[0].Contains("CW"))
+            CWAddr = binfileSegment.CheckwordAddr;
+        Lineparts[0] = Lineparts[0].Replace("CW", "");
+
+        if (!HexToUint(Lineparts[0].Replace("#", ""), out AD.Address))
             return AD;
 
         if (Line.StartsWith("#"))
         {
             AD.Address += SegmentAddress;
         }
+        if (Negative)
+            AD.Address = CWAddr - AD.Address;
+        else
+            AD.Address += CWAddr;
+
 
         if (Lineparts.Length > 1)
             UInt16.TryParse(Lineparts[1], out AD.Bytes);
@@ -251,7 +275,7 @@ public class upatcher
         return AD;
     }
 
-    public static string ReadInfo( byte[] buf, AddressData AD )
+    public static string ReadInfo(byte[] buf, AddressData AD )
     {
 
         string Result = "";
@@ -260,7 +284,7 @@ public class upatcher
             if (AD.Type == TypeHex)
                 Result = buf[AD.Address].ToString("X2");
             else if (AD.Type == TypeText)
-                Result = System.Text.Encoding.ASCII.GetString(buf, (int)AD.Address, AD.Bytes);
+                Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
             else
                 Result = buf[AD.Address].ToString();
         }
@@ -269,16 +293,25 @@ public class upatcher
             if (AD.Type == TypeHex)
                 Result = BEToUint16(buf, AD.Address).ToString("X4");
             else if (AD.Type == TypeText)
-                Result = System.Text.Encoding.ASCII.GetString(buf, (int)AD.Address, AD.Bytes);
+                Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
             else
                 Result = BEToUint16(buf, AD.Address).ToString();
         }
-        else
+        else if (AD.Bytes == 8)
+        {
+            if (AD.Type == TypeHex)
+                Result = BEToUint64(buf, AD.Address).ToString("X4");
+            else if (AD.Type == TypeText)
+                Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
+            else
+                Result = BEToUint64(buf, AD.Address).ToString();
+        }
+        else //Default is 4 bytes
         { 
             if (AD.Type == TypeHex)
                 Result = BEToUint32(buf, AD.Address).ToString("X4");
             else if (AD.Type == TypeText)
-                Result = System.Text.Encoding.ASCII.GetString(buf, (int)AD.Address, AD.Bytes);
+                Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
             else
                 Result = BEToUint32(buf, AD.Address).ToString();
         }
@@ -439,6 +472,7 @@ public class upatcher
             if (AddrParts[1].Contains("-"))
                 Negative = true;
             AddrParts[1] = AddrParts[1].Replace("-", "");
+            AddrParts[1] = AddrParts[1].Replace("+", "");
             if (!HexToUint(AddrParts[1].Replace("#", ""), out E.Address))
                 return LEX;
 
@@ -466,7 +500,7 @@ public class upatcher
         }
         return LEX;
     }
-
+/*
     public static uint ParseCheckWordAddress(byte[] buf,string Line, string Checkword)
     {
         if ( Line == null || Line.Length == 0)
@@ -552,6 +586,168 @@ public class upatcher
         //Not found:
         return 0;
     }
+    */
+/*
+    public static string ParseEepromData(byte[] buf, SegmentConfig S, BinFile binfile)
+    {
+        string Res="";
+        List<AddressData> ListEe;
+
+        ListEe = ParseExtraInfo(buf, S.EepromData, binfile.EepromAddr, binfile.EepromDataAddr);
+        for (int i=0;i<ListEe.Count;i++)
+        {
+            if (i > 0)
+                Res += ", ";
+            Res += ListEe[i].Name +": " + ReadInfo(buf, ListEe[i]);
+        }
+
+        return Res;
+    }
+    */
+    public static  bool FindEeprom(byte[] buf, SegmentConfig S, ref BinFile binfile)
+    {
+        if (S.EepromSearchfor.Length == 0)
+            return false;
+        ushort Bytes = (ushort)(S.EepromSearchfor.Length / 2);
+        if (Bytes == 1)
+            Bytes = 2;
+        if (Bytes == 3)
+            Bytes = 4;
+        if (Bytes > 4 && Bytes < 8)
+            Bytes = 8;
+        UInt64 SearchFor;
+        if (!HexToUint64(S.EepromSearchfor, out SearchFor))
+            return false;
+        uint SearchFrom;
+        if (!HexToUint(S.EepromSearchfrom, out SearchFrom))
+            return false;
+
+        List<Block> Blocks;
+        binfile.SegmentBlocks = new List<Block>();
+        if (!ParseSegmentAddresses(S.EepromAddresses, S, buf, out Blocks))
+            return false;
+        foreach (Block B in Blocks)
+        {
+
+            uint Addr = B.Start + SearchFrom;
+            if (!S.EepromSearchNot)
+            {
+
+                if (Bytes == 8)
+                    if (BEToUint64(buf, Addr) == SearchFor)
+                    { 
+                        binfile.SegmentBlocks.Add(B);
+                        return true;
+                    }
+                if (Bytes == 4)
+                    if (BEToUint32(buf, Addr) == SearchFor)
+                    {
+                        binfile.SegmentBlocks.Add(B);
+                        return true;
+                    }
+                if (Bytes == 2)
+                    if (BEToUint16(buf, Addr) == SearchFor)
+                    {
+                        binfile.SegmentBlocks.Add(B);
+                        return true;
+                    }
+                if (Bytes == 1)
+                    if (buf[Addr] == SearchFor)
+                    {
+                        binfile.SegmentBlocks.Add(B);
+                        return true;
+                    }
+            }
+            else
+            {
+                if (Bytes == 8)
+                    if (BEToUint64(buf, Addr) != SearchFor)
+                    {
+                        binfile.SegmentBlocks.Add(B);
+                        return true;
+                    }
+                if (Bytes == 4)
+                    if (BEToUint32(buf, Addr) != SearchFor)
+                    {
+                        binfile.SegmentBlocks.Add(B);
+                        return true;
+                    }
+                if (Bytes == 2)
+                    if (BEToUint16(buf, Addr) != SearchFor)
+                    {
+                        binfile.SegmentBlocks.Add(B);
+                        return true;
+                    }
+                if (Bytes == 1)
+                    if (buf[Addr] != SearchFor)
+                    {
+                        binfile.SegmentBlocks.Add(B);
+                        return true;
+                    }
+            }
+        }
+        return false;
+    }
+
+    public static bool FindCheckwordData(byte[] buf, SegmentConfig S, ref BinFile binfile)
+    {
+        if (S.CheckWords == null)
+            return false;
+
+        string[] CWlist = S.CheckWords.Split(',');
+        foreach(string Row in CWlist)
+        {
+            string[] Parts = Row.Split(':');
+            if (Parts.Length == 3)
+            {
+                UInt64 CW;
+                uint Location;
+                uint DataLocation;
+                if (!HexToUint64(Parts[0], out CW))
+                    return false;
+                if (!HexToUint(Parts[1], out Location))
+                    return false;
+                if (!HexToUint(Parts[2], out DataLocation))
+                    return false;
+                DataLocation += binfile.SegmentBlocks[0].Start;
+
+                Location += binfile.SegmentBlocks[0].Start;
+                ushort Bytes = (ushort)(Parts[0].Length / 2);
+                if (Bytes == 1)
+                    Bytes = 2;
+                if (Bytes == 3)
+                    Bytes = 4;
+                if (Bytes > 4 && Bytes < 8)
+                    Bytes = 8;
+
+                if (Bytes == 1)
+                    if (buf[Location] == CW)
+                    {
+                        binfile.CheckwordAddr = DataLocation;
+                        return true;
+                    }
+                if (Bytes == 2)
+                    if (BEToUint16(buf,Location) == CW)
+                    {
+                        binfile.CheckwordAddr = DataLocation;
+                        return true;
+                    }
+                if (Bytes == 4)
+                    if (BEToUint32(buf, Location) == CW)
+                    {
+                        binfile.CheckwordAddr = DataLocation;
+                        return true;
+                    }
+                if (Bytes == 8)
+                    if (BEToUint64(buf, Location) == CW)
+                    {
+                        binfile.CheckwordAddr = DataLocation;
+                        return true;
+                    }
+            }
+        }
+        return false;
+    }
 
     public static void GetSegmentAddresses(byte[] buf, out BinFile[] binfile)
     {
@@ -561,9 +757,18 @@ public class upatcher
             SegmentConfig S = Segments[i];
             List<Block> B = new List<Block>();
             binfile[i].ExcludeBlocks = B;
-            if (!ParseSegmentAddresses(S.Addresses, S, buf, out B))
-                return;
-            binfile[i].SegmentBlocks = B ;
+            if (S.EepromAddresses != null)
+            {
+                if (!FindEeprom(buf, S, ref binfile[i]))
+                    return;
+                if (!FindCheckwordData(buf, S, ref binfile[i]))
+                    return;
+            }
+            else { 
+                if (!ParseSegmentAddresses(S.Addresses, S, buf, out B))
+                    return;
+                binfile[i].SegmentBlocks = B;
+            }
             if (!ParseSegmentAddresses(S.CS1Blocks, S, buf, out B))
                 return;
             binfile[i].CS1Blocks = B;
@@ -576,7 +781,7 @@ public class upatcher
                 binfile[i].PNaddr = ParseAddress(S.PNAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
             binfile[i].VerAddr = ParseAddress(S.VerAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
             binfile[i].SegNrAddr = ParseAddress(S.SegNrAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
-            binfile[i].CheckwordAddr = ParseCheckWordAddress(buf, S.CheckwordLocations, S.CheckWord);
+            //binfile[i].CheckwordAddr = ParseCheckWordAddress(buf, S.CheckWords);
             binfile[i].ExtraInfo = ParseExtraInfo(buf, S.ExtraInfo, binfile[i].SegmentBlocks[0].Start, binfile[i].CheckwordAddr);
         }
     }

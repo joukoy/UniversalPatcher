@@ -47,7 +47,7 @@ namespace UniversalPatcher
             try
             {
                 Segments.Clear();
-
+                Logger("Loading file: " + Path.GetFileName(FileName), false);
                 System.Xml.Serialization.XmlSerializer reader =
                     new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentConfig>));
                 System.IO.StreamReader file = new System.IO.StreamReader(FileName);
@@ -65,12 +65,13 @@ namespace UniversalPatcher
                     item.Tag = s;
                     listSegments.Items.Add(item);
                 }
+                Logger(" [OK]");
                 XMLFile = FileName;
                 labelXML.Text = Path.GetFileName(XMLFile);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Logger(ex.Message);
             }
 
         }
@@ -90,6 +91,7 @@ namespace UniversalPatcher
                 string FileName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
                 if (FileName.Length < 1)
                     return;
+                Logger("Saving to file: " + Path.GetFileName(FileName), false);
 
                 using (FileStream stream = new FileStream(FileName, FileMode.Create))
                 {
@@ -97,18 +99,21 @@ namespace UniversalPatcher
                     writer.Serialize(stream, Segments);
                     stream.Close();
                 }
+                Logger(" [OK]");
                 XMLFile = FileName;
                 labelXML.Text = Path.GetFileName(XMLFile);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Logger(ex.Message);
             }
 
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
+            if (listSegments.SelectedItems.Count == 0)
+                return;
             frmSegmentSettings frmSS = new frmSegmentSettings();
             int CurrentSel = (int)listSegments.SelectedItems[0].Tag;
             frmSS.EditSegment(CurrentSel);
@@ -198,5 +203,13 @@ namespace UniversalPatcher
         {
 
         }
+        public void Logger(string LogText, Boolean NewLine = true)
+        {
+            txtStatus.AppendText(LogText);
+            if (NewLine)
+                txtStatus.AppendText(Environment.NewLine);
+            Application.DoEvents();
+        }
+
     }
 }
