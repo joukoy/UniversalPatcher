@@ -67,10 +67,10 @@ public class upatcher
         public string ExtraInfo;
         public string Comment;
         public string CheckWords;
-        public string EepromAddresses;  //Possible start addresses for Eepom segment
-        public string EepromSearchfor;  //search if this found/not found in segment
-        public string EepromSearchfrom; //Search above in these addresses
-        public bool EepromSearchNot;     //Search where NOT found
+        public string SearchAddresses;  //Possible start addresses for Eepom segment
+        public string Searchfor;  //search if this found/not found in segment
+        public string Searchfrom; //Search above in these addresses
+        public bool SearchNot;     //Search where NOT found
     }
 
     public const short CSMethod_None = 0;
@@ -606,9 +606,9 @@ public class upatcher
     */
     public static  bool FindEeprom(byte[] buf, SegmentConfig S, ref BinFile binfile)
     {
-        if (S.EepromSearchfor.Length == 0)
+        if (S.Searchfor.Length == 0)
             return false;
-        ushort Bytes = (ushort)(S.EepromSearchfor.Length / 2);
+        ushort Bytes = (ushort)(S.Searchfor.Length / 2);
         if (Bytes == 1)
             Bytes = 2;
         if (Bytes == 3)
@@ -616,21 +616,21 @@ public class upatcher
         if (Bytes > 4 && Bytes < 8)
             Bytes = 8;
         UInt64 SearchFor;
-        if (!HexToUint64(S.EepromSearchfor, out SearchFor))
+        if (!HexToUint64(S.Searchfor, out SearchFor))
             return false;
         uint SearchFrom;
-        if (!HexToUint(S.EepromSearchfrom, out SearchFrom))
+        if (!HexToUint(S.Searchfrom, out SearchFrom))
             return false;
 
         List<Block> Blocks;
         binfile.SegmentBlocks = new List<Block>();
-        if (!ParseSegmentAddresses(S.EepromAddresses, S, buf, out Blocks))
+        if (!ParseSegmentAddresses(S.SearchAddresses, S, buf, out Blocks))
             return false;
         foreach (Block B in Blocks)
         {
 
             uint Addr = B.Start + SearchFrom;
-            if (!S.EepromSearchNot)
+            if (!S.SearchNot)
             {
 
                 if (Bytes == 8)
@@ -757,7 +757,7 @@ public class upatcher
             SegmentConfig S = Segments[i];
             List<Block> B = new List<Block>();
             binfile[i].ExcludeBlocks = B;
-            if (S.EepromAddresses != null)
+            if (S.SearchAddresses != null)
             {
                 if (!FindEeprom(buf, S, ref binfile[i]))
                     return;

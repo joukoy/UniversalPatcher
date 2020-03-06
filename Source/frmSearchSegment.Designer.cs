@@ -34,7 +34,7 @@
             this.chkNot = new System.Windows.Forms.CheckBox();
             this.txtSearchfor = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.txtEepromAddresses = new System.Windows.Forms.TextBox();
+            this.txtSearchAddresses = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnOK = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -94,13 +94,13 @@
             this.label2.TabIndex = 10;
             this.label2.Text = "Search for:";
             // 
-            // txtEepromAddresses
+            // txtSearchAddresses
             // 
-            this.txtEepromAddresses.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtEepromAddresses.Location = new System.Drawing.Point(113, 1);
-            this.txtEepromAddresses.Name = "txtEepromAddresses";
-            this.txtEepromAddresses.Size = new System.Drawing.Size(194, 20);
-            this.txtEepromAddresses.TabIndex = 9;
+            this.txtSearchAddresses.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSearchAddresses.Location = new System.Drawing.Point(113, 1);
+            this.txtSearchAddresses.Name = "txtSearchAddresses";
+            this.txtSearchAddresses.Size = new System.Drawing.Size(194, 20);
+            this.txtSearchAddresses.TabIndex = 9;
             // 
             // label1
             // 
@@ -121,7 +121,7 @@
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
-            // frmEeprom
+            // frmSearchSegment
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -133,9 +133,9 @@
             this.Controls.Add(this.chkNot);
             this.Controls.Add(this.txtSearchfor);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.txtEepromAddresses);
+            this.Controls.Add(this.txtSearchAddresses);
             this.Controls.Add(this.label1);
-            this.Name = "frmEeprom";
+            this.Name = "frmSearchSegment";
             this.Text = "Form1";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -150,7 +150,7 @@
         private System.Windows.Forms.CheckBox chkNot;
         private System.Windows.Forms.TextBox txtSearchfor;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txtEepromAddresses;
+        private System.Windows.Forms.TextBox txtSearchAddresses;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnOK;
     }

@@ -22,22 +22,22 @@ namespace UniversalPatcher
         public void InitMe(int SegmentNr)
         {
             CurrentSegment = SegmentNr;
-            if (Segments[SegmentNr].EepromAddresses != null && Segments[SegmentNr].EepromAddresses != "")
+            if (Segments[SegmentNr].SearchAddresses != null && Segments[SegmentNr].SearchAddresses != "")
             {
-                txtEepromAddresses.Text = Segments[SegmentNr].EepromAddresses;
-                txtSearchfor.Text = Segments[SegmentNr].EepromSearchfor;
-                txtSearchfrom.Text = Segments[SegmentNr].EepromSearchfrom;
-                chkNot.Checked = Segments[SegmentNr].EepromSearchNot;
+                txtSearchAddresses.Text = Segments[SegmentNr].SearchAddresses;
+                txtSearchfor.Text = Segments[SegmentNr].Searchfor;
+                txtSearchfrom.Text = Segments[SegmentNr].Searchfrom;
+                chkNot.Checked = Segments[SegmentNr].SearchNot;
             }
         }
 
         private void btnOK_Click(object sender, EventArgs e)
         {
             SegmentConfig S = Segments[CurrentSegment];
-            S.EepromAddresses = txtEepromAddresses.Text;
-            S.EepromSearchfor = txtSearchfor.Text;
-            S.EepromSearchfrom = txtSearchfrom.Text;
-            S.EepromSearchNot = chkNot.Checked;
+            S.SearchAddresses = txtSearchAddresses.Text;
+            S.Searchfor = txtSearchfor.Text;
+            S.Searchfrom = txtSearchfrom.Text;
+            S.SearchNot = chkNot.Checked;
             Segments[CurrentSegment] = S;
             this.DialogResult = DialogResult.OK;
         }
