@@ -89,7 +89,7 @@
             this.radioStartRead.Location = new System.Drawing.Point(10, 40);
             this.radioStartRead.Name = "radioStartRead";
             this.radioStartRead.Size = new System.Drawing.Size(151, 17);
-            this.radioStartRead.TabIndex = 0;
+            this.radioStartRead.TabIndex = 2;
             this.radioStartRead.TabStop = true;
             this.radioStartRead.Text = "Read address from (HEX): ";
             this.radioStartRead.UseVisualStyleBackColor = true;
@@ -115,7 +115,7 @@
             0});
             this.numReadPairs.Name = "numReadPairs";
             this.numReadPairs.Size = new System.Drawing.Size(68, 20);
-            this.numReadPairs.TabIndex = 5;
+            this.numReadPairs.TabIndex = 4;
             this.numReadPairs.Value = new decimal(new int[] {
             1,
             0,
@@ -128,7 +128,7 @@
             this.txtStart.Location = new System.Drawing.Point(163, 31);
             this.txtStart.Name = "txtStart";
             this.txtStart.Size = new System.Drawing.Size(127, 20);
-            this.txtStart.TabIndex = 1;
+            this.txtStart.TabIndex = 3;
             // 
             // groupBox2
             // 
@@ -150,7 +150,7 @@
             this.radioEndAbsolute.Location = new System.Drawing.Point(10, 42);
             this.radioEndAbsolute.Name = "radioEndAbsolute";
             this.radioEndAbsolute.Size = new System.Drawing.Size(119, 17);
-            this.radioEndAbsolute.TabIndex = 2;
+            this.radioEndAbsolute.TabIndex = 7;
             this.radioEndAbsolute.TabStop = true;
             this.radioEndAbsolute.Text = "Use Address (HEX):";
             this.radioEndAbsolute.UseVisualStyleBackColor = true;
@@ -162,7 +162,7 @@
             this.radioReadEnd.Location = new System.Drawing.Point(10, 65);
             this.radioReadEnd.Name = "radioReadEnd";
             this.radioReadEnd.Size = new System.Drawing.Size(148, 17);
-            this.radioReadEnd.TabIndex = 1;
+            this.radioReadEnd.TabIndex = 8;
             this.radioReadEnd.TabStop = true;
             this.radioReadEnd.Text = "Read address from (HEX):";
             this.radioReadEnd.UseVisualStyleBackColor = true;
@@ -174,7 +174,7 @@
             this.radioUseStart.Location = new System.Drawing.Point(10, 19);
             this.radioUseStart.Name = "radioUseStart";
             this.radioUseStart.Size = new System.Drawing.Size(138, 17);
-            this.radioUseStart.TabIndex = 0;
+            this.radioUseStart.TabIndex = 6;
             this.radioUseStart.TabStop = true;
             this.radioUseStart.Text = "Read after start address";
             this.radioUseStart.UseVisualStyleBackColor = true;
@@ -186,7 +186,7 @@
             this.txtEnd.Location = new System.Drawing.Point(163, 47);
             this.txtEnd.Name = "txtEnd";
             this.txtEnd.Size = new System.Drawing.Size(126, 20);
-            this.txtEnd.TabIndex = 3;
+            this.txtEnd.TabIndex = 9;
             // 
             // chkEnd
             // 
@@ -195,7 +195,7 @@
             this.chkEnd.Location = new System.Drawing.Point(163, 73);
             this.chkEnd.Name = "chkEnd";
             this.chkEnd.Size = new System.Drawing.Size(103, 17);
-            this.chkEnd.TabIndex = 4;
+            this.chkEnd.TabIndex = 10;
             this.chkEnd.Text = "From END of file";
             this.chkEnd.UseVisualStyleBackColor = true;
             // 
@@ -213,14 +213,14 @@
             this.txtOffset.Location = new System.Drawing.Point(173, 233);
             this.txtOffset.Name = "txtOffset";
             this.txtOffset.Size = new System.Drawing.Size(127, 20);
-            this.txtOffset.TabIndex = 8;
+            this.txtOffset.TabIndex = 11;
             // 
             // btnOK
             // 
             this.btnOK.Location = new System.Drawing.Point(323, 12);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
-            this.btnOK.TabIndex = 9;
+            this.btnOK.TabIndex = 12;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
@@ -230,7 +230,7 @@
             this.btnCancel.Location = new System.Drawing.Point(323, 46);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 10;
+            this.btnCancel.TabIndex = 13;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -254,7 +254,7 @@
             0});
             this.numBlock.Name = "numBlock";
             this.numBlock.Size = new System.Drawing.Size(36, 20);
-            this.numBlock.TabIndex = 12;
+            this.numBlock.TabIndex = 14;
             this.numBlock.Value = new decimal(new int[] {
             1,
             0,
@@ -296,7 +296,7 @@
             0});
             this.numBytes.Name = "numBytes";
             this.numBytes.Size = new System.Drawing.Size(68, 20);
-            this.numBytes.TabIndex = 14;
+            this.numBytes.TabIndex = 5;
             this.numBytes.Value = new decimal(new int[] {
             4,
             0,

@@ -162,10 +162,22 @@ namespace UniversalPatcher
             this.Close();
         }
 
-        private string EditAddress(string OldAddress, bool extra=false)
+        private string EditAddress(string OldAddress)
         {
             frmEditAddress frmE = new frmEditAddress();
-            frmE.ParseAddress(OldAddress,extra);
+            frmE.ParseAddress(OldAddress);
+            string Res = OldAddress;
+            if (frmE.ShowDialog(this) == DialogResult.OK)
+            {
+                Res = frmE.Result;
+            }
+            return Res;
+        }
+
+        private string EditExtra(string OldAddress)
+        {
+            frmEditExtra frmE = new frmEditExtra();
+            frmE.InitMe(OldAddress, Segments[CurrentSegment]);
             string Res = OldAddress;
             if (frmE.ShowDialog(this) == DialogResult.OK)
             {
@@ -232,17 +244,11 @@ namespace UniversalPatcher
 
         private void txtExtrainfo_Doubleclick(object sender, EventArgs e)
         {
-            if (txtExtrainfo.Text.Length == 0)
-                txtExtrainfo.Text = EditAddress(txtExtrainfo.Text, true);
-            else
-                txtExtrainfo.Text += "," + EditAddress(txtExtrainfo.Text, true);
+            txtExtrainfo.Text = EditExtra(txtExtrainfo.Text);
         }
         private void btnExtraAddr_Click(object sender, EventArgs e)
         {
-            if (txtExtrainfo.Text.Length == 0)
-                txtExtrainfo.Text = EditAddress(txtExtrainfo.Text, true);
-            else
-                txtExtrainfo.Text += "," + EditAddress(txtExtrainfo.Text, true);
+            txtExtrainfo.Text = EditExtra(txtExtrainfo.Text);
         }
 
 
@@ -295,6 +301,11 @@ namespace UniversalPatcher
             frmCw.InitMe(CurrentSegment);
             if (frmCw.ShowDialog(this) == DialogResult.OK)
                 txtCheckWords.Text = Segments[CurrentSegment].CheckWords;
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

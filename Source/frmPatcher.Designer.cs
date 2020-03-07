@@ -62,7 +62,7 @@
             this.btnOrgFile.Location = new System.Drawing.Point(12, 31);
             this.btnOrgFile.Name = "btnOrgFile";
             this.btnOrgFile.Size = new System.Drawing.Size(78, 25);
-            this.btnOrgFile.TabIndex = 1;
+            this.btnOrgFile.TabIndex = 2;
             this.btnOrgFile.Text = "Original file";
             this.btnOrgFile.UseVisualStyleBackColor = true;
             this.btnOrgFile.Click += new System.EventHandler(this.btnOrgFile_Click);
@@ -72,7 +72,7 @@
             this.btnModFile.Location = new System.Drawing.Point(12, 62);
             this.btnModFile.Name = "btnModFile";
             this.btnModFile.Size = new System.Drawing.Size(78, 25);
-            this.btnModFile.TabIndex = 2;
+            this.btnModFile.TabIndex = 4;
             this.btnModFile.Text = "Modified file";
             this.btnModFile.UseVisualStyleBackColor = true;
             this.btnModFile.Click += new System.EventHandler(this.btnModFile_Click);
@@ -89,7 +89,7 @@
             this.txtModifierFile.Location = new System.Drawing.Point(96, 65);
             this.txtModifierFile.Name = "txtModifierFile";
             this.txtModifierFile.Size = new System.Drawing.Size(617, 20);
-            this.txtModifierFile.TabIndex = 4;
+            this.txtModifierFile.TabIndex = 5;
             this.txtModifierFile.TextChanged += new System.EventHandler(this.txtModifierFile_TextChanged);
             // 
             // btnCompare
@@ -97,7 +97,7 @@
             this.btnCompare.Location = new System.Drawing.Point(12, 117);
             this.btnCompare.Name = "btnCompare";
             this.btnCompare.Size = new System.Drawing.Size(78, 25);
-            this.btnCompare.TabIndex = 5;
+            this.btnCompare.TabIndex = 6;
             this.btnCompare.Text = "Compare";
             this.btnCompare.UseVisualStyleBackColor = true;
             this.btnCompare.Click += new System.EventHandler(this.btnCompare_Click);
@@ -118,7 +118,7 @@
             this.btnSave.Location = new System.Drawing.Point(640, 420);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(72, 35);
-            this.btnSave.TabIndex = 7;
+            this.btnSave.TabIndex = 16;
             this.btnSave.Text = "Save patch";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -129,7 +129,7 @@
             this.txtPatchName.Location = new System.Drawing.Point(107, 391);
             this.txtPatchName.Name = "txtPatchName";
             this.txtPatchName.Size = new System.Drawing.Size(606, 20);
-            this.txtPatchName.TabIndex = 8;
+            this.txtPatchName.TabIndex = 9;
             // 
             // labelBinSize
             // 
@@ -198,7 +198,7 @@
             this.btnSegments.Location = new System.Drawing.Point(406, 420);
             this.btnSegments.Name = "btnSegments";
             this.btnSegments.Size = new System.Drawing.Size(72, 35);
-            this.btnSegments.TabIndex = 14;
+            this.btnSegments.TabIndex = 13;
             this.btnSegments.Text = "Setup segments";
             this.btnSegments.UseVisualStyleBackColor = true;
             this.btnSegments.Click += new System.EventHandler(this.btnSegments_Click);
@@ -208,7 +208,7 @@
             this.btnCheckSums.Location = new System.Drawing.Point(484, 420);
             this.btnCheckSums.Name = "btnCheckSums";
             this.btnCheckSums.Size = new System.Drawing.Size(72, 35);
-            this.btnCheckSums.TabIndex = 15;
+            this.btnCheckSums.TabIndex = 14;
             this.btnCheckSums.Text = "Fix checksums";
             this.btnCheckSums.UseVisualStyleBackColor = true;
             this.btnCheckSums.Click += new System.EventHandler(this.btnCheckSums_Click);
@@ -229,7 +229,7 @@
             this.btnShowPatch.Location = new System.Drawing.Point(562, 420);
             this.btnShowPatch.Name = "btnShowPatch";
             this.btnShowPatch.Size = new System.Drawing.Size(72, 35);
-            this.btnShowPatch.TabIndex = 17;
+            this.btnShowPatch.TabIndex = 15;
             this.btnShowPatch.Text = "Show patch";
             this.btnShowPatch.UseVisualStyleBackColor = true;
             this.btnShowPatch.Click += new System.EventHandler(this.btnShowPatch_Click);
@@ -244,7 +244,7 @@
             0});
             this.numSuppress.Name = "numSuppress";
             this.numSuppress.Size = new System.Drawing.Size(42, 20);
-            this.numSuppress.TabIndex = 18;
+            this.numSuppress.TabIndex = 8;
             this.numSuppress.Value = new decimal(new int[] {
             10,
             0,
@@ -275,7 +275,7 @@
             this.btnLoad.Location = new System.Drawing.Point(328, 420);
             this.btnLoad.Name = "btnLoad";
             this.btnLoad.Size = new System.Drawing.Size(72, 35);
-            this.btnLoad.TabIndex = 21;
+            this.btnLoad.TabIndex = 12;
             this.btnLoad.Text = "Load config";
             this.btnLoad.UseVisualStyleBackColor = true;
             this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
@@ -286,7 +286,7 @@
             this.chkCompareAll.Location = new System.Drawing.Point(248, 125);
             this.chkCompareAll.Name = "chkCompareAll";
             this.chkCompareAll.Size = new System.Drawing.Size(167, 17);
-            this.chkCompareAll.TabIndex = 22;
+            this.chkCompareAll.TabIndex = 7;
             this.chkCompareAll.Text = "Compare all (ignore segments)";
             this.chkCompareAll.UseVisualStyleBackColor = true;
             // 
@@ -298,7 +298,7 @@
             this.chkAutodetect.Location = new System.Drawing.Point(12, 427);
             this.chkAutodetect.Name = "chkAutodetect";
             this.chkAutodetect.Size = new System.Drawing.Size(110, 17);
-            this.chkAutodetect.TabIndex = 23;
+            this.chkAutodetect.TabIndex = 10;
             this.chkAutodetect.Text = "Autodetect config";
             this.chkAutodetect.UseVisualStyleBackColor = true;
             // 
@@ -307,7 +307,7 @@
             this.btnAutodetect.Location = new System.Drawing.Point(250, 420);
             this.btnAutodetect.Name = "btnAutodetect";
             this.btnAutodetect.Size = new System.Drawing.Size(72, 35);
-            this.btnAutodetect.TabIndex = 24;
+            this.btnAutodetect.TabIndex = 11;
             this.btnAutodetect.Text = "Setup autodetect";
             this.btnAutodetect.UseVisualStyleBackColor = true;
             this.btnAutodetect.Click += new System.EventHandler(this.btnAutodetect_Click);

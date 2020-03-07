@@ -83,7 +83,7 @@
             this.comboGroupLogic.Location = new System.Drawing.Point(172, 54);
             this.comboGroupLogic.Name = "comboGroupLogic";
             this.comboGroupLogic.Size = new System.Drawing.Size(57, 21);
-            this.comboGroupLogic.TabIndex = 5;
+            this.comboGroupLogic.TabIndex = 3;
             this.comboGroupLogic.Text = "And";
             this.comboGroupLogic.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.comboCompare_KeyPress);
             // 
@@ -101,7 +101,7 @@
             this.btnBrowse.Location = new System.Drawing.Point(235, 5);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(57, 21);
-            this.btnBrowse.TabIndex = 7;
+            this.btnBrowse.TabIndex = 1;
             this.btnBrowse.Text = "Browse...";
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
@@ -122,7 +122,7 @@
             this.btnSave.Location = new System.Drawing.Point(317, 5);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(67, 28);
-            this.btnSave.TabIndex = 9;
+            this.btnSave.TabIndex = 10;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -132,7 +132,7 @@
             this.btnAdd.Location = new System.Drawing.Point(317, 81);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(63, 23);
-            this.btnAdd.TabIndex = 10;
+            this.btnAdd.TabIndex = 11;
             this.btnAdd.Text = "Add";
             this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
@@ -154,7 +154,7 @@
             this.radioData.Location = new System.Drawing.Point(8, 9);
             this.radioData.Name = "radioData";
             this.radioData.Size = new System.Drawing.Size(48, 17);
-            this.radioData.TabIndex = 1;
+            this.radioData.TabIndex = 4;
             this.radioData.TabStop = true;
             this.radioData.Text = "Data";
             this.radioData.UseVisualStyleBackColor = true;
@@ -165,7 +165,7 @@
             this.radioFilesize.Location = new System.Drawing.Point(79, 9);
             this.radioFilesize.Name = "radioFilesize";
             this.radioFilesize.Size = new System.Drawing.Size(62, 17);
-            this.radioFilesize.TabIndex = 0;
+            this.radioFilesize.TabIndex = 5;
             this.radioFilesize.Text = "File size";
             this.radioFilesize.UseVisualStyleBackColor = true;
             this.radioFilesize.CheckedChanged += new System.EventHandler(this.radioFilesize_CheckedChanged);
@@ -175,14 +175,14 @@
             this.txtData.Location = new System.Drawing.Point(94, 164);
             this.txtData.Name = "txtData";
             this.txtData.Size = new System.Drawing.Size(135, 20);
-            this.txtData.TabIndex = 12;
+            this.txtData.TabIndex = 9;
             // 
             // txtAddress
             // 
             this.txtAddress.Location = new System.Drawing.Point(94, 117);
             this.txtAddress.Name = "txtAddress";
             this.txtAddress.Size = new System.Drawing.Size(135, 20);
-            this.txtAddress.TabIndex = 13;
+            this.txtAddress.TabIndex = 6;
             // 
             // label4
             // 
@@ -213,7 +213,7 @@
             this.comboCompare.Location = new System.Drawing.Point(172, 140);
             this.comboCompare.Name = "comboCompare";
             this.comboCompare.Size = new System.Drawing.Size(57, 21);
-            this.comboCompare.TabIndex = 16;
+            this.comboCompare.TabIndex = 8;
             this.comboCompare.Text = "==";
             this.comboCompare.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.comboCompare_KeyPress);
             // 
@@ -222,7 +222,7 @@
             this.btnDel.Location = new System.Drawing.Point(317, 157);
             this.btnDel.Name = "btnDel";
             this.btnDel.Size = new System.Drawing.Size(63, 23);
-            this.btnDel.TabIndex = 17;
+            this.btnDel.TabIndex = 13;
             this.btnDel.Text = "Delete";
             this.btnDel.UseVisualStyleBackColor = true;
             this.btnDel.Click += new System.EventHandler(this.btnDel_Click);
@@ -232,7 +232,7 @@
             this.btnAddr.Location = new System.Drawing.Point(233, 116);
             this.btnAddr.Name = "btnAddr";
             this.btnAddr.Size = new System.Drawing.Size(30, 20);
-            this.btnAddr.TabIndex = 18;
+            this.btnAddr.TabIndex = 7;
             this.btnAddr.Text = "...";
             this.btnAddr.UseVisualStyleBackColor = true;
             this.btnAddr.Click += new System.EventHandler(this.btnAddr_Click);
@@ -247,7 +247,7 @@
             0});
             this.numGroup.Name = "numGroup";
             this.numGroup.Size = new System.Drawing.Size(57, 20);
-            this.numGroup.TabIndex = 19;
+            this.numGroup.TabIndex = 2;
             this.numGroup.Value = new decimal(new int[] {
             1,
             0,
@@ -261,7 +261,7 @@
             this.comboXML.Location = new System.Drawing.Point(68, 6);
             this.comboXML.Name = "comboXML";
             this.comboXML.Size = new System.Drawing.Size(161, 21);
-            this.comboXML.TabIndex = 20;
+            this.comboXML.TabIndex = 0;
             this.comboXML.SelectedIndexChanged += new System.EventHandler(this.comboXML_SelectedIndexChanged);
             // 
             // btnReplace
@@ -269,7 +269,7 @@
             this.btnReplace.Location = new System.Drawing.Point(317, 116);
             this.btnReplace.Name = "btnReplace";
             this.btnReplace.Size = new System.Drawing.Size(62, 25);
-            this.btnReplace.TabIndex = 21;
+            this.btnReplace.TabIndex = 12;
             this.btnReplace.Text = "Replace";
             this.btnReplace.UseVisualStyleBackColor = true;
             this.btnReplace.Click += new System.EventHandler(this.btnReplace_Click);

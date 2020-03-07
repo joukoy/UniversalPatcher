@@ -134,7 +134,7 @@ namespace UniversalPatcher
         {
             Segments.Clear();
             listSegments.Items.Clear();
-
+            txtStatus.Text = "";
         }
 
         private void btnMoveUp_Click(object sender, EventArgs e)

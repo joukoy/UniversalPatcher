@@ -45,7 +45,7 @@
             this.txtSearchfrom.Location = new System.Drawing.Point(113, 50);
             this.txtSearchfrom.Name = "txtSearchfrom";
             this.txtSearchfrom.Size = new System.Drawing.Size(193, 20);
-            this.txtSearchfrom.TabIndex = 15;
+            this.txtSearchfrom.TabIndex = 2;
             // 
             // label4
             // 
@@ -73,7 +73,7 @@
             this.chkNot.Location = new System.Drawing.Point(312, 24);
             this.chkNot.Name = "chkNot";
             this.chkNot.Size = new System.Drawing.Size(120, 17);
-            this.chkNot.TabIndex = 12;
+            this.chkNot.TabIndex = 3;
             this.chkNot.Text = "Match if NOT found";
             this.chkNot.UseVisualStyleBackColor = true;
             // 
@@ -83,7 +83,7 @@
             this.txtSearchfor.Location = new System.Drawing.Point(113, 25);
             this.txtSearchfor.Name = "txtSearchfor";
             this.txtSearchfor.Size = new System.Drawing.Size(193, 20);
-            this.txtSearchfor.TabIndex = 11;
+            this.txtSearchfor.TabIndex = 1;
             // 
             // label2
             // 
@@ -100,7 +100,7 @@
             this.txtSearchAddresses.Location = new System.Drawing.Point(113, 1);
             this.txtSearchAddresses.Name = "txtSearchAddresses";
             this.txtSearchAddresses.Size = new System.Drawing.Size(194, 20);
-            this.txtSearchAddresses.TabIndex = 9;
+            this.txtSearchAddresses.TabIndex = 0;
             // 
             // label1
             // 
@@ -116,7 +116,7 @@
             this.btnOK.Location = new System.Drawing.Point(373, 84);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(59, 29);
-            this.btnOK.TabIndex = 16;
+            this.btnOK.TabIndex = 4;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
@@ -136,7 +136,7 @@
             this.Controls.Add(this.txtSearchAddresses);
             this.Controls.Add(this.label1);
             this.Name = "frmSearchSegment";
-            this.Text = "Form1";
+            this.Text = "Search segment";
             this.ResumeLayout(false);
             this.PerformLayout();
 

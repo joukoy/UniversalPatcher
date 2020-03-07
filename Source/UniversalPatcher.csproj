@@ -60,6 +60,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="frmEditExtra.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditExtra.Designer.cs">
+      <DependentUpon>frmEditExtra.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmSearchSegment.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -141,6 +147,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmEditDetectAddress.resx">
       <DependentUpon>frmEditDetectAddress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditExtra.resx">
+      <DependentUpon>frmEditExtra.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmEditSegmentAddr.resx">
       <DependentUpon>frmEditSegmentAddr.cs</DependentUpon>

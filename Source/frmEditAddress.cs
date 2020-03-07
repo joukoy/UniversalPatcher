@@ -19,10 +19,8 @@ namespace UniversalPatcher
 
         public string Result = "";
 
-        public void ParseAddress(string OldAddr, bool extra = false)
+        public void ParseAddress(string OldAddr)
         {
-            if (!extra)
-                txtName.Enabled = false;
             if (OldAddr.Length > 0)
             {
                 string[] Parts = OldAddr.Split(':');
@@ -53,12 +51,7 @@ namespace UniversalPatcher
         {
             if (txtAddress.Text.Length == 0)
                 return;
-            if (txtName.Enabled && txtName.Text.Length == 0)
-                return;
-            if (txtName.Enabled)
-                Result = txtName.Text +":";
-            else
-                Result = "";
+            Result = "";
             if (radioRelative.Checked)
                 Result += "#";
             Result += txtAddress.Text + ":" + numBytes.Value.ToString() + ":";

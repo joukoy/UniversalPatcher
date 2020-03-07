@@ -48,7 +48,7 @@
             this.btnMoveDown.Location = new System.Drawing.Point(470, 70);
             this.btnMoveDown.Name = "btnMoveDown";
             this.btnMoveDown.Size = new System.Drawing.Size(71, 23);
-            this.btnMoveDown.TabIndex = 44;
+            this.btnMoveDown.TabIndex = 2;
             this.btnMoveDown.Text = "Move down";
             this.btnMoveDown.UseVisualStyleBackColor = true;
             this.btnMoveDown.Click += new System.EventHandler(this.btnMoveDown_Click);
@@ -58,7 +58,7 @@
             this.btnMoveUp.Location = new System.Drawing.Point(470, 38);
             this.btnMoveUp.Name = "btnMoveUp";
             this.btnMoveUp.Size = new System.Drawing.Size(71, 26);
-            this.btnMoveUp.TabIndex = 43;
+            this.btnMoveUp.TabIndex = 1;
             this.btnMoveUp.Text = "Move up";
             this.btnMoveUp.UseVisualStyleBackColor = true;
             this.btnMoveUp.Click += new System.EventHandler(this.btnMoveUp_Click);
@@ -69,7 +69,7 @@
             this.listSegments.Location = new System.Drawing.Point(3, 38);
             this.listSegments.Name = "listSegments";
             this.listSegments.Size = new System.Drawing.Size(461, 281);
-            this.listSegments.TabIndex = 42;
+            this.listSegments.TabIndex = 0;
             this.listSegments.UseCompatibleStateImageBehavior = false;
             this.listSegments.SelectedIndexChanged += new System.EventHandler(this.listSegments_SelectedIndexChanged);
             // 
@@ -78,7 +78,7 @@
             this.btnDelete.Location = new System.Drawing.Point(470, 228);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(71, 27);
-            this.btnDelete.TabIndex = 45;
+            this.btnDelete.TabIndex = 6;
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
@@ -88,7 +88,7 @@
             this.btnEdit.Location = new System.Drawing.Point(470, 195);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(70, 27);
-            this.btnEdit.TabIndex = 46;
+            this.btnEdit.TabIndex = 5;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
             this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
@@ -98,7 +98,7 @@
             this.btnCopy.Location = new System.Drawing.Point(470, 162);
             this.btnCopy.Name = "btnCopy";
             this.btnCopy.Size = new System.Drawing.Size(71, 27);
-            this.btnCopy.TabIndex = 47;
+            this.btnCopy.TabIndex = 4;
             this.btnCopy.Text = "Copy";
             this.btnCopy.UseVisualStyleBackColor = true;
             this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
@@ -108,7 +108,7 @@
             this.btnOpen.Location = new System.Drawing.Point(163, 325);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(71, 27);
-            this.btnOpen.TabIndex = 48;
+            this.btnOpen.TabIndex = 9;
             this.btnOpen.Text = "Open...";
             this.btnOpen.UseVisualStyleBackColor = true;
             this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
@@ -128,7 +128,7 @@
             this.btnSave.Location = new System.Drawing.Point(86, 325);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(71, 27);
-            this.btnSave.TabIndex = 50;
+            this.btnSave.TabIndex = 8;
             this.btnSave.Text = "Save...";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -138,7 +138,7 @@
             this.btnNewXML.Location = new System.Drawing.Point(9, 325);
             this.btnNewXML.Name = "btnNewXML";
             this.btnNewXML.Size = new System.Drawing.Size(71, 27);
-            this.btnNewXML.TabIndex = 51;
+            this.btnNewXML.TabIndex = 7;
             this.btnNewXML.Text = "New XML";
             this.btnNewXML.UseVisualStyleBackColor = true;
             this.btnNewXML.Click += new System.EventHandler(this.btnNewXML_Click);
@@ -148,17 +148,17 @@
             this.btnAdd.Location = new System.Drawing.Point(470, 130);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(70, 26);
-            this.btnAdd.TabIndex = 52;
+            this.btnAdd.TabIndex = 3;
             this.btnAdd.Text = "Add";
             this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(464, 327);
+            this.btnOK.Location = new System.Drawing.Point(470, 327);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(75, 23);
-            this.btnOK.TabIndex = 53;
+            this.btnOK.Size = new System.Drawing.Size(71, 23);
+            this.btnOK.TabIndex = 10;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
@@ -169,7 +169,7 @@
             this.txtStatus.Multiline = true;
             this.txtStatus.Name = "txtStatus";
             this.txtStatus.Size = new System.Drawing.Size(210, 35);
-            this.txtStatus.TabIndex = 54;
+            this.txtStatus.TabIndex = 11;
             // 
             // frmSegmenList
             // 
