@@ -22,11 +22,11 @@ Extrainfo:
 InfoName:#8:2:hex
 InfoName:FFFE:4:int
 Info1:#8:2:hex,Info2:FBA,Info3:#0
-PN:CW-64:4:int, Serial:CW-80:12:text		CW = Checkword address, see "Checkword locations" and "Checkword"
+PN:CW1-64:4:int, Serial:CW2-80:12:text		CW = Checkword address, see "Checkword locations" and "Checkword"
 
 
-Checkword locations:
-4088,6088
-1000-1100,4afc-ac7a
-1045,1099,3000-3020
+Checkwords:
+a5a0:88:88:CW1		Search A5A0 from 0x88 (from segment start) and if found CW1 points to segment start + 88
+a5a0:88:0:CW2		Search A5A0 from 0x88 (from segment start) and if found CW2 points to segment start
+a5a0:88:88:CW1,a5a0:88:0:CW2,a5a0:56:0:CW3,a5a0:56:56:CW4	Multiple checkwords
 
