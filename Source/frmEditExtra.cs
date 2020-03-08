@@ -125,12 +125,14 @@ namespace UniversalPatcher
             }
             txtAddress.Text = Parts[1].Replace("#", "");
             ushort x;
-            if (HexToUshort(Parts[2], out x))
-            numBytes.Value = x;
+            if (UInt16.TryParse(Parts[2], out x))
+                numBytes.Value = x;
             if (Parts[3].ToLower().Contains("hex"))
                 radioHEX.Checked = true;
             else if (Parts[3].ToLower().Contains("text") || Parts[2].ToLower().Contains("txt"))
                 radioText.Checked = true;
+            else if (Parts[3].ToLower().Contains("int"))
+                radioInt.Checked = true;
 
         }
 

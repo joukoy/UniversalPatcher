@@ -526,7 +526,7 @@ public class upatcher
         return LEX;
     }
 
-    public static  bool FindEeprom(byte[] buf, SegmentConfig S, ref BinFile binfile)
+    public static  bool FindSegment(byte[] buf, SegmentConfig S, ref BinFile binfile)
     {
         if (S.Searchfor.Length == 0)
             return false;
@@ -682,7 +682,7 @@ public class upatcher
             binfile[i].ExcludeBlocks = B;
             if (S.SearchAddresses != null)
             {
-                if (!FindEeprom(buf, S, ref binfile[i]))
+                if (!FindSegment(buf, S, ref binfile[i]))
                     return;
                 if (!FindCheckwordData(buf, S, ref binfile[i]))
                     return;
