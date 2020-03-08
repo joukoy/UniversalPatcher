@@ -647,29 +647,25 @@ public class upatcher
                     if (buf[Location] == CW)
                     {
                         binfile.Checkwords.Add(checkw);
-                        return true;
                     }
                 if (Bytes == 2)
                     if (BEToUint16(buf,Location) == CW)
                     {
                         binfile.Checkwords.Add(checkw);
-                        return true;
                     }
                 if (Bytes == 4)
                     if (BEToUint32(buf, Location) == CW)
                     {
                         binfile.Checkwords.Add(checkw);
-                        return true;
                     }
                 if (Bytes == 8)
                     if (BEToUint64(buf, Location) == CW)
                     {
                         binfile.Checkwords.Add(checkw);
-                        return true;
                     }
             }
         }
-        return false;
+        return true;
     }
 
     public static void GetSegmentAddresses(byte[] buf, out BinFile[] binfile)
@@ -683,8 +679,6 @@ public class upatcher
             if (S.SearchAddresses != null)
             {
                 if (!FindSegment(buf, S, ref binfile[i]))
-                    return;
-                if (!FindCheckwordData(buf, S, ref binfile[i]))
                     return;
             }
             else { 
@@ -700,6 +694,9 @@ public class upatcher
             binfile[i].CS2Blocks = B;
             binfile[i].CS1Address = ParseAddress(S.CS1Address, binfile[i].SegmentBlocks[0].Start,buf, ref binfile[i]);
             binfile[i].CS2Address = ParseAddress(S.CS2Address, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
+            if (S.CheckWords != null && S.CheckWords != "")
+                FindCheckwordData(buf, S, ref binfile[i]);
+                    
             if (binfile[i].PNaddr.Bytes == 0)
                 binfile[i].PNaddr = ParseAddress(S.PNAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
             binfile[i].VerAddr = ParseAddress(S.VerAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
