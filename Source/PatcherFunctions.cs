@@ -697,13 +697,11 @@ public class upatcher
             if (S.CheckWords != null && S.CheckWords != "")
                 FindCheckwordData(buf, S, ref binfile[i]);
                     
-            if (binfile[i].PNaddr.Bytes == 0)
+            if (binfile[i].PNaddr.Bytes == 0)  //if not searched
                 binfile[i].PNaddr = ParseAddress(S.PNAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
             binfile[i].VerAddr = ParseAddress(S.VerAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
             binfile[i].SegNrAddr = ParseAddress(S.SegNrAddr, binfile[i].SegmentBlocks[0].Start, buf, ref binfile[i]);
-            //binfile[i].CheckwordAddr = ParseCheckWordAddress(buf, S.CheckWords);
-            if (binfile[i].Checkwords != null)
-                binfile[i].ExtraInfo = ParseExtraInfo(buf, S.ExtraInfo, binfile[i].SegmentBlocks[0].Start, binfile[i]);
+            binfile[i].ExtraInfo = ParseExtraInfo(buf, S.ExtraInfo, binfile[i].SegmentBlocks[0].Start, binfile[i]);
         }
     }
     public static byte[] ReadBin(string FileName, uint FileOffset, uint Length)
