@@ -691,7 +691,8 @@ namespace UniversalPatcher
         {
             if (Segments.Count > 0)
                 FixCheckSums();
-
+            if (radioApply.Checked)
+                btnSave.Enabled = true;
         }
         private void FixCheckSums()
         {
