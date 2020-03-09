@@ -602,6 +602,8 @@ namespace UniversalPatcher
             try
             {
                 string FileName = SelectSaveFile();
+                if (FileName.Length == 0)
+                    return;
                 Logger("Saving to file: " + FileName);
                 WriteSegmentToFile(FileName, 0, (uint)Basebuf.Length, Basebuf);
                 Logger("Done.");

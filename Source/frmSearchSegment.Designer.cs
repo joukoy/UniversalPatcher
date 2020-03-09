@@ -28,9 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtSearchfrom = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.chkNot = new System.Windows.Forms.CheckBox();
             this.txtSearchfor = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -39,38 +36,12 @@
             this.btnOK = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // txtSearchfrom
-            // 
-            this.txtSearchfrom.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSearchfrom.Location = new System.Drawing.Point(113, 50);
-            this.txtSearchfrom.Name = "txtSearchfrom";
-            this.txtSearchfrom.Size = new System.Drawing.Size(193, 20);
-            this.txtSearchfrom.TabIndex = 2;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(309, 53);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(96, 13);
-            this.label4.TabIndex = 14;
-            this.label4.Text = "From segment start";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(4, 54);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(67, 13);
-            this.label3.TabIndex = 13;
-            this.label3.Text = "Search from:";
-            // 
             // chkNot
             // 
             this.chkNot.AutoSize = true;
             this.chkNot.Checked = true;
             this.chkNot.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkNot.Location = new System.Drawing.Point(312, 24);
+            this.chkNot.Location = new System.Drawing.Point(113, 51);
             this.chkNot.Name = "chkNot";
             this.chkNot.Size = new System.Drawing.Size(120, 17);
             this.chkNot.TabIndex = 3;
@@ -90,9 +61,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(4, 28);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(59, 13);
+            this.label2.Size = new System.Drawing.Size(79, 13);
             this.label2.TabIndex = 10;
-            this.label2.Text = "Search for:";
+            this.label2.Text = "Search for:from";
             // 
             // txtSearchAddresses
             // 
@@ -107,13 +78,13 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(4, 4);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(97, 13);
+            this.label1.Size = new System.Drawing.Size(103, 13);
             this.label1.TabIndex = 8;
-            this.label1.Text = "Eeprom addresses:";
+            this.label1.Text = "Segment addresses:";
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(373, 84);
+            this.btnOK.Location = new System.Drawing.Point(323, 39);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(59, 29);
             this.btnOK.TabIndex = 4;
@@ -125,11 +96,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(444, 125);
+            this.ClientSize = new System.Drawing.Size(391, 81);
             this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.txtSearchfrom);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.chkNot);
             this.Controls.Add(this.txtSearchfor);
             this.Controls.Add(this.label2);
@@ -143,10 +111,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.TextBox txtSearchfrom;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox chkNot;
         private System.Windows.Forms.TextBox txtSearchfor;
         private System.Windows.Forms.Label label2;

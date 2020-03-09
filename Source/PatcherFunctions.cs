@@ -429,93 +429,103 @@ public class upatcher
 
     public static  bool FindSegment(byte[] buf, SegmentConfig S, ref BinFile binfile)
     {
+        if (!S.Searchfor.Contains(":"))
+            return false;
         Debug.WriteLine("Searching segment");
-        if (S.Searchfor.Length == 0)
-            return false;
-        ushort Bytes = (ushort)(S.Searchfor.Length / 2);
-        if (Bytes == 1)
-            Bytes = 2;
-        if (Bytes == 3)
-            Bytes = 4;
-        if (Bytes > 4 && Bytes < 8)
-            Bytes = 8;
-        UInt64 SearchFor;
-        if (!HexToUint64(S.Searchfor, out SearchFor))
-            return false;
-        uint SearchFrom;
-        if (!HexToUint(S.Searchfrom, out SearchFrom))
-            return false;
 
-        List<Block> Blocks;
-        binfile.SegmentBlocks = new List<Block>();
-        if (!ParseSegmentAddresses(S.SearchAddresses, S, buf, out Blocks))
-            return false;
-        foreach (Block B in Blocks)
+        string[] Parts = S.Searchfor.Split(',');
+        foreach (string Part in Parts)
         {
+            string[] ForFrom = Part.Split(':');
+            Debug.WriteLine("Searching for: " + ForFrom[0] + " From: " + ForFrom[1]);
 
-            uint Addr = B.Start + SearchFrom;
-            if (!S.SearchNot)
+            if (ForFrom[0].Length == 0)
+                return false;
+            ushort Bytes = (ushort)(ForFrom[0].Length / 2);
+            if (Bytes == 1)
+                Bytes = 2;
+            if (Bytes == 3)
+                Bytes = 4;
+            if (Bytes > 4 && Bytes < 8)
+                Bytes = 8;
+            UInt64 SearchFor;
+            if (!HexToUint64(ForFrom[0], out SearchFor))
+                return false;
+            uint SearchFrom;
+            if (!HexToUint(ForFrom[1], out SearchFrom))
+                return false;
+
+            List<Block> Blocks;
+            binfile.SegmentBlocks = new List<Block>();
+            if (!ParseSegmentAddresses(S.SearchAddresses, S, buf, out Blocks))
+                return false;
+            foreach (Block B in Blocks)
             {
 
-                if (Bytes == 8)
-                    if (BEToUint64(buf, Addr) == SearchFor)
-                    { 
-                        binfile.SegmentBlocks.Add(B);
-                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
-                        return true;
-                    }
-                if (Bytes == 4)
-                    if (BEToUint32(buf, Addr) == SearchFor)
-                    {
-                        binfile.SegmentBlocks.Add(B);
-                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
-                        return true;
-                    }
-                if (Bytes == 2)
-                    if (BEToUint16(buf, Addr) == SearchFor)
-                    {
-                        binfile.SegmentBlocks.Add(B);
-                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
-                        return true;
-                    }
-                if (Bytes == 1)
-                    if (buf[Addr] == SearchFor)
-                    {
-                        binfile.SegmentBlocks.Add(B);
-                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
-                        return true;
-                    }
-            }
-            else
-            {
-                if (Bytes == 8)
-                    if (BEToUint64(buf, Addr) != SearchFor)
-                    {
-                        binfile.SegmentBlocks.Add(B);
-                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
-                        return true;
-                    }
-                if (Bytes == 4)
-                    if (BEToUint32(buf, Addr) != SearchFor)
-                    {
-                        binfile.SegmentBlocks.Add(B);
-                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
-                        return true;
-                    }
-                if (Bytes == 2)
-                    if (BEToUint16(buf, Addr) != SearchFor)
-                    {
-                        binfile.SegmentBlocks.Add(B);
-                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
-                        return true;
-                    }
-                if (Bytes == 1)
-                    if (buf[Addr] != SearchFor)
-                    {
-                        binfile.SegmentBlocks.Add(B);
-                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
-                        return true;
-                    }
+                uint Addr = B.Start + SearchFrom;
+                if (!S.SearchNot)
+                {
+
+                    if (Bytes == 8)
+                        if (BEToUint64(buf, Addr) == SearchFor)
+                        { 
+                            binfile.SegmentBlocks.Add(B);
+                            Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
+                            return true;
+                        }
+                    if (Bytes == 4)
+                        if (BEToUint32(buf, Addr) == SearchFor)
+                        {
+                            binfile.SegmentBlocks.Add(B);
+                            Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
+                            return true;
+                        }
+                    if (Bytes == 2)
+                        if (BEToUint16(buf, Addr) == SearchFor)
+                        {
+                            binfile.SegmentBlocks.Add(B);
+                            Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
+                            return true;
+                        }
+                    if (Bytes == 1)
+                        if (buf[Addr] == SearchFor)
+                        {
+                            binfile.SegmentBlocks.Add(B);
+                            Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
+                            return true;
+                        }
+                }
+                else
+                {
+                    if (Bytes == 8)
+                        if (BEToUint64(buf, Addr) != SearchFor)
+                        {
+                            binfile.SegmentBlocks.Add(B);
+                            Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
+                            return true;
+                        }
+                    if (Bytes == 4)
+                        if (BEToUint32(buf, Addr) != SearchFor)
+                        {
+                            binfile.SegmentBlocks.Add(B);
+                            Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
+                            return true;
+                        }
+                    if (Bytes == 2)
+                        if (BEToUint16(buf, Addr) != SearchFor)
+                        {
+                            binfile.SegmentBlocks.Add(B);
+                            Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
+                            return true;
+                        }
+                    if (Bytes == 1)
+                        if (buf[Addr] != SearchFor)
+                        {
+                            binfile.SegmentBlocks.Add(B);
+                            Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
+                            return true;
+                        }
+                }
             }
         }
         Debug.WriteLine("Not found");
