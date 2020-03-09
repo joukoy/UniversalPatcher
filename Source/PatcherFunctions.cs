@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 public class upatcher
 {
@@ -100,102 +101,23 @@ public class upatcher
     public const ushort TypeHex = 1;
     public const ushort TypeInt = 2;
 
-    public static string SelectFile(string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*")
+
+    public static CheckWord GetCheckwordAddress(BinFile binfile, string AddrLine)
     {
-
-        OpenFileDialog fdlg = new OpenFileDialog();
-        fdlg.Title = "Select file";
-        fdlg.Filter = Filter;
-        fdlg.FilterIndex = 1;
-        fdlg.RestoreDirectory = true;
-        if (Filter.Contains("PATCH"))
-            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
-        if (Filter.Contains("XML"))
-            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
-        else if (Filter.Contains("BIN"))
-            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
-
-        if (fdlg.ShowDialog() == DialogResult.OK)
-        {
-            if (Filter.Contains("XML"))
-                UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
-            else if (Filter.Contains("BIN"))
-                UniversalPatcher.Properties.Settings.Default.LastBINfolder = Path.GetDirectoryName(fdlg.FileName);
-            else if (Filter.Contains("PATCH"))
-                UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.GetDirectoryName(fdlg.FileName);
-            UniversalPatcher.Properties.Settings.Default.Save();
-            return fdlg.FileName;
-        }
-        return "";
-
-    }
-    public static string SelectSaveFile(string Filter = "BIN files (*.bin)|*.bin")
-    {
-        SaveFileDialog saveFileDialog = new SaveFileDialog();
-        //saveFileDialog.Filter = "BIN files (*.bin)|*.bin";
-        saveFileDialog.Filter = Filter;
-        saveFileDialog.RestoreDirectory = true;
-        saveFileDialog.Title = "Save to file";
-        if (Filter.Contains("PATCH"))
-                saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
-        if (Filter.Contains("XML"))
-            saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
-        else if (Filter.Contains("BIN"))
-            saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
-
-        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-        {
-            if (Filter.Contains("XML"))
-                UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.GetDirectoryName(saveFileDialog.FileName);
-            else if (Filter.Contains("BIN"))
-                UniversalPatcher.Properties.Settings.Default.LastBINfolder = Path.GetDirectoryName(saveFileDialog.FileName);
-            else if (Filter.Contains("PATCH"))
-                UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.GetDirectoryName(saveFileDialog.FileName);
-            UniversalPatcher.Properties.Settings.Default.Save();
-            return saveFileDialog.FileName;
-        }
+        string[] LineParts;
+        if (AddrLine.Contains("+"))
+            LineParts = AddrLine.Split('+');
+        else if (AddrLine.Contains("-"))
+            LineParts = AddrLine.Split('-');
         else
-            return "";
-
-    }
-
-    public static bool HexToUint64(string Hex, out UInt64 x)
-    {
-        x = 0;
-        if (!UInt64.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
-            return false;
-        return true;
-    }
-
-    public static bool HexToUint(string Hex, out uint x)
-    {
-        x=0;        
-        if (!UInt32.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
-            return false;
-        return true;
-    }
-
-    public static bool HexToUshort(string Hex, out ushort x)
-    {
-        x = 0;
-        if (!UInt16.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
-            return false;
-        return true; 
-    }
-
-    public static string ReadTextBlock(byte[] buf, int Address,int Bytes )
-    {       
-        string Result = System.Text.Encoding.ASCII.GetString(buf, (int)Address, Bytes);
-        Result = Regex.Replace(Result, "[^a-zA-Z0-9]", "");
-        return Result;
-    }
-
-    public static CheckWord GetCheckwordAddress(BinFile binfile, string LinePart)
-    {
+        {
+            throw new Exception("No + or - after Checkword! (" + AddrLine +")");
+        }
         foreach (CheckWord CW in binfile.Checkwords)
         {
-            if (LinePart.Contains(CW.Key))
+            if (LineParts[0] == (CW.Key))
             {
+                Debug.WriteLine("Checkword: " + CW.Key + " => " + CW.Address.ToString("X"));
                 return CW;
             }
         }
@@ -204,59 +126,75 @@ public class upatcher
         checkw.Key = "";
         return checkw;
     }
-    public static AddressData ParseAddress (string Line, uint SegmentAddress, byte[] buf, ref BinFile binfileSegment)
+
+    public static AddressData GMV6(string Line, uint SegmentAddress, byte[] buf, ref BinFile binfileSegment)
     {
+        uint BufSize = (uint)buf.Length;
+        uint GMOS = 0;
+        binfileSegment.PNaddr.Address = 0;
         AddressData AD = new AddressData();
 
-        if (Line.StartsWith("GM-V6"))
+        for (int i = 2; i < 20; i++)
+        {
+            if (BEToUint16(buf, (uint)(BufSize - i)) == 0xA55A) //Read OS version from end of file, before bytes A5 5A
+            {
+                binfileSegment.PNaddr.Address = (uint)(BufSize - (i + 4));
+                Debug.WriteLine("V6: Found PN address from: " + binfileSegment.PNaddr.Address.ToString("X"));
+            }
+        }
+        if (binfileSegment.PNaddr.Address == 0)
+            throw new Exception("OS id missing");
+        GMOS = BEToUint32(buf, binfileSegment.PNaddr.Address);
+        binfileSegment.PNaddr.Bytes = 4;
+        binfileSegment.PNaddr.Type = TypeInt;
+        Block B = new Block();
+        B.Start = binfileSegment.PNaddr.Address;
+        B.End = binfileSegment.PNaddr.Address + 3;
+        if (binfileSegment.ExcludeBlocks == null)
+            binfileSegment.ExcludeBlocks = new List<Block>();
+        binfileSegment.ExcludeBlocks.Add(B);
+        string FileName = Path.Combine(Application.StartupPath, "XML", Line);
+        StreamReader sr = new StreamReader(FileName);
+        string OsLine;
+        while ((OsLine = sr.ReadLine()) != null)
         {
             //Custom handling: read OS:Segmentaddress pairs from file
-            uint BufSize = (uint)buf.Length;
-            uint GMOS = 0;
-            binfileSegment.PNaddr.Address = 0;
-            for (int i=2; i<20;i++)
+            string[] OsLineparts = OsLine.Split(':');
+            if (OsLineparts.Length == 2)
             {
-                if (BEToUint16(buf, (uint)(BufSize - i)) == 0xA55A) //Read OS version from end of file, before bytes A5 5A
+                if (OsLineparts[0] == GMOS.ToString())
                 {
-                    binfileSegment.PNaddr.Address = (uint)(BufSize - (i + 4));
-                }
-            }
-            if (binfileSegment.PNaddr.Address == 0)
-                throw new Exception("OS id missing");
-            GMOS = BEToUint32(buf, binfileSegment.PNaddr.Address);
-            binfileSegment.PNaddr.Bytes = 4;
-            binfileSegment.PNaddr.Type = TypeInt;
-            Block B = new Block();
-            B.Start = binfileSegment.PNaddr.Address;
-            B.End = binfileSegment.PNaddr.Address + 3;
-            if (binfileSegment.ExcludeBlocks == null)
-                binfileSegment.ExcludeBlocks = new List<Block>();
-            binfileSegment.ExcludeBlocks.Add(B);
-            string FileName = Path.Combine(Application.StartupPath, "XML", Line);
-            StreamReader sr = new StreamReader(FileName);
-            string OsLine;
-            while ((OsLine = sr.ReadLine()) != null)
-            {
-                //Custom handling: read OS:Segmentaddress pairs from file
-                string[] OsLineparts = OsLine.Split(':');
-                if (OsLineparts.Length == 2)
-                {
-                    if (OsLineparts[0] == GMOS.ToString())
+                    if (HexToUint(OsLineparts[1], out AD.Address))
                     {
-                        if (HexToUint(OsLineparts[1], out AD.Address))
-                        {
-                            sr.Close();
-                            AD.Bytes = 4;
-                            AD.Type = TypeHex;
-                            return AD;
-                        }
+                        Debug.WriteLine("Address: " + AD.Address.ToString("X") + ", Bytes: 4, Type: HEX");
+                        sr.Close();
+                        AD.Bytes = 4;
+                        AD.Type = TypeHex;
+                        return AD;
                     }
                 }
             }
-            sr.Close();
-            throw new Exception("Unsupported OS:  " + GMOS.ToString());
+        }
+        sr.Close();
+        throw new Exception("Unsupported OS:  " + GMOS.ToString());
+
+    }
+
+    public static AddressData ParseAddress (string Line, uint SegmentAddress, byte[] buf, ref BinFile binfileSegment)
+    {
+
+        Debug.WriteLine("Addressline: " + Line);
+        if (Line.StartsWith("GM-V6"))
+        {
+            //Custom handling: read OS:Segmentaddress pairs from file
+            Debug.WriteLine("V6");
+            return GMV6(Line, SegmentAddress, buf, ref binfileSegment);
         }
 
+        AddressData AD = new AddressData();
+
+        if (Line.Length == 0) 
+            return AD;
         string[] Lineparts = Line.Split(':');
         CheckWord CWAddr;
         CWAddr.Address = 0;
@@ -269,7 +207,8 @@ public class upatcher
                 Lineparts[0] = Lineparts[0].Replace(CWAddr.Key, "");
         }
         if (!HexToUint(Lineparts[0].Replace("#", ""), out AD.Address))
-            return AD;
+            throw new Exception("Can't convert from HEX: " + Lineparts[0].Replace("#", "") + " (" + Line +")");
+            //return AD;
 
         if (Line.StartsWith("#"))
         {
@@ -291,56 +230,14 @@ public class upatcher
             else if (Lineparts[2].ToLower() == "text")
                 AD.Type = TypeText;
         }
-
+        Debug.WriteLine("Name: " + AD.Name + ", Address: " + AD.Address.ToString("X") + ", Bytes: " + AD.Bytes.ToString() + ", Type: " + AD.Type.ToString());
         return AD;
     }
 
-    public static string ReadInfo(byte[] buf, AddressData AD )
-    {
-
-        string Result = "";
-        if (AD.Bytes == 1)
-        { 
-            if (AD.Type == TypeHex)
-                Result = buf[AD.Address].ToString("X2");
-            else if (AD.Type == TypeText)
-                Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
-            else
-                Result = buf[AD.Address].ToString();
-        }
-        else if (AD.Bytes == 2)
-        { 
-            if (AD.Type == TypeHex)
-                Result = BEToUint16(buf, AD.Address).ToString("X4");
-            else if (AD.Type == TypeText)
-                Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
-            else
-                Result = BEToUint16(buf, AD.Address).ToString();
-        }
-        else if (AD.Bytes == 8)
-        {
-            if (AD.Type == TypeHex)
-                Result = BEToUint64(buf, AD.Address).ToString("X4");
-            else if (AD.Type == TypeText)
-                Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
-            else
-                Result = BEToUint64(buf, AD.Address).ToString();
-        }
-        else //Default is 4 bytes
-        { 
-            if (AD.Type == TypeHex)
-                Result = BEToUint32(buf, AD.Address).ToString("X4");
-            else if (AD.Type == TypeText)
-                Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
-            else
-                Result = BEToUint32(buf, AD.Address).ToString();
-        }
-
-        return Result;
-    }
 
     public static bool ParseSegmentAddresses(string Line, SegmentConfig S, byte[] buf, out List<Block> Blocks)
     {
+        Debug.WriteLine("Segment address line: " + Line);
         Blocks = new List<Block>();
 
         if (Line == null || Line == "")
@@ -369,7 +266,7 @@ public class upatcher
                 StartEnd[0] = SO[0];
                 uint x;
                 if (!HexToUint(SO[1], out x))
-                    return false;
+                    throw new Exception("Can't decode from HEX: " + SO[1] + " (" + Line + ")");
                 Offset = (int)x;
             }
             if (StartEnd[0].Contains("<"))
@@ -378,7 +275,7 @@ public class upatcher
                 StartEnd[0] = SO[0];
                 uint x;
                 if (!HexToUint(SO[1], out x))
-                    return false;
+                    throw new Exception("Can't decode from HEX: " + SO[1] + " (" + Line + ")");
                 Offset = ~(int)x;
             }
 
@@ -407,8 +304,7 @@ public class upatcher
 
             if (!HexToUint(StartEnd[0].Replace("@", ""), out B.Start))
             {
-                B.End = 0;
-                return false;
+                throw new Exception("Can't decode from HEX: " + StartEnd[0].Replace("@", "") + " (" + Line + ")"); 
             }
             if (StartEnd[0].StartsWith("@"))
             {
@@ -441,7 +337,7 @@ public class upatcher
             else
             {
                 if (!HexToUint(StartEnd[1].Replace("@", ""), out B.End))
-                    return false;
+                    throw new Exception("Can't decode from HEX: " + StartEnd[1].Replace("@", "") + " (" + Line + ")");
                 if (B.End >= buf.Length)    //Make 1MB config work with 512kB bin
                     B.End = (uint)buf.Length - 1;
             }
@@ -465,17 +361,20 @@ public class upatcher
             }
             i++;
         }
+        foreach (Block B in Blocks)
+            Debug.WriteLine("Address block: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
         return true;
     }
 
     public static List<AddressData> ParseExtraInfo(byte[] buf, string Line, uint SegmentAddress, BinFile binfile)
     {
+        Debug.WriteLine("Extrainfo: " + Line);
         List<AddressData> LEX = new List<AddressData>();
         if (Line == null || Line.Length == 0 || !Line.Contains(":"))
             return LEX;
 
         string[] LineParts = Line.Split(',');
-        foreach (string LinePart in LineParts )
+        foreach (string LinePart in LineParts)
         {
             AddressData E = new AddressData();
             string[] AddrParts = LinePart.Split(':');
@@ -489,8 +388,8 @@ public class upatcher
             CWAddr.Address = 0;
             bool Negative = false;
             if (AddrParts[1].Contains("CW"))
-            { 
-                CWAddr = GetCheckwordAddress(binfile,AddrParts[1]);
+            {
+                CWAddr = GetCheckwordAddress(binfile, AddrParts[1]);
                 if (CWAddr.Key != "")
                     AddrParts[1] = AddrParts[1].Replace(CWAddr.Key, "");
             }
@@ -502,7 +401,7 @@ public class upatcher
                 return LEX;
 
             if (Negative)
-                E.Address =  CWAddr.Address - E.Address;
+                E.Address = CWAddr.Address - E.Address;
             else
                 E.Address += CWAddr.Address;
 
@@ -523,11 +422,14 @@ public class upatcher
             }
             LEX.Add(E);
         }
+        for (int l = 0; l < LEX.Count; l++)
+            Debug.WriteLine("Extrainfo name: " + LEX[l].Name + ", Address: " + LEX[l].Address.ToString("X") + ", Bytes: " + LEX[l].Bytes + ", Type: " + LEX[l].Type);
         return LEX;
     }
 
     public static  bool FindSegment(byte[] buf, SegmentConfig S, ref BinFile binfile)
     {
+        Debug.WriteLine("Searching segment");
         if (S.Searchfor.Length == 0)
             return false;
         ushort Bytes = (ushort)(S.Searchfor.Length / 2);
@@ -559,24 +461,28 @@ public class upatcher
                     if (BEToUint64(buf, Addr) == SearchFor)
                     { 
                         binfile.SegmentBlocks.Add(B);
+                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                         return true;
                     }
                 if (Bytes == 4)
                     if (BEToUint32(buf, Addr) == SearchFor)
                     {
                         binfile.SegmentBlocks.Add(B);
+                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                         return true;
                     }
                 if (Bytes == 2)
                     if (BEToUint16(buf, Addr) == SearchFor)
                     {
                         binfile.SegmentBlocks.Add(B);
+                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                         return true;
                     }
                 if (Bytes == 1)
                     if (buf[Addr] == SearchFor)
                     {
                         binfile.SegmentBlocks.Add(B);
+                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                         return true;
                     }
             }
@@ -586,33 +492,39 @@ public class upatcher
                     if (BEToUint64(buf, Addr) != SearchFor)
                     {
                         binfile.SegmentBlocks.Add(B);
+                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                         return true;
                     }
                 if (Bytes == 4)
                     if (BEToUint32(buf, Addr) != SearchFor)
                     {
                         binfile.SegmentBlocks.Add(B);
+                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                         return true;
                     }
                 if (Bytes == 2)
                     if (BEToUint16(buf, Addr) != SearchFor)
                     {
                         binfile.SegmentBlocks.Add(B);
+                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                         return true;
                     }
                 if (Bytes == 1)
                     if (buf[Addr] != SearchFor)
                     {
                         binfile.SegmentBlocks.Add(B);
+                        Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                         return true;
                     }
             }
         }
+        Debug.WriteLine("Not found");
         return false;
     }
 
     public static bool FindCheckwordData(byte[] buf, SegmentConfig S, ref BinFile binfile)
     {
+        Debug.WriteLine("Checkwords: " + S.CheckWords);
         if (S.CheckWords == null)
             return false;
         binfile.Checkwords = new List<CheckWord>();
@@ -622,6 +534,7 @@ public class upatcher
             string[] Parts = Row.Split(':');
             if (Parts.Length == 4)
             {
+                Debug.WriteLine(Parts[3] + ": " + Parts[0] + " in " + Parts[1] + " ?");
                 CheckWord checkw = new CheckWord();
                 UInt64 CW;
                 uint Location;
@@ -646,21 +559,25 @@ public class upatcher
                 if (Bytes == 1)
                     if (buf[Location] == CW)
                     {
+                        Debug.WriteLine("Checkword: " + checkw.Key + " Found in: " + Location.ToString("X") + ", Data location: " + checkw.Address.ToString("X"));
                         binfile.Checkwords.Add(checkw);
                     }
                 if (Bytes == 2)
                     if (BEToUint16(buf,Location) == CW)
                     {
+                        Debug.WriteLine("Checkword: " + checkw.Key + " Found in: " + Location.ToString("X") + ", Data location: " + checkw.Address.ToString("X2"));
                         binfile.Checkwords.Add(checkw);
                     }
                 if (Bytes == 4)
                     if (BEToUint32(buf, Location) == CW)
                     {
+                        Debug.WriteLine("Checkword: " + checkw.Key + " Found in: " + Location.ToString("X") + ", Data location: " + checkw.Address.ToString("X4"));
                         binfile.Checkwords.Add(checkw);
                     }
                 if (Bytes == 8)
                     if (BEToUint64(buf, Location) == CW)
                     {
+                        Debug.WriteLine("Checkword: " + checkw.Key + " Found in: " + Location.ToString("X") + ", Data location: " + checkw.Address.ToString("X8"));
                         binfile.Checkwords.Add(checkw);
                     }
             }
@@ -677,7 +594,7 @@ public class upatcher
             List<Block> B = new List<Block>();
             binfile[i].ExcludeBlocks = B;
             if (S.SearchAddresses != null)
-            {
+            {                
                 if (!FindSegment(buf, S, ref binfile[i]))
                     return;
             }
@@ -704,6 +621,51 @@ public class upatcher
             binfile[i].ExtraInfo = ParseExtraInfo(buf, S.ExtraInfo, binfile[i].SegmentBlocks[0].Start, binfile[i]);
         }
     }
+
+    public static string ReadInfo(byte[] buf, AddressData AD)
+    {
+        Debug.WriteLine("Reading address: " + AD.Address.ToString("X") + ", bytes: " + AD.Bytes.ToString() + ", Type: " + AD.Type); 
+        string Result = "";
+        if (AD.Bytes == 1)
+        {
+            if (AD.Type == TypeHex)
+                Result = buf[AD.Address].ToString("X2");
+            else if (AD.Type == TypeText)
+                Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
+            else
+                Result = buf[AD.Address].ToString();
+        }
+        else if (AD.Bytes == 2)
+        {
+            if (AD.Type == TypeHex)
+                Result = BEToUint16(buf, AD.Address).ToString("X4");
+            else if (AD.Type == TypeText)
+                Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
+            else
+                Result = BEToUint16(buf, AD.Address).ToString();
+        }
+        else if (AD.Bytes == 8)
+        {
+            if (AD.Type == TypeHex)
+                Result = BEToUint64(buf, AD.Address).ToString("X4");
+            else if (AD.Type == TypeText)
+                Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
+            else
+                Result = BEToUint64(buf, AD.Address).ToString();
+        }
+        else //Default is 4 bytes
+        {
+            if (AD.Type == TypeHex)
+                Result = BEToUint32(buf, AD.Address).ToString("X4");
+            else if (AD.Type == TypeText)
+                Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
+            else
+                Result = BEToUint32(buf, AD.Address).ToString();
+        }
+        Debug.WriteLine("Result: " + Result);
+        return Result;
+    }
+
     public static byte[] ReadBin(string FileName, uint FileOffset, uint Length)
     {
 
@@ -745,6 +707,7 @@ public class upatcher
 
     public static uint CalculateChecksum(byte[] Data, AddressData CSAddress, List<Block> CSBlocks,List<Block> ExcludeBlocks, short Method, short Complement, ushort Bytes, Boolean SwapB)
     {
+        Debug.WriteLine("Calculating hecksum, method: " + Method);
         uint sum = 0;
         uint BufSize = 0;
         List<Block> Blocks = new List<Block>();
@@ -760,11 +723,13 @@ public class upatcher
                 if (CSAddress.Address == B.Start)    //At beginning of segment
                 {
                     //At beginning of segment
+                    Debug.WriteLine("Checksum is at start of block, skipping");
                     B.Start += CSAddress.Bytes;
                 }
                 else
                 {
                     //Located at middle of block, create new block C, ending before checksum
+                    Debug.WriteLine("Checksum is at middle of block, skipping");
                     Block C = new Block();
                     C.Start = B.Start;
                     C.End = CSAddress.Address - 1;
@@ -811,6 +776,7 @@ public class upatcher
         foreach (Block B in Blocks)
         {
             //Copy blocks to tmp array for calculation
+            Debug.WriteLine("Block: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
             uint BlockSize = B.End - B.Start + 1;
             Array.Copy(Data, B.Start, tmp, Offset, BlockSize);
             Offset += BlockSize;
@@ -876,7 +842,98 @@ public class upatcher
                 sum = SwapBytes(sum);
 
         }
+        Debug.WriteLine("Result: " + sum.ToString("X"));
         return sum;
+    }
+
+    public static string SelectFile(string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*")
+    {
+
+        OpenFileDialog fdlg = new OpenFileDialog();
+        fdlg.Title = "Select file";
+        fdlg.Filter = Filter;
+        fdlg.FilterIndex = 1;
+        fdlg.RestoreDirectory = true;
+        if (Filter.Contains("PATCH"))
+            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
+        if (Filter.Contains("XML"))
+            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
+        else if (Filter.Contains("BIN"))
+            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
+
+        if (fdlg.ShowDialog() == DialogResult.OK)
+        {
+            if (Filter.Contains("XML"))
+                UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
+            else if (Filter.Contains("BIN"))
+                UniversalPatcher.Properties.Settings.Default.LastBINfolder = Path.GetDirectoryName(fdlg.FileName);
+            else if (Filter.Contains("PATCH"))
+                UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.GetDirectoryName(fdlg.FileName);
+            UniversalPatcher.Properties.Settings.Default.Save();
+            return fdlg.FileName;
+        }
+        return "";
+
+    }
+    public static string SelectSaveFile(string Filter = "BIN files (*.bin)|*.bin")
+    {
+        SaveFileDialog saveFileDialog = new SaveFileDialog();
+        //saveFileDialog.Filter = "BIN files (*.bin)|*.bin";
+        saveFileDialog.Filter = Filter;
+        saveFileDialog.RestoreDirectory = true;
+        saveFileDialog.Title = "Save to file";
+        if (Filter.Contains("PATCH"))
+            saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
+        if (Filter.Contains("XML"))
+            saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
+        else if (Filter.Contains("BIN"))
+            saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
+
+        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        {
+            if (Filter.Contains("XML"))
+                UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.GetDirectoryName(saveFileDialog.FileName);
+            else if (Filter.Contains("BIN"))
+                UniversalPatcher.Properties.Settings.Default.LastBINfolder = Path.GetDirectoryName(saveFileDialog.FileName);
+            else if (Filter.Contains("PATCH"))
+                UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.GetDirectoryName(saveFileDialog.FileName);
+            UniversalPatcher.Properties.Settings.Default.Save();
+            return saveFileDialog.FileName;
+        }
+        else
+            return "";
+
+    }
+
+    public static bool HexToUint64(string Hex, out UInt64 x)
+    {
+        x = 0;
+        if (!UInt64.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
+            return false;
+        return true;
+    }
+
+    public static bool HexToUint(string Hex, out uint x)
+    {
+        x = 0;
+        if (!UInt32.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
+            return false;
+        return true;
+    }
+
+    public static bool HexToUshort(string Hex, out ushort x)
+    {
+        x = 0;
+        if (!UInt16.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
+            return false;
+        return true;
+    }
+
+    public static string ReadTextBlock(byte[] buf, int Address, int Bytes)
+    {
+        string Result = System.Text.Encoding.ASCII.GetString(buf, (int)Address, Bytes);
+        Result = Regex.Replace(Result, "[^a-zA-Z0-9]", "?");
+        return Result;
     }
 
     public static UInt64 BEToUint64(byte[] buf, uint offset)

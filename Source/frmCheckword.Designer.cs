@@ -49,7 +49,7 @@
             this.listCheckwords.HideSelection = false;
             this.listCheckwords.Location = new System.Drawing.Point(12, 49);
             this.listCheckwords.Name = "listCheckwords";
-            this.listCheckwords.Size = new System.Drawing.Size(407, 99);
+            this.listCheckwords.Size = new System.Drawing.Size(407, 216);
             this.listCheckwords.TabIndex = 8;
             this.listCheckwords.UseCompatibleStateImageBehavior = false;
             this.listCheckwords.SelectedIndexChanged += new System.EventHandler(this.listCheckwords_SelectedIndexChanged);
@@ -86,9 +86,9 @@
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(238, 9);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(73, 13);
+            this.label7.Size = new System.Drawing.Size(70, 13);
             this.label7.TabIndex = 14;
-            this.label7.Text = "Data location:";
+            this.label7.Text = "Data location";
             // 
             // txtDatalocation
             // 
@@ -120,7 +120,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(425, 115);
+            this.btnOK.Location = new System.Drawing.Point(425, 234);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(58, 31);
             this.btnOK.TabIndex = 7;
@@ -131,11 +131,11 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(134, 7);
+            this.label8.Location = new System.Drawing.Point(120, 7);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(48, 13);
+            this.label8.Size = new System.Drawing.Size(69, 13);
             this.label8.TabIndex = 19;
-            this.label8.Text = "Location";
+            this.label8.Text = "CW Location";
             // 
             // txtCheckword
             // 
@@ -166,7 +166,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(490, 161);
+            this.ClientSize = new System.Drawing.Size(490, 271);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtKey);
             this.Controls.Add(this.txtCheckword);

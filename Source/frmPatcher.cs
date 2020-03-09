@@ -23,6 +23,13 @@ namespace UniversalPatcher
             InitializeComponent();
         }
 
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            TextBoxTraceListener tbtl = new TextBoxTraceListener(txtDebug);
+            Debug.Listeners.Add(tbtl);
+            //Debug.WriteLine("Testing Testing 123");
+        }
+
         private struct DetectGroup
         {
             public string Logic;
@@ -74,6 +81,7 @@ namespace UniversalPatcher
             string AutoDetectFile = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
             if (File.Exists(AutoDetectFile))
             {
+                Debug.WriteLine("Loading autodetect.xml");
                 System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<DetectRule>));
                 System.IO.StreamReader file = new System.IO.StreamReader(AutoDetectFile);
                 DetectRules = (List<DetectRule>)reader.Deserialize(file);
@@ -225,10 +233,10 @@ namespace UniversalPatcher
                             Logger("");
                     }
                 }
+                Logger("Checksums:");
                 for (int i = 0; i < Segments.Count; i++)
                 {
                     SegmentConfig S = Segments[i];
-                    Logger("Checksums:");
                     Logger(S.Name);
                     if (S.Eeprom)
                     {
@@ -949,7 +957,9 @@ namespace UniversalPatcher
             }
             for (int x=0; x < XmlList.Count;x++)
             {
+                Debug.WriteLine("Autodetect: " + XmlList[x]);
                 uint MaxGroup = 0;
+                
                 //Check if compatible with THIS xml
                 List<DetectRule> DRL = new List<DetectRule>();
                 for (int s = 0; s < DetectRules.Count; s++)
@@ -1007,7 +1017,10 @@ namespace UniversalPatcher
                     if (Result != "")
                         Result += Environment.NewLine;
                     Result += XmlList[x];
+                    Debug.WriteLine("Rules match");
                 }
+                else
+                    Debug.WriteLine("No match");
             }
             return Result.ToLower();
         }
@@ -1017,6 +1030,29 @@ namespace UniversalPatcher
             frmAutodetect frmAD = new frmAutodetect();
             frmAD.Show();
             frmAD.InitMe();
+        }
+    }
+    class TextBoxTraceListener : TraceListener
+    {
+        private TextBox tBox;
+
+        public TextBoxTraceListener(TextBox box)
+        {
+            this.tBox = box;
+        }
+
+        public override void Write(string msg)
+        {
+            //allows tBox to be updated from different thread
+            tBox.Parent.Invoke(new MethodInvoker(delegate ()
+            {
+                tBox.AppendText(msg);
+            }));
+        }
+
+        public override void WriteLine(string msg)
+        {
+            Write(msg + "\r\n");
         }
     }
 }

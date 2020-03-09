@@ -53,8 +53,15 @@
             this.chkCompareAll = new System.Windows.Forms.CheckBox();
             this.chkAutodetect = new System.Windows.Forms.CheckBox();
             this.btnAutodetect = new System.Windows.Forms.Button();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.txtDebug = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOrgFile
@@ -105,17 +112,17 @@
             // txtResult
             // 
             this.txtResult.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtResult.Location = new System.Drawing.Point(12, 148);
+            this.txtResult.Location = new System.Drawing.Point(-4, 0);
             this.txtResult.Multiline = true;
             this.txtResult.Name = "txtResult";
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtResult.Size = new System.Drawing.Size(705, 234);
+            this.txtResult.Size = new System.Drawing.Size(709, 248);
             this.txtResult.TabIndex = 6;
             // 
             // btnSave
             // 
             this.btnSave.Enabled = false;
-            this.btnSave.Location = new System.Drawing.Point(640, 420);
+            this.btnSave.Location = new System.Drawing.Point(638, 455);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(72, 35);
             this.btnSave.TabIndex = 16;
@@ -126,7 +133,7 @@
             // txtPatchName
             // 
             this.txtPatchName.Enabled = false;
-            this.txtPatchName.Location = new System.Drawing.Point(107, 391);
+            this.txtPatchName.Location = new System.Drawing.Point(105, 426);
             this.txtPatchName.Name = "txtPatchName";
             this.txtPatchName.Size = new System.Drawing.Size(606, 20);
             this.txtPatchName.TabIndex = 9;
@@ -152,7 +159,7 @@
             // labelDescr
             // 
             this.labelDescr.AutoSize = true;
-            this.labelDescr.Location = new System.Drawing.Point(9, 391);
+            this.labelDescr.Location = new System.Drawing.Point(7, 426);
             this.labelDescr.Name = "labelDescr";
             this.labelDescr.Size = new System.Drawing.Size(92, 13);
             this.labelDescr.TabIndex = 11;
@@ -195,7 +202,7 @@
             // 
             // btnSegments
             // 
-            this.btnSegments.Location = new System.Drawing.Point(406, 420);
+            this.btnSegments.Location = new System.Drawing.Point(404, 455);
             this.btnSegments.Name = "btnSegments";
             this.btnSegments.Size = new System.Drawing.Size(72, 35);
             this.btnSegments.TabIndex = 13;
@@ -205,7 +212,7 @@
             // 
             // btnCheckSums
             // 
-            this.btnCheckSums.Location = new System.Drawing.Point(484, 420);
+            this.btnCheckSums.Location = new System.Drawing.Point(482, 455);
             this.btnCheckSums.Name = "btnCheckSums";
             this.btnCheckSums.Size = new System.Drawing.Size(72, 35);
             this.btnCheckSums.TabIndex = 14;
@@ -226,7 +233,7 @@
             // btnShowPatch
             // 
             this.btnShowPatch.Enabled = false;
-            this.btnShowPatch.Location = new System.Drawing.Point(562, 420);
+            this.btnShowPatch.Location = new System.Drawing.Point(560, 455);
             this.btnShowPatch.Name = "btnShowPatch";
             this.btnShowPatch.Size = new System.Drawing.Size(72, 35);
             this.btnShowPatch.TabIndex = 15;
@@ -272,7 +279,7 @@
             // 
             // btnLoad
             // 
-            this.btnLoad.Location = new System.Drawing.Point(328, 420);
+            this.btnLoad.Location = new System.Drawing.Point(326, 455);
             this.btnLoad.Name = "btnLoad";
             this.btnLoad.Size = new System.Drawing.Size(72, 35);
             this.btnLoad.TabIndex = 12;
@@ -295,7 +302,7 @@
             this.chkAutodetect.AutoSize = true;
             this.chkAutodetect.Checked = true;
             this.chkAutodetect.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutodetect.Location = new System.Drawing.Point(12, 427);
+            this.chkAutodetect.Location = new System.Drawing.Point(10, 462);
             this.chkAutodetect.Name = "chkAutodetect";
             this.chkAutodetect.Size = new System.Drawing.Size(110, 17);
             this.chkAutodetect.TabIndex = 10;
@@ -304,7 +311,7 @@
             // 
             // btnAutodetect
             // 
-            this.btnAutodetect.Location = new System.Drawing.Point(250, 420);
+            this.btnAutodetect.Location = new System.Drawing.Point(248, 455);
             this.btnAutodetect.Name = "btnAutodetect";
             this.btnAutodetect.Size = new System.Drawing.Size(72, 35);
             this.btnAutodetect.TabIndex = 11;
@@ -312,11 +319,54 @@
             this.btnAutodetect.UseVisualStyleBackColor = true;
             this.btnAutodetect.Click += new System.EventHandler(this.btnAutodetect_Click);
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(8, 148);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(711, 274);
+            this.tabControl1.TabIndex = 21;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.txtResult);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(703, 248);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Info";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.txtDebug);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(703, 248);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Debug";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // txtDebug
+            // 
+            this.txtDebug.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtDebug.Location = new System.Drawing.Point(-3, 1);
+            this.txtDebug.Multiline = true;
+            this.txtDebug.Name = "txtDebug";
+            this.txtDebug.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtDebug.Size = new System.Drawing.Size(710, 252);
+            this.txtDebug.TabIndex = 0;
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(729, 458);
+            this.ClientSize = new System.Drawing.Size(731, 497);
+            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnAutodetect);
             this.Controls.Add(this.chkAutodetect);
             this.Controls.Add(this.chkCompareAll);
@@ -334,7 +384,6 @@
             this.Controls.Add(this.labelBinSize);
             this.Controls.Add(this.txtPatchName);
             this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.txtResult);
             this.Controls.Add(this.btnCompare);
             this.Controls.Add(this.txtModifierFile);
             this.Controls.Add(this.txtBaseFile);
@@ -346,6 +395,11 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).EndInit();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -377,5 +431,9 @@
         private System.Windows.Forms.CheckBox chkCompareAll;
         private System.Windows.Forms.CheckBox chkAutodetect;
         private System.Windows.Forms.Button btnAutodetect;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TextBox txtDebug;
     }
 }

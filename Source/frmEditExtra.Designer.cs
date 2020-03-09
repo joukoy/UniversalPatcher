@@ -136,7 +136,7 @@
             // 
             // numBytes
             // 
-            this.numBytes.Location = new System.Drawing.Point(139, 142);
+            this.numBytes.Location = new System.Drawing.Point(136, 173);
             this.numBytes.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -159,7 +159,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(136, 122);
+            this.label3.Location = new System.Drawing.Point(133, 153);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(36, 13);
             this.label3.TabIndex = 6;
@@ -241,11 +241,11 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(136, 72);
+            this.label1.Location = new System.Drawing.Point(133, 72);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(28, 13);
+            this.label1.Size = new System.Drawing.Size(85, 13);
             this.label1.TabIndex = 11;
-            this.label1.Text = "Key:";
+            this.label1.Text = "Checkword Key:";
             // 
             // listExtra
             // 
