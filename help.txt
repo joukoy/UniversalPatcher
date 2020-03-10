@@ -12,6 +12,13 @@ Segment addressess:
 @500*4	4 pairs of Dword Start - End 	
 @500:2*4  4 pair of Word Start - End
 
+Segment search:
+ * Segment addresses:
+2000-4000,4000-6000	Select segment area, where search matches
+ * Search for:
+a5a0:3c:y	Match if found a5a0 from segment start + 3c
+a5a0:3c:n	Match if NOT found a5a0 from segment start + 3c
+a5a0:3c:y,a5a0:4c:y	Multiple searches, first match matters
 
 Checksum & info addressess:
 #0:2:Hex = Beginning of segment, word, show as Hex
