@@ -47,7 +47,7 @@
             // 
             this.btnMoveDown.Location = new System.Drawing.Point(470, 70);
             this.btnMoveDown.Name = "btnMoveDown";
-            this.btnMoveDown.Size = new System.Drawing.Size(71, 23);
+            this.btnMoveDown.Size = new System.Drawing.Size(71, 26);
             this.btnMoveDown.TabIndex = 2;
             this.btnMoveDown.Text = "Move down";
             this.btnMoveDown.UseVisualStyleBackColor = true;
@@ -129,7 +129,7 @@
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(71, 27);
             this.btnSave.TabIndex = 8;
-            this.btnSave.Text = "Save...";
+            this.btnSave.Text = "Save As...";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
@@ -155,11 +155,11 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(470, 327);
+            this.btnOK.Location = new System.Drawing.Point(469, 319);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(71, 23);
+            this.btnOK.Size = new System.Drawing.Size(71, 39);
             this.btnOK.TabIndex = 10;
-            this.btnOK.Text = "OK";
+            this.btnOK.Text = "Save and Close";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
@@ -175,7 +175,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(552, 364);
+            this.ClientSize = new System.Drawing.Size(547, 364);
             this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.btnAdd);

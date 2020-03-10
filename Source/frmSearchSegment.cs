@@ -27,7 +27,7 @@ namespace UniversalPatcher
                 txtSearchAddresses.Text = Segments[SegmentNr].SearchAddresses;
                 txtSearchfor.Text = Segments[SegmentNr].Searchfor;
                 //txtSearchfrom.Text = Segments[SegmentNr].Searchfrom;
-                chkNot.Checked = Segments[SegmentNr].SearchNot;
+                //chkNot.Checked = Segments[SegmentNr].SearchNot;
             }
         }
 
@@ -37,7 +37,7 @@ namespace UniversalPatcher
             S.SearchAddresses = txtSearchAddresses.Text;
             S.Searchfor = txtSearchfor.Text;
             //S.Searchfrom = txtSearchfrom.Text;
-            S.SearchNot = chkNot.Checked;
+            //S.SearchNot = chkNot.Checked;
             Segments[CurrentSegment] = S;
             this.DialogResult = DialogResult.OK;
         }

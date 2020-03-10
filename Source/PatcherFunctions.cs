@@ -437,7 +437,9 @@ public class upatcher
         foreach (string Part in Parts)
         {
             string[] ForFrom = Part.Split(':');
-            Debug.WriteLine("Searching for: " + ForFrom[0] + " From: " + ForFrom[1]);
+            if (ForFrom.Length != 3)
+                throw new Exception("Segment serach need 3 parameters: Serch for: search from: Y/N (" + Part +")");
+            Debug.WriteLine("Searching for: " + ForFrom[0] + " From: " + ForFrom[1] + " " + ForFrom[2]);
 
             if (ForFrom[0].Length == 0)
                 return false;
@@ -454,6 +456,7 @@ public class upatcher
             uint SearchFrom;
             if (!HexToUint(ForFrom[1], out SearchFrom))
                 return false;
+            string SearchNot = ForFrom[2].ToLower();
 
             List<Block> Blocks;
             binfile.SegmentBlocks = new List<Block>();
@@ -463,7 +466,7 @@ public class upatcher
             {
 
                 uint Addr = B.Start + SearchFrom;
-                if (!S.SearchNot)
+                if (!SearchNot.StartsWith("n"))
                 {
 
                     if (Bytes == 8)

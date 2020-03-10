@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Diagnostics;
 using static upatcher;
 
 namespace UniversalPatcher
@@ -196,7 +197,31 @@ namespace UniversalPatcher
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            this.Close();
+            try
+            {
+                string FileName;
+                if (XMLFile == "")
+                    FileName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
+                else 
+                    FileName = XMLFile;
+                if (FileName.Length < 1)
+                    return;
+                Logger("Saving to file: " + Path.GetFileName(FileName), false);
+                Debug.WriteLine ("Saving to file: " + Path.GetFileName(FileName));
+
+                using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                {
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentConfig>));
+                    writer.Serialize(stream, Segments);
+                    stream.Close();
+                }
+                Logger(" [OK]");
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
         }
 
         private void listSegments_SelectedIndexChanged(object sender, EventArgs e)

@@ -57,11 +57,16 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.txtDebug = new System.Windows.Forms.TextBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.btnSaveFileInfo = new System.Windows.Forms.Button();
+            this.txtFileinfo = new System.Windows.Forms.TextBox();
+            this.btnLoadFolder = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOrgFile
@@ -88,7 +93,7 @@
             // 
             this.txtBaseFile.Location = new System.Drawing.Point(96, 34);
             this.txtBaseFile.Name = "txtBaseFile";
-            this.txtBaseFile.Size = new System.Drawing.Size(619, 20);
+            this.txtBaseFile.Size = new System.Drawing.Size(617, 20);
             this.txtBaseFile.TabIndex = 3;
             // 
             // txtModifierFile
@@ -323,6 +328,7 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Location = new System.Drawing.Point(8, 148);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -361,11 +367,53 @@
             this.txtDebug.Size = new System.Drawing.Size(710, 252);
             this.txtDebug.TabIndex = 0;
             // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.btnSaveFileInfo);
+            this.tabPage3.Controls.Add(this.txtFileinfo);
+            this.tabPage3.Controls.Add(this.btnLoadFolder);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(703, 248);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "File info";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // btnSaveFileInfo
+            // 
+            this.btnSaveFileInfo.Location = new System.Drawing.Point(92, 5);
+            this.btnSaveFileInfo.Name = "btnSaveFileInfo";
+            this.btnSaveFileInfo.Size = new System.Drawing.Size(71, 28);
+            this.btnSaveFileInfo.TabIndex = 2;
+            this.btnSaveFileInfo.Text = "Save As...";
+            this.btnSaveFileInfo.UseVisualStyleBackColor = true;
+            this.btnSaveFileInfo.Click += new System.EventHandler(this.btnSaveFileInfo_Click);
+            // 
+            // txtFileinfo
+            // 
+            this.txtFileinfo.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFileinfo.Location = new System.Drawing.Point(4, 39);
+            this.txtFileinfo.Multiline = true;
+            this.txtFileinfo.Name = "txtFileinfo";
+            this.txtFileinfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtFileinfo.Size = new System.Drawing.Size(700, 208);
+            this.txtFileinfo.TabIndex = 1;
+            // 
+            // btnLoadFolder
+            // 
+            this.btnLoadFolder.Location = new System.Drawing.Point(4, 5);
+            this.btnLoadFolder.Name = "btnLoadFolder";
+            this.btnLoadFolder.Size = new System.Drawing.Size(80, 29);
+            this.btnLoadFolder.TabIndex = 0;
+            this.btnLoadFolder.Text = "Select Folder";
+            this.btnLoadFolder.UseVisualStyleBackColor = true;
+            this.btnLoadFolder.Click += new System.EventHandler(this.btnLoadFolder_Click);
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(731, 497);
+            this.ClientSize = new System.Drawing.Size(721, 498);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnAutodetect);
             this.Controls.Add(this.chkAutodetect);
@@ -400,6 +448,8 @@
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -435,5 +485,9 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TextBox txtDebug;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TextBox txtFileinfo;
+        private System.Windows.Forms.Button btnLoadFolder;
+        private System.Windows.Forms.Button btnSaveFileInfo;
     }
 }

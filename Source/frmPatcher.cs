@@ -188,6 +188,7 @@ namespace UniversalPatcher
                 labelXML.Text = Path.GetFileName(XMLFile);
                 addCheckBoxes();
                 Logger(Environment.NewLine + Path.GetFileName(FileName));
+                txtFileinfo.AppendText(Environment.NewLine + Path.GetFileName(FileName) +" (" + labelXML.Text + ")" + Environment.NewLine);
                 GetSegmentAddresses(buf, out binfile);
                 if (Segments.Count > 0)
                     Logger("Segments:");
@@ -217,6 +218,8 @@ namespace UniversalPatcher
                         if (Ver.Length > 1)
                             Logger(", Ver: " + Ver, false);
 
+                        txtFileinfo.AppendText(S.Name.PadRight(11) + " PN: " + PN + " Ver: " + Ver);
+
                         string SNr = ReadInfo(buf, binfile[i].SegNrAddr);
                         if (SNr.Length > 0)
                             Logger(", Nr: " + SNr, false);
@@ -232,12 +235,13 @@ namespace UniversalPatcher
                         else
                             Logger("");
                     }
+                    txtFileinfo.AppendText(Environment.NewLine);
                 }
                 Logger("Checksums:");
                 for (int i = 0; i < Segments.Count; i++)
                 {
                     SegmentConfig S = Segments[i];
-                    Logger(S.Name);
+                    Logger(S.Name.PadRight(11), false);
                     if (S.Eeprom)
                     {
                         Logger(GmEeprom.GetKeyStatus(buf));
@@ -248,50 +252,45 @@ namespace UniversalPatcher
 
                         if (S.CS1Method != CSMethod_None)
                         {
-                            string tmp = "";
-                            for (int s = 0; s < binfile[i].CS1Blocks.Count; s++)
-                            {
-                                if (s > 0)
-                                    tmp += ", ";
-                                tmp += binfile[i].CS1Blocks[s].Start.ToString("X4") + " - " + binfile[i].CS1Blocks[s].End.ToString("X4");
-                            }
                             string CS1Calc = CalculateChecksum(buf, binfile[i].CS1Address, binfile[i].CS1Blocks, binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, binfile[i].CS1Address.Bytes, S.CS1SwapBytes).ToString("X4");
                             if (binfile[i].CS1Address.Bytes == 0)
-                                Logger(" Checksum1: [" + tmp + "] " + CS1Calc);
+                                Logger(" Checksum1: " + CS1Calc,false);
                             else
                             {
                                 string CS1 = ReadInfo(buf, binfile[i].CS1Address);
                                 if (CS1 == CS1Calc)
-                                    Logger(" Checksum 1: [" + tmp + "] " + CS1 + " [OK]");
+                                    Logger(" Checksum 1: " + CS1 + " [OK]", false);
                                 else
-                                    Logger(" Checksum 1: [" + tmp + "] " + CS1 + ", Calculated: " + CS1Calc + " [Fail]");
+                                { 
+                                    Logger(" Checksum 1: " + CS1 + ", Calculated: " + CS1Calc + " [Fail]", false);
+                                    txtFileinfo.AppendText(S.Name + " Checksum 1 Fail");
+                                }
                             }
                         }
 
                         if (S.CS2Method != CSMethod_None)
                         {
-                            string tmp = "";
-                            for (int s = 0; s < binfile[i].CS2Blocks.Count; s++)
-                            {
-                                if (s > 0)
-                                    tmp += ", ";
-                                tmp += binfile[i].CS2Blocks[s].Start.ToString("X4") + " - " + binfile[i].CS2Blocks[s].End.ToString("X4");
-                            }
                             string CS2Calc = CalculateChecksum(buf, binfile[i].CS2Address, binfile[i].CS2Blocks, binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, binfile[i].CS2Address.Bytes, S.CS2SwapBytes).ToString("X4");
                             if (binfile[i].CS2Address.Bytes == 0)
-                                Logger(" Checksum1: [" + tmp + "] " + CS2Calc);
+                                Logger(" Checksum1: " + CS2Calc, false);
                             else
                             {
                                 string CS2 = ReadInfo(buf, binfile[i].CS2Address);
                                 if (CS2 == CS2Calc)
-                                    Logger(" Checksum 2: [" + tmp + "] " + CS2 + " [OK]");
+                                    Logger(" Checksum 2: "  + CS2 + " [OK]", false);
                                 else
-                                    Logger(" Checksum 2: [" + tmp + "] " + CS2 + ", Calculated: " + CS2Calc + " [Fail]");
+                                { 
+                                    Logger(" Checksum 2:" + CS2 + ", Calculated: " + CS2Calc + " [Fail]", false);
+                                    txtFileinfo.AppendText(" " + S.Name + " Checksum 2 Fail");
+                                }
                             }
                         }
 
                     }
-
+                    if (!txtResult.Text.EndsWith(Environment.NewLine))
+                        txtResult.AppendText(Environment.NewLine);
+                    if (!txtFileinfo.Text.EndsWith(Environment.NewLine))
+                        txtFileinfo.AppendText(Environment.NewLine);
                 }
                 addCheckBoxes();
                 CheckSegmentCompatibility();
@@ -1034,7 +1033,47 @@ namespace UniversalPatcher
             frmAD.Show();
             frmAD.InitMe();
         }
+
+
+        private void btnLoadFolder_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectFile();
+            if (FileName.Length == 0)
+                return;
+            txtFileinfo.Text = "";
+            string Fldr = Path.GetDirectoryName(FileName);
+            DirectoryInfo d = new DirectoryInfo(Fldr);
+            FileInfo[] Files = d.GetFiles("*.bin");
+            foreach (FileInfo file in Files)
+            {
+                uint fsize = (uint)new System.IO.FileInfo(file.FullName).Length;
+                BinFile[] binfile = new BinFile[Segments.Count];
+                byte[] buf = new byte[fsize];
+                GetFileInfo(file.FullName, ref binfile, ref buf);
+            }
+
+        }
+
+        private void btnSaveFileInfo_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string FileName = SelectSaveFile("Text files (*.txt)|*.txt|All files (*.*)|*.*");
+                if (FileName.Length > 1)
+                {
+                    StreamWriter sw = new StreamWriter(FileName);
+                    sw.WriteLine(txtFileinfo.Text);
+                    sw.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message, "Error");
+            }
+
+        }
     }
+
     class TextBoxTraceListener : TraceListener
     {
         private TextBox tBox;
