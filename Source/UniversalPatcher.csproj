@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Crc.cs" />
     <Compile Include="frmEditExtra.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -134,6 +135,7 @@
       <DependentUpon>frmPatcher.cs</DependentUpon>
     </Compile>
     <Compile Include="PatcherFunctions.cs" />
+    <Compile Include="PcmFile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="frmAsk.resx">
