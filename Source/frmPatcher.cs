@@ -48,7 +48,7 @@ namespace UniversalPatcher
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
             this.Show();
-            labelXML.Text = Path.GetFileName(XMLFile);
+            //labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1 && File.Exists(args[1]))
             {
@@ -123,7 +123,7 @@ namespace UniversalPatcher
             if (!radioCreate.Checked || txtBaseFile.Text == "" || txtModifierFile.Text == "")
                 return;
 
-            labelXML.Text = Path.GetFileName(XMLFile);
+            labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
             for (int s = 0; s < Segments.Count; s++)
             {
                 CheckBox chk = null;
@@ -182,7 +182,7 @@ namespace UniversalPatcher
                         }
                     }
                 }
-                labelXML.Text = Path.GetFileName(XMLFile);
+                labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
                 addCheckBoxes();
                 Logger(Environment.NewLine + Path.GetFileName(FileName));
                 txtFileinfo.AppendText(Environment.NewLine + Path.GetFileName(FileName) +" (" + labelXML.Text + ")" + Environment.NewLine);
@@ -512,7 +512,7 @@ namespace UniversalPatcher
             Properties.Settings.Default.Save();
             if (txtBaseFile.Text.Length == 0 || txtModifierFile.Text.Length == 0)
                 return;
-            labelXML.Text = Path.GetFileName(XMLFile);
+            labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
             PatchData = new List<uint>();
             PatchAddr = new List<uint>();
             txtResult.Text = "";
@@ -591,7 +591,7 @@ namespace UniversalPatcher
                 if (FileName.Length == 0)
                     return;
                 Logger("Saving to file: " + FileName);
-                WriteSegmentToFile(FileName, 0, (uint)basefile.fsize, basefile.buf);
+                WriteBinToFile(FileName, basefile.buf);
                 Logger("Done.");
             }
             catch (Exception ex)
@@ -857,7 +857,7 @@ namespace UniversalPatcher
             frmSegmenList frmSL = new frmSegmenList();
             frmSL.LoadFile(FileName);
             frmSL.Dispose();
-            labelXML.Text = Path.GetFileName(XMLFile);
+            labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
             addCheckBoxes();
         }
 

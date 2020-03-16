@@ -169,7 +169,7 @@ namespace UniversalPatcher
             return false;
         }
 
-        public static bool FindCheckwordData(byte[] buf, SegmentConfig S, ref BinFile binfile)
+        public bool FindCheckwordData(byte[] buf, SegmentConfig S, ref BinFile binfile)
         {
             Debug.WriteLine("Checkwords: " + S.CheckWords);
             if (S.CheckWords == null)
@@ -357,8 +357,7 @@ namespace UniversalPatcher
                     Lineparts[0] = Lineparts[0].Replace(CWAddr.Key, "");
             }
             if (!HexToUint(Lineparts[0].Replace("#", ""), out AD.Address))
-                throw new Exception("Can't convert from HEX: " + Lineparts[0].Replace("#", "") + " (" + Line + ")");
-            //return AD;
+                throw new Exception("Can't convert from HEX: " + Lineparts[0].Replace("#", "") + " (" + Line + ")");            
 
             if (Line.StartsWith("#"))
             {

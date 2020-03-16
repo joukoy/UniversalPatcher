@@ -54,7 +54,8 @@ public class upatcher
 
     public struct SegmentConfig
     {
-        public string Name;     
+        public string Name;
+        public string Version;
         public string Addresses;    //Segment addresses, can be multiple parts
         public string CS1Address;           //Checksum 1 Address
         public string CS2Address;           //Checksum 2 Address
@@ -73,10 +74,10 @@ public class upatcher
         public string ExtraInfo;
         public string Comment;
         public string CheckWords;
-        public string SearchAddresses;  //Possible start addresses for Eepom segment
+        public string SearchAddresses;  //Possible start addresses for searched segment
         public string Searchfor;  //search if this found/not found in segment
-        public string Searchfrom; //Search above in these addresses
-        public bool SearchNot;     //Search where NOT found
+        //public string Searchfrom; //Search above in these addresses OBSOLETE
+        //public bool SearchNot;     //Search where NOT found OBSOLETE
     }
 
     public const short CSMethod_None = 0;
@@ -129,14 +130,14 @@ public class upatcher
     }
 
 
-    public static void WriteSegmentToFile(string FileName, uint StartAddr, uint Length, byte[] Buf)
+    public static void WriteBinToFile(string FileName, byte[] Buf)
     {
 
         using (FileStream stream = new FileStream(FileName, FileMode.Create))
         {
             using (BinaryWriter writer = new BinaryWriter(stream))
             {
-                writer.Write(Buf, (int)StartAddr, (int)Length);
+                writer.Write(Buf);
                 writer.Close();
             }
         }

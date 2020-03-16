@@ -41,6 +41,8 @@
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
             this.txtStatus = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtVersion = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnMoveDown
@@ -168,14 +170,33 @@
             this.txtStatus.Location = new System.Drawing.Point(243, 325);
             this.txtStatus.Multiline = true;
             this.txtStatus.Name = "txtStatus";
-            this.txtStatus.Size = new System.Drawing.Size(210, 35);
+            this.txtStatus.Size = new System.Drawing.Size(220, 35);
             this.txtStatus.TabIndex = 11;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(419, 13);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(45, 13);
+            this.label1.TabIndex = 50;
+            this.label1.Text = "Version:";
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Location = new System.Drawing.Point(470, 9);
+            this.txtVersion.Name = "txtVersion";
+            this.txtVersion.Size = new System.Drawing.Size(65, 20);
+            this.txtVersion.TabIndex = 51;
+            this.txtVersion.Text = "1";
             // 
             // frmSegmenList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(547, 364);
+            this.Controls.Add(this.txtVersion);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.btnAdd);
@@ -211,5 +232,7 @@
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.TextBox txtStatus;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox txtVersion;
     }
 }

@@ -41,6 +41,8 @@ namespace UniversalPatcher
                 item.Tag = s;
                 listSegments.Items.Add(item);
             }
+            if (Segments.Count > 0)
+                txtVersion.Text = Segments[0].Version;
         }
 
         public void LoadFile(string FileName)
@@ -55,6 +57,12 @@ namespace UniversalPatcher
                 Segments = (List<SegmentConfig>)reader.Deserialize(file);
                 file.Close();
 
+                if (Segments[0].Version == null || Segments[0].Version == "")
+                {
+                    SegmentConfig S = Segments[0];
+                    S.Version = "1";
+                    Segments[0] = S;
+                }
                 listSegments.Items.Clear();
                 for (int s = 0; s < Segments.Count; s++)
                 {
@@ -69,6 +77,7 @@ namespace UniversalPatcher
                 Logger(" [OK]");
                 XMLFile = FileName;
                 labelXML.Text = Path.GetFileName(XMLFile);
+                txtVersion.Text = Segments[0].Version;
             }
             catch (Exception ex)
             {
@@ -136,6 +145,9 @@ namespace UniversalPatcher
             Segments.Clear();
             listSegments.Items.Clear();
             txtStatus.Text = "";
+            txtVersion.Text = "1";
+            XMLFile = "";
+            labelXML.Text = "";
         }
 
         private void btnMoveUp_Click(object sender, EventArgs e)
@@ -206,6 +218,9 @@ namespace UniversalPatcher
                     FileName = XMLFile;
                 if (FileName.Length < 1)
                     return;
+                SegmentConfig S = Segments[0];
+                S.Version = txtVersion.Text;
+                Segments[0] = S;
                 Logger("Saving to file: " + Path.GetFileName(FileName), false);
                 Debug.WriteLine ("Saving to file: " + Path.GetFileName(FileName));
 
