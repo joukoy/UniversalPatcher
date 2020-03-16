@@ -1,6 +1,25 @@
 <?xml version="1.0"?>
 <ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SegmentConfig>
+    <Name>BootBlock</Name>
+    <Addresses>@414</Addresses>
+    <CS1Address>#40E:2:hex</CS1Address>
+    <CS2Address>#3f0:2:hex</CS2Address>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+    <CS1Blocks>@41c*3</CS1Blocks>
+    <CS2Blocks>@434*2</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#3f5:4:int</PNAddr>
+    <VerAddr>#3f9:2:text</VerAddr>
+    <SegNrAddr>#3f3:1:int</SegNrAddr>
+    <SearchNot>false</SearchNot>
+  </SegmentConfig>
+  <SegmentConfig>
     <Name>OS</Name>
     <Addresses>@10024</Addresses>
     <CS1Address>#1E:2:hex</CS1Address>
@@ -13,9 +32,11 @@
     <CS2Complement>2</CS2Complement>
     <CS1SwapBytes>true</CS1SwapBytes>
     <CS2SwapBytes>false</CS2SwapBytes>
+    <Eeprom>false</Eeprom>
     <PNAddr>#5:4:int</PNAddr>
     <VerAddr>#9:2:text</VerAddr>
     <SegNrAddr>#3:1:int</SegNrAddr>
+    <SearchNot>false</SearchNot>
   </SegmentConfig>
   <SegmentConfig>
     <Name>System</Name>
@@ -30,9 +51,11 @@
     <CS2Complement>2</CS2Complement>
     <CS1SwapBytes>true</CS1SwapBytes>
     <CS2SwapBytes>false</CS2SwapBytes>
+    <Eeprom>false</Eeprom>
     <PNAddr>#5:4:int</PNAddr>
     <VerAddr>#9:2:text</VerAddr>
     <SegNrAddr>#3:1:int</SegNrAddr>
+    <SearchNot>false</SearchNot>
   </SegmentConfig>
   <SegmentConfig>
     <Name>Fuel</Name>
@@ -47,9 +70,11 @@
     <CS2Complement>2</CS2Complement>
     <CS1SwapBytes>true</CS1SwapBytes>
     <CS2SwapBytes>false</CS2SwapBytes>
+    <Eeprom>false</Eeprom>
     <PNAddr>#5:4:int</PNAddr>
     <VerAddr>#9:2:text</VerAddr>
     <SegNrAddr>#3:1:int</SegNrAddr>
+    <SearchNot>false</SearchNot>
   </SegmentConfig>
   <SegmentConfig>
     <Name>Speedo</Name>
@@ -64,9 +89,11 @@
     <CS2Complement>2</CS2Complement>
     <CS1SwapBytes>true</CS1SwapBytes>
     <CS2SwapBytes>false</CS2SwapBytes>
+    <Eeprom>false</Eeprom>
     <PNAddr>#5:4:int</PNAddr>
     <VerAddr>#9:2:text</VerAddr>
     <SegNrAddr>#3:1:int</SegNrAddr>
+    <SearchNot>false</SearchNot>
   </SegmentConfig>
   <SegmentConfig>
     <Name>EngineDiag</Name>
@@ -81,9 +108,11 @@
     <CS2Complement>2</CS2Complement>
     <CS1SwapBytes>true</CS1SwapBytes>
     <CS2SwapBytes>false</CS2SwapBytes>
+    <Eeprom>false</Eeprom>
     <PNAddr>#5:4:int</PNAddr>
     <VerAddr>#9:2:text</VerAddr>
     <SegNrAddr>#3:1:int</SegNrAddr>
+    <SearchNot>false</SearchNot>
   </SegmentConfig>
   <SegmentConfig>
     <Name>Engine</Name>
@@ -98,8 +127,35 @@
     <CS2Complement>2</CS2Complement>
     <CS1SwapBytes>true</CS1SwapBytes>
     <CS2SwapBytes>false</CS2SwapBytes>
+    <Eeprom>false</Eeprom>
     <PNAddr>#5:4:int</PNAddr>
     <VerAddr>#9:2:text</VerAddr>
     <SegNrAddr>#3:1:int</SegNrAddr>
+    <SearchNot>false</SearchNot>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>EEPROM_DATA</Name>
+    <Addresses>Search</Addresses>
+    <CS1Address />
+    <CS2Address />
+    <CS1Method>0</CS1Method>
+    <CS2Method>0</CS2Method>
+    <CS1Blocks />
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#7:3:text</PNAddr>
+    <VerAddr />
+    <SegNrAddr />
+    <ExtraInfo>PCM:#28:4:int,PCMid2:#20:4:int,VIN:CWvin+0:17:text,trace code:#2c:16:text</ExtraInfo>
+    <Comment />
+    <CheckWords>a5a0:326:1cc:CWvin,a5a0:1da:b4:CWvin,a5a0:1be:b8:CWvin</CheckWords>
+    <SearchAddresses>C000-E000,E000-10000</SearchAddresses>
+    <Searchfor>ffffffffffffffff:0:N</Searchfor>
+    <Searchfrom>1</Searchfrom>
+    <SearchNot>true</SearchNot>
   </SegmentConfig>
 </ArrayOfSegmentConfig>
