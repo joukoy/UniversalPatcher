@@ -38,8 +38,7 @@ namespace UniversalPatcher
         }
 
         private frmSegmenList frmSL;
-        private static List<uint> PatchData;
-        private static List<uint> PatchAddr;
+        private static List<XmlPatch> PatchList;
         private PcmFile basefile;
         private PcmFile modfile;
         private CheckBox[] chkSegments;
@@ -98,15 +97,13 @@ namespace UniversalPatcher
                     chkSegments[s].Dispose();
                 }
             }
-            if (radioApply.Checked)
-                return;
-            int Left = 12;
+            int Left = 6;
             chkSegments = new CheckBox[Segments.Count];
             for (int s = 0; s < Segments.Count; s++)
             {
                 CheckBox chk = new CheckBox();
-                this.Controls.Add(chk);
-                chk.Location = new Point(Left, 91);
+                tabCreate.Controls.Add(chk);
+                chk.Location = new Point(Left, 80);
                 chk.Text = Segments[s].Name;
                 chk.AutoSize = true;
                 Left += chk.Width + 5;
@@ -120,20 +117,12 @@ namespace UniversalPatcher
 
         private void CheckSegmentCompatibility()
         {
-            if (!radioCreate.Checked || txtBaseFile.Text == "" || txtModifierFile.Text == "")
+            if ( txtBaseFile.Text == "" || txtModifierFile.Text == "")
                 return;
 
             labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
             for (int s = 0; s < Segments.Count; s++)
             {
-                CheckBox chk = null;
-                for (int i = 0; i < this.Controls.Count; i++)
-                {
-                    if (this.Controls[i].Tag != null && (int)this.Controls[i].Tag == s)
-                    {
-                        chk = this.Controls[i] as CheckBox;
-                    }
-                }
                 string BasePN = basefile.ReadInfo(basefile.binfile[s].PNaddr);
                 string ModPN = modfile.ReadInfo(modfile.binfile[s].PNaddr);
                 string BaseVer = basefile.ReadInfo(basefile.binfile[s].VerAddr);
@@ -142,11 +131,11 @@ namespace UniversalPatcher
                 if (BasePN != ModPN || BaseVer != ModVer)
                 {
                     Logger(Segments[s].Name.PadLeft(11) + " differ: " + BasePN.ToString().PadRight(8) + " " + BaseVer + " <> " + ModPN.ToString().PadRight(8) + " " + ModVer);
-                    chk.Enabled = false;
+                    chkSegments[s].Enabled = false;
                 }
                 else
                 {
-                    chk.Enabled = true;
+                    chkSegments[s].Enabled = true;
                 }
             }
         }
@@ -182,10 +171,10 @@ namespace UniversalPatcher
                         }
                     }
                 }
+                txtOS.Text = "ALL";
                 labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
                 addCheckBoxes();
-                Logger(Environment.NewLine + Path.GetFileName(FileName));
-                txtFileinfo.AppendText(Environment.NewLine + Path.GetFileName(FileName) +" (" + labelXML.Text + ")" + Environment.NewLine);
+                Logger(Environment.NewLine + Path.GetFileName(FileName) + " (" + labelXML.Text + ")" + Environment.NewLine);
                 PCM.GetSegmentAddresses();
                 if (Segments.Count > 0)
                     Logger("Segments:");
@@ -200,22 +189,29 @@ namespace UniversalPatcher
                     else
                     {
                         string tmp = "";
+                        uint SSize = 0;
                         for (int s = 0; s < PCM.binfile[i].SegmentBlocks.Count; s++)
                         {
                             if (s > 0)
                                 tmp += ", ";
                             tmp = PCM.binfile[i].SegmentBlocks[s].Start.ToString("X4") + " - " + PCM.binfile[i].SegmentBlocks[s].End.ToString("X4");
+                            SSize += PCM.binfile[i].SegmentBlocks[s].End - PCM.binfile[i].SegmentBlocks[s].Start + 1;
                         }
-                        Logger(S.Name.PadRight(11) + (" [" + tmp + "]").PadRight(15), false);
+                        Logger(S.Name.PadRight(11), false); 
+                        if (chkRange.Checked) 
+                            Logger(" [" + tmp + "]", false);
+                        if (chkSize.Checked)                            
+                            Logger(", Size: " + SSize.ToString(), false);
                         string PN = PCM.ReadInfo(PCM.binfile[i].PNaddr);
                         if (PN.Length > 1)
+                        { 
                             Logger(", PN: " + PN.PadRight(9), false);
-
+                            if (S.Name == "OS")
+                                txtOS.Text = PN;
+                        }
                         string Ver = PCM.ReadInfo(PCM.binfile[i].VerAddr);
                         if (Ver.Length > 1)
                             Logger(", Ver: " + Ver, false);
-
-                        txtFileinfo.AppendText(S.Name.PadRight(11) + " PN: " + PN + " Ver: " + Ver);
 
                         string SNr = PCM.ReadInfo(PCM.binfile[i].SegNrAddr);
                         if (SNr.Length > 0)
@@ -227,65 +223,65 @@ namespace UniversalPatcher
                             {
                                 ExtraI += ", " + PCM.binfile[i].ExtraInfo[e].Name + ": " + PCM.ReadInfo(PCM.binfile[i].ExtraInfo[e]);
                             }
-                            Logger(ExtraI);
+                            if (chkExtra.Checked)
+                                Logger(ExtraI);
                         }
-                        else
-                            Logger("");
-                    }
-                    txtFileinfo.AppendText(Environment.NewLine);
-                }
-                Logger("Checksums:");
-                for (int i = 0; i < Segments.Count; i++)
-                {
-                    SegmentConfig S = Segments[i];
-                    Logger(S.Name.PadRight(11), false);
-                    if (S.Eeprom)
-                    {
-                        Logger(GmEeprom.GetKeyStatus(PCM.buf));
-                    }
-                    else
-                    {
-                        if (S.CS1Method != CSMethod_None)
-                        {
-                            string CS1Calc = CalculateChecksum(PCM.buf, PCM.binfile[i].CS1Address, PCM.binfile[i].CS1Blocks, PCM.binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, PCM.binfile[i].CS1Address.Bytes, S.CS1SwapBytes).ToString("X4");
-                            if (PCM.binfile[i].CS1Address.Bytes == 0)
-                                Logger(" Checksum1: " + CS1Calc,false);
-                            else
-                            {
-                                string CS1 = PCM.ReadInfo(PCM.binfile[i].CS1Address);
-                                if (CS1 == CS1Calc)
-                                    Logger(" Checksum 1: " + CS1 + " [OK]", false);
-                                else
-                                { 
-                                    Logger(" Checksum 1: " + CS1 + ", Calculated: " + CS1Calc + " [Fail]", false);
-                                    txtFileinfo.AppendText(S.Name + " Checksum 1 Fail");
-                                }
-                            }
-                        }
-
-                        if (S.CS2Method != CSMethod_None)
-                        {
-                            string CS2Calc = CalculateChecksum(PCM.buf, PCM.binfile[i].CS2Address, PCM.binfile[i].CS2Blocks, PCM.binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, PCM.binfile[i].CS2Address.Bytes, S.CS2SwapBytes).ToString("X4");
-                            if (PCM.binfile[i].CS2Address.Bytes == 0)
-                                Logger(" Checksum1: " + CS2Calc, false);
-                            else
-                            {
-                                string CS2 = PCM.ReadInfo(PCM.binfile[i].CS2Address);
-                                if (CS2 == CS2Calc)
-                                    Logger(" Checksum 2: "  + CS2 + " [OK]", false);
-                                else
-                                { 
-                                    Logger(" Checksum 2:" + CS2 + ", Calculated: " + CS2Calc + " [Fail]", false);
-                                    txtFileinfo.AppendText(" " + S.Name + " Checksum 2 Fail");
-                                }
-                            }
-                        }
-
                     }
                     if (!txtResult.Text.EndsWith(Environment.NewLine))
-                        txtResult.AppendText(Environment.NewLine);
-                    if (!txtFileinfo.Text.EndsWith(Environment.NewLine))
-                        txtFileinfo.AppendText(Environment.NewLine);
+                        Logger("");
+
+                }
+                if (chkCS1.Checked || chkCS2.Checked)
+                { 
+                    Logger("Checksums:");
+                    for (int i = 0; i < Segments.Count; i++)
+                    {
+                        SegmentConfig S = Segments[i];
+                        Logger(S.Name.PadRight(11), false);
+                        if (S.Eeprom)
+                        {
+                            Logger(GmEeprom.GetKeyStatus(PCM.buf));
+                        }
+                        else
+                        {
+                            if (S.CS1Method != CSMethod_None && chkCS1.Checked)
+                            {
+                                string CS1Calc = CalculateChecksum(PCM.buf, PCM.binfile[i].CS1Address, PCM.binfile[i].CS1Blocks, PCM.binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, PCM.binfile[i].CS1Address.Bytes, S.CS1SwapBytes).ToString("X4");
+                                if (PCM.binfile[i].CS1Address.Bytes == 0)
+                                    Logger(" Checksum1: " + CS1Calc,false);
+                                else
+                                {
+                                    string CS1 = PCM.ReadInfo(PCM.binfile[i].CS1Address);
+                                    if (CS1 == CS1Calc)
+                                        Logger(" Checksum 1: " + CS1 + " [OK]", false);
+                                    else
+                                    { 
+                                        Logger(" Checksum 1: " + CS1 + ", Calculated: " + CS1Calc + " [Fail]", false);
+                                    }
+                                }
+                            }
+
+                            if (S.CS2Method != CSMethod_None && chkCS2.Checked)
+                            {
+                                string CS2Calc = CalculateChecksum(PCM.buf, PCM.binfile[i].CS2Address, PCM.binfile[i].CS2Blocks, PCM.binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, PCM.binfile[i].CS2Address.Bytes, S.CS2SwapBytes).ToString("X4");
+                                if (PCM.binfile[i].CS2Address.Bytes == 0)
+                                    Logger(" Checksum1: " + CS2Calc, false);
+                                else
+                                {
+                                    string CS2 = PCM.ReadInfo(PCM.binfile[i].CS2Address);
+                                    if (CS2 == CS2Calc)
+                                        Logger(" Checksum 2: "  + CS2 + " [OK]", false);
+                                    else
+                                    { 
+                                        Logger(" Checksum 2:" + CS2 + ", Calculated: " + CS2Calc + " [Fail]", false);
+                                    }
+                                }
+                            }
+
+                        }
+                        if (!txtResult.Text.EndsWith(Environment.NewLine))
+                            txtResult.AppendText(Environment.NewLine);
+                    }
                 }
                 addCheckBoxes();
                 CheckSegmentCompatibility();
@@ -294,7 +290,7 @@ namespace UniversalPatcher
             {
                 Logger("Error: " + ex.Message);
             }
-
+            
         }
         private void btnOrgFile_Click(object sender, EventArgs e)
         {
@@ -310,62 +306,12 @@ namespace UniversalPatcher
 
         private void btnModFile_Click(object sender, EventArgs e)
         {
-            if (radioCreate.Checked)
+            string FileName = SelectFile();
+            if (FileName.Length > 1)
             {
-                string FileName = SelectFile();
-                if (FileName.Length > 1)
-                {
-                    txtModifierFile.Text = FileName;
-                    modfile = new PcmFile(FileName);
-                    GetFileInfo(txtModifierFile.Text, ref modfile);
-                }
-            }
-            else
-            {
-                try
-                {
-                    string Filename = SelectFile("PATCH files (*.patch)|*.patch|ALL files(*.*) | *.*");
-                    if (Filename.Length > 1)
-                    {
-                        txtModifierFile.Text = Filename;
-                        string line;
-                        StreamReader sr = new StreamReader(txtModifierFile.Text);
-                        line = sr.ReadLine();
-                        Logger("Patch is for bin size: " + line);
-                        line = sr.ReadLine();
-                        Logger(line);
-                        line = sr.ReadLine();
-                        if (line.Contains(".xml"))
-                        {
-                            string tmpXML = "";
-                            if (File.Exists(line))
-                            {
-                                tmpXML = line;
-                            }
-                            else
-                            {
-                                if (File.Exists(Path.Combine(Application.StartupPath, "XML", Path.GetFileName(line))))
-                                    tmpXML = Path.Combine(Application.StartupPath, "XML", Path.GetFileName(line));
-                            }
-
-                            if (tmpXML != "")
-                            {
-                                if (frmSL == null)
-                                    frmSL = new frmSegmenList();
-                                frmSL.LoadFile(tmpXML);
-                                labelXML.Text = Path.GetFileName(tmpXML);
-                                if (txtBaseFile.Text.Length > 1)
-                                    addCheckBoxes();
-                            }
-                        }
-                        sr.Close();
-                        btnShowPatch.Enabled = true;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logger("Error: " + ex.Message);
-                }
+                txtModifierFile.Text = FileName;
+                modfile = new PcmFile(FileName);
+                GetFileInfo(txtModifierFile.Text, ref modfile);
             }
 
         }
@@ -431,21 +377,142 @@ namespace UniversalPatcher
             return true;
         }
 
-        private void CompareBlock(byte[] OrgFile, byte[] ModFile, uint Start, uint End)
+        private bool ApplyXMLPatch()
+        {
+            try
+            {
+                bool isCompatible = false;
+                string BinPN="";
+                string PrevSegment = "";
+                uint ByteCount = 0;
+                string[] Parts = PatchList[0].XmlFile.Split(',');
+                foreach (string Part in Parts)
+                {
+                    if (Part == Path.GetFileName(XMLFile))
+                        isCompatible = true;
+                }
+                if (!isCompatible)
+                { 
+                    Logger("Incompatible patch");
+                    return false;
+                }
+                Logger("Applying patch:");
+                foreach (XmlPatch xpatch in PatchList)
+                {
+                    isCompatible = false;
+                    uint Addr = 0;
+                    string[] OSlist = xpatch.CompatibleOS.Split(',');
+                    foreach (string OS in OSlist)
+                    {
+                        Parts = OS.Split(':');
+                        if(Parts[0] == "ALL")
+                        {
+                            isCompatible = true;
+                            if (!HexToUint(Parts[1], out Addr))
+                                throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.CompatibleOS + ")");
+                            Debug.WriteLine("ALL, Addr: " + Parts[1]);
+                        }
+                        else
+                        {
+                            if (BinPN == "")
+                            { 
+                                //Search OS once
+                                for (int s = 0; s < Segments.Count; s++)
+                                {
+                                    string PN = basefile.ReadInfo(basefile.binfile[s].PNaddr);
+                                    if (Parts[0] == PN)
+                                    {                                        
+                                        isCompatible = true;
+                                        BinPN = PN;
+                                    }
+                                }
+                            }
+                            if (Parts[0] == BinPN)
+                            {
+                                isCompatible = true;
+                                if (!HexToUint(Parts[1], out Addr))
+                                    throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.CompatibleOS + ")");
+                                Debug.WriteLine("OS: " + BinPN + ", Addr: " + Parts[1]);
+                            }
+                        }
+                    }
+                    if (isCompatible)
+                    {
+                        if (xpatch.Description != null && xpatch.Description != "")
+                            Logger(xpatch.Description);
+                        if (xpatch.Segment.Length>0 &&  PrevSegment != xpatch.Segment)
+                        {
+                            PrevSegment = xpatch.Segment;
+                            Logger("Segment: " + xpatch.Segment);
+                        }
+                        Debug.WriteLine(Addr.ToString("X") + ":" + xpatch.Data);
+                        Parts = xpatch.Data.Split(' ');                        
+                        foreach(string Part in Parts)
+                        {                            
+                            //Actually add patch data:
+                            basefile.buf[Addr] = Byte.Parse(Part,System.Globalization.NumberStyles.HexNumber);
+                            Addr++;
+                            ByteCount++;
+                        }
+                    }
+                    else
+                    {
+                        Logger("Patch is not compatible");
+                        return false;
+                    }
+                }
+                Logger("Applied: " + ByteCount.ToString() + " Bytes");
+            }
+            catch (Exception ex)
+            {
+                Logger("Error: " + ex.Message);
+                return false;
+            }
+            return true;
+        }
+
+        private void CompareBlock(byte[] OrgFile, byte[] ModFile, uint Start, uint End, string CurrentSegment)
         {
             Logger(" [" + Start.ToString("X") + " - " + End.ToString("X") + "] ");
             uint ModCount = 0;
+            bool BlockStarted = false;
+            XmlPatch xpatch;
+            xpatch.CompatibleOS = txtOS.Text;
+            xpatch.XmlFile = Path.GetFileName(XMLFile);
+            xpatch.Data = "";
+            xpatch.Description = "";
+            xpatch.Segment = CurrentSegment;
             for (uint i = Start; i < End; i++)
             {
                 if (OrgFile[i] != ModFile[i])
                 {
+                    if (!BlockStarted)
+                    {
+                        //Start new block 
+                        xpatch.Data = "";
+                        xpatch.CompatibleOS = txtOS.Text + ":" + i.ToString("X");
+                        BlockStarted = true;
+                    }
+                    else
+                        xpatch.Data += " ";
+
+                    xpatch.Data += ModFile[i].ToString("X2");
                     ModCount++;
-                    PatchAddr.Add(i);
-                    PatchData.Add(ModFile[i]);
                     if (ModCount <= numSuppress.Value)
                         Logger(i.ToString("X6") + ": " + OrgFile[i].ToString("X2") + " => " + ModFile[i].ToString("X2"));
+                    
+                }
+                else if (BlockStarted)
+                {
+                    //No more differences in this block
+                    PatchList.Add(xpatch);
+                    BlockStarted = false;
                 }
 
+            }
+            if (BlockStarted)
+            {
+                PatchList.Add(xpatch);
             }
             if (ModCount > numSuppress.Value)
             {
@@ -467,20 +534,20 @@ namespace UniversalPatcher
                 }
                 basefile = new PcmFile(txtBaseFile.Text);
                 modfile = new PcmFile(txtModifierFile.Text);
+                PatchList = new List<XmlPatch>();
                 GetFileInfo(txtBaseFile.Text, ref basefile);
                 GetFileInfo(txtModifierFile.Text, ref modfile);
 
                 labelBinSize.Text = fsize.ToString();
-
                 if (Segments.Count == 0)
                 {
                     Logger("No segments defined, comparing complete file");
-                    CompareBlock(basefile.buf, modfile.buf, 0, (uint)fsize);
+                    CompareBlock(basefile.buf, modfile.buf, 0, (uint)fsize, "");
                 }
                 else if (chkCompareAll.Checked)
                 {
                     Logger("Comparing complete file");
-                    CompareBlock(basefile.buf, modfile.buf, 0, (uint)fsize);
+                    CompareBlock(basefile.buf, modfile.buf, 0, (uint)fsize, "");
                 }
                 else
                 {
@@ -493,13 +560,16 @@ namespace UniversalPatcher
                             {
                                 uint Start = basefile.binfile[Snr].SegmentBlocks[p].Start;
                                 uint End = basefile.binfile[Snr].SegmentBlocks[p].End;
-                                CompareBlock(basefile.buf, modfile.buf, Start, End);
+                                CompareBlock(basefile.buf, modfile.buf, Start, End, Segments[Snr].Name);
                             }
                             Logger("");
                         }
                     }
                 }
-
+                if (PatchList.Count > 0)
+                    Logger("Created patch for OS: " + txtOS.Text);
+                else
+                    Logger("No differences found");
             }
             catch (Exception ex)
             {
@@ -513,68 +583,41 @@ namespace UniversalPatcher
             if (txtBaseFile.Text.Length == 0 || txtModifierFile.Text.Length == 0)
                 return;
             labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
-            PatchData = new List<uint>();
-            PatchAddr = new List<uint>();
             txtResult.Text = "";
-            if (radioCreate.Checked)
-            {
-                CompareBins();
-                if (PatchAddr.Count > 0)
-                {
-                    btnShowPatch.Enabled = true;
-                    btnSave.Enabled = true;
-                    btnSave.Text = "Save patch";
-                    txtPatchName.Enabled = true;
-                }
-                else
-                {
-                    btnShowPatch.Enabled = false;
-                    btnSave.Enabled = false;
-                    txtPatchName.Enabled = false;
-                }
-            }
-            else //Apply patch selected
-            {
-                btnShowPatch.Enabled = false;
-                if (ApplyPatch())
-                {
-                    btnSave.Enabled = true;
-                    btnSave.Text = "Save Bin";
-                    txtPatchName.Enabled = true;
-                }
-                else
-                {
-                    btnSave.Enabled = false;
-                    txtPatchName.Enabled = false;
-                }
-            }
+
+            CompareBins();
 
         }
 
-        private void SavePatch()
+        private void SavePatch(string Description)
         {
             try
             {
-                if (txtPatchName.Text.Length < 1)
+                if (Description.Length < 1)
                 {
                     Logger("Supply patch description");
                     return;
                 }
-                string PatchName = labelBinSize.Text + "-" + txtPatchName.Text;
-                string PatchFile = SelectSaveFile("PATCH files (*.patch)|*.patch|ALL files(*.*) | *.*");
-                if (PatchFile.Length < 1)
-                    return;
-                Logger("Saving to file: " + PatchFile);
-                StreamWriter sw = new StreamWriter(PatchFile);
-                sw.WriteLine(labelBinSize.Text);
-                sw.WriteLine(txtPatchName.Text);
-                sw.WriteLine(XMLFile);
-                for (int i = 0; i < PatchAddr.Count; i++)
+                if (PatchList == null || PatchList.Count == 0)
                 {
-                    sw.WriteLine(PatchAddr[i].ToString() + ":" + PatchData[i].ToString());
+                    Logger("Nothing to save");
+                    return;
                 }
-                sw.Close();
-                Logger("Patch saved");
+                string FileName = SelectSaveFile("XMLPATCH files (*.xmlpatch)|*.xmlpatch|All files (*.*)|*.*");
+                if (FileName.Length < 1)
+                    return;
+                Logger("Saving to file: " + Path.GetFileName(FileName), false);
+                XmlPatch xpatch = PatchList[0];
+                xpatch.Description = Description;
+                PatchList[0] = xpatch;
+
+                using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                {
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
+                    writer.Serialize(stream, PatchList);
+                    stream.Close();
+                }
+                Logger(" [OK]");
             }
             catch (Exception ex)
             {
@@ -587,6 +630,11 @@ namespace UniversalPatcher
         {
             try
             {
+                if (basefile == null || basefile.buf == null | basefile.buf.Length == 0)
+                {
+                    Logger("Nothing to save");
+                    return;
+                }
                 string FileName = SelectSaveFile();
                 if (FileName.Length == 0)
                     return;
@@ -600,12 +648,9 @@ namespace UniversalPatcher
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void btnSaveBin_Click(object sender, EventArgs e)
         {
-            if (radioCreate.Checked)
-                SavePatch();
-            else
-                SaveBin();
+            SaveBin();
         }
 
         public void Logger(string LogText, Boolean NewLine = true)
@@ -619,46 +664,6 @@ namespace UniversalPatcher
         {
 
         }
-
-        private void radioCreate_CheckedChanged(object sender, EventArgs e)
-        {
-            txtModifierFile.Text = "";
-            btnSave.Enabled = false;
-            btnShowPatch.Enabled = false;
-            if (radioCreate.Checked)
-            {
-                btnOrgFile.Text = "Original file";
-                btnModFile.Text = "Modified file";
-                btnCompare.Text = "Compare";
-                btnSave.Text = "Save Patch";
-                txtPatchName.Visible = true;
-                labelDescr.Visible = true;
-                chkCompareAll.Visible = true;
-                this.Text = "Create patch";
-                addCheckBoxes();
-                CheckSegmentCompatibility();
-            }
-            else
-            {
-                btnOrgFile.Text = "BIN file";
-                btnModFile.Text = "Patch File";
-                btnCompare.Text = "Apply Patch";
-                btnSave.Text = "Save BIN";
-                txtPatchName.Visible = false;
-                labelDescr.Visible = false;
-                chkCompareAll.Visible = false;
-                this.Text = "Apply patch";
-                if (chkSegments != null)
-                {
-                    for (int s = 0; s < chkSegments.Length; s++)
-                    {
-                        chkSegments[s].Dispose();
-                    }
-                }
-                chkSegments = null;
-            }
-        }
-
 
         private void btnSegments_Click(object sender, EventArgs e)
         {
@@ -678,9 +683,9 @@ namespace UniversalPatcher
         private void btnCheckSums_Click(object sender, EventArgs e)
         {
             if (Segments.Count > 0)
+            { 
                 FixCheckSums();
-            if (radioApply.Checked)
-                btnSave.Enabled = true;
+            }
         }
         private void FixCheckSums()
         {
@@ -808,39 +813,7 @@ namespace UniversalPatcher
         private void btnShowPatch_Click(object sender, EventArgs e)
         {
             txtResult.Clear();
-            Properties.Settings.Default.SuppressAfter = (uint)numSuppress.Value;
-            Properties.Settings.Default.Save();
-
-            if (radioApply.Checked)
-            {
-                int i = 0;
-                StreamReader sr = new StreamReader(txtModifierFile.Text);
-                string line;
-                while ((line = sr.ReadLine()) != null)
-                {
-                    i++;
-                    if (i <= numSuppress.Value)
-                        Logger(line);
-                }
-                if (i > numSuppress.Value)
-                    Logger("Total: " + i.ToString() + " rows, showing first " + numSuppress.Value.ToString());
-
-            }
-            else
-            {
-
-                Logger(labelBinSize.Text);
-                Logger(txtPatchName.Text);
-                if (XMLFile != null)
-                    Logger(XMLFile);
-                int i;
-                for (i = 0; i < PatchAddr.Count && i <= numSuppress.Value; i++)
-                {
-                    Logger(PatchAddr[i].ToString() + ":" + PatchData[i].ToString());
-                }
-                if (i > numSuppress.Value)
-                    Logger("Total: " + PatchAddr.Count.ToString() + " rows, showing first " + numSuppress.Value.ToString());
-            }
+            ShowPatch();
 
         }
 
@@ -946,7 +919,6 @@ namespace UniversalPatcher
             }
             for (int x=0; x < XmlList.Count;x++)
             {
-                Debug.WriteLine("Autodetect: " + XmlList[x]);
                 uint MaxGroup = 0;
                 
                 //Check if compatible with THIS xml
@@ -1006,10 +978,8 @@ namespace UniversalPatcher
                     if (Result != "")
                         Result += Environment.NewLine;
                     Result += XmlList[x];
-                    Debug.WriteLine("Rules match");
+                    Debug.WriteLine("Autodetect: " + XmlList[x]);
                 }
-                else
-                    Debug.WriteLine("No match");
             }
             return Result.ToLower();
         }
@@ -1027,7 +997,7 @@ namespace UniversalPatcher
             string FileName = SelectFile();
             if (FileName.Length == 0)
                 return;
-            txtFileinfo.Text = "";
+            txtResult.Text = "";
             string Fldr = Path.GetDirectoryName(FileName);
             DirectoryInfo d = new DirectoryInfo(Fldr);
             FileInfo[] Files = d.GetFiles("*.bin");
@@ -1047,7 +1017,7 @@ namespace UniversalPatcher
                 if (FileName.Length > 1)
                 {
                     StreamWriter sw = new StreamWriter(FileName);
-                    sw.WriteLine(txtFileinfo.Text);
+                    sw.WriteLine(txtResult.Text);
                     sw.Close();
                 }
             }
@@ -1056,6 +1026,177 @@ namespace UniversalPatcher
                 MessageBox.Show("Error: " + ex.Message, "Error");
             }
 
+        }
+
+        public void ShowPatch()
+        {
+            int i;
+            if (PatchList == null || PatchList.Count == 0)
+            {
+                Logger("No patch");
+                return;
+            }
+            if (PatchList[0].Description != null && PatchList[0].Description.Length > 0)
+                Logger("Description: " + PatchList[0].Description);
+            for (i = 0; i < PatchList.Count && i <= numSuppress.Value; i++)
+            {
+                Logger("OS:Address: " + PatchList[i].CompatibleOS);
+                Logger("Data: " + PatchList[i].Data);
+            }
+            if (i > numSuppress.Value)
+                Logger("Total: " + PatchList.Count.ToString() + " rows, showing first " + numSuppress.Value.ToString());
+
+        }
+        private void btnShowNewPatch_Click(object sender, EventArgs e)
+        {
+            txtResult.Text = "";
+            ShowPatch();
+        }
+
+        private void btnPatchfile_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string FileName = SelectFile("XML patch files (*.xmlpatch)|*.xmlpatch|PATCH files (*.patch)|*.patch|ALL files(*.*)|*.*");
+                if (FileName.Length > 1)
+                {
+                    txtPatchfile.Text = FileName;
+                    if (FileName.EndsWith(".xmlpatch"))
+                    {
+                        Logger("Loading file");
+                        System.Xml.Serialization.XmlSerializer reader =
+                            new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
+                        System.IO.StreamReader file = new System.IO.StreamReader(FileName);
+                        PatchList = (List<XmlPatch>)reader.Deserialize(file);
+                        file.Close();
+                        if (PatchList.Count > 0)
+                        { 
+                            Logger("Description: " + PatchList[0].Description);
+                            string[] OsList = PatchList[0].CompatibleOS.Split(',');
+                            string CompOS ="";
+                            foreach (string OS in OsList)
+                            {
+                                if (CompOS != "")
+                                    CompOS += ",";
+                                string[] Parts = OS.Split(':');
+                                CompOS += Parts[0];
+                            }
+                            Logger("For OS: " + CompOS);
+                        }
+                        btnApplypatch.Enabled = true;
+                        Logger("[OK]");
+                    }
+                    else
+                    { 
+                        string line;
+                        StreamReader sr = new StreamReader(txtModifierFile.Text);
+                        line = sr.ReadLine();
+                        Logger("Patch is for bin size: " + line);
+                        line = sr.ReadLine();
+                        Logger(line);
+                        line = sr.ReadLine();
+                        if (line.Contains(".xml"))
+                        {
+                            string tmpXML = "";
+                            if (File.Exists(line))
+                            {
+                                tmpXML = line;
+                            }
+                            else
+                            {
+                                if (File.Exists(Path.Combine(Application.StartupPath, "XML", Path.GetFileName(line))))
+                                    tmpXML = Path.Combine(Application.StartupPath, "XML", Path.GetFileName(line));
+                            }
+
+                            if (tmpXML != "")
+                            {
+                                if (frmSL == null)
+                                    frmSL = new frmSegmenList();
+                                frmSL.LoadFile(tmpXML);
+                                labelXML.Text = Path.GetFileName(tmpXML);
+                                if (txtBaseFile.Text.Length > 1)
+                                    addCheckBoxes();
+                            }
+                        }
+                        sr.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger("Error: " + ex.Message);
+            }
+
+        }
+
+        private void btnApplypatch_Click(object sender, EventArgs e)
+        {
+            if (txtPatchfile.Text.EndsWith(".xmlpatch"))
+                ApplyXMLPatch();
+            else
+                ApplyPatch();
+
+        }
+
+        private void btnSavePatch_Click(object sender, EventArgs e)
+        {
+            SavePatch(txtPatchDescription.Text);
+        }
+
+        private void txtExtractRange_LostFocus(object sender, EventArgs e)
+        {
+            if (txtCompatibleOS.Text.Length == 0 && txtExtractRange.Text.Contains("-"))
+            {
+                for (int s=0;s<Segments.Count;s++)
+                {
+                    if (Segments[s].Name == "OS")
+                    {
+                        txtCompatibleOS.Text =  basefile.ReadInfo(basefile.binfile[s].PNaddr);
+                        string[] Parts = txtExtractRange.Text.Split('-');
+                        txtCompatibleOS.Text += ":" + Parts[0];
+                    }
+                }
+            }
+        }
+        private void btnExtract_Click(object sender, EventArgs e)
+        {
+            try 
+            { 
+                if (!txtExtractRange.Text.Contains("-"))
+                {
+                    Logger("Supply address range, for example 200-220");
+                    return;
+                }
+                if (txtBaseFile.Text.Length == 0)
+                    return;
+
+                basefile = new PcmFile(txtBaseFile.Text);
+                GetFileInfo(txtBaseFile.Text, ref basefile); 
+                XmlPatch xpatch = new XmlPatch();
+                xpatch.CompatibleOS = txtCompatibleOS.Text;
+                xpatch.XmlFile = Path.GetFileName(XMLFile);
+                xpatch.Description = txtExtractDescription.Text;
+                string[] Parts = txtExtractRange.Text.Split('-');
+                uint Start;
+                uint End;
+                HexToUint(Parts[0], out Start);
+                HexToUint(Parts[1], out End);
+                Debug.WriteLine("Extracting " + Start.ToString("X") + " - " + End.ToString("X"));
+                for (uint i=Start; i<=End; i++)
+                {
+                    if (i > Start)
+                        xpatch.Data += " ";
+                    xpatch.Data += basefile.buf[i].ToString("X2") ;
+                }
+                PatchList = new List<XmlPatch>();
+                PatchList.Add(xpatch);
+                SavePatch(txtExtractDescription.Text);
+
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
         }
     }
 

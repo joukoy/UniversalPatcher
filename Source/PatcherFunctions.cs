@@ -25,6 +25,14 @@ public class upatcher
         public string Description;
     }
 
+    public struct XmlPatch
+    {
+        public string Description;
+        public string XmlFile;
+        public string Segment;
+        public string CompatibleOS;
+        public string Data;
+    }
     public struct Block
     {
         public uint Start;
@@ -292,16 +300,16 @@ public class upatcher
         fdlg.Filter = Filter;
         fdlg.FilterIndex = 1;
         fdlg.RestoreDirectory = true;
+        if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
+            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
         if (Filter.Contains("PATCH"))
             fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
-        if (Filter.Contains("XML"))
-            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
         else if (Filter.Contains("BIN"))
             fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
 
         if (fdlg.ShowDialog() == DialogResult.OK)
         {
-            if (Filter.Contains("XML"))
+            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
                 UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
             else if (Filter.Contains("BIN"))
                 UniversalPatcher.Properties.Settings.Default.LastBINfolder = Path.GetDirectoryName(fdlg.FileName);
@@ -322,14 +330,14 @@ public class upatcher
         saveFileDialog.Title = "Save to file";
         if (Filter.Contains("PATCH"))
             saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
-        if (Filter.Contains("XML"))
+        if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
             saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
         else if (Filter.Contains("BIN"))
             saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
 
         if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {
-            if (Filter.Contains("XML"))
+            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
                 UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.GetDirectoryName(saveFileDialog.FileName);
             else if (Filter.Contains("BIN"))
                 UniversalPatcher.Properties.Settings.Default.LastBINfolder = Path.GetDirectoryName(saveFileDialog.FileName);
