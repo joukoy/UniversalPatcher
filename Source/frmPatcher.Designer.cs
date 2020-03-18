@@ -113,6 +113,8 @@
             // 
             // txtBaseFile
             // 
+            this.txtBaseFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtBaseFile.Location = new System.Drawing.Point(96, 34);
             this.txtBaseFile.Name = "txtBaseFile";
             this.txtBaseFile.Size = new System.Drawing.Size(617, 20);
@@ -120,6 +122,8 @@
             // 
             // txtModifierFile
             // 
+            this.txtModifierFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtModifierFile.Location = new System.Drawing.Point(90, 6);
             this.txtModifierFile.Name = "txtModifierFile";
             this.txtModifierFile.Size = new System.Drawing.Size(617, 20);
@@ -138,16 +142,18 @@
             // 
             // txtResult
             // 
+            this.txtResult.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtResult.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtResult.Location = new System.Drawing.Point(-4, 0);
+            this.txtResult.Location = new System.Drawing.Point(3, 3);
             this.txtResult.Multiline = true;
             this.txtResult.Name = "txtResult";
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtResult.Size = new System.Drawing.Size(715, 248);
+            this.txtResult.Size = new System.Drawing.Size(702, 316);
             this.txtResult.TabIndex = 6;
             // 
             // btnSaveBin
             // 
+            this.btnSaveBin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSaveBin.Location = new System.Drawing.Point(628, 31);
             this.btnSaveBin.Name = "btnSaveBin";
             this.btnSaveBin.Size = new System.Drawing.Size(78, 25);
@@ -158,6 +164,7 @@
             // 
             // txtPatchDescription
             // 
+            this.txtPatchDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPatchDescription.Location = new System.Drawing.Point(129, 57);
             this.txtPatchDescription.Name = "txtPatchDescription";
             this.txtPatchDescription.Size = new System.Drawing.Size(478, 20);
@@ -166,7 +173,7 @@
             // labelBinSize
             // 
             this.labelBinSize.AutoSize = true;
-            this.labelBinSize.Location = new System.Drawing.Point(431, 500);
+            this.labelBinSize.Location = new System.Drawing.Point(361, 195);
             this.labelBinSize.Name = "labelBinSize";
             this.labelBinSize.Size = new System.Drawing.Size(10, 13);
             this.labelBinSize.TabIndex = 9;
@@ -175,7 +182,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(374, 500);
+            this.label1.Location = new System.Drawing.Point(304, 195);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(51, 13);
             this.label1.TabIndex = 10;
@@ -192,7 +199,8 @@
             // 
             // btnSegments
             // 
-            this.btnSegments.Location = new System.Drawing.Point(12, 494);
+            this.btnSegments.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSegments.Location = new System.Drawing.Point(514, 3);
             this.btnSegments.Name = "btnSegments";
             this.btnSegments.Size = new System.Drawing.Size(91, 25);
             this.btnSegments.TabIndex = 210;
@@ -202,6 +210,7 @@
             // 
             // btnCheckSums
             // 
+            this.btnCheckSums.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCheckSums.Location = new System.Drawing.Point(526, 31);
             this.btnCheckSums.Name = "btnCheckSums";
             this.btnCheckSums.Size = new System.Drawing.Size(96, 25);
@@ -232,7 +241,7 @@
             // 
             // numSuppress
             // 
-            this.numSuppress.Location = new System.Drawing.Point(632, 193);
+            this.numSuppress.Location = new System.Drawing.Point(122, 191);
             this.numSuppress.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -251,7 +260,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(513, 196);
+            this.label2.Location = new System.Drawing.Point(5, 194);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(113, 13);
             this.label2.TabIndex = 19;
@@ -260,7 +269,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(680, 195);
+            this.label3.Location = new System.Drawing.Point(170, 193);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(29, 13);
             this.label3.TabIndex = 20;
@@ -279,7 +288,7 @@
             // chkCompareAll
             // 
             this.chkCompareAll.AutoSize = true;
-            this.chkCompareAll.Location = new System.Drawing.Point(440, 32);
+            this.chkCompareAll.Location = new System.Drawing.Point(257, 34);
             this.chkCompareAll.Name = "chkCompareAll";
             this.chkCompareAll.Size = new System.Drawing.Size(167, 17);
             this.chkCompareAll.TabIndex = 114;
@@ -300,7 +309,8 @@
             // 
             // btnAutodetect
             // 
-            this.btnAutodetect.Location = new System.Drawing.Point(109, 494);
+            this.btnAutodetect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAutodetect.Location = new System.Drawing.Point(611, 3);
             this.btnAutodetect.Name = "btnAutodetect";
             this.btnAutodetect.Size = new System.Drawing.Size(102, 25);
             this.btnAutodetect.TabIndex = 211;
@@ -310,12 +320,15 @@
             // 
             // tabControl1
             // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabInfo);
             this.tabControl1.Controls.Add(this.tabDebug);
-            this.tabControl1.Location = new System.Drawing.Point(6, 214);
+            this.tabControl1.Location = new System.Drawing.Point(0, 213);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(711, 274);
+            this.tabControl1.Size = new System.Drawing.Size(716, 348);
             this.tabControl1.TabIndex = 200;
             // 
             // tabInfo
@@ -324,7 +337,7 @@
             this.tabInfo.Location = new System.Drawing.Point(4, 22);
             this.tabInfo.Name = "tabInfo";
             this.tabInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabInfo.Size = new System.Drawing.Size(703, 248);
+            this.tabInfo.Size = new System.Drawing.Size(708, 322);
             this.tabInfo.TabIndex = 0;
             this.tabInfo.Text = "Info";
             this.tabInfo.UseVisualStyleBackColor = true;
@@ -335,19 +348,20 @@
             this.tabDebug.Location = new System.Drawing.Point(4, 22);
             this.tabDebug.Name = "tabDebug";
             this.tabDebug.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDebug.Size = new System.Drawing.Size(703, 248);
+            this.tabDebug.Size = new System.Drawing.Size(708, 322);
             this.tabDebug.TabIndex = 1;
             this.tabDebug.Text = "Debug";
             this.tabDebug.UseVisualStyleBackColor = true;
             // 
             // txtDebug
             // 
+            this.txtDebug.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtDebug.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtDebug.Location = new System.Drawing.Point(-3, 1);
+            this.txtDebug.Location = new System.Drawing.Point(3, 3);
             this.txtDebug.Multiline = true;
             this.txtDebug.Name = "txtDebug";
             this.txtDebug.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtDebug.Size = new System.Drawing.Size(710, 252);
+            this.txtDebug.Size = new System.Drawing.Size(702, 316);
             this.txtDebug.TabIndex = 0;
             // 
             // chkExtra
@@ -432,6 +446,8 @@
             // 
             // tabFunction
             // 
+            this.tabFunction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabFunction.Controls.Add(this.tabCreate);
             this.tabFunction.Controls.Add(this.tabApply);
             this.tabFunction.Controls.Add(this.tabExtract);
@@ -480,6 +496,7 @@
             // 
             // btnSavePatch
             // 
+            this.btnSavePatch.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.btnSavePatch.Location = new System.Drawing.Point(617, 54);
             this.btnSavePatch.Name = "btnSavePatch";
             this.btnSavePatch.Size = new System.Drawing.Size(90, 25);
@@ -490,6 +507,7 @@
             // 
             // btnShowNewPatch
             // 
+            this.btnShowNewPatch.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.btnShowNewPatch.Location = new System.Drawing.Point(617, 30);
             this.btnShowNewPatch.Name = "btnShowNewPatch";
             this.btnShowNewPatch.Size = new System.Drawing.Size(90, 22);
@@ -526,6 +544,8 @@
             // 
             // txtPatchfile
             // 
+            this.txtPatchfile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPatchfile.Location = new System.Drawing.Point(89, 8);
             this.txtPatchfile.Name = "txtPatchfile";
             this.txtPatchfile.Size = new System.Drawing.Size(617, 20);
@@ -576,6 +596,7 @@
             // 
             // btnExtract
             // 
+            this.btnExtract.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExtract.Location = new System.Drawing.Point(637, 9);
             this.btnExtract.Name = "btnExtract";
             this.btnExtract.Size = new System.Drawing.Size(66, 23);
@@ -637,7 +658,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(723, 525);
+            this.ClientSize = new System.Drawing.Size(716, 561);
             this.Controls.Add(this.tabFunction);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnAutodetect);
@@ -653,7 +674,7 @@
             this.Controls.Add(this.txtBaseFile);
             this.Controls.Add(this.btnOrgFile);
             this.Name = "FrmPatcher";
-            this.Text = "Create patch";
+            this.Text = "Universal patcher";
             this.Load += new System.EventHandler(this.FrmPatcher_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).EndInit();
             this.tabControl1.ResumeLayout(false);

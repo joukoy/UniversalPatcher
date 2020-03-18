@@ -108,7 +108,8 @@ namespace UniversalPatcher
                 chk.AutoSize = true;
                 Left += chk.Width + 5;
                 chk.Tag = s;
-                chk.Checked = true;
+                if (!chk.Text.ToLower().Contains("eeprom"))
+                    chk.Checked = true;
                 chkSegments[s] = chk;
             }
             LastXML = XMLFile;
@@ -140,7 +141,7 @@ namespace UniversalPatcher
             }
         }
 
-        private void GetFileInfo(string FileName, ref PcmFile PCM)
+        private void GetFileInfo(string FileName, ref PcmFile PCM, bool InfoOnly)
         {
             try
             {
@@ -168,12 +169,20 @@ namespace UniversalPatcher
                             labelXML.Text = "";
                             XMLFile = "";
                             Segments.Clear();
+                            Logger(Environment.NewLine + Path.GetFileName(FileName));
+                            return;
                         }
                     }
                 }
+                if (Segments == null || Segments.Count == 0)
+                {
+                    labelXML.Text = "";
+                    Logger(Environment.NewLine + Path.GetFileName(FileName));
+                    addCheckBoxes();
+                    return;
+                }
                 txtOS.Text = "ALL";
                 labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
-                addCheckBoxes();
                 Logger(Environment.NewLine + Path.GetFileName(FileName) + " (" + labelXML.Text + ")" + Environment.NewLine);
                 PCM.GetSegmentAddresses();
                 if (Segments.Count > 0)
@@ -283,8 +292,11 @@ namespace UniversalPatcher
                             txtResult.AppendText(Environment.NewLine);
                     }
                 }
-                addCheckBoxes();
-                CheckSegmentCompatibility();
+                if (!InfoOnly)
+                { 
+                    addCheckBoxes();
+                    CheckSegmentCompatibility();
+                }
             }
             catch (Exception ex)
             {
@@ -300,7 +312,7 @@ namespace UniversalPatcher
                 txtBaseFile.Text = FileName;
                 basefile = new PcmFile(FileName);
                 labelBinSize.Text = basefile.fsize.ToString();
-                GetFileInfo(txtBaseFile.Text, ref basefile);
+                GetFileInfo(txtBaseFile.Text, ref basefile, false);
             }
         }
 
@@ -311,7 +323,7 @@ namespace UniversalPatcher
             {
                 txtModifierFile.Text = FileName;
                 modfile = new PcmFile(FileName);
-                GetFileInfo(txtModifierFile.Text, ref modfile);
+                GetFileInfo(txtModifierFile.Text, ref modfile, false);
             }
 
         }
@@ -326,7 +338,7 @@ namespace UniversalPatcher
                 uint LineNr = 0;
                 basefile = new PcmFile(txtBaseFile.Text);
                 labelBinSize.Text = basefile.fsize.ToString();
-                GetFileInfo(txtBaseFile.Text, ref basefile);
+                GetFileInfo(txtBaseFile.Text, ref basefile, true);
                 while ((line = sr.ReadLine()) != null)
                 {
                     if (LineNr == 0)
@@ -535,8 +547,8 @@ namespace UniversalPatcher
                 basefile = new PcmFile(txtBaseFile.Text);
                 modfile = new PcmFile(txtModifierFile.Text);
                 PatchList = new List<XmlPatch>();
-                GetFileInfo(txtBaseFile.Text, ref basefile);
-                GetFileInfo(txtModifierFile.Text, ref modfile);
+                GetFileInfo(txtBaseFile.Text, ref basefile, false);
+                GetFileInfo(txtModifierFile.Text, ref modfile, false);
 
                 labelBinSize.Text = fsize.ToString();
                 if (Segments.Count == 0)
@@ -1004,7 +1016,7 @@ namespace UniversalPatcher
             foreach (FileInfo file in Files)
             {
                 PcmFile binfile = new PcmFile(file.FullName);
-                GetFileInfo(file.FullName, ref binfile);
+                GetFileInfo(file.FullName, ref binfile, true);
             }
 
         }
@@ -1040,7 +1052,10 @@ namespace UniversalPatcher
                 Logger("Description: " + PatchList[0].Description);
             for (i = 0; i < PatchList.Count && i <= numSuppress.Value; i++)
             {
-                Logger("OS:Address: " + PatchList[i].CompatibleOS);
+                if (PatchList[i].Segment != null && PatchList[i].Segment != "")
+                    Logger("OS:Address: " + PatchList[i].CompatibleOS + ", Segment: " + PatchList[i].Segment);
+                else
+                    Logger("OS:Address: " + PatchList[i].CompatibleOS);
                 Logger("Data: " + PatchList[i].Data);
             }
             if (i > numSuppress.Value)
@@ -1171,7 +1186,7 @@ namespace UniversalPatcher
                     return;
 
                 basefile = new PcmFile(txtBaseFile.Text);
-                GetFileInfo(txtBaseFile.Text, ref basefile); 
+                GetFileInfo(txtBaseFile.Text, ref basefile, true); 
                 XmlPatch xpatch = new XmlPatch();
                 xpatch.CompatibleOS = txtCompatibleOS.Text;
                 xpatch.XmlFile = Path.GetFileName(XMLFile);
