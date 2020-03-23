@@ -421,10 +421,15 @@ namespace UniversalPatcher
                                 byte Mask = 1;
                                 Mask = (byte)(Mask << (RuleBit - 1));
                                 if ((basefile.buf[RuleAddr] & Mask) == RuleValue)
+                                { 
                                     PatchRule = true;
+                                    Logger("Rule match, applying patch");
+                                }
                                 else
+                                { 
                                     PatchRule = false;
-
+                                    Logger("Rule doesn't match, skipping patch");
+                                }
                             }
                         }
                         if (PatchRule) { 
