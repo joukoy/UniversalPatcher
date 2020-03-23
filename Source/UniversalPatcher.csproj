@@ -67,6 +67,24 @@
     <Compile Include="frmEditExtra.Designer.cs">
       <DependentUpon>frmEditExtra.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmEditXML.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditXML.Designer.cs">
+      <DependentUpon>frmEditXML.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmRenameXML.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmRenameXML.Designer.cs">
+      <DependentUpon>frmRenameXML.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmManualPatch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmManualPatch.Designer.cs">
+      <DependentUpon>frmManualPatch.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmSearchSegment.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -158,6 +176,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmCheckword.resx">
       <DependentUpon>frmCheckword.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditXML.resx">
+      <DependentUpon>frmEditXML.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRenameXML.resx">
+      <DependentUpon>frmRenameXML.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmManualPatch.resx">
+      <DependentUpon>frmManualPatch.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmSearchSegment.resx">
       <DependentUpon>frmSearchSegment.cs</DependentUpon>

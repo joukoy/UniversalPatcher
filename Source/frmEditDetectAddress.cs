@@ -60,5 +60,10 @@ namespace UniversalPatcher
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

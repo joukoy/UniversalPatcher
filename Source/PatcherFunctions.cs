@@ -8,30 +8,28 @@ using UniversalPatcher;
 
 public class upatcher
 {
-    public struct DetectRule
+    public class DetectRule
     {
-        public string xml;
-        public ushort group;
-        public string grouplogic;   //and, or, xor
-        public string address;
-        public UInt64 data;
-        public string compare;        //==, <, >, !=      
+        public DetectRule() { }
+
+        public string xml { get; set; }
+        public ushort group { get; set; }
+        public string grouplogic { get; set; }   //and, or, xor
+        public string address { get; set; }
+        public UInt64 data { get; set; }
+        public string compare { get; set; }        //==, <, >, !=      
     }
 
-    public struct Patch
+   
+    public class XmlPatch
     {
-        public string Name;
-        public string FileName;
-        public string Description;
-    }
-
-    public struct XmlPatch
-    {
-        public string Description;
-        public string XmlFile;
-        public string Segment;
-        public string CompatibleOS;
-        public string Data;
+        public XmlPatch() { }
+        public string Description { get; set; }
+        public string XmlFile { get; set; }
+        public string Segment { get; set; }
+        public string CompatibleOS { get; set; }
+        public string Data { get; set; }
+        public string Rule { get; set; }
     }
     public struct Block
     {
@@ -97,6 +95,7 @@ public class upatcher
 
     public static List<SegmentConfig> Segments = new List<SegmentConfig>();
     public static List<DetectRule> DetectRules;
+    public static List<XmlPatch> PatchList;
 
     public static string XMLFile;
 

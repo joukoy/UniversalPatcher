@@ -84,10 +84,12 @@ namespace UniversalPatcher
         {
             if (txtAddress.Text == "" || txtData.Text == "")
                 return;
-            DetectRule DR;
+            DetectRule DR = new DetectRule();
             DR.address = txtAddress.Text;
             DR.compare = comboCompare.Text;
-            HexToUint64(txtData.Text, out DR.data);
+            UInt64 x;
+            HexToUint64(txtData.Text, out x);
+            DR.data = x;
             DR.group = (ushort) numGroup.Value;
             DR.grouplogic = comboGroupLogic.Text;
             DR.xml = comboXML.Text;
@@ -220,12 +222,14 @@ namespace UniversalPatcher
             if (listRules.SelectedItems.Count == 0)
                 return;
 
-            DetectRule DR;
+            DetectRule DR = new DetectRule();
 
             int d = (int)listRules.SelectedItems[0].Tag;
             DR.address = txtAddress.Text;
             DR.compare = comboCompare.Text;
-            HexToUint64(txtData.Text, out DR.data);
+            UInt64 x;
+            HexToUint64(txtData.Text, out x);
+            DR.data = x;
             DR.group = (ushort)numGroup.Value;
             DR.grouplogic = comboGroupLogic.Text;
             DR.xml = comboXML.Text;
@@ -245,6 +249,38 @@ namespace UniversalPatcher
             if (NewLine)
                 txtStatus.AppendText(Environment.NewLine);
             Application.DoEvents();
+        }
+
+        private void btnEditXML_Click(object sender, EventArgs e)
+        {
+            frmEditXML frmEX = new frmEditXML();
+            frmEX.LoadRules();
+            frmEX.ShowDialog(this);
+            InitMe();
+        }
+
+        private void btnRenameXML_Click(object sender, EventArgs e)
+        {
+            frmRenameXML frmN = new frmRenameXML();
+            frmN.txtOldXML.Text = comboXML.Text;
+            frmN.txtNewXML.Text = comboXML.Text;
+            if (frmN.ShowDialog(this) == DialogResult.OK)
+            {
+                for (int d=0; d< DetectRules.Count;d++)
+                {
+                    if (DetectRules[d].xml.ToLower() == frmN.txtOldXML.Text.ToLower())
+                    {
+                        DetectRule DR = DetectRules[d];
+                        DR.xml = frmN.txtNewXML.Text;
+                        DetectRules[d] = DR;
+                    }
+                }
+                InitMe();
+                if (frmN.txtOldXML.Text == comboXML.Text)
+                    comboXML.Text = frmN.txtNewXML.Text;
+                comboXML_SelectedIndexChanged(sender,e);
+            }
+            frmN.Dispose();
         }
     }
 

@@ -50,6 +50,8 @@
             this.comboXML = new System.Windows.Forms.ComboBox();
             this.btnReplace = new System.Windows.Forms.Button();
             this.txtStatus = new System.Windows.Forms.TextBox();
+            this.btnEditXML = new System.Windows.Forms.Button();
+            this.btnRenameXML = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numGroup)).BeginInit();
             this.SuspendLayout();
@@ -113,15 +115,15 @@
             this.listRules.Location = new System.Drawing.Point(5, 193);
             this.listRules.Name = "listRules";
             this.listRules.Size = new System.Drawing.Size(379, 131);
-            this.listRules.TabIndex = 8;
+            this.listRules.TabIndex = 20;
             this.listRules.UseCompatibleStateImageBehavior = false;
             this.listRules.SelectedIndexChanged += new System.EventHandler(this.listRules_SelectedIndexChanged);
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(317, 5);
+            this.btnSave.Location = new System.Drawing.Point(298, 5);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(67, 28);
+            this.btnSave.Size = new System.Drawing.Size(86, 28);
             this.btnSave.TabIndex = 10;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -129,10 +131,10 @@
             // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(317, 81);
+            this.btnAdd.Location = new System.Drawing.Point(298, 107);
             this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(63, 23);
-            this.btnAdd.TabIndex = 11;
+            this.btnAdd.Size = new System.Drawing.Size(86, 23);
+            this.btnAdd.TabIndex = 13;
             this.btnAdd.Text = "Add";
             this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
@@ -219,10 +221,10 @@
             // 
             // btnDel
             // 
-            this.btnDel.Location = new System.Drawing.Point(317, 157);
+            this.btnDel.Location = new System.Drawing.Point(298, 167);
             this.btnDel.Name = "btnDel";
-            this.btnDel.Size = new System.Drawing.Size(63, 23);
-            this.btnDel.TabIndex = 13;
+            this.btnDel.Size = new System.Drawing.Size(86, 23);
+            this.btnDel.TabIndex = 15;
             this.btnDel.Text = "Delete";
             this.btnDel.UseVisualStyleBackColor = true;
             this.btnDel.Click += new System.EventHandler(this.btnDel_Click);
@@ -266,10 +268,10 @@
             // 
             // btnReplace
             // 
-            this.btnReplace.Location = new System.Drawing.Point(317, 116);
+            this.btnReplace.Location = new System.Drawing.Point(298, 136);
             this.btnReplace.Name = "btnReplace";
-            this.btnReplace.Size = new System.Drawing.Size(62, 25);
-            this.btnReplace.TabIndex = 12;
+            this.btnReplace.Size = new System.Drawing.Size(86, 25);
+            this.btnReplace.TabIndex = 14;
             this.btnReplace.Text = "Replace";
             this.btnReplace.UseVisualStyleBackColor = true;
             this.btnReplace.Click += new System.EventHandler(this.btnReplace_Click);
@@ -280,13 +282,35 @@
             this.txtStatus.Multiline = true;
             this.txtStatus.Name = "txtStatus";
             this.txtStatus.Size = new System.Drawing.Size(378, 54);
-            this.txtStatus.TabIndex = 22;
+            this.txtStatus.TabIndex = 30;
+            // 
+            // btnEditXML
+            // 
+            this.btnEditXML.Location = new System.Drawing.Point(298, 78);
+            this.btnEditXML.Name = "btnEditXML";
+            this.btnEditXML.Size = new System.Drawing.Size(86, 23);
+            this.btnEditXML.TabIndex = 12;
+            this.btnEditXML.Text = "Edit All";
+            this.btnEditXML.UseVisualStyleBackColor = true;
+            this.btnEditXML.Click += new System.EventHandler(this.btnEditXML_Click);
+            // 
+            // btnRenameXML
+            // 
+            this.btnRenameXML.Location = new System.Drawing.Point(298, 37);
+            this.btnRenameXML.Name = "btnRenameXML";
+            this.btnRenameXML.Size = new System.Drawing.Size(86, 28);
+            this.btnRenameXML.TabIndex = 11;
+            this.btnRenameXML.Text = "Rename XML";
+            this.btnRenameXML.UseVisualStyleBackColor = true;
+            this.btnRenameXML.Click += new System.EventHandler(this.btnRenameXML_Click);
             // 
             // frmAutodetect
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(386, 387);
+            this.Controls.Add(this.btnRenameXML);
+            this.Controls.Add(this.btnEditXML);
             this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.btnReplace);
             this.Controls.Add(this.comboXML);
@@ -342,5 +366,7 @@
         private System.Windows.Forms.ComboBox comboXML;
         private System.Windows.Forms.Button btnReplace;
         private System.Windows.Forms.TextBox txtStatus;
+        private System.Windows.Forms.Button btnEditXML;
+        private System.Windows.Forms.Button btnRenameXML;
     }
 }

@@ -32,11 +32,11 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkEndofFile = new System.Windows.Forms.CheckBox();
             this.radioStartAbsolute = new System.Windows.Forms.RadioButton();
+            this.numBytes = new System.Windows.Forms.NumericUpDown();
             this.radioStartRead = new System.Windows.Forms.RadioButton();
             this.txtStart = new System.Windows.Forms.TextBox();
-            this.numBytes = new System.Windows.Forms.NumericUpDown();
-            this.chkEndofFile = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numBytes)).BeginInit();
             this.SuspendLayout();
@@ -58,6 +58,7 @@
             this.btnCancel.TabIndex = 18;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnOK
             // 
@@ -83,6 +84,16 @@
             this.groupBox1.TabIndex = 16;
             this.groupBox1.TabStop = false;
             // 
+            // chkEndofFile
+            // 
+            this.chkEndofFile.AutoSize = true;
+            this.chkEndofFile.Location = new System.Drawing.Point(10, 63);
+            this.chkEndofFile.Name = "chkEndofFile";
+            this.chkEndofFile.Size = new System.Drawing.Size(98, 17);
+            this.chkEndofFile.TabIndex = 23;
+            this.chkEndofFile.Text = "From end of file";
+            this.chkEndofFile.UseVisualStyleBackColor = true;
+            // 
             // radioStartAbsolute
             // 
             this.radioStartAbsolute.AutoSize = true;
@@ -93,25 +104,6 @@
             this.radioStartAbsolute.TabStop = true;
             this.radioStartAbsolute.Text = "Use address (HEX):";
             this.radioStartAbsolute.UseVisualStyleBackColor = true;
-            // 
-            // radioStartRead
-            // 
-            this.radioStartRead.AutoSize = true;
-            this.radioStartRead.Checked = true;
-            this.radioStartRead.Location = new System.Drawing.Point(10, 40);
-            this.radioStartRead.Name = "radioStartRead";
-            this.radioStartRead.Size = new System.Drawing.Size(151, 17);
-            this.radioStartRead.TabIndex = 0;
-            this.radioStartRead.TabStop = true;
-            this.radioStartRead.Text = "Read address from (HEX): ";
-            this.radioStartRead.UseVisualStyleBackColor = true;
-            // 
-            // txtStart
-            // 
-            this.txtStart.Location = new System.Drawing.Point(163, 31);
-            this.txtStart.Name = "txtStart";
-            this.txtStart.Size = new System.Drawing.Size(127, 20);
-            this.txtStart.TabIndex = 1;
             // 
             // numBytes
             // 
@@ -135,15 +127,24 @@
             0,
             0});
             // 
-            // chkEndofFile
+            // radioStartRead
             // 
-            this.chkEndofFile.AutoSize = true;
-            this.chkEndofFile.Location = new System.Drawing.Point(10, 63);
-            this.chkEndofFile.Name = "chkEndofFile";
-            this.chkEndofFile.Size = new System.Drawing.Size(98, 17);
-            this.chkEndofFile.TabIndex = 23;
-            this.chkEndofFile.Text = "From end of file";
-            this.chkEndofFile.UseVisualStyleBackColor = true;
+            this.radioStartRead.AutoSize = true;
+            this.radioStartRead.Checked = true;
+            this.radioStartRead.Location = new System.Drawing.Point(10, 40);
+            this.radioStartRead.Name = "radioStartRead";
+            this.radioStartRead.Size = new System.Drawing.Size(151, 17);
+            this.radioStartRead.TabIndex = 0;
+            this.radioStartRead.TabStop = true;
+            this.radioStartRead.Text = "Read address from (HEX): ";
+            this.radioStartRead.UseVisualStyleBackColor = true;
+            // 
+            // txtStart
+            // 
+            this.txtStart.Location = new System.Drawing.Point(163, 31);
+            this.txtStart.Name = "txtStart";
+            this.txtStart.Size = new System.Drawing.Size(127, 20);
+            this.txtStart.TabIndex = 1;
             // 
             // frmEditDetectAddress
             // 
