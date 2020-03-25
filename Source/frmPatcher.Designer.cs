@@ -456,7 +456,7 @@
             this.dataPatch.Name = "dataPatch";
             this.dataPatch.Size = new System.Drawing.Size(706, 308);
             this.dataPatch.TabIndex = 0;
-            this.dataPatch.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPatch_CellContentClick);
+            this.dataPatch.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPatch_CellContentDoubleClick);
             // 
             // btnSavePatch
             // 
@@ -673,7 +673,6 @@
             this.txtExtractRange.Size = new System.Drawing.Size(226, 20);
             this.txtExtractRange.TabIndex = 150;
             this.txtExtractRange.TextChanged += new System.EventHandler(this.txtExtractRange_TextChanged);
-            this.txtExtractRange.LostFocus += new System.EventHandler(this.txtExtractRange_LostFocus);
             // 
             // tabFileinfo
             // 

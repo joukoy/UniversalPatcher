@@ -31,9 +31,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.txtReadAddr = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.numCheckBit = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
-            this.numCheckValue = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
@@ -49,8 +47,9 @@
             this.label10 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.txtSegment = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.numCheckBit)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numCheckValue)).BeginInit();
+            this.chkNOT = new System.Windows.Forms.CheckBox();
+            this.txtMask = new System.Windows.Forms.TextBox();
+            this.txtValue = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -76,52 +75,18 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(9, 54);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(50, 13);
+            this.label2.Size = new System.Drawing.Size(67, 13);
             this.label2.TabIndex = 2;
-            this.label2.Text = "Read bit:";
-            // 
-            // numCheckBit
-            // 
-            this.numCheckBit.Location = new System.Drawing.Point(226, 52);
-            this.numCheckBit.Maximum = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            this.numCheckBit.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numCheckBit.Name = "numCheckBit";
-            this.numCheckBit.Size = new System.Drawing.Size(33, 20);
-            this.numCheckBit.TabIndex = 70;
-            this.numCheckBit.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.label2.Text = "Mask (HEX):";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(9, 79);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(95, 13);
+            this.label3.Size = new System.Drawing.Size(109, 13);
             this.label3.TabIndex = 4;
-            this.label3.Text = "Apply data, if bit is:";
-            // 
-            // numCheckValue
-            // 
-            this.numCheckValue.Location = new System.Drawing.Point(226, 77);
-            this.numCheckValue.Maximum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numCheckValue.Name = "numCheckValue";
-            this.numCheckValue.Size = new System.Drawing.Size(33, 20);
-            this.numCheckValue.TabIndex = 80;
+            this.label3.Text = "Apply data, if result is:";
             // 
             // label4
             // 
@@ -189,15 +154,16 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtValue);
+            this.groupBox1.Controls.Add(this.txtMask);
+            this.groupBox1.Controls.Add(this.chkNOT);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.txtReadAddr);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.numCheckBit);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.numCheckValue);
             this.groupBox1.Location = new System.Drawing.Point(2, 182);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(268, 103);
+            this.groupBox1.Size = new System.Drawing.Size(268, 127);
             this.groupBox1.TabIndex = 50;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Rule";
@@ -259,11 +225,35 @@
             this.txtSegment.Size = new System.Drawing.Size(271, 20);
             this.txtSegment.TabIndex = 11;
             // 
+            // chkNOT
+            // 
+            this.chkNOT.AutoSize = true;
+            this.chkNOT.Location = new System.Drawing.Point(171, 100);
+            this.chkNOT.Name = "chkNOT";
+            this.chkNOT.Size = new System.Drawing.Size(86, 17);
+            this.chkNOT.TabIndex = 64;
+            this.chkNOT.Text = "Apply if NOT";
+            this.chkNOT.UseVisualStyleBackColor = true;
+            // 
+            // txtMask
+            // 
+            this.txtMask.Location = new System.Drawing.Point(171, 51);
+            this.txtMask.Name = "txtMask";
+            this.txtMask.Size = new System.Drawing.Size(85, 20);
+            this.txtMask.TabIndex = 62;
+            // 
+            // txtValue
+            // 
+            this.txtValue.Location = new System.Drawing.Point(170, 76);
+            this.txtValue.Name = "txtValue";
+            this.txtValue.Size = new System.Drawing.Size(85, 20);
+            this.txtValue.TabIndex = 63;
+            // 
             // frmManualPatch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(438, 292);
+            this.ClientSize = new System.Drawing.Size(438, 313);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
@@ -277,8 +267,6 @@
             this.Controls.Add(this.label5);
             this.Name = "frmManualPatch";
             this.Text = "Manual patch";
-            ((System.ComponentModel.ISupportInitialize)(this.numCheckBit)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numCheckValue)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -299,17 +287,18 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btnOK;
-        public System.Windows.Forms.NumericUpDown numCheckValue;
         public System.Windows.Forms.TextBox txtDescription;
         public System.Windows.Forms.TextBox txtXML;
         public System.Windows.Forms.TextBox txtCompOS;
         public System.Windows.Forms.TextBox txtData;
         public System.Windows.Forms.TextBox txtReadAddr;
-        public System.Windows.Forms.NumericUpDown numCheckBit;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.GroupBox groupBox2;
         public System.Windows.Forms.TextBox txtSegment;
+        public System.Windows.Forms.TextBox txtValue;
+        public System.Windows.Forms.TextBox txtMask;
+        public System.Windows.Forms.CheckBox chkNOT;
     }
 }

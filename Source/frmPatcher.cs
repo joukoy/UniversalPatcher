@@ -408,28 +408,40 @@ namespace UniversalPatcher
                                 uint RuleAddr;
                                 if (!HexToUint(Parts[0], out RuleAddr))
                                     throw new Exception("Can't decode from HEX: " + Parts[0] + " (" + xpatch.Rule + ")");
-                                byte RuleBit;
-                                if (!Byte.TryParse(Parts[1], out RuleBit))
+                                ushort RuleMask;
+                                if (!HexToUshort(Parts[1], out RuleMask))
                                     throw new Exception("Unknown bit number: " + Parts[1] + " (" + xpatch.Rule + ")");
-                                byte RuleValue;
-                                if (!Byte.TryParse(Parts[2], out RuleValue))
+                                ushort RuleValue;
+                                if (!HexToUshort(Parts[2].Replace("!",""), out RuleValue))
                                     throw new Exception("Unknown rule value: " + Parts[2] + " (" + xpatch.Rule + ")");
 
-                                if (RuleBit > 8 || RuleValue > 1)
-                                    throw new Exception("Illegal rule:" + xpatch.Rule);
-
-                                byte Mask = 1;
-                                Mask = (byte)(Mask << (RuleBit - 1));
-                                if ((basefile.buf[RuleAddr] & Mask) == RuleValue)
-                                { 
-                                    PatchRule = true;
-                                    Logger("Rule match, applying patch");
+                                if (Parts[2].Contains("!"))
+                                {
+                                    if ((basefile.buf[RuleAddr] & RuleMask) != RuleValue)
+                                    {
+                                        PatchRule = true;
+                                        Logger("Rule match, applying patch");
+                                    }
+                                    else
+                                    {
+                                        PatchRule = false;
+                                        Logger("Rule doesn't match, skipping patch");
+                                    }
                                 }
                                 else
-                                { 
-                                    PatchRule = false;
-                                    Logger("Rule doesn't match, skipping patch");
+                                {
+                                    if ((basefile.buf[RuleAddr] & RuleMask) == RuleValue)
+                                    {
+                                        PatchRule = true;
+                                        Logger("Rule match, applying patch");
+                                    }
+                                    else
+                                    {
+                                        PatchRule = false;
+                                        Logger("Rule doesn't match, skipping patch");
+                                    }
                                 }
+
                             }
                         }
                         if (PatchRule) { 
@@ -447,7 +459,7 @@ namespace UniversalPatcher
                                     byte bitnum;
                                     byte.TryParse(bitparts[0], out bitnum);
                                     byte Mask = 1;
-                                    Mask = (byte)(Mask << (bitnum - 1));
+                                    Mask = (byte)(Mask << bitnum);
                                     if (bitparts[1] == "0")
                                     {
                                         Mask = (byte)~Mask;
@@ -1090,85 +1102,22 @@ namespace UniversalPatcher
             SavePatch(txtPatchDescription.Text);
         }
 
-        private void txtExtractRange_LostFocus(object sender, EventArgs e)
+         private void ExtractTable(uint Start, uint End, string[] OSlist)
         {
-            if (txtCompatibleOS.Text.Length == 0 && (txtExtractRange.Text.Contains("-") || txtExtractRange.Text.Contains(":")))
+            try
             {
-                for (int s=0;s<Segments.Count;s++)
-                {
-                    if (Segments[s].Name == "OS")
-                    {
-                        txtCompatibleOS.Text =  basefile.ReadInfo(basefile.binfile[s].PNaddr);
-                        Application.DoEvents();
-                    }
-                }
-                if (txtCompatibleOS.Text.Length == 0)
-                    txtCompatibleOS.Text = "ALL";
-                string[] Parts;
-                if (txtExtractRange.Text.Contains("-"))
-                     Parts = txtExtractRange.Text.Split('-');
-                else
-                    Parts = txtExtractRange.Text.Split(':');
-                txtCompatibleOS.Text += ":" + Parts[0];
-            }
-        }
-        private void btnExtract_Click(object sender, EventArgs e)
-        {
-            try 
-            {
-                uint Start;
-                uint End;
-                if (txtExtractRange.Text.Contains(":"))
-                {
-                    string[] StartEnd = txtExtractRange.Text.Split(':');
-                    if (!HexToUint(StartEnd[0], out Start))
-                    {
-                        Logger("Can't decode HEX value: " + StartEnd[0]);
-                        return;
-                    }
-                    if (!HexToUint(StartEnd[1], out End))
-                    {
-                        Logger("Can't decode HEX value: " + StartEnd[1]);
-                        return;
-                    }
-                    End += Start - 1;
-
-                }
-                else
-                { 
-                    if (!txtExtractRange.Text.Contains("-"))
-                    {
-                        Logger("Supply address range, for example 200-220 or 200:4");
-                        return;
-                    }
-                    string[] StartEnd = txtExtractRange.Text.Split('-');
-                    if (!HexToUint(StartEnd[0], out Start))
-                    {
-                        Logger("Can't decode HEX value: " + StartEnd[0]);
-                        return;
-                    }
-                    if (!HexToUint(StartEnd[1], out End))
-                    {
-                        Logger("Can't decode HEX value: " + StartEnd[1]);
-                        return;
-                    }
-                }
-                if (txtBaseFile.Text.Length == 0)
-                    return;
-                if (txtCompatibleOS.Text.Length == 0)
-                    txtCompatibleOS.Text = "ALL";
-                basefile = new PcmFile(txtBaseFile.Text);
-                GetFileInfo(txtBaseFile.Text, ref basefile, true); 
                 XmlPatch xpatch = new XmlPatch();
-                xpatch.CompatibleOS = txtCompatibleOS.Text;
+                xpatch.CompatibleOS = OSlist[0] + ":" + Start.ToString("X"); 
+                for (int i=1;i < OSlist.Length; i++)
+                    xpatch.CompatibleOS += "," + OSlist[i] + ":" + Start.ToString("X");
                 xpatch.XmlFile = Path.GetFileName(XMLFile);
                 xpatch.Description = txtExtractDescription.Text;
                 Logger("Extracting " + Start.ToString("X") + " - " + End.ToString("X"));
-                for (uint i=Start; i<=End; i++)
+                for (uint i = Start; i <= End; i++)
                 {
                     if (i > Start)
                         xpatch.Data += " ";
-                    xpatch.Data += basefile.buf[i].ToString("X2") ;
+                    xpatch.Data += basefile.buf[i].ToString("X2");
                 }
                 if (PatchList == null)
                     PatchList = new List<XmlPatch>();
@@ -1181,6 +1130,61 @@ namespace UniversalPatcher
             {
                 Logger(ex.Message);
             }
+
+        }
+        private void btnExtract_Click(object sender, EventArgs e)
+        {
+            uint Start;
+            uint End;
+            if (txtBaseFile.Text.Length == 0)
+                return;
+            basefile = new PcmFile(txtBaseFile.Text);
+            GetFileInfo(txtBaseFile.Text, ref basefile, true);
+            if (txtOS.Text.Length > 0 && txtCompatibleOS.Text.Length == 0)
+                txtCompatibleOS.Text = txtOS.Text;
+            if (txtCompatibleOS.Text.Length == 0)
+                txtCompatibleOS.Text = "ALL";
+            string[] OSlist = txtCompatibleOS.Text.Split(',');
+            string[] blocks = txtExtractRange.Text.Split(',');
+            foreach (string block in blocks) 
+            { 
+                if (block.Contains(":"))
+                {
+                    string[] StartEnd = block.Split(':');
+                    if (!HexToUint(StartEnd[0], out Start))
+                    {
+                        Logger("Can't decode HEX value: " + StartEnd[0]);
+                        return;
+                    }
+                    if (!HexToUint(StartEnd[1], out End))
+                    {
+                        Logger("Can't decode HEX value: " + StartEnd[1]);
+                        return;
+                    }
+                    End += Start - 1;
+                }
+                else
+                {
+                    if (!block.Contains("-"))
+                    {
+                        Logger("Supply address range, for example 200-220 or 200:4");
+                        return;
+                    }
+                    string[] StartEnd = block.Split('-');
+                    if (!HexToUint(StartEnd[0], out Start))
+                    {
+                        Logger("Can't decode HEX value: " + StartEnd[0]);
+                        return;
+                    }
+                    if (!HexToUint(StartEnd[1], out End))
+                    {
+                        Logger("Can't decode HEX value: " + StartEnd[1]);
+                        return;
+                    }
+                }
+                ExtractTable(Start, End, OSlist);
+            }
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -1217,10 +1221,6 @@ namespace UniversalPatcher
             { 
                 tabPatch.Text = "Patch editor (" + PatchList.Count.ToString() +")";
             }
-        }
-        private void dataPatch_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
         }
 
         private void txtCompatibleOS_TextChanged(object sender, EventArgs e)
@@ -1266,7 +1266,10 @@ namespace UniversalPatcher
                 XP.Data = frmM.txtData.Text;
                 if (frmM.txtReadAddr.Text.Length > 0)
                 {
-                    XP.Rule = frmM.txtReadAddr.Text + ":" + frmM.numCheckBit.Value.ToString() + ":" + frmM.numCheckValue.Value.ToString();
+                    XP.Rule = frmM.txtReadAddr.Text + ":" + frmM.txtMask.Text + ":";
+                    if (frmM.chkNOT.Checked)
+                        XP.Rule += "!";
+                    XP.Rule += frmM.txtValue.Text;
                 }
                 PatchList.Add(XP);
                 RefreshDatagrid();
@@ -1292,6 +1295,15 @@ namespace UniversalPatcher
                 Debug.Listeners.Clear();
             }
 
+        }
+
+        private void dataPatch_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            frmData frmD = new frmData();
+            frmD.txtData.Text = dataPatch.CurrentRow.Cells[4].Value.ToString();
+            if (frmD.ShowDialog(this) == DialogResult.OK)
+                dataPatch.CurrentRow.Cells[4].Value = frmD.txtData.Text;
+            frmD.Dispose();
         }
     }
 
