@@ -41,15 +41,15 @@
             this.txtCompOS = new System.Windows.Forms.TextBox();
             this.txtData = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtValue = new System.Windows.Forms.TextBox();
+            this.txtMask = new System.Windows.Forms.TextBox();
+            this.chkNOT = new System.Windows.Forms.CheckBox();
             this.btnOK = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.txtSegment = new System.Windows.Forms.TextBox();
-            this.chkNOT = new System.Windows.Forms.CheckBox();
-            this.txtMask = new System.Windows.Forms.TextBox();
-            this.txtValue = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -161,16 +161,40 @@
             this.groupBox1.Controls.Add(this.txtReadAddr);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Location = new System.Drawing.Point(2, 182);
+            this.groupBox1.Location = new System.Drawing.Point(2, 185);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(268, 127);
+            this.groupBox1.Size = new System.Drawing.Size(268, 137);
             this.groupBox1.TabIndex = 50;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Rule";
+            this.groupBox1.Text = "Rule (bitlevel AND)";
+            // 
+            // txtValue
+            // 
+            this.txtValue.Location = new System.Drawing.Point(170, 76);
+            this.txtValue.Name = "txtValue";
+            this.txtValue.Size = new System.Drawing.Size(85, 20);
+            this.txtValue.TabIndex = 63;
+            // 
+            // txtMask
+            // 
+            this.txtMask.Location = new System.Drawing.Point(171, 51);
+            this.txtMask.Name = "txtMask";
+            this.txtMask.Size = new System.Drawing.Size(85, 20);
+            this.txtMask.TabIndex = 62;
+            // 
+            // chkNOT
+            // 
+            this.chkNOT.AutoSize = true;
+            this.chkNOT.Location = new System.Drawing.Point(171, 100);
+            this.chkNOT.Name = "chkNOT";
+            this.chkNOT.Size = new System.Drawing.Size(86, 17);
+            this.chkNOT.TabIndex = 64;
+            this.chkNOT.Text = "Apply if NOT";
+            this.chkNOT.UseVisualStyleBackColor = true;
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(366, 248);
+            this.btnOK.Location = new System.Drawing.Point(366, 285);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(67, 31);
             this.btnOK.TabIndex = 90;
@@ -225,35 +249,11 @@
             this.txtSegment.Size = new System.Drawing.Size(271, 20);
             this.txtSegment.TabIndex = 11;
             // 
-            // chkNOT
-            // 
-            this.chkNOT.AutoSize = true;
-            this.chkNOT.Location = new System.Drawing.Point(171, 100);
-            this.chkNOT.Name = "chkNOT";
-            this.chkNOT.Size = new System.Drawing.Size(86, 17);
-            this.chkNOT.TabIndex = 64;
-            this.chkNOT.Text = "Apply if NOT";
-            this.chkNOT.UseVisualStyleBackColor = true;
-            // 
-            // txtMask
-            // 
-            this.txtMask.Location = new System.Drawing.Point(171, 51);
-            this.txtMask.Name = "txtMask";
-            this.txtMask.Size = new System.Drawing.Size(85, 20);
-            this.txtMask.TabIndex = 62;
-            // 
-            // txtValue
-            // 
-            this.txtValue.Location = new System.Drawing.Point(170, 76);
-            this.txtValue.Name = "txtValue";
-            this.txtValue.Size = new System.Drawing.Size(85, 20);
-            this.txtValue.TabIndex = 63;
-            // 
             // frmManualPatch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(438, 313);
+            this.ClientSize = new System.Drawing.Size(438, 324);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);

@@ -410,10 +410,10 @@ namespace UniversalPatcher
                                     throw new Exception("Can't decode from HEX: " + Parts[0] + " (" + xpatch.Rule + ")");
                                 ushort RuleMask;
                                 if (!HexToUshort(Parts[1], out RuleMask))
-                                    throw new Exception("Unknown bit number: " + Parts[1] + " (" + xpatch.Rule + ")");
+                                    throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.Rule + ")");
                                 ushort RuleValue;
                                 if (!HexToUshort(Parts[2].Replace("!",""), out RuleValue))
-                                    throw new Exception("Unknown rule value: " + Parts[2] + " (" + xpatch.Rule + ")");
+                                    throw new Exception("Can't decode from HEX: " + Parts[2] + " (" + xpatch.Rule + ")");
 
                                 if (Parts[2].Contains("!"))
                                 {
