@@ -1218,7 +1218,7 @@ namespace UniversalPatcher
 
         private void btnBinLoadPatch_Click(object sender, EventArgs e)
         {
-            btnPatchfile_Click(sender, e);
+            LoadPatch();
         }
 
         private void chkDebug_CheckedChanged(object sender, EventArgs e)
@@ -1383,7 +1383,7 @@ namespace UniversalPatcher
 
         }
 
-        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        public void LoadPatch()
         {
             try
             {
@@ -1421,6 +1421,10 @@ namespace UniversalPatcher
                 Logger("Error: " + ex.Message);
             }
 
+        }
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadPatch();
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
