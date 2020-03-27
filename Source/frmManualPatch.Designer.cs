@@ -65,7 +65,7 @@
             // 
             // txtReadAddr
             // 
-            this.txtReadAddr.Location = new System.Drawing.Point(171, 26);
+            this.txtReadAddr.Location = new System.Drawing.Point(171, 25);
             this.txtReadAddr.Name = "txtReadAddr";
             this.txtReadAddr.Size = new System.Drawing.Size(86, 20);
             this.txtReadAddr.TabIndex = 60;
@@ -100,7 +100,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 84);
+            this.label5.Location = new System.Drawing.Point(9, 214);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(125, 13);
             this.label5.TabIndex = 7;
@@ -109,7 +109,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(9, 107);
+            this.label6.Location = new System.Drawing.Point(9, 237);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(66, 13);
             this.label6.TabIndex = 8;
@@ -118,7 +118,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(9, 134);
+            this.label7.Location = new System.Drawing.Point(9, 264);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(33, 13);
             this.label7.TabIndex = 9;
@@ -133,23 +133,31 @@
             // 
             // txtXML
             // 
-            this.txtXML.Location = new System.Drawing.Point(161, 81);
+            this.txtXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtXML.Location = new System.Drawing.Point(161, 211);
             this.txtXML.Name = "txtXML";
             this.txtXML.Size = new System.Drawing.Size(271, 20);
             this.txtXML.TabIndex = 20;
             // 
             // txtCompOS
             // 
-            this.txtCompOS.Location = new System.Drawing.Point(161, 107);
+            this.txtCompOS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtCompOS.Location = new System.Drawing.Point(161, 237);
             this.txtCompOS.Name = "txtCompOS";
             this.txtCompOS.Size = new System.Drawing.Size(271, 20);
             this.txtCompOS.TabIndex = 30;
             // 
             // txtData
             // 
-            this.txtData.Location = new System.Drawing.Point(161, 131);
+            this.txtData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtData.Location = new System.Drawing.Point(161, 261);
+            this.txtData.Multiline = true;
             this.txtData.Name = "txtData";
-            this.txtData.Size = new System.Drawing.Size(271, 20);
+            this.txtData.Size = new System.Drawing.Size(271, 43);
             this.txtData.TabIndex = 40;
             // 
             // groupBox1
@@ -161,9 +169,9 @@
             this.groupBox1.Controls.Add(this.txtReadAddr);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Location = new System.Drawing.Point(2, 185);
+            this.groupBox1.Location = new System.Drawing.Point(161, 70);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(268, 137);
+            this.groupBox1.Size = new System.Drawing.Size(271, 129);
             this.groupBox1.TabIndex = 50;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Rule (bitlevel AND)";
@@ -194,7 +202,8 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(366, 285);
+            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOK.Location = new System.Drawing.Point(365, 313);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(67, 31);
             this.btnOK.TabIndex = 90;
@@ -204,8 +213,9 @@
             // 
             // label8
             // 
+            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(157, 154);
+            this.label8.Location = new System.Drawing.Point(156, 307);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(97, 13);
             this.label8.TabIndex = 91;
@@ -213,8 +223,9 @@
             // 
             // label9
             // 
+            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(157, 169);
+            this.label9.Location = new System.Drawing.Point(156, 322);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(135, 13);
             this.label9.TabIndex = 92;
@@ -237,7 +248,7 @@
             this.groupBox2.Controls.Add(this.txtDescription);
             this.groupBox2.Location = new System.Drawing.Point(6, 4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(427, 74);
+            this.groupBox2.Size = new System.Drawing.Size(434, 201);
             this.groupBox2.TabIndex = 94;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Optional";
@@ -253,12 +264,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(438, 324);
+            this.ClientSize = new System.Drawing.Size(439, 357);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.txtData);
             this.Controls.Add(this.txtCompOS);
             this.Controls.Add(this.txtXML);

@@ -39,28 +39,31 @@
             this.labelBinSize = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.labelDescr = new System.Windows.Forms.Label();
-            this.btnSegments = new System.Windows.Forms.Button();
             this.labelXML = new System.Windows.Forms.Label();
             this.numSuppress = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.btnLoad = new System.Windows.Forms.Button();
             this.chkCompareAll = new System.Windows.Forms.CheckBox();
             this.chkAutodetect = new System.Windows.Forms.CheckBox();
-            this.btnAutodetect = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabInfo = new System.Windows.Forms.TabPage();
             this.tabDebug = new System.Windows.Forms.TabPage();
             this.chkDebug = new System.Windows.Forms.CheckBox();
             this.txtDebug = new System.Windows.Forms.TextBox();
             this.tabPatch = new System.Windows.Forms.TabPage();
+            this.btnEdit = new System.Windows.Forms.Button();
+            this.btnDown = new System.Windows.Forms.Button();
+            this.btnUp = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
             this.btnManualPatch = new System.Windows.Forms.Button();
-            this.btnNewpatch = new System.Windows.Forms.Button();
             this.labelPatchname = new System.Windows.Forms.Label();
-            this.btnPatchfile = new System.Windows.Forms.Button();
-            this.btnRefresh = new System.Windows.Forms.Button();
             this.dataPatch = new System.Windows.Forms.DataGridView();
-            this.btnSavePatch = new System.Windows.Forms.Button();
+            this.menuStrip2 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkExtra = new System.Windows.Forms.CheckBox();
             this.chkCS2 = new System.Windows.Forms.CheckBox();
             this.chkCS1 = new System.Windows.Forms.CheckBox();
@@ -85,17 +88,26 @@
             this.btnBinLoadPatch = new System.Windows.Forms.Button();
             this.btnCheckSums = new System.Windows.Forms.Button();
             this.btnApplypatch = new System.Windows.Forms.Button();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setupSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.auotedetectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
             this.tabDebug.SuspendLayout();
             this.tabPatch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataPatch)).BeginInit();
+            this.menuStrip2.SuspendLayout();
             this.tabFunction.SuspendLayout();
             this.tabCreate.SuspendLayout();
             this.tabExtract.SuspendLayout();
             this.tabFileinfo.SuspendLayout();
             this.tabApply.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOrgFile
@@ -206,22 +218,11 @@
             this.labelDescr.TabIndex = 11;
             this.labelDescr.Text = "Patch description:";
             // 
-            // btnSegments
-            // 
-            this.btnSegments.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSegments.Location = new System.Drawing.Point(514, 3);
-            this.btnSegments.Name = "btnSegments";
-            this.btnSegments.Size = new System.Drawing.Size(91, 25);
-            this.btnSegments.TabIndex = 12;
-            this.btnSegments.Text = "Setup segments";
-            this.btnSegments.UseVisualStyleBackColor = true;
-            this.btnSegments.Click += new System.EventHandler(this.btnSegments_Click);
-            // 
             // labelXML
             // 
             this.labelXML.AutoSize = true;
             this.labelXML.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelXML.Location = new System.Drawing.Point(228, 9);
+            this.labelXML.Location = new System.Drawing.Point(260, 8);
             this.labelXML.Name = "labelXML";
             this.labelXML.Size = new System.Drawing.Size(13, 16);
             this.labelXML.TabIndex = 16;
@@ -265,16 +266,6 @@
             this.label3.TabIndex = 20;
             this.label3.Text = "patch rows";
             // 
-            // btnLoad
-            // 
-            this.btnLoad.Location = new System.Drawing.Point(12, 5);
-            this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(78, 25);
-            this.btnLoad.TabIndex = 10;
-            this.btnLoad.Text = "Load config";
-            this.btnLoad.UseVisualStyleBackColor = true;
-            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
-            // 
             // chkCompareAll
             // 
             this.chkCompareAll.AutoSize = true;
@@ -290,23 +281,12 @@
             this.chkAutodetect.AutoSize = true;
             this.chkAutodetect.Checked = true;
             this.chkAutodetect.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutodetect.Location = new System.Drawing.Point(96, 10);
+            this.chkAutodetect.Location = new System.Drawing.Point(130, 9);
             this.chkAutodetect.Name = "chkAutodetect";
             this.chkAutodetect.Size = new System.Drawing.Size(110, 17);
             this.chkAutodetect.TabIndex = 11;
             this.chkAutodetect.Text = "Autodetect config";
             this.chkAutodetect.UseVisualStyleBackColor = true;
-            // 
-            // btnAutodetect
-            // 
-            this.btnAutodetect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAutodetect.Location = new System.Drawing.Point(611, 3);
-            this.btnAutodetect.Name = "btnAutodetect";
-            this.btnAutodetect.Size = new System.Drawing.Size(102, 25);
-            this.btnAutodetect.TabIndex = 13;
-            this.btnAutodetect.Text = "Setup autodetect";
-            this.btnAutodetect.UseVisualStyleBackColor = true;
-            this.btnAutodetect.Click += new System.EventHandler(this.btnAutodetect_Click);
             // 
             // tabControl1
             // 
@@ -378,13 +358,14 @@
             // 
             // tabPatch
             // 
+            this.tabPatch.Controls.Add(this.btnEdit);
+            this.tabPatch.Controls.Add(this.btnDown);
+            this.tabPatch.Controls.Add(this.btnUp);
+            this.tabPatch.Controls.Add(this.btnDelete);
             this.tabPatch.Controls.Add(this.btnManualPatch);
-            this.tabPatch.Controls.Add(this.btnNewpatch);
             this.tabPatch.Controls.Add(this.labelPatchname);
-            this.tabPatch.Controls.Add(this.btnPatchfile);
-            this.tabPatch.Controls.Add(this.btnRefresh);
             this.tabPatch.Controls.Add(this.dataPatch);
-            this.tabPatch.Controls.Add(this.btnSavePatch);
+            this.tabPatch.Controls.Add(this.menuStrip2);
             this.tabPatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabPatch.Location = new System.Drawing.Point(4, 22);
             this.tabPatch.Name = "tabPatch";
@@ -393,57 +374,69 @@
             this.tabPatch.Text = "Patch editor";
             this.tabPatch.UseVisualStyleBackColor = true;
             // 
+            // btnEdit
+            // 
+            this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEdit.Location = new System.Drawing.Point(661, 56);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(43, 22);
+            this.btnEdit.TabIndex = 228;
+            this.btnEdit.Text = "Edit";
+            this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            // 
+            // btnDown
+            // 
+            this.btnDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDown.Location = new System.Drawing.Point(662, 219);
+            this.btnDown.Name = "btnDown";
+            this.btnDown.Size = new System.Drawing.Size(43, 22);
+            this.btnDown.TabIndex = 227;
+            this.btnDown.Text = "Down";
+            this.btnDown.UseVisualStyleBackColor = true;
+            this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
+            // 
+            // btnUp
+            // 
+            this.btnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUp.Location = new System.Drawing.Point(661, 191);
+            this.btnUp.Name = "btnUp";
+            this.btnUp.Size = new System.Drawing.Size(43, 22);
+            this.btnUp.TabIndex = 226;
+            this.btnUp.Text = "Up";
+            this.btnUp.UseVisualStyleBackColor = true;
+            this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDelete.Location = new System.Drawing.Point(661, 110);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(43, 22);
+            this.btnDelete.TabIndex = 225;
+            this.btnDelete.Text = "Del";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
             // btnManualPatch
             // 
             this.btnManualPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnManualPatch.Location = new System.Drawing.Point(452, 4);
+            this.btnManualPatch.Location = new System.Drawing.Point(661, 84);
             this.btnManualPatch.Name = "btnManualPatch";
-            this.btnManualPatch.Size = new System.Drawing.Size(58, 30);
+            this.btnManualPatch.Size = new System.Drawing.Size(43, 22);
             this.btnManualPatch.TabIndex = 221;
-            this.btnManualPatch.Text = "Add row";
+            this.btnManualPatch.Text = "Add";
             this.btnManualPatch.UseVisualStyleBackColor = true;
             this.btnManualPatch.Click += new System.EventHandler(this.btnManualPatch_Click);
-            // 
-            // btnNewpatch
-            // 
-            this.btnNewpatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNewpatch.Location = new System.Drawing.Point(535, 4);
-            this.btnNewpatch.Name = "btnNewpatch";
-            this.btnNewpatch.Size = new System.Drawing.Size(50, 30);
-            this.btnNewpatch.TabIndex = 222;
-            this.btnNewpatch.Text = "New";
-            this.btnNewpatch.UseVisualStyleBackColor = true;
-            this.btnNewpatch.Click += new System.EventHandler(this.btnNewpatch_Click);
             // 
             // labelPatchname
             // 
             this.labelPatchname.AutoSize = true;
-            this.labelPatchname.Location = new System.Drawing.Point(93, 12);
+            this.labelPatchname.Location = new System.Drawing.Point(128, 4);
             this.labelPatchname.Name = "labelPatchname";
             this.labelPatchname.Size = new System.Drawing.Size(10, 13);
             this.labelPatchname.TabIndex = 131;
             this.labelPatchname.Text = "-";
-            // 
-            // btnPatchfile
-            // 
-            this.btnPatchfile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPatchfile.Location = new System.Drawing.Point(591, 4);
-            this.btnPatchfile.Name = "btnPatchfile";
-            this.btnPatchfile.Size = new System.Drawing.Size(50, 30);
-            this.btnPatchfile.TabIndex = 223;
-            this.btnPatchfile.Text = "Load";
-            this.btnPatchfile.UseVisualStyleBackColor = true;
-            this.btnPatchfile.Click += new System.EventHandler(this.btnPatchfile_Click);
-            // 
-            // btnRefresh
-            // 
-            this.btnRefresh.Location = new System.Drawing.Point(7, 4);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(72, 29);
-            this.btnRefresh.TabIndex = 220;
-            this.btnRefresh.Text = "Refresh";
-            this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // dataPatch
             // 
@@ -452,22 +445,61 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataPatch.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataPatch.Location = new System.Drawing.Point(1, 39);
+            this.dataPatch.Location = new System.Drawing.Point(1, 27);
             this.dataPatch.Name = "dataPatch";
-            this.dataPatch.Size = new System.Drawing.Size(706, 308);
+            this.dataPatch.Size = new System.Drawing.Size(654, 320);
             this.dataPatch.TabIndex = 0;
+            this.dataPatch.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPatch_CellContentClick);
             this.dataPatch.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPatch_CellContentDoubleClick);
             // 
-            // btnSavePatch
+            // menuStrip2
             // 
-            this.btnSavePatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSavePatch.Location = new System.Drawing.Point(648, 4);
-            this.btnSavePatch.Name = "btnSavePatch";
-            this.btnSavePatch.Size = new System.Drawing.Size(50, 30);
-            this.btnSavePatch.TabIndex = 224;
-            this.btnSavePatch.Text = "Save";
-            this.btnSavePatch.UseVisualStyleBackColor = true;
-            this.btnSavePatch.Click += new System.EventHandler(this.btnSavePatch_Click);
+            this.menuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem});
+            this.menuStrip2.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip2.Name = "menuStrip2";
+            this.menuStrip2.Size = new System.Drawing.Size(708, 24);
+            this.menuStrip2.TabIndex = 229;
+            this.menuStrip2.Text = "menuPatch";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadToolStripMenuItem,
+            this.saveToolStripMenuItem,
+            this.newToolStripMenuItem,
+            this.refreshToolStripMenuItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // loadToolStripMenuItem
+            // 
+            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadToolStripMenuItem.Text = "Load";
+            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // newToolStripMenuItem
+            // 
+            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
+            // 
+            // refreshToolStripMenuItem
+            // 
+            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.refreshToolStripMenuItem.Text = "Refresh";
+            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
             // chkExtra
             // 
@@ -737,6 +769,63 @@
             this.btnApplypatch.UseVisualStyleBackColor = true;
             this.btnApplypatch.Click += new System.EventHandler(this.btnApplypatch_Click);
             // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1,
+            this.toolStripMenuItem2});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(716, 24);
+            this.menuStrip1.TabIndex = 201;
+            this.menuStrip1.Text = "menuMain";
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadConfigToolStripMenuItem,
+            this.setupSegmentsToolStripMenuItem,
+            this.auotedetectToolStripMenuItem});
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
+            this.toolStripMenuItem1.Text = "Settings";
+            // 
+            // loadConfigToolStripMenuItem
+            // 
+            this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
+            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.loadConfigToolStripMenuItem.Text = "Load config";
+            this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
+            // 
+            // setupSegmentsToolStripMenuItem
+            // 
+            this.setupSegmentsToolStripMenuItem.Name = "setupSegmentsToolStripMenuItem";
+            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.setupSegmentsToolStripMenuItem.Text = "Segments";
+            this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
+            // 
+            // auotedetectToolStripMenuItem
+            // 
+            this.auotedetectToolStripMenuItem.Name = "auotedetectToolStripMenuItem";
+            this.auotedetectToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.auotedetectToolStripMenuItem.Text = "Auotedetect";
+            this.auotedetectToolStripMenuItem.Click += new System.EventHandler(this.auotedetectToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aboutToolStripMenuItem});
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(44, 20);
+            this.toolStripMenuItem2.Text = "Help";
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -744,13 +833,12 @@
             this.ClientSize = new System.Drawing.Size(716, 561);
             this.Controls.Add(this.tabFunction);
             this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.btnAutodetect);
             this.Controls.Add(this.chkAutodetect);
-            this.Controls.Add(this.btnLoad);
             this.Controls.Add(this.labelXML);
-            this.Controls.Add(this.btnSegments);
             this.Controls.Add(this.txtBaseFile);
             this.Controls.Add(this.btnOrgFile);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "FrmPatcher";
             this.Text = "Universal patcher";
             this.Load += new System.EventHandler(this.FrmPatcher_Load);
@@ -763,6 +851,8 @@
             this.tabPatch.ResumeLayout(false);
             this.tabPatch.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataPatch)).EndInit();
+            this.menuStrip2.ResumeLayout(false);
+            this.menuStrip2.PerformLayout();
             this.tabFunction.ResumeLayout(false);
             this.tabCreate.ResumeLayout(false);
             this.tabCreate.PerformLayout();
@@ -771,6 +861,8 @@
             this.tabFileinfo.ResumeLayout(false);
             this.tabFileinfo.PerformLayout();
             this.tabApply.ResumeLayout(false);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -788,15 +880,12 @@
         public System.Windows.Forms.Button btnOrgFile;
         public System.Windows.Forms.Button btnModFile;
         private System.Windows.Forms.Label labelDescr;
-        private System.Windows.Forms.Button btnSegments;
         private System.Windows.Forms.Label labelXML;
         private System.Windows.Forms.NumericUpDown numSuppress;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button btnLoad;
         private System.Windows.Forms.CheckBox chkCompareAll;
         private System.Windows.Forms.CheckBox chkAutodetect;
-        private System.Windows.Forms.Button btnAutodetect;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabInfo;
         private System.Windows.Forms.TabPage tabDebug;
@@ -811,10 +900,8 @@
         private System.Windows.Forms.TabControl tabFunction;
         private System.Windows.Forms.TabPage tabCreate;
         private System.Windows.Forms.TabPage tabApply;
-        public System.Windows.Forms.Button btnPatchfile;
         private System.Windows.Forms.Button btnApplypatch;
         private System.Windows.Forms.TabPage tabFileinfo;
-        private System.Windows.Forms.Button btnSavePatch;
         private System.Windows.Forms.TabPage tabExtract;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txtExtractRange;
@@ -826,13 +913,28 @@
         private System.Windows.Forms.TextBox txtOS;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TabPage tabPatch;
-        private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.DataGridView dataPatch;
         private System.Windows.Forms.Button btnCheckSums;
         private System.Windows.Forms.Label labelPatchname;
-        private System.Windows.Forms.Button btnNewpatch;
         private System.Windows.Forms.Button btnManualPatch;
         private System.Windows.Forms.Button btnBinLoadPatch;
         private System.Windows.Forms.CheckBox chkDebug;
+        private System.Windows.Forms.Button btnEdit;
+        private System.Windows.Forms.Button btnDown;
+        private System.Windows.Forms.Button btnUp;
+        private System.Windows.Forms.Button btnDelete;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem loadConfigToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setupSegmentsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem auotedetectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.MenuStrip menuStrip2;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
     }
 }

@@ -705,17 +705,6 @@ namespace UniversalPatcher
 
         private void btnSegments_Click(object sender, EventArgs e)
         {
-            if (frmSL != null && frmSL.Visible)
-            {
-                frmSL.BringToFront();
-                return;
-            }
-            frmSL = new frmSegmenList();
-            frmSL.InitMe();
-            if (frmSL.ShowDialog() == DialogResult.OK)
-            {
-                //addCheckBoxes();
-            }
         }
 
         private void btnCheckSums_Click(object sender, EventArgs e)
@@ -845,14 +834,6 @@ namespace UniversalPatcher
 
         private void btnLoad_Click(object sender, EventArgs e)
         {
-            string FileName = SelectFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
-            if (FileName.Length < 1)
-                return;
-            frmSegmenList frmSL = new frmSegmenList();
-            frmSL.LoadFile(FileName);
-            frmSL.Dispose();
-            labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
-            addCheckBoxes();
         }
 
         private bool CheckRule(DetectRule DR, PcmFile PCM)
@@ -1009,9 +990,6 @@ namespace UniversalPatcher
 
         private void btnAutodetect_Click(object sender, EventArgs e)
         {
-            frmAutodetect frmAD = new frmAutodetect();
-            frmAD.Show();
-            frmAD.InitMe();
         }
 
 
@@ -1054,41 +1032,6 @@ namespace UniversalPatcher
 
         private void btnPatchfile_Click(object sender, EventArgs e)
         {
-            try
-            {
-                string FileName = SelectFile("XML patch files (*.xmlpatch)|*.xmlpatch|PATCH files (*.patch)|*.patch|ALL files(*.*)|*.*");
-                if (FileName.Length > 1)
-                {
-                    labelPatchname.Text = FileName;
-                    Logger("Loading file: " + FileName);
-                    System.Xml.Serialization.XmlSerializer reader =
-                        new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
-                    System.IO.StreamReader file = new System.IO.StreamReader(FileName);
-                    PatchList = (List<XmlPatch>)reader.Deserialize(file);
-                    file.Close();
-                    if (PatchList.Count > 0)
-                    { 
-                        Logger("Description: " + PatchList[0].Description);
-                        string[] OsList = PatchList[0].CompatibleOS.Split(',');
-                        string CompOS ="";
-                        foreach (string OS in OsList)
-                        {
-                            if (CompOS != "")
-                                CompOS += ",";
-                            string[] Parts = OS.Split(':');
-                            CompOS += Parts[0];
-                        }
-                        Logger("For OS: " + CompOS);
-                    }
-                    btnApplypatch.Enabled = true;
-                    RefreshDatagrid();
-                    Logger("[OK]");
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger("Error: " + ex.Message);
-            }
 
         }
 
@@ -1099,10 +1042,9 @@ namespace UniversalPatcher
 
         private void btnSavePatch_Click(object sender, EventArgs e)
         {
-            SavePatch(txtPatchDescription.Text);
         }
 
-         private void ExtractTable(uint Start, uint End, string[] OSlist)
+        private void ExtractTable(uint Start, uint End, string[] OSlist)
         {
             try
             {
@@ -1193,7 +1135,7 @@ namespace UniversalPatcher
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            RefreshDatagrid();
+            
         }
 
         private void txtExtractRange_TextChanged(object sender, EventArgs e)
@@ -1203,8 +1145,6 @@ namespace UniversalPatcher
 
         private void btnNewpatch_Click(object sender, EventArgs e)
         {
-            PatchList = new List<XmlPatch>();
-            RefreshDatagrid();
         }
 
         private void RefreshDatagrid()
@@ -1297,13 +1237,195 @@ namespace UniversalPatcher
 
         }
 
+        public void EditPatchRow()
+        {
+            if (dataPatch.SelectedRows.Count == 0 && dataPatch.SelectedCells.Count == 0)
+                return;
+            if (dataPatch.SelectedRows.Count == 0)
+                dataPatch.Rows[dataPatch.SelectedCells[0].RowIndex].Selected = true;
+            frmManualPatch frmM = new frmManualPatch();
+            if (dataPatch.CurrentRow.Cells[0].Value != null)
+                frmM.txtDescription.Text = dataPatch.CurrentRow.Cells[0].Value.ToString();
+            if (dataPatch.CurrentRow.Cells[1].Value != null)
+                frmM.txtXML.Text = dataPatch.CurrentRow.Cells[1].Value.ToString();
+            if (dataPatch.CurrentRow.Cells[2].Value != null)
+                frmM.txtSegment.Text = dataPatch.CurrentRow.Cells[2].Value.ToString();
+            if (dataPatch.CurrentRow.Cells[3].Value != null)
+                frmM.txtCompOS.Text = dataPatch.CurrentRow.Cells[3].Value.ToString();
+            if (dataPatch.CurrentRow.Cells[4].Value != null)
+                frmM.txtData.Text = dataPatch.CurrentRow.Cells[4].Value.ToString();
+            if (dataPatch.CurrentRow.Cells[5].Value != null && dataPatch.CurrentRow.Cells[5].Value.ToString().Contains(":"))
+            {
+                string[] Parts = dataPatch.CurrentRow.Cells[5].Value.ToString().Split(':');
+                if (Parts.Length == 3)
+                {
+                    frmM.txtReadAddr.Text = Parts[0];
+                    frmM.txtMask.Text = Parts[1];
+                    frmM.txtValue.Text = Parts[2];
+                }
+            }
+            if (frmM.ShowDialog(this) == DialogResult.OK)
+            {
+                dataPatch.CurrentRow.Cells[0].Value = frmM.txtDescription.Text;
+                dataPatch.CurrentRow.Cells[1].Value = frmM.txtXML.Text;
+                dataPatch.CurrentRow.Cells[2].Value = frmM.txtSegment.Text;
+                dataPatch.CurrentRow.Cells[3].Value = frmM.txtCompOS.Text;
+                dataPatch.CurrentRow.Cells[4].Value = frmM.txtData.Text;
+                if (frmM.txtReadAddr.Text.Length > 0)
+                {
+                    dataPatch.CurrentRow.Cells[5].Value = frmM.txtReadAddr.Text + ":" + frmM.txtMask.Text + ":" + frmM.txtValue.Text;
+                }
+            }
+            frmM.Dispose();
+
+        }
+
         private void dataPatch_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            frmData frmD = new frmData();
-            frmD.txtData.Text = dataPatch.CurrentRow.Cells[4].Value.ToString();
-            if (frmD.ShowDialog(this) == DialogResult.OK)
-                dataPatch.CurrentRow.Cells[4].Value = frmD.txtData.Text;
-            frmD.Dispose();
+            EditPatchRow();
+        }
+
+        private void dataPatch_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            EditPatchRow();
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (dataPatch.SelectedRows.Count == 0)
+                return;
+            dataPatch.Rows.Remove(dataPatch.CurrentRow);
+        }
+
+        private void btnUp_Click(object sender, EventArgs e)
+        {
+            int row = dataPatch.CurrentRow.Index; 
+            if (row == 0)
+                return;
+            XmlPatch CurrentP = PatchList[row];
+            PatchList.RemoveAt(row);
+            PatchList.Insert(row - 1, CurrentP);
+            RefreshDatagrid();
+            dataPatch.CurrentCell = dataPatch.Rows[row - 1].Cells[0];
+            dataPatch.Rows[row - 1].Selected = true;
+        }
+
+        private void btnDown_Click(object sender, EventArgs e)
+        {
+            int row = dataPatch.CurrentRow.Index;
+            if (row >= dataPatch.Rows.Count - 2)
+                return;
+            XmlPatch CurrentP = PatchList[row];
+            PatchList.RemoveAt(row);
+            PatchList.Insert(row + 1, CurrentP);
+            RefreshDatagrid();
+            dataPatch.CurrentCell = dataPatch.Rows[row + 1].Cells[0];
+            dataPatch.Rows[row + 1].Selected = true;
+        }
+
+        private void loadConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
+            if (FileName.Length < 1)
+                return;
+            frmSegmenList frmSL = new frmSegmenList();
+            frmSL.LoadFile(FileName);
+            frmSL.Dispose();
+            labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
+            addCheckBoxes();
+
+        }
+
+        private void setupSegmentsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (frmSL != null && frmSL.Visible)
+            {
+                frmSL.BringToFront();
+                return;
+            }
+            frmSL = new frmSegmenList();
+            frmSL.InitMe();
+            if (frmSL.ShowDialog() == DialogResult.OK)
+            {
+                //addCheckBoxes();
+            }
+
+        }
+
+        private void auotedetectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmAutodetect frmAD = new frmAutodetect();
+            frmAD.Show();
+            frmAD.InitMe();
+
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AboutBox1 aboutBox = new AboutBox1();
+            aboutBox.Show();
+        }
+
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RefreshDatagrid();
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PatchList = new List<XmlPatch>();
+            RefreshDatagrid();
+
+        }
+
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string FileName = SelectFile("XML patch files (*.xmlpatch)|*.xmlpatch|PATCH files (*.patch)|*.patch|ALL files(*.*)|*.*");
+                if (FileName.Length > 1)
+                {
+                    labelPatchname.Text = FileName;
+                    Logger("Loading file: " + FileName);
+                    System.Xml.Serialization.XmlSerializer reader =
+                        new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
+                    System.IO.StreamReader file = new System.IO.StreamReader(FileName);
+                    PatchList = (List<XmlPatch>)reader.Deserialize(file);
+                    file.Close();
+                    if (PatchList.Count > 0)
+                    {
+                        Logger("Description: " + PatchList[0].Description);
+                        string[] OsList = PatchList[0].CompatibleOS.Split(',');
+                        string CompOS = "";
+                        foreach (string OS in OsList)
+                        {
+                            if (CompOS != "")
+                                CompOS += ",";
+                            string[] Parts = OS.Split(':');
+                            CompOS += Parts[0];
+                        }
+                        Logger("For OS: " + CompOS);
+                    }
+                    btnApplypatch.Enabled = true;
+                    RefreshDatagrid();
+                    Logger("[OK]");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger("Error: " + ex.Message);
+            }
+
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SavePatch(txtPatchDescription.Text);
         }
     }
 
