@@ -49,10 +49,10 @@
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.txtSegment = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.txtHelpFile = new System.Windows.Forms.TextBox();
             this.btnBrowse = new System.Windows.Forms.Button();
+            this.txtHelpFile = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.txtSegment = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -160,6 +160,7 @@
             this.txtData.Location = new System.Drawing.Point(140, 282);
             this.txtData.Multiline = true;
             this.txtData.Name = "txtData";
+            this.txtData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtData.Size = new System.Drawing.Size(271, 59);
             this.txtData.TabIndex = 40;
             // 
@@ -259,12 +260,22 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Optional";
             // 
-            // txtSegment
+            // btnBrowse
             // 
-            this.txtSegment.Location = new System.Drawing.Point(134, 40);
-            this.txtSegment.Name = "txtSegment";
-            this.txtSegment.Size = new System.Drawing.Size(271, 20);
-            this.txtSegment.TabIndex = 11;
+            this.btnBrowse.Location = new System.Drawing.Point(377, 65);
+            this.btnBrowse.Name = "btnBrowse";
+            this.btnBrowse.Size = new System.Drawing.Size(27, 19);
+            this.btnBrowse.TabIndex = 96;
+            this.btnBrowse.Text = "...";
+            this.btnBrowse.UseVisualStyleBackColor = true;
+            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
+            // 
+            // txtHelpFile
+            // 
+            this.txtHelpFile.Location = new System.Drawing.Point(134, 64);
+            this.txtHelpFile.Name = "txtHelpFile";
+            this.txtHelpFile.Size = new System.Drawing.Size(237, 20);
+            this.txtHelpFile.TabIndex = 95;
             // 
             // label11
             // 
@@ -275,22 +286,12 @@
             this.label11.TabIndex = 94;
             this.label11.Text = "Helpfile:";
             // 
-            // txtHelpFile
+            // txtSegment
             // 
-            this.txtHelpFile.Location = new System.Drawing.Point(134, 64);
-            this.txtHelpFile.Name = "txtHelpFile";
-            this.txtHelpFile.Size = new System.Drawing.Size(237, 20);
-            this.txtHelpFile.TabIndex = 95;
-            // 
-            // btnBrowse
-            // 
-            this.btnBrowse.Location = new System.Drawing.Point(377, 65);
-            this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(27, 19);
-            this.btnBrowse.TabIndex = 96;
-            this.btnBrowse.Text = "...";
-            this.btnBrowse.UseVisualStyleBackColor = true;
-            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
+            this.txtSegment.Location = new System.Drawing.Point(134, 40);
+            this.txtSegment.Name = "txtSegment";
+            this.txtSegment.Size = new System.Drawing.Size(271, 20);
+            this.txtSegment.TabIndex = 11;
             // 
             // frmManualPatch
             // 
