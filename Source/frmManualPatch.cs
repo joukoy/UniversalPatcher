@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
+using static upatcher;
 
 namespace UniversalPatcher
 {
@@ -20,6 +22,13 @@ namespace UniversalPatcher
         {
             this.DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        private void btnBrowse_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectFile("TXT files (*.txt)|*.txt|All files (*.*)|*.*");
+            if (FileName.Length > 0)
+                txtHelpFile.Text = Path.GetFileName(FileName);
         }
     }
 }

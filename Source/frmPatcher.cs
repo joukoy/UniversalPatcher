@@ -1264,6 +1264,9 @@ namespace UniversalPatcher
                     frmM.txtValue.Text = Parts[2];
                 }
             }
+            if (dataPatch.CurrentRow.Cells[6].Value != null)
+                frmM.txtHelpFile.Text = dataPatch.CurrentRow.Cells[6].Value.ToString();
+
             if (frmM.ShowDialog(this) == DialogResult.OK)
             {
                 dataPatch.CurrentRow.Cells[0].Value = frmM.txtDescription.Text;
@@ -1275,6 +1278,7 @@ namespace UniversalPatcher
                 {
                     dataPatch.CurrentRow.Cells[5].Value = frmM.txtReadAddr.Text + ":" + frmM.txtMask.Text + ":" + frmM.txtValue.Text;
                 }
+                dataPatch.CurrentRow.Cells[6].Value = frmM.txtHelpFile.Text;
             }
             frmM.Dispose();
 
@@ -1430,6 +1434,22 @@ namespace UniversalPatcher
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SavePatch(txtPatchDescription.Text);
+        }
+
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+            try 
+            {
+                if (dataPatch.Rows[dataPatch.CurrentRow.Index].Cells[6].Value == null)
+                    return;
+                string FileName = dataPatch.Rows[dataPatch.CurrentRow.Index].Cells[6].Value.ToString();
+                FileName = Path.Combine(Application.StartupPath, "Patches" , FileName);
+                Process.Start(FileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error");
+            }
         }
     }
 

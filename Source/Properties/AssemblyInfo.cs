@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Universal Patcher")]
-[assembly: AssemblyDescription("Patch program for binary files.\r\nCreated for GM PCM files, can be configured for other bin-files too.")]
+[assembly: AssemblyDescription("Patch program for binary files.\r\nCreated for GM PCM files, can be configured for other binaries.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Creator: joukoy@gmail.com \r\nContributor: kur4o@pcmhacking.net")]
 [assembly: AssemblyProduct("Universal Patcher")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.9.5")]
-[assembly: AssemblyFileVersion("0.9.5")]
+[assembly: AssemblyVersion("0.9.6")]
+[assembly: AssemblyFileVersion("0.9.6")]

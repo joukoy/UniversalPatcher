@@ -51,6 +51,7 @@
             this.chkDebug = new System.Windows.Forms.CheckBox();
             this.txtDebug = new System.Windows.Forms.TextBox();
             this.tabPatch = new System.Windows.Forms.TabPage();
+            this.btnHelp = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
             this.btnDown = new System.Windows.Forms.Button();
             this.btnUp = new System.Windows.Forms.Button();
@@ -136,7 +137,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtBaseFile.Location = new System.Drawing.Point(96, 34);
             this.txtBaseFile.Name = "txtBaseFile";
-            this.txtBaseFile.Size = new System.Drawing.Size(617, 20);
+            this.txtBaseFile.Size = new System.Drawing.Size(685, 20);
             this.txtBaseFile.TabIndex = 15;
             // 
             // txtModifierFile
@@ -145,7 +146,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtModifierFile.Location = new System.Drawing.Point(90, 6);
             this.txtModifierFile.Name = "txtModifierFile";
-            this.txtModifierFile.Size = new System.Drawing.Size(617, 20);
+            this.txtModifierFile.Size = new System.Drawing.Size(685, 20);
             this.txtModifierFile.TabIndex = 111;
             this.txtModifierFile.TextChanged += new System.EventHandler(this.txtModifierFile_TextChanged);
             // 
@@ -188,7 +189,7 @@
             this.txtPatchDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPatchDescription.Location = new System.Drawing.Point(129, 57);
             this.txtPatchDescription.Name = "txtPatchDescription";
-            this.txtPatchDescription.Size = new System.Drawing.Size(478, 20);
+            this.txtPatchDescription.Size = new System.Drawing.Size(546, 20);
             this.txtPatchDescription.TabIndex = 116;
             // 
             // labelBinSize
@@ -299,7 +300,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 191);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(716, 370);
+            this.tabControl1.Size = new System.Drawing.Size(784, 370);
             this.tabControl1.TabIndex = 200;
             // 
             // tabInfo
@@ -358,6 +359,7 @@
             // 
             // tabPatch
             // 
+            this.tabPatch.Controls.Add(this.btnHelp);
             this.tabPatch.Controls.Add(this.btnEdit);
             this.tabPatch.Controls.Add(this.btnDown);
             this.tabPatch.Controls.Add(this.btnUp);
@@ -369,15 +371,26 @@
             this.tabPatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabPatch.Location = new System.Drawing.Point(4, 22);
             this.tabPatch.Name = "tabPatch";
-            this.tabPatch.Size = new System.Drawing.Size(708, 344);
+            this.tabPatch.Size = new System.Drawing.Size(776, 344);
             this.tabPatch.TabIndex = 2;
             this.tabPatch.Text = "Patch editor";
             this.tabPatch.UseVisualStyleBackColor = true;
             // 
+            // btnHelp
+            // 
+            this.btnHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnHelp.Location = new System.Drawing.Point(729, 138);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(43, 22);
+            this.btnHelp.TabIndex = 230;
+            this.btnHelp.Text = "Help";
+            this.btnHelp.UseVisualStyleBackColor = true;
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
+            // 
             // btnEdit
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEdit.Location = new System.Drawing.Point(661, 56);
+            this.btnEdit.Location = new System.Drawing.Point(729, 56);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(43, 22);
             this.btnEdit.TabIndex = 228;
@@ -388,7 +401,7 @@
             // btnDown
             // 
             this.btnDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDown.Location = new System.Drawing.Point(662, 219);
+            this.btnDown.Location = new System.Drawing.Point(730, 219);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(43, 22);
             this.btnDown.TabIndex = 227;
@@ -399,7 +412,7 @@
             // btnUp
             // 
             this.btnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUp.Location = new System.Drawing.Point(661, 191);
+            this.btnUp.Location = new System.Drawing.Point(729, 191);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(43, 22);
             this.btnUp.TabIndex = 226;
@@ -410,7 +423,7 @@
             // btnDelete
             // 
             this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDelete.Location = new System.Drawing.Point(661, 110);
+            this.btnDelete.Location = new System.Drawing.Point(729, 110);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(43, 22);
             this.btnDelete.TabIndex = 225;
@@ -421,7 +434,7 @@
             // btnManualPatch
             // 
             this.btnManualPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnManualPatch.Location = new System.Drawing.Point(661, 84);
+            this.btnManualPatch.Location = new System.Drawing.Point(729, 84);
             this.btnManualPatch.Name = "btnManualPatch";
             this.btnManualPatch.Size = new System.Drawing.Size(43, 22);
             this.btnManualPatch.TabIndex = 221;
@@ -447,7 +460,7 @@
             this.dataPatch.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataPatch.Location = new System.Drawing.Point(1, 27);
             this.dataPatch.Name = "dataPatch";
-            this.dataPatch.Size = new System.Drawing.Size(654, 320);
+            this.dataPatch.Size = new System.Drawing.Size(722, 320);
             this.dataPatch.TabIndex = 0;
             this.dataPatch.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPatch_CellContentClick);
             this.dataPatch.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPatch_CellContentDoubleClick);
@@ -458,7 +471,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip2.Location = new System.Drawing.Point(0, 0);
             this.menuStrip2.Name = "menuStrip2";
-            this.menuStrip2.Size = new System.Drawing.Size(708, 24);
+            this.menuStrip2.Size = new System.Drawing.Size(776, 24);
             this.menuStrip2.TabIndex = 229;
             this.menuStrip2.Text = "menuPatch";
             // 
@@ -476,28 +489,28 @@
             // loadToolStripMenuItem
             // 
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.loadToolStripMenuItem.Text = "Load";
             this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // refreshToolStripMenuItem
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
@@ -592,7 +605,7 @@
             this.tabFunction.Location = new System.Drawing.Point(2, 60);
             this.tabFunction.Name = "tabFunction";
             this.tabFunction.SelectedIndex = 0;
-            this.tabFunction.Size = new System.Drawing.Size(719, 129);
+            this.tabFunction.Size = new System.Drawing.Size(787, 129);
             this.tabFunction.TabIndex = 100;
             // 
             // tabCreate
@@ -608,7 +621,7 @@
             this.tabCreate.Location = new System.Drawing.Point(4, 22);
             this.tabCreate.Name = "tabCreate";
             this.tabCreate.Padding = new System.Windows.Forms.Padding(3);
-            this.tabCreate.Size = new System.Drawing.Size(711, 103);
+            this.tabCreate.Size = new System.Drawing.Size(779, 103);
             this.tabCreate.TabIndex = 0;
             this.tabCreate.Text = "Create Patch";
             this.tabCreate.UseVisualStyleBackColor = true;
@@ -776,7 +789,7 @@
             this.toolStripMenuItem2});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(716, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(784, 24);
             this.menuStrip1.TabIndex = 201;
             this.menuStrip1.Text = "menuMain";
             // 
@@ -830,7 +843,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(716, 561);
+            this.ClientSize = new System.Drawing.Size(784, 561);
             this.Controls.Add(this.tabFunction);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.chkAutodetect);
@@ -936,5 +949,6 @@
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
+        private System.Windows.Forms.Button btnHelp;
     }
 }

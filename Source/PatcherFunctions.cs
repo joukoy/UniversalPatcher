@@ -30,6 +30,7 @@ public class upatcher
         public string CompatibleOS { get; set; }
         public string Data { get; set; }
         public string Rule { get; set; }
+        public string HelpFile { get; set; }
     }
     public struct Block
     {
@@ -301,7 +302,7 @@ public class upatcher
         fdlg.RestoreDirectory = true;
         if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
             fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
-        if (Filter.Contains("PATCH"))
+        if (Filter.Contains("PATCH") || Filter.Contains("TXT"))
             fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
         else if (Filter.Contains("BIN"))
             fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;

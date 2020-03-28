@@ -50,6 +50,9 @@
             this.label10 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.txtSegment = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.txtHelpFile = new System.Windows.Forms.TextBox();
+            this.btnBrowse = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -100,7 +103,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 214);
+            this.label5.Location = new System.Drawing.Point(9, 233);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(125, 13);
             this.label5.TabIndex = 7;
@@ -109,7 +112,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(9, 237);
+            this.label6.Location = new System.Drawing.Point(9, 256);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(66, 13);
             this.label6.TabIndex = 8;
@@ -118,7 +121,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(9, 264);
+            this.label7.Location = new System.Drawing.Point(9, 285);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(33, 13);
             this.label7.TabIndex = 9;
@@ -126,7 +129,7 @@
             // 
             // txtDescription
             // 
-            this.txtDescription.Location = new System.Drawing.Point(155, 13);
+            this.txtDescription.Location = new System.Drawing.Point(134, 14);
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(271, 20);
             this.txtDescription.TabIndex = 10;
@@ -135,7 +138,7 @@
             // 
             this.txtXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtXML.Location = new System.Drawing.Point(161, 211);
+            this.txtXML.Location = new System.Drawing.Point(140, 230);
             this.txtXML.Name = "txtXML";
             this.txtXML.Size = new System.Drawing.Size(271, 20);
             this.txtXML.TabIndex = 20;
@@ -144,7 +147,7 @@
             // 
             this.txtCompOS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtCompOS.Location = new System.Drawing.Point(161, 237);
+            this.txtCompOS.Location = new System.Drawing.Point(140, 256);
             this.txtCompOS.Name = "txtCompOS";
             this.txtCompOS.Size = new System.Drawing.Size(271, 20);
             this.txtCompOS.TabIndex = 30;
@@ -154,10 +157,10 @@
             this.txtData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtData.Location = new System.Drawing.Point(161, 261);
+            this.txtData.Location = new System.Drawing.Point(140, 282);
             this.txtData.Multiline = true;
             this.txtData.Name = "txtData";
-            this.txtData.Size = new System.Drawing.Size(271, 43);
+            this.txtData.Size = new System.Drawing.Size(271, 59);
             this.txtData.TabIndex = 40;
             // 
             // groupBox1
@@ -169,9 +172,9 @@
             this.groupBox1.Controls.Add(this.txtReadAddr);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Location = new System.Drawing.Point(161, 70);
+            this.groupBox1.Location = new System.Drawing.Point(140, 94);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(271, 129);
+            this.groupBox1.Size = new System.Drawing.Size(271, 123);
             this.groupBox1.TabIndex = 50;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Rule (bitlevel AND)";
@@ -203,7 +206,7 @@
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(365, 313);
+            this.btnOK.Location = new System.Drawing.Point(344, 348);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(67, 31);
             this.btnOK.TabIndex = 90;
@@ -213,9 +216,9 @@
             // 
             // label8
             // 
-            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(156, 307);
+            this.label8.Location = new System.Drawing.Point(137, 344);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(97, 13);
             this.label8.TabIndex = 91;
@@ -223,9 +226,9 @@
             // 
             // label9
             // 
-            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(156, 322);
+            this.label9.Location = new System.Drawing.Point(137, 366);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(135, 13);
             this.label9.TabIndex = 92;
@@ -242,29 +245,58 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnBrowse);
+            this.groupBox2.Controls.Add(this.txtHelpFile);
+            this.groupBox2.Controls.Add(this.label11);
             this.groupBox2.Controls.Add(this.txtSegment);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.label10);
             this.groupBox2.Controls.Add(this.txtDescription);
             this.groupBox2.Location = new System.Drawing.Point(6, 4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(434, 201);
+            this.groupBox2.Size = new System.Drawing.Size(421, 220);
             this.groupBox2.TabIndex = 94;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Optional";
             // 
             // txtSegment
             // 
-            this.txtSegment.Location = new System.Drawing.Point(155, 40);
+            this.txtSegment.Location = new System.Drawing.Point(134, 40);
             this.txtSegment.Name = "txtSegment";
             this.txtSegment.Size = new System.Drawing.Size(271, 20);
             this.txtSegment.TabIndex = 11;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(3, 67);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(45, 13);
+            this.label11.TabIndex = 94;
+            this.label11.Text = "Helpfile:";
+            // 
+            // txtHelpFile
+            // 
+            this.txtHelpFile.Location = new System.Drawing.Point(134, 64);
+            this.txtHelpFile.Name = "txtHelpFile";
+            this.txtHelpFile.Size = new System.Drawing.Size(237, 20);
+            this.txtHelpFile.TabIndex = 95;
+            // 
+            // btnBrowse
+            // 
+            this.btnBrowse.Location = new System.Drawing.Point(377, 65);
+            this.btnBrowse.Name = "btnBrowse";
+            this.btnBrowse.Size = new System.Drawing.Size(27, 19);
+            this.btnBrowse.TabIndex = 96;
+            this.btnBrowse.Text = "...";
+            this.btnBrowse.UseVisualStyleBackColor = true;
+            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
             // frmManualPatch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(439, 357);
+            this.ClientSize = new System.Drawing.Size(418, 391);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.label9);
@@ -311,5 +343,8 @@
         public System.Windows.Forms.TextBox txtValue;
         public System.Windows.Forms.TextBox txtMask;
         public System.Windows.Forms.CheckBox chkNOT;
+        public System.Windows.Forms.TextBox txtHelpFile;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Button btnBrowse;
     }
 }
