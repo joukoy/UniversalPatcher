@@ -53,6 +53,7 @@
             this.txtHelpFile = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.txtSegment = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -219,7 +220,7 @@
             // 
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(137, 344);
+            this.label8.Location = new System.Drawing.Point(9, 328);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(97, 13);
             this.label8.TabIndex = 91;
@@ -229,11 +230,11 @@
             // 
             this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(137, 366);
+            this.label9.Location = new System.Drawing.Point(9, 348);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(135, 13);
+            this.label9.Size = new System.Drawing.Size(68, 13);
             this.label9.TabIndex = 92;
-            this.label9.Text = "Example: 5:0 (set bit 5 to 0)";
+            this.label9.Text = "55:55 FF:0A ";
             // 
             // label10
             // 
@@ -293,11 +294,22 @@
             this.txtSegment.Size = new System.Drawing.Size(271, 20);
             this.txtSegment.TabIndex = 11;
             // 
+            // label12
+            // 
+            this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(9, 366);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(277, 13);
+            this.label12.TabIndex = 95;
+            this.label12.Text = "(Data:Mask)(Mask: what bits to set, Data: how to set bits)";
+            // 
             // frmManualPatch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(418, 391);
+            this.Controls.Add(this.label12);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.label9);
@@ -347,5 +359,6 @@
         public System.Windows.Forms.TextBox txtHelpFile;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Button btnBrowse;
+        private System.Windows.Forms.Label label12;
     }
 }

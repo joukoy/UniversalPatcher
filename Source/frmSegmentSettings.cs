@@ -81,7 +81,15 @@ namespace UniversalPatcher
             if (radioCS2Complement2.Checked)
                 S.CS2Complement = 2;
             S.CS2SwapBytes = checkSwapBytes2.Checked;
+            if (comboCVN.Text == "None")
+                S.CVN = 0;
+            if (comboCVN.Text == "Checksum 1")
+                S.CVN = 1;
+            if (comboCVN.Text == "Checksum 2")
+                S.CVN = 2;
+
             Segments[CurrentSegment] = S;
+
         }
 
         public void EditSegment(int SegNr)
@@ -141,7 +149,12 @@ namespace UniversalPatcher
                 radioCS2Complement1.Checked = true;
             if (S.CS2Complement == 2)
                 radioCS2Complement2.Checked = true;
-
+            if (S.CVN == 0)
+                comboCVN.Text = "None";
+            if (S.CVN == 1)
+                comboCVN.Text = "Checksum 1";
+            if (S.CVN == 2)
+                comboCVN.Text = "Checksum 2";
         }
 
 

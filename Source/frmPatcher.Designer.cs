@@ -51,6 +51,10 @@
             this.chkDebug = new System.Windows.Forms.CheckBox();
             this.txtDebug = new System.Windows.Forms.TextBox();
             this.tabPatch = new System.Windows.Forms.TabPage();
+            this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnNew = new System.Windows.Forms.Button();
+            this.btnLoad = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
             this.btnHelp = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
             this.btnDown = new System.Windows.Forms.Button();
@@ -59,12 +63,6 @@
             this.btnManualPatch = new System.Windows.Forms.Button();
             this.labelPatchname = new System.Windows.Forms.Label();
             this.dataPatch = new System.Windows.Forms.DataGridView();
-            this.menuStrip2 = new System.Windows.Forms.MenuStrip();
-            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkExtra = new System.Windows.Forms.CheckBox();
             this.chkCS2 = new System.Windows.Forms.CheckBox();
             this.chkCS1 = new System.Windows.Forms.CheckBox();
@@ -77,6 +75,8 @@
             this.txtOS = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.tabExtract = new System.Windows.Forms.TabPage();
+            this.txtExtractMask = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.txtExtractDescription = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.btnExtract = new System.Windows.Forms.Button();
@@ -85,6 +85,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.txtExtractRange = new System.Windows.Forms.TextBox();
             this.tabFileinfo = new System.Windows.Forms.TabPage();
+            this.btnAddtoStock = new System.Windows.Forms.Button();
             this.tabApply = new System.Windows.Forms.TabPage();
             this.btnBinLoadPatch = new System.Windows.Forms.Button();
             this.btnCheckSums = new System.Windows.Forms.Button();
@@ -93,7 +94,8 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.loadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setupSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.auotedetectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.autodetectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
@@ -102,7 +104,6 @@
             this.tabDebug.SuspendLayout();
             this.tabPatch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataPatch)).BeginInit();
-            this.menuStrip2.SuspendLayout();
             this.tabFunction.SuspendLayout();
             this.tabCreate.SuspendLayout();
             this.tabExtract.SuspendLayout();
@@ -170,13 +171,13 @@
             this.txtResult.Multiline = true;
             this.txtResult.Name = "txtResult";
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtResult.Size = new System.Drawing.Size(702, 312);
+            this.txtResult.Size = new System.Drawing.Size(770, 312);
             this.txtResult.TabIndex = 6;
             // 
             // btnSaveBin
             // 
             this.btnSaveBin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveBin.Location = new System.Drawing.Point(600, 10);
+            this.btnSaveBin.Location = new System.Drawing.Point(351, 6);
             this.btnSaveBin.Name = "btnSaveBin";
             this.btnSaveBin.Size = new System.Drawing.Size(108, 25);
             this.btnSaveBin.TabIndex = 184;
@@ -314,7 +315,7 @@
             this.tabInfo.Location = new System.Drawing.Point(4, 22);
             this.tabInfo.Name = "tabInfo";
             this.tabInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabInfo.Size = new System.Drawing.Size(708, 344);
+            this.tabInfo.Size = new System.Drawing.Size(776, 344);
             this.tabInfo.TabIndex = 0;
             this.tabInfo.Text = "Info";
             this.tabInfo.UseVisualStyleBackColor = true;
@@ -326,7 +327,7 @@
             this.tabDebug.Location = new System.Drawing.Point(4, 22);
             this.tabDebug.Name = "tabDebug";
             this.tabDebug.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDebug.Size = new System.Drawing.Size(708, 344);
+            this.tabDebug.Size = new System.Drawing.Size(776, 344);
             this.tabDebug.TabIndex = 1;
             this.tabDebug.Text = "Debug";
             this.tabDebug.UseVisualStyleBackColor = true;
@@ -354,11 +355,15 @@
             this.txtDebug.Multiline = true;
             this.txtDebug.Name = "txtDebug";
             this.txtDebug.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtDebug.Size = new System.Drawing.Size(709, 318);
+            this.txtDebug.Size = new System.Drawing.Size(776, 318);
             this.txtDebug.TabIndex = 0;
             // 
             // tabPatch
             // 
+            this.tabPatch.Controls.Add(this.btnRefresh);
+            this.tabPatch.Controls.Add(this.btnNew);
+            this.tabPatch.Controls.Add(this.btnLoad);
+            this.tabPatch.Controls.Add(this.btnSave);
             this.tabPatch.Controls.Add(this.btnHelp);
             this.tabPatch.Controls.Add(this.btnEdit);
             this.tabPatch.Controls.Add(this.btnDown);
@@ -367,7 +372,6 @@
             this.tabPatch.Controls.Add(this.btnManualPatch);
             this.tabPatch.Controls.Add(this.labelPatchname);
             this.tabPatch.Controls.Add(this.dataPatch);
-            this.tabPatch.Controls.Add(this.menuStrip2);
             this.tabPatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabPatch.Location = new System.Drawing.Point(4, 22);
             this.tabPatch.Name = "tabPatch";
@@ -376,13 +380,57 @@
             this.tabPatch.Text = "Patch editor";
             this.tabPatch.UseVisualStyleBackColor = true;
             // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefresh.Location = new System.Drawing.Point(549, 0);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(59, 23);
+            this.btnRefresh.TabIndex = 250;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click_1);
+            // 
+            // btnNew
+            // 
+            this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnNew.Location = new System.Drawing.Point(614, 0);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Size = new System.Drawing.Size(49, 23);
+            this.btnNew.TabIndex = 251;
+            this.btnNew.Text = "New";
+            this.btnNew.UseVisualStyleBackColor = true;
+            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            // 
+            // btnLoad
+            // 
+            this.btnLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLoad.Location = new System.Drawing.Point(667, 0);
+            this.btnLoad.Name = "btnLoad";
+            this.btnLoad.Size = new System.Drawing.Size(49, 23);
+            this.btnLoad.TabIndex = 252;
+            this.btnLoad.Text = "Load";
+            this.btnLoad.UseVisualStyleBackColor = true;
+            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click_1);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(722, 0);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(49, 23);
+            this.btnSave.TabIndex = 253;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
             // btnHelp
             // 
             this.btnHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnHelp.Location = new System.Drawing.Point(729, 138);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(43, 22);
-            this.btnHelp.TabIndex = 230;
+            this.btnHelp.TabIndex = 257;
             this.btnHelp.Text = "Help";
             this.btnHelp.UseVisualStyleBackColor = true;
             this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
@@ -393,7 +441,7 @@
             this.btnEdit.Location = new System.Drawing.Point(729, 56);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(43, 22);
-            this.btnEdit.TabIndex = 228;
+            this.btnEdit.TabIndex = 254;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
             this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
@@ -404,7 +452,7 @@
             this.btnDown.Location = new System.Drawing.Point(730, 219);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(43, 22);
-            this.btnDown.TabIndex = 227;
+            this.btnDown.TabIndex = 259;
             this.btnDown.Text = "Down";
             this.btnDown.UseVisualStyleBackColor = true;
             this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
@@ -415,7 +463,7 @@
             this.btnUp.Location = new System.Drawing.Point(729, 191);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(43, 22);
-            this.btnUp.TabIndex = 226;
+            this.btnUp.TabIndex = 258;
             this.btnUp.Text = "Up";
             this.btnUp.UseVisualStyleBackColor = true;
             this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
@@ -426,7 +474,7 @@
             this.btnDelete.Location = new System.Drawing.Point(729, 110);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(43, 22);
-            this.btnDelete.TabIndex = 225;
+            this.btnDelete.TabIndex = 256;
             this.btnDelete.Text = "Del";
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
@@ -437,7 +485,7 @@
             this.btnManualPatch.Location = new System.Drawing.Point(729, 84);
             this.btnManualPatch.Name = "btnManualPatch";
             this.btnManualPatch.Size = new System.Drawing.Size(43, 22);
-            this.btnManualPatch.TabIndex = 221;
+            this.btnManualPatch.TabIndex = 255;
             this.btnManualPatch.Text = "Add";
             this.btnManualPatch.UseVisualStyleBackColor = true;
             this.btnManualPatch.Click += new System.EventHandler(this.btnManualPatch_Click);
@@ -445,7 +493,7 @@
             // labelPatchname
             // 
             this.labelPatchname.AutoSize = true;
-            this.labelPatchname.Location = new System.Drawing.Point(128, 4);
+            this.labelPatchname.Location = new System.Drawing.Point(8, 9);
             this.labelPatchname.Name = "labelPatchname";
             this.labelPatchname.Size = new System.Drawing.Size(10, 13);
             this.labelPatchname.TabIndex = 131;
@@ -465,61 +513,12 @@
             this.dataPatch.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPatch_CellContentClick);
             this.dataPatch.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPatch_CellContentDoubleClick);
             // 
-            // menuStrip2
-            // 
-            this.menuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
-            this.menuStrip2.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip2.Name = "menuStrip2";
-            this.menuStrip2.Size = new System.Drawing.Size(776, 24);
-            this.menuStrip2.TabIndex = 229;
-            this.menuStrip2.Text = "menuPatch";
-            // 
-            // fileToolStripMenuItem
-            // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadToolStripMenuItem,
-            this.saveToolStripMenuItem,
-            this.newToolStripMenuItem,
-            this.refreshToolStripMenuItem});
-            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
-            this.fileToolStripMenuItem.Text = "File";
-            // 
-            // loadToolStripMenuItem
-            // 
-            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
-            this.loadToolStripMenuItem.Text = "Load";
-            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
-            // 
-            // saveToolStripMenuItem
-            // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
-            this.saveToolStripMenuItem.Text = "Save";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
-            // 
-            // newToolStripMenuItem
-            // 
-            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
-            this.newToolStripMenuItem.Text = "New";
-            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
-            // 
-            // refreshToolStripMenuItem
-            // 
-            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
-            this.refreshToolStripMenuItem.Text = "Refresh";
-            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
-            // 
             // chkExtra
             // 
             this.chkExtra.AutoSize = true;
             this.chkExtra.Checked = true;
             this.chkExtra.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkExtra.Location = new System.Drawing.Point(550, 10);
+            this.chkExtra.Location = new System.Drawing.Point(700, 10);
             this.chkExtra.Name = "chkExtra";
             this.chkExtra.Size = new System.Drawing.Size(70, 17);
             this.chkExtra.TabIndex = 176;
@@ -531,7 +530,7 @@
             this.chkCS2.AutoSize = true;
             this.chkCS2.Checked = true;
             this.chkCS2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCS2.Location = new System.Drawing.Point(462, 10);
+            this.chkCS2.Location = new System.Drawing.Point(612, 10);
             this.chkCS2.Name = "chkCS2";
             this.chkCS2.Size = new System.Drawing.Size(85, 17);
             this.chkCS2.TabIndex = 175;
@@ -543,7 +542,7 @@
             this.chkCS1.AutoSize = true;
             this.chkCS1.Checked = true;
             this.chkCS1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCS1.Location = new System.Drawing.Point(371, 10);
+            this.chkCS1.Location = new System.Drawing.Point(521, 10);
             this.chkCS1.Name = "chkCS1";
             this.chkCS1.Size = new System.Drawing.Size(85, 17);
             this.chkCS1.TabIndex = 174;
@@ -555,7 +554,7 @@
             this.chkSize.AutoSize = true;
             this.chkSize.Checked = true;
             this.chkSize.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSize.Location = new System.Drawing.Point(274, 10);
+            this.chkSize.Location = new System.Drawing.Point(424, 10);
             this.chkSize.Name = "chkSize";
             this.chkSize.Size = new System.Drawing.Size(91, 17);
             this.chkSize.TabIndex = 173;
@@ -567,7 +566,7 @@
             this.chkRange.AutoSize = true;
             this.chkRange.Checked = true;
             this.chkRange.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRange.Location = new System.Drawing.Point(171, 10);
+            this.chkRange.Location = new System.Drawing.Point(321, 10);
             this.chkRange.Name = "chkRange";
             this.chkRange.Size = new System.Drawing.Size(98, 17);
             this.chkRange.TabIndex = 172;
@@ -576,9 +575,9 @@
             // 
             // btnSaveFileInfo
             // 
-            this.btnSaveFileInfo.Location = new System.Drawing.Point(94, 3);
+            this.btnSaveFileInfo.Location = new System.Drawing.Point(92, 4);
             this.btnSaveFileInfo.Name = "btnSaveFileInfo";
-            this.btnSaveFileInfo.Size = new System.Drawing.Size(71, 28);
+            this.btnSaveFileInfo.Size = new System.Drawing.Size(78, 28);
             this.btnSaveFileInfo.TabIndex = 171;
             this.btnSaveFileInfo.Text = "Save As...";
             this.btnSaveFileInfo.UseVisualStyleBackColor = true;
@@ -644,6 +643,8 @@
             // 
             // tabExtract
             // 
+            this.tabExtract.Controls.Add(this.txtExtractMask);
+            this.tabExtract.Controls.Add(this.label8);
             this.tabExtract.Controls.Add(this.txtExtractDescription);
             this.tabExtract.Controls.Add(this.label6);
             this.tabExtract.Controls.Add(this.btnExtract);
@@ -653,22 +654,39 @@
             this.tabExtract.Controls.Add(this.txtExtractRange);
             this.tabExtract.Location = new System.Drawing.Point(4, 22);
             this.tabExtract.Name = "tabExtract";
-            this.tabExtract.Size = new System.Drawing.Size(711, 103);
+            this.tabExtract.Size = new System.Drawing.Size(779, 103);
             this.tabExtract.TabIndex = 3;
             this.tabExtract.Text = "Extract table";
             this.tabExtract.UseVisualStyleBackColor = true;
             // 
+            // txtExtractMask
+            // 
+            this.txtExtractMask.Location = new System.Drawing.Point(124, 28);
+            this.txtExtractMask.Name = "txtExtractMask";
+            this.txtExtractMask.Size = new System.Drawing.Size(226, 20);
+            this.txtExtractMask.TabIndex = 151;
+            this.txtExtractMask.Text = "FF";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(9, 31);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(67, 13);
+            this.label8.TabIndex = 154;
+            this.label8.Text = "Mask (HEX);";
+            // 
             // txtExtractDescription
             // 
-            this.txtExtractDescription.Location = new System.Drawing.Point(124, 58);
+            this.txtExtractDescription.Location = new System.Drawing.Point(124, 77);
             this.txtExtractDescription.Name = "txtExtractDescription";
-            this.txtExtractDescription.Size = new System.Drawing.Size(225, 20);
-            this.txtExtractDescription.TabIndex = 152;
+            this.txtExtractDescription.Size = new System.Drawing.Size(226, 20);
+            this.txtExtractDescription.TabIndex = 153;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(9, 61);
+            this.label6.Location = new System.Drawing.Point(9, 80);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(63, 13);
             this.label6.TabIndex = 5;
@@ -680,23 +698,23 @@
             this.btnExtract.Location = new System.Drawing.Point(637, 9);
             this.btnExtract.Name = "btnExtract";
             this.btnExtract.Size = new System.Drawing.Size(66, 23);
-            this.btnExtract.TabIndex = 153;
+            this.btnExtract.TabIndex = 154;
             this.btnExtract.Text = "Extract";
             this.btnExtract.UseVisualStyleBackColor = true;
             this.btnExtract.Click += new System.EventHandler(this.btnExtract_Click);
             // 
             // txtCompatibleOS
             // 
-            this.txtCompatibleOS.Location = new System.Drawing.Point(124, 32);
+            this.txtCompatibleOS.Location = new System.Drawing.Point(124, 53);
             this.txtCompatibleOS.Name = "txtCompatibleOS";
             this.txtCompatibleOS.Size = new System.Drawing.Size(226, 20);
-            this.txtCompatibleOS.TabIndex = 151;
+            this.txtCompatibleOS.TabIndex = 152;
             this.txtCompatibleOS.TextChanged += new System.EventHandler(this.txtCompatibleOS_TextChanged);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 35);
+            this.label5.Location = new System.Drawing.Point(9, 54);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(95, 13);
             this.label5.TabIndex = 2;
@@ -721,6 +739,7 @@
             // 
             // tabFileinfo
             // 
+            this.tabFileinfo.Controls.Add(this.btnAddtoStock);
             this.tabFileinfo.Controls.Add(this.chkExtra);
             this.tabFileinfo.Controls.Add(this.btnLoadFolder);
             this.tabFileinfo.Controls.Add(this.chkCS2);
@@ -730,10 +749,20 @@
             this.tabFileinfo.Controls.Add(this.chkSize);
             this.tabFileinfo.Location = new System.Drawing.Point(4, 22);
             this.tabFileinfo.Name = "tabFileinfo";
-            this.tabFileinfo.Size = new System.Drawing.Size(711, 103);
+            this.tabFileinfo.Size = new System.Drawing.Size(779, 103);
             this.tabFileinfo.TabIndex = 2;
             this.tabFileinfo.Text = "File info";
             this.tabFileinfo.UseVisualStyleBackColor = true;
+            // 
+            // btnAddtoStock
+            // 
+            this.btnAddtoStock.Location = new System.Drawing.Point(6, 55);
+            this.btnAddtoStock.Name = "btnAddtoStock";
+            this.btnAddtoStock.Size = new System.Drawing.Size(164, 30);
+            this.btnAddtoStock.TabIndex = 177;
+            this.btnAddtoStock.Text = "Add to: \"stockcvn.xml\"";
+            this.btnAddtoStock.UseVisualStyleBackColor = true;
+            this.btnAddtoStock.Click += new System.EventHandler(this.buttonAddtoStock_Click);
             // 
             // tabApply
             // 
@@ -744,7 +773,7 @@
             this.tabApply.Location = new System.Drawing.Point(4, 22);
             this.tabApply.Name = "tabApply";
             this.tabApply.Padding = new System.Windows.Forms.Padding(3);
-            this.tabApply.Size = new System.Drawing.Size(711, 103);
+            this.tabApply.Size = new System.Drawing.Size(779, 103);
             this.tabApply.TabIndex = 1;
             this.tabApply.Text = "Modify bin";
             this.tabApply.UseVisualStyleBackColor = true;
@@ -752,7 +781,7 @@
             // btnBinLoadPatch
             // 
             this.btnBinLoadPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBinLoadPatch.Location = new System.Drawing.Point(258, 10);
+            this.btnBinLoadPatch.Location = new System.Drawing.Point(9, 6);
             this.btnBinLoadPatch.Name = "btnBinLoadPatch";
             this.btnBinLoadPatch.Size = new System.Drawing.Size(107, 25);
             this.btnBinLoadPatch.TabIndex = 181;
@@ -763,7 +792,7 @@
             // btnCheckSums
             // 
             this.btnCheckSums.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCheckSums.Location = new System.Drawing.Point(485, 10);
+            this.btnCheckSums.Location = new System.Drawing.Point(236, 6);
             this.btnCheckSums.Name = "btnCheckSums";
             this.btnCheckSums.Size = new System.Drawing.Size(107, 25);
             this.btnCheckSums.TabIndex = 183;
@@ -774,7 +803,7 @@
             // btnApplypatch
             // 
             this.btnApplypatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApplypatch.Location = new System.Drawing.Point(372, 10);
+            this.btnApplypatch.Location = new System.Drawing.Point(123, 6);
             this.btnApplypatch.Name = "btnApplypatch";
             this.btnApplypatch.Size = new System.Drawing.Size(107, 25);
             this.btnApplypatch.TabIndex = 182;
@@ -790,7 +819,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(784, 24);
-            this.menuStrip1.TabIndex = 201;
+            this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuMain";
             // 
             // toolStripMenuItem1
@@ -798,7 +827,8 @@
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadConfigToolStripMenuItem,
             this.setupSegmentsToolStripMenuItem,
-            this.auotedetectToolStripMenuItem});
+            this.autodetectToolStripMenuItem,
+            this.stockCVNToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "Settings";
@@ -806,23 +836,30 @@
             // loadConfigToolStripMenuItem
             // 
             this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
-            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadConfigToolStripMenuItem.Text = "Load config";
             this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
             // 
             // setupSegmentsToolStripMenuItem
             // 
             this.setupSegmentsToolStripMenuItem.Name = "setupSegmentsToolStripMenuItem";
-            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.setupSegmentsToolStripMenuItem.Text = "Segments";
             this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
             // 
-            // auotedetectToolStripMenuItem
+            // autodetectToolStripMenuItem
             // 
-            this.auotedetectToolStripMenuItem.Name = "auotedetectToolStripMenuItem";
-            this.auotedetectToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
-            this.auotedetectToolStripMenuItem.Text = "Auotedetect";
-            this.auotedetectToolStripMenuItem.Click += new System.EventHandler(this.auotedetectToolStripMenuItem_Click);
+            this.autodetectToolStripMenuItem.Name = "autodetectToolStripMenuItem";
+            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.autodetectToolStripMenuItem.Text = "Autodetect";
+            this.autodetectToolStripMenuItem.Click += new System.EventHandler(this.autodetectToolStripMenuItem_Click);
+            // 
+            // stockCVNToolStripMenuItem
+            // 
+            this.stockCVNToolStripMenuItem.Name = "stockCVNToolStripMenuItem";
+            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.stockCVNToolStripMenuItem.Text = "Stock CVN";
+            this.stockCVNToolStripMenuItem.Click += new System.EventHandler(this.stockCVNToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -864,8 +901,6 @@
             this.tabPatch.ResumeLayout(false);
             this.tabPatch.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataPatch)).EndInit();
-            this.menuStrip2.ResumeLayout(false);
-            this.menuStrip2.PerformLayout();
             this.tabFunction.ResumeLayout(false);
             this.tabCreate.ResumeLayout(false);
             this.tabCreate.PerformLayout();
@@ -941,14 +976,16 @@
         private System.Windows.Forms.ToolStripMenuItem loadConfigToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setupSegmentsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem auotedetectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem autodetectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-        private System.Windows.Forms.MenuStrip menuStrip2;
-        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
         private System.Windows.Forms.Button btnHelp;
+        private System.Windows.Forms.Button btnAddtoStock;
+        private System.Windows.Forms.ToolStripMenuItem stockCVNToolStripMenuItem;
+        private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Button btnNew;
+        private System.Windows.Forms.Button btnLoad;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.TextBox txtExtractMask;
+        private System.Windows.Forms.Label label8;
     }
 }

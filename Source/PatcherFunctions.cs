@@ -32,6 +32,16 @@ public class upatcher
         public string Rule { get; set; }
         public string HelpFile { get; set; }
     }
+
+    public class CVN
+    {
+        public CVN() { }
+        public string XmlFile { get; set; }
+        public string SegmentNr { get; set; }
+        public string PN { get; set; }
+        public string Ver { get; set; }
+        public string cvn { get; set; }
+    }
     public struct Block
     {
         public uint Start;
@@ -74,6 +84,7 @@ public class upatcher
         public short CS2Complement;   //Calculate 1's or 2's Complement from Checksum?
         public bool CS1SwapBytes;
         public bool CS2SwapBytes;
+        public int CVN;             //0=None, 1=Checksum 1, 2=Checksum 2
         public bool Eeprom;         //Special case: P01 or P59 Eeprom segment
         public string PNAddr;
         public string VerAddr;
@@ -97,6 +108,7 @@ public class upatcher
     public static List<SegmentConfig> Segments = new List<SegmentConfig>();
     public static List<DetectRule> DetectRules;
     public static List<XmlPatch> PatchList;
+    public static List<CVN> StockCVN;
 
     public static string XMLFile;
 

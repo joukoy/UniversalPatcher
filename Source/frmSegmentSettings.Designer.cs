@@ -92,6 +92,8 @@
             this.label10 = new System.Windows.Forms.Label();
             this.btnCheckword = new System.Windows.Forms.Button();
             this.btnFindSegment = new System.Windows.Forms.Button();
+            this.label11 = new System.Windows.Forms.Label();
+            this.comboCVN = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -721,11 +723,35 @@
             this.btnFindSegment.UseVisualStyleBackColor = true;
             this.btnFindSegment.Click += new System.EventHandler(this.btnFindSegment_Click);
             // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(274, 235);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(32, 13);
+            this.label11.TabIndex = 221;
+            this.label11.Text = "CVN:";
+            // 
+            // comboCVN
+            // 
+            this.comboCVN.FormattingEnabled = true;
+            this.comboCVN.Items.AddRange(new object[] {
+            "None",
+            "Checksum 1",
+            "Checksum 2"});
+            this.comboCVN.Location = new System.Drawing.Point(414, 235);
+            this.comboCVN.Name = "comboCVN";
+            this.comboCVN.Size = new System.Drawing.Size(110, 21);
+            this.comboCVN.TabIndex = 222;
+            this.comboCVN.Text = "None";
+            // 
             // frmSegmentSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(533, 476);
+            this.Controls.Add(this.comboCVN);
+            this.Controls.Add(this.label11);
             this.Controls.Add(this.btnFindSegment);
             this.Controls.Add(this.btnCheckword);
             this.Controls.Add(this.label10);
@@ -853,5 +879,7 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button btnCheckword;
         private System.Windows.Forms.Button btnFindSegment;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.ComboBox comboCVN;
     }
 }
