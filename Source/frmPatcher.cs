@@ -45,6 +45,7 @@ namespace UniversalPatcher
         private CheckBox[] chkSegments;
         private string LastXML = "";
         private BindingSource bindingSource = new BindingSource();
+        private BindingSource CvnSource = new BindingSource();
 
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
@@ -152,7 +153,7 @@ namespace UniversalPatcher
             }
         }
 
-        private bool CheckStockCVN(string PN, string Ver, string SegNr, string cvn)
+        private bool CheckStockCVN(string PN, string Ver, string SegNr, string cvn, bool AddToList)
         {
             for (int c=0; c < StockCVN.Count; c++)
             {
@@ -160,6 +161,19 @@ namespace UniversalPatcher
                 {
                     return true;
                 }
+            }
+            if (AddToList)
+            {
+                CVN C1 = new CVN();
+                C1.cvn = cvn;
+                C1.PN = PN;
+                C1.SegmentNr = SegNr;
+                C1.Ver = Ver;
+                C1.XmlFile = Path.GetFileName(XMLFile);
+                if (ListCVN == null)
+                    ListCVN = new List<CVN>();
+                ListCVN.Add(C1);
+                RefreshCVNlist();
             }
             return false;
         }
@@ -275,29 +289,33 @@ namespace UniversalPatcher
                         }
                         else
                         {
+                            string PN = PCM.ReadInfo(PCM.binfile[i].PNaddr);
+                            string Ver = PCM.ReadInfo(PCM.binfile[i].VerAddr);
+                            string SNr = PCM.ReadInfo(PCM.binfile[i].SegNrAddr);
                             if (S.CS1Method != CSMethod_None && chkCS1.Checked)
                             {
                                 string CS1 = "";
                                 string CS1Calc = CalculateChecksum(PCM.buf, PCM.binfile[i].CS1Address, PCM.binfile[i].CS1Blocks, PCM.binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, PCM.binfile[i].CS1Address.Bytes, S.CS1SwapBytes).ToString("X4");
                                 if (PCM.binfile[i].CS1Address.Bytes == 0)
-                                    Logger(" Checksum1: " + CS1Calc,false);
+                                {
+                                    Logger(" Checksum1: " + CS1Calc, false);
+                                    if (CheckStockCVN(PN, Ver, SNr, CS1Calc,true))
+                                        Logger("[Stock]", false);
+                                }
                                 else
                                 {
                                     CS1 = PCM.ReadInfo(PCM.binfile[i].CS1Address);
                                     if (CS1 == CS1Calc)
-                                    { 
+                                    {
                                         Logger(" Checksum 1: " + CS1 + " [OK]", false);
                                         if (S.CVN == 1)
                                         {
-                                            string PN = PCM.ReadInfo(PCM.binfile[i].PNaddr);
-                                            string Ver = PCM.ReadInfo(PCM.binfile[i].VerAddr);
-                                            string SNr = PCM.ReadInfo(PCM.binfile[i].SegNrAddr);
-                                            if (CheckStockCVN(PN, Ver, SNr, CS1))
+                                            if (CheckStockCVN(PN, Ver, SNr, CS1,true))
                                                 Logger("[Stock]", false);
                                         }
                                     }
                                     else
-                                    { 
+                                    {
                                         Logger(" Checksum 1: " + CS1 + ", Calculated: " + CS1Calc + " [Fail]", false);
                                     }
                                 }
@@ -308,7 +326,11 @@ namespace UniversalPatcher
                                 string CS2 = "";
                                 string CS2Calc = CalculateChecksum(PCM.buf, PCM.binfile[i].CS2Address, PCM.binfile[i].CS2Blocks, PCM.binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, PCM.binfile[i].CS2Address.Bytes, S.CS2SwapBytes).ToString("X4");
                                 if (PCM.binfile[i].CS2Address.Bytes == 0)
+                                { 
                                     Logger(" Checksum1: " + CS2Calc, false);
+                                    if (CheckStockCVN(PN, Ver, SNr, CS2Calc,true))
+                                        Logger("[Stock]", false);
+                                }
                                 else
                                 {
                                     CS2 = PCM.ReadInfo(PCM.binfile[i].CS2Address);
@@ -317,11 +339,7 @@ namespace UniversalPatcher
                                         Logger(" Checksum 2: " + CS2 + " [OK]", false);
                                         if (S.CVN == 2)
                                         {
-                                            string PN = PCM.ReadInfo(PCM.binfile[i].PNaddr);
-                                            string Ver = PCM.ReadInfo(PCM.binfile[i].VerAddr);
-                                            string SNr = PCM.ReadInfo(PCM.binfile[i].SegNrAddr);
-
-                                            if (CheckStockCVN(PN, Ver, SNr, CS2))
+                                            if (CheckStockCVN(PN, Ver, SNr, CS2, true))
                                                 Logger("[Stock]", false);
                                         }
 
@@ -497,14 +515,18 @@ namespace UniversalPatcher
                             foreach(string Part in Parts)
                             {                            
                                 //Actually add patch data:
-                                if (Part.Contains(":"))
+                                if (Part.Contains("[") || Part.Contains(":"))
                                 {
                                     //Set bits / use Mask
                                     byte Origdata = basefile.buf[Addr];
                                     Debug.WriteLine("Set address: " + Addr.ToString("X") + ", old data: " + Origdata.ToString("X"));
-                                    string[] dataparts = Part.Split(':');
+                                    string[] dataparts;
+                                    if (Part.Contains("["))
+                                        dataparts = Part.Split('[');
+                                    else
+                                        dataparts = Part.Split(':');
                                     byte Setdata = byte.Parse(dataparts[0], System.Globalization.NumberStyles.HexNumber);
-                                    byte Mask = byte.Parse(dataparts[1], System.Globalization.NumberStyles.HexNumber);
+                                    byte Mask = byte.Parse(dataparts[1].Replace("]",""), System.Globalization.NumberStyles.HexNumber);
 
                                     // Set 1
                                     byte tmpMask = (byte)(Mask & Setdata);
@@ -1111,7 +1133,7 @@ namespace UniversalPatcher
                     else
                     {
                         byte Mask = byte.Parse(MaskText, System.Globalization.NumberStyles.HexNumber);
-                        xpatch.Data += (basefile.buf[i] & Mask).ToString("X2") + ":" + MaskText;
+                        xpatch.Data += (basefile.buf[i] & Mask).ToString("X2") + "[" + MaskText +"]";
                     }
                 }
                 if (PatchList == null)
@@ -1131,6 +1153,7 @@ namespace UniversalPatcher
         {
             uint Start;
             uint End;
+            string MaskText = "";
             if (txtBaseFile.Text.Length == 0)
                 return;
             basefile = new PcmFile(txtBaseFile.Text);
@@ -1141,8 +1164,15 @@ namespace UniversalPatcher
                 txtCompatibleOS.Text = "ALL";
             string[] OSlist = txtCompatibleOS.Text.Split(',');
             string[] blocks = txtExtractRange.Text.Split(',');
-            foreach (string block in blocks) 
-            { 
+            for (int b=0; b< blocks.Length; b++) 
+            {
+                string block = blocks[b];
+                if (block.Contains("["))
+                {
+                    string[] AddrMask = block.Split('[');
+                    block = AddrMask[0];
+                    MaskText = AddrMask[1].Replace("]", "");
+                }
                 if (block.Contains(":"))
                 {
                     string[] StartEnd = block.Split(':');
@@ -1177,7 +1207,7 @@ namespace UniversalPatcher
                         return;
                     }
                 }
-                ExtractTable(Start, End, OSlist, txtExtractMask.Text);
+                ExtractTable(Start, End, OSlist, MaskText);
             }
 
         }
@@ -1511,36 +1541,20 @@ namespace UniversalPatcher
             {
                 bool isNew = false;
                 int counter = 0;
-                for (int i=0;i < Segments.Count; i++)
+                for (int i=0;i < ListCVN.Count; i++)
                 {
-                    if (Segments[i].CVN > 0)
+                    CVN stock = ListCVN[i];
+                    counter++;
+                    if (!CheckStockCVN(stock.PN,stock.Ver,stock.SegmentNr,stock.cvn, false))
                     {
-                        CVN stock = new CVN();
-                        counter++;
-                        SegmentConfig S = Segments[i];
-                        if (Segments[i].CVN == 1)
-                        {
-                            stock.cvn = CalculateChecksum(basefile.buf, basefile.binfile[i].CS1Address, basefile.binfile[i].CS1Blocks, basefile.binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, basefile.binfile[i].CS1Address.Bytes, S.CS1SwapBytes).ToString("X4");
-                        }
-                        if (Segments[i].CVN == 2)
-                        {
-                            stock.cvn = CalculateChecksum(basefile.buf, basefile.binfile[i].CS2Address, basefile.binfile[i].CS2Blocks, basefile.binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, basefile.binfile[i].CS2Address.Bytes, S.CS2SwapBytes).ToString("X4");
-                        }
-                        stock.PN = basefile.ReadInfo(basefile.binfile[i].PNaddr);
-                        stock.Ver = basefile.ReadInfo(basefile.binfile[i].VerAddr);
-                        stock.SegmentNr = basefile.ReadInfo(basefile.binfile[i].SegNrAddr);
-                        stock.XmlFile = Path.GetFileName(XMLFile);
-                        if (!CheckStockCVN(stock.PN,stock.Ver,stock.SegmentNr,stock.cvn))
-                        {
-                            //Add if not already in list
-                            StockCVN.Add(stock);
-                            isNew = true;
-                            Debug.WriteLine(stock.PN + " " + stock.Ver + " cvn: " + stock.cvn + " added");
-                        }
-                        else
-                        {
-                            Debug.WriteLine(stock.PN + " " + stock.Ver + " cvn: " + stock.cvn + " Already in list");
-                        }
+                        //Add if not already in list
+                        StockCVN.Add(stock);
+                        isNew = true;
+                        Debug.WriteLine(stock.PN + " " + stock.Ver + " cvn: " + stock.cvn + " added");
+                    }
+                    else
+                    {
+                        Debug.WriteLine(stock.PN + " " + stock.Ver + " cvn: " + stock.cvn + " Already in list");
                     }
                 }
                 if (counter == 0)
@@ -1599,6 +1613,32 @@ namespace UniversalPatcher
         {
             RefreshDatagrid();
 
+        }
+
+        private void RefreshCVNlist()
+        {
+            dataCVN.DataSource = null;
+            CvnSource.DataSource = null;
+            CvnSource.DataSource = ListCVN;
+            dataCVN.DataSource = CvnSource;
+            if (ListCVN.Count > 0)
+                tabCVN.Text = "CVN (" + ListCVN.Count.ToString() + ")";
+            else
+                tabCVN.Text = "CVN";
+        }
+
+        private void ClearCVNlist()
+        {
+            ListCVN = new List<CVN>();
+            dataCVN.DataSource = null;
+            CvnSource.DataSource = null;
+            CvnSource.DataSource = ListCVN;
+            dataCVN.DataSource = CvnSource;
+        }
+
+        private void btnClearCVN_Click(object sender, EventArgs e)
+        {
+            ClearCVNlist();
         }
     }
 

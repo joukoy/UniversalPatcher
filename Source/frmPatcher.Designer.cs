@@ -63,6 +63,10 @@
             this.btnManualPatch = new System.Windows.Forms.Button();
             this.labelPatchname = new System.Windows.Forms.Label();
             this.dataPatch = new System.Windows.Forms.DataGridView();
+            this.tabCVN = new System.Windows.Forms.TabPage();
+            this.btnClearCVN = new System.Windows.Forms.Button();
+            this.btnAddtoStock = new System.Windows.Forms.Button();
+            this.dataCVN = new System.Windows.Forms.DataGridView();
             this.chkExtra = new System.Windows.Forms.CheckBox();
             this.chkCS2 = new System.Windows.Forms.CheckBox();
             this.chkCS1 = new System.Windows.Forms.CheckBox();
@@ -75,8 +79,6 @@
             this.txtOS = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.tabExtract = new System.Windows.Forms.TabPage();
-            this.txtExtractMask = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
             this.txtExtractDescription = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.btnExtract = new System.Windows.Forms.Button();
@@ -85,7 +87,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.txtExtractRange = new System.Windows.Forms.TextBox();
             this.tabFileinfo = new System.Windows.Forms.TabPage();
-            this.btnAddtoStock = new System.Windows.Forms.Button();
             this.tabApply = new System.Windows.Forms.TabPage();
             this.btnBinLoadPatch = new System.Windows.Forms.Button();
             this.btnCheckSums = new System.Windows.Forms.Button();
@@ -104,6 +105,8 @@
             this.tabDebug.SuspendLayout();
             this.tabPatch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataPatch)).BeginInit();
+            this.tabCVN.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataCVN)).BeginInit();
             this.tabFunction.SuspendLayout();
             this.tabCreate.SuspendLayout();
             this.tabExtract.SuspendLayout();
@@ -298,6 +301,7 @@
             this.tabControl1.Controls.Add(this.tabInfo);
             this.tabControl1.Controls.Add(this.tabDebug);
             this.tabControl1.Controls.Add(this.tabPatch);
+            this.tabControl1.Controls.Add(this.tabCVN);
             this.tabControl1.Location = new System.Drawing.Point(0, 191);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -513,6 +517,50 @@
             this.dataPatch.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPatch_CellContentClick);
             this.dataPatch.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPatch_CellContentDoubleClick);
             // 
+            // tabCVN
+            // 
+            this.tabCVN.Controls.Add(this.btnClearCVN);
+            this.tabCVN.Controls.Add(this.btnAddtoStock);
+            this.tabCVN.Controls.Add(this.dataCVN);
+            this.tabCVN.Location = new System.Drawing.Point(4, 22);
+            this.tabCVN.Name = "tabCVN";
+            this.tabCVN.Size = new System.Drawing.Size(776, 344);
+            this.tabCVN.TabIndex = 3;
+            this.tabCVN.Text = "CVN";
+            this.tabCVN.UseVisualStyleBackColor = true;
+            // 
+            // btnClearCVN
+            // 
+            this.btnClearCVN.Location = new System.Drawing.Point(5, 7);
+            this.btnClearCVN.Name = "btnClearCVN";
+            this.btnClearCVN.Size = new System.Drawing.Size(62, 22);
+            this.btnClearCVN.TabIndex = 178;
+            this.btnClearCVN.Text = "Clear";
+            this.btnClearCVN.UseVisualStyleBackColor = true;
+            this.btnClearCVN.Click += new System.EventHandler(this.btnClearCVN_Click);
+            // 
+            // btnAddtoStock
+            // 
+            this.btnAddtoStock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddtoStock.Location = new System.Drawing.Point(637, 7);
+            this.btnAddtoStock.Name = "btnAddtoStock";
+            this.btnAddtoStock.Size = new System.Drawing.Size(136, 22);
+            this.btnAddtoStock.TabIndex = 177;
+            this.btnAddtoStock.Text = "Add to: \"stockcvn.xml\"";
+            this.btnAddtoStock.UseVisualStyleBackColor = true;
+            this.btnAddtoStock.Click += new System.EventHandler(this.buttonAddtoStock_Click);
+            // 
+            // dataCVN
+            // 
+            this.dataCVN.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataCVN.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataCVN.Location = new System.Drawing.Point(1, 33);
+            this.dataCVN.Name = "dataCVN";
+            this.dataCVN.Size = new System.Drawing.Size(776, 310);
+            this.dataCVN.TabIndex = 0;
+            // 
             // chkExtra
             // 
             this.chkExtra.AutoSize = true;
@@ -643,8 +691,6 @@
             // 
             // tabExtract
             // 
-            this.tabExtract.Controls.Add(this.txtExtractMask);
-            this.tabExtract.Controls.Add(this.label8);
             this.tabExtract.Controls.Add(this.txtExtractDescription);
             this.tabExtract.Controls.Add(this.label6);
             this.tabExtract.Controls.Add(this.btnExtract);
@@ -659,26 +705,9 @@
             this.tabExtract.Text = "Extract table";
             this.tabExtract.UseVisualStyleBackColor = true;
             // 
-            // txtExtractMask
-            // 
-            this.txtExtractMask.Location = new System.Drawing.Point(124, 28);
-            this.txtExtractMask.Name = "txtExtractMask";
-            this.txtExtractMask.Size = new System.Drawing.Size(226, 20);
-            this.txtExtractMask.TabIndex = 151;
-            this.txtExtractMask.Text = "FF";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(9, 31);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(67, 13);
-            this.label8.TabIndex = 154;
-            this.label8.Text = "Mask (HEX);";
-            // 
             // txtExtractDescription
             // 
-            this.txtExtractDescription.Location = new System.Drawing.Point(124, 77);
+            this.txtExtractDescription.Location = new System.Drawing.Point(124, 56);
             this.txtExtractDescription.Name = "txtExtractDescription";
             this.txtExtractDescription.Size = new System.Drawing.Size(226, 20);
             this.txtExtractDescription.TabIndex = 153;
@@ -686,7 +715,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(9, 80);
+            this.label6.Location = new System.Drawing.Point(9, 59);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(63, 13);
             this.label6.TabIndex = 5;
@@ -705,7 +734,7 @@
             // 
             // txtCompatibleOS
             // 
-            this.txtCompatibleOS.Location = new System.Drawing.Point(124, 53);
+            this.txtCompatibleOS.Location = new System.Drawing.Point(124, 32);
             this.txtCompatibleOS.Name = "txtCompatibleOS";
             this.txtCompatibleOS.Size = new System.Drawing.Size(226, 20);
             this.txtCompatibleOS.TabIndex = 152;
@@ -714,7 +743,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 54);
+            this.label5.Location = new System.Drawing.Point(9, 33);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(95, 13);
             this.label5.TabIndex = 2;
@@ -739,7 +768,6 @@
             // 
             // tabFileinfo
             // 
-            this.tabFileinfo.Controls.Add(this.btnAddtoStock);
             this.tabFileinfo.Controls.Add(this.chkExtra);
             this.tabFileinfo.Controls.Add(this.btnLoadFolder);
             this.tabFileinfo.Controls.Add(this.chkCS2);
@@ -753,16 +781,6 @@
             this.tabFileinfo.TabIndex = 2;
             this.tabFileinfo.Text = "File info";
             this.tabFileinfo.UseVisualStyleBackColor = true;
-            // 
-            // btnAddtoStock
-            // 
-            this.btnAddtoStock.Location = new System.Drawing.Point(6, 55);
-            this.btnAddtoStock.Name = "btnAddtoStock";
-            this.btnAddtoStock.Size = new System.Drawing.Size(164, 30);
-            this.btnAddtoStock.TabIndex = 177;
-            this.btnAddtoStock.Text = "Add to: \"stockcvn.xml\"";
-            this.btnAddtoStock.UseVisualStyleBackColor = true;
-            this.btnAddtoStock.Click += new System.EventHandler(this.buttonAddtoStock_Click);
             // 
             // tabApply
             // 
@@ -836,28 +854,28 @@
             // loadConfigToolStripMenuItem
             // 
             this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
-            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.loadConfigToolStripMenuItem.Text = "Load config";
             this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
             // 
             // setupSegmentsToolStripMenuItem
             // 
             this.setupSegmentsToolStripMenuItem.Name = "setupSegmentsToolStripMenuItem";
-            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.setupSegmentsToolStripMenuItem.Text = "Segments";
             this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
             // 
             // autodetectToolStripMenuItem
             // 
             this.autodetectToolStripMenuItem.Name = "autodetectToolStripMenuItem";
-            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.autodetectToolStripMenuItem.Text = "Autodetect";
             this.autodetectToolStripMenuItem.Click += new System.EventHandler(this.autodetectToolStripMenuItem_Click);
             // 
             // stockCVNToolStripMenuItem
             // 
             this.stockCVNToolStripMenuItem.Name = "stockCVNToolStripMenuItem";
-            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.stockCVNToolStripMenuItem.Text = "Stock CVN";
             this.stockCVNToolStripMenuItem.Click += new System.EventHandler(this.stockCVNToolStripMenuItem_Click);
             // 
@@ -901,6 +919,8 @@
             this.tabPatch.ResumeLayout(false);
             this.tabPatch.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataPatch)).EndInit();
+            this.tabCVN.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataCVN)).EndInit();
             this.tabFunction.ResumeLayout(false);
             this.tabCreate.ResumeLayout(false);
             this.tabCreate.PerformLayout();
@@ -985,7 +1005,8 @@
         private System.Windows.Forms.Button btnNew;
         private System.Windows.Forms.Button btnLoad;
         private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.TextBox txtExtractMask;
-        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TabPage tabCVN;
+        private System.Windows.Forms.DataGridView dataCVN;
+        private System.Windows.Forms.Button btnClearCVN;
     }
 }

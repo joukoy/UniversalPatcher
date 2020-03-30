@@ -232,9 +232,9 @@
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(9, 348);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(68, 13);
+            this.label9.Size = new System.Drawing.Size(71, 13);
             this.label9.TabIndex = 92;
-            this.label9.Text = "55:55 FF:0A ";
+            this.label9.Text = "55[55] FF[0A]";
             // 
             // label10
             // 
@@ -300,9 +300,9 @@
             this.label12.AutoSize = true;
             this.label12.Location = new System.Drawing.Point(9, 366);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(277, 13);
+            this.label12.Size = new System.Drawing.Size(283, 13);
             this.label12.TabIndex = 95;
-            this.label12.Text = "(Data:Mask)(Mask: what bits to set, Data: how to set bits)";
+            this.label12.Text = "(Data[Mask]) (Data: how to set bits, Mask: what bits to set)";
             // 
             // frmManualPatch
             // 

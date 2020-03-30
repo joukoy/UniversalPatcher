@@ -109,6 +109,7 @@ public class upatcher
     public static List<DetectRule> DetectRules;
     public static List<XmlPatch> PatchList;
     public static List<CVN> StockCVN;
+    public static List<CVN> ListCVN;
 
     public static string XMLFile;
 
