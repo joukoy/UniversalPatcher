@@ -164,16 +164,28 @@ namespace UniversalPatcher
             }
             if (AddToList)
             {
-                CVN C1 = new CVN();
-                C1.cvn = cvn;
-                C1.PN = PN;
-                C1.SegmentNr = SegNr;
-                C1.Ver = Ver;
-                C1.XmlFile = Path.GetFileName(XMLFile);
+                bool IsinCVNlist = false;
                 if (ListCVN == null)
                     ListCVN = new List<CVN>();
-                ListCVN.Add(C1);
-                RefreshCVNlist();
+                for (int c = 0; c < ListCVN.Count; c++)
+                {
+                    if (ListCVN[c].XmlFile == Path.GetFileName(XMLFile) && ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && ListCVN[c].cvn == cvn)
+                    {
+                        Debug.WriteLine("Already in CVN list: " + cvn);
+                        IsinCVNlist = true;
+                    }
+                }
+                if (!IsinCVNlist)
+                {
+                    CVN C1 = new CVN();
+                    C1.cvn = cvn;
+                    C1.PN = PN;
+                    C1.SegmentNr = SegNr;
+                    C1.Ver = Ver;
+                    C1.XmlFile = Path.GetFileName(XMLFile);
+                    ListCVN.Add(C1);
+                    RefreshCVNlist();
+                }
             }
             return false;
         }
@@ -465,9 +477,9 @@ namespace UniversalPatcher
                             Logger("Segment: " + xpatch.Segment);
                         }
                         bool PatchRule = true; //If there is no rule, apply patch
-                        if (xpatch.Rule != null && xpatch.Rule.Contains(':'))
+                        if (xpatch.Rule != null && (xpatch.Rule.Contains(':') || xpatch.Rule.Contains('[')))
                         {
-                            Parts = xpatch.Rule.Split(':');
+                            Parts = xpatch.Rule.Split(new char[] { ']', '[', ':' }, StringSplitOptions.RemoveEmptyEntries);
                             if (Parts.Length == 3)
                             {
                                 uint RuleAddr;
@@ -521,10 +533,7 @@ namespace UniversalPatcher
                                     byte Origdata = basefile.buf[Addr];
                                     Debug.WriteLine("Set address: " + Addr.ToString("X") + ", old data: " + Origdata.ToString("X"));
                                     string[] dataparts;
-                                    if (Part.Contains("["))
-                                        dataparts = Part.Split('[');
-                                    else
-                                        dataparts = Part.Split(':');
+                                    dataparts = Part.Split(new char[] { ']', '[', ':' }, StringSplitOptions.RemoveEmptyEntries);
                                     byte Setdata = byte.Parse(dataparts[0], System.Globalization.NumberStyles.HexNumber);
                                     byte Mask = byte.Parse(dataparts[1].Replace("]",""), System.Globalization.NumberStyles.HexNumber);
 
@@ -1289,7 +1298,7 @@ namespace UniversalPatcher
                 XP.Data = frmM.txtData.Text;
                 if (frmM.txtReadAddr.Text.Length > 0)
                 {
-                    XP.Rule = frmM.txtReadAddr.Text + ":" + frmM.txtMask.Text + ":";
+                    XP.Rule = frmM.txtReadAddr.Text + "[" + frmM.txtMask.Text + "]";
                     if (frmM.chkNOT.Checked)
                         XP.Rule += "!";
                     XP.Rule += frmM.txtValue.Text;
