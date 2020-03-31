@@ -295,7 +295,7 @@ public class upatcher
         }
         if (SwapB)
         {
-            if (Bytes == 2)
+            if (Bytes == 2 || Method == CSMethod_crc16)
                 sum = (ushort)SwapBytes((ushort)sum);
             else
                 sum = SwapBytes(sum);

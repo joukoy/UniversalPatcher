@@ -86,5 +86,36 @@ namespace UniversalPatcher
             Application.DoEvents();
         }
 
+        private void btnSaveCSV_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+            Logger("Writing to file: " + Path.GetFileName(FileName), false);
+            using (StreamWriter writetext = new StreamWriter(FileName))
+            {
+                string row = "";
+                for (int i= 0;i< dataGridView1.Columns.Count; i++)
+                {
+                    if (i > 0)
+                        row += ";";
+                    row += dataGridView1.Columns[i].HeaderText;
+                }
+                writetext.WriteLine(row);
+                for (int r = 0; r < (dataGridView1.Rows.Count - 1); r++)
+                {
+                    row = "";
+                    for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                    {
+                        if (i > 0)
+                            row += ";";
+                        if (dataGridView1.Rows[r].Cells[i].Value != null)
+                            row += dataGridView1.Rows[r].Cells[i].Value.ToString();
+                    }
+                    writetext.WriteLine(row);
+                }                
+            }
+            Logger(" [OK]");
+        }
     }
 }

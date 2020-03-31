@@ -304,6 +304,7 @@ namespace UniversalPatcher
                             string PN = PCM.ReadInfo(PCM.binfile[i].PNaddr);
                             string Ver = PCM.ReadInfo(PCM.binfile[i].VerAddr);
                             string SNr = PCM.ReadInfo(PCM.binfile[i].SegNrAddr);
+                            bool isStock = false;
                             if (S.CS1Method != CSMethod_None && chkCS1.Checked)
                             {
                                 string CS1 = "";
@@ -311,8 +312,7 @@ namespace UniversalPatcher
                                 if (PCM.binfile[i].CS1Address.Bytes == 0)
                                 {
                                     Logger(" Checksum1: " + CS1Calc, false);
-                                    if (CheckStockCVN(PN, Ver, SNr, CS1Calc,true))
-                                        Logger("[Stock]", false);
+                                    isStock = CheckStockCVN(PN, Ver, SNr, CS1Calc, true);
                                 }
                                 else
                                 {
@@ -322,8 +322,7 @@ namespace UniversalPatcher
                                         Logger(" Checksum 1: " + CS1 + " [OK]", false);
                                         if (S.CVN == 1)
                                         {
-                                            if (CheckStockCVN(PN, Ver, SNr, CS1,true))
-                                                Logger("[Stock]", false);
+                                            isStock = CheckStockCVN(PN, Ver, SNr, CS1, true);
                                         }
                                     }
                                     else
@@ -340,8 +339,7 @@ namespace UniversalPatcher
                                 if (PCM.binfile[i].CS2Address.Bytes == 0)
                                 { 
                                     Logger(" Checksum1: " + CS2Calc, false);
-                                    if (CheckStockCVN(PN, Ver, SNr, CS2Calc,true))
-                                        Logger("[Stock]", false);
+                                    isStock = CheckStockCVN(PN, Ver, SNr, CS2Calc, true);
                                 }
                                 else
                                 {
@@ -351,8 +349,7 @@ namespace UniversalPatcher
                                         Logger(" Checksum 2: " + CS2 + " [OK]", false);
                                         if (S.CVN == 2)
                                         {
-                                            if (CheckStockCVN(PN, Ver, SNr, CS2, true))
-                                                Logger("[Stock]", false);
+                                            isStock = CheckStockCVN(PN, Ver, SNr, CS2, true);
                                         }
 
                                     }
@@ -362,8 +359,11 @@ namespace UniversalPatcher
                                     }
                                 }
                             }
+                            if (isStock)
+                                LoggerBold("[Stock]",false);
 
                         }
+
                         if (!txtResult.Text.EndsWith(Environment.NewLine))
                             txtResult.AppendText(Environment.NewLine);
                     }
@@ -574,7 +574,7 @@ namespace UniversalPatcher
             return true;
         }
 
-        private void CompareBlock(byte[] OrgFile, byte[] ModFile, uint Start, uint End, string CurrentSegment)
+        private void CompareBlock(byte[] OrgFile, byte[] ModFile, uint Start, uint End, string CurrentSegment, AddressData[] SkipList)
         {
             Logger(" [" + Start.ToString("X") + " - " + End.ToString("X") + "] ");
             uint ModCount = 0;
@@ -584,27 +584,42 @@ namespace UniversalPatcher
             {
                 if (OrgFile[i] != ModFile[i])
                 {
-                    if (!BlockStarted)
+                    bool SkipAddr = false;
+                    for (int s=0; s<SkipList.Length; s++)
                     {
-                        //Start new block 
-                        xpatch = new XmlPatch();
-                        xpatch.CompatibleOS = txtOS.Text;
-                        xpatch.XmlFile = Path.GetFileName(XMLFile);
-                        xpatch.Data = "";
-                        xpatch.Description = "";
-                        xpatch.Segment = CurrentSegment;
-                        xpatch.Data = "";
-                        xpatch.CompatibleOS = txtOS.Text + ":" + i.ToString("X");
-                        BlockStarted = true;
+                        if (SkipList[s].Bytes > 0 && i >= SkipList[s].Address && i <= (uint)(SkipList[s].Address + SkipList[s].Bytes - 1))
+                        {
+                            SkipAddr = true;
+                        }
+                    }
+                    if (SkipAddr)
+                    {
+                        Debug.WriteLine("Skipping: " + i.ToString("X") + "(" + CurrentSegment +")");
                     }
                     else
-                        xpatch.Data += " ";
+                    { 
+                        if (!BlockStarted)
+                        {
+                            //Start new block 
+                            xpatch = new XmlPatch();
+                            xpatch.CompatibleOS = txtOS.Text;
+                            xpatch.XmlFile = Path.GetFileName(XMLFile);
+                            xpatch.Data = "";
+                            xpatch.Description = "";
+                            xpatch.Segment = CurrentSegment;
+                            xpatch.Data = "";
+                            xpatch.CompatibleOS = txtOS.Text + ":" + i.ToString("X");
+                            BlockStarted = true;
+                        }
+                        else
+                            xpatch.Data += " ";
 
-                    xpatch.Data += ModFile[i].ToString("X2");
-                    ModCount++;
-                    if (ModCount <= numSuppress.Value)
-                        Logger(i.ToString("X6") + ": " + OrgFile[i].ToString("X2") + " => " + ModFile[i].ToString("X2"));
-                    
+                        xpatch.Data += ModFile[i].ToString("X2");
+                        ModCount++;
+                        if (ModCount <= numSuppress.Value)
+                            Logger(i.ToString("X6") + ": " + OrgFile[i].ToString("X2") + " => " + ModFile[i].ToString("X2"));
+                    }
+
                 }
                 else if (BlockStarted)
                 {
@@ -646,12 +661,14 @@ namespace UniversalPatcher
                 if (Segments.Count == 0)
                 {
                     Logger("No segments defined, comparing complete file");
-                    CompareBlock(basefile.buf, modfile.buf, 0, (uint)fsize, "");
+                    AddressData[] SkipList = new AddressData[0];
+                    CompareBlock(basefile.buf, modfile.buf, 0, (uint)fsize, "", SkipList);
                 }
                 else if (chkCompareAll.Checked)
                 {
                     Logger("Comparing complete file");
-                    CompareBlock(basefile.buf, modfile.buf, 0, (uint)fsize, "");
+                    AddressData[] SkipList = new AddressData[0];
+                    CompareBlock(basefile.buf, modfile.buf, 0, (uint)fsize, "", SkipList);
                 }
                 else
                 {
@@ -664,7 +681,12 @@ namespace UniversalPatcher
                             {
                                 uint Start = basefile.binfile[Snr].SegmentBlocks[p].Start;
                                 uint End = basefile.binfile[Snr].SegmentBlocks[p].End;
-                                CompareBlock(basefile.buf, modfile.buf, Start, End, Segments[Snr].Name);
+                                AddressData[] SkipList = new AddressData[2];
+                                if (Segments[Snr].CS1Address != null && Segments[Snr].CS1Address != "")
+                                    SkipList[0] = basefile.binfile[Snr].CS1Address;
+                                if (Segments[Snr].CS2Address != null && Segments[Snr].CS2Address != "")
+                                    SkipList[1] = basefile.binfile[Snr].CS2Address;
+                                CompareBlock(basefile.buf, modfile.buf, Start, End, Segments[Snr].Name, SkipList);
                             }
                             Logger("");
                         }
@@ -767,11 +789,24 @@ namespace UniversalPatcher
             SaveBin();
         }
 
-        public void Logger(string LogText, Boolean NewLine = true)
+        public void LoggerBold(string LogText, Boolean NewLine = true)
         {
+            txtResult.Focus();
+            int Start = txtResult.Text.Length;
             txtResult.AppendText(LogText);
+            txtResult.Select(Start, LogText.Length);
             if (NewLine)
                 txtResult.AppendText(Environment.NewLine);
+            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Bold);
+            Application.DoEvents();
+        }
+
+        public void Logger(string LogText, Boolean NewLine = true)
+        {
+            txtResult.Focus();
+            txtResult.AppendText(LogText);
+            if (NewLine)
+                txtResult.AppendText(Environment.NewLine);            
             Application.DoEvents();
         }
         private void txtModifierFile_TextChanged(object sender, EventArgs e)
@@ -1114,6 +1149,7 @@ namespace UniversalPatcher
         private void btnApplypatch_Click(object sender, EventArgs e)
         {
             ApplyXMLPatch();
+            btnCheckSums_Click(sender, e);
         }
 
         private void btnSavePatch_Click(object sender, EventArgs e)
@@ -1175,6 +1211,7 @@ namespace UniversalPatcher
             string[] blocks = txtExtractRange.Text.Split(',');
             for (int b=0; b< blocks.Length; b++) 
             {
+                MaskText = "";
                 string block = blocks[b];
                 if (block.Contains("["))
                 {
