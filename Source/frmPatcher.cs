@@ -46,6 +46,7 @@ namespace UniversalPatcher
         private string LastXML = "";
         private BindingSource bindingSource = new BindingSource();
         private BindingSource CvnSource = new BindingSource();
+        private BindingSource Finfosource = new BindingSource();
 
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
@@ -153,232 +154,152 @@ namespace UniversalPatcher
             }
         }
 
-        private bool CheckStockCVN(string PN, string Ver, string SegNr, string cvn, bool AddToList)
-        {
-            for (int c=0; c < StockCVN.Count; c++)
-            {
-                if (StockCVN[c].XmlFile == Path.GetFileName(XMLFile) && StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
-                {
-                    return true;
-                }
-            }
-            if (AddToList)
-            {
-                bool IsinCVNlist = false;
-                if (ListCVN == null)
-                    ListCVN = new List<CVN>();
-                for (int c = 0; c < ListCVN.Count; c++)
-                {
-                    if (ListCVN[c].XmlFile == Path.GetFileName(XMLFile) && ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && ListCVN[c].cvn == cvn)
-                    {
-                        Debug.WriteLine("Already in CVN list: " + cvn);
-                        IsinCVNlist = true;
-                    }
-                }
-                if (!IsinCVNlist)
-                {
-                    CVN C1 = new CVN();
-                    C1.cvn = cvn;
-                    C1.PN = PN;
-                    C1.SegmentNr = SegNr;
-                    C1.Ver = Ver;
-                    C1.XmlFile = Path.GetFileName(XMLFile);
-                    ListCVN.Add(C1);
-                    RefreshCVNlist();
-                }
-            }
-            return false;
-        }
-        private void GetFileInfo(string FileName, ref PcmFile PCM, bool InfoOnly)
+
+        private void ShowFileInfo(PcmFile PCM, bool InfoOnly)
         {
             try
             {
 
-                if (chkAutodetect.Checked)
-                {
-                    string ConfFile = Autodetect(PCM);
-                    Logger("Autodetect: " + ConfFile);
-                    if (ConfFile == "" || ConfFile.Contains(Environment.NewLine))
-                    {
-                        labelXML.Text = "";
-                        XMLFile = "";
-                        Segments.Clear();
-                    }
-                    else
-                    { 
-                        ConfFile = Path.Combine(Application.StartupPath,"XML", ConfFile);
-                        if (File.Exists(ConfFile)) { 
-                            frmSegmenList frmSL = new frmSegmenList();
-                            frmSL.LoadFile(ConfFile);
-                        }
-                        else
-                        {
-                            Logger("XML File not found");
-                            labelXML.Text = "";
-                            XMLFile = "";
-                            Segments.Clear();
-                            Logger(Environment.NewLine + Path.GetFileName(FileName));
-                            return;
-                        }
-                    }
-                }
-                if (Segments == null || Segments.Count == 0)
-                {
-                    labelXML.Text = "";
-                    Logger(Environment.NewLine + Path.GetFileName(FileName));
-                    addCheckBoxes();
-                    return;
-                }
-                txtOS.Text = "ALL";
-                labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
-                Logger(Environment.NewLine + Path.GetFileName(FileName) + " (" + labelXML.Text + ")" + Environment.NewLine);
-                PCM.GetSegmentAddresses();
-                if (Segments.Count > 0)
-                    Logger("Segments:");
                 for (int i = 0; i < Segments.Count; i++)
                 {
                     SegmentConfig S = Segments[i];
-                    if (S.Eeprom)
+                    Logger(PCM.segmentinfos[i].Name.PadRight(11), false);
+                    if (PCM.segmentinfos[i].PN.Length > 1)
                     {
-                        Logger(S.Name + " [4000 - 8000]");
-                        Logger(GmEeprom.GetEEpromInfo(PCM.buf));
+                        if (PCM.segmentinfos[i].Stock == "True")
+                            LoggerBold("PN: " + PCM.segmentinfos[i].PN.PadRight(9), false);
+                        else
+                            Logger(", PN: " + PCM.segmentinfos[i].PN.PadRight(9), false);
+                        if (S.Name == "OS")
+                            txtOS.Text = PCM.segmentinfos[i].PN;
                     }
-                    else
-                    {
-                        string tmp = "";
-                        uint SSize = 0;
-                        for (int s = 0; s < PCM.binfile[i].SegmentBlocks.Count; s++)
-                        {
-                            if (s > 0)
-                                tmp += ", ";
-                            tmp = PCM.binfile[i].SegmentBlocks[s].Start.ToString("X4") + " - " + PCM.binfile[i].SegmentBlocks[s].End.ToString("X4");
-                            SSize += PCM.binfile[i].SegmentBlocks[s].End - PCM.binfile[i].SegmentBlocks[s].Start + 1;
-                        }
-                        Logger(S.Name.PadRight(11), false); 
-                        if (chkRange.Checked) 
-                            Logger(" [" + tmp + "]", false);
-                        if (chkSize.Checked)                            
-                            Logger(", Size: " + SSize.ToString(), false);
-                        string PN = PCM.ReadInfo(PCM.binfile[i].PNaddr);
-                        if (PN.Length > 1)
-                        { 
-                            Logger(", PN: " + PN.PadRight(9), false);
-                            if (S.Name == "OS")
-                                txtOS.Text = PN;
-                        }
-                        string  Ver = PCM.ReadInfo(PCM.binfile[i].VerAddr);
-                        if (Ver.Length > 1)
-                            Logger(", Ver: " + Ver, false);
+                    if (PCM.segmentinfos[i].Ver.Length > 1)
+                        Logger(", Ver: " + PCM.segmentinfos[i].Ver, false);
 
-                        string  SNr = PCM.ReadInfo(PCM.binfile[i].SegNrAddr);
-                        if (SNr.Length > 0)
-                            Logger(", Nr: " + SNr, false);
-                        if (PCM.binfile[i].ExtraInfo != null && PCM.binfile[i].ExtraInfo.Count > 0)
-                        {
-                            string ExtraI = "";
-                            for (int e = 0; e < PCM.binfile[i].ExtraInfo.Count; e++)
-                            {
-                                ExtraI += ", " + PCM.binfile[i].ExtraInfo[e].Name + ": " + PCM.ReadInfo(PCM.binfile[i].ExtraInfo[e]);
-                            }
-                            if (chkExtra.Checked)
-                                Logger(ExtraI);
-                        }
-                    }
+                    if (PCM.segmentinfos[i].SegNr.Length > 0)
+                        Logger(", Nr: " + PCM.segmentinfos[i].SegNr.PadRight(3), false);
+                    if (chkRange.Checked)
+                        Logger("[" + PCM.segmentinfos[i].Address + "]", false);
+                    if (chkSize.Checked)
+                        Logger(", Size: " + PCM.segmentinfos[i].Size.ToString(), false);
+                    if (PCM.segmentinfos[i].ExtraInfo != null && PCM.segmentinfos[i].ExtraInfo.Length > 0)
+                        Logger(", " + PCM.segmentinfos[i].ExtraInfo, false);
+
                     if (!txtResult.Text.EndsWith(Environment.NewLine))
                         Logger("");
-
                 }
                 if (chkCS1.Checked || chkCS2.Checked)
-                { 
+                {
                     Logger("Checksums:");
                     for (int i = 0; i < Segments.Count; i++)
                     {
                         SegmentConfig S = Segments[i];
-                        Logger(S.Name.PadRight(11), false);
-                        if (S.Eeprom)
+                        if (S.CS1Method != CSMethod_None && chkCS1.Checked)
                         {
-                            Logger(GmEeprom.GetKeyStatus(PCM.buf));
-                        }
-                        else
-                        {
-                            string PN = PCM.ReadInfo(PCM.binfile[i].PNaddr);
-                            string Ver = PCM.ReadInfo(PCM.binfile[i].VerAddr);
-                            string SNr = PCM.ReadInfo(PCM.binfile[i].SegNrAddr);
-                            bool isStock = false;
-                            if (S.CS1Method != CSMethod_None && chkCS1.Checked)
+                            if (PCM.binfile[i].CS1Address.Bytes == 0)
                             {
-                                string CS1 = "";
-                                string CS1Calc = CalculateChecksum(PCM.buf, PCM.binfile[i].CS1Address, PCM.binfile[i].CS1Blocks, PCM.binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, PCM.binfile[i].CS1Address.Bytes, S.CS1SwapBytes).ToString("X4");
-                                if (PCM.binfile[i].CS1Address.Bytes == 0)
+                                Logger(" Checksum1: " + PCM.segmentinfos[i].CS1Calc, false);
+                            }
+                            else
+                            {
+                                if (PCM.segmentinfos[i].CS1 == PCM.segmentinfos[i].CS1Calc)
                                 {
-                                    Logger(" Checksum1: " + CS1Calc, false);
-                                    isStock = CheckStockCVN(PN, Ver, SNr, CS1Calc, true);
+                                    Logger(" Checksum 1: " + PCM.segmentinfos[i].CS1 + " [OK]", false);
                                 }
                                 else
                                 {
-                                    CS1 = PCM.ReadInfo(PCM.binfile[i].CS1Address);
-                                    if (CS1 == CS1Calc)
-                                    {
-                                        Logger(" Checksum 1: " + CS1 + " [OK]", false);
-                                        if (S.CVN == 1)
-                                        {
-                                            isStock = CheckStockCVN(PN, Ver, SNr, CS1, true);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Logger(" Checksum 1: " + CS1 + ", Calculated: " + CS1Calc + " [Fail]", false);
-                                    }
+                                    Logger(" Checksum 1: " + PCM.segmentinfos[i].CS1 + ", Calculated: " + PCM.segmentinfos[i].CS1Calc + " [Fail]", false);
                                 }
                             }
+                        }
 
-                            if (S.CS2Method != CSMethod_None && chkCS2.Checked)
+                        if (S.CS2Method != CSMethod_None && chkCS2.Checked)
+                        {
+                            if (PCM.binfile[i].CS2Address.Bytes == 0)
                             {
-                                string CS2 = "";
-                                string CS2Calc = CalculateChecksum(PCM.buf, PCM.binfile[i].CS2Address, PCM.binfile[i].CS2Blocks, PCM.binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, PCM.binfile[i].CS2Address.Bytes, S.CS2SwapBytes).ToString("X4");
-                                if (PCM.binfile[i].CS2Address.Bytes == 0)
-                                { 
-                                    Logger(" Checksum1: " + CS2Calc, false);
-                                    isStock = CheckStockCVN(PN, Ver, SNr, CS2Calc, true);
+                                Logger(" Checksum1: " + PCM.segmentinfos[i].CS2Calc, false);
+                            }
+                            else
+                            {
+                                if (PCM.segmentinfos[i].CS2 == PCM.segmentinfos[i].CS2Calc)
+                                {
+                                    Logger(" Checksum 2: " + PCM.segmentinfos[i].CS2 + " [OK]", false);
                                 }
                                 else
                                 {
-                                    CS2 = PCM.ReadInfo(PCM.binfile[i].CS2Address);
-                                    if (CS2 == CS2Calc)
-                                    {
-                                        Logger(" Checksum 2: " + CS2 + " [OK]", false);
-                                        if (S.CVN == 2)
-                                        {
-                                            isStock = CheckStockCVN(PN, Ver, SNr, CS2, true);
-                                        }
-
-                                    }
-                                    else
-                                    { 
-                                        Logger(" Checksum 2:" + CS2 + ", Calculated: " + CS2Calc + " [Fail]", false);
-                                    }
+                                    Logger(" Checksum 2:" + PCM.segmentinfos[i].CS2 + ", Calculated: " + PCM.segmentinfos[i].CS2Calc + " [Fail]", false);
                                 }
                             }
-                            if (isStock)
-                                LoggerBold("[Stock]",false);
-
                         }
+                        if (PCM.segmentinfos[i].Stock == "True")
+                            LoggerBold("[Stock]", false);
 
                         if (!txtResult.Text.EndsWith(Environment.NewLine))
                             txtResult.AppendText(Environment.NewLine);
                     }
                 }
                 if (!InfoOnly)
-                { 
+                {
                     addCheckBoxes();
                     CheckSegmentCompatibility();
                 }
+                RefreshFileInfo();
             }
             catch (Exception ex)
             {
                 Logger("Error: " + ex.Message);
             }
-            
+
+        }
+
+        private void GetFileInfo(string FileName, ref PcmFile PCM, bool InfoOnly, bool Show = true)
+        {
+            if (chkAutodetect.Checked)
+            {
+                string ConfFile = Autodetect(PCM);
+                Logger("Autodetect: " + ConfFile);
+                if (ConfFile == "" || ConfFile.Contains(Environment.NewLine))
+                {
+                    labelXML.Text = "";
+                    XMLFile = "";
+                    Segments.Clear();
+                }
+                else
+                {
+                    ConfFile = Path.Combine(Application.StartupPath, "XML", ConfFile);
+                    if (File.Exists(ConfFile))
+                    {
+                        frmSegmenList frmSL = new frmSegmenList();
+                        frmSL.LoadFile(ConfFile);
+                    }
+                    else
+                    {
+                        Logger("XML File not found");
+                        labelXML.Text = "";
+                        XMLFile = "";
+                        Segments.Clear();
+                        Logger(Environment.NewLine + Path.GetFileName(FileName));
+                        return;
+                    }
+                }
+            }
+            if (Segments == null || Segments.Count == 0)
+            {
+                labelXML.Text = "";
+                Logger(Environment.NewLine + Path.GetFileName(FileName));
+                addCheckBoxes();
+                return;
+            }
+            txtOS.Text = "ALL";
+            labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
+            Logger(Environment.NewLine + Path.GetFileName(FileName) + " (" + labelXML.Text + ")" + Environment.NewLine);
+            PCM.GetSegmentAddresses();
+            if (Segments.Count > 0)
+                Logger("Segments:");
+            PCM.GetInfo();
+            RefreshCVNlist();
+            if (Show)
+                ShowFileInfo(PCM, InfoOnly);
         }
         private void btnOrgFile_Click(object sender, EventArgs e)
         {
@@ -404,6 +325,17 @@ namespace UniversalPatcher
 
         }
 
+        private void RefreshFileInfo() 
+        { 
+            dataFileInfo.DataSource = null;
+            Finfosource.DataSource = null;
+            Finfosource.DataSource = ListSegment;
+            dataFileInfo.DataSource = Finfosource;
+            if (ListSegment == null || ListSegment.Count == 0)
+                tabFinfo.Text = "File info";
+            else
+                tabFinfo.Text = "File info (" + ListSegment.Count.ToString() + ")";
+        }
         private bool ApplyXMLPatch()
         {
             try
@@ -654,8 +586,8 @@ namespace UniversalPatcher
                 basefile = new PcmFile(txtBaseFile.Text);
                 modfile = new PcmFile(txtModifierFile.Text);
                 PatchList = new List<XmlPatch>();
-                GetFileInfo(txtBaseFile.Text, ref basefile, false);
-                GetFileInfo(txtModifierFile.Text, ref modfile, false);
+                GetFileInfo(txtBaseFile.Text, ref basefile, false, false);
+                GetFileInfo(txtModifierFile.Text, ref modfile, false, false);
 
                 labelBinSize.Text = fsize.ToString();
                 if (Segments.Count == 0)
@@ -804,9 +736,12 @@ namespace UniversalPatcher
         public void Logger(string LogText, Boolean NewLine = true)
         {
             txtResult.Focus();
+            int Start = txtResult.Text.Length;
             txtResult.AppendText(LogText);
+            txtResult.Select(Start, LogText.Length);
             if (NewLine)
-                txtResult.AppendText(Environment.NewLine);            
+                txtResult.AppendText(Environment.NewLine);
+            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
             Application.DoEvents();
         }
         private void txtModifierFile_TextChanged(object sender, EventArgs e)
@@ -1202,7 +1137,7 @@ namespace UniversalPatcher
             if (txtBaseFile.Text.Length == 0)
                 return;
             basefile = new PcmFile(txtBaseFile.Text);
-            GetFileInfo(txtBaseFile.Text, ref basefile, true);
+            GetFileInfo(txtBaseFile.Text, ref basefile, true, false);
             if (txtOS.Text.Length > 0 && txtCompatibleOS.Text.Length == 0)
                 txtCompatibleOS.Text = txtOS.Text;
             if (txtCompatibleOS.Text.Length == 0)
@@ -1667,7 +1602,7 @@ namespace UniversalPatcher
             CvnSource.DataSource = null;
             CvnSource.DataSource = ListCVN;
             dataCVN.DataSource = CvnSource;
-            if (ListCVN.Count > 0)
+            if (ListCVN != null && ListCVN.Count > 0)
                 tabCVN.Text = "CVN (" + ListCVN.Count.ToString() + ")";
             else
                 tabCVN.Text = "CVN";
@@ -1685,6 +1620,45 @@ namespace UniversalPatcher
         private void btnClearCVN_Click(object sender, EventArgs e)
         {
             ClearCVNlist();
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            ListSegment.Clear();
+            RefreshFileInfo();
+        }
+
+        private void btnSaveCSV_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+            Logger("Writing to file: " + Path.GetFileName(FileName), false);
+            using (StreamWriter writetext = new StreamWriter(FileName))
+            {
+                string row = "";
+                for (int i = 0; i < dataFileInfo.Columns.Count; i++)
+                {
+                    if (i > 0)
+                        row += ";";
+                    row += dataFileInfo.Columns[i].HeaderText;
+                }
+                writetext.WriteLine(row);
+                for (int r = 0; r < (dataFileInfo.Rows.Count - 1); r++)
+                {
+                    row = "";
+                    for (int i = 0; i < dataFileInfo.Columns.Count; i++)
+                    {
+                        if (i > 0)
+                            row += ";";
+                        if (dataFileInfo.Rows[r].Cells[i].Value != null)
+                            row += dataFileInfo.Rows[r].Cells[i].Value.ToString();
+                    }
+                    writetext.WriteLine(row);
+                }
+            }
+            Logger(" [OK]");
+
         }
     }
 

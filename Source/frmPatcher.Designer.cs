@@ -47,6 +47,7 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabInfo = new System.Windows.Forms.TabPage();
             this.txtResult = new System.Windows.Forms.RichTextBox();
+            this.btnSaveFileInfo = new System.Windows.Forms.Button();
             this.tabDebug = new System.Windows.Forms.TabPage();
             this.chkDebug = new System.Windows.Forms.CheckBox();
             this.txtDebug = new System.Windows.Forms.TextBox();
@@ -67,12 +68,14 @@
             this.btnClearCVN = new System.Windows.Forms.Button();
             this.btnAddtoStock = new System.Windows.Forms.Button();
             this.dataCVN = new System.Windows.Forms.DataGridView();
+            this.tabFinfo = new System.Windows.Forms.TabPage();
+            this.btnClear = new System.Windows.Forms.Button();
+            this.dataFileInfo = new System.Windows.Forms.DataGridView();
             this.chkExtra = new System.Windows.Forms.CheckBox();
             this.chkCS2 = new System.Windows.Forms.CheckBox();
             this.chkCS1 = new System.Windows.Forms.CheckBox();
             this.chkSize = new System.Windows.Forms.CheckBox();
             this.chkRange = new System.Windows.Forms.CheckBox();
-            this.btnSaveFileInfo = new System.Windows.Forms.Button();
             this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tabFunction = new System.Windows.Forms.TabControl();
             this.tabCreate = new System.Windows.Forms.TabPage();
@@ -99,6 +102,7 @@
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnSaveCSV = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -107,6 +111,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataPatch)).BeginInit();
             this.tabCVN.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataCVN)).BeginInit();
+            this.tabFinfo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataFileInfo)).BeginInit();
             this.tabFunction.SuspendLayout();
             this.tabCreate.SuspendLayout();
             this.tabExtract.SuspendLayout();
@@ -289,6 +295,7 @@
             this.tabControl1.Controls.Add(this.tabDebug);
             this.tabControl1.Controls.Add(this.tabPatch);
             this.tabControl1.Controls.Add(this.tabCVN);
+            this.tabControl1.Controls.Add(this.tabFinfo);
             this.tabControl1.Location = new System.Drawing.Point(0, 191);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -311,7 +318,7 @@
             this.tabInfo.Padding = new System.Windows.Forms.Padding(3);
             this.tabInfo.Size = new System.Drawing.Size(776, 344);
             this.tabInfo.TabIndex = 0;
-            this.tabInfo.Text = "Info";
+            this.tabInfo.Text = "Log";
             this.tabInfo.UseVisualStyleBackColor = true;
             // 
             // txtResult
@@ -325,6 +332,16 @@
             this.txtResult.Size = new System.Drawing.Size(774, 317);
             this.txtResult.TabIndex = 202;
             this.txtResult.Text = "";
+            // 
+            // btnSaveFileInfo
+            // 
+            this.btnSaveFileInfo.Location = new System.Drawing.Point(508, 1);
+            this.btnSaveFileInfo.Name = "btnSaveFileInfo";
+            this.btnSaveFileInfo.Size = new System.Drawing.Size(78, 23);
+            this.btnSaveFileInfo.TabIndex = 171;
+            this.btnSaveFileInfo.Text = "Save As...";
+            this.btnSaveFileInfo.UseVisualStyleBackColor = true;
+            this.btnSaveFileInfo.Click += new System.EventHandler(this.btnSaveFileInfo_Click);
             // 
             // tabDebug
             // 
@@ -563,12 +580,45 @@
             this.dataCVN.Size = new System.Drawing.Size(776, 310);
             this.dataCVN.TabIndex = 0;
             // 
+            // tabFinfo
+            // 
+            this.tabFinfo.Controls.Add(this.btnSaveCSV);
+            this.tabFinfo.Controls.Add(this.btnClear);
+            this.tabFinfo.Controls.Add(this.dataFileInfo);
+            this.tabFinfo.Location = new System.Drawing.Point(4, 22);
+            this.tabFinfo.Name = "tabFinfo";
+            this.tabFinfo.Size = new System.Drawing.Size(776, 344);
+            this.tabFinfo.TabIndex = 4;
+            this.tabFinfo.Text = "File info";
+            this.tabFinfo.UseVisualStyleBackColor = true;
+            // 
+            // btnClear
+            // 
+            this.btnClear.Location = new System.Drawing.Point(6, 4);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(62, 21);
+            this.btnClear.TabIndex = 1;
+            this.btnClear.Text = "Clear";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // dataFileInfo
+            // 
+            this.dataFileInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataFileInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataFileInfo.Location = new System.Drawing.Point(1, 31);
+            this.dataFileInfo.Name = "dataFileInfo";
+            this.dataFileInfo.Size = new System.Drawing.Size(778, 312);
+            this.dataFileInfo.TabIndex = 0;
+            // 
             // chkExtra
             // 
             this.chkExtra.AutoSize = true;
             this.chkExtra.Checked = true;
             this.chkExtra.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkExtra.Location = new System.Drawing.Point(700, 10);
+            this.chkExtra.Location = new System.Drawing.Point(402, 10);
             this.chkExtra.Name = "chkExtra";
             this.chkExtra.Size = new System.Drawing.Size(70, 17);
             this.chkExtra.TabIndex = 176;
@@ -580,7 +630,7 @@
             this.chkCS2.AutoSize = true;
             this.chkCS2.Checked = true;
             this.chkCS2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCS2.Location = new System.Drawing.Point(612, 10);
+            this.chkCS2.Location = new System.Drawing.Point(314, 10);
             this.chkCS2.Name = "chkCS2";
             this.chkCS2.Size = new System.Drawing.Size(85, 17);
             this.chkCS2.TabIndex = 175;
@@ -592,7 +642,7 @@
             this.chkCS1.AutoSize = true;
             this.chkCS1.Checked = true;
             this.chkCS1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCS1.Location = new System.Drawing.Point(521, 10);
+            this.chkCS1.Location = new System.Drawing.Point(223, 10);
             this.chkCS1.Name = "chkCS1";
             this.chkCS1.Size = new System.Drawing.Size(85, 17);
             this.chkCS1.TabIndex = 174;
@@ -604,7 +654,7 @@
             this.chkSize.AutoSize = true;
             this.chkSize.Checked = true;
             this.chkSize.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSize.Location = new System.Drawing.Point(424, 10);
+            this.chkSize.Location = new System.Drawing.Point(581, 10);
             this.chkSize.Name = "chkSize";
             this.chkSize.Size = new System.Drawing.Size(91, 17);
             this.chkSize.TabIndex = 173;
@@ -616,22 +666,12 @@
             this.chkRange.AutoSize = true;
             this.chkRange.Checked = true;
             this.chkRange.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRange.Location = new System.Drawing.Point(321, 10);
+            this.chkRange.Location = new System.Drawing.Point(478, 10);
             this.chkRange.Name = "chkRange";
             this.chkRange.Size = new System.Drawing.Size(98, 17);
             this.chkRange.TabIndex = 172;
             this.chkRange.Text = "Segment range";
             this.chkRange.UseVisualStyleBackColor = true;
-            // 
-            // btnSaveFileInfo
-            // 
-            this.btnSaveFileInfo.Location = new System.Drawing.Point(508, 1);
-            this.btnSaveFileInfo.Name = "btnSaveFileInfo";
-            this.btnSaveFileInfo.Size = new System.Drawing.Size(78, 23);
-            this.btnSaveFileInfo.TabIndex = 171;
-            this.btnSaveFileInfo.Text = "Save As...";
-            this.btnSaveFileInfo.UseVisualStyleBackColor = true;
-            this.btnSaveFileInfo.Click += new System.EventHandler(this.btnSaveFileInfo_Click);
             // 
             // btnLoadFolder
             // 
@@ -895,6 +935,16 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // btnSaveCSV
+            // 
+            this.btnSaveCSV.Location = new System.Drawing.Point(693, 4);
+            this.btnSaveCSV.Name = "btnSaveCSV";
+            this.btnSaveCSV.Size = new System.Drawing.Size(75, 23);
+            this.btnSaveCSV.TabIndex = 4;
+            this.btnSaveCSV.Text = "Save CSV";
+            this.btnSaveCSV.UseVisualStyleBackColor = true;
+            this.btnSaveCSV.Click += new System.EventHandler(this.btnSaveCSV_Click);
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -922,6 +972,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataPatch)).EndInit();
             this.tabCVN.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataCVN)).EndInit();
+            this.tabFinfo.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataFileInfo)).EndInit();
             this.tabFunction.ResumeLayout(false);
             this.tabCreate.ResumeLayout(false);
             this.tabCreate.PerformLayout();
@@ -1009,5 +1061,9 @@
         private System.Windows.Forms.DataGridView dataCVN;
         private System.Windows.Forms.Button btnClearCVN;
         private System.Windows.Forms.RichTextBox txtResult;
+        private System.Windows.Forms.TabPage tabFinfo;
+        private System.Windows.Forms.DataGridView dataFileInfo;
+        private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Button btnSaveCSV;
     }
 }

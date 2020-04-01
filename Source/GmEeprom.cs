@@ -142,7 +142,7 @@ namespace UniversalPatcher
                 Ret += " * Calculated: " + Key.NewKey.ToString("X4") + " [Fail]" + Environment.NewLine;
             return Ret;
         }
-        public static string GetEEpromInfo(byte[] buf)
+        public static string GetEEpromInfoText(byte[] buf)
         {
             uint VINAddr = GetVINAddr(buf);
             string Ver;
@@ -164,6 +164,30 @@ namespace UniversalPatcher
             Ret += " Ver ".PadRight(20) + Ver + Environment.NewLine;
             Ret += " VIN ".PadRight(20) + GetVIN(buf) + Environment.NewLine;
             return Ret;
+        }
+
+        public static void GetEEpromInfo(byte[] buf, ref SegmentInfo sinfo)
+        {
+            uint VINAddr = GetVINAddr(buf);
+
+            if (VINAddr == 1) //Check word not found
+            {
+                sinfo.PN = "Eeprom_data unreadable";
+                return;
+            }
+
+            sinfo.Address = "4000-8000";
+            sinfo.Size = "4000";
+            sinfo.PN = BEToUint32(buf, VINAddr + 4).ToString();
+            sinfo.Ver = ReadTextBlock(buf, (int)VINAddr + 0x1C, 4);
+
+            string Ret = " Hardware ".PadRight(20) + BEToUint32(buf, VINAddr + 4).ToString() + Environment.NewLine;
+            Ret += " Serial ".PadRight(20) + ReadTextBlock(buf, (int)VINAddr + 8, 12) + Environment.NewLine;
+            Ret += " Id ".PadRight(20) + BEToUint32(buf, VINAddr + 0x14).ToString() + Environment.NewLine;
+            Ret += " Id2 ".PadRight(20) + BEToUint32(buf, VINAddr + 0x18).ToString() + Environment.NewLine;
+            Ret += " Broadcast ".PadRight(20) + ReadTextBlock(buf, (int)VINAddr + 0x1C, 4) + Environment.NewLine;
+            Ret += " VIN ".PadRight(20) + GetVIN(buf) + Environment.NewLine;
+            sinfo.ExtraInfo = Ret;
         }
 
     }

@@ -14,6 +14,7 @@ namespace UniversalPatcher
         public byte[] buf;
         public string FileName;
         public BinFile[] binfile;
+        public SegmentInfo[] segmentinfos;
         public uint fsize;
 
         public PcmFile(string FName)
@@ -59,6 +60,94 @@ namespace UniversalPatcher
                 binfile[i].SegNrAddr = ParseAddress(S.SegNrAddr, i);
                 binfile[i].ExtraInfo = ParseExtraInfo(S.ExtraInfo, i);
             }
+        }
+        public void GetInfo()
+        {
+            if (ListSegment == null)
+                ListSegment = new List<SegmentInfo>();
+            segmentinfos = new SegmentInfo[Segments.Count];
+            for (int i = 0; i < Segments.Count; i++)
+            {
+                SegmentConfig S = Segments[i];
+                segmentinfos[i] = new SegmentInfo();
+                segmentinfos[i].Name = S.Name;
+                segmentinfos[i].FileName = FileName;
+                segmentinfos[i].XmlFile = Path.GetFileName(XMLFile);
+                if (S.Eeprom)
+                {
+                    GmEeprom.GetEEpromInfo(buf, ref segmentinfos[i]);
+                    segmentinfos[i].CS1 = GmEeprom.GetKeyStatus(buf);
+                }
+                else
+                {
+                    string tmp = "";
+                    uint SSize = 0;
+                    for (int s = 0; s < binfile[i].SegmentBlocks.Count; s++)
+                    {
+                        if (s > 0)
+                            tmp += ", ";
+                        tmp = binfile[i].SegmentBlocks[s].Start.ToString("X4") + " - " + binfile[i].SegmentBlocks[s].End.ToString("X4");
+                        SSize += binfile[i].SegmentBlocks[s].End - binfile[i].SegmentBlocks[s].Start + 1;
+                    }
+                    segmentinfos[i].Size = SSize.ToString("X");
+                    segmentinfos[i].Address = tmp;
+                    segmentinfos[i].PN = ReadInfo(binfile[i].PNaddr);
+                    segmentinfos[i].Ver = ReadInfo(binfile[i].VerAddr);
+                    segmentinfos[i].SegNr = ReadInfo(binfile[i].SegNrAddr);
+                    if (binfile[i].ExtraInfo != null && binfile[i].ExtraInfo.Count > 0)
+                    {
+                        string ExtraI = "";
+                        for (int e = 0; e < binfile[i].ExtraInfo.Count; e++)
+                        {
+                            if (e > 0)
+                                ExtraI += ", ";
+                            ExtraI += binfile[i].ExtraInfo[e].Name + ": " + ReadInfo(binfile[i].ExtraInfo[e]);
+                        }
+                        segmentinfos[i].ExtraInfo = ExtraI;
+                    }
+
+                    bool isStock = false;
+                    if (S.CS1Method != CSMethod_None)
+                    {
+                        segmentinfos[i].CS1 = "";
+                        segmentinfos[i].CS1Calc = CalculateChecksum(buf, binfile[i].CS1Address, binfile[i].CS1Blocks, binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, binfile[i].CS1Address.Bytes, S.CS1SwapBytes).ToString("X4");
+                        if (binfile[i].CS1Address.Bytes == 0)
+                        {
+                            isStock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS1Calc, true);
+                        }
+                        else
+                        {
+                            segmentinfos[i].CS1 = ReadInfo(binfile[i].CS1Address);
+                            if (segmentinfos[i].CS1 == segmentinfos[i].CS1Calc && S.CVN == 1)
+                            {
+                                isStock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS1, true);
+                            }
+                        }
+                    }
+
+                    if (S.CS2Method != CSMethod_None)
+                    {
+                        segmentinfos[i].CS2 = "";
+                        segmentinfos[i].CS2Calc = CalculateChecksum(buf, binfile[i].CS2Address, binfile[i].CS2Blocks, binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, binfile[i].CS2Address.Bytes, S.CS2SwapBytes).ToString("X4");
+                        if (binfile[i].CS2Address.Bytes == 0)
+                        {
+                            isStock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS2Calc, true);
+                        }
+                        else
+                        {
+                            segmentinfos[i].CS2 = ReadInfo(binfile[i].CS2Address);
+                            if (segmentinfos[i].CS2 == segmentinfos[i].CS2Calc && S.CVN == 2)
+                            {
+                                isStock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS2, true);
+                            }
+                        }
+                        segmentinfos[i].Stock = isStock.ToString();
+
+                    }
+                }
+                ListSegment.Add(segmentinfos[i]);
+            }
+
         }
 
         public bool FindSegment(SegmentConfig S, int SegNr)

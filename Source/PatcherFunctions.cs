@@ -69,6 +69,25 @@ public class upatcher
         public List<AddressData> ExtraInfo;
     }
 
+    public class SegmentInfo
+    {
+        public SegmentInfo() { }
+        public string Name { get; set; }
+        public string FileName { get; set; }
+        public string XmlFile { get; set; }
+        public string Address { get; set; }
+        public string Size { get; set; }
+        public string CS1 { get; set; }
+        public string CS2 { get; set; }
+        public string CS1Calc { get; set; }
+        public string CS2Calc { get; set; }
+        public string Stock { get; set; }
+        public string PN { get; set; }
+        public string Ver { get; set; }
+        public string SegNr { get; set; }
+        public string ExtraInfo { get; set; }
+
+    }
     public struct SegmentConfig
     {
         public string Name;
@@ -110,6 +129,7 @@ public class upatcher
     public static List<XmlPatch> PatchList;
     public static List<CVN> StockCVN;
     public static List<CVN> ListCVN;
+    public static List<SegmentInfo> ListSegment;
 
     public static string XMLFile;
 
@@ -362,6 +382,42 @@ public class upatcher
         else
             return "";
 
+    }
+
+    public static bool CheckStockCVN(string PN, string Ver, string SegNr, string cvn, bool AddToList)
+    {
+        for (int c = 0; c < StockCVN.Count; c++)
+        {
+            if (StockCVN[c].XmlFile == Path.GetFileName(XMLFile) && StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
+            {
+                return true;
+            }
+        }
+        if (AddToList)
+        {
+            bool IsinCVNlist = false;
+            if (ListCVN == null)
+                ListCVN = new List<CVN>();
+            for (int c = 0; c < ListCVN.Count; c++)
+            {
+                if (ListCVN[c].XmlFile == Path.GetFileName(XMLFile) && ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && ListCVN[c].cvn == cvn)
+                {
+                    Debug.WriteLine("Already in CVN list: " + cvn);
+                    IsinCVNlist = true;
+                }
+            }
+            if (!IsinCVNlist)
+            {
+                CVN C1 = new CVN();
+                C1.cvn = cvn;
+                C1.PN = PN;
+                C1.SegmentNr = SegNr;
+                C1.Ver = Ver;
+                C1.XmlFile = Path.GetFileName(XMLFile);
+                ListCVN.Add(C1);                
+            }
+        }
+        return false;
     }
 
     public static bool HexToUint64(string Hex, out UInt64 x)
