@@ -71,21 +71,37 @@ public class upatcher
 
     public class SegmentInfo
     {
-        public SegmentInfo() { }
+        public SegmentInfo() 
+        {
+            Name = "";
+            FileName = "";
+            XmlFile = "";
+            Address = "";
+            Size = "";
+            CS1 = "";
+            CS2 = "";
+            CS1Calc = "";
+            CS2Calc = "";
+            Stock = "";
+            PN = "";
+            Ver = "";
+            SegNr = "";
+            ExtraInfo = "";
+        }
         public string Name { get; set; }
-        public string FileName { get; set; }
-        public string XmlFile { get; set; }
+        public string FileName  { get; set; }
+        public string XmlFile  { get; set; }
         public string Address { get; set; }
-        public string Size { get; set; }
-        public string CS1 { get; set; }
-        public string CS2 { get; set; }
+        public string Size  { get; set; }
+        public string CS1  { get; set; }
+        public string CS2  { get; set; }
         public string CS1Calc { get; set; }
-        public string CS2Calc { get; set; }
-        public string Stock { get; set; }
-        public string PN { get; set; }
-        public string Ver { get; set; }
-        public string SegNr { get; set; }
-        public string ExtraInfo { get; set; }
+        public string CS2Calc  { get; set; }
+        public string Stock  { get; set; }
+        public string PN  { get; set; }
+        public string Ver  { get; set; }
+        public string SegNr  { get; set; }
+        public string ExtraInfo  { get; set; }
 
     }
     public struct SegmentConfig
