@@ -82,6 +82,7 @@ public class upatcher
             CS2 = "";
             CS1Calc = "";
             CS2Calc = "";
+            cvn = "";
             Stock = "";
             PN = "";
             Ver = "";
@@ -97,6 +98,7 @@ public class upatcher
         public string CS2  { get; set; }
         public string CS1Calc { get; set; }
         public string CS2Calc  { get; set; }
+        public string cvn { get; set; }
         public string Stock  { get; set; }
         public string PN  { get; set; }
         public string Ver  { get; set; }

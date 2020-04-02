@@ -158,8 +158,7 @@ namespace UniversalPatcher
         private void ShowFileInfo(PcmFile PCM, bool InfoOnly)
         {
             try
-            {
-
+            {                
                 for (int i = 0; i < Segments.Count; i++)
                 {
                     SegmentConfig S = Segments[i];
@@ -167,11 +166,9 @@ namespace UniversalPatcher
                     if (PCM.segmentinfos[i].PN.Length > 1)
                     {
                         if (PCM.segmentinfos[i].Stock == "True")
-                            LoggerBold("PN: " + PCM.segmentinfos[i].PN.PadRight(9), false);
+                            LoggerBold(" PN: " + PCM.segmentinfos[i].PN.PadRight(9), false);
                         else
-                            Logger(", PN: " + PCM.segmentinfos[i].PN.PadRight(9), false);
-                        if (S.Name == "OS")
-                            txtOS.Text = PCM.segmentinfos[i].PN;
+                            Logger(" PN: " + PCM.segmentinfos[i].PN.PadRight(9), false);
                     }
                     if (PCM.segmentinfos[i].Ver.Length > 1)
                         Logger(", Ver: " + PCM.segmentinfos[i].Ver, false);
@@ -290,7 +287,6 @@ namespace UniversalPatcher
                 addCheckBoxes();
                 return;
             }
-            txtOS.Text = "ALL";
             labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
             Logger(Environment.NewLine + Path.GetFileName(FileName) + " (" + labelXML.Text + ")" + Environment.NewLine);
             PCM.GetSegmentAddresses();
@@ -310,6 +306,7 @@ namespace UniversalPatcher
                 basefile = new PcmFile(FileName);
                 labelBinSize.Text = basefile.fsize.ToString();
                 GetFileInfo(txtBaseFile.Text, ref basefile, false);
+                txtOS.Text = basefile.OS;
             }
         }
 
@@ -534,7 +531,6 @@ namespace UniversalPatcher
                         {
                             //Start new block 
                             xpatch = new XmlPatch();
-                            xpatch.CompatibleOS = txtOS.Text;
                             xpatch.XmlFile = Path.GetFileName(XMLFile);
                             xpatch.Data = "";
                             xpatch.Description = "";
@@ -764,7 +760,7 @@ namespace UniversalPatcher
         {
             try
             {
-                Logger("Segments:");
+                Logger("Fixing segsums:");
                 for (int i = 0; i < Segments.Count; i++)
                 {
                     SegmentConfig S = Segments[i];
@@ -1138,8 +1134,8 @@ namespace UniversalPatcher
                 return;
             basefile = new PcmFile(txtBaseFile.Text);
             GetFileInfo(txtBaseFile.Text, ref basefile, true, false);
-            if (txtOS.Text.Length > 0 && txtCompatibleOS.Text.Length == 0)
-                txtCompatibleOS.Text = txtOS.Text;
+            if (txtCompatibleOS.Text.Length == 0)
+                txtCompatibleOS.Text = basefile.OS;
             if (txtCompatibleOS.Text.Length == 0)
                 txtCompatibleOS.Text = "ALL";
             string[] OSlist = txtCompatibleOS.Text.Split(',');

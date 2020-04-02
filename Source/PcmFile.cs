@@ -16,12 +16,13 @@ namespace UniversalPatcher
         public BinFile[] binfile;
         public SegmentInfo[] segmentinfos;
         public uint fsize;
-
+        public string OS;
         public PcmFile(string FName)
         {
             FileName = FName;
             fsize = (uint)new FileInfo(FileName).Length;
             buf = ReadBin(FileName, 0, fsize);
+            OS = "";
         }
 
         public void GetSegmentAddresses()
@@ -92,6 +93,8 @@ namespace UniversalPatcher
                     segmentinfos[i].Size = SSize.ToString("X");
                     segmentinfos[i].Address = tmp;
                     segmentinfos[i].PN = ReadInfo(binfile[i].PNaddr);
+                    if (S.Name == "OS")
+                        OS = segmentinfos[i].PN;
                     segmentinfos[i].Ver = ReadInfo(binfile[i].VerAddr);
                     segmentinfos[i].SegNr = ReadInfo(binfile[i].SegNrAddr);
                     if (binfile[i].ExtraInfo != null && binfile[i].ExtraInfo.Count > 0)
@@ -106,43 +109,48 @@ namespace UniversalPatcher
                         segmentinfos[i].ExtraInfo = ExtraI;
                     }
 
-                    bool isStock = false;
                     if (S.CS1Method != CSMethod_None)
                     {
-                        segmentinfos[i].CS1 = "";
                         segmentinfos[i].CS1Calc = CalculateChecksum(buf, binfile[i].CS1Address, binfile[i].CS1Blocks, binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, binfile[i].CS1Address.Bytes, S.CS1SwapBytes).ToString("X4");
+                        if (S.CVN == 1)
+                        {
+                            segmentinfos[i].cvn = segmentinfos[i].CS1Calc;
+                        }
                         if (binfile[i].CS1Address.Bytes == 0)
                         {
-                            isStock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS1Calc, true);
+                            segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS1Calc, true).ToString();
                         }
                         else
                         {
                             segmentinfos[i].CS1 = ReadInfo(binfile[i].CS1Address);
                             if (segmentinfos[i].CS1 == segmentinfos[i].CS1Calc && S.CVN == 1)
                             {
-                                isStock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS1, true);
+                                segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS1, true).ToString();
                             }
                         }
+                        
                     }
 
                     if (S.CS2Method != CSMethod_None)
                     {
-                        segmentinfos[i].CS2 = "";
                         segmentinfos[i].CS2Calc = CalculateChecksum(buf, binfile[i].CS2Address, binfile[i].CS2Blocks, binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, binfile[i].CS2Address.Bytes, S.CS2SwapBytes).ToString("X4");
+                        if (S.CVN == 2)
+                        {
+                            segmentinfos[i].cvn = segmentinfos[i].CS2Calc;
+                        }
+
                         if (binfile[i].CS2Address.Bytes == 0)
                         {
-                            isStock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS2Calc, true);
+                            segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS2Calc, true).ToString();
                         }
                         else
                         {
                             segmentinfos[i].CS2 = ReadInfo(binfile[i].CS2Address);
                             if (segmentinfos[i].CS2 == segmentinfos[i].CS2Calc && S.CVN == 2)
                             {
-                                isStock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS2, true);
+                                segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS2, true).ToString();
                             }
                         }
-                        segmentinfos[i].Stock = isStock.ToString();
-
                     }
                 }
                 ListSegment.Add(segmentinfos[i]);
