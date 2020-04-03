@@ -103,15 +103,18 @@ namespace UniversalPatcher
                         for (int e = 0; e < binfile[i].ExtraInfo.Count; e++)
                         {
                             if (e > 0)
-                                ExtraI += ", ";
-                            ExtraI += binfile[i].ExtraInfo[e].Name + ": " + ReadInfo(binfile[i].ExtraInfo[e]);
+                                ExtraI += Environment.NewLine;
+                            ExtraI += " " + binfile[i].ExtraInfo[e].Name + ": " + ReadInfo(binfile[i].ExtraInfo[e]);
                         }
                         segmentinfos[i].ExtraInfo = ExtraI;
                     }
 
                     if (S.CS1Method != CSMethod_None)
                     {
-                        segmentinfos[i].CS1Calc = CalculateChecksum(buf, binfile[i].CS1Address, binfile[i].CS1Blocks, binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, binfile[i].CS1Address.Bytes, S.CS1SwapBytes).ToString("X4");
+                        string HexLength = "X4";
+                        if (S.CS1Method == CSMethod_crc32 || S.CS1Method == CSMethod_Dwordsum)
+                            HexLength = "X8";
+                        segmentinfos[i].CS1Calc = CalculateChecksum(buf, binfile[i].CS1Address, binfile[i].CS1Blocks, binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, binfile[i].CS1Address.Bytes, S.CS1SwapBytes).ToString(HexLength);
                         if (S.CVN == 1)
                         {
                             segmentinfos[i].cvn = segmentinfos[i].CS1Calc;
@@ -133,7 +136,10 @@ namespace UniversalPatcher
 
                     if (S.CS2Method != CSMethod_None)
                     {
-                        segmentinfos[i].CS2Calc = CalculateChecksum(buf, binfile[i].CS2Address, binfile[i].CS2Blocks, binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, binfile[i].CS2Address.Bytes, S.CS2SwapBytes).ToString("X4");
+                        string HexLength = "X4";
+                        if (S.CS2Method == CSMethod_crc32 || S.CS2Method == CSMethod_Dwordsum)
+                            HexLength = "X8";
+                        segmentinfos[i].CS2Calc = CalculateChecksum(buf, binfile[i].CS2Address, binfile[i].CS2Blocks, binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, binfile[i].CS2Address.Bytes, S.CS2SwapBytes).ToString(HexLength);
                         if (S.CVN == 2)
                         {
                             segmentinfos[i].cvn = segmentinfos[i].CS2Calc;

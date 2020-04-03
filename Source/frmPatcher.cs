@@ -180,7 +180,7 @@ namespace UniversalPatcher
                     if (chkSize.Checked)
                         Logger(", Size: " + PCM.segmentinfos[i].Size.ToString(), false);
                     if (PCM.segmentinfos[i].ExtraInfo != null && PCM.segmentinfos[i].ExtraInfo.Length > 0)
-                        Logger(", " + PCM.segmentinfos[i].ExtraInfo, false);
+                        Logger(Environment.NewLine + PCM.segmentinfos[i].ExtraInfo, false);
 
                     if (!txtResult.Text.EndsWith(Environment.NewLine))
                         Logger("");
@@ -251,51 +251,58 @@ namespace UniversalPatcher
 
         private void GetFileInfo(string FileName, ref PcmFile PCM, bool InfoOnly, bool Show = true)
         {
-            if (chkAutodetect.Checked)
+            try
             {
-                string ConfFile = Autodetect(PCM);
-                Logger("Autodetect: " + ConfFile);
-                if (ConfFile == "" || ConfFile.Contains(Environment.NewLine))
+                if (chkAutodetect.Checked)
                 {
-                    labelXML.Text = "";
-                    XMLFile = "";
-                    Segments.Clear();
-                }
-                else
-                {
-                    ConfFile = Path.Combine(Application.StartupPath, "XML", ConfFile);
-                    if (File.Exists(ConfFile))
+                    string ConfFile = Autodetect(PCM);
+                    Logger("Autodetect: " + ConfFile);
+                    if (ConfFile == "" || ConfFile.Contains(Environment.NewLine))
                     {
-                        frmSegmenList frmSL = new frmSegmenList();
-                        frmSL.LoadFile(ConfFile);
-                    }
-                    else
-                    {
-                        Logger("XML File not found");
                         labelXML.Text = "";
                         XMLFile = "";
                         Segments.Clear();
-                        Logger(Environment.NewLine + Path.GetFileName(FileName));
-                        return;
+                    }
+                    else
+                    {
+                        ConfFile = Path.Combine(Application.StartupPath, "XML", ConfFile);
+                        if (File.Exists(ConfFile))
+                        {
+                            frmSegmenList frmSL = new frmSegmenList();
+                            frmSL.LoadFile(ConfFile);
+                        }
+                        else
+                        {
+                            Logger("XML File not found");
+                            labelXML.Text = "";
+                            XMLFile = "";
+                            Segments.Clear();
+                            Logger(Environment.NewLine + Path.GetFileName(FileName));
+                            return;
+                        }
                     }
                 }
+                if (Segments == null || Segments.Count == 0)
+                {
+                    labelXML.Text = "";
+                    Logger(Environment.NewLine + Path.GetFileName(FileName));
+                    addCheckBoxes();
+                    return;
+                }
+                labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
+                Logger(Environment.NewLine + Path.GetFileName(FileName) + " (" + labelXML.Text + ")" + Environment.NewLine);
+                PCM.GetSegmentAddresses();
+                if (Segments.Count > 0)
+                    Logger("Segments:");
+                PCM.GetInfo();
+                RefreshCVNlist();
+                if (Show)
+                    ShowFileInfo(PCM, InfoOnly);
             }
-            if (Segments == null || Segments.Count == 0)
+            catch (Exception ex)
             {
-                labelXML.Text = "";
-                Logger(Environment.NewLine + Path.GetFileName(FileName));
-                addCheckBoxes();
-                return;
+                Logger(ex.Message);
             }
-            labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
-            Logger(Environment.NewLine + Path.GetFileName(FileName) + " (" + labelXML.Text + ")" + Environment.NewLine);
-            PCM.GetSegmentAddresses();
-            if (Segments.Count > 0)
-                Logger("Segments:");
-            PCM.GetInfo();
-            RefreshCVNlist();
-            if (Show)
-                ShowFileInfo(PCM, InfoOnly);
         }
         private void btnOrgFile_Click(object sender, EventArgs e)
         {
