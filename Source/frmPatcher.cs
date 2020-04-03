@@ -214,7 +214,7 @@ namespace UniversalPatcher
                         {
                             if (PCM.binfile[i].CS2Address.Bytes == 0)
                             {
-                                Logger(" Checksum1: " + PCM.segmentinfos[i].CS2Calc, false);
+                                Logger(" Checksum2: " + PCM.segmentinfos[i].CS2Calc, false);
                             }
                             else
                             {

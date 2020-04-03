@@ -327,13 +327,14 @@ public class upatcher
 
         if (Bytes == 1)
             sum = (sum & 0xFF);
-        if (Bytes ==  2 || Bytes == 0) //Bytes = 0 if not saving
-        { 
+        //if (Bytes == 2 || Bytes == 0) //Bytes = 0 if not saving
+        if (Bytes == 2) //Bytes = 0 if not saving
+        {
             sum = (sum & 0xFFFF);
         }
         if (SwapB)
         {
-            if (Bytes == 2 || Method == CSMethod_crc16)
+            if (Method == CSMethod_Wordsum || Method == CSMethod_crc16)
                 sum = (ushort)SwapBytes((ushort)sum);
             else
                 sum = SwapBytes(sum);
