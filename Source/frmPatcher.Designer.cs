@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnOrgFile = new System.Windows.Forms.Button();
             this.btnModFile = new System.Windows.Forms.Button();
             this.txtBaseFile = new System.Windows.Forms.TextBox();
@@ -49,8 +50,8 @@
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.btnSaveFileInfo = new System.Windows.Forms.Button();
             this.tabDebug = new System.Windows.Forms.TabPage();
-            this.chkDebug = new System.Windows.Forms.CheckBox();
             this.txtDebug = new System.Windows.Forms.TextBox();
+            this.chkDebug = new System.Windows.Forms.CheckBox();
             this.tabPatch = new System.Windows.Forms.TabPage();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnNew = new System.Windows.Forms.Button();
@@ -69,6 +70,7 @@
             this.btnAddtoStock = new System.Windows.Forms.Button();
             this.dataCVN = new System.Windows.Forms.DataGridView();
             this.tabFinfo = new System.Windows.Forms.TabPage();
+            this.btnSaveCSV = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.dataFileInfo = new System.Windows.Forms.DataGridView();
             this.chkExtra = new System.Windows.Forms.CheckBox();
@@ -102,7 +104,12 @@
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnSaveCSV = new System.Windows.Forms.Button();
+            this.contextMenuDebug = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuCopy = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuCut = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuPaste = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuUndo = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuSelectAll = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -119,6 +126,7 @@
             this.tabFileinfo.SuspendLayout();
             this.tabApply.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.contextMenuDebug.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOrgFile
@@ -339,14 +347,14 @@
             this.btnSaveFileInfo.Name = "btnSaveFileInfo";
             this.btnSaveFileInfo.Size = new System.Drawing.Size(78, 23);
             this.btnSaveFileInfo.TabIndex = 171;
-            this.btnSaveFileInfo.Text = "Save As...";
+            this.btnSaveFileInfo.Text = "Save log...";
             this.btnSaveFileInfo.UseVisualStyleBackColor = true;
             this.btnSaveFileInfo.Click += new System.EventHandler(this.btnSaveFileInfo_Click);
             // 
             // tabDebug
             // 
-            this.tabDebug.Controls.Add(this.chkDebug);
             this.tabDebug.Controls.Add(this.txtDebug);
+            this.tabDebug.Controls.Add(this.chkDebug);
             this.tabDebug.Location = new System.Drawing.Point(4, 22);
             this.tabDebug.Name = "tabDebug";
             this.tabDebug.Padding = new System.Windows.Forms.Padding(3);
@@ -354,6 +362,18 @@
             this.tabDebug.TabIndex = 1;
             this.tabDebug.Text = "Debug";
             this.tabDebug.UseVisualStyleBackColor = true;
+            // 
+            // txtDebug
+            // 
+            this.txtDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDebug.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtDebug.Location = new System.Drawing.Point(2, 24);
+            this.txtDebug.Multiline = true;
+            this.txtDebug.Name = "txtDebug";
+            this.txtDebug.Size = new System.Drawing.Size(773, 324);
+            this.txtDebug.TabIndex = 212;
             // 
             // chkDebug
             // 
@@ -367,19 +387,6 @@
             this.chkDebug.Text = "Debug on";
             this.chkDebug.UseVisualStyleBackColor = true;
             this.chkDebug.CheckedChanged += new System.EventHandler(this.chkDebug_CheckedChanged);
-            // 
-            // txtDebug
-            // 
-            this.txtDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtDebug.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtDebug.Location = new System.Drawing.Point(0, 26);
-            this.txtDebug.Multiline = true;
-            this.txtDebug.Name = "txtDebug";
-            this.txtDebug.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtDebug.Size = new System.Drawing.Size(776, 318);
-            this.txtDebug.TabIndex = 0;
             // 
             // tabPatch
             // 
@@ -591,6 +598,16 @@
             this.tabFinfo.TabIndex = 4;
             this.tabFinfo.Text = "File info";
             this.tabFinfo.UseVisualStyleBackColor = true;
+            // 
+            // btnSaveCSV
+            // 
+            this.btnSaveCSV.Location = new System.Drawing.Point(693, 4);
+            this.btnSaveCSV.Name = "btnSaveCSV";
+            this.btnSaveCSV.Size = new System.Drawing.Size(75, 23);
+            this.btnSaveCSV.TabIndex = 4;
+            this.btnSaveCSV.Text = "Save CSV";
+            this.btnSaveCSV.UseVisualStyleBackColor = true;
+            this.btnSaveCSV.Click += new System.EventHandler(this.btnSaveCSV_Click);
             // 
             // btnClear
             // 
@@ -935,15 +952,51 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // btnSaveCSV
+            // contextMenuDebug
             // 
-            this.btnSaveCSV.Location = new System.Drawing.Point(693, 4);
-            this.btnSaveCSV.Name = "btnSaveCSV";
-            this.btnSaveCSV.Size = new System.Drawing.Size(75, 23);
-            this.btnSaveCSV.TabIndex = 4;
-            this.btnSaveCSV.Text = "Save CSV";
-            this.btnSaveCSV.UseVisualStyleBackColor = true;
-            this.btnSaveCSV.Click += new System.EventHandler(this.btnSaveCSV_Click);
+            this.contextMenuDebug.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuCopy,
+            this.toolStripMenuCut,
+            this.toolStripMenuPaste,
+            this.toolStripMenuUndo,
+            this.toolStripMenuSelectAll});
+            this.contextMenuDebug.Name = "contextMenuDebug";
+            this.contextMenuDebug.Size = new System.Drawing.Size(123, 114);
+            // 
+            // toolStripMenuCopy
+            // 
+            this.toolStripMenuCopy.Name = "toolStripMenuCopy";
+            this.toolStripMenuCopy.Size = new System.Drawing.Size(122, 22);
+            this.toolStripMenuCopy.Text = "Copy";
+            this.toolStripMenuCopy.Click += new System.EventHandler(this.toolStripMenuCopy_Click);
+            // 
+            // toolStripMenuCut
+            // 
+            this.toolStripMenuCut.Name = "toolStripMenuCut";
+            this.toolStripMenuCut.Size = new System.Drawing.Size(122, 22);
+            this.toolStripMenuCut.Text = "Cut";
+            this.toolStripMenuCut.Click += new System.EventHandler(this.toolStripMenuCut_Click);
+            // 
+            // toolStripMenuPaste
+            // 
+            this.toolStripMenuPaste.Name = "toolStripMenuPaste";
+            this.toolStripMenuPaste.Size = new System.Drawing.Size(122, 22);
+            this.toolStripMenuPaste.Text = "Paste";
+            this.toolStripMenuPaste.Click += new System.EventHandler(this.toolStripMenuPaste_Click);
+            // 
+            // toolStripMenuUndo
+            // 
+            this.toolStripMenuUndo.Name = "toolStripMenuUndo";
+            this.toolStripMenuUndo.Size = new System.Drawing.Size(122, 22);
+            this.toolStripMenuUndo.Text = "Undo";
+            this.toolStripMenuUndo.Click += new System.EventHandler(this.toolStripMenuUndo_Click);
+            // 
+            // toolStripMenuSelectAll
+            // 
+            this.toolStripMenuSelectAll.Name = "toolStripMenuSelectAll";
+            this.toolStripMenuSelectAll.Size = new System.Drawing.Size(122, 22);
+            this.toolStripMenuSelectAll.Text = "Select All";
+            this.toolStripMenuSelectAll.Click += new System.EventHandler(this.toolStripMenuSelectAll_Click);
             // 
             // FrmPatcher
             // 
@@ -984,6 +1037,7 @@
             this.tabApply.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.contextMenuDebug.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1009,7 +1063,6 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabInfo;
         private System.Windows.Forms.TabPage tabDebug;
-        private System.Windows.Forms.TextBox txtDebug;
         private System.Windows.Forms.Button btnLoadFolder;
         private System.Windows.Forms.Button btnSaveFileInfo;
         private System.Windows.Forms.CheckBox chkExtra;
@@ -1065,5 +1118,12 @@
         private System.Windows.Forms.DataGridView dataFileInfo;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnSaveCSV;
+        private System.Windows.Forms.TextBox txtDebug;
+        private System.Windows.Forms.ContextMenuStrip contextMenuDebug;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuCopy;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuCut;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuPaste;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuUndo;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuSelectAll;
     }
 }

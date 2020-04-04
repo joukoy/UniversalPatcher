@@ -21,6 +21,7 @@ namespace UniversalPatcher
         public FrmPatcher()
         {
             InitializeComponent();
+            txtResult.EnableContextMenu();
         }
 
         protected override void OnHandleCreated(EventArgs e)
@@ -1663,8 +1664,39 @@ namespace UniversalPatcher
             Logger(" [OK]");
 
         }
-    }
+        
+        private void toolStripMenuCopy_Click(object sender, EventArgs e)
+        {
+            if (txtDebug.SelectionLength > 0)
+                txtDebug.Copy();
+        }
 
+        private void toolStripMenuCut_Click(object sender, EventArgs e)
+        {
+            if (txtDebug.SelectionLength > 0)
+                txtDebug.Cut();
+
+        }
+
+        private void toolStripMenuPaste_Click(object sender, EventArgs e)
+        {
+            txtDebug.Paste();
+        }
+
+        private void toolStripMenuUndo_Click(object sender, EventArgs e)
+        {
+            if (txtDebug.CanUndo)
+            {
+                txtDebug.Undo();
+                txtDebug.ClearUndo();
+            }
+        }
+
+        private void toolStripMenuSelectAll_Click(object sender, EventArgs e)
+        {
+            txtDebug.SelectAll();
+        }
+    }
     class TextBoxTraceListener : TraceListener
     {
         private TextBox tBox;
@@ -1688,4 +1720,6 @@ namespace UniversalPatcher
             Write(msg + "\r\n");
         }
     }
+
+
 }

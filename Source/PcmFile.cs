@@ -409,6 +409,8 @@ namespace UniversalPatcher
             string FileName = Path.Combine(Application.StartupPath, "XML", Line);
             StreamReader sr = new StreamReader(FileName);
             string OsLine;
+            string LastLine = "";
+            bool isinfile = false;
             while ((OsLine = sr.ReadLine()) != null)
             {
                 //Custom handling: read OS:Segmentaddress pairs from file
@@ -417,6 +419,7 @@ namespace UniversalPatcher
                 {
                     if (OsLineparts[0] == GMOS.ToString())
                     {
+                        isinfile = true;
                         if (HexToUint(OsLineparts[1], out AD.Address))
                         {
                             Debug.WriteLine("Address: " + AD.Address.ToString("X") + ", Bytes: 4, Type: HEX");
@@ -426,9 +429,24 @@ namespace UniversalPatcher
                             return AD;
                         }
                     }
+                    LastLine = OsLine;
                 }
             }
             sr.Close();
+
+            if (!isinfile)
+            {
+                //OS not in file, add it: (OS may be in file, but without address)
+                string NewOS = "";
+                if (!LastLine.Contains(Environment.NewLine))
+                    NewOS = Environment.NewLine;
+                NewOS += GMOS.ToString() + ":";
+                StreamWriter sw = new StreamWriter(FileName,true);
+                sw.WriteLine(NewOS);
+                sw.Close();
+                throw new Exception("Unsupported OS:  " + GMOS.ToString() + ", adding to file: " + FileName);
+
+            }
             throw new Exception("Unsupported OS:  " + GMOS.ToString());
 
         }
