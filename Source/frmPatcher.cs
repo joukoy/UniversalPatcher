@@ -22,13 +22,15 @@ namespace UniversalPatcher
         {
             InitializeComponent();
             txtResult.EnableContextMenu();
+            txtDebug.EnableContextMenu();
         }
 
         protected override void OnHandleCreated(EventArgs e)
         {
             if (Properties.Settings.Default.DebugOn)
-            { 
-                TextBoxTraceListener tbtl = new TextBoxTraceListener(txtDebug);
+            {
+                //TextBoxTraceListener tbtl = new TextBoxTraceListener(txtDebug);
+                RichTextBoxTraceListener tbtl = new RichTextBoxTraceListener(txtDebug);
                 Debug.Listeners.Add(tbtl);
             }
         }
@@ -1295,7 +1297,7 @@ namespace UniversalPatcher
             Properties.Settings.Default.Save();
             if (chkDebug.Checked)
             {
-                TextBoxTraceListener tbtl = new TextBoxTraceListener(txtDebug);
+                RichTextBoxTraceListener tbtl = new RichTextBoxTraceListener(txtDebug);
                 Debug.Listeners.Add(tbtl);
             }
             else
@@ -1721,5 +1723,28 @@ namespace UniversalPatcher
         }
     }
 
+    class RichTextBoxTraceListener : TraceListener
+    {
+        private RichTextBox rtBox;
+
+        public RichTextBoxTraceListener(RichTextBox box)
+        {
+            this.rtBox = box;
+        }
+
+        public override void Write(string msg)
+        {
+            //allows tBox to be updated from different thread
+            rtBox.Parent.Invoke(new MethodInvoker(delegate ()
+            {
+                rtBox.AppendText(msg);
+            }));
+        }
+
+        public override void WriteLine(string msg)
+        {
+            Write(msg + "\r\n");
+        }
+    }
 
 }

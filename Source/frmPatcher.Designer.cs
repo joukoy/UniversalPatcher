@@ -50,7 +50,6 @@
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.btnSaveFileInfo = new System.Windows.Forms.Button();
             this.tabDebug = new System.Windows.Forms.TabPage();
-            this.txtDebug = new System.Windows.Forms.TextBox();
             this.chkDebug = new System.Windows.Forms.CheckBox();
             this.tabPatch = new System.Windows.Forms.TabPage();
             this.btnRefresh = new System.Windows.Forms.Button();
@@ -110,6 +109,7 @@
             this.toolStripMenuPaste = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuUndo = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuSelectAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.txtDebug = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -362,18 +362,6 @@
             this.tabDebug.TabIndex = 1;
             this.tabDebug.Text = "Debug";
             this.tabDebug.UseVisualStyleBackColor = true;
-            // 
-            // txtDebug
-            // 
-            this.txtDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtDebug.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtDebug.Location = new System.Drawing.Point(2, 24);
-            this.txtDebug.Multiline = true;
-            this.txtDebug.Name = "txtDebug";
-            this.txtDebug.Size = new System.Drawing.Size(773, 324);
-            this.txtDebug.TabIndex = 212;
             // 
             // chkDebug
             // 
@@ -998,6 +986,18 @@
             this.toolStripMenuSelectAll.Text = "Select All";
             this.toolStripMenuSelectAll.Click += new System.EventHandler(this.toolStripMenuSelectAll_Click);
             // 
+            // txtDebug
+            // 
+            this.txtDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDebug.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtDebug.Location = new System.Drawing.Point(2, 24);
+            this.txtDebug.Name = "txtDebug";
+            this.txtDebug.Size = new System.Drawing.Size(774, 323);
+            this.txtDebug.TabIndex = 212;
+            this.txtDebug.Text = "";
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1118,12 +1118,12 @@
         private System.Windows.Forms.DataGridView dataFileInfo;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnSaveCSV;
-        private System.Windows.Forms.TextBox txtDebug;
         private System.Windows.Forms.ContextMenuStrip contextMenuDebug;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuCopy;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuCut;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuPaste;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuUndo;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuSelectAll;
+        private System.Windows.Forms.RichTextBox txtDebug;
     }
 }
