@@ -407,14 +407,11 @@ public class upatcher
     {
         for (int c = 0; c < StockCVN.Count; c++)
         {
-            string[] Parts = StockCVN[c].XmlFile.Split(',');
-            for (int x = 0; x < Parts.Length; x++)
-            { 
-                if (Parts[x] == Path.GetFileName(XMLFile) && StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
+                //if (StockCVN[c].XmlFile == Path.GetFileName(XMLFile) && StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
+                if (StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
                 {
                     return true;
                 }
-            }
         }
         if (AddToList)
         {
@@ -423,7 +420,8 @@ public class upatcher
                 ListCVN = new List<CVN>();
             for (int c = 0; c < ListCVN.Count; c++)
             {
-                if (ListCVN[c].XmlFile == Path.GetFileName(XMLFile) && ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && ListCVN[c].cvn == cvn)
+                //if (ListCVN[c].XmlFile == Path.GetFileName(XMLFile) && ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && ListCVN[c].cvn == cvn)
+                if (ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && ListCVN[c].cvn == cvn)
                 {
                     Debug.WriteLine("Already in CVN list: " + cvn);
                     IsinCVNlist = true;

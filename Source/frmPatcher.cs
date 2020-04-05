@@ -1480,8 +1480,6 @@ namespace UniversalPatcher
                     if (!CheckStockCVN(stock.PN,stock.Ver,stock.SegmentNr,stock.cvn, false))
                     {
                         //Add if not already in list
-                        if (txtCompatibleXML.Text.Length > 0)
-                            stock.XmlFile += "," + txtCompatibleXML.Text;
                         StockCVN.Add(stock);
                         isNew = true;
                         Debug.WriteLine(stock.PN + " " + stock.Ver + " cvn: " + stock.cvn + " added");

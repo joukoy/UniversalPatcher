@@ -103,8 +103,6 @@
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label8 = new System.Windows.Forms.Label();
-            this.txtCompatibleXML = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -537,8 +535,6 @@
             // 
             // tabCVN
             // 
-            this.tabCVN.Controls.Add(this.txtCompatibleXML);
-            this.tabCVN.Controls.Add(this.label8);
             this.tabCVN.Controls.Add(this.btnClearCVN);
             this.tabCVN.Controls.Add(this.btnAddtoStock);
             this.tabCVN.Controls.Add(this.dataCVN);
@@ -944,22 +940,6 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(226, 10);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(156, 13);
-            this.label8.TabIndex = 179;
-            this.label8.Text = "Additional compatible XML files:";
-            // 
-            // txtCompatibleXML
-            // 
-            this.txtCompatibleXML.Location = new System.Drawing.Point(388, 7);
-            this.txtCompatibleXML.Name = "txtCompatibleXML";
-            this.txtCompatibleXML.Size = new System.Drawing.Size(216, 20);
-            this.txtCompatibleXML.TabIndex = 180;
-            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -986,7 +966,6 @@
             this.tabPatch.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataPatch)).EndInit();
             this.tabCVN.ResumeLayout(false);
-            this.tabCVN.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataCVN)).EndInit();
             this.tabFinfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataFileInfo)).EndInit();
@@ -1081,7 +1060,5 @@
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnSaveCSV;
         private System.Windows.Forms.RichTextBox txtDebug;
-        private System.Windows.Forms.TextBox txtCompatibleXML;
-        private System.Windows.Forms.Label label8;
     }
 }
