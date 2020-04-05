@@ -407,9 +407,13 @@ public class upatcher
     {
         for (int c = 0; c < StockCVN.Count; c++)
         {
-            if (StockCVN[c].XmlFile == Path.GetFileName(XMLFile) && StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
-            {
-                return true;
+            string[] Parts = StockCVN[c].XmlFile.Split(',');
+            for (int x = 0; x < Parts.Length; x++)
+            { 
+                if (Parts[x] == Path.GetFileName(XMLFile) && StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
+                {
+                    return true;
+                }
             }
         }
         if (AddToList)

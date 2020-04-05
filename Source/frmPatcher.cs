@@ -750,14 +750,6 @@ namespace UniversalPatcher
             txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
             Application.DoEvents();
         }
-        private void txtModifierFile_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnSegments_Click(object sender, EventArgs e)
-        {
-        }
 
         private void btnCheckSums_Click(object sender, EventArgs e)
         {
@@ -882,10 +874,6 @@ namespace UniversalPatcher
                 Logger("Error: " + ex.Message);
             }
 
-        }
-
-        private void btnLoad_Click(object sender, EventArgs e)
-        {
         }
 
         private bool CheckRule(DetectRule DR, PcmFile PCM)
@@ -1040,11 +1028,6 @@ namespace UniversalPatcher
             return Result.ToLower();
         }
 
-        private void btnAutodetect_Click(object sender, EventArgs e)
-        {
-        }
-
-
         private void btnLoadFolder_Click(object sender, EventArgs e)
         {
             string FileName = SelectFile();
@@ -1081,20 +1064,10 @@ namespace UniversalPatcher
 
         }
 
-
-        private void btnPatchfile_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnApplypatch_Click(object sender, EventArgs e)
         {
             ApplyXMLPatch();
             btnCheckSums_Click(sender, e);
-        }
-
-        private void btnSavePatch_Click(object sender, EventArgs e)
-        {
         }
 
         private void ExtractTable(uint Start, uint End, string[] OSlist, string MaskText)
@@ -1199,24 +1172,6 @@ namespace UniversalPatcher
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void btnRefresh_Click(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void txtExtractRange_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnNewpatch_Click(object sender, EventArgs e)
-        {
-        }
-
         private void RefreshDatagrid()
         {
             bindingSource.DataSource = null;
@@ -1231,11 +1186,6 @@ namespace UniversalPatcher
             { 
                 tabPatch.Text = "Patch editor (" + PatchList.Count.ToString() +")";
             }
-        }
-
-        private void txtCompatibleOS_TextChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void btnManualPatch_Click(object sender, EventArgs e)
@@ -1357,11 +1307,6 @@ namespace UniversalPatcher
         private void dataPatch_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             EditPatchRow();
-        }
-
-        private void dataPatch_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
@@ -1535,6 +1480,8 @@ namespace UniversalPatcher
                     if (!CheckStockCVN(stock.PN,stock.Ver,stock.SegmentNr,stock.cvn, false))
                     {
                         //Add if not already in list
+                        if (txtCompatibleXML.Text.Length > 0)
+                            stock.XmlFile += "," + txtCompatibleXML.Text;
                         StockCVN.Add(stock);
                         isNew = true;
                         Debug.WriteLine(stock.PN + " " + stock.Ver + " cvn: " + stock.cvn + " added");
@@ -1667,84 +1614,6 @@ namespace UniversalPatcher
 
         }
         
-        private void toolStripMenuCopy_Click(object sender, EventArgs e)
-        {
-            if (txtDebug.SelectionLength > 0)
-                txtDebug.Copy();
-        }
-
-        private void toolStripMenuCut_Click(object sender, EventArgs e)
-        {
-            if (txtDebug.SelectionLength > 0)
-                txtDebug.Cut();
-
-        }
-
-        private void toolStripMenuPaste_Click(object sender, EventArgs e)
-        {
-            txtDebug.Paste();
-        }
-
-        private void toolStripMenuUndo_Click(object sender, EventArgs e)
-        {
-            if (txtDebug.CanUndo)
-            {
-                txtDebug.Undo();
-                txtDebug.ClearUndo();
-            }
-        }
-
-        private void toolStripMenuSelectAll_Click(object sender, EventArgs e)
-        {
-            txtDebug.SelectAll();
-        }
-    }
-    class TextBoxTraceListener : TraceListener
-    {
-        private TextBox tBox;
-
-        public TextBoxTraceListener(TextBox box)
-        {
-            this.tBox = box;
-        }
-
-        public override void Write(string msg)
-        {
-            //allows tBox to be updated from different thread
-            tBox.Parent.Invoke(new MethodInvoker(delegate ()
-            {
-                tBox.AppendText(msg);
-            }));
-        }
-
-        public override void WriteLine(string msg)
-        {
-            Write(msg + "\r\n");
-        }
-    }
-
-    class RichTextBoxTraceListener : TraceListener
-    {
-        private RichTextBox rtBox;
-
-        public RichTextBoxTraceListener(RichTextBox box)
-        {
-            this.rtBox = box;
-        }
-
-        public override void Write(string msg)
-        {
-            //allows tBox to be updated from different thread
-            rtBox.Parent.Invoke(new MethodInvoker(delegate ()
-            {
-                rtBox.AppendText(msg);
-            }));
-        }
-
-        public override void WriteLine(string msg)
-        {
-            Write(msg + "\r\n");
-        }
     }
 
 }

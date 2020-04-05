@@ -67,6 +67,7 @@
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </Compile>
     <Compile Include="Crc.cs" />
+    <Compile Include="Debug.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="frmData.cs">
       <SubType>Form</SubType>
