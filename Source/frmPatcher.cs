@@ -591,7 +591,8 @@ namespace UniversalPatcher
                 }
                 basefile = new PcmFile(txtBaseFile.Text);
                 modfile = new PcmFile(txtModifierFile.Text);
-                PatchList = new List<XmlPatch>();
+                if (!checkAppendPatch.Checked || PatchList == null)
+                    PatchList = new List<XmlPatch>();
                 GetFileInfo(txtBaseFile.Text, ref basefile, false, false);
                 GetFileInfo(txtModifierFile.Text, ref modfile, false, false);
 

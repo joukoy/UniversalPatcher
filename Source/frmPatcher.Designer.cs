@@ -103,6 +103,7 @@
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkAppendPatch = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -706,6 +707,7 @@
             // 
             // tabCreate
             // 
+            this.tabCreate.Controls.Add(this.checkAppendPatch);
             this.tabCreate.Controls.Add(this.txtOS);
             this.tabCreate.Controls.Add(this.label7);
             this.tabCreate.Controls.Add(this.btnModFile);
@@ -940,6 +942,16 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // checkAppendPatch
+            // 
+            this.checkAppendPatch.AutoSize = true;
+            this.checkAppendPatch.Location = new System.Drawing.Point(445, 34);
+            this.checkAppendPatch.Name = "checkAppendPatch";
+            this.checkAppendPatch.Size = new System.Drawing.Size(63, 17);
+            this.checkAppendPatch.TabIndex = 117;
+            this.checkAppendPatch.Text = "Append";
+            this.checkAppendPatch.UseVisualStyleBackColor = true;
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1060,5 +1072,6 @@
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnSaveCSV;
         private System.Windows.Forms.RichTextBox txtDebug;
+        private System.Windows.Forms.CheckBox checkAppendPatch;
     }
 }
