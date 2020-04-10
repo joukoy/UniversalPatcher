@@ -48,9 +48,9 @@ namespace UniversalPatcher
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
-            if (!File.Exists(Path.Combine(Application.StartupPath, "Patches")))
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Patches")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
-            if (!File.Exists(Path.Combine(Application.StartupPath, "XML")))
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
 
             Properties.Settings.Default.LastBINfolder = Properties.Settings.Default.LastBINfolder;

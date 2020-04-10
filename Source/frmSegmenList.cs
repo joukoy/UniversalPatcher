@@ -88,7 +88,7 @@ namespace UniversalPatcher
 
         private void btnOpen_Click(object sender, EventArgs e)
         {
-            string FileName = SelectFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
+            string FileName = SelectFile("Select XML file", "XML files (*.xml)|*.xml|All files (*.*)|*.*");
             if (FileName.Length < 1)
                 return;
             LoadFile(FileName);

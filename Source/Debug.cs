@@ -45,7 +45,11 @@ namespace UniversalPatcher
             //allows tBox to be updated from different thread
             rtBox.Parent.Invoke(new MethodInvoker(delegate ()
             {
+                rtBox.Focus();
+                int Start = rtBox.Text.Length;
                 rtBox.AppendText(msg);
+                rtBox.Select(Start, msg.Length);
+                Application.DoEvents();
             }));
         }
 

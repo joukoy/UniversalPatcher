@@ -202,6 +202,25 @@ public class upatcher
         }
     }
 
+    public static void WriteSegmentToFile(string FileName, List<Block> Addr, byte[] Buf)
+    {
+
+        using (FileStream stream = new FileStream(FileName, FileMode.Create))
+        {
+            using (BinaryWriter writer = new BinaryWriter(stream))
+            {
+                for (int b=0;b<Addr.Count;b++)
+                {
+                    uint StartAddr = Addr[b].Start;
+                    uint Length = Addr[b].End - Addr[b].Start + 1;
+                    writer.Write(Buf, (int)StartAddr, (int)Length);
+                }
+                writer.Close();
+            }
+        }
+
+    }
+
     public static uint CalculateChecksum(byte[] Data, AddressData CSAddress, List<Block> CSBlocks,List<Block> ExcludeBlocks, short Method, short Complement, ushort Bytes, Boolean SwapB)
     {
         Debug.WriteLine("Calculating hecksum, method: " + Method);
@@ -344,11 +363,10 @@ public class upatcher
         return sum;
     }
 
-    public static string SelectFile(string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*")
+    public static string SelectFile(string Title = "Select file", string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*")
     {
-
         OpenFileDialog fdlg = new OpenFileDialog();
-        fdlg.Title = "Select file";
+        fdlg.Title = Title;
         fdlg.Filter = Filter;
         fdlg.FilterIndex = 1;
         fdlg.RestoreDirectory = true;

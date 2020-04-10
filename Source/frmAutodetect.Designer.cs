@@ -110,6 +110,9 @@
             // 
             // listRules
             // 
+            this.listRules.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listRules.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listRules.HideSelection = false;
             this.listRules.Location = new System.Drawing.Point(5, 193);
@@ -278,6 +281,8 @@
             // 
             // txtStatus
             // 
+            this.txtStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtStatus.Location = new System.Drawing.Point(6, 330);
             this.txtStatus.Multiline = true;
             this.txtStatus.Name = "txtStatus";

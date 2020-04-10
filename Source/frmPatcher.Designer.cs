@@ -80,8 +80,16 @@
             this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tabFunction = new System.Windows.Forms.TabControl();
             this.tabCreate = new System.Windows.Forms.TabPage();
+            this.checkAppendPatch = new System.Windows.Forms.CheckBox();
             this.txtOS = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.tabFileinfo = new System.Windows.Forms.TabPage();
+            this.tabApply = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
+            this.btnSwapSegments = new System.Windows.Forms.Button();
+            this.btnBinLoadPatch = new System.Windows.Forms.Button();
+            this.btnCheckSums = new System.Windows.Forms.Button();
+            this.btnApplypatch = new System.Windows.Forms.Button();
             this.tabExtract = new System.Windows.Forms.TabPage();
             this.txtExtractDescription = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -90,11 +98,15 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.txtExtractRange = new System.Windows.Forms.TextBox();
-            this.tabFileinfo = new System.Windows.Forms.TabPage();
-            this.tabApply = new System.Windows.Forms.TabPage();
-            this.btnBinLoadPatch = new System.Windows.Forms.Button();
-            this.btnCheckSums = new System.Windows.Forms.Button();
-            this.btnApplypatch = new System.Windows.Forms.Button();
+            this.tabExtractSegments = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radioRename = new System.Windows.Forms.RadioButton();
+            this.radioReplace = new System.Windows.Forms.RadioButton();
+            this.radioSkip = new System.Windows.Forms.RadioButton();
+            this.btnExtractSegmentsFolder = new System.Windows.Forms.Button();
+            this.txtSegmentDescription = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.btnExtractSegments = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.loadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -103,7 +115,6 @@
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.checkAppendPatch = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -116,9 +127,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataFileInfo)).BeginInit();
             this.tabFunction.SuspendLayout();
             this.tabCreate.SuspendLayout();
-            this.tabExtract.SuspendLayout();
             this.tabFileinfo.SuspendLayout();
             this.tabApply.SuspendLayout();
+            this.tabExtract.SuspendLayout();
+            this.tabExtractSegments.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -173,7 +186,7 @@
             // btnSaveBin
             // 
             this.btnSaveBin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveBin.Location = new System.Drawing.Point(351, 6);
+            this.btnSaveBin.Location = new System.Drawing.Point(666, 6);
             this.btnSaveBin.Name = "btnSaveBin";
             this.btnSaveBin.Size = new System.Drawing.Size(108, 25);
             this.btnSaveBin.TabIndex = 184;
@@ -696,9 +709,10 @@
             this.tabFunction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabFunction.Controls.Add(this.tabCreate);
-            this.tabFunction.Controls.Add(this.tabExtract);
             this.tabFunction.Controls.Add(this.tabFileinfo);
             this.tabFunction.Controls.Add(this.tabApply);
+            this.tabFunction.Controls.Add(this.tabExtract);
+            this.tabFunction.Controls.Add(this.tabExtractSegments);
             this.tabFunction.Location = new System.Drawing.Point(2, 60);
             this.tabFunction.Name = "tabFunction";
             this.tabFunction.SelectedIndex = 0;
@@ -724,6 +738,16 @@
             this.tabCreate.Text = "Create Patch";
             this.tabCreate.UseVisualStyleBackColor = true;
             // 
+            // checkAppendPatch
+            // 
+            this.checkAppendPatch.AutoSize = true;
+            this.checkAppendPatch.Location = new System.Drawing.Point(445, 34);
+            this.checkAppendPatch.Name = "checkAppendPatch";
+            this.checkAppendPatch.Size = new System.Drawing.Size(63, 17);
+            this.checkAppendPatch.TabIndex = 117;
+            this.checkAppendPatch.Text = "Append";
+            this.checkAppendPatch.UseVisualStyleBackColor = true;
+            // 
             // txtOS
             // 
             this.txtOS.Location = new System.Drawing.Point(129, 32);
@@ -739,6 +763,90 @@
             this.label7.Size = new System.Drawing.Size(25, 13);
             this.label7.TabIndex = 12;
             this.label7.Text = "OS:";
+            // 
+            // tabFileinfo
+            // 
+            this.tabFileinfo.Controls.Add(this.chkExtra);
+            this.tabFileinfo.Controls.Add(this.btnLoadFolder);
+            this.tabFileinfo.Controls.Add(this.chkCS2);
+            this.tabFileinfo.Controls.Add(this.chkCS1);
+            this.tabFileinfo.Controls.Add(this.chkRange);
+            this.tabFileinfo.Controls.Add(this.chkSize);
+            this.tabFileinfo.Location = new System.Drawing.Point(4, 22);
+            this.tabFileinfo.Name = "tabFileinfo";
+            this.tabFileinfo.Size = new System.Drawing.Size(779, 103);
+            this.tabFileinfo.TabIndex = 2;
+            this.tabFileinfo.Text = "File info";
+            this.tabFileinfo.UseVisualStyleBackColor = true;
+            // 
+            // tabApply
+            // 
+            this.tabApply.Controls.Add(this.button1);
+            this.tabApply.Controls.Add(this.btnSwapSegments);
+            this.tabApply.Controls.Add(this.btnBinLoadPatch);
+            this.tabApply.Controls.Add(this.btnCheckSums);
+            this.tabApply.Controls.Add(this.btnApplypatch);
+            this.tabApply.Controls.Add(this.btnSaveBin);
+            this.tabApply.Location = new System.Drawing.Point(4, 22);
+            this.tabApply.Name = "tabApply";
+            this.tabApply.Padding = new System.Windows.Forms.Padding(3);
+            this.tabApply.Size = new System.Drawing.Size(779, 103);
+            this.tabApply.TabIndex = 1;
+            this.tabApply.Text = "Modify bin";
+            this.tabApply.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(124, 37);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(131, 25);
+            this.button1.TabIndex = 186;
+            this.button1.Text = "Fix checksum of files...";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // btnSwapSegments
+            // 
+            this.btnSwapSegments.Location = new System.Drawing.Point(236, 6);
+            this.btnSwapSegments.Name = "btnSwapSegments";
+            this.btnSwapSegments.Size = new System.Drawing.Size(107, 25);
+            this.btnSwapSegments.TabIndex = 185;
+            this.btnSwapSegments.Text = "Swap segment(s)";
+            this.btnSwapSegments.UseVisualStyleBackColor = true;
+            this.btnSwapSegments.Click += new System.EventHandler(this.btnSwapSegments_Click);
+            // 
+            // btnBinLoadPatch
+            // 
+            this.btnBinLoadPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBinLoadPatch.Location = new System.Drawing.Point(9, 6);
+            this.btnBinLoadPatch.Name = "btnBinLoadPatch";
+            this.btnBinLoadPatch.Size = new System.Drawing.Size(107, 25);
+            this.btnBinLoadPatch.TabIndex = 181;
+            this.btnBinLoadPatch.Text = "Load patch";
+            this.btnBinLoadPatch.UseVisualStyleBackColor = true;
+            this.btnBinLoadPatch.Click += new System.EventHandler(this.btnBinLoadPatch_Click);
+            // 
+            // btnCheckSums
+            // 
+            this.btnCheckSums.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCheckSums.Location = new System.Drawing.Point(10, 37);
+            this.btnCheckSums.Name = "btnCheckSums";
+            this.btnCheckSums.Size = new System.Drawing.Size(107, 25);
+            this.btnCheckSums.TabIndex = 183;
+            this.btnCheckSums.Text = "Fix checksums";
+            this.btnCheckSums.UseVisualStyleBackColor = true;
+            this.btnCheckSums.Click += new System.EventHandler(this.btnCheckSums_Click);
+            // 
+            // btnApplypatch
+            // 
+            this.btnApplypatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnApplypatch.Location = new System.Drawing.Point(123, 6);
+            this.btnApplypatch.Name = "btnApplypatch";
+            this.btnApplypatch.Size = new System.Drawing.Size(107, 25);
+            this.btnApplypatch.TabIndex = 182;
+            this.btnApplypatch.Text = "Apply current patch";
+            this.btnApplypatch.UseVisualStyleBackColor = true;
+            this.btnApplypatch.Click += new System.EventHandler(this.btnApplypatch_Click);
             // 
             // tabExtract
             // 
@@ -815,67 +923,99 @@
             this.txtExtractRange.Size = new System.Drawing.Size(226, 20);
             this.txtExtractRange.TabIndex = 150;
             // 
-            // tabFileinfo
+            // tabExtractSegments
             // 
-            this.tabFileinfo.Controls.Add(this.chkExtra);
-            this.tabFileinfo.Controls.Add(this.btnLoadFolder);
-            this.tabFileinfo.Controls.Add(this.chkCS2);
-            this.tabFileinfo.Controls.Add(this.chkCS1);
-            this.tabFileinfo.Controls.Add(this.chkRange);
-            this.tabFileinfo.Controls.Add(this.chkSize);
-            this.tabFileinfo.Location = new System.Drawing.Point(4, 22);
-            this.tabFileinfo.Name = "tabFileinfo";
-            this.tabFileinfo.Size = new System.Drawing.Size(779, 103);
-            this.tabFileinfo.TabIndex = 2;
-            this.tabFileinfo.Text = "File info";
-            this.tabFileinfo.UseVisualStyleBackColor = true;
+            this.tabExtractSegments.Controls.Add(this.groupBox2);
+            this.tabExtractSegments.Controls.Add(this.btnExtractSegmentsFolder);
+            this.tabExtractSegments.Controls.Add(this.txtSegmentDescription);
+            this.tabExtractSegments.Controls.Add(this.label8);
+            this.tabExtractSegments.Controls.Add(this.btnExtractSegments);
+            this.tabExtractSegments.Location = new System.Drawing.Point(4, 22);
+            this.tabExtractSegments.Name = "tabExtractSegments";
+            this.tabExtractSegments.Size = new System.Drawing.Size(779, 103);
+            this.tabExtractSegments.TabIndex = 4;
+            this.tabExtractSegments.Text = "Extract segments";
+            this.tabExtractSegments.UseVisualStyleBackColor = true;
             // 
-            // tabApply
+            // groupBox2
             // 
-            this.tabApply.Controls.Add(this.btnBinLoadPatch);
-            this.tabApply.Controls.Add(this.btnCheckSums);
-            this.tabApply.Controls.Add(this.btnApplypatch);
-            this.tabApply.Controls.Add(this.btnSaveBin);
-            this.tabApply.Location = new System.Drawing.Point(4, 22);
-            this.tabApply.Name = "tabApply";
-            this.tabApply.Padding = new System.Windows.Forms.Padding(3);
-            this.tabApply.Size = new System.Drawing.Size(779, 103);
-            this.tabApply.TabIndex = 1;
-            this.tabApply.Text = "Modify bin";
-            this.tabApply.UseVisualStyleBackColor = true;
+            this.groupBox2.Controls.Add(this.radioRename);
+            this.groupBox2.Controls.Add(this.radioReplace);
+            this.groupBox2.Controls.Add(this.radioSkip);
+            this.groupBox2.Location = new System.Drawing.Point(3, 33);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(284, 42);
+            this.groupBox2.TabIndex = 17;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Duplicates";
             // 
-            // btnBinLoadPatch
+            // radioRename
             // 
-            this.btnBinLoadPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBinLoadPatch.Location = new System.Drawing.Point(9, 6);
-            this.btnBinLoadPatch.Name = "btnBinLoadPatch";
-            this.btnBinLoadPatch.Size = new System.Drawing.Size(107, 25);
-            this.btnBinLoadPatch.TabIndex = 181;
-            this.btnBinLoadPatch.Text = "Load patch";
-            this.btnBinLoadPatch.UseVisualStyleBackColor = true;
-            this.btnBinLoadPatch.Click += new System.EventHandler(this.btnBinLoadPatch_Click);
+            this.radioRename.AutoSize = true;
+            this.radioRename.Location = new System.Drawing.Point(143, 19);
+            this.radioRename.Name = "radioRename";
+            this.radioRename.Size = new System.Drawing.Size(65, 17);
+            this.radioRename.TabIndex = 2;
+            this.radioRename.Text = "Rename";
+            this.radioRename.UseVisualStyleBackColor = true;
             // 
-            // btnCheckSums
+            // radioReplace
             // 
-            this.btnCheckSums.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCheckSums.Location = new System.Drawing.Point(236, 6);
-            this.btnCheckSums.Name = "btnCheckSums";
-            this.btnCheckSums.Size = new System.Drawing.Size(107, 25);
-            this.btnCheckSums.TabIndex = 183;
-            this.btnCheckSums.Text = "Fix checksums";
-            this.btnCheckSums.UseVisualStyleBackColor = true;
-            this.btnCheckSums.Click += new System.EventHandler(this.btnCheckSums_Click);
+            this.radioReplace.AutoSize = true;
+            this.radioReplace.Location = new System.Drawing.Point(72, 19);
+            this.radioReplace.Name = "radioReplace";
+            this.radioReplace.Size = new System.Drawing.Size(65, 17);
+            this.radioReplace.TabIndex = 1;
+            this.radioReplace.Text = "Replace";
+            this.radioReplace.UseVisualStyleBackColor = true;
             // 
-            // btnApplypatch
+            // radioSkip
             // 
-            this.btnApplypatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApplypatch.Location = new System.Drawing.Point(123, 6);
-            this.btnApplypatch.Name = "btnApplypatch";
-            this.btnApplypatch.Size = new System.Drawing.Size(107, 25);
-            this.btnApplypatch.TabIndex = 182;
-            this.btnApplypatch.Text = "Apply current patch";
-            this.btnApplypatch.UseVisualStyleBackColor = true;
-            this.btnApplypatch.Click += new System.EventHandler(this.btnApplypatch_Click);
+            this.radioSkip.AutoSize = true;
+            this.radioSkip.Checked = true;
+            this.radioSkip.Location = new System.Drawing.Point(7, 19);
+            this.radioSkip.Name = "radioSkip";
+            this.radioSkip.Size = new System.Drawing.Size(46, 17);
+            this.radioSkip.TabIndex = 0;
+            this.radioSkip.TabStop = true;
+            this.radioSkip.Text = "Skip";
+            this.radioSkip.UseVisualStyleBackColor = true;
+            // 
+            // btnExtractSegmentsFolder
+            // 
+            this.btnExtractSegmentsFolder.Location = new System.Drawing.Point(318, 48);
+            this.btnExtractSegmentsFolder.Name = "btnExtractSegmentsFolder";
+            this.btnExtractSegmentsFolder.Size = new System.Drawing.Size(266, 21);
+            this.btnExtractSegmentsFolder.TabIndex = 3;
+            this.btnExtractSegmentsFolder.Text = "Extract all segments from all files in folder...";
+            this.btnExtractSegmentsFolder.UseVisualStyleBackColor = true;
+            this.btnExtractSegmentsFolder.Click += new System.EventHandler(this.btnExtractSegmentsFolder_Click);
+            // 
+            // txtSegmentDescription
+            // 
+            this.txtSegmentDescription.Location = new System.Drawing.Point(83, 7);
+            this.txtSegmentDescription.Name = "txtSegmentDescription";
+            this.txtSegmentDescription.Size = new System.Drawing.Size(565, 20);
+            this.txtSegmentDescription.TabIndex = 2;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(8, 8);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(63, 13);
+            this.label8.TabIndex = 1;
+            this.label8.Text = "Description:";
+            // 
+            // btnExtractSegments
+            // 
+            this.btnExtractSegments.Location = new System.Drawing.Point(651, 3);
+            this.btnExtractSegments.Name = "btnExtractSegments";
+            this.btnExtractSegments.Size = new System.Drawing.Size(123, 26);
+            this.btnExtractSegments.TabIndex = 0;
+            this.btnExtractSegments.Text = "Extract current file";
+            this.btnExtractSegments.UseVisualStyleBackColor = true;
+            this.btnExtractSegments.Click += new System.EventHandler(this.btnExtractSegments_Click);
             // 
             // menuStrip1
             // 
@@ -942,16 +1082,6 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // checkAppendPatch
-            // 
-            this.checkAppendPatch.AutoSize = true;
-            this.checkAppendPatch.Location = new System.Drawing.Point(445, 34);
-            this.checkAppendPatch.Name = "checkAppendPatch";
-            this.checkAppendPatch.Size = new System.Drawing.Size(63, 17);
-            this.checkAppendPatch.TabIndex = 117;
-            this.checkAppendPatch.Text = "Append";
-            this.checkAppendPatch.UseVisualStyleBackColor = true;
-            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -984,11 +1114,15 @@
             this.tabFunction.ResumeLayout(false);
             this.tabCreate.ResumeLayout(false);
             this.tabCreate.PerformLayout();
-            this.tabExtract.ResumeLayout(false);
-            this.tabExtract.PerformLayout();
             this.tabFileinfo.ResumeLayout(false);
             this.tabFileinfo.PerformLayout();
             this.tabApply.ResumeLayout(false);
+            this.tabExtract.ResumeLayout(false);
+            this.tabExtract.PerformLayout();
+            this.tabExtractSegments.ResumeLayout(false);
+            this.tabExtractSegments.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -1073,5 +1207,16 @@
         private System.Windows.Forms.Button btnSaveCSV;
         private System.Windows.Forms.RichTextBox txtDebug;
         private System.Windows.Forms.CheckBox checkAppendPatch;
+        private System.Windows.Forms.TabPage tabExtractSegments;
+        private System.Windows.Forms.Button btnExtractSegments;
+        private System.Windows.Forms.TextBox txtSegmentDescription;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button btnExtractSegmentsFolder;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton radioRename;
+        private System.Windows.Forms.RadioButton radioReplace;
+        private System.Windows.Forms.RadioButton radioSkip;
+        private System.Windows.Forms.Button btnSwapSegments;
+        private System.Windows.Forms.Button button1;
     }
 }

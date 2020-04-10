@@ -46,6 +46,7 @@ namespace UniversalPatcher
         private PcmFile basefile;
         private PcmFile modfile;
         private CheckBox[] chkSegments;
+        private CheckBox[] chkExtractSegments;
         private string LastXML = "";
         private BindingSource bindingSource = new BindingSource();
         private BindingSource CvnSource = new BindingSource();
@@ -66,10 +67,12 @@ namespace UniversalPatcher
             if (numSuppress.Value == 0)
                 numSuppress.Value = 10;
 
-            if (!File.Exists(Path.Combine(Application.StartupPath, "Patches")))
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Patches")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
-            if (!File.Exists(Path.Combine(Application.StartupPath, "XML")))
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Segments")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Segments"));
 
 
             if (Properties.Settings.Default.LastXMLfolder == "")
@@ -111,10 +114,12 @@ namespace UniversalPatcher
                 for (int s = 0; s < chkSegments.Length; s++)
                 {
                     chkSegments[s].Dispose();
+                    chkExtractSegments[s].Dispose();
                 }
             }
             int Left = 6;
             chkSegments = new CheckBox[Segments.Count];
+            chkExtractSegments = new CheckBox[Segments.Count];
             for (int s = 0; s < Segments.Count; s++)
             {
                 CheckBox chk = new CheckBox();
@@ -122,11 +127,22 @@ namespace UniversalPatcher
                 chk.Location = new Point(Left, 80);
                 chk.Text = Segments[s].Name;
                 chk.AutoSize = true;
-                Left += chk.Width + 5;
                 chk.Tag = s;
                 if (!chk.Text.ToLower().Contains("eeprom"))
                     chk.Checked = true;
                 chkSegments[s] = chk;
+
+                chk = new CheckBox();
+                tabExtractSegments.Controls.Add(chk);
+                chk.Location = new Point(Left, 80);
+                chk.Text = Segments[s].Name;
+                chk.AutoSize = true;
+                chk.Tag = s;
+                chk.Checked = true;
+                chkExtractSegments[s] = chk;
+
+                Left += chk.Width + 5;
+
             }
             LastXML = XMLFile;
 
@@ -759,18 +775,22 @@ namespace UniversalPatcher
                 FixCheckSums();
             }
         }
-        private void FixCheckSums()
+        private bool FixCheckSums()
         {
+            bool NeedFix = false;
             try
             {
-                Logger("Fixing segsums:");
+                Logger("Fixing Checksums:");
                 for (int i = 0; i < Segments.Count; i++)
                 {
                     SegmentConfig S = Segments[i];
                     Logger(S.Name);
                     if (S.Eeprom)
                     {
-                        Logger(GmEeprom.FixEepromKey(basefile.buf));
+                        string Ret = GmEeprom.FixEepromKey(basefile.buf);
+                        if (Ret.Contains("Fixed"))
+                            NeedFix = true;
+                        Logger(Ret);
                     }
                     else
                     {
@@ -816,6 +836,7 @@ namespace UniversalPatcher
 
                                     }
                                     Logger(" Checksum 1: " + CS1.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
+                                    NeedFix = true;
                                 }
                             }
                         }
@@ -862,6 +883,7 @@ namespace UniversalPatcher
 
                                     }
                                     Logger(" Checksum 2: " + CS2.ToString("X") + " => " + CS2Calc.ToString("X4") + " [Fixed]");
+                                    NeedFix = true;
                                 }
                             }
                         }
@@ -874,7 +896,7 @@ namespace UniversalPatcher
             {
                 Logger("Error: " + ex.Message);
             }
-
+            return NeedFix;
         }
 
         private bool CheckRule(DetectRule DR, PcmFile PCM)
@@ -1031,7 +1053,7 @@ namespace UniversalPatcher
 
         private void btnLoadFolder_Click(object sender, EventArgs e)
         {
-            string FileName = SelectFile();
+            string FileName = SelectFile("Select one file from folder");
             if (FileName.Length == 0)
                 return;
             txtResult.Text = "";
@@ -1067,6 +1089,11 @@ namespace UniversalPatcher
 
         private void btnApplypatch_Click(object sender, EventArgs e)
         {
+            if (basefile == null || PatchList == null)
+            {
+                Logger("Nothing to do");
+                return;
+            }
             ApplyXMLPatch();
             btnCheckSums_Click(sender, e);
         }
@@ -1350,7 +1377,7 @@ namespace UniversalPatcher
 
         private void loadConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string FileName = SelectFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
+            string FileName = SelectFile("Select XML file", "XML files (*.xml)|*.xml|All files (*.*)|*.*");
             if (FileName.Length < 1)
                 return;
             frmSegmenList frmSL = new frmSegmenList();
@@ -1407,7 +1434,7 @@ namespace UniversalPatcher
         {
             try
             {
-                string FileName = SelectFile("XML patch files (*.xmlpatch)|*.xmlpatch|PATCH files (*.patch)|*.patch|ALL files(*.*)|*.*");
+                string FileName = SelectFile("Select patch file", "XML patch files (*.xmlpatch)|*.xmlpatch|PATCH files (*.patch)|*.patch|ALL files(*.*)|*.*");
                 if (FileName.Length > 1)
                 {
                     labelPatchname.Text = FileName;
@@ -1612,7 +1639,149 @@ namespace UniversalPatcher
             Logger(" [OK]");
 
         }
-        
+
+        private string SegmentFileName(string FnameStart, string Extension)
+        {
+            string FileName = FnameStart + Extension;
+            FileName = FileName.Replace("?", "_");
+            if (radioReplace.Checked)
+                return FileName;
+
+            if (!Directory.Exists(Path.GetDirectoryName(FnameStart)))
+                Directory.CreateDirectory(Path.GetDirectoryName(FnameStart));
+
+            if (!File.Exists(FileName))
+            {
+                return FileName;
+            }
+
+            if (radioSkip.Checked)
+            {
+                Logger("Skipping duplicate file: " + FileName);
+                return "";
+            }
+
+            //radioRename checked
+            uint Fnr = 0;
+            while (File.Exists(FileName))
+            {
+                Fnr++;
+                FileName = FnameStart + "(" + Fnr.ToString() + ")" + Extension;
+            }
+            return FileName;
+        }
+
+        private void ExtractSegments(PcmFile PCM, string Descr, bool AllSegments)
+        {            
+            if (PCM.segmentinfos == null)
+            {
+                Logger("no segments defined");
+                return;
+            }
+            try
+            {
+                for (int s=0;s<PCM.segmentinfos.Length;s++)
+                {
+                    if (AllSegments || chkExtractSegments[s].Checked)
+                    {
+                        string FnameStart = Path.Combine(Application.StartupPath, "Segments", PCM.OS , PCM.segmentinfos[s].SegNr, PCM.segmentinfos[s].Name + "-" + PCM.segmentinfos[s].PN + PCM.segmentinfos[s].Ver);
+                        string FileName = SegmentFileName(FnameStart, ".binsegment");
+                        if (FileName.Length > 0) 
+                        { 
+                            Logger("Writing " + PCM.segmentinfos[s].Name + " to file: " + FileName + ", size: " + PCM.segmentinfos[s].Size + " (0x" + PCM.segmentinfos[s].Size + ")");
+                            WriteSegmentToFile(FileName, PCM.binfile[s].SegmentBlocks, PCM.buf);
+                            StreamWriter sw = new StreamWriter(FileName + ".txt");
+                            sw.WriteLine(Descr);
+                            sw.Close();
+                            Logger("[OK]");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+        }
+        private void btnExtractSegments_Click(object sender, EventArgs e)
+        {
+            if (txtSegmentDescription.Text.Length == 0)
+                txtSegmentDescription.Text = Path.GetFileName(basefile.FileName).Replace(".bin", "");
+            ExtractSegments(basefile, txtExtractDescription.Text, false);
+        }
+
+        private void btnExtractSegmentsFolder_Click(object sender, EventArgs e)
+        {
+            string Title = "Select one file from folder";
+            string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*";
+            string FileName = SelectFile (Title, Filter);
+            if (FileName.Length == 0)
+                return;
+            DirectoryInfo d = new DirectoryInfo(Path.GetDirectoryName(FileName));
+            FileInfo[] Files = d.GetFiles("*.bin");
+            foreach (FileInfo file in Files)
+            {
+                PcmFile PCM = new PcmFile(file.FullName);
+                GetFileInfo(file.FullName, ref PCM, true);
+                ExtractSegments(PCM, file.Name.Replace(".bin", ""), true);
+            }
+
+        }
+
+        private void btnSwapSegments_Click(object sender, EventArgs e)
+        {
+            if (basefile == null)
+            {
+                Logger("No file loaded");
+                return;
+            }
+            if (basefile.OS == null || basefile.OS == "")
+            {
+                Logger("No OS segment defined");
+                return;
+            }
+            frmSwapSegmentList frmSw = new frmSwapSegmentList();
+            frmSw.LoadSegmentList(ref basefile);
+            if (frmSw.ShowDialog(this) == DialogResult.OK)
+            {
+                basefile = frmSw.PCM;
+                FixCheckSums();
+            }
+            frmSw.Dispose();
+        }
+
+        private void FixFileChecksum(string FileName)
+        {
+            try
+            {
+                basefile = new PcmFile(FileName);
+                GetFileInfo(FileName, ref basefile, true, false);
+                if (FixCheckSums())
+                {
+                    Logger("Saving file: " + FileName);
+                    WriteBinToFile(FileName, basefile.buf);
+                    Logger("[OK]");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            frmFileSelection frmF = new frmFileSelection();
+            frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+            if (frmF.ShowDialog(this) == DialogResult.OK)
+            {
+                for (int i= 0; i< frmF.listFiles.CheckedItems.Count; i++)
+                {
+                    string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
+                    FixFileChecksum(FileName);
+                }
+            }
+        }
     }
 
 }

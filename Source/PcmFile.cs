@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace UniversalPatcher
 {
-    class PcmFile
+    public class PcmFile
     {
         public byte[] buf;
         public string FileName;
@@ -167,7 +167,7 @@ namespace UniversalPatcher
         public bool FindSegment(SegmentConfig S, int SegNr)
         {
             if (!S.Searchfor.Contains(":"))
-                return false;
+                throw new Exception("Segment serach need 3 parameters: Serch for: search from: Y/N (" + S.Searchfor + ")");
             Debug.WriteLine("Searching segment");
 
             string[] Parts = S.Searchfor.Split(',');
