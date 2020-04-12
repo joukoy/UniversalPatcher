@@ -421,6 +421,24 @@ public class upatcher
 
     }
 
+    public static string SelectFolder(string Title)
+    {
+        string folderPath = "";
+        OpenFileDialog folderBrowser = new OpenFileDialog();
+        // Set validate names and check file exists to false otherwise windows will
+        // not let you select "Folder Selection."
+        folderBrowser.ValidateNames = false;
+        folderBrowser.CheckFileExists = false;
+        folderBrowser.CheckPathExists = true;
+        // Always default to Folder Selection.
+        folderBrowser.Title = Title;
+        folderBrowser.FileName = "Folder Selection";
+        if (folderBrowser.ShowDialog() == DialogResult.OK)
+        {
+            folderPath = Path.GetDirectoryName(folderBrowser.FileName);            
+        }
+        return folderPath;
+    }
     public static bool CheckStockCVN(string PN, string Ver, string SegNr, string cvn, bool AddToList)
     {
         for (int c = 0; c < StockCVN.Count; c++)

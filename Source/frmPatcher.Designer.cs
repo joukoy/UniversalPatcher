@@ -115,6 +115,7 @@
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkCustomFolder = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -189,7 +190,7 @@
             this.btnSaveBin.Location = new System.Drawing.Point(666, 6);
             this.btnSaveBin.Name = "btnSaveBin";
             this.btnSaveBin.Size = new System.Drawing.Size(108, 25);
-            this.btnSaveBin.TabIndex = 184;
+            this.btnSaveBin.TabIndex = 188;
             this.btnSaveBin.Text = "Save bin";
             this.btnSaveBin.UseVisualStyleBackColor = true;
             this.btnSaveBin.Click += new System.EventHandler(this.btnSaveBin_Click);
@@ -797,9 +798,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(124, 37);
+            this.button1.Location = new System.Drawing.Point(181, 37);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(131, 25);
+            this.button1.Size = new System.Drawing.Size(162, 25);
             this.button1.TabIndex = 186;
             this.button1.Text = "Fix checksum of files...";
             this.button1.UseVisualStyleBackColor = true;
@@ -810,7 +811,7 @@
             this.btnSwapSegments.Location = new System.Drawing.Point(236, 6);
             this.btnSwapSegments.Name = "btnSwapSegments";
             this.btnSwapSegments.Size = new System.Drawing.Size(107, 25);
-            this.btnSwapSegments.TabIndex = 185;
+            this.btnSwapSegments.TabIndex = 183;
             this.btnSwapSegments.Text = "Swap segment(s)";
             this.btnSwapSegments.UseVisualStyleBackColor = true;
             this.btnSwapSegments.Click += new System.EventHandler(this.btnSwapSegments_Click);
@@ -831,9 +832,9 @@
             this.btnCheckSums.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCheckSums.Location = new System.Drawing.Point(10, 37);
             this.btnCheckSums.Name = "btnCheckSums";
-            this.btnCheckSums.Size = new System.Drawing.Size(107, 25);
-            this.btnCheckSums.TabIndex = 183;
-            this.btnCheckSums.Text = "Fix checksums";
+            this.btnCheckSums.Size = new System.Drawing.Size(165, 25);
+            this.btnCheckSums.TabIndex = 184;
+            this.btnCheckSums.Text = "Fix checksums of current file";
             this.btnCheckSums.UseVisualStyleBackColor = true;
             this.btnCheckSums.Click += new System.EventHandler(this.btnCheckSums_Click);
             // 
@@ -925,6 +926,7 @@
             // 
             // tabExtractSegments
             // 
+            this.tabExtractSegments.Controls.Add(this.checkCustomFolder);
             this.tabExtractSegments.Controls.Add(this.groupBox2);
             this.tabExtractSegments.Controls.Add(this.btnExtractSegmentsFolder);
             this.tabExtractSegments.Controls.Add(this.txtSegmentDescription);
@@ -942,9 +944,9 @@
             this.groupBox2.Controls.Add(this.radioRename);
             this.groupBox2.Controls.Add(this.radioReplace);
             this.groupBox2.Controls.Add(this.radioSkip);
-            this.groupBox2.Location = new System.Drawing.Point(3, 33);
+            this.groupBox2.Location = new System.Drawing.Point(2, 2);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(284, 42);
+            this.groupBox2.Size = new System.Drawing.Size(231, 42);
             this.groupBox2.TabIndex = 17;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Duplicates";
@@ -955,7 +957,7 @@
             this.radioRename.Location = new System.Drawing.Point(143, 19);
             this.radioRename.Name = "radioRename";
             this.radioRename.Size = new System.Drawing.Size(65, 17);
-            this.radioRename.TabIndex = 2;
+            this.radioRename.TabIndex = 504;
             this.radioRename.Text = "Rename";
             this.radioRename.UseVisualStyleBackColor = true;
             // 
@@ -965,7 +967,7 @@
             this.radioReplace.Location = new System.Drawing.Point(72, 19);
             this.radioReplace.Name = "radioReplace";
             this.radioReplace.Size = new System.Drawing.Size(65, 17);
-            this.radioReplace.TabIndex = 1;
+            this.radioReplace.TabIndex = 503;
             this.radioReplace.Text = "Replace";
             this.radioReplace.UseVisualStyleBackColor = true;
             // 
@@ -976,32 +978,32 @@
             this.radioSkip.Location = new System.Drawing.Point(7, 19);
             this.radioSkip.Name = "radioSkip";
             this.radioSkip.Size = new System.Drawing.Size(46, 17);
-            this.radioSkip.TabIndex = 0;
+            this.radioSkip.TabIndex = 502;
             this.radioSkip.TabStop = true;
             this.radioSkip.Text = "Skip";
             this.radioSkip.UseVisualStyleBackColor = true;
             // 
             // btnExtractSegmentsFolder
             // 
-            this.btnExtractSegmentsFolder.Location = new System.Drawing.Point(318, 48);
+            this.btnExtractSegmentsFolder.Location = new System.Drawing.Point(335, 18);
             this.btnExtractSegmentsFolder.Name = "btnExtractSegmentsFolder";
-            this.btnExtractSegmentsFolder.Size = new System.Drawing.Size(266, 21);
-            this.btnExtractSegmentsFolder.TabIndex = 3;
+            this.btnExtractSegmentsFolder.Size = new System.Drawing.Size(232, 21);
+            this.btnExtractSegmentsFolder.TabIndex = 505;
             this.btnExtractSegmentsFolder.Text = "Extract all segments from all files in folder...";
             this.btnExtractSegmentsFolder.UseVisualStyleBackColor = true;
             this.btnExtractSegmentsFolder.Click += new System.EventHandler(this.btnExtractSegmentsFolder_Click);
             // 
             // txtSegmentDescription
             // 
-            this.txtSegmentDescription.Location = new System.Drawing.Point(83, 7);
+            this.txtSegmentDescription.Location = new System.Drawing.Point(84, 45);
             this.txtSegmentDescription.Name = "txtSegmentDescription";
             this.txtSegmentDescription.Size = new System.Drawing.Size(565, 20);
-            this.txtSegmentDescription.TabIndex = 2;
+            this.txtSegmentDescription.TabIndex = 500;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(8, 8);
+            this.label8.Location = new System.Drawing.Point(9, 46);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(63, 13);
             this.label8.TabIndex = 1;
@@ -1009,10 +1011,10 @@
             // 
             // btnExtractSegments
             // 
-            this.btnExtractSegments.Location = new System.Drawing.Point(651, 3);
+            this.btnExtractSegments.Location = new System.Drawing.Point(652, 41);
             this.btnExtractSegments.Name = "btnExtractSegments";
             this.btnExtractSegments.Size = new System.Drawing.Size(123, 26);
-            this.btnExtractSegments.TabIndex = 0;
+            this.btnExtractSegments.TabIndex = 501;
             this.btnExtractSegments.Text = "Extract current file";
             this.btnExtractSegments.UseVisualStyleBackColor = true;
             this.btnExtractSegments.Click += new System.EventHandler(this.btnExtractSegments_Click);
@@ -1081,6 +1083,16 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // checkCustomFolder
+            // 
+            this.checkCustomFolder.AutoSize = true;
+            this.checkCustomFolder.Location = new System.Drawing.Point(239, 22);
+            this.checkCustomFolder.Name = "checkCustomFolder";
+            this.checkCustomFolder.Size = new System.Drawing.Size(90, 17);
+            this.checkCustomFolder.TabIndex = 506;
+            this.checkCustomFolder.Text = "Custom folder";
+            this.checkCustomFolder.UseVisualStyleBackColor = true;
             // 
             // FrmPatcher
             // 
@@ -1218,5 +1230,6 @@
         private System.Windows.Forms.RadioButton radioSkip;
         private System.Windows.Forms.Button btnSwapSegments;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox checkCustomFolder;
     }
 }

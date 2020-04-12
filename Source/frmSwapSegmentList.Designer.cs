@@ -115,10 +115,11 @@
             this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtResult.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtResult.Location = new System.Drawing.Point(4, 311);
             this.txtResult.Name = "txtResult";
             this.txtResult.Size = new System.Drawing.Size(773, 170);
-            this.txtResult.TabIndex = 7;
+            this.txtResult.TabIndex = 10;
             this.txtResult.Text = "";
             // 
             // btnOK

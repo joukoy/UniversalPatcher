@@ -23,6 +23,7 @@ namespace UniversalPatcher
         public PcmFile PCM;
         private byte[] SwapBuffer;
         private bool Applied = false;
+        private bool Swapped = false;
         public void LoadSegmentList(ref PcmFile PCM1)
         {
             PCM = PCM1;
@@ -48,6 +49,10 @@ namespace UniversalPatcher
             listSegments.Items.Clear();
             SwapBuffer = null;
             labelSelectedSegment.Text = "-";
+            if (comboSegments.Text == "OS")
+            {
+                return;
+            }
             string SegNr = ((SegmentInfo)comboSegments.SelectedItem).SegNr;
             string Folder = Path.Combine(Application.StartupPath, "Segments", PCM.OS, SegNr);
             if (!Directory.Exists(Folder))
@@ -91,14 +96,19 @@ namespace UniversalPatcher
             if (listSegments.SelectedItems.Count == 0)
                 return;
             try 
-            { 
+            {
+                if (comboSegments.Text == "OS")
+                {
+                    Logger("OS swap disabled");
+                    return;
+                }
                 string FileName = listSegments.SelectedItems[0].Tag.ToString();
-                labelSelectedSegment.Text = "Swap to: " + listSegments.SelectedItems[0].Text;
+                labelSelectedSegment.Text = "Selected: " + listSegments.SelectedItems[0].Text;
                 labelSelectedSegment.Tag = FileName;
                 uint fsize = (uint)new FileInfo(FileName).Length;
-                Logger("Reading file: " + FileName, false);
+                Logger("Reading file: " + FileName);
                 SwapBuffer = ReadBin(FileName, 0, fsize);
-                Logger(" [OK]");
+                Logger("[OK] Press \"Apply\" to swap");
                 Applied = false;
             }
             catch (Exception ex)
@@ -107,12 +117,12 @@ namespace UniversalPatcher
             }
         }
 
-        private void ApplySegment()
+        private bool ApplySegment()
         {
             if (SwapBuffer == null)
             {
                 Logger("No segment selected");
-                return;
+                return false;
             }
             try
             {
@@ -129,10 +139,13 @@ namespace UniversalPatcher
                 }
                 Logger(" [OK]");
                 Applied = true;
+                Swapped = true;
+                return true;
             }
             catch (Exception ex)
             {
                 Logger(ex.Message);
+                return false;
             }
 
         }
@@ -144,19 +157,30 @@ namespace UniversalPatcher
         private void btnOK_Click(object sender, EventArgs e)
         {
             if (!Applied && SwapBuffer != null)
-                ApplySegment();
-            this.DialogResult = DialogResult.OK;
+            {
+                if (!ApplySegment())
+                    return;
+            }
+            if (Swapped)
+                this.DialogResult = DialogResult.OK;
+            else
+                this.DialogResult = DialogResult.None;
             this.Close();
         }
 
         private void btnExtract_Click(object sender, EventArgs e)
         {
+            if (comboSegments.Text == "OS")
+            {
+                Logger("OS swap disabled");
+                return;
+            }
             string FileName = SelectFile();
             if (FileName.Length == 0)
                 return;
             try
             {
-                Logger("Reading segment from file: " + FileName, false);
+                Logger("Reading segment from file: " + FileName);
                 PcmFile tmpPCM = new PcmFile(FileName);
                 tmpPCM.GetSegmentAddresses();
                 tmpPCM.GetInfo();
@@ -169,7 +193,7 @@ namespace UniversalPatcher
                 if (!HexToUint(PCM.segmentinfos[Seg].Size, out TotalLength))
                     throw new Exception("Cant't decode HEX: " + PCM.segmentinfos[Seg].Size);
                 SwapBuffer = new byte[TotalLength];
-                labelSelectedSegment.Text = "Swap to: " + tmpPCM.segmentinfos[Seg].PN + tmpPCM.segmentinfos[Seg].Ver + "  (From file: " + Path.GetFileName(FileName) +")";
+                labelSelectedSegment.Text = "Selected: " + tmpPCM.segmentinfos[Seg].PN + tmpPCM.segmentinfos[Seg].Ver + "  (From file: " + Path.GetFileName(FileName) +")";
                 labelSelectedSegment.Tag = FileName;
                 uint Offset = 0;
                 for (int s=0; s < PCM.binfile[Seg].SegmentBlocks.Count; s++)
@@ -180,7 +204,7 @@ namespace UniversalPatcher
                     Offset += Length;
                 }
                 Logger(" (" + TotalLength.ToString() + " B)", false);
-                Logger(" [OK]");
+                Logger("[OK] Press \"Apply\" to swap");
                 Applied = false;
             }
             catch (Exception ex)

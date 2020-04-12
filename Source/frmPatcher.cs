@@ -314,6 +314,8 @@ namespace UniversalPatcher
                 if (Segments.Count > 0)
                     Logger("Segments:");
                 PCM.GetInfo();
+                if (PCM.OS == null || PCM.OS == "")
+                    LoggerBold("Warning: No OS segment defined, limiting functions");
                 RefreshCVNlist();
                 if (Show)
                     ShowFileInfo(PCM, InfoOnly);
@@ -750,9 +752,9 @@ namespace UniversalPatcher
             int Start = txtResult.Text.Length;
             txtResult.AppendText(LogText);
             txtResult.Select(Start, LogText.Length);
+            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Bold);
             if (NewLine)
                 txtResult.AppendText(Environment.NewLine);
-            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Bold);
             Application.DoEvents();
         }
 
@@ -762,9 +764,9 @@ namespace UniversalPatcher
             int Start = txtResult.Text.Length;
             txtResult.AppendText(LogText);
             txtResult.Select(Start, LogText.Length);
+            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
             if (NewLine)
                 txtResult.AppendText(Environment.NewLine);
-            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
             Application.DoEvents();
         }
 
@@ -1053,11 +1055,10 @@ namespace UniversalPatcher
 
         private void btnLoadFolder_Click(object sender, EventArgs e)
         {
-            string FileName = SelectFile("Select one file from folder");
-            if (FileName.Length == 0)
+            string Fldr = SelectFolder("Select folder");
+            if (Fldr.Length == 0)
                 return;
             txtResult.Text = "";
-            string Fldr = Path.GetDirectoryName(FileName);
             DirectoryInfo d = new DirectoryInfo(Fldr);
             FileInfo[] Files = d.GetFiles("*.bin");
             foreach (FileInfo file in Files)
@@ -1671,7 +1672,7 @@ namespace UniversalPatcher
             return FileName;
         }
 
-        private void ExtractSegments(PcmFile PCM, string Descr, bool AllSegments)
+        private void ExtractSegments(PcmFile PCM, string Descr, bool AllSegments, string dstFolder)
         {            
             if (PCM.segmentinfos == null)
             {
@@ -1684,8 +1685,17 @@ namespace UniversalPatcher
                 {
                     if (AllSegments || chkExtractSegments[s].Checked)
                     {
-                        string FnameStart = Path.Combine(Application.StartupPath, "Segments", PCM.OS , PCM.segmentinfos[s].SegNr, PCM.segmentinfos[s].Name + "-" + PCM.segmentinfos[s].PN + PCM.segmentinfos[s].Ver);
-                        string FileName = SegmentFileName(FnameStart, ".binsegment");
+                        string FileName;
+                        if (dstFolder.Length > 0)
+                        {
+                            string FnameStart = Path.Combine(dstFolder, PCM.segmentinfos[s].PN.PadLeft(8,'0'));
+                            FileName = SegmentFileName(FnameStart, ".bin");
+                        }
+                        else
+                        {
+                            string FnameStart = Path.Combine(Application.StartupPath, "Segments", PCM.OS, PCM.segmentinfos[s].SegNr, PCM.segmentinfos[s].Name + "-" + PCM.segmentinfos[s].PN + PCM.segmentinfos[s].Ver);
+                            FileName = SegmentFileName(FnameStart, ".binsegment");
+                        }
                         if (FileName.Length > 0) 
                         { 
                             Logger("Writing " + PCM.segmentinfos[s].Name + " to file: " + FileName + ", size: " + PCM.segmentinfos[s].Size + " (0x" + PCM.segmentinfos[s].Size + ")");
@@ -1707,23 +1717,25 @@ namespace UniversalPatcher
         {
             if (txtSegmentDescription.Text.Length == 0)
                 txtSegmentDescription.Text = Path.GetFileName(basefile.FileName).Replace(".bin", "");
-            ExtractSegments(basefile, txtExtractDescription.Text, false);
+            ExtractSegments(basefile, txtExtractDescription.Text, false,"");
         }
 
         private void btnExtractSegmentsFolder_Click(object sender, EventArgs e)
         {
-            string Title = "Select one file from folder";
-            string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*";
-            string FileName = SelectFile (Title, Filter);
-            if (FileName.Length == 0)
+            //string FileName = SelectFile (Title, Filter);
+            string Folder = SelectFolder("Select BIN file directory");
+            string dstFolder = "";
+            if (checkCustomFolder.Checked)
+                dstFolder = SelectFolder("Select destination directory");
+            if (Folder.Length == 0)
                 return;
-            DirectoryInfo d = new DirectoryInfo(Path.GetDirectoryName(FileName));
+            DirectoryInfo d = new DirectoryInfo(Folder);
             FileInfo[] Files = d.GetFiles("*.bin");
             foreach (FileInfo file in Files)
             {
                 PcmFile PCM = new PcmFile(file.FullName);
                 GetFileInfo(file.FullName, ref PCM, true);
-                ExtractSegments(PCM, file.Name.Replace(".bin", ""), true);
+                ExtractSegments(PCM, file.Name.Replace(".bin", ""), true, dstFolder);
             }
 
         }
@@ -1746,6 +1758,7 @@ namespace UniversalPatcher
             {
                 basefile = frmSw.PCM;
                 FixCheckSums();
+                Logger("Segment(s) swapped and checksums fixed (you can save BIN now)");
             }
             frmSw.Dispose();
         }
