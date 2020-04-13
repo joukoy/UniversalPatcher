@@ -17,17 +17,16 @@ namespace UniversalPatcher
         public frmSwapSegmentList()
         {
             InitializeComponent();
-            txtResult.EnableContextMenu();
         }
 
         public PcmFile PCM;
         private byte[] SwapBuffer;
         private bool Applied = false;
-        private bool Swapped = false;
-        public void LoadSegmentList(ref PcmFile PCM1)
+        public void LoadSegmentList(string fileName)
         {
-            PCM = PCM1;
-            labelBasefile.Text = Path.GetFileName(PCM.FileName);
+            labelBasefile.Text = fileName;
+            PCM = new PcmFile(fileName);
+            GetFileInfo(fileName, ref PCM, true, true, false);
             comboSegments.Items.Clear();
             //for (int s=0;s<PCM.segmentinfos.Length;s++)
             comboSegments.ValueMember = "SegNr";
@@ -79,17 +78,6 @@ namespace UniversalPatcher
         {
             LoadSegments();
         }
-        public void Logger(string LogText, Boolean NewLine = true)
-        {
-            txtResult.Focus();
-            int Start = txtResult.Text.Length;
-            txtResult.AppendText(LogText);
-            txtResult.Select(Start, LogText.Length);
-            if (NewLine)
-                txtResult.AppendText(Environment.NewLine);
-            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
-            Application.DoEvents();
-        }
 
         private void listSegments_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -139,7 +127,6 @@ namespace UniversalPatcher
                 }
                 Logger(" [OK]");
                 Applied = true;
-                Swapped = true;
                 return true;
             }
             catch (Exception ex)
@@ -161,11 +148,14 @@ namespace UniversalPatcher
                 if (!ApplySegment())
                     return;
             }
-            if (Swapped)
-                this.DialogResult = DialogResult.OK;
-            else
-                this.DialogResult = DialogResult.None;
-            this.Close();
+            string fileName = SelectSaveFile();
+            if (fileName.Length == 0)
+                return;
+            Logger("Fixing Checksums");
+            FixCheckSums(ref PCM);
+            Logger("Saving to file: " + fileName);
+            WriteBinToFile(fileName, PCM.buf);
+            Logger("OK");
         }
 
         private void btnExtract_Click(object sender, EventArgs e)
@@ -211,6 +201,11 @@ namespace UniversalPatcher
             {
                 Logger(ex.Message);
             }
+        }
+
+        private void frmSwapSegmentList_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

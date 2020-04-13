@@ -45,9 +45,9 @@ namespace UniversalPatcher
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            string FileName = SelectFile("Select one file from folder");
-            if (FileName.Length > 0)
-                LoadFiles(Path.GetDirectoryName(FileName));
+            string Folder = SelectFolder("Select folder");
+            if (Folder.Length > 0)
+                LoadFiles(Folder);
         }
 
         private void btnSelectAll_Click(object sender, EventArgs e)

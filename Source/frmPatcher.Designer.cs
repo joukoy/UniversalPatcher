@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnOrgFile = new System.Windows.Forms.Button();
             this.btnModFile = new System.Windows.Forms.Button();
             this.txtBaseFile = new System.Windows.Forms.TextBox();
@@ -99,6 +100,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.txtExtractRange = new System.Windows.Forms.TextBox();
             this.tabExtractSegments = new System.Windows.Forms.TabPage();
+            this.checkCustomFolder = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.radioRename = new System.Windows.Forms.RadioButton();
             this.radioReplace = new System.Windows.Forms.RadioButton();
@@ -115,7 +117,7 @@
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.checkCustomFolder = new System.Windows.Forms.CheckBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -243,7 +245,7 @@
             // numSuppress
             // 
             this.numSuppress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numSuppress.Location = new System.Drawing.Point(657, 3);
+            this.numSuppress.Location = new System.Drawing.Point(665, 32);
             this.numSuppress.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -257,26 +259,29 @@
             0,
             0,
             0});
+            this.numSuppress.ValueChanged += new System.EventHandler(this.numSuppress_ValueChanged);
             // 
             // label2
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(592, 5);
+            this.label2.Location = new System.Drawing.Point(600, 34);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(59, 13);
             this.label2.TabIndex = 19;
             this.label2.Text = "Show max:";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label3
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(700, 5);
+            this.label3.Location = new System.Drawing.Point(708, 34);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(59, 13);
             this.label3.TabIndex = 20;
             this.label3.Text = "patch rows";
+            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // chkCompareAll
             // 
@@ -320,10 +325,7 @@
             // 
             this.tabInfo.AutoScroll = true;
             this.tabInfo.Controls.Add(this.txtResult);
-            this.tabInfo.Controls.Add(this.numSuppress);
-            this.tabInfo.Controls.Add(this.label2);
             this.tabInfo.Controls.Add(this.btnSaveFileInfo);
-            this.tabInfo.Controls.Add(this.label3);
             this.tabInfo.Controls.Add(this.label1);
             this.tabInfo.Controls.Add(this.labelBinSize);
             this.tabInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -589,8 +591,9 @@
             this.dataCVN.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataCVN.Location = new System.Drawing.Point(1, 33);
             this.dataCVN.Name = "dataCVN";
-            this.dataCVN.Size = new System.Drawing.Size(776, 310);
+            this.dataCVN.Size = new System.Drawing.Size(776, 501);
             this.dataCVN.TabIndex = 0;
+            this.dataCVN.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataCVN_CellContentClick);
             // 
             // tabFinfo
             // 
@@ -603,6 +606,7 @@
             this.tabFinfo.TabIndex = 4;
             this.tabFinfo.Text = "File info";
             this.tabFinfo.UseVisualStyleBackColor = true;
+            this.tabFinfo.Click += new System.EventHandler(this.tabFinfo_Click);
             // 
             // btnSaveCSV
             // 
@@ -632,8 +636,9 @@
             this.dataFileInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataFileInfo.Location = new System.Drawing.Point(1, 31);
             this.dataFileInfo.Name = "dataFileInfo";
-            this.dataFileInfo.Size = new System.Drawing.Size(778, 312);
+            this.dataFileInfo.Size = new System.Drawing.Size(778, 503);
             this.dataFileInfo.TabIndex = 0;
+            this.dataFileInfo.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataFileInfo_CellContentClick);
             // 
             // chkExtra
             // 
@@ -723,8 +728,11 @@
             // tabCreate
             // 
             this.tabCreate.Controls.Add(this.checkAppendPatch);
+            this.tabCreate.Controls.Add(this.numSuppress);
             this.tabCreate.Controls.Add(this.txtOS);
+            this.tabCreate.Controls.Add(this.label2);
             this.tabCreate.Controls.Add(this.label7);
+            this.tabCreate.Controls.Add(this.label3);
             this.tabCreate.Controls.Add(this.btnModFile);
             this.tabCreate.Controls.Add(this.txtModifierFile);
             this.tabCreate.Controls.Add(this.btnCompare);
@@ -939,6 +947,16 @@
             this.tabExtractSegments.Text = "Extract segments";
             this.tabExtractSegments.UseVisualStyleBackColor = true;
             // 
+            // checkCustomFolder
+            // 
+            this.checkCustomFolder.AutoSize = true;
+            this.checkCustomFolder.Location = new System.Drawing.Point(239, 22);
+            this.checkCustomFolder.Name = "checkCustomFolder";
+            this.checkCustomFolder.Size = new System.Drawing.Size(90, 17);
+            this.checkCustomFolder.TabIndex = 506;
+            this.checkCustomFolder.Text = "Custom folder";
+            this.checkCustomFolder.UseVisualStyleBackColor = true;
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.radioRename);
@@ -1029,6 +1047,7 @@
             this.menuStrip1.Size = new System.Drawing.Size(784, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuMain";
+            this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
             // 
             // toolStripMenuItem1
             // 
@@ -1083,16 +1102,6 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // checkCustomFolder
-            // 
-            this.checkCustomFolder.AutoSize = true;
-            this.checkCustomFolder.Location = new System.Drawing.Point(239, 22);
-            this.checkCustomFolder.Name = "checkCustomFolder";
-            this.checkCustomFolder.Size = new System.Drawing.Size(90, 17);
-            this.checkCustomFolder.TabIndex = 506;
-            this.checkCustomFolder.Text = "Custom folder";
-            this.checkCustomFolder.UseVisualStyleBackColor = true;
             // 
             // FrmPatcher
             // 
@@ -1231,5 +1240,6 @@
         private System.Windows.Forms.Button btnSwapSegments;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox checkCustomFolder;
+        private System.Windows.Forms.Timer timer1;
     }
 }

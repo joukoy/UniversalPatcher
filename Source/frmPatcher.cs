@@ -35,12 +35,6 @@ namespace UniversalPatcher
             }
         }
 
-        private struct DetectGroup
-        {
-            public string Logic;
-            public uint Hits;
-            public uint Miss;
-        }
 
         private frmSegmenList frmSL;
         private PcmFile basefile;
@@ -54,54 +48,11 @@ namespace UniversalPatcher
 
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
-            this.Show();
-            string[] args = Environment.GetCommandLineArgs();
-            if (args.Length > 1 && File.Exists(args[1]))
-            {
-                Logger(args[1]);
-                frmSegmenList frmSL = new frmSegmenList();
-                frmSL.LoadFile(args[1]);
-            }
             addCheckBoxes();
             numSuppress.Value = Properties.Settings.Default.SuppressAfter;
             if (numSuppress.Value == 0)
                 numSuppress.Value = 10;
-
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Patches")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Segments")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Segments"));
-
-
-            if (Properties.Settings.Default.LastXMLfolder == "")
-                Properties.Settings.Default.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
-            if (Properties.Settings.Default.LastPATCHfolder == "")
-                Properties.Settings.Default.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
             chkDebug.Checked = Properties.Settings.Default.DebugOn;
-
-            DetectRules = new List<DetectRule>();
-            string AutoDetectFile = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
-            if (File.Exists(AutoDetectFile))
-            {
-                Debug.WriteLine("Loading autodetect.xml");
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<DetectRule>));
-                System.IO.StreamReader file = new System.IO.StreamReader(AutoDetectFile);
-                DetectRules = (List<DetectRule>)reader.Deserialize(file);
-                file.Close();
-            }
-
-            StockCVN = new List<CVN>();
-            string StockCVNFile = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
-            if (File.Exists(StockCVNFile))
-            {
-                Debug.WriteLine("Loading stockcvn.xml");
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<CVN>));
-                System.IO.StreamReader file = new System.IO.StreamReader(StockCVNFile);
-                StockCVN = (List<CVN>)reader.Deserialize(file);
-                file.Close();
-            }
 
         }
 
@@ -248,7 +199,7 @@ namespace UniversalPatcher
                             }
                         }
                         if (PCM.segmentinfos[i].Stock == "True")
-                            LoggerBold("[Stock]", false);
+                            LoggerBold("[Stock]", true);
 
                         if (!txtResult.Text.EndsWith(Environment.NewLine))
                             txtResult.AppendText(Environment.NewLine);
@@ -325,16 +276,22 @@ namespace UniversalPatcher
                 Logger(ex.Message);
             }
         }
+
+        public void LoadFile(string FileName)
+        {
+            txtBaseFile.Text = FileName;
+            basefile = new PcmFile(FileName);
+            labelBinSize.Text = basefile.fsize.ToString();
+            GetFileInfo(txtBaseFile.Text, ref basefile, false);
+            txtOS.Text = basefile.OS;
+
+        }
         private void btnOrgFile_Click(object sender, EventArgs e)
         {
             string FileName = SelectFile();
             if (FileName.Length > 1)
             {
-                txtBaseFile.Text = FileName;
-                basefile = new PcmFile(FileName);
-                labelBinSize.Text = basefile.fsize.ToString();
-                GetFileInfo(txtBaseFile.Text, ref basefile, false);
-                txtOS.Text = basefile.OS;
+                LoadFile(FileName);
             }
         }
 
@@ -360,175 +317,6 @@ namespace UniversalPatcher
                 tabFinfo.Text = "File info";
             else
                 tabFinfo.Text = "File info (" + ListSegment.Count.ToString() + ")";
-        }
-        private bool ApplyXMLPatch()
-        {
-            try
-            {
-                bool isCompatible = false;
-                string BinPN="";
-                string PrevSegment = "";
-                uint ByteCount = 0;
-                string[] Parts;
-                if (PatchList[0].XmlFile != null)
-                {
-                    Parts = PatchList[0].XmlFile.Split(',');
-                    foreach (string Part in Parts)
-                    {
-                        if (Part == Path.GetFileName(XMLFile))
-                            isCompatible = true;
-                    }
-                    if (!isCompatible)
-                    { 
-                        Logger("Incompatible patch");
-                        return false;
-                    }
-                }
-                Logger("Applying patch:");
-                foreach (XmlPatch xpatch in PatchList)
-                {
-                    isCompatible = false;
-                    uint Addr = 0;
-                    string[] OSlist = xpatch.CompatibleOS.Split(',');
-                    foreach (string OS in OSlist)
-                    {
-                        Parts = OS.Split(':');
-                        if(Parts[0] == "ALL")
-                        {
-                            isCompatible = true;
-                            if (!HexToUint(Parts[1], out Addr))
-                                throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.CompatibleOS + ")");
-                            Debug.WriteLine("ALL, Addr: " + Parts[1]);
-                        }
-                        else
-                        {
-                            if (BinPN == "")
-                            { 
-                                //Search OS once
-                                for (int s = 0; s < Segments.Count; s++)
-                                {
-                                    string PN = basefile.ReadInfo(basefile.binfile[s].PNaddr);
-                                    if (Parts[0] == PN)
-                                    {                                        
-                                        isCompatible = true;
-                                        BinPN = PN;
-                                    }
-                                }
-                            }
-                            if (Parts[0] == BinPN)
-                            {
-                                isCompatible = true;
-                                if (!HexToUint(Parts[1], out Addr))
-                                    throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.CompatibleOS + ")");
-                                Debug.WriteLine("OS: " + BinPN + ", Addr: " + Parts[1]);
-                            }
-                        }
-                    }
-                    if (isCompatible)
-                    {
-                        if (xpatch.Description != null && xpatch.Description != "")
-                            Logger(xpatch.Description);
-                        if (xpatch.Segment != null && xpatch.Segment.Length > 0 && PrevSegment != xpatch.Segment)
-                        {
-                            PrevSegment = xpatch.Segment;
-                            Logger("Segment: " + xpatch.Segment);
-                        }
-                        bool PatchRule = true; //If there is no rule, apply patch
-                        if (xpatch.Rule != null && (xpatch.Rule.Contains(':') || xpatch.Rule.Contains('[')))
-                        {
-                            Parts = xpatch.Rule.Split(new char[] { ']', '[', ':' }, StringSplitOptions.RemoveEmptyEntries);
-                            if (Parts.Length == 3)
-                            {
-                                uint RuleAddr;
-                                if (!HexToUint(Parts[0], out RuleAddr))
-                                    throw new Exception("Can't decode from HEX: " + Parts[0] + " (" + xpatch.Rule + ")");
-                                ushort RuleMask;
-                                if (!HexToUshort(Parts[1], out RuleMask))
-                                    throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.Rule + ")");
-                                ushort RuleValue;
-                                if (!HexToUshort(Parts[2].Replace("!",""), out RuleValue))
-                                    throw new Exception("Can't decode from HEX: " + Parts[2] + " (" + xpatch.Rule + ")");
-
-                                if (Parts[2].Contains("!"))
-                                {
-                                    if ((basefile.buf[RuleAddr] & RuleMask) != RuleValue)
-                                    {
-                                        PatchRule = true;
-                                        Logger("Rule match, applying patch");
-                                    }
-                                    else
-                                    {
-                                        PatchRule = false;
-                                        Logger("Rule doesn't match, skipping patch");
-                                    }
-                                }
-                                else
-                                {
-                                    if ((basefile.buf[RuleAddr] & RuleMask) == RuleValue)
-                                    {
-                                        PatchRule = true;
-                                        Logger("Rule match, applying patch");
-                                    }
-                                    else
-                                    {
-                                        PatchRule = false;
-                                        Logger("Rule doesn't match, skipping patch");
-                                    }
-                                }
-
-                            }
-                        }
-                        if (PatchRule) { 
-                            Debug.WriteLine(Addr.ToString("X") + ":" + xpatch.Data);
-                            Parts = xpatch.Data.Split(' ');                        
-                            foreach(string Part in Parts)
-                            {                            
-                                //Actually add patch data:
-                                if (Part.Contains("[") || Part.Contains(":"))
-                                {
-                                    //Set bits / use Mask
-                                    byte Origdata = basefile.buf[Addr];
-                                    Debug.WriteLine("Set address: " + Addr.ToString("X") + ", old data: " + Origdata.ToString("X"));
-                                    string[] dataparts;
-                                    dataparts = Part.Split(new char[] { ']', '[', ':' }, StringSplitOptions.RemoveEmptyEntries);
-                                    byte Setdata = byte.Parse(dataparts[0], System.Globalization.NumberStyles.HexNumber);
-                                    byte Mask = byte.Parse(dataparts[1].Replace("]",""), System.Globalization.NumberStyles.HexNumber);
-
-                                    // Set 1
-                                    byte tmpMask = (byte)(Mask & Setdata);
-                                    byte Newdata = (byte)(Origdata | tmpMask);
-
-                                    // Set 0
-                                    tmpMask = (byte)(Mask & ~Setdata);
-                                    Newdata = (byte)(Newdata & ~tmpMask);
-
-                                    Debug.WriteLine("New data: " + Newdata.ToString("X"));
-                                    basefile.buf[Addr] = Newdata;
-                                }
-                                else 
-                                { 
-                                    //Set byte
-                                    basefile.buf[Addr] = Byte.Parse(Part,System.Globalization.NumberStyles.HexNumber);
-                                }
-                                Addr++;
-                                ByteCount++;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Logger("Patch is not compatible");
-                        return false;
-                    }
-                }
-                Logger("Applied: " + ByteCount.ToString() + " Bytes");
-            }
-            catch (Exception ex)
-            {
-                Logger("Error: " + ex.Message);
-                return false;
-            }
-            return true;
         }
 
         private void CompareBlock(byte[] OrgFile, byte[] ModFile, uint Start, uint End, string CurrentSegment, AddressData[] SkipList)
@@ -746,7 +534,7 @@ namespace UniversalPatcher
             SaveBin();
         }
 
-        public void LoggerBold(string LogText, Boolean NewLine = true)
+/*        public void LoggerBold(string LogText, Boolean NewLine = true)
         {
             txtResult.Focus();
             int Start = txtResult.Text.Length;
@@ -757,8 +545,8 @@ namespace UniversalPatcher
                 txtResult.AppendText(Environment.NewLine);
             Application.DoEvents();
         }
-
-        public void Logger(string LogText, Boolean NewLine = true)
+*/
+/*        public void Logger(string LogText, Boolean NewLine = true)
         {
             txtResult.Focus();
             int Start = txtResult.Text.Length;
@@ -769,289 +557,16 @@ namespace UniversalPatcher
                 txtResult.AppendText(Environment.NewLine);
             Application.DoEvents();
         }
+*/
 
         private void btnCheckSums_Click(object sender, EventArgs e)
         {
             if (Segments != null && Segments.Count > 0)
             { 
-                FixCheckSums();
-            }
-        }
-        private bool FixCheckSums()
-        {
-            bool NeedFix = false;
-            try
-            {
-                Logger("Fixing Checksums:");
-                for (int i = 0; i < Segments.Count; i++)
-                {
-                    SegmentConfig S = Segments[i];
-                    Logger(S.Name);
-                    if (S.Eeprom)
-                    {
-                        string Ret = GmEeprom.FixEepromKey(basefile.buf);
-                        if (Ret.Contains("Fixed"))
-                            NeedFix = true;
-                        Logger(Ret);
-                    }
-                    else
-                    {
-                        if (S.CS1Method != CSMethod_None)
-                        {
-                            uint CS1 = 0;
-                            uint CS1Calc = CalculateChecksum(basefile.buf, basefile.binfile[i].CS1Address, basefile.binfile[i].CS1Blocks, basefile.binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, basefile.binfile[i].CS1Address.Bytes, S.CS1SwapBytes);
-                            if (basefile.binfile[i].CS1Address.Bytes == 1)
-                            {
-                                CS1 = basefile.buf[basefile.binfile[i].CS1Address.Address];
-                            }
-                            else if (basefile.binfile[i].CS1Address.Bytes == 2)
-                            {
-                                CS1 = BEToUint16(basefile.buf, basefile.binfile[i].CS1Address.Address);
-                            }
-                            else if (basefile.binfile[i].CS1Address.Bytes == 4)
-                            {
-                                CS1 = BEToUint32(basefile.buf, basefile.binfile[i].CS1Address.Address);
-                            }
-                            if (CS1 == CS1Calc)
-                                Logger(" Checksum 1: " + CS1.ToString("X4") + " [OK]");
-                            else
-                            {
-                                if (basefile.binfile[i].CS1Address.Bytes == 0)
-                                {
-                                    Logger(" Checksum 1: " + CS1Calc.ToString("X4") + " [Not saved]");
-                                }
-                                else
-                                {
-                                    if (basefile.binfile[i].CS1Address.Bytes == 1)
-                                        basefile.buf[basefile.binfile[i].CS1Address.Address] = (byte)CS1Calc;
-                                    else if (basefile.binfile[i].CS1Address.Bytes == 2)
-                                    {
-                                        basefile.buf[basefile.binfile[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF00) >> 8);
-                                        basefile.buf[basefile.binfile[i].CS1Address.Address + 1] = (byte)(CS1Calc & 0xFF);
-                                    }
-                                    else if (basefile.binfile[i].CS1Address.Bytes == 4)
-                                    {
-                                        basefile.buf[basefile.binfile[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF000000) >> 24);
-                                        basefile.buf[basefile.binfile[i].CS1Address.Address + 1] = (byte)((CS1Calc & 0xFF0000) >> 16);
-                                        basefile.buf[basefile.binfile[i].CS1Address.Address + 2] = (byte)((CS1Calc & 0xFF00) >> 8);
-                                        basefile.buf[basefile.binfile[i].CS1Address.Address + 3] = (byte)(CS1Calc & 0xFF);
-
-                                    }
-                                    Logger(" Checksum 1: " + CS1.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
-                                    NeedFix = true;
-                                }
-                            }
-                        }
-
-                        if (S.CS2Method != CSMethod_None)
-                        {
-                            uint CS2 = 0;
-                            uint CS2Calc = CalculateChecksum(basefile.buf, basefile.binfile[i].CS2Address, basefile.binfile[i].CS2Blocks, basefile.binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, basefile.binfile[i].CS2Address.Bytes, S.CS2SwapBytes);
-                            if (basefile.binfile[i].CS2Address.Bytes == 1)
-                            {
-                                CS2 = basefile.buf[basefile.binfile[i].CS2Address.Address];
-                            }
-                            else if (basefile.binfile[i].CS2Address.Bytes == 2)
-                            {
-                                CS2 = BEToUint16(basefile.buf, basefile.binfile[i].CS2Address.Address);
-                            }
-                            else if (basefile.binfile[i].CS2Address.Bytes == 4)
-                            {
-                                CS2 = BEToUint32(basefile.buf, basefile.binfile[i].CS2Address.Address);
-                            }
-                            if (CS2 == CS2Calc)
-                                Logger(" Checksum 2: " + CS2.ToString("X4") + " [OK]");
-                            else
-                            {
-                                if (basefile.binfile[i].CS2Address.Bytes == 0)
-                                {
-                                    Logger(" Checksum 2: " + CS2Calc.ToString("X4") + " [Not saved]");
-                                }
-                                else
-                                {
-                                    if (basefile.binfile[i].CS2Address.Bytes == 1)
-                                        basefile.buf[basefile.binfile[i].CS2Address.Address] = (byte)CS2Calc;
-                                    else if (basefile.binfile[i].CS2Address.Bytes == 2)
-                                    {
-                                        basefile.buf[basefile.binfile[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF00) >> 8);
-                                        basefile.buf[basefile.binfile[i].CS2Address.Address + 1] = (byte)(CS2Calc & 0xFF);
-                                    }
-                                    else if (basefile.binfile[i].CS2Address.Bytes == 4)
-                                    {
-                                        basefile.buf[basefile.binfile[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF000000) >> 24);
-                                        basefile.buf[basefile.binfile[i].CS2Address.Address + 1] = (byte)((CS2Calc & 0xFF0000) >> 16);
-                                        basefile.buf[basefile.binfile[i].CS2Address.Address + 2] = (byte)((CS2Calc & 0xFF00) >> 8);
-                                        basefile.buf[basefile.binfile[i].CS2Address.Address + 3] = (byte)(CS2Calc & 0xFF);
-
-                                    }
-                                    Logger(" Checksum 2: " + CS2.ToString("X") + " => " + CS2Calc.ToString("X4") + " [Fixed]");
-                                    NeedFix = true;
-                                }
-                            }
-                        }
-
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger("Error: " + ex.Message);
-            }
-            return NeedFix;
-        }
-
-        private bool CheckRule(DetectRule DR, PcmFile PCM)
-        {
-            try { 
-            
-                UInt64 Data = 0;
-                uint Addr = 0;
-                if (DR.address == "filesize")
-                {
-                    Data = (UInt64)new FileInfo(PCM.FileName).Length;
-                }
-                else
-                {
-                    string[] Parts = DR.address.Split(':');
-                    HexToUint(Parts[0].Replace("@", ""),out Addr);
-                    if (DR.address.StartsWith("@"))
-                        Addr = BEToUint32(PCM.buf, Addr);
-                    if (Parts[0].EndsWith("@"))
-                        Addr = (uint)PCM.buf.Length - Addr;
-                    if (Parts.Length == 1)
-                        Data = BEToUint16(PCM.buf, Addr);
-                    else
-                    {
-                        if (Parts[1] == "1")
-                            Data = (uint)PCM.buf[Addr];
-                        if (Parts[1] == "2")
-                            Data = (uint)BEToUint16(PCM.buf, Addr);
-                        if (Parts[1] == "4")
-                            Data = BEToUint32(PCM.buf, Addr);
-                        if (Parts[1] == "8")
-                            Data = BEToUint64(PCM.buf, Addr);
-
-                    }
-                }
-
-                //Logger(DR.xml + ": " + DR.address + ": " + DR.data.ToString("X") + DR.compare + "(" + DR.grouplogic + ") " + " [" + Addr.ToString("X") + ": " + Data.ToString("X") + "]");
-
-                if (DR.compare == "==")
-                {
-                    if (Data == DR.data)
-                        return true;
-                }
-                if (DR.compare == "<")
-                {
-                    if (Data < DR.data)
-                        return true;
-                }
-                if (DR.compare == ">")
-                {
-                    if (Data > DR.data)
-                        return true;
-                }
-                if (DR.compare == "!=")
-                {
-                    if (Data != DR.data)
-                        return true;
-                }
-                //Logger("Not match");
-                return false;
-            }
-            catch (Exception ex)
-            {
-                //Something wrong, just skip this part and continue
-                Debug.WriteLine(ex.Message);
-                return false;
+                FixCheckSums(ref basefile);
             }
         }
 
-        private string Autodetect(PcmFile PCM)
-        {
-            string Result = "";
-            
-            List<string> XmlList = new List<string>();
-            XmlList.Add(DetectRules[0].xml.ToLower());
-            for (int s = 0; s < DetectRules.Count; s++)
-            {
-                //Create list of XML files we know:
-                bool Found = false;
-                for (int x = 0; x < XmlList.Count; x++)
-                {
-                    if (XmlList[x] == DetectRules[s].xml.ToLower())
-                        Found = true;
-                }
-                if (!Found)
-                    XmlList.Add(DetectRules[s].xml.ToLower());
-            }
-            for (int x=0; x < XmlList.Count;x++)
-            {
-                uint MaxGroup = 0;
-                
-                //Check if compatible with THIS xml
-                List<DetectRule> DRL = new List<DetectRule>();
-                for (int s = 0; s < DetectRules.Count; s++)
-                {                    
-                    if (XmlList[x] == DetectRules[s].xml.ToLower())
-                    {
-                        DRL.Add(DetectRules[s]);
-                        if (DetectRules[s].group > MaxGroup)
-                            MaxGroup = DetectRules[s].group;
-                    }
-                }
-                //Now all rules for this XML are in DRL (DetectRuleList)
-                DetectGroup[] DG = new DetectGroup[MaxGroup + 1];
-                for (int d = 1; d <= MaxGroup; d++)
-                {
-                    //Clear DG (needed?)
-                    DG[d].Hits = 0;
-                    DG[d].Miss = 0;
-                }
-                for (int d=0; d < DRL.Count; d++)
-                {
-                    //This list have only rules for one XML, lets go thru them
-                    DG[DRL[d].group].Logic = DRL[d].grouplogic;
-                    if (CheckRule(DRL[d], PCM))
-                        //This check matches
-                        DG[DRL[d].group].Hits++;
-                    else
-                        DG[DRL[d].group].Miss++;
-                }
-                //Now we have array DG, where hits & misses are counted per group, for this XML
-                bool Detection = true;
-                for (int g = 1; g <= MaxGroup; g++)
-                {
-                    //If all groups match, then this XML, match.
-                    if (DG[g].Logic == "And")
-                    {
-                        //Logic = and => if any Miss, not detection
-                        if (DG[g].Miss > 0)
-                            Detection = false;
-                    }
-                    if (DG[g].Logic == "Or")
-                    {
-                        if (DG[g].Hits == 0)
-                            Detection = false;
-                    }
-                    if (DG[g].Logic == "Xor")
-                    {
-                        if (DG[g].Hits != 1)
-                            Detection = false;
-                    }
-                }
-                if (Detection)
-                {
-                    //All groups have hit (if grouplogic = or, only one hit per group is a hit)
-                    if (Result != "")
-                        Result += Environment.NewLine;
-                    Result += XmlList[x];
-                    Debug.WriteLine("Autodetect: " + XmlList[x]);
-                }
-            }
-            return Result.ToLower();
-        }
 
         private void btnLoadFolder_Click(object sender, EventArgs e)
         {
@@ -1095,7 +610,7 @@ namespace UniversalPatcher
                 Logger("Nothing to do");
                 return;
             }
-            ApplyXMLPatch();
+            ApplyXMLPatch(ref basefile);
             btnCheckSums_Click(sender, e);
         }
 
@@ -1220,6 +735,7 @@ namespace UniversalPatcher
         private void btnManualPatch_Click(object sender, EventArgs e)
         {
             frmManualPatch frmM = new frmManualPatch();
+            frmM.MdiParent = this;
             if (PatchList != null && PatchList.Count > 0)
             {
                 string[] Oslist = PatchList[0].CompatibleOS.Split(',');
@@ -1753,11 +1269,11 @@ namespace UniversalPatcher
                 return;
             }
             frmSwapSegmentList frmSw = new frmSwapSegmentList();
-            frmSw.LoadSegmentList(ref basefile);
+            frmSw.LoadSegmentList(txtBaseFile.Text);
             if (frmSw.ShowDialog(this) == DialogResult.OK)
             {
                 basefile = frmSw.PCM;
-                FixCheckSums();
+                FixCheckSums(ref basefile);
                 Logger("Segment(s) swapped and checksums fixed (you can save BIN now)");
             }
             frmSw.Dispose();
@@ -1769,7 +1285,7 @@ namespace UniversalPatcher
             {
                 basefile = new PcmFile(FileName);
                 GetFileInfo(FileName, ref basefile, true, false);
-                if (FixCheckSums())
+                if (FixCheckSums(ref basefile))
                 {
                     Logger("Saving file: " + FileName);
                     WriteBinToFile(FileName, basefile.buf);
@@ -1794,6 +1310,41 @@ namespace UniversalPatcher
                     FixFileChecksum(FileName);
                 }
             }
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void numSuppress_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void dataCVN_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dataFileInfo_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void tabFinfo_Click(object sender, EventArgs e)
+        {
+
         }
     }
 

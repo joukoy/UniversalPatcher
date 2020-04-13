@@ -106,10 +106,10 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button btnOK;
         public System.Windows.Forms.ListView listFiles;
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.Button btnSelectAll;
         private System.Windows.Forms.TextBox txtFolder;
+        public System.Windows.Forms.Button btnOK;
     }
 }
