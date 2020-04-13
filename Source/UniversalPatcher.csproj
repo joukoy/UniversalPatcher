@@ -69,24 +69,6 @@
     <Compile Include="Crc.cs" />
     <Compile Include="Debug.cs" />
     <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="frmApplyPatch.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmApplyPatch.Designer.cs">
-      <DependentUpon>frmApplyPatch.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmCompare.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmCompare.Designer.cs">
-      <DependentUpon>frmCompare.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmCVN.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmCVN.Designer.cs">
-      <DependentUpon>frmCVN.cs</DependentUpon>
-    </Compile>
     <Compile Include="frmData.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -105,41 +87,11 @@
     <Compile Include="frmEditXML.Designer.cs">
       <DependentUpon>frmEditXML.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmExtractSegments.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmExtractSegments.Designer.cs">
-      <DependentUpon>frmExtractSegments.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmExtractTable.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmExtractTable.Designer.cs">
-      <DependentUpon>frmExtractTable.cs</DependentUpon>
-    </Compile>
     <Compile Include="frmFileSelection.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmFileSelection.Designer.cs">
       <DependentUpon>frmFileSelection.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmFinfo.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmFinfo.Designer.cs">
-      <DependentUpon>frmFinfo.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmLog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmLog.Designer.cs">
-      <DependentUpon>frmLog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmPatcheditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmPatcheditor.designer.cs">
-      <DependentUpon>frmPatcheditor.cs</DependentUpon>
     </Compile>
     <Compile Include="frmRenameXML.cs">
       <SubType>Form</SubType>
@@ -233,20 +185,11 @@
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmApplyPatch.resx">
-      <DependentUpon>frmApplyPatch.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="frmAsk.resx">
       <DependentUpon>frmAsk.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmAutodetect.resx">
       <DependentUpon>frmAutodetect.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmCompare.resx">
-      <DependentUpon>frmCompare.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmCVN.resx">
-      <DependentUpon>frmCVN.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmData.resx">
       <DependentUpon>frmData.cs</DependentUpon>
@@ -269,23 +212,8 @@
     <EmbeddedResource Include="frmEditXML.resx">
       <DependentUpon>frmEditXML.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmExtractSegments.resx">
-      <DependentUpon>frmExtractSegments.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmExtractTable.resx">
-      <DependentUpon>frmExtractTable.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="frmFileSelection.resx">
       <DependentUpon>frmFileSelection.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmFinfo.resx">
-      <DependentUpon>frmFinfo.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmLog.resx">
-      <DependentUpon>frmLog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmPatcheditor.resx">
-      <DependentUpon>frmPatcheditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmRenameXML.resx">
       <DependentUpon>frmRenameXML.cs</DependentUpon>

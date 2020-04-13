@@ -49,6 +49,7 @@
             this.numGroup = new System.Windows.Forms.NumericUpDown();
             this.comboXML = new System.Windows.Forms.ComboBox();
             this.btnReplace = new System.Windows.Forms.Button();
+            this.txtStatus = new System.Windows.Forms.TextBox();
             this.btnEditXML = new System.Windows.Forms.Button();
             this.btnRenameXML = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
@@ -116,7 +117,7 @@
             this.listRules.HideSelection = false;
             this.listRules.Location = new System.Drawing.Point(5, 193);
             this.listRules.Name = "listRules";
-            this.listRules.Size = new System.Drawing.Size(379, 136);
+            this.listRules.Size = new System.Drawing.Size(379, 131);
             this.listRules.TabIndex = 20;
             this.listRules.UseCompatibleStateImageBehavior = false;
             this.listRules.SelectedIndexChanged += new System.EventHandler(this.listRules_SelectedIndexChanged);
@@ -278,6 +279,16 @@
             this.btnReplace.UseVisualStyleBackColor = true;
             this.btnReplace.Click += new System.EventHandler(this.btnReplace_Click);
             // 
+            // txtStatus
+            // 
+            this.txtStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtStatus.Location = new System.Drawing.Point(6, 330);
+            this.txtStatus.Multiline = true;
+            this.txtStatus.Name = "txtStatus";
+            this.txtStatus.Size = new System.Drawing.Size(378, 54);
+            this.txtStatus.TabIndex = 30;
+            // 
             // btnEditXML
             // 
             this.btnEditXML.Location = new System.Drawing.Point(298, 78);
@@ -302,9 +313,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(386, 331);
+            this.ClientSize = new System.Drawing.Size(386, 387);
             this.Controls.Add(this.btnRenameXML);
             this.Controls.Add(this.btnEditXML);
+            this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.btnReplace);
             this.Controls.Add(this.comboXML);
             this.Controls.Add(this.numGroup);
@@ -358,6 +370,7 @@
         private System.Windows.Forms.NumericUpDown numGroup;
         private System.Windows.Forms.ComboBox comboXML;
         private System.Windows.Forms.Button btnReplace;
+        private System.Windows.Forms.TextBox txtStatus;
         private System.Windows.Forms.Button btnEditXML;
         private System.Windows.Forms.Button btnRenameXML;
     }

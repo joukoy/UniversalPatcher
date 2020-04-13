@@ -78,6 +78,13 @@ namespace UniversalPatcher
                 Logger(ex.Message);
             }
         }
+        public void Logger(string LogText, Boolean NewLine = true)
+        {
+            txtResult.AppendText(LogText);
+            if (NewLine)
+                txtResult.AppendText(Environment.NewLine);
+            Application.DoEvents();
+        }
 
         private void btnSaveCSV_Click(object sender, EventArgs e)
         {
@@ -109,11 +116,6 @@ namespace UniversalPatcher
                 }                
             }
             Logger(" [OK]");
-        }
-
-        private void frmEditXML_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

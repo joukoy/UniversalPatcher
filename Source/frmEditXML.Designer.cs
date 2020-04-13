@@ -30,6 +30,7 @@
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.btnSave = new System.Windows.Forms.Button();
+            this.txtResult = new System.Windows.Forms.TextBox();
             this.btnSaveCSV = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -57,6 +58,17 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // txtResult
+            // 
+            this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtResult.Location = new System.Drawing.Point(5, 419);
+            this.txtResult.Multiline = true;
+            this.txtResult.Name = "txtResult";
+            this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtResult.Size = new System.Drawing.Size(477, 36);
+            this.txtResult.TabIndex = 2;
+            // 
             // btnSaveCSV
             // 
             this.btnSaveCSV.Location = new System.Drawing.Point(489, 423);
@@ -73,13 +85,14 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(651, 450);
             this.Controls.Add(this.btnSaveCSV);
+            this.Controls.Add(this.txtResult);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.dataGridView1);
             this.Name = "frmEditXML";
             this.Text = "Edit Autodetect";
-            this.Load += new System.EventHandler(this.frmEditXML_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -87,6 +100,7 @@
 
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.TextBox txtResult;
         private System.Windows.Forms.Button btnSaveCSV;
     }
 }

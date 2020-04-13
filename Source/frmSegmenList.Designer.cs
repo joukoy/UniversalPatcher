@@ -40,6 +40,7 @@
             this.btnNewXML = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
+            this.txtStatus = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtVersion = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
@@ -164,6 +165,14 @@
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
+            // txtStatus
+            // 
+            this.txtStatus.Location = new System.Drawing.Point(243, 325);
+            this.txtStatus.Multiline = true;
+            this.txtStatus.Name = "txtStatus";
+            this.txtStatus.Size = new System.Drawing.Size(220, 35);
+            this.txtStatus.TabIndex = 11;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -188,6 +197,7 @@
             this.ClientSize = new System.Drawing.Size(547, 364);
             this.Controls.Add(this.txtVersion);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.btnNewXML);
@@ -202,7 +212,6 @@
             this.Controls.Add(this.listSegments);
             this.Name = "frmSegmenList";
             this.Text = "Segments";
-            this.Load += new System.EventHandler(this.frmSegmenList_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -222,6 +231,7 @@
         private System.Windows.Forms.Button btnNewXML;
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.TextBox txtStatus;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtVersion;
     }

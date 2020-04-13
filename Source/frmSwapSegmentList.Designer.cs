@@ -35,6 +35,7 @@
             this.btnExtract = new System.Windows.Forms.Button();
             this.labelSelectedSegment = new System.Windows.Forms.Label();
             this.btnApply = new System.Windows.Forms.Button();
+            this.txtResult = new System.Windows.Forms.RichTextBox();
             this.btnOK = new System.Windows.Forms.Button();
             this.labelBasefile = new System.Windows.Forms.Label();
             this.SuspendLayout();
@@ -54,7 +55,6 @@
             // 
             this.listSegments.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.listSegments.FullRowSelect = true;
             this.listSegments.HideSelection = false;
             this.listSegments.Location = new System.Drawing.Point(3, 102);
             this.listSegments.Name = "listSegments";
@@ -110,6 +110,18 @@
             this.btnApply.UseVisualStyleBackColor = true;
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
+            // txtResult
+            // 
+            this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtResult.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtResult.Location = new System.Drawing.Point(4, 311);
+            this.txtResult.Name = "txtResult";
+            this.txtResult.Size = new System.Drawing.Size(773, 170);
+            this.txtResult.TabIndex = 10;
+            this.txtResult.Text = "";
+            // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -117,7 +129,7 @@
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(106, 26);
             this.btnOK.TabIndex = 8;
-            this.btnOK.Text = "Save bin";
+            this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
@@ -135,9 +147,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(782, 310);
+            this.ClientSize = new System.Drawing.Size(782, 481);
             this.Controls.Add(this.labelBasefile);
             this.Controls.Add(this.btnOK);
+            this.Controls.Add(this.txtResult);
             this.Controls.Add(this.btnApply);
             this.Controls.Add(this.labelSelectedSegment);
             this.Controls.Add(this.btnExtract);
@@ -147,7 +160,6 @@
             this.Controls.Add(this.comboSegments);
             this.Name = "frmSwapSegmentList";
             this.Text = "Swap segment(s):";
-            this.Load += new System.EventHandler(this.frmSwapSegmentList_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -162,6 +174,7 @@
         private System.Windows.Forms.Button btnExtract;
         private System.Windows.Forms.Label labelSelectedSegment;
         private System.Windows.Forms.Button btnApply;
+        private System.Windows.Forms.RichTextBox txtResult;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Label labelBasefile;
     }
