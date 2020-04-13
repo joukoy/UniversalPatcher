@@ -243,13 +243,6 @@ namespace UniversalPatcher
             listRules.SelectedItems[0].SubItems[4].Text = comboGroupLogic.Text;
 
         }
-        public void Logger(string LogText, Boolean NewLine = true)
-        {
-            txtStatus.AppendText(LogText);
-            if (NewLine)
-                txtStatus.AppendText(Environment.NewLine);
-            Application.DoEvents();
-        }
 
         private void btnEditXML_Click(object sender, EventArgs e)
         {
