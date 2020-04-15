@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{13C7FC36-2E9A-4E97-A0AF-F330260ACEC7}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>UniversalPatcher</RootNamespace>
+    <AssemblyName>UniversalPatcher</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>0.1.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AboutBox1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutBox1.Designer.cs">
+      <DependentUpon>AboutBox1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Crc.cs" />
+    <Compile Include="Debug.cs" />
+    <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="frmData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmData.Designer.cs">
+      <DependentUpon>frmData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditExtra.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditExtra.Designer.cs">
+      <DependentUpon>frmEditExtra.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditXML.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditXML.Designer.cs">
+      <DependentUpon>frmEditXML.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmFileSelection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmFileSelection.Designer.cs">
+      <DependentUpon>frmFileSelection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmRenameXML.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmRenameXML.Designer.cs">
+      <DependentUpon>frmRenameXML.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmManualPatch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmManualPatch.Designer.cs">
+      <DependentUpon>frmManualPatch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmSearchSegment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSearchSegment.Designer.cs">
+      <DependentUpon>frmSearchSegment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmCheckword.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmCheckword.Designer.cs">
+      <DependentUpon>frmCheckword.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditDetectAddress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditDetectAddress.Designer.cs">
+      <DependentUpon>frmEditDetectAddress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmAsk.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAsk.designer.cs">
+      <DependentUpon>frmAsk.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmAutodetect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAutodetect.Designer.cs">
+      <DependentUpon>frmAutodetect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditSegmentAddr.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditSegmentAddr.Designer.cs">
+      <DependentUpon>frmEditSegmentAddr.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditAddress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditAddress.Designer.cs">
+      <DependentUpon>frmEditAddress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmSwapSegmentList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSwapSegmentList.Designer.cs">
+      <DependentUpon>frmSwapSegmentList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GmEeprom.cs" />
+    <Compile Include="frmSegmenList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSegmenList.Designer.cs">
+      <DependentUpon>frmSegmenList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmMain.Designer.cs">
+      <DependentUpon>FrmMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmSegmentSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSegmentSettings.Designer.cs">
+      <DependentUpon>frmSegmentSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmPatcher.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmPatcher.Designer.cs">
+      <DependentUpon>frmPatcher.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PatcherFunctions.cs" />
+    <Compile Include="PcmFile.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AboutBox1.resx">
+      <DependentUpon>AboutBox1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAsk.resx">
+      <DependentUpon>frmAsk.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAutodetect.resx">
+      <DependentUpon>frmAutodetect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmData.resx">
+      <DependentUpon>frmData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditAddress.resx">
+      <DependentUpon>frmEditAddress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditDetectAddress.resx">
+      <DependentUpon>frmEditDetectAddress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditExtra.resx">
+      <DependentUpon>frmEditExtra.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditSegmentAddr.resx">
+      <DependentUpon>frmEditSegmentAddr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmCheckword.resx">
+      <DependentUpon>frmCheckword.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditXML.resx">
+      <DependentUpon>frmEditXML.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmFileSelection.resx">
+      <DependentUpon>frmFileSelection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmRenameXML.resx">
+      <DependentUpon>frmRenameXML.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmManualPatch.resx">
+      <DependentUpon>frmManualPatch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSearchSegment.resx">
+      <DependentUpon>frmSearchSegment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSegmenList.resx">
+      <DependentUpon>frmSegmenList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmMain.resx">
+      <DependentUpon>FrmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSegmentSettings.resx">
+      <DependentUpon>frmSegmentSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmPatcher.resx">
+      <DependentUpon>frmPatcher.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSwapSegmentList.resx">
+      <DependentUpon>frmSwapSegmentList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\UniversalPatcher.JPG" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
