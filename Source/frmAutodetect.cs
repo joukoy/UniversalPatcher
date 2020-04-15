@@ -47,6 +47,8 @@ namespace UniversalPatcher
                 if (!comboXML.Items.Contains(DetectRules[d].xml.ToLower()))
                     comboXML.Items.Add(DetectRules[d].xml.ToLower());
             }
+            if (comboXML.Text.Length == 0)
+                comboXML.Text = DetectRules[0].xml.ToLower();
             Logger("[OK]");
         }
 
@@ -73,6 +75,7 @@ namespace UniversalPatcher
             if (FileName.Length < 1)
                 return;
             comboXML.Text = Path.GetFileName(FileName).ToLower();
+            SelectXML();
         }
 
         private void btnAddr_Click(object sender, EventArgs e)
@@ -166,7 +169,7 @@ namespace UniversalPatcher
             listRules.SelectedItems[0].Remove();
         }
 
-        private void comboXML_SelectedIndexChanged(object sender, EventArgs e)
+        private void SelectXML()
         {
             listRules.Items.Clear();
             for (int s = 0; s < DetectRules.Count; s++)
@@ -187,6 +190,10 @@ namespace UniversalPatcher
                 }
             }
 
+        }
+        private void comboXML_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectXML();
         }
 
         private void listRules_SelectedIndexChanged(object sender, EventArgs e)
@@ -278,7 +285,7 @@ namespace UniversalPatcher
                 InitMe();
                 if (frmN.txtOldXML.Text == comboXML.Text)
                     comboXML.Text = frmN.txtNewXML.Text;
-                comboXML_SelectedIndexChanged(sender,e);
+                SelectXML();
             }
             frmN.Dispose();
         }

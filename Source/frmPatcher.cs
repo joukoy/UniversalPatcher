@@ -977,13 +977,7 @@ namespace UniversalPatcher
             for (int s = 0; s < DetectRules.Count; s++)
             {
                 //Create list of XML files we know:
-                bool Found = false;
-                for (int x = 0; x < XmlList.Count; x++)
-                {
-                    if (XmlList[x] == DetectRules[s].xml.ToLower())
-                        Found = true;
-                }
-                if (!Found)
+                if (!XmlList.Contains(DetectRules[s].xml.ToLower()))
                     XmlList.Add(DetectRules[s].xml.ToLower());
             }
             for (int x=0; x < XmlList.Count;x++)
@@ -1003,12 +997,6 @@ namespace UniversalPatcher
                 }
                 //Now all rules for this XML are in DRL (DetectRuleList)
                 DetectGroup[] DG = new DetectGroup[MaxGroup + 1];
-                for (int d = 1; d <= MaxGroup; d++)
-                {
-                    //Clear DG (needed?)
-                    DG[d].Hits = 0;
-                    DG[d].Miss = 0;
-                }
                 for (int d=0; d < DRL.Count; d++)
                 {
                     //This list have only rules for one XML, lets go thru them
@@ -1715,6 +1703,11 @@ namespace UniversalPatcher
         }
         private void btnExtractSegments_Click(object sender, EventArgs e)
         {
+            if (txtBaseFile.Text.Length == 0)
+            {
+                Logger("No file loaded");
+                return;
+            }
             if (txtSegmentDescription.Text.Length == 0)
                 txtSegmentDescription.Text = Path.GetFileName(basefile.FileName).Replace(".bin", "");
             ExtractSegments(basefile, txtExtractDescription.Text, false,"");
@@ -1722,22 +1715,23 @@ namespace UniversalPatcher
 
         private void btnExtractSegmentsFolder_Click(object sender, EventArgs e)
         {
-            //string FileName = SelectFile (Title, Filter);
-            string Folder = SelectFolder("Select BIN file directory");
-            string dstFolder = "";
-            if (checkCustomFolder.Checked)
-                dstFolder = SelectFolder("Select destination directory");
-            if (Folder.Length == 0)
-                return;
-            DirectoryInfo d = new DirectoryInfo(Folder);
-            FileInfo[] Files = d.GetFiles("*.bin");
-            foreach (FileInfo file in Files)
+            frmFileSelection frmF = new frmFileSelection();
+            frmF.labelCustomdst.Visible = true;
+            frmF.btnCustomdst.Visible = true;
+            frmF.btnOK.Text = "Extract!";
+            frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+            if (frmF.ShowDialog(this) == DialogResult.OK)
             {
-                PcmFile PCM = new PcmFile(file.FullName);
-                GetFileInfo(file.FullName, ref PCM, true);
-                ExtractSegments(PCM, file.Name.Replace(".bin", ""), true, dstFolder);
+                string dstFolder = frmF.labelCustomdst.Text;
+                for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                {
+                    string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
+                    PcmFile PCM = new PcmFile(FileName);
+                    GetFileInfo(FileName, ref PCM, true);
+                    ExtractSegments(PCM, FileName.Replace(".bin", ""), true, dstFolder);
+                }
+                Logger("Segments extracted");
             }
-
         }
 
         private void btnSwapSegments_Click(object sender, EventArgs e)
@@ -1793,6 +1787,7 @@ namespace UniversalPatcher
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                     FixFileChecksum(FileName);
                 }
+                Logger("Checksums fixed.");
             }
         }
     }

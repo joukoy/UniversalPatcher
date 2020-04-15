@@ -64,5 +64,12 @@ namespace UniversalPatcher
                 LoadFiles(txtFolder.Text);
 
         }
+
+        private void btnCustomdst_Click(object sender, EventArgs e)
+        {
+            string Folder = SelectFolder("Select destination folder");
+            if (Folder.Length > 0)
+                labelCustomdst.Text = Folder;
+        }
     }
 }

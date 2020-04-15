@@ -99,7 +99,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.txtExtractRange = new System.Windows.Forms.TextBox();
             this.tabExtractSegments = new System.Windows.Forms.TabPage();
-            this.checkCustomFolder = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.radioRename = new System.Windows.Forms.RadioButton();
             this.radioReplace = new System.Windows.Forms.RadioButton();
@@ -242,8 +241,7 @@
             // 
             // numSuppress
             // 
-            this.numSuppress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numSuppress.Location = new System.Drawing.Point(657, 3);
+            this.numSuppress.Location = new System.Drawing.Point(342, 5);
             this.numSuppress.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -260,9 +258,8 @@
             // 
             // label2
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(592, 5);
+            this.label2.Location = new System.Drawing.Point(277, 7);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(59, 13);
             this.label2.TabIndex = 19;
@@ -270,9 +267,8 @@
             // 
             // label3
             // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(700, 5);
+            this.label3.Location = new System.Drawing.Point(385, 7);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(59, 13);
             this.label3.TabIndex = 20;
@@ -349,7 +345,8 @@
             // 
             // btnSaveFileInfo
             // 
-            this.btnSaveFileInfo.Location = new System.Drawing.Point(508, 1);
+            this.btnSaveFileInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveFileInfo.Location = new System.Drawing.Point(695, 2);
             this.btnSaveFileInfo.Name = "btnSaveFileInfo";
             this.btnSaveFileInfo.Size = new System.Drawing.Size(78, 23);
             this.btnSaveFileInfo.TabIndex = 171;
@@ -926,7 +923,6 @@
             // 
             // tabExtractSegments
             // 
-            this.tabExtractSegments.Controls.Add(this.checkCustomFolder);
             this.tabExtractSegments.Controls.Add(this.groupBox2);
             this.tabExtractSegments.Controls.Add(this.btnExtractSegmentsFolder);
             this.tabExtractSegments.Controls.Add(this.txtSegmentDescription);
@@ -938,16 +934,6 @@
             this.tabExtractSegments.TabIndex = 4;
             this.tabExtractSegments.Text = "Extract segments";
             this.tabExtractSegments.UseVisualStyleBackColor = true;
-            // 
-            // checkCustomFolder
-            // 
-            this.checkCustomFolder.AutoSize = true;
-            this.checkCustomFolder.Location = new System.Drawing.Point(239, 22);
-            this.checkCustomFolder.Name = "checkCustomFolder";
-            this.checkCustomFolder.Size = new System.Drawing.Size(90, 17);
-            this.checkCustomFolder.TabIndex = 506;
-            this.checkCustomFolder.Text = "Custom folder";
-            this.checkCustomFolder.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
@@ -995,11 +981,11 @@
             // 
             // btnExtractSegmentsFolder
             // 
-            this.btnExtractSegmentsFolder.Location = new System.Drawing.Point(335, 18);
+            this.btnExtractSegmentsFolder.Location = new System.Drawing.Point(603, 8);
             this.btnExtractSegmentsFolder.Name = "btnExtractSegmentsFolder";
-            this.btnExtractSegmentsFolder.Size = new System.Drawing.Size(232, 21);
+            this.btnExtractSegmentsFolder.Size = new System.Drawing.Size(171, 26);
             this.btnExtractSegmentsFolder.TabIndex = 505;
-            this.btnExtractSegmentsFolder.Text = "Extract all segments from all files in folder...";
+            this.btnExtractSegmentsFolder.Text = "Extract all segments from files..";
             this.btnExtractSegmentsFolder.UseVisualStyleBackColor = true;
             this.btnExtractSegmentsFolder.Click += new System.EventHandler(this.btnExtractSegmentsFolder_Click);
             // 
@@ -1007,7 +993,7 @@
             // 
             this.txtSegmentDescription.Location = new System.Drawing.Point(84, 45);
             this.txtSegmentDescription.Name = "txtSegmentDescription";
-            this.txtSegmentDescription.Size = new System.Drawing.Size(565, 20);
+            this.txtSegmentDescription.Size = new System.Drawing.Size(514, 20);
             this.txtSegmentDescription.TabIndex = 500;
             // 
             // label8
@@ -1021,9 +1007,9 @@
             // 
             // btnExtractSegments
             // 
-            this.btnExtractSegments.Location = new System.Drawing.Point(652, 41);
+            this.btnExtractSegments.Location = new System.Drawing.Point(604, 41);
             this.btnExtractSegments.Name = "btnExtractSegments";
-            this.btnExtractSegments.Size = new System.Drawing.Size(123, 26);
+            this.btnExtractSegments.Size = new System.Drawing.Size(171, 26);
             this.btnExtractSegments.TabIndex = 501;
             this.btnExtractSegments.Text = "Extract current file";
             this.btnExtractSegments.UseVisualStyleBackColor = true;
@@ -1230,6 +1216,5 @@
         private System.Windows.Forms.RadioButton radioSkip;
         private System.Windows.Forms.Button btnSwapSegments;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.CheckBox checkCustomFolder;
     }
 }
