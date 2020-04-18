@@ -1,0 +1,41 @@
+Examples: 
+
+Segment addressess:
+0-4FF,1000-4000 = direct addresses
+@500 = Read segment address from $500
+0-2@ = From beginning of file to 2 bytes from end of file
+
+@500<2 Offset: -2
+@500>2 Offset: +2
+@500:2  2 bytes
+@500:4  4 bytes
+@500*4	4 pairs of Dword Start - End 	
+@500:2*4  4 pair of Word Start - End
+
+Segment search:
+ * Segment addresses:
+2000-4000,4000-6000	Select segment area, where search matches
+ * Search for:
+a5a0:3c:y	Match if found a5a0 from segment start + 3c
+a5a0:3c:n	Match if NOT found a5a0 from segment start + 3c
+a5a0:3c:y,a5a0:4c:y	Multiple searches, first match matters
+
+Checksum & info addressess:
+#0:2:Hex = Beginning of segment, word, show as Hex
+#4:2:Int = 4 bytes from segment start, Word, Show as integer
+#8:4:Text = 8 bytes from segment start, Dword, show as text
+
+Extrainfo:
+InfoName:#8:2:hex
+InfoName:FFFE:4:int
+Info1:#8:2:hex,Info2:FBA,Info3:#0
+PN:CW1-64:4:int, Serial:CW2-80:12:text		CW = Checkword address, see "Checkword locations" and "Checkword"
+
+
+Checkwords:
+a5a0:88:88:CW1		Search A5A0 from 0x88 (from segment start) and if found CW1 points to segment start + 88
+a5a0:88:0:CW2		Search A5A0 from 0x88 (from segment start) and if found CW2 points to segment start
+a5a0:88:88:CW1,a5a0:88:0:CW2,a5a0:56:0:CW3,a5a0:56:56:CW4	Multiple checkwords
+a5a0:fb:3c:CWvin,a5a0:ca:30:CWvin,a5a0:99:0:CWvin	Search a5a0 from multiple places, CWvin points to 3c,30 or 0, depending where found
+
+
