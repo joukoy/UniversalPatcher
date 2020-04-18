@@ -1,5 +1,6 @@
 # UniversalPatcher
-Make/apply patches for bin files
+- Make/apply patches for bin files
+- Extract / swap segments
 
-Configurable for different binary files (engine controller)
-Mostly for GM PCM 1997 ->
+Configurable for different engine controller binary files
+ * Mostly for GM PCM 1997 ->
