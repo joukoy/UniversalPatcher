@@ -181,7 +181,7 @@ namespace UniversalPatcher
                 for (int i = 0; i < Segments.Count; i++)
                 {
                     SegmentConfig S = Segments[i];
-                    Logger(PCM.segmentinfos[i].Name.PadRight(11), false);
+                    Logger(" " + PCM.segmentinfos[i].Name.PadRight(11), false);
                     if (PCM.segmentinfos[i].PN.Length > 1)
                     {
                         if (PCM.segmentinfos[i].Stock == "True")
@@ -210,6 +210,7 @@ namespace UniversalPatcher
                     for (int i = 0; i < Segments.Count; i++)
                     {
                         SegmentConfig S = Segments[i];
+                        Logger(" " + PCM.segmentinfos[i].Name.PadRight(11), false);
                         if (S.CS1Method != CSMethod_None && chkCS1.Checked)
                         {
                             if (PCM.binfile[i].CS1Address.Bytes == 0)
@@ -1043,16 +1044,19 @@ namespace UniversalPatcher
 
         private void btnLoadFolder_Click(object sender, EventArgs e)
         {
-            string Fldr = SelectFolder("Select folder");
-            if (Fldr.Length == 0)
-                return;
-            txtResult.Text = "";
-            DirectoryInfo d = new DirectoryInfo(Fldr);
-            FileInfo[] Files = d.GetFiles("*.bin");
-            foreach (FileInfo file in Files)
+            frmFileSelection frmF = new frmFileSelection();
+            frmF.btnOK.Text = "OK";
+            frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+            if (frmF.ShowDialog(this) == DialogResult.OK)
             {
-                PcmFile binfile = new PcmFile(file.FullName);
-                GetFileInfo(file.FullName, ref binfile, true);
+                string dstFolder = frmF.labelCustomdst.Text;
+                for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                {
+                    string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
+                    PcmFile PCM = new PcmFile(FileName);
+                    GetFileInfo(FileName, ref PCM, true);
+                }
+                Logger("[Done]");
             }
 
         }
@@ -1787,7 +1791,7 @@ namespace UniversalPatcher
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                     FixFileChecksum(FileName);
                 }
-                Logger("Checksums fixed.");
+                Logger("[Checksums fixed]");
             }
         }
     }

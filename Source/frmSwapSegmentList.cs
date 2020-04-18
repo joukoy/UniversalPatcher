@@ -128,6 +128,13 @@ namespace UniversalPatcher
             {
                 Logger("Applying segment: " + Path.GetFileName(labelSelectedSegment.Tag.ToString()), false);
                 int s = comboSegments.SelectedIndex;
+                if (PCM.segmentinfos[s].SegNr != "")
+                {
+                    uint segnrAddr = PCM.binfile[s].SegNrAddr.Address - PCM.binfile[s].SegmentBlocks[0].Start;
+                    string SwapSegNr = SwapBuffer[segnrAddr].ToString();
+                    if (PCM.segmentinfos[s].SegNr != SwapSegNr)
+                        throw new Exception(Environment.NewLine + "Segment number doesn't match (" + PCM.segmentinfos[s].SegNr + " != " + SwapSegNr + ")");
+                }
                 uint Offset = 0;
                 for (int i = 0; i < PCM.binfile[s].SegmentBlocks.Count; i++)
                 {
@@ -180,32 +187,49 @@ namespace UniversalPatcher
                 return;
             try
             {
-                Logger("Reading segment from file: " + FileName);
-                PcmFile tmpPCM = new PcmFile(FileName);
-                tmpPCM.GetSegmentAddresses();
-                tmpPCM.GetInfo();
-                if (tmpPCM.OS != PCM.OS)
-                {
-                    throw new Exception(Environment.NewLine +  "OS mismatch: " + PCM.OS + " <> " + tmpPCM.OS);
-                }
                 int Seg = comboSegments.SelectedIndex;
                 uint TotalLength = 0;
                 if (!HexToUint(PCM.segmentinfos[Seg].Size, out TotalLength))
                     throw new Exception("Cant't decode HEX: " + PCM.segmentinfos[Seg].Size);
-                SwapBuffer = new byte[TotalLength];
-                labelSelectedSegment.Text = "Selected: " + tmpPCM.segmentinfos[Seg].PN + tmpPCM.segmentinfos[Seg].Ver + "  (From file: " + Path.GetFileName(FileName) +")";
-                labelSelectedSegment.Tag = FileName;
-                uint Offset = 0;
-                for (int s=0; s < PCM.binfile[Seg].SegmentBlocks.Count; s++)
+                Logger("Reading segment from file: " + FileName);
+                uint fsize = (uint)new FileInfo(FileName).Length;
+                if (fsize == TotalLength)
                 {
-                    uint Start = PCM.binfile[Seg].SegmentBlocks[s].Start;
-                    uint Length = PCM.binfile[Seg].SegmentBlocks[s].End - PCM.binfile[Seg].SegmentBlocks[s].Start + 1;
-                    Array.Copy(tmpPCM.buf, Start, SwapBuffer,Offset, Length);
-                    Offset += Length;
+                    Logger("Reading file: " + FileName);
+                    SwapBuffer = ReadBin(FileName, 0, fsize);
+                    labelSelectedSegment.Text = "Selected: " + Path.GetFileName(FileName);
+                    labelSelectedSegment.Tag = FileName;
+                    Logger("[OK] Press \"Apply\" to swap");
+                    Applied = false;
                 }
-                Logger(" (" + TotalLength.ToString() + " B)", false);
-                Logger("[OK] Press \"Apply\" to swap");
-                Applied = false;
+                else if (fsize == PCM.fsize)
+                { 
+                    PcmFile tmpPCM = new PcmFile(FileName);
+                    tmpPCM.GetSegmentAddresses();
+                    tmpPCM.GetInfo();
+                    if (tmpPCM.OS != PCM.OS)
+                    {
+                        throw new Exception(Environment.NewLine +  "OS mismatch: " + PCM.OS + " <> " + tmpPCM.OS);
+                    }
+                    SwapBuffer = new byte[TotalLength];
+                    labelSelectedSegment.Text = "Selected: " + tmpPCM.segmentinfos[Seg].PN + tmpPCM.segmentinfos[Seg].Ver + "  (From file: " + Path.GetFileName(FileName) +")";
+                    labelSelectedSegment.Tag = FileName;
+                    uint Offset = 0;
+                    for (int s=0; s < PCM.binfile[Seg].SegmentBlocks.Count; s++)
+                    {
+                        uint Start = PCM.binfile[Seg].SegmentBlocks[s].Start;
+                        uint Length = PCM.binfile[Seg].SegmentBlocks[s].End - PCM.binfile[Seg].SegmentBlocks[s].Start + 1;
+                        Array.Copy(tmpPCM.buf, Start, SwapBuffer,Offset, Length);
+                        Offset += Length;
+                    }
+                    Logger(" (" + TotalLength.ToString() + " B)", false);
+                    Logger("[OK] Press \"Apply\" to swap");
+                    Applied = false;
+                }
+                else
+                {
+                    throw new Exception("Unknown file size");
+                }
             }
             catch (Exception ex)
             {

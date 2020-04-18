@@ -603,6 +603,7 @@
             // 
             // btnSaveCSV
             // 
+            this.btnSaveCSV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSaveCSV.Location = new System.Drawing.Point(693, 4);
             this.btnSaveCSV.Name = "btnSaveCSV";
             this.btnSaveCSV.Size = new System.Drawing.Size(75, 23);
@@ -637,7 +638,7 @@
             this.chkExtra.AutoSize = true;
             this.chkExtra.Checked = true;
             this.chkExtra.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkExtra.Location = new System.Drawing.Point(402, 10);
+            this.chkExtra.Location = new System.Drawing.Point(328, 10);
             this.chkExtra.Name = "chkExtra";
             this.chkExtra.Size = new System.Drawing.Size(70, 17);
             this.chkExtra.TabIndex = 176;
@@ -649,7 +650,7 @@
             this.chkCS2.AutoSize = true;
             this.chkCS2.Checked = true;
             this.chkCS2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCS2.Location = new System.Drawing.Point(314, 10);
+            this.chkCS2.Location = new System.Drawing.Point(240, 10);
             this.chkCS2.Name = "chkCS2";
             this.chkCS2.Size = new System.Drawing.Size(85, 17);
             this.chkCS2.TabIndex = 175;
@@ -661,7 +662,7 @@
             this.chkCS1.AutoSize = true;
             this.chkCS1.Checked = true;
             this.chkCS1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCS1.Location = new System.Drawing.Point(223, 10);
+            this.chkCS1.Location = new System.Drawing.Point(149, 10);
             this.chkCS1.Name = "chkCS1";
             this.chkCS1.Size = new System.Drawing.Size(85, 17);
             this.chkCS1.TabIndex = 174;
@@ -673,7 +674,7 @@
             this.chkSize.AutoSize = true;
             this.chkSize.Checked = true;
             this.chkSize.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSize.Location = new System.Drawing.Point(581, 10);
+            this.chkSize.Location = new System.Drawing.Point(507, 10);
             this.chkSize.Name = "chkSize";
             this.chkSize.Size = new System.Drawing.Size(91, 17);
             this.chkSize.TabIndex = 173;
@@ -685,7 +686,7 @@
             this.chkRange.AutoSize = true;
             this.chkRange.Checked = true;
             this.chkRange.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRange.Location = new System.Drawing.Point(478, 10);
+            this.chkRange.Location = new System.Drawing.Point(404, 10);
             this.chkRange.Name = "chkRange";
             this.chkRange.Size = new System.Drawing.Size(98, 17);
             this.chkRange.TabIndex = 172;
@@ -696,9 +697,9 @@
             // 
             this.btnLoadFolder.Location = new System.Drawing.Point(6, 3);
             this.btnLoadFolder.Name = "btnLoadFolder";
-            this.btnLoadFolder.Size = new System.Drawing.Size(80, 29);
+            this.btnLoadFolder.Size = new System.Drawing.Size(124, 29);
             this.btnLoadFolder.TabIndex = 170;
-            this.btnLoadFolder.Text = "Select Folder";
+            this.btnLoadFolder.Text = "Show info for files...";
             this.btnLoadFolder.UseVisualStyleBackColor = true;
             this.btnLoadFolder.Click += new System.EventHandler(this.btnLoadFolder_Click);
             // 
@@ -815,7 +816,6 @@
             // 
             // btnBinLoadPatch
             // 
-            this.btnBinLoadPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBinLoadPatch.Location = new System.Drawing.Point(9, 6);
             this.btnBinLoadPatch.Name = "btnBinLoadPatch";
             this.btnBinLoadPatch.Size = new System.Drawing.Size(107, 25);
@@ -826,7 +826,6 @@
             // 
             // btnCheckSums
             // 
-            this.btnCheckSums.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCheckSums.Location = new System.Drawing.Point(10, 37);
             this.btnCheckSums.Name = "btnCheckSums";
             this.btnCheckSums.Size = new System.Drawing.Size(165, 25);
@@ -837,7 +836,6 @@
             // 
             // btnApplypatch
             // 
-            this.btnApplypatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnApplypatch.Location = new System.Drawing.Point(123, 6);
             this.btnApplypatch.Name = "btnApplypatch";
             this.btnApplypatch.Size = new System.Drawing.Size(107, 25);
@@ -981,6 +979,7 @@
             // 
             // btnExtractSegmentsFolder
             // 
+            this.btnExtractSegmentsFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExtractSegmentsFolder.Location = new System.Drawing.Point(603, 8);
             this.btnExtractSegmentsFolder.Name = "btnExtractSegmentsFolder";
             this.btnExtractSegmentsFolder.Size = new System.Drawing.Size(171, 26);
@@ -991,6 +990,8 @@
             // 
             // txtSegmentDescription
             // 
+            this.txtSegmentDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSegmentDescription.Location = new System.Drawing.Point(84, 45);
             this.txtSegmentDescription.Name = "txtSegmentDescription";
             this.txtSegmentDescription.Size = new System.Drawing.Size(514, 20);
@@ -1007,6 +1008,7 @@
             // 
             // btnExtractSegments
             // 
+            this.btnExtractSegments.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExtractSegments.Location = new System.Drawing.Point(604, 41);
             this.btnExtractSegments.Name = "btnExtractSegments";
             this.btnExtractSegments.Size = new System.Drawing.Size(171, 26);

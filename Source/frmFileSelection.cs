@@ -27,6 +27,8 @@ namespace UniversalPatcher
             listFiles.Columns[0].Width = 1000;
 
             listFiles.CheckBoxes = true;
+            if (Folder == "")
+                Folder = Application.StartupPath;
             DirectoryInfo d = new DirectoryInfo(Folder);
             FileInfo[] Files = d.GetFiles("*.bin");
             foreach (FileInfo file in Files)
