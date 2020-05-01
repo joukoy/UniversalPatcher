@@ -199,7 +199,7 @@
             this.txtPatchDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPatchDescription.Location = new System.Drawing.Point(129, 57);
             this.txtPatchDescription.Name = "txtPatchDescription";
-            this.txtPatchDescription.Size = new System.Drawing.Size(546, 20);
+            this.txtPatchDescription.Size = new System.Drawing.Size(483, 20);
             this.txtPatchDescription.TabIndex = 116;
             // 
             // labelBinSize
