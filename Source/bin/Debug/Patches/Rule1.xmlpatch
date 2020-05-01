@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<ArrayOfXmlPatch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <XmlPatch>
+    <Description>sdasdf</Description>
+    <XmlFile>p01-p59.xml</XmlFile>
+    <CompatibleOS>12579405:20</CompatibleOS>
+    <Data>FF</Data>
+    <Rule>10:1:1</Rule>
+  </XmlPatch>
+</ArrayOfXmlPatch>

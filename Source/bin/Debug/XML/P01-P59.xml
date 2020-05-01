@@ -1,0 +1,204 @@
+<?xml version="1.0"?>
+<ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SegmentConfig>
+    <Name>OS</Name>
+    <Version>1</Version>
+    <Addresses>0-4FF,500-3FFF,20000-2@</Addresses>
+    <CS1Address>500:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+    <CS1Blocks>0-4FF,502-3FFF,20000-2@</CS1Blocks>
+    <CS2Blocks>0-3fff,20000-2@</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>504:4:int</PNAddr>
+    <VerAddr>508:2:text</VerAddr>
+    <SegNrAddr>503:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>EngineCal</Name>
+    <Addresses>@514</Addresses>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+    <CS1Blocks>@514</CS1Blocks>
+    <CS2Blocks>@514</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>EngineDiag</Name>
+    <Addresses>@51C</Addresses>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+    <CS1Blocks>@51C</CS1Blocks>
+    <CS2Blocks>@51C</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>TransCal</Name>
+    <Addresses>@524</Addresses>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+    <CS1Blocks>@524</CS1Blocks>
+    <CS2Blocks>@524</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>TransDiag</Name>
+    <Addresses>@52C</Addresses>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+    <CS1Blocks>@52C</CS1Blocks>
+    <CS2Blocks>@52C</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Fuel</Name>
+    <Addresses>@534</Addresses>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+    <CS1Blocks>@534</CS1Blocks>
+    <CS2Blocks>@534</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>System</Name>
+    <Addresses>@53C</Addresses>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+    <CS1Blocks>@53C</CS1Blocks>
+    <CS2Blocks>@53C</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Speedometer</Name>
+    <Addresses>@544</Addresses>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+    <CS1Blocks>@544</CS1Blocks>
+    <CS2Blocks>@544</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Eeprom_data</Name>
+    <Addresses>Search</Addresses>
+    <CS1Address />
+    <CS2Address />
+    <CS1Method>0</CS1Method>
+    <CS2Method>0</CS2Method>
+    <CS1Blocks />
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>true</Eeprom>
+    <PNAddr>#4:4:int</PNAddr>
+    <VerAddr>#1C:4:text</VerAddr>
+    <SegNrAddr />
+    <ExtraInfo>Serial:CW+8:12:text,VIN:#21:17:text</ExtraInfo>
+    <Comment />
+    <CheckWords>A5A0:88:0,A5A0:56:0</CheckWords>
+    <SearchAddresses>4000-6000,6000-8000</SearchAddresses>
+    <Searchfor>ffffffffffffffff:0:n</Searchfor>
+  </SegmentConfig>
+</ArrayOfSegmentConfig>

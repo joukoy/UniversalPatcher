@@ -37,13 +37,58 @@ namespace UniversalPatcher
             listSegments.Enabled = true;
             listSegments.Clear();
             listSegments.View = View.Details;
+            listSegments.FullRowSelect = true;
             listSegments.Columns.Add("Segment");
+            listSegments.Columns.Add("Stock");
+            listSegments.Columns.Add("Compatible");
             listSegments.Columns.Add("Description");
             listSegments.Columns[0].Width = 250;
-            listSegments.Columns[1].Width = 400;
+            listSegments.Columns[1].Width = 50;
+            listSegments.Columns[2].Width = 80;
+            listSegments.Columns[3].Width = 400;
             LoadSegments();
         }
 
+        private void LoadSegments()
+        {
+            listSegments.Items.Clear();
+            SwapBuffer = null;
+            labelSelectedSegment.Text = "-";
+            if (comboSegments.Text == "OS")
+            {
+                return;
+            }
+            string SegNr = ((SegmentInfo)comboSegments.SelectedItem).SegNr;
+            int SegIndex = comboSegments.SelectedIndex;
+            for (int i=0;i< SwapSegments.Count;i++)
+            {
+                Debug.WriteLine(SwapSegments[i].Size + " <> " + PCM.segmentinfos[SegIndex].Size);
+                if (SwapSegments[i].XmlFile == PCM.segmentinfos[SegIndex].XmlFile && SwapSegments[i].Size == PCM.segmentinfos[SegIndex].Size)
+                { 
+                    var item = new ListViewItem(Path.GetFileName(SwapSegments[i].FileName));
+                    if (SwapSegments[i].Stock == "True")
+                        item.SubItems.Add(SwapSegments[i].Stock);
+                    else
+                        item.SubItems.Add("");
+                    if (SwapSegments[i].OS == PCM.OS)
+                    {
+                        item.SubItems.Add("100%");
+                    }
+                    else if (SwapSegments[i].Address == PCM.segmentinfos[SegIndex].Address)
+                    {
+                        item.SubItems.Add("High chance");
+                    }
+                    else
+                    {
+                        item.SubItems.Add("Less chance");
+                    }
+                    item.SubItems.Add(SwapSegments[i].Description);
+                    item.Tag = Application.StartupPath + SwapSegments[i].FileName;
+                    listSegments.Items.Add(item);
+                }
+            }
+        }
+/*
         private void LoadSegments()
         {
             listSegments.Items.Clear();
@@ -75,6 +120,7 @@ namespace UniversalPatcher
             }
 
         }
+        */
         private void comboSegments_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadSegments();

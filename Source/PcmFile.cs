@@ -87,7 +87,7 @@ namespace UniversalPatcher
                     {
                         if (s > 0)
                             tmp += ", ";
-                        tmp = binfile[i].SegmentBlocks[s].Start.ToString("X4") + " - " + binfile[i].SegmentBlocks[s].End.ToString("X4");
+                        tmp += binfile[i].SegmentBlocks[s].Start.ToString("X4") + " - " + binfile[i].SegmentBlocks[s].End.ToString("X4");
                         SSize += binfile[i].SegmentBlocks[s].End - binfile[i].SegmentBlocks[s].Start + 1;
                     }
                     segmentinfos[i].Size = SSize.ToString("X");
@@ -111,15 +111,23 @@ namespace UniversalPatcher
 
                     if (S.CS1Method != CSMethod_None)
                     {
-                        string HexLength = "X4";
-                        if (S.CS1Method == CSMethod_crc32 || S.CS1Method == CSMethod_Dwordsum)
-                            HexLength = "X8";
+                        string HexLength;
+                        if (binfile[i].CS1Address.Bytes == 0)
+                        {
+                            HexLength = "X4";
+                            if (S.CS1Method == CSMethod_crc32 || S.CS1Method == CSMethod_Dwordsum)
+                                HexLength = "X8";
+                        }
+                        else
+                        { 
+                            HexLength = "X" + (binfile[i].CS1Address.Bytes * 2).ToString();
+                        }
                         segmentinfos[i].CS1Calc = CalculateChecksum(buf, binfile[i].CS1Address, binfile[i].CS1Blocks, binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, binfile[i].CS1Address.Bytes, S.CS1SwapBytes).ToString(HexLength);
                         if (S.CVN == 1)
                         {
                             segmentinfos[i].cvn = segmentinfos[i].CS1Calc;
                         }
-                        if (binfile[i].CS1Address.Bytes == 0)
+                        if (binfile[i].CS1Address.Address == uint.MaxValue)
                         {
                             segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS1Calc, true).ToString();
                         }
@@ -136,16 +144,24 @@ namespace UniversalPatcher
 
                     if (S.CS2Method != CSMethod_None)
                     {
-                        string HexLength = "X4";
-                        if (S.CS2Method == CSMethod_crc32 || S.CS2Method == CSMethod_Dwordsum)
-                            HexLength = "X8";
+                        string HexLength;
+                        if (binfile[i].CS2Address.Bytes == 0)
+                        {
+                            HexLength = "X4";
+                            if (S.CS2Method == CSMethod_crc32 || S.CS2Method == CSMethod_Dwordsum)
+                                HexLength = "X8";
+                        }
+                        else
+                        {
+                            HexLength = "X" + (binfile[i].CS2Address.Bytes * 2).ToString();
+                        }
                         segmentinfos[i].CS2Calc = CalculateChecksum(buf, binfile[i].CS2Address, binfile[i].CS2Blocks, binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, binfile[i].CS2Address.Bytes, S.CS2SwapBytes).ToString(HexLength);
                         if (S.CVN == 2)
                         {
                             segmentinfos[i].cvn = segmentinfos[i].CS2Calc;
                         }
 
-                        if (binfile[i].CS2Address.Bytes == 0)
+                        if (binfile[i].CS2Address.Address == uint.MaxValue)
                         {
                             segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS2Calc, true).ToString();
                         }
@@ -339,6 +355,11 @@ namespace UniversalPatcher
         public string ReadInfo(AddressData AD)
         {
             Debug.WriteLine("Reading address: " + AD.Address.ToString("X") + ", bytes: " + AD.Bytes.ToString() + ", Type: " + AD.Type);
+            if (AD.Address == uint.MaxValue)
+            {
+                Debug.WriteLine("Address not defined");
+                return "";
+            }
             string Result = "";
             if (AD.Bytes == 1)
             {
@@ -465,7 +486,12 @@ namespace UniversalPatcher
             AddressData AD = new AddressData();
 
             if (Line.Length == 0)
+            {
+                //Set defaults:
+                AD.Address = uint.MaxValue;
+                AD.Bytes = 2;
                 return AD;
+            }
             string[] Lineparts = Line.Split(':');
             CheckWord CWAddr;
             CWAddr.Address = 0;
@@ -477,9 +503,14 @@ namespace UniversalPatcher
                 if (CWAddr.Key != "")
                     Lineparts[0] = Lineparts[0].Replace(CWAddr.Key, "");
             }
-            if (!HexToUint(Lineparts[0].Replace("#", ""), out AD.Address))
-                throw new Exception("Can't convert from HEX: " + Lineparts[0].Replace("#", "") + " (" + Line + ")");            
 
+            if (Lineparts[0].Replace("#", "") == "")
+            {
+                AD.Address = uint.MaxValue;
+            }
+            else if (!HexToUint(Lineparts[0].Replace("#", ""), out AD.Address))
+                throw new Exception("Can't convert from HEX: " + Lineparts[0].Replace("#", "") + " (" + Line + ")");
+            
             if (Line.StartsWith("#"))
             {
                 AD.Address += binfile[SegNr].SegmentBlocks[0].Start;

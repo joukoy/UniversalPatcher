@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SegmentConfig>
+    <Name>OS</Name>
+    <Version>1</Version>
+    <Addresses>0-3FFF,20000-0@</Addresses>
+    <CS1Address>#52a:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+    <CS1Blocks>0-529,52c-3fff,20000-4@</CS1Blocks>
+    <CS2Blocks>0-3fff,20000-0@</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>52e:4:int</PNAddr>
+    <VerAddr>532:2:text</VerAddr>
+    <SegNrAddr>52d:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Engine</Name>
+    <Addresses>@54e</Addresses>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+    <CS1Blocks>@54e</CS1Blocks>
+    <CS2Blocks>@54e</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Trans</Name>
+    <Addresses>@556</Addresses>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+    <CS1Blocks>@556</CS1Blocks>
+    <CS2Blocks>@556</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Speedo</Name>
+    <Addresses>@55e</Addresses>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+    <CS1Blocks>@55e</CS1Blocks>
+    <CS2Blocks>@55e</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>System</Name>
+    <Addresses>@566</Addresses>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+    <CS1Blocks>@566</CS1Blocks>
+    <CS2Blocks>@566</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:3:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Eeprom_data</Name>
+    <Addresses>Search</Addresses>
+    <CS1Address />
+    <CS2Address />
+    <CS1Method>0</CS1Method>
+    <CS2Method>0</CS2Method>
+    <CS1Blocks />
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr />
+    <VerAddr />
+    <SegNrAddr />
+    <ExtraInfo>VIN:#2d:17:text,BCC:#54:4:text,Hardware:#4a:4:int</ExtraInfo>
+    <Comment />
+    <CheckWords />
+    <SearchAddresses>4000-5fff,6000-7fff</SearchAddresses>
+    <Searchfor>ffffffff:0:n</Searchfor>
+  </SegmentConfig>
+</ArrayOfSegmentConfig>

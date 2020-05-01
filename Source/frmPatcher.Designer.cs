@@ -241,7 +241,7 @@
             // 
             // numSuppress
             // 
-            this.numSuppress.Location = new System.Drawing.Point(342, 5);
+            this.numSuppress.Location = new System.Drawing.Point(357, 3);
             this.numSuppress.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -259,7 +259,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(277, 7);
+            this.label2.Location = new System.Drawing.Point(292, 5);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(59, 13);
             this.label2.TabIndex = 19;
@@ -268,7 +268,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(385, 7);
+            this.label3.Location = new System.Drawing.Point(400, 5);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(59, 13);
             this.label3.TabIndex = 20;

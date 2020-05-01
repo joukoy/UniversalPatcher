@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<ArrayOfXmlPatch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <XmlPatch>
+    <Description />
+    <XmlFile>p01-p59.xml</XmlFile>
+    <Segment />
+    <CompatibleOS>ALL:12</CompatibleOS>
+    <Data>33</Data>
+    <Rule>13:FF:5C</Rule>
+  </XmlPatch>
+</ArrayOfXmlPatch>

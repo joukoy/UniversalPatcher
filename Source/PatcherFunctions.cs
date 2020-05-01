@@ -135,6 +135,24 @@ public class upatcher
         //public bool SearchNot;     //Search where NOT found OBSOLETE
     }
 
+    public class SwapSegment
+    {
+        public SwapSegment()
+        {
+
+        }
+        public string FileName { get; set; }
+        public string XmlFile { get; set; }
+        public string OS { get; set; }
+        public string SegNr {get;set; }
+        public int SegIndex { get; set; }
+        public string Size { get; set; }
+        public string Address { get; set; }
+        public string Description { get; set; }
+        public string Stock { get; set; }
+
+    }
+
     public const short CSMethod_None = 0;
     public const short CSMethod_crc16 = 1;
     public const short CSMethod_crc32 = 2;
@@ -148,7 +166,7 @@ public class upatcher
     public static List<CVN> StockCVN;
     public static List<CVN> ListCVN;
     public static List<SegmentInfo> ListSegment;
-
+    public static List<SwapSegment> SwapSegments;
     public static string XMLFile;
 
     public struct AddressData
@@ -223,7 +241,7 @@ public class upatcher
 
     public static uint CalculateChecksum(byte[] Data, AddressData CSAddress, List<Block> CSBlocks,List<Block> ExcludeBlocks, short Method, short Complement, ushort Bytes, Boolean SwapB)
     {
-        Debug.WriteLine("Calculating hecksum, method: " + Method);
+        Debug.WriteLine("Calculating checksum, method: " + Method);
         uint sum = 0;
         uint BufSize = 0;
         List<Block> Blocks = new List<Block>();

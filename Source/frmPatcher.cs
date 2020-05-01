@@ -103,6 +103,20 @@ namespace UniversalPatcher
                 file.Close();
             }
 
+            string SwapSegmentListFile = Path.Combine(Application.StartupPath, "Segments", "extractedsegments.xml");
+            if (File.Exists(SwapSegmentListFile))
+            {
+                Debug.WriteLine("Loading extractedsegments.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<SwapSegment>));
+                System.IO.StreamReader file = new System.IO.StreamReader(SwapSegmentListFile);
+                SwapSegments = (List<SwapSegment>)reader.Deserialize(file);
+                file.Close();
+
+            }
+            else
+            {
+                SwapSegments = new List<SwapSegment>();
+            }
         }
 
         public void addCheckBoxes()
@@ -213,7 +227,7 @@ namespace UniversalPatcher
                         Logger(" " + PCM.segmentinfos[i].Name.PadRight(11), false);
                         if (S.CS1Method != CSMethod_None && chkCS1.Checked)
                         {
-                            if (PCM.binfile[i].CS1Address.Bytes == 0)
+                            if (PCM.binfile[i].CS1Address.Address == uint.MaxValue)
                             {
                                 Logger(" Checksum1: " + PCM.segmentinfos[i].CS1Calc, false);
                             }
@@ -232,7 +246,7 @@ namespace UniversalPatcher
 
                         if (S.CS2Method != CSMethod_None && chkCS2.Checked)
                         {
-                            if (PCM.binfile[i].CS2Address.Bytes == 0)
+                            if (PCM.binfile[i].CS2Address.Address == uint.MaxValue)
                             {
                                 Logger(" Checksum2: " + PCM.segmentinfos[i].CS2Calc, false);
                             }
@@ -801,25 +815,33 @@ namespace UniversalPatcher
                         {
                             uint CS1 = 0;
                             uint CS1Calc = CalculateChecksum(basefile.buf, basefile.binfile[i].CS1Address, basefile.binfile[i].CS1Blocks, basefile.binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, basefile.binfile[i].CS1Address.Bytes, S.CS1SwapBytes);
-                            if (basefile.binfile[i].CS1Address.Bytes == 1)
-                            {
-                                CS1 = basefile.buf[basefile.binfile[i].CS1Address.Address];
-                            }
-                            else if (basefile.binfile[i].CS1Address.Bytes == 2)
-                            {
-                                CS1 = BEToUint16(basefile.buf, basefile.binfile[i].CS1Address.Address);
-                            }
-                            else if (basefile.binfile[i].CS1Address.Bytes == 4)
-                            {
-                                CS1 = BEToUint32(basefile.buf, basefile.binfile[i].CS1Address.Address);
+                            if (basefile.binfile[i].CS1Address.Address < uint.MaxValue)
+                            { 
+                                if (basefile.binfile[i].CS1Address.Bytes == 1)
+                                {
+                                    CS1 = basefile.buf[basefile.binfile[i].CS1Address.Address];
+                                }
+                                else if (basefile.binfile[i].CS1Address.Bytes == 2)
+                                {
+                                    CS1 = BEToUint16(basefile.buf, basefile.binfile[i].CS1Address.Address);
+                                }
+                                else if (basefile.binfile[i].CS1Address.Bytes == 4)
+                                {
+                                    CS1 = BEToUint32(basefile.buf, basefile.binfile[i].CS1Address.Address);
+                                }
                             }
                             if (CS1 == CS1Calc)
                                 Logger(" Checksum 1: " + CS1.ToString("X4") + " [OK]");
                             else
                             {
-                                if (basefile.binfile[i].CS1Address.Bytes == 0)
+                                if (basefile.binfile[i].CS1Address.Address == uint.MaxValue)
                                 {
-                                    Logger(" Checksum 1: " + CS1Calc.ToString("X4") + " [Not saved]");
+                                    string hexdigits;
+                                    if (basefile.binfile[i].CS1Address.Bytes == 0)
+                                        hexdigits = "X4";
+                                    else
+                                        hexdigits = "X" + (basefile.binfile[i].CS1Address.Bytes * 2).ToString();
+                                    Logger(" Checksum 1: " + CS1Calc.ToString(hexdigits) + " [Not saved]");
                                 }
                                 else
                                 {
@@ -848,24 +870,32 @@ namespace UniversalPatcher
                         {
                             uint CS2 = 0;
                             uint CS2Calc = CalculateChecksum(basefile.buf, basefile.binfile[i].CS2Address, basefile.binfile[i].CS2Blocks, basefile.binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, basefile.binfile[i].CS2Address.Bytes, S.CS2SwapBytes);
-                            if (basefile.binfile[i].CS2Address.Bytes == 1)
-                            {
-                                CS2 = basefile.buf[basefile.binfile[i].CS2Address.Address];
-                            }
-                            else if (basefile.binfile[i].CS2Address.Bytes == 2)
-                            {
-                                CS2 = BEToUint16(basefile.buf, basefile.binfile[i].CS2Address.Address);
-                            }
-                            else if (basefile.binfile[i].CS2Address.Bytes == 4)
-                            {
-                                CS2 = BEToUint32(basefile.buf, basefile.binfile[i].CS2Address.Address);
+                            if (basefile.binfile[i].CS2Address.Address < uint.MaxValue)
+                            { 
+                                if (basefile.binfile[i].CS2Address.Bytes == 1)
+                                {
+                                    CS2 = basefile.buf[basefile.binfile[i].CS2Address.Address];
+                                }
+                                else if (basefile.binfile[i].CS2Address.Bytes == 2)
+                                {
+                                    CS2 = BEToUint16(basefile.buf, basefile.binfile[i].CS2Address.Address);
+                                }
+                                else if (basefile.binfile[i].CS2Address.Bytes == 4)
+                                {
+                                    CS2 = BEToUint32(basefile.buf, basefile.binfile[i].CS2Address.Address);
+                                }
                             }
                             if (CS2 == CS2Calc)
                                 Logger(" Checksum 2: " + CS2.ToString("X4") + " [OK]");
                             else
                             {
-                                if (basefile.binfile[i].CS2Address.Bytes == 0)
+                                if (basefile.binfile[i].CS2Address.Address == uint.MaxValue)
                                 {
+                                    string hexdigits;
+                                    if (basefile.binfile[i].CS1Address.Bytes == 0)
+                                        hexdigits = "X4";
+                                    else
+                                        hexdigits = "X" + (basefile.binfile[i].CS2Address.Bytes * 2).ToString();
                                     Logger(" Checksum 2: " + CS2Calc.ToString("X4") + " [Not saved]");
                                 }
                                 else
@@ -1633,6 +1663,19 @@ namespace UniversalPatcher
 
         }
 
+        private void SaveSegmentList()
+        {
+            Logger("Saving file extractedsegments.xml", false);
+            string FileName = Path.Combine(Application.StartupPath, "Segments", "extractedsegments.xml");
+            using (FileStream stream = new FileStream(FileName, FileMode.Create))
+            {
+                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<SwapSegment>));
+                writer.Serialize(stream, SwapSegments);
+                stream.Close();
+            }
+            Logger(" [OK]");
+
+        }
         private string SegmentFileName(string FnameStart, string Extension)
         {
             string FileName = FnameStart + Extension;
@@ -1687,9 +1730,23 @@ namespace UniversalPatcher
                         {
                             string FnameStart = Path.Combine(Application.StartupPath, "Segments", PCM.OS, PCM.segmentinfos[s].SegNr, PCM.segmentinfos[s].Name + "-" + PCM.segmentinfos[s].PN + PCM.segmentinfos[s].Ver);
                             FileName = SegmentFileName(FnameStart, ".binsegment");
+                            if (FileName.Length > 0)
+                            { 
+                                SwapSegment swapsegment = new SwapSegment();
+                                swapsegment.Address = PCM.segmentinfos[s].Address;
+                                swapsegment.Description = Descr;
+                                swapsegment.FileName = FileName.Replace(Application.StartupPath,"");
+                                swapsegment.OS = PCM.OS;
+                                swapsegment.SegIndex = s;
+                                swapsegment.SegNr = PCM.segmentinfos[s].SegNr;
+                                swapsegment.Size = PCM.segmentinfos[s].Size;
+                                swapsegment.Stock = PCM.segmentinfos[s].Stock;
+                                swapsegment.XmlFile = PCM.segmentinfos[s].XmlFile;
+                                SwapSegments.Add(swapsegment);
+                            }
                         }
                         if (FileName.Length > 0) 
-                        { 
+                        {
                             Logger("Writing " + PCM.segmentinfos[s].Name + " to file: " + FileName + ", size: " + PCM.segmentinfos[s].Size + " (0x" + PCM.segmentinfos[s].Size + ")");
                             WriteSegmentToFile(FileName, PCM.binfile[s].SegmentBlocks, PCM.buf);
                             StreamWriter sw = new StreamWriter(FileName + ".txt");
@@ -1715,6 +1772,7 @@ namespace UniversalPatcher
             if (txtSegmentDescription.Text.Length == 0)
                 txtSegmentDescription.Text = Path.GetFileName(basefile.FileName).Replace(".bin", "");
             ExtractSegments(basefile, txtExtractDescription.Text, false,"");
+            SaveSegmentList();
         }
 
         private void btnExtractSegmentsFolder_Click(object sender, EventArgs e)
@@ -1732,9 +1790,10 @@ namespace UniversalPatcher
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                     PcmFile PCM = new PcmFile(FileName);
                     GetFileInfo(FileName, ref PCM, true);
-                    ExtractSegments(PCM, FileName.Replace(".bin", ""), true, dstFolder);
+                    ExtractSegments(PCM, Path.GetFileName(FileName).Replace(".bin", ""), true, dstFolder);
                 }
                 Logger("Segments extracted");
+                SaveSegmentList();
             }
         }
 

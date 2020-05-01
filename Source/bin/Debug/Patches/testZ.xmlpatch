@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<ArrayOfXmlPatch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <XmlPatch>
+    <XmlFile>p01-p59.xml</XmlFile>
+    <CompatibleOS>12579405:ba80</CompatibleOS>
+    <Data>00 22 00 E4 00 E4 00 E4 01 11 01 3F 01 6C 01 9A 01</Data>
+    <Description>Test X</Description>
+  </XmlPatch>
+</ArrayOfXmlPatch>

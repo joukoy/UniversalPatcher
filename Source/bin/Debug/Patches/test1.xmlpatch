@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<ArrayOfXmlPatch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <XmlPatch>
+    <XmlFile>p01-p59.xml</XmlFile>
+    <CompatibleOS>12579405:e960</CompatibleOS>
+    <Data>08 00 08 00 08 00 08 00 08 00 08 00 0A 00 0C 52 0F 00 10 00 10 00 10 00 10 00 00 20 00 2B 00 3D 00 3D 00 3D 00 3D 00 3D 00 3D 00 3D 00 20 00 2B 00</Data>
+  </XmlPatch>
+</ArrayOfXmlPatch>

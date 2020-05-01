@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ArrayOfXmlPatch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <XmlPatch>
+    <Description>Sample patch</Description>
+    <XmlFile>p01-p59.xml,other.xml</XmlFile>
+    <Segment>TransCal</Segment>
+    <CompatibleOS>12587603:19610,12579405:19600</CompatibleOS>
+    <Data>F0 C5</Data>
+  </XmlPatch>
+  <XmlPatch>
+    <Description />
+    <XmlFile>p01-p59.xml,other.xml</XmlFile>
+    <Segment>TransCal</Segment>
+    <CompatibleOS>12587603:196D3,12579405:19610</CompatibleOS>
+    <Data>90</Data>
+  </XmlPatch>
+</ArrayOfXmlPatch>
