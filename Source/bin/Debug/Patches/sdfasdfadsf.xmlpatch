@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<ArrayOfXmlPatch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <XmlPatch>
-    <Description>asdasdf</Description>
-    <XmlFile>p01-p59.xml</XmlFile>
-    <CompatibleOS>12587603:162D0</CompatibleOS>
-    <Data>79 20 00 03 00 C0 13 AB 41 42 00 00 31 32 35 38 37 39 34 37 00 00 00 00 00 00 00 00 C8 00 01 00 01</Data>
-  </XmlPatch>
-</ArrayOfXmlPatch>
