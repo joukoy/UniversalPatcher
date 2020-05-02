@@ -49,7 +49,7 @@ namespace UniversalPatcher
                 int Start = rtBox.Text.Length;
                 rtBox.AppendText(msg);
                 rtBox.Select(Start, msg.Length);
-                Application.DoEvents();
+                //Application.DoEvents();
             }));
         }
 

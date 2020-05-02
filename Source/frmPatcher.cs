@@ -24,7 +24,6 @@ namespace UniversalPatcher
             txtResult.EnableContextMenu();
             txtDebug.EnableContextMenu();
         }
-
         protected override void OnHandleCreated(EventArgs e)
         {
             if (Properties.Settings.Default.DebugOn)
@@ -262,9 +261,10 @@ namespace UniversalPatcher
                                 }
                             }
                         }
-                        if (PCM.segmentinfos[i].Stock == "True")
-                            LoggerBold("[Stock]", false);
-
+                        if (PCM.segmentinfos[i].Stock == "[stock]")
+                            LoggerBold(" [stock]", false);
+                        else
+                            Logger(" " + PCM.segmentinfos[i].Stock, false);
                         if (!txtResult.Text.EndsWith(Environment.NewLine))
                             txtResult.AppendText(Environment.NewLine);
                     }
@@ -765,24 +765,28 @@ namespace UniversalPatcher
         {
             txtResult.Focus();
             int Start = txtResult.Text.Length;
-            txtResult.AppendText(LogText);
-            txtResult.Select(Start, LogText.Length);
+            //txtResult.AppendText(LogText);
+            //txtResult.Select(Start, LogText.Length);
+            txtResult.Select(Start, 1);
             txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Bold);
+            txtResult.AppendText(LogText);
             if (NewLine)
                 txtResult.AppendText(Environment.NewLine);
-            Application.DoEvents();
+            //Application.DoEvents();
         }
 
         public void Logger(string LogText, Boolean NewLine = true)
         {
             txtResult.Focus();
             int Start = txtResult.Text.Length;
-            txtResult.AppendText(LogText);
-            txtResult.Select(Start, LogText.Length);
+            //txtResult.AppendText(LogText);
+            //txtResult.Select(Start, LogText.Length);
+            txtResult.Select(Start  , 1);
             txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
+            txtResult.AppendText(LogText);
             if (NewLine)
                 txtResult.AppendText(Environment.NewLine);
-            Application.DoEvents();
+            //Application.DoEvents();
         }
 
         private void btnCheckSums_Click(object sender, EventArgs e)
@@ -1080,12 +1084,14 @@ namespace UniversalPatcher
             if (frmF.ShowDialog(this) == DialogResult.OK)
             {
                 string dstFolder = frmF.labelCustomdst.Text;
+                txtResult.SuspendLayout();
                 for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                     PcmFile PCM = new PcmFile(FileName);
                     GetFileInfo(FileName, ref PCM, true);
                 }
+                txtResult.ResumeLayout();
                 Logger("[Done]");
             }
 
@@ -1528,7 +1534,7 @@ namespace UniversalPatcher
                 {
                     CVN stock = ListCVN[i];
                     counter++;
-                    if (!CheckStockCVN(stock.PN,stock.Ver,stock.SegmentNr,stock.cvn, false))
+                    if (CheckStockCVN(stock.PN,stock.Ver,stock.SegmentNr,stock.cvn , false) != "[stock]")
                     {
                         //Add if not already in list
                         StockCVN.Add(stock);
@@ -1737,6 +1743,7 @@ namespace UniversalPatcher
                                 swapsegment.Description = Descr;
                                 swapsegment.FileName = FileName.Replace(Application.StartupPath,"");
                                 swapsegment.OS = PCM.OS;
+                                swapsegment.PN = PCM.segmentinfos[s].PN + PCM.segmentinfos[s].Ver;
                                 swapsegment.SegIndex = s;
                                 swapsegment.SegNr = PCM.segmentinfos[s].SegNr;
                                 swapsegment.Size = PCM.segmentinfos[s].Size;

@@ -178,6 +178,7 @@
     <Compile Include="frmPatcher.Designer.cs">
       <DependentUpon>frmPatcher.cs</DependentUpon>
     </Compile>
+    <Compile Include="ListViewSorter.cs" />
     <Compile Include="PatcherFunctions.cs" />
     <Compile Include="PcmFile.cs" />
     <Compile Include="Program.cs" />

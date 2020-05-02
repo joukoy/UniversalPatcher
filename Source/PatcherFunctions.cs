@@ -144,6 +144,7 @@ public class upatcher
         public string FileName { get; set; }
         public string XmlFile { get; set; }
         public string OS { get; set; }
+        public string PN { get; set; }
         public string SegNr {get;set; }
         public int SegIndex { get; set; }
         public string Size { get; set; }
@@ -457,15 +458,22 @@ public class upatcher
         }
         return folderPath;
     }
-    public static bool CheckStockCVN(string PN, string Ver, string SegNr, string cvn, bool AddToList)
+    public static string CheckStockCVN(string PN, string Ver, string SegNr, string cvn, bool AddToList)
     {
         for (int c = 0; c < StockCVN.Count; c++)
         {
                 //if (StockCVN[c].XmlFile == Path.GetFileName(XMLFile) && StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
-                if (StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
+                if (StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr)
                 {
-                    return true;
-                }
+                    if (StockCVN[c].cvn == cvn)
+                    {
+                        return "[stock]";
+                    }
+                    else
+                    { 
+                        return "[modded]";
+                    }
+            }
         }
         if (AddToList)
         {
@@ -492,7 +500,7 @@ public class upatcher
                 ListCVN.Add(C1);                
             }
         }
-        return false;
+        return "[n/a]";
     }
 
     public static bool HexToUint64(string Hex, out UInt64 x)

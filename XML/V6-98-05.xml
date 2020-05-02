@@ -2,19 +2,49 @@
 <ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SegmentConfig>
     <Name>OS</Name>
+    <Version>1</Version>
     <Addresses>0-2@</Addresses>
     <CS1Address>GM-V6.txt</CS1Address>
     <CS2Address />
     <CS1Method>4</CS1Method>
-    <CS2Method>0</CS2Method>
+    <CS2Method>2</CS2Method>
     <CS1Blocks>0-3FFF,8000-0@</CS1Blocks>
+    <CS2Blocks>0-3FFF,8000-0@</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr />
+    <VerAddr />
+    <SegNrAddr />
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>EEPROM_data</Name>
+    <Addresses>Search</Addresses>
+    <CS1Address />
+    <CS2Address />
+    <CS1Method>0</CS1Method>
+    <CS2Method>0</CS2Method>
+    <CS1Blocks />
     <CS2Blocks />
     <CS1Complement>0</CS1Complement>
     <CS2Complement>0</CS2Complement>
     <CS1SwapBytes>false</CS1SwapBytes>
     <CS2SwapBytes>false</CS2SwapBytes>
-    <PNAddr />
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#0:4:int</PNAddr>
     <VerAddr />
     <SegNrAddr />
+    <ExtraInfo>vin:#1a:17:text,trace:#e:10:text,PCM1:#0:4:int,PCM2:#a:4:int,seed:#6:2:hex,key:#8:2:hex</ExtraInfo>
+    <Comment />
+    <CheckWords />
+    <SearchAddresses>4000-5fff,6000-7fff</SearchAddresses>
+    <Searchfor>a5a0:3f6:y</Searchfor>
   </SegmentConfig>
 </ArrayOfSegmentConfig>

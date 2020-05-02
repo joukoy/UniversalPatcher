@@ -1,7 +1,7 @@
 ﻿################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
-
+.gitignore
 /Source/bin/Debug
 /Source/obj/Debug
 /Source/.vs/UniversalPatcher/v16

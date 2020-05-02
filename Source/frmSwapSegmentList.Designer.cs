@@ -53,15 +53,17 @@
             // 
             // listSegments
             // 
-            this.listSegments.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.listSegments.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listSegments.HideSelection = false;
             this.listSegments.Location = new System.Drawing.Point(3, 102);
             this.listSegments.Name = "listSegments";
-            this.listSegments.Size = new System.Drawing.Size(774, 171);
+            this.listSegments.Size = new System.Drawing.Size(774, 204);
             this.listSegments.TabIndex = 1;
             this.listSegments.UseCompatibleStateImageBehavior = false;
             this.listSegments.SelectedIndexChanged += new System.EventHandler(this.listSegments_SelectedIndexChanged);
+            this.listSegments.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listSegments_ColumnClick);
             // 
             // label1
             // 
@@ -83,7 +85,8 @@
             // 
             // btnExtract
             // 
-            this.btnExtract.Location = new System.Drawing.Point(3, 279);
+            this.btnExtract.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnExtract.Location = new System.Drawing.Point(3, 312);
             this.btnExtract.Name = "btnExtract";
             this.btnExtract.Size = new System.Drawing.Size(106, 26);
             this.btnExtract.TabIndex = 4;
@@ -102,7 +105,8 @@
             // 
             // btnApply
             // 
-            this.btnApply.Location = new System.Drawing.Point(335, 278);
+            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnApply.Location = new System.Drawing.Point(329, 312);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(106, 26);
             this.btnApply.TabIndex = 6;
@@ -112,20 +116,19 @@
             // 
             // txtResult
             // 
-            this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtResult.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtResult.Location = new System.Drawing.Point(4, 311);
+            this.txtResult.Location = new System.Drawing.Point(4, 344);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(773, 170);
+            this.txtResult.Size = new System.Drawing.Size(773, 137);
             this.txtResult.TabIndex = 10;
             this.txtResult.Text = "";
             // 
             // btnOK
             // 
-            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(667, 280);
+            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOK.Location = new System.Drawing.Point(671, 312);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(106, 26);
             this.btnOK.TabIndex = 8;

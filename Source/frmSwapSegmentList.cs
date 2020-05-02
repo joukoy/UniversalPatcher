@@ -18,8 +18,10 @@ namespace UniversalPatcher
         {
             InitializeComponent();
             txtResult.EnableContextMenu();
+            lvwColumnSorter = new ListViewColumnSorter();
+            this.listSegments.ListViewItemSorter = lvwColumnSorter;
         }
-
+        private ListViewColumnSorter lvwColumnSorter;
         public PcmFile PCM;
         private byte[] SwapBuffer;
         private bool Applied = false;
@@ -41,11 +43,15 @@ namespace UniversalPatcher
             listSegments.Columns.Add("Segment");
             listSegments.Columns.Add("Stock");
             listSegments.Columns.Add("Compatible");
+            listSegments.Columns.Add("OS");
+            listSegments.Columns.Add("P/N");
             listSegments.Columns.Add("Description");
             listSegments.Columns[0].Width = 250;
             listSegments.Columns[1].Width = 50;
             listSegments.Columns[2].Width = 80;
-            listSegments.Columns[3].Width = 400;
+            listSegments.Columns[3].Width = 70;
+            listSegments.Columns[4].Width = 100;
+            listSegments.Columns[5].Width = 400;
             LoadSegments();
         }
 
@@ -62,14 +68,10 @@ namespace UniversalPatcher
             int SegIndex = comboSegments.SelectedIndex;
             for (int i=0;i< SwapSegments.Count;i++)
             {
-                Debug.WriteLine(SwapSegments[i].Size + " <> " + PCM.segmentinfos[SegIndex].Size);
                 if (SwapSegments[i].XmlFile == PCM.segmentinfos[SegIndex].XmlFile && SwapSegments[i].Size == PCM.segmentinfos[SegIndex].Size)
                 { 
                     var item = new ListViewItem(Path.GetFileName(SwapSegments[i].FileName));
-                    if (SwapSegments[i].Stock == "True")
-                        item.SubItems.Add(SwapSegments[i].Stock);
-                    else
-                        item.SubItems.Add("");
+                    item.SubItems.Add(SwapSegments[i].Stock);
                     if (SwapSegments[i].OS == PCM.OS)
                     {
                         item.SubItems.Add("100%");
@@ -82,6 +84,8 @@ namespace UniversalPatcher
                     {
                         item.SubItems.Add("Less chance");
                     }
+                    item.SubItems.Add(SwapSegments[i].OS);
+                    item.SubItems.Add(SwapSegments[i].PN);
                     item.SubItems.Add(SwapSegments[i].Description);
                     item.Tag = Application.StartupPath + SwapSegments[i].FileName;
                     listSegments.Items.Add(item);
@@ -134,7 +138,7 @@ namespace UniversalPatcher
             if (NewLine)
                 txtResult.AppendText(Environment.NewLine);
             txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
-            Application.DoEvents();
+            //Application.DoEvents();
         }
 
         private void listSegments_SelectedIndexChanged(object sender, EventArgs e)
@@ -281,6 +285,32 @@ namespace UniversalPatcher
             {
                 Logger(ex.Message);
             }
+        }
+
+        private void listSegments_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            // Determine if clicked column is already the column that is being sorted.
+            if (e.Column == lvwColumnSorter.SortColumn)
+            {
+                // Reverse the current sort direction for this column.
+                if (lvwColumnSorter.Order == SortOrder.Ascending)
+                {
+                    lvwColumnSorter.Order = SortOrder.Descending;
+                }
+                else
+                {
+                    lvwColumnSorter.Order = SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                lvwColumnSorter.SortColumn = e.Column;
+                lvwColumnSorter.Order = SortOrder.Ascending;
+            }
+
+            // Perform the sort with these new sort options.
+            this.listSegments.Sort();
         }
     }
 }
