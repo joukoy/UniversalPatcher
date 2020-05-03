@@ -65,10 +65,14 @@
             this.labelPatchname = new System.Windows.Forms.Label();
             this.dataPatch = new System.Windows.Forms.DataGridView();
             this.tabCVN = new System.Windows.Forms.TabPage();
+            this.checkAutorefreshCVNlist = new System.Windows.Forms.CheckBox();
+            this.btnRefreshCvnList = new System.Windows.Forms.Button();
             this.btnClearCVN = new System.Windows.Forms.Button();
             this.btnAddtoStock = new System.Windows.Forms.Button();
             this.dataCVN = new System.Windows.Forms.DataGridView();
             this.tabFinfo = new System.Windows.Forms.TabPage();
+            this.checkAutorefreshFileinfo = new System.Windows.Forms.CheckBox();
+            this.btnRefreshFileinfo = new System.Windows.Forms.Button();
             this.btnSaveCSV = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.dataFileInfo = new System.Windows.Forms.DataGridView();
@@ -99,6 +103,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.txtExtractRange = new System.Windows.Forms.TextBox();
             this.tabExtractSegments = new System.Windows.Forms.TabPage();
+            this.checkExtractShowinfo = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.radioRename = new System.Windows.Forms.RadioButton();
             this.radioReplace = new System.Windows.Forms.RadioButton();
@@ -115,11 +120,7 @@
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.checkExtractShowinfo = new System.Windows.Forms.CheckBox();
-            this.btnRefreshFileinfo = new System.Windows.Forms.Button();
-            this.checkAutorefreshFileinfo = new System.Windows.Forms.CheckBox();
-            this.checkAutorefreshCVNlist = new System.Windows.Forms.CheckBox();
-            this.btnRefreshCvnList = new System.Windows.Forms.Button();
+            this.chkSuspendlog = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -246,7 +247,7 @@
             // 
             // numSuppress
             // 
-            this.numSuppress.Location = new System.Drawing.Point(357, 3);
+            this.numSuppress.Location = new System.Drawing.Point(406, 3);
             this.numSuppress.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -264,7 +265,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(292, 5);
+            this.label2.Location = new System.Drawing.Point(341, 5);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(59, 13);
             this.label2.TabIndex = 19;
@@ -273,7 +274,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(400, 5);
+            this.label3.Location = new System.Drawing.Point(449, 5);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(59, 13);
             this.label3.TabIndex = 20;
@@ -320,6 +321,7 @@
             // tabInfo
             // 
             this.tabInfo.AutoScroll = true;
+            this.tabInfo.Controls.Add(this.chkSuspendlog);
             this.tabInfo.Controls.Add(this.txtResult);
             this.tabInfo.Controls.Add(this.numSuppress);
             this.tabInfo.Controls.Add(this.label2);
@@ -386,8 +388,6 @@
             // chkDebug
             // 
             this.chkDebug.AutoSize = true;
-            this.chkDebug.Checked = true;
-            this.chkDebug.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDebug.Location = new System.Drawing.Point(0, 3);
             this.chkDebug.Name = "chkDebug";
             this.chkDebug.Size = new System.Drawing.Size(73, 17);
@@ -564,6 +564,29 @@
             this.tabCVN.Text = "CVN";
             this.tabCVN.UseVisualStyleBackColor = true;
             // 
+            // checkAutorefreshCVNlist
+            // 
+            this.checkAutorefreshCVNlist.AutoSize = true;
+            this.checkAutorefreshCVNlist.Checked = true;
+            this.checkAutorefreshCVNlist.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkAutorefreshCVNlist.Location = new System.Drawing.Point(151, 10);
+            this.checkAutorefreshCVNlist.Name = "checkAutorefreshCVNlist";
+            this.checkAutorefreshCVNlist.Size = new System.Drawing.Size(83, 17);
+            this.checkAutorefreshCVNlist.TabIndex = 180;
+            this.checkAutorefreshCVNlist.Text = "Auto refresh";
+            this.checkAutorefreshCVNlist.UseVisualStyleBackColor = true;
+            this.checkAutorefreshCVNlist.CheckedChanged += new System.EventHandler(this.checkAutorefreshCVNlist_CheckedChanged);
+            // 
+            // btnRefreshCvnList
+            // 
+            this.btnRefreshCvnList.Location = new System.Drawing.Point(73, 6);
+            this.btnRefreshCvnList.Name = "btnRefreshCvnList";
+            this.btnRefreshCvnList.Size = new System.Drawing.Size(62, 21);
+            this.btnRefreshCvnList.TabIndex = 179;
+            this.btnRefreshCvnList.Text = "Refresh";
+            this.btnRefreshCvnList.UseVisualStyleBackColor = true;
+            this.btnRefreshCvnList.Click += new System.EventHandler(this.btnRefreshCvnList_Click);
+            // 
             // btnClearCVN
             // 
             this.btnClearCVN.Location = new System.Drawing.Point(5, 5);
@@ -609,6 +632,29 @@
             this.tabFinfo.TabIndex = 4;
             this.tabFinfo.Text = "File info";
             this.tabFinfo.UseVisualStyleBackColor = true;
+            // 
+            // checkAutorefreshFileinfo
+            // 
+            this.checkAutorefreshFileinfo.AutoSize = true;
+            this.checkAutorefreshFileinfo.Checked = true;
+            this.checkAutorefreshFileinfo.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkAutorefreshFileinfo.Location = new System.Drawing.Point(152, 8);
+            this.checkAutorefreshFileinfo.Name = "checkAutorefreshFileinfo";
+            this.checkAutorefreshFileinfo.Size = new System.Drawing.Size(83, 17);
+            this.checkAutorefreshFileinfo.TabIndex = 6;
+            this.checkAutorefreshFileinfo.Text = "Auto refresh";
+            this.checkAutorefreshFileinfo.UseVisualStyleBackColor = true;
+            this.checkAutorefreshFileinfo.CheckedChanged += new System.EventHandler(this.checkAutorefreshFileinfo_CheckedChanged);
+            // 
+            // btnRefreshFileinfo
+            // 
+            this.btnRefreshFileinfo.Location = new System.Drawing.Point(74, 4);
+            this.btnRefreshFileinfo.Name = "btnRefreshFileinfo";
+            this.btnRefreshFileinfo.Size = new System.Drawing.Size(62, 21);
+            this.btnRefreshFileinfo.TabIndex = 5;
+            this.btnRefreshFileinfo.Text = "Refresh";
+            this.btnRefreshFileinfo.UseVisualStyleBackColor = true;
+            this.btnRefreshFileinfo.Click += new System.EventHandler(this.btnRefreshFileinfo_Click);
             // 
             // btnSaveCSV
             // 
@@ -943,6 +989,18 @@
             this.tabExtractSegments.Text = "Extract segments";
             this.tabExtractSegments.UseVisualStyleBackColor = true;
             // 
+            // checkExtractShowinfo
+            // 
+            this.checkExtractShowinfo.AutoSize = true;
+            this.checkExtractShowinfo.Checked = true;
+            this.checkExtractShowinfo.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkExtractShowinfo.Location = new System.Drawing.Point(243, 21);
+            this.checkExtractShowinfo.Name = "checkExtractShowinfo";
+            this.checkExtractShowinfo.Size = new System.Drawing.Size(93, 17);
+            this.checkExtractShowinfo.TabIndex = 506;
+            this.checkExtractShowinfo.Text = "Display fileinfo";
+            this.checkExtractShowinfo.UseVisualStyleBackColor = true;
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.radioRename);
@@ -1092,63 +1150,17 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // checkExtractShowinfo
+            // chkSuspendlog
             // 
-            this.checkExtractShowinfo.AutoSize = true;
-            this.checkExtractShowinfo.Checked = true;
-            this.checkExtractShowinfo.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkExtractShowinfo.Location = new System.Drawing.Point(243, 21);
-            this.checkExtractShowinfo.Name = "checkExtractShowinfo";
-            this.checkExtractShowinfo.Size = new System.Drawing.Size(93, 17);
-            this.checkExtractShowinfo.TabIndex = 506;
-            this.checkExtractShowinfo.Text = "Display fileinfo";
-            this.checkExtractShowinfo.UseVisualStyleBackColor = true;
-            // 
-            // btnRefreshFileinfo
-            // 
-            this.btnRefreshFileinfo.Location = new System.Drawing.Point(74, 4);
-            this.btnRefreshFileinfo.Name = "btnRefreshFileinfo";
-            this.btnRefreshFileinfo.Size = new System.Drawing.Size(62, 21);
-            this.btnRefreshFileinfo.TabIndex = 5;
-            this.btnRefreshFileinfo.Text = "Refresh";
-            this.btnRefreshFileinfo.UseVisualStyleBackColor = true;
-            this.btnRefreshFileinfo.Click += new System.EventHandler(this.btnRefreshFileinfo_Click);
-            // 
-            // checkAutorefreshFileinfo
-            // 
-            this.checkAutorefreshFileinfo.AutoSize = true;
-            this.checkAutorefreshFileinfo.Checked = true;
-            this.checkAutorefreshFileinfo.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkAutorefreshFileinfo.Location = new System.Drawing.Point(152, 8);
-            this.checkAutorefreshFileinfo.Name = "checkAutorefreshFileinfo";
-            this.checkAutorefreshFileinfo.Size = new System.Drawing.Size(83, 17);
-            this.checkAutorefreshFileinfo.TabIndex = 6;
-            this.checkAutorefreshFileinfo.Text = "Auto refresh";
-            this.checkAutorefreshFileinfo.UseVisualStyleBackColor = true;
-            this.checkAutorefreshFileinfo.CheckedChanged += new System.EventHandler(this.checkAutorefreshFileinfo_CheckedChanged);
-            // 
-            // checkAutorefreshCVNlist
-            // 
-            this.checkAutorefreshCVNlist.AutoSize = true;
-            this.checkAutorefreshCVNlist.Checked = true;
-            this.checkAutorefreshCVNlist.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkAutorefreshCVNlist.Location = new System.Drawing.Point(151, 10);
-            this.checkAutorefreshCVNlist.Name = "checkAutorefreshCVNlist";
-            this.checkAutorefreshCVNlist.Size = new System.Drawing.Size(83, 17);
-            this.checkAutorefreshCVNlist.TabIndex = 180;
-            this.checkAutorefreshCVNlist.Text = "Auto refresh";
-            this.checkAutorefreshCVNlist.UseVisualStyleBackColor = true;
-            this.checkAutorefreshCVNlist.CheckedChanged += new System.EventHandler(this.checkAutorefreshCVNlist_CheckedChanged);
-            // 
-            // btnRefreshCvnList
-            // 
-            this.btnRefreshCvnList.Location = new System.Drawing.Point(73, 6);
-            this.btnRefreshCvnList.Name = "btnRefreshCvnList";
-            this.btnRefreshCvnList.Size = new System.Drawing.Size(62, 21);
-            this.btnRefreshCvnList.TabIndex = 179;
-            this.btnRefreshCvnList.Text = "Refresh";
-            this.btnRefreshCvnList.UseVisualStyleBackColor = true;
-            this.btnRefreshCvnList.Click += new System.EventHandler(this.btnRefreshCvnList_Click);
+            this.chkSuspendlog.AutoSize = true;
+            this.chkSuspendlog.Checked = true;
+            this.chkSuspendlog.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSuspendlog.Location = new System.Drawing.Point(151, 5);
+            this.chkSuspendlog.Name = "chkSuspendlog";
+            this.chkSuspendlog.Size = new System.Drawing.Size(158, 17);
+            this.chkSuspendlog.TabIndex = 177;
+            this.chkSuspendlog.Text = "Suspend for long operations";
+            this.chkSuspendlog.UseVisualStyleBackColor = true;
             // 
             // FrmPatcher
             // 
@@ -1293,5 +1305,6 @@
         private System.Windows.Forms.Button btnRefreshFileinfo;
         private System.Windows.Forms.CheckBox checkAutorefreshCVNlist;
         private System.Windows.Forms.Button btnRefreshCvnList;
+        private System.Windows.Forms.CheckBox chkSuspendlog;
     }
 }

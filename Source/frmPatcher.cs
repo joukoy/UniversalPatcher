@@ -1088,12 +1088,17 @@ namespace UniversalPatcher
             if (frmF.ShowDialog(this) == DialogResult.OK)
             {
                 string dstFolder = frmF.labelCustomdst.Text;
+                txtResult.SuspendLayout();
+                if (chkSuspendlog.Checked)
+                    txtResult.Enabled = false;
                 for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                     PcmFile PCM = new PcmFile(FileName);
                     GetFileInfo(FileName, ref PCM, true);
                 }
+                txtResult.ResumeLayout();
+                txtResult.Enabled = true;
                 Logger("[Done]");
             }
 
@@ -1807,6 +1812,9 @@ namespace UniversalPatcher
             if (frmF.ShowDialog(this) == DialogResult.OK)
             {
                 string dstFolder = frmF.labelCustomdst.Text;
+                txtResult.SuspendLayout();
+                if (chkSuspendlog.Checked)
+                    txtResult.Enabled = false;
                 for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
@@ -1814,6 +1822,8 @@ namespace UniversalPatcher
                     GetFileInfo(FileName, ref PCM, true,checkExtractShowinfo.Checked);
                     ExtractSegments(PCM, Path.GetFileName(FileName).Replace(".bin", ""), true, dstFolder);
                 }
+                txtResult.Enabled = true;
+                txtResult.ResumeLayout();
                 Logger("Segments extracted");
                 SaveSegmentList();
             }
@@ -1867,11 +1877,16 @@ namespace UniversalPatcher
             frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
             if (frmF.ShowDialog(this) == DialogResult.OK)
             {
+                txtResult.SuspendLayout();
+                if (chkSuspendlog.Checked)
+                    txtResult.Enabled = false;
                 for (int i= 0; i< frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                     FixFileChecksum(FileName);
                 }
+                txtResult.Enabled = true;
+                txtResult.ResumeLayout();
                 Logger("[Checksums fixed]");
             }
         }

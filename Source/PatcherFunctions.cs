@@ -452,12 +452,15 @@ public class upatcher
         folderBrowser.ValidateNames = false;
         folderBrowser.CheckFileExists = false;
         folderBrowser.CheckPathExists = true;
+        folderBrowser.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
         // Always default to Folder Selection.
         folderBrowser.Title = Title;
         folderBrowser.FileName = "Folder Selection";
         if (folderBrowser.ShowDialog() == DialogResult.OK)
         {
-            folderPath = Path.GetDirectoryName(folderBrowser.FileName);            
+            folderPath = Path.GetDirectoryName(folderBrowser.FileName);
+            UniversalPatcher.Properties.Settings.Default.LastBINfolder = folderPath;
+            UniversalPatcher.Properties.Settings.Default.Save();
         }
         return folderPath;
     }
