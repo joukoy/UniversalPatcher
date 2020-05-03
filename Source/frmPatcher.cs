@@ -79,6 +79,8 @@ namespace UniversalPatcher
             if (Properties.Settings.Default.LastPATCHfolder == "")
                 Properties.Settings.Default.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
             chkDebug.Checked = Properties.Settings.Default.DebugOn;
+            checkAutorefreshCVNlist.Checked = Properties.Settings.Default.AutorefreshCVNlist;
+            checkAutorefreshFileinfo.Checked = Properties.Settings.Default.AutorefreshFileinfo;
 
             DetectRules = new List<DetectRule>();
             string AutoDetectFile = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
@@ -197,7 +199,7 @@ namespace UniversalPatcher
                     Logger(" " + PCM.segmentinfos[i].Name.PadRight(11), false);
                     if (PCM.segmentinfos[i].PN.Length > 1)
                     {
-                        if (PCM.segmentinfos[i].Stock == "True")
+                        if (PCM.segmentinfos[i].Stock == "[stock]")
                             LoggerBold(" PN: " + PCM.segmentinfos[i].PN.PadRight(9), false);
                         else
                             Logger(" PN: " + PCM.segmentinfos[i].PN.PadRight(9), false);
@@ -274,7 +276,8 @@ namespace UniversalPatcher
                     addCheckBoxes();
                     CheckSegmentCompatibility();
                 }
-                RefreshFileInfo();
+                if (checkAutorefreshFileinfo.Checked)
+                    RefreshFileInfo();
             }
             catch (Exception ex)
             {
@@ -331,7 +334,8 @@ namespace UniversalPatcher
                 PCM.GetInfo();
                 if (PCM.OS == null || PCM.OS == "")
                     LoggerBold("Warning: No OS segment defined, limiting functions");
-                RefreshCVNlist();
+                if (checkAutorefreshCVNlist.Checked)
+                    RefreshCVNlist();
                 if (Show)
                     ShowFileInfo(PCM, InfoOnly);
             }
@@ -1084,14 +1088,12 @@ namespace UniversalPatcher
             if (frmF.ShowDialog(this) == DialogResult.OK)
             {
                 string dstFolder = frmF.labelCustomdst.Text;
-                txtResult.SuspendLayout();
                 for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                     PcmFile PCM = new PcmFile(FileName);
                     GetFileInfo(FileName, ref PCM, true);
                 }
-                txtResult.ResumeLayout();
                 Logger("[Done]");
             }
 
@@ -1749,6 +1751,19 @@ namespace UniversalPatcher
                                 swapsegment.Size = PCM.segmentinfos[s].Size;
                                 swapsegment.Stock = PCM.segmentinfos[s].Stock;
                                 swapsegment.XmlFile = PCM.segmentinfos[s].XmlFile;
+                                if (PCM.segmentinfos[s].Name == "OS")
+                                {
+                                    for (int x=0;x< PCM.segmentinfos.Length;x++)
+                                    {
+                                        if (x>0)
+                                        {
+                                            swapsegment.SegmentSizes += ",";
+                                            swapsegment.SegmentAddresses += ",";
+                                        }
+                                        swapsegment.SegmentSizes += PCM.segmentinfos[x].Size;
+                                        swapsegment.SegmentAddresses += PCM.segmentinfos[x].Address;
+                                    }
+                                }
                                 SwapSegments.Add(swapsegment);
                             }
                         }
@@ -1796,7 +1811,7 @@ namespace UniversalPatcher
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                     PcmFile PCM = new PcmFile(FileName);
-                    GetFileInfo(FileName, ref PCM, true);
+                    GetFileInfo(FileName, ref PCM, true,checkExtractShowinfo.Checked);
                     ExtractSegments(PCM, Path.GetFileName(FileName).Replace(".bin", ""), true, dstFolder);
                 }
                 Logger("Segments extracted");
@@ -1859,6 +1874,28 @@ namespace UniversalPatcher
                 }
                 Logger("[Checksums fixed]");
             }
+        }
+
+        private void btnRefreshFileinfo_Click(object sender, EventArgs e)
+        {
+            RefreshFileInfo();
+        }
+
+        private void btnRefreshCvnList_Click(object sender, EventArgs e)
+        {
+            RefreshCVNlist();
+        }
+
+        private void checkAutorefreshFileinfo_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.AutorefreshFileinfo = checkAutorefreshFileinfo.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void checkAutorefreshCVNlist_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.AutorefreshCVNlist = checkAutorefreshCVNlist.Checked;
+            Properties.Settings.Default.Save();
         }
     }
 

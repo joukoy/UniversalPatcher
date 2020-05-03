@@ -115,6 +115,11 @@
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkExtractShowinfo = new System.Windows.Forms.CheckBox();
+            this.btnRefreshFileinfo = new System.Windows.Forms.Button();
+            this.checkAutorefreshFileinfo = new System.Windows.Forms.CheckBox();
+            this.checkAutorefreshCVNlist = new System.Windows.Forms.CheckBox();
+            this.btnRefreshCvnList = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -547,6 +552,8 @@
             // 
             // tabCVN
             // 
+            this.tabCVN.Controls.Add(this.checkAutorefreshCVNlist);
+            this.tabCVN.Controls.Add(this.btnRefreshCvnList);
             this.tabCVN.Controls.Add(this.btnClearCVN);
             this.tabCVN.Controls.Add(this.btnAddtoStock);
             this.tabCVN.Controls.Add(this.dataCVN);
@@ -559,7 +566,7 @@
             // 
             // btnClearCVN
             // 
-            this.btnClearCVN.Location = new System.Drawing.Point(5, 7);
+            this.btnClearCVN.Location = new System.Drawing.Point(5, 5);
             this.btnClearCVN.Name = "btnClearCVN";
             this.btnClearCVN.Size = new System.Drawing.Size(62, 22);
             this.btnClearCVN.TabIndex = 178;
@@ -570,7 +577,7 @@
             // btnAddtoStock
             // 
             this.btnAddtoStock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddtoStock.Location = new System.Drawing.Point(637, 7);
+            this.btnAddtoStock.Location = new System.Drawing.Point(637, 5);
             this.btnAddtoStock.Name = "btnAddtoStock";
             this.btnAddtoStock.Size = new System.Drawing.Size(136, 22);
             this.btnAddtoStock.TabIndex = 177;
@@ -591,6 +598,8 @@
             // 
             // tabFinfo
             // 
+            this.tabFinfo.Controls.Add(this.checkAutorefreshFileinfo);
+            this.tabFinfo.Controls.Add(this.btnRefreshFileinfo);
             this.tabFinfo.Controls.Add(this.btnSaveCSV);
             this.tabFinfo.Controls.Add(this.btnClear);
             this.tabFinfo.Controls.Add(this.dataFileInfo);
@@ -921,6 +930,7 @@
             // 
             // tabExtractSegments
             // 
+            this.tabExtractSegments.Controls.Add(this.checkExtractShowinfo);
             this.tabExtractSegments.Controls.Add(this.groupBox2);
             this.tabExtractSegments.Controls.Add(this.btnExtractSegmentsFolder);
             this.tabExtractSegments.Controls.Add(this.txtSegmentDescription);
@@ -948,10 +958,12 @@
             // radioRename
             // 
             this.radioRename.AutoSize = true;
+            this.radioRename.Checked = true;
             this.radioRename.Location = new System.Drawing.Point(143, 19);
             this.radioRename.Name = "radioRename";
             this.radioRename.Size = new System.Drawing.Size(65, 17);
             this.radioRename.TabIndex = 504;
+            this.radioRename.TabStop = true;
             this.radioRename.Text = "Rename";
             this.radioRename.UseVisualStyleBackColor = true;
             // 
@@ -968,12 +980,10 @@
             // radioSkip
             // 
             this.radioSkip.AutoSize = true;
-            this.radioSkip.Checked = true;
             this.radioSkip.Location = new System.Drawing.Point(7, 19);
             this.radioSkip.Name = "radioSkip";
             this.radioSkip.Size = new System.Drawing.Size(46, 17);
             this.radioSkip.TabIndex = 502;
-            this.radioSkip.TabStop = true;
             this.radioSkip.Text = "Skip";
             this.radioSkip.UseVisualStyleBackColor = true;
             // 
@@ -1082,6 +1092,64 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // checkExtractShowinfo
+            // 
+            this.checkExtractShowinfo.AutoSize = true;
+            this.checkExtractShowinfo.Checked = true;
+            this.checkExtractShowinfo.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkExtractShowinfo.Location = new System.Drawing.Point(243, 21);
+            this.checkExtractShowinfo.Name = "checkExtractShowinfo";
+            this.checkExtractShowinfo.Size = new System.Drawing.Size(93, 17);
+            this.checkExtractShowinfo.TabIndex = 506;
+            this.checkExtractShowinfo.Text = "Display fileinfo";
+            this.checkExtractShowinfo.UseVisualStyleBackColor = true;
+            // 
+            // btnRefreshFileinfo
+            // 
+            this.btnRefreshFileinfo.Location = new System.Drawing.Point(74, 4);
+            this.btnRefreshFileinfo.Name = "btnRefreshFileinfo";
+            this.btnRefreshFileinfo.Size = new System.Drawing.Size(62, 21);
+            this.btnRefreshFileinfo.TabIndex = 5;
+            this.btnRefreshFileinfo.Text = "Refresh";
+            this.btnRefreshFileinfo.UseVisualStyleBackColor = true;
+            this.btnRefreshFileinfo.Click += new System.EventHandler(this.btnRefreshFileinfo_Click);
+            // 
+            // checkAutorefreshFileinfo
+            // 
+            this.checkAutorefreshFileinfo.AutoSize = true;
+            this.checkAutorefreshFileinfo.Checked = true;
+            this.checkAutorefreshFileinfo.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkAutorefreshFileinfo.Location = new System.Drawing.Point(152, 8);
+            this.checkAutorefreshFileinfo.Name = "checkAutorefreshFileinfo";
+            this.checkAutorefreshFileinfo.Size = new System.Drawing.Size(83, 17);
+            this.checkAutorefreshFileinfo.TabIndex = 6;
+            this.checkAutorefreshFileinfo.Text = "Auto refresh";
+            this.checkAutorefreshFileinfo.UseVisualStyleBackColor = true;
+            this.checkAutorefreshFileinfo.CheckedChanged += new System.EventHandler(this.checkAutorefreshFileinfo_CheckedChanged);
+            // 
+            // checkAutorefreshCVNlist
+            // 
+            this.checkAutorefreshCVNlist.AutoSize = true;
+            this.checkAutorefreshCVNlist.Checked = true;
+            this.checkAutorefreshCVNlist.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkAutorefreshCVNlist.Location = new System.Drawing.Point(151, 10);
+            this.checkAutorefreshCVNlist.Name = "checkAutorefreshCVNlist";
+            this.checkAutorefreshCVNlist.Size = new System.Drawing.Size(83, 17);
+            this.checkAutorefreshCVNlist.TabIndex = 180;
+            this.checkAutorefreshCVNlist.Text = "Auto refresh";
+            this.checkAutorefreshCVNlist.UseVisualStyleBackColor = true;
+            this.checkAutorefreshCVNlist.CheckedChanged += new System.EventHandler(this.checkAutorefreshCVNlist_CheckedChanged);
+            // 
+            // btnRefreshCvnList
+            // 
+            this.btnRefreshCvnList.Location = new System.Drawing.Point(73, 6);
+            this.btnRefreshCvnList.Name = "btnRefreshCvnList";
+            this.btnRefreshCvnList.Size = new System.Drawing.Size(62, 21);
+            this.btnRefreshCvnList.TabIndex = 179;
+            this.btnRefreshCvnList.Text = "Refresh";
+            this.btnRefreshCvnList.UseVisualStyleBackColor = true;
+            this.btnRefreshCvnList.Click += new System.EventHandler(this.btnRefreshCvnList_Click);
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1108,8 +1176,10 @@
             this.tabPatch.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataPatch)).EndInit();
             this.tabCVN.ResumeLayout(false);
+            this.tabCVN.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataCVN)).EndInit();
             this.tabFinfo.ResumeLayout(false);
+            this.tabFinfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataFileInfo)).EndInit();
             this.tabFunction.ResumeLayout(false);
             this.tabCreate.ResumeLayout(false);
@@ -1218,5 +1288,10 @@
         private System.Windows.Forms.RadioButton radioSkip;
         private System.Windows.Forms.Button btnSwapSegments;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox checkExtractShowinfo;
+        private System.Windows.Forms.CheckBox checkAutorefreshFileinfo;
+        private System.Windows.Forms.Button btnRefreshFileinfo;
+        private System.Windows.Forms.CheckBox checkAutorefreshCVNlist;
+        private System.Windows.Forms.Button btnRefreshCvnList;
     }
 }

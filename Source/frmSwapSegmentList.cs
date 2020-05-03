@@ -60,10 +60,6 @@ namespace UniversalPatcher
             listSegments.Items.Clear();
             SwapBuffer = null;
             labelSelectedSegment.Text = "-";
-            if (comboSegments.Text == "OS")
-            {
-                return;
-            }
             string SegNr = ((SegmentInfo)comboSegments.SelectedItem).SegNr;
             int SegIndex = comboSegments.SelectedIndex;
             for (int i=0;i< SwapSegments.Count;i++)
@@ -72,17 +68,48 @@ namespace UniversalPatcher
                 { 
                     var item = new ListViewItem(Path.GetFileName(SwapSegments[i].FileName));
                     item.SubItems.Add(SwapSegments[i].Stock);
-                    if (SwapSegments[i].OS == PCM.OS)
+                    if (comboSegments.Text == "OS")
                     {
-                        item.SubItems.Add("100%");
-                    }
-                    else if (SwapSegments[i].Address == PCM.segmentinfos[SegIndex].Address)
-                    {
-                        item.SubItems.Add("High chance");
+                        string sizes = "";
+                        string addresses = "";
+                        for (int x = 0; x < PCM.segmentinfos.Length; x++)
+                        {
+                            if (x > 0)
+                            {
+                                sizes += ",";
+                                addresses += ",";
+                            }
+                            sizes += PCM.segmentinfos[x].Size;
+                            addresses += PCM.segmentinfos[x].Address;
+                        }
+
+                        if (SwapSegments[i].SegmentAddresses == addresses)
+                        {
+                            item.SubItems.Add("100%");
+                        }
+                        else if (SwapSegments[i].SegmentSizes == sizes)
+                        {
+                            item.SubItems.Add("High chance");
+                        }
+                        else
+                        {
+                            item.SubItems.Add("Less chance");
+                        }
                     }
                     else
-                    {
-                        item.SubItems.Add("Less chance");
+                    { 
+                        if (SwapSegments[i].OS == PCM.OS)
+                        {
+                            item.SubItems.Add("100%");
+                        }
+                        else if (SwapSegments[i].Address == PCM.segmentinfos[SegIndex].Address)
+                        {
+                            item.SubItems.Add("High chance");
+                        }
+                        else
+                        {
+                            item.SubItems.Add("Less chance");
+                        }
                     }
                     item.SubItems.Add(SwapSegments[i].OS);
                     item.SubItems.Add(SwapSegments[i].PN);
@@ -147,11 +174,11 @@ namespace UniversalPatcher
                 return;
             try 
             {
-                if (comboSegments.Text == "OS")
+                /*if (comboSegments.Text == "OS")
                 {
                     Logger("OS swap disabled");
                     return;
-                }
+                }*/
                 string FileName = listSegments.SelectedItems[0].Tag.ToString();
                 labelSelectedSegment.Text = "Selected: " + listSegments.SelectedItems[0].Text;
                 labelSelectedSegment.Tag = FileName;
@@ -227,11 +254,11 @@ namespace UniversalPatcher
 
         private void btnExtract_Click(object sender, EventArgs e)
         {
-            if (comboSegments.Text == "OS")
+            /*if (comboSegments.Text == "OS")
             {
                 Logger("OS swap disabled");
                 return;
-            }
+            }*/
             string FileName = SelectFile();
             if (FileName.Length == 0)
                 return;

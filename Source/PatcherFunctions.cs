@@ -151,8 +151,11 @@ public class upatcher
         public string Address { get; set; }
         public string Description { get; set; }
         public string Stock { get; set; }
+        public string SegmentSizes { get; set; }     //For OS compatibility
+        public string SegmentAddresses { get; set; } //For OS compatibility
 
     }
+
 
     public const short CSMethod_None = 0;
     public const short CSMethod_crc16 = 1;
