@@ -33,7 +33,26 @@ namespace UniversalPatcher
                 Debug.Listeners.Add(tbtl);
             }
         }
+ /*       protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams i_Params = base.CreateParams;
+                try
+                {
+                    // Available since XP SP1
+                    Win32.LoadLibrary("MsftEdit.dll"); // throws
 
+                    // Replace "RichEdit20W" with "RichEdit50W"
+                    i_Params.ClassName = "RichEdit50W";
+                }
+                catch
+                {
+                    // Windows XP without any Service Pack.
+                }
+                return i_Params;
+            }
+        }*/
         private struct DetectGroup
         {
             public string Logic;
@@ -50,7 +69,8 @@ namespace UniversalPatcher
         private BindingSource bindingSource = new BindingSource();
         private BindingSource CvnSource = new BindingSource();
         private BindingSource Finfosource = new BindingSource();
-
+        private string logFile;
+        StreamWriter logwriter;
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
             this.Show();
@@ -72,6 +92,9 @@ namespace UniversalPatcher
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
             if (!Directory.Exists(Path.Combine(Application.StartupPath, "Segments")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Segments"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Log")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Log"));
+            logFile = Path.Combine(Application.StartupPath, "Log", "universalpatcher" + DateTime.Now.ToString() + ".rtf");
 
 
             if (Properties.Settings.Default.LastXMLfolder == "")
@@ -120,6 +143,14 @@ namespace UniversalPatcher
             }
         }
 
+        private void FrmPatcher_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (chkLogtoFile.Checked)
+            {
+                chkLogtoFile.Checked = false;
+                Application.DoEvents();
+            }    
+        }
         public void addCheckBoxes()
         {
             if (LastXML == XMLFile && chkSegments != null && chkSegments.Length == Segments.Count)
@@ -216,7 +247,7 @@ namespace UniversalPatcher
                     if (PCM.segmentinfos[i].ExtraInfo != null && PCM.segmentinfos[i].ExtraInfo.Length > 0)
                         Logger(Environment.NewLine + PCM.segmentinfos[i].ExtraInfo, false);
 
-                    if (!txtResult.Text.EndsWith(Environment.NewLine))
+                    if (!txtResult.Text.EndsWith(Environment.NewLine) || chkLogtoFile.Checked)
                         Logger("");
                 }
                 if (chkCS1.Checked || chkCS2.Checked)
@@ -267,8 +298,8 @@ namespace UniversalPatcher
                             LoggerBold(" [stock]", false);
                         else
                             Logger(" " + PCM.segmentinfos[i].Stock, false);
-                        if (!txtResult.Text.EndsWith(Environment.NewLine))
-                            txtResult.AppendText(Environment.NewLine);
+                        if (!txtResult.Text.EndsWith(Environment.NewLine) || chkLogtoFile.Checked)
+                            Logger("");
                     }
                 }
                 if (!InfoOnly)
@@ -767,13 +798,22 @@ namespace UniversalPatcher
 
         public void LoggerBold(string LogText, Boolean NewLine = true)
         {
+            if (chkLogtoFile.Checked)
+            {
+                logwriter.Write("\\b " + LogText +" \\b0");
+                if (NewLine)
+                    logwriter.Write("\\par" + Environment.NewLine);
+                return;
+            }
             txtResult.Focus();
             int Start = txtResult.Text.Length;
             //txtResult.AppendText(LogText);
             //txtResult.Select(Start, LogText.Length);
-            txtResult.Select(Start, 1);
+            /*txtResult.Select(Start, 1);*/
             txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Bold);
+            //txtResult.SelectedRtf = @"{\rtf1\ansi \b " + LogText + "\b0  ";
             txtResult.AppendText(LogText);
+            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
             if (NewLine)
                 txtResult.AppendText(Environment.NewLine);
             //Application.DoEvents();
@@ -781,12 +821,19 @@ namespace UniversalPatcher
 
         public void Logger(string LogText, Boolean NewLine = true)
         {
+            if (chkLogtoFile.Checked)
+            {
+                logwriter.Write(LogText);
+                if (NewLine)
+                    logwriter.Write("\\par" + Environment.NewLine);
+                return;
+            }
             txtResult.Focus();
             int Start = txtResult.Text.Length;
             //txtResult.AppendText(LogText);
             //txtResult.Select(Start, LogText.Length);
-            txtResult.Select(Start  , 1);
-            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
+            /*txtResult.Select(Start  , 1);
+            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);*/
             txtResult.AppendText(LogText);
             if (NewLine)
                 txtResult.AppendText(Environment.NewLine);
@@ -1087,19 +1134,19 @@ namespace UniversalPatcher
             frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
             if (frmF.ShowDialog(this) == DialogResult.OK)
             {
+                if (chkLogtoFile.Checked)
+                    txtResult.AppendText("Writing file info to logfile" + Environment.NewLine);
                 string dstFolder = frmF.labelCustomdst.Text;
-                txtResult.SuspendLayout();
-                if (chkSuspendlog.Checked)
-                    txtResult.Enabled = false;
                 for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                     PcmFile PCM = new PcmFile(FileName);
                     GetFileInfo(FileName, ref PCM, true);
                 }
-                txtResult.ResumeLayout();
-                txtResult.Enabled = true;
-                Logger("[Done]");
+                if (chkLogtoFile.Checked)
+                    txtResult.AppendText("[Done]" + Environment.NewLine);
+                else
+                    Logger("[Done]");
             }
 
         }
@@ -1765,8 +1812,8 @@ namespace UniversalPatcher
                                             swapsegment.SegmentSizes += ",";
                                             swapsegment.SegmentAddresses += ",";
                                         }
-                                        swapsegment.SegmentSizes += PCM.segmentinfos[x].Size;
-                                        swapsegment.SegmentAddresses += PCM.segmentinfos[x].Address;
+                                        swapsegment.SegmentSizes += PCM.segmentinfos[x].Name + ":" + PCM.segmentinfos[x].Size;
+                                        swapsegment.SegmentAddresses += PCM.segmentinfos[x].Name + ":" + PCM.segmentinfos[x].Address;
                                     }
                                 }
                                 SwapSegments.Add(swapsegment);
@@ -1811,10 +1858,9 @@ namespace UniversalPatcher
             frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
             if (frmF.ShowDialog(this) == DialogResult.OK)
             {
+                if (chkLogtoFile.Checked)
+                    txtResult.AppendText("Extracting..." + Environment.NewLine);
                 string dstFolder = frmF.labelCustomdst.Text;
-                txtResult.SuspendLayout();
-                if (chkSuspendlog.Checked)
-                    txtResult.Enabled = false;
                 for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
@@ -1822,9 +1868,10 @@ namespace UniversalPatcher
                     GetFileInfo(FileName, ref PCM, true,checkExtractShowinfo.Checked);
                     ExtractSegments(PCM, Path.GetFileName(FileName).Replace(".bin", ""), true, dstFolder);
                 }
-                txtResult.Enabled = true;
-                txtResult.ResumeLayout();
-                Logger("Segments extracted");
+                if (chkLogtoFile.Checked)
+                    txtResult.AppendText("Segments extracted" + Environment.NewLine);
+                else
+                    Logger("Segments extracted");
                 SaveSegmentList();
             }
         }
@@ -1877,17 +1924,17 @@ namespace UniversalPatcher
             frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
             if (frmF.ShowDialog(this) == DialogResult.OK)
             {
-                txtResult.SuspendLayout();
-                if (chkSuspendlog.Checked)
-                    txtResult.Enabled = false;
+                if (chkLogtoFile.Checked)
+                    txtResult.AppendText("Fixing checksums..." + Environment.NewLine);
                 for (int i= 0; i< frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                     FixFileChecksum(FileName);
                 }
-                txtResult.Enabled = true;
-                txtResult.ResumeLayout();
-                Logger("[Checksums fixed]");
+                if (chkLogtoFile.Checked)
+                    txtResult.AppendText("[Checksums fixed]" + Environment.NewLine);
+                else
+                    Logger("[Checksums fixed]");
             }
         }
 
@@ -1911,6 +1958,31 @@ namespace UniversalPatcher
         {
             Properties.Settings.Default.AutorefreshCVNlist = checkAutorefreshCVNlist.Checked;
             Properties.Settings.Default.Save();
+        }
+
+         private void chkLogtoFile_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkLogtoFile.Checked)
+            {
+                if (!File.Exists(logFile))
+                {
+                    logwriter = new StreamWriter(logFile);
+                    logwriter.WriteLine(@"{\rtf1\ansi\deff0\nouicompat{\fonttbl{\f0\fnil\fcharset0 Lucida Console;}{\f1\fnil\fcharset0 Lucida Console;}}" + Environment.NewLine);
+                    logwriter.WriteLine(@"{\*\generator Riched20 10.0.18362}\viewkind4\uc1" + Environment.NewLine);
+                    logwriter.WriteLine(@"\pard\sa200\sl276\slmult1\f0\fs16\lang11" + Environment.NewLine);
+                }
+                else
+                {
+                    logwriter = new StreamWriter(logFile, true);
+                }
+                txtResult.AppendText("Logging to file: " + logFile + Environment.NewLine);
+            }
+            else
+            {
+                logwriter.WriteLine("}");
+                logwriter.Close();
+                txtResult.AppendText("Logfile closed" + Environment.NewLine);
+            }
         }
     }
 

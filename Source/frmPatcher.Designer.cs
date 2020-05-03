@@ -46,6 +46,7 @@
             this.chkAutodetect = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabInfo = new System.Windows.Forms.TabPage();
+            this.chkLogtoFile = new System.Windows.Forms.CheckBox();
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.btnSaveFileInfo = new System.Windows.Forms.Button();
             this.tabDebug = new System.Windows.Forms.TabPage();
@@ -120,7 +121,6 @@
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkSuspendlog = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -321,7 +321,7 @@
             // tabInfo
             // 
             this.tabInfo.AutoScroll = true;
-            this.tabInfo.Controls.Add(this.chkSuspendlog);
+            this.tabInfo.Controls.Add(this.chkLogtoFile);
             this.tabInfo.Controls.Add(this.txtResult);
             this.tabInfo.Controls.Add(this.numSuppress);
             this.tabInfo.Controls.Add(this.label2);
@@ -338,12 +338,24 @@
             this.tabInfo.Text = "Log";
             this.tabInfo.UseVisualStyleBackColor = true;
             // 
+            // chkLogtoFile
+            // 
+            this.chkLogtoFile.AutoSize = true;
+            this.chkLogtoFile.Location = new System.Drawing.Point(192, 7);
+            this.chkLogtoFile.Name = "chkLogtoFile";
+            this.chkLogtoFile.Size = new System.Drawing.Size(72, 17);
+            this.chkLogtoFile.TabIndex = 203;
+            this.chkLogtoFile.Text = "Log to file";
+            this.chkLogtoFile.UseVisualStyleBackColor = true;
+            this.chkLogtoFile.CheckedChanged += new System.EventHandler(this.chkLogtoFile_CheckedChanged);
+            // 
             // txtResult
             // 
             this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtResult.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtResult.HideSelection = false;
             this.txtResult.Location = new System.Drawing.Point(2, 26);
             this.txtResult.Name = "txtResult";
             this.txtResult.Size = new System.Drawing.Size(774, 317);
@@ -379,6 +391,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDebug.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtDebug.HideSelection = false;
             this.txtDebug.Location = new System.Drawing.Point(2, 24);
             this.txtDebug.Name = "txtDebug";
             this.txtDebug.Size = new System.Drawing.Size(774, 323);
@@ -1150,18 +1163,6 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // chkSuspendlog
-            // 
-            this.chkSuspendlog.AutoSize = true;
-            this.chkSuspendlog.Checked = true;
-            this.chkSuspendlog.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSuspendlog.Location = new System.Drawing.Point(151, 5);
-            this.chkSuspendlog.Name = "chkSuspendlog";
-            this.chkSuspendlog.Size = new System.Drawing.Size(158, 17);
-            this.chkSuspendlog.TabIndex = 177;
-            this.chkSuspendlog.Text = "Suspend for long operations";
-            this.chkSuspendlog.UseVisualStyleBackColor = true;
-            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1177,6 +1178,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FrmPatcher";
             this.Text = "Universal patcher";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmPatcher_FormClosing);
             this.Load += new System.EventHandler(this.FrmPatcher_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).EndInit();
             this.tabControl1.ResumeLayout(false);
@@ -1305,6 +1307,6 @@
         private System.Windows.Forms.Button btnRefreshFileinfo;
         private System.Windows.Forms.CheckBox checkAutorefreshCVNlist;
         private System.Windows.Forms.Button btnRefreshCvnList;
-        private System.Windows.Forms.CheckBox chkSuspendlog;
+        private System.Windows.Forms.CheckBox chkLogtoFile;
     }
 }

@@ -46,12 +46,20 @@ namespace UniversalPatcher
             listSegments.Columns.Add("OS");
             listSegments.Columns.Add("P/N");
             listSegments.Columns.Add("Description");
+            listSegments.Columns.Add("Size");
+            listSegments.Columns.Add("Address");
             listSegments.Columns[0].Width = 250;
             listSegments.Columns[1].Width = 50;
             listSegments.Columns[2].Width = 80;
             listSegments.Columns[3].Width = 70;
             listSegments.Columns[4].Width = 100;
-            listSegments.Columns[5].Width = 400;
+            listSegments.Columns[5].Width = 100;
+            listSegments.Columns[6].Width = 100;
+            listSegments.Columns[7].Width = 100;
+            for (int s = 0; s < PCM.segmentinfos.Length;s++)
+            {
+                listSegments.Columns.Add(PCM.segmentinfos[s].Name);
+            }
             LoadSegments();
         }
 
@@ -79,8 +87,8 @@ namespace UniversalPatcher
                                 sizes += ",";
                                 addresses += ",";
                             }
-                            sizes += PCM.segmentinfos[x].Size;
-                            addresses += PCM.segmentinfos[x].Address;
+                            sizes += PCM.segmentinfos[x].Name +":" +  PCM.segmentinfos[x].Size;
+                            addresses += PCM.segmentinfos[x].Name + ":" + PCM.segmentinfos[x].Address;
                         }
 
                         if (SwapSegments[i].SegmentAddresses == addresses)
@@ -114,6 +122,19 @@ namespace UniversalPatcher
                     item.SubItems.Add(SwapSegments[i].OS);
                     item.SubItems.Add(SwapSegments[i].PN);
                     item.SubItems.Add(SwapSegments[i].Description);
+                    item.SubItems.Add(SwapSegments[i].Size);
+                    item.SubItems.Add(SwapSegments[i].Address);
+                    if (comboSegments.Text == "OS")
+                    {
+                        string[] sizes = SwapSegments[i].SegmentAddresses.Split(',');
+                        for (int y=0;y< sizes.Length;y++)
+                        {
+                            string[] parts = sizes[y].Split(':');
+                            if (parts.Length == 2)
+                                item.SubItems.Add(parts[1]);
+                        }
+                        item.SubItems.Add(SwapSegments[i].SegmentAddresses);
+                    }
                     item.Tag = Application.StartupPath + SwapSegments[i].FileName;
                     listSegments.Items.Add(item);
                 }
@@ -284,10 +305,10 @@ namespace UniversalPatcher
                     PcmFile tmpPCM = new PcmFile(FileName);
                     tmpPCM.GetSegmentAddresses();
                     tmpPCM.GetInfo();
-                    if (tmpPCM.OS != PCM.OS)
+                    /*if (tmpPCM.OS != PCM.OS)
                     {
                         throw new Exception(Environment.NewLine +  "OS mismatch: " + PCM.OS + " <> " + tmpPCM.OS);
-                    }
+                    }*/
                     SwapBuffer = new byte[TotalLength];
                     labelSelectedSegment.Text = "Selected: " + tmpPCM.segmentinfos[Seg].PN + tmpPCM.segmentinfos[Seg].Ver + "  (From file: " + Path.GetFileName(FileName) +")";
                     labelSelectedSegment.Tag = FileName;
