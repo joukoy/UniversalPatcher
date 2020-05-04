@@ -23,18 +23,25 @@ namespace UniversalPatcher
             listFiles.Enabled = true;
             listFiles.Items.Clear();
             listFiles.View = View.Details;
-            listFiles.Columns.Add("Files");
-            listFiles.Columns[0].Width = 1000;
+            listFiles.Columns.Add("File");
+            listFiles.Columns.Add("Folder");
+            listFiles.Columns[0].Width = 300;
+            listFiles.Columns[1].Width = 500;
 
             listFiles.CheckBoxes = true;
             if (Folder == "")
                 Folder = Application.StartupPath;
             DirectoryInfo d = new DirectoryInfo(Folder);
-            FileInfo[] Files = d.GetFiles("*.bin");
+            FileInfo[] Files;
+            if (chkSubfolders.Checked)
+                Files = d.GetFiles("*.bin", SearchOption.AllDirectories);
+            else
+                Files = d.GetFiles("*.bin");
             foreach (FileInfo file in Files)
             {
                 var item = new ListViewItem(file.Name);
                 item.Tag = file.FullName;
+                item.SubItems.Add(file.DirectoryName);
                 listFiles.Items.Add(item);
             }
             txtFolder.Text = Folder;
@@ -72,6 +79,11 @@ namespace UniversalPatcher
             string Folder = SelectFolder("Select destination folder");
             if (Folder.Length > 0)
                 labelCustomdst.Text = Folder;
+        }
+
+        private void chkSubfolders_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadFiles(txtFolder.Text);
         }
     }
 }

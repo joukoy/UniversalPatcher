@@ -35,6 +35,7 @@
             this.txtFolder = new System.Windows.Forms.TextBox();
             this.btnCustomdst = new System.Windows.Forms.Button();
             this.labelCustomdst = new System.Windows.Forms.Label();
+            this.chkSubfolders = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // listFiles
@@ -43,16 +44,16 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listFiles.HideSelection = false;
-            this.listFiles.Location = new System.Drawing.Point(3, 66);
+            this.listFiles.Location = new System.Drawing.Point(3, 83);
             this.listFiles.Name = "listFiles";
-            this.listFiles.Size = new System.Drawing.Size(546, 385);
+            this.listFiles.Size = new System.Drawing.Size(546, 368);
             this.listFiles.TabIndex = 0;
             this.listFiles.UseCompatibleStateImageBehavior = false;
             // 
             // btnOK
             // 
-            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(447, 31);
+            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOK.Location = new System.Drawing.Point(447, 50);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(89, 27);
             this.btnOK.TabIndex = 1;
@@ -62,7 +63,7 @@
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBrowse.Location = new System.Drawing.Point(479, 1);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(57, 24);
@@ -73,8 +74,7 @@
             // 
             // btnSelectAll
             // 
-            this.btnSelectAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSelectAll.Location = new System.Drawing.Point(7, 29);
+            this.btnSelectAll.Location = new System.Drawing.Point(5, 50);
             this.btnSelectAll.Name = "btnSelectAll";
             this.btnSelectAll.Size = new System.Drawing.Size(70, 27);
             this.btnSelectAll.TabIndex = 3;
@@ -84,6 +84,8 @@
             // 
             // txtFolder
             // 
+            this.txtFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFolder.Location = new System.Drawing.Point(3, 3);
             this.txtFolder.Name = "txtFolder";
             this.txtFolder.Size = new System.Drawing.Size(470, 20);
@@ -92,9 +94,9 @@
             // 
             // btnCustomdst
             // 
-            this.btnCustomdst.Location = new System.Drawing.Point(83, 29);
+            this.btnCustomdst.Location = new System.Drawing.Point(81, 50);
             this.btnCustomdst.Name = "btnCustomdst";
-            this.btnCustomdst.Size = new System.Drawing.Size(117, 28);
+            this.btnCustomdst.Size = new System.Drawing.Size(117, 27);
             this.btnCustomdst.TabIndex = 5;
             this.btnCustomdst.Text = "Custom destination:";
             this.btnCustomdst.UseVisualStyleBackColor = true;
@@ -103,18 +105,32 @@
             // 
             // labelCustomdst
             // 
+            this.labelCustomdst.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.labelCustomdst.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.labelCustomdst.Location = new System.Drawing.Point(206, 33);
+            this.labelCustomdst.Location = new System.Drawing.Point(204, 54);
             this.labelCustomdst.Name = "labelCustomdst";
             this.labelCustomdst.Size = new System.Drawing.Size(239, 23);
             this.labelCustomdst.TabIndex = 6;
             this.labelCustomdst.Visible = false;
+            // 
+            // chkSubfolders
+            // 
+            this.chkSubfolders.AutoSize = true;
+            this.chkSubfolders.Location = new System.Drawing.Point(6, 27);
+            this.chkSubfolders.Name = "chkSubfolders";
+            this.chkSubfolders.Size = new System.Drawing.Size(112, 17);
+            this.chkSubfolders.TabIndex = 7;
+            this.chkSubfolders.Text = "Include subfolders";
+            this.chkSubfolders.UseVisualStyleBackColor = true;
+            this.chkSubfolders.CheckedChanged += new System.EventHandler(this.chkSubfolders_CheckedChanged);
             // 
             // frmFileSelection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(548, 450);
+            this.Controls.Add(this.chkSubfolders);
             this.Controls.Add(this.labelCustomdst);
             this.Controls.Add(this.btnCustomdst);
             this.Controls.Add(this.txtFolder);
@@ -137,5 +153,6 @@
         public System.Windows.Forms.Button btnCustomdst;
         public System.Windows.Forms.Label labelCustomdst;
         public System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.CheckBox chkSubfolders;
     }
 }

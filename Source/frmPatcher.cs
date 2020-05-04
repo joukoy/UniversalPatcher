@@ -94,7 +94,7 @@ namespace UniversalPatcher
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Segments"));
             if (!Directory.Exists(Path.Combine(Application.StartupPath, "Log")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Log"));
-            logFile = Path.Combine(Application.StartupPath, "Log", "universalpatcher" + DateTime.Now.ToString() + ".rtf");
+            logFile = Path.Combine(Application.StartupPath, "Log", "universalpatcher" + DateTime.Now.ToString("_yyyyMMdd_hhmm") + ".rtf");
 
 
             if (Properties.Settings.Default.LastXMLfolder == "")
@@ -803,20 +803,22 @@ namespace UniversalPatcher
                 logwriter.Write("\\b " + LogText +" \\b0");
                 if (NewLine)
                     logwriter.Write("\\par" + Environment.NewLine);
-                return;
             }
-            txtResult.Focus();
-            int Start = txtResult.Text.Length;
-            //txtResult.AppendText(LogText);
-            //txtResult.Select(Start, LogText.Length);
-            /*txtResult.Select(Start, 1);*/
-            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Bold);
-            //txtResult.SelectedRtf = @"{\rtf1\ansi \b " + LogText + "\b0  ";
-            txtResult.AppendText(LogText);
-            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
-            if (NewLine)
-                txtResult.AppendText(Environment.NewLine);
-            //Application.DoEvents();
+            if (chkLogtodisplay.Checked)
+            {
+                //txtResult.Focus();
+                //int Start = txtResult.Text.Length;
+                //txtResult.AppendText(LogText);
+                //txtResult.Select(Start, LogText.Length);
+                /*txtResult.Select(Start, 1);*/
+                txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Bold);
+                //txtResult.SelectedRtf = @"{\rtf1\ansi \b " + LogText + "\b0  ";
+                txtResult.AppendText(LogText);
+                txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
+                if (NewLine)
+                    txtResult.AppendText(Environment.NewLine);
+                //Application.DoEvents();
+            }
         }
 
         public void Logger(string LogText, Boolean NewLine = true)
@@ -826,18 +828,20 @@ namespace UniversalPatcher
                 logwriter.Write(LogText);
                 if (NewLine)
                     logwriter.Write("\\par" + Environment.NewLine);
-                return;
             }
-            txtResult.Focus();
-            int Start = txtResult.Text.Length;
-            //txtResult.AppendText(LogText);
-            //txtResult.Select(Start, LogText.Length);
-            /*txtResult.Select(Start  , 1);
-            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);*/
-            txtResult.AppendText(LogText);
-            if (NewLine)
-                txtResult.AppendText(Environment.NewLine);
-            //Application.DoEvents();
+            if (chkLogtodisplay.Checked)
+            { 
+                //txtResult.Focus();
+                int Start = txtResult.Text.Length;
+                //txtResult.AppendText(LogText);
+                //txtResult.Select(Start, LogText.Length);
+                /*txtResult.Select(Start  , 1);
+                txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);*/
+                txtResult.AppendText(LogText);
+                if (NewLine)
+                    txtResult.AppendText(Environment.NewLine);
+                //Application.DoEvents();
+            }
         }
 
         private void btnCheckSums_Click(object sender, EventArgs e)
@@ -1155,11 +1159,11 @@ namespace UniversalPatcher
         {
             try
             {
-                string FileName = SelectSaveFile("Text files (*.txt)|*.txt|All files (*.*)|*.*");
+                string FileName = SelectSaveFile("RTF files (*.rtf)|*.rtf|All files (*.*)|*.*");
                 if (FileName.Length > 1)
                 {
                     StreamWriter sw = new StreamWriter(FileName);
-                    sw.WriteLine(txtResult.Text);
+                    sw.WriteLine(txtResult.Rtf);
                     sw.Close();
                 }
             }

@@ -38,6 +38,11 @@
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.btnOK = new System.Windows.Forms.Button();
             this.labelBasefile = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkFullmatch = new System.Windows.Forms.CheckBox();
+            this.chkHighChance = new System.Windows.Forms.CheckBox();
+            this.chkLessChance = new System.Windows.Forms.CheckBox();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboSegments
@@ -62,8 +67,8 @@
             this.listSegments.Size = new System.Drawing.Size(774, 204);
             this.listSegments.TabIndex = 1;
             this.listSegments.UseCompatibleStateImageBehavior = false;
-            this.listSegments.SelectedIndexChanged += new System.EventHandler(this.listSegments_SelectedIndexChanged);
             this.listSegments.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listSegments_ColumnClick);
+            this.listSegments.SelectedIndexChanged += new System.EventHandler(this.listSegments_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -146,11 +151,59 @@
             this.labelBasefile.TabIndex = 9;
             this.labelBasefile.Text = "-";
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.chkLessChance);
+            this.groupBox1.Controls.Add(this.chkHighChance);
+            this.groupBox1.Controls.Add(this.chkFullmatch);
+            this.groupBox1.Location = new System.Drawing.Point(518, 59);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(251, 39);
+            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Display:";
+            // 
+            // chkFullmatch
+            // 
+            this.chkFullmatch.AutoSize = true;
+            this.chkFullmatch.Checked = true;
+            this.chkFullmatch.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkFullmatch.Location = new System.Drawing.Point(6, 16);
+            this.chkFullmatch.Name = "chkFullmatch";
+            this.chkFullmatch.Size = new System.Drawing.Size(52, 17);
+            this.chkFullmatch.TabIndex = 0;
+            this.chkFullmatch.Text = "100%";
+            this.chkFullmatch.UseVisualStyleBackColor = true;
+            this.chkFullmatch.CheckedChanged += new System.EventHandler(this.chkFullmatch_CheckedChanged);
+            // 
+            // chkHighChance
+            // 
+            this.chkHighChance.AutoSize = true;
+            this.chkHighChance.Location = new System.Drawing.Point(64, 16);
+            this.chkHighChance.Name = "chkHighChance";
+            this.chkHighChance.Size = new System.Drawing.Size(87, 17);
+            this.chkHighChance.TabIndex = 1;
+            this.chkHighChance.Text = "High chance";
+            this.chkHighChance.UseVisualStyleBackColor = true;
+            this.chkHighChance.CheckedChanged += new System.EventHandler(this.chkHighChance_CheckedChanged);
+            // 
+            // chkLessChance
+            // 
+            this.chkLessChance.AutoSize = true;
+            this.chkLessChance.Location = new System.Drawing.Point(157, 16);
+            this.chkLessChance.Name = "chkLessChance";
+            this.chkLessChance.Size = new System.Drawing.Size(83, 17);
+            this.chkLessChance.TabIndex = 2;
+            this.chkLessChance.Text = "less chance";
+            this.chkLessChance.UseVisualStyleBackColor = true;
+            this.chkLessChance.CheckedChanged += new System.EventHandler(this.chkLessChance_CheckedChanged);
+            // 
             // frmSwapSegmentList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(782, 481);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.labelBasefile);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.txtResult);
@@ -163,6 +216,8 @@
             this.Controls.Add(this.comboSegments);
             this.Name = "frmSwapSegmentList";
             this.Text = "Swap segment(s):";
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -180,5 +235,9 @@
         private System.Windows.Forms.RichTextBox txtResult;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Label labelBasefile;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox chkLessChance;
+        private System.Windows.Forms.CheckBox chkHighChance;
+        private System.Windows.Forms.CheckBox chkFullmatch;
     }
 }

@@ -75,7 +75,9 @@ namespace UniversalPatcher
                 if (SwapSegments[i].XmlFile == PCM.segmentinfos[SegIndex].XmlFile && SwapSegments[i].Size == PCM.segmentinfos[SegIndex].Size)
                 { 
                     var item = new ListViewItem(Path.GetFileName(SwapSegments[i].FileName));
+                    item.Tag = Application.StartupPath + SwapSegments[i].FileName;
                     item.SubItems.Add(SwapSegments[i].Stock);
+                    bool displaythis = false;
                     if (comboSegments.Text == "OS")
                     {
                         string sizes = "";
@@ -94,14 +96,28 @@ namespace UniversalPatcher
                         if (SwapSegments[i].SegmentAddresses == addresses)
                         {
                             item.SubItems.Add("100%");
+                            if (chkFullmatch.Checked)
+                            { 
+                                displaythis = true;
+                            }
                         }
                         else if (SwapSegments[i].SegmentSizes == sizes)
                         {
                             item.SubItems.Add("High chance");
+                            item.Tag = null;
+                            if (chkHighChance.Checked)
+                            { 
+                                displaythis = true;
+                            }
                         }
                         else
                         {
                             item.SubItems.Add("Less chance");
+                            item.Tag = null;
+                            if (chkLessChance.Checked)
+                            { 
+                                displaythis = true;
+                            }
                         }
                     }
                     else
@@ -109,14 +125,26 @@ namespace UniversalPatcher
                         if (SwapSegments[i].OS == PCM.OS)
                         {
                             item.SubItems.Add("100%");
+                            if (chkFullmatch.Checked)
+                            { 
+                                displaythis = true;
+                            }
                         }
                         else if (SwapSegments[i].Address == PCM.segmentinfos[SegIndex].Address)
                         {
                             item.SubItems.Add("High chance");
+                            if (chkHighChance.Checked)
+                            {
+                                displaythis = true;
+                            }
                         }
                         else
                         {
                             item.SubItems.Add("Less chance");
+                            if (chkLessChance.Checked)
+                            {
+                                displaythis = true;
+                            }
                         }
                     }
                     item.SubItems.Add(SwapSegments[i].OS);
@@ -135,8 +163,10 @@ namespace UniversalPatcher
                         }
                         item.SubItems.Add(SwapSegments[i].SegmentAddresses);
                     }
-                    item.Tag = Application.StartupPath + SwapSegments[i].FileName;
-                    listSegments.Items.Add(item);
+                    if (displaythis)
+                    { 
+                        listSegments.Items.Add(item);
+                    }
                 }
             }
         }
@@ -195,11 +225,14 @@ namespace UniversalPatcher
                 return;
             try 
             {
-                /*if (comboSegments.Text == "OS")
+                if (comboSegments.Text == "OS")
                 {
-                    Logger("OS swap disabled");
-                    return;
-                }*/
+                    if (listSegments.SelectedItems[0].Tag == null)
+                    {
+                        Logger("Incompatible segment");
+                        return;
+                    }
+                }
                 string FileName = listSegments.SelectedItems[0].Tag.ToString();
                 labelSelectedSegment.Text = "Selected: " + listSegments.SelectedItems[0].Text;
                 labelSelectedSegment.Tag = FileName;
@@ -359,6 +392,21 @@ namespace UniversalPatcher
 
             // Perform the sort with these new sort options.
             this.listSegments.Sort();
+        }
+
+        private void chkFullmatch_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadSegments();
+        }
+
+        private void chkHighChance_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadSegments();
+        }
+
+        private void chkLessChance_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadSegments();
         }
     }
 }

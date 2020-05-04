@@ -184,7 +184,8 @@ public class upatcher
     public const ushort TypeText = 0;
     public const ushort TypeHex = 1;
     public const ushort TypeInt = 2;
-              
+    public const ushort TypeFilename = 3;
+
     public static byte[] ReadBin(string FileName, uint FileOffset, uint Length)
     {
 

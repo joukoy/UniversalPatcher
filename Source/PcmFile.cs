@@ -6,6 +6,7 @@ using System.IO;
 using System.Diagnostics;
 using static upatcher;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace UniversalPatcher
 {
@@ -361,7 +362,11 @@ namespace UniversalPatcher
                 return "";
             }
             string Result = "";
-            if (AD.Bytes == 1)
+            if (AD.Type == TypeFilename)
+            {
+                Result = AD.Address.ToString();
+            }
+            else if (AD.Bytes == 1)
             {
                 if (AD.Type == TypeHex)
                     Result = buf[AD.Address].ToString("X2");
@@ -484,6 +489,29 @@ namespace UniversalPatcher
             }
 
             AddressData AD = new AddressData();
+
+            //Special handling, get info from filename:
+            if (Line.StartsWith("filename"))
+            {
+                if (!Line.Contains(":"))
+                    throw new Exception("usage: filename:digits");
+                string[] parts = Line.Split(':');
+                ushort digits;
+                if (!ushort.TryParse(parts[1], out digits))
+                    throw new Exception("usage: filename:digits");
+                string[] numbers = Regex.Split(FileName, @"\D+");
+                foreach (string value in numbers)
+                {
+                    if (!string.IsNullOrEmpty(value) && value.Length == digits)
+                    {
+                        AD.Address = uint.Parse(value);
+                        Debug.WriteLine("PN from filename: {0}", AD.Address);
+                        AD.Bytes = digits;
+                        AD.Type = TypeFilename;
+                    }
+                }
+                return AD;
+            }
 
             if (Line.Length == 0)
             {

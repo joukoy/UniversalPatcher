@@ -46,6 +46,7 @@
             this.chkAutodetect = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabInfo = new System.Windows.Forms.TabPage();
+            this.chkLogtodisplay = new System.Windows.Forms.CheckBox();
             this.chkLogtoFile = new System.Windows.Forms.CheckBox();
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.btnSaveFileInfo = new System.Windows.Forms.Button();
@@ -321,6 +322,7 @@
             // tabInfo
             // 
             this.tabInfo.AutoScroll = true;
+            this.tabInfo.Controls.Add(this.chkLogtodisplay);
             this.tabInfo.Controls.Add(this.chkLogtoFile);
             this.tabInfo.Controls.Add(this.txtResult);
             this.tabInfo.Controls.Add(this.numSuppress);
@@ -338,10 +340,22 @@
             this.tabInfo.Text = "Log";
             this.tabInfo.UseVisualStyleBackColor = true;
             // 
+            // chkLogtodisplay
+            // 
+            this.chkLogtodisplay.AutoSize = true;
+            this.chkLogtodisplay.Checked = true;
+            this.chkLogtodisplay.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkLogtodisplay.Location = new System.Drawing.Point(146, 6);
+            this.chkLogtodisplay.Name = "chkLogtodisplay";
+            this.chkLogtodisplay.Size = new System.Drawing.Size(91, 17);
+            this.chkLogtodisplay.TabIndex = 204;
+            this.chkLogtodisplay.Text = "Log to display";
+            this.chkLogtodisplay.UseVisualStyleBackColor = true;
+            // 
             // chkLogtoFile
             // 
             this.chkLogtoFile.AutoSize = true;
-            this.chkLogtoFile.Location = new System.Drawing.Point(192, 7);
+            this.chkLogtoFile.Location = new System.Drawing.Point(259, 5);
             this.chkLogtoFile.Name = "chkLogtoFile";
             this.chkLogtoFile.Size = new System.Drawing.Size(72, 17);
             this.chkLogtoFile.TabIndex = 203;
@@ -1308,5 +1322,6 @@
         private System.Windows.Forms.CheckBox checkAutorefreshCVNlist;
         private System.Windows.Forms.Button btnRefreshCvnList;
         private System.Windows.Forms.CheckBox chkLogtoFile;
+        private System.Windows.Forms.CheckBox chkLogtodisplay;
     }
 }
