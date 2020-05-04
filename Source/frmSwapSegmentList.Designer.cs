@@ -39,9 +39,10 @@
             this.btnOK = new System.Windows.Forms.Button();
             this.labelBasefile = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.chkFullmatch = new System.Windows.Forms.CheckBox();
-            this.chkHighChance = new System.Windows.Forms.CheckBox();
             this.chkLessChance = new System.Windows.Forms.CheckBox();
+            this.chkHighChance = new System.Windows.Forms.CheckBox();
+            this.chkFullmatch = new System.Windows.Forms.CheckBox();
+            this.btnSavelist = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -163,6 +164,28 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Display:";
             // 
+            // chkLessChance
+            // 
+            this.chkLessChance.AutoSize = true;
+            this.chkLessChance.Location = new System.Drawing.Point(157, 16);
+            this.chkLessChance.Name = "chkLessChance";
+            this.chkLessChance.Size = new System.Drawing.Size(83, 17);
+            this.chkLessChance.TabIndex = 2;
+            this.chkLessChance.Text = "less chance";
+            this.chkLessChance.UseVisualStyleBackColor = true;
+            this.chkLessChance.CheckedChanged += new System.EventHandler(this.chkLessChance_CheckedChanged);
+            // 
+            // chkHighChance
+            // 
+            this.chkHighChance.AutoSize = true;
+            this.chkHighChance.Location = new System.Drawing.Point(64, 16);
+            this.chkHighChance.Name = "chkHighChance";
+            this.chkHighChance.Size = new System.Drawing.Size(87, 17);
+            this.chkHighChance.TabIndex = 1;
+            this.chkHighChance.Text = "High chance";
+            this.chkHighChance.UseVisualStyleBackColor = true;
+            this.chkHighChance.CheckedChanged += new System.EventHandler(this.chkHighChance_CheckedChanged);
+            // 
             // chkFullmatch
             // 
             this.chkFullmatch.AutoSize = true;
@@ -176,33 +199,23 @@
             this.chkFullmatch.UseVisualStyleBackColor = true;
             this.chkFullmatch.CheckedChanged += new System.EventHandler(this.chkFullmatch_CheckedChanged);
             // 
-            // chkHighChance
+            // btnSavelist
             // 
-            this.chkHighChance.AutoSize = true;
-            this.chkHighChance.Location = new System.Drawing.Point(64, 16);
-            this.chkHighChance.Name = "chkHighChance";
-            this.chkHighChance.Size = new System.Drawing.Size(87, 17);
-            this.chkHighChance.TabIndex = 1;
-            this.chkHighChance.Text = "High chance";
-            this.chkHighChance.UseVisualStyleBackColor = true;
-            this.chkHighChance.CheckedChanged += new System.EventHandler(this.chkHighChance_CheckedChanged);
-            // 
-            // chkLessChance
-            // 
-            this.chkLessChance.AutoSize = true;
-            this.chkLessChance.Location = new System.Drawing.Point(157, 16);
-            this.chkLessChance.Name = "chkLessChance";
-            this.chkLessChance.Size = new System.Drawing.Size(83, 17);
-            this.chkLessChance.TabIndex = 2;
-            this.chkLessChance.Text = "less chance";
-            this.chkLessChance.UseVisualStyleBackColor = true;
-            this.chkLessChance.CheckedChanged += new System.EventHandler(this.chkLessChance_CheckedChanged);
+            this.btnSavelist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSavelist.Location = new System.Drawing.Point(563, 312);
+            this.btnSavelist.Name = "btnSavelist";
+            this.btnSavelist.Size = new System.Drawing.Size(106, 26);
+            this.btnSavelist.TabIndex = 12;
+            this.btnSavelist.Text = "Save list...";
+            this.btnSavelist.UseVisualStyleBackColor = true;
+            this.btnSavelist.Click += new System.EventHandler(this.btnSavelist_Click);
             // 
             // frmSwapSegmentList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(782, 481);
+            this.Controls.Add(this.btnSavelist);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.labelBasefile);
             this.Controls.Add(this.btnOK);
@@ -239,5 +252,6 @@
         private System.Windows.Forms.CheckBox chkLessChance;
         private System.Windows.Forms.CheckBox chkHighChance;
         private System.Windows.Forms.CheckBox chkFullmatch;
+        private System.Windows.Forms.Button btnSavelist;
     }
 }

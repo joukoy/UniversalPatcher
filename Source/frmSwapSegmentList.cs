@@ -26,16 +26,9 @@ namespace UniversalPatcher
         private byte[] SwapBuffer;
         private bool Applied = false;
         private bool Swapped = false;
-        public void LoadSegmentList(ref PcmFile PCM1)
-        {
-            PCM = PCM1;
-            labelBasefile.Text = Path.GetFileName(PCM.FileName);
-            comboSegments.Items.Clear();
-            //for (int s=0;s<PCM.segmentinfos.Length;s++)
-            comboSegments.ValueMember = "SegNr";
-            comboSegments.DisplayMember = "Name";
-            comboSegments.DataSource = PCM.segmentinfos;
 
+        private void setuplistview()
+        {
             listSegments.Enabled = true;
             listSegments.Clear();
             listSegments.View = View.Details;
@@ -56,16 +49,31 @@ namespace UniversalPatcher
             listSegments.Columns[5].Width = 100;
             listSegments.Columns[6].Width = 100;
             listSegments.Columns[7].Width = 100;
-            for (int s = 0; s < PCM.segmentinfos.Length;s++)
-            {
-                listSegments.Columns.Add(PCM.segmentinfos[s].Name);
+            if (comboSegments.Text == "OS")
+            { 
+                for (int s = 0; s < PCM.segmentinfos.Length; s++)
+                {
+                    listSegments.Columns.Add(PCM.segmentinfos[s].Name);
+                }
             }
+        }
+        public void LoadSegmentList(ref PcmFile PCM1)
+        {
+            PCM = PCM1;
+            labelBasefile.Text = Path.GetFileName(PCM.FileName);
+            comboSegments.Items.Clear();
+            //for (int s=0;s<PCM.segmentinfos.Length;s++)
+            comboSegments.ValueMember = "SegNr";
+            comboSegments.DisplayMember = "Name";
+            comboSegments.DataSource = PCM.segmentinfos;
+            setuplistview();
             LoadSegments();
         }
 
         private void LoadSegments()
         {
-            listSegments.Items.Clear();
+            //listSegments.Items.Clear();
+            setuplistview();
             SwapBuffer = null;
             labelSelectedSegment.Text = "-";
             string SegNr = ((SegmentInfo)comboSegments.SelectedItem).SegNr;
@@ -407,6 +415,38 @@ namespace UniversalPatcher
         private void chkLessChance_CheckedChanged(object sender, EventArgs e)
         {
             LoadSegments();
+        }
+
+        private void btnSavelist_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+            Logger("Writing to file: " + Path.GetFileName(FileName), false);
+            using (StreamWriter writetext = new StreamWriter(FileName))
+            {
+                string row = "";
+                for (int i = 0; i < listSegments.Columns.Count; i++)
+                {
+                    if (i > 0)
+                        row += ";";
+                    row += listSegments.Columns[i].Text;
+                }
+                writetext.WriteLine(row);
+                for (int r = 0; r < listSegments.Items.Count; r++)
+                {
+                    row = "";
+                    for (int i = 0; i < listSegments.Columns.Count; i++)
+                    {
+                        if (i > 0)
+                            row += ";";
+                        if (listSegments.Items[r].SubItems[i].Text != null)
+                            row += listSegments.Items[r].SubItems[i].Text;
+                    }
+                    writetext.WriteLine(row);
+                }
+            }
+            Logger(" [OK]");
         }
     }
 }
