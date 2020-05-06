@@ -41,6 +41,8 @@
             this.radioHEX = new System.Windows.Forms.RadioButton();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.radioEndFile = new System.Windows.Forms.RadioButton();
+            this.radioEndSegment = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numBytes)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -59,16 +61,18 @@
             // 
             this.txtAddress.Location = new System.Drawing.Point(95, 12);
             this.txtAddress.Name = "txtAddress";
-            this.txtAddress.Size = new System.Drawing.Size(152, 20);
+            this.txtAddress.Size = new System.Drawing.Size(177, 20);
             this.txtAddress.TabIndex = 0;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.radioEndSegment);
+            this.groupBox1.Controls.Add(this.radioEndFile);
             this.groupBox1.Controls.Add(this.radioRelative);
             this.groupBox1.Controls.Add(this.radioAbsolute);
             this.groupBox1.Location = new System.Drawing.Point(9, 39);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(126, 63);
+            this.groupBox1.Size = new System.Drawing.Size(132, 122);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             // 
@@ -87,16 +91,16 @@
             // radioAbsolute
             // 
             this.radioAbsolute.AutoSize = true;
-            this.radioAbsolute.Location = new System.Drawing.Point(3, 37);
+            this.radioAbsolute.Location = new System.Drawing.Point(3, 40);
             this.radioAbsolute.Name = "radioAbsolute";
-            this.radioAbsolute.Size = new System.Drawing.Size(66, 17);
+            this.radioAbsolute.Size = new System.Drawing.Size(99, 17);
             this.radioAbsolute.TabIndex = 2;
-            this.radioAbsolute.Text = "Absolute";
+            this.radioAbsolute.Text = "From start of file";
             this.radioAbsolute.UseVisualStyleBackColor = true;
             // 
             // numBytes
             // 
-            this.numBytes.Location = new System.Drawing.Point(155, 76);
+            this.numBytes.Location = new System.Drawing.Point(204, 37);
             this.numBytes.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -119,7 +123,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(152, 56);
+            this.label3.Location = new System.Drawing.Point(162, 39);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(36, 13);
             this.label3.TabIndex = 6;
@@ -130,7 +134,7 @@
             this.groupBox2.Controls.Add(this.radioInt);
             this.groupBox2.Controls.Add(this.radioText);
             this.groupBox2.Controls.Add(this.radioHEX);
-            this.groupBox2.Location = new System.Drawing.Point(9, 107);
+            this.groupBox2.Location = new System.Drawing.Point(200, 63);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(72, 77);
             this.groupBox2.TabIndex = 7;
@@ -171,7 +175,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(190, 116);
+            this.btnOK.Location = new System.Drawing.Point(215, 146);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(57, 27);
             this.btnOK.TabIndex = 7;
@@ -181,7 +185,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(190, 154);
+            this.btnCancel.Location = new System.Drawing.Point(152, 146);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(57, 27);
             this.btnCancel.TabIndex = 8;
@@ -189,11 +193,33 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // radioEndFile
+            // 
+            this.radioEndFile.AutoSize = true;
+            this.radioEndFile.Location = new System.Drawing.Point(3, 86);
+            this.radioEndFile.Name = "radioEndFile";
+            this.radioEndFile.Size = new System.Drawing.Size(97, 17);
+            this.radioEndFile.TabIndex = 3;
+            this.radioEndFile.TabStop = true;
+            this.radioEndFile.Text = "From end of file";
+            this.radioEndFile.UseVisualStyleBackColor = true;
+            // 
+            // radioEndSegment
+            // 
+            this.radioEndSegment.AutoSize = true;
+            this.radioEndSegment.Location = new System.Drawing.Point(3, 63);
+            this.radioEndSegment.Name = "radioEndSegment";
+            this.radioEndSegment.Size = new System.Drawing.Size(124, 17);
+            this.radioEndSegment.TabIndex = 4;
+            this.radioEndSegment.TabStop = true;
+            this.radioEndSegment.Text = "From end of segment";
+            this.radioEndSegment.UseVisualStyleBackColor = true;
+            // 
             // frmEditAddress
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(259, 192);
+            this.ClientSize = new System.Drawing.Size(278, 182);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.groupBox2);
@@ -228,5 +254,7 @@
         public System.Windows.Forms.RadioButton radioInt;
         public System.Windows.Forms.RadioButton radioText;
         public System.Windows.Forms.RadioButton radioHEX;
+        private System.Windows.Forms.RadioButton radioEndSegment;
+        private System.Windows.Forms.RadioButton radioEndFile;
     }
 }

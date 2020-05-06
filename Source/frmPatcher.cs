@@ -24,35 +24,6 @@ namespace UniversalPatcher
             txtResult.EnableContextMenu();
             txtDebug.EnableContextMenu();
         }
-        protected override void OnHandleCreated(EventArgs e)
-        {
-            if (Properties.Settings.Default.DebugOn)
-            {
-                //TextBoxTraceListener tbtl = new TextBoxTraceListener(txtDebug);
-                RichTextBoxTraceListener tbtl = new RichTextBoxTraceListener(txtDebug);
-                Debug.Listeners.Add(tbtl);
-            }
-        }
- /*       protected override CreateParams CreateParams
-        {
-            get
-            {
-                CreateParams i_Params = base.CreateParams;
-                try
-                {
-                    // Available since XP SP1
-                    Win32.LoadLibrary("MsftEdit.dll"); // throws
-
-                    // Replace "RichEdit20W" with "RichEdit50W"
-                    i_Params.ClassName = "RichEdit50W";
-                }
-                catch
-                {
-                    // Windows XP without any Service Pack.
-                }
-                return i_Params;
-            }
-        }*/
         private struct DetectGroup
         {
             public string Logic;
@@ -369,6 +340,10 @@ namespace UniversalPatcher
                     RefreshCVNlist();
                 if (Show)
                     ShowFileInfo(PCM, InfoOnly);
+                if (!chkLogtodisplay.Checked)
+                {
+                    txtResult.AppendText(".");
+                }
             }
             catch (Exception ex)
             {
@@ -825,7 +800,7 @@ namespace UniversalPatcher
         {
             if (chkLogtoFile.Checked)
             {
-                logwriter.Write(LogText);
+                logwriter.Write(LogText.Replace("\\","\\\\"));
                 if (NewLine)
                     logwriter.Write("\\par" + Environment.NewLine);
             }
@@ -842,6 +817,7 @@ namespace UniversalPatcher
                     txtResult.AppendText(Environment.NewLine);
                 //Application.DoEvents();
             }
+            Application.DoEvents();
         }
 
         private void btnCheckSums_Click(object sender, EventArgs e)
@@ -1138,8 +1114,8 @@ namespace UniversalPatcher
             frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
             if (frmF.ShowDialog(this) == DialogResult.OK)
             {
-                if (chkLogtoFile.Checked)
-                    txtResult.AppendText("Writing file info to logfile" + Environment.NewLine);
+                if (!chkLogtodisplay.Checked)
+                    txtResult.AppendText("Writing file info to logfile");
                 string dstFolder = frmF.labelCustomdst.Text;
                 for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                 {
@@ -1147,8 +1123,8 @@ namespace UniversalPatcher
                     PcmFile PCM = new PcmFile(FileName);
                     GetFileInfo(FileName, ref PCM, true);
                 }
-                if (chkLogtoFile.Checked)
-                    txtResult.AppendText("[Done]" + Environment.NewLine);
+                if (!chkLogtodisplay.Checked)
+                    txtResult.AppendText(Environment.NewLine + "[Done]" + Environment.NewLine);
                 else
                     Logger("[Done]");
             }
@@ -1813,8 +1789,8 @@ namespace UniversalPatcher
                                     {
                                         if (x>0)
                                         {
-                                            swapsegment.SegmentSizes += ",";
-                                            swapsegment.SegmentAddresses += ",";
+                                            swapsegment.SegmentSizes += ";";
+                                            swapsegment.SegmentAddresses += ";";
                                         }
                                         swapsegment.SegmentSizes += PCM.segmentinfos[x].Name + ":" + PCM.segmentinfos[x].Size;
                                         swapsegment.SegmentAddresses += PCM.segmentinfos[x].Name + ":" + PCM.segmentinfos[x].Address;
@@ -1862,8 +1838,8 @@ namespace UniversalPatcher
             frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
             if (frmF.ShowDialog(this) == DialogResult.OK)
             {
-                if (chkLogtoFile.Checked)
-                    txtResult.AppendText("Extracting..." + Environment.NewLine);
+                if (!chkLogtodisplay.Checked)
+                    txtResult.AppendText("Extracting...");
                 string dstFolder = frmF.labelCustomdst.Text;
                 for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                 {
@@ -1872,8 +1848,8 @@ namespace UniversalPatcher
                     GetFileInfo(FileName, ref PCM, true,checkExtractShowinfo.Checked);
                     ExtractSegments(PCM, Path.GetFileName(FileName).Replace(".bin", ""), true, dstFolder);
                 }
-                if (chkLogtoFile.Checked)
-                    txtResult.AppendText("Segments extracted" + Environment.NewLine);
+                if (!chkLogtodisplay.Checked)
+                    txtResult.AppendText(Environment.NewLine + "Segments extracted" + Environment.NewLine);
                 else
                     Logger("Segments extracted");
                 SaveSegmentList();
@@ -1898,6 +1874,7 @@ namespace UniversalPatcher
             {
                 basefile = frmSw.PCM;
                 FixCheckSums();
+                Logger("");
                 Logger("Segment(s) swapped and checksums fixed (you can save BIN now)");
             }
             frmSw.Dispose();
@@ -1928,15 +1905,15 @@ namespace UniversalPatcher
             frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
             if (frmF.ShowDialog(this) == DialogResult.OK)
             {
-                if (chkLogtoFile.Checked)
-                    txtResult.AppendText("Fixing checksums..." + Environment.NewLine);
+                if (!chkLogtodisplay.Checked)
+                    txtResult.AppendText("Fixing checksums...");
                 for (int i= 0; i< frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                     FixFileChecksum(FileName);
                 }
-                if (chkLogtoFile.Checked)
-                    txtResult.AppendText("[Checksums fixed]" + Environment.NewLine);
+                if (!chkLogtodisplay.Checked)
+                    txtResult.AppendText(Environment.NewLine +  "[Checksums fixed]" + Environment.NewLine);
                 else
                     Logger("[Checksums fixed]");
             }

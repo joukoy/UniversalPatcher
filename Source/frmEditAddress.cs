@@ -25,10 +25,21 @@ namespace UniversalPatcher
             {
                 string[] Parts = OldAddr.Split(':');
                 txtAddress.Text = Parts[0].Replace("#", "");
+                txtAddress.Text = txtAddress.Text.Replace("@", "");
                 if (Parts[0].StartsWith("#"))
-                    radioRelative.Checked = true;
+                {
+                    if (Parts[0].EndsWith("@"))
+                        radioEndSegment.Checked = true;
+                    else
+                        radioRelative.Checked = true;
+                }
                 else
-                    radioAbsolute.Checked = true;
+                {
+                    if (Parts[0].EndsWith("@"))
+                        radioEndFile.Checked = true;
+                    else
+                        radioAbsolute.Checked = true;
+                }
                 if (Parts.Length > 1)
                 {
                     ushort x;
@@ -52,8 +63,10 @@ namespace UniversalPatcher
             if (txtAddress.Text.Length == 0)
                 return;
             Result = "";
-            if (radioRelative.Checked)
+            if (radioRelative.Checked || radioEndSegment.Checked)
                 Result += "#";
+            if (radioEndSegment.Checked || radioEndFile.Checked)
+                txtAddress.Text += "@";
             Result += txtAddress.Text + ":" + numBytes.Value.ToString() + ":";
 
             if (radioHEX.Checked)

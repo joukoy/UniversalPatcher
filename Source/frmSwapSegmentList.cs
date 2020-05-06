@@ -21,12 +21,54 @@ namespace UniversalPatcher
             lvwColumnSorter = new ListViewColumnSorter();
             this.listSegments.ListViewItemSorter = lvwColumnSorter;
         }
+
+        private class SegmentData
+        {
+            public SegmentData(PcmFile pcm) 
+            {
+                int segmentCount = pcm.segmentinfos.Length;
+                name = new string[segmentCount];
+                size = new string[segmentCount];
+                range = new string[segmentCount];
+                for (int s=0; s< pcm.segmentinfos.Length;s++)
+                {
+                    name[s] = pcm.segmentinfos[s].Name;
+                    size[s] = pcm.segmentinfos[s].Size;
+                    range[s] = pcm.segmentinfos[s].Address;
+                }
+            }
+
+            public SegmentData(string addrdata, string sizedata)
+            {
+                string[] addrparts = addrdata.Split(';');
+                string[] sizeparts = sizedata.Split(';');
+                name = new string[sizeparts.Length];
+                size = new string[sizeparts.Length];
+                range = new string[sizeparts.Length];
+                for (int s=0;s< addrparts.Length;s++)
+                {
+                    if (addrparts[s].Contains(":") && sizeparts[s].Contains(":"))
+                    { 
+                        string[] addr = addrparts[s].Split(':');
+                        string[] sz = sizeparts[s].Split(':');
+                        name[s] = addr[0];
+                        range[s] = addr[1];
+                        size[s] = sz[1];
+                    }
+                }
+            }
+            public string[] name { get; set; }
+            public string[] size { get; set; }
+            public string[] range { get; set; }
+
+        }
+
         private ListViewColumnSorter lvwColumnSorter;
         public PcmFile PCM;
         private byte[] SwapBuffer;
         private bool Applied = false;
         private bool Swapped = false;
-
+        private SegmentData PCMsegmentdata;
         private void setuplistview()
         {
             listSegments.Enabled = true;
@@ -41,25 +83,27 @@ namespace UniversalPatcher
             listSegments.Columns.Add("Description");
             listSegments.Columns.Add("Size");
             listSegments.Columns.Add("Address");
-            listSegments.Columns[0].Width = 250;
+/*            listSegments.Columns[0].Width = 250;
             listSegments.Columns[1].Width = 50;
             listSegments.Columns[2].Width = 80;
             listSegments.Columns[3].Width = 70;
             listSegments.Columns[4].Width = 100;
             listSegments.Columns[5].Width = 100;
             listSegments.Columns[6].Width = 100;
-            listSegments.Columns[7].Width = 100;
+            listSegments.Columns[7].Width = 100;*/
             if (comboSegments.Text == "OS")
             { 
                 for (int s = 0; s < PCM.segmentinfos.Length; s++)
                 {
                     listSegments.Columns.Add(PCM.segmentinfos[s].Name);
+                    //listSegments.Columns[8 + s].Width = 90;
                 }
             }
         }
         public void LoadSegmentList(ref PcmFile PCM1)
         {
             PCM = PCM1;
+            PCMsegmentdata = new SegmentData(PCM);
             labelBasefile.Text = Path.GetFileName(PCM.FileName);
             comboSegments.Items.Clear();
             //for (int s=0;s<PCM.segmentinfos.Length;s++)
@@ -70,6 +114,35 @@ namespace UniversalPatcher
             LoadSegments();
         }
 
+        private string segmentcompatible(SegmentData s1, SegmentData s2, int segNr)
+        {
+            try {
+                if (s1.name[segNr].ToLower().Contains(txtSkiptext.Text.ToLower()) && chkSkipeeprom.Checked)
+                {
+                    Debug.WriteLine("Skipping segment: " + s1.name[segNr]);
+                    return "";
+                }
+                else
+                {
+                    if (s1.range[segNr] == s2.range[segNr])
+                    {
+                        return "1";
+                    }
+                    else if (s1.size[segNr] == s2.size[segNr])
+                    {
+                        return "0";
+                    }
+                    else
+                    {
+                        return "X";
+                    }
+                }
+            }
+            catch 
+            {
+                return "X";
+            }
+        }
         private void LoadSegments()
         {
             //listSegments.Items.Clear();
@@ -85,23 +158,30 @@ namespace UniversalPatcher
                     var item = new ListViewItem(Path.GetFileName(SwapSegments[i].FileName));
                     item.Tag = Application.StartupPath + SwapSegments[i].FileName;
                     item.SubItems.Add(SwapSegments[i].Stock);
+                    SegmentData swapdata;                    
+
                     bool displaythis = false;
                     if (comboSegments.Text == "OS")
                     {
-                        string sizes = "";
-                        string addresses = "";
+                        string complevel = "1";
+                        swapdata = new SegmentData(SwapSegments[i].SegmentAddresses, SwapSegments[i].SegmentSizes);
                         for (int x = 0; x < PCM.segmentinfos.Length; x++)
                         {
-                            if (x > 0)
+                            string segmentcomp = segmentcompatible(PCMsegmentdata, swapdata, x);
+                            if (segmentcomp == "0")
                             {
-                                sizes += ",";
-                                addresses += ",";
+                                if (complevel == "1")
+                                {
+                                    complevel = "0";
+                                }
                             }
-                            sizes += PCM.segmentinfos[x].Name +":" +  PCM.segmentinfos[x].Size;
-                            addresses += PCM.segmentinfos[x].Name + ":" + PCM.segmentinfos[x].Address;
+                            else if (segmentcomp == "X")
+                            {
+                                complevel = "X";
+                            }
                         }
 
-                        if (SwapSegments[i].SegmentAddresses == addresses)
+                        if (complevel == "1")
                         {
                             item.SubItems.Add("100%");
                             if (chkFullmatch.Checked)
@@ -109,7 +189,7 @@ namespace UniversalPatcher
                                 displaythis = true;
                             }
                         }
-                        else if (SwapSegments[i].SegmentSizes == sizes)
+                        else if (complevel == "0")
                         {
                             item.SubItems.Add("High chance");
                             item.Tag = null;
@@ -160,16 +240,32 @@ namespace UniversalPatcher
                     item.SubItems.Add(SwapSegments[i].Description);
                     item.SubItems.Add(SwapSegments[i].Size);
                     item.SubItems.Add(SwapSegments[i].Address);
-                    if (comboSegments.Text == "OS")
+                    if (comboSegments.Text == "OS" && displaythis)
                     {
-                        string[] sizes = SwapSegments[i].SegmentAddresses.Split(',');
-                        for (int y=0;y< sizes.Length;y++)
+                        swapdata = new SegmentData(SwapSegments[i].SegmentAddresses, SwapSegments[i].SegmentSizes);
+                        for (int x=0; x < PCM.segmentinfos.Length; x++)
                         {
-                            string[] parts = sizes[y].Split(':');
-                            if (parts.Length == 2)
-                                item.SubItems.Add(parts[1]);
+                            if (radioShow1x0.Checked)
+                            {
+                                item.SubItems.Add(segmentcompatible(PCMsegmentdata, swapdata, x));
+                            }
+                            else 
+                            {
+                                if (!PCM.segmentinfos[x].Name.ToLower().Contains(txtSkiptext.Text.ToLower()) || !chkSkipeeprom.Checked)
+                                { 
+                                    if (radioShowSize.Checked)
+                                    {
+                                        item.SubItems.Add(swapdata.size[x]);
+                                    }
+                                    else
+                                    {
+                                        item.SubItems.Add(swapdata.range[x]);
+
+                                    }
+                                }
+                            }
+
                         }
-                        item.SubItems.Add(SwapSegments[i].SegmentAddresses);
                     }
                     if (displaythis)
                     { 
@@ -177,40 +273,41 @@ namespace UniversalPatcher
                     }
                 }
             }
+            listSegments.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
-/*
-        private void LoadSegments()
-        {
-            listSegments.Items.Clear();
-            SwapBuffer = null;
-            labelSelectedSegment.Text = "-";
-            if (comboSegments.Text == "OS")
-            {
-                return;
-            }
-            string SegNr = ((SegmentInfo)comboSegments.SelectedItem).SegNr;
-            string Folder = Path.Combine(Application.StartupPath, "Segments", PCM.OS, SegNr);
-            if (!Directory.Exists(Folder))
-                return;
-            DirectoryInfo d = new DirectoryInfo(Folder);
-            FileInfo[] Files = d.GetFiles("*.binsegment");
-            foreach (FileInfo file in Files)
-            {
-                var item = new ListViewItem(file.Name);
-                string DescrFile = file.FullName + ".txt";
-                if (File.Exists(DescrFile))
+        /*
+                private void LoadSegments()
                 {
-                    StreamReader sr = new StreamReader(DescrFile);
-                    string line = sr.ReadLine();
-                    sr.Close();
-                    item.SubItems.Add(line);
-                }
-                item.Tag = file.FullName;
-                listSegments.Items.Add(item);
-            }
+                    listSegments.Items.Clear();
+                    SwapBuffer = null;
+                    labelSelectedSegment.Text = "-";
+                    if (comboSegments.Text == "OS")
+                    {
+                        return;
+                    }
+                    string SegNr = ((SegmentInfo)comboSegments.SelectedItem).SegNr;
+                    string Folder = Path.Combine(Application.StartupPath, "Segments", PCM.OS, SegNr);
+                    if (!Directory.Exists(Folder))
+                        return;
+                    DirectoryInfo d = new DirectoryInfo(Folder);
+                    FileInfo[] Files = d.GetFiles("*.binsegment");
+                    foreach (FileInfo file in Files)
+                    {
+                        var item = new ListViewItem(file.Name);
+                        string DescrFile = file.FullName + ".txt";
+                        if (File.Exists(DescrFile))
+                        {
+                            StreamReader sr = new StreamReader(DescrFile);
+                            string line = sr.ReadLine();
+                            sr.Close();
+                            item.SubItems.Add(line);
+                        }
+                        item.Tag = file.FullName;
+                        listSegments.Items.Add(item);
+                    }
 
-        }
-        */
+                }
+                */
         private void comboSegments_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadSegments();
@@ -245,9 +342,10 @@ namespace UniversalPatcher
                 labelSelectedSegment.Text = "Selected: " + listSegments.SelectedItems[0].Text;
                 labelSelectedSegment.Tag = FileName;
                 uint fsize = (uint)new FileInfo(FileName).Length;
-                Logger("Reading file: " + FileName);
+                Logger("Reading file: " + FileName + " (0x" + fsize.ToString("X") +" B)");
                 SwapBuffer = ReadBin(FileName, 0, fsize);
-                Logger("[OK] Press \"Apply\" to swap");
+                Logger("[OK]");
+                Logger("Press \"Apply\" to swap");
                 Applied = false;
             }
             catch (Exception ex)
@@ -330,15 +428,16 @@ namespace UniversalPatcher
                 uint TotalLength = 0;
                 if (!HexToUint(PCM.segmentinfos[Seg].Size, out TotalLength))
                     throw new Exception("Cant't decode HEX: " + PCM.segmentinfos[Seg].Size);
-                Logger("Reading segment from file: " + FileName);
+                Logger("Reading segment from file: " + FileName,false);
                 uint fsize = (uint)new FileInfo(FileName).Length;
                 if (fsize == TotalLength)
                 {
-                    Logger("Reading file: " + FileName);
+                    Logger(" (0x" + fsize.ToString("X") + " B)");
                     SwapBuffer = ReadBin(FileName, 0, fsize);
                     labelSelectedSegment.Text = "Selected: " + Path.GetFileName(FileName);
                     labelSelectedSegment.Tag = FileName;
-                    Logger("[OK] Press \"Apply\" to swap");
+                    Logger("[OK]");
+                    Logger("Press \"Apply\" to swap");
                     Applied = false;
                 }
                 else if (fsize == PCM.fsize)
@@ -361,8 +460,9 @@ namespace UniversalPatcher
                         Array.Copy(tmpPCM.buf, Start, SwapBuffer,Offset, Length);
                         Offset += Length;
                     }
-                    Logger(" (" + TotalLength.ToString() + " B)", false);
-                    Logger("[OK] Press \"Apply\" to swap");
+                    Logger(" (0x" + TotalLength.ToString("X") + " B)", false);
+                    Logger("[OK]");
+                    Logger("Press \"Apply\" to swap");
                     Applied = false;
                 }
                 else
@@ -447,6 +547,26 @@ namespace UniversalPatcher
                 }
             }
             Logger(" [OK]");
+        }
+
+        private void radioShow1x0_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadSegments();
+        }
+
+        private void chkSkipeeprom_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadSegments();
+        }
+
+        private void radioShowSize_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadSegments();
+        }
+
+        private void radioShowRange_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadSegments();
         }
     }
 }

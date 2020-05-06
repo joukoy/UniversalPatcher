@@ -481,6 +481,17 @@ namespace UniversalPatcher
         {
 
             Debug.WriteLine("Addressline: " + Line);
+            AddressData AD = new AddressData();
+            //Set defaults:
+            AD.Address = uint.MaxValue;
+            AD.Bytes = 2;
+            AD.Type = TypeInt;
+
+            if (Line.Length == 0)
+            {
+                return AD;
+            }
+
             if (Line.StartsWith("GM-V6"))
             {
                 //Custom handling: read OS:Segmentaddress pairs from file
@@ -488,38 +499,51 @@ namespace UniversalPatcher
                 return GMV6(Line, SegNr);
             }
 
-            AddressData AD = new AddressData();
 
             //Special handling, get info from filename:
             if (Line.StartsWith("filename"))
             {
                 if (!Line.Contains(":"))
-                    throw new Exception("usage: filename:digits");
+                    throw new Exception("usage: filename:digits, or filename:digitsmax-digitsmin");
                 string[] parts = Line.Split(':');
-                ushort digits;
-                if (!ushort.TryParse(parts[1], out digits))
-                    throw new Exception("usage: filename:digits");
-                string[] numbers = Regex.Split(FileName, @"\D+");
-                foreach (string value in numbers)
+                ushort digitsmax;
+                ushort digitsmin;
+                if (parts[1].Contains("-"))
                 {
-                    if (!string.IsNullOrEmpty(value) && value.Length == digits)
+                    string[] digitparts = parts[1].Split('-');
+                    if (!ushort.TryParse(digitparts[0], out digitsmax))
+                        throw new Exception("usage: filename:digits or filename:digitsmax-digitsmin");
+                    if (!ushort.TryParse(digitparts[1], out digitsmin))
+                        throw new Exception("usage: filename:digits or filename:digitsmax-digitsmin");
+                }
+                else 
+                {
+                    ushort x;
+                    if (!ushort.TryParse(parts[1], out x))
+                        throw new Exception("usage: filename:digits or filename:digitsmax-digitsmin");
+                    digitsmin = x;
+                    digitsmax = x;
+                }
+                for (ushort digits = digitsmax; digits >= digitsmin; digits --)
+                { 
+                    string[] numbers = Regex.Split(FileName, @"\D+");
+                    for  (int v=numbers.Length-1; v >= 0; v-- )
                     {
-                        AD.Address = uint.Parse(value);
-                        Debug.WriteLine("PN from filename: {0}", AD.Address);
-                        AD.Bytes = digits;
-                        AD.Type = TypeFilename;
+                        string value = numbers[v];
+                        if (!string.IsNullOrEmpty(value) && value.Length == digits)
+                        {
+                            AD.Address = uint.Parse(value);
+                            Debug.WriteLine("PN from filename: {0}", AD.Address);
+                            AD.Bytes = digits;
+                            AD.Type = TypeFilename;
+                            return AD;
+                        }
                     }
                 }
+                //Not found?
                 return AD;
             }
 
-            if (Line.Length == 0)
-            {
-                //Set defaults:
-                AD.Address = uint.MaxValue;
-                AD.Bytes = 2;
-                return AD;
-            }
             string[] Lineparts = Line.Split(':');
             CheckWord CWAddr;
             CWAddr.Address = 0;
@@ -534,24 +558,47 @@ namespace UniversalPatcher
 
             if (Lineparts[0].Replace("#", "") == "")
             {
+                //If address is not defined: (For checksum, display-only)
                 AD.Address = uint.MaxValue;
             }
-            else if (!HexToUint(Lineparts[0].Replace("#", ""), out AD.Address))
-                throw new Exception("Can't convert from HEX: " + Lineparts[0].Replace("#", "") + " (" + Line + ")");
-            
-            if (Line.StartsWith("#"))
-            {
-                AD.Address += binfile[SegNr].SegmentBlocks[0].Start;
-            }
-            if (Negative)
-                AD.Address = CWAddr.Address - AD.Address;
             else
-                AD.Address += CWAddr.Address;
+            {
+                bool relativetoend = false;
+                if (Lineparts[0].EndsWith("@"))
+                {
+                    Lineparts[0] = Lineparts[0].Replace("@", "");
+                    relativetoend = true;
+                }
 
+                if (!HexToUint(Lineparts[0].Replace("#", ""), out AD.Address))
+                    throw new Exception("Can't convert from HEX: " + Lineparts[0].Replace("#", "") + " (" + Line + ")");
 
+                if (relativetoend)
+                {
+                    if (Line.StartsWith("#"))
+                    {
+                        AD.Address = binfile[SegNr].SegmentBlocks[(binfile[SegNr].SegmentBlocks.Count - 1)].End - AD.Address;
+                    }
+                    else
+                    {
+                        AD.Address = fsize - AD.Address;
+                    }
+                }
+                else
+                {
+                    if (Line.StartsWith("#"))
+                    {
+                        AD.Address += binfile[SegNr].SegmentBlocks[0].Start;
+                    }
+                    if (Negative)
+                        AD.Address = CWAddr.Address - AD.Address;
+                    else
+                        AD.Address += CWAddr.Address;
+                }
+            }
+            //Address handled, handle bytes & type:
             if (Lineparts.Length > 1)
                 UInt16.TryParse(Lineparts[1], out AD.Bytes);
-            AD.Type = TypeInt;
             if (Lineparts.Length > 2)
             {
                 if (Lineparts[2].ToLower() == "hex")

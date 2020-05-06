@@ -405,7 +405,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDebug.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtDebug.HideSelection = false;
             this.txtDebug.Location = new System.Drawing.Point(2, 24);
             this.txtDebug.Name = "txtDebug";
             this.txtDebug.Size = new System.Drawing.Size(774, 323);

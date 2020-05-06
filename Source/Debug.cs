@@ -7,29 +7,6 @@ using System.Windows.Forms;
 
 namespace UniversalPatcher
 {
-    class TextBoxTraceListener : TraceListener
-    {
-        private TextBox tBox;
-
-        public TextBoxTraceListener(TextBox box)
-        {
-            this.tBox = box;
-        }
-
-        public override void Write(string msg)
-        {
-            //allows tBox to be updated from different thread
-            tBox.Parent.Invoke(new MethodInvoker(delegate ()
-            {
-                tBox.AppendText(msg);
-            }));
-        }
-
-        public override void WriteLine(string msg)
-        {
-            Write(msg + "\r\n");
-        }
-    }
 
     class RichTextBoxTraceListener : TraceListener
     {
@@ -45,10 +22,10 @@ namespace UniversalPatcher
             //allows tBox to be updated from different thread
             rtBox.Parent.Invoke(new MethodInvoker(delegate ()
             {
-                rtBox.Focus();
-                int Start = rtBox.Text.Length;
+                //rtBox.Focus();
+                //int Start = rtBox.Text.Length;
                 rtBox.AppendText(msg);
-                rtBox.Select(Start, msg.Length);
+                //rtBox.Select(Start, msg.Length);
                 //Application.DoEvents();
             }));
         }

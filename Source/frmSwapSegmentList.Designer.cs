@@ -43,17 +43,22 @@
             this.chkHighChance = new System.Windows.Forms.CheckBox();
             this.chkFullmatch = new System.Windows.Forms.CheckBox();
             this.btnSavelist = new System.Windows.Forms.Button();
+            this.radioShow1x0 = new System.Windows.Forms.RadioButton();
+            this.radioShowRange = new System.Windows.Forms.RadioButton();
+            this.chkSkipeeprom = new System.Windows.Forms.CheckBox();
+            this.txtSkiptext = new System.Windows.Forms.TextBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radioShowSize = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboSegments
             // 
-            this.comboSegments.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboSegments.FormattingEnabled = true;
-            this.comboSegments.Location = new System.Drawing.Point(58, 32);
+            this.comboSegments.Location = new System.Drawing.Point(58, 28);
             this.comboSegments.Name = "comboSegments";
-            this.comboSegments.Size = new System.Drawing.Size(719, 21);
+            this.comboSegments.Size = new System.Drawing.Size(330, 21);
             this.comboSegments.TabIndex = 0;
             this.comboSegments.SelectedIndexChanged += new System.EventHandler(this.comboSegments_SelectedIndexChanged);
             // 
@@ -63,9 +68,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listSegments.HideSelection = false;
-            this.listSegments.Location = new System.Drawing.Point(3, 102);
+            this.listSegments.Location = new System.Drawing.Point(3, 116);
             this.listSegments.Name = "listSegments";
-            this.listSegments.Size = new System.Drawing.Size(774, 204);
+            this.listSegments.Size = new System.Drawing.Size(774, 190);
             this.listSegments.TabIndex = 1;
             this.listSegments.UseCompatibleStateImageBehavior = false;
             this.listSegments.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listSegments_ColumnClick);
@@ -74,7 +79,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(0, 36);
+            this.label1.Location = new System.Drawing.Point(1, 31);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(52, 13);
             this.label1.TabIndex = 2;
@@ -83,7 +88,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(0, 86);
+            this.label2.Location = new System.Drawing.Point(1, 100);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(103, 13);
             this.label2.TabIndex = 3;
@@ -103,7 +108,7 @@
             // labelSelectedSegment
             // 
             this.labelSelectedSegment.AutoSize = true;
-            this.labelSelectedSegment.Location = new System.Drawing.Point(0, 63);
+            this.labelSelectedSegment.Location = new System.Drawing.Point(0, 75);
             this.labelSelectedSegment.Name = "labelSelectedSegment";
             this.labelSelectedSegment.Size = new System.Drawing.Size(10, 13);
             this.labelSelectedSegment.TabIndex = 5;
@@ -154,15 +159,16 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.chkLessChance);
             this.groupBox1.Controls.Add(this.chkHighChance);
             this.groupBox1.Controls.Add(this.chkFullmatch);
-            this.groupBox1.Location = new System.Drawing.Point(518, 59);
+            this.groupBox1.Location = new System.Drawing.Point(532, 75);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(251, 39);
+            this.groupBox1.Size = new System.Drawing.Size(245, 38);
             this.groupBox1.TabIndex = 11;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Display:";
+            this.groupBox1.Text = "Show:";
             // 
             // chkLessChance
             // 
@@ -210,11 +216,84 @@
             this.btnSavelist.UseVisualStyleBackColor = true;
             this.btnSavelist.Click += new System.EventHandler(this.btnSavelist_Click);
             // 
+            // radioShow1x0
+            // 
+            this.radioShow1x0.AutoSize = true;
+            this.radioShow1x0.Location = new System.Drawing.Point(119, 36);
+            this.radioShow1x0.Name = "radioShow1x0";
+            this.radioShow1x0.Size = new System.Drawing.Size(54, 17);
+            this.radioShow1x0.TabIndex = 0;
+            this.radioShow1x0.Text = "1/X/0";
+            this.radioShow1x0.UseVisualStyleBackColor = true;
+            this.radioShow1x0.CheckedChanged += new System.EventHandler(this.radioShow1x0_CheckedChanged);
+            // 
+            // radioShowRange
+            // 
+            this.radioShowRange.AutoSize = true;
+            this.radioShowRange.Checked = true;
+            this.radioShowRange.Location = new System.Drawing.Point(5, 36);
+            this.radioShowRange.Name = "radioShowRange";
+            this.radioShowRange.Size = new System.Drawing.Size(57, 17);
+            this.radioShowRange.TabIndex = 3;
+            this.radioShowRange.TabStop = true;
+            this.radioShowRange.Text = "Range";
+            this.radioShowRange.UseVisualStyleBackColor = true;
+            this.radioShowRange.CheckedChanged += new System.EventHandler(this.radioShowRange_CheckedChanged);
+            // 
+            // chkSkipeeprom
+            // 
+            this.chkSkipeeprom.AutoSize = true;
+            this.chkSkipeeprom.Checked = true;
+            this.chkSkipeeprom.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSkipeeprom.Location = new System.Drawing.Point(5, 15);
+            this.chkSkipeeprom.Name = "chkSkipeeprom";
+            this.chkSkipeeprom.Size = new System.Drawing.Size(202, 17);
+            this.chkSkipeeprom.TabIndex = 13;
+            this.chkSkipeeprom.Text = "Skip segments, name containing text:";
+            this.chkSkipeeprom.UseVisualStyleBackColor = true;
+            this.chkSkipeeprom.CheckedChanged += new System.EventHandler(this.chkSkipeeprom_CheckedChanged);
+            // 
+            // txtSkiptext
+            // 
+            this.txtSkiptext.Location = new System.Drawing.Point(223, 13);
+            this.txtSkiptext.Name = "txtSkiptext";
+            this.txtSkiptext.Size = new System.Drawing.Size(128, 20);
+            this.txtSkiptext.TabIndex = 14;
+            this.txtSkiptext.Text = "eeprom";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.radioShowSize);
+            this.groupBox2.Controls.Add(this.radioShowRange);
+            this.groupBox2.Controls.Add(this.chkSkipeeprom);
+            this.groupBox2.Controls.Add(this.radioShow1x0);
+            this.groupBox2.Controls.Add(this.txtSkiptext);
+            this.groupBox2.Location = new System.Drawing.Point(408, 7);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(362, 62);
+            this.groupBox2.TabIndex = 15;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "OS compatibility";
+            // 
+            // radioShowSize
+            // 
+            this.radioShowSize.AutoSize = true;
+            this.radioShowSize.Location = new System.Drawing.Point(68, 36);
+            this.radioShowSize.Name = "radioShowSize";
+            this.radioShowSize.Size = new System.Drawing.Size(45, 17);
+            this.radioShowSize.TabIndex = 15;
+            this.radioShowSize.TabStop = true;
+            this.radioShowSize.Text = "Size";
+            this.radioShowSize.UseVisualStyleBackColor = true;
+            this.radioShowSize.CheckedChanged += new System.EventHandler(this.radioShowSize_CheckedChanged);
+            // 
             // frmSwapSegmentList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(782, 481);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.btnSavelist);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.labelBasefile);
@@ -231,6 +310,8 @@
             this.Text = "Swap segment(s):";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -253,5 +334,11 @@
         private System.Windows.Forms.CheckBox chkHighChance;
         private System.Windows.Forms.CheckBox chkFullmatch;
         private System.Windows.Forms.Button btnSavelist;
+        private System.Windows.Forms.RadioButton radioShowRange;
+        private System.Windows.Forms.RadioButton radioShow1x0;
+        private System.Windows.Forms.CheckBox chkSkipeeprom;
+        private System.Windows.Forms.TextBox txtSkiptext;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton radioShowSize;
     }
 }
