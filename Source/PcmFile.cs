@@ -34,7 +34,16 @@ namespace UniversalPatcher
                 SegmentConfig S = Segments[i];
                 List<Block> B = new List<Block>();
                 binfile[i].ExcludeBlocks = B;
-                if (S.SearchAddresses != null)
+                if (S.Eeprom)
+                {
+                    //Special case for GM eeprom segment
+                    Block eeblock;
+                    eeblock.Start = 0x4000;
+                    eeblock.End = 0x7fff;
+                    B.Add(eeblock);
+                    binfile[i].SegmentBlocks = B;
+                }
+                else if (S.SearchAddresses != null)
                 {
                     if (!FindSegment(S, i))
                         return;
@@ -184,7 +193,7 @@ namespace UniversalPatcher
         public bool FindSegment(SegmentConfig S, int SegNr)
         {
             if (!S.Searchfor.Contains(":"))
-                throw new Exception("Segment serach need 3 parameters: Serch for: search from: Y/N (" + S.Searchfor + ")");
+                throw new Exception("Segment search need 3 parameters: Serch for: search from: Y/N (" + S.Searchfor + ")");
             Debug.WriteLine("Searching segment");
 
             string[] Parts = S.Searchfor.Split(',');
@@ -192,7 +201,7 @@ namespace UniversalPatcher
             {
                 string[] ForFrom = Part.Split(':');
                 if (ForFrom.Length != 3)
-                    throw new Exception("Segment serach need 3 parameters: Serch for: search from: Y/N (" + Part + ")");
+                    throw new Exception("Segment search need 3 parameters: Serch for: search from: Y/N (" + Part + ")");
                 Debug.WriteLine("Searching for: " + ForFrom[0] + " From: " + ForFrom[1] + " " + ForFrom[2]);
 
                 if (ForFrom[0].Length == 0)

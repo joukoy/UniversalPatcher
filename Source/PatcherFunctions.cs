@@ -57,6 +57,7 @@ public class upatcher
     public struct BinFile
     {
         public List<Block> SegmentBlocks;
+        public List<Block> ExtractBlocks;
         public List<Block> CS1Blocks;
         public List<Block> CS2Blocks;
         public List<Block> ExcludeBlocks;

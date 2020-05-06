@@ -153,7 +153,7 @@ namespace UniversalPatcher
             int SegIndex = comboSegments.SelectedIndex;
             for (int i=0;i< SwapSegments.Count;i++)
             {
-                if (SwapSegments[i].XmlFile == PCM.segmentinfos[SegIndex].XmlFile && SwapSegments[i].Size == PCM.segmentinfos[SegIndex].Size)
+                if (SwapSegments[i].SegIndex == SegIndex && SwapSegments[i].XmlFile == PCM.segmentinfos[SegIndex].XmlFile && SwapSegments[i].Size == PCM.segmentinfos[SegIndex].Size)
                 { 
                     var item = new ListViewItem(Path.GetFileName(SwapSegments[i].FileName));
                     item.Tag = Application.StartupPath + SwapSegments[i].FileName;

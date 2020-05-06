@@ -176,8 +176,8 @@ namespace UniversalPatcher
                 return;
             }
 
-            sinfo.Address = VINAddr.ToString("X") + "-" + (VINAddr + 0x1FFF).ToString("X");
-            sinfo.Size = "2000";
+            sinfo.Address = "4000-7FFF";            
+            sinfo.Size = "4000";
             sinfo.PN = BEToUint32(buf, VINAddr + 4).ToString();
             sinfo.Ver = ReadTextBlock(buf, (int)VINAddr + 0x1C, 4);
 

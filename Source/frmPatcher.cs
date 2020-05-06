@@ -1801,7 +1801,7 @@ namespace UniversalPatcher
                         }
                         if (FileName.Length > 0) 
                         {
-                            Logger("Writing " + PCM.segmentinfos[s].Name + " to file: " + FileName + ", size: " + PCM.segmentinfos[s].Size + " (0x" + PCM.segmentinfos[s].Size + ")");
+                            Logger("Writing " + PCM.segmentinfos[s].Name + " to file: " + FileName + ", size: " + PCM.segmentinfos[s].Size );
                             WriteSegmentToFile(FileName, PCM.binfile[s].SegmentBlocks, PCM.buf);
                             StreamWriter sw = new StreamWriter(FileName + ".txt");
                             sw.WriteLine(Descr);
