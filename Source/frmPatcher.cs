@@ -1720,20 +1720,19 @@ namespace UniversalPatcher
         {
             string FileName = FnameStart + Extension;
             FileName = FileName.Replace("?", "_");
+            if (!Directory.Exists(Path.GetDirectoryName(FnameStart)))
+                Directory.CreateDirectory(Path.GetDirectoryName(FnameStart));
             if (radioReplace.Checked)
-            { 
+            {
                 for (int x=0;x<SwapSegments.Count;x++)
                 {
-                    if (FileName.EndsWith(SwapSegments[x].FileName))
+                    if (FileName == Application.StartupPath + SwapSegments[x].FileName)
                     {                        
                         SwapSegments.RemoveAt(x);
                     }
                 }
                 return FileName;
             }
-
-            if (!Directory.Exists(Path.GetDirectoryName(FnameStart)))
-                Directory.CreateDirectory(Path.GetDirectoryName(FnameStart));
 
             if (!File.Exists(FileName))
             {
@@ -1785,10 +1784,12 @@ namespace UniversalPatcher
                                 swapsegment.Description = Descr;
                                 swapsegment.FileName = FileName.Replace(Application.StartupPath,"");
                                 swapsegment.OS = PCM.OS;
-                                swapsegment.PN = PCM.segmentinfos[s].PN + PCM.segmentinfos[s].Ver;
+                                swapsegment.PN = PCM.segmentinfos[s].PN;
+                                swapsegment.Ver = PCM.segmentinfos[s].Ver;
                                 swapsegment.SegIndex = s;
                                 swapsegment.SegNr = PCM.segmentinfos[s].SegNr;
-                                if (PCM.segmentinfos[s].SwapSize != "1")
+                                swapsegment.Cvn = PCM.segmentinfos[s].cvn;
+                                if (PCM.segmentinfos[s].SwapAddress != "")
                                 {
                                     swapsegment.Address = PCM.segmentinfos[s].SwapAddress;
                                     swapsegment.Size = PCM.segmentinfos[s].SwapSize;

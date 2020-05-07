@@ -178,7 +178,10 @@ namespace UniversalPatcher
                 { 
                     var item = new ListViewItem(Path.GetFileName(SwapSegments[i].FileName));
                     item.Tag = Application.StartupPath + SwapSegments[i].FileName;
-                    item.SubItems.Add(SwapSegments[i].Stock);
+                    if (SwapSegments[i].Cvn != null && SwapSegments[i].Cvn != "")
+                        item.SubItems.Add(CheckStockCVN(SwapSegments[i].PN, SwapSegments[i].Ver, SwapSegments[i].SegNr, SwapSegments[i].Cvn, false));
+                    else
+                        item.SubItems.Add(SwapSegments[i].Stock);
                     SegmentData swapdata;                    
 
                     bool displaythis = false;
@@ -257,7 +260,10 @@ namespace UniversalPatcher
                         }
                     }
                     item.SubItems.Add(SwapSegments[i].OS);
-                    item.SubItems.Add(SwapSegments[i].PN);
+                    if (SwapSegments[i].Ver == null )
+                        item.SubItems.Add(SwapSegments[i].PN);
+                    else
+                        item.SubItems.Add(SwapSegments[i].PN + SwapSegments[i].Ver);
                     item.SubItems.Add(SwapSegments[i].Description);
                     item.SubItems.Add(SegSize);
                     item.SubItems.Add(SegAddr);

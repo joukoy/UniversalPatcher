@@ -54,6 +54,14 @@ public class upatcher
         public uint Address;
     }
 
+    /*
+     File information is read in 3 phases:
+     1. XML-file have definitions, how info is stored (SegmentConfig)
+     2. Addresses for information is collected from file (BinFile). 
+        For example (OS 12579405): read EngineCal segment address from address 514 => SegmentBlocks => Block1 = 8000 - 15DFFF
+        PNAddr is segment address +4 => PNaddr = 8004
+     3. Read information from file using collected addresses (SegmentInfo)     
+     */
     public struct BinFile
     {
         public List<Block> SegmentBlocks;
@@ -143,6 +151,7 @@ public class upatcher
 
     public class SwapSegment
     {
+        //For storing information about extracted calibration segments
         public SwapSegment()
         {
 
@@ -151,12 +160,14 @@ public class upatcher
         public string XmlFile { get; set; }
         public string OS { get; set; }
         public string PN { get; set; }
+        public string Ver { get; set; }
         public string SegNr {get;set; }
         public int SegIndex { get; set; }
         public string Size { get; set; }
         public string Address { get; set; }
         public string Description { get; set; }
         public string Stock { get; set; }
+        public string Cvn { get; set; }
         public string SegmentSizes { get; set; }     //For OS compatibility
         public string SegmentAddresses { get; set; } //For OS compatibility
 
