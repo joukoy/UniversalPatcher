@@ -1721,7 +1721,16 @@ namespace UniversalPatcher
             string FileName = FnameStart + Extension;
             FileName = FileName.Replace("?", "_");
             if (radioReplace.Checked)
+            { 
+                for (int x=0;x<SwapSegments.Count;x++)
+                {
+                    if (FileName.EndsWith(SwapSegments[x].FileName))
+                    {                        
+                        SwapSegments.RemoveAt(x);
+                    }
+                }
                 return FileName;
+            }
 
             if (!Directory.Exists(Path.GetDirectoryName(FnameStart)))
                 Directory.CreateDirectory(Path.GetDirectoryName(FnameStart));
@@ -1773,14 +1782,22 @@ namespace UniversalPatcher
                             if (FileName.Length > 0)
                             { 
                                 SwapSegment swapsegment = new SwapSegment();
-                                swapsegment.Address = PCM.segmentinfos[s].Address;
                                 swapsegment.Description = Descr;
                                 swapsegment.FileName = FileName.Replace(Application.StartupPath,"");
                                 swapsegment.OS = PCM.OS;
                                 swapsegment.PN = PCM.segmentinfos[s].PN + PCM.segmentinfos[s].Ver;
                                 swapsegment.SegIndex = s;
                                 swapsegment.SegNr = PCM.segmentinfos[s].SegNr;
-                                swapsegment.Size = PCM.segmentinfos[s].Size;
+                                if (PCM.segmentinfos[s].SwapSize != "1")
+                                {
+                                    swapsegment.Address = PCM.segmentinfos[s].SwapAddress;
+                                    swapsegment.Size = PCM.segmentinfos[s].SwapSize;
+                                }
+                                else
+                                {
+                                    swapsegment.Address = PCM.segmentinfos[s].Address;
+                                    swapsegment.Size = PCM.segmentinfos[s].Size;
+                                }
                                 swapsegment.Stock = PCM.segmentinfos[s].Stock;
                                 swapsegment.XmlFile = PCM.segmentinfos[s].XmlFile;
                                 if (PCM.segmentinfos[s].Name == "OS")
@@ -1792,8 +1809,16 @@ namespace UniversalPatcher
                                             swapsegment.SegmentSizes += ";";
                                             swapsegment.SegmentAddresses += ";";
                                         }
-                                        swapsegment.SegmentSizes += PCM.segmentinfos[x].Name + ":" + PCM.segmentinfos[x].Size;
-                                        swapsegment.SegmentAddresses += PCM.segmentinfos[x].Name + ":" + PCM.segmentinfos[x].Address;
+                                        if (PCM.segmentinfos[x].SwapAddress != "")
+                                        {
+                                            swapsegment.SegmentSizes += PCM.segmentinfos[x].Name + ":" + PCM.segmentinfos[x].SwapSize;
+                                            swapsegment.SegmentAddresses += PCM.segmentinfos[x].Name + ":" + PCM.segmentinfos[x].SwapAddress;
+                                        }
+                                        else
+                                        { 
+                                            swapsegment.SegmentSizes += PCM.segmentinfos[x].Name + ":" + PCM.segmentinfos[x].Size;
+                                            swapsegment.SegmentAddresses += PCM.segmentinfos[x].Name + ":" + PCM.segmentinfos[x].Address;
+                                        }
                                     }
                                 }
                                 SwapSegments.Add(swapsegment);
@@ -1801,8 +1826,17 @@ namespace UniversalPatcher
                         }
                         if (FileName.Length > 0) 
                         {
-                            Logger("Writing " + PCM.segmentinfos[s].Name + " to file: " + FileName + ", size: " + PCM.segmentinfos[s].Size );
-                            WriteSegmentToFile(FileName, PCM.binfile[s].SegmentBlocks, PCM.buf);
+                            
+                            if (PCM.segmentinfos[s].SwapAddress != "")
+                            {
+                                Logger("Writing " + PCM.segmentinfos[s].Name + " to file: " + FileName + ", size: " + PCM.segmentinfos[s].SwapSize);
+                                WriteSegmentToFile(FileName, PCM.binfile[s].SwapBlocks, PCM.buf);
+                            }
+                            else
+                            { 
+                                Logger("Writing " + PCM.segmentinfos[s].Name + " to file: " + FileName + ", size: " + PCM.segmentinfos[s].Size);
+                                WriteSegmentToFile(FileName, PCM.binfile[s].SegmentBlocks, PCM.buf);
+                            }
                             StreamWriter sw = new StreamWriter(FileName + ".txt");
                             sw.WriteLine(Descr);
                             sw.Close();

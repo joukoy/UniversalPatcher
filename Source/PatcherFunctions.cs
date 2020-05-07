@@ -57,7 +57,7 @@ public class upatcher
     public struct BinFile
     {
         public List<Block> SegmentBlocks;
-        public List<Block> ExtractBlocks;
+        public List<Block> SwapBlocks;
         public List<Block> CS1Blocks;
         public List<Block> CS2Blocks;
         public List<Block> ExcludeBlocks;
@@ -78,7 +78,9 @@ public class upatcher
             FileName = "";
             XmlFile = "";
             Address = "";
+            SwapAddress = "";
             Size = "";
+            SwapSize = "";
             CS1 = "";
             CS2 = "";
             CS1Calc = "";
@@ -94,7 +96,9 @@ public class upatcher
         public string FileName  { get; set; }
         public string XmlFile  { get; set; }
         public string Address { get; set; }
+        public string SwapAddress { get; set; }
         public string Size  { get; set; }
+        public string SwapSize { get; set; }
         public string CS1  { get; set; }
         public string CS2  { get; set; }
         public string CS1Calc { get; set; }
@@ -112,6 +116,7 @@ public class upatcher
         public string Name;
         public string Version;
         public string Addresses;    //Segment addresses, can be multiple parts
+        public string SwapAddress;  //Segment addresses, can be multiple parts, used for segment swapping
         public string CS1Address;           //Checksum 1 Address
         public string CS2Address;           //Checksum 2 Address
         public short CS1Method;     //Checksum 1 calculation method

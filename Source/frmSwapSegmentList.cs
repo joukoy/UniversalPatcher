@@ -33,8 +33,16 @@ namespace UniversalPatcher
                 for (int s=0; s< pcm.segmentinfos.Length;s++)
                 {
                     name[s] = pcm.segmentinfos[s].Name;
-                    size[s] = pcm.segmentinfos[s].Size;
-                    range[s] = pcm.segmentinfos[s].Address;
+                    if (pcm.segmentinfos[s].SwapAddress.Length > 1)
+                    {
+                        size[s] = pcm.segmentinfos[s].SwapSize;
+                        range[s] = pcm.segmentinfos[s].SwapAddress;
+                    }
+                    else
+                    { 
+                        size[s] = pcm.segmentinfos[s].Size;
+                        range[s] = pcm.segmentinfos[s].Address;
+                    }
                 }
             }
 
@@ -153,7 +161,20 @@ namespace UniversalPatcher
             int SegIndex = comboSegments.SelectedIndex;
             for (int i=0;i< SwapSegments.Count;i++)
             {
-                if (SwapSegments[i].SegIndex == SegIndex && SwapSegments[i].XmlFile == PCM.segmentinfos[SegIndex].XmlFile && SwapSegments[i].Size == PCM.segmentinfos[SegIndex].Size)
+                string SegSize;
+                string SegAddr;
+                if (PCM.segmentinfos[SegIndex].SwapAddress != "")
+                { 
+                    SegSize = PCM.segmentinfos[SegIndex].SwapSize;
+                    SegAddr = PCM.segmentinfos[SegIndex].SwapAddress;
+                }
+                else
+                {
+                    SegSize = PCM.segmentinfos[SegIndex].Size;
+                    SegAddr = PCM.segmentinfos[SegIndex].Address;
+                }
+
+                if (SwapSegments[i].SegIndex == SegIndex && SwapSegments[i].XmlFile == PCM.segmentinfos[SegIndex].XmlFile && SwapSegments[i].Size == SegSize)
                 { 
                     var item = new ListViewItem(Path.GetFileName(SwapSegments[i].FileName));
                     item.Tag = Application.StartupPath + SwapSegments[i].FileName;
@@ -238,8 +259,8 @@ namespace UniversalPatcher
                     item.SubItems.Add(SwapSegments[i].OS);
                     item.SubItems.Add(SwapSegments[i].PN);
                     item.SubItems.Add(SwapSegments[i].Description);
-                    item.SubItems.Add(SwapSegments[i].Size);
-                    item.SubItems.Add(SwapSegments[i].Address);
+                    item.SubItems.Add(SegSize);
+                    item.SubItems.Add(SegAddr);
                     if (comboSegments.Text == "OS" && displaythis)
                     {
                         swapdata = new SegmentData(SwapSegments[i].SegmentAddresses, SwapSegments[i].SegmentSizes);
@@ -373,13 +394,27 @@ namespace UniversalPatcher
                         throw new Exception(Environment.NewLine + "Segment number doesn't match (" + PCM.segmentinfos[s].SegNr + " != " + SwapSegNr + ")");
                 }
                 uint Offset = 0;
-                for (int i = 0; i < PCM.binfile[s].SegmentBlocks.Count; i++)
-                {
-                    uint Start = PCM.binfile[s].SegmentBlocks[i].Start;
-                    uint Length = PCM.binfile[s].SegmentBlocks[i].End - PCM.binfile[s].SegmentBlocks[i].Start + 1;                    
-                    Debug.WriteLine("Copy data: " + Start.ToString("X") + " - " + PCM.binfile[s].SegmentBlocks[i].End.ToString("X"));
-                    Array.Copy(SwapBuffer, Offset, PCM.buf, Start, Length);
-                    Offset += Length;
+                if (PCM.segmentinfos[s].SwapAddress.Length > 1)
+                { 
+                    for (int i = 0; i < PCM.binfile[s].SwapBlocks.Count; i++)
+                    {
+                        uint Start = PCM.binfile[s].SwapBlocks[i].Start;
+                        uint Length = PCM.binfile[s].SwapBlocks[i].End - PCM.binfile[s].SwapBlocks[i].Start + 1;                    
+                        Debug.WriteLine("Copy data: " + Start.ToString("X") + " - " + PCM.binfile[s].SwapBlocks[i].End.ToString("X"));
+                        Array.Copy(SwapBuffer, Offset, PCM.buf, Start, Length);
+                        Offset += Length;
+                    }
+                }
+                else
+                { 
+                    for (int i = 0; i < PCM.binfile[s].SegmentBlocks.Count; i++)
+                    {
+                        uint Start = PCM.binfile[s].SegmentBlocks[i].Start;
+                        uint Length = PCM.binfile[s].SegmentBlocks[i].End - PCM.binfile[s].SegmentBlocks[i].Start + 1;
+                        Debug.WriteLine("Copy data: " + Start.ToString("X") + " - " + PCM.binfile[s].SegmentBlocks[i].End.ToString("X"));
+                        Array.Copy(SwapBuffer, Offset, PCM.buf, Start, Length);
+                        Offset += Length;
+                    }
                 }
                 Logger(" [OK]");
                 Applied = true;
@@ -426,8 +461,16 @@ namespace UniversalPatcher
             {
                 int Seg = comboSegments.SelectedIndex;
                 uint TotalLength = 0;
-                if (!HexToUint(PCM.segmentinfos[Seg].Size, out TotalLength))
-                    throw new Exception("Cant't decode HEX: " + PCM.segmentinfos[Seg].Size);
+                if (PCM.segmentinfos[Seg].SwapAddress.Length > 1)
+                {
+                    if (!HexToUint(PCM.segmentinfos[Seg].SwapSize, out TotalLength))
+                        throw new Exception("Cant't decode HEX: " + PCM.segmentinfos[Seg].Size);
+                }
+                else
+                { 
+                    if (!HexToUint(PCM.segmentinfos[Seg].Size, out TotalLength))
+                        throw new Exception("Cant't decode HEX: " + PCM.segmentinfos[Seg].Size);
+                }
                 Logger("Reading segment from file: " + FileName,false);
                 uint fsize = (uint)new FileInfo(FileName).Length;
                 if (fsize == TotalLength)
@@ -453,12 +496,25 @@ namespace UniversalPatcher
                     labelSelectedSegment.Text = "Selected: " + tmpPCM.segmentinfos[Seg].PN + tmpPCM.segmentinfos[Seg].Ver + "  (From file: " + Path.GetFileName(FileName) +")";
                     labelSelectedSegment.Tag = FileName;
                     uint Offset = 0;
-                    for (int s=0; s < PCM.binfile[Seg].SegmentBlocks.Count; s++)
+                    if (PCM.segmentinfos[Seg].SwapAddress.Length > 1)
                     {
-                        uint Start = PCM.binfile[Seg].SegmentBlocks[s].Start;
-                        uint Length = PCM.binfile[Seg].SegmentBlocks[s].End - PCM.binfile[Seg].SegmentBlocks[s].Start + 1;
-                        Array.Copy(tmpPCM.buf, Start, SwapBuffer,Offset, Length);
-                        Offset += Length;
+                        for (int s = 0; s < PCM.binfile[Seg].SegmentBlocks.Count; s++)
+                        {
+                            uint Start = PCM.binfile[Seg].SegmentBlocks[s].Start;
+                            uint Length = PCM.binfile[Seg].SegmentBlocks[s].End - PCM.binfile[Seg].SegmentBlocks[s].Start + 1;
+                            Array.Copy(tmpPCM.buf, Start, SwapBuffer, Offset, Length);
+                            Offset += Length;
+                        }
+                    }
+                    else
+                    {
+                        for (int s = 0; s < PCM.binfile[Seg].SwapBlocks.Count; s++)
+                        {
+                            uint Start = PCM.binfile[Seg].SwapBlocks[s].Start;
+                            uint Length = PCM.binfile[Seg].SwapBlocks[s].End - PCM.binfile[Seg].SwapBlocks[s].Start + 1;
+                            Array.Copy(tmpPCM.buf, Start, SwapBuffer, Offset, Length);
+                            Offset += Length;
+                        }
                     }
                     Logger(" (0x" + TotalLength.ToString("X") + " B)", false);
                     Logger("[OK]");

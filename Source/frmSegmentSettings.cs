@@ -26,6 +26,7 @@ namespace UniversalPatcher
 
             S.Name = txtSegmentName.Text;
             S.Addresses = txtSegmentAddress.Text;
+            S.SwapAddress = txtSwapAddr.Text;
 
             S.CS1Address = txtCS1Address.Text;
             S.CS2Address = txtCS2Address.Text;
@@ -99,6 +100,7 @@ namespace UniversalPatcher
             SegmentConfig S = Segments[SegNr];
             txtSegmentName.Text = S.Name;
             txtSegmentAddress.Text = S.Addresses;
+            txtSwapAddr.Text = S.SwapAddress;
             txtCS1Address.Text = S.CS1Address;
             txtCS2Address.Text = S.CS2Address;
             txtCS1Block.Text = S.CS1Blocks;
@@ -319,6 +321,11 @@ namespace UniversalPatcher
         private void label4_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnEditSwapddr_Click(object sender, EventArgs e)
+        {
+            txtSwapAddr.Text = EditSegmentAddress(txtSwapAddr.Text);
         }
     }
 }

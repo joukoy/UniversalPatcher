@@ -54,6 +54,12 @@ namespace UniversalPatcher
                         return;
                     binfile[i].SegmentBlocks = B;
                 }
+                if (S.SwapAddress != null && S.SwapAddress.Length > 1)
+                { 
+                    if (!ParseSegmentAddresses(S.SwapAddress, S, out B))
+                        return;
+                    binfile[i].SwapBlocks = B;
+                }
                 if (!ParseSegmentAddresses(S.CS1Blocks, S, out B))
                     return;
                 binfile[i].CS1Blocks = B;
@@ -84,15 +90,30 @@ namespace UniversalPatcher
                 segmentinfos[i].Name = S.Name;
                 segmentinfos[i].FileName = FileName;
                 segmentinfos[i].XmlFile = Path.GetFileName(XMLFile);
+                string tmp = "";
+                uint SSize = 0;
+                if (S.SwapAddress != null && S.SwapAddress.Length > 1)
+                { 
+                    for (int s = 0; s < binfile[i].SwapBlocks.Count; s++)
+                    {
+                        if (s > 0)
+                            tmp += ", ";
+                        tmp += binfile[i].SwapBlocks[s].Start.ToString("X4") + " - " + binfile[i].SwapBlocks[s].End.ToString("X4");
+                        SSize += binfile[i].SwapBlocks[s].End - binfile[i].SwapBlocks[s].Start + 1;
+                    }
+                    segmentinfos[i].SwapSize = SSize.ToString("X");
+                    segmentinfos[i].SwapAddress = tmp;
+                }
                 if (S.Eeprom)
                 {
+                    //Special handling for P01/P59 eeprom -segment
                     GmEeprom.GetEEpromInfo(buf, ref segmentinfos[i]);
                     segmentinfos[i].CS1 = GmEeprom.GetKeyStatus(buf);
                 }
                 else
                 {
-                    string tmp = "";
-                    uint SSize = 0;
+                    tmp = "";
+                    SSize = 0;
                     for (int s = 0; s < binfile[i].SegmentBlocks.Count; s++)
                     {
                         if (s > 0)
