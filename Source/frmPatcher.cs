@@ -112,6 +112,15 @@ namespace UniversalPatcher
             {
                 SwapSegments = new List<SwapSegment>();
             }
+            listCSAddresses.Enabled = true;
+            listCSAddresses.Clear();
+            listCSAddresses.View = View.Details;
+            listCSAddresses.FullRowSelect = true;
+            listCSAddresses.Columns.Add("OS");
+            listCSAddresses.Columns.Add("CS1 Address");
+            //listCSAddresses.Columns.Add("CS2 Address");
+            listCSAddresses.Columns[0].Width = 200;
+            listCSAddresses.Columns[1].Width = 200;
         }
 
         private void FrmPatcher_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -194,7 +203,21 @@ namespace UniversalPatcher
         private void ShowFileInfo(PcmFile PCM, bool InfoOnly)
         {
             try
-            {                
+            {
+                if (Segments[0].CS1Address.StartsWith("GM-V6"))
+                { 
+                    var item = new ListViewItem(PCM.OS);
+                    if (PCM.binfile[0].CS1Address.Address == uint.MaxValue)
+                        item.SubItems.Add("");
+                    else
+                        item.SubItems.Add(PCM.binfile[0].CS1Address.Address.ToString("X"));
+                    /*if (PCM.binfile[0].CS2Address.Address == uint.MaxValue)
+                        item.SubItems.Add("");
+                    else
+                        item.SubItems.Add(PCM.binfile[0].CS2Address.Address.ToString("X"));*/
+                    listCSAddresses.Items.Add(item);
+                    tabCsAddress.Text = "CS Address (" + listCSAddresses.Items.Count.ToString() + ")";
+                }
                 for (int i = 0; i < Segments.Count; i++)
                 {
                     SegmentConfig S = Segments[i];
@@ -273,6 +296,7 @@ namespace UniversalPatcher
                             Logger("");
                     }
                 }
+                
                 if (!InfoOnly)
                 {
                     addCheckBoxes();
@@ -1999,6 +2023,51 @@ namespace UniversalPatcher
                 logwriter.Close();
                 txtResult.AppendText("Logfile closed" + Environment.NewLine);
             }
+        }
+
+        private void btnSaveCSaddresses_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+            Logger("Writing to file: " + Path.GetFileName(FileName), false);
+            try 
+            { 
+                using (StreamWriter writetext = new StreamWriter(FileName))
+                {
+                    string row = "";
+                    for (int i = 0; i < listCSAddresses.Columns.Count; i++)
+                    {
+                        if (i > 0)
+                            row += ";";
+                        row += listCSAddresses.Columns[i].Text;
+                    }
+                    writetext.WriteLine(row);
+                    for (int r = 0; r < listCSAddresses.Items.Count; r++)
+                    {
+                        row = "";
+                        for (int i = 0; i < listCSAddresses.Columns.Count; i++)
+                        {
+                            if (i > 0)
+                                row += ";";
+                            if (listCSAddresses.Items[r].SubItems[i].Text != null)
+                                row += listCSAddresses.Items[r].SubItems[i].Text;
+                        }
+                        writetext.WriteLine(row);
+                    }
+                }
+                Logger(" [OK]");
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+        }
+
+        private void btnClearCSAddresses_Click(object sender, EventArgs e)
+        {
+            listCSAddresses.Items.Clear();
+            tabCsAddress.Text = "CS Address";
         }
     }
 

@@ -449,6 +449,7 @@ namespace UniversalPatcher
                 }
                 if (match)
                 {
+                    Debug.WriteLine("Found OS Store address from: " + i.ToString("X"));
                     osStoreAddress = i;
                     //Check if this ONLY match
                     for (uint k=i+6; k < fsize - 6; k++)
@@ -460,7 +461,11 @@ namespace UniversalPatcher
                                 secondmatch = false;
                         }
                         if (secondmatch)
-                            return uint.MaxValue;   //Found other match, dont know which is correct
+                        {
+                            //Found other match, dont know which is correct
+                            Debug.WriteLine("Found other match from: " + k.ToString("X") + ", dont know which is correct");
+                            return uint.MaxValue;
+                        }
                     }
                 }
             }

@@ -78,6 +78,10 @@
             this.btnSaveCSV = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.dataFileInfo = new System.Windows.Forms.DataGridView();
+            this.tabCsAddress = new System.Windows.Forms.TabPage();
+            this.btnClearCSAddresses = new System.Windows.Forms.Button();
+            this.btnSaveCSaddresses = new System.Windows.Forms.Button();
+            this.listCSAddresses = new System.Windows.Forms.ListView();
             this.chkExtra = new System.Windows.Forms.CheckBox();
             this.chkCS2 = new System.Windows.Forms.CheckBox();
             this.chkCS1 = new System.Windows.Forms.CheckBox();
@@ -122,6 +126,7 @@
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label9 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -132,6 +137,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataCVN)).BeginInit();
             this.tabFinfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataFileInfo)).BeginInit();
+            this.tabCsAddress.SuspendLayout();
             this.tabFunction.SuspendLayout();
             this.tabCreate.SuspendLayout();
             this.tabFileinfo.SuspendLayout();
@@ -313,6 +319,7 @@
             this.tabControl1.Controls.Add(this.tabPatch);
             this.tabControl1.Controls.Add(this.tabCVN);
             this.tabControl1.Controls.Add(this.tabFinfo);
+            this.tabControl1.Controls.Add(this.tabCsAddress);
             this.tabControl1.Location = new System.Drawing.Point(0, 191);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -713,6 +720,52 @@
             this.dataFileInfo.Name = "dataFileInfo";
             this.dataFileInfo.Size = new System.Drawing.Size(778, 312);
             this.dataFileInfo.TabIndex = 0;
+            // 
+            // tabCsAddress
+            // 
+            this.tabCsAddress.Controls.Add(this.label9);
+            this.tabCsAddress.Controls.Add(this.btnClearCSAddresses);
+            this.tabCsAddress.Controls.Add(this.btnSaveCSaddresses);
+            this.tabCsAddress.Controls.Add(this.listCSAddresses);
+            this.tabCsAddress.Location = new System.Drawing.Point(4, 22);
+            this.tabCsAddress.Name = "tabCsAddress";
+            this.tabCsAddress.Size = new System.Drawing.Size(776, 344);
+            this.tabCsAddress.TabIndex = 5;
+            this.tabCsAddress.Text = "CS Address";
+            this.tabCsAddress.UseVisualStyleBackColor = true;
+            // 
+            // btnClearCSAddresses
+            // 
+            this.btnClearCSAddresses.Location = new System.Drawing.Point(7, 5);
+            this.btnClearCSAddresses.Name = "btnClearCSAddresses";
+            this.btnClearCSAddresses.Size = new System.Drawing.Size(67, 22);
+            this.btnClearCSAddresses.TabIndex = 2;
+            this.btnClearCSAddresses.Text = "Clear";
+            this.btnClearCSAddresses.UseVisualStyleBackColor = true;
+            this.btnClearCSAddresses.Click += new System.EventHandler(this.btnClearCSAddresses_Click);
+            // 
+            // btnSaveCSaddresses
+            // 
+            this.btnSaveCSaddresses.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveCSaddresses.Location = new System.Drawing.Point(693, 3);
+            this.btnSaveCSaddresses.Name = "btnSaveCSaddresses";
+            this.btnSaveCSaddresses.Size = new System.Drawing.Size(75, 25);
+            this.btnSaveCSaddresses.TabIndex = 1;
+            this.btnSaveCSaddresses.Text = "Save list...";
+            this.btnSaveCSaddresses.UseVisualStyleBackColor = true;
+            this.btnSaveCSaddresses.Click += new System.EventHandler(this.btnSaveCSaddresses_Click);
+            // 
+            // listCSAddresses
+            // 
+            this.listCSAddresses.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listCSAddresses.HideSelection = false;
+            this.listCSAddresses.Location = new System.Drawing.Point(2, 31);
+            this.listCSAddresses.Name = "listCSAddresses";
+            this.listCSAddresses.Size = new System.Drawing.Size(774, 316);
+            this.listCSAddresses.TabIndex = 0;
+            this.listCSAddresses.UseCompatibleStateImageBehavior = false;
             // 
             // chkExtra
             // 
@@ -1176,6 +1229,15 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(96, 11);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(255, 13);
+            this.label9.TabIndex = 3;
+            this.label9.Text = "GM V6 Checksum address: (ignore for other binaries)";
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1208,6 +1270,8 @@
             this.tabFinfo.ResumeLayout(false);
             this.tabFinfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataFileInfo)).EndInit();
+            this.tabCsAddress.ResumeLayout(false);
+            this.tabCsAddress.PerformLayout();
             this.tabFunction.ResumeLayout(false);
             this.tabCreate.ResumeLayout(false);
             this.tabCreate.PerformLayout();
@@ -1322,5 +1386,10 @@
         private System.Windows.Forms.Button btnRefreshCvnList;
         private System.Windows.Forms.CheckBox chkLogtoFile;
         private System.Windows.Forms.CheckBox chkLogtodisplay;
+        private System.Windows.Forms.TabPage tabCsAddress;
+        private System.Windows.Forms.ListView listCSAddresses;
+        private System.Windows.Forms.Button btnSaveCSaddresses;
+        private System.Windows.Forms.Button btnClearCSAddresses;
+        private System.Windows.Forms.Label label9;
     }
 }
