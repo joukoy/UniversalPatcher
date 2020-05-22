@@ -186,7 +186,7 @@ public class upatcher
     public static List<XmlPatch> PatchList;
     public static List<CVN> StockCVN;
     public static List<CVN> ListCVN;
-    public static List<SegmentInfo> ListSegment;
+    public static List<SegmentInfo> SegmentList;
     public static List<SwapSegment> SwapSegments;
     public static string XMLFile;
 

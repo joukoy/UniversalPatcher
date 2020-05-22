@@ -379,12 +379,12 @@ namespace UniversalPatcher
         { 
             dataFileInfo.DataSource = null;
             Finfosource.DataSource = null;
-            Finfosource.DataSource = ListSegment;
+            Finfosource.DataSource = SegmentList;
             dataFileInfo.DataSource = Finfosource;
-            if (ListSegment == null || ListSegment.Count == 0)
+            if (SegmentList == null || SegmentList.Count == 0)
                 tabFinfo.Text = "File info";
             else
-                tabFinfo.Text = "File info (" + ListSegment.Count.ToString() + ")";
+                tabFinfo.Text = "File info (" + SegmentList.Count.ToString() + ")";
         }
         private bool ApplyXMLPatch()
         {
@@ -1666,7 +1666,7 @@ namespace UniversalPatcher
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            ListSegment.Clear();
+            SegmentList.Clear();
             RefreshFileInfo();
         }
 

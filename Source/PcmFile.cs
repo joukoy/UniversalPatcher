@@ -80,8 +80,8 @@ namespace UniversalPatcher
         }
         public void GetInfo()
         {
-            if (ListSegment == null)
-                ListSegment = new List<SegmentInfo>();
+            if (SegmentList == null)
+                SegmentList = new List<SegmentInfo>();
             segmentinfos = new SegmentInfo[Segments.Count];
             for (int i = 0; i < Segments.Count; i++)
             {
@@ -206,7 +206,7 @@ namespace UniversalPatcher
                         }
                     }
                 }
-                ListSegment.Add(segmentinfos[i]);
+                SegmentList.Add(segmentinfos[i]);
             }
 
         }
@@ -436,6 +436,75 @@ namespace UniversalPatcher
             return Result;
         }
 
+        private uint FindV6OSAddress(byte[] searchfor)
+        {
+            uint osStoreAddress = uint.MaxValue;
+            for (uint i=0; i < fsize - 6; i++)
+            {
+                bool match = true;
+                for (uint j=0; j<6; j++)
+                {
+                    if (buf[i + j] != searchfor[j])
+                        match = false;
+                }
+                if (match)
+                {
+                    osStoreAddress = i;
+                    //Check if this ONLY match
+                    for (uint k=i+6; k < fsize - 6; k++)
+                    {
+                        bool secondmatch = true;
+                        for (uint j = 0; j < 6; j++)
+                        {
+                            if (buf[k + j] != searchfor[j])
+                                secondmatch = false;
+                        }
+                        if (secondmatch)
+                            return uint.MaxValue;   //Found other match, dont know which is correct
+                    }
+                }
+            }
+            return osStoreAddress;
+        }
+        private uint FindV6checksumAddress()
+        {
+            byte[] searchfor = new byte[6];
+            uint osStoreAddress = uint.MaxValue;
+
+            if (fsize == 256 * 1024)
+            {
+                searchfor = new byte[] {0x20,0x39,0x0,0x03,0xff,0xfa};
+                osStoreAddress = FindV6OSAddress(searchfor);
+            }
+            if (fsize == 512 * 1024)
+            {
+                searchfor = new byte[] { 0x20, 0x39, 0x0, 0x07, 0xff, 0xf8 };
+                osStoreAddress = FindV6OSAddress(searchfor);
+                if (osStoreAddress == uint.MaxValue)
+                {
+                    searchfor = new byte[] { 0x26, 0x39, 0x0, 0x07, 0xff, 0xfa };
+                    osStoreAddress = FindV6OSAddress(searchfor);
+                }
+            }
+            if (fsize == 1024 * 1024)
+            {
+                searchfor = new byte[] { 0x26, 0x39, 0x0, 0x0f, 0xff, 0xfa };
+                osStoreAddress = FindV6OSAddress(searchfor);
+            }
+
+            if (osStoreAddress == uint.MaxValue)
+                return osStoreAddress;
+
+            for (uint i=osStoreAddress + 16; i< osStoreAddress + 32 && i< fsize; i++)
+            {
+                if (buf[i] == searchfor[0] && buf[i+1] == searchfor[1])
+                {
+                    return BEToUint32(buf, i + 2);
+                }
+            }
+            //Not found?
+            return uint.MaxValue;
+        }
         private AddressData GMV6(string Line, int SegNr)
         {
             uint BufSize = (uint)buf.Length;
@@ -462,6 +531,18 @@ namespace UniversalPatcher
             if (binfile[SegNr].ExcludeBlocks == null)
                 binfile[SegNr].ExcludeBlocks = new List<Block>();
             binfile[SegNr].ExcludeBlocks.Add(B);
+
+            AD.Address = FindV6checksumAddress();
+            if (AD.Address < uint.MaxValue)
+            {
+                Debug.WriteLine("Find V6 checksum address: " + AD.Address.ToString("X"));
+                AD.Bytes = 4;
+                AD.Type = TypeHex;
+                return AD;
+            }
+
+            Debug.WriteLine("Checksum address not found, using old file-method");
+
             string FileName = Path.Combine(Application.StartupPath, "XML", Line);
             StreamReader sr = new StreamReader(FileName);
             string OsLine;
