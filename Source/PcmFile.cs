@@ -490,6 +490,16 @@ namespace UniversalPatcher
                     searchfor = new byte[] { 0x26, 0x39, 0x0, 0x07, 0xff, 0xfa };
                     osStoreAddress = FindV6OSAddress(searchfor);
                 }
+                if (osStoreAddress == uint.MaxValue)
+                {
+                    searchfor = new byte[] { 0x20, 0x39, 0x0, 0x07, 0xff, 0xfa };
+                    osStoreAddress = FindV6OSAddress(searchfor);
+                }
+                if (osStoreAddress == uint.MaxValue)
+                {
+                    searchfor = new byte[] { 0x26, 0x39, 0x0, 0x07, 0xff, 0xf8 };
+                    osStoreAddress = FindV6OSAddress(searchfor);
+                }
             }
             if (fsize == 1024 * 1024)
             {
