@@ -487,12 +487,12 @@ namespace UniversalPatcher
                 osStoreAddress = FindV6OSAddress(searchfor);
                 if (osStoreAddress == uint.MaxValue)
                 {
-                    searchfor = new byte[] { 0x26, 0x39, 0x0, 0x07, 0xff, 0xfa };
+                    searchfor = new byte[] { 0x20, 0x39, 0x0, 0x07, 0xff, 0xfa };
                     osStoreAddress = FindV6OSAddress(searchfor);
                 }
                 if (osStoreAddress == uint.MaxValue)
                 {
-                    searchfor = new byte[] { 0x20, 0x39, 0x0, 0x07, 0xff, 0xfa };
+                    searchfor = new byte[] { 0x26, 0x39, 0x0, 0x07, 0xff, 0xfa };
                     osStoreAddress = FindV6OSAddress(searchfor);
                 }
                 if (osStoreAddress == uint.MaxValue)
