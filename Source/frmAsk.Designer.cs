@@ -28,20 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
+            this.labelAsk = new System.Windows.Forms.Label();
             this.TextBox1 = new System.Windows.Forms.TextBox();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // label1
+            // labelAsk
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 23);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(68, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Group name:";
+            this.labelAsk.AutoSize = true;
+            this.labelAsk.Location = new System.Drawing.Point(12, 23);
+            this.labelAsk.Name = "labelAsk";
+            this.labelAsk.Size = new System.Drawing.Size(68, 13);
+            this.labelAsk.TabIndex = 0;
+            this.labelAsk.Text = "Group name:";
             // 
             // TextBox1
             // 
@@ -54,7 +54,7 @@
             // 
             this.btnOK.Location = new System.Drawing.Point(153, 7);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(56, 29);
+            this.btnOK.Size = new System.Drawing.Size(54, 25);
             this.btnOK.TabIndex = 2;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
@@ -78,7 +78,7 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.TextBox1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelAsk);
             this.Name = "FrmAsk";
             this.Text = "Group";
             this.ResumeLayout(false);
@@ -90,6 +90,6 @@
         public System.Windows.Forms.TextBox TextBox1;
         public System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
-        public System.Windows.Forms.Label label1;
+        public System.Windows.Forms.Label labelAsk;
     }
 }

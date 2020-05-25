@@ -40,6 +40,7 @@ namespace UniversalPatcher
         private BindingSource bindingSource = new BindingSource();
         private BindingSource CvnSource = new BindingSource();
         private BindingSource Finfosource = new BindingSource();
+        private BindingSource badchkfilesource = new BindingSource();
         private string logFile;
         StreamWriter logwriter;
         private void FrmPatcher_Load(object sender, EventArgs e)
@@ -118,9 +119,11 @@ namespace UniversalPatcher
             listCSAddresses.FullRowSelect = true;
             listCSAddresses.Columns.Add("OS");
             listCSAddresses.Columns.Add("CS1 Address");
+            listCSAddresses.Columns.Add("OS Store Address");
             //listCSAddresses.Columns.Add("CS2 Address");
             listCSAddresses.Columns[0].Width = 200;
             listCSAddresses.Columns[1].Width = 200;
+            listCSAddresses.Columns[2].Width = 200;
         }
 
         private void FrmPatcher_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -211,10 +214,10 @@ namespace UniversalPatcher
                         item.SubItems.Add("");
                     else
                         item.SubItems.Add(PCM.binfile[0].CS1Address.Address.ToString("X"));
-                    /*if (PCM.binfile[0].CS2Address.Address == uint.MaxValue)
+                    if (PCM.osStoreAddress == uint.MaxValue)
                         item.SubItems.Add("");
                     else
-                        item.SubItems.Add(PCM.binfile[0].CS2Address.Address.ToString("X"));*/
+                        item.SubItems.Add(PCM.osStoreAddress.ToString("X"));
                     listCSAddresses.Items.Add(item);
                     tabCsAddress.Text = "CS Address (" + listCSAddresses.Items.Count.ToString() + ")";
                 }
@@ -304,6 +307,8 @@ namespace UniversalPatcher
                 }
                 if (checkAutorefreshFileinfo.Checked)
                     RefreshFileInfo();
+                if (chkAutoRefreshBadChkFile.Checked)
+                    RefreshBadChkFile();
             }
             catch (Exception ex)
             {
@@ -409,6 +414,17 @@ namespace UniversalPatcher
                 tabFinfo.Text = "File info";
             else
                 tabFinfo.Text = "File info (" + SegmentList.Count.ToString() + ")";
+        }
+        private void RefreshBadChkFile()
+        {
+            dataBadChkFile.DataSource = null;
+            badchkfilesource.DataSource = null;
+            badchkfilesource.DataSource = BadChkFileList;
+            dataBadChkFile.DataSource = badchkfilesource;
+            if (BadChkFileList == null || BadChkFileList.Count == 0)
+                tabFinfo.Text = "File info";
+            else
+                tabFinfo.Text = "File info (" + BadChkFileList.Count.ToString() + ")";
         }
         private bool ApplyXMLPatch()
         {
@@ -1462,7 +1478,7 @@ namespace UniversalPatcher
             dataPatch.Rows[row + 1].Selected = true;
         }
 
-        private void loadConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        private void loadXMLfile()
         {
             string FileName = SelectFile("Select XML file", "XML files (*.xml)|*.xml|All files (*.*)|*.*");
             if (FileName.Length < 1)
@@ -1473,6 +1489,10 @@ namespace UniversalPatcher
             labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
             addCheckBoxes();
 
+        }
+        private void loadConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            loadXMLfile();
         }
 
         private void setupSegmentsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2068,6 +2088,106 @@ namespace UniversalPatcher
         {
             listCSAddresses.Items.Clear();
             tabCsAddress.Text = "CS Address";
+        }
+
+        private void chkAutodetect_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!chkAutodetect.Checked)
+            {
+                loadXMLfile();
+            }
+        }
+
+        private void dataFileInfo_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try 
+            {    
+                string folder = Path.GetDirectoryName(dataFileInfo.Rows[e.RowIndex].Cells[1].Value.ToString());
+                Process.Start(folder);
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+        }
+
+        private void btnSaveCsvBadChkFile_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+            Logger("Writing to file: " + Path.GetFileName(FileName), false);
+            using (StreamWriter writetext = new StreamWriter(FileName))
+            {
+                string row = "";
+                for (int i = 0; i < dataBadChkFile.Columns.Count; i++)
+                {
+                    if (i > 0)
+                        row += ";";
+                    row += dataBadChkFile.Columns[i].HeaderText;
+                }
+                writetext.WriteLine(row);
+                for (int r = 0; r < (dataBadChkFile.Rows.Count - 1); r++)
+                {
+                    row = "";
+                    for (int i = 0; i < dataBadChkFile.Columns.Count; i++)
+                    {
+                        if (i > 0)
+                            row += ";";
+                        if (dataBadChkFile.Rows[r].Cells[i].Value != null)
+                            row += dataBadChkFile.Rows[r].Cells[i].Value.ToString();
+                    }
+                    writetext.WriteLine(row);
+                }
+            }
+            Logger(" [OK]");
+
+        }
+
+        private void btnRefreshBadChkFile_Click(object sender, EventArgs e)
+        {
+            RefreshBadChkFile();
+        }
+
+        private void dataFileInfo_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dataBadChkFile_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                string folder = Path.GetDirectoryName(dataFileInfo.Rows[e.RowIndex].Cells[1].Value.ToString());
+                Process.Start(folder);
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            FrmAsk frmA = new FrmAsk();
+            frmA.Text = "Search text";
+            frmA.labelAsk.Text = "Search:";
+            if (frmA.ShowDialog() == DialogResult.OK)
+            {
+                string word = frmA.TextBox1.Text;
+                int s_start = txtResult.SelectionStart, startIndex = 0, index;
+                while ((index = txtResult.Text.IndexOf(word, startIndex)) != -1)
+                {
+                    txtResult.Select(index, word.Length);
+                    txtResult.SelectionColor = Color.Blue;
+                    startIndex = index + word.Length;
+                }
+                txtResult.SelectionStart = 0;
+                txtResult.SelectionLength = txtResult.TextLength;
+                txtResult.SelectionColor = Color.Black;
+            }
+            frmA.Dispose();
         }
     }
 

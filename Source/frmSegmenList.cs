@@ -207,14 +207,14 @@ namespace UniversalPatcher
 
         }
 
-        private void btnOK_Click(object sender, EventArgs e)
+        private void saveXML()
         {
             try
             {
                 string FileName;
                 if (XMLFile == "")
                     FileName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
-                else 
+                else
                     FileName = XMLFile;
                 if (FileName.Length < 1)
                     return;
@@ -222,7 +222,7 @@ namespace UniversalPatcher
                 S.Version = txtVersion.Text;
                 Segments[0] = S;
                 Logger("Saving to file: " + Path.GetFileName(FileName), false);
-                Debug.WriteLine ("Saving to file: " + Path.GetFileName(FileName));
+                Debug.WriteLine("Saving to file: " + Path.GetFileName(FileName));
 
                 using (FileStream stream = new FileStream(FileName, FileMode.Create))
                 {
@@ -231,12 +231,17 @@ namespace UniversalPatcher
                     stream.Close();
                 }
                 Logger(" [OK]");
-                this.Close();
             }
             catch (Exception ex)
             {
                 Logger(ex.Message);
             }
+
+        }
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            saveXML();
+            this.Close();
         }
 
         private void listSegments_SelectedIndexChanged(object sender, EventArgs e)
@@ -251,5 +256,9 @@ namespace UniversalPatcher
             Application.DoEvents();
         }
 
+        private void btnSaveOnly_Click(object sender, EventArgs e)
+        {
+            saveXML();
+        }
     }
 }

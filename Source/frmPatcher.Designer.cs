@@ -46,6 +46,7 @@
             this.chkAutodetect = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabInfo = new System.Windows.Forms.TabPage();
+            this.btnSearch = new System.Windows.Forms.Button();
             this.chkLogtodisplay = new System.Windows.Forms.CheckBox();
             this.chkLogtoFile = new System.Windows.Forms.CheckBox();
             this.txtResult = new System.Windows.Forms.RichTextBox();
@@ -79,9 +80,16 @@
             this.btnClear = new System.Windows.Forms.Button();
             this.dataFileInfo = new System.Windows.Forms.DataGridView();
             this.tabCsAddress = new System.Windows.Forms.TabPage();
+            this.label9 = new System.Windows.Forms.Label();
             this.btnClearCSAddresses = new System.Windows.Forms.Button();
             this.btnSaveCSaddresses = new System.Windows.Forms.Button();
             this.listCSAddresses = new System.Windows.Forms.ListView();
+            this.tabBadChkFile = new System.Windows.Forms.TabPage();
+            this.chkAutoRefreshBadChkFile = new System.Windows.Forms.CheckBox();
+            this.btnRefreshBadChkFile = new System.Windows.Forms.Button();
+            this.btnSaveCsvBadChkFile = new System.Windows.Forms.Button();
+            this.btnClearBadchkFile = new System.Windows.Forms.Button();
+            this.dataBadChkFile = new System.Windows.Forms.DataGridView();
             this.chkExtra = new System.Windows.Forms.CheckBox();
             this.chkCS2 = new System.Windows.Forms.CheckBox();
             this.chkCS1 = new System.Windows.Forms.CheckBox();
@@ -126,7 +134,7 @@
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -138,6 +146,8 @@
             this.tabFinfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataFileInfo)).BeginInit();
             this.tabCsAddress.SuspendLayout();
+            this.tabBadChkFile.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataBadChkFile)).BeginInit();
             this.tabFunction.SuspendLayout();
             this.tabCreate.SuspendLayout();
             this.tabFileinfo.SuspendLayout();
@@ -308,6 +318,7 @@
             this.chkAutodetect.TabIndex = 11;
             this.chkAutodetect.Text = "Autodetect config";
             this.chkAutodetect.UseVisualStyleBackColor = true;
+            this.chkAutodetect.CheckedChanged += new System.EventHandler(this.chkAutodetect_CheckedChanged);
             // 
             // tabControl1
             // 
@@ -320,6 +331,7 @@
             this.tabControl1.Controls.Add(this.tabCVN);
             this.tabControl1.Controls.Add(this.tabFinfo);
             this.tabControl1.Controls.Add(this.tabCsAddress);
+            this.tabControl1.Controls.Add(this.tabBadChkFile);
             this.tabControl1.Location = new System.Drawing.Point(0, 191);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -329,6 +341,7 @@
             // tabInfo
             // 
             this.tabInfo.AutoScroll = true;
+            this.tabInfo.Controls.Add(this.btnSearch);
             this.tabInfo.Controls.Add(this.chkLogtodisplay);
             this.tabInfo.Controls.Add(this.chkLogtoFile);
             this.tabInfo.Controls.Add(this.txtResult);
@@ -346,6 +359,17 @@
             this.tabInfo.TabIndex = 0;
             this.tabInfo.Text = "Log";
             this.tabInfo.UseVisualStyleBackColor = true;
+            // 
+            // btnSearch
+            // 
+            this.btnSearch.Location = new System.Drawing.Point(539, 1);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(75, 23);
+            this.btnSearch.TabIndex = 205;
+            this.btnSearch.Text = "Search...";
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Visible = false;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
             // chkLogtodisplay
             // 
@@ -720,6 +744,8 @@
             this.dataFileInfo.Name = "dataFileInfo";
             this.dataFileInfo.Size = new System.Drawing.Size(778, 312);
             this.dataFileInfo.TabIndex = 0;
+            this.dataFileInfo.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataFileInfo_CellContentClick);
+            this.dataFileInfo.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataFileInfo_CellContentDoubleClick);
             // 
             // tabCsAddress
             // 
@@ -733,6 +759,15 @@
             this.tabCsAddress.TabIndex = 5;
             this.tabCsAddress.Text = "CS Address";
             this.tabCsAddress.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(96, 11);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(255, 13);
+            this.label9.TabIndex = 3;
+            this.label9.Text = "GM V6 Checksum address: (ignore for other binaries)";
             // 
             // btnClearCSAddresses
             // 
@@ -766,6 +801,75 @@
             this.listCSAddresses.Size = new System.Drawing.Size(774, 316);
             this.listCSAddresses.TabIndex = 0;
             this.listCSAddresses.UseCompatibleStateImageBehavior = false;
+            // 
+            // tabBadChkFile
+            // 
+            this.tabBadChkFile.Controls.Add(this.label10);
+            this.tabBadChkFile.Controls.Add(this.chkAutoRefreshBadChkFile);
+            this.tabBadChkFile.Controls.Add(this.btnRefreshBadChkFile);
+            this.tabBadChkFile.Controls.Add(this.btnSaveCsvBadChkFile);
+            this.tabBadChkFile.Controls.Add(this.btnClearBadchkFile);
+            this.tabBadChkFile.Controls.Add(this.dataBadChkFile);
+            this.tabBadChkFile.Location = new System.Drawing.Point(4, 22);
+            this.tabBadChkFile.Name = "tabBadChkFile";
+            this.tabBadChkFile.Size = new System.Drawing.Size(776, 344);
+            this.tabBadChkFile.TabIndex = 6;
+            this.tabBadChkFile.Text = "bad chk file";
+            this.tabBadChkFile.UseVisualStyleBackColor = true;
+            // 
+            // chkAutoRefreshBadChkFile
+            // 
+            this.chkAutoRefreshBadChkFile.AutoSize = true;
+            this.chkAutoRefreshBadChkFile.Checked = true;
+            this.chkAutoRefreshBadChkFile.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAutoRefreshBadChkFile.Location = new System.Drawing.Point(153, 6);
+            this.chkAutoRefreshBadChkFile.Name = "chkAutoRefreshBadChkFile";
+            this.chkAutoRefreshBadChkFile.Size = new System.Drawing.Size(83, 17);
+            this.chkAutoRefreshBadChkFile.TabIndex = 10;
+            this.chkAutoRefreshBadChkFile.Text = "Auto refresh";
+            this.chkAutoRefreshBadChkFile.UseVisualStyleBackColor = true;
+            // 
+            // btnRefreshBadChkFile
+            // 
+            this.btnRefreshBadChkFile.Location = new System.Drawing.Point(72, 3);
+            this.btnRefreshBadChkFile.Name = "btnRefreshBadChkFile";
+            this.btnRefreshBadChkFile.Size = new System.Drawing.Size(62, 21);
+            this.btnRefreshBadChkFile.TabIndex = 9;
+            this.btnRefreshBadChkFile.Text = "Refresh";
+            this.btnRefreshBadChkFile.UseVisualStyleBackColor = true;
+            this.btnRefreshBadChkFile.Click += new System.EventHandler(this.btnRefreshBadChkFile_Click);
+            // 
+            // btnSaveCsvBadChkFile
+            // 
+            this.btnSaveCsvBadChkFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveCsvBadChkFile.Location = new System.Drawing.Point(691, 3);
+            this.btnSaveCsvBadChkFile.Name = "btnSaveCsvBadChkFile";
+            this.btnSaveCsvBadChkFile.Size = new System.Drawing.Size(75, 23);
+            this.btnSaveCsvBadChkFile.TabIndex = 8;
+            this.btnSaveCsvBadChkFile.Text = "Save CSV";
+            this.btnSaveCsvBadChkFile.UseVisualStyleBackColor = true;
+            this.btnSaveCsvBadChkFile.Click += new System.EventHandler(this.btnSaveCsvBadChkFile_Click);
+            // 
+            // btnClearBadchkFile
+            // 
+            this.btnClearBadchkFile.Location = new System.Drawing.Point(4, 3);
+            this.btnClearBadchkFile.Name = "btnClearBadchkFile";
+            this.btnClearBadchkFile.Size = new System.Drawing.Size(62, 21);
+            this.btnClearBadchkFile.TabIndex = 7;
+            this.btnClearBadchkFile.Text = "Clear";
+            this.btnClearBadchkFile.UseVisualStyleBackColor = true;
+            // 
+            // dataBadChkFile
+            // 
+            this.dataBadChkFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataBadChkFile.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataBadChkFile.Location = new System.Drawing.Point(-1, 30);
+            this.dataBadChkFile.Name = "dataBadChkFile";
+            this.dataBadChkFile.Size = new System.Drawing.Size(778, 312);
+            this.dataBadChkFile.TabIndex = 6;
+            this.dataBadChkFile.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataBadChkFile_CellContentDoubleClick);
             // 
             // chkExtra
             // 
@@ -1197,7 +1301,7 @@
             // 
             this.setupSegmentsToolStripMenuItem.Name = "setupSegmentsToolStripMenuItem";
             this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
-            this.setupSegmentsToolStripMenuItem.Text = "Segments";
+            this.setupSegmentsToolStripMenuItem.Text = "Edit XML";
             this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
             // 
             // autodetectToolStripMenuItem
@@ -1229,14 +1333,14 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // label9
+            // label10
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(96, 11);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(255, 13);
-            this.label9.TabIndex = 3;
-            this.label9.Text = "GM V6 Checksum address: (ignore for other binaries)";
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(257, 9);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(185, 13);
+            this.label10.TabIndex = 11;
+            this.label10.Text = "Segments of files with bad checksum:";
             // 
             // FrmPatcher
             // 
@@ -1272,6 +1376,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataFileInfo)).EndInit();
             this.tabCsAddress.ResumeLayout(false);
             this.tabCsAddress.PerformLayout();
+            this.tabBadChkFile.ResumeLayout(false);
+            this.tabBadChkFile.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataBadChkFile)).EndInit();
             this.tabFunction.ResumeLayout(false);
             this.tabCreate.ResumeLayout(false);
             this.tabCreate.PerformLayout();
@@ -1391,5 +1498,13 @@
         private System.Windows.Forms.Button btnSaveCSaddresses;
         private System.Windows.Forms.Button btnClearCSAddresses;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TabPage tabBadChkFile;
+        private System.Windows.Forms.Button btnRefreshBadChkFile;
+        private System.Windows.Forms.Button btnSaveCsvBadChkFile;
+        private System.Windows.Forms.Button btnClearBadchkFile;
+        private System.Windows.Forms.DataGridView dataBadChkFile;
+        private System.Windows.Forms.CheckBox chkAutoRefreshBadChkFile;
+        private System.Windows.Forms.Button btnSearch;
+        private System.Windows.Forms.Label label10;
     }
 }

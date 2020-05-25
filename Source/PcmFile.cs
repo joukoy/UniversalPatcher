@@ -18,12 +18,15 @@ namespace UniversalPatcher
         public SegmentInfo[] segmentinfos;
         public uint fsize;
         public string OS;
+        public uint osStoreAddress;
+        public bool checksumOK;
         public PcmFile(string FName)
         {
             FileName = FName;
             fsize = (uint)new FileInfo(FileName).Length;
             buf = ReadBin(FileName, 0, fsize);
             OS = "";
+            osStoreAddress = uint.MaxValue;
         }
 
         public void GetSegmentAddresses()
@@ -83,6 +86,7 @@ namespace UniversalPatcher
             if (SegmentList == null)
                 SegmentList = new List<SegmentInfo>();
             segmentinfos = new SegmentInfo[Segments.Count];
+            checksumOK = true;
             for (int i = 0; i < Segments.Count; i++)
             {
                 SegmentConfig S = Segments[i];
@@ -165,9 +169,16 @@ namespace UniversalPatcher
                         else
                         {
                             segmentinfos[i].CS1 = ReadInfo(binfile[i].CS1Address);
-                            if (segmentinfos[i].CS1 == segmentinfos[i].CS1Calc && S.CVN == 1)
+                            if (segmentinfos[i].CS1 == segmentinfos[i].CS1Calc)
+                            { 
+                                if (S.CVN == 1)
+                                {
+                                    segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS1, true).ToString();
+                                }
+                            }
+                            else
                             {
-                                segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS1, true).ToString();
+                                checksumOK = false;
                             }
                         }
                         
@@ -199,14 +210,28 @@ namespace UniversalPatcher
                         else
                         {
                             segmentinfos[i].CS2 = ReadInfo(binfile[i].CS2Address);
-                            if (segmentinfos[i].CS2 == segmentinfos[i].CS2Calc && S.CVN == 2)
+                            if (segmentinfos[i].CS2 == segmentinfos[i].CS2Calc)
                             {
-                                segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS2, true).ToString();
+                                if (S.CVN == 2)
+                                {
+                                    segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS2, true).ToString();
+                                }
+                            }
+                            else
+                            {
+                                checksumOK = false;
                             }
                         }
                     }
                 }
                 SegmentList.Add(segmentinfos[i]);
+            }
+            if (!checksumOK)
+            {
+                for (int i = 0; i< Segments.Count; i++)
+                {
+                    BadChkFileList.Add(segmentinfos[i]);
+                }
             }
 
         }
@@ -438,7 +463,7 @@ namespace UniversalPatcher
 
         private uint FindV6OSAddress(byte[] searchfor)
         {
-            uint osStoreAddress = uint.MaxValue;
+            uint osStoreAddr = uint.MaxValue;
             for (uint i=0; i < fsize - 6; i++)
             {
                 bool match = true;
@@ -450,7 +475,7 @@ namespace UniversalPatcher
                 if (match)
                 {
                     Debug.WriteLine("Found OS Store address from: " + i.ToString("X"));
-                    osStoreAddress = i;
+                    osStoreAddr = i;
                     //Check if this ONLY match
                     for (uint k=i+6; k < fsize - 6; k++)
                     {
@@ -469,12 +494,12 @@ namespace UniversalPatcher
                     }
                 }
             }
-            return osStoreAddress;
+            return osStoreAddr;
         }
         private uint FindV6checksumAddress()
         {
             byte[] searchfor = new byte[6];
-            uint osStoreAddress = uint.MaxValue;
+            osStoreAddress = uint.MaxValue;
 
             if (fsize == 256 * 1024)
             {
@@ -483,7 +508,7 @@ namespace UniversalPatcher
             }
             if (fsize == 512 * 1024)
             {
-                searchfor = new byte[] { 0x20, 0x39, 0x0, 0x07, 0xff, 0xf8 };
+                searchfor = new byte[] { 0x26, 0x39, 0x0, 0x07, 0xff, 0xfa };
                 osStoreAddress = FindV6OSAddress(searchfor);
                 if (osStoreAddress == uint.MaxValue)
                 {
@@ -492,7 +517,7 @@ namespace UniversalPatcher
                 }
                 if (osStoreAddress == uint.MaxValue)
                 {
-                    searchfor = new byte[] { 0x26, 0x39, 0x0, 0x07, 0xff, 0xfa };
+                    searchfor = new byte[] { 0x20, 0x39, 0x0, 0x07, 0xff, 0xf8 };
                     osStoreAddress = FindV6OSAddress(searchfor);
                 }
                 if (osStoreAddress == uint.MaxValue)

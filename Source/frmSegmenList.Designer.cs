@@ -43,6 +43,7 @@
             this.txtStatus = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtVersion = new System.Windows.Forms.TextBox();
+            this.btnSaveOnly = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnMoveDown
@@ -190,11 +191,22 @@
             this.txtVersion.TabIndex = 51;
             this.txtVersion.Text = "1";
             // 
+            // btnSaveOnly
+            // 
+            this.btnSaveOnly.Location = new System.Drawing.Point(469, 287);
+            this.btnSaveOnly.Name = "btnSaveOnly";
+            this.btnSaveOnly.Size = new System.Drawing.Size(72, 31);
+            this.btnSaveOnly.TabIndex = 52;
+            this.btnSaveOnly.Text = "Save";
+            this.btnSaveOnly.UseVisualStyleBackColor = true;
+            this.btnSaveOnly.Click += new System.EventHandler(this.btnSaveOnly_Click);
+            // 
             // frmSegmenList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(547, 364);
+            this.Controls.Add(this.btnSaveOnly);
             this.Controls.Add(this.txtVersion);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtStatus);
@@ -234,5 +246,6 @@
         private System.Windows.Forms.TextBox txtStatus;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtVersion;
+        private System.Windows.Forms.Button btnSaveOnly;
     }
 }
