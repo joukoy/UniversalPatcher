@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 using UniversalPatcher;
+using System.Runtime.InteropServices;
 
 public class upatcher
 {
@@ -190,6 +191,8 @@ public class upatcher
     public static List<SegmentInfo> BadChkFileList = new List<SegmentInfo>();
     public static List<SwapSegment> SwapSegments;
     public static string XMLFile;
+
+    public static FrmPatcher frmpatcher;
 
     public struct AddressData
     {
@@ -482,6 +485,47 @@ public class upatcher
             UniversalPatcher.Properties.Settings.Default.Save();
         }
         return folderPath;
+    }
+
+    [DllImport("shell32.dll", SetLastError = true)]
+    public static extern int SHOpenFolderAndSelectItems(IntPtr pidlFolder, uint cidl, [In, MarshalAs(UnmanagedType.LPArray)] IntPtr[] apidl, uint dwFlags);
+
+    [DllImport("shell32.dll", SetLastError = true)]
+    public static extern void SHParseDisplayName([MarshalAs(UnmanagedType.LPWStr)] string name, IntPtr bindingContext, [Out] out IntPtr pidl, uint sfgaoIn, [Out] out uint psfgaoOut);
+
+    public static void OpenFolderAndSelectItem(string folderPath, string file)
+    {
+        IntPtr nativeFolder;
+        uint psfgaoOut;
+        SHParseDisplayName(folderPath, IntPtr.Zero, out nativeFolder, 0, out psfgaoOut);
+
+        if (nativeFolder == IntPtr.Zero)
+        {
+            // Log error, can't find folder
+            return;
+        }
+
+        IntPtr nativeFile;
+        SHParseDisplayName(Path.Combine(folderPath, file), IntPtr.Zero, out nativeFile, 0, out psfgaoOut);
+
+        IntPtr[] fileArray;
+        if (nativeFile == IntPtr.Zero)
+        {
+            // Open the folder without the file selected if we can't find the file
+            fileArray = new IntPtr[0];
+        }
+        else
+        {
+            fileArray = new IntPtr[] { nativeFile };
+        }
+
+        SHOpenFolderAndSelectItems(nativeFolder, (uint)fileArray.Length, fileArray, 0);
+
+        Marshal.FreeCoTaskMem(nativeFolder);
+        if (nativeFile != IntPtr.Zero)
+        {
+            Marshal.FreeCoTaskMem(nativeFile);
+        }
     }
     public static string CheckStockCVN(string PN, string Ver, string SegNr, string cvn, bool AddToList)
     {

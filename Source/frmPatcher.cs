@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using UniversalPatcher.Properties;
 
 namespace UniversalPatcher
 {
@@ -23,6 +24,7 @@ namespace UniversalPatcher
             InitializeComponent();
             txtResult.EnableContextMenu();
             txtDebug.EnableContextMenu();
+            frmpatcher = this;
         }
         private struct DetectGroup
         {
@@ -120,10 +122,11 @@ namespace UniversalPatcher
             listCSAddresses.Columns.Add("OS");
             listCSAddresses.Columns.Add("CS1 Address");
             listCSAddresses.Columns.Add("OS Store Address");
-            //listCSAddresses.Columns.Add("CS2 Address");
-            listCSAddresses.Columns[0].Width = 200;
-            listCSAddresses.Columns[1].Width = 200;
-            listCSAddresses.Columns[2].Width = 200;
+            listCSAddresses.Columns.Add("MAF Address");
+            //listCSAddresses.Columns[0].Width = 100;
+            //listCSAddresses.Columns[1].Width = 100;
+            //listCSAddresses.Columns[2].Width = 100;
+            //listCSAddresses.Columns[2].Width = 100;
         }
 
         private void FrmPatcher_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -218,8 +221,10 @@ namespace UniversalPatcher
                         item.SubItems.Add("");
                     else
                         item.SubItems.Add(PCM.osStoreAddress.ToString("X"));
+                    item.SubItems.Add(PCM.mafAddress);
                     listCSAddresses.Items.Add(item);
-                    tabCsAddress.Text = "CS Address (" + listCSAddresses.Items.Count.ToString() + ")";
+                    listCSAddresses.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+                    tabCsAddress.Text = "Gm-v6 info (" + listCSAddresses.Items.Count.ToString() + ")";
                 }
                 for (int i = 0; i < Segments.Count; i++)
                 {
@@ -2087,7 +2092,7 @@ namespace UniversalPatcher
         private void btnClearCSAddresses_Click(object sender, EventArgs e)
         {
             listCSAddresses.Items.Clear();
-            tabCsAddress.Text = "CS Address";
+            tabCsAddress.Text = "Gm-v6 info";
         }
 
         private void chkAutodetect_CheckedChanged(object sender, EventArgs e)
@@ -2103,7 +2108,9 @@ namespace UniversalPatcher
             try 
             {    
                 string folder = Path.GetDirectoryName(dataFileInfo.Rows[e.RowIndex].Cells[1].Value.ToString());
-                Process.Start(folder);
+                string FileName = Path.GetFileName(dataFileInfo.Rows[e.RowIndex].Cells[1].Value.ToString());
+                OpenFolderAndSelectItem(folder, FileName);
+                //Process.Start(folder);
             }
             catch (Exception ex)
             {
@@ -2159,7 +2166,9 @@ namespace UniversalPatcher
             try
             {
                 string folder = Path.GetDirectoryName(dataFileInfo.Rows[e.RowIndex].Cells[1].Value.ToString());
-                Process.Start(folder);
+                string FileName = Path.GetFileName(dataFileInfo.Rows[e.RowIndex].Cells[1].Value.ToString());
+                OpenFolderAndSelectItem(folder, FileName);
+                //Process.Start(folder);
             }
             catch (Exception ex)
             {
@@ -2170,24 +2179,35 @@ namespace UniversalPatcher
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            FrmAsk frmA = new FrmAsk();
-            frmA.Text = "Search text";
-            frmA.labelAsk.Text = "Search:";
-            if (frmA.ShowDialog() == DialogResult.OK)
+            frmSearchText frmS = new frmSearchText();
+            frmS.Show();
+            frmS.initMe(txtResult);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            frmSearchText frmS = new frmSearchText();
+            frmS.Show();
+            frmS.initMe(txtDebug);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            try
             {
-                string word = frmA.TextBox1.Text;
-                int s_start = txtResult.SelectionStart, startIndex = 0, index;
-                while ((index = txtResult.Text.IndexOf(word, startIndex)) != -1)
+                string FileName = SelectSaveFile("RTF files (*.rtf)|*.rtf|All files (*.*)|*.*");
+                if (FileName.Length > 1)
                 {
-                    txtResult.Select(index, word.Length);
-                    txtResult.SelectionColor = Color.Blue;
-                    startIndex = index + word.Length;
+                    StreamWriter sw = new StreamWriter(FileName);
+                    sw.WriteLine(txtDebug.Rtf);
+                    sw.Close();
                 }
-                txtResult.SelectionStart = 0;
-                txtResult.SelectionLength = txtResult.TextLength;
-                txtResult.SelectionColor = Color.Black;
             }
-            frmA.Dispose();
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message, "Error");
+            }
+
         }
     }
 

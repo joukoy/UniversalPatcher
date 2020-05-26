@@ -19,6 +19,7 @@ namespace UniversalPatcher
         public uint fsize;
         public string OS;
         public uint osStoreAddress;
+        public string mafAddress;
         public bool checksumOK;
         public PcmFile(string FName)
         {
@@ -470,7 +471,10 @@ namespace UniversalPatcher
                 for (uint j=0; j<6; j++)
                 {
                     if (buf[i + j] != searchfor[j])
+                    { 
                         match = false;
+                        break;
+                    }
                 }
                 if (match)
                 {
@@ -483,7 +487,10 @@ namespace UniversalPatcher
                         for (uint j = 0; j < 6; j++)
                         {
                             if (buf[k + j] != searchfor[j])
+                            { 
                                 secondmatch = false;
+                                break;
+                            }
                         }
                         if (secondmatch)
                         {
@@ -545,6 +552,52 @@ namespace UniversalPatcher
             //Not found?
             return uint.MaxValue;
         }
+
+        private string FindMafCodes(byte[] searchfor)
+        {
+            string res = "";
+            uint prevMafAddr = uint.MaxValue;
+            for (uint i = 0; i < fsize - 6; i++)
+            {
+                bool match = true;
+                for (uint j = 0; j < 6; j++)
+                {
+                    if (buf[i + j] != searchfor[j])
+                    { 
+                        match = false;
+                        break;
+                    }
+                }
+                if (match)
+                {
+                    Debug.WriteLine("Found MAF address from: " + i.ToString("X"));
+                    uint mafAddr = BEToUint32(buf, i + 6);
+                    if (mafAddr != prevMafAddr)
+                    { 
+                        if (res.Length > 0)
+                            res += ",";
+                        res += mafAddr.ToString("X");
+                        prevMafAddr = mafAddr;
+                    }
+                }
+            }
+            return res;
+        }
+
+        private void FindV6MAFAddress()
+        {
+            byte[] searchfor = new byte[6];
+            mafAddress = "";
+
+            searchfor = new byte[] { 0x30, 0x3C, 0x50, 0x0, 0x20, 0x7c };
+            mafAddress = FindMafCodes(searchfor);
+            if (mafAddress.Length == 0)
+            {
+                searchfor = new byte[] { 0x36, 0x3C, 0x50, 0x0, 0x24, 0x7c };
+                mafAddress = FindMafCodes(searchfor);
+            }
+
+        }
         private AddressData GMV6(string Line, int SegNr)
         {
             uint BufSize = (uint)buf.Length;
@@ -571,6 +624,8 @@ namespace UniversalPatcher
             if (binfile[SegNr].ExcludeBlocks == null)
                 binfile[SegNr].ExcludeBlocks = new List<Block>();
             binfile[SegNr].ExcludeBlocks.Add(B);
+
+            FindV6MAFAddress();
 
             AD.Address = FindV6checksumAddress();
             if (AD.Address < uint.MaxValue)

@@ -52,6 +52,8 @@
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.btnSaveFileInfo = new System.Windows.Forms.Button();
             this.tabDebug = new System.Windows.Forms.TabPage();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.txtDebug = new System.Windows.Forms.RichTextBox();
             this.chkDebug = new System.Windows.Forms.CheckBox();
             this.tabPatch = new System.Windows.Forms.TabPage();
@@ -85,6 +87,7 @@
             this.btnSaveCSaddresses = new System.Windows.Forms.Button();
             this.listCSAddresses = new System.Windows.Forms.ListView();
             this.tabBadChkFile = new System.Windows.Forms.TabPage();
+            this.label10 = new System.Windows.Forms.Label();
             this.chkAutoRefreshBadChkFile = new System.Windows.Forms.CheckBox();
             this.btnRefreshBadChkFile = new System.Windows.Forms.Button();
             this.btnSaveCsvBadChkFile = new System.Windows.Forms.Button();
@@ -134,7 +137,6 @@
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label10 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -368,7 +370,6 @@
             this.btnSearch.TabIndex = 205;
             this.btnSearch.Text = "Search...";
             this.btnSearch.UseVisualStyleBackColor = true;
-            this.btnSearch.Visible = false;
             this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
             // chkLogtodisplay
@@ -420,6 +421,8 @@
             // 
             // tabDebug
             // 
+            this.tabDebug.Controls.Add(this.button3);
+            this.tabDebug.Controls.Add(this.button2);
             this.tabDebug.Controls.Add(this.txtDebug);
             this.tabDebug.Controls.Add(this.chkDebug);
             this.tabDebug.Location = new System.Drawing.Point(4, 22);
@@ -429,6 +432,27 @@
             this.tabDebug.TabIndex = 1;
             this.tabDebug.Text = "Debug";
             this.tabDebug.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button3.Location = new System.Drawing.Point(695, 1);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.TabIndex = 214;
+            this.button3.Text = "Save log...";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(92, 0);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 213;
+            this.button2.Text = "Search...";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // txtDebug
             // 
@@ -445,7 +469,7 @@
             // chkDebug
             // 
             this.chkDebug.AutoSize = true;
-            this.chkDebug.Location = new System.Drawing.Point(0, 3);
+            this.chkDebug.Location = new System.Drawing.Point(5, 3);
             this.chkDebug.Name = "chkDebug";
             this.chkDebug.Size = new System.Drawing.Size(73, 17);
             this.chkDebug.TabIndex = 211;
@@ -757,7 +781,7 @@
             this.tabCsAddress.Name = "tabCsAddress";
             this.tabCsAddress.Size = new System.Drawing.Size(776, 344);
             this.tabCsAddress.TabIndex = 5;
-            this.tabCsAddress.Text = "CS Address";
+            this.tabCsAddress.Text = "Gm-v6 info";
             this.tabCsAddress.UseVisualStyleBackColor = true;
             // 
             // label9
@@ -816,6 +840,15 @@
             this.tabBadChkFile.TabIndex = 6;
             this.tabBadChkFile.Text = "bad chk file";
             this.tabBadChkFile.UseVisualStyleBackColor = true;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(257, 9);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(185, 13);
+            this.label10.TabIndex = 11;
+            this.label10.Text = "Segments of files with bad checksum:";
             // 
             // chkAutoRefreshBadChkFile
             // 
@@ -1333,15 +1366,6 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(257, 9);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(185, 13);
-            this.label10.TabIndex = 11;
-            this.label10.Text = "Segments of files with bad checksum:";
-            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1506,5 +1530,7 @@
         private System.Windows.Forms.CheckBox chkAutoRefreshBadChkFile;
         private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
     }
 }

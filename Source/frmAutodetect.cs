@@ -164,10 +164,17 @@ namespace UniversalPatcher
         {
             if (listRules.SelectedItems.Count == 0)
                 return;
-            int i = (int)listRules.SelectedItems[0].Tag;
-            DetectRules.RemoveAt(i);
-            listRules.SelectedItems[0].Remove();
-        }
+            try
+            {
+                int i = (int)listRules.SelectedItems[0].Tag;
+                DetectRules.RemoveAt(i);
+                listRules.SelectedItems[0].Remove();
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+            }
 
         private void SelectXML()
         {
