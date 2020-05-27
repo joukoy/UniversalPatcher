@@ -649,11 +649,24 @@ namespace UniversalPatcher
                 searchfor = new byte[] { 0x0C, 0x40, 0x1C, 0x00, 0x64, 0x08, 0xE2, 0x48, 0x04, 0x40, 0x02, 0x00, 0x60, 0x04, 0X30, 0X3C, 0X0C, 0X00 };
                 v6VeTable = FindVEAddr(searchfor, 18);
             }
+            if (v6VeTable.address == uint.MaxValue)
+            {
+                searchfor = new byte[] { 0x0C, 0x46, 0x1C, 0x00, 0x64, 0x0A, 0x20, 0x06, 0xE2, 0x48, 0x04, 0x40, 0x02, 0x00, 0X60, 0X04, 0X30, 0X3C, 0x0C, 0x00 };
+                v6VeTable = FindVEAddr(searchfor, 20);
+            }
         }
 
         private void FindV6OtherTables()
         {
             v6tables = new List<V6Table>();
+            uint calStartAddr = 0;
+            if (fsize == 256 * 1024)
+                calStartAddr = 0x36000;
+            if (fsize == 512 * 1024)
+                calStartAddr = 0x64000;
+            if (fsize == 1024 * 1024)
+                calStartAddr = 0xCF000;
+
             for (uint i=0;i< fsize-10; i++)
             {
                 if (buf[i] == 0x20 && buf[i + 1] == 0x7C && buf[i + 6] == 0x4E && buf[i + 7] == 0xB9)
@@ -663,7 +676,7 @@ namespace UniversalPatcher
                         if (buf[i-j] == 0x74)
                         {
                             uint addr = BEToUint32(buf,i + 2);
-                            if (addr < fsize && addr > 0x60000)
+                            if (addr < fsize && addr > calStartAddr)
                             { 
                                 Debug.WriteLine("Found V6 table address from address: " + (i + 3).ToString("X"));
                                 V6Table v6 = new V6Table();
