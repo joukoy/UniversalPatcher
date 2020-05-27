@@ -7,11 +7,19 @@ using System.Diagnostics;
 using static upatcher;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace UniversalPatcher
 {
     public class PcmFile
     {
+
+        public struct V6Table
+        {
+            public uint address;
+            public ushort rows; 
+        }
+
         public byte[] buf;
         public string FileName;
         public BinFile[] binfile;
@@ -21,6 +29,9 @@ namespace UniversalPatcher
         public uint osStoreAddress;
         public string mafAddress;
         public bool checksumOK;
+        public List<V6Table> v6tables;
+        public V6Table v6VeTable;
+
         public PcmFile(string FName)
         {
             FileName = FName;
@@ -598,6 +609,73 @@ namespace UniversalPatcher
             }
 
         }
+        private V6Table FindVEAddr(byte[] searchfor, ushort length)
+        {
+            V6Table v6;
+            v6.address = uint.MaxValue;
+            v6.rows = ushort.MaxValue;
+            
+            for (uint i = 0; i < fsize - length; i++)
+            {
+                bool match = true;
+                for (uint j = 0; j < length; j++)
+                {
+                    if (buf[i + j] != searchfor[j])
+                    {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match)
+                {
+                    Debug.WriteLine("Found VE search sequence from: " + i.ToString("X"));
+                    if (buf[i + length] == 0x74 && buf[i+length+2] == 0x20 &&  buf[i + length + 3] == 0x7C)
+                    {
+                        Debug.WriteLine("Found V6 VE table from: " + v6.address.ToString("X"));
+                        v6.address = BEToUint32(buf, i + length + 4);
+                        v6.rows = buf[i + length + 1];
+                    }
+                }
+            }
+            return v6;
+        }
+
+        private void FindV6VeTable()
+        {
+            byte[] searchfor = new byte[] { 0x0C, 0x40, 0x1C, 0x00, 0x64, 0x04, 0xE2, 0x48, 0x60, 0x04, 0x30, 0x3C, 0x0E, 0x00 };
+            v6VeTable = FindVEAddr(searchfor, 14);
+            if (v6VeTable.address == uint.MaxValue)
+            {
+                searchfor = new byte[] { 0x0C, 0x40, 0x1C, 0x00, 0x64, 0x08, 0xE2, 0x48, 0x04, 0x40, 0x02, 0x00, 0x60, 0x04, 0X30, 0X3C, 0X0C, 0X00 };
+                v6VeTable = FindVEAddr(searchfor, 18);
+            }
+        }
+
+        private void FindV6OtherTables()
+        {
+            v6tables = new List<V6Table>();
+            for (uint i=0;i< fsize-10; i++)
+            {
+                if (buf[i] == 0x20 && buf[i + 1] == 0x7C && buf[i + 6] == 0x4E && buf[i + 7] == 0xB9)
+                {
+                    for (uint j=0; j < 18 && i - j > 0; j++)
+                    {
+                        if (buf[i-j] == 0x74)
+                        {
+                            uint addr = BEToUint32(buf,i + 2);
+                            if (addr < fsize && addr > 0x60000)
+                            { 
+                                Debug.WriteLine("Found V6 table address from address: " + (i + 3).ToString("X"));
+                                V6Table v6 = new V6Table();
+                                v6.address = addr;
+                                v6.rows = buf[i - j + 1];
+                                v6tables.Add(v6);
+                            }
+                        }
+                    }
+                }
+            }
+        }
         private AddressData GMV6(string Line, int SegNr)
         {
             uint BufSize = (uint)buf.Length;
@@ -626,6 +704,8 @@ namespace UniversalPatcher
             binfile[SegNr].ExcludeBlocks.Add(B);
 
             FindV6MAFAddress();
+            FindV6VeTable();
+            FindV6OtherTables();
 
             AD.Address = FindV6checksumAddress();
             if (AD.Address < uint.MaxValue)

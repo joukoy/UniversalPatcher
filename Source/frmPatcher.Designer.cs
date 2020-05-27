@@ -891,6 +891,7 @@
             this.btnClearBadchkFile.TabIndex = 7;
             this.btnClearBadchkFile.Text = "Clear";
             this.btnClearBadchkFile.UseVisualStyleBackColor = true;
+            this.btnClearBadchkFile.Click += new System.EventHandler(this.btnClearBadchkFile_Click);
             // 
             // dataBadChkFile
             // 

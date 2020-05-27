@@ -123,6 +123,8 @@ namespace UniversalPatcher
             listCSAddresses.Columns.Add("CS1 Address");
             listCSAddresses.Columns.Add("OS Store Address");
             listCSAddresses.Columns.Add("MAF Address");
+            listCSAddresses.Columns.Add("VE table");
+            listCSAddresses.Columns.Add("Other tables");
             //listCSAddresses.Columns[0].Width = 100;
             //listCSAddresses.Columns[1].Width = 100;
             //listCSAddresses.Columns[2].Width = 100;
@@ -222,6 +224,18 @@ namespace UniversalPatcher
                     else
                         item.SubItems.Add(PCM.osStoreAddress.ToString("X"));
                     item.SubItems.Add(PCM.mafAddress);
+                    if (PCM.v6VeTable.address == uint.MaxValue)
+                        item.SubItems.Add("");
+                    else
+                        item.SubItems.Add(PCM.v6VeTable.address.ToString("X") + ":" + PCM.v6VeTable.rows.ToString());
+                    string v6tablelist = "";
+                    for (int i=0; i< PCM.v6tables.Count; i++)
+                    {
+                        if (i > 0)
+                            v6tablelist += ",";
+                        v6tablelist += PCM.v6tables[i].address.ToString("X") + ":" + PCM.v6tables[i].rows.ToString();
+                    }
+                    item.SubItems.Add(v6tablelist);
                     listCSAddresses.Items.Add(item);
                     listCSAddresses.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
                     tabCsAddress.Text = "Gm-v6 info (" + listCSAddresses.Items.Count.ToString() + ")";
@@ -427,9 +441,9 @@ namespace UniversalPatcher
             badchkfilesource.DataSource = BadChkFileList;
             dataBadChkFile.DataSource = badchkfilesource;
             if (BadChkFileList == null || BadChkFileList.Count == 0)
-                tabFinfo.Text = "File info";
+                tabBadChkFile.Text = "bad chk file";
             else
-                tabFinfo.Text = "File info (" + BadChkFileList.Count.ToString() + ")";
+                tabBadChkFile.Text = "bad chk file (" + BadChkFileList.Count.ToString() + ")";
         }
         private bool ApplyXMLPatch()
         {
@@ -2208,6 +2222,12 @@ namespace UniversalPatcher
                 MessageBox.Show("Error: " + ex.Message, "Error");
             }
 
+        }
+
+        private void btnClearBadchkFile_Click(object sender, EventArgs e)
+        {
+            BadChkFileList = new List<SegmentInfo>();
+            RefreshBadChkFile();
         }
     }
 
