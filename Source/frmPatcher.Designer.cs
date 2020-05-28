@@ -93,6 +93,8 @@
             this.btnSaveCsvBadChkFile = new System.Windows.Forms.Button();
             this.btnClearBadchkFile = new System.Windows.Forms.Button();
             this.dataBadChkFile = new System.Windows.Forms.DataGridView();
+            this.tabSearchedTables = new System.Windows.Forms.TabPage();
+            this.dataGridSearchedTables = new System.Windows.Forms.DataGridView();
             this.chkExtra = new System.Windows.Forms.CheckBox();
             this.chkCS2 = new System.Windows.Forms.CheckBox();
             this.chkCS1 = new System.Windows.Forms.CheckBox();
@@ -105,6 +107,7 @@
             this.txtOS = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.tabFileinfo = new System.Windows.Forms.TabPage();
+            this.chkSearchTables = new System.Windows.Forms.CheckBox();
             this.tabApply = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
             this.btnSwapSegments = new System.Windows.Forms.Button();
@@ -135,6 +138,7 @@
             this.setupSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autodetectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editTableSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
@@ -150,6 +154,8 @@
             this.tabCsAddress.SuspendLayout();
             this.tabBadChkFile.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataBadChkFile)).BeginInit();
+            this.tabSearchedTables.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridSearchedTables)).BeginInit();
             this.tabFunction.SuspendLayout();
             this.tabCreate.SuspendLayout();
             this.tabFileinfo.SuspendLayout();
@@ -334,6 +340,7 @@
             this.tabControl1.Controls.Add(this.tabFinfo);
             this.tabControl1.Controls.Add(this.tabCsAddress);
             this.tabControl1.Controls.Add(this.tabBadChkFile);
+            this.tabControl1.Controls.Add(this.tabSearchedTables);
             this.tabControl1.Location = new System.Drawing.Point(0, 191);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -905,6 +912,27 @@
             this.dataBadChkFile.TabIndex = 6;
             this.dataBadChkFile.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataBadChkFile_CellContentDoubleClick);
             // 
+            // tabSearchedTables
+            // 
+            this.tabSearchedTables.Controls.Add(this.dataGridSearchedTables);
+            this.tabSearchedTables.Location = new System.Drawing.Point(4, 22);
+            this.tabSearchedTables.Name = "tabSearchedTables";
+            this.tabSearchedTables.Size = new System.Drawing.Size(776, 344);
+            this.tabSearchedTables.TabIndex = 7;
+            this.tabSearchedTables.Text = "Searched Tables";
+            this.tabSearchedTables.UseVisualStyleBackColor = true;
+            // 
+            // dataGridSearchedTables
+            // 
+            this.dataGridSearchedTables.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridSearchedTables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridSearchedTables.Location = new System.Drawing.Point(1, 21);
+            this.dataGridSearchedTables.Name = "dataGridSearchedTables";
+            this.dataGridSearchedTables.Size = new System.Drawing.Size(775, 322);
+            this.dataGridSearchedTables.TabIndex = 0;
+            // 
             // chkExtra
             // 
             this.chkExtra.AutoSize = true;
@@ -1037,6 +1065,7 @@
             // 
             // tabFileinfo
             // 
+            this.tabFileinfo.Controls.Add(this.chkSearchTables);
             this.tabFileinfo.Controls.Add(this.chkExtra);
             this.tabFileinfo.Controls.Add(this.btnLoadFolder);
             this.tabFileinfo.Controls.Add(this.chkCS2);
@@ -1049,6 +1078,18 @@
             this.tabFileinfo.TabIndex = 2;
             this.tabFileinfo.Text = "File info";
             this.tabFileinfo.UseVisualStyleBackColor = true;
+            // 
+            // chkSearchTables
+            // 
+            this.chkSearchTables.AutoSize = true;
+            this.chkSearchTables.Checked = true;
+            this.chkSearchTables.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSearchTables.Location = new System.Drawing.Point(149, 33);
+            this.chkSearchTables.Name = "chkSearchTables";
+            this.chkSearchTables.Size = new System.Drawing.Size(95, 17);
+            this.chkSearchTables.TabIndex = 177;
+            this.chkSearchTables.Text = "Search Tables";
+            this.chkSearchTables.UseVisualStyleBackColor = true;
             // 
             // tabApply
             // 
@@ -1319,7 +1360,8 @@
             this.loadConfigToolStripMenuItem,
             this.setupSegmentsToolStripMenuItem,
             this.autodetectToolStripMenuItem,
-            this.stockCVNToolStripMenuItem});
+            this.stockCVNToolStripMenuItem,
+            this.editTableSearchToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "Settings";
@@ -1327,30 +1369,37 @@
             // loadConfigToolStripMenuItem
             // 
             this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
-            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.loadConfigToolStripMenuItem.Text = "Load config";
             this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
             // 
             // setupSegmentsToolStripMenuItem
             // 
             this.setupSegmentsToolStripMenuItem.Name = "setupSegmentsToolStripMenuItem";
-            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.setupSegmentsToolStripMenuItem.Text = "Edit XML";
             this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
             // 
             // autodetectToolStripMenuItem
             // 
             this.autodetectToolStripMenuItem.Name = "autodetectToolStripMenuItem";
-            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.autodetectToolStripMenuItem.Text = "Autodetect";
             this.autodetectToolStripMenuItem.Click += new System.EventHandler(this.autodetectToolStripMenuItem_Click);
             // 
             // stockCVNToolStripMenuItem
             // 
             this.stockCVNToolStripMenuItem.Name = "stockCVNToolStripMenuItem";
-            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.stockCVNToolStripMenuItem.Text = "Stock CVN";
             this.stockCVNToolStripMenuItem.Click += new System.EventHandler(this.stockCVNToolStripMenuItem_Click);
+            // 
+            // editTableSearchToolStripMenuItem
+            // 
+            this.editTableSearchToolStripMenuItem.Name = "editTableSearchToolStripMenuItem";
+            this.editTableSearchToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.editTableSearchToolStripMenuItem.Text = "Edit Table Search ";
+            this.editTableSearchToolStripMenuItem.Click += new System.EventHandler(this.editTableSearchToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -1404,6 +1453,8 @@
             this.tabBadChkFile.ResumeLayout(false);
             this.tabBadChkFile.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataBadChkFile)).EndInit();
+            this.tabSearchedTables.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridSearchedTables)).EndInit();
             this.tabFunction.ResumeLayout(false);
             this.tabCreate.ResumeLayout(false);
             this.tabCreate.PerformLayout();
@@ -1533,5 +1584,9 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.ToolStripMenuItem editTableSearchToolStripMenuItem;
+        private System.Windows.Forms.TabPage tabSearchedTables;
+        private System.Windows.Forms.CheckBox chkSearchTables;
+        private System.Windows.Forms.DataGridView dataGridSearchedTables;
     }
 }

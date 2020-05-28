@@ -43,6 +43,7 @@ namespace UniversalPatcher
         private BindingSource CvnSource = new BindingSource();
         private BindingSource Finfosource = new BindingSource();
         private BindingSource badchkfilesource = new BindingSource();
+        private BindingSource searchedTablesBindingSource = new BindingSource();
         private string logFile;
         StreamWriter logwriter;
         private void FrmPatcher_Load(object sender, EventArgs e)
@@ -124,11 +125,20 @@ namespace UniversalPatcher
             listCSAddresses.Columns.Add("OS Store Address");
             listCSAddresses.Columns.Add("MAF Address");
             listCSAddresses.Columns.Add("VE table");
-            listCSAddresses.Columns.Add("Other tables");
+            listCSAddresses.Columns.Add("3d tables");
             //listCSAddresses.Columns[0].Width = 100;
             //listCSAddresses.Columns[1].Width = 100;
             //listCSAddresses.Columns[2].Width = 100;
             //listCSAddresses.Columns[2].Width = 100;
+        }
+
+        public void refreshSearchedTables()
+        {
+            searchedTablesBindingSource.DataSource = null;
+            searchedTablesBindingSource.DataSource = tablesearchresult;
+            dataGridSearchedTables.DataSource = null;
+            dataGridSearchedTables.DataSource = searchedTablesBindingSource;
+            dataGridSearchedTables.AutoResizeColumns();
         }
 
         private void FrmPatcher_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -207,7 +217,162 @@ namespace UniversalPatcher
             }
         }
 
+        private void searchTables(string FileName, PcmFile PCM)
+        {
+            try
+            {
+                if (tablesearchresult == null)
+                    tablesearchresult = new List<TableSearchResult>();
+                string searchXMLFile = Path.Combine(Application.StartupPath, "XML", "SearchTables-" + Path.GetFileName(XMLFile));
+                if (File.Exists(searchXMLFile))
+                {
+                    System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSearchConfig>));
+                    System.IO.StreamReader file = new System.IO.StreamReader(searchXMLFile);
+                    tablesearchconfig = (List<TableSearchConfig>)reader.Deserialize(file);
+                    file.Close();
+                    tableSearchFile = searchXMLFile;
+                    for (int i=0; i< tablesearchconfig.Count; i++)
+                    {
+                        string searchTxt = tablesearchconfig[i].search1.Replace("[", "");
+                        searchTxt = searchTxt.Replace("]", "");
+                        string[] search1Parts = searchTxt.Split(' ');
+                        int length1 = search1Parts.Length;
+                        TableSearchResult tsr;
 
+                        for (uint f=0; f<PCM.fsize - length1; f++)
+                        {
+                            bool match = true;
+                            for (int j=0;j<length1; j++)
+                            {
+                                byte searchval = 0;
+                                if (HexToByte(search1Parts[j], out searchval)) //Ignore non-hex values, like X or XX
+                                {
+                                    //Debug.WriteLine(PCM.buf[f + j].ToString("X") + " vs " + searchval.ToString("X"));
+                                    if (PCM.buf[f+j] != searchval)
+                                    {
+                                        match = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (match)
+                            {
+                                tsr = new TableSearchResult();
+                                tsr.OS = PCM.OS;
+                                searchTxt = tablesearchconfig[i].rowsearch.Replace("[", "");
+                                searchTxt = searchTxt.Replace("]", "");
+                                string[] search2Parts = searchTxt.Split(' ');
+                                int length2 = search2Parts.Length;
+                                int step2;
+                                uint f2;
+                                bool found2 = false;
+                                int distance2 = 0;
+                                f2 = (uint)(f + tablesearchconfig[i].rowSearchDistanceMin);
+                                if (tablesearchconfig[i].rowSearchDistanceMin >= 0)
+                                {
+                                    //Forward from end of searched data
+                                    step2 = 1;
+                                }
+                                else
+                                {
+                                    //Backwards from beginning of searched data
+                                    step2 = -1;
+                                }
+
+                                while (!found2 && distance2 <= tablesearchconfig[i].rowSearchDistanceMax)
+                                {
+                                    match = true;
+                                    for (int j = 0; j < length2; j++)
+                                    {
+                                        byte searchval = 0;
+                                        if (HexToByte(search2Parts[j], out searchval)) //Ignore non-hex values, like X or XX
+                                        {
+                                            //Debug.WriteLine(PCM.buf[f + j].ToString("X") + " vs " + searchval.ToString("X"));
+                                            if (PCM.buf[f2 + j] != searchval)
+                                            {
+                                                match = false;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (match)
+                                    {
+                                        found2 = true;
+                                        if (tablesearchconfig[i].rowLocation < int.MaxValue)
+                                        {                                            
+                                            tsr.rows = PCM.buf[f2 + tablesearchconfig[i].rowLocation].ToString();
+                                        }
+                                        searchTxt = tablesearchconfig[i].tableSearch.Replace("[", "");
+                                        searchTxt = searchTxt.Replace("]", "");
+                                        string[] search3Parts = searchTxt.Split(' ');
+                                        int length3 = search3Parts.Length;
+                                        int step3;
+                                        uint f3;
+                                        bool found3 = false;
+                                        int distance3 = 0;
+                                        f3 = (uint)(f2 + tablesearchconfig[i].tableSearchDistanceMin);
+                                        if (tablesearchconfig[i].tableSearchDistanceMin >= 0)
+                                        {
+                                            //Forward from end of searched data
+                                            step3 = 1;
+                                        }
+                                        else
+                                        {
+                                            //Backwards from beginning of searched data
+                                            step3 = -1;
+                                        }
+
+                                        while (!found3 && distance3 <= tablesearchconfig[i].tableSearchDistanceMax)
+                                        {
+                                            match = true;
+                                            for (int j = 0; j < length2; j++)
+                                            {
+                                                byte searchval = 0;
+                                                if (HexToByte(search3Parts[j], out searchval)) //Ignore non-hex values, like X or XX
+                                                {
+                                                    //Debug.WriteLine(PCM.buf[f + j].ToString("X") + " vs " + searchval.ToString("X"));
+                                                    if (PCM.buf[f3 + j] != searchval)
+                                                    {
+                                                        match = false;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            if (match)
+                                            {
+                                                if (tablesearchconfig[i].tableLocation < int.MaxValue)
+                                                {
+                                                    uint addr = BEToUint32(PCM.buf, (uint)(f3 + tablesearchconfig[i].tableLocation));
+                                                    tsr.address = addr.ToString("X8");
+                                                    for (int s=0; s<Segments.Count;s++)
+                                                    {
+                                                        for (int b=0;b< PCM.binfile[s].SegmentBlocks.Count;b++)
+                                                        {
+                                                            if (addr >= PCM.binfile[s].SegmentBlocks[b].Start && addr <= PCM.binfile[s].SegmentBlocks[b].End)
+                                                                tsr.Segment = PCM.segmentinfos[b].Name;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            f3 = (uint)(f3 + step3);
+                                            distance3++;
+                                        }
+                                    }
+                                    f2 = (uint)(f2 + step2);
+                                    distance2++;
+                                }
+                                tablesearchresult.Add(tsr);
+                            }
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
         private void ShowFileInfo(PcmFile PCM, bool InfoOnly)
         {
             try
@@ -318,7 +483,9 @@ namespace UniversalPatcher
                             Logger("");
                     }
                 }
-                
+
+                refreshSearchedTables();
+
                 if (!InfoOnly)
                 {
                     addCheckBoxes();
@@ -382,6 +549,8 @@ namespace UniversalPatcher
                 if (Segments.Count > 0)
                     Logger("Segments:");
                 PCM.GetInfo();
+                if (chkSearchTables.Checked)
+                    searchTables(FileName, PCM);
                 if (PCM.OS == null || PCM.OS == "")
                     LoggerBold("Warning: No OS segment defined, limiting functions");
                 if (checkAutorefreshCVNlist.Checked)
@@ -2228,6 +2397,20 @@ namespace UniversalPatcher
         {
             BadChkFileList = new List<SegmentInfo>();
             RefreshBadChkFile();
+        }
+
+        private void btnSearchTables_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void editTableSearchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (tablesearchconfig == null)
+                tablesearchconfig = new List<TableSearchConfig>();
+            frmSearchTables frmST = new frmSearchTables();
+            frmST.LoadConfig();
+            frmST.Show(this);
+
         }
     }
 

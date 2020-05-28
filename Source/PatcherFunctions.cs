@@ -190,7 +190,10 @@ public class upatcher
     public static List<SegmentInfo> SegmentList;
     public static List<SegmentInfo> BadChkFileList = new List<SegmentInfo>();
     public static List<SwapSegment> SwapSegments;
+    public static List<TableSearchConfig> tablesearchconfig;
+    public static List<TableSearchResult> tablesearchresult;
     public static string XMLFile;
+    public static string tableSearchFile;
 
     public static FrmPatcher frmpatcher;
 
@@ -592,6 +595,13 @@ public class upatcher
     {
         x = 0;
         if (!UInt16.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
+            return false;
+        return true;
+    }
+    public static bool HexToByte(string Hex, out byte x)
+    {
+        x = 0;
+        if (!byte.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
             return false;
         return true;
     }

@@ -117,5 +117,10 @@ namespace UniversalPatcher
             }
             Logger(" [OK]");
         }
+
+        private void frmEditXML_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

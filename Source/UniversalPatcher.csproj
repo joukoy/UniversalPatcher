@@ -189,6 +189,13 @@
     <Compile Include="Properties\frmSearchText.Designer.cs">
       <DependentUpon>frmSearchText.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmSearchTables.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSearchTables.Designer.cs">
+      <DependentUpon>frmSearchTables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="tableSearch.cs" />
     <Compile Include="win32.cs" />
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
@@ -260,6 +267,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="frmSearchTables.resx">
+      <DependentUpon>frmSearchTables.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
