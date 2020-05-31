@@ -174,7 +174,6 @@ public class upatcher
 
     }
 
-
     public const short CSMethod_None = 0;
     public const short CSMethod_crc16 = 1;
     public const short CSMethod_crc32 = 2;
@@ -190,8 +189,9 @@ public class upatcher
     public static List<SegmentInfo> SegmentList;
     public static List<SegmentInfo> BadChkFileList = new List<SegmentInfo>();
     public static List<SwapSegment> SwapSegments;
-    public static List<TableSearchConfig> tablesearchconfig;
-    public static List<TableSearchResult> tablesearchresult;
+    //public static List<TableSearchConfig> tableSearchConfig;
+    public static List<TableSearchResult> tableSearchResult;
+
     public static string XMLFile;
     public static string tableSearchFile;
 

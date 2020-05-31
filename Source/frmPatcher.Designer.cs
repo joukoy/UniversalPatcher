@@ -94,6 +94,8 @@
             this.btnClearBadchkFile = new System.Windows.Forms.Button();
             this.dataBadChkFile = new System.Windows.Forms.DataGridView();
             this.tabSearchedTables = new System.Windows.Forms.TabPage();
+            this.btnClearSearchedTables = new System.Windows.Forms.Button();
+            this.btnSaveSearchedTables = new System.Windows.Forms.Button();
             this.dataGridSearchedTables = new System.Windows.Forms.DataGridView();
             this.chkExtra = new System.Windows.Forms.CheckBox();
             this.chkCS2 = new System.Windows.Forms.CheckBox();
@@ -914,6 +916,8 @@
             // 
             // tabSearchedTables
             // 
+            this.tabSearchedTables.Controls.Add(this.btnClearSearchedTables);
+            this.tabSearchedTables.Controls.Add(this.btnSaveSearchedTables);
             this.tabSearchedTables.Controls.Add(this.dataGridSearchedTables);
             this.tabSearchedTables.Location = new System.Drawing.Point(4, 22);
             this.tabSearchedTables.Name = "tabSearchedTables";
@@ -922,15 +926,35 @@
             this.tabSearchedTables.Text = "Searched Tables";
             this.tabSearchedTables.UseVisualStyleBackColor = true;
             // 
+            // btnClearSearchedTables
+            // 
+            this.btnClearSearchedTables.Location = new System.Drawing.Point(3, 3);
+            this.btnClearSearchedTables.Name = "btnClearSearchedTables";
+            this.btnClearSearchedTables.Size = new System.Drawing.Size(75, 23);
+            this.btnClearSearchedTables.TabIndex = 2;
+            this.btnClearSearchedTables.Text = "Clear";
+            this.btnClearSearchedTables.UseVisualStyleBackColor = true;
+            this.btnClearSearchedTables.Click += new System.EventHandler(this.btnClearSearchedTables_Click);
+            // 
+            // btnSaveSearchedTables
+            // 
+            this.btnSaveSearchedTables.Location = new System.Drawing.Point(84, 3);
+            this.btnSaveSearchedTables.Name = "btnSaveSearchedTables";
+            this.btnSaveSearchedTables.Size = new System.Drawing.Size(75, 23);
+            this.btnSaveSearchedTables.TabIndex = 1;
+            this.btnSaveSearchedTables.Text = "Save CSV";
+            this.btnSaveSearchedTables.UseVisualStyleBackColor = true;
+            this.btnSaveSearchedTables.Click += new System.EventHandler(this.btnSaveSearchedTables_Click);
+            // 
             // dataGridSearchedTables
             // 
             this.dataGridSearchedTables.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridSearchedTables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridSearchedTables.Location = new System.Drawing.Point(1, 21);
+            this.dataGridSearchedTables.Location = new System.Drawing.Point(1, 35);
             this.dataGridSearchedTables.Name = "dataGridSearchedTables";
-            this.dataGridSearchedTables.Size = new System.Drawing.Size(775, 322);
+            this.dataGridSearchedTables.Size = new System.Drawing.Size(775, 308);
             this.dataGridSearchedTables.TabIndex = 0;
             // 
             // chkExtra
@@ -1588,5 +1612,7 @@
         private System.Windows.Forms.TabPage tabSearchedTables;
         private System.Windows.Forms.CheckBox chkSearchTables;
         private System.Windows.Forms.DataGridView dataGridSearchedTables;
+        private System.Windows.Forms.Button btnSaveSearchedTables;
+        private System.Windows.Forms.Button btnClearSearchedTables;
     }
 }

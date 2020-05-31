@@ -34,6 +34,7 @@
             this.btnLoad = new System.Windows.Forms.Button();
             this.dataGridConfig = new System.Windows.Forms.DataGridView();
             this.labelConfigFile = new System.Windows.Forms.Label();
+            this.btnSaveAs = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabConfig.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridConfig)).BeginInit();
@@ -53,6 +54,7 @@
             // 
             // tabConfig
             // 
+            this.tabConfig.Controls.Add(this.btnSaveAs);
             this.tabConfig.Controls.Add(this.btnSave);
             this.tabConfig.Controls.Add(this.btnLoad);
             this.tabConfig.Controls.Add(this.dataGridConfig);
@@ -105,6 +107,16 @@
             this.labelConfigFile.TabIndex = 1;
             this.labelConfigFile.Text = "-";
             // 
+            // btnSaveAs
+            // 
+            this.btnSaveAs.Location = new System.Drawing.Point(171, 5);
+            this.btnSaveAs.Name = "btnSaveAs";
+            this.btnSaveAs.Size = new System.Drawing.Size(75, 23);
+            this.btnSaveAs.TabIndex = 3;
+            this.btnSaveAs.Text = "Save as...";
+            this.btnSaveAs.UseVisualStyleBackColor = true;
+            this.btnSaveAs.Click += new System.EventHandler(this.btnSaveAs_Click);
+            // 
             // frmSearchTables
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -130,5 +142,6 @@
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnLoad;
         private System.Windows.Forms.Label labelConfigFile;
+        private System.Windows.Forms.Button btnSaveAs;
     }
 }

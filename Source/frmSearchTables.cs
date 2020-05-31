@@ -18,29 +18,25 @@ namespace UniversalPatcher
             InitializeComponent();
         }
         private BindingSource configBindingSource = new BindingSource();
-
+        private static List<TableSearchConfig> tableSearchConfig = new List<TableSearchConfig>();
         public void LoadConfig()
         {
             configBindingSource.DataSource = null;
-            configBindingSource.DataSource = tablesearchconfig;
+            configBindingSource.DataSource = tableSearchConfig;
             dataGridConfig.DataSource = null;
             dataGridConfig.DataSource = configBindingSource;
             dataGridConfig.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             labelConfigFile.Text = Path.GetFileName(tableSearchFile);
         }
 
-
-        private void btnSave_Click(object sender, EventArgs e)
+        private void saveFile(string FileName)
         {
             try
             {
-                string FileName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
-                if (FileName.Length == 0)
-                    return;
                 using (FileStream stream = new FileStream(FileName, FileMode.Create))
                 {
                     System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSearchConfig>));
-                    writer.Serialize(stream, tablesearchconfig);
+                    writer.Serialize(stream, tableSearchConfig);
                     stream.Close();
                 }
             }
@@ -48,18 +44,38 @@ namespace UniversalPatcher
             {
                 MessageBox.Show(ex.Message, "Error");
             }
+
         }
 
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            saveFile(tableSearchFile);
+        }
+
+        public void LoadFile(string FileName)
+        {
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSearchConfig>));
+            System.IO.StreamReader file = new System.IO.StreamReader(FileName);
+            tableSearchConfig = (List<TableSearchConfig>)reader.Deserialize(file);
+            file.Close();
+            LoadConfig();
+        }
         private void btnLoad_Click(object sender, EventArgs e)
         {
             string FileName = SelectFile("Select XML file", "XML files (*.xml)|*.xml|All files (*.*)|*.*");
             if (FileName.Length == 0)
                 return;
-            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSearchConfig>));
-            System.IO.StreamReader file = new System.IO.StreamReader(FileName);
-            tablesearchconfig = (List<TableSearchConfig>)reader.Deserialize(file);
-            file.Close();
-            LoadConfig();
+            LoadFile(FileName);
+        }
+
+        private void btnSaveAs_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+            saveFile(FileName);
+            labelConfigFile.Text = Path.GetFileName(FileName);
+            tableSearchFile = FileName;
         }
     }
 }

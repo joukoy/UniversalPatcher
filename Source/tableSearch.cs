@@ -10,25 +10,23 @@ namespace UniversalPatcher
     {
         public TableSearchConfig()
         {
-            search1 = "";
-            rowsearch = "";
-            tableSearch = "";
-            rowLocation = int.MaxValue;
-            tableLocation = int.MaxValue;
-            rowSearchDistanceMin = int.MaxValue;
-            rowSearchDistanceMax = int.MaxValue;
-            tableSearchDistanceMin = int.MaxValue;
-            tableSearchDistanceMax = int.MaxValue;
+            //ID = "";
+            searchData = "";
+            items = "";
+            name = "";
+            start = "";
+            distanceMin = 0;
+            distanceMax = int.MaxValue;
+            //location = 0;
         }
-        public string search1 { get; set; }
-        public string rowsearch { get; set; }
-        public uint rowSearchDistanceMin { get; set; }
-        public uint rowSearchDistanceMax { get; set; }
-        public int rowLocation { get; set; }
-        public string tableSearch { get; set; }
-        public uint tableSearchDistanceMin { get; set; }
-        public uint tableSearchDistanceMax { get; set; }
-        public int tableLocation { get; set; }
+        //public string ID { get; set; }
+        public string searchData { get; set; }
+        public string items { get; set; }
+        public string name { get; set; }
+        public string start { get; set; }
+        public int distanceMin { get; set; }
+        public int distanceMax { get; set; }
+        //public int location { get; set; }
     }
     public class TableSearchResult
     {
@@ -37,10 +35,22 @@ namespace UniversalPatcher
 
         }
         public string OS { get; set; }
-        public string Segment { get; set; }
-        public string rows { get; set; }
-        public string address { get; set; }
+        public string name { get; set; }
+        public string segment { get; set; }
         public string hitCount { get; set; }
+        public string search { get; set; }
+        public string found { get; set; }
+        public string data { get; set; }
+    }
 
+    public class SearchVariable
+    {
+        public SearchVariable()
+        {
+            name = "";
+            position = 0;
+        }
+        public string name { get; set; }
+        public uint position { get; set; }
     }
 }

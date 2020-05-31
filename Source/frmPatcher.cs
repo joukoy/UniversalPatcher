@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using UniversalPatcher.Properties;
+using System.Drawing.Text;
 
 namespace UniversalPatcher
 {
@@ -44,6 +45,7 @@ namespace UniversalPatcher
         private BindingSource Finfosource = new BindingSource();
         private BindingSource badchkfilesource = new BindingSource();
         private BindingSource searchedTablesBindingSource = new BindingSource();
+        private List<SearchVariable> searchVariables = new List<SearchVariable>(); //"Global" list
         private string logFile;
         StreamWriter logwriter;
         private void FrmPatcher_Load(object sender, EventArgs e)
@@ -135,7 +137,7 @@ namespace UniversalPatcher
         public void refreshSearchedTables()
         {
             searchedTablesBindingSource.DataSource = null;
-            searchedTablesBindingSource.DataSource = tablesearchresult;
+            searchedTablesBindingSource.DataSource = tableSearchResult;
             dataGridSearchedTables.DataSource = null;
             dataGridSearchedTables.DataSource = searchedTablesBindingSource;
             dataGridSearchedTables.AutoResizeColumns();
@@ -217,78 +219,171 @@ namespace UniversalPatcher
             }
         }
 
+        private void parseTableSearchString(string searchString, out List<string> searchStrings)
+        {
+            searchStrings = new List<string>();
+
+            searchString = searchString.Replace("]", "");
+            string[] search1Parts = searchString.Split(' ');
+            byte varSize = 0;
+
+            string newSearchString = "";
+            uint bytecount = 0;
+            for (int v = 0; v < search1Parts.Length; v++)
+            {
+                if (search1Parts[v].Contains(":"))
+                {
+                    //Have variable
+                    string[] varparts = search1Parts[v].Split(':');
+                    if (!HexToByte(varparts[1], out varSize))
+                        throw new Exception("Variable size missing! Example: variable1:4");
+                    //uint position = bytecount;
+                    for (int x = 0; x < varSize; x++)
+                    {
+                        newSearchString += search1Parts[v] + " ";
+                        bytecount++;
+                    }
+                }
+                else if (search1Parts[v].Contains("-")) //Range
+                {
+                    //Create all possible combinations for this range
+                    List<string> tmpList;
+                    string part = search1Parts[v];
+                    string[] parts = part.Split('-');
+                    uint from = uint.Parse(parts[0]);
+                    uint to = uint.Parse(parts[1]);
+                    for (uint r=from; r<to;r++)
+                    {
+                        string tmpString = newSearchString;
+                        for (uint rr=0; rr<r;rr++)
+                        {
+                            tmpString += "X ";
+                        }
+                        //Add rest of searchstring:
+                        for (int s = v + 1; s < search1Parts.Length; s++)
+                        {
+                            tmpString += search1Parts[s] + " ";
+                        }
+                        //Parse all (not last possible) combinations and add to list:
+                        parseTableSearchString(tmpString, out tmpList);
+                        for (int s=0;s<tmpList.Count;s++)
+                        {
+                            searchStrings.Add(tmpList[s]);
+                        }
+                    }
+                    for (int r=0;r<to;r++)
+                    {
+                        //Add last combination to current searchstring
+                        newSearchString += "X ";
+                        bytecount++;
+                    }
+                }
+                else if (search1Parts[v].Contains("/")) //For example: 3/6/9 = 3 or 6 or 9 bytes
+                {
+                    List<string> tmpList;
+                    string[] parts = search1Parts[v].Split('/');
+                    for (int c=0;c<parts.Length;c++)
+                    {
+                        uint count = uint.Parse(parts[c]);
+                        //Generate all combinations
+                        if (c < parts.Length - 1)
+                        {
+                            string tmpString = newSearchString;
+                            for (int cc = 0; cc < count; cc++)
+                            {
+                                tmpString += "X ";
+                            }
+                            //Add rest of searchstring:
+                            for (int s = v + 1; s < search1Parts.Length; s++)
+                            {
+                                tmpString += search1Parts[s] + " ";
+                            }
+                        
+                            //Parse all (not last possible) combinations and add to list:
+                            parseTableSearchString(tmpString, out tmpList);
+                            for (int s = 0; s < tmpList.Count; s++)
+                            {
+                                searchStrings.Add(tmpList[s]);
+                            }
+                        }
+                        else
+                        {
+                            //Add last combination to current searchstring
+                            for (uint cc=0;cc<count;cc++)
+                            {
+                                newSearchString += "X ";
+                                bytecount++;
+                            }
+                            //Add rest of searchstring:
+                            for (int s = v + 1; s < search1Parts.Length; s++)
+                            {
+                                newSearchString += search1Parts[s] + " ";
+                                bytecount++;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //searchPartList.Add(search1Parts[v]);
+                    newSearchString += search1Parts[v] + " ";
+                    bytecount++;
+                }
+            }
+            searchStrings.Add(newSearchString);
+        }
         private void searchTables(string FileName, PcmFile PCM)
         {
+
             try
             {
-                if (tablesearchresult == null)
-                    tablesearchresult = new List<TableSearchResult>();
+                if (tableSearchResult == null)
+                    tableSearchResult = new List<TableSearchResult>();
+                searchVariables = new List<SearchVariable>(); 
                 string searchXMLFile = Path.Combine(Application.StartupPath, "XML", "SearchTables-" + Path.GetFileName(XMLFile));
                 if (File.Exists(searchXMLFile))
                 {
                     System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSearchConfig>));
                     System.IO.StreamReader file = new System.IO.StreamReader(searchXMLFile);
-                    tablesearchconfig = (List<TableSearchConfig>)reader.Deserialize(file);
+                    List<TableSearchConfig> tableSearchConfig = (List<TableSearchConfig>)reader.Deserialize(file);
                     file.Close();
                     tableSearchFile = searchXMLFile;
-                    for (int i=0; i< tablesearchconfig.Count; i++)
+                    TableSearchResult tsr;
+                    for (int i = 0; i < tableSearchConfig.Count; i++)
                     {
-                        string searchTxt = tablesearchconfig[i].search1.Replace("[", "");
+                        string searchTxt = tableSearchConfig[i].searchData.Replace("[", "");
                         searchTxt = searchTxt.Replace("]", "");
-                        string[] search1Parts = searchTxt.Split(' ');
-                        int length1 = search1Parts.Length;
-                        TableSearchResult tsr;
+                        List<string> searchStrings;
+                        parseTableSearchString(searchTxt, out searchStrings);
 
-                        for (uint f=0; f<PCM.fsize - length1; f++)
+                        List<uint> startAddresses = new List<uint>();
+                        //Not number, is variable?
+                        for (int sv = 0; sv < searchVariables.Count; sv++)
                         {
-                            bool match = true;
-                            for (int j=0;j<length1; j++)
+                            if (searchVariables[sv].name == tableSearchConfig[i].start)
                             {
-                                byte searchval = 0;
-                                if (HexToByte(search1Parts[j], out searchval)) //Ignore non-hex values, like X or XX
-                                {
-                                    //Debug.WriteLine(PCM.buf[f + j].ToString("X") + " vs " + searchval.ToString("X"));
-                                    if (PCM.buf[f+j] != searchval)
-                                    {
-                                        match = false;
-                                        break;
-                                    }
-                                }
+                                startAddresses.Add((uint)(searchVariables[sv].position + tableSearchConfig[i].distanceMin));
                             }
-                            if (match)
-                            {
-                                tsr = new TableSearchResult();
-                                tsr.OS = PCM.OS;
-                                searchTxt = tablesearchconfig[i].rowsearch.Replace("[", "");
-                                searchTxt = searchTxt.Replace("]", "");
-                                string[] search2Parts = searchTxt.Split(' ');
-                                int length2 = search2Parts.Length;
-                                int step2;
-                                uint f2;
-                                bool found2 = false;
-                                int distance2 = 0;
-                                f2 = (uint)(f + tablesearchconfig[i].rowSearchDistanceMin);
-                                if (tablesearchconfig[i].rowSearchDistanceMin >= 0)
-                                {
-                                    //Forward from end of searched data
-                                    step2 = 1;
-                                }
-                                else
-                                {
-                                    //Backwards from beginning of searched data
-                                    step2 = -1;
-                                }
+                        }
+                        if (startAddresses.Count == 0)
+                            startAddresses.Add(0);  //No variable, start from beginning of file
 
-                                while (!found2 && distance2 <= tablesearchconfig[i].rowSearchDistanceMax)
+                        for (int sa = 0; sa < startAddresses.Count; sa++)
+                        {
+                            for (int s = 0; s < searchStrings.Count; s++)
+                            {
+                                string[] searchParts = searchStrings[s].Split(' ');
+                                uint distance = (uint)tableSearchConfig[i].distanceMin;
+                                for (uint addr = startAddresses[sa]; addr < PCM.fsize - searchParts.Length && distance < tableSearchConfig[i].distanceMax; addr++)
                                 {
-                                    match = true;
-                                    for (int j = 0; j < length2; j++)
+                                    bool match = true;
+                                    for (int j = 0; j < searchParts.Length; j++)
                                     {
                                         byte searchval = 0;
-                                        if (HexToByte(search2Parts[j], out searchval)) //Ignore non-hex values, like X or XX
+                                        if (HexToByte(searchParts[j], out searchval)) //Ignore non-hex values, like X or XX
                                         {
-                                            //Debug.WriteLine(PCM.buf[f + j].ToString("X") + " vs " + searchval.ToString("X"));
-                                            if (PCM.buf[f2 + j] != searchval)
+                                            //Debug.WriteLine(PCM.buf[addr + j].ToString("X") + " vs " + searchval.ToString("X"));
+                                            if (PCM.buf[addr + j] != searchval)
                                             {
                                                 match = false;
                                                 break;
@@ -297,80 +392,122 @@ namespace UniversalPatcher
                                     }
                                     if (match)
                                     {
-                                        found2 = true;
-                                        if (tablesearchconfig[i].rowLocation < int.MaxValue)
-                                        {                                            
-                                            tsr.rows = PCM.buf[f2 + tablesearchconfig[i].rowLocation].ToString();
-                                        }
-                                        searchTxt = tablesearchconfig[i].tableSearch.Replace("[", "");
-                                        searchTxt = searchTxt.Replace("]", "");
-                                        string[] search3Parts = searchTxt.Split(' ');
-                                        int length3 = search3Parts.Length;
-                                        int step3;
-                                        uint f3;
-                                        bool found3 = false;
-                                        int distance3 = 0;
-                                        f3 = (uint)(f2 + tablesearchconfig[i].tableSearchDistanceMin);
-                                        if (tablesearchconfig[i].tableSearchDistanceMin >= 0)
+                                        tsr = new TableSearchResult();
+                                        tsr.OS = PCM.OS;
+                                        tsr.search = searchStrings[s];
+                                        tsr.name = tableSearchConfig[i].name;
+                                        for (uint t=0; t< searchParts.Length - 1;t++)
                                         {
-                                            //Forward from end of searched data
-                                            step3 = 1;
+                                            if (t > 0)
+                                                tsr.found += " ";
+                                            tsr.found += PCM.buf[addr + t].ToString("X2");
                                         }
-                                        else
+                                        if (tableSearchConfig[i].items.Length > 0)
                                         {
-                                            //Backwards from beginning of searched data
-                                            step3 = -1;
+                                            string[] items = tableSearchConfig[i].items.Split(',');
+                                            for (int p = 0; p < items.Length; p++)
+                                            {
+                                                string[] itemParts = items[p].Split(':');
+                                                if (itemParts.Length == 3)
+                                                {
+                                                    //It's variable
+                                                    SearchVariable SV = new SearchVariable();
+                                                    SV.name = itemParts[0];
+                                                    SV.position = addr + uint.Parse(itemParts[1]);
+                                                    if (itemParts[2].ToLower() == "e")  //AFTER searched data
+                                                        SV.position += (uint)searchParts.Length - 1;
+                                                    searchVariables.Add(SV);
+                                                    if (tsr.data != null && tsr.data.Length > 1)
+                                                        tsr.data += "; ";
+                                                    tsr.data += SV.name + ": " + SV.position.ToString("X8");
+                                                }
+                                                else
+                                                {
+                                                    if (itemParts.Length != 4)
+                                                        throw new Exception("item needs 4 parts: name:location:bytes:type, for example: rows:1:2:int");
+                                                    if (tsr.data != null && tsr.data.Length > 1)
+                                                        tsr.data += "; ";
+                                                    tsr.data += itemParts[0] + ":";   //Item name
+                                                    uint location = (uint)(addr + int.Parse(itemParts[1]));
+                                                    string formatString = "";
+                                                    if (itemParts[3].ToLower() == "hex")
+                                                        formatString = "X";
+                                                    if (itemParts[2] == "1")
+                                                        tsr.data += PCM.buf[location].ToString(formatString);
+                                                    if (itemParts[2] == "2")
+                                                        tsr.data += BEToUint16(PCM.buf, location).ToString(formatString);
+                                                    if (itemParts[2] == "4")
+                                                        tsr.data += BEToUint32(PCM.buf, location).ToString(formatString);
+                                                    if (itemParts[2] == "8")
+                                                        tsr.data += BEToUint16(PCM.buf, location).ToString(formatString);
+                                                }
+                                            }
                                         }
+                                        //Any variables?
+                                        if (searchStrings[s].Contains(":"))
+                                        {
+                                            uint k = 0;
+                                            while (k < searchParts.Length)
+                                            {
+                                                if (searchParts[k].Contains(":"))
+                                                {
+                                                    string[] varParts = searchParts[k].Split(':');
+                                                    if (varParts.Length > 2)
+                                                    {
+                                                        //Its's item, show it.
+                                                        if (tsr.data != null && tsr.data.Length > 1)
+                                                            tsr.data += "; ";
+                                                        tsr.data += varParts[0] + ":";
+                                                        uint location = (uint)(addr + k);
+                                                        string formatString = "";
+                                                        if (varParts[2].ToLower() == "hex")
+                                                            formatString = "X";
+                                                        if (varParts[1] == "1")
+                                                            tsr.data += PCM.buf[location].ToString(formatString);
+                                                        if (varParts[1] == "2")
+                                                            tsr.data += BEToUint16(PCM.buf, location).ToString(formatString);
+                                                        if (varParts[1] == "4")
+                                                            tsr.data += BEToUint32(PCM.buf, location).ToString(formatString);
+                                                        if (varParts[1] == "8")
+                                                            tsr.data += BEToUint16(PCM.buf, location).ToString(formatString);
+                                                    }
+                                                    else
+                                                    {
+                                                        //It's variable
+                                                        SearchVariable SV = new SearchVariable();
+                                                        SV.name = varParts[0];
+                                                        SV.position = addr + k;
+                                                        searchVariables.Add(SV);
+                                                        if (tsr.data != null && tsr.data.Length > 1)
+                                                            tsr.data += "; ";
+                                                        tsr.data += SV.name + ": " + SV.position.ToString("X8");
 
-                                        while (!found3 && distance3 <= tablesearchconfig[i].tableSearchDistanceMax)
-                                        {
-                                            match = true;
-                                            for (int j = 0; j < length2; j++)
-                                            {
-                                                byte searchval = 0;
-                                                if (HexToByte(search3Parts[j], out searchval)) //Ignore non-hex values, like X or XX
-                                                {
-                                                    //Debug.WriteLine(PCM.buf[f + j].ToString("X") + " vs " + searchval.ToString("X"));
-                                                    if (PCM.buf[f3 + j] != searchval)
-                                                    {
-                                                        match = false;
-                                                        break;
                                                     }
+                                                    k += uint.Parse(varParts[1]) - 1;
                                                 }
+                                                k++;
                                             }
-                                            if (match)
-                                            {
-                                                if (tablesearchconfig[i].tableLocation < int.MaxValue)
-                                                {
-                                                    uint addr = BEToUint32(PCM.buf, (uint)(f3 + tablesearchconfig[i].tableLocation));
-                                                    tsr.address = addr.ToString("X8");
-                                                    for (int s=0; s<Segments.Count;s++)
-                                                    {
-                                                        for (int b=0;b< PCM.binfile[s].SegmentBlocks.Count;b++)
-                                                        {
-                                                            if (addr >= PCM.binfile[s].SegmentBlocks[b].Start && addr <= PCM.binfile[s].SegmentBlocks[b].End)
-                                                                tsr.Segment = PCM.segmentinfos[b].Name;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            f3 = (uint)(f3 + step3);
-                                            distance3++;
                                         }
+                                        for (int seg = 0; seg < Segments.Count; seg++)
+                                        {
+                                            for (int b = 0; b < PCM.binfile[seg].SegmentBlocks.Count; b++)
+                                            {
+                                                if (addr >= PCM.binfile[seg].SegmentBlocks[b].Start && addr <= PCM.binfile[seg].SegmentBlocks[b].End)
+                                                    tsr.segment = PCM.segmentinfos[b].Name;
+                                            }
+                                        }
+                                        tableSearchResult.Add(tsr);
                                     }
-                                    f2 = (uint)(f2 + step2);
-                                    distance2++;
+                                    distance++;
                                 }
-                                tablesearchresult.Add(tsr);
                             }
                         }
-
                     }
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                Logger(ex.Message);
             }
         }
         private void ShowFileInfo(PcmFile PCM, bool InfoOnly)
@@ -2405,12 +2542,52 @@ namespace UniversalPatcher
 
         private void editTableSearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (tablesearchconfig == null)
-                tablesearchconfig = new List<TableSearchConfig>();
             frmSearchTables frmST = new frmSearchTables();
-            frmST.LoadConfig();
+            if (tableSearchFile != null && tableSearchFile.Length > 0)
+                frmST.LoadFile(tableSearchFile);
+            else
+                frmST.LoadConfig();
             frmST.Show(this);
 
+        }
+
+        private void btnSaveSearchedTables_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+            Logger("Writing to file: " + Path.GetFileName(FileName), false);
+            using (StreamWriter writetext = new StreamWriter(FileName))
+            {
+                string row = "";
+                for (int i = 0; i < dataGridSearchedTables.Columns.Count; i++)
+                {
+                    if (i > 0)
+                        row += ";";
+                    row += dataGridSearchedTables.Columns[i].HeaderText;
+                }
+                writetext.WriteLine(row);
+                for (int r = 0; r < (dataGridSearchedTables.Rows.Count - 1); r++)
+                {
+                    row = "";
+                    for (int i = 0; i < dataGridSearchedTables.Columns.Count; i++)
+                    {
+                        if (i > 0)
+                            row += ";";
+                        if (dataGridSearchedTables.Rows[r].Cells[i].Value != null)
+                            row += dataGridSearchedTables.Rows[r].Cells[i].Value.ToString();
+                    }
+                    writetext.WriteLine(row);
+                }
+            }
+            Logger(" [OK]");
+
+        }
+
+        private void btnClearSearchedTables_Click(object sender, EventArgs e)
+        {
+            tableSearchResult = new List<TableSearchResult>();
+            refreshSearchedTables();
         }
     }
 
