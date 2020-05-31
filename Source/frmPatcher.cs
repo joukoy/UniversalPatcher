@@ -339,7 +339,8 @@ namespace UniversalPatcher
             {
                 if (tableSearchResult == null)
                     tableSearchResult = new List<TableSearchResult>();
-                searchVariables = new List<SearchVariable>(); 
+                searchVariables = new List<SearchVariable>();
+                List<TableSearchResult> thisFileTables = new List<TableSearchResult>();
                 string searchXMLFile = Path.Combine(Application.StartupPath, "XML", "SearchTables-" + Path.GetFileName(XMLFile));
                 if (File.Exists(searchXMLFile))
                 {
@@ -496,12 +497,28 @@ namespace UniversalPatcher
                                                     tsr.segment = PCM.segmentinfos[b].Name;
                                             }
                                         }
-                                        tableSearchResult.Add(tsr);
+                                        //tableSearchResult.Add(tsr);
+                                        bool duplicate = false;
+                                        for (int ts = 0; ts < thisFileTables.Count; ts++)
+                                        {
+                                            if (thisFileTables[ts].data == tsr.data && thisFileTables[ts].name == tsr.name)
+                                            {
+                                                thisFileTables[ts].hitCount++;
+                                                duplicate = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!duplicate)
+                                            thisFileTables.Add(tsr);
                                     }
                                     distance++;
                                 }
                             }
                         }
+                    }
+                    for (int t=0;t< thisFileTables.Count;t++)
+                    {
+                            tableSearchResult.Add(thisFileTables[t]);
                     }
                 }
             }

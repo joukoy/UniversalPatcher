@@ -32,12 +32,12 @@ namespace UniversalPatcher
     {
         public TableSearchResult()
         {
-
+            hitCount = 1;
         }
         public string OS { get; set; }
         public string name { get; set; }
         public string segment { get; set; }
-        public string hitCount { get; set; }
+        public int hitCount { get; set; }
         public string search { get; set; }
         public string found { get; set; }
         public string data { get; set; }
