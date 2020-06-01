@@ -956,6 +956,7 @@
             this.dataGridSearchedTables.Name = "dataGridSearchedTables";
             this.dataGridSearchedTables.Size = new System.Drawing.Size(775, 308);
             this.dataGridSearchedTables.TabIndex = 0;
+            this.dataGridSearchedTables.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridSearchedTables_CellContentDoubleClick);
             // 
             // chkExtra
             // 

@@ -35,6 +35,7 @@ namespace UniversalPatcher
             hitCount = 1;
         }
         public string OS { get; set; }
+        public string file { get; set; }
         public string name { get; set; }
         public string segment { get; set; }
         public int hitCount { get; set; }

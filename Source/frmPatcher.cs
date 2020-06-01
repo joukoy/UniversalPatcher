@@ -238,9 +238,10 @@ namespace UniversalPatcher
                     if (!HexToByte(varparts[1], out varSize))
                         throw new Exception("Variable size missing! Example: variable1:4");
                     //uint position = bytecount;
-                    for (int x = 0; x < varSize; x++)
+                    newSearchString += search1Parts[v] + " ";
+                    for (int x = 0; x < varSize - 1; x++)
                     {
-                        newSearchString += search1Parts[v] + " ";
+                        newSearchString += "* ";
                         bytecount++;
                     }
                 }
@@ -257,7 +258,7 @@ namespace UniversalPatcher
                         string tmpString = newSearchString;
                         for (uint rr=0; rr<r;rr++)
                         {
-                            tmpString += "X ";
+                            tmpString += "* ";
                         }
                         //Add rest of searchstring:
                         for (int s = v + 1; s < search1Parts.Length; s++)
@@ -274,7 +275,7 @@ namespace UniversalPatcher
                     for (int r=0;r<to;r++)
                     {
                         //Add last combination to current searchstring
-                        newSearchString += "X ";
+                        newSearchString += "* ";
                         bytecount++;
                     }
                 }
@@ -291,7 +292,7 @@ namespace UniversalPatcher
                             string tmpString = newSearchString;
                             for (int cc = 0; cc < count; cc++)
                             {
-                                tmpString += "X ";
+                                tmpString += "* ";
                             }
                             //Add rest of searchstring:
                             for (int s = v + 1; s < search1Parts.Length; s++)
@@ -311,7 +312,7 @@ namespace UniversalPatcher
                             //Add last combination to current searchstring
                             for (uint cc=0;cc<count;cc++)
                             {
-                                newSearchString += "X ";
+                                newSearchString += "* ";
                                 bytecount++;
                             }
                             //Add rest of searchstring:
@@ -326,11 +327,14 @@ namespace UniversalPatcher
                 else
                 {
                     //searchPartList.Add(search1Parts[v]);
-                    newSearchString += search1Parts[v] + " ";
-                    bytecount++;
+                    if (search1Parts[v] != " ")
+                    { 
+                        newSearchString += search1Parts[v] + " ";
+                        bytecount++;
+                    }
                 }
             }
-            searchStrings.Add(newSearchString);
+            searchStrings.Add(newSearchString.Trim());
         }
         private void searchTables(string FileName, PcmFile PCM)
         {
@@ -395,9 +399,11 @@ namespace UniversalPatcher
                                     {
                                         tsr = new TableSearchResult();
                                         tsr.OS = PCM.OS;
+                                        tsr.file = PCM.FileName;
                                         tsr.search = searchStrings[s];
                                         tsr.name = tableSearchConfig[i].name;
-                                        for (uint t=0; t< searchParts.Length - 1;t++)
+                                        tsr.found = addr.ToString("X8") + ":";
+                                        for (uint t=0; t< searchParts.Length ;t++)
                                         {
                                             if (t > 0)
                                                 tsr.found += " ";
@@ -408,6 +414,7 @@ namespace UniversalPatcher
                                             string[] items = tableSearchConfig[i].items.Split(',');
                                             for (int p = 0; p < items.Length; p++)
                                             {
+                                                uint foundAddr = uint.MaxValue;
                                                 string[] itemParts = items[p].Split(':');
                                                 if (itemParts.Length == 3)
                                                 {
@@ -417,6 +424,7 @@ namespace UniversalPatcher
                                                     SV.position = addr + uint.Parse(itemParts[1]);
                                                     if (itemParts[2].ToLower() == "e")  //AFTER searched data
                                                         SV.position += (uint)searchParts.Length - 1;
+                                                    foundAddr = SV.position;
                                                     searchVariables.Add(SV);
                                                     if (tsr.data != null && tsr.data.Length > 1)
                                                         tsr.data += "; ";
@@ -438,13 +446,23 @@ namespace UniversalPatcher
                                                     if (itemParts[2] == "2")
                                                         tsr.data += BEToUint16(PCM.buf, location).ToString(formatString);
                                                     if (itemParts[2] == "4")
+                                                    {
+                                                        foundAddr = BEToUint32(PCM.buf, location);
                                                         tsr.data += BEToUint32(PCM.buf, location).ToString(formatString);
+                                                    }
                                                     if (itemParts[2] == "8")
                                                         tsr.data += BEToUint16(PCM.buf, location).ToString(formatString);
                                                 }
+                                                for (int seg = 0; seg < Segments.Count; seg++)
+                                                {
+                                                    for (int b = 0; b < PCM.binfile[seg].SegmentBlocks.Count; b++)
+                                                    {
+                                                        if (foundAddr >= PCM.binfile[seg].SegmentBlocks[b].Start && foundAddr <= PCM.binfile[seg].SegmentBlocks[b].End)
+                                                            tsr.segment = PCM.segmentinfos[seg].Name;
+                                                    }
+                                                }
                                             }
                                         }
-                                        //Any variables?
                                         if (searchStrings[s].Contains(":"))
                                         {
                                             uint k = 0;
@@ -453,6 +471,7 @@ namespace UniversalPatcher
                                                 if (searchParts[k].Contains(":"))
                                                 {
                                                     string[] varParts = searchParts[k].Split(':');
+                                                    uint foundAddr = uint.MaxValue;
                                                     if (varParts.Length > 2)
                                                     {
                                                         //Its's item, show it.
@@ -468,7 +487,10 @@ namespace UniversalPatcher
                                                         if (varParts[1] == "2")
                                                             tsr.data += BEToUint16(PCM.buf, location).ToString(formatString);
                                                         if (varParts[1] == "4")
-                                                            tsr.data += BEToUint32(PCM.buf, location).ToString(formatString);
+                                                        {
+                                                            foundAddr = BEToUint32(PCM.buf, location);
+                                                            tsr.data += foundAddr.ToString(formatString);
+                                                        }
                                                         if (varParts[1] == "8")
                                                             tsr.data += BEToUint16(PCM.buf, location).ToString(formatString);
                                                     }
@@ -477,39 +499,42 @@ namespace UniversalPatcher
                                                         //It's variable
                                                         SearchVariable SV = new SearchVariable();
                                                         SV.name = varParts[0];
-                                                        SV.position = addr + k;
+                                                        SV.position = BEToUint32(PCM.buf,addr + k);
+                                                        foundAddr = SV.position;
                                                         searchVariables.Add(SV);
                                                         if (tsr.data != null && tsr.data.Length > 1)
                                                             tsr.data += "; ";
                                                         tsr.data += SV.name + ": " + SV.position.ToString("X8");
 
                                                     }
+                                                    for (int seg = 0; seg < Segments.Count; seg++)
+                                                    {
+                                                        for (int b = 0; b < PCM.binfile[seg].SegmentBlocks.Count; b++)
+                                                        {
+                                                            if (foundAddr >= PCM.binfile[seg].SegmentBlocks[b].Start && foundAddr <= PCM.binfile[seg].SegmentBlocks[b].End)
+                                                                tsr.segment = PCM.segmentinfos[seg].Name;
+                                                        }
+                                                    }
                                                     k += uint.Parse(varParts[1]) - 1;
                                                 }
                                                 k++;
                                             }
                                         }
-                                        for (int seg = 0; seg < Segments.Count; seg++)
+                                        //if (tsr.segment != null && tsr.segment != "")  //If address is outside of any segment, ignore
                                         {
-                                            for (int b = 0; b < PCM.binfile[seg].SegmentBlocks.Count; b++)
+                                            bool duplicate = false;
+                                            for (int ts = 0; ts < thisFileTables.Count; ts++)
                                             {
-                                                if (addr >= PCM.binfile[seg].SegmentBlocks[b].Start && addr <= PCM.binfile[seg].SegmentBlocks[b].End)
-                                                    tsr.segment = PCM.segmentinfos[b].Name;
+                                                if (thisFileTables[ts].data == tsr.data && thisFileTables[ts].name == tsr.name)
+                                                {
+                                                    thisFileTables[ts].hitCount++;
+                                                    duplicate = true;
+                                                    break;
+                                                }
                                             }
+                                            if (!duplicate)
+                                                thisFileTables.Add(tsr);
                                         }
-                                        //tableSearchResult.Add(tsr);
-                                        bool duplicate = false;
-                                        for (int ts = 0; ts < thisFileTables.Count; ts++)
-                                        {
-                                            if (thisFileTables[ts].data == tsr.data && thisFileTables[ts].name == tsr.name)
-                                            {
-                                                thisFileTables[ts].hitCount++;
-                                                duplicate = true;
-                                                break;
-                                            }
-                                        }
-                                        if (!duplicate)
-                                            thisFileTables.Add(tsr);
                                     }
                                     distance++;
                                 }
@@ -2606,6 +2631,23 @@ namespace UniversalPatcher
             tableSearchResult = new List<TableSearchResult>();
             refreshSearchedTables();
         }
-    }
 
+        private void dataGridSearchedTables_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                string folder = Path.GetDirectoryName(dataGridSearchedTables.Rows[e.RowIndex].Cells[1].Value.ToString());
+                string FileName = Path.GetFileName(dataGridSearchedTables.Rows[e.RowIndex].Cells[1].Value.ToString());
+                OpenFolderAndSelectItem(folder, FileName);
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+
+        }
+
+    }
 }
+
+

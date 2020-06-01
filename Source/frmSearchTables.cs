@@ -58,6 +58,7 @@ namespace UniversalPatcher
             System.IO.StreamReader file = new System.IO.StreamReader(FileName);
             tableSearchConfig = (List<TableSearchConfig>)reader.Deserialize(file);
             file.Close();
+            tableSearchFile = FileName;
             LoadConfig();
         }
         private void btnLoad_Click(object sender, EventArgs e)
