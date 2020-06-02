@@ -25,6 +25,7 @@ namespace UniversalPatcher
             configBindingSource.DataSource = tableSearchConfig;
             dataGridConfig.DataSource = null;
             dataGridConfig.DataSource = configBindingSource;
+            Application.DoEvents();
             dataGridConfig.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             labelConfigFile.Text = Path.GetFileName(tableSearchFile);
         }
