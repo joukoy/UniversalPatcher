@@ -46,7 +46,9 @@ namespace UniversalPatcher
         private BindingSource Finfosource = new BindingSource();
         private BindingSource badchkfilesource = new BindingSource();
         private BindingSource searchedTablesBindingSource = new BindingSource();
+        private BindingSource pidListBindingSource = new BindingSource();
         private List<SearchVariable> searchVariables = new List<SearchVariable>(); //"Global" list
+        private List<PidSearch.PID> pidList = new List<PidSearch.PID>();
         private string logFile;
         StreamWriter logwriter;
         private void FrmPatcher_Load(object sender, EventArgs e)
@@ -142,6 +144,22 @@ namespace UniversalPatcher
             dataGridSearchedTables.DataSource = null;
             dataGridSearchedTables.DataSource = searchedTablesBindingSource;
             dataGridSearchedTables.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+            if (tableSearchResult.Count == 0)
+                tabSearchedTables.Text = "Searched Tables";
+            else
+                tabSearchedTables.Text = "Searched Tables (" + tableSearchResult.Count.ToString() + ")";
+        }
+        public void refreshPidList()
+        {
+            pidListBindingSource.DataSource = null;
+            pidListBindingSource.DataSource = pidList;
+            dataGridPIDlist.DataSource = null;
+            dataGridPIDlist.DataSource = pidListBindingSource;
+            dataGridPIDlist.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+            if (pidList.Count == 0)
+                tabPIDList.Text = "PIDs";
+            else
+                tabPIDList.Text = "PIDs (" + pidList.Count.ToString() + ")";
         }
 
         private void FrmPatcher_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -2727,6 +2745,59 @@ namespace UniversalPatcher
 
         }
 
+        private void btnGetPidList_Click(object sender, EventArgs e)
+        {
+            PidSearch pidSearch = new PidSearch(basefile);
+            if (pidSearch.pidList == null)
+            {
+                Logger ("PIDs not found");
+                return;
+            }
+            for (int i = 0; i < pidSearch.pidList.Count; i++)
+            {
+                pidList.Add(pidSearch.pidList[i]);
+            }
+            refreshPidList();
+        }
+
+        private void btnClearPidList_Click(object sender, EventArgs e)
+        {
+            pidList = new List<PidSearch.PID>();
+            refreshPidList();
+        }
+
+        private void btnSavePidList_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+            Logger("Writing to file: " + Path.GetFileName(FileName), false);
+            using (StreamWriter writetext = new StreamWriter(FileName))
+            {
+                string row = "";
+                for (int i = 0; i < dataGridPIDlist.Columns.Count; i++)
+                {
+                    if (i > 0)
+                        row += ";";
+                    row += dataGridPIDlist.Columns[i].HeaderText;
+                }
+                writetext.WriteLine(row);
+                for (int r = 0; r < (dataGridPIDlist.Rows.Count - 1); r++)
+                {
+                    row = "";
+                    for (int i = 0; i < dataGridPIDlist.Columns.Count; i++)
+                    {
+                        if (i > 0)
+                            row += ";";
+                        if (dataGridPIDlist.Rows[r].Cells[i].Value != null)
+                            row += dataGridPIDlist.Rows[r].Cells[i].Value.ToString();
+                    }
+                    writetext.WriteLine(row);
+                }
+            }
+            Logger(" [OK]");
+
+        }
     }
 }
 

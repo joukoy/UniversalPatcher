@@ -195,6 +195,7 @@
     <Compile Include="frmSearchTables.Designer.cs">
       <DependentUpon>frmSearchTables.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\pidSearch.cs" />
     <Compile Include="tableSearch.cs" />
     <Compile Include="win32.cs" />
     <EmbeddedResource Include="AboutBox1.resx">

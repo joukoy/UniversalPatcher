@@ -97,6 +97,10 @@
             this.btnClearSearchedTables = new System.Windows.Forms.Button();
             this.btnSaveSearchedTables = new System.Windows.Forms.Button();
             this.dataGridSearchedTables = new System.Windows.Forms.DataGridView();
+            this.tabPIDList = new System.Windows.Forms.TabPage();
+            this.btnClearPidList = new System.Windows.Forms.Button();
+            this.btnSavePidList = new System.Windows.Forms.Button();
+            this.dataGridPIDlist = new System.Windows.Forms.DataGridView();
             this.chkExtra = new System.Windows.Forms.CheckBox();
             this.chkCS2 = new System.Windows.Forms.CheckBox();
             this.chkCS1 = new System.Windows.Forms.CheckBox();
@@ -109,6 +113,7 @@
             this.txtOS = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.tabFileinfo = new System.Windows.Forms.TabPage();
+            this.btnGetPidList = new System.Windows.Forms.Button();
             this.chkSearchTables = new System.Windows.Forms.CheckBox();
             this.tabApply = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
@@ -158,6 +163,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataBadChkFile)).BeginInit();
             this.tabSearchedTables.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridSearchedTables)).BeginInit();
+            this.tabPIDList.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridPIDlist)).BeginInit();
             this.tabFunction.SuspendLayout();
             this.tabCreate.SuspendLayout();
             this.tabFileinfo.SuspendLayout();
@@ -343,6 +350,7 @@
             this.tabControl1.Controls.Add(this.tabCsAddress);
             this.tabControl1.Controls.Add(this.tabBadChkFile);
             this.tabControl1.Controls.Add(this.tabSearchedTables);
+            this.tabControl1.Controls.Add(this.tabPIDList);
             this.tabControl1.Location = new System.Drawing.Point(0, 191);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -958,6 +966,49 @@
             this.dataGridSearchedTables.TabIndex = 0;
             this.dataGridSearchedTables.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridSearchedTables_CellContentDoubleClick);
             // 
+            // tabPIDList
+            // 
+            this.tabPIDList.Controls.Add(this.btnClearPidList);
+            this.tabPIDList.Controls.Add(this.btnSavePidList);
+            this.tabPIDList.Controls.Add(this.dataGridPIDlist);
+            this.tabPIDList.Location = new System.Drawing.Point(4, 22);
+            this.tabPIDList.Name = "tabPIDList";
+            this.tabPIDList.Size = new System.Drawing.Size(776, 344);
+            this.tabPIDList.TabIndex = 8;
+            this.tabPIDList.Text = "PIDs";
+            this.tabPIDList.UseVisualStyleBackColor = true;
+            // 
+            // btnClearPidList
+            // 
+            this.btnClearPidList.Location = new System.Drawing.Point(8, 4);
+            this.btnClearPidList.Name = "btnClearPidList";
+            this.btnClearPidList.Size = new System.Drawing.Size(75, 23);
+            this.btnClearPidList.TabIndex = 4;
+            this.btnClearPidList.Text = "Clear";
+            this.btnClearPidList.UseVisualStyleBackColor = true;
+            this.btnClearPidList.Click += new System.EventHandler(this.btnClearPidList_Click);
+            // 
+            // btnSavePidList
+            // 
+            this.btnSavePidList.Location = new System.Drawing.Point(89, 4);
+            this.btnSavePidList.Name = "btnSavePidList";
+            this.btnSavePidList.Size = new System.Drawing.Size(75, 23);
+            this.btnSavePidList.TabIndex = 3;
+            this.btnSavePidList.Text = "Save CSV";
+            this.btnSavePidList.UseVisualStyleBackColor = true;
+            this.btnSavePidList.Click += new System.EventHandler(this.btnSavePidList_Click);
+            // 
+            // dataGridPIDlist
+            // 
+            this.dataGridPIDlist.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridPIDlist.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridPIDlist.Location = new System.Drawing.Point(1, 33);
+            this.dataGridPIDlist.Name = "dataGridPIDlist";
+            this.dataGridPIDlist.Size = new System.Drawing.Size(774, 310);
+            this.dataGridPIDlist.TabIndex = 0;
+            // 
             // chkExtra
             // 
             this.chkExtra.AutoSize = true;
@@ -1090,6 +1141,7 @@
             // 
             // tabFileinfo
             // 
+            this.tabFileinfo.Controls.Add(this.btnGetPidList);
             this.tabFileinfo.Controls.Add(this.chkSearchTables);
             this.tabFileinfo.Controls.Add(this.chkExtra);
             this.tabFileinfo.Controls.Add(this.btnLoadFolder);
@@ -1103,6 +1155,16 @@
             this.tabFileinfo.TabIndex = 2;
             this.tabFileinfo.Text = "File info";
             this.tabFileinfo.UseVisualStyleBackColor = true;
+            // 
+            // btnGetPidList
+            // 
+            this.btnGetPidList.Location = new System.Drawing.Point(7, 37);
+            this.btnGetPidList.Name = "btnGetPidList";
+            this.btnGetPidList.Size = new System.Drawing.Size(122, 27);
+            this.btnGetPidList.TabIndex = 178;
+            this.btnGetPidList.Text = "Get PID list";
+            this.btnGetPidList.UseVisualStyleBackColor = true;
+            this.btnGetPidList.Click += new System.EventHandler(this.btnGetPidList_Click);
             // 
             // chkSearchTables
             // 
@@ -1480,6 +1542,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataBadChkFile)).EndInit();
             this.tabSearchedTables.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridSearchedTables)).EndInit();
+            this.tabPIDList.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridPIDlist)).EndInit();
             this.tabFunction.ResumeLayout(false);
             this.tabCreate.ResumeLayout(false);
             this.tabCreate.PerformLayout();
@@ -1615,5 +1679,10 @@
         private System.Windows.Forms.DataGridView dataGridSearchedTables;
         private System.Windows.Forms.Button btnSaveSearchedTables;
         private System.Windows.Forms.Button btnClearSearchedTables;
+        private System.Windows.Forms.Button btnGetPidList;
+        private System.Windows.Forms.TabPage tabPIDList;
+        private System.Windows.Forms.Button btnClearPidList;
+        private System.Windows.Forms.Button btnSavePidList;
+        private System.Windows.Forms.DataGridView dataGridPIDlist;
     }
 }
