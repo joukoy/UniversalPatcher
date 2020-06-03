@@ -61,12 +61,12 @@ namespace UniversalPatcher.Properties
             pid.Subroutine = pid.SubroutineInt.ToString("X8");
             uint ramStoreAddr = uint.MaxValue;
             if (pid.Bytes == 1)
-                ramStoreAddr = searchBytes("10 38", pid.SubroutineInt, PCM.fsize, 0x4E75) + 2;
+                ramStoreAddr = searchBytes("10 38", pid.SubroutineInt, PCM.fsize, 0x4E75) ;
             else if (pid.Bytes == 2)
-                ramStoreAddr = searchBytes("30 38", pid.SubroutineInt, PCM.fsize, 0x4E75) + 2;
+                ramStoreAddr = searchBytes("30 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
             if (ramStoreAddr < uint.MaxValue)
             {
-                pid.RamAddressInt = BEToUint16(PCM.buf, ramStoreAddr);
+                pid.RamAddressInt = BEToUint16(PCM.buf, ramStoreAddr + 2);
                 pid.RamAddress = pid.RamAddressInt.ToString("X4");
             }
             return pid;
