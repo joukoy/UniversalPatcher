@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using UniversalPatcher.Properties;
 using System.Drawing.Text;
+using System.ComponentModel.Design;
 
 namespace UniversalPatcher
 {
@@ -219,16 +220,19 @@ namespace UniversalPatcher
             }
         }
 
-        private void parseTableSearchString(string searchString, out List<string> searchStrings)
+        private int parseTableSearchString(string searchString, int start, out List<string> searchStrings)
         {
-            searchStrings = new List<string>();
-
-            searchString = searchString.Replace("]", "");
+            int commonParts = 0;    //How many parts from beginning of searchstring, before first range etc 
             string[] search1Parts = searchString.Split(' ');
-
+            searchStrings = new List<string>();
             string newSearchString = "";
             uint bytecount = 0;
-            for (int v = 0; v < search1Parts.Length; v++)
+            for (int v = 0; v < start; v++)
+            {
+                //add already handled part to string
+                newSearchString += search1Parts[v] + " ";
+            }
+            for (int v = start; v < search1Parts.Length; v++)
             {
                 if (search1Parts[v].StartsWith("$"))
                 {
@@ -265,12 +269,12 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        byte varSize = 0;
-                        if (!HexToByte(varParts[1], out varSize))
+                        byte itemSize = 0;
+                        if (!HexToByte(varParts[1], out itemSize))
                             throw new Exception("Item size missing! Example: rows:4:int");
                         //uint position = bytecount;
                         newSearchString += search1Parts[v] + " ";
-                        for (int x = 1; x < varSize; x++)
+                        for (int x = 1; x < itemSize; x++)
                         {
                             newSearchString += "* ";
                             bytecount++;
@@ -280,15 +284,17 @@ namespace UniversalPatcher
                 else if (search1Parts[v].Contains("-")) //Range
                 {
                     //Create all possible combinations for this range
+                    if (commonParts == 0)
+                        commonParts = v;
                     List<string> tmpList;
                     string part = search1Parts[v];
                     string[] parts = part.Split('-');
-                    uint from = uint.Parse(parts[0]);
-                    uint to = uint.Parse(parts[1]);
-                    for (uint r = from; r < to; r++)
+                    int from = int.Parse(parts[0]);
+                    int to = int.Parse(parts[1]);
+                    for (int r = from; r < to; r++)
                     {
                         string tmpString = newSearchString;
-                        for (uint rr = 0; rr < r; rr++)
+                        for (int rr = 0; rr < r; rr++)
                         {
                             tmpString += "* ";
                         }
@@ -298,7 +304,7 @@ namespace UniversalPatcher
                             tmpString += search1Parts[s] + " ";
                         }
                         //Parse all (not last possible) combinations and add to list:
-                        parseTableSearchString(tmpString, out tmpList);
+                        parseTableSearchString(tmpString, v + r, out tmpList);
                         for (int s = 0; s < tmpList.Count; s++)
                         {
                             searchStrings.Add(tmpList[s]);
@@ -313,11 +319,13 @@ namespace UniversalPatcher
                 }
                 else if (search1Parts[v].Contains("/")) //For example: 3/6/9 = 3 or 6 or 9 bytes
                 {
+                    if (commonParts == 0)
+                        commonParts = v;
                     List<string> tmpList;
                     string[] parts = search1Parts[v].Split('/');
                     for (int c = 0; c < parts.Length; c++)
                     {
-                        uint count = uint.Parse(parts[c]);
+                        int count = int.Parse(parts[c]);
                         //Generate all combinations
                         if (c < parts.Length - 1)
                         {
@@ -327,13 +335,13 @@ namespace UniversalPatcher
                                 tmpString += "* ";
                             }
                             //Add rest of searchstring:
-                            for (int s = v + 1; s < search1Parts.Length; s++)
+                            for (int s = v + count; s < search1Parts.Length; s++)
                             {
                                 tmpString += search1Parts[s] + " ";
                             }
-
+                            tmpString = tmpString.Trim();
                             //Parse all (not last possible) combinations and add to list:
-                            parseTableSearchString(tmpString, out tmpList);
+                            parseTableSearchString(tmpString, v + count + 1, out tmpList);
                             for (int s = 0; s < tmpList.Count; s++)
                             {
                                 searchStrings.Add(tmpList[s]);
@@ -367,7 +375,11 @@ namespace UniversalPatcher
                 }
             }
             searchStrings.Add(newSearchString.Trim());
+            if (searchStrings.Count == 1)   //If only one string, no need to check other strings
+                commonParts = (int)bytecount;
+            return commonParts;
         }
+
         private void searchTables(string FileName, PcmFile PCM)
         {
 
@@ -391,38 +403,71 @@ namespace UniversalPatcher
                         string searchTxt = tableSearchConfig[i].searchData.Replace("[", "");
                         searchTxt = searchTxt.Replace("]", "");
                         List<string> searchStrings;
+                        List<string[]> searchPartList = new List<string[]>();
 
-                        parseTableSearchString(searchTxt, out searchStrings);
-
-
-                        for (int s = 0; s < searchStrings.Count; s++)
+                        TableSearchConfig tsc = tableSearchConfig[i];
+                        tsc.parseAddresses(PCM);
+               
+                        int commonParts = parseTableSearchString(searchTxt, 0, out searchStrings);
+                        for (int g=0; g<searchStrings.Count;g++)
                         {
-                            string[] searchParts = searchStrings[s].Split(' ');
-                            for (uint addr = 0; addr < PCM.fsize - searchParts.Length; addr++)
+                            string[] searchParts = searchStrings[g].Split(' ');
+                            searchPartList.Add(searchParts);
+                        }
+
+                        for (int block = 0; block < tsc.searchBlocks.Count; block++)
+                        {
+                            uint addr = tsc.searchBlocks[block].Start;
+                            while (addr < tsc.searchBlocks[block].End)
                             {
-                                bool match = true;
-                                for (int j = 0; j < searchParts.Length; j++)
+                                bool match = false;
+                                for (int ss = 0; ss < searchPartList.Count; ss++)
                                 {
-                                    byte searchval = 0;
-                                    if (!searchParts[j].Contains(":") && HexToByte(searchParts[j], out searchval)) //Ignore non-hex values, like *, X or XX
+                                    int hits = 0;
+                                    //searchParts = searchStrings[ss].Split(' ');
+                                    for (int j = 0; j < searchPartList[ss].Length; j++)
                                     {
-                                        //Debug.WriteLine(PCM.buf[addr + j].ToString("X") + " vs " + searchval.ToString("X"));
-                                        if (PCM.buf[addr + j] != searchval)
+                                        byte searchval = 0;
+                                        if (searchPartList[ss][j].Contains(":") || !HexToByte(searchPartList[ss][j], out searchval))
                                         {
-                                            match = false;
-                                            break;
+                                            //Count as hit (ignore)
+                                            hits++;
                                         }
+                                        else
+                                        {
+                                            if (PCM.buf[addr + j] == searchval)
+                                            {
+                                                hits++;
+                                            }
+                                            else
+                                            {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (hits == searchPartList[ss].Length)
+                                    {
+                                        match = true;
+                                        searchTxt = searchStrings[ss];
+                                        break;
+                                    }
+                                    if (hits < searchPartList[ss].Length && hits < commonParts)
+                                    {
+                                        match = false;
+                                        break;
                                     }
                                 }
                                 if (match)
                                 {
+                                    
                                     tsr = new TableSearchResult();
                                     tsr.OS = PCM.OS;
                                     tsr.File = PCM.FileName;
-                                    tsr.Search = searchStrings[s];
+                                    tsr.Search = searchTxt;
+                                    string[] searchParts = searchTxt.Split(' ');
                                     tsr.Name = tableSearchConfig[i].Name;
                                     tsr.Found = addr.ToString("X8") + ":";
-                                    for (uint t=0; t< searchParts.Length ;t++)
+                                    for (uint t = 0; t < searchParts.Length; t++)
                                     {
                                         if (t > 0)
                                             tsr.Found += " ";
@@ -470,7 +515,7 @@ namespace UniversalPatcher
                                                     tsr.Data += BEToUint32(PCM.buf, location).ToString(formatString);
                                                 if (itemParts[2] == "8")
                                                     tsr.Data += BEToUint16(PCM.buf, location).ToString(formatString);
-                                                
+
                                             }
                                             for (int seg = 0; seg < Segments.Count; seg++)
                                             {
@@ -482,7 +527,7 @@ namespace UniversalPatcher
                                             }
                                         }
                                     }
-                                    if (searchStrings[s].Contains(":"))
+                                    if (searchTxt.Contains(":"))
                                     {
                                         uint k = 0;
                                         while (k < searchParts.Length)
@@ -498,8 +543,8 @@ namespace UniversalPatcher
                                                     tsr.Data += SV.Name;
                                                     int bytes = int.Parse(varParts[1]);
                                                     uint location = addr + k;
-                                                    tsr.AddressInt = location; 
-                                                    for (uint l=0;l<bytes;l++)
+                                                    tsr.AddressInt = location;
+                                                    for (uint l = 0; l < bytes; l++)
                                                     {
                                                         SV.Data += PCM.buf[location + l].ToString("X2") + " ";
                                                     }
@@ -528,7 +573,7 @@ namespace UniversalPatcher
                                                         tsr.Data += BEToUint32(PCM.buf, location).ToString(formatString);
                                                     if (varParts[1] == "8")
                                                         tsr.Data += BEToUint64(PCM.buf, location).ToString(formatString);
-                                                    
+
 
                                                 }
                                                 for (int seg = 0; seg < Segments.Count; seg++)
@@ -544,24 +589,29 @@ namespace UniversalPatcher
                                             k++;
                                         }
                                     }
-                                    if (tsr.Segment != null && tsr.Segment != "")  //If address is outside of any segment, ignore
+                                    for (int tblock = 0; tblock < tsc.tableBlocks.Count; tblock++)
                                     {
-                                        bool duplicate = false;
-                                        for (int ts = 0; ts < thisFileTables.Count; ts++)
+                                        if (tsr.AddressInt >= tsc.tableBlocks[tblock].Start && tsr.AddressInt <= tsc.tableBlocks[tblock].End)
                                         {
-                                            if (thisFileTables[ts].Data == tsr.Data && thisFileTables[ts].Name == tsr.Name)
+                                            bool duplicate = false;
+                                            for (int ts = 0; ts < thisFileTables.Count; ts++)
                                             {
-                                                thisFileTables[ts].hitCount++;
-                                                duplicate = true;
-                                                break;
+                                                if (thisFileTables[ts].Data == tsr.Data && thisFileTables[ts].Name == tsr.Name)
+                                                {
+                                                    thisFileTables[ts].hitCount++;
+                                                    duplicate = true;
+                                                    break;
+                                                }
                                             }
+                                            tsr.Address = tsr.AddressInt.ToString("X8");
+                                            if (!duplicate)
+                                                thisFileTables.Add(tsr);
                                         }
-                                        tsr.Address = tsr.AddressInt.ToString("X8");
-                                        if (!duplicate)
-                                            thisFileTables.Add(tsr);
                                     }
                                 }
+                                addr++;
                             }
+                            
                         }
                         
                     }
@@ -579,7 +629,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(0);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                Logger("Tablesearch: " + line + ": "+ ex.Message);
+                LoggerBold("Tablesearch: " + line + ": "+ ex.Message);
             }
         }
         private void ShowFileInfo(PcmFile PCM, bool InfoOnly)
