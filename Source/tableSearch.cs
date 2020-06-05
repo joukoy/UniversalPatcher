@@ -300,7 +300,7 @@ namespace UniversalPatcher
                                 //tmpConfigList.addPart(search1Parts[s]);
                             }
                             //Parse all (not last possible) combinations and add to list:
-                            parseTableSearchString(tmpString, pos + wildcards + 1, tmpConfig);
+                            parseTableSearchString(tmpString, pos + wildcards , tmpConfig);
                         }
                         //Add last combination to current searchstring
                         //newSearchString += "* ";
