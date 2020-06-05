@@ -225,12 +225,10 @@ namespace UniversalPatcher
                             if (searchVariables[var].Name == search1Parts[pos].Replace("$", ""))
                             {
                                 //replace variable text with variable value
-                                parsedConfig.searchString += searchVariables[var].Data + " ";
                                 string[] varParts = searchVariables[var].Data.Split(' ');
                                 for (int vp = 0; vp < varParts.Length; vp++)
                                 {
-                                    parsedConfig.searchParts.Add(varParts[vp]);
-                                    parsedConfig.searchValues.Add(int.Parse(varParts[vp]));
+                                    parsedConfig.addPart(varParts[vp]);
                                 }
                                 bytecount += (uint)varParts.Length;
                                 break;
