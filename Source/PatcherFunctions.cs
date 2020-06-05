@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using UniversalPatcher;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
 
 public class upatcher
 {
@@ -191,6 +192,7 @@ public class upatcher
     public static List<SwapSegment> SwapSegments;
     //public static List<TableSearchConfig> tableSearchConfig;
     public static List<TableSearchResult> tableSearchResult;
+    public static List<TableSearchResult> tableSearchResultNoFilters;
 
     public static string XMLFile;
     public static string tableSearchFile;
@@ -210,6 +212,18 @@ public class upatcher
     public const ushort TypeInt = 2;
     public const ushort TypeFilename = 3;
 
+    public static T DeepClone<T>(T obj)
+    {
+        T objResult;
+        using (MemoryStream ms = new MemoryStream())
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            bf.Serialize(ms, obj);
+            ms.Position = 0;
+            objResult = (T)bf.Deserialize(ms);
+        }
+        return objResult;
+    }
     public static byte[] ReadBin(string FileName, uint FileOffset, uint Length)
     {
 
@@ -587,6 +601,13 @@ public class upatcher
     {
         x = 0;
         if (!UInt32.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
+            return false;
+        return true;
+    }
+    public static bool HexToInt(string Hex, out int x)
+    {
+        x = 0;
+        if (!int.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
             return false;
         return true;
     }

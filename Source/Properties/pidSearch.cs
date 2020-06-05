@@ -12,17 +12,24 @@ namespace UniversalPatcher.Properties
         public PidSearch(PcmFile PCM1)
         {
             PCM = PCM1;
-            startAddress = searchBytes("00 01 02 00 * * * * 00 03 01 00 * * * * 00 04 00 00 * * * * 00 05 00 00", 0, PCM.fsize-6);
+            uint step=8;
+            startAddress = searchBytes("00 01 02 00 * * * * 00 03 01 00 * * * * 00 04 00 00 * * * * 00 05 00 00", 0, PCM.fsize-28);
+            if (startAddress == uint.MaxValue)
+            {
+                startAddress = searchBytes("00 00 02 00 * * * * * * 00 01 02 00", 0, PCM.fsize - 14);
+                step=10;
+            }
             if (startAddress < uint.MaxValue)
-                searchPids();
+                searchPids(step);
         }
 
         public class PID
         {
-            public ushort PidNumber { get; set; }
+            public string PidNumber { get; set; }
             public ushort Bytes { get; set; }
             public string  Subroutine { get; set; }
             public string  RamAddress { get; set; }
+            public ushort pidNumberInt;
             public uint SubroutineInt;
             public ushort RamAddressInt;
         }
@@ -30,14 +37,14 @@ namespace UniversalPatcher.Properties
         private PcmFile PCM;
         public List<PID> pidList; 
 
-        private void searchPids()
+        private void searchPids(uint step)
         {
             pidList = new List<PID>();
             ushort prevPidNumber = 0;            
-            for (uint addr = startAddress ; addr < PCM.fsize; addr += 8)
+            for (uint addr = startAddress ; addr < PCM.fsize; addr += step)
             {
                 PID pid = readPID(addr);
-                if (pid.PidNumber < prevPidNumber || pid.PidNumber == 0xFFFF)
+                if (pid.pidNumberInt < prevPidNumber || pid.pidNumberInt == 0xFFFF)
                 {
                     break;
                 }
@@ -45,7 +52,7 @@ namespace UniversalPatcher.Properties
                 {
                     pidList.Add(pid);
                 }
-                prevPidNumber = pid.PidNumber;
+                prevPidNumber = pid.pidNumberInt;
             }
 
         }
@@ -53,16 +60,18 @@ namespace UniversalPatcher.Properties
         private PID readPID(uint addr)
         {
             PID pid = new PID();
-            pid.PidNumber = BEToUint16(PCM.buf, addr);
+            pid.pidNumberInt = BEToUint16(PCM.buf, addr);
+            pid.PidNumber = pid.pidNumberInt.ToString("X4");
             pid.Bytes = (ushort)(PCM.buf[addr + 2] + 1);
             if (pid.Bytes == 3)
                 pid.Bytes = 4;
             pid.SubroutineInt = BEToUint32(PCM.buf, addr + 4);
             pid.Subroutine = pid.SubroutineInt.ToString("X8");
             uint ramStoreAddr = uint.MaxValue;
-            if (pid.Bytes == 1)
+            //if (pid.Bytes == 1)
                 ramStoreAddr = searchBytes("10 38", pid.SubroutineInt, PCM.fsize, 0x4E75) ;
-            else if (pid.Bytes == 2)
+            //else if (pid.Bytes == 2)
+            if (ramStoreAddr == uint.MaxValue)
                 ramStoreAddr = searchBytes("30 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
             if (ramStoreAddr < uint.MaxValue)
             {

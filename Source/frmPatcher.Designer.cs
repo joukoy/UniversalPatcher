@@ -148,6 +148,7 @@
             this.editTableSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chkTableSearchNoFilters = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -924,6 +925,7 @@
             // 
             // tabSearchedTables
             // 
+            this.tabSearchedTables.Controls.Add(this.chkTableSearchNoFilters);
             this.tabSearchedTables.Controls.Add(this.btnClearSearchedTables);
             this.tabSearchedTables.Controls.Add(this.btnSaveSearchedTables);
             this.tabSearchedTables.Controls.Add(this.dataGridSearchedTables);
@@ -1503,6 +1505,17 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // chkTableSearchNoFilters
+            // 
+            this.chkTableSearchNoFilters.AutoSize = true;
+            this.chkTableSearchNoFilters.Location = new System.Drawing.Point(178, 10);
+            this.chkTableSearchNoFilters.Name = "chkTableSearchNoFilters";
+            this.chkTableSearchNoFilters.Size = new System.Drawing.Size(122, 17);
+            this.chkTableSearchNoFilters.TabIndex = 3;
+            this.chkTableSearchNoFilters.Text = "No filters/hit counter";
+            this.chkTableSearchNoFilters.UseVisualStyleBackColor = true;
+            this.chkTableSearchNoFilters.CheckedChanged += new System.EventHandler(this.chkTableSearchNoFilters_CheckedChanged);
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1541,6 +1554,7 @@
             this.tabBadChkFile.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataBadChkFile)).EndInit();
             this.tabSearchedTables.ResumeLayout(false);
+            this.tabSearchedTables.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridSearchedTables)).EndInit();
             this.tabPIDList.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridPIDlist)).EndInit();
@@ -1684,5 +1698,6 @@
         private System.Windows.Forms.Button btnClearPidList;
         private System.Windows.Forms.Button btnSavePidList;
         private System.Windows.Forms.DataGridView dataGridPIDlist;
+        private System.Windows.Forms.CheckBox chkTableSearchNoFilters;
     }
 }
