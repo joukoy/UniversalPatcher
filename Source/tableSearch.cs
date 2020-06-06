@@ -196,7 +196,7 @@ namespace UniversalPatcher
         }
         private List<SearchVariable> searchVariables = new List<SearchVariable>(); //"Global" list
         private List<TableSearchConfig.ParsedTableSearchConfig> parsedConfigList = new List<TableSearchConfig.ParsedTableSearchConfig>();
-        private int parseTableSearchString(string searchString, int start, TableSearchConfig.ParsedTableSearchConfig prevConfig)
+        private int parseTableSearchString(string searchString, TableSearchConfig.ParsedTableSearchConfig prevConfig)
         {
             int commonParts = 0;    //How many parts from beginning of searchstring, before first range etc 
             string[] search1Parts = searchString.Trim().Split(' ');
@@ -215,7 +215,7 @@ namespace UniversalPatcher
                     parsedConfig.searchValues.Add(prevConfig.searchValues[v]);
                 }
 
-                for (int pos = start; pos < search1Parts.Length; pos++)
+                for (int pos = parsedConfig.searchParts.Count; pos < search1Parts.Length; pos++)
                 {
                     if (search1Parts[pos].StartsWith("$"))
                     {
@@ -300,7 +300,7 @@ namespace UniversalPatcher
                                 //tmpConfigList.addPart(search1Parts[s]);
                             }
                             //Parse all (not last possible) combinations and add to list:
-                            parseTableSearchString(tmpString, pos + wildcards , tmpConfig);
+                            parseTableSearchString(tmpString, tmpConfig);
                         }
                         //Add last combination to current searchstring
                         //newSearchString += "* ";
@@ -343,7 +343,7 @@ namespace UniversalPatcher
                                 }
                                 tmpString = tmpString.Trim();
                                 //Parse all (not last possible) combinations and add to list:
-                                parseTableSearchString(tmpString, pos + count + 1, tmpConfig);
+                                parseTableSearchString(tmpString, tmpConfig);
                             }
                             else
                             {
@@ -377,6 +377,15 @@ namespace UniversalPatcher
                 }
                 //searchStrings.Add(newSearchString.Trim());
                 parsedConfigList.Add(parsedConfig);
+                /*                string dtxt = "";
+                                for (int x = 0; x < parsedConfig.searchValues.Count; x++)
+                                {
+                                    if (parsedConfig.searchValues[x] > 0)
+                                        dtxt += parsedConfig.searchValues[x].ToString("X2") + " ";
+                                    else
+                                        dtxt += "* ";
+                                }
+                                Debug.WriteLine(dtxt);*/
                 Debug.WriteLine("Added searchstring: " + parsedConfig.searchString);
                 if (parsedConfigList.Count == 1)   //If only one string, no need to check other strings
                     commonParts = (int)bytecount;
@@ -431,8 +440,8 @@ namespace UniversalPatcher
                         tsc.parseAddresses(PCM);
 
                         Debug.WriteLine("Original searchstring: " + searchTxt);
-                        int commonParts = parseTableSearchString(searchTxt, 0, parsedConfig);
-
+                        int commonParts = parseTableSearchString(searchTxt, parsedConfig);
+                        Debug.WriteLine("Searchstrings generated: " + parsedConfigList.Count);
 
                         for (int block = 0; block < tsc.searchBlocks.Count; block++)
                         {
@@ -607,8 +616,8 @@ namespace UniversalPatcher
                                         }
                                     }
                                     TableSearchResult tsrNoFilter = new TableSearchResult();
-                                    tsrNoFilter.Address = tsr.Address;
                                     tsrNoFilter.AddressInt = tsr.AddressInt;
+                                    tsrNoFilter.Address = tsr.AddressInt.ToString("X8");
                                     tsrNoFilter.Data = tsr.Data;
                                     tsrNoFilter.File = tsr.File;
                                     tsrNoFilter.Found = tsr.Found;
@@ -630,12 +639,16 @@ namespace UniversalPatcher
                                                 {
                                                     thisFileTables[ts].hitCount++;
                                                     duplicate = true;
+                                                    thisFileTables[ts].Address += ";" + tsr.AddressInt.ToString("X8");
                                                     break;
                                                 }
                                             }
-                                            tsr.Address = tsr.AddressInt.ToString("X8");
+
                                             if (!duplicate)
+                                            {
+                                                tsr.Address = tsr.AddressInt.ToString("X8");
                                                 thisFileTables.Add(tsr);
+                                            }
                                         }
                                     }
                                 }
