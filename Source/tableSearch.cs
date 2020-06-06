@@ -170,6 +170,7 @@ namespace UniversalPatcher
         public string Segment { get; set; }
         public int hitCount { get; set; }
         public string Search { get; set; }
+        public string origSearchString;
         public string Found { get; set; }
         public uint AddressInt;
         public string Address { get; set; }
@@ -196,42 +197,75 @@ namespace UniversalPatcher
         }
         private List<SearchVariable> searchVariables = new List<SearchVariable>(); //"Global" list
         private List<TableSearchConfig.ParsedTableSearchConfig> parsedConfigList = new List<TableSearchConfig.ParsedTableSearchConfig>();
-        private int parseTableSearchString(string searchString, TableSearchConfig.ParsedTableSearchConfig prevConfig)
+        private int parseTableSearchString(string searchString, TableSearchConfig.ParsedTableSearchConfig parsedConfig)
         {
             int commonParts = 0;    //How many parts from beginning of searchstring, before first range etc 
             string[] search1Parts = searchString.Trim().Split(' ');
-            TableSearchConfig.ParsedTableSearchConfig parsedConfig = new TableSearchConfig.ParsedTableSearchConfig();
+            //TableSearchConfig.ParsedTableSearchConfig parsedConfig = new TableSearchConfig.ParsedTableSearchConfig();
 
             try
             {
 
                 uint bytecount = 0;
 
-                parsedConfig.searchString = prevConfig.searchString;
+/*                parsedConfig.searchString = prevConfig.searchString;
                 for (int v = 0; v < prevConfig.searchParts.Count; v++)
                 {
                     //add already handled part to string
                     parsedConfig.searchParts.Add(prevConfig.searchParts[v]);
                     parsedConfig.searchValues.Add(prevConfig.searchValues[v]);
-                }
+                }*/
 
                 for (int pos = parsedConfig.searchParts.Count; pos < search1Parts.Length; pos++)
                 {
                     if (search1Parts[pos].StartsWith("$"))
                     {
+                        List<int> varAddresses = new List<int>();
                         //is variable
                         for (int var = 0; var < searchVariables.Count; var++)
                         {
                             if (searchVariables[var].Name == search1Parts[pos].Replace("$", ""))
                             {
-                                //replace variable text with variable value
-                                string[] varParts = searchVariables[var].Data.Split(' ');
+                                varAddresses.Add(var);
+                            }
+                        }
+                        for (int v = 0; v < varAddresses.Count; v++)
+                        {
+                            int var = varAddresses[v];
+                            //replace variable with variable value
+                            string[] varParts = searchVariables[var].Data.Split(' ');
+                            if (var < varAddresses.Count -1)
+                            {
+                                TableSearchConfig.ParsedTableSearchConfig tmpConfig = new TableSearchConfig.ParsedTableSearchConfig();
+                                tmpConfig.searchString = parsedConfig.searchString;
+                                string tmpString = parsedConfig.searchString + searchVariables[var].Data + " ";
+                                for (int w = 0; w < parsedConfig.searchParts.Count; w++)
+                                {
+                                    //Copy parsed data to tmpConfig
+                                    tmpConfig.searchParts.Add(parsedConfig.searchParts[w]);
+                                    tmpConfig.searchValues.Add(parsedConfig.searchValues[w]);
+                                }
+                                for (int vp = 0; vp < varParts.Length; vp++)
+                                {
+                                    //Copy variable values to tmpConfig
+                                    tmpConfig.addPart(varParts[vp]);
+                                }
+                                for (int s = pos + varParts.Length; s < search1Parts.Length; s++)
+                                {
+                                    //Add rest of searchstring:
+                                    tmpString += search1Parts[s] + " ";
+                                }
+                                //Parse all other combinations and add to list:
+                                parseTableSearchString(tmpString, tmpConfig);
+                            }
+                            else
+                            {
+                                //Last combination added to current searchstring
                                 for (int vp = 0; vp < varParts.Length; vp++)
                                 {
                                     parsedConfig.addPart(varParts[vp]);
                                 }
                                 bytecount += (uint)varParts.Length;
-                                break;
                             }
                         }
 
@@ -491,6 +525,7 @@ namespace UniversalPatcher
                                     tsr.OS = PCM.OS;
                                     tsr.File = PCM.FileName;
                                     tsr.Search = searchTxt;
+                                    tsr.origSearchString = tableSearchConfig[i].searchData;
                                     tsr.Name = tableSearchConfig[i].Name;
                                     tsr.Found = addr.ToString("X8") + ":";
                                     for (uint t = 0; t < parsedConfig.searchParts.Count; t++)
@@ -635,7 +670,7 @@ namespace UniversalPatcher
                                             bool duplicate = false;
                                             for (int ts = 0; ts < thisFileTables.Count; ts++)
                                             {
-                                                if (thisFileTables[ts].Data == tsr.Data && thisFileTables[ts].Name == tsr.Name)
+                                                if (thisFileTables[ts].Data == tsr.Data && thisFileTables[ts].Name == tsr.Name && thisFileTables[ts].origSearchString == tsr.origSearchString)
                                                 {
                                                     thisFileTables[ts].hitCount++;
                                                     duplicate = true;
