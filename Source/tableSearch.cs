@@ -256,9 +256,6 @@ namespace UniversalPatcher
 
             try
             {
-
-                uint bytecount = 0;
-
                 for (int pos = parsedConfig.searchParts.Count; pos < search1Parts.Length; pos++)
                 {
                     if (search1Parts[pos].StartsWith("$"))
@@ -293,7 +290,7 @@ namespace UniversalPatcher
                                     //Copy variable values to tmpConfig
                                     tmpConfig.addPart(varParts[vp]);
                                 }
-                                for (int s = pos + varParts.Length; s < search1Parts.Length; s++)
+                                for (int s = pos + 1; s < search1Parts.Length; s++)
                                 {
                                     //Add rest of searchstring:
                                     tmpString += search1Parts[s] + " ";
@@ -308,7 +305,6 @@ namespace UniversalPatcher
                                 {
                                     parsedConfig.addPart(varParts[vp]);
                                 }
-                                bytecount += (uint)varParts.Length;
                             }
                         }
 
@@ -323,11 +319,9 @@ namespace UniversalPatcher
                             if (!HexToByte(varParts[1], out varSize))
                                 throw new Exception("Variable size missing! Example: variable1:4");
                             parsedConfig.addPart(varParts[1]);
-                            bytecount++;
                             for (uint p = 1; p < varSize; p++)
                             {
                                 parsedConfig.addPart("*");
-                                bytecount++;
                             }
                         }
                         else
@@ -335,12 +329,10 @@ namespace UniversalPatcher
                             byte itemSize = 0;
                             if (!HexToByte(varParts[1], out itemSize))
                                 throw new Exception("Item size missing! Example: rows:4:int");
-                            //uint position = bytecount;
                             parsedConfig.addPart(search1Parts[pos]);
                             for (int x = 1; x < itemSize; x++)
                             {
                                 parsedConfig.addPart("*");
-                                bytecount++;
                             }
                         }
                     }
@@ -384,7 +376,6 @@ namespace UniversalPatcher
                         for (int f = 0; f < to; f++)
                         {
                             parsedConfig.addPart("*");
-                            bytecount++;
                         }
                     }
                     else if (search1Parts[pos].Contains("/")) //For example: 3/6/9 = 3 or 6 or 9 bytes
@@ -429,36 +420,22 @@ namespace UniversalPatcher
                                 {
                                     //newSearchString += "* ";
                                     parsedConfig.addPart("*");
-                                    bytecount++;
                                 }
                             }
                         }
                     }
                     else
                     {
-                        //searchPartList.Add(search1Parts[v]);
                         if (search1Parts[pos] != " ")
                         {
-                            //newSearchString += search1Parts[v] + " ";
                             parsedConfig.addPart(search1Parts[pos]);
-                            bytecount++;
                         }
                     }
                 }
-                //searchStrings.Add(newSearchString.Trim());
                 parsedConfigList.Add(parsedConfig);
-                /*                string dtxt = "";
-                                for (int x = 0; x < parsedConfig.searchValues.Count; x++)
-                                {
-                                    if (parsedConfig.searchValues[x] > 0)
-                                        dtxt += parsedConfig.searchValues[x].ToString("X2") + " ";
-                                    else
-                                        dtxt += "* ";
-                                }
-                                Debug.WriteLine(dtxt);*/
                 Debug.WriteLine("Added searchstring: " + parsedConfig.searchString);
                 if (parsedConfigList.Count == 1)   //If only one string, no need to check other strings
-                    commonParts = (int)bytecount;
+                    commonParts = parsedConfig.searchParts.Count;
                 return commonParts;
             }
             catch (Exception ex)
@@ -648,7 +625,7 @@ namespace UniversalPatcher
                         string searchTxt = tableSearchConfig[i].searchData.Replace("[", "");
                         searchTxt = searchTxt.Replace("]", "");
 
-                        if (searchTxt.StartsWith("//"))
+                        if (searchTxt.StartsWith("//") || searchTxt.Length < 2)
                         {
                             Debug.WriteLine("Skipping disabled line: " + searchTxt);
                         }
@@ -659,7 +636,9 @@ namespace UniversalPatcher
 
                             TableSearchConfig tsc = tableSearchConfig[i];
                             tsc.parseAddresses(PCM);
-                            searchVariables = tsc.parseVariables(PCM);
+                            List <SearchVariable> tmpVariables = tsc.parseVariables(PCM);
+                            for (int var = 0; var < tmpVariables.Count; var++)
+                                searchVariables.Add(tmpVariables[var]);
                             Debug.WriteLine("Original searchstring: " + searchTxt);
                             int commonParts = parseTableSearchString(searchTxt, parsedConfig);
                             Debug.WriteLine("Searchstrings generated: " + parsedConfigList.Count);
