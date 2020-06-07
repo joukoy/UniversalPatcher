@@ -170,7 +170,6 @@ namespace UniversalPatcher
         public string Segment { get; set; }
         public int hitCount { get; set; }
         public string Search { get; set; }
-        public string origSearchString;
         public string Found { get; set; }
         public uint AddressInt;
         public string Address { get; set; }
@@ -201,20 +200,11 @@ namespace UniversalPatcher
         {
             int commonParts = 0;    //How many parts from beginning of searchstring, before first range etc 
             string[] search1Parts = searchString.Trim().Split(' ');
-            //TableSearchConfig.ParsedTableSearchConfig parsedConfig = new TableSearchConfig.ParsedTableSearchConfig();
 
             try
             {
 
                 uint bytecount = 0;
-
-/*                parsedConfig.searchString = prevConfig.searchString;
-                for (int v = 0; v < prevConfig.searchParts.Count; v++)
-                {
-                    //add already handled part to string
-                    parsedConfig.searchParts.Add(prevConfig.searchParts[v]);
-                    parsedConfig.searchValues.Add(prevConfig.searchValues[v]);
-                }*/
 
                 for (int pos = parsedConfig.searchParts.Count; pos < search1Parts.Length; pos++)
                 {
@@ -438,6 +428,152 @@ namespace UniversalPatcher
             }
         }
 
+        private TableSearchResult parseMatch(PcmFile PCM, TableSearchConfig.ParsedTableSearchConfig parsedConfig, TableSearchConfig tableSearchConfig, uint addr)
+        {
+            TableSearchResult tsr = new TableSearchResult();
+            tsr.OS = PCM.OS;
+            tsr.File = PCM.FileName;
+            tsr.Search = parsedConfig.searchString;
+            tsr.Name = tableSearchConfig.Name;
+            tsr.Found = addr.ToString("X8") + ":";
+            for (uint t = 0; t < parsedConfig.searchParts.Count; t++)
+            {
+                if (t > 0)
+                    tsr.Found += " ";
+                tsr.Found += PCM.buf[addr + t].ToString("X2");
+            }
+            if (tableSearchConfig.Items.Length > 0)
+            {
+                string[] items = tableSearchConfig.Items.Split(',');
+                for (int p = 0; p < items.Length; p++)
+                {
+                    string[] itemParts = items[p].Split(':');
+                    uint location = (uint)(addr + int.Parse(itemParts[1]));
+                    if (itemParts.Length == 3)
+                    {
+                        SearchVariable SV = new SearchVariable();
+                        SV.Name = itemParts[0];
+                        if (itemParts[2].ToLower() == "e")
+                            location += (uint)parsedConfig.searchParts.Count;
+                        tsr.AddressInt = location;
+                        tsr.Data = SV.Name;
+                        SV.Data = ((location & 0xFF000000) >> 24).ToString("X2") + " " + ((location & 0xFF0000) >> 16).ToString("X2") + " " + ((location & 0xFF00) >> 8).ToString("X2") + " " + (location & 0xFF).ToString("X2");
+                        searchVariables.Add(SV);
+                    }
+                    else
+                    {
+                        if (itemParts.Length != 4)
+                            throw new Exception("item needs 4 parts: name:location:bytes:type, for example: rows:1:2:int");
+
+                        if (itemParts[0].StartsWith("@"))
+                        {
+                            tsr.AddressInt = BEToUint32(PCM.buf, location);
+                        }
+                        if (tsr.Data != null && tsr.Data.Length > 1)
+                            tsr.Data += "; ";
+                        tsr.Data += itemParts[0] + ":";   //Item name
+
+                        string formatString = "";
+                        if (itemParts[3].ToLower() == "hex")
+                            formatString = "X";
+                        if (itemParts[2] == "1")
+                            tsr.Data += PCM.buf[location].ToString(formatString);
+                        if (itemParts[2] == "2")
+                            tsr.Data += BEToUint16(PCM.buf, location).ToString(formatString);
+                        if (itemParts[2] == "4")
+                            tsr.Data += BEToUint32(PCM.buf, location).ToString(formatString);
+                        if (itemParts[2] == "8")
+                            tsr.Data += BEToUint16(PCM.buf, location).ToString(formatString);
+
+                    }
+                    for (int seg = 0; seg < Segments.Count; seg++)
+                    {
+                        for (int b = 0; b < PCM.binfile[seg].SegmentBlocks.Count; b++)
+                        {
+                            if (tsr.AddressInt >= PCM.binfile[seg].SegmentBlocks[b].Start && tsr.AddressInt <= PCM.binfile[seg].SegmentBlocks[b].End)
+                                tsr.Segment = PCM.segmentinfos[seg].Name;
+                        }
+                    }
+                }
+            }
+            if (parsedConfig.searchString.Contains(":"))
+            {
+                int k = 0;
+                while (k < parsedConfig.searchParts.Count)
+                {
+                    if (parsedConfig.searchParts[k].Contains(":"))
+                    {
+                        string[] varParts = parsedConfig.searchParts[k].Split(':');
+                        if (varParts.Length == 2)
+                        {
+                            //Set variable
+                            SearchVariable SV = new SearchVariable();
+                            SV.Name = varParts[0];
+                            tsr.Data += SV.Name;
+                            int bytes = int.Parse(varParts[1]);
+                            uint location = (uint)(addr + k);
+                            tsr.AddressInt = location;
+                            for (uint l = 0; l < bytes; l++)
+                            {
+                                SV.Data += PCM.buf[location + l].ToString("X2") + " ";
+                            }
+                            SV.Data = SV.Data.Trim();
+                            searchVariables.Add(SV);
+                        }
+                        else
+                        {
+                            //Its's item, show it.
+                            uint location = (uint)(addr + k);
+                            if (varParts[0].ToLower().StartsWith("@"))
+                            {
+                                tsr.AddressInt = BEToUint32(PCM.buf, location);
+                            }
+                            if (tsr.Data != null && tsr.Data.Length > 1)
+                                tsr.Data += "; ";
+                            tsr.Data += varParts[0] + ":";
+                            string formatString = "";
+                            if (varParts[2].ToLower() == "hex")
+                                formatString = "X";
+                            if (varParts[1] == "1")
+                                tsr.Data += PCM.buf[location].ToString(formatString);
+                            if (varParts[1] == "2")
+                                tsr.Data += BEToUint16(PCM.buf, location).ToString(formatString);
+                            if (varParts[1] == "4")
+                                tsr.Data += BEToUint32(PCM.buf, location).ToString(formatString);
+                            if (varParts[1] == "8")
+                                tsr.Data += BEToUint64(PCM.buf, location).ToString(formatString);
+
+
+                        }
+                        for (int seg = 0; seg < Segments.Count; seg++)
+                        {
+                            for (int b = 0; b < PCM.binfile[seg].SegmentBlocks.Count; b++)
+                            {
+                                if (tsr.AddressInt >= PCM.binfile[seg].SegmentBlocks[b].Start && tsr.AddressInt <= PCM.binfile[seg].SegmentBlocks[b].End)
+                                    tsr.Segment = PCM.segmentinfos[seg].Name;
+                            }
+                        }
+                        k += int.Parse(varParts[1]) - 1;
+                    }
+                    k++;
+                }
+            }
+            TableSearchResult tsrNoFilter = new TableSearchResult();
+            tsrNoFilter.AddressInt = tsr.AddressInt;
+            tsrNoFilter.Address = tsr.AddressInt.ToString("X8");
+            tsrNoFilter.Data = tsr.Data;
+            tsrNoFilter.File = tsr.File;
+            tsrNoFilter.Found = tsr.Found;
+            tsrNoFilter.hitCount = 1;
+            tsrNoFilter.Name = tsr.Name;
+            tsrNoFilter.OS = tsr.OS;
+            tsrNoFilter.Search = tsr.Search;
+            tsrNoFilter.Segment = tsr.Segment;
+
+            tableSearchResultNoFilters.Add(tsrNoFilter);
+            return tsr;
+
+        }
         public void searchTables(string FileName, PcmFile PCM)
         {
 
@@ -448,6 +584,7 @@ namespace UniversalPatcher
                 if (tableSearchResultNoFilters == null)
                     tableSearchResultNoFilters = new List<TableSearchResult>();
                 searchVariables = new List<SearchVariable>();
+                TableSearchResult tsr = new TableSearchResult();
                 List<TableSearchResult> thisFileTables = new List<TableSearchResult>();
 
                 string searchXMLFile = Path.Combine(Application.StartupPath, "XML", "SearchTables-" + Path.GetFileName(XMLFile));
@@ -459,238 +596,106 @@ namespace UniversalPatcher
                     List<TableSearchConfig> tableSearchConfig = (List<TableSearchConfig>)reader.Deserialize(file);
                     file.Close();
                     tableSearchFile = searchXMLFile;
-                    TableSearchResult tsr;
+                    
                     for (int i = 0; i < tableSearchConfig.Count; i++)
-                    {
+                    {                        
                         string searchTxt = tableSearchConfig[i].searchData.Replace("[", "");
                         searchTxt = searchTxt.Replace("]", "");
-                        //List<string> searchStrings;
-                        //List<string[]> searchPartList = new List<string[]>();
 
-                        parsedConfigList = new List<TableSearchConfig.ParsedTableSearchConfig>();
-                        TableSearchConfig.ParsedTableSearchConfig parsedConfig = new TableSearchConfig.ParsedTableSearchConfig();
-
-                        TableSearchConfig tsc = tableSearchConfig[i];
-                        tsc.parseAddresses(PCM);
-
-                        Debug.WriteLine("Original searchstring: " + searchTxt);
-                        int commonParts = parseTableSearchString(searchTxt, parsedConfig);
-                        Debug.WriteLine("Searchstrings generated: " + parsedConfigList.Count);
-
-                        for (int block = 0; block < tsc.searchBlocks.Count; block++)
+                        if (searchTxt.StartsWith("//"))
                         {
-                            uint addr = tsc.searchBlocks[block].Start;
-                            while (addr < tsc.searchBlocks[block].End)
+                            Debug.WriteLine("Skipping disabled line: " + searchTxt);
+                        }
+                        else
+                        {
+                            parsedConfigList = new List<TableSearchConfig.ParsedTableSearchConfig>();
+                            TableSearchConfig.ParsedTableSearchConfig parsedConfig = new TableSearchConfig.ParsedTableSearchConfig();
+
+                            TableSearchConfig tsc = tableSearchConfig[i];
+                            tsc.parseAddresses(PCM);
+
+                            Debug.WriteLine("Original searchstring: " + searchTxt);
+                            int commonParts = parseTableSearchString(searchTxt, parsedConfig);
+                            Debug.WriteLine("Searchstrings generated: " + parsedConfigList.Count);
+
+                            for (int block = 0; block < tsc.searchBlocks.Count; block++)
                             {
-                                bool match = false;
-                                for (int ss = 0; ss < parsedConfigList.Count; ss++)
+                                uint addr = tsc.searchBlocks[block].Start;
+                                while (addr < tsc.searchBlocks[block].End)
                                 {
-                                    int hits = 0;
-                                    for (int j = 0; j < parsedConfigList[ss].searchParts.Count; j++)
+                                    int ss = 0;
+                                    while (ss < parsedConfigList.Count)
                                     {
-                                        if (parsedConfigList[ss].searchValues[j] == -1)
+                                        bool match = false;
+                                        int hits = 0;
+                                        for (int j = 0; j < parsedConfigList[ss].searchParts.Count; j++)
                                         {
-                                            //Count as hit (wildcard, ignore)
-                                            hits++;
-                                        }
-                                        else
-                                        {
-                                            if (PCM.buf[addr + j] == parsedConfigList[ss].searchValues[j])
+                                            if (parsedConfigList[ss].searchValues[j] == -1)
                                             {
+                                                //Count as hit (wildcard, ignore)
                                                 hits++;
                                             }
                                             else
                                             {
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if (hits == parsedConfigList[ss].searchValues.Count)
-                                    {
-                                        match = true;
-                                        searchTxt = parsedConfigList[ss].searchString;
-                                        parsedConfig = parsedConfigList[ss];
-                                        break;
-                                    }
-                                    if (hits < parsedConfigList[ss].searchValues.Count && hits < commonParts)
-                                    {
-                                        match = false;
-                                        break;
-                                    }
-                                }
-                                if (match)
-                                {
-
-                                    tsr = new TableSearchResult();
-                                    tsr.OS = PCM.OS;
-                                    tsr.File = PCM.FileName;
-                                    tsr.Search = searchTxt;
-                                    tsr.origSearchString = tableSearchConfig[i].searchData;
-                                    tsr.Name = tableSearchConfig[i].Name;
-                                    tsr.Found = addr.ToString("X8") + ":";
-                                    for (uint t = 0; t < parsedConfig.searchParts.Count; t++)
-                                    {
-                                        if (t > 0)
-                                            tsr.Found += " ";
-                                        tsr.Found += PCM.buf[addr + t].ToString("X2");
-                                    }
-                                    if (tableSearchConfig[i].Items.Length > 0)
-                                    {
-                                        string[] items = tableSearchConfig[i].Items.Split(',');
-                                        for (int p = 0; p < items.Length; p++)
-                                        {
-                                            string[] itemParts = items[p].Split(':');
-                                            uint location = (uint)(addr + int.Parse(itemParts[1]));
-                                            if (itemParts.Length == 3)
-                                            {
-                                                SearchVariable SV = new SearchVariable();
-                                                SV.Name = itemParts[0];
-                                                if (itemParts[2].ToLower() == "e")
-                                                    location += (uint)parsedConfig.searchParts.Count;
-                                                tsr.AddressInt = location;
-                                                tsr.Data = SV.Name;
-                                                SV.Data = ((location & 0xFF000000) >> 24).ToString("X2") + " " + ((location & 0xFF0000) >> 16).ToString("X2") + " " + ((location & 0xFF00) >> 8).ToString("X2") + " " + (location & 0xFF).ToString("X2");
-                                                searchVariables.Add(SV);
-                                            }
-                                            else
-                                            {
-                                                if (itemParts.Length != 4)
-                                                    throw new Exception("item needs 4 parts: name:location:bytes:type, for example: rows:1:2:int");
-
-                                                if (itemParts[0].StartsWith("@"))
+                                                if (PCM.buf[addr + j] == parsedConfigList[ss].searchValues[j])
                                                 {
-                                                    tsr.AddressInt = BEToUint32(PCM.buf, location);
-                                                }
-                                                if (tsr.Data != null && tsr.Data.Length > 1)
-                                                    tsr.Data += "; ";
-                                                tsr.Data += itemParts[0] + ":";   //Item name
-
-                                                string formatString = "";
-                                                if (itemParts[3].ToLower() == "hex")
-                                                    formatString = "X";
-                                                if (itemParts[2] == "1")
-                                                    tsr.Data += PCM.buf[location].ToString(formatString);
-                                                if (itemParts[2] == "2")
-                                                    tsr.Data += BEToUint16(PCM.buf, location).ToString(formatString);
-                                                if (itemParts[2] == "4")
-                                                    tsr.Data += BEToUint32(PCM.buf, location).ToString(formatString);
-                                                if (itemParts[2] == "8")
-                                                    tsr.Data += BEToUint16(PCM.buf, location).ToString(formatString);
-
-                                            }
-                                            for (int seg = 0; seg < Segments.Count; seg++)
-                                            {
-                                                for (int b = 0; b < PCM.binfile[seg].SegmentBlocks.Count; b++)
-                                                {
-                                                    if (tsr.AddressInt >= PCM.binfile[seg].SegmentBlocks[b].Start && tsr.AddressInt <= PCM.binfile[seg].SegmentBlocks[b].End)
-                                                        tsr.Segment = PCM.segmentinfos[seg].Name;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if (searchTxt.Contains(":"))
-                                    {
-                                        int k = 0;
-                                        while (k < parsedConfig.searchParts.Count)
-                                        {
-                                            if (parsedConfig.searchParts[k].Contains(":"))
-                                            {
-                                                string[] varParts = parsedConfig.searchParts[k].Split(':');
-                                                if (varParts.Length == 2)
-                                                {
-                                                    //Set variable
-                                                    SearchVariable SV = new SearchVariable();
-                                                    SV.Name = varParts[0];
-                                                    tsr.Data += SV.Name;
-                                                    int bytes = int.Parse(varParts[1]);
-                                                    uint location = (uint)(addr + k);
-                                                    tsr.AddressInt = location;
-                                                    for (uint l = 0; l < bytes; l++)
-                                                    {
-                                                        SV.Data += PCM.buf[location + l].ToString("X2") + " ";
-                                                    }
-                                                    SV.Data = SV.Data.Trim();
-                                                    searchVariables.Add(SV);
+                                                    hits++;
                                                 }
                                                 else
                                                 {
-                                                    //Its's item, show it.
-                                                    uint location = (uint)(addr + k);
-                                                    if (varParts[0].ToLower().StartsWith("@"))
-                                                    {
-                                                        tsr.AddressInt = BEToUint32(PCM.buf, location);
-                                                    }
-                                                    if (tsr.Data != null && tsr.Data.Length > 1)
-                                                        tsr.Data += "; ";
-                                                    tsr.Data += varParts[0] + ":";
-                                                    string formatString = "";
-                                                    if (varParts[2].ToLower() == "hex")
-                                                        formatString = "X";
-                                                    if (varParts[1] == "1")
-                                                        tsr.Data += PCM.buf[location].ToString(formatString);
-                                                    if (varParts[1] == "2")
-                                                        tsr.Data += BEToUint16(PCM.buf, location).ToString(formatString);
-                                                    if (varParts[1] == "4")
-                                                        tsr.Data += BEToUint32(PCM.buf, location).ToString(formatString);
-                                                    if (varParts[1] == "8")
-                                                        tsr.Data += BEToUint64(PCM.buf, location).ToString(formatString);
-
-
-                                                }
-                                                for (int seg = 0; seg < Segments.Count; seg++)
-                                                {
-                                                    for (int b = 0; b < PCM.binfile[seg].SegmentBlocks.Count; b++)
-                                                    {
-                                                        if (tsr.AddressInt >= PCM.binfile[seg].SegmentBlocks[b].Start && tsr.AddressInt <= PCM.binfile[seg].SegmentBlocks[b].End)
-                                                            tsr.Segment = PCM.segmentinfos[seg].Name;
-                                                    }
-                                                }
-                                                k += int.Parse(varParts[1]) - 1;
-                                            }
-                                            k++;
-                                        }
-                                    }
-                                    TableSearchResult tsrNoFilter = new TableSearchResult();
-                                    tsrNoFilter.AddressInt = tsr.AddressInt;
-                                    tsrNoFilter.Address = tsr.AddressInt.ToString("X8");
-                                    tsrNoFilter.Data = tsr.Data;
-                                    tsrNoFilter.File = tsr.File;
-                                    tsrNoFilter.Found = tsr.Found;
-                                    tsrNoFilter.hitCount = 1;
-                                    tsrNoFilter.Name = tsr.Name;
-                                    tsrNoFilter.OS = tsr.OS;
-                                    tsrNoFilter.Search = tsr.Search;
-                                    tsrNoFilter.Segment = tsr.Segment;
-
-                                    tableSearchResultNoFilters.Add(tsrNoFilter);
-                                    for (int tblock = 0; tblock < tsc.tableBlocks.Count; tblock++)
-                                    {
-                                        if (tsr.AddressInt >= tsc.tableBlocks[tblock].Start && tsr.AddressInt <= tsc.tableBlocks[tblock].End)
-                                        {
-                                            bool duplicate = false;
-                                            for (int ts = 0; ts < thisFileTables.Count; ts++)
-                                            {
-                                                if (thisFileTables[ts].Data == tsr.Data && thisFileTables[ts].Name == tsr.Name && thisFileTables[ts].origSearchString == tsr.origSearchString)
-                                                {
-                                                    thisFileTables[ts].hitCount++;
-                                                    duplicate = true;
-                                                    thisFileTables[ts].Address += ";" + tsr.AddressInt.ToString("X8");
                                                     break;
                                                 }
                                             }
-
-                                            if (!duplicate)
+                                        }
+                                        if (hits == parsedConfigList[ss].searchValues.Count)
+                                        {
+                                            match = true;
+                                            searchTxt = parsedConfigList[ss].searchString;
+                                            parsedConfig = parsedConfigList[ss];
+                                        }
+                                        if (hits < parsedConfigList[ss].searchValues.Count && hits < commonParts)
+                                        {
+                                            //Optimization: beginning of all parsed searchstrings until "commpnParts" are identical. 
+                                            //If this string doesn't match, others in list doesn't match either
+                                            match = false;
+                                            ss = parsedConfigList.Count;
+                                        }
+                                        if (match)
+                                        {
+                                            tsr = parseMatch(PCM, parsedConfigList[ss], tsc, addr);
+                                            for (int tblock = 0; tblock < tsc.tableBlocks.Count; tblock++)
                                             {
-                                                tsr.Address = tsr.AddressInt.ToString("X8");
-                                                thisFileTables.Add(tsr);
+                                                if (tsr.AddressInt >= tsc.tableBlocks[tblock].Start && tsr.AddressInt <= tsc.tableBlocks[tblock].End)
+                                                {
+                                                    bool duplicate = false;
+                                                    for (int ts = 0; ts < thisFileTables.Count; ts++)
+                                                    {
+                                                        if (thisFileTables[ts].Data == tsr.Data && thisFileTables[ts].Name == tsr.Name && thisFileTables[ts].Search == tsr.Search)
+                                                        {
+                                                            thisFileTables[ts].hitCount++;
+                                                            duplicate = true;
+                                                            //thisFileTables[ts].Address += ";" + tsr.AddressInt.ToString("X8");
+                                                            thisFileTables[ts].Found += ";" + tsr.Found;
+                                                            break;
+                                                        }
+                                                    }
+
+                                                    if (!duplicate)
+                                                    {
+                                                        tsr.Address = tsr.AddressInt.ToString("X8");
+                                                        thisFileTables.Add(tsr);
+                                                    }
+                                                }
                                             }
                                         }
+                                        ss++;
                                     }
+                                    addr++;
                                 }
-                                addr++;
-                            }
 
+                            }
                         }
+
 
                     }
                     for (int t = 0; t < thisFileTables.Count; t++)
