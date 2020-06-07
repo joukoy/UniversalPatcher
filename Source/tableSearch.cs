@@ -16,6 +16,7 @@ namespace UniversalPatcher
             //ID = "";
             searchData = "";
             Items = "";
+            Variables = "";
             Name = "";
             searchRange = "";
             tableRange = "";
@@ -57,9 +58,60 @@ namespace UniversalPatcher
             ParseAddress(tableRange, PCM, out tableBlocks);
 
         }
+        public List<SearchVariable> parseVariables(PcmFile PCM)
+        {
+            List <SearchVariable> searchVariables = new List<SearchVariable>();
+            string[] varlist = Variables.Split(',');
+            for (int v = 0; v < varlist.Length; v++)
+            {
+                string[] varParts = varlist[v].Split('=');
+                if (varParts.Length < 2)
+                {
+                    Debug.WriteLine("Unknown variable: " + varlist[v]);
+                }
+                else
+                {
+                    if (varParts[1].StartsWith("@"))
+                    {
+                        SearchVariable SV = new SearchVariable();
+                        SV.Name = varParts[0].Trim();
+                        uint location;
+                        int bytes;
+                        string[] svDataParts = varParts[1].Split(':');
+
+                        if (!HexToUint(svDataParts[0].Replace("@", ""), out location))
+                            throw new Exception("Can't decode variable location: " + varlist[v]);
+                        if (!HexToInt(svDataParts[1].Replace("@", ""), out bytes))
+                            throw new Exception("Can't decode variable size: " + varlist[v]);
+
+                        for (int i = 0; i < bytes; i++)
+                        {
+                            SV.Data += PCM.buf[location + i].ToString("X2") + " ";
+                        }
+                        SV.Data = SV.Data.Trim();
+                        searchVariables.Add(SV);
+                        Debug.WriteLine("New variable: " + SV.Name + "=" + SV.Data);
+                    }
+                    else
+                    {
+                        string[] svDataParts = varParts[1].Split(';');
+                        foreach (string svDataPart in svDataParts)
+                        {
+                            SearchVariable SV = new SearchVariable();
+                            SV.Name = varParts[0].Trim(); ;
+                            SV.Data = svDataPart.Trim();
+                            searchVariables.Add(SV);
+                            Debug.WriteLine("New variable: " + SV.Name + "=" + SV.Data);
+                        }
+                    }
+                }
+            }
+            return searchVariables;
+        }
         //public string ID { get; set; }
         public string searchData { get; set; }
         public string Items { get; set; }
+        public string Variables { get; set; }
         public string Name { get; set; }
         public string searchRange { get; set; }
         public string tableRange { get; set; }
@@ -196,6 +248,7 @@ namespace UniversalPatcher
         }
         private List<SearchVariable> searchVariables = new List<SearchVariable>(); //"Global" list
         private List<TableSearchConfig.ParsedTableSearchConfig> parsedConfigList = new List<TableSearchConfig.ParsedTableSearchConfig>();
+
         private int parseTableSearchString(string searchString, TableSearchConfig.ParsedTableSearchConfig parsedConfig)
         {
             int commonParts = 0;    //How many parts from beginning of searchstring, before first range etc 
@@ -606,7 +659,7 @@ namespace UniversalPatcher
 
                             TableSearchConfig tsc = tableSearchConfig[i];
                             tsc.parseAddresses(PCM);
-
+                            searchVariables = tsc.parseVariables(PCM);
                             Debug.WriteLine("Original searchstring: " + searchTxt);
                             int commonParts = parseTableSearchString(searchTxt, parsedConfig);
                             Debug.WriteLine("Searchstrings generated: " + parsedConfigList.Count);
