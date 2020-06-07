@@ -378,13 +378,6 @@ namespace UniversalPatcher
                                     parsedConfig.addPart("*");
                                     bytecount++;
                                 }
-                                //Add rest of searchstring:
-                                for (int s = pos + 1; s < search1Parts.Length; s++)
-                                {
-                                    //newSearchString += search1Parts[s] + " ";
-                                    parsedConfig.addPart(search1Parts[s]);
-                                    bytecount++;
-                                }
                             }
                         }
                     }
