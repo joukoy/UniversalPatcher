@@ -122,5 +122,46 @@ namespace UniversalPatcher
         {
 
         }
+
+        private void btnImportCSV_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+            StreamReader sr = new StreamReader(FileName);
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                string[] lineparts = line.Split(';');
+                if (lineparts.Length == 2)
+                {
+                    CVN C1 = new CVN();
+                    C1.PN = lineparts[0];
+                    C1.cvn = lineparts[1];
+                    bool isinlist = false;
+                    for (int i = 0; i < StockCVN.Count; i++)
+                    {
+                        if (StockCVN[i].PN == C1.PN)
+                        {
+                            isinlist= true;
+                            if (StockCVN[i].cvn != C1.cvn)
+                            {
+                                //Update, is not correct CVN
+                                Logger("Updating PN: " + C1.PN + " Old: " + StockCVN[i].cvn + ", new: " + C1.cvn);
+                                C1.SegmentNr = StockCVN[i].SegmentNr;
+                                C1.Ver = StockCVN[i].Ver;
+                                C1.XmlFile = StockCVN[i].XmlFile;
+                                StockCVN.RemoveAt(i);
+                                StockCVN.Insert(i, C1);
+                            }
+                        }
+                    }
+                    if (!isinlist)
+                        StockCVN.Add(C1);
+                }
+            }
+            sr.Close();
+            LoadStockCVN();
+        }
     }
 }

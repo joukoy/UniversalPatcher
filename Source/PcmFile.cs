@@ -169,14 +169,15 @@ namespace UniversalPatcher
                         { 
                             HexLength = "X" + (binfile[i].CS1Address.Bytes * 2).ToString();
                         }
-                        segmentinfos[i].CS1Calc = CalculateChecksum(buf, binfile[i].CS1Address, binfile[i].CS1Blocks, binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, binfile[i].CS1Address.Bytes, S.CS1SwapBytes).ToString(HexLength);
+                        uint CS1Calc = CalculateChecksum(buf, binfile[i].CS1Address, binfile[i].CS1Blocks, binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, binfile[i].CS1Address.Bytes, S.CS1SwapBytes);
+                        segmentinfos[i].CS1Calc = CS1Calc.ToString(HexLength);
                         if (S.CVN == 1)
                         {
-                            segmentinfos[i].cvn = segmentinfos[i].CS1Calc;
+                            segmentinfos[i].cvn = CS1Calc.ToString("X8"); 
                         }
                         if (binfile[i].CS1Address.Address == uint.MaxValue)
                         {
-                            segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS1Calc, true).ToString();
+                            segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true).ToString();
                         }
                         else
                         {
@@ -185,7 +186,7 @@ namespace UniversalPatcher
                             { 
                                 if (S.CVN == 1)
                                 {
-                                    segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS1, true).ToString();
+                                    segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true).ToString();
                                 }
                             }
                             else
@@ -209,15 +210,16 @@ namespace UniversalPatcher
                         {
                             HexLength = "X" + (binfile[i].CS2Address.Bytes * 2).ToString();
                         }
-                        segmentinfos[i].CS2Calc = CalculateChecksum(buf, binfile[i].CS2Address, binfile[i].CS2Blocks, binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, binfile[i].CS2Address.Bytes, S.CS2SwapBytes).ToString(HexLength);
+                        uint CS2Calc = CalculateChecksum(buf, binfile[i].CS2Address, binfile[i].CS2Blocks, binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, binfile[i].CS2Address.Bytes, S.CS2SwapBytes);
+                        segmentinfos[i].CS2Calc = CS2Calc.ToString(HexLength);
                         if (S.CVN == 2)
                         {
-                            segmentinfos[i].cvn = segmentinfos[i].CS2Calc;
+                            segmentinfos[i].cvn = CS2Calc.ToString("X8");
                         }
 
                         if (binfile[i].CS2Address.Address == uint.MaxValue)
                         {
-                            segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS2Calc, true).ToString();
+                            segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true).ToString();
                         }
                         else
                         {
@@ -226,7 +228,7 @@ namespace UniversalPatcher
                             {
                                 if (S.CVN == 2)
                                 {
-                                    segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].CS2, true).ToString();
+                                    segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true).ToString();
                                 }
                             }
                             else

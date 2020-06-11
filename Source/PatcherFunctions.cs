@@ -548,17 +548,17 @@ public class upatcher
     {
         for (int c = 0; c < StockCVN.Count; c++)
         {
-                //if (StockCVN[c].XmlFile == Path.GetFileName(XMLFile) && StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
-                if (StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr)
+            //if (StockCVN[c].XmlFile == Path.GetFileName(XMLFile) && StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
+            if (StockCVN[c].PN == PN) // && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr)
+            {
+                if (StockCVN[c].cvn == cvn)
                 {
-                    if (StockCVN[c].cvn == cvn)
-                    {
-                        return "[stock]";
-                    }
-                    else
-                    { 
-                        return "[modded]";
-                    }
+                    return "[stock]";
+                }
+                else
+                { 
+                    return "[modded]";
+                }
             }
         }
         if (AddToList)

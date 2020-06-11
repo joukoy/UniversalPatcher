@@ -32,6 +32,7 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.txtResult = new System.Windows.Forms.TextBox();
             this.btnSaveCSV = new System.Windows.Forms.Button();
+            this.btnImportCSV = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -62,11 +63,11 @@
             // 
             this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtResult.Location = new System.Drawing.Point(5, 419);
+            this.txtResult.Location = new System.Drawing.Point(5, 416);
             this.txtResult.Multiline = true;
             this.txtResult.Name = "txtResult";
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtResult.Size = new System.Drawing.Size(477, 36);
+            this.txtResult.Size = new System.Drawing.Size(477, 39);
             this.txtResult.TabIndex = 2;
             // 
             // btnSaveCSV
@@ -79,11 +80,23 @@
             this.btnSaveCSV.UseVisualStyleBackColor = true;
             this.btnSaveCSV.Click += new System.EventHandler(this.btnSaveCSV_Click);
             // 
+            // btnImportCSV
+            // 
+            this.btnImportCSV.Location = new System.Drawing.Point(408, 423);
+            this.btnImportCSV.Name = "btnImportCSV";
+            this.btnImportCSV.Size = new System.Drawing.Size(75, 23);
+            this.btnImportCSV.TabIndex = 4;
+            this.btnImportCSV.Text = "Import CSV";
+            this.btnImportCSV.UseVisualStyleBackColor = true;
+            this.btnImportCSV.Visible = false;
+            this.btnImportCSV.Click += new System.EventHandler(this.btnImportCSV_Click);
+            // 
             // frmEditXML
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(651, 450);
+            this.Controls.Add(this.btnImportCSV);
             this.Controls.Add(this.btnSaveCSV);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.btnSave);
@@ -103,5 +116,6 @@
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.TextBox txtResult;
         private System.Windows.Forms.Button btnSaveCSV;
+        private System.Windows.Forms.Button btnImportCSV;
     }
 }
