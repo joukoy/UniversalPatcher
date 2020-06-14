@@ -19,11 +19,15 @@ namespace UniversalPatcher
             public uint address;
             public ushort rows; 
         }
-        public struct osAddresses
+        public class osAddresses
         {
-            public string category;
-            public string label;
-            public uint address;
+            public osAddresses()
+            {
+
+            }
+            public string category { get; set; }
+            public string label { get; set; }
+            public uint address { get; set; }
         }
 
         public byte[] buf;
@@ -50,24 +54,13 @@ namespace UniversalPatcher
 
         public void loadAddresses()
         {
-            string FileName = Path.Combine(Application.StartupPath, "XML", "addresses-" + OS + ".csv");
+            string FileName = Path.Combine(Application.StartupPath, "XML", "addresses-" + OS + ".xml");
             if (!File.Exists(FileName))
                 return;
-            StreamReader sr = new StreamReader(FileName);
-            string line;
-            while ((line = sr.ReadLine()) != null)
-            {
-                string[] lineparts = line.Split(';');
-                if (lineparts.Length == 3)
-                {
-                    osAddresses osA = new osAddresses();
-                    osA.category = lineparts[0];
-                    osA.label = lineparts[1];
-                    if (HexToUint(lineparts[2], out osA.address))
-                        osaAddressList.Add(osA);
-                }
-            }
-            sr.Close();
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<osAddresses>));
+            System.IO.StreamReader file = new System.IO.StreamReader(FileName);
+            osaAddressList = (List<osAddresses>)reader.Deserialize(file);
+            file.Close();
         }
         public void GetSegmentAddresses()
         {

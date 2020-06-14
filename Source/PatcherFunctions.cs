@@ -608,35 +608,27 @@ public class upatcher
 
     public static void loadReferenceCvn()
     {
-        string FileName = Path.Combine(Application.StartupPath, "XML", "Reference-CVN.csv");
+        string FileName = Path.Combine(Application.StartupPath, "XML", "Reference-CVN.xml");
         if (!File.Exists(FileName))
             return;
         referenceCvnList = new List<referenceCvn>();
-        StreamReader sr = new StreamReader(FileName);
-        string line;
-        while ((line = sr.ReadLine()) != null)
+        System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<referenceCvn>));
+        System.IO.StreamReader file = new System.IO.StreamReader(FileName);
+        referenceCvnList = (List<referenceCvn>)reader.Deserialize(file);
+        file.Close();
+        foreach (referenceCvn refCvn in referenceCvnList)
         {
-            string[] lineparts = line.Split(';');
-            if (lineparts.Length == 2)
+            for (int i = 0; i < StockCVN.Count; i++)
             {
-                referenceCvn refCvn = new referenceCvn();
-                refCvn.PN = lineparts[0];
-                refCvn.CVN = lineparts[1];
-                referenceCvnList.Add(refCvn);
-                for (int i=0; i< StockCVN.Count;i++)
+                if (StockCVN[i].PN == refCvn.PN)
                 {
-                    if (StockCVN[i].PN == refCvn.PN)
-                    {
-                        CVN C1 = StockCVN[i];
-                        C1.ReferenceCvn = refCvn.CVN;
-                        StockCVN.RemoveAt(i);
-                        StockCVN.Insert(i, C1);
-                    }
+                    CVN C1 = StockCVN[i];
+                    C1.ReferenceCvn = refCvn.CVN;
+                    StockCVN.RemoveAt(i);
+                    StockCVN.Insert(i, C1);
                 }
             }
         }
-        sr.Close();
-
     }
     public static bool HexToUint64(string Hex, out UInt64 x)
     {

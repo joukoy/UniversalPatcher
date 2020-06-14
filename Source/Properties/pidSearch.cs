@@ -135,32 +135,14 @@ namespace UniversalPatcher.Properties
         }
         public void loadPidList()
         {
-            string FileName = Path.Combine(Application.StartupPath, "XML", "pidlist.csv");
+            string FileName = Path.Combine(Application.StartupPath, "XML", "pidlist.xml");
             if (!File.Exists(FileName))
                 return;
-            StreamReader sr = new StreamReader(FileName);
             pidNameList = new List<pidName>();
-            string line;
-            while ((line = sr.ReadLine()) != null)
-            {
-                string[] lineparts = line.Split(';');
-                if (lineparts.Length > 1)
-                {
-                    pidName pName = new pidName();
-                    uint nr;
-                    if (HexToUint(lineparts[0], out nr))
-                    {
-                        pName.PidNumber = nr;
-                        pName.PidName = lineparts[1];
-                        if (lineparts.Length > 2)
-                        {
-                            pName.ConversionFactor = lineparts[2];
-                        }
-                        pidNameList.Add(pName);
-                    }
-                }
-            }
-            sr.Close();
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<pidName>));
+            System.IO.StreamReader file = new System.IO.StreamReader(FileName);
+            pidNameList = (List<pidName>)reader.Deserialize(file);
+            file.Close();
         }
 
     }
