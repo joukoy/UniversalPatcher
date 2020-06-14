@@ -30,6 +30,7 @@ namespace UniversalPatcher.Properties
         {
             public uint PidNumber { get; set; }
             public string PidName { get; set; }
+            public string ConversionFactor { get; set; }
         }
         public class PID
         {
@@ -94,6 +95,7 @@ namespace UniversalPatcher.Properties
                 if (pidNameList[p].PidNumber == pid.pidNumberInt)
                 {
                     pid.Name = pidNameList[p].PidName;
+                    pid.ConversionFactor = pidNameList[p].ConversionFactor;
                     break;
                 }
             }
@@ -150,6 +152,10 @@ namespace UniversalPatcher.Properties
                     {
                         pName.PidNumber = nr;
                         pName.PidName = lineparts[1];
+                        if (lineparts.Length > 2)
+                        {
+                            pName.ConversionFactor = lineparts[2];
+                        }
                         pidNameList.Add(pName);
                     }
                 }
