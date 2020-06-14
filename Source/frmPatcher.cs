@@ -104,6 +104,7 @@ namespace UniversalPatcher
                 System.IO.StreamReader file = new System.IO.StreamReader(StockCVNFile);
                 StockCVN = (List<CVN>)reader.Deserialize(file);
                 file.Close();
+                loadReferenceCvn();
             }
 
             string SwapSegmentListFile = Path.Combine(Application.StartupPath, "Segments", "extractedsegments.xml");

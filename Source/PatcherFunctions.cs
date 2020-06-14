@@ -43,6 +43,7 @@ public class upatcher
         public string PN { get; set; }
         public string Ver { get; set; }
         public string cvn { get; set; }
+        public string ReferenceCvn { get; set; }
     }
     public struct Block
     {
@@ -174,6 +175,20 @@ public class upatcher
         public string SegmentAddresses { get; set; } //For OS compatibility
 
     }
+    public struct AddressData
+    {
+        public string Name;
+        public uint Address;
+        public ushort Bytes;
+        public ushort Type;
+    }
+
+    public struct referenceCvn
+    {
+        public string PN;
+        public string CVN;
+    }
+
 
     public const short CSMethod_None = 0;
     public const short CSMethod_crc16 = 1;
@@ -193,19 +208,13 @@ public class upatcher
     //public static List<TableSearchConfig> tableSearchConfig;
     public static List<TableSearchResult> tableSearchResult;
     public static List<TableSearchResult> tableSearchResultNoFilters;
+    public static List<referenceCvn> referenceCvnList;
 
     public static string XMLFile;
     public static string tableSearchFile;
 
     public static FrmPatcher frmpatcher;
 
-    public struct AddressData
-    {
-        public string Name;
-        public uint Address;
-        public ushort Bytes;
-        public ushort Type;
-    }
 
     public const ushort TypeText = 0;
     public const ushort TypeHex = 1;
@@ -549,7 +558,7 @@ public class upatcher
         for (int c = 0; c < StockCVN.Count; c++)
         {
             //if (StockCVN[c].XmlFile == Path.GetFileName(XMLFile) && StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
-            if (StockCVN[c].PN == PN) // && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr)
+            if (StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr)
             {
                 if (StockCVN[c].cvn == cvn)
                 {
@@ -583,12 +592,52 @@ public class upatcher
                 C1.SegmentNr = SegNr;
                 C1.Ver = Ver;
                 C1.XmlFile = Path.GetFileName(XMLFile);
+                for (int r=0; r<referenceCvnList.Count;r++)
+                {
+                    if (referenceCvnList[r].PN == C1.PN)
+                    {
+                        C1.ReferenceCvn = referenceCvnList[r].CVN;
+                        break;
+                    }
+                }
                 ListCVN.Add(C1);                
             }
         }
         return "[n/a]";
     }
 
+    public static void loadReferenceCvn()
+    {
+        string FileName = Path.Combine(Application.StartupPath, "XML", "Reference-CVN.csv");
+        if (!File.Exists(FileName))
+            return;
+        referenceCvnList = new List<referenceCvn>();
+        StreamReader sr = new StreamReader(FileName);
+        string line;
+        while ((line = sr.ReadLine()) != null)
+        {
+            string[] lineparts = line.Split(';');
+            if (lineparts.Length == 2)
+            {
+                referenceCvn refCvn = new referenceCvn();
+                refCvn.PN = lineparts[0];
+                refCvn.CVN = lineparts[1];
+                referenceCvnList.Add(refCvn);
+                for (int i=0; i< StockCVN.Count;i++)
+                {
+                    if (StockCVN[i].PN == refCvn.PN)
+                    {
+                        CVN C1 = StockCVN[i];
+                        C1.ReferenceCvn = refCvn.CVN;
+                        StockCVN.RemoveAt(i);
+                        StockCVN.Insert(i, C1);
+                    }
+                }
+            }
+        }
+        sr.Close();
+
+    }
     public static bool HexToUint64(string Hex, out UInt64 x)
     {
         x = 0;

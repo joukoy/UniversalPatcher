@@ -225,6 +225,8 @@ namespace UniversalPatcher
         public string Found { get; set; }
         public uint AddressInt;
         public string Address { get; set; }
+        public string Category { get; set; }
+        public string Label { get; set; }
         public string Data { get; set; }
     }
 
@@ -581,6 +583,16 @@ namespace UniversalPatcher
                     k++;
                 }
             }
+            for (int o = 0; o < PCM.osaAddressList.Count; o++)
+            {
+                if (PCM.osaAddressList[o].address == tsr.AddressInt)
+                {
+                    tsr.Category = PCM.osaAddressList[o].category;
+                    tsr.Label = PCM.osaAddressList[o].label;
+                    break;
+                }
+            }
+
             TableSearchResult tsrNoFilter = new TableSearchResult();
             tsrNoFilter.AddressInt = tsr.AddressInt;
             tsrNoFilter.Address = tsr.AddressInt.ToString("X8");

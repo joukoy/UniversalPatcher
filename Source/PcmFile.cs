@@ -19,6 +19,12 @@ namespace UniversalPatcher
             public uint address;
             public ushort rows; 
         }
+        public struct osAddresses
+        {
+            public string category;
+            public string label;
+            public uint address;
+        }
 
         public byte[] buf;
         public string FileName;
@@ -31,6 +37,7 @@ namespace UniversalPatcher
         public bool checksumOK;
         public List<V6Table> v6tables;
         public V6Table v6VeTable;
+        public List<osAddresses> osaAddressList;
 
         public PcmFile(string FName)
         {
@@ -41,6 +48,27 @@ namespace UniversalPatcher
             osStoreAddress = uint.MaxValue;
         }
 
+        public void loadAddresses()
+        {
+            string FileName = Path.Combine(Application.StartupPath, "XML", "addresses-" + OS + ".csv");
+            if (!File.Exists(FileName))
+                return;
+            StreamReader sr = new StreamReader(FileName);
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                string[] lineparts = line.Split(';');
+                if (lineparts.Length == 3)
+                {
+                    osAddresses osA = new osAddresses();
+                    osA.category = lineparts[0];
+                    osA.label = lineparts[1];
+                    if (HexToUint(lineparts[2], out osA.address))
+                        osaAddressList.Add(osA);
+                }
+            }
+            sr.Close();
+        }
         public void GetSegmentAddresses()
         {
             binfile = new BinFile[Segments.Count];
@@ -173,7 +201,8 @@ namespace UniversalPatcher
                         segmentinfos[i].CS1Calc = CS1Calc.ToString(HexLength);
                         if (S.CVN == 1)
                         {
-                            segmentinfos[i].cvn = CS1Calc.ToString("X8"); 
+                            //segmentinfos[i].cvn = CS1Calc.ToString("X8");
+                            segmentinfos[i].cvn = CS1Calc.ToString(HexLength);
                         }
                         if (binfile[i].CS1Address.Address == uint.MaxValue)
                         {
@@ -214,7 +243,8 @@ namespace UniversalPatcher
                         segmentinfos[i].CS2Calc = CS2Calc.ToString(HexLength);
                         if (S.CVN == 2)
                         {
-                            segmentinfos[i].cvn = CS2Calc.ToString("X8");
+                            //segmentinfos[i].cvn = CS2Calc.ToString("X8");
+                            segmentinfos[i].cvn = CS2Calc.ToString(HexLength);
                         }
 
                         if (binfile[i].CS2Address.Address == uint.MaxValue)
@@ -247,7 +277,8 @@ namespace UniversalPatcher
                     BadChkFileList.Add(segmentinfos[i]);
                 }
             }
-
+            osaAddressList = new List<osAddresses>();
+            loadAddresses();
         }
 
         public bool FindSegment(SegmentConfig S, int SegNr)
