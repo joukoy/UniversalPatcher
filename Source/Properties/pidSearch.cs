@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.IO;
 using static upatcher;
+using System.Windows.Forms;
 
 namespace UniversalPatcher.Properties
 {
@@ -13,6 +15,7 @@ namespace UniversalPatcher.Properties
         {
             PCM = PCM1;
             uint step=8;
+            loadPidList();
             startAddress = searchBytes("00 01 02 00 * * * * 00 03 01 00 * * * * 00 04 00 00 * * * * 00 05 00 00", 0, PCM.fsize-28);
             if (startAddress == uint.MaxValue)
             {
@@ -23,6 +26,11 @@ namespace UniversalPatcher.Properties
                 searchPids(step);
         }
 
+        public class pidName
+        {
+            public uint PidNumber { get; set; }
+            public string PidName { get; set; }
+        }
         public class PID
         {
             public string PidNumber { get; set; }
@@ -32,10 +40,13 @@ namespace UniversalPatcher.Properties
             public ushort pidNumberInt;
             public uint SubroutineInt;
             public ushort RamAddressInt;
+            public string Name { get; set; }
+            public string ConversionFactor { get; set; }
         }
         public uint startAddress { get; set; }
         private PcmFile PCM;
-        public List<PID> pidList; 
+        public List<PID> pidList;
+        public List<pidName> pidNameList;
 
         private void searchPids(uint step)
         {
@@ -78,6 +89,14 @@ namespace UniversalPatcher.Properties
                 pid.RamAddressInt = BEToUint16(PCM.buf, ramStoreAddr + 2);
                 pid.RamAddress = pid.RamAddressInt.ToString("X4");
             }
+            for (int p=0; p< pidNameList.Count;p++)
+            {
+                if (pidNameList[p].PidNumber == pid.pidNumberInt)
+                {
+                    pid.Name = pidNameList[p].PidName;
+                    break;
+                }
+            }
             return pid;
         }
         private uint searchBytes(string searchString, uint Start, uint End, ushort stopVal=0 )
@@ -112,5 +131,31 @@ namespace UniversalPatcher.Properties
             }
             return uint.MaxValue;
         }
+        public void loadPidList()
+        {
+            string FileName = Path.Combine(Application.StartupPath, "XML", "pidlist.csv");
+            if (!File.Exists(FileName))
+                return;
+            StreamReader sr = new StreamReader(FileName);
+            pidNameList = new List<pidName>();
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                string[] lineparts = line.Split(';');
+                if (lineparts.Length > 1)
+                {
+                    pidName pName = new pidName();
+                    uint nr;
+                    if (HexToUint(lineparts[0], out nr))
+                    {
+                        pName.PidNumber = nr;
+                        pName.PidName = lineparts[1];
+                        pidNameList.Add(pName);
+                    }
+                }
+            }
+            sr.Close();
+        }
+
     }
 }
