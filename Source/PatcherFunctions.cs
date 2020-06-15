@@ -555,6 +555,7 @@ public class upatcher
     }
     public static string CheckStockCVN(string PN, string Ver, string SegNr, string cvn, bool AddToList)
     {
+        bool modded = false;
         for (int c = 0; c < StockCVN.Count; c++)
         {
             //if (StockCVN[c].XmlFile == Path.GetFileName(XMLFile) && StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
@@ -566,6 +567,7 @@ public class upatcher
                 }
                 else
                 {
+                    modded = true;
                     break;
                     //return "[modded]";
                 }
@@ -608,6 +610,13 @@ public class upatcher
                 return "[modded]";
             }
         }
+        if (modded)
+        {
+            //based on stockcvn this is modded, not included in referencelist
+            return "[modded]";
+        }
+
+        //If we get this far, CVN was not in either list
         if (AddToList)
         {
             bool IsinCVNlist = false;
