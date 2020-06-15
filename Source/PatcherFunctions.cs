@@ -565,9 +565,47 @@ public class upatcher
                     return "[stock]";
                 }
                 else
-                { 
-                    return "[modded]";
+                {
+                    break;
+                    //return "[modded]";
                 }
+            }
+        }
+        //Check if it's in referencelist
+        for (int r = 0; r < referenceCvnList.Count; r++)
+        {
+            if (PN == referenceCvnList[r].PN)
+            {
+                uint refC = 0;
+                uint C = 0;
+                if (!HexToUint(referenceCvnList[r].CVN, out refC))
+                {
+                    Debug.WriteLine("Can't convert from HEX: " + referenceCvnList[r].CVN);
+                    break;
+                }
+                if (!HexToUint(cvn, out C))
+                {
+                    Debug.WriteLine("Can't convert from HEX: " + cvn);
+                    break;
+                }
+                if (refC == C)
+                {
+                    Debug.WriteLine("PN: " + PN + " CVN found from Referencelist: " + referenceCvnList[r].CVN);
+                    return "[stock]";
+                }
+                ushort refShort;
+                if (!HexToUshort(referenceCvnList[r].CVN, out refShort))
+                {
+                    Debug.WriteLine("Can't convert from HEX: " + referenceCvnList[r].CVN);
+                    break;
+                }
+                if (SwapBytes(refShort) == C)
+                {
+                    Debug.WriteLine("PN: " + PN + " byteswapped CVN found from Referencelist: " + referenceCvnList[r].CVN);
+                    return "[stock]";
+                }
+                Debug.WriteLine("CVN: " + cvn + " != reference: " + referenceCvnList[r].CVN);
+                return "[modded]";
             }
         }
         if (AddToList)
