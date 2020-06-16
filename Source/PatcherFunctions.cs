@@ -39,6 +39,7 @@ public class upatcher
     {
         public CVN() { }
         public string XmlFile { get; set; }
+        public string AlternateXML { get; set; }
         public string SegmentNr { get; set; }
         public string PN { get; set; }
         public string Ver { get; set; }
@@ -555,19 +556,26 @@ public class upatcher
     }
     public static string CheckStockCVN(string PN, string Ver, string SegNr, string cvn, bool AddToList)
     {
-        bool modded = false;
+        string retVal = "[n/a]";
         for (int c = 0; c < StockCVN.Count; c++)
         {
             //if (StockCVN[c].XmlFile == Path.GetFileName(XMLFile) && StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
             if (StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr)
             {
+                if (Path.GetFileName(XMLFile) != StockCVN[c].XmlFile && StockCVN[c].AlternateXML == null)
+                {
+                    CVN c1 = StockCVN[c];
+                    c1.AlternateXML = Path.GetFileName(XMLFile);
+                    StockCVN.RemoveAt(c);
+                    StockCVN.Insert(c, c1);
+                }
                 if (StockCVN[c].cvn == cvn)
                 {
                     return "[stock]";
                 }
                 else
                 {
-                    modded = true;
+                    retVal = "[modded]";
                     break;
                     //return "[modded]";
                 }
@@ -593,7 +601,7 @@ public class upatcher
                 if (refC == C)
                 {
                     Debug.WriteLine("PN: " + PN + " CVN found from Referencelist: " + referenceCvnList[r].CVN);
-                    return "[stock]";
+                    retVal = "[stock]";
                 }
                 ushort refShort;
                 if (!HexToUshort(referenceCvnList[r].CVN, out refShort))
@@ -604,19 +612,13 @@ public class upatcher
                 if (SwapBytes(refShort) == C)
                 {
                     Debug.WriteLine("PN: " + PN + " byteswapped CVN found from Referencelist: " + referenceCvnList[r].CVN);
-                    return "[stock]";
+                    retVal =  "[stock]";
                 }
                 Debug.WriteLine("CVN: " + cvn + " != reference: " + referenceCvnList[r].CVN);
-                return "[modded]";
+                break;
             }
         }
-        if (modded)
-        {
-            //based on stockcvn this is modded, not included in referencelist
-            return "[modded]";
-        }
 
-        //If we get this far, CVN was not in either list
         if (AddToList)
         {
             bool IsinCVNlist = false;
@@ -650,7 +652,7 @@ public class upatcher
                 ListCVN.Add(C1);                
             }
         }
-        return "[n/a]";
+        return retVal;
     }
 
     public static void loadReferenceCvn()

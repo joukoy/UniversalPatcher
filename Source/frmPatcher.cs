@@ -104,8 +104,16 @@ namespace UniversalPatcher
                 System.IO.StreamReader file = new System.IO.StreamReader(StockCVNFile);
                 StockCVN = (List<CVN>)reader.Deserialize(file);
                 file.Close();
-                loadReferenceCvn();
             }
+            else
+            {
+                //Dirty fix to make system work without stockcvn.xml
+                CVN ctmp = new CVN();
+                ctmp.cvn = "";
+                ctmp.PN = "";
+                StockCVN.Add(ctmp);
+            }
+            loadReferenceCvn();
 
             string SwapSegmentListFile = Path.Combine(Application.StartupPath, "Segments", "extractedsegments.xml");
             if (File.Exists(SwapSegmentListFile))
