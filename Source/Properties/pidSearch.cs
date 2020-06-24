@@ -22,6 +22,11 @@ namespace UniversalPatcher.Properties
                 startAddress = searchBytes("00 00 02 00 * * * * * * 00 01 02 00", 0, PCM.fsize - 14);
                 step=10;
             }
+            if (startAddress == uint.MaxValue)
+            {
+                startAddress = searchBytes("00 00 04 * * * * * * * 00 01 04 * * * * * * * 00 02 02", 0, PCM.fsize - 23);
+                step = 10;
+            }
             if (startAddress < uint.MaxValue)
                 searchPids(step);
         }

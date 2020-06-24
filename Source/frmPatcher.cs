@@ -43,6 +43,7 @@ namespace UniversalPatcher
         private string LastXML = "";
         private BindingSource bindingSource = new BindingSource();
         private BindingSource CvnSource = new BindingSource();
+        private BindingSource badCvnSource = new BindingSource();
         private BindingSource Finfosource = new BindingSource();
         private BindingSource badchkfilesource = new BindingSource();
         private BindingSource searchedTablesBindingSource = new BindingSource();
@@ -448,6 +449,7 @@ namespace UniversalPatcher
                 {
                     txtResult.AppendText(".");
                 }
+                RefreshBadCVNlist();
             }
             catch (Exception ex)
             {
@@ -1756,6 +1758,23 @@ namespace UniversalPatcher
             RefreshDatagrid();
 
         }
+        private void RefreshBadCVNlist()
+        {
+            dataGridBadCvn.DataSource = null;
+            badCvnSource.DataSource = null;
+            badCvnSource.DataSource = BadCvnList;
+            dataGridBadCvn.DataSource = badCvnSource;
+            if (BadCvnList != null && BadCvnList.Count > 0)
+                tabBadCvn.Text = "Bad CVN (" + BadCvnList.Count.ToString() + ")";
+            else
+                tabBadCvn.Text = "Bad CVN";
+        }
+
+        private void ClearBadCVNlist()
+        {
+            BadCvnList = new List<CVN>();
+            RefreshBadCVNlist();
+        }
 
         private void RefreshCVNlist()
         {
@@ -1772,10 +1791,7 @@ namespace UniversalPatcher
         private void ClearCVNlist()
         {
             ListCVN = new List<CVN>();
-            dataCVN.DataSource = null;
-            CvnSource.DataSource = null;
-            CvnSource.DataSource = ListCVN;
-            dataCVN.DataSource = CvnSource;
+            RefreshCVNlist();
         }
 
         private void btnClearCVN_Click(object sender, EventArgs e)
@@ -2413,6 +2429,16 @@ namespace UniversalPatcher
         private void chkTableSearchNoFilters_CheckedChanged(object sender, EventArgs e)
         {
             refreshSearchedTables();
+        }
+
+        private void btnClearBadCvn_Click(object sender, EventArgs e)
+        {
+            ClearBadCVNlist();
+        }
+
+        private void BtnRefreshBadCvn_Click(object sender, EventArgs e)
+        {
+            RefreshBadCVNlist();
         }
     }
 }

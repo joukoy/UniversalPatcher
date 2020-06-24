@@ -75,6 +75,10 @@
             this.btnClearCVN = new System.Windows.Forms.Button();
             this.btnAddtoStock = new System.Windows.Forms.Button();
             this.dataCVN = new System.Windows.Forms.DataGridView();
+            this.tabBadCvn = new System.Windows.Forms.TabPage();
+            this.BtnRefreshBadCvn = new System.Windows.Forms.Button();
+            this.btnClearBadCvn = new System.Windows.Forms.Button();
+            this.dataGridBadCvn = new System.Windows.Forms.DataGridView();
             this.tabFinfo = new System.Windows.Forms.TabPage();
             this.checkAutorefreshFileinfo = new System.Windows.Forms.CheckBox();
             this.btnRefreshFileinfo = new System.Windows.Forms.Button();
@@ -94,6 +98,7 @@
             this.btnClearBadchkFile = new System.Windows.Forms.Button();
             this.dataBadChkFile = new System.Windows.Forms.DataGridView();
             this.tabSearchedTables = new System.Windows.Forms.TabPage();
+            this.chkTableSearchNoFilters = new System.Windows.Forms.CheckBox();
             this.btnClearSearchedTables = new System.Windows.Forms.Button();
             this.btnSaveSearchedTables = new System.Windows.Forms.Button();
             this.dataGridSearchedTables = new System.Windows.Forms.DataGridView();
@@ -148,7 +153,6 @@
             this.editTableSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkTableSearchNoFilters = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -157,6 +161,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataPatch)).BeginInit();
             this.tabCVN.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataCVN)).BeginInit();
+            this.tabBadCvn.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridBadCvn)).BeginInit();
             this.tabFinfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataFileInfo)).BeginInit();
             this.tabCsAddress.SuspendLayout();
@@ -347,6 +353,7 @@
             this.tabControl1.Controls.Add(this.tabDebug);
             this.tabControl1.Controls.Add(this.tabPatch);
             this.tabControl1.Controls.Add(this.tabCVN);
+            this.tabControl1.Controls.Add(this.tabBadCvn);
             this.tabControl1.Controls.Add(this.tabFinfo);
             this.tabControl1.Controls.Add(this.tabCsAddress);
             this.tabControl1.Controls.Add(this.tabBadChkFile);
@@ -718,6 +725,49 @@
             this.dataCVN.Size = new System.Drawing.Size(776, 310);
             this.dataCVN.TabIndex = 0;
             // 
+            // tabBadCvn
+            // 
+            this.tabBadCvn.Controls.Add(this.BtnRefreshBadCvn);
+            this.tabBadCvn.Controls.Add(this.btnClearBadCvn);
+            this.tabBadCvn.Controls.Add(this.dataGridBadCvn);
+            this.tabBadCvn.Location = new System.Drawing.Point(4, 22);
+            this.tabBadCvn.Name = "tabBadCvn";
+            this.tabBadCvn.Size = new System.Drawing.Size(776, 344);
+            this.tabBadCvn.TabIndex = 9;
+            this.tabBadCvn.Text = "Bad CVN";
+            this.tabBadCvn.UseVisualStyleBackColor = true;
+            // 
+            // BtnRefreshBadCvn
+            // 
+            this.BtnRefreshBadCvn.Location = new System.Drawing.Point(71, 7);
+            this.BtnRefreshBadCvn.Name = "BtnRefreshBadCvn";
+            this.BtnRefreshBadCvn.Size = new System.Drawing.Size(62, 21);
+            this.BtnRefreshBadCvn.TabIndex = 182;
+            this.BtnRefreshBadCvn.Text = "Refresh";
+            this.BtnRefreshBadCvn.UseVisualStyleBackColor = true;
+            this.BtnRefreshBadCvn.Click += new System.EventHandler(this.BtnRefreshBadCvn_Click);
+            // 
+            // btnClearBadCvn
+            // 
+            this.btnClearBadCvn.Location = new System.Drawing.Point(3, 6);
+            this.btnClearBadCvn.Name = "btnClearBadCvn";
+            this.btnClearBadCvn.Size = new System.Drawing.Size(62, 22);
+            this.btnClearBadCvn.TabIndex = 181;
+            this.btnClearBadCvn.Text = "Clear";
+            this.btnClearBadCvn.UseVisualStyleBackColor = true;
+            this.btnClearBadCvn.Click += new System.EventHandler(this.btnClearBadCvn_Click);
+            // 
+            // dataGridBadCvn
+            // 
+            this.dataGridBadCvn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridBadCvn.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridBadCvn.Location = new System.Drawing.Point(0, 34);
+            this.dataGridBadCvn.Name = "dataGridBadCvn";
+            this.dataGridBadCvn.Size = new System.Drawing.Size(776, 310);
+            this.dataGridBadCvn.TabIndex = 1;
+            // 
             // tabFinfo
             // 
             this.tabFinfo.Controls.Add(this.checkAutorefreshFileinfo);
@@ -935,6 +985,17 @@
             this.tabSearchedTables.TabIndex = 7;
             this.tabSearchedTables.Text = "Searched Tables";
             this.tabSearchedTables.UseVisualStyleBackColor = true;
+            // 
+            // chkTableSearchNoFilters
+            // 
+            this.chkTableSearchNoFilters.AutoSize = true;
+            this.chkTableSearchNoFilters.Location = new System.Drawing.Point(178, 10);
+            this.chkTableSearchNoFilters.Name = "chkTableSearchNoFilters";
+            this.chkTableSearchNoFilters.Size = new System.Drawing.Size(122, 17);
+            this.chkTableSearchNoFilters.TabIndex = 3;
+            this.chkTableSearchNoFilters.Text = "No filters/hit counter";
+            this.chkTableSearchNoFilters.UseVisualStyleBackColor = true;
+            this.chkTableSearchNoFilters.CheckedChanged += new System.EventHandler(this.chkTableSearchNoFilters_CheckedChanged);
             // 
             // btnClearSearchedTables
             // 
@@ -1505,17 +1566,6 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // chkTableSearchNoFilters
-            // 
-            this.chkTableSearchNoFilters.AutoSize = true;
-            this.chkTableSearchNoFilters.Location = new System.Drawing.Point(178, 10);
-            this.chkTableSearchNoFilters.Name = "chkTableSearchNoFilters";
-            this.chkTableSearchNoFilters.Size = new System.Drawing.Size(122, 17);
-            this.chkTableSearchNoFilters.TabIndex = 3;
-            this.chkTableSearchNoFilters.Text = "No filters/hit counter";
-            this.chkTableSearchNoFilters.UseVisualStyleBackColor = true;
-            this.chkTableSearchNoFilters.CheckedChanged += new System.EventHandler(this.chkTableSearchNoFilters_CheckedChanged);
-            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1545,6 +1595,8 @@
             this.tabCVN.ResumeLayout(false);
             this.tabCVN.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataCVN)).EndInit();
+            this.tabBadCvn.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridBadCvn)).EndInit();
             this.tabFinfo.ResumeLayout(false);
             this.tabFinfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataFileInfo)).EndInit();
@@ -1699,5 +1751,9 @@
         private System.Windows.Forms.Button btnSavePidList;
         private System.Windows.Forms.DataGridView dataGridPIDlist;
         private System.Windows.Forms.CheckBox chkTableSearchNoFilters;
+        private System.Windows.Forms.TabPage tabBadCvn;
+        private System.Windows.Forms.Button BtnRefreshBadCvn;
+        private System.Windows.Forms.Button btnClearBadCvn;
+        private System.Windows.Forms.DataGridView dataGridBadCvn;
     }
 }
