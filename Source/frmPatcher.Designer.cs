@@ -52,7 +52,7 @@
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.btnSaveFileInfo = new System.Windows.Forms.Button();
             this.tabDebug = new System.Windows.Forms.TabPage();
-            this.button3 = new System.Windows.Forms.Button();
+            this.btnSaveDebug = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.txtDebug = new System.Windows.Forms.RichTextBox();
             this.chkDebug = new System.Windows.Forms.CheckBox();
@@ -446,7 +446,7 @@
             // 
             // tabDebug
             // 
-            this.tabDebug.Controls.Add(this.button3);
+            this.tabDebug.Controls.Add(this.btnSaveDebug);
             this.tabDebug.Controls.Add(this.button2);
             this.tabDebug.Controls.Add(this.txtDebug);
             this.tabDebug.Controls.Add(this.chkDebug);
@@ -458,16 +458,16 @@
             this.tabDebug.Text = "Debug";
             this.tabDebug.UseVisualStyleBackColor = true;
             // 
-            // button3
+            // btnSaveDebug
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(695, 1);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 214;
-            this.button3.Text = "Save log...";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btnSaveDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveDebug.Location = new System.Drawing.Point(695, 1);
+            this.btnSaveDebug.Name = "btnSaveDebug";
+            this.btnSaveDebug.Size = new System.Drawing.Size(75, 23);
+            this.btnSaveDebug.TabIndex = 214;
+            this.btnSaveDebug.Text = "Save log...";
+            this.btnSaveDebug.UseVisualStyleBackColor = true;
+            this.btnSaveDebug.Click += new System.EventHandler(this.btnSaveDebug_Click);
             // 
             // button2
             // 
@@ -734,7 +734,7 @@
             this.tabBadCvn.Name = "tabBadCvn";
             this.tabBadCvn.Size = new System.Drawing.Size(776, 344);
             this.tabBadCvn.TabIndex = 9;
-            this.tabBadCvn.Text = "Bad CVN";
+            this.tabBadCvn.Text = "Mismatch CVN";
             this.tabBadCvn.UseVisualStyleBackColor = true;
             // 
             // BtnRefreshBadCvn
@@ -836,7 +836,6 @@
             this.dataFileInfo.Name = "dataFileInfo";
             this.dataFileInfo.Size = new System.Drawing.Size(778, 312);
             this.dataFileInfo.TabIndex = 0;
-            this.dataFileInfo.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataFileInfo_CellContentClick);
             this.dataFileInfo.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataFileInfo_CellContentDoubleClick);
             // 
             // tabCsAddress
@@ -1738,7 +1737,7 @@
         private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button btnSaveDebug;
         private System.Windows.Forms.ToolStripMenuItem editTableSearchToolStripMenuItem;
         private System.Windows.Forms.TabPage tabSearchedTables;
         private System.Windows.Forms.CheckBox chkSearchTables;

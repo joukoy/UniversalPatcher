@@ -1765,9 +1765,9 @@ namespace UniversalPatcher
             badCvnSource.DataSource = BadCvnList;
             dataGridBadCvn.DataSource = badCvnSource;
             if (BadCvnList != null && BadCvnList.Count > 0)
-                tabBadCvn.Text = "Bad CVN (" + BadCvnList.Count.ToString() + ")";
+                tabBadCvn.Text = "Mismatch CVN (" + BadCvnList.Count.ToString() + ")";
             else
-                tabBadCvn.Text = "Bad CVN";
+                tabBadCvn.Text = "Mismatch CVN";
         }
 
         private void ClearBadCVNlist()
@@ -2242,17 +2242,13 @@ namespace UniversalPatcher
             RefreshBadChkFile();
         }
 
-        private void dataFileInfo_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
 
         private void dataBadChkFile_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             try
             {
-                string folder = Path.GetDirectoryName(dataFileInfo.Rows[e.RowIndex].Cells[1].Value.ToString());
-                string FileName = Path.GetFileName(dataFileInfo.Rows[e.RowIndex].Cells[1].Value.ToString());
+                string folder = Path.GetDirectoryName(dataBadChkFile.Rows[e.RowIndex].Cells[1].Value.ToString());
+                string FileName = Path.GetFileName(dataBadChkFile.Rows[e.RowIndex].Cells[1].Value.ToString());
                 OpenFolderAndSelectItem(folder, FileName);
                 //Process.Start(folder);
             }
@@ -2277,7 +2273,7 @@ namespace UniversalPatcher
             frmS.initMe(txtDebug);
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSaveDebug_Click(object sender, EventArgs e)
         {
             try
             {
@@ -2374,17 +2370,24 @@ namespace UniversalPatcher
 
         private void btnGetPidList_Click(object sender, EventArgs e)
         {
-            PidSearch pidSearch = new PidSearch(basefile);
-            if (pidSearch.pidList == null)
+            try
             {
-                Logger ("PIDs not found");
-                return;
+                PidSearch pidSearch = new PidSearch(basefile);
+                if (pidSearch.pidList == null)
+                {
+                    Logger("PIDs not found");
+                    return;
+                }
+                for (int i = 0; i < pidSearch.pidList.Count; i++)
+                {
+                    pidList.Add(pidSearch.pidList[i]);
+                }
+                refreshPidList();
             }
-            for (int i = 0; i < pidSearch.pidList.Count; i++)
+            catch (Exception ex)
             {
-                pidList.Add(pidSearch.pidList[i]);
+                Logger(ex.Message);
             }
-            refreshPidList();
         }
 
         private void btnClearPidList_Click(object sender, EventArgs e)
