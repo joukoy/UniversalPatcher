@@ -124,10 +124,19 @@ namespace UniversalPatcher.Properties
             pid.pidNumberInt = BEToUint16(PCM.buf, addr);
             pid.PidNumber = pid.pidNumberInt.ToString("X4");
             pid.Bytes = (ushort)(PCM.buf[addr + 2]);
-            if (pid.Bytes > 3)
+            if (pid.Bytes > 4)
                 pid.Bytes = 0;
-            pid.SubroutineInt = BEToUint32(PCM.buf, addr + 4);
+            pid.SubroutineInt = BEToUint32(PCM.buf, addr + 6);
             pid.Subroutine = pid.SubroutineInt.ToString("X8");
+            uint ramStoreAddr = uint.MaxValue;
+            ramStoreAddr = searchBytes("10 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
+            if (ramStoreAddr == uint.MaxValue)
+                ramStoreAddr = searchBytes("30 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
+            if (ramStoreAddr < uint.MaxValue)
+            {
+                pid.RamAddressInt = BEToUint16(PCM.buf, ramStoreAddr + 2);
+                pid.RamAddress = pid.RamAddressInt.ToString("X4");
+            }
             for (int p = 0; p < pidNameList.Count; p++)
             {
                 if (pidNameList[p].PidNumber == pid.pidNumberInt)
