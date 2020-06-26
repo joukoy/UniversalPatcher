@@ -14,23 +14,31 @@ namespace UniversalPatcher.Properties
         public PidSearch(PcmFile PCM1)
         {
             PCM = PCM1;
-            uint step=8;
+            uint step = 8;
             loadPidList();
-            startAddress = searchBytes("00 01 02 00 * * * * 00 03 01 00 * * * * 00 04 00 00 * * * * 00 05 00 00", 0, PCM.fsize-28);
-            if (startAddress == uint.MaxValue)
-            {
-                startAddress = searchBytes("00 00 02 00 * * * * * * 00 01 02 00", 0, PCM.fsize - 14);
-                step=10;
-            }
-            if (startAddress == uint.MaxValue)
+            if (Path.GetFileName(XMLFile).ToLower().StartsWith("diesel01"))
             {
                 startAddress = searchBytes("00 00 04 * * * * * * * 00 01 04 * * * * * * * 00 02 02", 0, PCM.fsize - 23);
                 step = 10;
+                if (startAddress < uint.MaxValue)
+                    searchPids(step,true);
             }
-            if (startAddress < uint.MaxValue)
-                searchPids(step);
-        }
 
+            if (Path.GetFileName(XMLFile).ToLower().StartsWith("p01"))
+            {
+                step = 8;
+                startAddress = searchBytes("00 01 02 00 * * * * 00 03 01 00 * * * * 00 04 00 00 * * * * 00 05 00 00", 0, PCM.fsize - 28);
+                if (startAddress < uint.MaxValue)
+                    searchPids(step,false);
+            }
+            if (Path.GetFileName(XMLFile).ToLower().StartsWith("v6"))
+            {
+                startAddress = searchBytes("00 00 02 00 * * * * * * 00 01 02 00", 0, PCM.fsize - 14);
+                step = 10;
+                if (startAddress < uint.MaxValue)
+                    searchPids(step,false);
+            }
+        }
         public class pidName
         {
             public uint PidNumber { get; set; }
@@ -54,13 +62,17 @@ namespace UniversalPatcher.Properties
         public List<PID> pidList;
         public List<pidName> pidNameList;
 
-        private void searchPids(uint step)
+        private void searchPids(uint step, bool diesel)
         {
             pidList = new List<PID>();
             ushort prevPidNumber = 0;            
             for (uint addr = startAddress ; addr < PCM.fsize; addr += step)
             {
-                PID pid = readPID(addr);
+                PID pid;
+                if (diesel)
+                    pid = readPidDiesel(addr);
+                else
+                    pid = readPid(addr);
                 if (pid.pidNumberInt < prevPidNumber || pid.pidNumberInt == 0xFFFF)
                 {
                     break;
@@ -74,7 +86,7 @@ namespace UniversalPatcher.Properties
 
         }
 
-        private PID readPID(uint addr)
+        private PID readPid(uint addr)
         {
             PID pid = new PID();
             pid.pidNumberInt = BEToUint16(PCM.buf, addr);
@@ -86,7 +98,7 @@ namespace UniversalPatcher.Properties
             pid.Subroutine = pid.SubroutineInt.ToString("X8");
             uint ramStoreAddr = uint.MaxValue;
             //if (pid.Bytes == 1)
-                ramStoreAddr = searchBytes("10 38", pid.SubroutineInt, PCM.fsize, 0x4E75) ;
+            ramStoreAddr = searchBytes("10 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
             //else if (pid.Bytes == 2)
             if (ramStoreAddr == uint.MaxValue)
                 ramStoreAddr = searchBytes("30 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
@@ -96,6 +108,27 @@ namespace UniversalPatcher.Properties
                 pid.RamAddress = pid.RamAddressInt.ToString("X4");
             }
             for (int p=0; p< pidNameList.Count;p++)
+            {
+                if (pidNameList[p].PidNumber == pid.pidNumberInt)
+                {
+                    pid.Name = pidNameList[p].PidName;
+                    pid.ConversionFactor = pidNameList[p].ConversionFactor;
+                    break;
+                }
+            }
+            return pid;
+        }
+        private PID readPidDiesel(uint addr)
+        {
+            PID pid = new PID();
+            pid.pidNumberInt = BEToUint16(PCM.buf, addr);
+            pid.PidNumber = pid.pidNumberInt.ToString("X4");
+            pid.Bytes = (ushort)(PCM.buf[addr + 2]);
+            if (pid.Bytes > 3)
+                pid.Bytes = 0;
+            pid.SubroutineInt = BEToUint32(PCM.buf, addr + 4);
+            pid.Subroutine = pid.SubroutineInt.ToString("X8");
+            for (int p = 0; p < pidNameList.Count; p++)
             {
                 if (pidNameList[p].PidNumber == pid.pidNumberInt)
                 {
