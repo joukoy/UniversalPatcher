@@ -557,8 +557,8 @@ public class upatcher
     }
     public static string CheckStockCVN(string PN, string Ver, string SegNr, string cvn, bool AddToList)
     {
-        string retStock = "[n/a]";
-        string retRef = "";
+        string retVal = "[n/a]";
+        uint stockC = 0;
         for (int c = 0; c < StockCVN.Count; c++)
         {
             //if (StockCVN[c].XmlFile == Path.GetFileName(XMLFile) && StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
@@ -571,58 +571,25 @@ public class upatcher
                     StockCVN.RemoveAt(c);
                     StockCVN.Insert(c, c1);
                 }
+                if (!HexToUint(cvn, out stockC))
+                {
+                    throw new Exception("Can't convert from HEX: " + cvn);
+                }
                 if (StockCVN[c].cvn == cvn)
                 {
-                    retStock = "[stock]";
+                    retVal = "[stock]";
                     break;
                 }
                 else
                 {
-                    retStock = "[modded]";
+                    retVal = "[modded]";
                     break;
                     //return "[modded]";
                 }
             }
         }
-        //Check if it's in referencelist
-        for (int r = 0; r < referenceCvnList.Count; r++)
-        {
-            if (PN == referenceCvnList[r].PN)
-            {
-                uint refC = 0;
-                uint C = 0;
-                retRef = "[modded]";
-                if (!HexToUint(referenceCvnList[r].CVN, out refC))
-                {
-                    Debug.WriteLine("Can't convert from HEX: " + referenceCvnList[r].CVN);
-                    break;
-                }
-                if (!HexToUint(cvn, out C))
-                {
-                    Debug.WriteLine("Can't convert from HEX: " + cvn);
-                    break;
-                }
-                if (refC == C)
-                {
-                    Debug.WriteLine("PN: " + PN + " CVN found from Referencelist: " + referenceCvnList[r].CVN);
-                    retRef = "[stock]";
-                }
-                ushort refShort;
-                if (!HexToUshort(referenceCvnList[r].CVN, out refShort))
-                {
-                    Debug.WriteLine("Can't convert from HEX: " + referenceCvnList[r].CVN);
-                    break;
-                }
-                if (SwapBytes(refShort) == C)
-                {
-                    Debug.WriteLine("PN: " + PN + " byteswapped CVN found from Referencelist: " + referenceCvnList[r].CVN);
-                    retRef =  "[stock]";
-                }                
-                break;
-            }
-        }
 
-        if (AddToList && retStock != "[stock]")
+        if (AddToList && retVal != "[stock]") 
         {
             bool IsinCVNlist = false;
             if (ListCVN == null)
@@ -657,42 +624,71 @@ public class upatcher
             }
         }
 
-        if (retStock == "[stock]" && retRef == "[modded]")
+        if (retVal != "[n/a]")
         {
-            bool isInBadCvnList = false;
-            if (BadCvnList == null)
-                BadCvnList = new List<CVN>();
-            for (int i=0;i<BadCvnList.Count;i++)
+            //Check if it's in referencelist
+            bool cvnMismatch = false;
+            uint refC = 0;
+            string refString = "";
+            for (int r = 0; r < referenceCvnList.Count; r++)
             {
-                if (BadCvnList[i].PN == PN && BadCvnList[i].cvn == cvn)
+                if (PN == referenceCvnList[r].PN)
                 {
-                    isInBadCvnList = true;
-                    Debug.WriteLine("PN: " + PN + ", CVN: " + cvn + " is already in badCvnList");
+                    refString = referenceCvnList[r].CVN;
+                    cvnMismatch = true;    //Found from referencelist, match not found YET
+                    if (!HexToUint(referenceCvnList[r].CVN, out refC))
+                    {
+                        throw new Exception("Can't convert from HEX: " + referenceCvnList[r].CVN);
+                    }
+                    if (refC == stockC)
+                    {
+                        Debug.WriteLine("PN: " + PN + " CVN found from Referencelist: " + referenceCvnList[r].CVN);
+                        cvnMismatch = false; //Found from referencelist, no mismatch
+                    }
+                    ushort refShort;
+                    if (!HexToUshort(referenceCvnList[r].CVN, out refShort))
+                    {
+                        throw new Exception("Can't convert from HEX: " + referenceCvnList[r].CVN);
+                    }
+                    if (SwapBytes(refShort) == stockC)
+                    {
+                        Debug.WriteLine("PN: " + PN + " byteswapped CVN found from Referencelist: " + referenceCvnList[r].CVN);
+                        cvnMismatch = false; //Found from referencelist, no mismatch
+                    }
                     break;
                 }
             }
-            if (!isInBadCvnList)
+
+            if (cvnMismatch) //Found from referencelist, have mismatch
             {
-                Debug.WriteLine("Adding PN: " + PN +", CVN: " + cvn + " to badCvnList");
-                CVN C1 = new CVN();
-                C1.cvn = cvn;
-                C1.PN = PN;
-                C1.SegmentNr = SegNr;
-                C1.Ver = Ver;
-                C1.XmlFile = Path.GetFileName(XMLFile);
-                for (int r = 0; r < referenceCvnList.Count; r++)
+                bool isInBadCvnList = false;
+                if (BadCvnList == null)
+                    BadCvnList = new List<CVN>();
+                for (int i = 0; i < BadCvnList.Count; i++)
                 {
-                    if (referenceCvnList[r].PN == C1.PN)
+                    if (BadCvnList[i].PN == PN && BadCvnList[i].cvn == cvn)
                     {
-                        C1.ReferenceCvn = referenceCvnList[r].CVN.TrimStart('0');
+                        isInBadCvnList = true;
+                        Debug.WriteLine("PN: " + PN + ", CVN: " + cvn + " is already in badCvnList");
                         break;
                     }
                 }
-                BadCvnList.Add(C1);
+                if (!isInBadCvnList)
+                {
+                    Debug.WriteLine("Adding PN: " + PN + ", CVN: " + cvn + " to badCvnList");
+                    CVN C1 = new CVN();
+                    C1.cvn = cvn;
+                    C1.PN = PN;
+                    C1.SegmentNr = SegNr;
+                    C1.Ver = Ver;
+                    C1.XmlFile = Path.GetFileName(XMLFile);
+                    C1.ReferenceCvn = refString.TrimStart('0');
+                    BadCvnList.Add(C1);
 
+                }
             }
         }
-        return retStock;
+        return retVal;
     }
 
     public static void loadReferenceCvn()
