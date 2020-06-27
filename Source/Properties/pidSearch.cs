@@ -146,32 +146,56 @@ namespace UniversalPatcher.Properties
         private uint searchRamAddressDiesel(uint startAddr)
         {
             uint location = uint.MaxValue;
-            location = searchBytes("10 39", startAddr, PCM.fsize - 2, 0x4E75);
-            if (location == uint.MaxValue)
-                location = searchBytes("30 39", startAddr, PCM.fsize - 2, 0x4E75);
-            if (location == uint.MaxValue)
-                location = searchBytes("12 39", startAddr, PCM.fsize - 2, 0x4E75);
-            if (location == uint.MaxValue)
-                location = searchBytes("32 39", startAddr, PCM.fsize - 2, 0x4E75);
-            if (location == uint.MaxValue)
-                location = searchBytes("1e 39", startAddr, PCM.fsize - 2, 0x4E75);
-            if (location == uint.MaxValue)
-                location = searchBytes("3e 39", startAddr, PCM.fsize - 2, 0x4E75);
-            if (location == uint.MaxValue)
-                location = searchBytes("20 b9", startAddr, PCM.fsize - 2, 0x4E75);
+            uint ramAddress = uint.MaxValue;
 
+            location = searchBytes("10 39", startAddr, PCM.fsize - 2, 0x4E75);
             if (location != uint.MaxValue)
             {
-                uint ramAddress = BEToUint32(PCM.buf, location + 2);
-                //Debug.WriteLine("Possible RAM address: " + ramAddress.ToString("X"));
-                if (ramAddress == 0xff8f0a || ramAddress == 0xff8a7c)
-                {
-                    Debug.WriteLine("Discarded RAM address: " + ramAddress.ToString("X"));
-                }
-                else
-                {
+                ramAddress = BEToUint32(PCM.buf, location + 2);
+                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
                     return ramAddress;
-                }
+            }
+            location = searchBytes("30 39", startAddr, PCM.fsize - 2, 0x4E75);
+            if (location != uint.MaxValue)
+            {
+                ramAddress = BEToUint32(PCM.buf, location + 2);
+                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
+                    return ramAddress;
+            }
+            location = searchBytes("12 39", startAddr, PCM.fsize - 2, 0x4E75);
+            if (location != uint.MaxValue)
+            {
+                ramAddress = BEToUint32(PCM.buf, location + 2);
+                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
+                    return ramAddress;
+            }
+            location = searchBytes("32 39", startAddr, PCM.fsize - 2, 0x4E75);
+            if (location != uint.MaxValue)
+            {
+                ramAddress = BEToUint32(PCM.buf, location + 2);
+                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
+                    return ramAddress;
+            }
+            location = searchBytes("1e 39", startAddr, PCM.fsize - 2, 0x4E75);
+            if (location != uint.MaxValue)
+            {
+                ramAddress = BEToUint32(PCM.buf, location + 2);
+                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
+                    return ramAddress;
+            }
+            location = searchBytes("3e 39", startAddr, PCM.fsize - 2, 0x4E75);
+            if (location != uint.MaxValue)
+            {
+                ramAddress = BEToUint32(PCM.buf, location + 2);
+                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
+                    return ramAddress;
+            }
+            location = searchBytes("20 b9", startAddr, PCM.fsize - 2, 0x4E75);
+            if (location != uint.MaxValue)
+            {
+                ramAddress = BEToUint32(PCM.buf, location + 2);
+                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
+                    return ramAddress;
             }
             return uint.MaxValue;
         }
