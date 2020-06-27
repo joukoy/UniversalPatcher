@@ -131,7 +131,10 @@ namespace UniversalPatcher.Properties
             pid.SubroutineInt = BEToUint32(PCM.buf, addr + 6);
             pid.Subroutine = pid.SubroutineInt.ToString("X8");
             pid.RamAddressInt = searchRamAddressDiesel(pid.SubroutineInt);
-            pid.RamAddress = pid.RamAddressInt.ToString("X4");
+            if (pid.RamAddressInt != uint.MaxValue)
+                pid.RamAddress = pid.RamAddressInt.ToString("X4");
+            else
+                pid.RamAddress = "";
             for (int p = 0; p < pidNameList.Count; p++)
             {
                 if (pidNameList[p].PidNumber == pid.pidNumberInt)
@@ -191,6 +194,13 @@ namespace UniversalPatcher.Properties
                     return ramAddress;
             }
             location = searchBytes("20 b9", startAddr, PCM.fsize - 2, 0x4E75);
+            if (location != uint.MaxValue)
+            {
+                ramAddress = BEToUint32(PCM.buf, location + 2);
+                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
+                    return ramAddress;
+            }
+            location = searchBytes("33 F9 * * * * 00 FF 8F 02", startAddr, PCM.fsize - 10, 0x4E75);
             if (location != uint.MaxValue)
             {
                 ramAddress = BEToUint32(PCM.buf, location + 2);
