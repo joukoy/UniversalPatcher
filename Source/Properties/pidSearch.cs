@@ -19,7 +19,7 @@ namespace UniversalPatcher.Properties
             loadPidList();
             if (Path.GetFileName(XMLFile).ToLower().StartsWith("diesel01"))
             {
-                startAddress = searchBytes("00 00 04 * * * * * * * 00 01 04 * * * * * * * 00 02 02", 0, PCM.fsize - 23);
+                startAddress = searchBytes(PCM, "00 00 04 * * * * * * * 00 01 04 * * * * * * * 00 02 02", 0, PCM.fsize - 23);
                 step = 10;
                 if (startAddress < uint.MaxValue)
                     searchPids(step,true);
@@ -29,14 +29,14 @@ namespace UniversalPatcher.Properties
             if (Path.GetFileName(XMLFile).ToLower().StartsWith("p01"))
             {
                 step = 8;
-                startAddress = searchBytes("00 01 02 00 * * * * 00 03 01 00 * * * * 00 04 00 00 * * * * 00 05 00 00", 0, PCM.fsize - 28);
+                startAddress = searchBytes(PCM, "00 01 02 00 * * * * 00 03 01 00 * * * * 00 04 00 00 * * * * 00 05 00 00", 0, PCM.fsize - 28);
                 if (startAddress < uint.MaxValue)
                     searchPids(step,false);
                 return;
             }
             if (Path.GetFileName(XMLFile).ToLower().StartsWith("v6"))
             {
-                startAddress = searchBytes("00 00 02 00 * * * * * * 00 01 02 00", 0, PCM.fsize - 14);
+                startAddress = searchBytes(PCM, "00 00 02 00 * * * * * * 00 01 02 00", 0, PCM.fsize - 14);
                 step = 10;
                 if (startAddress < uint.MaxValue)
                     searchPids(step,false);
@@ -101,9 +101,9 @@ namespace UniversalPatcher.Properties
                 pid.Bytes = 4;
             pid.SubroutineInt = BEToUint32(PCM.buf, addr + 4);
             pid.Subroutine = pid.SubroutineInt.ToString("X8");
-            uint ramStoreAddr = searchBytes("10 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
+            uint ramStoreAddr = searchBytes(PCM, "10 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
             if (ramStoreAddr == uint.MaxValue)
-                ramStoreAddr = searchBytes("30 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
+                ramStoreAddr = searchBytes(PCM, "30 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
             if (ramStoreAddr < uint.MaxValue)
             {
                 pid.RamAddressInt = BEToUint16(PCM.buf, ramStoreAddr + 2);
@@ -150,98 +150,79 @@ namespace UniversalPatcher.Properties
         {
             uint location = uint.MaxValue;
             uint ramAddress = uint.MaxValue;
+            uint skipWord1 = 0xff8f0a;
+            uint skipWord2 = 0xff8a7c;
 
-            location = searchBytes("10 39", startAddr, PCM.fsize - 2, 0x4E75);
+            location = searchBytes(PCM, "10 39 * * * * 55 00 67 06", startAddr, PCM.fsize);
+            if (location != uint.MaxValue)
+            {
+                skipWord1 = BEToUint32(PCM.buf, location + 2);
+            }
+            location = searchBytes(PCM, "12 39 * * * * 41 EE FF", startAddr, PCM.fsize);
+            if (location != uint.MaxValue)
+            {
+                skipWord2 = BEToUint32(PCM.buf, location + 2);
+            }
+
+            location = searchBytes(PCM, "10 39", startAddr, PCM.fsize - 2, 0x4E75);
             if (location != uint.MaxValue)
             {
                 ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
+                if (ramAddress != skipWord1 && ramAddress != skipWord2)
                     return ramAddress;
             }
-            location = searchBytes("30 39", startAddr, PCM.fsize - 2, 0x4E75);
+            location = searchBytes(PCM, "30 39", startAddr, PCM.fsize - 2, 0x4E75);
             if (location != uint.MaxValue)
             {
                 ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
+                if (ramAddress != skipWord1 && ramAddress != skipWord2)
                     return ramAddress;
             }
-            location = searchBytes("12 39", startAddr, PCM.fsize - 2, 0x4E75);
+            location = searchBytes(PCM, "12 39", startAddr, PCM.fsize - 2, 0x4E75);
             if (location != uint.MaxValue)
             {
                 ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
+                if (ramAddress != skipWord1 && ramAddress != skipWord2)
                     return ramAddress;
             }
-            location = searchBytes("32 39", startAddr, PCM.fsize - 2, 0x4E75);
+            location = searchBytes(PCM, "32 39", startAddr, PCM.fsize - 2, 0x4E75);
             if (location != uint.MaxValue)
             {
                 ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
+                if (ramAddress != skipWord1 && ramAddress != skipWord2)
                     return ramAddress;
             }
-            location = searchBytes("1e 39", startAddr, PCM.fsize - 2, 0x4E75);
+            location = searchBytes(PCM, "1e 39", startAddr, PCM.fsize - 2, 0x4E75);
             if (location != uint.MaxValue)
             {
                 ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
+                if (ramAddress != skipWord1 && ramAddress != skipWord2)
                     return ramAddress;
             }
-            location = searchBytes("3e 39", startAddr, PCM.fsize - 2, 0x4E75);
+            location = searchBytes(PCM, "3e 39", startAddr, PCM.fsize - 2, 0x4E75);
             if (location != uint.MaxValue)
             {
                 ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
+                if (ramAddress != skipWord1 && ramAddress != skipWord2)
                     return ramAddress;
             }
-            location = searchBytes("20 b9", startAddr, PCM.fsize - 2, 0x4E75);
+            location = searchBytes(PCM, "20 b9", startAddr, PCM.fsize - 2, 0x4E75);
             if (location != uint.MaxValue)
             {
                 ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
+                if (ramAddress != skipWord1 && ramAddress != skipWord2)
                     return ramAddress;
             }
-            location = searchBytes("33 F9 * * * * 00 FF 8F 02", startAddr, PCM.fsize - 10, 0x4E75);
+            location = searchBytes(PCM, "33 F9 * * * * 00 FF 8F 02", startAddr, PCM.fsize - 10, 0x4E75);
             if (location != uint.MaxValue)
             {
                 ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != 0xff8f0a && ramAddress != 0xff8a7c)
+                if (ramAddress != skipWord1 && ramAddress != skipWord2)
                     return ramAddress;
             }
             return uint.MaxValue;
         }
 
-        private uint searchBytes(string searchString, uint Start, uint End, ushort stopVal=0 )
-        {
-            uint addr;
-            string[] searchParts = searchString.Split(' ');
-
-            for (addr=Start; addr < End; addr++)
-            {
-                bool match = true;
-                for (uint part = 0; part < searchParts.Length; part++)
-                {
-                    if (stopVal != 0 && BEToUint16(PCM.buf,addr) == stopVal)
-                    {
-                        return uint.MaxValue;
-                    }
-                    if (searchParts[part] != "*")
-                    {
-                        byte searchval;
-                        HexToByte(searchParts[part], out searchval);
-                        if (PCM.buf[addr + part] != searchval)
-                        {
-                            match = false;
-                            break;
-                        }
-                    }
-                }
-                if (match)
-                {
-                    return addr;
-                }
-            }
-            return uint.MaxValue;
-        }
         public void loadPidList()
         {
             string FileName = Path.Combine(Application.StartupPath, "XML", "pidlist.xml");

@@ -153,6 +153,11 @@
             this.editTableSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.txtCustomSearchString = new System.Windows.Forms.TextBox();
+            this.txtCustomSearchStartAddress = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.btnCustomSearch = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1203,6 +1208,11 @@
             // 
             // tabFileinfo
             // 
+            this.tabFileinfo.Controls.Add(this.btnCustomSearch);
+            this.tabFileinfo.Controls.Add(this.label12);
+            this.tabFileinfo.Controls.Add(this.label11);
+            this.tabFileinfo.Controls.Add(this.txtCustomSearchStartAddress);
+            this.tabFileinfo.Controls.Add(this.txtCustomSearchString);
             this.tabFileinfo.Controls.Add(this.btnGetPidList);
             this.tabFileinfo.Controls.Add(this.chkSearchTables);
             this.tabFileinfo.Controls.Add(this.chkExtra);
@@ -1565,6 +1575,51 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // txtCustomSearchString
+            // 
+            this.txtCustomSearchString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtCustomSearchString.Location = new System.Drawing.Point(492, 41);
+            this.txtCustomSearchString.Name = "txtCustomSearchString";
+            this.txtCustomSearchString.Size = new System.Drawing.Size(274, 20);
+            this.txtCustomSearchString.TabIndex = 179;
+            // 
+            // txtCustomSearchStartAddress
+            // 
+            this.txtCustomSearchStartAddress.Location = new System.Drawing.Point(557, 67);
+            this.txtCustomSearchStartAddress.Name = "txtCustomSearchStartAddress";
+            this.txtCustomSearchStartAddress.Size = new System.Drawing.Size(117, 20);
+            this.txtCustomSearchStartAddress.TabIndex = 180;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(378, 70);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(175, 13);
+            this.label11.TabIndex = 181;
+            this.label11.Text = "Start searching from address (HEX):";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(378, 41);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(108, 13);
+            this.label12.TabIndex = 182;
+            this.label12.Text = "Custom search string:";
+            // 
+            // btnCustomSearch
+            // 
+            this.btnCustomSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCustomSearch.Location = new System.Drawing.Point(691, 65);
+            this.btnCustomSearch.Name = "btnCustomSearch";
+            this.btnCustomSearch.Size = new System.Drawing.Size(75, 23);
+            this.btnCustomSearch.TabIndex = 183;
+            this.btnCustomSearch.Text = "Search";
+            this.btnCustomSearch.UseVisualStyleBackColor = true;
+            this.btnCustomSearch.Click += new System.EventHandler(this.btnCustomSearch_Click);
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1754,5 +1809,10 @@
         private System.Windows.Forms.Button BtnRefreshBadCvn;
         private System.Windows.Forms.Button btnClearBadCvn;
         private System.Windows.Forms.DataGridView dataGridBadCvn;
+        private System.Windows.Forms.Button btnCustomSearch;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TextBox txtCustomSearchStartAddress;
+        private System.Windows.Forms.TextBox txtCustomSearchString;
     }
 }

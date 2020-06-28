@@ -2443,6 +2443,57 @@ namespace UniversalPatcher
         {
             RefreshBadCVNlist();
         }
+
+        private void btnCustomSearch_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                uint startAddr = 0;
+                if (txtCustomSearchStartAddress.Text.Length == 0 || !HexToUint(txtCustomSearchStartAddress.Text, out startAddr))
+                    startAddr = 0;
+                uint addr = searchBytes(basefile, txtCustomSearchString.Text, startAddr, basefile.fsize);
+                if (addr == uint.MaxValue)
+                    Logger("Not found");
+                else
+                {
+                    Logger("Found at address: " + addr.ToString("X"));
+
+                    string dataBuf = "";
+                    if (addr > 5)
+                        startAddr = addr - 5;
+                    else
+                        startAddr = 0;
+
+                    for (uint a = startAddr; a < addr; a++)
+                    {
+                        dataBuf += basefile.buf[a].ToString("X2") + " ";
+                    }
+                    Logger(dataBuf, false);
+                    dataBuf = "";
+                    string[] searhParts = txtCustomSearchString.Text.Split(' ');
+                    for (uint a = addr; a < addr + searhParts.Length; a++)
+                    {
+                        dataBuf += basefile.buf[a].ToString("X2") + " ";
+                    }
+                    LoggerBold(dataBuf, false);
+                    dataBuf = "";
+                    uint endAddr = 0;
+                    if ((addr + searhParts.Length + 5) > basefile.fsize)
+                        endAddr = basefile.fsize;
+                    else
+                        endAddr = (uint)(addr + searhParts.Length + 5);
+                    for (uint a = (uint)(addr + searhParts.Length); a < endAddr; a++)
+                    {
+                        dataBuf += basefile.buf[a].ToString("X2") + " ";
+                    }
+                    Logger(dataBuf);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+        }
     }
 }
 

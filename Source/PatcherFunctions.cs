@@ -715,6 +715,41 @@ public class upatcher
             }
         }
     }
+    public static uint searchBytes(PcmFile PCM, string searchString, uint Start, uint End, ushort stopVal = 0)
+    {
+        uint addr;
+        string[] searchParts = searchString.Split(' ');
+
+        for (addr = Start; addr < End; addr++)
+        {
+            bool match = true;
+            if (stopVal != 0 && BEToUint16(PCM.buf, addr) == stopVal)
+            {
+                return uint.MaxValue;
+            }
+            if ((addr + searchParts.Length) > PCM.fsize)
+                return uint.MaxValue;
+            for (uint part = 0; part < searchParts.Length; part++)
+            {
+                if (searchParts[part] != "*")
+                {
+                    byte searchval;
+                    HexToByte(searchParts[part], out searchval);
+                    if (PCM.buf[addr + part] != searchval)
+                    {
+                        match = false;
+                        break;
+                    }
+                }
+            }
+            if (match)
+            {
+                return addr;
+            }
+        }
+        return uint.MaxValue;
+    }
+
     public static bool HexToUint64(string Hex, out UInt64 x)
     {
         x = 0;
