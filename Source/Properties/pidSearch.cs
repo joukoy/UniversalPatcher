@@ -164,7 +164,7 @@ namespace UniversalPatcher.Properties
                 skipWord2 = BEToUint32(PCM.buf, addr + 2);
             }
 
-            ushort[] dwordList = { 0x1039, 0x3039, 0x1239, 0x3239, 0x1e39, 0x3e39, 0x20b9 };
+            ushort[] dwordList = { 0x1039, 0x3039, 0x1239, 0x3239, 0x1e39, 0x3e39, 0x20b9, 0x33f9 };
 
             for (int s=0;s< dwordList.Length;s++)
             {
