@@ -609,7 +609,7 @@ namespace UniversalPatcher
             return tsr;
 
         }
-        public void searchTables(string FileName, PcmFile PCM)
+        public void searchTables(string FileName, PcmFile PCM, string CustomSearch = "")
         {
 
             try
@@ -621,125 +621,137 @@ namespace UniversalPatcher
                 searchVariables = new List<SearchVariable>();
                 TableSearchResult tsr = new TableSearchResult();
                 List<TableSearchResult> thisFileTables = new List<TableSearchResult>();
+                List<TableSearchConfig> tableSearchConfig;
 
-                string searchXMLFile = Path.Combine(Application.StartupPath, "XML", "SearchTables-" + Path.GetFileName(XMLFile));
-
-                if (File.Exists(searchXMLFile))
+                if (CustomSearch == "")
                 {
+                    string searchXMLFile = Path.Combine(Application.StartupPath, "XML", "SearchTables-" + Path.GetFileName(XMLFile));
+
+                    if (!File.Exists(searchXMLFile))
+                        return;
+
                     System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSearchConfig>));
                     System.IO.StreamReader file = new System.IO.StreamReader(searchXMLFile);
-                    List<TableSearchConfig> tableSearchConfig = (List<TableSearchConfig>)reader.Deserialize(file);
+                    tableSearchConfig = (List<TableSearchConfig>)reader.Deserialize(file);
                     file.Close();
                     tableSearchFile = searchXMLFile;
-                    
-                    for (int i = 0; i < tableSearchConfig.Count; i++)
-                    {                        
-                        string searchTxt = tableSearchConfig[i].searchData.Replace("[", "");
-                        searchTxt = searchTxt.Replace("]", "");
+                }
+                else
+                {
+                    tableSearchConfig = new List<TableSearchConfig>();
+                    TableSearchConfig tsc = new TableSearchConfig();
+                    tsc.searchData = CustomSearch;
+                    tableSearchConfig.Add(tsc);
+                }
+            
+                for (int i = 0; i < tableSearchConfig.Count; i++)
+                {                        
+                    string searchTxt = tableSearchConfig[i].searchData.Replace("[", "");
+                    searchTxt = searchTxt.Replace("]", "");
 
-                        if (searchTxt.StartsWith("//") || searchTxt.Length < 2)
+                    if (searchTxt.StartsWith("//") || searchTxt.Length < 2)
+                    {
+                        Debug.WriteLine("Skipping disabled line: " + searchTxt);
+                    }
+                    else
+                    {
+                        parsedConfigList = new List<TableSearchConfig.ParsedTableSearchConfig>();
+                        TableSearchConfig.ParsedTableSearchConfig parsedConfig = new TableSearchConfig.ParsedTableSearchConfig();
+
+                        TableSearchConfig tsc = tableSearchConfig[i];
+                        tsc.parseAddresses(PCM);
+                        List <SearchVariable> tmpVariables = tsc.parseVariables(PCM);
+                        for (int var = 0; var < tmpVariables.Count; var++)
+                            searchVariables.Add(tmpVariables[var]);
+                        Debug.WriteLine("Original searchstring: " + searchTxt);
+                        int commonParts = parseTableSearchString(searchTxt, parsedConfig);
+                        Debug.WriteLine("Searchstrings generated: " + parsedConfigList.Count);
+
+                        for (int block = 0; block < tsc.searchBlocks.Count; block++)
                         {
-                            Debug.WriteLine("Skipping disabled line: " + searchTxt);
-                        }
-                        else
-                        {
-                            parsedConfigList = new List<TableSearchConfig.ParsedTableSearchConfig>();
-                            TableSearchConfig.ParsedTableSearchConfig parsedConfig = new TableSearchConfig.ParsedTableSearchConfig();
-
-                            TableSearchConfig tsc = tableSearchConfig[i];
-                            tsc.parseAddresses(PCM);
-                            List <SearchVariable> tmpVariables = tsc.parseVariables(PCM);
-                            for (int var = 0; var < tmpVariables.Count; var++)
-                                searchVariables.Add(tmpVariables[var]);
-                            Debug.WriteLine("Original searchstring: " + searchTxt);
-                            int commonParts = parseTableSearchString(searchTxt, parsedConfig);
-                            Debug.WriteLine("Searchstrings generated: " + parsedConfigList.Count);
-
-                            for (int block = 0; block < tsc.searchBlocks.Count; block++)
+                            uint addr = tsc.searchBlocks[block].Start;
+                            while (addr < tsc.searchBlocks[block].End)
                             {
-                                uint addr = tsc.searchBlocks[block].Start;
-                                while (addr < tsc.searchBlocks[block].End)
+                                int ss = 0;
+                                while (ss < parsedConfigList.Count)
                                 {
-                                    int ss = 0;
-                                    while (ss < parsedConfigList.Count)
+                                    bool match = false;
+                                    int hits = 0;
+                                    for (int j = 0; j < parsedConfigList[ss].searchParts.Count; j++)
                                     {
-                                        bool match = false;
-                                        int hits = 0;
-                                        for (int j = 0; j < parsedConfigList[ss].searchParts.Count; j++)
+                                        if (parsedConfigList[ss].searchValues[j] == -1)
                                         {
-                                            if (parsedConfigList[ss].searchValues[j] == -1)
+                                            //Count as hit (wildcard, ignore)
+                                            hits++;
+                                        }
+                                        else
+                                        {
+                                            if (PCM.buf[addr + j] == parsedConfigList[ss].searchValues[j])
                                             {
-                                                //Count as hit (wildcard, ignore)
                                                 hits++;
                                             }
                                             else
                                             {
-                                                if (PCM.buf[addr + j] == parsedConfigList[ss].searchValues[j])
-                                                {
-                                                    hits++;
-                                                }
-                                                else
-                                                {
-                                                    break;
-                                                }
+                                                break;
                                             }
                                         }
-                                        if (hits == parsedConfigList[ss].searchValues.Count)
-                                        {
-                                            match = true;
-                                            searchTxt = parsedConfigList[ss].searchString;
-                                            parsedConfig = parsedConfigList[ss];
-                                        }
-                                        if (hits < parsedConfigList[ss].searchValues.Count && hits < commonParts)
-                                        {
-                                            //Optimization: beginning of all parsed searchstrings until "commonParts" are identical. 
-                                            //If this string doesn't match, others in list doesn't match either
-                                            match = false;
-                                            ss = parsedConfigList.Count;
-                                        }
-                                        if (match)
-                                        {
-                                            tsr = parseMatch(PCM, parsedConfigList[ss], tsc, addr);
-                                            for (int tblock = 0; tblock < tsc.tableBlocks.Count; tblock++)
-                                            {
-                                                if (tsr.AddressInt >= tsc.tableBlocks[tblock].Start && tsr.AddressInt <= tsc.tableBlocks[tblock].End)
-                                                {
-                                                    bool duplicate = false;
-                                                    for (int ts = 0; ts < thisFileTables.Count; ts++)
-                                                    {
-                                                        if (thisFileTables[ts].Data == tsr.Data && thisFileTables[ts].Name == tsr.Name && thisFileTables[ts].Search == tsr.Search)
-                                                        {
-                                                            thisFileTables[ts].hitCount++;
-                                                            duplicate = true;
-                                                            //thisFileTables[ts].Address += ";" + tsr.AddressInt.ToString("X8");
-                                                            thisFileTables[ts].Found += ";" + tsr.Found;
-                                                            break;
-                                                        }
-                                                    }
-
-                                                    if (!duplicate)
-                                                    {
-                                                        tsr.Address = tsr.AddressInt.ToString("X8");
-                                                        thisFileTables.Add(tsr);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        ss++;
                                     }
-                                    addr++;
+                                    if (hits == parsedConfigList[ss].searchValues.Count)
+                                    {
+                                        match = true;
+                                        searchTxt = parsedConfigList[ss].searchString;
+                                        parsedConfig = parsedConfigList[ss];
+                                    }
+                                    if (hits < parsedConfigList[ss].searchValues.Count && hits < commonParts)
+                                    {
+                                        //Optimization: beginning of all parsed searchstrings until "commonParts" are identical. 
+                                        //If this string doesn't match, others in list doesn't match either
+                                        match = false;
+                                        ss = parsedConfigList.Count;
+                                    }
+                                    if (match)
+                                    {
+                                        tsr = parseMatch(PCM, parsedConfigList[ss], tsc, addr);
+                                        for (int tblock = 0; tblock < tsc.tableBlocks.Count; tblock++)
+                                        {
+                                            if (tsr.AddressInt >= tsc.tableBlocks[tblock].Start && tsr.AddressInt <= tsc.tableBlocks[tblock].End)
+                                            {
+                                                bool duplicate = false;
+                                                for (int ts = 0; ts < thisFileTables.Count; ts++)
+                                                {
+                                                    if (thisFileTables[ts].Data == tsr.Data && thisFileTables[ts].Name == tsr.Name && thisFileTables[ts].Search == tsr.Search)
+                                                    {
+                                                        thisFileTables[ts].hitCount++;
+                                                        duplicate = true;
+                                                        //thisFileTables[ts].Address += ";" + tsr.AddressInt.ToString("X8");
+                                                        thisFileTables[ts].Found += ";" + tsr.Found;
+                                                        break;
+                                                    }
+                                                }
+
+                                                if (!duplicate)
+                                                {
+                                                    tsr.Address = tsr.AddressInt.ToString("X8");
+                                                    thisFileTables.Add(tsr);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    ss++;
                                 }
-
+                                addr++;
                             }
+
                         }
+                    }
 
 
-                    }
-                    for (int t = 0; t < thisFileTables.Count; t++)
-                    {
-                        tableSearchResult.Add(thisFileTables[t]);
-                    }
                 }
+                for (int t = 0; t < thisFileTables.Count; t++)
+                {
+                    tableSearchResult.Add(thisFileTables[t]);
+                }
+                
             }
             catch (Exception ex)
             {

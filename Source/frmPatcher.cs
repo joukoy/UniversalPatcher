@@ -49,6 +49,7 @@ namespace UniversalPatcher
         private BindingSource searchedTablesBindingSource = new BindingSource();
         private BindingSource pidListBindingSource = new BindingSource();
         private List<PidSearch.PID> pidList = new List<PidSearch.PID>();
+        private uint lastCustomSearchResult = 0;
         private string logFile;
         StreamWriter logwriter;
         private void FrmPatcher_Load(object sender, EventArgs e)
@@ -2444,10 +2445,53 @@ namespace UniversalPatcher
             RefreshBadCVNlist();
         }
 
+        private void ShowCustomSearchResult(uint addr)
+        {
+            uint startAddr;
+            string[] searhParts = txtCustomSearchString.Text.Split(' ');
+
+            Logger("Found at address: " + addr.ToString("X"));
+            lastCustomSearchResult = addr;
+            string dataBuf = "";
+            if (addr > 5)
+                startAddr = addr - 5;
+            else
+                startAddr = 0;
+
+            for (uint a = startAddr; a < addr; a++)
+            {
+                dataBuf += basefile.buf[a].ToString("X2") + " ";
+            }
+            Logger(dataBuf, false);
+            dataBuf = "";
+            for (uint a = addr; a < addr + searhParts.Length; a++)
+            {
+                dataBuf += basefile.buf[a].ToString("X2") + " ";
+            }
+            LoggerBold(dataBuf, false);
+            dataBuf = "";
+            uint endAddr = 0;
+            if ((addr + searhParts.Length + 5) > basefile.fsize)
+                endAddr = basefile.fsize;
+            else
+                endAddr = (uint)(addr + searhParts.Length + 5);
+            for (uint a = (uint)(addr + searhParts.Length); a < endAddr; a++)
+            {
+                dataBuf += basefile.buf[a].ToString("X2") + " ";
+            }
+            Logger(dataBuf);
+        }
         private void btnCustomSearch_Click(object sender, EventArgs e)
         {
             try
             {
+                if (chkCustomTableSearch.Checked)
+                {
+                    TableFinder tableFinder = new TableFinder();
+                    tableFinder.searchTables(basefile.FileName, basefile, txtCustomSearchString.Text);
+                    refreshSearchedTables();
+                    return;
+                }
                 uint startAddr = 0;
                 if (txtCustomSearchStartAddress.Text.Length == 0 || !HexToUint(txtCustomSearchStartAddress.Text, out startAddr))
                     startAddr = 0;
@@ -2456,42 +2500,76 @@ namespace UniversalPatcher
                     Logger("Not found");
                 else
                 {
-                    Logger("Found at address: " + addr.ToString("X"));
-                    txtCustomSearchStartAddress.Text = (addr+1).ToString("X");
-                    string dataBuf = "";
-                    if (addr > 5)
-                        startAddr = addr - 5;
-                    else
-                        startAddr = 0;
-
-                    for (uint a = startAddr; a < addr; a++)
-                    {
-                        dataBuf += basefile.buf[a].ToString("X2") + " ";
-                    }
-                    Logger(dataBuf, false);
-                    dataBuf = "";
-                    string[] searhParts = txtCustomSearchString.Text.Split(' ');
-                    for (uint a = addr; a < addr + searhParts.Length; a++)
-                    {
-                        dataBuf += basefile.buf[a].ToString("X2") + " ";
-                    }
-                    LoggerBold(dataBuf, false);
-                    dataBuf = "";
-                    uint endAddr = 0;
-                    if ((addr + searhParts.Length + 5) > basefile.fsize)
-                        endAddr = basefile.fsize;
-                    else
-                        endAddr = (uint)(addr + searhParts.Length + 5);
-                    for (uint a = (uint)(addr + searhParts.Length); a < endAddr; a++)
-                    {
-                        dataBuf += basefile.buf[a].ToString("X2") + " ";
-                    }
-                    Logger(dataBuf);
+                    ShowCustomSearchResult(addr);
                 }
             }
             catch (Exception ex)
             {
                 Logger(ex.Message);
+            }
+        }
+
+        private void btnCustomSearchNext_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                uint addr = searchBytes(basefile, txtCustomSearchString.Text, lastCustomSearchResult + 1, basefile.fsize);
+                if (addr == uint.MaxValue)
+                    Logger("Not found");
+                else
+                {
+                    ShowCustomSearchResult(addr);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+
+        }
+
+        private void btnCustomFindAll_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                uint startAddr = 0;
+                if (txtCustomSearchStartAddress.Text.Length == 0 || !HexToUint(txtCustomSearchStartAddress.Text, out startAddr))
+                    startAddr = 0;
+                while (startAddr < uint.MaxValue)
+                {
+                    uint addr = searchBytes(basefile, txtCustomSearchString.Text, startAddr, basefile.fsize);
+                    if (addr < uint.MaxValue)
+                    {
+                        ShowCustomSearchResult(addr);
+                        startAddr = lastCustomSearchResult + 1;
+                    }
+                    else
+                    {
+                        Logger("Done");
+                        return;
+                    }
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+        }
+
+        private void chkCustomTableSearch_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkCustomTableSearch.Checked)
+            {
+                txtCustomSearchStartAddress.Enabled = false;
+                btnCustomFindAll.Enabled = false;
+                btnCustomSearchNext.Enabled = false;
+            }
+            else
+            {
+                txtCustomSearchStartAddress.Enabled = true;
+                btnCustomFindAll.Enabled = true;
+                btnCustomSearchNext.Enabled = true;
             }
         }
     }

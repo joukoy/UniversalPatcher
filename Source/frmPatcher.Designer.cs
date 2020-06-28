@@ -118,6 +118,9 @@
             this.txtOS = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.tabFileinfo = new System.Windows.Forms.TabPage();
+            this.chkCustomTableSearch = new System.Windows.Forms.CheckBox();
+            this.btnCustomFindAll = new System.Windows.Forms.Button();
+            this.btnCustomSearchNext = new System.Windows.Forms.Button();
             this.btnCustomSearch = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
@@ -1208,6 +1211,9 @@
             // 
             // tabFileinfo
             // 
+            this.tabFileinfo.Controls.Add(this.chkCustomTableSearch);
+            this.tabFileinfo.Controls.Add(this.btnCustomFindAll);
+            this.tabFileinfo.Controls.Add(this.btnCustomSearchNext);
             this.tabFileinfo.Controls.Add(this.btnCustomSearch);
             this.tabFileinfo.Controls.Add(this.label12);
             this.tabFileinfo.Controls.Add(this.label11);
@@ -1228,10 +1234,42 @@
             this.tabFileinfo.Text = "File info";
             this.tabFileinfo.UseVisualStyleBackColor = true;
             // 
+            // chkCustomTableSearch
+            // 
+            this.chkCustomTableSearch.AutoSize = true;
+            this.chkCustomTableSearch.Location = new System.Drawing.Point(384, 78);
+            this.chkCustomTableSearch.Name = "chkCustomTableSearch";
+            this.chkCustomTableSearch.Size = new System.Drawing.Size(88, 17);
+            this.chkCustomTableSearch.TabIndex = 186;
+            this.chkCustomTableSearch.Text = "Table search";
+            this.chkCustomTableSearch.UseVisualStyleBackColor = true;
+            this.chkCustomTableSearch.CheckedChanged += new System.EventHandler(this.chkCustomTableSearch_CheckedChanged);
+            // 
+            // btnCustomFindAll
+            // 
+            this.btnCustomFindAll.Location = new System.Drawing.Point(599, 77);
+            this.btnCustomFindAll.Name = "btnCustomFindAll";
+            this.btnCustomFindAll.Size = new System.Drawing.Size(75, 23);
+            this.btnCustomFindAll.TabIndex = 185;
+            this.btnCustomFindAll.Text = "Find all";
+            this.btnCustomFindAll.UseVisualStyleBackColor = true;
+            this.btnCustomFindAll.Click += new System.EventHandler(this.btnCustomFindAll_Click);
+            // 
+            // btnCustomSearchNext
+            // 
+            this.btnCustomSearchNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCustomSearchNext.Location = new System.Drawing.Point(691, 77);
+            this.btnCustomSearchNext.Name = "btnCustomSearchNext";
+            this.btnCustomSearchNext.Size = new System.Drawing.Size(75, 23);
+            this.btnCustomSearchNext.TabIndex = 184;
+            this.btnCustomSearchNext.Text = "Find next";
+            this.btnCustomSearchNext.UseVisualStyleBackColor = true;
+            this.btnCustomSearchNext.Click += new System.EventHandler(this.btnCustomSearchNext_Click);
+            // 
             // btnCustomSearch
             // 
             this.btnCustomSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCustomSearch.Location = new System.Drawing.Point(691, 57);
+            this.btnCustomSearch.Location = new System.Drawing.Point(691, 53);
             this.btnCustomSearch.Name = "btnCustomSearch";
             this.btnCustomSearch.Size = new System.Drawing.Size(75, 23);
             this.btnCustomSearch.TabIndex = 183;
@@ -1251,7 +1289,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(378, 62);
+            this.label11.Location = new System.Drawing.Point(378, 57);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(175, 13);
             this.label11.TabIndex = 181;
@@ -1259,7 +1297,7 @@
             // 
             // txtCustomSearchStartAddress
             // 
-            this.txtCustomSearchStartAddress.Location = new System.Drawing.Point(557, 59);
+            this.txtCustomSearchStartAddress.Location = new System.Drawing.Point(557, 54);
             this.txtCustomSearchStartAddress.Name = "txtCustomSearchStartAddress";
             this.txtCustomSearchStartAddress.Size = new System.Drawing.Size(117, 20);
             this.txtCustomSearchStartAddress.TabIndex = 180;
@@ -1814,5 +1852,8 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.TextBox txtCustomSearchStartAddress;
         private System.Windows.Forms.TextBox txtCustomSearchString;
+        private System.Windows.Forms.Button btnCustomSearchNext;
+        private System.Windows.Forms.Button btnCustomFindAll;
+        private System.Windows.Forms.CheckBox chkCustomTableSearch;
     }
 }
