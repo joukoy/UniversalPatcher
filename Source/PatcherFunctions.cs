@@ -749,6 +749,21 @@ public class upatcher
         }
         return uint.MaxValue;
     }
+    public static uint searchDword(PcmFile PCM, ushort searchDword, uint Start, uint End, ushort stopVal = 0)
+    {
+        for (uint addr = Start; addr < End; addr++)
+        {
+            if (stopVal != 0 && BEToUint16(PCM.buf, addr) == stopVal)
+            {
+                return uint.MaxValue;
+            }
+            if (BEToUint16(PCM.buf, addr) == searchDword)
+            { 
+                return addr;
+            }
+        }
+        return uint.MaxValue;
+    }
 
     public static bool HexToUint64(string Hex, out UInt64 x)
     {

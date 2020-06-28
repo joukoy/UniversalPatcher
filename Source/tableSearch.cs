@@ -692,7 +692,7 @@ namespace UniversalPatcher
                                         }
                                         if (hits < parsedConfigList[ss].searchValues.Count && hits < commonParts)
                                         {
-                                            //Optimization: beginning of all parsed searchstrings until "commpnParts" are identical. 
+                                            //Optimization: beginning of all parsed searchstrings until "commonParts" are identical. 
                                             //If this string doesn't match, others in list doesn't match either
                                             match = false;
                                             ss = parsedConfigList.Count;

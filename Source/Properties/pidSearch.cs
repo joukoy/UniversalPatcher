@@ -148,77 +148,41 @@ namespace UniversalPatcher.Properties
         }
         private uint searchRamAddressDiesel(uint startAddr)
         {
-            uint location = uint.MaxValue;
+            uint addr = uint.MaxValue;
             uint ramAddress = uint.MaxValue;
             uint skipWord1 = 0xff8f0a;
             uint skipWord2 = 0xff8a7c;
 
-            location = searchBytes(PCM, "10 39 * * * * 55 00 67 06", startAddr, PCM.fsize);
-            if (location != uint.MaxValue)
+            addr = searchBytes(PCM, "10 39 * * * * 55 00 67 06", startAddr, PCM.fsize);
+            if (addr != uint.MaxValue)
             {
-                skipWord1 = BEToUint32(PCM.buf, location + 2);
+                skipWord1 = BEToUint32(PCM.buf, addr + 2);
             }
-            location = searchBytes(PCM, "12 39 * * * * 41 EE FF", startAddr, PCM.fsize);
-            if (location != uint.MaxValue)
+            addr = searchBytes(PCM, "12 39 * * * * 41 EE FF", startAddr, PCM.fsize);
+            if (addr != uint.MaxValue)
             {
-                skipWord2 = BEToUint32(PCM.buf, location + 2);
+                skipWord2 = BEToUint32(PCM.buf, addr + 2);
             }
 
-            location = searchBytes(PCM, "10 39", startAddr, PCM.fsize - 2, 0x4E75);
-            if (location != uint.MaxValue)
+            ushort[] dwordList = { 0x1039, 0x3039, 0x1239, 0x3239, 0x1e39, 0x3e39, 0x20b9 };
+
+            for (int s=0;s< dwordList.Length;s++)
             {
-                ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != skipWord1 && ramAddress != skipWord2)
-                    return ramAddress;
-            }
-            location = searchBytes(PCM, "30 39", startAddr, PCM.fsize - 2, 0x4E75);
-            if (location != uint.MaxValue)
-            {
-                ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != skipWord1 && ramAddress != skipWord2)
-                    return ramAddress;
-            }
-            location = searchBytes(PCM, "12 39", startAddr, PCM.fsize - 2, 0x4E75);
-            if (location != uint.MaxValue)
-            {
-                ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != skipWord1 && ramAddress != skipWord2)
-                    return ramAddress;
-            }
-            location = searchBytes(PCM, "32 39", startAddr, PCM.fsize - 2, 0x4E75);
-            if (location != uint.MaxValue)
-            {
-                ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != skipWord1 && ramAddress != skipWord2)
-                    return ramAddress;
-            }
-            location = searchBytes(PCM, "1e 39", startAddr, PCM.fsize - 2, 0x4E75);
-            if (location != uint.MaxValue)
-            {
-                ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != skipWord1 && ramAddress != skipWord2)
-                    return ramAddress;
-            }
-            location = searchBytes(PCM, "3e 39", startAddr, PCM.fsize - 2, 0x4E75);
-            if (location != uint.MaxValue)
-            {
-                ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != skipWord1 && ramAddress != skipWord2)
-                    return ramAddress;
-            }
-            location = searchBytes(PCM, "20 b9", startAddr, PCM.fsize - 2, 0x4E75);
-            if (location != uint.MaxValue)
-            {
-                ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != skipWord1 && ramAddress != skipWord2)
-                    return ramAddress;
-            }
-            location = searchBytes(PCM, "33 F9 * * * * 00 FF 8F 02", startAddr, PCM.fsize - 10, 0x4E75);
-            if (location != uint.MaxValue)
-            {
-                ramAddress = BEToUint32(PCM.buf, location + 2);
-                if (ramAddress != skipWord1 && ramAddress != skipWord2)
-                    return ramAddress;
+                for (addr = startAddr; addr < PCM.fsize-1; addr++)
+                {
+                    if (BEToUint16(PCM.buf, addr) == 0x4E75)   //End of subroutine
+                    {
+                        break;
+                    }
+                    if (BEToUint16(PCM.buf, addr) == dwordList[s]) 
+                    {
+                        ramAddress = BEToUint32(PCM.buf, addr + 2);
+                        Debug.WriteLine("Searchword: " + dwordList[s].ToString("X2") + " found in: " + addr.ToString("X") + " Data: " + ramAddress.ToString("X"));
+                        if (ramAddress != skipWord1 && ramAddress != skipWord2)
+                            return ramAddress;
+                        Debug.WriteLine("Skipped");
+                    }
+                }
             }
             return uint.MaxValue;
         }

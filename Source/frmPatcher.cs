@@ -2457,7 +2457,7 @@ namespace UniversalPatcher
                 else
                 {
                     Logger("Found at address: " + addr.ToString("X"));
-
+                    txtCustomSearchStartAddress.Text = (addr+1).ToString("X");
                     string dataBuf = "";
                     if (addr > 5)
                         startAddr = addr - 5;

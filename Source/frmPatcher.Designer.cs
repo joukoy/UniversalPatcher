@@ -118,6 +118,11 @@
             this.txtOS = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.tabFileinfo = new System.Windows.Forms.TabPage();
+            this.btnCustomSearch = new System.Windows.Forms.Button();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.txtCustomSearchStartAddress = new System.Windows.Forms.TextBox();
+            this.txtCustomSearchString = new System.Windows.Forms.TextBox();
             this.btnGetPidList = new System.Windows.Forms.Button();
             this.chkSearchTables = new System.Windows.Forms.CheckBox();
             this.tabApply = new System.Windows.Forms.TabPage();
@@ -153,11 +158,6 @@
             this.editTableSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.txtCustomSearchString = new System.Windows.Forms.TextBox();
-            this.txtCustomSearchStartAddress = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.btnCustomSearch = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1228,6 +1228,51 @@
             this.tabFileinfo.Text = "File info";
             this.tabFileinfo.UseVisualStyleBackColor = true;
             // 
+            // btnCustomSearch
+            // 
+            this.btnCustomSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCustomSearch.Location = new System.Drawing.Point(691, 57);
+            this.btnCustomSearch.Name = "btnCustomSearch";
+            this.btnCustomSearch.Size = new System.Drawing.Size(75, 23);
+            this.btnCustomSearch.TabIndex = 183;
+            this.btnCustomSearch.Text = "Search";
+            this.btnCustomSearch.UseVisualStyleBackColor = true;
+            this.btnCustomSearch.Click += new System.EventHandler(this.btnCustomSearch_Click);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(378, 31);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(108, 13);
+            this.label12.TabIndex = 182;
+            this.label12.Text = "Custom search string:";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(378, 62);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(175, 13);
+            this.label11.TabIndex = 181;
+            this.label11.Text = "Start searching from address (HEX):";
+            // 
+            // txtCustomSearchStartAddress
+            // 
+            this.txtCustomSearchStartAddress.Location = new System.Drawing.Point(557, 59);
+            this.txtCustomSearchStartAddress.Name = "txtCustomSearchStartAddress";
+            this.txtCustomSearchStartAddress.Size = new System.Drawing.Size(117, 20);
+            this.txtCustomSearchStartAddress.TabIndex = 180;
+            // 
+            // txtCustomSearchString
+            // 
+            this.txtCustomSearchString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtCustomSearchString.Location = new System.Drawing.Point(492, 31);
+            this.txtCustomSearchString.Name = "txtCustomSearchString";
+            this.txtCustomSearchString.Size = new System.Drawing.Size(274, 20);
+            this.txtCustomSearchString.TabIndex = 179;
+            // 
             // btnGetPidList
             // 
             this.btnGetPidList.Location = new System.Drawing.Point(7, 37);
@@ -1574,51 +1619,6 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // txtCustomSearchString
-            // 
-            this.txtCustomSearchString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtCustomSearchString.Location = new System.Drawing.Point(492, 41);
-            this.txtCustomSearchString.Name = "txtCustomSearchString";
-            this.txtCustomSearchString.Size = new System.Drawing.Size(274, 20);
-            this.txtCustomSearchString.TabIndex = 179;
-            // 
-            // txtCustomSearchStartAddress
-            // 
-            this.txtCustomSearchStartAddress.Location = new System.Drawing.Point(557, 67);
-            this.txtCustomSearchStartAddress.Name = "txtCustomSearchStartAddress";
-            this.txtCustomSearchStartAddress.Size = new System.Drawing.Size(117, 20);
-            this.txtCustomSearchStartAddress.TabIndex = 180;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(378, 70);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(175, 13);
-            this.label11.TabIndex = 181;
-            this.label11.Text = "Start searching from address (HEX):";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(378, 41);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(108, 13);
-            this.label12.TabIndex = 182;
-            this.label12.Text = "Custom search string:";
-            // 
-            // btnCustomSearch
-            // 
-            this.btnCustomSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCustomSearch.Location = new System.Drawing.Point(691, 65);
-            this.btnCustomSearch.Name = "btnCustomSearch";
-            this.btnCustomSearch.Size = new System.Drawing.Size(75, 23);
-            this.btnCustomSearch.TabIndex = 183;
-            this.btnCustomSearch.Text = "Search";
-            this.btnCustomSearch.UseVisualStyleBackColor = true;
-            this.btnCustomSearch.Click += new System.EventHandler(this.btnCustomSearch_Click);
             // 
             // FrmPatcher
             // 
