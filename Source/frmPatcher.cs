@@ -131,6 +131,23 @@ namespace UniversalPatcher
             {
                 SwapSegments = new List<SwapSegment>();
             }
+
+
+            string FileTypeListFile = Path.Combine(Application.StartupPath, "XML", "filetypes.xml");
+            if (File.Exists(FileTypeListFile))
+            {
+                Debug.WriteLine("Loading filetypes.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<FileType>));
+                System.IO.StreamReader file = new System.IO.StreamReader(FileTypeListFile);
+                fileTypeList = (List<FileType>)reader.Deserialize(file);
+                file.Close();
+
+            }
+            else
+            {
+                fileTypeList = new List<FileType>();
+            }
+
             listCSAddresses.Enabled = true;
             listCSAddresses.Clear();
             listCSAddresses.View = View.Details;
@@ -2571,6 +2588,14 @@ namespace UniversalPatcher
                 btnCustomFindAll.Enabled = true;
                 btnCustomSearchNext.Enabled = true;
             }
+        }
+
+        private void fileTypesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmEditXML frmEX = new frmEditXML();
+            frmEX.LoadFileTypes();
+            frmEX.Show();
+
         }
     }
 }

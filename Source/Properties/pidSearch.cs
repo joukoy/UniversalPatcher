@@ -164,9 +164,9 @@ namespace UniversalPatcher.Properties
                 skipWord2 = BEToUint32(PCM.buf, addr + 2);
             }
 
-            ushort[] dwordList = { 0x1039, 0x3039, 0x1239, 0x3239, 0x1e39, 0x3e39, 0x20b9, 0x33f9 };
+            ushort[] wordList = { 0x1039, 0x3039, 0x1239, 0x3239, 0x1e39, 0x3e39, 0x20b9, 0x33f9 };
 
-            for (int s=0;s< dwordList.Length;s++)
+            for (int s=0;s< wordList.Length;s++)
             {
                 for (addr = startAddr; addr < PCM.fsize-1; addr++)
                 {
@@ -174,10 +174,10 @@ namespace UniversalPatcher.Properties
                     {
                         break;
                     }
-                    if (BEToUint16(PCM.buf, addr) == dwordList[s]) 
+                    if (BEToUint16(PCM.buf, addr) == wordList[s]) 
                     {
                         ramAddress = BEToUint32(PCM.buf, addr + 2);
-                        Debug.WriteLine("Searchword: " + dwordList[s].ToString("X2") + " found in: " + addr.ToString("X") + " Data: " + ramAddress.ToString("X"));
+                        Debug.WriteLine("Searchword: " + wordList[s].ToString("X2") + " found in: " + addr.ToString("X") + " Data: " + ramAddress.ToString("X"));
                         if (ramAddress != skipWord1 && ramAddress != skipWord2)
                             return ramAddress;
                         Debug.WriteLine("Skipped");

@@ -37,7 +37,16 @@ namespace UniversalPatcher
             dataGridView1.DataSource = bindingSource;
         }
 
- 
+        public void LoadFileTypes()
+        {
+            this.Text = "File Types";
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = fileTypeList;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+        }
+
+
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
@@ -55,6 +64,18 @@ namespace UniversalPatcher
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<CVN>));
                         writer.Serialize(stream, StockCVN);
+                        stream.Close();
+                    }
+                    Logger(" [OK]");
+                }
+                else if (this.Text.Contains("File Types"))
+                {
+                    Logger("Saving file filetypes.xml", false);
+                    string FileName = Path.Combine(Application.StartupPath, "XML", "filetypes.xml");
+                    using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                    {
+                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<FileType>));
+                        writer.Serialize(stream, fileTypeList);
                         stream.Close();
                     }
                     Logger(" [OK]");

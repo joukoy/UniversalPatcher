@@ -161,6 +161,7 @@
             this.editTableSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1603,7 +1604,8 @@
             this.setupSegmentsToolStripMenuItem,
             this.autodetectToolStripMenuItem,
             this.stockCVNToolStripMenuItem,
-            this.editTableSearchToolStripMenuItem});
+            this.editTableSearchToolStripMenuItem,
+            this.fileTypesToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "Settings";
@@ -1611,35 +1613,35 @@
             // loadConfigToolStripMenuItem
             // 
             this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
-            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadConfigToolStripMenuItem.Text = "Load config";
             this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
             // 
             // setupSegmentsToolStripMenuItem
             // 
             this.setupSegmentsToolStripMenuItem.Name = "setupSegmentsToolStripMenuItem";
-            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.setupSegmentsToolStripMenuItem.Text = "Edit XML";
             this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
             // 
             // autodetectToolStripMenuItem
             // 
             this.autodetectToolStripMenuItem.Name = "autodetectToolStripMenuItem";
-            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.autodetectToolStripMenuItem.Text = "Autodetect";
             this.autodetectToolStripMenuItem.Click += new System.EventHandler(this.autodetectToolStripMenuItem_Click);
             // 
             // stockCVNToolStripMenuItem
             // 
             this.stockCVNToolStripMenuItem.Name = "stockCVNToolStripMenuItem";
-            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.stockCVNToolStripMenuItem.Text = "Stock CVN";
             this.stockCVNToolStripMenuItem.Click += new System.EventHandler(this.stockCVNToolStripMenuItem_Click);
             // 
             // editTableSearchToolStripMenuItem
             // 
             this.editTableSearchToolStripMenuItem.Name = "editTableSearchToolStripMenuItem";
-            this.editTableSearchToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.editTableSearchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.editTableSearchToolStripMenuItem.Text = "Edit Table Search ";
             this.editTableSearchToolStripMenuItem.Click += new System.EventHandler(this.editTableSearchToolStripMenuItem_Click);
             // 
@@ -1657,6 +1659,13 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // fileTypesToolStripMenuItem
+            // 
+            this.fileTypesToolStripMenuItem.Name = "fileTypesToolStripMenuItem";
+            this.fileTypesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fileTypesToolStripMenuItem.Text = "File Types";
+            this.fileTypesToolStripMenuItem.Click += new System.EventHandler(this.fileTypesToolStripMenuItem_Click);
             // 
             // FrmPatcher
             // 
@@ -1855,5 +1864,6 @@
         private System.Windows.Forms.Button btnCustomSearchNext;
         private System.Windows.Forms.Button btnCustomFindAll;
         private System.Windows.Forms.CheckBox chkCustomTableSearch;
+        private System.Windows.Forms.ToolStripMenuItem fileTypesToolStripMenuItem;
     }
 }

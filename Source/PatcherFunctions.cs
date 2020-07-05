@@ -190,6 +190,13 @@ public class upatcher
         public string CVN;
     }
 
+    public class FileType
+    {
+        public FileType() { }
+
+        public string Description { get; set; }
+        public string Extension { get; set; }
+    }
 
     public const short CSMethod_None = 0;
     public const short CSMethod_crc16 = 1;
@@ -211,6 +218,7 @@ public class upatcher
     public static List<TableSearchResult> tableSearchResult;
     public static List<TableSearchResult> tableSearchResultNoFilters;
     public static List<referenceCvn> referenceCvnList;
+    public static List<FileType> fileTypeList;
 
     public static string XMLFile;
     public static string tableSearchFile;
@@ -438,16 +446,25 @@ public class upatcher
     public static string SelectFile(string Title = "Select file", string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*")
     {
         OpenFileDialog fdlg = new OpenFileDialog();
-        fdlg.Title = Title;
-        fdlg.Filter = Filter;
-        fdlg.FilterIndex = 1;
-        fdlg.RestoreDirectory = true;
         if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
             fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
         if (Filter.Contains("PATCH") || Filter.Contains("TXT"))
             fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
         else if (Filter.Contains("BIN"))
+        {
             fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
+            Filter = "BIN files (*.bin)|*.bin";
+            for (int f=0;f<fileTypeList.Count;f++)
+            {
+                string newFilter = "|" + fileTypeList[f].Description + "|" + "*." + fileTypeList[f].Extension;
+                Filter += newFilter;
+            }
+            Filter += "|All files (*.*)|*.*";
+        }
+        fdlg.Title = Title;
+        fdlg.Filter = Filter;
+        fdlg.FilterIndex = 1;
+        fdlg.RestoreDirectory = true;
 
         if (fdlg.ShowDialog() == DialogResult.OK)
         {
@@ -589,40 +606,6 @@ public class upatcher
             }
         }
 
-        if (AddToList && retVal != "[stock]") 
-        {
-            bool IsinCVNlist = false;
-            if (ListCVN == null)
-                ListCVN = new List<CVN>();
-            for (int c = 0; c < ListCVN.Count; c++)
-            {
-                //if (ListCVN[c].XmlFile == Path.GetFileName(XMLFile) && ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && ListCVN[c].cvn == cvn)
-                if (ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && ListCVN[c].cvn == cvn)
-                {
-                    Debug.WriteLine("Already in CVN list: " + cvn);
-                    IsinCVNlist = true;
-                    break;
-                }
-            }
-            if (!IsinCVNlist)
-            {
-                CVN C1 = new CVN();
-                C1.cvn = cvn;
-                C1.PN = PN;
-                C1.SegmentNr = SegNr;
-                C1.Ver = Ver;
-                C1.XmlFile = Path.GetFileName(XMLFile);
-                for (int r=0; r<referenceCvnList.Count;r++)
-                {
-                    if (referenceCvnList[r].PN == C1.PN)
-                    {
-                        C1.ReferenceCvn = referenceCvnList[r].CVN.TrimStart('0');
-                        break;
-                    }
-                }
-                ListCVN.Add(C1);                
-            }
-        }
 
         if (retVal != "[n/a]")
         {
@@ -662,6 +645,7 @@ public class upatcher
             if (cvnMismatch) //Found from referencelist, have mismatch
             {
                 bool isInBadCvnList = false;
+                AddToList = false;  //Don't add to CVN list if add to mismatch CVN
                 if (BadCvnList == null)
                     BadCvnList = new List<CVN>();
                 for (int i = 0; i < BadCvnList.Count; i++)
@@ -688,6 +672,42 @@ public class upatcher
                 }
             }
         }
+
+        if (AddToList && retVal != "[stock]")
+        {
+            bool IsinCVNlist = false;
+            if (ListCVN == null)
+                ListCVN = new List<CVN>();
+            for (int c = 0; c < ListCVN.Count; c++)
+            {
+                //if (ListCVN[c].XmlFile == Path.GetFileName(XMLFile) && ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && ListCVN[c].cvn == cvn)
+                if (ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && ListCVN[c].cvn == cvn)
+                {
+                    Debug.WriteLine("Already in CVN list: " + cvn);
+                    IsinCVNlist = true;
+                    break;
+                }
+            }
+            if (!IsinCVNlist)
+            {
+                CVN C1 = new CVN();
+                C1.cvn = cvn;
+                C1.PN = PN;
+                C1.SegmentNr = SegNr;
+                C1.Ver = Ver;
+                C1.XmlFile = Path.GetFileName(XMLFile);
+                for (int r = 0; r < referenceCvnList.Count; r++)
+                {
+                    if (referenceCvnList[r].PN == C1.PN)
+                    {
+                        C1.ReferenceCvn = referenceCvnList[r].CVN.TrimStart('0');
+                        break;
+                    }
+                }
+                ListCVN.Add(C1);
+            }
+        }
+
         return retVal;
     }
 
@@ -749,7 +769,7 @@ public class upatcher
         }
         return uint.MaxValue;
     }
-    public static uint searchDword(PcmFile PCM, ushort searchDword, uint Start, uint End, ushort stopVal = 0)
+    public static uint searchWord(PcmFile PCM, ushort sWord, uint Start, uint End, ushort stopVal = 0)
     {
         for (uint addr = Start; addr < End; addr++)
         {
@@ -757,7 +777,7 @@ public class upatcher
             {
                 return uint.MaxValue;
             }
-            if (BEToUint16(PCM.buf, addr) == searchDword)
+            if (BEToUint16(PCM.buf, addr) == sWord)
             { 
                 return addr;
             }
