@@ -217,6 +217,8 @@ public class upatcher
     //public static List<TableSearchConfig> tableSearchConfig;
     public static List<TableSearchResult> tableSearchResult;
     public static List<TableSearchResult> tableSearchResultNoFilters;
+    public static List<CrossTableSearchResult> crossTableSearchResult;
+    public static List<CrossTableSearchResult> crossTableSearchResultNoFilters;
     public static List<referenceCvn> referenceCvnList;
     public static List<FileType> fileTypeList;
 

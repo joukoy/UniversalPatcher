@@ -230,6 +230,29 @@ namespace UniversalPatcher
         public string Data { get; set; }
     }
 
+    public class CrossTableSearchResult
+    {
+        public CrossTableSearchResult()
+        {
+            hitCount = 1;
+        }
+        public string OS { get; set; }
+        public string File { get; set; }
+        public string Name { get; set; }
+        public string Segment { get; set; }
+        public int hitCount { get; set; }
+        public string Search { get; set; }
+        public string Found { get; set; }
+        public uint AddressInt;
+        public string Address { get; set; }
+        public string Category { get; set; }
+        public string Label { get; set; }
+        public string Data { get; set; }
+        public string Found2 { get; set; }
+        public uint AddressInt2;
+        public string Address2 { get; set; }
+    }
+
     public class SearchVariable
     {
         public SearchVariable()

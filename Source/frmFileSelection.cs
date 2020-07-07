@@ -34,15 +34,36 @@ namespace UniversalPatcher
             DirectoryInfo d = new DirectoryInfo(Folder);
             FileInfo[] Files;
             if (chkSubfolders.Checked)
-                Files = d.GetFiles("*.bin", SearchOption.AllDirectories);
+                Files = d.GetFiles("*.*", SearchOption.AllDirectories);
             else
-                Files = d.GetFiles("*.bin");
+                Files = d.GetFiles("*.*");
+
+            string[] filters;
+            if (fileTypeList != null && fileTypeList.Count > 0 && chkIncludeCustomFileTypes.Checked)
+            {
+                filters = new string[fileTypeList.Count + 1];
+                filters[0] = ".bin";
+                for (int f = 0; f < fileTypeList.Count; f++)
+                    filters[f + 1] = "." + fileTypeList[f].Extension;
+            }
+            else
+            {
+                filters = new string[1];
+                filters[0] = ".bin";
+            }
             foreach (FileInfo file in Files)
             {
-                var item = new ListViewItem(file.Name);
-                item.Tag = file.FullName;
-                item.SubItems.Add(file.DirectoryName);
-                listFiles.Items.Add(item);
+                for (int f = 0; f < filters.Length; f++)
+                {
+                    if (file.Extension.ToLower() == filters[f].ToLower())
+                    {
+                        var item = new ListViewItem(file.Name);
+                        item.Tag = file.FullName;
+                        item.SubItems.Add(file.DirectoryName);
+                        listFiles.Items.Add(item);
+                        break;
+                    }
+                }
             }
             txtFolder.Text = Folder;
         }
@@ -82,6 +103,11 @@ namespace UniversalPatcher
         }
 
         private void chkSubfolders_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadFiles(txtFolder.Text);
+        }
+
+        private void chkIncludeCustomFileTypes_CheckedChanged(object sender, EventArgs e)
         {
             LoadFiles(txtFolder.Text);
         }

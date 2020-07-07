@@ -36,6 +36,7 @@
             this.btnCustomdst = new System.Windows.Forms.Button();
             this.labelCustomdst = new System.Windows.Forms.Label();
             this.chkSubfolders = new System.Windows.Forms.CheckBox();
+            this.chkIncludeCustomFileTypes = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // listFiles
@@ -125,11 +126,25 @@
             this.chkSubfolders.UseVisualStyleBackColor = true;
             this.chkSubfolders.CheckedChanged += new System.EventHandler(this.chkSubfolders_CheckedChanged);
             // 
+            // chkIncludeCustomFileTypes
+            // 
+            this.chkIncludeCustomFileTypes.AutoSize = true;
+            this.chkIncludeCustomFileTypes.Checked = true;
+            this.chkIncludeCustomFileTypes.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkIncludeCustomFileTypes.Location = new System.Drawing.Point(124, 27);
+            this.chkIncludeCustomFileTypes.Name = "chkIncludeCustomFileTypes";
+            this.chkIncludeCustomFileTypes.Size = new System.Drawing.Size(142, 17);
+            this.chkIncludeCustomFileTypes.TabIndex = 8;
+            this.chkIncludeCustomFileTypes.Text = "Include custom file types";
+            this.chkIncludeCustomFileTypes.UseVisualStyleBackColor = true;
+            this.chkIncludeCustomFileTypes.CheckedChanged += new System.EventHandler(this.chkIncludeCustomFileTypes_CheckedChanged);
+            // 
             // frmFileSelection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(548, 450);
+            this.Controls.Add(this.chkIncludeCustomFileTypes);
             this.Controls.Add(this.chkSubfolders);
             this.Controls.Add(this.labelCustomdst);
             this.Controls.Add(this.btnCustomdst);
@@ -154,5 +169,6 @@
         public System.Windows.Forms.Label labelCustomdst;
         public System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.CheckBox chkSubfolders;
+        private System.Windows.Forms.CheckBox chkIncludeCustomFileTypes;
     }
 }
