@@ -454,7 +454,7 @@ namespace UniversalPatcher
                 if (chkSearchTables.Checked)
                 {
                     TableFinder tableFinder = new TableFinder();
-                    tableFinder.searchTables(FileName, PCM);
+                    tableFinder.searchTables(PCM);
                 }
                     
                 if (PCM.OS == null || PCM.OS == "")
@@ -2505,7 +2505,7 @@ namespace UniversalPatcher
                 if (chkCustomTableSearch.Checked)
                 {
                     TableFinder tableFinder = new TableFinder();
-                    tableFinder.searchTables(basefile.FileName, basefile, txtCustomSearchString.Text);
+                    tableFinder.searchTables(basefile, txtCustomSearchString.Text);
                     refreshSearchedTables();
                     return;
                 }
@@ -2596,6 +2596,14 @@ namespace UniversalPatcher
             frmEX.LoadFileTypes();
             frmEX.Show();
 
+        }
+
+        private void btnCrossTableSearch_Click(object sender, EventArgs e)
+        {
+            tableSearchResult.Clear();
+            TableFinder tableFinder = new TableFinder();
+            tableFinder.crossSearchTables(basefile, modfile);
+            refreshSearchedTables();
         }
     }
 }

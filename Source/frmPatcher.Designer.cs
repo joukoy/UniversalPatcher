@@ -114,6 +114,7 @@
             this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tabFunction = new System.Windows.Forms.TabControl();
             this.tabCreate = new System.Windows.Forms.TabPage();
+            this.btnCrossTableSearch = new System.Windows.Forms.Button();
             this.checkAppendPatch = new System.Windows.Forms.CheckBox();
             this.txtOS = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -159,9 +160,9 @@
             this.autodetectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editTableSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fileTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1167,6 +1168,7 @@
             // 
             // tabCreate
             // 
+            this.tabCreate.Controls.Add(this.btnCrossTableSearch);
             this.tabCreate.Controls.Add(this.checkAppendPatch);
             this.tabCreate.Controls.Add(this.txtOS);
             this.tabCreate.Controls.Add(this.label7);
@@ -1183,6 +1185,17 @@
             this.tabCreate.TabIndex = 0;
             this.tabCreate.Text = "Create Patch";
             this.tabCreate.UseVisualStyleBackColor = true;
+            // 
+            // btnCrossTableSearch
+            // 
+            this.btnCrossTableSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCrossTableSearch.Location = new System.Drawing.Point(658, 30);
+            this.btnCrossTableSearch.Name = "btnCrossTableSearch";
+            this.btnCrossTableSearch.Size = new System.Drawing.Size(116, 23);
+            this.btnCrossTableSearch.TabIndex = 118;
+            this.btnCrossTableSearch.Text = "Cross table search";
+            this.btnCrossTableSearch.UseVisualStyleBackColor = true;
+            this.btnCrossTableSearch.Click += new System.EventHandler(this.btnCrossTableSearch_Click);
             // 
             // checkAppendPatch
             // 
@@ -1613,37 +1626,44 @@
             // loadConfigToolStripMenuItem
             // 
             this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
-            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.loadConfigToolStripMenuItem.Text = "Load config";
             this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
             // 
             // setupSegmentsToolStripMenuItem
             // 
             this.setupSegmentsToolStripMenuItem.Name = "setupSegmentsToolStripMenuItem";
-            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.setupSegmentsToolStripMenuItem.Text = "Edit XML";
             this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
             // 
             // autodetectToolStripMenuItem
             // 
             this.autodetectToolStripMenuItem.Name = "autodetectToolStripMenuItem";
-            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.autodetectToolStripMenuItem.Text = "Autodetect";
             this.autodetectToolStripMenuItem.Click += new System.EventHandler(this.autodetectToolStripMenuItem_Click);
             // 
             // stockCVNToolStripMenuItem
             // 
             this.stockCVNToolStripMenuItem.Name = "stockCVNToolStripMenuItem";
-            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.stockCVNToolStripMenuItem.Text = "Stock CVN";
             this.stockCVNToolStripMenuItem.Click += new System.EventHandler(this.stockCVNToolStripMenuItem_Click);
             // 
             // editTableSearchToolStripMenuItem
             // 
             this.editTableSearchToolStripMenuItem.Name = "editTableSearchToolStripMenuItem";
-            this.editTableSearchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.editTableSearchToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.editTableSearchToolStripMenuItem.Text = "Edit Table Search ";
             this.editTableSearchToolStripMenuItem.Click += new System.EventHandler(this.editTableSearchToolStripMenuItem_Click);
+            // 
+            // fileTypesToolStripMenuItem
+            // 
+            this.fileTypesToolStripMenuItem.Name = "fileTypesToolStripMenuItem";
+            this.fileTypesToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.fileTypesToolStripMenuItem.Text = "File Types";
+            this.fileTypesToolStripMenuItem.Click += new System.EventHandler(this.fileTypesToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -1659,13 +1679,6 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // fileTypesToolStripMenuItem
-            // 
-            this.fileTypesToolStripMenuItem.Name = "fileTypesToolStripMenuItem";
-            this.fileTypesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.fileTypesToolStripMenuItem.Text = "File Types";
-            this.fileTypesToolStripMenuItem.Click += new System.EventHandler(this.fileTypesToolStripMenuItem_Click);
             // 
             // FrmPatcher
             // 
@@ -1865,5 +1878,6 @@
         private System.Windows.Forms.Button btnCustomFindAll;
         private System.Windows.Forms.CheckBox chkCustomTableSearch;
         private System.Windows.Forms.ToolStripMenuItem fileTypesToolStripMenuItem;
+        private System.Windows.Forms.Button btnCrossTableSearch;
     }
 }

@@ -217,8 +217,6 @@ public class upatcher
     //public static List<TableSearchConfig> tableSearchConfig;
     public static List<TableSearchResult> tableSearchResult;
     public static List<TableSearchResult> tableSearchResultNoFilters;
-    public static List<CrossTableSearchResult> crossTableSearchResult;
-    public static List<CrossTableSearchResult> crossTableSearchResultNoFilters;
     public static List<referenceCvn> referenceCvnList;
     public static List<FileType> fileTypeList;
 
@@ -577,7 +575,6 @@ public class upatcher
     public static string CheckStockCVN(string PN, string Ver, string SegNr, string cvn, bool AddToList)
     {
         string retVal = "[n/a]";
-        uint stockC = 0;
         for (int c = 0; c < StockCVN.Count; c++)
         {
             //if (StockCVN[c].XmlFile == Path.GetFileName(XMLFile) && StockCVN[c].PN == PN && StockCVN[c].Ver == Ver && StockCVN[c].SegmentNr == SegNr && StockCVN[c].cvn == cvn)
@@ -589,10 +586,6 @@ public class upatcher
                     c1.AlternateXML = Path.GetFileName(XMLFile);
                     StockCVN.RemoveAt(c);
                     StockCVN.Insert(c, c1);
-                }
-                if (!HexToUint(cvn, out stockC))
-                {
-                    throw new Exception("Can't convert from HEX: " + cvn);
                 }
                 if (StockCVN[c].cvn == cvn)
                 {
@@ -609,11 +602,16 @@ public class upatcher
         }
 
 
-        if (retVal != "[n/a]")
+        if (retVal == "[n/a]")
         {
             //Check if it's in referencelist
             bool cvnMismatch = false;
             uint refC = 0;
+            uint cvnInt = 0;
+            if (!HexToUint(cvn, out cvnInt))
+            {
+                throw new Exception("Can't convert from HEX: " + cvn);
+            }
             string refString = "";
             for (int r = 0; r < referenceCvnList.Count; r++)
             {
@@ -625,7 +623,7 @@ public class upatcher
                     {
                         throw new Exception("Can't convert from HEX: " + referenceCvnList[r].CVN);
                     }
-                    if (refC == stockC)
+                    if (refC == cvnInt)
                     {
                         Debug.WriteLine("PN: " + PN + " CVN found from Referencelist: " + referenceCvnList[r].CVN);
                         cvnMismatch = false; //Found from referencelist, no mismatch
@@ -635,7 +633,7 @@ public class upatcher
                     {
                         throw new Exception("Can't convert from HEX: " + referenceCvnList[r].CVN);
                     }
-                    if (SwapBytes(refShort) == stockC)
+                    if (SwapBytes(refShort) == cvnInt)
                     {
                         Debug.WriteLine("PN: " + PN + " byteswapped CVN found from Referencelist: " + referenceCvnList[r].CVN);
                         cvnMismatch = false; //Found from referencelist, no mismatch
