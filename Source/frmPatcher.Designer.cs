@@ -114,6 +114,8 @@
             this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tabFunction = new System.Windows.Forms.TabControl();
             this.tabCreate = new System.Windows.Forms.TabPage();
+            this.label13 = new System.Windows.Forms.Label();
+            this.numCrossVariation = new System.Windows.Forms.NumericUpDown();
             this.btnCrossTableSearch = new System.Windows.Forms.Button();
             this.checkAppendPatch = new System.Windows.Forms.CheckBox();
             this.txtOS = new System.Windows.Forms.TextBox();
@@ -184,6 +186,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridPIDlist)).BeginInit();
             this.tabFunction.SuspendLayout();
             this.tabCreate.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numCrossVariation)).BeginInit();
             this.tabFileinfo.SuspendLayout();
             this.tabApply.SuspendLayout();
             this.tabExtract.SuspendLayout();
@@ -1168,6 +1171,8 @@
             // 
             // tabCreate
             // 
+            this.tabCreate.Controls.Add(this.label13);
+            this.tabCreate.Controls.Add(this.numCrossVariation);
             this.tabCreate.Controls.Add(this.btnCrossTableSearch);
             this.tabCreate.Controls.Add(this.checkAppendPatch);
             this.tabCreate.Controls.Add(this.txtOS);
@@ -1186,10 +1191,33 @@
             this.tabCreate.Text = "Create Patch";
             this.tabCreate.UseVisualStyleBackColor = true;
             // 
+            // label13
+            // 
+            this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(653, 33);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(73, 13);
+            this.label13.TabIndex = 120;
+            this.label13.Text = "Max variation:";
+            // 
+            // numCrossVariation
+            // 
+            this.numCrossVariation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numCrossVariation.Location = new System.Drawing.Point(730, 29);
+            this.numCrossVariation.Name = "numCrossVariation";
+            this.numCrossVariation.Size = new System.Drawing.Size(36, 20);
+            this.numCrossVariation.TabIndex = 119;
+            this.numCrossVariation.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            // 
             // btnCrossTableSearch
             // 
             this.btnCrossTableSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCrossTableSearch.Location = new System.Drawing.Point(658, 30);
+            this.btnCrossTableSearch.Location = new System.Drawing.Point(655, 52);
             this.btnCrossTableSearch.Name = "btnCrossTableSearch";
             this.btnCrossTableSearch.Size = new System.Drawing.Size(116, 23);
             this.btnCrossTableSearch.TabIndex = 118;
@@ -1727,6 +1755,7 @@
             this.tabFunction.ResumeLayout(false);
             this.tabCreate.ResumeLayout(false);
             this.tabCreate.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numCrossVariation)).EndInit();
             this.tabFileinfo.ResumeLayout(false);
             this.tabFileinfo.PerformLayout();
             this.tabApply.ResumeLayout(false);
@@ -1879,5 +1908,7 @@
         private System.Windows.Forms.CheckBox chkCustomTableSearch;
         private System.Windows.Forms.ToolStripMenuItem fileTypesToolStripMenuItem;
         private System.Windows.Forms.Button btnCrossTableSearch;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.NumericUpDown numCrossVariation;
     }
 }

@@ -454,7 +454,7 @@ namespace UniversalPatcher
                 if (chkSearchTables.Checked)
                 {
                     TableFinder tableFinder = new TableFinder();
-                    tableFinder.searchTables(PCM);
+                    tableFinder.searchTables(PCM,false);
                 }
                     
                 if (PCM.OS == null || PCM.OS == "")
@@ -2505,7 +2505,7 @@ namespace UniversalPatcher
                 if (chkCustomTableSearch.Checked)
                 {
                     TableFinder tableFinder = new TableFinder();
-                    tableFinder.searchTables(basefile, txtCustomSearchString.Text);
+                    tableFinder.searchTables(basefile,false, txtCustomSearchString.Text);
                     refreshSearchedTables();
                     return;
                 }
@@ -2600,10 +2600,18 @@ namespace UniversalPatcher
 
         private void btnCrossTableSearch_Click(object sender, EventArgs e)
         {
+            if (basefile == null || modfile == null)
+            {
+                Logger("No files selected");
+                return;
+            }
+            Logger("Cross table search...");
             tableSearchResult.Clear();
             TableFinder tableFinder = new TableFinder();
-            tableFinder.crossSearchTables(basefile, modfile);
+            tableFinder.searchTables(basefile,false);
+            tableFinder.searchTables(modfile, true,"",(int)numCrossVariation.Value);
             refreshSearchedTables();
+            Logger("Done");
         }
     }
 }

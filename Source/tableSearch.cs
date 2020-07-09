@@ -609,7 +609,7 @@ namespace UniversalPatcher
             return tsr;
 
         }
-        public void searchTables(PcmFile PCM, string CustomSearch = "")
+        public void searchTables(PcmFile PCM, bool crossSearch, string CustomSearch = "",int crossVariation=3)
         {
 
             try
@@ -747,207 +747,58 @@ namespace UniversalPatcher
 
 
                 }
-                for (int t = 0; t < thisFileTables.Count; t++)
+                if (crossSearch)
                 {
-                    tableSearchResult.Add(thisFileTables[t]);
-                }
-                
-            }
-            catch (Exception ex)
-            {
-                // Get stack trace for the exception with source file information
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(0);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Tablesearch: " + line + ": " + ex.Message);
-            }
-        }
-        public void crossSearchTables(PcmFile PCM, PcmFile PCM2)
-        {
-
-            try
-            {
-                if (tableSearchResult == null)
-                    tableSearchResult = new List<TableSearchResult>();
-                if (tableSearchResultNoFilters == null)
-                    tableSearchResultNoFilters = new List<TableSearchResult>();
-                searchVariables = new List<SearchVariable>();
-                TableSearchResult tsr = new TableSearchResult();
-                List<TableSearchConfig> tableSearchConfig;
-                //List<string> goodSearchStrings = new List<string>();
-
-                string searchXMLFile = Path.Combine(Application.StartupPath, "XML", "SearchTables-" + Path.GetFileName(XMLFile));
-
-                if (!File.Exists(searchXMLFile))
-                    return;
-
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSearchConfig>));
-                System.IO.StreamReader file = new System.IO.StreamReader(searchXMLFile);
-                tableSearchConfig = (List<TableSearchConfig>)reader.Deserialize(file);
-                file.Close();
-                tableSearchFile = searchXMLFile;
-
-                for (int i = 0; i < tableSearchConfig.Count; i++)
-                {
-                    string searchTxt = tableSearchConfig[i].searchData.Replace("[", "");
-                    searchTxt = searchTxt.Replace("]", "");
-
-                    if (searchTxt.StartsWith("//") || searchTxt.Length < 2)
+                    bool[] usedRow = new bool[thisFileTables.Count];
+                    for (int u = 0; u < usedRow.Length; u++)
+                        usedRow[u] = false;
+                    int t = 0;
+                    int lastHit = 0;
+                    int missCount = 0;
+                    int t3 = 0;
+                    while (t<tableSearchResult.Count)
                     {
-                        Debug.WriteLine("Skipping disabled line: " + searchTxt);
-                    }
-                    else
-                    {
-                        parsedConfigList = new List<TableSearchConfig.ParsedTableSearchConfig>();
-                        TableSearchConfig.ParsedTableSearchConfig parsedConfig = new TableSearchConfig.ParsedTableSearchConfig();
-
-                        TableSearchConfig tsc = tableSearchConfig[i];
-                        tsc.parseAddresses(PCM);
-                        TableSearchConfig tsc2 = tableSearchConfig[i];
-                        tsc2.parseAddresses(PCM2);
-                        List<SearchVariable> tmpVariables = tsc.parseVariables(PCM);
-                        for (int var = 0; var < tmpVariables.Count; var++)
-                            searchVariables.Add(tmpVariables[var]);
-                        Debug.WriteLine("Original searchstring: " + searchTxt);
-                        int commonParts = parseTableSearchString(searchTxt, parsedConfig);
-                        Debug.WriteLine("Searchstrings generated: " + parsedConfigList.Count);
-
-                        int ss = 0;
-                        while (ss < parsedConfigList.Count)
+                        bool hit = false;
+                        int t2;
+                        if (t3 > crossVariation)
+                            t2 = t3 - missCount - crossVariation;
+                        else
+                            t2 = t3 - missCount;
+                        for (; t2 < t3 + crossVariation && t2 < thisFileTables.Count; t2++)
                         {
-                            uint lastHitAddr = 0;
-                            for (int block = 0; block < tsc.searchBlocks.Count; block++)
+                            if (!usedRow[t2])
                             {
-                                uint addr = tsc.searchBlocks[block].Start;
-                                while (addr < tsc.searchBlocks[block].End)
+                                if (tableSearchResult[t].Search == thisFileTables[t2].Search)
                                 {
-                                    bool match = false;
-                                    int hits = 0;
-                                    for (int j = 0; j < parsedConfigList[ss].searchParts.Count; j++)
-                                    {
-                                        if (parsedConfigList[ss].searchValues[j] == -1)
-                                        {
-                                            //Count as hit (wildcard, ignore)
-                                            hits++;
-                                        }
-                                        else
-                                        {
-                                            if (PCM.buf[addr + j] == parsedConfigList[ss].searchValues[j])
-                                            {
-                                                hits++;
-                                            }
-                                            else
-                                            {
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if (hits == parsedConfigList[ss].searchValues.Count)
-                                    {
-                                        match = true;
-                                        searchTxt = parsedConfigList[ss].searchString;
-                                        parsedConfig = parsedConfigList[ss];
-                                    }
-                                    if (match)
-                                    {
-                                        tsr = parseMatch(PCM, parsedConfigList[ss], tsc, addr);
-                                        for (int tblock = 0; tblock < tsc.tableBlocks.Count; tblock++)
-                                        {
-                                            if (tsr.AddressInt >= tsc.tableBlocks[tblock].Start && tsr.AddressInt <= tsc.tableBlocks[tblock].End)
-                                            {
-                                                bool duplicate = false;
-                                                for (int ts = 0; ts < tableSearchResult.Count; ts++)
-                                                {
-                                                    if (tableSearchResult[ts].OS == tsr.OS &&  tableSearchResult[ts].Data == tsr.Data && tableSearchResult[ts].Name == tsr.Name && tableSearchResult[ts].Search == tsr.Search)
-                                                    {
-                                                        tableSearchResult[ts].hitCount++;
-                                                        duplicate = true;
-                                                        //thisFileTables[ts].Address += ";" + tsr.AddressInt.ToString("X8");
-                                                        tableSearchResult[ts].Found += ";" + tsr.Found;
-                                                        break;
-                                                    }
-                                                }
-
-                                                if (!duplicate)
-                                                {
-                                                    tsr.Address = tsr.AddressInt.ToString("X8");
-                                                    tableSearchResult.Add(tsr);
-                                                }
-                                            }
-                                        }
-                                        bool foundFromPCM2 = false;
-                                        for (int block2 = 0; block2 < tsc2.searchBlocks.Count && !foundFromPCM2; block2++)
-                                        {
-                                            uint addr2 = tsc2.searchBlocks[block].Start;
-                                            if (addr2 < lastHitAddr)
-                                            {
-                                                if (lastHitAddr > tsc2.searchBlocks[block].End)
-                                                    break;  //Next block
-                                                addr2 = lastHitAddr + 1;
-                                            }
-                                            while (addr2 < tsc2.searchBlocks[block].End)
-                                            {
-                                                bool match2 = false;
-                                                int hits2 = 0;
-                                                for (int j = 0; j < parsedConfigList[ss].searchParts.Count; j++)
-                                                {
-                                                    if (parsedConfigList[ss].searchValues[j] == -1)
-                                                    {
-                                                        //Count as hit (wildcard, ignore)
-                                                        hits2++;
-                                                    }
-                                                    else
-                                                    {
-                                                        if (PCM2.buf[addr2 + j] == parsedConfigList[ss].searchValues[j])
-                                                        {
-                                                            hits2++;
-                                                        }
-                                                        else
-                                                        {
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                                if (hits2 == parsedConfigList[ss].searchValues.Count)
-                                                {
-                                                    match2 = true;
-                                                    searchTxt = parsedConfigList[ss].searchString;
-                                                    parsedConfig = parsedConfigList[ss];
-                                                }
-                                                if (match2)
-                                                {
-                                                    foundFromPCM2 = true;
-                                                    TableSearchResult crossTsr = new TableSearchResult();
-                                                    crossTsr = parseMatch(PCM2, parsedConfigList[ss], tsc, addr2);
-                                                    crossTsr.Address = crossTsr.AddressInt.ToString("X8");
-                                                    tableSearchResult.Add(crossTsr);
-                                                    lastHitAddr = addr2;
-                                                    break; //Found one hit, search more from "base" file
-                                                }
-                                                addr2++;
-                                            }
-                                        }
-                                        if (!foundFromPCM2)
-                                        {
-                                            //Not found any results
-                                            TableSearchResult crossTsr = new TableSearchResult();
-                                            crossTsr.Name = tsr.Name;
-                                            crossTsr.OS = PCM2.OS;
-                                            crossTsr.File = PCM2.FileName;
-                                            crossTsr.Search = searchTxt;
-                                            tableSearchResult.Add(crossTsr);
-                                        }
-                                    }
-                                    addr++;
+                                    tableSearchResult.Insert(t + 1, thisFileTables[t2]);
+                                    usedRow[t2] = true;
+                                    lastHit = t2;
+                                    hit = true;
+                                    Debug.WriteLine("BinA: " + t3 + ", BinB: " + t2);
+                                    break;
                                 }
                             }
-                            ss++;
                         }
+                        if (!hit)
+                        {
+                            TableSearchResult crossTSR = new TableSearchResult();
+                            crossTSR.OS = PCM.OS;
+                            tableSearchResult.Insert(t + 1, crossTSR);
+                            missCount++;
+                            Debug.WriteLine("BinA: " + t3 + ", BinB: missing");
+                        }
+                        t +=2;
+                        t3++;
                     }
-
                 }
+                else
+                {
+                    for (int t = 0; t < thisFileTables.Count; t++)
+                    {
+                        tableSearchResult.Add(thisFileTables[t]);
+                    }
+                }
+                
             }
             catch (Exception ex)
             {
