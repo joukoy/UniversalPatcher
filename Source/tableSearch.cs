@@ -228,6 +228,7 @@ namespace UniversalPatcher
         public string Category { get; set; }
         public string Label { get; set; }
         public string Data { get; set; }
+        public uint Rows { get; set; }
     }
 
     public class SearchVariable
@@ -553,6 +554,10 @@ namespace UniversalPatcher
                             {
                                 tsr.AddressInt = BEToUint32(PCM.buf, location);
                             }
+                            if (varParts[0].ToLower().StartsWith("row"))
+                            {
+                                tsr.Rows = PCM.buf[location];
+                            }
                             if (tsr.Data != null && tsr.Data.Length > 1)
                                 tsr.Data += "; ";
                             tsr.Data += varParts[0] + ":";
@@ -749,47 +754,7 @@ namespace UniversalPatcher
                 }
                 if (crossSearch)
                 {
-                    bool[] usedRow = new bool[thisFileTables.Count];
-                    for (int u = 0; u < usedRow.Length; u++)
-                        usedRow[u] = false;
-                    int t = 0;
-                    int lastHit = 0;
-                    int missCount = 0;
-                    int t3 = 0;
-                    while (t<tableSearchResult.Count)
-                    {
-                        bool hit = false;
-                        int t2;
-                        if (t3 > crossVariation)
-                            t2 = t3 - missCount - crossVariation;
-                        else
-                            t2 = t3 - missCount;
-                        for (; t2 < t3 + crossVariation && t2 < thisFileTables.Count; t2++)
-                        {
-                            if (!usedRow[t2])
-                            {
-                                if (tableSearchResult[t].Search == thisFileTables[t2].Search)
-                                {
-                                    tableSearchResult.Insert(t + 1, thisFileTables[t2]);
-                                    usedRow[t2] = true;
-                                    lastHit = t2;
-                                    hit = true;
-                                    Debug.WriteLine("BinA: " + t3 + ", BinB: " + t2);
-                                    break;
-                                }
-                            }
-                        }
-                        if (!hit)
-                        {
-                            TableSearchResult crossTSR = new TableSearchResult();
-                            crossTSR.OS = PCM.OS;
-                            tableSearchResult.Insert(t + 1, crossTSR);
-                            missCount++;
-                            Debug.WriteLine("BinA: " + t3 + ", BinB: missing");
-                        }
-                        t +=2;
-                        t3++;
-                    }
+                    crossSearchTables(thisFileTables,PCM, crossVariation);
                 }
                 else
                 {
@@ -810,6 +775,100 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("Tablesearch: " + line + ": " + ex.Message);
             }
+        }
+        private void crossSearchTables(List<TableSearchResult> thisFileTables, PcmFile PCM, int crossVariation)
+        {
+            try
+            {
+                bool[] usedRow = new bool[thisFileTables.Count];
+                for (int u = 0; u < usedRow.Length; u++)
+                    usedRow[u] = false;
+                int t = 0;
+                int lastHit = 0;
+                int missCount = 0;
+                int t3 = 0;
+
+                for (int pos = 0; pos < tableSearchResult.Count; pos++)
+                {
+                    for (int pos2 = pos + 1; pos2 < tableSearchResult.Count; pos2++)
+                    {
+                        if (tableSearchResult[pos].AddressInt > tableSearchResult[pos2].AddressInt)
+                        {
+                            //Oraganize by Address:
+                            TableSearchResult tmpTsr = tableSearchResult[pos];
+                            tableSearchResult[pos] = tableSearchResult[pos2];
+                            tableSearchResult[pos2] = tmpTsr;
+                        }
+                    }
+                }
+
+                for (int pos = 0; pos < thisFileTables.Count; pos++)
+                {
+                    for (int pos2 = pos + 1; pos2 < thisFileTables.Count; pos2++)
+                    {
+                        if (thisFileTables[pos].AddressInt > thisFileTables[pos2].AddressInt)
+                        {
+                            //Oraganize by Address:
+                            TableSearchResult tmpTsr = thisFileTables[pos];
+                            thisFileTables[pos] = thisFileTables[pos2];
+                            thisFileTables[pos2] = tmpTsr;
+                        }
+                    }
+                }
+
+                while (t < tableSearchResult.Count)
+                {
+                    bool hit = false;
+                    int start = t3 - missCount - crossVariation;
+                    if (start < 0)
+                        start = 0;
+                    for (int maxOffset = 0; maxOffset < 100000 && !hit; maxOffset++)
+                    {
+                        for (int t2 = start; t2 < (t3 + crossVariation) && t2 < thisFileTables.Count; t2++)
+                        {
+                            if (!usedRow[t2])
+                            {
+                                uint offset = (uint)Math.Abs(tableSearchResult[t].AddressInt - thisFileTables[t2].AddressInt);
+                                if (tableSearchResult[t].Name == thisFileTables[t2].Name
+                                    && tableSearchResult[t].Segment == thisFileTables[t2].Segment
+                                    && tableSearchResult[t].Search == thisFileTables[t2].Search
+                                    && tableSearchResult[t].Rows == thisFileTables[t2].Rows
+                                    && offset <= maxOffset
+                                    )
+                                {
+                                    tableSearchResult.Insert(t + 1, thisFileTables[t2]);
+                                    usedRow[t2] = true;
+                                    lastHit = t2;
+                                    hit = true;
+                                    Debug.WriteLine("BinA: " + t3 + ", BinB: " + t2 + ", Addr offset: " + offset.ToString());
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (!hit)
+                    {
+                        TableSearchResult crossTSR = new TableSearchResult();
+                        crossTSR.OS = PCM.OS;
+                        tableSearchResult.Insert(t + 1, crossTSR);
+                        missCount++;
+                        Debug.WriteLine("BinA: " + t3 + ", BinB: missing");
+                    }
+                    t += 2;
+                    t3++;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Get stack trace for the exception with source file information
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(0);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("crossSearchTables: " + line + ": " + ex.Message);
+            }
+
         }
     }
 }

@@ -167,6 +167,8 @@ namespace UniversalPatcher
         public void refreshSearchedTables()
         {
             int count = 0;
+            if (tableSearchResult == null)
+                return;
             searchedTablesBindingSource.DataSource = null;
             if (chkTableSearchNoFilters.Checked)
             {
@@ -2606,7 +2608,7 @@ namespace UniversalPatcher
                 return;
             }
             Logger("Cross table search...");
-            tableSearchResult.Clear();
+            tableSearchResult = new List<TableSearchResult>();
             TableFinder tableFinder = new TableFinder();
             tableFinder.searchTables(basefile,false);
             tableFinder.searchTables(modfile, true,"",(int)numCrossVariation.Value);
