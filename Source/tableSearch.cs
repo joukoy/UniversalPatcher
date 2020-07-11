@@ -229,6 +229,7 @@ namespace UniversalPatcher
         public string Label { get; set; }
         public string Data { get; set; }
         public uint Rows { get; set; }
+        public uint Size { get; set; }
     }
 
     public class SearchVariable
@@ -594,6 +595,7 @@ namespace UniversalPatcher
                 {
                     tsr.Category = PCM.osaAddressList[o].category;
                     tsr.Label = PCM.osaAddressList[o].label;
+                    tsr.Size = PCM.osaAddressList[o].size;
                     break;
                 }
             }
@@ -752,6 +754,7 @@ namespace UniversalPatcher
 
 
                 }
+
                 if (crossSearch)
                 {
                     crossSearchTables(thisFileTables,PCM, crossVariation);

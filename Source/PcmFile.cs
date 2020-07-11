@@ -28,6 +28,7 @@ namespace UniversalPatcher
             public string category { get; set; }
             public string label { get; set; }
             public uint address { get; set; }
+            public uint size { get; set; }
         }
 
         public byte[] buf;
