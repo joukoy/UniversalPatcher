@@ -165,6 +165,7 @@
             this.fileTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnSaveDecCsv = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -783,6 +784,7 @@
             // 
             // tabFinfo
             // 
+            this.tabFinfo.Controls.Add(this.btnSaveDecCsv);
             this.tabFinfo.Controls.Add(this.checkAutorefreshFileinfo);
             this.tabFinfo.Controls.Add(this.btnRefreshFileinfo);
             this.tabFinfo.Controls.Add(this.btnSaveCSV);
@@ -1366,8 +1368,6 @@
             // chkSearchTables
             // 
             this.chkSearchTables.AutoSize = true;
-            this.chkSearchTables.Checked = true;
-            this.chkSearchTables.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSearchTables.Location = new System.Drawing.Point(149, 33);
             this.chkSearchTables.Name = "chkSearchTables";
             this.chkSearchTables.Size = new System.Drawing.Size(95, 17);
@@ -1708,6 +1708,17 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // btnSaveDecCsv
+            // 
+            this.btnSaveDecCsv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveDecCsv.Location = new System.Drawing.Point(571, 4);
+            this.btnSaveDecCsv.Name = "btnSaveDecCsv";
+            this.btnSaveDecCsv.Size = new System.Drawing.Size(116, 23);
+            this.btnSaveDecCsv.TabIndex = 7;
+            this.btnSaveDecCsv.Text = "Save CSV(dec)";
+            this.btnSaveDecCsv.UseVisualStyleBackColor = true;
+            this.btnSaveDecCsv.Click += new System.EventHandler(this.btnSaveDecCsv_Click);
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1910,5 +1921,6 @@
         private System.Windows.Forms.Button btnCrossTableSearch;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.NumericUpDown numCrossVariation;
+        private System.Windows.Forms.Button btnSaveDecCsv;
     }
 }

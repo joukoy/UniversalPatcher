@@ -2615,6 +2615,75 @@ namespace UniversalPatcher
             refreshSearchedTables();
             Logger("Done");
         }
+
+        private void btnSaveDecCsv_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+            Logger("Writing to file: " + Path.GetFileName(FileName), false);
+            using (StreamWriter writetext = new StreamWriter(FileName))
+            {
+                string row = "";
+                for (int i = 0; i < dataFileInfo.Columns.Count; i++)
+                {
+                    if (i > 0)
+                        row += ";";
+                    row += dataFileInfo.Columns[i].HeaderText;
+                }
+                writetext.WriteLine(row);
+                for (int r = 0; r < (dataFileInfo.Rows.Count - 1); r++)
+                {
+                    string val = "";
+                    uint valDec = 0;
+                    row = "";
+                    for (int i = 0; i < dataFileInfo.Columns.Count; i++)
+                    {
+                        if (dataFileInfo.Rows[r].Cells[i].Value != null)
+                            val = dataFileInfo.Rows[r].Cells[i].Value.ToString();
+                        if (i > 0)
+                            row += ";";
+                        if (i == 3 || i == 4)  //Address (block)
+                        {
+                            string[] aparts = val.Split(',');
+                            val = "";
+                            for (int a= 0; a<aparts.Length; a++)
+                            {
+                                if (a > 0)
+                                    val += ", ";
+                                string[] addresses = aparts[a].Split('-');
+                                if (addresses.Length > 1)
+                                {
+                                    if (!HexToUint(addresses[0],out valDec))
+                                    {
+                                        Debug.WriteLine("Can't convert from hex: " + addresses[0]);
+                                        break;
+                                    }
+                                    val += valDec.ToString() + " - ";
+                                    if (!HexToUint(addresses[1], out valDec))
+                                    {
+                                        Debug.WriteLine("Can't convert from hex: " + addresses[1]);
+                                        break;
+                                    }
+                                    val += valDec.ToString();
+                                }
+                            }
+
+                        }
+                        else if (i> 4 && i < 12)
+                        {
+                            if (HexToUint(val, out valDec))
+                                val = valDec.ToString();
+                        }
+                        row += val;
+                    }
+
+                    writetext.WriteLine(row);
+                }
+            }
+            Logger(" [OK]");
+
+        }
     }
 }
 
