@@ -1852,6 +1852,7 @@ namespace UniversalPatcher
                             row += dataFileInfo.Rows[r].Cells[i].Value.ToString();
                     }
                     row = row.Replace(Environment.NewLine, ":");
+                    row = row.Replace(",", " ");
                     writetext.WriteLine(row);
                 }
             }
@@ -2676,6 +2677,7 @@ namespace UniversalPatcher
                             if (HexToUint(val, out valDec))
                                 val = valDec.ToString();
                         }
+                        row += val.Replace(",", " ");
                         row += val.Replace(Environment.NewLine, ":");
                     }
 
