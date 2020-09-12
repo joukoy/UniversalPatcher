@@ -2677,9 +2677,10 @@ namespace UniversalPatcher
                             if (HexToUint(val, out valDec))
                                 val = valDec.ToString();
                         }
-                        row += val.Replace(",", " ");
-                        row += val.Replace(Environment.NewLine, ":");
+                        row += val;
                     }
+                    row = row.Replace(",", " ");
+                    row = row.Replace(Environment.NewLine, ":");
 
                     writetext.WriteLine(row);
                 }
