@@ -1851,6 +1851,7 @@ namespace UniversalPatcher
                         if (dataFileInfo.Rows[r].Cells[i].Value != null)
                             row += dataFileInfo.Rows[r].Cells[i].Value.ToString();
                     }
+                    row = row.Replace(Environment.NewLine, ":");
                     writetext.WriteLine(row);
                 }
             }
@@ -2650,7 +2651,7 @@ namespace UniversalPatcher
                             for (int a= 0; a<aparts.Length; a++)
                             {
                                 if (a > 0)
-                                    val += ", ";
+                                    val += ":";
                                 string[] addresses = aparts[a].Split('-');
                                 if (addresses.Length > 1)
                                 {
@@ -2675,7 +2676,7 @@ namespace UniversalPatcher
                             if (HexToUint(val, out valDec))
                                 val = valDec.ToString();
                         }
-                        row += val;
+                        row += val.Replace(Environment.NewLine, ":");
                     }
 
                     writetext.WriteLine(row);
