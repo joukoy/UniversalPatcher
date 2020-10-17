@@ -251,7 +251,7 @@ public class upatcher
         long offset = 0;
         long remaining = Length;
 
-        using (BinaryReader freader = new BinaryReader(File.Open(FileName, FileMode.Open)))
+        using (BinaryReader freader = new BinaryReader(File.Open(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
         {
             freader.BaseStream.Seek(FileOffset, 0);
             while (remaining > 0)
