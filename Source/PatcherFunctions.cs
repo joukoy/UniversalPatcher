@@ -123,6 +123,27 @@ public class upatcher
         public string ExtraInfo  { get; set; }
 
     }
+
+    public class dtcCode
+    {
+        public dtcCode()
+        {
+            codeInt = 0;
+            Status = 0;
+            codeAddrInt = 0;
+            CodeAddr = "";
+            statusAddrInt = 0;
+            StatusAddr = "";
+        }
+        public uint codeAddrInt;
+        public string CodeAddr { get; set; }
+        public UInt16 codeInt;
+        public string Code { get; set; }
+        public uint statusAddrInt;
+        public string StatusAddr { get; set; }
+        public byte Status { get; set; }
+        public string StatusTxt { get; set; }
+    }
     public struct SegmentConfig
     {
         public string Name;
@@ -219,6 +240,7 @@ public class upatcher
     public static List<TableSearchResult> tableSearchResultNoFilters;
     public static List<referenceCvn> referenceCvnList;
     public static List<FileType> fileTypeList;
+    public static List<dtcCode> dtcCodes;
 
     public static string XMLFile;
     public static string tableSearchFile;

@@ -13,7 +13,11 @@ namespace UniversalPatcher
 {
     public class PcmFile
     {
-
+        public PcmFile()
+        {
+            OSSegment = -1;
+            diagSegment = -1;
+        }
         public struct V6Table
         {
             public uint address;
@@ -28,7 +32,7 @@ namespace UniversalPatcher
             public string category { get; set; }
             public string label { get; set; }
             public uint address { get; set; }
-            public uint size { get; set; }
+            public uint size { get; set; }            
         }
 
         public byte[] buf;
@@ -37,12 +41,14 @@ namespace UniversalPatcher
         public SegmentInfo[] segmentinfos;
         public uint fsize;
         public string OS;
+        public int OSSegment;
+        public int diagSegment;
         public uint osStoreAddress;
         public string mafAddress;
         public bool checksumOK;
         public List<V6Table> v6tables;
         public V6Table v6VeTable;
-        public List<osAddresses> osaAddressList;
+        public List<osAddresses> osAddressList;
 
         public PcmFile(string FName)
         {
@@ -60,7 +66,7 @@ namespace UniversalPatcher
                 return;
             System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<osAddresses>));
             System.IO.StreamReader file = new System.IO.StreamReader(FileName);
-            osaAddressList = (List<osAddresses>)reader.Deserialize(file);
+            osAddressList = (List<osAddresses>)reader.Deserialize(file);
             file.Close();
         }
         public void GetSegmentAddresses()
@@ -163,7 +169,14 @@ namespace UniversalPatcher
                     segmentinfos[i].Address = tmp;
                     segmentinfos[i].PN = ReadInfo(binfile[i].PNaddr);
                     if (S.Name == "OS")
+                    {
                         OS = segmentinfos[i].PN;
+                        OSSegment = i;
+                    }
+                    if (S.Name == "EngineDiag")
+                    {
+                        diagSegment = i;
+                    }
                     segmentinfos[i].Ver = ReadInfo(binfile[i].VerAddr);
                     segmentinfos[i].SegNr = ReadInfo(binfile[i].SegNrAddr);
                     if (binfile[i].ExtraInfo != null && binfile[i].ExtraInfo.Count > 0)
@@ -271,7 +284,7 @@ namespace UniversalPatcher
                     BadChkFileList.Add(segmentinfos[i]);
                 }
             }
-            osaAddressList = new List<osAddresses>();
+            osAddressList = new List<osAddresses>();
             loadAddresses();
         }
 

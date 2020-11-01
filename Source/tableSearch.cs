@@ -447,7 +447,7 @@ namespace UniversalPatcher
                 // Get stack trace for the exception with source file information
                 var st = new StackTrace(ex, true);
                 // Get the top stack frame
-                var frame = st.GetFrame(0);
+                var frame = st.GetFrame(st.FrameCount-1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("ParseTablesearch: " + line + ": " + ex.Message);
@@ -589,13 +589,13 @@ namespace UniversalPatcher
                     k++;
                 }
             }
-            for (int o = 0; o < PCM.osaAddressList.Count; o++)
+            for (int o = 0; o < PCM.osAddressList.Count; o++)
             {
-                if (PCM.osaAddressList[o].address == tsr.AddressInt)
+                if (PCM.osAddressList[o].address == tsr.AddressInt)
                 {
-                    tsr.Category = PCM.osaAddressList[o].category;
-                    tsr.Label = PCM.osaAddressList[o].label;
-                    tsr.Size = PCM.osaAddressList[o].size;
+                    tsr.Category = PCM.osAddressList[o].category;
+                    tsr.Label = PCM.osAddressList[o].label;
+                    tsr.Size = PCM.osAddressList[o].size;
                     break;
                 }
             }
@@ -773,7 +773,7 @@ namespace UniversalPatcher
                 // Get stack trace for the exception with source file information
                 var st = new StackTrace(ex, true);
                 // Get the top stack frame
-                var frame = st.GetFrame(0);
+                var frame = st.GetFrame(st.FrameCount-1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("Tablesearch: " + line + ": " + ex.Message);
@@ -866,7 +866,7 @@ namespace UniversalPatcher
                 // Get stack trace for the exception with source file information
                 var st = new StackTrace(ex, true);
                 // Get the top stack frame
-                var frame = st.GetFrame(0);
+                var frame = st.GetFrame(st.FrameCount-1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("crossSearchTables: " + line + ": " + ex.Message);

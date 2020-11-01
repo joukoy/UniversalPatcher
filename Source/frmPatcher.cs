@@ -48,6 +48,7 @@ namespace UniversalPatcher
         private BindingSource badchkfilesource = new BindingSource();
         private BindingSource searchedTablesBindingSource = new BindingSource();
         private BindingSource pidListBindingSource = new BindingSource();
+        private BindingSource dtcBindingSource = new BindingSource();
         private List<PidSearch.PID> pidList = new List<PidSearch.PID>();
         private uint lastCustomSearchResult = 0;
         private string logFile;
@@ -199,6 +200,19 @@ namespace UniversalPatcher
                 tabPIDList.Text = "PIDs";
             else
                 tabPIDList.Text = "PIDs (" + pidList.Count.ToString() + ")";
+        }
+
+        public void refreshDtcList()
+        {
+            dtcBindingSource.DataSource = null;
+            dtcBindingSource.DataSource = dtcCodes;
+            dataGridDTC.DataSource = null;
+            dataGridDTC.DataSource = dtcBindingSource;
+            dataGridDTC.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+            if (dtcCodes.Count == 0)
+                tabDTC.Text = "DTC";
+            else
+                tabDTC.Text = "DTC (" + dtcCodes.Count.ToString() + ")";
         }
 
         private void FrmPatcher_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -457,6 +471,13 @@ namespace UniversalPatcher
                 {
                     TableFinder tableFinder = new TableFinder();
                     tableFinder.searchTables(PCM,false);
+                }
+
+                if (Path.GetFileName(XMLFile).StartsWith("e38") || Path.GetFileName(XMLFile).StartsWith("e67"))
+                {
+                    dtcCodes = new List<dtcCode>();
+                    SearchDtc(PCM);
+                    refreshDtcList();
                 }
                     
                 if (PCM.OS == null || PCM.OS == "")
@@ -2687,6 +2708,170 @@ namespace UniversalPatcher
             }
             Logger(" [OK]");
 
+        }
+
+        private void btnClearDTC_Click(object sender, EventArgs e)
+        {
+            refreshDtcList();
+        }
+
+        private void btnSaveCsvDTC_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+            Logger("Writing to file: " + Path.GetFileName(FileName), false);
+            using (StreamWriter writetext = new StreamWriter(FileName))
+            {
+                string row = "";
+                for (int i = 0; i < dataGridDTC.Columns.Count; i++)
+                {
+                    if (i > 0)
+                        row += ";";
+                    row += dataGridDTC.Columns[i].HeaderText;
+                }
+                writetext.WriteLine(row);
+                for (int r = 0; r < (dataGridDTC.Rows.Count - 1); r++)
+                {
+                    row = "";
+                    for (int i = 0; i < dataGridDTC.Columns.Count; i++)
+                    {
+                        if (i > 0)
+                            row += ";";
+                        if (dataGridDTC.Rows[r].Cells[i].Value != null)
+                            row += dataGridDTC.Rows[r].Cells[i].Value.ToString();
+                    }
+                    writetext.WriteLine(row);
+                }
+            }
+            Logger(" [OK]");
+
+        }
+
+        //Search GM e38/e67 DTC codes
+        private void SearchDtc(PcmFile PCM)
+        {
+            try
+            {
+                if (PCM.OSSegment == -1)
+                {
+                    Logger("DTC search: No OS segment??");
+                    return;
+                }
+                if (PCM.diagSegment == -1)
+                {
+                    Logger("DTC search: No Diagnostic segment??");
+                    return;
+                }
+
+                //Get codes from OS segment:
+                string searchStr = "00 00 00 10 00 11";
+                for (int b = 0; b < PCM.binfile[PCM.OSSegment].SegmentBlocks.Count; b++)
+                {
+                    uint startAddr = searchBytes(PCM,searchStr , PCM.binfile[PCM.OSSegment].SegmentBlocks[b].Start, PCM.binfile[PCM.OSSegment].SegmentBlocks[b].End);
+                    if (startAddr < uint.MaxValue)
+                    {
+                        searchStr = "94 21 ff";
+                        uint endAddr = searchBytes(PCM, searchStr, startAddr + 6, PCM.binfile[PCM.OSSegment].SegmentBlocks[b].End);
+                        if (endAddr == uint.MaxValue)
+                        {
+                            LoggerBold("DTC Search: SearchString: " + searchStr + " not found");
+                            return;
+                        }
+                        for (uint addr = startAddr + 2; addr < endAddr; addr += 2)
+                        {
+                            dtcCode dtc = new dtcCode();
+                            dtc.codeAddrInt = addr;
+                            dtc.CodeAddr = addr.ToString("X8");
+                            dtc.codeInt = BEToUint16(PCM.buf, addr);
+                            
+                            string codeTmp = dtc.codeInt.ToString("X4");
+                            if (codeTmp.StartsWith("5"))
+                            {
+                                dtc.Code = "C1" + codeTmp.Substring(1);
+                            }
+                            else if (codeTmp.StartsWith("C"))
+                            {
+                                dtc.Code = "U0" + codeTmp.Substring(1);
+                            }
+                            else if (codeTmp.StartsWith("D"))
+                            {
+                                dtc.Code = codeTmp;
+                            }
+                            else
+                            {
+                                dtc.Code = "P" + codeTmp;
+                            }
+                            dtcCodes.Add(dtc);
+                        }
+                        break;
+                    }
+                }
+
+                int dtcCount = dtcCodes.Count;
+                for (int b = 0; b < PCM.binfile[PCM.diagSegment].SegmentBlocks.Count; b++)
+                {
+                    for (uint addr = PCM.binfile[PCM.diagSegment].SegmentBlocks[b].Start; addr < PCM.binfile[PCM.diagSegment].SegmentBlocks[b].End; addr++)
+                    {
+                        bool valuesOK = true; 
+                        if (PCM.buf[addr] <= 7 && PCM.buf[addr + dtcCount] == 0xFF) //DTC code status is 0-7, FF after table 
+                        {
+                            valuesOK = true;
+                            for (uint a=addr; a < addr + dtcCount-1;a++)
+                            {
+                                if (PCM.buf[a] > 7 )
+                                {
+                                    //This is not DTC table, it can only have values 0-7
+                                    valuesOK = false;
+                                    break;
+                                }
+                            }
+                            if (valuesOK)
+                            {
+                                //We found the table!
+                                int dtcNr = 0;
+                                for (uint addr2 = addr; addr2 < addr + dtcCount; addr2++)
+                                {
+                                    if (BEToUint16(PCM.buf, addr2) == 0xFF)
+                                    {
+                                        return;
+                                    }
+                                    dtcCode dtc = dtcCodes[dtcNr];
+                                    dtc.statusAddrInt = addr2;
+                                    dtc.StatusAddr = addr2.ToString("X8");
+                                    dtc.Status = PCM.buf[addr2];
+
+                                    if (dtc.Status == 0) dtc.StatusTxt = "MIL and reporting off";
+                                    if (dtc.Status == 1) dtc.StatusTxt = "Type A/no MIL";
+                                    if (dtc.Status == 2) dtc.StatusTxt = "Type B/no MIL";
+                                    if (dtc.Status == 3) dtc.StatusTxt = "Type C/no MIL";
+                                    if (dtc.Status == 4) dtc.StatusTxt = "Not reported/no MIL";
+                                    if (dtc.Status == 5) dtc.StatusTxt = "Type A/MIL";
+                                    if (dtc.Status == 6) dtc.StatusTxt = "Type B/MIL";
+                                    if (dtc.Status == 7) dtc.StatusTxt = "Type C/MIL";
+
+                                    dtcCodes.RemoveAt(dtcNr);
+                                    dtcCodes.Insert(dtcNr, dtc);
+                                    dtcNr++;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber(); 
+                LoggerBold("DTC search, line " + line + ": " +  ex.Message);
+                return;
+            }
         }
     }
 }

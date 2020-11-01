@@ -80,6 +80,7 @@
             this.btnClearBadCvn = new System.Windows.Forms.Button();
             this.dataGridBadCvn = new System.Windows.Forms.DataGridView();
             this.tabFinfo = new System.Windows.Forms.TabPage();
+            this.btnSaveDecCsv = new System.Windows.Forms.Button();
             this.checkAutorefreshFileinfo = new System.Windows.Forms.CheckBox();
             this.btnRefreshFileinfo = new System.Windows.Forms.Button();
             this.btnSaveCSV = new System.Windows.Forms.Button();
@@ -106,6 +107,11 @@
             this.btnClearPidList = new System.Windows.Forms.Button();
             this.btnSavePidList = new System.Windows.Forms.Button();
             this.dataGridPIDlist = new System.Windows.Forms.DataGridView();
+            this.tabDTC = new System.Windows.Forms.TabPage();
+            this.label14 = new System.Windows.Forms.Label();
+            this.btnClearDTC = new System.Windows.Forms.Button();
+            this.btnSaveCsvDTC = new System.Windows.Forms.Button();
+            this.dataGridDTC = new System.Windows.Forms.DataGridView();
             this.chkExtra = new System.Windows.Forms.CheckBox();
             this.chkCS2 = new System.Windows.Forms.CheckBox();
             this.chkCS1 = new System.Windows.Forms.CheckBox();
@@ -165,7 +171,6 @@
             this.fileTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnSaveDecCsv = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -185,6 +190,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridSearchedTables)).BeginInit();
             this.tabPIDList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridPIDlist)).BeginInit();
+            this.tabDTC.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridDTC)).BeginInit();
             this.tabFunction.SuspendLayout();
             this.tabCreate.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numCrossVariation)).BeginInit();
@@ -373,6 +380,7 @@
             this.tabControl1.Controls.Add(this.tabBadChkFile);
             this.tabControl1.Controls.Add(this.tabSearchedTables);
             this.tabControl1.Controls.Add(this.tabPIDList);
+            this.tabControl1.Controls.Add(this.tabDTC);
             this.tabControl1.Location = new System.Drawing.Point(0, 191);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -797,6 +805,17 @@
             this.tabFinfo.Text = "File info";
             this.tabFinfo.UseVisualStyleBackColor = true;
             // 
+            // btnSaveDecCsv
+            // 
+            this.btnSaveDecCsv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveDecCsv.Location = new System.Drawing.Point(571, 4);
+            this.btnSaveDecCsv.Name = "btnSaveDecCsv";
+            this.btnSaveDecCsv.Size = new System.Drawing.Size(116, 23);
+            this.btnSaveDecCsv.TabIndex = 7;
+            this.btnSaveDecCsv.Text = "Save CSV(dec)";
+            this.btnSaveDecCsv.UseVisualStyleBackColor = true;
+            this.btnSaveDecCsv.Click += new System.EventHandler(this.btnSaveDecCsv_Click);
+            // 
             // checkAutorefreshFileinfo
             // 
             this.checkAutorefreshFileinfo.AutoSize = true;
@@ -1085,6 +1104,59 @@
             this.dataGridPIDlist.Name = "dataGridPIDlist";
             this.dataGridPIDlist.Size = new System.Drawing.Size(774, 310);
             this.dataGridPIDlist.TabIndex = 0;
+            // 
+            // tabDTC
+            // 
+            this.tabDTC.Controls.Add(this.label14);
+            this.tabDTC.Controls.Add(this.btnClearDTC);
+            this.tabDTC.Controls.Add(this.btnSaveCsvDTC);
+            this.tabDTC.Controls.Add(this.dataGridDTC);
+            this.tabDTC.Location = new System.Drawing.Point(4, 22);
+            this.tabDTC.Name = "tabDTC";
+            this.tabDTC.Size = new System.Drawing.Size(776, 344);
+            this.tabDTC.TabIndex = 10;
+            this.tabDTC.Text = "DTC";
+            this.tabDTC.UseVisualStyleBackColor = true;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(182, 9);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(162, 13);
+            this.label14.TabIndex = 8;
+            this.label14.Text = "GM e38/e67 DTC codes (BETA)";
+            // 
+            // btnClearDTC
+            // 
+            this.btnClearDTC.Location = new System.Drawing.Point(8, 3);
+            this.btnClearDTC.Name = "btnClearDTC";
+            this.btnClearDTC.Size = new System.Drawing.Size(75, 23);
+            this.btnClearDTC.TabIndex = 7;
+            this.btnClearDTC.Text = "Clear";
+            this.btnClearDTC.UseVisualStyleBackColor = true;
+            this.btnClearDTC.Click += new System.EventHandler(this.btnClearDTC_Click);
+            // 
+            // btnSaveCsvDTC
+            // 
+            this.btnSaveCsvDTC.Location = new System.Drawing.Point(89, 3);
+            this.btnSaveCsvDTC.Name = "btnSaveCsvDTC";
+            this.btnSaveCsvDTC.Size = new System.Drawing.Size(75, 23);
+            this.btnSaveCsvDTC.TabIndex = 6;
+            this.btnSaveCsvDTC.Text = "Save CSV";
+            this.btnSaveCsvDTC.UseVisualStyleBackColor = true;
+            this.btnSaveCsvDTC.Click += new System.EventHandler(this.btnSaveCsvDTC_Click);
+            // 
+            // dataGridDTC
+            // 
+            this.dataGridDTC.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridDTC.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridDTC.Location = new System.Drawing.Point(1, 32);
+            this.dataGridDTC.Name = "dataGridDTC";
+            this.dataGridDTC.Size = new System.Drawing.Size(774, 310);
+            this.dataGridDTC.TabIndex = 5;
             // 
             // chkExtra
             // 
@@ -1708,17 +1780,6 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // btnSaveDecCsv
-            // 
-            this.btnSaveDecCsv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveDecCsv.Location = new System.Drawing.Point(571, 4);
-            this.btnSaveDecCsv.Name = "btnSaveDecCsv";
-            this.btnSaveDecCsv.Size = new System.Drawing.Size(116, 23);
-            this.btnSaveDecCsv.TabIndex = 7;
-            this.btnSaveDecCsv.Text = "Save CSV(dec)";
-            this.btnSaveDecCsv.UseVisualStyleBackColor = true;
-            this.btnSaveDecCsv.Click += new System.EventHandler(this.btnSaveDecCsv_Click);
-            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1763,6 +1824,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridSearchedTables)).EndInit();
             this.tabPIDList.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridPIDlist)).EndInit();
+            this.tabDTC.ResumeLayout(false);
+            this.tabDTC.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridDTC)).EndInit();
             this.tabFunction.ResumeLayout(false);
             this.tabCreate.ResumeLayout(false);
             this.tabCreate.PerformLayout();
@@ -1922,5 +1986,10 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.NumericUpDown numCrossVariation;
         private System.Windows.Forms.Button btnSaveDecCsv;
+        private System.Windows.Forms.TabPage tabDTC;
+        private System.Windows.Forms.Button btnClearDTC;
+        private System.Windows.Forms.Button btnSaveCsvDTC;
+        private System.Windows.Forms.DataGridView dataGridDTC;
+        private System.Windows.Forms.Label label14;
     }
 }
