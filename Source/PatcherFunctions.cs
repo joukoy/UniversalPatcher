@@ -134,6 +134,7 @@ public class upatcher
             CodeAddr = "";
             statusAddrInt = 0;
             StatusAddr = "";
+            Description = "";
         }
         public uint codeAddrInt;
         public string CodeAddr { get; set; }
@@ -143,7 +144,19 @@ public class upatcher
         public string StatusAddr { get; set; }
         public byte Status { get; set; }
         public string StatusTxt { get; set; }
+        public string Description { get; set; }
     }
+
+    public class OBD2Code
+    {
+        public OBD2Code()
+        {
+
+        }
+        public string Code { get; set; }
+        public string Description { get; set; }
+    }
+
     public struct SegmentConfig
     {
         public string Name;
@@ -241,6 +254,7 @@ public class upatcher
     public static List<referenceCvn> referenceCvnList;
     public static List<FileType> fileTypeList;
     public static List<dtcCode> dtcCodes;
+    public static List<OBD2Code> OBD2Codes;
 
     public static string XMLFile;
     public static string tableSearchFile;
@@ -649,6 +663,8 @@ public class upatcher
                     {
                         Debug.WriteLine("PN: " + PN + " CVN found from Referencelist: " + referenceCvnList[r].CVN);
                         cvnMismatch = false; //Found from referencelist, no mismatch
+						retVal = "[stock]";
+
                     }
                     ushort refShort;
                     if (!HexToUshort(referenceCvnList[r].CVN, out refShort))
@@ -659,6 +675,7 @@ public class upatcher
                     {
                         Debug.WriteLine("PN: " + PN + " byteswapped CVN found from Referencelist: " + referenceCvnList[r].CVN);
                         cvnMismatch = false; //Found from referencelist, no mismatch
+						retVal = "[stock]";
                     }
                     break;
                 }

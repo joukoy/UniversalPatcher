@@ -2752,6 +2752,19 @@ namespace UniversalPatcher
         {
             try
             {
+                string OBD2CodeFile = Path.Combine(Application.StartupPath, "XML", "OBD2Codes.xml");
+                if (File.Exists(OBD2CodeFile))
+                {
+                    Debug.WriteLine("Loading OBD2Codes.xml");
+                    System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<OBD2Code>));
+                    System.IO.StreamReader file = new System.IO.StreamReader(OBD2CodeFile);
+                    OBD2Codes = (List<OBD2Code>)reader.Deserialize(file);
+                    file.Close();
+                }
+                else
+                {
+                    OBD2Codes = new List<OBD2Code>();
+                }
                 if (PCM.OSSegment == -1)
                 {
                     Logger("DTC search: No OS segment??");
@@ -2812,6 +2825,14 @@ namespace UniversalPatcher
                             else
                             {
                                 dtc.Code = "P" + codeTmp;
+                            }
+                            for (int o=0; o< OBD2Codes.Count; o++)
+                            {
+                                if (dtc.Code == OBD2Codes[o].Code)
+                                {
+                                    dtc.Description = OBD2Codes[o].Description;
+                                    break;
+                                }
                             }
                             dtcCodes.Add(dtc);
                         }
