@@ -2964,17 +2964,17 @@ namespace UniversalPatcher
             Logger("Writing to file: " + Path.GetFileName(FileName), false);
             using (StreamWriter writetext = new StreamWriter(FileName))
             {
-                writetext.WriteLine ("      <indexcount>" + dtcCodes.Count.ToString() + "</indexcount>");
-                writetext.WriteLine("      <outputtype>4</outputtype>");
-                writetext.WriteLine("      <datatype>2</datatype>");
-                writetext.WriteLine("      <unittype>2</unittype>");
-                writetext.WriteLine("      <DALINK index=\"0\" />");
+                writetext.WriteLine ("     <indexcount>" + dtcCodes.Count.ToString() + "</indexcount>");
+                writetext.WriteLine("     <outputtype>4</outputtype>");
+                writetext.WriteLine("     <datatype>2</datatype>");
+                writetext.WriteLine("     <unittype>2</unittype>");
+                writetext.WriteLine("     <DALINK index=\"0\" />");
 
                 for (int d=0; d<dtcCodes.Count;d++)
                 {
                     writetext.WriteLine("     <LABEL index=\"" + d.ToString() + "\" value=\"" + dtcCodes[d].Code + "\" />" );
                 }
-                writetext.Write("     <MATH equation=\"X\">\n<VAR id=\"X\" />\n       </MATH>\n\r    </XDFAXIS>\n    <XDFAXIS id=\"z\">\n");
+                writetext.Write("     <MATH equation=\"X\">\n<VAR id=\"X\" />\n       </MATH>\n    </XDFAXIS>\n    <XDFAXIS id=\"z\">\n");
                 writetext.WriteLine("     <EMBEDDEDDATA mmedtypeflags=\"0x04\" mmedaddress=\"0x" + dtcCodes[0].StatusAddr + "\" mmedelementsizebits=\"8\" mmedrowcount=\"" + (dtcCodes.Count + 10).ToString() + "\" mmedmajorstridebits=\"0\" mmedminorstridebits=\"0\" />");
             }
             Logger(" [OK]");
