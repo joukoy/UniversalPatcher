@@ -171,6 +171,7 @@
             this.fileTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnExportXdf = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1107,6 +1108,7 @@
             // 
             // tabDTC
             // 
+            this.tabDTC.Controls.Add(this.btnExportXdf);
             this.tabDTC.Controls.Add(this.label14);
             this.tabDTC.Controls.Add(this.btnClearDTC);
             this.tabDTC.Controls.Add(this.btnSaveCsvDTC);
@@ -1121,7 +1123,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(182, 9);
+            this.label14.Location = new System.Drawing.Point(293, 8);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(162, 13);
             this.label14.TabIndex = 8;
@@ -1780,6 +1782,16 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // btnExportXdf
+            // 
+            this.btnExportXdf.Location = new System.Drawing.Point(170, 3);
+            this.btnExportXdf.Name = "btnExportXdf";
+            this.btnExportXdf.Size = new System.Drawing.Size(75, 23);
+            this.btnExportXdf.TabIndex = 9;
+            this.btnExportXdf.Text = "Export xdf";
+            this.btnExportXdf.UseVisualStyleBackColor = true;
+            this.btnExportXdf.Click += new System.EventHandler(this.btnExportXdf_Click);
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1991,5 +2003,6 @@
         private System.Windows.Forms.Button btnSaveCsvDTC;
         private System.Windows.Forms.DataGridView dataGridDTC;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Button btnExportXdf;
     }
 }
