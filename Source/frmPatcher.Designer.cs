@@ -1261,9 +1261,9 @@
             // 
             this.tabFunction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabFunction.Controls.Add(this.tabCreate);
-            this.tabFunction.Controls.Add(this.tabFileinfo);
             this.tabFunction.Controls.Add(this.tabApply);
+            this.tabFunction.Controls.Add(this.tabFileinfo);
+            this.tabFunction.Controls.Add(this.tabCreate);
             this.tabFunction.Controls.Add(this.tabExtract);
             this.tabFunction.Controls.Add(this.tabExtractSegments);
             this.tabFunction.Location = new System.Drawing.Point(2, 60);
