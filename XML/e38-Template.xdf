@@ -1,0 +1,82 @@
+<!-- Written 11/04/2020 09:12:04 -->
+<XDFFORMAT version="1.60">
+  <XDFHEADER>
+    <flags>0x1</flags>
+    <deftitle>REPLACE-OSID</deftitle>
+    <description></description>
+    <BASEOFFSET offset="0" subtract="0" />
+    <DEFAULTS datasizeinbits="8" sigdigits="2" outputtype="1" signed="0" lsbfirst="0" float="0" />
+    <REGION type="0xFFFFFFFF" startaddress="0x0" size="0x200000" regionflags="0x0" name="Binary File" desc="This region describes the bin file edited by this XDF" />
+  </XDFHEADER>
+  <XDFTABLE uniqueid="0x1E2E" flags="0x30">
+    <title>DTC table</title>
+    <description>00 MIL and reporting off&#013;&#010;01 type A/no mil&#013;&#010;02 type B/no mil&#013;&#010;03 type C/no mil&#013;&#010;04 not reported/no mil &#013;&#010;05 type A/mil &#013;&#010;06 type B/mil &#013;&#010;07 type c/mil </description>
+    <CATEGORYMEM index="0" category="1" />
+    <XDFAXIS id="x" uniqueid="0x0">
+      <EMBEDDEDDATA mmedelementsizebits="8" mmedmajorstridebits="-32" mmedminorstridebits="0" />
+      <indexcount>1</indexcount>
+      <outputtype>3</outputtype>
+      <datatype>0</datatype>
+      <unittype>0</unittype>
+      <DALINK index="0" />
+      <LABEL index="0" value="" />
+      <MATH equation="X">
+        <VAR id="X" />
+      </MATH>
+    </XDFAXIS>
+    <XDFAXIS id="y" uniqueid="0x0">
+      <EMBEDDEDDATA mmedelementsizebits="8" mmedmajorstridebits="-32" mmedminorstridebits="0" />
+      <indexcount>REPLACE-DTCCOUNT</indexcount>
+      <outputtype>4</outputtype>
+      <datatype>2</datatype>
+      <unittype>2</unittype>
+      <DALINK index="0" />
+      REPLACE-DTCCODES
+      <MATH equation="X">
+        <VAR id="X" />
+      </MATH>
+    </XDFAXIS>
+    <XDFAXIS id="z">
+      <EMBEDDEDDATA mmedtypeflags="0x04" mmedaddress="0xREPLACE-DTCADDRESS" mmedelementsizebits="8" mmedrowcount="REPLACE-DTCCOUNT" mmedmajorstridebits="0" mmedminorstridebits="0" />
+      <decimalpl>1</decimalpl>
+      <min>0.000000</min>
+      <max>7.000000</max>
+      <outputtype>2</outputtype>
+      <MATH equation="X">
+        <VAR id="X" />
+      </MATH>
+    </XDFAXIS>
+  </XDFTABLE>
+  <XDFCHECKSUM uniqueid="0x2CDC">
+    <title>CVN </title>
+    <REGION>
+      <pluginmoduleid>cbebdc26-cd53-460b-8d61-898d18dca53f</pluginmoduleid>
+      <datastart>0x0</datastart>
+      <dataend>0x0</dataend>
+      <storeaddress>0x0</storeaddress>
+      <calculationmethod>0x0</calculationmethod>
+    </REGION>
+  </XDFCHECKSUM>
+  <XDFCHECKSUM uniqueid="0x7B14">
+    <title>Checksum</title>
+    <REGION>
+      <pluginmoduleid>cbebdc26-cd53-460b-8d61-898d18dca53f</pluginmoduleid>
+      <datastart>0x0</datastart>
+      <dataend>0x0</dataend>
+      <storeaddress>0x0</storeaddress>
+      <calculationmethod>0x1</calculationmethod>
+    </REGION>
+  </XDFCHECKSUM>
+  <XDFCONSTANT uniqueid="0x32ED">
+    <title>OS ID - Don&apos;t modify, must match XDF</title>
+    <description>DON&apos;T MODIFY</description>
+    <EMBEDDEDDATA mmedaddress="0xREPLACE-OSADDRESS" mmedelementsizebits="32" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <outputtype>2</outputtype>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+</XDFFORMAT>

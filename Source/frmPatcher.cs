@@ -2958,24 +2958,38 @@ namespace UniversalPatcher
 
         private void btnExportXdf_Click(object sender, EventArgs e)
         {
-            string FileName = SelectSaveFile("XDF files (*.xdf)|*.xdf|ALL files (*.*)|*.*");
+
+            string PcmType = Path.GetFileNameWithoutExtension(XMLFile);
+            string FileName = Path.Combine(Application.StartupPath, "XML", PcmType + "-template.xdf");
+            if (!File.Exists(FileName))
+            {
+                LoggerBold("File not found: " + FileName);
+                return;
+            }
+            StreamReader sr = new StreamReader(FileName);
+            string templateTxt = sr.ReadToEnd();
+            sr.Close();
+
+            FileName = SelectSaveFile("XDF files (*.xdf)|*.xdf|ALL files (*.*)|*.*", basefile.OS + "-dtconly.xdf");
             if (FileName.Length == 0)
                 return;
+
+            string tableRows = "";
+            for (int d = 0; d < dtcCodes.Count; d++)
+            {
+                tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + dtcCodes[d].Code + "\" />" + Environment.NewLine;
+            }
+
+            string xdfTxt = templateTxt.Replace("REPLACE-DTCCODES", tableRows);
+            xdfTxt = xdfTxt.Replace("REPLACE-OSID", txtOS.Text);
+            xdfTxt = xdfTxt.Replace("REPLACE-DTCCOUNT", dtcCodes.Count.ToString());
+            xdfTxt = xdfTxt.Replace("REPLACE-DTCADDRESS", dtcCodes[0].statusAddrInt.ToString("X"));
+            xdfTxt = xdfTxt.Replace("REPLACE-OSADDRESS", basefile.binfile[basefile.OSSegment].PNaddr.Address.ToString("X"));
+
             Logger("Writing to file: " + Path.GetFileName(FileName), false);
             using (StreamWriter writetext = new StreamWriter(FileName))
             {
-                writetext.WriteLine ("     <indexcount>" + dtcCodes.Count.ToString() + "</indexcount>");
-                writetext.WriteLine("     <outputtype>4</outputtype>");
-                writetext.WriteLine("     <datatype>2</datatype>");
-                writetext.WriteLine("     <unittype>2</unittype>");
-                writetext.WriteLine("     <DALINK index=\"0\" />");
-
-                for (int d=0; d<dtcCodes.Count;d++)
-                {
-                    writetext.WriteLine("     <LABEL index=\"" + d.ToString() + "\" value=\"" + dtcCodes[d].Code + "\" />" );
-                }
-                writetext.Write("     <MATH equation=\"X\">\n<VAR id=\"X\" />\n       </MATH>\n    </XDFAXIS>\n    <XDFAXIS id=\"z\">\n");
-                writetext.WriteLine("     <EMBEDDEDDATA mmedtypeflags=\"0x04\" mmedaddress=\"0x" + dtcCodes[0].StatusAddr + "\" mmedelementsizebits=\"8\" mmedrowcount=\"" + (dtcCodes.Count + 10).ToString() + "\" mmedmajorstridebits=\"0\" mmedminorstridebits=\"0\" />");
+                writetext.Write (xdfTxt);
             }
             Logger(" [OK]");
         }

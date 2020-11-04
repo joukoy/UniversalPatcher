@@ -516,13 +516,14 @@ public class upatcher
         return "";
 
     }
-    public static string SelectSaveFile(string Filter = "BIN files (*.bin)|*.bin")
+    public static string SelectSaveFile(string Filter = "BIN files (*.bin)|*.bin", string defaultFileName = "")
     {
         SaveFileDialog saveFileDialog = new SaveFileDialog();
         //saveFileDialog.Filter = "BIN files (*.bin)|*.bin";
         saveFileDialog.Filter = Filter;
         saveFileDialog.RestoreDirectory = true;
         saveFileDialog.Title = "Save to file";
+        saveFileDialog.FileName = defaultFileName;
         if (Filter.Contains("PATCH"))
             saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
         if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
