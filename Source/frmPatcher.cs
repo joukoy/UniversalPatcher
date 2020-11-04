@@ -913,6 +913,8 @@ namespace UniversalPatcher
                 string FileName = SelectSaveFile();
                 if (FileName.Length == 0)
                     return;
+
+                FixCheckSums();
                 Logger("Saving to file: " + FileName);
                 WriteBinToFile(FileName, basefile.buf);
                 Logger("Done.");
@@ -2929,6 +2931,7 @@ namespace UniversalPatcher
                         dtc.StatusAddr = addr2.ToString("X8");
                         dtc.Status = PCM.buf[addr2];
 
+                        /*
                         if (dtc.Status == 0) dtc.StatusTxt = "MIL and reporting off";
                         if (dtc.Status == 1) dtc.StatusTxt = "Type A/no MIL";
                         if (dtc.Status == 2) dtc.StatusTxt = "Type B/no MIL";
@@ -2937,6 +2940,8 @@ namespace UniversalPatcher
                         if (dtc.Status == 5) dtc.StatusTxt = "Type A/MIL";
                         if (dtc.Status == 6) dtc.StatusTxt = "Type B/MIL";
                         if (dtc.Status == 7) dtc.StatusTxt = "Type C/MIL";
+                        */
+                        dtc.StatusTxt = dtcStatus[dtc.Status];
 
                         dtcCodes.RemoveAt(dtcNr);
                         dtcCodes.Insert(dtcNr, dtc);
@@ -2992,6 +2997,32 @@ namespace UniversalPatcher
                 writetext.Write (xdfTxt);
             }
             Logger(" [OK]");
+        }
+
+        private void modifyDtc()
+        {
+            int codeIndex = dataGridDTC.SelectedCells[0].RowIndex;
+            frmSetDTC frmS = new frmSetDTC();
+            frmS.startMe(codeIndex);
+            if (frmS.ShowDialog() == DialogResult.OK)
+            {
+                dtcCodes[codeIndex].Status = (byte)frmS.comboDtcStatus.SelectedIndex;
+                dtcCodes[codeIndex].StatusTxt = dtcStatus[dtcCodes[codeIndex].Status];
+                basefile.buf[dtcCodes[codeIndex].statusAddrInt] = dtcCodes[codeIndex].Status;
+                dataGridDTC.Rows[codeIndex].Cells["Status"].Value = dtcCodes[codeIndex].Status;
+                dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = dtcCodes[codeIndex].StatusTxt;
+                tabFunction.SelectedTab = tabApply;
+                Logger("DTC modified, you can now save bin");
+            }
+        }
+        private void dataGridDTC_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            modifyDtc();
+        }
+
+        private void btnSetDTC_Click(object sender, EventArgs e)
+        {
+            modifyDtc();
         }
     }
 }

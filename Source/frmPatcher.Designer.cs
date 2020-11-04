@@ -108,6 +108,8 @@
             this.btnSavePidList = new System.Windows.Forms.Button();
             this.dataGridPIDlist = new System.Windows.Forms.DataGridView();
             this.tabDTC = new System.Windows.Forms.TabPage();
+            this.btnSetDTC = new System.Windows.Forms.Button();
+            this.btnExportXdf = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
             this.btnClearDTC = new System.Windows.Forms.Button();
             this.btnSaveCsvDTC = new System.Windows.Forms.Button();
@@ -171,7 +173,6 @@
             this.fileTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnExportXdf = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1108,6 +1109,7 @@
             // 
             // tabDTC
             // 
+            this.tabDTC.Controls.Add(this.btnSetDTC);
             this.tabDTC.Controls.Add(this.btnExportXdf);
             this.tabDTC.Controls.Add(this.label14);
             this.tabDTC.Controls.Add(this.btnClearDTC);
@@ -1120,10 +1122,30 @@
             this.tabDTC.Text = "DTC";
             this.tabDTC.UseVisualStyleBackColor = true;
             // 
+            // btnSetDTC
+            // 
+            this.btnSetDTC.Location = new System.Drawing.Point(251, 3);
+            this.btnSetDTC.Name = "btnSetDTC";
+            this.btnSetDTC.Size = new System.Drawing.Size(75, 23);
+            this.btnSetDTC.TabIndex = 10;
+            this.btnSetDTC.Text = "Set DTC";
+            this.btnSetDTC.UseVisualStyleBackColor = true;
+            this.btnSetDTC.Click += new System.EventHandler(this.btnSetDTC_Click);
+            // 
+            // btnExportXdf
+            // 
+            this.btnExportXdf.Location = new System.Drawing.Point(170, 3);
+            this.btnExportXdf.Name = "btnExportXdf";
+            this.btnExportXdf.Size = new System.Drawing.Size(75, 23);
+            this.btnExportXdf.TabIndex = 9;
+            this.btnExportXdf.Text = "Export xdf";
+            this.btnExportXdf.UseVisualStyleBackColor = true;
+            this.btnExportXdf.Click += new System.EventHandler(this.btnExportXdf_Click);
+            // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(293, 8);
+            this.label14.Location = new System.Drawing.Point(337, 8);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(162, 13);
             this.label14.TabIndex = 8;
@@ -1151,14 +1173,19 @@
             // 
             // dataGridDTC
             // 
+            this.dataGridDTC.AllowUserToAddRows = false;
+            this.dataGridDTC.AllowUserToDeleteRows = false;
+            this.dataGridDTC.AllowUserToOrderColumns = true;
             this.dataGridDTC.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridDTC.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridDTC.Location = new System.Drawing.Point(1, 32);
+            this.dataGridDTC.MultiSelect = false;
             this.dataGridDTC.Name = "dataGridDTC";
             this.dataGridDTC.Size = new System.Drawing.Size(774, 310);
             this.dataGridDTC.TabIndex = 5;
+            this.dataGridDTC.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridDTC_CellContentDoubleClick);
             // 
             // chkExtra
             // 
@@ -1782,16 +1809,6 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // btnExportXdf
-            // 
-            this.btnExportXdf.Location = new System.Drawing.Point(170, 3);
-            this.btnExportXdf.Name = "btnExportXdf";
-            this.btnExportXdf.Size = new System.Drawing.Size(75, 23);
-            this.btnExportXdf.TabIndex = 9;
-            this.btnExportXdf.Text = "Export xdf";
-            this.btnExportXdf.UseVisualStyleBackColor = true;
-            this.btnExportXdf.Click += new System.EventHandler(this.btnExportXdf_Click);
-            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2004,5 +2021,6 @@
         private System.Windows.Forms.DataGridView dataGridDTC;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Button btnExportXdf;
+        private System.Windows.Forms.Button btnSetDTC;
     }
 }

@@ -232,7 +232,8 @@ public class upatcher
         public string Extension { get; set; }
     }
 
-    public const short CSMethod_None = 0;
+
+public const short CSMethod_None = 0;
     public const short CSMethod_crc16 = 1;
     public const short CSMethod_crc32 = 2;
     public const short CSMethod_Bytesum = 3;
@@ -260,6 +261,8 @@ public class upatcher
     public static string tableSearchFile;
 
     public static FrmPatcher frmpatcher;
+
+    public static string[] dtcStatus = { "MIL and reporting off", "Type A/no MIL", "Type B/no MIL", "Type C/no MIL", "Not reported/no MIL", "Type A/MIL", "Type B/MIL", "Type C/MIL" };
 
 
     public const ushort TypeText = 0;

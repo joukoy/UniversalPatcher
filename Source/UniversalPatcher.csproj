@@ -147,6 +147,12 @@
     <Compile Include="frmEditAddress.Designer.cs">
       <DependentUpon>frmEditAddress.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmSetDTC.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSetDTC.Designer.cs">
+      <DependentUpon>frmSetDTC.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmSwapSegmentList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -251,6 +257,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmPatcher.resx">
       <DependentUpon>frmPatcher.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSetDTC.resx">
+      <DependentUpon>frmSetDTC.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmSwapSegmentList.resx">
       <DependentUpon>frmSwapSegmentList.cs</DependentUpon>
