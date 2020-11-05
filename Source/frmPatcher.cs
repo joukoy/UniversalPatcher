@@ -3070,14 +3070,7 @@ namespace UniversalPatcher
                 if (StatusAddr < uint.MaxValue)
                 {
                     int dtcNr = 0;
-                    uint startAddr = BEToUint32(PCM.buf, StatusAddr + 4);
-
-                    //Find end of DTC MIL table: 
-                    uint endAddr = (uint)(2 * dtcCodesP59.Count + startAddr);
-                    // Calculate start of Status address based on Mil End address
-                    // 0-1 bytes, Status table, 00/FF, MIL table, >1
-                    for (; PCM.buf[endAddr] < 2; endAddr++) ; //Mil = 0/1
-                    startAddr = (uint)(endAddr - (2 * dtcCodesP59.Count) - 2);
+                    uint startAddr = BEToUint32(PCM.buf, StatusAddr + 4) + 1;
 
                     for (uint addr2 = startAddr; addr2 < startAddr + dtcCodesP59.Count; addr2++)
                     {
@@ -3096,7 +3089,8 @@ namespace UniversalPatcher
                         dtcNr++;
                     }
                     dtcNr = 0;
-                    startAddr = (uint)(startAddr + dtcCodesP59.Count + 2);
+                    startAddr = (uint)(startAddr + dtcCodesP59.Count + 1 );
+                    if (PCM.buf[startAddr - 1] == 0xFF) startAddr ++ ; //If there is FF before first byte, skip first byte
                     for (uint addr2 = startAddr; addr2 < startAddr + dtcCodesP59.Count; addr2++)
                     {
                         if (PCM.buf[addr2] > 1)     //MIL=0/1
