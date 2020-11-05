@@ -2,12 +2,11 @@
 - Make/apply patches for bin files
 - Get information of PCM binary files
 - Extract / swap segments
+- Generate minimal XDF files for Tunerpro (GM E38/E67/P59 only)
 
 Configurable for different engine controller binary files
  * Mostly for GM PCM 1997 ->
 
 # Installation:
-Extract XML_v??.zip to folder where universal.exe is copied.
-- For example:
-* c:\uvpatcher\universalpatcher.exe
-* c:\uvpatcher\XML\
+Extract UniversalPatcher-Full.Zip to empty folder.
+
