@@ -124,9 +124,9 @@ public class upatcher
 
     }
 
-    public class dtcCode
+    public class dtcCodeE38
     {
-        public dtcCode()
+        public dtcCodeE38()
         {
             codeInt = 0;
             Status = 0;
@@ -144,6 +144,36 @@ public class upatcher
         public string StatusAddr { get; set; }
         public byte Status { get; set; }
         public string StatusTxt { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class dtcCodeP59
+    {
+        public dtcCodeP59()
+        {
+            codeInt = 0;
+            codeAddrInt = 0;
+            CodeAddr = "";
+            statusAddrInt = 0;
+            StatusAddr = "";
+            Description = "";
+            Status = 0;
+            MilStatus = 0;
+            MilAddr = "";
+            milAddrInt = 0;
+            StatusTxt = "";
+        }
+        public uint codeAddrInt;
+        public string CodeAddr { get; set; }
+        public UInt16 codeInt;
+        public string Code { get; set; }
+        public uint statusAddrInt;
+        public string StatusAddr { get; set; }
+        public byte Status { get; set; }
+        public string StatusTxt { get; set; }
+        public uint milAddrInt;
+        public string MilAddr { get; set; }
+        public byte MilStatus { get; set; }
         public string Description { get; set; }
     }
 
@@ -254,7 +284,8 @@ public const short CSMethod_None = 0;
     public static List<TableSearchResult> tableSearchResultNoFilters;
     public static List<referenceCvn> referenceCvnList;
     public static List<FileType> fileTypeList;
-    public static List<dtcCode> dtcCodes;
+    public static List<dtcCodeE38> dtcCodesE38;
+    public static List<dtcCodeP59> dtcCodesP59;
     public static List<OBD2Code> OBD2Codes;
 
     public static string XMLFile;
@@ -262,8 +293,8 @@ public const short CSMethod_None = 0;
 
     public static FrmPatcher frmpatcher;
 
-    public static string[] dtcStatus = { "MIL and reporting off", "Type A/no MIL", "Type B/no MIL", "Type C/no MIL", "Not reported/no MIL", "Type A/MIL", "Type B/MIL", "Type C/MIL" };
-
+    public static string[] dtcStatusE38 = { "MIL and reporting off", "Type A/no MIL", "Type B/no MIL", "Type C/no MIL", "Not reported/no MIL", "Type A/MIL", "Type B/MIL", "Type C/MIL" };
+    public static string[] dtcStatusP59 = { "1 Trip/immediately", "2 Trips", "Store only", "Disabled" };
 
     public const ushort TypeText = 0;
     public const ushort TypeHex = 1;
@@ -687,6 +718,7 @@ public const short CSMethod_None = 0;
 
             if (cvnMismatch) //Found from referencelist, have mismatch
             {
+                retVal = "[modded/R]";
                 bool isInBadCvnList = false;
                 AddToList = false;  //Don't add to CVN list if add to mismatch CVN
                 if (BadCvnList == null)

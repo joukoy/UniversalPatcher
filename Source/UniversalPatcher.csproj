@@ -302,4 +302,7 @@
     <None Include="Resources\UniversalPatcher.JPG" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetPath) $(ProjectDir)..\</PostBuildEvent>
+  </PropertyGroup>
 </Project>

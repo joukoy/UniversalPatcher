@@ -121,13 +121,12 @@
             this.chkRange = new System.Windows.Forms.CheckBox();
             this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tabFunction = new System.Windows.Forms.TabControl();
-            this.tabCreate = new System.Windows.Forms.TabPage();
-            this.label13 = new System.Windows.Forms.Label();
-            this.numCrossVariation = new System.Windows.Forms.NumericUpDown();
-            this.btnCrossTableSearch = new System.Windows.Forms.Button();
-            this.checkAppendPatch = new System.Windows.Forms.CheckBox();
-            this.txtOS = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.tabApply = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
+            this.btnSwapSegments = new System.Windows.Forms.Button();
+            this.btnBinLoadPatch = new System.Windows.Forms.Button();
+            this.btnCheckSums = new System.Windows.Forms.Button();
+            this.btnApplypatch = new System.Windows.Forms.Button();
             this.tabFileinfo = new System.Windows.Forms.TabPage();
             this.chkCustomTableSearch = new System.Windows.Forms.CheckBox();
             this.btnCustomFindAll = new System.Windows.Forms.Button();
@@ -139,12 +138,13 @@
             this.txtCustomSearchString = new System.Windows.Forms.TextBox();
             this.btnGetPidList = new System.Windows.Forms.Button();
             this.chkSearchTables = new System.Windows.Forms.CheckBox();
-            this.tabApply = new System.Windows.Forms.TabPage();
-            this.button1 = new System.Windows.Forms.Button();
-            this.btnSwapSegments = new System.Windows.Forms.Button();
-            this.btnBinLoadPatch = new System.Windows.Forms.Button();
-            this.btnCheckSums = new System.Windows.Forms.Button();
-            this.btnApplypatch = new System.Windows.Forms.Button();
+            this.tabCreate = new System.Windows.Forms.TabPage();
+            this.label13 = new System.Windows.Forms.Label();
+            this.numCrossVariation = new System.Windows.Forms.NumericUpDown();
+            this.btnCrossTableSearch = new System.Windows.Forms.Button();
+            this.checkAppendPatch = new System.Windows.Forms.CheckBox();
+            this.txtOS = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.tabExtract = new System.Windows.Forms.TabPage();
             this.txtExtractDescription = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -195,10 +195,10 @@
             this.tabDTC.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridDTC)).BeginInit();
             this.tabFunction.SuspendLayout();
+            this.tabApply.SuspendLayout();
+            this.tabFileinfo.SuspendLayout();
             this.tabCreate.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numCrossVariation)).BeginInit();
-            this.tabFileinfo.SuspendLayout();
-            this.tabApply.SuspendLayout();
             this.tabExtract.SuspendLayout();
             this.tabExtractSegments.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -1147,9 +1147,9 @@
             this.label14.AutoSize = true;
             this.label14.Location = new System.Drawing.Point(337, 8);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(162, 13);
+            this.label14.Size = new System.Drawing.Size(186, 13);
             this.label14.TabIndex = 8;
-            this.label14.Text = "GM e38/e67 DTC codes (BETA)";
+            this.label14.Text = "GM e38/e67/P59 DTC codes (BETA)";
             // 
             // btnClearDTC
             // 
@@ -1272,87 +1272,71 @@
             this.tabFunction.Size = new System.Drawing.Size(787, 129);
             this.tabFunction.TabIndex = 100;
             // 
-            // tabCreate
+            // tabApply
             // 
-            this.tabCreate.Controls.Add(this.label13);
-            this.tabCreate.Controls.Add(this.numCrossVariation);
-            this.tabCreate.Controls.Add(this.btnCrossTableSearch);
-            this.tabCreate.Controls.Add(this.checkAppendPatch);
-            this.tabCreate.Controls.Add(this.txtOS);
-            this.tabCreate.Controls.Add(this.label7);
-            this.tabCreate.Controls.Add(this.btnModFile);
-            this.tabCreate.Controls.Add(this.txtModifierFile);
-            this.tabCreate.Controls.Add(this.btnCompare);
-            this.tabCreate.Controls.Add(this.chkCompareAll);
-            this.tabCreate.Controls.Add(this.labelDescr);
-            this.tabCreate.Controls.Add(this.txtPatchDescription);
-            this.tabCreate.Location = new System.Drawing.Point(4, 22);
-            this.tabCreate.Name = "tabCreate";
-            this.tabCreate.Padding = new System.Windows.Forms.Padding(3);
-            this.tabCreate.Size = new System.Drawing.Size(779, 103);
-            this.tabCreate.TabIndex = 0;
-            this.tabCreate.Text = "Create Patch";
-            this.tabCreate.UseVisualStyleBackColor = true;
+            this.tabApply.Controls.Add(this.button1);
+            this.tabApply.Controls.Add(this.btnSwapSegments);
+            this.tabApply.Controls.Add(this.btnBinLoadPatch);
+            this.tabApply.Controls.Add(this.btnCheckSums);
+            this.tabApply.Controls.Add(this.btnApplypatch);
+            this.tabApply.Controls.Add(this.btnSaveBin);
+            this.tabApply.Location = new System.Drawing.Point(4, 22);
+            this.tabApply.Name = "tabApply";
+            this.tabApply.Padding = new System.Windows.Forms.Padding(3);
+            this.tabApply.Size = new System.Drawing.Size(779, 103);
+            this.tabApply.TabIndex = 1;
+            this.tabApply.Text = "Modify bin";
+            this.tabApply.UseVisualStyleBackColor = true;
             // 
-            // label13
+            // button1
             // 
-            this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(653, 33);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(73, 13);
-            this.label13.TabIndex = 120;
-            this.label13.Text = "Max variation:";
+            this.button1.Location = new System.Drawing.Point(181, 37);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(162, 25);
+            this.button1.TabIndex = 186;
+            this.button1.Text = "Fix checksum of files...";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // numCrossVariation
+            // btnSwapSegments
             // 
-            this.numCrossVariation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numCrossVariation.Location = new System.Drawing.Point(730, 29);
-            this.numCrossVariation.Name = "numCrossVariation";
-            this.numCrossVariation.Size = new System.Drawing.Size(36, 20);
-            this.numCrossVariation.TabIndex = 119;
-            this.numCrossVariation.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
+            this.btnSwapSegments.Location = new System.Drawing.Point(236, 6);
+            this.btnSwapSegments.Name = "btnSwapSegments";
+            this.btnSwapSegments.Size = new System.Drawing.Size(107, 25);
+            this.btnSwapSegments.TabIndex = 183;
+            this.btnSwapSegments.Text = "Swap segment(s)";
+            this.btnSwapSegments.UseVisualStyleBackColor = true;
+            this.btnSwapSegments.Click += new System.EventHandler(this.btnSwapSegments_Click);
             // 
-            // btnCrossTableSearch
+            // btnBinLoadPatch
             // 
-            this.btnCrossTableSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCrossTableSearch.Location = new System.Drawing.Point(655, 52);
-            this.btnCrossTableSearch.Name = "btnCrossTableSearch";
-            this.btnCrossTableSearch.Size = new System.Drawing.Size(116, 23);
-            this.btnCrossTableSearch.TabIndex = 118;
-            this.btnCrossTableSearch.Text = "Cross table search";
-            this.btnCrossTableSearch.UseVisualStyleBackColor = true;
-            this.btnCrossTableSearch.Click += new System.EventHandler(this.btnCrossTableSearch_Click);
+            this.btnBinLoadPatch.Location = new System.Drawing.Point(9, 6);
+            this.btnBinLoadPatch.Name = "btnBinLoadPatch";
+            this.btnBinLoadPatch.Size = new System.Drawing.Size(107, 25);
+            this.btnBinLoadPatch.TabIndex = 181;
+            this.btnBinLoadPatch.Text = "Load patch";
+            this.btnBinLoadPatch.UseVisualStyleBackColor = true;
+            this.btnBinLoadPatch.Click += new System.EventHandler(this.btnBinLoadPatch_Click);
             // 
-            // checkAppendPatch
+            // btnCheckSums
             // 
-            this.checkAppendPatch.AutoSize = true;
-            this.checkAppendPatch.Location = new System.Drawing.Point(445, 34);
-            this.checkAppendPatch.Name = "checkAppendPatch";
-            this.checkAppendPatch.Size = new System.Drawing.Size(63, 17);
-            this.checkAppendPatch.TabIndex = 117;
-            this.checkAppendPatch.Text = "Append";
-            this.checkAppendPatch.UseVisualStyleBackColor = true;
+            this.btnCheckSums.Location = new System.Drawing.Point(10, 37);
+            this.btnCheckSums.Name = "btnCheckSums";
+            this.btnCheckSums.Size = new System.Drawing.Size(165, 25);
+            this.btnCheckSums.TabIndex = 184;
+            this.btnCheckSums.Text = "Fix checksums of current file";
+            this.btnCheckSums.UseVisualStyleBackColor = true;
+            this.btnCheckSums.Click += new System.EventHandler(this.btnCheckSums_Click);
             // 
-            // txtOS
+            // btnApplypatch
             // 
-            this.txtOS.Location = new System.Drawing.Point(129, 32);
-            this.txtOS.Name = "txtOS";
-            this.txtOS.Size = new System.Drawing.Size(106, 20);
-            this.txtOS.TabIndex = 113;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(91, 36);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(25, 13);
-            this.label7.TabIndex = 12;
-            this.label7.Text = "OS:";
+            this.btnApplypatch.Location = new System.Drawing.Point(123, 6);
+            this.btnApplypatch.Name = "btnApplypatch";
+            this.btnApplypatch.Size = new System.Drawing.Size(107, 25);
+            this.btnApplypatch.TabIndex = 182;
+            this.btnApplypatch.Text = "Apply current patch";
+            this.btnApplypatch.UseVisualStyleBackColor = true;
+            this.btnApplypatch.Click += new System.EventHandler(this.btnApplypatch_Click);
             // 
             // tabFileinfo
             // 
@@ -1476,71 +1460,87 @@
             this.chkSearchTables.Text = "Search Tables";
             this.chkSearchTables.UseVisualStyleBackColor = true;
             // 
-            // tabApply
+            // tabCreate
             // 
-            this.tabApply.Controls.Add(this.button1);
-            this.tabApply.Controls.Add(this.btnSwapSegments);
-            this.tabApply.Controls.Add(this.btnBinLoadPatch);
-            this.tabApply.Controls.Add(this.btnCheckSums);
-            this.tabApply.Controls.Add(this.btnApplypatch);
-            this.tabApply.Controls.Add(this.btnSaveBin);
-            this.tabApply.Location = new System.Drawing.Point(4, 22);
-            this.tabApply.Name = "tabApply";
-            this.tabApply.Padding = new System.Windows.Forms.Padding(3);
-            this.tabApply.Size = new System.Drawing.Size(779, 103);
-            this.tabApply.TabIndex = 1;
-            this.tabApply.Text = "Modify bin";
-            this.tabApply.UseVisualStyleBackColor = true;
+            this.tabCreate.Controls.Add(this.label13);
+            this.tabCreate.Controls.Add(this.numCrossVariation);
+            this.tabCreate.Controls.Add(this.btnCrossTableSearch);
+            this.tabCreate.Controls.Add(this.checkAppendPatch);
+            this.tabCreate.Controls.Add(this.txtOS);
+            this.tabCreate.Controls.Add(this.label7);
+            this.tabCreate.Controls.Add(this.btnModFile);
+            this.tabCreate.Controls.Add(this.txtModifierFile);
+            this.tabCreate.Controls.Add(this.btnCompare);
+            this.tabCreate.Controls.Add(this.chkCompareAll);
+            this.tabCreate.Controls.Add(this.labelDescr);
+            this.tabCreate.Controls.Add(this.txtPatchDescription);
+            this.tabCreate.Location = new System.Drawing.Point(4, 22);
+            this.tabCreate.Name = "tabCreate";
+            this.tabCreate.Padding = new System.Windows.Forms.Padding(3);
+            this.tabCreate.Size = new System.Drawing.Size(779, 103);
+            this.tabCreate.TabIndex = 0;
+            this.tabCreate.Text = "Create Patch";
+            this.tabCreate.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // label13
             // 
-            this.button1.Location = new System.Drawing.Point(181, 37);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(162, 25);
-            this.button1.TabIndex = 186;
-            this.button1.Text = "Fix checksum of files...";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(653, 33);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(73, 13);
+            this.label13.TabIndex = 120;
+            this.label13.Text = "Max variation:";
             // 
-            // btnSwapSegments
+            // numCrossVariation
             // 
-            this.btnSwapSegments.Location = new System.Drawing.Point(236, 6);
-            this.btnSwapSegments.Name = "btnSwapSegments";
-            this.btnSwapSegments.Size = new System.Drawing.Size(107, 25);
-            this.btnSwapSegments.TabIndex = 183;
-            this.btnSwapSegments.Text = "Swap segment(s)";
-            this.btnSwapSegments.UseVisualStyleBackColor = true;
-            this.btnSwapSegments.Click += new System.EventHandler(this.btnSwapSegments_Click);
+            this.numCrossVariation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numCrossVariation.Location = new System.Drawing.Point(730, 29);
+            this.numCrossVariation.Name = "numCrossVariation";
+            this.numCrossVariation.Size = new System.Drawing.Size(36, 20);
+            this.numCrossVariation.TabIndex = 119;
+            this.numCrossVariation.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
             // 
-            // btnBinLoadPatch
+            // btnCrossTableSearch
             // 
-            this.btnBinLoadPatch.Location = new System.Drawing.Point(9, 6);
-            this.btnBinLoadPatch.Name = "btnBinLoadPatch";
-            this.btnBinLoadPatch.Size = new System.Drawing.Size(107, 25);
-            this.btnBinLoadPatch.TabIndex = 181;
-            this.btnBinLoadPatch.Text = "Load patch";
-            this.btnBinLoadPatch.UseVisualStyleBackColor = true;
-            this.btnBinLoadPatch.Click += new System.EventHandler(this.btnBinLoadPatch_Click);
+            this.btnCrossTableSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCrossTableSearch.Location = new System.Drawing.Point(655, 52);
+            this.btnCrossTableSearch.Name = "btnCrossTableSearch";
+            this.btnCrossTableSearch.Size = new System.Drawing.Size(116, 23);
+            this.btnCrossTableSearch.TabIndex = 118;
+            this.btnCrossTableSearch.Text = "Cross table search";
+            this.btnCrossTableSearch.UseVisualStyleBackColor = true;
+            this.btnCrossTableSearch.Click += new System.EventHandler(this.btnCrossTableSearch_Click);
             // 
-            // btnCheckSums
+            // checkAppendPatch
             // 
-            this.btnCheckSums.Location = new System.Drawing.Point(10, 37);
-            this.btnCheckSums.Name = "btnCheckSums";
-            this.btnCheckSums.Size = new System.Drawing.Size(165, 25);
-            this.btnCheckSums.TabIndex = 184;
-            this.btnCheckSums.Text = "Fix checksums of current file";
-            this.btnCheckSums.UseVisualStyleBackColor = true;
-            this.btnCheckSums.Click += new System.EventHandler(this.btnCheckSums_Click);
+            this.checkAppendPatch.AutoSize = true;
+            this.checkAppendPatch.Location = new System.Drawing.Point(445, 34);
+            this.checkAppendPatch.Name = "checkAppendPatch";
+            this.checkAppendPatch.Size = new System.Drawing.Size(63, 17);
+            this.checkAppendPatch.TabIndex = 117;
+            this.checkAppendPatch.Text = "Append";
+            this.checkAppendPatch.UseVisualStyleBackColor = true;
             // 
-            // btnApplypatch
+            // txtOS
             // 
-            this.btnApplypatch.Location = new System.Drawing.Point(123, 6);
-            this.btnApplypatch.Name = "btnApplypatch";
-            this.btnApplypatch.Size = new System.Drawing.Size(107, 25);
-            this.btnApplypatch.TabIndex = 182;
-            this.btnApplypatch.Text = "Apply current patch";
-            this.btnApplypatch.UseVisualStyleBackColor = true;
-            this.btnApplypatch.Click += new System.EventHandler(this.btnApplypatch_Click);
+            this.txtOS.Location = new System.Drawing.Point(129, 32);
+            this.txtOS.Name = "txtOS";
+            this.txtOS.Size = new System.Drawing.Size(106, 20);
+            this.txtOS.TabIndex = 113;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(91, 36);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(25, 13);
+            this.label7.TabIndex = 12;
+            this.label7.Text = "OS:";
             // 
             // tabExtract
             // 
@@ -1857,12 +1857,12 @@
             this.tabDTC.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridDTC)).EndInit();
             this.tabFunction.ResumeLayout(false);
+            this.tabApply.ResumeLayout(false);
+            this.tabFileinfo.ResumeLayout(false);
+            this.tabFileinfo.PerformLayout();
             this.tabCreate.ResumeLayout(false);
             this.tabCreate.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numCrossVariation)).EndInit();
-            this.tabFileinfo.ResumeLayout(false);
-            this.tabFileinfo.PerformLayout();
-            this.tabApply.ResumeLayout(false);
             this.tabExtract.ResumeLayout(false);
             this.tabExtract.PerformLayout();
             this.tabExtractSegments.ResumeLayout(false);

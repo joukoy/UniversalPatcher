@@ -17,6 +17,7 @@ namespace UniversalPatcher
         {
             OSSegment = -1;
             diagSegment = -1;
+            PcmType = "";
         }
         public struct V6Table
         {
@@ -49,6 +50,7 @@ namespace UniversalPatcher
         public List<V6Table> v6tables;
         public V6Table v6VeTable;
         public List<osAddresses> osAddressList;
+        public string PcmType;
 
         public PcmFile(string FName)
         {

@@ -34,12 +34,14 @@
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.labelDescription = new System.Windows.Forms.Label();
+            this.labelMil = new System.Windows.Forms.Label();
+            this.comboMIL = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // comboDtcStatus
             // 
             this.comboDtcStatus.FormattingEnabled = true;
-            this.comboDtcStatus.Location = new System.Drawing.Point(81, 28);
+            this.comboDtcStatus.Location = new System.Drawing.Point(76, 26);
             this.comboDtcStatus.Name = "comboDtcStatus";
             this.comboDtcStatus.Size = new System.Drawing.Size(313, 21);
             this.comboDtcStatus.TabIndex = 0;
@@ -47,7 +49,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(14, 32);
+            this.label1.Location = new System.Drawing.Point(9, 30);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(40, 13);
             this.label1.TabIndex = 1;
@@ -56,7 +58,7 @@
             // labelCode
             // 
             this.labelCode.AutoSize = true;
-            this.labelCode.Location = new System.Drawing.Point(14, 9);
+            this.labelCode.Location = new System.Drawing.Point(9, 7);
             this.labelCode.Name = "labelCode";
             this.labelCode.Size = new System.Drawing.Size(32, 13);
             this.labelCode.TabIndex = 2;
@@ -64,7 +66,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(319, 66);
+            this.btnOK.Location = new System.Drawing.Point(314, 79);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 3;
@@ -74,7 +76,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(17, 66);
+            this.btnCancel.Location = new System.Drawing.Point(12, 79);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 1;
@@ -85,17 +87,36 @@
             // labelDescription
             // 
             this.labelDescription.AutoSize = true;
-            this.labelDescription.Location = new System.Drawing.Point(78, 9);
+            this.labelDescription.Location = new System.Drawing.Point(73, 7);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(10, 13);
             this.labelDescription.TabIndex = 5;
             this.labelDescription.Text = "-";
             // 
+            // labelMil
+            // 
+            this.labelMil.AutoSize = true;
+            this.labelMil.Location = new System.Drawing.Point(9, 52);
+            this.labelMil.Name = "labelMil";
+            this.labelMil.Size = new System.Drawing.Size(28, 13);
+            this.labelMil.TabIndex = 6;
+            this.labelMil.Text = "MIL:";
+            // 
+            // comboMIL
+            // 
+            this.comboMIL.FormattingEnabled = true;
+            this.comboMIL.Location = new System.Drawing.Point(75, 52);
+            this.comboMIL.Name = "comboMIL";
+            this.comboMIL.Size = new System.Drawing.Size(313, 21);
+            this.comboMIL.TabIndex = 7;
+            // 
             // frmSetDTC
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(408, 99);
+            this.ClientSize = new System.Drawing.Size(401, 109);
+            this.Controls.Add(this.comboMIL);
+            this.Controls.Add(this.labelMil);
             this.Controls.Add(this.labelDescription);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
@@ -117,5 +138,7 @@
         private System.Windows.Forms.Button btnCancel;
         public System.Windows.Forms.ComboBox comboDtcStatus;
         public System.Windows.Forms.Label labelDescription;
+        private System.Windows.Forms.Label labelMil;
+        public System.Windows.Forms.ComboBox comboMIL;
     }
 }
