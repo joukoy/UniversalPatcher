@@ -277,6 +277,10 @@
     <Description>MAP - Barometric Pressure Correlation</Description>
   </OBD2Code>
   <OBD2Code>
+    <Code>P006D</Code>
+    <Description>Barometric Pressure - Turbocharger/Supercharger Inlet Pressure Correlation</Description>
+  </OBD2Code>
+  <OBD2Code>
     <Code>P0070</Code>
     <Description>Ambient Air Temperature Sensor Circuit</Description>
   </OBD2Code>
@@ -397,6 +401,14 @@
     <Description>Intake Air Temperature Sensor 2 Circuit Intermittent/Erratic</Description>
   </OBD2Code>
   <OBD2Code>
+    <Code>P00B3</Code>
+    <Description>Radiator Coolant Temperature Sensor Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P00B4</Code>
+    <Description>Radiator Coolant Temperature Sensor Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
     <Code>P0100</Code>
     <Description>Mass or Volume Air flow Circuit Malfunction</Description>
   </OBD2Code>
@@ -515,6 +527,18 @@
   <OBD2Code>
     <Code>P0129</Code>
     <Description>Barometric Pressure Too Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P012B</Code>
+    <Description>Supercharger Inlet Pressure Sensor Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P012C</Code>
+    <Description>Turbocharger/Supercharger Inlet Pressure Sensor Circuit Low (Downstream of throttle valve)</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P012D</Code>
+    <Description>Turbocharger/Supercharger Inlet Pressure Sensor Circuit High (Downstream of throttle valve)</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P0130</Code>
@@ -955,6 +979,10 @@
   <OBD2Code>
     <Code>P0239</Code>
     <Description>Turbocharger Boost Sensor B Circuit Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P023A</Code>
+    <Description>Charge Air Cooler Coolant Pump Control Circuit Open</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P0240</Code>
@@ -1705,6 +1733,10 @@
     <Description>Catalyst Heater Control Circuit (Bank 1)</Description>
   </OBD2Code>
   <OBD2Code>
+    <Code>P042E</Code>
+    <Description>Exhaust Gas Recirculation A Control Stuck Open</Description>
+  </OBD2Code>
+  <OBD2Code>
     <Code>P0430</Code>
     <Description>Catalyst System Efficiency Below Threshold (Bank 2)</Description>
   </OBD2Code>
@@ -1783,6 +1815,30 @@
   <OBD2Code>
     <Code>P0449</Code>
     <Description>Evaporative Emission Control System Vent Valve/Solenoid Circuit Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0451</Code>
+    <Description>Evaporative Emission Control System Pressure Sensor Range/Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0452</Code>
+    <Description>Evaporative Emission Fuel Tank Pressure Sensor Circuit Low Input Conditions</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0453</Code>
+    <Description>Evaporative Emissions Control System Pressure Sensor High Input</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0454</Code>
+    <Description>Evaporative Emission Control System Pressure Sensor Intermittent</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0455</Code>
+    <Description>Evaporative Emissions Control System Leak Detected Conditions</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P0455</Code>
+    <Description>Evaporative Emissions Control System Small Leak Detected</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P0460</Code>
@@ -2425,6 +2481,10 @@
     <Description>Control Module VSS Output B Malfunction</Description>
   </OBD2Code>
   <OBD2Code>
+    <Code>P060D</Code>
+    <Description>Internal Control Module Accelerator Pedal Position Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
     <Code>P0610</Code>
     <Description>Control Module VSS Output B Malfunction</Description>
   </OBD2Code>
@@ -2503,6 +2563,10 @@
   <OBD2Code>
     <Code>P0629</Code>
     <Description>Fuel Pump A Control Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P062F</Code>
+    <Description>Internal Control Module EEPROM Error</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P0630</Code>
@@ -2783,6 +2847,10 @@
   <OBD2Code>
     <Code>P0699</Code>
     <Description>Sensor Reference Voltage C Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P069E</Code>
+    <Description>Fuel Pump Control Module Requested MIL Illumination</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P0700</Code>
@@ -3223,6 +3291,10 @@
   <OBD2Code>
     <Code>P0809</Code>
     <Description>Clutch Position Sensor Circuit Intermittent Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P080A</Code>
+    <Description>Clutch Position Not Learned</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P0810</Code>
@@ -5029,6 +5101,10 @@
     <Description>SAI System Incorrect Downstream Flow Detected</Description>
   </OBD2Code>
   <OBD2Code>
+    <Code>P1410</Code>
+    <Description>EGR Valve Position Sensor Circuit Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
     <Code>P1413</Code>
     <Description>SAI System Monitor Circuit Low Input</Description>
   </OBD2Code>
@@ -5099,6 +5175,14 @@
   <OBD2Code>
     <Code>P1430</Code>
     <Description>Electric Air Pump Secondary Failure</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1431</Code>
+    <Description>Fuel Level Sensor 2 Circuit Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1432</Code>
+    <Description>Thermostat Heater Control Circuit Failure</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P1433</Code>
@@ -5577,12 +5661,24 @@
     <Description>Air Bypass Valve Circuit Malfunction</Description>
   </OBD2Code>
   <OBD2Code>
+    <Code>P1545</Code>
+    <Description>Throttle Position Control Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1546</Code>
+    <Description>Air Conditioning Clutch Feedback Circuit Low Voltage</Description>
+  </OBD2Code>
+  <OBD2Code>
     <Code>P1549</Code>
     <Description>IMCC Circuit Malfunction, Bank B</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P1550</Code>
     <Description>PSPS Out Of Self Test Range</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1553</Code>
+    <Description>Battery Current Sensor Performance</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P1565</Code>
@@ -5675,6 +5771,10 @@
   <OBD2Code>
     <Code>P1589</Code>
     <Description>TCU Unable To Control Desired Throttle Angle</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1598</Code>
+    <Description>A/C Pressure Sensor High Input Conditions</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P1600</Code>
@@ -5861,6 +5961,14 @@
     <Description>Fuel Pump Resistor Switch Circuit Malfunction</Description>
   </OBD2Code>
   <OBD2Code>
+    <Code>P1648</Code>
+    <Description>Anti-Theft Device Wrong Security Code</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1649</Code>
+    <Description>CAN Data Bus ABS No Signal</Description>
+  </OBD2Code>
+  <OBD2Code>
     <Code>P1650</Code>
     <Description>PSP Switch Out of Self Test Range</Description>
   </OBD2Code>
@@ -5885,6 +5993,10 @@
     <Description>Starter Disable Circuit Malfunction</Description>
   </OBD2Code>
   <OBD2Code>
+    <Code>P1659</Code>
+    <Description>Electronic Throttle Control System Control Relay On Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
     <Code>P1660</Code>
     <Description>Output Circuit Check Signal High</Description>
   </OBD2Code>
@@ -5901,6 +6013,14 @@
     <Description>Fuel Demand Command Signal Circuit Malfunction</Description>
   </OBD2Code>
   <OBD2Code>
+    <Code>P1665</Code>
+    <Description>EVAP Vent Solenoid Control Circuit Conditions</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1666</Code>
+    <Description>Fuel Injector 1 Mechanical Fault</Description>
+  </OBD2Code>
+  <OBD2Code>
     <Code>P1667</Code>
     <Description>CI Circuit Malfunction</Description>
   </OBD2Code>
@@ -5911,6 +6031,18 @@
   <OBD2Code>
     <Code>P1670</Code>
     <Description>Electronic Feedback Signal Not Detected</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1677</Code>
+    <Description>Immobilizer Function Deactivated</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1678</Code>
+    <Description>Immobilizer Powertrain Identification Failed</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P1679</Code>
+    <Description>Immobilizer Environment Identification Failed</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P1680</Code>
@@ -14379,6 +14511,14 @@
   <OBD2Code>
     <Code>U1262</Code>
     <Description>SCP (J1850) Communication Bus Fault</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1300</Code>
+    <Description>Class 2 Data Link Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>U1301</Code>
+    <Description>Class 2 Data Link High</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>U1308</Code>

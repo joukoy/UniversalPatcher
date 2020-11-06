@@ -129,22 +129,22 @@ public class upatcher
         public dtcCodeE38()
         {
             codeInt = 0;
-            Status = 0;
+            Status = 99;
             codeAddrInt = 0;
             CodeAddr = "";
             statusAddrInt = 0;
             StatusAddr = "";
             Description = "";
         }
-        public uint codeAddrInt;
-        public string CodeAddr { get; set; }
         public UInt16 codeInt;
         public string Code { get; set; }
-        public uint statusAddrInt;
-        public string StatusAddr { get; set; }
         public byte Status { get; set; }
         public string StatusTxt { get; set; }
         public string Description { get; set; }
+        public uint codeAddrInt;
+        public string CodeAddr { get; set; }
+        public uint statusAddrInt;
+        public string StatusAddr { get; set; }
     }
 
     public class dtcCodeP59
@@ -157,24 +157,24 @@ public class upatcher
             statusAddrInt = 0;
             StatusAddr = "";
             Description = "";
-            Status = 0;
-            MilStatus = 0;
+            Status = 99;
+            MilStatus = 99;
             MilAddr = "";
             milAddrInt = 0;
             StatusTxt = "";
         }
-        public uint codeAddrInt;
-        public string CodeAddr { get; set; }
         public UInt16 codeInt;
         public string Code { get; set; }
-        public uint statusAddrInt;
-        public string StatusAddr { get; set; }
         public byte Status { get; set; }
         public string StatusTxt { get; set; }
-        public uint milAddrInt;
-        public string MilAddr { get; set; }
         public byte MilStatus { get; set; }
         public string Description { get; set; }
+        public uint codeAddrInt;
+        public string CodeAddr { get; set; }
+        public uint statusAddrInt;
+        public string StatusAddr { get; set; }
+        public uint milAddrInt;
+        public string MilAddr { get; set; }
     }
 
     public class OBD2Code

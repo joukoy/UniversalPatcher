@@ -214,7 +214,7 @@ namespace UniversalPatcher
                 else
                     tabDTC.Text = "DTC (" + dtcCodesE38.Count.ToString() + ")";
             }
-            else if (basefile.PcmType == "p01-p59")
+            else if (basefile.PcmType == "p01-p59" || basefile.PcmType.StartsWith("v6"))
             {
                 dtcBindingSource.DataSource = dtcCodesP59;
                 if (dtcCodesP59.Count == 0)
@@ -501,7 +501,7 @@ namespace UniversalPatcher
                     SearchDtcE38(PCM);
                     refreshDtcList();
                 }
-                else if (PCM.PcmType == "p01-p59" && PCM.fsize == 1024*1024)
+                else if (PCM.PcmType == "p01-p59" || PCM.PcmType.StartsWith("v6"))
                 {
                     SearchDtcP59(PCM);
                     refreshDtcList();
@@ -926,7 +926,7 @@ namespace UniversalPatcher
                     Logger("Nothing to save");
                     return;
                 }
-                string FileName = SelectSaveFile();
+                string FileName = SelectSaveFile("BIN files (*.bin)|*.bin|ALL files(*.*)|*.*",Path.GetFileName(txtBaseFile.Text));
                 if (FileName.Length == 0)
                     return;
 
@@ -2973,7 +2973,14 @@ namespace UniversalPatcher
             }
         }
 
-
+        private enum PcmModel
+        {
+            Unknown,
+            P59_02,
+            P59_06,
+            LS1_V6,
+            LS1_97
+        }
         //Search GM P59 DTC codes
         private void SearchDtcP59(PcmFile PCM)
         {
@@ -3006,107 +3013,225 @@ namespace UniversalPatcher
                 dtcCodesP59 = new List<dtcCodeP59>();
 
                 //Get codes from OS segment:
-                string searchStr = "18 30 35 B0";
-                uint extraCode = 0;
-                uint extraStatus = 0;
 
                 //Search DTC codes:
-                for (int b = 0; b < PCM.binfile[PCM.OSSegment].SegmentBlocks.Count; b++)
+                PcmModel pcmModel = PcmModel.Unknown;
+                uint opCodeAddr;
+                uint codeAddr;
+                string searchStr;
+                if (PCM.PcmType == "p01-p59" && PCM.fsize == 1024 * 1024)
                 {
-                    uint tableAddr = searchBytes(PCM, searchStr, PCM.binfile[PCM.OSSegment].SegmentBlocks[b].Start, PCM.binfile[PCM.OSSegment].SegmentBlocks[b].End);
-                    if (tableAddr < uint.MaxValue)
+                    searchStr = "18 30 35 B0";
+                    opCodeAddr = searchBytes(PCM, searchStr, 0, PCM.fsize);
+                    if (opCodeAddr < uint.MaxValue)
                     {
-                        tableAddr += 4;
-                        bool dCodes = false;
-                        uint startAddr = BEToUint32(PCM.buf, tableAddr);
-                        for (uint addr = startAddr +2 ; addr < PCM.fsize; addr += 4)
+                        pcmModel = PcmModel.P59_02;
+                    }
+                    else
+                    { 
+                        searchStr = "BC 30 59 B0 * * * * 66";
+                        opCodeAddr = searchBytes(PCM, searchStr, 0, PCM.fsize);
+                        if (opCodeAddr < uint.MaxValue)
                         {
-                            dtcCodeP59 dtc = new dtcCodeP59();
-                            dtc.codeAddrInt = addr;
-                            dtc.CodeAddr = addr.ToString("X8");
-                            dtc.codeInt = BEToUint16(PCM.buf, addr);
-
-                            string codeTmp = dtc.codeInt.ToString("X4");
-                            if (dCodes && !codeTmp.StartsWith("D"))
-                            {
-                                break;
-                            }
-                            if (codeTmp.StartsWith("5"))
-                            {
-                                dtc.Code = "C1" + codeTmp.Substring(1);
-                            }
-                            else if (codeTmp.StartsWith("C"))
-                            {
-                                dtc.Code = "U0" + codeTmp.Substring(1);
-                            }
-                            else if (codeTmp.StartsWith("D"))
-                            {
-                                dCodes = true;
-                                dtc.Code = "U1" + codeTmp.Substring(1);
-                            }
-                            else
-                            {
-                                dtc.Code = "P" + codeTmp;
-                            }
-
-                            //Find description for code:
-                            for (int o = 0; o < OBD2Codes.Count; o++)
-                            {
-                                if (dtc.Code == OBD2Codes[o].Code)
-                                {
-                                    dtc.Description = OBD2Codes[o].Description;
-                                    break;
-                                }
-                            }
-                            dtcCodesP59.Add(dtc);
+                            pcmModel = PcmModel.P59_06;
                         }
+                    }
+                    codeAddr = BEToUint32(PCM.buf, opCodeAddr + 4) + 2;
+                }
+                else //512kb or V6
+                {
+                    searchStr = "B0 30 55 B0 * * * * 66";
+                    opCodeAddr = searchBytes(PCM, searchStr, 0, PCM.fsize);
+                    if (opCodeAddr < uint.MaxValue)
+                    {
+                        pcmModel = PcmModel.LS1_V6;
+                    }
+                    else
+                    {
+                        Logger("DTC search: can't find DTC code table");
+                        return;
+                    }
+                    codeAddr = BEToUint32(PCM.buf, opCodeAddr + 4) + 1;
+                }
+
+                //Read codes:
+                bool dCodes = false;                
+                for (uint addr = codeAddr; addr < PCM.fsize; addr += 4)
+                {
+                    dtcCodeP59 dtc = new dtcCodeP59();
+                    dtc.codeAddrInt = addr;
+                    dtc.CodeAddr = addr.ToString("X8");
+                    dtc.codeInt = BEToUint16(PCM.buf, addr);
+
+                    string codeTmp = dtc.codeInt.ToString("X");
+                    if (dCodes && !codeTmp.StartsWith("D"))
+                    {
                         break;
                     }
+                    codeTmp = dtc.codeInt.ToString("X4");
+                    if (codeTmp.StartsWith("5"))
+                    {
+                        dtc.Code = "U0" + codeTmp.Substring(1);
+                    }
+                    else if (codeTmp.StartsWith("C"))
+                    {
+                        dtc.Code = "C0" + codeTmp.Substring(1);
+                    }
+                    else if (codeTmp.StartsWith("D"))
+                    {
+                        dCodes = true;
+                        dtc.Code = "U1" + codeTmp.Substring(1);
+                    }
+                    else
+                    {
+                        dtc.Code = "P" + codeTmp;
+                    }
+
+                    //Find description for code:
+                    for (int o = 0; o < OBD2Codes.Count; o++)
+                    {
+                        if (dtc.Code == OBD2Codes[o].Code)
+                        {
+                            dtc.Description = OBD2Codes[o].Description;
+                            break;
+                        }
+                    }
+                    dtcCodesP59.Add(dtc);
                 }
 
-                //Search Code status:
-                searchStr = "18 30 31 B0 * * * * 67";
-                uint StatusAddr = searchBytes(PCM, searchStr, 0, PCM.fsize);
-                if (StatusAddr < uint.MaxValue)
+                //Search Code status table:
+                uint statusAddr = uint.MaxValue;
+                uint milAddr = uint.MaxValue;
+                List<uint> milAddrList = new List<uint>();
+                if (pcmModel == PcmModel.P59_02)
                 {
-                    int dtcNr = 0;
-                    uint startAddr = BEToUint32(PCM.buf, StatusAddr + 4) + 1;
-
-                    for (uint addr2 = startAddr; addr2 < startAddr + dtcCodesP59.Count; addr2++)
+                    searchStr = "18 30 31 B0 * * * * 67";
+                    opCodeAddr = searchBytes(PCM, searchStr, 0, PCM.fsize);
+                    if (opCodeAddr == uint.MaxValue)
                     {
-                        if (PCM.buf[addr2] > 3) //DTC = 0-3
-                        {
-                            break;
-                        }
-                        dtcCodeP59 dtc = dtcCodesP59[dtcNr];
-                        dtc.statusAddrInt = addr2;
-                        dtc.StatusAddr = addr2.ToString("X8");
-                        dtc.Status = PCM.buf[addr2];
-                        dtc.StatusTxt = dtcStatusP59[dtc.Status];
-
-                        dtcCodesP59.RemoveAt(dtcNr);
-                        dtcCodesP59.Insert(dtcNr, dtc);
-                        dtcNr++;
+                        Logger("DTC Search: Can't find status table");
+                        return;
                     }
-                    dtcNr = 0;
-                    startAddr = (uint)(startAddr + dtcCodesP59.Count + 1 );
-                    if (PCM.buf[startAddr - 1] == 0xFF) startAddr ++ ; //If there is FF before first byte, skip first byte
-                    for (uint addr2 = startAddr; addr2 < startAddr + dtcCodesP59.Count; addr2++)
-                    {
-                        if (PCM.buf[addr2] > 1)     //MIL=0/1
-                        {
-                            break;
-                        }
-                        dtcCodeP59 dtc = dtcCodesP59[dtcNr];
-                        dtc.milAddrInt = addr2;
-                        dtc.MilAddr = addr2.ToString("X8");
-                        dtc.MilStatus = PCM.buf[addr2];
-                        dtcCodesP59.RemoveAt(dtcNr);
-                        dtcCodesP59.Insert(dtcNr, dtc);
-                        dtcNr++;
-                    }
-
+                    statusAddr = BEToUint32(PCM.buf, opCodeAddr + 4) + 1;
+                    milAddr = (uint)(statusAddr + dtcCodesP59.Count + 1);
+                    milAddrList.Add(milAddr);
                 }
+                else
+                {
+                    searchStr = "00 03 41 B0 * * * * 66";
+                    opCodeAddr = searchBytes(PCM, searchStr, 0, PCM.fsize);
+                    if (opCodeAddr < uint.MaxValue)
+                    {
+                        statusAddr = BEToUint32(PCM.buf, opCodeAddr + 4) + 1;
+                        searchStr = "4A 30 31 B0 * * * * 67";
+                    }
+                    else
+                    {
+                        searchStr = "00 03 41 B0 * * * * 67";
+                        opCodeAddr = searchBytes(PCM, searchStr, 0, PCM.fsize);
+                        if (opCodeAddr < uint.MaxValue)
+                        {
+                            pcmModel = PcmModel.LS1_97;
+                            statusAddr = BEToUint32(PCM.buf, opCodeAddr + 4) + 1;
+                            searchStr = "67 0C 4A 30 31 B0";
+                        }
+                        else
+                        {
+                            Logger("DTC Search: Can't find status table");
+                            return;
+                        }
+                    }
+                    //Search MIL table
+                    uint startAddr = 0;
+                    for (int i = 0; i < 30; i++)
+                    {
+                        opCodeAddr = searchBytes(PCM, searchStr, startAddr, PCM.fsize);
+                        if (opCodeAddr < uint.MaxValue)
+                        {
+                            if (pcmModel == PcmModel.LS1_97)
+                                milAddr = BEToUint32(PCM.buf, opCodeAddr + 6) + 1;
+                            else
+                                milAddr = BEToUint32(PCM.buf, opCodeAddr + 4) + 1;
+                            if (milAddr < PCM.fsize) //Hit
+                            {
+                                milAddrList.Add(milAddr);
+                                //break;
+                            }
+                            startAddr = opCodeAddr + 8;
+                        }
+                        else
+                        {
+                            //Not found
+                            break;
+                        }
+                    }
+                }
+
+                //Read DTC status bytes:
+                if (statusAddr >= PCM.fsize)
+                {
+                    Logger("DTC search: Status table address out of address range:" + statusAddr.ToString("X8"));
+                    return;
+                }
+                if (milAddr >= PCM.fsize)
+                {
+                    Logger("DTC search: MIL table address out of address range:" + milAddr.ToString("X8"));
+                    return;
+                }
+
+                int dtcNr = 0;
+
+                for (uint addr2 = statusAddr ; addr2 < statusAddr + dtcCodesP59.Count; addr2++)
+                {
+                    if (PCM.buf[addr2] > 3) //DTC = 0-3
+                    {
+                        break;
+                    }
+                    dtcCodeP59 dtc = dtcCodesP59[dtcNr];
+                    dtc.statusAddrInt = addr2;
+                    dtc.StatusAddr = addr2.ToString("X8");
+                    dtc.Status = PCM.buf[addr2];
+                    dtc.StatusTxt = dtcStatusP59[dtc.Status];
+
+                    dtcCodesP59.RemoveAt(dtcNr);
+                    dtcCodesP59.Insert(dtcNr, dtc);
+                    dtcNr++;
+                }
+
+                //Read MIL bytes:
+                if (milAddrList.Count > 1)
+                {
+                    //IF have multiple hits for search, use table which starts after FF, ends before FF
+                    for (int m = 0; m < milAddrList.Count; m++)
+                    {
+                        Debug.WriteLine("MIL Start: " + (milAddrList[m] - 1).ToString("X"));
+                        Debug.WriteLine("MIL End: " + (milAddrList[m] + dtcCodesP59.Count).ToString("X"));
+                        if (PCM.buf[milAddrList[m] - 2] == 0xFF && PCM.buf[milAddrList[m] + dtcCodesP59.Count] == 0xFF)
+                        {
+                            milAddr = milAddrList[m];
+                            break;
+                        }
+                    }
+                }
+                dtcNr = 0;
+                Debug.WriteLine("MIL: " + milAddr.ToString("X"));
+                if (PCM.buf[milAddr - 1] == 0xFF) milAddr++; //If there is FF before first byte, skip first byte                
+                for (uint addr2 = milAddr; addr2 < milAddr + dtcCodesP59.Count; addr2++)
+                {
+                    if (PCM.buf[addr2] > 1)     //MIL=0/1
+                    {
+                        break;
+                    }
+                    dtcCodeP59 dtc = dtcCodesP59[dtcNr];
+                    dtc.milAddrInt = addr2;
+                    dtc.MilAddr = addr2.ToString("X8");
+                    dtc.MilStatus = PCM.buf[addr2];
+                    //Debug.Write(dtc.MilStatus.ToString() + ", ");
+                    dtcCodesP59.RemoveAt(dtcNr);
+                    dtcCodesP59.Insert(dtcNr, dtc);
+                    dtcNr++;
+                }
+
             }
             catch (Exception ex)
             {
@@ -3215,6 +3340,11 @@ namespace UniversalPatcher
         private void btnSetDTC_Click(object sender, EventArgs e)
         {
             modifyDtc();
+        }
+
+        private void label14_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

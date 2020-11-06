@@ -1147,9 +1147,10 @@
             this.label14.AutoSize = true;
             this.label14.Location = new System.Drawing.Point(337, 8);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(186, 13);
+            this.label14.Size = new System.Drawing.Size(208, 13);
             this.label14.TabIndex = 8;
-            this.label14.Text = "GM e38/e67/P59 DTC codes (BETA)";
+            this.label14.Text = "GM e38/e67/p01/p59 DTC codes (BETA)";
+            this.label14.Click += new System.EventHandler(this.label14_Click);
             // 
             // btnClearDTC
             // 
