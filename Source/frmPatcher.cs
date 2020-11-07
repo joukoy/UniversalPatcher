@@ -3055,8 +3055,10 @@ namespace UniversalPatcher
                 }
 
                 //Read codes:
-                bool dCodes = false;                
-                for (uint addr = codeAddr; addr < PCM.fsize; addr += 4)
+                bool dCodes = false;
+                uint step = 4;
+                if (pcmModel == PcmModel.P59_06) step = 6;
+                for (uint addr = codeAddr; addr < PCM.fsize; addr += step)
                 {
                     dtcCodeP59 dtc = new dtcCodeP59();
                     dtc.codeAddrInt = addr;
