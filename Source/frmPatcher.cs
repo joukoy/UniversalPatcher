@@ -222,6 +222,10 @@ namespace UniversalPatcher
                 else
                     tabDTC.Text = "DTC (" + dtcCodesP59.Count.ToString() + ")";
             }
+            else
+            {
+                tabDTC.Text = "DTC";
+            }
             dataGridDTC.DataSource = dtcBindingSource;
             dataGridDTC.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
 
@@ -496,6 +500,8 @@ namespace UniversalPatcher
                     txtResult.AppendText(".");
                 }
                 RefreshBadCVNlist();
+                dtcCodesE38 = new List<dtcCodeE38>();
+                dtcCodesP59 = new List<dtcCodeP59>();
                 if (PCM.PcmType == "e38" || PCM.PcmType == "e67")
                 {
                     SearchDtcE38(PCM);
@@ -504,6 +510,10 @@ namespace UniversalPatcher
                 else if (PCM.PcmType == "p01-p59" || PCM.PcmType.StartsWith("v6"))
                 {
                     SearchDtcP59(PCM);
+                    refreshDtcList();
+                }
+                else
+                {
                     refreshDtcList();
                 }
             }
@@ -2798,7 +2808,7 @@ namespace UniversalPatcher
                     return;
                 }
 
-                dtcCodesE38 = new List<dtcCodeE38>();
+                //dtcCodesE38 = new List<dtcCodeE38>();
 
                 //Get codes from OS segment:
                 string searchStr = "00 00 00 10 00 11";
@@ -3010,7 +3020,7 @@ namespace UniversalPatcher
                     return;
                 }
 
-                dtcCodesP59 = new List<dtcCodeP59>();
+                //dtcCodesP59 = new List<dtcCodeP59>();
 
                 //Get codes from OS segment:
 
