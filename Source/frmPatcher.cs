@@ -214,7 +214,7 @@ namespace UniversalPatcher
                 else
                     tabDTC.Text = "DTC (" + dtcCodesE38.Count.ToString() + ")";
             }
-            else if (basefile.PcmType == "p01-p59" || basefile.PcmType.StartsWith("v6"))
+            else if (basefile.PcmType == "p01-p59" || basefile.PcmType.StartsWith("v6") || basefile.PcmType.StartsWith("ls1"))
             {
                 dtcBindingSource.DataSource = dtcCodesP59;
                 if (dtcCodesP59.Count == 0)
@@ -506,7 +506,7 @@ namespace UniversalPatcher
                 {
                     SearchDtcE38(PCM);
                 }
-                else if (PCM.PcmType == "p01-p59" || PCM.PcmType.StartsWith("v6"))
+                else if (PCM.PcmType == "p01-p59" || PCM.PcmType.StartsWith("v6") || PCM.PcmType.StartsWith("ls1"))
                 {
                     SearchDtcP59(PCM);
                 }
@@ -2983,9 +2983,11 @@ namespace UniversalPatcher
             Unknown,
             P59_02,
             P59_06,
+            P01,
             LS1_V6, 
             LS1_97,
             V6_512,
+            V6_96,
             V6_1M
         }
         //Search GM P59 DTC codes
@@ -3033,6 +3035,7 @@ namespace UniversalPatcher
                     if (opCodeAddr < uint.MaxValue)
                     {
                         pcmModel = PcmModel.P59_02;
+                        Debug.WriteLine("LS1 2002 - 2005 1MB");
                         searchStatus = "18 30 31 B0 * * * * 67";
                     }
                     else
@@ -3042,6 +3045,7 @@ namespace UniversalPatcher
                         if (opCodeAddr < uint.MaxValue)
                         {
                             pcmModel = PcmModel.P59_06;
+                            Debug.WriteLine("LS1 2006 -> 1MB");
                             searchStatus = "00 03 41 B0 * * * * 66";
                             searchMil = "4A 30 31 B0 * * * * 67 2E";
                         }
@@ -3058,22 +3062,33 @@ namespace UniversalPatcher
                     {
                         searchCodeList = new string[] {"B6 30 05 B0 * * * * 66", "B0 30 55 B0 * * * * 66" };
                         searchStatusList = new string[] { "BC 30 11 B0 * * * * 65", "00 03 41 B0 * * * * 66"  };
-                        searchMilList = new string[] { "67 0C 4A 30 01 B0", "4A 30 11 B0 * * * * 67"  };
+                        searchMilList = new string[] { "67 0C 4A 30 01 B0", "4A 30 11 B0 * * * * 67" };
                         pcmModel = PcmModel.V6_512;
+                        Debug.WriteLine("V6 512kb");
                     }
-                    else if (PCM.PcmType.StartsWith("v6") && PCM.fsize == 1024 * 1024)
+                    else if (PCM.PcmType.StartsWith("v6"))
                     {
                         searchCodeList = new string[] { "10 30 05 B0 * * * *", "B0 30 55 B0 * * * * 66" };
                         searchStatusList = new string[] { "18 30 31 B0 * * * * 67 06", "00 03 41 B0 * * * * 66" };
                         searchMilList = new string[] { "4A 30 11 B0 * * * * 67 2E", "4A 30 11 B0 * * * * 67" };
                         pcmModel = PcmModel.V6_1M;
+                        Debug.WriteLine("V6 1MB");
                     }
-                    else if (PCM.PcmType == "p01-p59" && PCM.fsize == 512 * 1024)
+                    else if (PCM.PcmType.StartsWith("ls1")) //97-98 LS1
                     {
-                        searchCodeList = new string[] { "B0 30 55 B0 * * * * 66", "B0 30 55 B0 * * * * 66" };
-                        searchStatusList = new string[] {  "00 03 41 B0 * * * * 67", "00 03 41 B0 * * * * 66" };
-                        searchMilList = new string[] { "67 0C 4A 30 31 B0", "4A 30 31 B0 * * * * 67 2E" };
+                        searchCodeList = new string[] { "B0 30 55 B0 * * * * 66" };
+                        searchStatusList = new string[] { "00 03 41 B0 * * * * 67" };
+                        searchMilList = new string[] { "67 0C 4A 30 31 B0" };
                         pcmModel = PcmModel.LS1_97;
+                        Debug.WriteLine("LS1 97-98");
+                    }
+                    else if (PCM.PcmType == "p01-p59") //512kB LS1 99->
+                    {
+                        searchCodeList = new string[] { "B0 30 55 B0 * * * * 66" };
+                        searchStatusList = new string[] {"00 03 41 B0 * * * * 66" };
+                        searchMilList = new string[] { "4A 30 31 B0 * * * * 67 2E" };
+                        pcmModel = PcmModel.P01;
+                        Debug.WriteLine("LS1 99 ->");
                     }
                     else
                     {
@@ -3081,6 +3096,7 @@ namespace UniversalPatcher
                         searchStatusList = new string[] { "00 03 41 B0 * * * * 66" };
                         searchMilList = new string[] { "4A 30 31 B0 * * * * 67 2E" };
                         pcmModel = PcmModel.LS1_V6;
+                        Debug.WriteLine("Error, this should not be possible!");
                     }
                     for (int s = 0; s < searchCodeList.Length; s++)
                     {              
@@ -3088,11 +3104,16 @@ namespace UniversalPatcher
                         opCodeAddr = searchBytes(PCM, searchStr, 0, PCM.fsize);
                         if (opCodeAddr < uint.MaxValue)
                         {
-                            codeAddr = BEToUint32(PCM.buf, opCodeAddr + 4) + 1;
+                            codeAddr = BEToUint32(PCM.buf, opCodeAddr + 4) + 1; 
                             Debug.WriteLine("Code search string: " + searchStr);
                             Debug.WriteLine("DTC code table address: " + codeAddr.ToString("X") + ", opcodeaddress: " + opCodeAddr.ToString("X"));
                             searchStatus = searchStatusList[s];
                             searchMil = searchMilList[s];
+                            if (pcmModel == PcmModel.V6_512 || searchMil == "67 0C 4A 30 01 B0")
+                            {
+                                pcmModel = PcmModel.V6_96;
+                                codeAddr++;  //Pre-2000 V6, table begins from 1 byte later than others
+                            }
                             break;
                         }                        
                     }
@@ -3115,7 +3136,7 @@ namespace UniversalPatcher
                     dtc.codeInt = BEToUint16(PCM.buf, addr);
 
                     string codeTmp = dtc.codeInt.ToString("X");
-                    if (dCodes && !codeTmp.StartsWith("D"))
+                    if (dCodes && !codeTmp.StartsWith("D") ||  ( dtc.codeInt < 10 && dtcCodesP59.Count > 10 ))
                     {
                         break;
                     }
@@ -3176,7 +3197,7 @@ namespace UniversalPatcher
                         opCodeAddr = searchBytes(PCM, searchMil, startAddr, PCM.fsize);
                         if (opCodeAddr < uint.MaxValue)
                         {
-                            if (pcmModel == PcmModel.LS1_97)
+                            if (pcmModel == PcmModel.LS1_97 || searchMil == "67 0C 4A 30 01 B0")
                                 milAddr = BEToUint32(PCM.buf, opCodeAddr + 6) + 1;
                             else
                                 milAddr = BEToUint32(PCM.buf, opCodeAddr + 4) + 1;
