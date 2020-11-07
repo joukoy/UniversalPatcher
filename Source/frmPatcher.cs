@@ -505,17 +505,12 @@ namespace UniversalPatcher
                 if (PCM.PcmType == "e38" || PCM.PcmType == "e67")
                 {
                     SearchDtcE38(PCM);
-                    refreshDtcList();
                 }
                 else if (PCM.PcmType == "p01-p59" || PCM.PcmType.StartsWith("v6"))
                 {
                     SearchDtcP59(PCM);
-                    refreshDtcList();
                 }
-                else
-                {
-                    refreshDtcList();
-                }
+                refreshDtcList();
             }
             catch (Exception ex)
             {
@@ -3135,7 +3130,14 @@ namespace UniversalPatcher
                     if (opCodeAddr < uint.MaxValue)
                     {
                         statusAddr = BEToUint32(PCM.buf, opCodeAddr + 4) + 1;
-                        searchStr = "4A 30 31 B0 * * * * 67";
+                        if (pcmModel == PcmModel.P59_06)
+                        {
+                            searchStr = "4A 30 31 B0 * * * * 67 2E"; //For MIL codes
+                        }
+                        else
+                        {
+                            searchStr = "4A 30 31 B0 * * * * 67"; //For MIL codes
+                        }
                     }
                     else
                     {
@@ -3145,7 +3147,7 @@ namespace UniversalPatcher
                         {
                             pcmModel = PcmModel.LS1_97;
                             statusAddr = BEToUint32(PCM.buf, opCodeAddr + 4) + 1;
-                            searchStr = "67 0C 4A 30 31 B0";
+                            searchStr = "67 0C 4A 30 31 B0"; //For MIL codes
                         }
                         else
                         {
