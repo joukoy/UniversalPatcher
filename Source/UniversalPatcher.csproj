@@ -189,6 +189,7 @@
     <Compile Include="PcmFile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\DtcSearch.cs" />
     <Compile Include="Properties\frmSearchText.cs">
       <SubType>Form</SubType>
     </Compile>

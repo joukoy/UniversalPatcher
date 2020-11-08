@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<ArrayOfDtcSearchConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <DtcSearchConfig>
+    <XMLFile>p01-p59</XMLFile>
+    <CodeSearch>18 30 35 B0</CodeSearch>
+    <StatusSearch>18 30 31 B0 * * * * 67</StatusSearch>
+    <MilTable>afterstatus</MilTable>
+    <CodeOffset>2</CodeOffset>
+    <CodeSteps>4</CodeSteps>
+    <StatusOffset>1</StatusOffset>
+    <MilOffset>1</MilOffset>
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <XMLFile>p01-p59</XMLFile>
+    <CodeSearch>BC 30 59 B0 * * * * 66</CodeSearch>
+    <StatusSearch>00 03 41 B0 * * * * 66</StatusSearch>
+    <MilSearch>4A 30 31 B0 * * * * 67 2E</MilSearch>
+    <MilTable>opcode</MilTable>
+    <CodeOffset>1</CodeOffset>
+    <CodeSteps>6</CodeSteps>
+    <StatusOffset>1</StatusOffset>
+    <MilOffset>1</MilOffset>
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <XMLFile>p01-p59</XMLFile>
+    <CodeSearch>B0 30 55 B0 * * * * 66</CodeSearch>
+    <StatusSearch>00 03 41 B0 * * * * 66</StatusSearch>
+    <MilSearch>4A 30 31 B0 * * * * 67 2E</MilSearch>
+    <MilTable>opcode</MilTable>
+    <CodeOffset>1</CodeOffset>
+    <CodeSteps>4</CodeSteps>
+    <StatusOffset>1</StatusOffset>
+    <MilOffset>1</MilOffset>
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <XMLFile>p01-p59</XMLFile>
+    <CodeSearch>B0 30 55 B0 * * * * 66</CodeSearch>
+    <StatusSearch>00 03 41 B0 * * * * 67</StatusSearch>
+    <MilSearch>67 0C 4A 30 31 B0 * * * *</MilSearch>
+    <MilTable>opcode</MilTable>
+    <CodeOffset>1</CodeOffset>
+    <CodeSteps>4</CodeSteps>
+    <StatusOffset>1</StatusOffset>
+    <MilOffset>1</MilOffset>
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <XMLFile>v6-96-97</XMLFile>
+    <CodeSearch>B6 30 05 B0 * * * * 66</CodeSearch>
+    <StatusSearch>BC 30 11 B0 * * * * 65</StatusSearch>
+    <MilSearch>67 0C 4A 30 01 B0</MilSearch>
+    <MilTable>opcode</MilTable>
+    <CodeOffset>2</CodeOffset>
+    <CodeSteps>4</CodeSteps>
+    <StatusOffset>1</StatusOffset>
+    <MilOffset>1</MilOffset>
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <XMLFile>v6-96-97</XMLFile>
+    <CodeSearch>B0 30 55 B0 * * * * 66</CodeSearch>
+    <StatusSearch>00 03 41 B0 * * * * 66</StatusSearch>
+    <MilSearch>4A 30 11 B0 * * * * 67</MilSearch>
+    <MilTable>opcode</MilTable>
+    <CodeOffset>2</CodeOffset>
+    <CodeSteps>4</CodeSteps>
+    <StatusOffset>1</StatusOffset>
+    <MilOffset>1</MilOffset>
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <XMLFile>v6-1mb</XMLFile>
+    <CodeSearch>10 30 05 B0 * * * *</CodeSearch>
+    <StatusSearch>18 30 31 B0 * * * * 67 06</StatusSearch>
+    <MilSearch>4A 30 11 B0 * * * * 67 2E</MilSearch>
+    <MilTable>opcode</MilTable>
+    <CodeOffset>1</CodeOffset>
+    <CodeSteps>4</CodeSteps>
+    <StatusOffset>1</StatusOffset>
+    <MilOffset>1</MilOffset>
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <XMLFile>ls1-97-98</XMLFile>
+    <CodeSearch>B0 30 55 B0 * * * * 66</CodeSearch>
+    <StatusSearch>00 03 41 B0 * * * * 67</StatusSearch>
+    <MilSearch>67 0C 4A 30 31 B0</MilSearch>
+    <MilTable>opcode</MilTable>
+    <CodeOffset>1</CodeOffset>
+    <CodeSteps>4</CodeSteps>
+    <StatusOffset>1</StatusOffset>
+    <MilOffset>1</MilOffset>
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <XMLFile>diesel01-05</XMLFile>
+    <CodeSearch>42 10 20 7C * * * * 1C</CodeSearch>
+    <StatusSearch>67 24 20 7C * * * * D1</StatusSearch>
+    <MilSearch>67 0C 20 7C * * * * D1</MilSearch>
+    <MilTable>opcode</MilTable>
+    <CodeOffset>1</CodeOffset>
+    <CodeSteps>4</CodeSteps>
+    <StatusOffset>1</StatusOffset>
+    <MilOffset>1</MilOffset>
+  </DtcSearchConfig>
+</ArrayOfDtcSearchConfig>

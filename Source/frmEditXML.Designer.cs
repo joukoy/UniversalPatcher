@@ -69,6 +69,7 @@
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtResult.Size = new System.Drawing.Size(477, 39);
             this.txtResult.TabIndex = 2;
+            this.txtResult.TextChanged += new System.EventHandler(this.txtResult_TextChanged);
             // 
             // btnSaveCSV
             // 

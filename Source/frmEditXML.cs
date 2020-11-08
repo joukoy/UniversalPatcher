@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using static upatcher;
+using UniversalPatcher.Properties;
 
 namespace UniversalPatcher
 {
@@ -33,6 +34,14 @@ namespace UniversalPatcher
             this.Text = "Edit stock CVN list";
             bindingSource.DataSource = null;
             bindingSource.DataSource = StockCVN;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+        }
+        public void LoadDTCSearchConfig()
+        {
+            this.Text = "Edit DTC Search config";
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = dtcSearchConfigs;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
         }
@@ -76,6 +85,18 @@ namespace UniversalPatcher
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<FileType>));
                         writer.Serialize(stream, fileTypeList);
+                        stream.Close();
+                    }
+                    Logger(" [OK]");
+                }
+                else if (this.Text.Contains("DTC"))
+                {
+                    Logger("Saving file DtcSearch.xml", false);
+                    string FileName = Path.Combine(Application.StartupPath, "XML", "DtcSearch.xml");
+                    using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                    {
+                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<DtcSearchConfig>));
+                        writer.Serialize(stream, dtcSearchConfigs);
                         stream.Close();
                     }
                     Logger(" [OK]");
@@ -183,6 +204,11 @@ namespace UniversalPatcher
             }
             sr.Close();
             LoadStockCVN();
+        }
+
+        private void txtResult_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

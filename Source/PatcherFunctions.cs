@@ -7,6 +7,7 @@ using System.Diagnostics;
 using UniversalPatcher;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using UniversalPatcher.Properties;
 
 public class upatcher
 {
@@ -147,9 +148,9 @@ public class upatcher
         public string StatusAddr { get; set; }
     }
 
-    public class dtcCodeP59
+    public class dtcCode
     {
-        public dtcCodeP59()
+        public dtcCode()
         {
             codeInt = 0;
             codeAddrInt = 0;
@@ -285,8 +286,9 @@ public const short CSMethod_None = 0;
     public static List<referenceCvn> referenceCvnList;
     public static List<FileType> fileTypeList;
     public static List<dtcCodeE38> dtcCodesE38;
-    public static List<dtcCodeP59> dtcCodesP59;
+    public static List<dtcCode> dtcCodes;
     public static List<OBD2Code> OBD2Codes;
+    public static List<DtcSearchConfig> dtcSearchConfigs;
 
     public static string XMLFile;
     public static string tableSearchFile;
@@ -294,7 +296,7 @@ public const short CSMethod_None = 0;
     public static FrmPatcher frmpatcher;
 
     public static string[] dtcStatusE38 = { "MIL and reporting off", "Type A/no MIL", "Type B/no MIL", "Type C/no MIL", "Not reported/no MIL", "Type A/MIL", "Type B/MIL", "Type C/MIL" };
-    public static string[] dtcStatusP59 = { "1 Trip/immediately", "2 Trips", "Store only", "Disabled" };
+    public static string[] dtcStatus = { "1 Trip/immediately", "2 Trips", "Store only", "Disabled" };
 
     public const ushort TypeText = 0;
     public const ushort TypeHex = 1;
