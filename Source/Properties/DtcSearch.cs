@@ -183,26 +183,6 @@ namespace UniversalPatcher.Properties
                     return "DTC search: Status table address out of address range:" + statusAddr.ToString("X8");
                 }
 
-                //Read DTC status bytes:
-                int dtcNr = 0;
-                for (uint addr2 = statusAddr; addr2 < statusAddr + dtcCodes.Count; addr2++)
-                {
-                    if (PCM.buf[addr2] > 3) //DTC = 0-3
-                    {
-                        break;
-                    }
-                    dtcCode dtc = dtcCodes[dtcNr];
-                    dtc.statusAddrInt = addr2;
-                    dtc.StatusAddr = addr2.ToString("X8");
-                    dtc.Status = PCM.buf[addr2];
-                    dtc.StatusTxt = dtcStatus[dtc.Status];
-
-                    dtcCodes.RemoveAt(dtcNr);
-                    dtcCodes.Insert(dtcNr, dtc);
-                    dtcNr++;
-                }
-
-                //Read MIL bytes:
                 if (milAddrList.Count > 1)
                 {
                     //IF have multiple hits for search, use table which starts after FF, ends before FF
@@ -217,24 +197,33 @@ namespace UniversalPatcher.Properties
                         }
                     }
                 }
+                Debug.WriteLine("MIL: " + milAddr.ToString("X"));
                 if (milAddr >= PCM.fsize)
                 {
                     return "DTC search: MIL table address out of address range:" + milAddr.ToString("X8");
                 }
-                dtcNr = 0;
-                Debug.WriteLine("MIL: " + milAddr.ToString("X"));
-                if (PCM.buf[milAddr - 1] == 0xFF) milAddr++; //If there is FF before first byte, skip first byte                
-                for (uint addr2 = milAddr; addr2 < milAddr + dtcCodes.Count; addr2++)
+
+
+                //Read DTC status bytes:
+                int dtcNr = 0;
+                uint addr3 = milAddr;
+                for (uint addr2 = statusAddr; addr2 < statusAddr + dtcCodes.Count; addr2++, addr3++)
                 {
-                    if (PCM.buf[addr2] > 1)     //MIL=0/1
+                    if (PCM.buf[addr2] > 3) //DTC = 0-3
                     {
                         break;
                     }
                     dtcCode dtc = dtcCodes[dtcNr];
-                    dtc.milAddrInt = addr2;
-                    dtc.MilAddr = addr2.ToString("X8");
-                    dtc.MilStatus = PCM.buf[addr2];
-                    //Debug.Write(dtc.MilStatus.ToString() + ", ");
+                    dtc.statusAddrInt = addr2;
+                    dtc.StatusAddr = addr2.ToString("X8");
+                    dtc.Status = PCM.buf[addr2];
+                    dtc.StatusTxt = dtcStatus[dtc.Status];
+
+                    //Read MIL bytes:
+                    dtc.milAddrInt = addr3;
+                    dtc.MilAddr = addr3.ToString("X8");
+                    dtc.MilStatus = PCM.buf[addr3];
+
                     dtcCodes.RemoveAt(dtcNr);
                     dtcCodes.Insert(dtcNr, dtc);
                     dtcNr++;
