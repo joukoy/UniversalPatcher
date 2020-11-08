@@ -515,15 +515,17 @@ namespace UniversalPatcher
                 dtcCodesE38 = new List<dtcCodeE38>();
                 dtcCodes = new List<dtcCode>();
                 DtcSearch DS = new DtcSearch();
+                string dtcSearchResult = "";
                 if (PCM.xmlFile == "e38" || PCM.xmlFile == "e67")
                 {
-                    DS.SearchDtcE38(PCM);
+                    dtcSearchResult=DS.SearchDtcE38(PCM);
                 }
                 else 
                 {
-                    
-                    DS.searchDtc(PCM);
+
+                    dtcSearchResult=DS.searchDtc(PCM);
                 }
+                Logger(dtcSearchResult);
                 refreshDtcList();
             }
             catch (Exception ex)
