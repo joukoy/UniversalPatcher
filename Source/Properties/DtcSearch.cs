@@ -150,6 +150,7 @@ namespace UniversalPatcher.Properties
                 if (dtcSearchConfigs[configIndex].MilTable == "afterstatus")
                 {
                     milAddr = (uint)(statusAddr + dtcCodes.Count + (uint)dtcSearchConfigs[configIndex].MilOffset);
+                    if (PCM.xmlFile == "p01-p59" && PCM.buf[milAddr - 1] == 0xFF) milAddr++; //P59 hack: If there is FF before first byte, skip first byte 
                     milAddrList.Add(milAddr);
                 }
                 else
