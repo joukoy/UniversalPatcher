@@ -215,9 +215,11 @@ namespace UniversalPatcher.Properties
                 //Read DTC status bytes:
                 int dtcNr = 0;
                 uint addr3 = milAddr;
-                for (uint addr2 = statusAddr; addr2 < statusAddr + dtcCodes.Count; addr2+= (uint)dtcSearchConfigs[configIndex].StatusSteps, addr3+= (uint)dtcSearchConfigs[configIndex].MilSteps)
+                for (uint addr2 = statusAddr; dtcNr < dtcCodes.Count; addr2+= (uint)dtcSearchConfigs[configIndex].StatusSteps, addr3+= (uint)dtcSearchConfigs[configIndex].MilSteps)
                 {
-                    if (PCM.buf[addr2] > 3) //DTC = 0-3
+                    if (PCM.buf[addr2] > 7)
+                        break;
+                    if (!dtcCombined && PCM.buf[addr2] > 3) //DTC = 0-3
                     {
                         break;
                     }
@@ -225,7 +227,7 @@ namespace UniversalPatcher.Properties
                     dtc.statusAddrInt = addr2;
                     dtc.StatusAddr = addr2.ToString("X8");
                     byte statusByte = PCM.buf[addr2];
-                    if (dtcCombined && statusByte > 4)
+                    if (dtcCombined && statusByte > 3)
                         dtc.Status = (byte)(statusByte - 4);
                     else
                         dtc.Status = statusByte;
@@ -233,7 +235,7 @@ namespace UniversalPatcher.Properties
 
                     if (dtcCombined)
                     {
-                        if (statusByte > 4)
+                        if (statusByte > 3)
                             dtc.MilStatus = 1;
                         else
                             dtc.MilStatus = 0;
