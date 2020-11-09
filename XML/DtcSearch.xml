@@ -9,6 +9,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>p01-p59</XMLFile>
@@ -20,6 +22,8 @@
     <CodeSteps>6</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>p01-p59</XMLFile>
@@ -31,6 +35,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>p01-p59</XMLFile>
@@ -42,6 +48,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>v6-96-97</XMLFile>
@@ -53,6 +61,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>v6-98-05</XMLFile>
@@ -64,6 +74,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>v6-98-05</XMLFile>
@@ -75,6 +87,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>v6-98-05</XMLFile>
@@ -86,6 +100,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>v6-98-05</XMLFile>
@@ -97,6 +113,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>v6-1mb</XMLFile>
@@ -108,6 +126,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>ls1-97-98</XMLFile>
@@ -119,6 +139,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>ls1-97-98-2</XMLFile>
@@ -130,6 +152,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>ls1-97-98-3</XMLFile>
@@ -141,6 +165,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>ls1-97-98-4</XMLFile>
@@ -152,6 +178,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>ls1-97-98-5</XMLFile>
@@ -163,6 +191,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>diesel01-05</XMLFile>
@@ -174,6 +204,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>diesel01-05-1mb</XMLFile>
@@ -185,6 +217,8 @@
     <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>e40</XMLFile>
@@ -196,16 +230,20 @@
     <CodeSteps>2</CodeSteps>
     <StatusOffset>0</StatusOffset>
     <MilOffset>0</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>e40-wsl</XMLFile>
     <CodeSearch>00 72 00 2A 7C * * * * 2A 3C</CodeSearch>
     <StatusSearch>66 CC 20 7C * * * * 48</StatusSearch>
     <MilSearch>66 CC 20 7C * * * * 48</MilSearch>
-    <MilTable>opcode</MilTable>
+    <MilTable>combined</MilTable>
     <CodeOffset>0</CodeOffset>
     <CodeSteps>2</CodeSteps>
-    <StatusOffset>0</StatusOffset>
+    <StatusOffset>1</StatusOffset>
     <MilOffset>0</MilOffset>
+    <StatusSteps>2</StatusSteps>
+    <MilSteps>1</MilSteps>
   </DtcSearchConfig>
 </ArrayOfDtcSearchConfig>
