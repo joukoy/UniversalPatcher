@@ -221,22 +221,11 @@ namespace UniversalPatcher
         {
             dtcBindingSource.DataSource = null;
             dataGridDTC.DataSource = null;
-            if (basefile.xmlFile == "e38" || basefile.xmlFile == "e67")
-            {
-                dtcBindingSource.DataSource = dtcCodesE38;
-                if (dtcCodesE38.Count == 0)
-                    tabDTC.Text = "DTC";
-                else
-                    tabDTC.Text = "DTC (" + dtcCodesE38.Count.ToString() + ")";
-            }
-            else 
-            {
-                dtcBindingSource.DataSource = dtcCodes;
-                if (dtcCodes.Count == 0)
-                    tabDTC.Text = "DTC";
-                else
-                    tabDTC.Text = "DTC (" + dtcCodes.Count.ToString() + ")";
-            }
+            dtcBindingSource.DataSource = dtcCodes;
+            if (dtcCodes.Count == 0)
+                tabDTC.Text = "DTC";
+            else
+                tabDTC.Text = "DTC (" + dtcCodes.Count.ToString() + ")";
             dataGridDTC.DataSource = dtcBindingSource;
             dataGridDTC.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
 
@@ -512,19 +501,10 @@ namespace UniversalPatcher
                     txtResult.AppendText(".");
                 }
                 RefreshBadCVNlist();
-                dtcCodesE38 = new List<dtcCodeE38>();
                 dtcCodes = new List<dtcCode>();
                 DtcSearch DS = new DtcSearch();
                 string dtcSearchResult = "";
-                if (PCM.xmlFile == "e38" || PCM.xmlFile == "e67")
-                {
-                    dtcSearchResult=DS.SearchDtcE38(PCM);
-                }
-                else 
-                {
-
-                    dtcSearchResult=DS.searchDtc(PCM);
-                }
+                dtcSearchResult=DS.searchDtc(PCM);
                 Logger(dtcSearchResult);
                 refreshDtcList();
             }
@@ -2808,15 +2788,15 @@ namespace UniversalPatcher
             string tableRows = "";            
             string xdfTxt = templateTxt.Replace("REPLACE-OSID", txtOS.Text);
             xdfTxt = xdfTxt.Replace("REPLACE-OSADDRESS", basefile.binfile[basefile.OSSegment].PNaddr.Address.ToString("X"));
-            if (basefile.xmlFile == "e38" || basefile.xmlFile == "e67")
+            if (dtcCombined)
             {
-                for (int d = 0; d < dtcCodesE38.Count; d++)
+                for (int d = 0; d < dtcCodes.Count; d++)
                 {
-                    tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + dtcCodesE38[d].Code + "\" />" + Environment.NewLine;
+                    tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + dtcCodes[d].Code + "\" />" + Environment.NewLine;
                 }
 
-                xdfTxt = xdfTxt.Replace("REPLACE-DTCCOUNT", dtcCodesE38.Count.ToString());
-                xdfTxt = xdfTxt.Replace("REPLACE-DTCADDRESS", dtcCodesE38[0].statusAddrInt.ToString("X"));
+                xdfTxt = xdfTxt.Replace("REPLACE-DTCCOUNT", dtcCodes.Count.ToString());
+                xdfTxt = xdfTxt.Replace("REPLACE-DTCADDRESS", dtcCodes[0].statusAddrInt.ToString("X"));
             }
             else
             {
@@ -2846,25 +2826,21 @@ namespace UniversalPatcher
             frmS.startMe(codeIndex, basefile.xmlFile);
             if (frmS.ShowDialog() == DialogResult.OK)
             {
-                if (basefile.xmlFile == "e38" || basefile.xmlFile == "e67")
-                {
-                    dtcCodesE38[codeIndex].Status = (byte)frmS.comboDtcStatus.SelectedIndex;
-                    dtcCodesE38[codeIndex].StatusTxt = dtcStatusE38[dtcCodesE38[codeIndex].Status];
-                    basefile.buf[dtcCodesE38[codeIndex].statusAddrInt] = dtcCodesE38[codeIndex].Status;
-                    dataGridDTC.Rows[codeIndex].Cells["Status"].Value = dtcCodesE38[codeIndex].Status;
-                    dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = dtcCodesE38[codeIndex].StatusTxt;
+                dtcCodes[codeIndex].Status = (byte)frmS.comboDtcStatus.SelectedIndex;
+                dtcCodes[codeIndex].StatusTxt = dtcStatus[dtcCodes[codeIndex].Status];
+                dtcCodes[codeIndex].MilStatus = (byte)frmS.comboMIL.SelectedIndex;
+                if (dtcCombined)
+                {                    
+                    basefile.buf[dtcCodes[codeIndex].statusAddrInt] = (byte)(dtcCodes[codeIndex].Status + (4 * dtcCodes[codeIndex].MilStatus));
                 }
-                else 
+                else
                 {
-                    dtcCodes[codeIndex].Status = (byte)frmS.comboDtcStatus.SelectedIndex;
-                    dtcCodes[codeIndex].StatusTxt = dtcStatus[dtcCodes[codeIndex].Status];
-                    dtcCodes[codeIndex].MilStatus = (byte)frmS.comboMIL.SelectedIndex;
                     basefile.buf[dtcCodes[codeIndex].statusAddrInt] = dtcCodes[codeIndex].Status;
                     basefile.buf[dtcCodes[codeIndex].milAddrInt] = dtcCodes[codeIndex].MilStatus;
-                    dataGridDTC.Rows[codeIndex].Cells["Status"].Value = dtcCodes[codeIndex].Status;
-                    dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = dtcCodes[codeIndex].StatusTxt;
-
                 }
+                dataGridDTC.Rows[codeIndex].Cells["Status"].Value = dtcCodes[codeIndex].Status;
+                dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = dtcCodes[codeIndex].StatusTxt;
+
                 tabFunction.SelectedTab = tabApply;
                 Logger("DTC modified, you can now save bin");
             }

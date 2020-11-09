@@ -125,29 +125,6 @@ public class upatcher
 
     }
 
-    public class dtcCodeE38
-    {
-        public dtcCodeE38()
-        {
-            codeInt = 0;
-            Status = 99;
-            codeAddrInt = 0;
-            CodeAddr = "";
-            statusAddrInt = 0;
-            StatusAddr = "";
-            Description = "";
-        }
-        public UInt16 codeInt;
-        public string Code { get; set; }
-        public byte Status { get; set; }
-        public string StatusTxt { get; set; }
-        public string Description { get; set; }
-        public uint codeAddrInt;
-        public string CodeAddr { get; set; }
-        public uint statusAddrInt;
-        public string StatusAddr { get; set; }
-    }
-
     public class dtcCode
     {
         public dtcCode()
@@ -285,17 +262,17 @@ public const short CSMethod_None = 0;
     public static List<TableSearchResult> tableSearchResultNoFilters;
     public static List<referenceCvn> referenceCvnList;
     public static List<FileType> fileTypeList;
-    public static List<dtcCodeE38> dtcCodesE38;
     public static List<dtcCode> dtcCodes;
     public static List<OBD2Code> OBD2Codes;
     public static List<DtcSearchConfig> dtcSearchConfigs;
+    public static bool dtcCombined = false;
 
     public static string XMLFile;
     public static string tableSearchFile;
 
     public static FrmPatcher frmpatcher;
 
-    public static string[] dtcStatusE38 = { "MIL and reporting off", "Type A/no MIL", "Type B/no MIL", "Type C/no MIL", "Not reported/no MIL", "Type A/MIL", "Type B/MIL", "Type C/MIL" };
+    public static string[] dtcStatusCombined = { "MIL and reporting off", "Type A/no MIL", "Type B/no MIL", "Type C/no MIL", "Not reported/no MIL", "Type A/MIL", "Type B/MIL", "Type C/MIL" };
     public static string[] dtcStatus = { "1 Trip/immediately", "2 Trips", "Store only", "Disabled" };
 
     public const ushort TypeText = 0;

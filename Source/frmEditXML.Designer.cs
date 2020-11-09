@@ -73,6 +73,7 @@
             // 
             // btnSaveCSV
             // 
+            this.btnSaveCSV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSaveCSV.Location = new System.Drawing.Point(489, 423);
             this.btnSaveCSV.Name = "btnSaveCSV";
             this.btnSaveCSV.Size = new System.Drawing.Size(75, 23);
@@ -83,6 +84,7 @@
             // 
             // btnImportCSV
             // 
+            this.btnImportCSV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportCSV.Location = new System.Drawing.Point(408, 423);
             this.btnImportCSV.Name = "btnImportCSV";
             this.btnImportCSV.Size = new System.Drawing.Size(75, 23);
