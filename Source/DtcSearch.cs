@@ -83,6 +83,7 @@ namespace UniversalPatcher.Properties
                 uint codeAddr = 0;
                 string searchStr;
                 int configIndex = 0;
+                dtcCombined = false;
 
                 for (configIndex = 0; configIndex < dtcSearchConfigs.Count; configIndex++)
                 {
