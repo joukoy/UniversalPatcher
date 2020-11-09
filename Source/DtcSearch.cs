@@ -134,6 +134,7 @@ namespace UniversalPatcher
                 {
                     if (PCM.xmlFile == "e38" || PCM.xmlFile == "e67")
                     {
+                        dtcCombined = true;
                         string retval = SearchDtcE38(PCM);
                         return retval;
                     }
@@ -260,21 +261,19 @@ namespace UniversalPatcher
                     dtc.statusAddrInt = addr2;
                     dtc.StatusAddr = addr2.ToString("X8");
                     byte statusByte = PCM.buf[addr2];
-                    if (dtcCombined && statusByte > 3)
-                        dtc.Status = (byte)(statusByte - 4);
-                    else
-                        dtc.Status = statusByte;
-                    dtc.StatusTxt = dtcStatus[dtc.Status];
+                    dtc.Status = statusByte;
 
                     if (dtcCombined)
                     {
-                        if (statusByte > 3)
+                        dtc.StatusTxt = dtcStatusCombined[dtc.Status];
+                        if (statusByte > 4)
                             dtc.MilStatus = 1;
                         else
                             dtc.MilStatus = 0;
                     }
                     else
                     {
+                        dtc.StatusTxt = dtcStatus[dtc.Status];
                         //Read MIL bytes:
                         dtc.milAddrInt = addr3;
                         dtc.MilAddr = addr3.ToString("X8");
@@ -450,19 +449,12 @@ namespace UniversalPatcher
                         dtc.StatusAddr = addr2.ToString("X8");
                         //dtc.Status = PCM.buf[addr2];
                         byte statusByte = PCM.buf[addr2];
-                        if (statusByte > 3)
-                        {
-                            dtc.Status = (byte)(statusByte - 4);
+                        if (statusByte > 4)
                             dtc.MilStatus = 1;
-                        }
                         else
-                        {
-                            dtc.Status = statusByte;
                             dtc.MilStatus = 0;
-                        }
-                        dtc.StatusTxt = dtcStatus[dtc.Status];
-
-                        dtc.StatusTxt = dtcStatus[dtc.Status];
+                        dtc.Status = statusByte;
+                        dtc.StatusTxt = dtcStatusCombined[dtc.Status];
 
                         dtcCodes.RemoveAt(dtcNr);
                         dtcCodes.Insert(dtcNr, dtc);

@@ -2827,19 +2827,27 @@ namespace UniversalPatcher
             if (frmS.ShowDialog() == DialogResult.OK)
             {
                 dtcCodes[codeIndex].Status = (byte)frmS.comboDtcStatus.SelectedIndex;
-                dtcCodes[codeIndex].StatusTxt = dtcStatus[dtcCodes[codeIndex].Status];
-                dtcCodes[codeIndex].MilStatus = (byte)frmS.comboMIL.SelectedIndex;
+
+                basefile.buf[dtcCodes[codeIndex].statusAddrInt] = dtcCodes[codeIndex].Status;
                 if (dtcCombined)
-                {                    
-                    basefile.buf[dtcCodes[codeIndex].statusAddrInt] = (byte)(dtcCodes[codeIndex].Status + (4 * dtcCodes[codeIndex].MilStatus));
+                {
+                    dtcCodes[codeIndex].StatusTxt = dtcStatusCombined[dtcCodes[codeIndex].Status];
+                    dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = dtcCodes[codeIndex].StatusTxt;
+
+                    if (dtcCodes[codeIndex].Status > 4)
+                        dtcCodes[codeIndex].MilStatus = 1;
+                    else
+                        dtcCodes[codeIndex].MilStatus = 0;
                 }
                 else
                 {
-                    basefile.buf[dtcCodes[codeIndex].statusAddrInt] = dtcCodes[codeIndex].Status;
+                    dtcCodes[codeIndex].MilStatus = (byte)frmS.comboMIL.SelectedIndex;
+                    dtcCodes[codeIndex].StatusTxt = dtcStatus[dtcCodes[codeIndex].Status];
                     basefile.buf[dtcCodes[codeIndex].milAddrInt] = dtcCodes[codeIndex].MilStatus;
+                    dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = dtcCodes[codeIndex].StatusTxt;
                 }
                 dataGridDTC.Rows[codeIndex].Cells["Status"].Value = dtcCodes[codeIndex].Status;
-                dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = dtcCodes[codeIndex].StatusTxt;
+                
 
                 tabFunction.SelectedTab = tabApply;
                 Logger("DTC modified, you can now save bin");
