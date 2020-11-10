@@ -130,6 +130,19 @@
     <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
+    <XMLFile>p05c-v6</XMLFile>
+    <CodeSearch>10 30 05 B0 * * * *</CodeSearch>
+    <StatusSearch>18 30 31 B0 * * * * 67 06</StatusSearch>
+    <MilSearch>4A 30 11 B0 * * * * 67</MilSearch>
+    <MilTable>opcode</MilTable>
+    <CodeOffset>2</CodeOffset>
+    <CodeSteps>4</CodeSteps>
+    <StatusOffset>1</StatusOffset>
+    <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
+  </DtcSearchConfig>
+  <DtcSearchConfig>
     <XMLFile>ls1-97-98</XMLFile>
     <CodeSearch>B0 30 55 B0 * * * * 66</CodeSearch>
     <StatusSearch>00 03 41 B0 * * * * 67</StatusSearch>
@@ -224,26 +237,24 @@
     <XMLFile>e40</XMLFile>
     <CodeSearch>00 72 00 2A 7C * * * * 2A 3C</CodeSearch>
     <StatusSearch>66 CC 20 7C * * * * 48</StatusSearch>
-    <MilSearch>66 CC 20 7C * * * * 48</MilSearch>
-    <MilTable>opcode</MilTable>
+    <MilTable>combined</MilTable>
     <CodeOffset>0</CodeOffset>
     <CodeSteps>2</CodeSteps>
-    <StatusOffset>0</StatusOffset>
-    <MilOffset>0</MilOffset>
-    <StatusSteps>1</StatusSteps>
-    <MilSteps>1</MilSteps>
+    <StatusOffset>1</StatusOffset>
+    <MilOffset>1</MilOffset>
+    <StatusSteps>2</StatusSteps>
+    <MilSteps>2</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>e40-wsl</XMLFile>
     <CodeSearch>00 72 00 2A 7C * * * * 2A 3C</CodeSearch>
     <StatusSearch>66 CC 20 7C * * * * 48</StatusSearch>
-    <MilSearch>66 CC 20 7C * * * * 48</MilSearch>
     <MilTable>combined</MilTable>
     <CodeOffset>0</CodeOffset>
     <CodeSteps>2</CodeSteps>
     <StatusOffset>1</StatusOffset>
-    <MilOffset>0</MilOffset>
+    <MilOffset>1</MilOffset>
     <StatusSteps>2</StatusSteps>
-    <MilSteps>1</MilSteps>
+    <MilSteps>2</MilSteps>
   </DtcSearchConfig>
 </ArrayOfDtcSearchConfig>
