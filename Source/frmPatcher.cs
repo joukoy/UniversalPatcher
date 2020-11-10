@@ -2834,7 +2834,7 @@ namespace UniversalPatcher
                     dtcCodes[codeIndex].StatusTxt = dtcStatusCombined[dtcCodes[codeIndex].Status];
                     dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = dtcCodes[codeIndex].StatusTxt;
 
-                    if (dtcCodes[codeIndex].Status > 4)
+                    if (dtcCodes[codeIndex].Status > 3)
                         dtcCodes[codeIndex].MilStatus = 1;
                     else
                         dtcCodes[codeIndex].MilStatus = 0;
@@ -2875,6 +2875,54 @@ namespace UniversalPatcher
             frmE.LoadDTCSearchConfig();
             frmE.Show();
 
+        }
+
+        private void btnShowTableData_Click(object sender, EventArgs e)
+        {
+            tableDatas = new List<TableData>();
+            int dataIndex = dataIndex = dataGridSearchedTables.SelectedCells[0].RowIndex;
+            uint StartAddr;
+            uint rows;
+            if (chkTableSearchNoFilters.Checked)
+            {
+                StartAddr = tableSearchResultNoFilters[dataIndex].AddressInt;
+                rows = tableSearchResultNoFilters[dataIndex].Rows;
+            }
+            else
+            {
+                StartAddr = tableSearchResult[dataIndex].AddressInt;
+                rows = tableSearchResult[dataIndex].Rows;
+            }
+
+            if (rows == 0)
+            {
+                TableData dt = new TableData();
+                dt.Row = 0;
+                dt.Address = StartAddr.ToString("X8");
+                dt.addrInt = StartAddr;
+                dt.dataInt = basefile.buf[StartAddr];
+                dt.Data = dt.dataInt.ToString("X2");
+                tableDatas.Add(dt);
+            }
+            else
+            {
+                uint row = 0;
+                for (uint addr = StartAddr; addr < StartAddr + rows; addr++)
+                {
+                    TableData dt = new TableData();
+                    dt.Row = row;
+                    dt.addrInt = addr;
+                    dt.Address = addr.ToString("X8");
+                    dt.dataInt = basefile.buf[addr];
+                    dt.Data = dt.dataInt.ToString("X2");
+                    tableDatas.Add(dt);
+                    row++;
+                }
+            }
+            frmEditXML frmEX = new frmEditXML();
+            frmEX.LoadTableData();
+            frmEX.Show();
+            //dataGridSearchedTables.Columns[""]
         }
     }
 }

@@ -46,6 +46,16 @@ namespace UniversalPatcher
             dataGridView1.DataSource = bindingSource;
         }
 
+        public void LoadTableData()
+        {
+            this.Text = "Table data";
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = tableDatas;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+            btnSave.Visible = false;
+        }
+
         public void LoadFileTypes()
         {
             this.Text = "File Types";

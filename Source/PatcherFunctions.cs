@@ -165,6 +165,17 @@ public class upatcher
         public string Description { get; set; }
     }
 
+    public class TableData
+    {
+        public TableData()
+        { }
+        public uint Row { get; set; }
+        public uint addrInt;
+        public string Address { get; set; }
+        public byte dataInt;
+        public string Data { get; set; }
+    }
+
     public struct SegmentConfig
     {
         public string Name;
@@ -260,6 +271,7 @@ public const short CSMethod_None = 0;
     //public static List<TableSearchConfig> tableSearchConfig;
     public static List<TableSearchResult> tableSearchResult;
     public static List<TableSearchResult> tableSearchResultNoFilters;
+    public static List<TableData> tableDatas;
     public static List<referenceCvn> referenceCvnList;
     public static List<FileType> fileTypeList;
     public static List<dtcCode> dtcCodes;
@@ -272,7 +284,7 @@ public const short CSMethod_None = 0;
 
     public static FrmPatcher frmpatcher;
 
-    public static string[] dtcStatusCombined = { "MIL and reporting off", "Type A/no MIL", "Type B/no MIL", "Type C/no MIL", "Not reported/no MIL", "Type A/MIL", "Type B/MIL", "Type C/MIL" };
+    public static string[] dtcStatusCombined = { "MIL and reporting off", "Type A/no MIL", "Type B/no MIL", "Type C/no MIL", "Not reported/MIL", "Type A/MIL", "Type B/MIL", "Type C/MIL" };
     public static string[] dtcStatus = { "1 Trip/immediately", "2 Trips", "Store only", "Disabled" };
 
     public const ushort TypeText = 0;

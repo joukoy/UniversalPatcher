@@ -611,6 +611,10 @@ namespace UniversalPatcher
             tsrNoFilter.OS = tsr.OS;
             tsrNoFilter.Search = tsr.Search;
             tsrNoFilter.Segment = tsr.Segment;
+            tsrNoFilter.Rows = tsr.Rows;
+            tsrNoFilter.Category = tsr.Category;
+            tsrNoFilter.Label = tsr.Label;
+            tsrNoFilter.Size = tsr.Size;
 
             tableSearchResultNoFilters.Add(tsrNoFilter);
             return tsr;

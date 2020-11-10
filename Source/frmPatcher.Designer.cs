@@ -171,9 +171,10 @@
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editTableSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dTCSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.dTCSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnShowTableData = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1011,6 +1012,7 @@
             // 
             // tabSearchedTables
             // 
+            this.tabSearchedTables.Controls.Add(this.btnShowTableData);
             this.tabSearchedTables.Controls.Add(this.chkTableSearchNoFilters);
             this.tabSearchedTables.Controls.Add(this.btnClearSearchedTables);
             this.tabSearchedTables.Controls.Add(this.btnSaveSearchedTables);
@@ -1025,7 +1027,7 @@
             // chkTableSearchNoFilters
             // 
             this.chkTableSearchNoFilters.AutoSize = true;
-            this.chkTableSearchNoFilters.Location = new System.Drawing.Point(178, 10);
+            this.chkTableSearchNoFilters.Location = new System.Drawing.Point(259, 7);
             this.chkTableSearchNoFilters.Name = "chkTableSearchNoFilters";
             this.chkTableSearchNoFilters.Size = new System.Drawing.Size(122, 17);
             this.chkTableSearchNoFilters.TabIndex = 3;
@@ -1148,7 +1150,7 @@
             this.label14.AutoSize = true;
             this.label14.Location = new System.Drawing.Point(337, 8);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(208, 13);
+            this.label14.Size = new System.Drawing.Size(118, 13);
             this.label14.TabIndex = 8;
             this.label14.Text = "GM DTC codes (BETA)";
             this.label14.Click += new System.EventHandler(this.label14_Click);
@@ -1758,44 +1760,51 @@
             // loadConfigToolStripMenuItem
             // 
             this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
-            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.loadConfigToolStripMenuItem.Text = "Load config";
             this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
             // 
             // setupSegmentsToolStripMenuItem
             // 
             this.setupSegmentsToolStripMenuItem.Name = "setupSegmentsToolStripMenuItem";
-            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.setupSegmentsToolStripMenuItem.Text = "Edit XML";
             this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
             // 
             // autodetectToolStripMenuItem
             // 
             this.autodetectToolStripMenuItem.Name = "autodetectToolStripMenuItem";
-            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.autodetectToolStripMenuItem.Text = "Autodetect";
             this.autodetectToolStripMenuItem.Click += new System.EventHandler(this.autodetectToolStripMenuItem_Click);
             // 
             // stockCVNToolStripMenuItem
             // 
             this.stockCVNToolStripMenuItem.Name = "stockCVNToolStripMenuItem";
-            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.stockCVNToolStripMenuItem.Text = "Stock CVN";
             this.stockCVNToolStripMenuItem.Click += new System.EventHandler(this.stockCVNToolStripMenuItem_Click);
             // 
             // editTableSearchToolStripMenuItem
             // 
             this.editTableSearchToolStripMenuItem.Name = "editTableSearchToolStripMenuItem";
-            this.editTableSearchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.editTableSearchToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.editTableSearchToolStripMenuItem.Text = "Edit Table Search ";
             this.editTableSearchToolStripMenuItem.Click += new System.EventHandler(this.editTableSearchToolStripMenuItem_Click);
             // 
             // fileTypesToolStripMenuItem
             // 
             this.fileTypesToolStripMenuItem.Name = "fileTypesToolStripMenuItem";
-            this.fileTypesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fileTypesToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.fileTypesToolStripMenuItem.Text = "File Types";
             this.fileTypesToolStripMenuItem.Click += new System.EventHandler(this.fileTypesToolStripMenuItem_Click);
+            // 
+            // dTCSearchToolStripMenuItem
+            // 
+            this.dTCSearchToolStripMenuItem.Name = "dTCSearchToolStripMenuItem";
+            this.dTCSearchToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.dTCSearchToolStripMenuItem.Text = "DTC Search";
+            this.dTCSearchToolStripMenuItem.Click += new System.EventHandler(this.dTCSearchToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -1812,12 +1821,15 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // dTCSearchToolStripMenuItem
+            // btnShowTableData
             // 
-            this.dTCSearchToolStripMenuItem.Name = "dTCSearchToolStripMenuItem";
-            this.dTCSearchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.dTCSearchToolStripMenuItem.Text = "DTC Search";
-            this.dTCSearchToolStripMenuItem.Click += new System.EventHandler(this.dTCSearchToolStripMenuItem_Click);
+            this.btnShowTableData.Location = new System.Drawing.Point(166, 4);
+            this.btnShowTableData.Name = "btnShowTableData";
+            this.btnShowTableData.Size = new System.Drawing.Size(75, 23);
+            this.btnShowTableData.TabIndex = 4;
+            this.btnShowTableData.Text = "Show data";
+            this.btnShowTableData.UseVisualStyleBackColor = true;
+            this.btnShowTableData.Click += new System.EventHandler(this.btnShowTableData_Click);
             // 
             // FrmPatcher
             // 
@@ -2033,5 +2045,6 @@
         private System.Windows.Forms.Button btnExportXdf;
         private System.Windows.Forms.Button btnSetDTC;
         private System.Windows.Forms.ToolStripMenuItem dTCSearchToolStripMenuItem;
+        private System.Windows.Forms.Button btnShowTableData;
     }
 }

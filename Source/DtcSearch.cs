@@ -449,7 +449,7 @@ namespace UniversalPatcher
                         dtc.StatusAddr = addr2.ToString("X8");
                         //dtc.Status = PCM.buf[addr2];
                         byte statusByte = PCM.buf[addr2];
-                        if (statusByte > 4)
+                        if (statusByte > 3)
                             dtc.MilStatus = 1;
                         else
                             dtc.MilStatus = 0;
