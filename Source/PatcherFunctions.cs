@@ -723,6 +723,10 @@ public const short CSMethod_None = 0;
                         cvnMismatch = false; //Found from referencelist, no mismatch
 						retVal = "[stock]";
                     }
+                    else
+                    {
+                        Debug.WriteLine("Byte swapped CVN doesn't match: " + SwapBytes(refShort).ToString("X") + " <> " + cvnInt.ToString("X"));
+                    }
                     break;
                 }
             }
