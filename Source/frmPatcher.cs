@@ -2777,9 +2777,7 @@ namespace UniversalPatcher
                 LoggerBold("File not found: " + FileName);
                 return;
             }
-            StreamReader sr = new StreamReader(FileName);
-            string templateTxt = sr.ReadToEnd();
-            sr.Close();
+            string templateTxt = ReadTextFile(FileName);
 
             FileName = SelectSaveFile("XDF files (*.xdf)|*.xdf|ALL files (*.*)|*.*", basefile.OS + "-dtconly.xdf");
             if (FileName.Length == 0)
@@ -2923,6 +2921,182 @@ namespace UniversalPatcher
             frmEX.LoadTableData();
             frmEX.Show();
             //dataGridSearchedTables.Columns[""]
+        }
+
+        private void btnExportXDF2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string tableRows = "";
+                String tableText = "";
+                string templateTxt = "";
+                int lastCategory = 0;
+                int dtcCategory = 0;
+                string fName = Path.Combine(Application.StartupPath, "Templates", "xdfheader.txt");
+                string xdfText = ReadTextFile(fName);
+                xdfText = xdfText.Replace("REPLACE-TIMESTAMP", DateTime.Today.ToString("MM/dd/yyyy H:mm"));
+                xdfText = xdfText.Replace("REPLACE-OSID", basefile.OS);
+                xdfText = xdfText.Replace("REPLACE-BINSIZE", basefile.fsize.ToString("X"));
+                for (int s=0; s<basefile.segmentinfos.Length; s++)
+                {                    
+                    tableText += Environment.NewLine + "     <CATEGORY index = \"0x" + s.ToString("X") + "\" name = \"" + basefile.segmentinfos[s].Name + "\" />" + Environment.NewLine ;
+                    lastCategory = s;
+                }
+                dtcCategory = lastCategory + 1;
+                tableText += Environment.NewLine + "     <CATEGORY index = \"0x" + dtcCategory.ToString("X") + "\" name = \"DTC\" />" + Environment.NewLine;
+                lastCategory = dtcCategory + 1;
+                tableText += Environment.NewLine + "     <CATEGORY index = \"0x" + lastCategory.ToString("X") + "\" name = \"Other\" />" + Environment.NewLine;
+                xdfText = xdfText.Replace("REPLACE-CATEGORYNAME", tableText);
+
+                fName = Path.Combine(Application.StartupPath, "Templates", basefile.xmlFile + "-checksum.txt");
+                xdfText += ReadTextFile(fName);
+
+                if (chkExportXdfDTC.Checked)
+                {
+                    //Generate DTC Status table:
+                    fName = Path.Combine(Application.StartupPath, "Templates", "xdftable.txt");
+                    templateTxt = ReadTextFile(fName);
+                    tableText = templateTxt.Replace("REPLACE-TABLETITLE", "DTC Codes");
+                    tableText = tableText.Replace("REPLACE-TABLEID", "1E2E");
+                    tableText = tableText.Replace("REPLACE-ROWCOUNT", dtcCodes.Count.ToString());
+                    tableText = tableText.Replace("REPLACE-TABLEADDRESS", dtcCodes[0].statusAddrInt.ToString("X"));
+                    if (dtcCombined)
+                    {
+                        tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "00 MIL and reporting off&#013;&#010;01 type A/no mil&#013;&#010;02 type B/no mil&#013;&#010;03 type C/no mil&#013;&#010;04 not reported/mil &#013;&#010;05 type A/mil &#013;&#010;06 type B/mil &#013;&#010;07 type c/mil");
+                        tableText = tableText.Replace("REPLACE-MINVALUE", "0");
+                        tableText = tableText.Replace("REPLACE-MAXVALUE", "7");
+                    }
+                    else
+                    {
+                        tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "0 = 1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY)&#013;&#010;1 = 2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles)&#013;&#010;2 = Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC)&#013;&#010;3 = Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)");
+                        tableText = tableText.Replace("REPLACE-MINVALUE", "0");
+                        tableText = tableText.Replace("REPLACE-MAXVALUE", "3");
+
+                    }
+                    for (int d = 0; d < dtcCodes.Count; d++)
+                    {
+                        tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + dtcCodes[d].Code + "\" />" + Environment.NewLine;
+                    }
+                    tableText = tableText.Replace("REPLACE-TABLEROWS", tableRows);
+                    tableText = tableText.Replace("REPLACE-CATEGORY", (dtcCategory + 1).ToString());
+                    xdfText += tableText;       //Add generated table to end of xdfText
+
+                    if (!dtcCombined)
+                    {
+                        //Create another table for MIL codes
+                        tableText = templateTxt.Replace("REPLACE-TABLETITLE", "DTC MIL"); //Yes, use templatetext (New table
+                        tableText = tableText.Replace("REPLACE-TABLEID", "1654");
+                        tableText = tableText.Replace("REPLACE-ROWCOUNT", dtcCodes.Count.ToString());
+                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", dtcCodes[0].milAddrInt.ToString("X"));
+                        tableText = tableText.Replace("REPLACE-TABLEROWS", tableRows);
+                        tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "0 = No MIL (Lamp always off)&#013;&#010;1 = MIL (Lamp may be commanded on by PCM)");
+                        tableText = tableText.Replace("REPLACE-CATEGORY", (dtcCategory + 1 ).ToString());
+                        xdfText += tableText;       //Add generated table to end of xdfText
+                    }
+
+                }
+
+                //Add OS ID:
+                fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
+                templateTxt = ReadTextFile(fName);
+                tableText = templateTxt.Replace("REPLACE-TABLEID", "32ED");
+                tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "DON&apos;T MODIFY");
+                tableText = tableText.Replace("REPLACE-TABLETITLE", "OS ID - Don&apos;t modify, must match XDF!");
+                tableText = tableText.Replace("REPLACE-BITS", "32");
+                tableText = tableText.Replace("REPLACE-MINVALUE", basefile.OS);
+                tableText = tableText.Replace("REPLACE-MAXVALUE", basefile.OS);
+                tableText = tableText.Replace("REPLACE-TABLEADDRESS", basefile.binfile[basefile.OSSegment].PNaddr.Address.ToString("X"));
+                tableText = tableText.Replace("REPLACE-CATEGORY", (basefile.OSSegment + 1).ToString("X"));
+                xdfText += tableText;
+
+                if(chkExportXdfTables.Checked)
+                {
+                    fName = Path.Combine(Application.StartupPath, "Templates", "xdftable.txt");
+                    templateTxt = ReadTextFile(fName);
+                    for (int t=0; t<tableSearchResult.Count;t++)
+                    {
+                        //Add all tables
+                        if (tableSearchResult[t].Rows > 0)
+                        {
+                            if (tableSearchResult[t].Label != null && tableSearchResult[t].Label.Length > 1)
+                                tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableSearchResult[t].Label);
+                            else
+                                tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableSearchResult[t].Address);
+
+                            for (int s = 0; s < basefile.segmentinfos.Length; s++)
+                            {
+                                if (basefile.segmentinfos[s].Name == tableSearchResult[t].Segment)
+                                {
+                                    tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
+                                    break;
+                                }
+                            }
+                            tableText = tableText.Replace("REPLACE-TABLEID", tableSearchResult[t].Address);
+                            tableText = tableText.Replace("REPLACE-ROWCOUNT", tableSearchResult[t].Rows.ToString());
+                            tableText = tableText.Replace("REPLACE-TABLEADDRESS", tableSearchResult[t].Address);
+                            tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
+                            tableText = tableText.Replace("REPLACE-MINVALUE", "0");
+                            tableText = tableText.Replace("REPLACE-MAXVALUE", "255");
+                            tableRows = "";
+                            for (int d = 0; d < tableSearchResult[t].Rows; d++)
+                            {
+                                tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />" + Environment.NewLine;
+                            }
+                            tableText = tableText.Replace("REPLACE-TABLEROWS", tableRows);
+                            xdfText += tableText;       //Add generated table to end of xdfText
+                        }
+                    }
+                    fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
+                    templateTxt = ReadTextFile(fName);
+                    for (int t = 0; t < tableSearchResult.Count; t++)
+                    {
+                        //Add all constants
+                        if (tableSearchResult[t].Rows == 0)
+                        {
+                            if (tableSearchResult[t].Label != null && tableSearchResult[t].Label.Length > 1)
+                                tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableSearchResult[t].Label);
+                            else
+                                tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableSearchResult[t].Address);
+                            for (int s = 0; s < basefile.segmentinfos.Length; s++)
+                            {
+                                if (basefile.segmentinfos[s].Name == tableSearchResult[t].Segment)
+                                {
+                                    tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
+                                    break;
+                                }
+                            }
+                            tableText = tableText.Replace("REPLACE-TABLEID", tableSearchResult[t].Address);
+                            tableText = tableText.Replace("REPLACE-TABLEADDRESS", tableSearchResult[t].Address);
+                            tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
+                            tableText = tableText.Replace("REPLACE-BITS", "8");
+                            tableText = tableText.Replace("REPLACE-MINVALUE", "0");
+                            tableText = tableText.Replace("REPLACE-MAXVALUE", "255");
+                            xdfText += tableText;       //Add generated table to end of xdfText
+                        }
+                    }
+                }
+
+                xdfText += "</XDFFORMAT>" + Environment.NewLine;
+                string fileName = SelectSaveFile("XDF Files(*.xdf)|*.xdf|ALL Files (*.*)|*.*",basefile.OS + "-generated.xdf");
+                if (fileName.Length == 0)
+                    return;
+                Logger("Writing to file: " + Path.GetFileName(fileName), false);
+                WriteTextFile(fileName, xdfText);
+                Logger(" [OK]");
+
+
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold ("Export XDF, line " + line + ": " + ex.Message);
+            }
+            return;
+
         }
     }
 }

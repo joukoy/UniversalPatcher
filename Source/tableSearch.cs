@@ -730,7 +730,8 @@ namespace UniversalPatcher
                                                 bool duplicate = false;
                                                 for (int ts = 0; ts < thisFileTables.Count; ts++)
                                                 {
-                                                    if (thisFileTables[ts].Data == tsr.Data && thisFileTables[ts].Name == tsr.Name && thisFileTables[ts].Search == tsr.Search)
+                                                    //if (thisFileTables[ts].Data == tsr.Data && thisFileTables[ts].Name == tsr.Name && thisFileTables[ts].Search == tsr.Search)
+                                                    if (thisFileTables[ts].AddressInt == tsr.AddressInt && thisFileTables[ts].Rows == tsr.Rows)
                                                     {
                                                         thisFileTables[ts].hitCount++;
                                                         duplicate = true;

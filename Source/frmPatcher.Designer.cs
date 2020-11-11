@@ -99,6 +99,7 @@
             this.btnClearBadchkFile = new System.Windows.Forms.Button();
             this.dataBadChkFile = new System.Windows.Forms.DataGridView();
             this.tabSearchedTables = new System.Windows.Forms.TabPage();
+            this.btnShowTableData = new System.Windows.Forms.Button();
             this.chkTableSearchNoFilters = new System.Windows.Forms.CheckBox();
             this.btnClearSearchedTables = new System.Windows.Forms.Button();
             this.btnSaveSearchedTables = new System.Windows.Forms.Button();
@@ -174,7 +175,10 @@
             this.dTCSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnShowTableData = new System.Windows.Forms.Button();
+            this.tabExportXDF = new System.Windows.Forms.TabPage();
+            this.chkExportXdfDTC = new System.Windows.Forms.CheckBox();
+            this.chkExportXdfTables = new System.Windows.Forms.CheckBox();
+            this.btnExportXDF2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -205,6 +209,7 @@
             this.tabExtractSegments.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.tabExportXDF.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOrgFile
@@ -1024,6 +1029,16 @@
             this.tabSearchedTables.Text = "Searched Tables";
             this.tabSearchedTables.UseVisualStyleBackColor = true;
             // 
+            // btnShowTableData
+            // 
+            this.btnShowTableData.Location = new System.Drawing.Point(166, 4);
+            this.btnShowTableData.Name = "btnShowTableData";
+            this.btnShowTableData.Size = new System.Drawing.Size(75, 23);
+            this.btnShowTableData.TabIndex = 4;
+            this.btnShowTableData.Text = "Show data";
+            this.btnShowTableData.UseVisualStyleBackColor = true;
+            this.btnShowTableData.Click += new System.EventHandler(this.btnShowTableData_Click);
+            // 
             // chkTableSearchNoFilters
             // 
             this.chkTableSearchNoFilters.AutoSize = true;
@@ -1270,6 +1285,7 @@
             this.tabFunction.Controls.Add(this.tabCreate);
             this.tabFunction.Controls.Add(this.tabExtract);
             this.tabFunction.Controls.Add(this.tabExtractSegments);
+            this.tabFunction.Controls.Add(this.tabExportXDF);
             this.tabFunction.Location = new System.Drawing.Point(2, 60);
             this.tabFunction.Name = "tabFunction";
             this.tabFunction.SelectedIndex = 0;
@@ -1821,15 +1837,49 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // btnShowTableData
+            // tabExportXDF
             // 
-            this.btnShowTableData.Location = new System.Drawing.Point(166, 4);
-            this.btnShowTableData.Name = "btnShowTableData";
-            this.btnShowTableData.Size = new System.Drawing.Size(75, 23);
-            this.btnShowTableData.TabIndex = 4;
-            this.btnShowTableData.Text = "Show data";
-            this.btnShowTableData.UseVisualStyleBackColor = true;
-            this.btnShowTableData.Click += new System.EventHandler(this.btnShowTableData_Click);
+            this.tabExportXDF.Controls.Add(this.btnExportXDF2);
+            this.tabExportXDF.Controls.Add(this.chkExportXdfTables);
+            this.tabExportXDF.Controls.Add(this.chkExportXdfDTC);
+            this.tabExportXDF.Location = new System.Drawing.Point(4, 22);
+            this.tabExportXDF.Name = "tabExportXDF";
+            this.tabExportXDF.Size = new System.Drawing.Size(779, 103);
+            this.tabExportXDF.TabIndex = 5;
+            this.tabExportXDF.Text = "Export XDF";
+            this.tabExportXDF.UseVisualStyleBackColor = true;
+            // 
+            // chkExportXdfDTC
+            // 
+            this.chkExportXdfDTC.AutoSize = true;
+            this.chkExportXdfDTC.Checked = true;
+            this.chkExportXdfDTC.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkExportXdfDTC.Location = new System.Drawing.Point(6, 3);
+            this.chkExportXdfDTC.Name = "chkExportXdfDTC";
+            this.chkExportXdfDTC.Size = new System.Drawing.Size(114, 17);
+            this.chkExportXdfDTC.TabIndex = 0;
+            this.chkExportXdfDTC.Text = "Export DTC Codes";
+            this.chkExportXdfDTC.UseVisualStyleBackColor = true;
+            // 
+            // chkExportXdfTables
+            // 
+            this.chkExportXdfTables.AutoSize = true;
+            this.chkExportXdfTables.Location = new System.Drawing.Point(6, 26);
+            this.chkExportXdfTables.Name = "chkExportXdfTables";
+            this.chkExportXdfTables.Size = new System.Drawing.Size(140, 17);
+            this.chkExportXdfTables.TabIndex = 1;
+            this.chkExportXdfTables.Text = "Export Searched Tables";
+            this.chkExportXdfTables.UseVisualStyleBackColor = true;
+            // 
+            // btnExportXDF2
+            // 
+            this.btnExportXDF2.Location = new System.Drawing.Point(7, 57);
+            this.btnExportXDF2.Name = "btnExportXDF2";
+            this.btnExportXDF2.Size = new System.Drawing.Size(75, 23);
+            this.btnExportXDF2.TabIndex = 2;
+            this.btnExportXDF2.Text = "Export XDF";
+            this.btnExportXDF2.UseVisualStyleBackColor = true;
+            this.btnExportXDF2.Click += new System.EventHandler(this.btnExportXDF2_Click);
             // 
             // FrmPatcher
             // 
@@ -1893,6 +1943,8 @@
             this.groupBox2.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.tabExportXDF.ResumeLayout(false);
+            this.tabExportXDF.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2046,5 +2098,9 @@
         private System.Windows.Forms.Button btnSetDTC;
         private System.Windows.Forms.ToolStripMenuItem dTCSearchToolStripMenuItem;
         private System.Windows.Forms.Button btnShowTableData;
+        private System.Windows.Forms.TabPage tabExportXDF;
+        private System.Windows.Forms.CheckBox chkExportXdfTables;
+        private System.Windows.Forms.CheckBox chkExportXdfDTC;
+        private System.Windows.Forms.Button btnExportXDF2;
     }
 }

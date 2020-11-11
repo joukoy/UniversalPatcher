@@ -1,0 +1,11 @@
+  <XDFCHECKSUM uniqueid="0x776D">
+    <title>P01/P59  Checksum</title>
+    <REGION>
+      <pluginmoduleid>a8d1fdd7-d985-4b09-9979-2735b69cc9a6</pluginmoduleid>
+      <datastart>0x0</datastart>
+      <dataend>0x8000</dataend>
+      <storeaddress>0x0</storeaddress>
+      <calculationmethod>0x0</calculationmethod>
+    </REGION>
+  </XDFCHECKSUM>
+

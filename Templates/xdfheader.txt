@@ -1,0 +1,11 @@
+<!-- Written REPLACE-TIMESTAMP -->
+<XDFFORMAT version="1.60">
+  <XDFHEADER>
+    <flags>0x1</flags>
+    <deftitle>REPLACE-OSID</deftitle>
+    <description></description>
+    <BASEOFFSET offset="0" subtract="0" />
+    <DEFAULTS datasizeinbits="8" sigdigits="2" outputtype="1" signed="0" lsbfirst="0" float="0" />
+    <REGION type="0xFFFFFFFF" startaddress="0x0" size="0xREPLACE-BINSIZE" regionflags="0x0" name="Binary File" desc="This region describes the bin file edited by this XDF" />
+REPLACE-CATEGORYNAME
+  </XDFHEADER>

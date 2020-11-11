@@ -304,6 +304,7 @@ public const short CSMethod_None = 0;
         }
         return objResult;
     }
+
     public static byte[] ReadBin(string FileName, uint FileOffset, uint Length)
     {
 
@@ -358,6 +359,23 @@ public const short CSMethod_None = 0;
                 }
                 writer.Close();
             }
+        }
+
+    }
+
+    public static string ReadTextFile(string fileName)
+    {
+        StreamReader sr = new StreamReader(fileName);
+        string fileContent = sr.ReadToEnd();
+        sr.Close();
+        return fileContent;
+    }
+
+    public static void WriteTextFile(string fileName, string fileContent)
+    {
+        using (StreamWriter writetext = new StreamWriter(fileName))
+        {
+            writetext.Write(fileContent);
         }
 
     }
@@ -555,6 +573,8 @@ public const short CSMethod_None = 0;
             saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
         else if (Filter.Contains("BIN"))
             saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
+        else if (Filter.Contains("XDF"))
+            saveFileDialog.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
 
         if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {
