@@ -784,6 +784,11 @@ namespace UniversalPatcher
                 Debug.WriteLine("Tablesearch: " + line + ": " + ex.Message);
             }
         }
+        public string searchE38Tables(PcmFile PCM)
+        {
+            //Search 
+            return "";
+        }
         private void crossSearchTables(List<TableSearchResult> thisFileTables, PcmFile PCM, int crossVariation)
         {
             try

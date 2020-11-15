@@ -504,8 +504,11 @@ namespace UniversalPatcher
                 dtcCodes = new List<dtcCode>();
                 DtcSearch DS = new DtcSearch();
                 string dtcSearchResult = "";
-                dtcSearchResult=DS.searchDtc(PCM);
-                Logger(dtcSearchResult);
+                if (chkSearchDTC.Checked)
+                {
+                    dtcSearchResult = DS.searchDtc(PCM);
+                    Logger(dtcSearchResult);
+                }
                 refreshDtcList();
             }
             catch (Exception ex)

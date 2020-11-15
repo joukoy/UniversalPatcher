@@ -311,25 +311,21 @@ namespace UniversalPatcher
                 }
 
                 //Get codes from OS segment:
-                string searchStr = "00 00 00 10 00 11";
-                uint extraCode = 0;
-                uint extraStatus = 0;
-
+                string searchStr = "3D 80 * * 39 8C * * 7D 7B DA 14 7C 8C 5A 2E 80 BD";
+                uint opCodeAddr = uint.MaxValue;
+                uint tableStart = 0;
                 for (int b = 0; b < PCM.binfile[PCM.OSSegment].SegmentBlocks.Count; b++)
                 {
-                    uint startAddr = searchBytes(PCM, searchStr, PCM.binfile[PCM.OSSegment].SegmentBlocks[b].Start, PCM.binfile[PCM.OSSegment].SegmentBlocks[b].End);
-                    if (startAddr < uint.MaxValue)
+                    opCodeAddr = searchBytes(PCM, searchStr, PCM.binfile[PCM.OSSegment].SegmentBlocks[b].Start, PCM.binfile[PCM.OSSegment].SegmentBlocks[b].End);
+                    if (opCodeAddr < uint.MaxValue)
                     {
-                        startAddr += 2;
-                        searchStr = "94 21 ff";
-                        uint endAddr = searchBytes(PCM, searchStr, startAddr + 6, PCM.binfile[PCM.OSSegment].SegmentBlocks[b].End);
-                        if (endAddr == uint.MaxValue)
-                        {
-                            return "DTC Search: SearchString: " + searchStr + " not found";
-                        }
-                        endAddr -= 1;
+                        ushort highBytes = BEToUint16(PCM.buf, (uint)(opCodeAddr + 2));
+                        ushort lowBytes = BEToUint16(PCM.buf, (uint)(opCodeAddr + 6));
+                        tableStart = (uint)(highBytes << 16 | lowBytes);
+                        ushort tmp = (ushort)(opCodeAddr & 0xffff);
+                        if (tmp > 0x5000) tableStart -= 0x10000; //Some kind of address offset 
                         bool dCodes = false;
-                        for (uint addr = startAddr; addr < endAddr; addr += 2)
+                        for (uint addr = tableStart; addr < PCM.fsize; addr += 2)
                         {
                             dtcCode dtc = new dtcCode();
                             dtc.codeAddrInt = addr;
@@ -339,7 +335,6 @@ namespace UniversalPatcher
                             string codeTmp = dtc.codeInt.ToString("X4");
                             if (dCodes && !codeTmp.StartsWith("D"))
                             {
-                                extraCode = endAddr - addr;
                                 break;
                             }
                             if (codeTmp.StartsWith("D"))
@@ -362,79 +357,16 @@ namespace UniversalPatcher
                 }
 
                 int dtcCount = dtcCodes.Count;
-                uint tableStart = 0;
-                for (int b = 0; b < PCM.binfile[PCM.diagSegment].SegmentBlocks.Count; b++)
-                {
-                    //Search table which is exactly correct size & includes values 0-7
-                    for (uint addr = PCM.binfile[PCM.diagSegment].SegmentBlocks[b].Start; addr < PCM.binfile[PCM.diagSegment].SegmentBlocks[b].End; addr++)
-                    {
-                        bool valuesOK = true;
-                        if (PCM.buf[addr] == 0xFF && PCM.buf[addr + 1] == 0 && PCM.buf[addr + 2] <= 7 && PCM.buf[addr + dtcCount + 3] == 0xFF) //DTC code status is 0-7, FF after table 
-                        {
-                            valuesOK = true;
-                            for (uint a = addr + 2; a < (addr + dtcCount + 2); a++)
-                            {
-                                if (PCM.buf[a] > 7)
-                                {
-                                    //This is not DTC table, it can only have values 0-7
-                                    valuesOK = false;
-                                    break;
-                                }
-                            }
-                            if (valuesOK)
-                            {
-                                //We found the table!
-                                tableStart = addr + 2;
-                                Debug.WriteLine("Found DTC code status table (exact size) at address:" + tableStart.ToString("X8"));
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (tableStart == 0) //Not found yet
-                {
-                    for (int b = 0; b < PCM.binfile[PCM.diagSegment].SegmentBlocks.Count; b++)
-                    {
-                        //Search table which is bigger than DTC code list & includes values 0-7
-                        for (uint addr = PCM.binfile[PCM.diagSegment].SegmentBlocks[b].Start; addr < PCM.binfile[PCM.diagSegment].SegmentBlocks[b].End; addr++)
-                        {
-                            bool valuesOK = true;
-                            if (PCM.buf[addr] == 0xFF && PCM.buf[addr + 1] == 0 && PCM.buf[addr + 2] <= 7) //DTC code status is 0-7, FF after table 
-                            {
-                                valuesOK = true;
-                                uint a;
-                                for (a = addr + 2; a < (addr + dtcCount + 2); a++)
-                                {
-                                    if (PCM.buf[a] > 7)
-                                    {
-                                        //This is not DTC table, it can only have values 0-7
-                                        valuesOK = false;
-                                        break;
-                                    }
-                                }
-                                if (valuesOK)
-                                {
-                                    //We found the table!
-                                    for (uint a2 = a; b < PCM.binfile[PCM.diagSegment].SegmentBlocks[b].End; a2++)
-                                    {
-                                        if (PCM.buf[a2] == 0xFF)
-                                        {
-                                            extraStatus = a2 - a;
-                                            break;
-                                        }
-                                    }
-                                    tableStart = addr + 2;
-                                    Debug.WriteLine("Found DTC status table (NOT exact size) at address:" + tableStart.ToString("X8"));
-                                    break;
-                                }
-                            }
-                        }
 
-                    }
-
+                //Search by opcode:
+                opCodeAddr = searchBytes(PCM, "3C A0 * * 38 A5 * * 7D 85 50", 0, PCM.fsize);
+                if (opCodeAddr < uint.MaxValue)
+                {
+                    ushort highBytes = BEToUint16(PCM.buf, (uint)(opCodeAddr + 2));
+                    ushort lowBytes = BEToUint16(PCM.buf, (uint)(opCodeAddr + 6));
+                    tableStart = (uint)(highBytes << 16 | lowBytes);
                 }
-                Debug.WriteLine("DTC Code table has " + extraCode.ToString() + " extra bytes");
-                Debug.WriteLine("DTC status table has " + extraStatus.ToString() + " extra bytes");
+
                 if (tableStart > 0)
                 {
                     int dtcNr = 0;
