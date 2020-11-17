@@ -3018,6 +3018,8 @@ namespace UniversalPatcher
                         tableText = tableText.Replace("REPLACE-TABLEROWS", tableRows);
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "0 = No MIL (Lamp always off)&#013;&#010;1 = MIL (Lamp may be commanded on by PCM)");
                         tableText = tableText.Replace("REPLACE-CATEGORY", (dtcCategory + 1 ).ToString());
+                        tableText = tableText.Replace("REPLACE-MINVALUE", "0");
+                        tableText = tableText.Replace("REPLACE-MAXVALUE", "1");
                         xdfText += tableText;       //Add generated table to end of xdfText
                     }
 
