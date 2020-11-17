@@ -1229,6 +1229,7 @@
             // 
             // dataGridTableSeek
             // 
+            this.dataGridTableSeek.AllowUserToAddRows = false;
             this.dataGridTableSeek.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -1902,56 +1903,56 @@
             // loadConfigToolStripMenuItem
             // 
             this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
-            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.loadConfigToolStripMenuItem.Text = "Load config";
             this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
             // 
             // setupSegmentsToolStripMenuItem
             // 
             this.setupSegmentsToolStripMenuItem.Name = "setupSegmentsToolStripMenuItem";
-            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.setupSegmentsToolStripMenuItem.Text = "Edit XML";
             this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
             // 
             // autodetectToolStripMenuItem
             // 
             this.autodetectToolStripMenuItem.Name = "autodetectToolStripMenuItem";
-            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.autodetectToolStripMenuItem.Text = "Autodetect";
             this.autodetectToolStripMenuItem.Click += new System.EventHandler(this.autodetectToolStripMenuItem_Click);
             // 
             // stockCVNToolStripMenuItem
             // 
             this.stockCVNToolStripMenuItem.Name = "stockCVNToolStripMenuItem";
-            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.stockCVNToolStripMenuItem.Text = "Stock CVN";
             this.stockCVNToolStripMenuItem.Click += new System.EventHandler(this.stockCVNToolStripMenuItem_Click);
             // 
             // editTableSearchToolStripMenuItem
             // 
             this.editTableSearchToolStripMenuItem.Name = "editTableSearchToolStripMenuItem";
-            this.editTableSearchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.editTableSearchToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.editTableSearchToolStripMenuItem.Text = "Table Search ";
             this.editTableSearchToolStripMenuItem.Click += new System.EventHandler(this.editTableSearchToolStripMenuItem_Click);
             // 
             // fileTypesToolStripMenuItem
             // 
             this.fileTypesToolStripMenuItem.Name = "fileTypesToolStripMenuItem";
-            this.fileTypesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fileTypesToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.fileTypesToolStripMenuItem.Text = "File Types";
             this.fileTypesToolStripMenuItem.Click += new System.EventHandler(this.fileTypesToolStripMenuItem_Click);
             // 
             // dTCSearchToolStripMenuItem
             // 
             this.dTCSearchToolStripMenuItem.Name = "dTCSearchToolStripMenuItem";
-            this.dTCSearchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dTCSearchToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.dTCSearchToolStripMenuItem.Text = "DTC Search";
             this.dTCSearchToolStripMenuItem.Click += new System.EventHandler(this.dTCSearchToolStripMenuItem_Click);
             // 
             // tableSeekToolStripMenuItem
             // 
             this.tableSeekToolStripMenuItem.Name = "tableSeekToolStripMenuItem";
-            this.tableSeekToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tableSeekToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.tableSeekToolStripMenuItem.Text = "TableSeek";
             this.tableSeekToolStripMenuItem.Click += new System.EventHandler(this.tableSeekToolStripMenuItem_Click);
             // 

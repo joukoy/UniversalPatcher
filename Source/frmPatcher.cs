@@ -166,21 +166,6 @@ namespace UniversalPatcher
             }
 
 
-            string tableSeekFile = Path.Combine(Application.StartupPath, "XML", "TableSeek.xml");
-            if (File.Exists(tableSeekFile))
-            {
-                Debug.WriteLine("Loading TableSeek.xml");
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSeek>));
-                System.IO.StreamReader file = new System.IO.StreamReader(tableSeekFile);
-                tableSeeks = (List<TableSeek>)reader.Deserialize(file);
-                file.Close();
-
-            }
-            else
-            {
-                tableSeeks = new List<TableSeek>();
-            }
-
             listCSAddresses.Enabled = true;
             listCSAddresses.Clear();
             listCSAddresses.View = View.Details;
@@ -3139,6 +3124,9 @@ namespace UniversalPatcher
                             tableText = tableText.Replace("REPLACE-ROWCOUNT", tableSeeks[id].Rows.ToString());
                             tableText = tableText.Replace("REPLACE-COLCOUNT", tableSeeks[id].Columns.ToString());
                             tableText = tableText.Replace("REPLACE-MATH", tableSeeks[id].Math);
+                            tableText = tableText.Replace("REPLACE-BITS", tableSeeks[id].Bits.ToString());
+                            tableText = tableText.Replace("REPLACE-DECIMALS", tableSeeks[id].Decimals.ToString());
+                            tableText = tableText.Replace("REPLACE-OUTPUTTYPE", tableSeeks[id].DataType.ToString());
                             tableText = tableText.Replace("REPLACE-TABLEADDRESS", foundTables[t].Address);
                             tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
                             tableText = tableText.Replace("REPLACE-MINVALUE", "0");
@@ -3233,8 +3221,13 @@ namespace UniversalPatcher
 
         private void tableSeekToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (XMLFile == null)
+            {
+                Logger("No file/XML selected");
+                return;
+            }
             frmEditXML frmE = new frmEditXML();
-            frmE.LoadTableSeek();
+            frmE.LoadTableSeek(Path.Combine(Application.StartupPath, "XML", "TableSeek-" + basefile.xmlFile + ".xml") );
             frmE.Show();
 
         }

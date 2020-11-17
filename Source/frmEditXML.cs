@@ -21,6 +21,7 @@ namespace UniversalPatcher
 
         private BindingSource bindingSource = new BindingSource();
 
+        string fileName = "";
         public void LoadRules()
         {
             bindingSource.DataSource = null;
@@ -45,14 +46,17 @@ namespace UniversalPatcher
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
         }
-        public void LoadTableSeek()
+        public void LoadTableSeek(string fname)
         {
+            fileName = fname;
             this.Text = "Edit Table Seek config";
             if (tableSeeks == null) tableSeeks = new List<TableSeek>();
             bindingSource.DataSource = null;
             bindingSource.DataSource = tableSeeks;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
+            dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
+            dataGridView1.Columns["ConditionalOffset"].ToolTipText = "If set, and Opcode Address last 2 bytes > 0x5000, Offset = -10000";            
         }
 
         public void LoadTableData()
@@ -75,9 +79,17 @@ namespace UniversalPatcher
         }
 
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-
+            if ((e.ColumnIndex == this.dataGridView1.Columns["Rating"].Index) && e.Value != null)
+            {
+                DataGridViewCell cell =
+                    this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                if (e.Value.Equals("DataType"))
+                {
+                    cell.ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
+                }
+            }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -122,9 +134,8 @@ namespace UniversalPatcher
                 }
                 else if (this.Text.Contains("Seek"))
                 {
-                    Logger("Saving file TableSeek.xml", false);
-                    string FileName = Path.Combine(Application.StartupPath, "XML", "tableseek.xml");
-                    using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                    Logger("Saving file " + fileName, false);
+                    using (FileStream stream = new FileStream(fileName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSeek>));
                         writer.Serialize(stream, tableSeeks);
@@ -239,6 +250,16 @@ namespace UniversalPatcher
 
         private void txtResult_TextChanged(object sender, EventArgs e)
         {
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if ((e.ColumnIndex == this.dataGridView1.Columns["DataType"].Index) )
+            {
+                DataGridViewCell cell = this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                 cell.ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
+            }
 
         }
     }
