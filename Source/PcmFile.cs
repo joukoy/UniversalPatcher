@@ -1169,5 +1169,39 @@ namespace UniversalPatcher
             return LEX;
         }
 
+        public string GetSegmentName(uint addr)
+        {
+            string retVal = "";
+            for (int s = 0; s<segmentinfos.Length; s++)
+            {
+                for (int b=0; b< binfile[s].SegmentBlocks.Count; b++)
+                {
+                    if (addr >= binfile[s].SegmentBlocks[b].Start && addr <= binfile[s].SegmentBlocks[b].End)
+                    {
+                        retVal = segmentinfos[s].Name;
+                        return retVal;
+                    }
+                }
+            }
+            return retVal;
+        }
+
+        public int GetSegmentNumber(uint addr)
+        {
+            int retVal = -1;
+            for (int s = 0; s < segmentinfos.Length; s++)
+            {
+                for (int b = 0; b < binfile[s].SegmentBlocks.Count; b++)
+                {
+                    if (addr >= binfile[s].SegmentBlocks[b].Start && addr <= binfile[s].SegmentBlocks[b].End)
+                    {
+                        retVal = s;
+                        return retVal;
+                    }
+                }
+            }
+            return retVal;
+        }
+
     }
 }

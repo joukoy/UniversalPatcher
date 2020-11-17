@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<ArrayOfTableSeek xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TableSeek>
+    <Name>MBT spark</Name>
+    <XmlFile>p01-p59</XmlFile>
+    <SearchStr>74 14 20 7c * * * * 4e b9 * * * * 36</SearchStr>
+    <Rows>15</Rows>
+    <Columns>20</Columns>
+    <RowHeaders>0.08,0.16,0.24,0.32,0.40,0.48,0.56,0.64,0.72,0.80,0.88,0.96,1.04,1.12,1.20</RowHeaders>
+    <ColHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000</ColHeaders>
+    <Math>X*0.021978</Math>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+  </TableSeek>
+</ArrayOfTableSeek>

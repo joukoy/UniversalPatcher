@@ -115,6 +115,9 @@
             this.btnClearDTC = new System.Windows.Forms.Button();
             this.btnSaveCsvDTC = new System.Windows.Forms.Button();
             this.dataGridDTC = new System.Windows.Forms.DataGridView();
+            this.tabTableSeek = new System.Windows.Forms.TabPage();
+            this.dataGridTableSeek = new System.Windows.Forms.DataGridView();
+            this.btnClearTableSeek = new System.Windows.Forms.Button();
             this.chkExtra = new System.Windows.Forms.CheckBox();
             this.chkCS2 = new System.Windows.Forms.CheckBox();
             this.chkCS1 = new System.Windows.Forms.CheckBox();
@@ -129,6 +132,7 @@
             this.btnCheckSums = new System.Windows.Forms.Button();
             this.btnApplypatch = new System.Windows.Forms.Button();
             this.tabFileinfo = new System.Windows.Forms.TabPage();
+            this.chkTableSeek = new System.Windows.Forms.CheckBox();
             this.chkSearchDTC = new System.Windows.Forms.CheckBox();
             this.chkCustomTableSearch = new System.Windows.Forms.CheckBox();
             this.btnCustomFindAll = new System.Windows.Forms.Button();
@@ -166,6 +170,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.btnExtractSegments = new System.Windows.Forms.Button();
             this.tabExportXDF = new System.Windows.Forms.TabPage();
+            this.chkXdfExportTableSeek = new System.Windows.Forms.CheckBox();
             this.btnExportXDF2 = new System.Windows.Forms.Button();
             this.chkExportXdfTables = new System.Windows.Forms.CheckBox();
             this.chkExportXdfDTC = new System.Windows.Forms.CheckBox();
@@ -178,6 +183,7 @@
             this.editTableSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dTCSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
@@ -201,6 +207,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridPIDlist)).BeginInit();
             this.tabDTC.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridDTC)).BeginInit();
+            this.tabTableSeek.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridTableSeek)).BeginInit();
             this.tabFunction.SuspendLayout();
             this.tabApply.SuspendLayout();
             this.tabFileinfo.SuspendLayout();
@@ -391,6 +399,7 @@
             this.tabControl1.Controls.Add(this.tabSearchedTables);
             this.tabControl1.Controls.Add(this.tabPIDList);
             this.tabControl1.Controls.Add(this.tabDTC);
+            this.tabControl1.Controls.Add(this.tabTableSeek);
             this.tabControl1.Location = new System.Drawing.Point(0, 191);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -1207,6 +1216,38 @@
             this.dataGridDTC.TabIndex = 5;
             this.dataGridDTC.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridDTC_CellContentDoubleClick);
             // 
+            // tabTableSeek
+            // 
+            this.tabTableSeek.Controls.Add(this.dataGridTableSeek);
+            this.tabTableSeek.Controls.Add(this.btnClearTableSeek);
+            this.tabTableSeek.Location = new System.Drawing.Point(4, 22);
+            this.tabTableSeek.Name = "tabTableSeek";
+            this.tabTableSeek.Size = new System.Drawing.Size(776, 344);
+            this.tabTableSeek.TabIndex = 11;
+            this.tabTableSeek.Text = "Table Seek";
+            this.tabTableSeek.UseVisualStyleBackColor = true;
+            // 
+            // dataGridTableSeek
+            // 
+            this.dataGridTableSeek.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridTableSeek.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridTableSeek.Location = new System.Drawing.Point(-2, 32);
+            this.dataGridTableSeek.Name = "dataGridTableSeek";
+            this.dataGridTableSeek.Size = new System.Drawing.Size(775, 312);
+            this.dataGridTableSeek.TabIndex = 1;
+            // 
+            // btnClearTableSeek
+            // 
+            this.btnClearTableSeek.Location = new System.Drawing.Point(3, 3);
+            this.btnClearTableSeek.Name = "btnClearTableSeek";
+            this.btnClearTableSeek.Size = new System.Drawing.Size(75, 23);
+            this.btnClearTableSeek.TabIndex = 0;
+            this.btnClearTableSeek.Text = "Clear";
+            this.btnClearTableSeek.UseVisualStyleBackColor = true;
+            this.btnClearTableSeek.Click += new System.EventHandler(this.btnClearTableSeek_Click);
+            // 
             // chkExtra
             // 
             this.chkExtra.AutoSize = true;
@@ -1361,6 +1402,7 @@
             // 
             // tabFileinfo
             // 
+            this.tabFileinfo.Controls.Add(this.chkTableSeek);
             this.tabFileinfo.Controls.Add(this.chkSearchDTC);
             this.tabFileinfo.Controls.Add(this.chkCustomTableSearch);
             this.tabFileinfo.Controls.Add(this.btnCustomFindAll);
@@ -1384,6 +1426,18 @@
             this.tabFileinfo.TabIndex = 2;
             this.tabFileinfo.Text = "File info";
             this.tabFileinfo.UseVisualStyleBackColor = true;
+            // 
+            // chkTableSeek
+            // 
+            this.chkTableSeek.AutoSize = true;
+            this.chkTableSeek.Checked = true;
+            this.chkTableSeek.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkTableSeek.Location = new System.Drawing.Point(149, 76);
+            this.chkTableSeek.Name = "chkTableSeek";
+            this.chkTableSeek.Size = new System.Drawing.Size(81, 17);
+            this.chkTableSeek.TabIndex = 188;
+            this.chkTableSeek.Text = "Table Seek";
+            this.chkTableSeek.UseVisualStyleBackColor = true;
             // 
             // chkSearchDTC
             // 
@@ -1764,6 +1818,7 @@
             // 
             // tabExportXDF
             // 
+            this.tabExportXDF.Controls.Add(this.chkXdfExportTableSeek);
             this.tabExportXDF.Controls.Add(this.btnExportXDF2);
             this.tabExportXDF.Controls.Add(this.chkExportXdfTables);
             this.tabExportXDF.Controls.Add(this.chkExportXdfDTC);
@@ -1774,9 +1829,21 @@
             this.tabExportXDF.Text = "Export XDF";
             this.tabExportXDF.UseVisualStyleBackColor = true;
             // 
+            // chkXdfExportTableSeek
+            // 
+            this.chkXdfExportTableSeek.AutoSize = true;
+            this.chkXdfExportTableSeek.Checked = true;
+            this.chkXdfExportTableSeek.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkXdfExportTableSeek.Location = new System.Drawing.Point(6, 49);
+            this.chkXdfExportTableSeek.Name = "chkXdfExportTableSeek";
+            this.chkXdfExportTableSeek.Size = new System.Drawing.Size(114, 17);
+            this.chkXdfExportTableSeek.TabIndex = 3;
+            this.chkXdfExportTableSeek.Text = "Export Table Seek";
+            this.chkXdfExportTableSeek.UseVisualStyleBackColor = true;
+            // 
             // btnExportXDF2
             // 
-            this.btnExportXDF2.Location = new System.Drawing.Point(7, 57);
+            this.btnExportXDF2.Location = new System.Drawing.Point(192, 20);
             this.btnExportXDF2.Name = "btnExportXDF2";
             this.btnExportXDF2.Size = new System.Drawing.Size(75, 23);
             this.btnExportXDF2.TabIndex = 2;
@@ -1787,7 +1854,7 @@
             // chkExportXdfTables
             // 
             this.chkExportXdfTables.AutoSize = true;
-            this.chkExportXdfTables.Location = new System.Drawing.Point(6, 26);
+            this.chkExportXdfTables.Location = new System.Drawing.Point(6, 3);
             this.chkExportXdfTables.Name = "chkExportXdfTables";
             this.chkExportXdfTables.Size = new System.Drawing.Size(140, 17);
             this.chkExportXdfTables.TabIndex = 1;
@@ -1799,7 +1866,7 @@
             this.chkExportXdfDTC.AutoSize = true;
             this.chkExportXdfDTC.Checked = true;
             this.chkExportXdfDTC.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkExportXdfDTC.Location = new System.Drawing.Point(6, 3);
+            this.chkExportXdfDTC.Location = new System.Drawing.Point(6, 26);
             this.chkExportXdfDTC.Name = "chkExportXdfDTC";
             this.chkExportXdfDTC.Size = new System.Drawing.Size(114, 17);
             this.chkExportXdfDTC.TabIndex = 0;
@@ -1826,7 +1893,8 @@
             this.stockCVNToolStripMenuItem,
             this.editTableSearchToolStripMenuItem,
             this.fileTypesToolStripMenuItem,
-            this.dTCSearchToolStripMenuItem});
+            this.dTCSearchToolStripMenuItem,
+            this.tableSeekToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "Settings";
@@ -1834,51 +1902,58 @@
             // loadConfigToolStripMenuItem
             // 
             this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
-            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadConfigToolStripMenuItem.Text = "Load config";
             this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
             // 
             // setupSegmentsToolStripMenuItem
             // 
             this.setupSegmentsToolStripMenuItem.Name = "setupSegmentsToolStripMenuItem";
-            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.setupSegmentsToolStripMenuItem.Text = "Edit XML";
             this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
             // 
             // autodetectToolStripMenuItem
             // 
             this.autodetectToolStripMenuItem.Name = "autodetectToolStripMenuItem";
-            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.autodetectToolStripMenuItem.Text = "Autodetect";
             this.autodetectToolStripMenuItem.Click += new System.EventHandler(this.autodetectToolStripMenuItem_Click);
             // 
             // stockCVNToolStripMenuItem
             // 
             this.stockCVNToolStripMenuItem.Name = "stockCVNToolStripMenuItem";
-            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.stockCVNToolStripMenuItem.Text = "Stock CVN";
             this.stockCVNToolStripMenuItem.Click += new System.EventHandler(this.stockCVNToolStripMenuItem_Click);
             // 
             // editTableSearchToolStripMenuItem
             // 
             this.editTableSearchToolStripMenuItem.Name = "editTableSearchToolStripMenuItem";
-            this.editTableSearchToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.editTableSearchToolStripMenuItem.Text = "Edit Table Search ";
+            this.editTableSearchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.editTableSearchToolStripMenuItem.Text = "Table Search ";
             this.editTableSearchToolStripMenuItem.Click += new System.EventHandler(this.editTableSearchToolStripMenuItem_Click);
             // 
             // fileTypesToolStripMenuItem
             // 
             this.fileTypesToolStripMenuItem.Name = "fileTypesToolStripMenuItem";
-            this.fileTypesToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.fileTypesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.fileTypesToolStripMenuItem.Text = "File Types";
             this.fileTypesToolStripMenuItem.Click += new System.EventHandler(this.fileTypesToolStripMenuItem_Click);
             // 
             // dTCSearchToolStripMenuItem
             // 
             this.dTCSearchToolStripMenuItem.Name = "dTCSearchToolStripMenuItem";
-            this.dTCSearchToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.dTCSearchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.dTCSearchToolStripMenuItem.Text = "DTC Search";
             this.dTCSearchToolStripMenuItem.Click += new System.EventHandler(this.dTCSearchToolStripMenuItem_Click);
+            // 
+            // tableSeekToolStripMenuItem
+            // 
+            this.tableSeekToolStripMenuItem.Name = "tableSeekToolStripMenuItem";
+            this.tableSeekToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tableSeekToolStripMenuItem.Text = "TableSeek";
+            this.tableSeekToolStripMenuItem.Click += new System.EventHandler(this.tableSeekToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -1942,6 +2017,8 @@
             this.tabDTC.ResumeLayout(false);
             this.tabDTC.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridDTC)).EndInit();
+            this.tabTableSeek.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridTableSeek)).EndInit();
             this.tabFunction.ResumeLayout(false);
             this.tabApply.ResumeLayout(false);
             this.tabFileinfo.ResumeLayout(false);
@@ -2117,5 +2194,11 @@
         private System.Windows.Forms.CheckBox chkExportXdfDTC;
         private System.Windows.Forms.Button btnExportXDF2;
         private System.Windows.Forms.CheckBox chkSearchDTC;
+        private System.Windows.Forms.ToolStripMenuItem tableSeekToolStripMenuItem;
+        private System.Windows.Forms.TabPage tabTableSeek;
+        private System.Windows.Forms.Button btnClearTableSeek;
+        private System.Windows.Forms.DataGridView dataGridTableSeek;
+        private System.Windows.Forms.CheckBox chkTableSeek;
+        private System.Windows.Forms.CheckBox chkXdfExportTableSeek;
     }
 }

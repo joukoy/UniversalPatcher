@@ -277,6 +277,8 @@ public const short CSMethod_None = 0;
     public static List<dtcCode> dtcCodes;
     public static List<OBD2Code> OBD2Codes;
     public static List<DtcSearchConfig> dtcSearchConfigs;
+    public static List<TableSeek> tableSeeks;
+    public static List<FoundTable> foundTables;
     public static bool dtcCombined = false;
 
     public static string XMLFile;
@@ -825,6 +827,7 @@ public const short CSMethod_None = 0;
             }
         }
     }
+
     public static uint searchBytes(PcmFile PCM, string searchString, uint Start, uint End, ushort stopVal = 0)
     {
         uint addr;
@@ -859,6 +862,50 @@ public const short CSMethod_None = 0;
         }
         return uint.MaxValue;
     }
+
+    public static uint getAddrbySearchString(PcmFile PCM, string searchStr, ref uint startAddr, bool conditionalOffset = false)
+    {
+        uint retVal = uint.MaxValue;
+
+        uint addr = searchBytes(PCM, searchStr, startAddr, PCM.fsize);
+        if (addr == uint.MaxValue) return addr;
+
+        string[] sParts = searchStr.Trim().Split(' ');
+        startAddr = addr + (uint)sParts.Length;
+
+        if (!searchStr.Contains("*"))
+        {
+            //Address is AFTER searchstring
+            retVal = BEToUint32(PCM.buf, addr + (uint)sParts.Length);
+            return retVal;
+        }
+
+        int[] locations = new int[4];
+        int l = 0;
+        for (int p = 0; p < sParts.Length && l < 4; p++)
+        {
+            if (sParts[p].Contains("*"))
+            {
+                locations[l] = p;
+                l++;
+            }
+        }
+        if (l < 4)
+        {
+            Debug.WriteLine("Less than 4 * in searchstring, address need 4 bytes!");
+            return uint.MaxValue;
+        }
+
+        retVal = (uint)(PCM.buf[addr + locations[0]] << 24 | PCM.buf[addr + locations[1]] << 16 | PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
+        if (conditionalOffset)
+        {
+            ushort addrWord = (ushort)(PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
+            if (addrWord > 0x5000)
+                retVal -= 0x10000;
+        }
+        return retVal;
+    }
+
     public static uint searchWord(PcmFile PCM, ushort sWord, uint Start, uint End, ushort stopVal = 0)
     {
         for (uint addr = Start; addr < End; addr++)

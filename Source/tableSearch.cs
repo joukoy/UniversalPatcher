@@ -25,6 +25,21 @@ namespace UniversalPatcher
             //distanceMax = int.MaxValue;
             //location = 0;
         }
+        //public string ID { get; set; }
+        public string searchData { get; set; }
+        public string Items { get; set; }
+        public string Variables { get; set; }
+        public string Name { get; set; }
+        public string searchRange { get; set; }
+        public string tableRange { get; set; }
+
+        public List<Block> searchBlocks;
+        public List<Block> tableBlocks;
+
+        //public string start { get; set; }
+        //public int distanceMin { get; set; }
+        //public int distanceMax { get; set; }
+        //public int location { get; set; }
 
         public class ParsedTableSearchConfig
         {
@@ -108,21 +123,6 @@ namespace UniversalPatcher
             }
             return searchVariables;
         }
-        //public string ID { get; set; }
-        public string searchData { get; set; }
-        public string Items { get; set; }
-        public string Variables { get; set; }
-        public string Name { get; set; }
-        public string searchRange { get; set; }
-        public string tableRange { get; set; }
-
-        public List<Block> searchBlocks;
-        public List<Block> tableBlocks;
-
-        //public string start { get; set; }
-        //public int distanceMin { get; set; }
-        //public int distanceMax { get; set; }
-        //public int location { get; set; }
 
         private bool ParseAddress(string Line, PcmFile PCM, out List<Block> Blocks)
         {
@@ -513,14 +513,7 @@ namespace UniversalPatcher
                             tsr.Data += BEToUint16(PCM.buf, location).ToString(formatString);
 
                     }
-                    for (int seg = 0; seg < Segments.Count; seg++)
-                    {
-                        for (int b = 0; b < PCM.binfile[seg].SegmentBlocks.Count; b++)
-                        {
-                            if (tsr.AddressInt >= PCM.binfile[seg].SegmentBlocks[b].Start && tsr.AddressInt <= PCM.binfile[seg].SegmentBlocks[b].End)
-                                tsr.Segment = PCM.segmentinfos[seg].Name;
-                        }
-                    }
+                    tsr.Segment = PCM.GetSegmentName(tsr.AddressInt);
                 }
             }
             if (parsedConfig.searchString.Contains(":"))

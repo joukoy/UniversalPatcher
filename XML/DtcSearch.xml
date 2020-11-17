@@ -156,46 +156,7 @@
     <MilSteps>1</MilSteps>
   </DtcSearchConfig>
   <DtcSearchConfig>
-    <XMLFile>ls1-97-98-2</XMLFile>
-    <CodeSearch>B0 30 55 B0 * * * * 66</CodeSearch>
-    <StatusSearch>00 03 41 B0 * * * * 67</StatusSearch>
-    <MilSearch>67 0C 4A 30 31 B0</MilSearch>
-    <MilTable>opcode</MilTable>
-    <CodeOffset>1</CodeOffset>
-    <CodeSteps>4</CodeSteps>
-    <StatusOffset>1</StatusOffset>
-    <MilOffset>1</MilOffset>
-    <StatusSteps>1</StatusSteps>
-    <MilSteps>1</MilSteps>
-  </DtcSearchConfig>
-  <DtcSearchConfig>
-    <XMLFile>ls1-97-98-3</XMLFile>
-    <CodeSearch>B0 30 55 B0 * * * * 66</CodeSearch>
-    <StatusSearch>00 03 41 B0 * * * * 67</StatusSearch>
-    <MilSearch>67 0C 4A 30 31 B0</MilSearch>
-    <MilTable>opcode</MilTable>
-    <CodeOffset>1</CodeOffset>
-    <CodeSteps>4</CodeSteps>
-    <StatusOffset>1</StatusOffset>
-    <MilOffset>1</MilOffset>
-    <StatusSteps>1</StatusSteps>
-    <MilSteps>1</MilSteps>
-  </DtcSearchConfig>
-  <DtcSearchConfig>
-    <XMLFile>ls1-97-98-4</XMLFile>
-    <CodeSearch>B0 30 55 B0 * * * * 66</CodeSearch>
-    <StatusSearch>00 03 41 B0 * * * * 67</StatusSearch>
-    <MilSearch>67 0C 4A 30 31 B0</MilSearch>
-    <MilTable>opcode</MilTable>
-    <CodeOffset>1</CodeOffset>
-    <CodeSteps>4</CodeSteps>
-    <StatusOffset>1</StatusOffset>
-    <MilOffset>1</MilOffset>
-    <StatusSteps>1</StatusSteps>
-    <MilSteps>1</MilSteps>
-  </DtcSearchConfig>
-  <DtcSearchConfig>
-    <XMLFile>ls1-97-98-5</XMLFile>
+    <XMLFile>p01-p59</XMLFile>
     <CodeSearch>B0 30 55 B0 * * * * 66</CodeSearch>
     <StatusSearch>00 03 41 B0 * * * * 67</StatusSearch>
     <MilSearch>67 0C 4A 30 31 B0</MilSearch>

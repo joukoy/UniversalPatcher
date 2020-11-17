@@ -1,0 +1,42 @@
+  <XDFTABLE uniqueid="0xREPLACE-TABLEID" flags="0x30">
+    <title>REPLACE-TABLETITLE</title>
+    <description>REPLACE-TABLEDESCRIPTION</description>
+    <CATEGORYMEM index="0" category="REPLACE-CATEGORY" />
+    <XDFAXIS id="x" uniqueid="0x0">
+      <EMBEDDEDDATA mmedelementsizebits="16" mmedmajorstridebits="-32" mmedminorstridebits="0" />
+      <indexcount>REPLACE-COLCOUNT</indexcount>
+      <outputtype>2</outputtype>
+      <datatype>0</datatype>
+      <unittype>0</unittype>
+      <DALINK index="0" />
+      <MATH equation="X">
+        <VAR id="X" />
+      </MATH>
+REPLACE-TABLECOLS
+      <MATH equation="X">
+        <VAR id="X" />
+      </MATH>
+    </XDFAXIS>
+    <XDFAXIS id="y" uniqueid="0x0">
+      <EMBEDDEDDATA mmedelementsizebits="16" mmedmajorstridebits="-32" mmedminorstridebits="0" />
+      <indexcount>REPLACE-ROWCOUNT</indexcount>
+      <outputtype>4</outputtype>
+      <datatype>2</datatype>
+      <unittype>2</unittype>
+      <DALINK index="0" />
+REPLACE-TABLEROWS
+      <MATH equation="X">
+        <VAR id="X" />
+      </MATH>
+    </XDFAXIS>
+    <XDFAXIS id="z">
+      <EMBEDDEDDATA mmedaddress="0xREPLACE-TABLEADDRESS" mmedelementsizebits="16" mmedrowcount="REPLACE-ROWCOUNT" mmedmajorstridebits="0" mmedminorstridebits="0" />
+      <decimalpl>2</decimalpl>
+      <min>REPLACE-MINVALUE.000000</min>
+      <max>REPLACE-MAXVALUE.000000</max>
+      <outputtype>1</outputtype>
+      <MATH equation="REPLACE-MATH">
+        <VAR id="X" />
+      </MATH>
+    </XDFAXIS>
+  </XDFTABLE>

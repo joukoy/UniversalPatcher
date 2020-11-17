@@ -49,6 +49,7 @@ namespace UniversalPatcher
         private BindingSource searchedTablesBindingSource = new BindingSource();
         private BindingSource pidListBindingSource = new BindingSource();
         private BindingSource dtcBindingSource = new BindingSource();
+        private BindingSource tableSeekBindingSource = new BindingSource();
         private List<PidSearch.PID> pidList = new List<PidSearch.PID>();
         private uint lastCustomSearchResult = 0;
         private string logFile;
@@ -164,6 +165,22 @@ namespace UniversalPatcher
                 dtcSearchConfigs = new List<DtcSearchConfig>();
             }
 
+
+            string tableSeekFile = Path.Combine(Application.StartupPath, "XML", "TableSeek.xml");
+            if (File.Exists(tableSeekFile))
+            {
+                Debug.WriteLine("Loading TableSeek.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSeek>));
+                System.IO.StreamReader file = new System.IO.StreamReader(tableSeekFile);
+                tableSeeks = (List<TableSeek>)reader.Deserialize(file);
+                file.Close();
+
+            }
+            else
+            {
+                tableSeeks = new List<TableSeek>();
+            }
+
             listCSAddresses.Enabled = true;
             listCSAddresses.Clear();
             listCSAddresses.View = View.Details;
@@ -228,6 +245,19 @@ namespace UniversalPatcher
                 tabDTC.Text = "DTC (" + dtcCodes.Count.ToString() + ")";
             dataGridDTC.DataSource = dtcBindingSource;
             dataGridDTC.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+
+        }
+        public void refreshTableSeek()
+        {
+            tableSeekBindingSource.DataSource = null;
+            dataGridTableSeek.DataSource = null;
+            tableSeekBindingSource.DataSource = foundTables;
+            if (dtcCodes.Count == 0)
+                tabTableSeek.Text = "Table Seek";
+            else
+                tabTableSeek.Text = "Table Seek (" + foundTables.Count.ToString() + ")";
+            dataGridTableSeek.DataSource = tableSeekBindingSource;
+            dataGridTableSeek.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
 
         }
 
@@ -501,6 +531,7 @@ namespace UniversalPatcher
                     txtResult.AppendText(".");
                 }
                 RefreshBadCVNlist();
+
                 dtcCodes = new List<dtcCode>();
                 DtcSearch DS = new DtcSearch();
                 string dtcSearchResult = "";
@@ -510,6 +541,14 @@ namespace UniversalPatcher
                     Logger(dtcSearchResult);
                 }
                 refreshDtcList();
+
+                foundTables = new List<FoundTable>();
+                TableSeek TS = new TableSeek();
+                if (chkTableSeek.Checked)
+                {
+                    TS.seekTables(PCM);
+                }
+                refreshTableSeek();
             }
             catch (Exception ex)
             {
@@ -3079,6 +3118,96 @@ namespace UniversalPatcher
                     }
                 }
 
+                if (chkXdfExportTableSeek.Checked)
+                {
+                    fName = Path.Combine(Application.StartupPath, "Templates", "xdftableseek.txt");
+                    templateTxt = ReadTextFile(fName);
+                    for (int t = 0; t < foundTables.Count; t++)
+                    {
+                        //Add all tables
+                        int id = foundTables[t].configId;
+                        if (tableSeeks[id].Rows > 0)
+                        {
+                            if (tableSeeks[id].Name != null && tableSeeks[id].Name.Length > 1)
+                                tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableSeeks[id].Name);
+                            else
+                                tableText = templateTxt.Replace("REPLACE-TABLETITLE", foundTables[t].Address);
+                            int s = basefile.GetSegmentNumber(foundTables[t].addrInt);
+                            if (s == -1) s = lastCategory;
+                            tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
+                            tableText = tableText.Replace("REPLACE-TABLEID", foundTables[t].Address);
+                            tableText = tableText.Replace("REPLACE-ROWCOUNT", tableSeeks[id].Rows.ToString());
+                            tableText = tableText.Replace("REPLACE-COLCOUNT", tableSeeks[id].Columns.ToString());
+                            tableText = tableText.Replace("REPLACE-MATH", tableSeeks[id].Math);
+                            tableText = tableText.Replace("REPLACE-TABLEADDRESS", foundTables[t].Address);
+                            tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
+                            tableText = tableText.Replace("REPLACE-MINVALUE", "0");
+                            tableText = tableText.Replace("REPLACE-MAXVALUE", "255");
+                            tableRows = "";
+                            if (tableSeeks[id].RowHeaders == "")
+                            {
+                                for (int d = 0; d < tableSeeks[id].Rows; d++)
+                                {
+                                    tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />" + Environment.NewLine;
+                                }
+                            }
+                            else
+                            {
+                                string[] hParts = tableSeeks[t].RowHeaders.Split(',');
+                                for (int row=0; row<hParts.Length;row++)
+                                {
+                                    tableRows += "     <LABEL index=\"" + row.ToString() + "\" value=\"" + hParts[row] + "\" />" + Environment.NewLine;
+                                }
+                            }
+                            tableText = tableText.Replace("REPLACE-TABLEROWS", tableRows);
+                            string tableCols = "";
+                            if (tableSeeks[id].ColHeaders == "")
+                            {
+                                for (int d = 0; d < tableSeeks[id].Columns; d++)
+                                {
+                                    tableCols += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />" + Environment.NewLine;
+                                }
+                            }
+                            else
+                            {
+                                string[] hParts = tableSeeks[t].ColHeaders.Split(',');
+                                for (int col = 0; col < hParts.Length; col++)
+                                {
+                                    tableCols += "     <LABEL index=\"" + col.ToString() + "\" value=\"" + hParts[col] + "\" />" + Environment.NewLine;
+                                }
+                            }
+                            tableText = tableText.Replace("REPLACE-TABLECOLS", tableCols);
+
+
+                            xdfText += tableText;       //Add generated table to end of xdfText
+                        }
+                    }
+                    fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
+                    templateTxt = ReadTextFile(fName);
+                    for (int t = 0; t < foundTables.Count; t++)
+                    {
+                        //Add all constants
+                        int id = foundTables[t].configId;
+                        if (tableSeeks[id].Rows == 0)
+                        {
+                            if (foundTables[t].Name != null && foundTables[t].Name.Length > 1)
+                                tableText = templateTxt.Replace("REPLACE-TABLETITLE", foundTables[t].Name);
+                            else
+                                tableText = templateTxt.Replace("REPLACE-TABLETITLE", foundTables[t].Address);
+                            int s = basefile.GetSegmentNumber(foundTables[t].addrInt);
+                            if (s == -1) s = lastCategory;
+                            tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
+                            tableText = tableText.Replace("REPLACE-TABLEID", foundTables[t].Address);
+                            tableText = tableText.Replace("REPLACE-TABLEADDRESS", foundTables[t].Address);
+                            tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
+                            tableText = tableText.Replace("REPLACE-BITS", "8");
+                            tableText = tableText.Replace("REPLACE-MINVALUE", "0");
+                            tableText = tableText.Replace("REPLACE-MAXVALUE", "255");
+                            xdfText += tableText;       //Add generated table to end of xdfText
+                        }
+                    }
+                }
+
                 xdfText += "</XDFFORMAT>" + Environment.NewLine;
                 string fileName = SelectSaveFile("XDF Files(*.xdf)|*.xdf|ALL Files (*.*)|*.*",basefile.OS + "-generated.xdf");
                 if (fileName.Length == 0)
@@ -3100,6 +3229,20 @@ namespace UniversalPatcher
             }
             return;
 
+        }
+
+        private void tableSeekToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmEditXML frmE = new frmEditXML();
+            frmE.LoadTableSeek();
+            frmE.Show();
+
+        }
+
+        private void btnClearTableSeek_Click(object sender, EventArgs e)
+        {
+            tableSeeks = new List<TableSeek>();
+            refreshTableSeek();
         }
     }
 }

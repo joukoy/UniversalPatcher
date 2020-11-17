@@ -203,6 +203,7 @@
       <DependentUpon>frmSearchTables.cs</DependentUpon>
     </Compile>
     <Compile Include="PidSearch.cs" />
+    <Compile Include="TableSeek.cs" />
     <Compile Include="tableSearch.cs" />
     <Compile Include="win32.cs" />
     <EmbeddedResource Include="AboutBox1.resx">

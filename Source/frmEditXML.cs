@@ -45,6 +45,15 @@ namespace UniversalPatcher
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
         }
+        public void LoadTableSeek()
+        {
+            this.Text = "Edit Table Seek config";
+            if (tableSeeks == null) tableSeeks = new List<TableSeek>();
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = tableSeeks;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+        }
 
         public void LoadTableData()
         {
@@ -107,6 +116,18 @@ namespace UniversalPatcher
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<DtcSearchConfig>));
                         writer.Serialize(stream, dtcSearchConfigs);
+                        stream.Close();
+                    }
+                    Logger(" [OK]");
+                }
+                else if (this.Text.Contains("Seek"))
+                {
+                    Logger("Saving file TableSeek.xml", false);
+                    string FileName = Path.Combine(Application.StartupPath, "XML", "tableseek.xml");
+                    using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                    {
+                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSeek>));
+                        writer.Serialize(stream, tableSeeks);
                         stream.Close();
                     }
                     Logger(" [OK]");

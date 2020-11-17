@@ -22,6 +22,7 @@ namespace UniversalPatcher
             MilOffset = 1;
             StatusSteps = 1;
             MilSteps = 1;
+            ConditionalOffset = "";
         }
         public string XMLFile { get; set; }
         public string CodeSearch { get; set; }
@@ -34,6 +35,7 @@ namespace UniversalPatcher
         public int MilOffset { get; set; }
         public int StatusSteps { get; set; }
         public int MilSteps { get; set; }
+        public string ConditionalOffset { get; set; }
     }
 
     public class DtcSearch
@@ -61,6 +63,7 @@ namespace UniversalPatcher
 
             return offset;
         }
+
 
         private string decodeDTC(string code)
         {
@@ -105,28 +108,40 @@ namespace UniversalPatcher
                 }
 
                 //Search DTC codes:
-                uint opCodeAddr = 0;
-                uint codeAddr = 0;
+                uint codeAddr = uint.MaxValue;
                 string searchStr;
                 int configIndex = 0;
+                uint startAddr = 0;
                 dtcCombined = false;
+                bool condOffset = false;
+                uint statusAddr = uint.MaxValue;
+                uint milAddr = uint.MaxValue;
 
                 for (configIndex = 0; configIndex < dtcSearchConfigs.Count; configIndex++)
                 {
                     if (PCM.xmlFile == dtcSearchConfigs[configIndex].XMLFile.ToLower())
                     {
                         searchStr = dtcSearchConfigs[configIndex].CodeSearch;
-                        opCodeAddr = searchBytes(PCM, searchStr, 0, PCM.fsize);
+                        startAddr = 0;
+                        condOffset = false;
+                        if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("code")) condOffset = true;
+                        codeAddr = getAddrbySearchString(PCM, searchStr,ref startAddr,condOffset);
                         //Check if we found status table, too:
-                        uint tmpAddr = searchBytes(PCM, dtcSearchConfigs[configIndex].StatusSearch, 0, PCM.fsize);
-                        if (opCodeAddr < uint.MaxValue && tmpAddr < uint.MaxValue)
+                        startAddr = 0;
+                        condOffset = false;
+                        if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("status")) condOffset = true;
+                        statusAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].StatusSearch, ref startAddr, condOffset);
+                        if (codeAddr < PCM.fsize && statusAddr < PCM.fsize)
                         {
-                            codeAddr = BEToUint32(PCM.buf, opCodeAddr + (uint)searchStringAddressOffset(searchStr));
                             Debug.WriteLine("Code search string: " + searchStr);
-                            Debug.WriteLine("DTC code table address: " + codeAddr.ToString("X") + ", opcodeaddress: " + opCodeAddr.ToString("X"));
+                            Debug.WriteLine("DTC code table address: " + codeAddr.ToString("X"));
                             codeAddr += (uint)dtcSearchConfigs[configIndex].CodeOffset;
+                            statusAddr += (uint)dtcSearchConfigs[configIndex].StatusOffset;
+                            Debug.WriteLine("DTC status table address: " + statusAddr.ToString("X"));
                             break;
                         }
+                        else codeAddr = 0;
+
                     }
                 }
 
@@ -170,17 +185,8 @@ namespace UniversalPatcher
                     dtcCodes.Add(dtc);
                 }
 
-                //Search Code status table:
-                uint statusAddr = uint.MaxValue;
-                uint milAddr = uint.MaxValue;
                 List<uint> milAddrList = new List<uint>();
-                opCodeAddr = searchBytes(PCM, dtcSearchConfigs[configIndex].StatusSearch, 0, PCM.fsize);
-                if (opCodeAddr == uint.MaxValue)
-                {
-                    return "DTC Search: Can't find status table";
-                }
-                statusAddr = BEToUint32(PCM.buf, opCodeAddr + (uint)searchStringAddressOffset(dtcSearchConfigs[configIndex].StatusSearch)) + (uint)dtcSearchConfigs[configIndex].StatusOffset;
-                Debug.WriteLine("DTC status table address: " + statusAddr.ToString("X"));
+
                 if (dtcSearchConfigs[configIndex].MilTable == "afterstatus")
                 {
                     milAddr = (uint)(statusAddr + dtcCodes.Count + (uint)dtcSearchConfigs[configIndex].MilOffset);
@@ -197,20 +203,21 @@ namespace UniversalPatcher
                 else
                 {
                     //Search MIL table
-                    uint startAddr = 0;
+                    startAddr = 0;
                     for (int i = 0; i < 30; i++)
                     {
-                        opCodeAddr = searchBytes(PCM, dtcSearchConfigs[configIndex].MilSearch, startAddr, PCM.fsize);
-                        if (opCodeAddr < uint.MaxValue)
+                        condOffset = false;
+                        if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("mil")) condOffset = true;
+                        milAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].MilSearch, ref startAddr, condOffset);
+                        if (milAddr < uint.MaxValue)
                         {
 
-                            milAddr = BEToUint32(PCM.buf, opCodeAddr + (uint)searchStringAddressOffset(dtcSearchConfigs[configIndex].MilSearch)) + (uint)dtcSearchConfigs[configIndex].MilOffset;
+                            milAddr +=  (uint)dtcSearchConfigs[configIndex].MilOffset;
                             if (milAddr < PCM.fsize) //Hit
                             {
                                 milAddrList.Add(milAddr);
                                 //break;
                             }
-                            startAddr = opCodeAddr + 8;
                         }
                         else
                         {
@@ -220,10 +227,6 @@ namespace UniversalPatcher
                     }
                 }
 
-                if (statusAddr >= PCM.fsize)
-                {
-                    return "DTC search: Status table address out of address range:" + statusAddr.ToString("X8");
-                }
 
                 if (milAddrList.Count > 1)
                 {
@@ -239,6 +242,7 @@ namespace UniversalPatcher
                         }
                     }
                 }
+                else milAddr = milAddrList[0];
                 Debug.WriteLine("MIL: " + milAddr.ToString("X"));
                 if (milAddr >= PCM.fsize)
                 {
