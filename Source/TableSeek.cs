@@ -74,7 +74,7 @@ namespace UniversalPatcher
                     FoundTable ft = new FoundTable();
                     ft.configId = s;
                     ft.Name = tableSeeks[s].Name;
-                    ft.addrInt = addr;
+                    ft.addrInt = addr + (uint)tableSeeks[s].Offset;
                     ft.Address = addr.ToString("X8");
                     foundTables.Add(ft);
                 }
