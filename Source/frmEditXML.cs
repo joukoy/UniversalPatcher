@@ -253,14 +253,5 @@ namespace UniversalPatcher
 
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if ((e.ColumnIndex == this.dataGridView1.Columns["DataType"].Index) )
-            {
-                DataGridViewCell cell = this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                 cell.ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
-            }
-
-        }
     }
 }

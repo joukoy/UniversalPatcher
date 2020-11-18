@@ -237,7 +237,7 @@ namespace UniversalPatcher
             tableSeekBindingSource.DataSource = null;
             dataGridTableSeek.DataSource = null;
             tableSeekBindingSource.DataSource = foundTables;
-            if (dtcCodes.Count == 0)
+            if (foundTables.Count == 0)
                 tabTableSeek.Text = "Table Seek";
             else
                 tabTableSeek.Text = "Table Seek (" + foundTables.Count.ToString() + ")";
@@ -531,7 +531,7 @@ namespace UniversalPatcher
                 TableSeek TS = new TableSeek();
                 if (chkTableSeek.Checked)
                 {
-                    TS.seekTables(PCM);
+                    Logger(TS.seekTables(PCM));
                 }
                 refreshTableSeek();
             }

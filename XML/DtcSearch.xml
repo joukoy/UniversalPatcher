@@ -223,8 +223,8 @@
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>e38</XMLFile>
-    <CodeSearch>3D 80 * * 39 8C * * 7D 7B DA 14 7C 8C 5A 2E 80 BD</CodeSearch>
-    <StatusSearch>3C A0 * * 38 A5 * * 7D 85 50</StatusSearch>
+    <CodeSearch>3D 80 @ @ 39 8C @ @ 7D 7B DA 14 7C 8C 5A 2E 80 BD</CodeSearch>
+    <StatusSearch>3C A0 @ @ 38 A5 @ @ 7D 85 50</StatusSearch>
     <MilTable>combined</MilTable>
     <CodeOffset>0</CodeOffset>
     <CodeSteps>2</CodeSteps>
@@ -236,8 +236,8 @@
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>e67</XMLFile>
-    <CodeSearch>3D 80 * * 39 8C * * 7D 7B DA 14 7C 8C 5A 2E 80 BD</CodeSearch>
-    <StatusSearch>3C A0 * * 38 A5 * * 7D 85 50</StatusSearch>
+    <CodeSearch>3D 80 @ @ 39 8C @ @ 7D 7B DA 14 7C 8C 5A 2E 80 BD</CodeSearch>
+    <StatusSearch>3C A0 @ @ 38 A5 @ @ 7D 85 50</StatusSearch>
     <MilTable>combined</MilTable>
     <CodeOffset>0</CodeOffset>
     <CodeSteps>2</CodeSteps>
@@ -249,8 +249,8 @@
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>e92</XMLFile>
-    <CodeSearch>3D 80 * * 39 8C * * 57 EB 08 3C 7C 8C 5A 2E</CodeSearch>
-    <StatusSearch>3C A0 * * 38 A5 * * 89 65 01</StatusSearch>
+    <CodeSearch>3D 80 @ @ 39 8C @ @ 57 EB 08 3C 7C 8C 5A 2E</CodeSearch>
+    <StatusSearch>3C A0 @ @ 38 A5 @ @ 89 65 01</StatusSearch>
     <MilTable>combined</MilTable>
     <CodeOffset>0</CodeOffset>
     <CodeSteps>2</CodeSteps>
@@ -258,6 +258,6 @@
     <MilOffset>0</MilOffset>
     <StatusSteps>1</StatusSteps>
     <MilSteps>1</MilSteps>
-    <ConditionalOffset></ConditionalOffset>
+    <ConditionalOffset />
   </DtcSearchConfig>
 </ArrayOfDtcSearchConfig>

@@ -867,24 +867,26 @@ public const short CSMethod_None = 0;
     {
         uint retVal = uint.MaxValue;
 
-        uint addr = searchBytes(PCM, searchStr, startAddr, PCM.fsize);
+        uint addr = searchBytes(PCM, searchStr.Replace("@","*"), startAddr, PCM.fsize);
         if (addr == uint.MaxValue) return addr;
 
         string[] sParts = searchStr.Trim().Split(' ');
         startAddr = addr + (uint)sParts.Length;
 
-        if (!searchStr.Contains("*"))
+        int[] locations = new int[4];
+        int l = 0;
+        string addrStr = "";
+        if (searchStr.Contains("@")) addrStr = "@";
+        else if (searchStr.Contains("*")) addrStr = "*";
+        else
         {
             //Address is AFTER searchstring
             retVal = BEToUint32(PCM.buf, addr + (uint)sParts.Length);
             return retVal;
         }
-
-        int[] locations = new int[4];
-        int l = 0;
         for (int p = 0; p < sParts.Length && l < 4; p++)
         {
-            if (sParts[p].Contains("*"))
+            if (sParts[p].Contains(addrStr))
             {
                 locations[l] = p;
                 l++;

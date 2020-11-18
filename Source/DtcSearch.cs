@@ -135,8 +135,8 @@ namespace UniversalPatcher
                         {
                             Debug.WriteLine("Code search string: " + searchStr);
                             Debug.WriteLine("DTC code table address: " + codeAddr.ToString("X"));
-                            codeAddr += (uint)dtcSearchConfigs[configIndex].CodeOffset;
-                            statusAddr += (uint)dtcSearchConfigs[configIndex].StatusOffset;
+                            codeAddr = (uint)(codeAddr + dtcSearchConfigs[configIndex].CodeOffset);
+                            statusAddr = (uint)(statusAddr + dtcSearchConfigs[configIndex].StatusOffset);
                             Debug.WriteLine("DTC status table address: " + statusAddr.ToString("X"));
                             break;
                         }

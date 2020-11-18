@@ -2,7 +2,7 @@
 <ArrayOfTableSeek xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <TableSeek>
     <Name>MBT spark</Name>
-    <SearchStr>74 14 20 7c * * * * 4e b9 * * * * 36</SearchStr>
+    <SearchStr>74 14 20 7c @ @ @ @ 4e b9 * * * * 36</SearchStr>
     <Rows>15</Rows>
     <Columns>20</Columns>
     <RowHeaders>0.08,0.16,0.24,0.32,0.40,0.48,0.56,0.64,0.72,0.80,0.88,0.96,1.04,1.12,1.20</RowHeaders>
