@@ -142,7 +142,6 @@
             this.label11 = new System.Windows.Forms.Label();
             this.txtCustomSearchStartAddress = new System.Windows.Forms.TextBox();
             this.txtCustomSearchString = new System.Windows.Forms.TextBox();
-            this.btnGetPidList = new System.Windows.Forms.Button();
             this.chkSearchTables = new System.Windows.Forms.CheckBox();
             this.tabCreate = new System.Windows.Forms.TabPage();
             this.label13 = new System.Windows.Forms.Label();
@@ -1413,7 +1412,6 @@
             this.tabFileinfo.Controls.Add(this.label11);
             this.tabFileinfo.Controls.Add(this.txtCustomSearchStartAddress);
             this.tabFileinfo.Controls.Add(this.txtCustomSearchString);
-            this.tabFileinfo.Controls.Add(this.btnGetPidList);
             this.tabFileinfo.Controls.Add(this.chkSearchTables);
             this.tabFileinfo.Controls.Add(this.chkExtra);
             this.tabFileinfo.Controls.Add(this.btnLoadFolder);
@@ -1528,16 +1526,6 @@
             this.txtCustomSearchString.Name = "txtCustomSearchString";
             this.txtCustomSearchString.Size = new System.Drawing.Size(274, 20);
             this.txtCustomSearchString.TabIndex = 179;
-            // 
-            // btnGetPidList
-            // 
-            this.btnGetPidList.Location = new System.Drawing.Point(7, 37);
-            this.btnGetPidList.Name = "btnGetPidList";
-            this.btnGetPidList.Size = new System.Drawing.Size(122, 27);
-            this.btnGetPidList.TabIndex = 178;
-            this.btnGetPidList.Text = "Get PID list";
-            this.btnGetPidList.UseVisualStyleBackColor = true;
-            this.btnGetPidList.Click += new System.EventHandler(this.btnGetPidList_Click);
             // 
             // chkSearchTables
             // 
@@ -2158,7 +2146,6 @@
         private System.Windows.Forms.DataGridView dataGridSearchedTables;
         private System.Windows.Forms.Button btnSaveSearchedTables;
         private System.Windows.Forms.Button btnClearSearchedTables;
-        private System.Windows.Forms.Button btnGetPidList;
         private System.Windows.Forms.TabPage tabPIDList;
         private System.Windows.Forms.Button btnClearPidList;
         private System.Windows.Forms.Button btnSavePidList;

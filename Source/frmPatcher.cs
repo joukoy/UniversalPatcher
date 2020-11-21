@@ -321,6 +321,29 @@ namespace UniversalPatcher
                 }
             }
         }
+        private void getPidList()
+        {
+            try
+            {
+                pidList = new List<PidSearch.PID>();
+                PidSearch pidSearch = new PidSearch(basefile);
+                if (pidSearch.pidList == null)
+                {
+                    Logger("PIDs not found");
+                    return;
+                }
+                for (int i = 0; i < pidSearch.pidList.Count; i++)
+                {
+                    pidList.Add(pidSearch.pidList[i]);
+                }
+                refreshPidList();
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+            refreshPidList();
+        }
 
         private void ShowFileInfo(PcmFile PCM, bool InfoOnly)
         {
@@ -534,6 +557,8 @@ namespace UniversalPatcher
                     Logger(TS.seekTables(PCM));
                 }
                 refreshTableSeek();
+
+                getPidList();
             }
             catch (Exception ex)
             {
@@ -2456,26 +2481,10 @@ namespace UniversalPatcher
 
         }
 
+
         private void btnGetPidList_Click(object sender, EventArgs e)
         {
-            try
-            {
-                PidSearch pidSearch = new PidSearch(basefile);
-                if (pidSearch.pidList == null)
-                {
-                    Logger("PIDs not found");
-                    return;
-                }
-                for (int i = 0; i < pidSearch.pidList.Count; i++)
-                {
-                    pidList.Add(pidSearch.pidList[i]);
-                }
-                refreshPidList();
-            }
-            catch (Exception ex)
-            {
-                Logger(ex.Message);
-            }
+            getPidList();
         }
 
         private void btnClearPidList_Click(object sender, EventArgs e)

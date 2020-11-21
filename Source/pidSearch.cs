@@ -17,7 +17,7 @@ namespace UniversalPatcher.Properties
             PCM = PCM1;
             uint step = 8;
             loadPidList();
-            if (Path.GetFileName(XMLFile).ToLower().StartsWith("diesel01"))
+            if (PCM.xmlFile.StartsWith("diesel01"))
             {
                 startAddress = searchBytes(PCM, "00 00 04 * * * * * * * 00 01 04 * * * * * * * 00 02 02", 0, PCM.fsize - 23);
                 step = 10;
@@ -26,7 +26,7 @@ namespace UniversalPatcher.Properties
                 return;
             }
 
-            if (Path.GetFileName(XMLFile).ToLower().StartsWith("p01"))
+            if (PCM.xmlFile.StartsWith("p01"))
             {
                 step = 8;
                 startAddress = searchBytes(PCM, "00 01 02 00 * * * * 00 03 01 00 * * * * 00 04 00 00 * * * * 00 05 00 00", 0, PCM.fsize - 28);
@@ -34,7 +34,7 @@ namespace UniversalPatcher.Properties
                     searchPids(step,false);
                 return;
             }
-            if (Path.GetFileName(XMLFile).ToLower().StartsWith("v6"))
+            if (PCM.xmlFile.StartsWith("v6"))
             {
                 startAddress = searchBytes(PCM, "00 00 02 00 * * * * * * 00 01 02 00", 0, PCM.fsize - 14);
                 step = 10;
@@ -42,7 +42,7 @@ namespace UniversalPatcher.Properties
                     searchPids(step,false);
                 return;
             }
-            throw new Exception("Not implemented for this file type");
+            throw new Exception("PID search not implemented for this file type");
         }
         public class pidName
         {
