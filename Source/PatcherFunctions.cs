@@ -863,11 +863,13 @@ public const short CSMethod_None = 0;
         return uint.MaxValue;
     }
 
-    public static uint getAddrbySearchString(PcmFile PCM, string searchStr, ref uint startAddr, bool conditionalOffset = false)
+    public static uint getAddrbySearchString(PcmFile PCM, string searchStr, ref uint startAddr, ref byte rows, bool conditionalOffset = false)
     {
         uint retVal = uint.MaxValue;
 
-        uint addr = searchBytes(PCM, searchStr.Replace("@","*"), startAddr, PCM.fsize);
+        string modStr = searchStr.Replace("r", "*");
+        modStr = modStr.Replace("@", "*");
+        uint addr = searchBytes(PCM, modStr, startAddr, PCM.fsize);
         if (addr == uint.MaxValue) return addr;
 
         string[] sParts = searchStr.Trim().Split(' ');
@@ -890,6 +892,10 @@ public const short CSMethod_None = 0;
             {
                 locations[l] = p;
                 l++;
+            }
+            if (sParts[p].Contains("r"))
+            {
+                rows = PCM.buf[(uint)(addr + p)];
             }
         }
         if (l < 4)

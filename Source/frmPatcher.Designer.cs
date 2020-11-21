@@ -185,6 +185,7 @@
             this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chkSearchPids = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1402,6 +1403,7 @@
             // 
             // tabFileinfo
             // 
+            this.tabFileinfo.Controls.Add(this.chkSearchPids);
             this.tabFileinfo.Controls.Add(this.chkTableSeek);
             this.tabFileinfo.Controls.Add(this.chkSearchDTC);
             this.tabFileinfo.Controls.Add(this.chkCustomTableSearch);
@@ -1443,7 +1445,7 @@
             this.chkSearchDTC.AutoSize = true;
             this.chkSearchDTC.Checked = true;
             this.chkSearchDTC.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSearchDTC.Location = new System.Drawing.Point(149, 53);
+            this.chkSearchDTC.Location = new System.Drawing.Point(244, 53);
             this.chkSearchDTC.Name = "chkSearchDTC";
             this.chkSearchDTC.Size = new System.Drawing.Size(85, 17);
             this.chkSearchDTC.TabIndex = 187;
@@ -1530,7 +1532,7 @@
             // chkSearchTables
             // 
             this.chkSearchTables.AutoSize = true;
-            this.chkSearchTables.Location = new System.Drawing.Point(149, 30);
+            this.chkSearchTables.Location = new System.Drawing.Point(149, 53);
             this.chkSearchTables.Name = "chkSearchTables";
             this.chkSearchTables.Size = new System.Drawing.Size(95, 17);
             this.chkSearchTables.TabIndex = 177;
@@ -1959,6 +1961,18 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // chkSearchPids
+            // 
+            this.chkSearchPids.AutoSize = true;
+            this.chkSearchPids.Checked = true;
+            this.chkSearchPids.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSearchPids.Location = new System.Drawing.Point(244, 77);
+            this.chkSearchPids.Name = "chkSearchPids";
+            this.chkSearchPids.Size = new System.Drawing.Size(86, 17);
+            this.chkSearchPids.TabIndex = 189;
+            this.chkSearchPids.Text = "Search PIDs";
+            this.chkSearchPids.UseVisualStyleBackColor = true;
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2188,5 +2202,6 @@
         private System.Windows.Forms.DataGridView dataGridTableSeek;
         private System.Windows.Forms.CheckBox chkTableSeek;
         private System.Windows.Forms.CheckBox chkXdfExportTableSeek;
+        private System.Windows.Forms.CheckBox chkSearchPids;
     }
 }

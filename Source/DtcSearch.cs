@@ -125,12 +125,13 @@ namespace UniversalPatcher
                         startAddr = 0;
                         condOffset = false;
                         if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("code")) condOffset = true;
-                        codeAddr = getAddrbySearchString(PCM, searchStr,ref startAddr,condOffset);
+                        byte rows = 0;
+                        codeAddr = getAddrbySearchString(PCM, searchStr,ref startAddr,ref rows, condOffset);
                         //Check if we found status table, too:
                         startAddr = 0;
                         condOffset = false;
                         if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("status")) condOffset = true;
-                        statusAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].StatusSearch, ref startAddr, condOffset);
+                        statusAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].StatusSearch, ref startAddr, ref rows, condOffset);
                         if (codeAddr < PCM.fsize && statusAddr < PCM.fsize)
                         {
                             Debug.WriteLine("Code search string: " + searchStr);
@@ -210,7 +211,8 @@ namespace UniversalPatcher
                     {
                         condOffset = false;
                         if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("mil")) condOffset = true;
-                        milAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].MilSearch, ref startAddr, condOffset);
+                        byte rows = 0;
+                        milAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].MilSearch, ref startAddr,ref rows,  condOffset);
                         if (milAddr < uint.MaxValue)
                         {
 
@@ -243,6 +245,11 @@ namespace UniversalPatcher
                             break;
                         }
                     }
+                    if (milAddr == uint.MaxValue)
+                    {
+                        //We didn't found it, use first from list
+                        milAddr = milAddrList[0];
+                    }
                 }
                 else milAddr = milAddrList[0];
                 Debug.WriteLine("MIL: " + milAddr.ToString("X"));
@@ -250,7 +257,6 @@ namespace UniversalPatcher
                 {
                     return "DTC search: MIL table address out of address range:" + milAddr.ToString("X8");
                 }
-
 
                 //Read DTC status bytes:
                 int dtcNr = 0;

@@ -326,17 +326,19 @@ namespace UniversalPatcher
             try
             {
                 pidList = new List<PidSearch.PID>();
-                PidSearch pidSearch = new PidSearch(basefile);
-                if (pidSearch.pidList == null)
+                if (chkSearchPids.Checked)
                 {
-                    Logger("PIDs not found");
-                    return;
+                    PidSearch pidSearch = new PidSearch(basefile);
+                    if (pidSearch.pidList == null)
+                    {
+                        Logger("PIDs not found");
+                        return;
+                    }
+                    for (int i = 0; i < pidSearch.pidList.Count; i++)
+                    {
+                        pidList.Add(pidSearch.pidList[i]);
+                    }
                 }
-                for (int i = 0; i < pidSearch.pidList.Count; i++)
-                {
-                    pidList.Add(pidSearch.pidList[i]);
-                }
-                refreshPidList();
             }
             catch (Exception ex)
             {

@@ -70,9 +70,10 @@ namespace UniversalPatcher
                 {
                     uint startAddr = 0;
                     uint addr = uint.MaxValue;
+                    byte rows = 0;
                     for (int hit = 1; hit <= tableSeeks[s].UseHit; hit++)
                     {
-                        addr = getAddrbySearchString(PCM, tableSeeks[s].SearchStr, ref startAddr, tableSeeks[s].ConditionalOffset);
+                        addr = getAddrbySearchString(PCM, tableSeeks[s].SearchStr, ref startAddr, ref rows, tableSeeks[s].ConditionalOffset);
                     }
                     if (addr < PCM.fsize)
                     {
@@ -81,6 +82,7 @@ namespace UniversalPatcher
                         ft.Name = tableSeeks[s].Name;
                         ft.addrInt = (uint)(addr + tableSeeks[s].Offset);
                         ft.Address = addr.ToString("X8");
+                        ft.Rows = rows;
                         foundTables.Add(ft);
                     }
 
@@ -111,6 +113,7 @@ namespace UniversalPatcher
         public string Name { get; set; }
         public uint addrInt;
         public string Address { get; set; }
+        public byte Rows { get; set; }
         public int configId;
     }
 

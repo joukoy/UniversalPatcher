@@ -45,6 +45,7 @@ namespace UniversalPatcher
             bindingSource.DataSource = dtcSearchConfigs;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
+            dataGridView1.Columns["ConditionalOffset"].ToolTipText = "Possible values:code,status,mil (Multiple values allowed)";
         }
         public void LoadTableSeek(string fname)
         {
