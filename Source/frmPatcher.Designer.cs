@@ -132,6 +132,7 @@
             this.btnCheckSums = new System.Windows.Forms.Button();
             this.btnApplypatch = new System.Windows.Forms.Button();
             this.tabFileinfo = new System.Windows.Forms.TabPage();
+            this.chkSearchPids = new System.Windows.Forms.CheckBox();
             this.chkTableSeek = new System.Windows.Forms.CheckBox();
             this.chkSearchDTC = new System.Windows.Forms.CheckBox();
             this.chkCustomTableSearch = new System.Windows.Forms.CheckBox();
@@ -185,7 +186,7 @@
             this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkSearchPids = new System.Windows.Forms.CheckBox();
+            this.btnEditTable = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1218,6 +1219,7 @@
             // 
             // tabTableSeek
             // 
+            this.tabTableSeek.Controls.Add(this.btnEditTable);
             this.tabTableSeek.Controls.Add(this.dataGridTableSeek);
             this.tabTableSeek.Controls.Add(this.btnClearTableSeek);
             this.tabTableSeek.Location = new System.Drawing.Point(4, 22);
@@ -1427,6 +1429,18 @@
             this.tabFileinfo.TabIndex = 2;
             this.tabFileinfo.Text = "File info";
             this.tabFileinfo.UseVisualStyleBackColor = true;
+            // 
+            // chkSearchPids
+            // 
+            this.chkSearchPids.AutoSize = true;
+            this.chkSearchPids.Checked = true;
+            this.chkSearchPids.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSearchPids.Location = new System.Drawing.Point(244, 77);
+            this.chkSearchPids.Name = "chkSearchPids";
+            this.chkSearchPids.Size = new System.Drawing.Size(86, 17);
+            this.chkSearchPids.TabIndex = 189;
+            this.chkSearchPids.Text = "Search PIDs";
+            this.chkSearchPids.UseVisualStyleBackColor = true;
             // 
             // chkTableSeek
             // 
@@ -1961,17 +1975,15 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // chkSearchPids
+            // btnEditTable
             // 
-            this.chkSearchPids.AutoSize = true;
-            this.chkSearchPids.Checked = true;
-            this.chkSearchPids.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSearchPids.Location = new System.Drawing.Point(244, 77);
-            this.chkSearchPids.Name = "chkSearchPids";
-            this.chkSearchPids.Size = new System.Drawing.Size(86, 17);
-            this.chkSearchPids.TabIndex = 189;
-            this.chkSearchPids.Text = "Search PIDs";
-            this.chkSearchPids.UseVisualStyleBackColor = true;
+            this.btnEditTable.Location = new System.Drawing.Point(84, 3);
+            this.btnEditTable.Name = "btnEditTable";
+            this.btnEditTable.Size = new System.Drawing.Size(75, 23);
+            this.btnEditTable.TabIndex = 2;
+            this.btnEditTable.Text = "Edit table";
+            this.btnEditTable.UseVisualStyleBackColor = true;
+            this.btnEditTable.Click += new System.EventHandler(this.btnEditTable_Click);
             // 
             // FrmPatcher
             // 
@@ -2203,5 +2215,6 @@
         private System.Windows.Forms.CheckBox chkTableSeek;
         private System.Windows.Forms.CheckBox chkXdfExportTableSeek;
         private System.Windows.Forms.CheckBox chkSearchPids;
+        private System.Windows.Forms.Button btnEditTable;
     }
 }

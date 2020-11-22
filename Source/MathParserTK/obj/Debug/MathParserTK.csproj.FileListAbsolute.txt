@@ -1,0 +1,6 @@
+Y:\Visualstudio\UniversalPatcher\Source\MathParserTK\bin\Debug\MathParserTK.dll
+Y:\Visualstudio\UniversalPatcher\Source\MathParserTK\bin\Debug\MathParserTK.pdb
+Y:\Visualstudio\UniversalPatcher\Source\MathParserTK\obj\Debug\MathParserTK.csprojAssemblyReference.cache
+Y:\Visualstudio\UniversalPatcher\Source\MathParserTK\obj\Debug\MathParserTK.csproj.CoreCompileInputs.cache
+Y:\Visualstudio\UniversalPatcher\Source\MathParserTK\obj\Debug\MathParserTK.dll
+Y:\Visualstudio\UniversalPatcher\Source\MathParserTK\obj\Debug\MathParserTK.pdb

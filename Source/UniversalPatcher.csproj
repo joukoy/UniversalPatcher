@@ -159,6 +159,12 @@
     <Compile Include="frmSwapSegmentList.Designer.cs">
       <DependentUpon>frmSwapSegmentList.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmTableEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmTableEditor.Designer.cs">
+      <DependentUpon>frmTableEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="GmEeprom.cs" />
     <Compile Include="frmSegmenList.cs">
       <SubType>Form</SubType>
@@ -269,6 +275,9 @@
     <EmbeddedResource Include="frmSearchText.resx">
       <DependentUpon>frmSearchText.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmTableEditor.resx">
+      <DependentUpon>frmTableEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -302,6 +311,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\UniversalPatcher.JPG" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="MathParserTK\MathParserTK.csproj">
+      <Project>{C349510C-C794-477E-9B26-E1A4B91E3A88}</Project>
+      <Name>MathParserTK</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -21,6 +21,7 @@ namespace UniversalPatcher
             RowHeaders = "";
             ColHeaders = "";
             Math = "X";
+            SavingMath = "X";
             Offset = 0;
             ConditionalOffset = false;
             Bits = 16;
@@ -37,6 +38,7 @@ namespace UniversalPatcher
         public string RowHeaders { get; set; }
         public string ColHeaders { get; set; }
         public string Math { get; set; }
+        public string SavingMath { get; set; }
         public int Offset { get; set; }
         public bool ConditionalOffset { get; set; }
         public ushort Bits { get; set; }

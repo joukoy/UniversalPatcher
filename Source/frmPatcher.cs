@@ -16,6 +16,7 @@ using System.Diagnostics;
 using UniversalPatcher.Properties;
 using System.Drawing.Text;
 using System.ComponentModel.Design;
+using MathParserTK;
 
 namespace UniversalPatcher
 {
@@ -3249,6 +3250,19 @@ namespace UniversalPatcher
         {
             tableSeeks = new List<TableSeek>();
             refreshTableSeek();
+        }
+
+        private void btnEditTable_Click(object sender, EventArgs e)
+        {
+            int codeIndex = dataGridTableSeek.SelectedCells[0].RowIndex;
+            frmTableEditor frmT = new frmTableEditor();
+            frmT.loadTable(codeIndex, basefile);
+            if ((frmT.ShowDialog()) == DialogResult.OK)
+            {
+                LoggerBold("File modified, you can now save it");
+            }
+            frmT.Dispose();
+
         }
     }
 }
