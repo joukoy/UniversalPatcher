@@ -3254,15 +3254,22 @@ namespace UniversalPatcher
 
         private void btnEditTable_Click(object sender, EventArgs e)
         {
-            int codeIndex = dataGridTableSeek.SelectedCells[0].RowIndex;
-            frmTableEditor frmT = new frmTableEditor();
-            frmT.loadTable(codeIndex, basefile);
-            if ((frmT.ShowDialog()) == DialogResult.OK)
+            try
             {
-                LoggerBold("File modified, you can now save it");
-            }
-            frmT.Dispose();
 
+                int codeIndex = dataGridTableSeek.SelectedCells[0].RowIndex;
+                frmTableEditor frmT = new frmTableEditor();
+                frmT.loadTable(codeIndex, basefile);
+                if ((frmT.ShowDialog()) == DialogResult.OK)
+                {
+                    LoggerBold("File modified, you can now save it");
+                }
+                frmT.Dispose();
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
     }
 }
