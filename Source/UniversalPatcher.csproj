@@ -191,6 +191,7 @@
       <DependentUpon>frmPatcher.cs</DependentUpon>
     </Compile>
     <Compile Include="ListViewSorter.cs" />
+    <Compile Include="MathParser.cs" />
     <Compile Include="PatcherFunctions.cs" />
     <Compile Include="PcmFile.cs" />
     <Compile Include="Program.cs" />
@@ -311,12 +312,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\UniversalPatcher.JPG" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="MathParserTK\MathParserTK.csproj">
-      <Project>{C349510C-C794-477E-9B26-E1A4B91E3A88}</Project>
-      <Name>MathParserTK</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

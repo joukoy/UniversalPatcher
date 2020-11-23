@@ -27,7 +27,7 @@ namespace UniversalPatcher
         private bool tableModified = false;
         private bool commaDecimal = true;
 
-        public void loadTable (int tableId, PcmFile PCM1)
+        public void loadTable(int tableId, PcmFile PCM1)
         {
 
             var currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
@@ -42,15 +42,15 @@ namespace UniversalPatcher
             tSeek = tableSeeks[foundTables[tableId].configId];
             this.Text = "Table Editor: " + tSeek.Name;
             string[] colHeaders = tSeek.ColHeaders.Split(',');
-            for (int c=0; c<colHeaders.Length;c++)
+            for (int c = 0; c < colHeaders.Length; c++)
             {
                 dt.Columns.Add(colHeaders[c], System.Type.GetType("System.Decimal"));
             }
 
             uint addr = foundTables[tableId].addrInt;
             int step = (int)(tSeek.Bits / 8);
-            double value =0;
-            for (int r=0; r<tSeek.Rows;r++ )
+            double value = 0;
+            for (int r = 0; r < tSeek.Rows; r++)
             {
                 var dRow = new object[tSeek.Columns];
                 for (int c = 0; c < tSeek.Columns; c++)
@@ -68,8 +68,8 @@ namespace UniversalPatcher
                         value = BEToUint32(PCM.buf, addr);
                     }
                     string mathStr = tSeek.Math.ToLower().Replace("x", value.ToString());
-                    if (commaDecimal)  mathStr = mathStr.Replace(".", ",");
-                    dRow[c] = parser.Parse(mathStr,false);
+                    if (commaDecimal) mathStr = mathStr.Replace(".", ",");
+                    dRow[c] = parser.Parse(mathStr, false);
                     addr += (uint)step;
                 }
                 dt.Rows.Add(dRow);
@@ -91,7 +91,7 @@ namespace UniversalPatcher
         }
         private void DataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex > -1)  tableModified = true;
+            if (e.RowIndex > -1) tableModified = true;
         }
 
         private void saveTable()
@@ -106,7 +106,7 @@ namespace UniversalPatcher
                 {
                     for (int c = 0; c < tSeek.Columns; c++)
                     {
-                        value = Convert.ToDouble( dt.Rows[r].ItemArray[c]);
+                        value = Convert.ToDouble(dt.Rows[r].ItemArray[c]);
                         string mathStr = tSeek.SavingMath.ToLower().Replace("x", value.ToString());
                         if (commaDecimal) mathStr = mathStr.Replace(".", ",");
                         int intValue = (int)parser.Parse(mathStr, true);
@@ -116,15 +116,15 @@ namespace UniversalPatcher
                         }
                         if (tSeek.Bits == 16)
                         {
-                            PCM.buf[addr] = (byte)((intValue&0xFF00) >> 8);
-                            PCM.buf[addr+1] = (byte)(intValue & 0xFF);
+                            PCM.buf[addr] = (byte)((intValue & 0xFF00) >> 8);
+                            PCM.buf[addr + 1] = (byte)(intValue & 0xFF);
                         }
                         if (tSeek.Bits == 32)
                         {
                             PCM.buf[addr] = (byte)((intValue & 0xFF000000) >> 24);
-                            PCM.buf[addr+1] = (byte)((intValue & 0xFF0000) >> 16);
-                            PCM.buf[addr+2] = (byte)((intValue & 0xFF00) >> 8);
-                            PCM.buf[addr+3] = (byte)(intValue & 0xFF);
+                            PCM.buf[addr + 1] = (byte)((intValue & 0xFF0000) >> 16);
+                            PCM.buf[addr + 2] = (byte)((intValue & 0xFF00) >> 8);
+                            PCM.buf[addr + 3] = (byte)(intValue & 0xFF);
 
                         }
                         addr += (uint)step;
