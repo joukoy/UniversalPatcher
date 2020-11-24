@@ -12,6 +12,58 @@
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
     <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+  </TableSeek>
+  <TableSeek>
+    <Name>LowOct spark</Name>
+    <SearchStr>30 38 * * 32 38 * * 74 19 20 7c @ @ @ @ 4e b9 * * * * 26</SearchStr>
+    <Rows>29</Rows>
+    <Columns>25</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
+    <ColHeaders>400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000</ColHeaders>
+    <Math>X*0.021978</Math>
+    <SavingMath>X/0.021978</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+  </TableSeek>
+  <TableSeek>
+    <Name>HiOct spark</Name>
+    <SearchStr>30 38 * * 32 38 * * 74 19 20 7c @ @ @ @ 4e b9 * * * * 3c</SearchStr>
+    <Rows>29</Rows>
+    <Columns>25</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
+    <ColHeaders>400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000</ColHeaders>
+    <Math>X*0.021978</Math>
+    <SavingMath>X/0.021978</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+  </TableSeek>
+  <TableSeek>
+    <Name>max_dwell/mult vs rpm</Name>
+    <SearchStr>36 38 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 24 7C @ @ @ @ F8 12</SearchStr>
+    <Rows>11</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>0,800,1600,2400,3200,4000,4800,5600,6400,7200,8000</RowHeaders>
+    <ColHeaders />
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>1</UseHit>

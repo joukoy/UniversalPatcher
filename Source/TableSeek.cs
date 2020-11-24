@@ -42,6 +42,7 @@ namespace UniversalPatcher
         public int Offset { get; set; }
         public bool ConditionalOffset { get; set; }
         public ushort Bits { get; set; }
+        public bool Signed { get; set; }
         public ushort Decimals { get; set; }
         public ushort DataType { get; set; }
         public ushort UseHit { get; set; }

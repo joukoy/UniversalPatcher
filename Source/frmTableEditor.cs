@@ -44,7 +44,12 @@ namespace UniversalPatcher
             string[] colHeaders = tSeek.ColHeaders.Split(',');
             for (int c = 0; c < colHeaders.Length; c++)
             {
-                dt.Columns.Add(colHeaders[c], System.Type.GetType("System.Decimal"));
+                if (tSeek.DataType == 1 )
+                    dt.Columns.Add(colHeaders[c], typeof(double)); //System.Type.GetType("System.Decimal"));
+                if (tSeek.DataType == 2)
+                    dt.Columns.Add(colHeaders[c], typeof(int));  //System.Type.GetType("System.Int32"));
+                if (tSeek.DataType == 3 || tSeek.DataType == 4)
+                    dt.Columns.Add(colHeaders[c], typeof(string));
             }
 
             uint addr = foundTables[tableId].addrInt;
@@ -57,19 +62,30 @@ namespace UniversalPatcher
                 {
                     if (tSeek.Bits == 8)
                     {
-                        value = PCM.buf[addr];
+                        if (tSeek.Signed)
+                            value = unchecked((sbyte)PCM.buf[addr]);
+                        else
+                            value = PCM.buf[addr];
                     }
                     if (tSeek.Bits == 16)
                     {
-                        value = BEToUint16(PCM.buf, addr);
+                        if (tSeek.Signed)
+                            value = BEToInt16(PCM.buf, addr);
+                        else
+                            value = BEToUint16(PCM.buf, addr);
                     }
                     if (tSeek.Bits == 32)
                     {
-                        value = BEToUint32(PCM.buf, addr);
+                        if (tSeek.Signed)
+                            value = BEToInt32(PCM.buf, addr);
+                        else
+                            value = BEToUint32(PCM.buf, addr);
                     }
                     string mathStr = tSeek.Math.ToLower().Replace("x", value.ToString());
                     if (commaDecimal) mathStr = mathStr.Replace(".", ",");
-                    dRow[c] = parser.Parse(mathStr, false);
+                    value = parser.Parse(mathStr, false);
+                    dRow[c] = value;
+
                     addr += (uint)step;
                 }
                 dt.Rows.Add(dRow);
@@ -171,6 +187,11 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
             }
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

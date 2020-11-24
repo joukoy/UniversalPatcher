@@ -251,8 +251,7 @@ public class upatcher
         public string Extension { get; set; }
     }
 
-
-public const short CSMethod_None = 0;
+    public const short CSMethod_None = 0;
     public const short CSMethod_crc16 = 1;
     public const short CSMethod_crc32 = 2;
     public const short CSMethod_Bytesum = 3;
@@ -992,6 +991,17 @@ public const short CSMethod_None = 0;
     public static UInt16 BEToUint16(byte[] buf, uint offset)
     {
         return (UInt16)((buf[offset] << 8) | buf[offset + 1]);
+    }
+
+    public static int BEToInt32(byte[] buf, uint offset)
+    {
+        //Shift first byte 24 bits left, second 16bits left...
+        return (int)((buf[offset] << 24) | (buf[offset + 1] << 16) | (buf[offset + 2] << 8) | buf[offset + 3]);
+    }
+
+    public static Int16 BEToInt16(byte[] buf, uint offset)
+    {
+        return (Int16)((buf[offset] << 8) | buf[offset + 1]);
     }
 
     public static ushort SwapBytes(ushort x)
