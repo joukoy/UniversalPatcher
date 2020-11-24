@@ -116,6 +116,7 @@
             this.btnSaveCsvDTC = new System.Windows.Forms.Button();
             this.dataGridDTC = new System.Windows.Forms.DataGridView();
             this.tabTableSeek = new System.Windows.Forms.TabPage();
+            this.btnEditTable = new System.Windows.Forms.Button();
             this.dataGridTableSeek = new System.Windows.Forms.DataGridView();
             this.btnClearTableSeek = new System.Windows.Forms.Button();
             this.chkExtra = new System.Windows.Forms.CheckBox();
@@ -186,7 +187,6 @@
             this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnEditTable = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1229,17 +1229,29 @@
             this.tabTableSeek.Text = "Table Seek";
             this.tabTableSeek.UseVisualStyleBackColor = true;
             // 
+            // btnEditTable
+            // 
+            this.btnEditTable.Location = new System.Drawing.Point(84, 3);
+            this.btnEditTable.Name = "btnEditTable";
+            this.btnEditTable.Size = new System.Drawing.Size(75, 23);
+            this.btnEditTable.TabIndex = 2;
+            this.btnEditTable.Text = "Edit table";
+            this.btnEditTable.UseVisualStyleBackColor = true;
+            this.btnEditTable.Click += new System.EventHandler(this.btnEditTable_Click);
+            // 
             // dataGridTableSeek
             // 
             this.dataGridTableSeek.AllowUserToAddRows = false;
             this.dataGridTableSeek.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridTableSeek.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dataGridTableSeek.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridTableSeek.Location = new System.Drawing.Point(-2, 32);
             this.dataGridTableSeek.Name = "dataGridTableSeek";
             this.dataGridTableSeek.Size = new System.Drawing.Size(775, 312);
             this.dataGridTableSeek.TabIndex = 1;
+            this.dataGridTableSeek.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridTableSeek_CellContentClick);
             // 
             // btnClearTableSeek
             // 
@@ -1974,16 +1986,6 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // btnEditTable
-            // 
-            this.btnEditTable.Location = new System.Drawing.Point(84, 3);
-            this.btnEditTable.Name = "btnEditTable";
-            this.btnEditTable.Size = new System.Drawing.Size(75, 23);
-            this.btnEditTable.TabIndex = 2;
-            this.btnEditTable.Text = "Edit table";
-            this.btnEditTable.UseVisualStyleBackColor = true;
-            this.btnEditTable.Click += new System.EventHandler(this.btnEditTable_Click);
             // 
             // FrmPatcher
             // 

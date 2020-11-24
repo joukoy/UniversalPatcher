@@ -27,7 +27,7 @@ REPLACE-TABLEROWS
       </MATH>
     </XDFAXIS>
     <XDFAXIS id="z">
-      <EMBEDDEDDATA mmedtypeflags="0x04" mmedaddress="0xREPLACE-TABLEADDRESS" mmedelementsizebits="8" mmedrowcount="REPLACE-ROWCOUNT" mmedmajorstridebits="0" mmedminorstridebits="0" />
+      <EMBEDDEDDATA mmedtypeflags="0x01" mmedaddress="0xREPLACE-TABLEADDRESS" mmedelementsizebits="8" mmedrowcount="REPLACE-ROWCOUNT" mmedmajorstridebits="0" mmedminorstridebits="0" />
       <decimalpl>1</decimalpl>
       <min>REPLACE-MINVALUE.000000</min>
       <max>REPLACE-MAXVALUE.000000</max>

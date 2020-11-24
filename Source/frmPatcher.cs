@@ -3145,6 +3145,15 @@ namespace UniversalPatcher
                             tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
                             tableText = tableText.Replace("REPLACE-MINVALUE", "0");
                             tableText = tableText.Replace("REPLACE-MAXVALUE", "255");
+                            if (tableSeeks[id].Signed)
+                            {
+                                tableText = tableText.Replace("REPLACE-TYPEFLAGS", "01");
+                            }
+                            else
+                            {
+                                tableText = tableText.Replace("REPLACE-TYPEFLAGS", "00");
+
+                            }
                             tableRows = "";
                             if (tableSeeks[id].RowHeaders == "")
                             {
@@ -3270,6 +3279,11 @@ namespace UniversalPatcher
             {
                 LoggerBold(ex.Message);
             }
+        }
+
+        private void dataGridTableSeek_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

@@ -254,5 +254,16 @@ namespace UniversalPatcher
 
         }
 
+        private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            if (this.Text.Contains("Seek"))
+            {
+                dataGridView1.AutoResizeColumns();
+                dataGridView1.Columns["SearchStr"].Width = 100;
+                dataGridView1.Columns["RowHeaders"].Width = 100;
+                dataGridView1.Columns["Colheaders"].Width = 100;
+                this.Width = 1300;
+            }
+        }
     }
 }

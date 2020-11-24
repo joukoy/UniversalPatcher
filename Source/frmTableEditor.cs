@@ -42,16 +42,21 @@ namespace UniversalPatcher
             tSeek = tableSeeks[foundTables[tableId].configId];
             this.Text = "Table Editor: " + tSeek.Name;
             string[] colHeaders = tSeek.ColHeaders.Split(',');
-            for (int c = 0; c < colHeaders.Length; c++)
+            for (int c = 0; c < tSeek.Columns; c++)
             {
+                string headerTxt = "";
+                if (c > colHeaders.Length || colHeaders[0].Length == 0)
+                    headerTxt = "";
+                else
+                    headerTxt = colHeaders[c];
                 if (tSeek.DataType == 1 )
-                    dt.Columns.Add(colHeaders[c], typeof(double)); //System.Type.GetType("System.Decimal"));
+                    dt.Columns.Add(headerTxt, typeof(double)); //System.Type.GetType("System.Decimal"));
                 if (tSeek.DataType == 2)
-                    dt.Columns.Add(colHeaders[c], typeof(int));  //System.Type.GetType("System.Int32"));
+                    dt.Columns.Add(headerTxt, typeof(int));  //System.Type.GetType("System.Int32"));
                 if (tSeek.DataType == 3 || tSeek.DataType == 4)
-                    dt.Columns.Add(colHeaders[c], typeof(string));
+                    dt.Columns.Add(headerTxt, typeof(string));
             }
-
+            //dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader; // .AutoResizeColumns(DataGridViewAutoSizeColumnsMode.Fill);
             uint addr = foundTables[tableId].addrInt;
             int step = (int)(tSeek.Bits / 8);
             double value = 0;
@@ -91,18 +96,30 @@ namespace UniversalPatcher
                 dt.Rows.Add(dRow);
             }
             dataGridView1.DataSource = dt;
-            dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-            Application.DoEvents();
             tableModified = false;
         }
 
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             string[] rowHeaders = tSeek.RowHeaders.Split(',');
-            for (int r = 0; r < rowHeaders.Length; r++)
+            for (int r = 0; r < tSeek.Rows; r++)
             {
-                dataGridView1.Rows[r].HeaderCell.Value = rowHeaders[r];
+                if (r < rowHeaders.Length)
+                    dataGridView1.Rows[r].HeaderCell.Value = rowHeaders[r];
             }
+            string formatStr = "0";
+            for (int f=0; f< tSeek.Decimals; f++)
+            {
+                if (f > 0) formatStr += ".";
+                formatStr += "0";
+            }
+            formatStr += "#";
+            foreach (DataGridViewColumn dgvc in dataGridView1.Columns)
+            {
+                dgvc.SortMode = DataGridViewColumnSortMode.NotSortable;
+                dgvc.DefaultCellStyle.Format = formatStr;
+            }
+            dataGridView1.AutoResizeColumns();
             dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
         }
         private void DataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -125,23 +142,56 @@ namespace UniversalPatcher
                         value = Convert.ToDouble(dt.Rows[r].ItemArray[c]);
                         string mathStr = tSeek.SavingMath.ToLower().Replace("x", value.ToString());
                         if (commaDecimal) mathStr = mathStr.Replace(".", ",");
-                        int intValue = (int)parser.Parse(mathStr, true);
+                        value = parser.Parse(mathStr, true);
                         if (tSeek.Bits == 8)
                         {
                             PCM.buf[addr] = (byte)value;
                         }
                         if (tSeek.Bits == 16)
                         {
-                            PCM.buf[addr] = (byte)((intValue & 0xFF00) >> 8);
-                            PCM.buf[addr + 1] = (byte)(intValue & 0xFF);
+                            if (tSeek.Signed)
+                            {
+                                short newValue = (short)value;
+                                PCM.buf[addr] = (byte)((newValue & 0xFF00) >> 8);
+                                PCM.buf[addr + 1] = (byte)(newValue & 0xFF);
+                            }
+                            else
+                            {
+                                ushort newValue = (ushort)value;
+                                PCM.buf[addr] = (byte)((newValue & 0xFF00) >> 8);
+                                PCM.buf[addr + 1] = (byte)(newValue & 0xFF);
+                            }
+
                         }
                         if (tSeek.Bits == 32)
                         {
-                            PCM.buf[addr] = (byte)((intValue & 0xFF000000) >> 24);
-                            PCM.buf[addr + 1] = (byte)((intValue & 0xFF0000) >> 16);
-                            PCM.buf[addr + 2] = (byte)((intValue & 0xFF00) >> 8);
-                            PCM.buf[addr + 3] = (byte)(intValue & 0xFF);
-
+                            if (tSeek.DataType == 1)
+                            {
+                                byte[] buffer = BitConverter.GetBytes((float)value);
+                                PCM.buf[addr] = buffer[0];
+                                PCM.buf[addr + 1] = buffer[1];
+                                PCM.buf[addr + 2] = buffer[2];
+                                PCM.buf[addr + 3] = buffer[3];
+                            }
+                            else
+                            {
+                                if (tSeek.Signed)
+                                {
+                                    Int32 newValue = (Int32)value;
+                                    PCM.buf[addr] = (byte)((newValue & 0xFF000000) >> 24);
+                                    PCM.buf[addr + 1] = (byte)((newValue & 0xFF0000) >> 16);
+                                    PCM.buf[addr + 2] = (byte)((newValue & 0xFF00) >> 8);
+                                    PCM.buf[addr + 3] = (byte)(newValue & 0xFF);
+                                }
+                                else
+                                {
+                                    UInt32 newValue = (UInt32)value;
+                                    PCM.buf[addr] = (byte)((newValue & 0xFF000000) >> 24);
+                                    PCM.buf[addr + 1] = (byte)((newValue & 0xFF0000) >> 16);
+                                    PCM.buf[addr + 2] = (byte)((newValue & 0xFF00) >> 8);
+                                    PCM.buf[addr + 3] = (byte)(newValue & 0xFF);
+                                }
+                            }
                         }
                         addr += (uint)step;
                     }
