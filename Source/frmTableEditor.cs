@@ -243,5 +243,26 @@ namespace UniversalPatcher
         {
 
         }
+
+        private void btnExecute_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                MathParser parser = new MathParser();
+
+                foreach (DataGridViewCell cell in dataGridView1.SelectedCells)
+                {
+                    string mathStr = txtMath.Text.ToLower().Replace("x", cell.Value.ToString());
+                    if (commaDecimal) mathStr = mathStr.Replace(".", ",");
+                    double newvalue = parser.Parse(mathStr);
+                    cell.Value = newvalue;
+                }
+                tableModified = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error");
+            }
+        }
     }
 }
