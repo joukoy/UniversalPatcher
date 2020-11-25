@@ -84,7 +84,7 @@ namespace UniversalPatcher
                         ft.configId = s;
                         ft.Name = tableSeeks[s].Name;
                         ft.addrInt = (uint)(addr + tableSeeks[s].Offset);
-                        ft.Address = addr.ToString("X8");
+                        ft.Address = ft.addrInt.ToString("X8");
                         ft.Rows = rows;
                         foundTables.Add(ft);
                     }
