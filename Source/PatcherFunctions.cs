@@ -879,6 +879,7 @@ public class upatcher
         int l = 0;
         string addrStr = "";
         if (searchStr.Contains("@")) addrStr = "@";
+        else if (searchStr.Contains("#")) addrStr = "#";
         else if (searchStr.Contains("*")) addrStr = "*";
         else
         {
