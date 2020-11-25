@@ -868,6 +868,7 @@ public class upatcher
 
         string modStr = searchStr.Replace("r", "*");
         modStr = modStr.Replace("@", "*");
+        modStr = modStr.Replace("#", "*");
         uint addr = searchBytes(PCM, modStr, startAddr, PCM.fsize);
         if (addr == uint.MaxValue) return addr;
 
@@ -896,6 +897,11 @@ public class upatcher
             {
                 rows = PCM.buf[(uint)(addr + p)];
             }
+            if (sParts[p].Contains("#"))
+            {
+                return (uint)(addr + p);
+            }
+
         }
         if (l < 4)
         {

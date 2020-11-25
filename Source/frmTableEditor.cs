@@ -108,7 +108,7 @@ namespace UniversalPatcher
                     dataGridView1.Rows[r].HeaderCell.Value = rowHeaders[r];
             }
             string formatStr = "0";
-            for (int f=0; f< tSeek.Decimals; f++)
+            for (int f=1; f <= tSeek.Decimals; f++)
             {
                 if (f > 0) formatStr += ".";
                 formatStr += "0";
