@@ -897,7 +897,6 @@ public class upatcher
         {
             //Address is AFTER searchstring
             retVal.Addr = BEToUint32(PCM.buf, addr + (uint)sParts.Length);
-            return retVal;
         }
         for (int p = 0; p < sParts.Length; p++)
         {
@@ -920,7 +919,7 @@ public class upatcher
             }
 
         }
-        if (searchStr.Contains("#"))
+        if (retVal.Addr < uint.MaxValue)
         {
             return retVal;
         }
