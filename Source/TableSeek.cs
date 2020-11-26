@@ -54,7 +54,7 @@ namespace UniversalPatcher
 
         public string seekTables(PcmFile PCM)
         {
-            string retVal = "";
+            string retVal = "Seeking tables..." + Environment.NewLine;
             try
             {
                 string fileName = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + PCM.xmlFile + ".xml");
@@ -86,7 +86,7 @@ namespace UniversalPatcher
                     sAddr.Rows = 0;
                     sAddr.Columns = 0;
                     Block block = new Block();
-                    if (tableSeeks[s].Range.Length > 0)
+                    if (tableSeeks[s].Range != null && tableSeeks[s].Range.Length > 0)
                     {
                         string[] rangeS = tableSeeks[s].Range.Split(',');
                         for (int r=0; r<rangeS.Length; r++)
@@ -98,7 +98,7 @@ namespace UniversalPatcher
                             addrList.Add(block);
                         }
                     }
-                    else if (tableSeeks[s].Segments.Length > 0)
+                    else if (tableSeeks[s].Segments != null && tableSeeks[s].Segments.Length > 0)
                     {
                         string[] segStrings = tableSeeks[s].Segments.Split(',');
                         for (int y=0; y< segStrings.Length; y++)
@@ -154,6 +154,7 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 return "DTC search, line " + line + ": " + ex.Message;
             }
+            retVal += "Done";
             return retVal;
         }
     }
