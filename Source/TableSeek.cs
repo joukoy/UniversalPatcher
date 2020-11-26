@@ -152,7 +152,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                return "DTC search, line " + line + ": " + ex.Message;
+                return "Table seek, line " + line + ": " + ex.Message;
             }
             retVal += "Done";
             return retVal;

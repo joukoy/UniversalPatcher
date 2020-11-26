@@ -878,7 +878,7 @@ public class upatcher
         retVal.Rows = 0;
 
         string modStr = searchStr.Replace("r", "");
-        modStr = modStr.Replace("c", "");
+        modStr = modStr.Replace("k", "");
         modStr = modStr.Replace("@", "*");
         modStr = modStr.Replace("#", "*");
         uint addr = searchBytes(PCM, modStr, startAddr, endAddr);
@@ -889,7 +889,7 @@ public class upatcher
 
         int[] locations = new int[4];
         int l = 0;
-        string addrStr = "";
+        string addrStr = "*";
         if (searchStr.Contains("@")) addrStr = "@";
         else if (searchStr.Contains("#")) addrStr = "#";
         else if (searchStr.Contains("*")) addrStr = "*";
@@ -900,7 +900,7 @@ public class upatcher
         }
         for (int p = 0; p < sParts.Length; p++)
         {
-            if (sParts[p].Contains(addrStr))
+            if (sParts[p].Contains(addrStr) && l < 4)
             {
                 locations[l] = p;
                 l++;
@@ -909,7 +909,7 @@ public class upatcher
             {
                 retVal.Rows = PCM.buf[(uint)(addr + p)];
             }
-            if (sParts[p].Contains("c"))
+            if (sParts[p].Contains("k"))
             {
                 retVal.Columns = PCM.buf[(uint)(addr + p)];
             }
