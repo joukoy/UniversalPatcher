@@ -251,6 +251,13 @@ public class upatcher
         public string Extension { get; set; }
     }
 
+    public struct SearchedAddress
+    {
+        public uint Addr;
+        public byte Rows;
+        public byte Columns;
+    }
+
     public const short CSMethod_None = 0;
     public const short CSMethod_crc16 = 1;
     public const short CSMethod_crc32 = 2;
@@ -282,6 +289,7 @@ public class upatcher
 
     public static string XMLFile;
     public static string tableSearchFile;
+    public static string tableSeekFile = "";
 
     public static FrmPatcher frmpatcher;
 
@@ -862,15 +870,19 @@ public class upatcher
         return uint.MaxValue;
     }
 
-    public static uint getAddrbySearchString(PcmFile PCM, string searchStr, ref uint startAddr, ref byte rows, bool conditionalOffset = false)
+    public static SearchedAddress getAddrbySearchString(PcmFile PCM, string searchStr, ref uint startAddr, uint endAddr, bool conditionalOffset = false)
     {
-        uint retVal = uint.MaxValue;
+        SearchedAddress retVal;
+        retVal.Addr = uint.MaxValue;
+        retVal.Columns = 0;
+        retVal.Rows = 0;
 
-        string modStr = searchStr.Replace("r", "*");
+        string modStr = searchStr.Replace("r", "");
+        modStr = modStr.Replace("c", "");
         modStr = modStr.Replace("@", "*");
         modStr = modStr.Replace("#", "*");
-        uint addr = searchBytes(PCM, modStr, startAddr, PCM.fsize);
-        if (addr == uint.MaxValue) return addr;
+        uint addr = searchBytes(PCM, modStr, startAddr, endAddr);
+        if (addr == uint.MaxValue) return retVal;
 
         string[] sParts = searchStr.Trim().Split(' ');
         startAddr = addr + (uint)sParts.Length;
@@ -884,10 +896,10 @@ public class upatcher
         else
         {
             //Address is AFTER searchstring
-            retVal = BEToUint32(PCM.buf, addr + (uint)sParts.Length);
+            retVal.Addr = BEToUint32(PCM.buf, addr + (uint)sParts.Length);
             return retVal;
         }
-        for (int p = 0; p < sParts.Length && l < 4; p++)
+        for (int p = 0; p < sParts.Length; p++)
         {
             if (sParts[p].Contains(addrStr))
             {
@@ -896,26 +908,35 @@ public class upatcher
             }
             if (sParts[p].Contains("r"))
             {
-                rows = PCM.buf[(uint)(addr + p)];
+                retVal.Rows = PCM.buf[(uint)(addr + p)];
+            }
+            if (sParts[p].Contains("c"))
+            {
+                retVal.Columns = PCM.buf[(uint)(addr + p)];
             }
             if (sParts[p].Contains("#"))
             {
-                return (uint)(addr + p);
+                retVal.Addr = (uint)(addr + p);
             }
 
         }
+        if (searchStr.Contains("#"))
+        {
+            return retVal;
+        }
+
         if (l < 4)
         {
             Debug.WriteLine("Less than 4 * in searchstring, address need 4 bytes!");
-            return uint.MaxValue;
+            retVal.Addr = uint.MaxValue;
         }
 
-        retVal = (uint)(PCM.buf[addr + locations[0]] << 24 | PCM.buf[addr + locations[1]] << 16 | PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
+        retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 24 | PCM.buf[addr + locations[1]] << 16 | PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
         if (conditionalOffset)
         {
             ushort addrWord = (ushort)(PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
             if (addrWord > 0x5000)
-                retVal -= 0x10000;
+                retVal.Addr -= 0x10000;
         }
         return retVal;
     }

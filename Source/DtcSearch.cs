@@ -124,14 +124,13 @@ namespace UniversalPatcher
                         searchStr = dtcSearchConfigs[configIndex].CodeSearch;
                         startAddr = 0;
                         condOffset = false;
-                        if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("code")) condOffset = true;
-                        byte rows = 0;
-                        codeAddr = getAddrbySearchString(PCM, searchStr,ref startAddr,ref rows, condOffset);
+                        if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("code")) condOffset = true;                        
+                        codeAddr = getAddrbySearchString(PCM, searchStr,ref startAddr,PCM.fsize, condOffset).Addr;
                         //Check if we found status table, too:
                         startAddr = 0;
                         condOffset = false;
                         if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("status")) condOffset = true;
-                        statusAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].StatusSearch, ref startAddr, ref rows, condOffset);
+                        statusAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].StatusSearch, ref startAddr,PCM.fsize, condOffset).Addr;
                         if (codeAddr < PCM.fsize && statusAddr < PCM.fsize)
                         {
                             Debug.WriteLine("Code search string: " + searchStr);
@@ -211,8 +210,7 @@ namespace UniversalPatcher
                     {
                         condOffset = false;
                         if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("mil")) condOffset = true;
-                        byte rows = 0;
-                        milAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].MilSearch, ref startAddr,ref rows,  condOffset);
+                        milAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].MilSearch, ref startAddr, PCM.fsize, condOffset).Addr;
                         if (milAddr < uint.MaxValue)
                         {
 

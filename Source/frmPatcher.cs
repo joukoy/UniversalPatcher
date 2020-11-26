@@ -3125,7 +3125,7 @@ namespace UniversalPatcher
                     {
                         //Add all tables
                         int id = foundTables[t].configId;
-                        if (tableSeeks[id].Rows > 0)
+                        if (foundTables[t].Rows > 0)
                         {
                             if (tableSeeks[id].Name != null && tableSeeks[id].Name.Length > 1)
                                 tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableSeeks[id].Name);
@@ -3135,14 +3135,14 @@ namespace UniversalPatcher
                             if (s == -1) s = lastCategory;
                             tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
                             tableText = tableText.Replace("REPLACE-TABLEID", foundTables[t].Address);
-                            tableText = tableText.Replace("REPLACE-ROWCOUNT", tableSeeks[id].Rows.ToString());
-                            tableText = tableText.Replace("REPLACE-COLCOUNT", tableSeeks[id].Columns.ToString());
+                            tableText = tableText.Replace("REPLACE-ROWCOUNT", foundTables[t].Rows.ToString());
+                            tableText = tableText.Replace("REPLACE-COLCOUNT", foundTables[t].Columns.ToString());
                             tableText = tableText.Replace("REPLACE-MATH", tableSeeks[id].Math);
                             tableText = tableText.Replace("REPLACE-BITS", tableSeeks[id].Bits.ToString());
                             tableText = tableText.Replace("REPLACE-DECIMALS", tableSeeks[id].Decimals.ToString());
                             tableText = tableText.Replace("REPLACE-OUTPUTTYPE", tableSeeks[id].DataType.ToString());
                             tableText = tableText.Replace("REPLACE-TABLEADDRESS", foundTables[t].Address);
-                            tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
+                            tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", foundTables[t].Description);
                             tableText = tableText.Replace("REPLACE-MINVALUE", "0");
                             tableText = tableText.Replace("REPLACE-MAXVALUE", "255");
                             if (tableSeeks[id].Signed)
@@ -3157,7 +3157,7 @@ namespace UniversalPatcher
                             tableRows = "";
                             if (tableSeeks[id].RowHeaders == "")
                             {
-                                for (int d = 0; d < tableSeeks[id].Rows; d++)
+                                for (int d = 0; d < foundTables[t].Rows; d++)
                                 {
                                     tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />" + Environment.NewLine;
                                 }
@@ -3174,7 +3174,7 @@ namespace UniversalPatcher
                             string tableCols = "";
                             if (tableSeeks[id].ColHeaders == "")
                             {
-                                for (int d = 0; d < tableSeeks[id].Columns; d++)
+                                for (int d = 0; d < foundTables[t].Columns; d++)
                                 {
                                     tableCols += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />" + Environment.NewLine;
                                 }

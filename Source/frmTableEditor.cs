@@ -42,7 +42,7 @@ namespace UniversalPatcher
             tSeek = tableSeeks[foundTables[tableId].configId];
             this.Text = "Table Editor: " + tSeek.Name;
             string[] colHeaders = tSeek.ColHeaders.Split(',');
-            for (int c = 0; c < tSeek.Columns; c++)
+            for (int c = 0; c < foundTables[tableId].Columns; c++)
             {
                 string headerTxt = "";
                 if (c > colHeaders.Length || colHeaders[0].Length == 0)
@@ -60,10 +60,10 @@ namespace UniversalPatcher
             uint addr = foundTables[tableId].addrInt;
             int step = (int)(tSeek.Bits / 8);
             double value = 0;
-            for (int r = 0; r < tSeek.Rows; r++)
+            for (int r = 0; r < foundTables[tableId].Rows; r++)
             {
-                var dRow = new object[tSeek.Columns];
-                for (int c = 0; c < tSeek.Columns; c++)
+                var dRow = new object[foundTables[tId].Columns];
+                for (int c = 0; c < foundTables[tableId].Columns; c++)
                 {
                     if (tSeek.Bits == 8)
                     {
@@ -102,7 +102,7 @@ namespace UniversalPatcher
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             string[] rowHeaders = tSeek.RowHeaders.Split(',');
-            for (int r = 0; r < tSeek.Rows; r++)
+            for (int r = 0; r < foundTables[tId].Rows; r++)
             {
                 if (r < rowHeaders.Length)
                     dataGridView1.Rows[r].HeaderCell.Value = rowHeaders[r];
@@ -135,9 +135,9 @@ namespace UniversalPatcher
                 int step = (int)(tSeek.Bits / 8);
                 double value = 0;
                 MathParser parser = new MathParser();
-                for (int r = 0; r < tSeek.Rows; r++)
+                for (int r = 0; r < foundTables[tId].Rows; r++)
                 {
-                    for (int c = 0; c < tSeek.Columns; c++)
+                    for (int c = 0; c < foundTables[tId].Columns; c++)
                     {
                         value = Convert.ToDouble(dt.Rows[r].ItemArray[c]);
                         string mathStr = tSeek.SavingMath.ToLower().Replace("x", value.ToString());

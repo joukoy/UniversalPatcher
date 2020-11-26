@@ -14,7 +14,7 @@ namespace UniversalPatcher
         public TableSeek()
         {
             Name = "";
-            //XmlFile = "";
+            Description = "";
             SearchStr = "";
             Rows = 0;
             Columns = 0;
@@ -28,13 +28,15 @@ namespace UniversalPatcher
             Decimals = 2;
             DataType = 1;
             UseHit = 1;
+            Range = "";
+            Segments = "";
         }
 
         public string Name { get; set; }
-        //public string XmlFile { get; set; }
+        public string Description { get; set; }
         public string SearchStr { get; set; }
-        public int Rows { get; set; }
-        public int Columns { get; set; }
+        public byte Rows { get; set; }
+        public byte Columns { get; set; }
         public string RowHeaders { get; set; }
         public string ColHeaders { get; set; }
         public string Math { get; set; }
@@ -46,6 +48,8 @@ namespace UniversalPatcher
         public ushort Decimals { get; set; }
         public ushort DataType { get; set; }
         public ushort UseHit { get; set; }
+        public string Range { get; set; }
+        public string Segments { get; set; }
 
 
         public string seekTables(PcmFile PCM)
@@ -54,39 +58,89 @@ namespace UniversalPatcher
             try
             {
                 string fileName = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + PCM.xmlFile + ".xml");
-                if (File.Exists(fileName))
+                if (fileName != tableSeekFile)
                 {
-                    Debug.WriteLine("Loading " + fileName);
-                    System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSeek>));
-                    System.IO.StreamReader file = new System.IO.StreamReader(fileName);
-                    tableSeeks = (List<TableSeek>)reader.Deserialize(file);
-                    file.Close();
+                    if (File.Exists(fileName))
+                    {
+                        tableSeekFile = fileName;
+                        Debug.WriteLine("Loading " + fileName);
+                        System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSeek>));
+                        System.IO.StreamReader file = new System.IO.StreamReader(fileName);
+                        tableSeeks = (List<TableSeek>)reader.Deserialize(file);
+                        file.Close();
 
+                    }
+                    else
+                    {
+                        tableSeeks = new List<TableSeek>();
+                        return retVal;
+                    }
                 }
-                else
-                {
-                    tableSeeks = new List<TableSeek>();
-                    return retVal;
-                }
-
                 for (int s = 0; s < tableSeeks.Count; s++)
                 {
                     uint startAddr = 0;
-                    uint addr = uint.MaxValue;
-                    byte rows = 0;
-                    for (int hit = 1; hit <= tableSeeks[s].UseHit; hit++)
+                    uint endAddr = PCM.fsize;
+                    List<Block> addrList = new List<Block>();
+                    SearchedAddress sAddr;
+                    sAddr.Addr = uint.MaxValue;
+                    sAddr.Rows = 0;
+                    sAddr.Columns = 0;
+                    Block block = new Block();
+                    if (tableSeeks[s].Range.Length > 0)
                     {
-                        addr = getAddrbySearchString(PCM, tableSeeks[s].SearchStr, ref startAddr, ref rows, tableSeeks[s].ConditionalOffset);
+                        string[] rangeS = tableSeeks[s].Range.Split(',');
+                        for (int r=0; r<rangeS.Length; r++)
+                        {
+                            string[] range = rangeS[r].Split('-');
+                            if (range.Length != 2) throw new Exception("Unknown address range:" + rangeS[r]);
+                            if (HexToUint(range[0],out block.Start) == false) throw new Exception("Unknown HEX code:" + range[0]);
+                            if (HexToUint(range[1], out block.End) == false) throw new Exception("Unknown HEX code:" + range[1]);
+                            addrList.Add(block);
+                        }
                     }
-                    if (addr < PCM.fsize)
+                    else if (tableSeeks[s].Segments.Length > 0)
                     {
-                        FoundTable ft = new FoundTable();
-                        ft.configId = s;
-                        ft.Name = tableSeeks[s].Name;
-                        ft.addrInt = (uint)(addr + tableSeeks[s].Offset);
-                        ft.Address = ft.addrInt.ToString("X8");
-                        ft.Rows = rows;
-                        foundTables.Add(ft);
+                        string[] segStrings = tableSeeks[s].Segments.Split(',');
+                        for (int y=0; y< segStrings.Length; y++)
+                        {
+                            int segNr = 0;
+                            if (int.TryParse( segStrings[y], out segNr) == false) throw new Exception("Unknown segment: " + segStrings[y]);
+                            for (int b=0; b< PCM.binfile[segNr].SegmentBlocks.Count; b++)
+                                addrList.Add(PCM.binfile[segNr].SegmentBlocks[b]);
+                        }
+                    }
+                    else
+                    {
+                        block.Start = 0;
+                        block.End = PCM.fsize;
+                        addrList.Add(block);
+                    }
+                    for (int b = 0; b < addrList.Count; b++)
+                    {
+                        startAddr = addrList[b].Start;
+                        endAddr = addrList[b].End;
+                        for (int hit = 1; hit <= tableSeeks[s].UseHit; hit++)
+                        {
+                            sAddr = getAddrbySearchString(PCM, tableSeeks[s].SearchStr, ref startAddr, endAddr, tableSeeks[s].ConditionalOffset);
+                        }
+                        if (sAddr.Addr < PCM.fsize)
+                        {
+                            FoundTable ft = new FoundTable();
+                            ft.configId = s;
+                            ft.Name = tableSeeks[s].Name;
+                            ft.Description = tableSeeks[s].Description;
+                            ft.addrInt = (uint)(sAddr.Addr + tableSeeks[s].Offset);
+                            ft.Address = ft.addrInt.ToString("X8");
+                            if (tableSeeks[s].Rows > 0)
+                                ft.Rows = tableSeeks[s].Rows;
+                            else
+                                ft.Rows = sAddr.Rows;
+                            if (tableSeeks[s].Columns > 0)
+                                ft.Columns = tableSeeks[s].Columns;
+                            else
+                                ft.Columns = sAddr.Columns;
+                            foundTables.Add(ft);
+                        }
                     }
 
                 }
@@ -112,11 +166,15 @@ namespace UniversalPatcher
             addrInt = uint.MaxValue;
             Address = "";
             configId = -1;
+            Description = "";
         }
         public string Name { get; set; }
+        public string Description { get; set; }
+
         public uint addrInt;
         public string Address { get; set; }
         public byte Rows { get; set; }
+        public byte Columns { get; set; }
         public int configId;
     }
 
