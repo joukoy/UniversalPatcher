@@ -33,7 +33,6 @@ namespace UniversalPatcher
         }
 
         public string Name { get; set; }
-        public string Description { get; set; }
         public string SearchStr { get; set; }
         public byte Rows { get; set; }
         public byte Columns { get; set; }
@@ -51,6 +50,7 @@ namespace UniversalPatcher
         public string Range { get; set; }
         public string Segments { get; set; }
         public string ValidationSearchStr { get; set; }
+        public string Description { get; set; }
 
         public string seekTables(PcmFile PCM)
         {
