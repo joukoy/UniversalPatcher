@@ -119,9 +119,14 @@ namespace UniversalPatcher
                     {
                         startAddr = addrList[b].Start;
                         endAddr = addrList[b].End;
-                        for (int hit = 1; hit <= tableSeeks[s].UseHit; hit++)
+                        int hit = 0;
+                        while (startAddr < PCM.fsize)
                         {
                             sAddr = getAddrbySearchString(PCM, tableSeeks[s].SearchStr, ref startAddr, endAddr, tableSeeks[s].ConditionalOffset, tableSeeks[s].ValidationSearchStr);
+                            if (sAddr.Addr < PCM.fsize) 
+                                hit++;
+                            if (hit == tableSeeks[s].UseHit)
+                                break;
                         }
                         if (sAddr.Addr < PCM.fsize)
                         {

@@ -903,7 +903,15 @@ public class upatcher
         modStr = modStr.Replace("@", "*");
         modStr = modStr.Replace("#", "*");
         uint addr = searchBytes(PCM, modStr, startAddr, endAddr);
-        if (addr == uint.MaxValue) return retVal;
+        if (addr == uint.MaxValue)
+        {
+            //Not found
+            startAddr = uint.MaxValue;
+            return retVal;
+        }
+
+        string[] sParts = searchStr.Trim().Split(' ');
+        startAddr = addr + (uint)sParts.Length;
 
         if (validationSearchStr != null && validationSearchStr != "")
         {
@@ -928,8 +936,6 @@ public class upatcher
             Debug.WriteLine("Found, validated");
         }
 
-        string[] sParts = searchStr.Trim().Split(' ');
-        startAddr = addr + (uint)sParts.Length;
 
         int[] locations = new int[4];
         int l = 0;
