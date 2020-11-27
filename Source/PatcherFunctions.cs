@@ -873,7 +873,7 @@ public class upatcher
     private static string generateValidationSearchString(uint addr, string origStr)
     {
         string retVal = "";
-        string validationAddr = (addr).ToString("X8");
+        string validationAddr = (addr + 1).ToString("X8");
         string[] vParts = origStr.Split(' ');
         int vpartNr = 0;
         for (int v = 0; v < vParts.Length; v++)
