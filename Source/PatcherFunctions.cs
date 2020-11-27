@@ -873,7 +873,7 @@ public class upatcher
     private static string generateValidationSearchString(uint addr, string origStr)
     {
         string retVal = "";
-        string validationAddr = (addr + 1).ToString("X8");
+        string validationAddr = (addr).ToString("X8");
         string[] vParts = origStr.Split(' ');
         int vpartNr = 0;
         for (int v = 0; v < vParts.Length; v++)
@@ -889,7 +889,7 @@ public class upatcher
             }
         }
 
-        return retVal;
+        return retVal.Trim();
     }
     public static SearchedAddress getAddrbySearchString(PcmFile PCM, string searchStr, ref uint startAddr, uint endAddr, bool conditionalOffset = false, string validationSearchStr="")
     {
@@ -900,8 +900,13 @@ public class upatcher
 
         string modStr = searchStr.Replace("r", "");
         modStr = modStr.Replace("k", "");
+        modStr = modStr.Replace("x", "");
+        modStr = modStr.Replace("y", "");
         modStr = modStr.Replace("@", "*");
-        modStr = modStr.Replace("#", "*");
+        modStr = modStr.Replace("# ", "* "); //# alone at beginning or middle
+        if (modStr.EndsWith("#")) 
+            modStr = modStr.Replace(" #" , " *"); //# alone at end
+        modStr = modStr.Replace("#", "").Trim(); //For example: #21 00 21
         uint addr = searchBytes(PCM, modStr, startAddr, endAddr);
         if (addr == uint.MaxValue)
         {
@@ -941,8 +946,6 @@ public class upatcher
         int l = 0;
         string addrStr = "*";
         if (searchStr.Contains("@")) addrStr = "@";
-        else if (searchStr.Contains("#")) addrStr = "#";
-        else if (searchStr.Contains("*")) addrStr = "*";
         else
         {
             //Address is AFTER searchstring
@@ -955,11 +958,11 @@ public class upatcher
                 locations[l] = p;
                 l++;
             }
-            if (sParts[p].Contains("r"))
+            if (sParts[p].Contains("r") || sParts[p].Contains("x"))
             {
                 retVal.Rows = PCM.buf[(uint)(addr + p)];
             }
-            if (sParts[p].Contains("k"))
+            if (sParts[p].Contains("k") || sParts[p].Contains("y"))
             {
                 retVal.Columns = PCM.buf[(uint)(addr + p)];
             }
