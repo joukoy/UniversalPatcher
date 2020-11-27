@@ -16,6 +16,9 @@
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>1</UseHit>
+    <Range />
+    <Segments>1</Segments>
+    <Description />
   </TableSeek>
   <TableSeek>
     <Name>hi oct spark08-11</Name>
@@ -33,6 +36,9 @@
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>1</UseHit>
+    <Range />
+    <Segments>1</Segments>
+    <Description />
   </TableSeek>
   <TableSeek>
     <Name>hi oct spark12-15</Name>
@@ -50,12 +56,15 @@
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>1</UseHit>
+    <Range />
+    <Segments>1</Segments>
+    <Description />
   </TableSeek>
   <TableSeek>
     <Name>hi oct spark</Name>
-    <SearchStr># 21 21 02</SearchStr>
-    <Rows>33</Rows>
-    <Columns>33</Columns>
+    <SearchStr>#k21 r21 02</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
     <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
     <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
     <Math>X/2</Math>
@@ -67,12 +76,16 @@
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>1</UseHit>
+    <Range>10000-1fffff</Range>
+    <Segments />
+    <ValidationSearchStr>3c 60 @ @ 38 63 @ @</ValidationSearchStr>
+    <Description />
   </TableSeek>
   <TableSeek>
     <Name>low oct spark</Name>
-    <SearchStr># 21 21 02</SearchStr>
-    <Rows>33</Rows>
-    <Columns>33</Columns>
+    <SearchStr>#k21 r21 02</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
     <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
     <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
     <Math>X/2</Math>
@@ -84,13 +97,17 @@
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>2</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3c 60 @ @ 38 63 @ @</ValidationSearchStr>
+    <Description />
   </TableSeek>
   <TableSeek>
     <Name>IAT spark corr</Name>
-    <SearchStr># 21 21 02</SearchStr>
+    <SearchStr>#21 21 02</SearchStr>
     <Rows>33</Rows>
     <Columns>33</Columns>
-    <RowHeaders>-64,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,64</RowHeaders>
+    <RowHeaders>-40,-35,-30,-25,-20,-15,-10,-5,0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120</RowHeaders>
     <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
     <Math>X/2</Math>
     <SavingMath>X*2</SavingMath>
@@ -101,10 +118,14 @@
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>3</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3c 60 @ @ 38 63 @ @</ValidationSearchStr>
+    <Description />
   </TableSeek>
   <TableSeek>
     <Name>Base idle spark</Name>
-    <SearchStr># 21 21 02</SearchStr>
+    <SearchStr>#21 21 02</SearchStr>
     <Rows>33</Rows>
     <Columns>33</Columns>
     <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
@@ -118,6 +139,10 @@
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>4</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>@ @ * * @ @</ValidationSearchStr>
+    <Description />
   </TableSeek>
   <TableSeek>
     <Name>coast down spark</Name>
@@ -128,13 +153,16 @@
     <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
     <Math>X/2</Math>
     <SavingMath>X*2</SavingMath>
-    <Offset>3</Offset>
+    <Offset>4</Offset>
     <ConditionalOffset>false</ConditionalOffset>
     <Bits>8</Bits>
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>5</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Description />
   </TableSeek>
   <TableSeek>
     <Name>Flex fuel spark</Name>
@@ -145,13 +173,16 @@
     <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
     <Math>X/2</Math>
     <SavingMath>X*2</SavingMath>
-    <Offset>3</Offset>
+    <Offset>4</Offset>
     <ConditionalOffset>false</ConditionalOffset>
     <Bits>8</Bits>
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>6</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Description />
   </TableSeek>
   <TableSeek>
     <Name>Dfco min spark,egr, misfire limit</Name>
@@ -162,12 +193,155 @@
     <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
     <Math>X/2</Math>
     <SavingMath>X*2</SavingMath>
-    <Offset>3</Offset>
+    <Offset>4</Offset>
     <ConditionalOffset>false</ConditionalOffset>
     <Bits>8</Bits>
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>7</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>HalfCylBaseHiOctane Spark</Name>
+    <SearchStr># 11 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800</ColHeaders>
+    <Math>X/2</Math>
+    <SavingMath>X*2</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>8</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>HalfCylBaseLowOctane</Name>
+    <SearchStr># 11 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800</ColHeaders>
+    <Math>X/2</Math>
+    <SavingMath>X*2</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>8</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>2</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>EGR SPARK</Name>
+    <SearchStr># 11 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800</ColHeaders>
+    <Math>X/2</Math>
+    <SavingMath>X*2</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>8</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>3</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>Cam phaser spark table</Name>
+    <SearchStr># 11 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800</ColHeaders>
+    <Math>X/2</Math>
+    <SavingMath>X*2</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>8</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>4</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>EGR dod spark</Name>
+    <SearchStr># 11 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800</ColHeaders>
+    <Math>X/2</Math>
+    <SavingMath>X*2</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>8</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>5</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>Coolant spark correction</Name>
+    <SearchStr># 11 21 02</SearchStr>
+    <Rows>33</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>-20,-10,0,10,20,30,40,50,60,70,80,90,100,110,120,130,140</ColHeaders>
+    <Math>X/2</Math>
+    <SavingMath>X*2</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>8</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>6</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>Clutch Fuel Cut Off rpm/GmCyl</Name>
+    <SearchStr># 21 09 02</SearchStr>
+    <Rows>9</Rows>
+    <Columns>33</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
+    <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4200,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000,8200</ColHeaders>
+    <Math>X/2</Math>
+    <SavingMath>X*2</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>8</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <Description />
   </TableSeek>
 </ArrayOfTableSeek>
