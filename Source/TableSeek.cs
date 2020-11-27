@@ -50,7 +50,7 @@ namespace UniversalPatcher
         public ushort UseHit { get; set; }
         public string Range { get; set; }
         public string Segments { get; set; }
-
+        public string ValidationSearchStr { get; set; }
 
         public string seekTables(PcmFile PCM)
         {
@@ -121,7 +121,7 @@ namespace UniversalPatcher
                         endAddr = addrList[b].End;
                         for (int hit = 1; hit <= tableSeeks[s].UseHit; hit++)
                         {
-                            sAddr = getAddrbySearchString(PCM, tableSeeks[s].SearchStr, ref startAddr, endAddr, tableSeeks[s].ConditionalOffset);
+                            sAddr = getAddrbySearchString(PCM, tableSeeks[s].SearchStr, ref startAddr, endAddr, tableSeeks[s].ConditionalOffset, tableSeeks[s].ValidationSearchStr);
                         }
                         if (sAddr.Addr < PCM.fsize)
                         {
@@ -170,13 +170,13 @@ namespace UniversalPatcher
             Description = "";
         }
         public string Name { get; set; }
-        public string Description { get; set; }
 
         public uint addrInt;
         public string Address { get; set; }
         public byte Rows { get; set; }
         public byte Columns { get; set; }
         public int configId;
+        public string Description { get; set; }
     }
 
 

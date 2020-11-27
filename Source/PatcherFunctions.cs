@@ -870,7 +870,28 @@ public class upatcher
         return uint.MaxValue;
     }
 
-    public static SearchedAddress getAddrbySearchString(PcmFile PCM, string searchStr, ref uint startAddr, uint endAddr, bool conditionalOffset = false)
+    private static string generateValidationSearchString(uint addr, string origStr)
+    {
+        string retVal = "";
+        string validationAddr = (addr).ToString("X8");
+        string[] vParts = origStr.Split(' ');
+        int vpartNr = 0;
+        for (int v = 0; v < vParts.Length; v++)
+        {
+            if (vParts[v] == "@")
+            {
+                retVal += validationAddr.Substring(vpartNr * 2, 2) + " ";
+                vpartNr++;
+            }
+            else
+            {
+                retVal += vParts[v] + " ";
+            }
+        }
+
+        return retVal;
+    }
+    public static SearchedAddress getAddrbySearchString(PcmFile PCM, string searchStr, ref uint startAddr, uint endAddr, bool conditionalOffset = false, string validationSearchStr="")
     {
         SearchedAddress retVal;
         retVal.Addr = uint.MaxValue;
@@ -883,6 +904,29 @@ public class upatcher
         modStr = modStr.Replace("#", "*");
         uint addr = searchBytes(PCM, modStr, startAddr, endAddr);
         if (addr == uint.MaxValue) return retVal;
+
+        if (validationSearchStr != null && validationSearchStr != "")
+        {
+            Debug.WriteLine("Validation string: " + validationSearchStr + ", Address: " + addr.ToString("X8"));
+            int vLen = validationSearchStr.Split('@').Length - 1;
+            if (vLen != 4) throw new Exception("Validation search needs four '@'");
+            string newStr = generateValidationSearchString(addr, validationSearchStr);
+            Debug.WriteLine("Searching validationstring: " + newStr);
+            if (searchBytes(PCM, newStr, 0, PCM.fsize) == uint.MaxValue)
+            {
+                //Try with 0x10k offset:
+                newStr = generateValidationSearchString(addr + 0x10000, validationSearchStr);
+                Debug.WriteLine("Not found, using 10k offset and searching validationstring: " + newStr);
+                if (searchBytes(PCM, newStr, 0, PCM.fsize) == uint.MaxValue)
+                {
+                    //Validation fail
+                    Debug.WriteLine("Not found");
+                    retVal.Addr = uint.MaxValue;
+                    return retVal;
+                }
+            }
+            Debug.WriteLine("Found, validated");
+        }
 
         string[] sParts = searchStr.Trim().Split(' ');
         startAddr = addr + (uint)sParts.Length;
