@@ -62,7 +62,7 @@
   </TableSeek>
   <TableSeek>
     <Name>hi oct spark</Name>
-    <SearchStr>#k21 r21 02</SearchStr>
+    <SearchStr>#y21 x21 02</SearchStr>
     <Rows>0</Rows>
     <Columns>0</Columns>
     <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
@@ -76,14 +76,14 @@
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>1</UseHit>
-    <Range>10000-1fffff</Range>
+    <Range />
     <Segments />
-    <ValidationSearchStr>3c 60 @ @ 38 63 @ @</ValidationSearchStr>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @</ValidationSearchStr>
     <Description />
   </TableSeek>
   <TableSeek>
     <Name>low oct spark</Name>
-    <SearchStr>#k21 r21 02</SearchStr>
+    <SearchStr>#y21 x21 02</SearchStr>
     <Rows>0</Rows>
     <Columns>0</Columns>
     <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
@@ -98,8 +98,8 @@
     <DataType>1</DataType>
     <UseHit>2</UseHit>
     <Range />
-    <Segments>6</Segments>
-    <ValidationSearchStr>3c 60 @ @ 38 63 @ @</ValidationSearchStr>
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @</ValidationSearchStr>
     <Description />
   </TableSeek>
   <TableSeek>
@@ -119,8 +119,8 @@
     <DataType>1</DataType>
     <UseHit>3</UseHit>
     <Range />
-    <Segments>6</Segments>
-    <ValidationSearchStr>3c 60 @ @ 38 63 @ @</ValidationSearchStr>
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @</ValidationSearchStr>
     <Description />
   </TableSeek>
   <TableSeek>
@@ -140,7 +140,7 @@
     <DataType>1</DataType>
     <UseHit>4</UseHit>
     <Range />
-    <Segments>6</Segments>
+    <Segments />
     <ValidationSearchStr>@ @ * * @ @</ValidationSearchStr>
     <Description />
   </TableSeek>
@@ -343,5 +343,26 @@
     <Range />
     <Segments>6</Segments>
     <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>dwell rpm£/volts</Name>
+    <SearchStr>#00 y11 00 x21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1-3,4-13</UseHit>
+    <Range />
+    <Segments>2,3,4,5,6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @</ValidationSearchStr>
+    <Description>Dwell £</Description>
   </TableSeek>
 </ArrayOfTableSeek>
