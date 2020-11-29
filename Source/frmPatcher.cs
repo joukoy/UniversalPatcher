@@ -17,6 +17,7 @@ using UniversalPatcher.Properties;
 using System.Drawing.Text;
 using System.ComponentModel.Design;
 using MathParserTK;
+using System.Configuration;
 
 namespace UniversalPatcher
 {
@@ -65,6 +66,28 @@ namespace UniversalPatcher
                 frmSegmenList frmSL = new frmSegmenList();
                 frmSL.LoadFile(args[1]);
             }
+
+            if (Properties.Settings.Default.MainWindowPersistence)
+            {
+                rememberWindowSizeToolStripMenuItem.Checked = true;
+                if (Properties.Settings.Default.MainWindowSize.Width > 0 || Properties.Settings.Default.MainWindowSize.Height > 0)
+                {
+                    this.WindowState = Properties.Settings.Default.MainWindowState;
+                    if (this.WindowState == FormWindowState.Minimized)
+                    {
+                        this.WindowState = FormWindowState.Normal;
+                    }
+                    this.Location = Properties.Settings.Default.MainWindowLocation;
+                    this.Size = Properties.Settings.Default.MainWindowSize;
+                }
+            }
+            else
+            {
+                rememberWindowSizeToolStripMenuItem.Checked = false;
+            }
+
+            Application.DoEvents();
+
             addCheckBoxes();
             numSuppress.Value = Properties.Settings.Default.SuppressAfter;
             if (numSuppress.Value == 0)
@@ -80,6 +103,7 @@ namespace UniversalPatcher
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Log"));
             logFile = Path.Combine(Application.StartupPath, "Log", "universalpatcher" + DateTime.Now.ToString("_yyyyMMdd_hhmm") + ".rtf");
 
+            loadXmlFiles();
 
             if (Properties.Settings.Default.LastXMLfolder == "")
                 Properties.Settings.Default.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
@@ -89,6 +113,23 @@ namespace UniversalPatcher
             checkAutorefreshCVNlist.Checked = Properties.Settings.Default.AutorefreshCVNlist;
             checkAutorefreshFileinfo.Checked = Properties.Settings.Default.AutorefreshFileinfo;
 
+            listCSAddresses.Enabled = true;
+            listCSAddresses.Clear();
+            listCSAddresses.View = View.Details;
+            listCSAddresses.FullRowSelect = true;
+            listCSAddresses.Columns.Add("OS");
+            listCSAddresses.Columns.Add("CS1 Address");
+            listCSAddresses.Columns.Add("OS Store Address");
+            listCSAddresses.Columns.Add("MAF Address");
+            listCSAddresses.Columns.Add("VE table");
+            listCSAddresses.Columns.Add("3d tables");
+            //listCSAddresses.Columns[0].Width = 100;
+            //listCSAddresses.Columns[1].Width = 100;
+            //listCSAddresses.Columns[2].Width = 100;
+            //listCSAddresses.Columns[2].Width = 100;
+        }
+        private void loadXmlFiles()
+        {
             DetectRules = new List<DetectRule>();
             string AutoDetectFile = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
             if (File.Exists(AutoDetectFile))
@@ -166,23 +207,7 @@ namespace UniversalPatcher
                 dtcSearchConfigs = new List<DtcSearchConfig>();
             }
 
-
-            listCSAddresses.Enabled = true;
-            listCSAddresses.Clear();
-            listCSAddresses.View = View.Details;
-            listCSAddresses.FullRowSelect = true;
-            listCSAddresses.Columns.Add("OS");
-            listCSAddresses.Columns.Add("CS1 Address");
-            listCSAddresses.Columns.Add("OS Store Address");
-            listCSAddresses.Columns.Add("MAF Address");
-            listCSAddresses.Columns.Add("VE table");
-            listCSAddresses.Columns.Add("3d tables");
-            //listCSAddresses.Columns[0].Width = 100;
-            //listCSAddresses.Columns[1].Width = 100;
-            //listCSAddresses.Columns[2].Width = 100;
-            //listCSAddresses.Columns[2].Width = 100;
         }
-
         public void refreshSearchedTables()
         {
             int count = 0;
@@ -253,7 +278,22 @@ namespace UniversalPatcher
             {
                 chkLogtoFile.Checked = false;
                 Application.DoEvents();
-            }    
+            }
+            if (Properties.Settings.Default.MainWindowPersistence)
+            {
+                Properties.Settings.Default.MainWindowState = this.WindowState;
+                if (this.WindowState == FormWindowState.Normal)
+                {
+                    Properties.Settings.Default.MainWindowLocation = this.Location;
+                    Properties.Settings.Default.MainWindowSize = this.Size;
+                }
+                else
+                {
+                    Properties.Settings.Default.MainWindowLocation = this.RestoreBounds.Location;
+                    Properties.Settings.Default.MainWindowSize = this.RestoreBounds.Size;
+                }
+                Properties.Settings.Default.Save();
+            }
         }
         public void addCheckBoxes()
         {
@@ -3284,6 +3324,22 @@ namespace UniversalPatcher
         private void dataGridTableSeek_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
+        }
+
+        private void rememberWindowSizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (rememberWindowSizeToolStripMenuItem.Checked)
+            {
+                rememberWindowSizeToolStripMenuItem.Checked = false;
+                Properties.Settings.Default.MainWindowPersistence = false;
+                Properties.Settings.Default.Save();
+            }
+            else
+            {
+                rememberWindowSizeToolStripMenuItem.Checked = true;
+                Properties.Settings.Default.MainWindowPersistence = true;
+                Properties.Settings.Default.Save();
+            }
         }
     }
 }

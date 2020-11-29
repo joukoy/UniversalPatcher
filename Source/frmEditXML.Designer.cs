@@ -1,4 +1,6 @@
-﻿namespace UniversalPatcher
+﻿using System;
+
+namespace UniversalPatcher
 {
     partial class frmEditXML
     {
@@ -107,6 +109,7 @@
             this.Name = "frmEditXML";
             this.Text = "Edit Autodetect";
             this.Load += new System.EventHandler(this.frmEditXML_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmEditXML_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

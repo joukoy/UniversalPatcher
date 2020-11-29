@@ -20,6 +20,7 @@ namespace UniversalPatcher
         }
 
         private BindingSource bindingSource = new BindingSource();
+        private bool starting = true;
 
         string fileName = "";
         public void LoadRules()
@@ -205,8 +206,40 @@ namespace UniversalPatcher
 
         private void frmEditXML_Load(object sender, EventArgs e)
         {
+            if (Properties.Settings.Default.MainWindowPersistence)
+            {                
+                if (Properties.Settings.Default.EditXMLWindowSize.Width > 0 || Properties.Settings.Default.EditXMLWindowSize.Height > 0)
+                {
+                    this.WindowState = Properties.Settings.Default.EditXMLWindowState;
+                    if (this.WindowState == FormWindowState.Minimized)
+                    {
+                        this.WindowState = FormWindowState.Normal;
+                    }
+                    this.Location = Properties.Settings.Default.EditXMLWindowLocation;
+                    this.Size = Properties.Settings.Default.EditXMLWindowSize;
+                }
+            }
 
         }
+        private void frmEditXML_FormClosing(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.MainWindowPersistence)
+            {
+                Properties.Settings.Default.EditXMLWindowState = this.WindowState;
+                if (this.WindowState == FormWindowState.Normal)
+                {
+                    Properties.Settings.Default.EditXMLWindowLocation = this.Location;
+                    Properties.Settings.Default.EditXMLWindowSize = this.Size;
+                }
+                else
+                {
+                    Properties.Settings.Default.EditXMLWindowLocation = this.RestoreBounds.Location;
+                    Properties.Settings.Default.EditXMLWindowSize = this.RestoreBounds.Size;
+                }
+                Properties.Settings.Default.Save();
+            }
+        }
+
 
         private void btnImportCSV_Click(object sender, EventArgs e)
         {
@@ -256,13 +289,13 @@ namespace UniversalPatcher
 
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-            if (this.Text.Contains("Seek"))
+            if (this.Text.Contains("Seek") && starting)
             {
                 dataGridView1.AutoResizeColumns();
                 dataGridView1.Columns["SearchStr"].Width = 100;
                 dataGridView1.Columns["RowHeaders"].Width = 100;
                 dataGridView1.Columns["Colheaders"].Width = 100;
-                this.Width = 1300;
+                starting = false;
             }
         }
     }

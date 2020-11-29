@@ -187,6 +187,7 @@
             this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1911,7 +1912,8 @@
             this.editTableSearchToolStripMenuItem,
             this.fileTypesToolStripMenuItem,
             this.dTCSearchToolStripMenuItem,
-            this.tableSeekToolStripMenuItem});
+            this.tableSeekToolStripMenuItem,
+            this.rememberWindowSizeToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "Settings";
@@ -1919,56 +1921,56 @@
             // loadConfigToolStripMenuItem
             // 
             this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
-            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.loadConfigToolStripMenuItem.Text = "Load config";
             this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
             // 
             // setupSegmentsToolStripMenuItem
             // 
             this.setupSegmentsToolStripMenuItem.Name = "setupSegmentsToolStripMenuItem";
-            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.setupSegmentsToolStripMenuItem.Text = "Edit XML";
             this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
             // 
             // autodetectToolStripMenuItem
             // 
             this.autodetectToolStripMenuItem.Name = "autodetectToolStripMenuItem";
-            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.autodetectToolStripMenuItem.Text = "Autodetect";
             this.autodetectToolStripMenuItem.Click += new System.EventHandler(this.autodetectToolStripMenuItem_Click);
             // 
             // stockCVNToolStripMenuItem
             // 
             this.stockCVNToolStripMenuItem.Name = "stockCVNToolStripMenuItem";
-            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.stockCVNToolStripMenuItem.Text = "Stock CVN";
             this.stockCVNToolStripMenuItem.Click += new System.EventHandler(this.stockCVNToolStripMenuItem_Click);
             // 
             // editTableSearchToolStripMenuItem
             // 
             this.editTableSearchToolStripMenuItem.Name = "editTableSearchToolStripMenuItem";
-            this.editTableSearchToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.editTableSearchToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.editTableSearchToolStripMenuItem.Text = "Table Search ";
             this.editTableSearchToolStripMenuItem.Click += new System.EventHandler(this.editTableSearchToolStripMenuItem_Click);
             // 
             // fileTypesToolStripMenuItem
             // 
             this.fileTypesToolStripMenuItem.Name = "fileTypesToolStripMenuItem";
-            this.fileTypesToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.fileTypesToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.fileTypesToolStripMenuItem.Text = "File Types";
             this.fileTypesToolStripMenuItem.Click += new System.EventHandler(this.fileTypesToolStripMenuItem_Click);
             // 
             // dTCSearchToolStripMenuItem
             // 
             this.dTCSearchToolStripMenuItem.Name = "dTCSearchToolStripMenuItem";
-            this.dTCSearchToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.dTCSearchToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.dTCSearchToolStripMenuItem.Text = "DTC Search";
             this.dTCSearchToolStripMenuItem.Click += new System.EventHandler(this.dTCSearchToolStripMenuItem_Click);
             // 
             // tableSeekToolStripMenuItem
             // 
             this.tableSeekToolStripMenuItem.Name = "tableSeekToolStripMenuItem";
-            this.tableSeekToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.tableSeekToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.tableSeekToolStripMenuItem.Text = "TableSeek";
             this.tableSeekToolStripMenuItem.Click += new System.EventHandler(this.tableSeekToolStripMenuItem_Click);
             // 
@@ -1986,6 +1988,13 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // rememberWindowSizeToolStripMenuItem
+            // 
+            this.rememberWindowSizeToolStripMenuItem.Name = "rememberWindowSizeToolStripMenuItem";
+            this.rememberWindowSizeToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.rememberWindowSizeToolStripMenuItem.Text = "Remember window size";
+            this.rememberWindowSizeToolStripMenuItem.Click += new System.EventHandler(this.rememberWindowSizeToolStripMenuItem_Click);
             // 
             // FrmPatcher
             // 
@@ -2218,5 +2227,6 @@
         private System.Windows.Forms.CheckBox chkXdfExportTableSeek;
         private System.Windows.Forms.CheckBox chkSearchPids;
         private System.Windows.Forms.Button btnEditTable;
+        private System.Windows.Forms.ToolStripMenuItem rememberWindowSizeToolStripMenuItem;
     }
 }

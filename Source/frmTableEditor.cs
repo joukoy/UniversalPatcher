@@ -209,10 +209,63 @@ namespace UniversalPatcher
             }
 
         }
-        private void frmTableEditor_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void btnExecute_Click(object sender, EventArgs e)
         {
             try
             {
+                MathParser parser = new MathParser();
+
+                foreach (DataGridViewCell cell in dataGridView1.SelectedCells)
+                {
+                    string mathStr = txtMath.Text.ToLower().Replace("x", cell.Value.ToString());
+                    if (commaDecimal) mathStr = mathStr.Replace(".", ",");
+                    double newvalue = parser.Parse(mathStr);
+                    cell.Value = newvalue;
+                }
+                tableModified = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error");
+            }
+        }
+
+        private void frmTableEditor_Load(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.MainWindowPersistence)
+            {
+                if (Properties.Settings.Default.TableEditorWindowSize.Width > 0 || Properties.Settings.Default.TableEditorWindowSize.Height > 0)
+                {
+                    this.WindowState = Properties.Settings.Default.TableEditorWindowState;
+                    if (this.WindowState == FormWindowState.Minimized)
+                    {
+                        this.WindowState = FormWindowState.Normal;
+                    }
+                    this.Location = Properties.Settings.Default.TableEditorWindowLocation;
+                    this.Size = Properties.Settings.Default.TableEditorWindowSize;
+                }
+            }
+
+        }
+        private void frmTableEditor_FormClosing(object sender, EventArgs e)
+        {
+            try
+            {
+                if (Properties.Settings.Default.MainWindowPersistence)
+                {
+                    Properties.Settings.Default.TableEditorWindowState = this.WindowState;
+                    if (this.WindowState == FormWindowState.Normal)
+                    {
+                        Properties.Settings.Default.TableEditorWindowLocation = this.Location;
+                        Properties.Settings.Default.TableEditorWindowSize = this.Size;
+                    }
+                    else
+                    {
+                        Properties.Settings.Default.TableEditorWindowLocation = this.RestoreBounds.Location;
+                        Properties.Settings.Default.TableEditorWindowSize = this.RestoreBounds.Size;
+                    }
+                    Properties.Settings.Default.Save();
+                }
 
                 if (tableModified)
                 {
@@ -239,30 +292,5 @@ namespace UniversalPatcher
             }
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-        private void btnExecute_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                MathParser parser = new MathParser();
-
-                foreach (DataGridViewCell cell in dataGridView1.SelectedCells)
-                {
-                    string mathStr = txtMath.Text.ToLower().Replace("x", cell.Value.ToString());
-                    if (commaDecimal) mathStr = mathStr.Replace(".", ",");
-                    double newvalue = parser.Parse(mathStr);
-                    cell.Value = newvalue;
-                }
-                tableModified = true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error");
-            }
-        }
     }
 }

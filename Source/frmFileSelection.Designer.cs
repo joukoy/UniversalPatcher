@@ -1,4 +1,6 @@
-﻿namespace UniversalPatcher
+﻿using System;
+
+namespace UniversalPatcher
 {
     partial class frmFileSelection
     {
@@ -155,6 +157,8 @@
             this.Controls.Add(this.listFiles);
             this.Name = "frmFileSelection";
             this.Text = "Select files";
+            this.Load += new System.EventHandler(this.frmFileSelection_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmFileSelection_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

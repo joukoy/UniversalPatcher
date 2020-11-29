@@ -12,7 +12,7 @@ namespace UniversalPatcher.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.5.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.7.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -116,6 +116,162 @@ namespace UniversalPatcher.Properties {
             }
             set {
                 this["AutorefreshFileinfo"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool MainWindowPersistence {
+            get {
+                return ((bool)(this["MainWindowPersistence"]));
+            }
+            set {
+                this["MainWindowPersistence"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size MainWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["MainWindowSize"]));
+            }
+            set {
+                this["MainWindowSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.Forms.FormWindowState MainWindowState {
+            get {
+                return ((global::System.Windows.Forms.FormWindowState)(this["MainWindowState"]));
+            }
+            set {
+                this["MainWindowState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point MainWindowLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["MainWindowLocation"]));
+            }
+            set {
+                this["MainWindowLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size EditXMLWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["EditXMLWindowSize"]));
+            }
+            set {
+                this["EditXMLWindowSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.Forms.FormWindowState EditXMLWindowState {
+            get {
+                return ((global::System.Windows.Forms.FormWindowState)(this["EditXMLWindowState"]));
+            }
+            set {
+                this["EditXMLWindowState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point EditXMLWindowLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["EditXMLWindowLocation"]));
+            }
+            set {
+                this["EditXMLWindowLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size FileSelectionWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["FileSelectionWindowSize"]));
+            }
+            set {
+                this["FileSelectionWindowSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.Forms.FormWindowState FileSelectionWindowState {
+            get {
+                return ((global::System.Windows.Forms.FormWindowState)(this["FileSelectionWindowState"]));
+            }
+            set {
+                this["FileSelectionWindowState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point FileSelectionWindowLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["FileSelectionWindowLocation"]));
+            }
+            set {
+                this["FileSelectionWindowLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size TableEditorWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["TableEditorWindowSize"]));
+            }
+            set {
+                this["TableEditorWindowSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.Forms.FormWindowState TableEditorWindowState {
+            get {
+                return ((global::System.Windows.Forms.FormWindowState)(this["TableEditorWindowState"]));
+            }
+            set {
+                this["TableEditorWindowState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point TableEditorWindowLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["TableEditorWindowLocation"]));
+            }
+            set {
+                this["TableEditorWindowLocation"] = value;
             }
         }
     }

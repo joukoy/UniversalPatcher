@@ -1,4 +1,6 @@
-﻿namespace UniversalPatcher
+﻿using System;
+
+namespace UniversalPatcher
 {
     partial class frmTableEditor
     {
@@ -48,7 +50,6 @@
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridView1.Size = new System.Drawing.Size(796, 420);
             this.dataGridView1.TabIndex = 0;
-            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
             this.dataGridView1.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridView1_DataBindingComplete);
             // 
@@ -80,7 +81,8 @@
             this.Controls.Add(this.dataGridView1);
             this.Name = "frmTableEditor";
             this.Text = "Table Editor";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmTableEditor_Closing);
+            this.Load += new System.EventHandler(this.frmTableEditor_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmTableEditor_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
