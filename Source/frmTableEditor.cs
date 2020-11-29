@@ -230,9 +230,31 @@ namespace UniversalPatcher
             }
         }
 
+        private void AutoResize()
+        {
+            int dgv_width = dataGridView1.Columns.GetColumnsWidth(DataGridViewElementStates.Visible);
+            if (dgv_width < 175) dgv_width = 175;
+            int dgv_height = dataGridView1.Rows.GetRowsHeight(DataGridViewElementStates.Visible);
+            Screen myScreen = Screen.FromPoint(Cursor.Position);
+            System.Drawing.Rectangle area = myScreen.WorkingArea;
+            if ((dgv_width + 125) > area.Width)
+                this.Width = area.Width - 50;
+            else
+                this.Width = dgv_width + 125;
+            if ((dgv_height + 100) > area.Height)
+                this.Height = area.Height - 50;
+            else
+                this.Height = dgv_height + 100;
+
+        }
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
-            if (Properties.Settings.Default.MainWindowPersistence)
+            chkAutoResize.Checked = Properties.Settings.Default.TableEditorAutoResize;
+            if (Properties.Settings.Default.TableEditorAutoResize)
+            {
+                AutoResize();
+            }
+            else if (Properties.Settings.Default.MainWindowPersistence)
             {
                 if (Properties.Settings.Default.TableEditorWindowSize.Width > 0 || Properties.Settings.Default.TableEditorWindowSize.Height > 0)
                 {
@@ -292,5 +314,14 @@ namespace UniversalPatcher
             }
         }
 
+        private void chkAutoResize_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.TableEditorAutoResize = chkAutoResize.Checked;
+            Properties.Settings.Default.Save();
+            if (chkAutoResize.Checked)
+            {
+                AutoResize();
+            }
+        }
     }
 }

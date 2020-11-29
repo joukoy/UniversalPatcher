@@ -274,5 +274,17 @@ namespace UniversalPatcher.Properties {
                 this["TableEditorWindowLocation"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool TableEditorAutoResize {
+            get {
+                return ((bool)(this["TableEditorAutoResize"]));
+            }
+            set {
+                this["TableEditorAutoResize"] = value;
+            }
+        }
     }
 }

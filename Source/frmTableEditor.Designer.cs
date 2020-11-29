@@ -33,6 +33,7 @@ namespace UniversalPatcher
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.txtMath = new System.Windows.Forms.TextBox();
             this.btnExecute = new System.Windows.Forms.Button();
+            this.chkAutoResize = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -63,7 +64,7 @@ namespace UniversalPatcher
             // 
             // btnExecute
             // 
-            this.btnExecute.Location = new System.Drawing.Point(116, 3);
+            this.btnExecute.Location = new System.Drawing.Point(114, 3);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(68, 19);
             this.btnExecute.TabIndex = 2;
@@ -71,18 +72,31 @@ namespace UniversalPatcher
             this.btnExecute.UseVisualStyleBackColor = true;
             this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
             // 
+            // chkAutoResize
+            // 
+            this.chkAutoResize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkAutoResize.AutoSize = true;
+            this.chkAutoResize.Location = new System.Drawing.Point(720, 5);
+            this.chkAutoResize.Name = "chkAutoResize";
+            this.chkAutoResize.Size = new System.Drawing.Size(78, 17);
+            this.chkAutoResize.TabIndex = 3;
+            this.chkAutoResize.Text = "Auto resize";
+            this.chkAutoResize.UseVisualStyleBackColor = true;
+            this.chkAutoResize.CheckedChanged += new System.EventHandler(this.chkAutoResize_CheckedChanged);
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.chkAutoResize);
             this.Controls.Add(this.btnExecute);
             this.Controls.Add(this.txtMath);
             this.Controls.Add(this.dataGridView1);
             this.Name = "frmTableEditor";
             this.Text = "Table Editor";
-            this.Load += new System.EventHandler(this.frmTableEditor_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmTableEditor_FormClosing);
+            this.Load += new System.EventHandler(this.frmTableEditor_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -94,5 +108,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.TextBox txtMath;
         private System.Windows.Forms.Button btnExecute;
+        private System.Windows.Forms.CheckBox chkAutoResize;
     }
 }

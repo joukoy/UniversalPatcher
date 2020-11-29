@@ -130,6 +130,7 @@ namespace UniversalPatcher
         }
         private void loadXmlFiles()
         {
+            Logger("Loading configurations...", false);
             DetectRules = new List<DetectRule>();
             string AutoDetectFile = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
             if (File.Exists(AutoDetectFile))
@@ -206,7 +207,7 @@ namespace UniversalPatcher
             {
                 dtcSearchConfigs = new List<DtcSearchConfig>();
             }
-
+            Logger(" Done");
         }
         public void refreshSearchedTables()
         {
