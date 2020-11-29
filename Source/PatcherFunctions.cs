@@ -845,8 +845,9 @@ public class upatcher
 
             for (int b = 0; b < searchParts.Length; b++)
             {
-                byte searchval;
-                HexToByte(searchParts[b], out searchval);
+                byte searchval = 0;
+                if (searchParts[b] != "*")
+                    HexToByte(searchParts[b], out searchval);
                 bytes[b] = searchval;
             }
 
