@@ -1,0 +1,11 @@
+  <XDFCHECKSUM uniqueid="0x65FA">
+    <title>GM V6 Checksum</title>
+    <REGION>
+      <pluginmoduleid>7e23159d-104a-49cb-9486-7c1f5db663d9</pluginmoduleid>
+      <datastart>0x0</datastart>
+      <dataend>0x0</dataend>
+      <storeaddress>0x0</storeaddress>
+      <calculationmethod>0x0</calculationmethod>
+    </REGION>
+  </XDFCHECKSUM>
+

@@ -73,6 +73,7 @@ namespace UniversalPatcher
                     else
                     {
                         tableSeeks = new List<TableSeek>();
+                        retVal += "Configuration not found." + Environment.NewLine;
                         return retVal;
                     }
                 }
