@@ -1236,11 +1236,11 @@
             // 
             this.btnReadTinyTunerDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnReadTinyTunerDB.Enabled = false;
-            this.btnReadTinyTunerDB.Location = new System.Drawing.Point(653, 3);
+            this.btnReadTinyTunerDB.Location = new System.Drawing.Point(608, 3);
             this.btnReadTinyTunerDB.Name = "btnReadTinyTunerDB";
-            this.btnReadTinyTunerDB.Size = new System.Drawing.Size(120, 23);
+            this.btnReadTinyTunerDB.Size = new System.Drawing.Size(165, 23);
             this.btnReadTinyTunerDB.TabIndex = 3;
-            this.btnReadTinyTunerDB.Text = "Read TinyTuner DB";
+            this.btnReadTinyTunerDB.Text = "Read TinyTuner DB (V6 only)";
             this.btnReadTinyTunerDB.UseVisualStyleBackColor = true;
             this.btnReadTinyTunerDB.Click += new System.EventHandler(this.btnReadTinyTunerDB_Click);
             // 
