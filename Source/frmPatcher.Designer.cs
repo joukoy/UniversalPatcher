@@ -116,6 +116,7 @@
             this.btnSaveCsvDTC = new System.Windows.Forms.Button();
             this.dataGridDTC = new System.Windows.Forms.DataGridView();
             this.tabTableSeek = new System.Windows.Forms.TabPage();
+            this.btnReadTinyTunerDB = new System.Windows.Forms.Button();
             this.btnEditTable = new System.Windows.Forms.Button();
             this.dataGridTableSeek = new System.Windows.Forms.DataGridView();
             this.btnClearTableSeek = new System.Windows.Forms.Button();
@@ -185,9 +186,9 @@
             this.fileTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dTCSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1220,6 +1221,7 @@
             // 
             // tabTableSeek
             // 
+            this.tabTableSeek.Controls.Add(this.btnReadTinyTunerDB);
             this.tabTableSeek.Controls.Add(this.btnEditTable);
             this.tabTableSeek.Controls.Add(this.dataGridTableSeek);
             this.tabTableSeek.Controls.Add(this.btnClearTableSeek);
@@ -1229,6 +1231,18 @@
             this.tabTableSeek.TabIndex = 11;
             this.tabTableSeek.Text = "Table Seek";
             this.tabTableSeek.UseVisualStyleBackColor = true;
+            // 
+            // btnReadTinyTunerDB
+            // 
+            this.btnReadTinyTunerDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnReadTinyTunerDB.Enabled = false;
+            this.btnReadTinyTunerDB.Location = new System.Drawing.Point(653, 3);
+            this.btnReadTinyTunerDB.Name = "btnReadTinyTunerDB";
+            this.btnReadTinyTunerDB.Size = new System.Drawing.Size(120, 23);
+            this.btnReadTinyTunerDB.TabIndex = 3;
+            this.btnReadTinyTunerDB.Text = "Read TinyTuner DB";
+            this.btnReadTinyTunerDB.UseVisualStyleBackColor = true;
+            this.btnReadTinyTunerDB.Click += new System.EventHandler(this.btnReadTinyTunerDB_Click);
             // 
             // btnEditTable
             // 
@@ -1974,6 +1988,13 @@
             this.tableSeekToolStripMenuItem.Text = "TableSeek";
             this.tableSeekToolStripMenuItem.Click += new System.EventHandler(this.tableSeekToolStripMenuItem_Click);
             // 
+            // rememberWindowSizeToolStripMenuItem
+            // 
+            this.rememberWindowSizeToolStripMenuItem.Name = "rememberWindowSizeToolStripMenuItem";
+            this.rememberWindowSizeToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.rememberWindowSizeToolStripMenuItem.Text = "Remember window size";
+            this.rememberWindowSizeToolStripMenuItem.Click += new System.EventHandler(this.rememberWindowSizeToolStripMenuItem_Click);
+            // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1988,13 +2009,6 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // rememberWindowSizeToolStripMenuItem
-            // 
-            this.rememberWindowSizeToolStripMenuItem.Name = "rememberWindowSizeToolStripMenuItem";
-            this.rememberWindowSizeToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
-            this.rememberWindowSizeToolStripMenuItem.Text = "Remember window size";
-            this.rememberWindowSizeToolStripMenuItem.Click += new System.EventHandler(this.rememberWindowSizeToolStripMenuItem_Click);
             // 
             // FrmPatcher
             // 
@@ -2228,5 +2242,6 @@
         private System.Windows.Forms.CheckBox chkSearchPids;
         private System.Windows.Forms.Button btnEditTable;
         private System.Windows.Forms.ToolStripMenuItem rememberWindowSizeToolStripMenuItem;
+        private System.Windows.Forms.Button btnReadTinyTunerDB;
     }
 }

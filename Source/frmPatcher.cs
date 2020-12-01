@@ -602,7 +602,11 @@ namespace UniversalPatcher
                     Logger(TS.seekTables(PCM));
                 }
                 refreshTableSeek();
-
+                if (upatcher.Segments[0].CS1Address.StartsWith("GM-V6"))
+                    btnReadTinyTunerDB.Enabled = true;
+                else
+                    btnReadTinyTunerDB.Enabled = false;
+                                    
                 getPidList();
             }
             catch (Exception ex)
@@ -3342,6 +3346,14 @@ namespace UniversalPatcher
                 Properties.Settings.Default.MainWindowPersistence = true;
                 Properties.Settings.Default.Save();
             }
+        }
+
+        private void btnReadTinyTunerDB_Click(object sender, EventArgs e)
+        {
+            TinyTuner tt = new TinyTuner();
+            Logger("Reading TinyTuner DB...");
+            Logger(tt.readTinyDB(basefile));
+            refreshTableSeek();
         }
     }
 }

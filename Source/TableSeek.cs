@@ -98,7 +98,7 @@ namespace UniversalPatcher
                             ts.Offset = 0;
                             ts.SavingMath = "X/0.0002441406";
                             ts.Signed = true;
-                            ts.ColHeaders = "0,400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400";
+                            ts.ColHeaders = "RPM 0,400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400, 6800";
                             if (ft.Rows == 15)
                                 ts.RowHeaders = "kpa 0,10,20,30,40,50,60,70,80,90,100,110,120,130,140";
                             else
@@ -128,6 +128,7 @@ namespace UniversalPatcher
                                 ts.RowHeaders += (1500 + rh * 125).ToString();
                                 if (rh < 81) ts.RowHeaders += ",";
                             }
+                            ts.ColHeaders = "g/s";
                             ts.Description = "Grams Per Second";
                             tableSeeks.Add(ts);
 
