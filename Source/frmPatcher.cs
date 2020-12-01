@@ -598,6 +598,7 @@ namespace UniversalPatcher
                 TableSeek TS = new TableSeek();
                 if (chkTableSeek.Checked)
                 {
+                    Logger("Seeking tables...");
                     Logger(TS.seekTables(PCM));
                 }
                 refreshTableSeek();
@@ -3240,7 +3241,7 @@ namespace UniversalPatcher
                     {
                         //Add all constants
                         int id = foundTables[t].configId;
-                        if (tableSeeks[id].Rows == 0)
+                        if (foundTables[t].Rows == 0)
                         {
                             if (foundTables[t].Name != null && foundTables[t].Name.Length > 1)
                                 tableText = templateTxt.Replace("REPLACE-TABLETITLE", foundTables[t].Name);

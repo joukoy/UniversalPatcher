@@ -41,6 +41,8 @@ namespace UniversalPatcher
             dt = new DataTable("data");
             tSeek = tableSeeks[foundTables[tableId].configId];
             this.Text = "Table Editor: " + tSeek.Name;
+            if (foundTables[tableId].Description.Length > 0)
+                this.Text += " - " + foundTables[tableId].Description;
             string[] colHeaders = tSeek.ColHeaders.Split(',');
             for (int c = 0; c < foundTables[tableId].Columns; c++)
             {

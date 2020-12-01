@@ -54,9 +54,10 @@ namespace UniversalPatcher
 
         public string seekTables(PcmFile PCM)
         {
-            string retVal = "Seeking tables..." + Environment.NewLine;
+            string retVal = "";
             try
             {
+
                 string fileName = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + PCM.xmlFile + ".xml");
                 if (fileName != tableSeekFile)
                 {
@@ -72,9 +73,73 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        tableSeeks = new List<TableSeek>();
-                        retVal += "Configuration not found." + Environment.NewLine;
-                        return retVal;
+                        if (upatcher.Segments[0].CS1Address.StartsWith("GM-V6"))
+                        {
+                            tableSeeks = new List<TableSeek>();
+                            TableSeek ts = new TableSeek();
+                            foundTables = new List<FoundTable>();
+                            FoundTable ft = new FoundTable();
+
+                            ft.Address = PCM.v6VeTable.address.ToString("X8");
+                            ft.addrInt = PCM.v6VeTable.address;
+                            ft.Rows = (byte)PCM.v6VeTable.rows;
+                            ft.Columns = 17;
+                            ft.configId = 0;
+                            ft.Name = "VE";
+                            ft.Description = "Volumetric Efficiency";
+                            foundTables.Add(ft);
+
+                            ts.Name = "VE";
+                            ts.Description = "Volumetric Efficiency";
+                            ts.Bits = 8;
+                            ts.DataType = 2;
+                            ts.Decimals = 0;
+                            ts.Math = "X*0.0002441406";
+                            ts.Offset = 0;
+                            ts.SavingMath = "X/0.0002441406";
+                            ts.Signed = true;
+                            ts.ColHeaders = "0,400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400";
+                            if (ft.Rows == 15)
+                                ts.RowHeaders = "kpa 0,10,20,30,40,50,60,70,80,90,100,110,120,130,140";
+                            else
+                                ts.RowHeaders = "kpa 20,30,40,50,60,70,80,90,100,110,120,130,140";
+                            tableSeeks.Add(ts);
+
+                            ft = new FoundTable();
+                            HexToUint(PCM.mafAddress, out ft.addrInt);
+                            ft.Address = ft.addrInt.ToString("X8");
+                            ft.Rows = 81;
+                            ft.Columns = 1;
+                            ft.configId = 1;
+                            ft.Name = "MAF";
+                            ft.Description = "Grams Per Second";
+                            foundTables.Add(ft);
+
+                            ts = new TableSeek();
+                            ts.Name = "MAF";
+                            ts.Math = "X*0.0078125";
+                            ts.SavingMath = "X/0.0078125";
+                            ts.DataType = 2;
+                            ts.Decimals = 0;
+                            ts.Signed = false;
+                            ts.RowHeaders = "1500,";
+                            for (int rh = 1; rh < 82; rh++)
+                            {
+                                ts.RowHeaders += (1500 + rh * 125).ToString();
+                                if (rh < 81) ts.RowHeaders += ",";
+                            }
+                            ts.Description = "Grams Per Second";
+                            tableSeeks.Add(ts);
+
+                            retVal += "OK";
+                            return retVal;
+                        }
+                        else
+                        {
+                            tableSeeks = new List<TableSeek>();
+                            retVal += "Configuration not found." + Environment.NewLine;
+                            return retVal;
+                        }
                     }
                 }
                 for (int s = 0; s < tableSeeks.Count; s++)
