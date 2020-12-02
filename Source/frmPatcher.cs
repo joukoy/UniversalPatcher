@@ -53,6 +53,9 @@ namespace UniversalPatcher
         private BindingSource dtcBindingSource = new BindingSource();
         private BindingSource tableSeekBindingSource = new BindingSource();
         private List<PidSearch.PID> pidList = new List<PidSearch.PID>();
+        private BindingList<FoundTable> filteredCategories = new BindingList<FoundTable>();
+        private BindingSource categoryBindingSource = new BindingSource();
+
         private uint lastCustomSearchResult = 0;
         private string logFile;
         StreamWriter logwriter;
@@ -270,7 +273,10 @@ namespace UniversalPatcher
                 tabTableSeek.Text = "Table Seek (" + foundTables.Count.ToString() + ")";
             dataGridTableSeek.DataSource = tableSeekBindingSource;
             dataGridTableSeek.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-
+            comboTableCategory.DataSource = null;
+            categoryBindingSource.DataSource = null;
+            categoryBindingSource.DataSource = tableCategories;
+            comboTableCategory.DataSource = categoryBindingSource;
         }
 
         private void FrmPatcher_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -352,14 +358,24 @@ namespace UniversalPatcher
                 string BaseVer = basefile.ReadInfo(basefile.binfile[s].VerAddr);
                 string ModVer = modfile.ReadInfo(modfile.binfile[s].VerAddr);
 
-                if (BasePN != ModPN || BaseVer != ModVer)
+                if (chkForceCompare.Checked)
                 {
-                    Logger(Segments[s].Name.PadLeft(11) + " differ: " + BasePN.ToString().PadRight(8) + " " + BaseVer + " <> " + ModPN.ToString().PadRight(8) + " " + ModVer);
-                    chkSegments[s].Enabled = false;
+                    if (basefile.segmentinfos[s].Size == modfile.segmentinfos[s].Size)
+                        chkSegments[s].Enabled = true;
+                    else
+                        chkSegments[s].Enabled = false;
                 }
                 else
                 {
-                    chkSegments[s].Enabled = true;
+                    if (BasePN != ModPN || BaseVer != ModVer)
+                    {
+                        Logger(Segments[s].Name.PadLeft(11) + " differ: " + BasePN.ToString().PadRight(8) + " " + BaseVer + " <> " + ModPN.ToString().PadRight(8) + " " + ModVer);
+                        chkSegments[s].Enabled = false;
+                    }
+                    else
+                    {
+                        chkSegments[s].Enabled = true;
+                    }
                 }
             }
         }
@@ -594,11 +610,10 @@ namespace UniversalPatcher
                 }
                 refreshDtcList();
 
-                foundTables = new List<FoundTable>();
                 TableSeek TS = new TableSeek();
                 if (chkTableSeek.Checked)
                 {
-                    Logger("Seeking tables...");
+                    Logger("Seeking tables...",false);
                     Logger(TS.seekTables(PCM));
                 }
                 refreshTableSeek();
@@ -3022,15 +3037,15 @@ namespace UniversalPatcher
                 xdfText = xdfText.Replace("REPLACE-TIMESTAMP", DateTime.Today.ToString("MM/dd/yyyy H:mm"));
                 xdfText = xdfText.Replace("REPLACE-OSID", basefile.OS);
                 xdfText = xdfText.Replace("REPLACE-BINSIZE", basefile.fsize.ToString("X"));
-                for (int s=0; s<basefile.segmentinfos.Length; s++)
-                {                    
-                    tableText += Environment.NewLine + "     <CATEGORY index = \"0x" + s.ToString("X") + "\" name = \"" + basefile.segmentinfos[s].Name + "\" />" + Environment.NewLine ;
+                for (int s = 1; s < tableCategories.Count ; s++)
+                {
+                    tableText += Environment.NewLine + "     <CATEGORY index = \"0x" + (s-1).ToString("X") + "\" name = \"" + tableCategories[s] + "\" />" + Environment.NewLine;
                     lastCategory = s;
                 }
                 dtcCategory = lastCategory + 1;
-                tableText += Environment.NewLine + "     <CATEGORY index = \"0x" + dtcCategory.ToString("X") + "\" name = \"DTC\" />" + Environment.NewLine;
+                tableText += Environment.NewLine + "     <CATEGORY index = \"0x" + (dtcCategory-1).ToString("X") + "\" name = \"DTC\" />" + Environment.NewLine;
                 lastCategory = dtcCategory + 1;
-                tableText += Environment.NewLine + "     <CATEGORY index = \"0x" + lastCategory.ToString("X") + "\" name = \"Other\" />" + Environment.NewLine;
+                tableText += Environment.NewLine + "     <CATEGORY index = \"0x" + (lastCategory-1).ToString("X") + "\" name = \"Other\" />" + Environment.NewLine;
                 xdfText = xdfText.Replace("REPLACE-CATEGORYNAME", tableText);
 
                 fName = Path.Combine(Application.StartupPath, "Templates", basefile.xmlFile + "-checksum.txt");
@@ -3063,7 +3078,7 @@ namespace UniversalPatcher
                         tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + dtcCodes[d].Code + "\" />" + Environment.NewLine;
                     }
                     tableText = tableText.Replace("REPLACE-TABLEROWS", tableRows);
-                    tableText = tableText.Replace("REPLACE-CATEGORY", (dtcCategory + 1).ToString());
+                    tableText = tableText.Replace("REPLACE-CATEGORY", dtcCategory.ToString());
                     xdfText += tableText;       //Add generated table to end of xdfText
 
                     if (!dtcCombined)
@@ -3075,7 +3090,7 @@ namespace UniversalPatcher
                         tableText = tableText.Replace("REPLACE-TABLEADDRESS", dtcCodes[0].milAddrInt.ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEROWS", tableRows);
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "0 = No MIL (Lamp always off)&#013;&#010;1 = MIL (Lamp may be commanded on by PCM)");
-                        tableText = tableText.Replace("REPLACE-CATEGORY", (dtcCategory + 1 ).ToString());
+                        tableText = tableText.Replace("REPLACE-CATEGORY", dtcCategory.ToString());
                         tableText = tableText.Replace("REPLACE-MINVALUE", "0");
                         tableText = tableText.Replace("REPLACE-MAXVALUE", "1");
                         xdfText += tableText;       //Add generated table to end of xdfText
@@ -3114,7 +3129,7 @@ namespace UniversalPatcher
                             {
                                 if (basefile.segmentinfos[s].Name == tableSearchResult[t].Segment)
                                 {
-                                    tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
+                                    tableText = tableText.Replace("REPLACE-CATEGORY", s.ToString("X"));
                                     break;
                                 }
                             }
@@ -3148,7 +3163,7 @@ namespace UniversalPatcher
                             {
                                 if (basefile.segmentinfos[s].Name == tableSearchResult[t].Segment)
                                 {
-                                    tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
+                                    tableText = tableText.Replace("REPLACE-CATEGORY", s.ToString());
                                     break;
                                 }
                             }
@@ -3179,7 +3194,20 @@ namespace UniversalPatcher
                                 tableText = templateTxt.Replace("REPLACE-TABLETITLE", foundTables[t].Address);
                             int s = basefile.GetSegmentNumber(foundTables[t].addrInt);
                             if (s == -1) s = lastCategory;
-                            tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
+                            if (tableSeeks[id].Category != null && tableSeeks[id].Category != "")
+                            {
+                                for (int c = 1; c < tableCategories.Count; c++)
+                                {
+                                    if (tableCategories[c] == tableSeeks[id].Category)
+                                    {
+                                        tableText = tableText.Replace("REPLACE-CATEGORY", c.ToString());
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                tableText = tableText.Replace("REPLACE-CATEGORY", s.ToString());
+                            }
                             tableText = tableText.Replace("REPLACE-TABLEID", foundTables[t].Address);
                             tableText = tableText.Replace("REPLACE-ROWCOUNT", foundTables[t].Rows.ToString());
                             tableText = tableText.Replace("REPLACE-COLCOUNT", foundTables[t].Columns.ToString());
@@ -3312,7 +3340,9 @@ namespace UniversalPatcher
             try
             {
 
-                int codeIndex = dataGridTableSeek.SelectedCells[0].RowIndex;
+                int rowindex = dataGridTableSeek.CurrentCell.RowIndex;
+                int columnindex = dataGridTableSeek.CurrentCell.ColumnIndex;
+                int codeIndex = Convert.ToInt32( dataGridTableSeek.Rows[rowindex].Cells["id"].Value);
                 frmTableEditor frmT = new frmTableEditor();
                 frmT.loadTable(codeIndex, basefile);
                 if ((frmT.ShowDialog()) == DialogResult.OK)
@@ -3350,10 +3380,37 @@ namespace UniversalPatcher
 
         private void btnReadTinyTunerDB_Click(object sender, EventArgs e)
         {
+            TableSeek TS = new TableSeek();
+            if (chkTableSeek.Checked)
+            {
+                Logger("Seeking tables...", false);
+                Logger(TS.seekTables(basefile));
+            }
+
             TinyTuner tt = new TinyTuner();
-            Logger("Reading TinyTuner DB...");
+            Logger("Reading TinyTuner DB...", false);
             Logger(tt.readTinyDB(basefile));
             refreshTableSeek();
+        }
+
+        private void comboTableCategory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (comboTableCategory.Text == "All")
+                    tableSeekBindingSource.DataSource = foundTables;
+                else
+                {
+                    filteredCategories = new BindingList<FoundTable>(foundTables.Where(t => t.Category.ToLower().Contains(comboTableCategory.Text.ToLower())).ToList());
+                    tableSeekBindingSource.DataSource = filteredCategories;
+                }
+            }
+            catch { }
+        }
+
+        private void chkForceCompare_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckSegmentCompatibility();
         }
     }
 }

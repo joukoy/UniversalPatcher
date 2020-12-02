@@ -286,6 +286,7 @@ public class upatcher
     public static List<TableSeek> tableSeeks;
     public static List<FoundTable> foundTables;
     public static bool dtcCombined = false;
+    public static List<string> tableCategories;
 
     public static string XMLFile;
     public static string tableSearchFile;

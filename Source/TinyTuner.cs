@@ -38,7 +38,7 @@ namespace UniversalPatcher
         {
             string connetionString = null;
             OleDbConnection cnn;
-            connetionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=TinyTuner_DB_0.0.1.mdb;";
+            connetionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=TinyTuner.mdb;";
             cnn = new OleDbConnection(connetionString);
             try
             {
@@ -58,6 +58,23 @@ namespace UniversalPatcher
                 {
                     MessageBox.Show("OS not found from TinyTuner DB", "OS not found from TinyTuner DB");
                     return "Not found";
+                }
+
+                query = "select * from CategoryList order by Category";
+                selectCommand = new OleDbCommand(query, cnn);
+                table = new DataTable();
+                adapter = new OleDbDataAdapter();
+                adapter.SelectCommand = selectCommand;
+                adapter.Fill(table);
+
+                if (tableCategories == null) tableCategories = new List<string>();
+                foreach (DataRow row in table.Rows)
+                {
+                    string cat = row["Category"].ToString();
+                    if (!tableCategories.Contains(cat))
+                    {
+                        tableCategories.Add(cat);
+                    }
                 }
 
                 query = "select * from TableData where MapNumber=" + mapNr + " order by TableName";
@@ -80,6 +97,7 @@ namespace UniversalPatcher
                     ft.Description = row["TableDescription"].ToString();
                     ft.Name = row["TableName"].ToString();
                     ft.Rows = Convert.ToByte(row["RowCount"]);
+                    ft.Category = row["MainCategory"].ToString();
                     ft.configId = tableSeeks.Count;
                     foundTables.Add(ft);
 
@@ -96,6 +114,7 @@ namespace UniversalPatcher
                     ts.Rows = Convert.ToByte(row["RowCount"]);
                     ts.SavingMath = "X/" + row["Factor"].ToString();
                     ts.Signed = Convert.ToBoolean(row["AllowNegative"]);
+                    ts.Category = row["MainCategory"].ToString();
                     tableSeeks.Add(ts);                    
                 }
 

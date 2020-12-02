@@ -116,6 +116,8 @@
             this.btnSaveCsvDTC = new System.Windows.Forms.Button();
             this.dataGridDTC = new System.Windows.Forms.DataGridView();
             this.tabTableSeek = new System.Windows.Forms.TabPage();
+            this.comboTableCategory = new System.Windows.Forms.ComboBox();
+            this.label15 = new System.Windows.Forms.Label();
             this.btnReadTinyTunerDB = new System.Windows.Forms.Button();
             this.btnEditTable = new System.Windows.Forms.Button();
             this.dataGridTableSeek = new System.Windows.Forms.DataGridView();
@@ -147,6 +149,7 @@
             this.txtCustomSearchString = new System.Windows.Forms.TextBox();
             this.chkSearchTables = new System.Windows.Forms.CheckBox();
             this.tabCreate = new System.Windows.Forms.TabPage();
+            this.chkForceCompare = new System.Windows.Forms.CheckBox();
             this.label13 = new System.Windows.Forms.Label();
             this.numCrossVariation = new System.Windows.Forms.NumericUpDown();
             this.btnCrossTableSearch = new System.Windows.Forms.Button();
@@ -366,7 +369,7 @@
             // chkCompareAll
             // 
             this.chkCompareAll.AutoSize = true;
-            this.chkCompareAll.Location = new System.Drawing.Point(257, 34);
+            this.chkCompareAll.Location = new System.Drawing.Point(241, 35);
             this.chkCompareAll.Name = "chkCompareAll";
             this.chkCompareAll.Size = new System.Drawing.Size(167, 17);
             this.chkCompareAll.TabIndex = 114;
@@ -1221,6 +1224,8 @@
             // 
             // tabTableSeek
             // 
+            this.tabTableSeek.Controls.Add(this.comboTableCategory);
+            this.tabTableSeek.Controls.Add(this.label15);
             this.tabTableSeek.Controls.Add(this.btnReadTinyTunerDB);
             this.tabTableSeek.Controls.Add(this.btnEditTable);
             this.tabTableSeek.Controls.Add(this.dataGridTableSeek);
@@ -1231,6 +1236,24 @@
             this.tabTableSeek.TabIndex = 11;
             this.tabTableSeek.Text = "Table Seek";
             this.tabTableSeek.UseVisualStyleBackColor = true;
+            // 
+            // comboTableCategory
+            // 
+            this.comboTableCategory.FormattingEnabled = true;
+            this.comboTableCategory.Location = new System.Drawing.Point(224, 5);
+            this.comboTableCategory.Name = "comboTableCategory";
+            this.comboTableCategory.Size = new System.Drawing.Size(142, 21);
+            this.comboTableCategory.TabIndex = 5;
+            this.comboTableCategory.SelectedIndexChanged += new System.EventHandler(this.comboTableCategory_SelectedIndexChanged);
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(168, 9);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(52, 13);
+            this.label15.TabIndex = 4;
+            this.label15.Text = "Category:";
             // 
             // btnReadTinyTunerDB
             // 
@@ -1582,6 +1605,7 @@
             // 
             // tabCreate
             // 
+            this.tabCreate.Controls.Add(this.chkForceCompare);
             this.tabCreate.Controls.Add(this.label13);
             this.tabCreate.Controls.Add(this.numCrossVariation);
             this.tabCreate.Controls.Add(this.btnCrossTableSearch);
@@ -1601,6 +1625,17 @@
             this.tabCreate.TabIndex = 0;
             this.tabCreate.Text = "Create Patch";
             this.tabCreate.UseVisualStyleBackColor = true;
+            // 
+            // chkForceCompare
+            // 
+            this.chkForceCompare.AutoSize = true;
+            this.chkForceCompare.Location = new System.Drawing.Point(414, 35);
+            this.chkForceCompare.Name = "chkForceCompare";
+            this.chkForceCompare.Size = new System.Drawing.Size(110, 17);
+            this.chkForceCompare.TabIndex = 121;
+            this.chkForceCompare.Text = "Force if same size";
+            this.chkForceCompare.UseVisualStyleBackColor = true;
+            this.chkForceCompare.CheckedChanged += new System.EventHandler(this.chkForceCompare_CheckedChanged);
             // 
             // label13
             // 
@@ -1639,7 +1674,7 @@
             // checkAppendPatch
             // 
             this.checkAppendPatch.AutoSize = true;
-            this.checkAppendPatch.Location = new System.Drawing.Point(445, 34);
+            this.checkAppendPatch.Location = new System.Drawing.Point(537, 35);
             this.checkAppendPatch.Name = "checkAppendPatch";
             this.checkAppendPatch.Size = new System.Drawing.Size(63, 17);
             this.checkAppendPatch.TabIndex = 117;
@@ -2058,6 +2093,7 @@
             this.tabDTC.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridDTC)).EndInit();
             this.tabTableSeek.ResumeLayout(false);
+            this.tabTableSeek.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridTableSeek)).EndInit();
             this.tabFunction.ResumeLayout(false);
             this.tabApply.ResumeLayout(false);
@@ -2243,5 +2279,8 @@
         private System.Windows.Forms.Button btnEditTable;
         private System.Windows.Forms.ToolStripMenuItem rememberWindowSizeToolStripMenuItem;
         private System.Windows.Forms.Button btnReadTinyTunerDB;
+        private System.Windows.Forms.ComboBox comboTableCategory;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.CheckBox chkForceCompare;
     }
 }

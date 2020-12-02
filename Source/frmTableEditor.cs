@@ -40,7 +40,7 @@ namespace UniversalPatcher
             MathParser parser = new MathParser();
             dt = new DataTable("data");
             tSeek = tableSeeks[foundTables[tableId].configId];
-            this.Text = "Table Editor: " + tSeek.Name;
+            this.Text = "Table Editor: " + foundTables[tableId].Name;
             if (foundTables[tableId].Description.Length > 0)
                 this.Text += " - " + foundTables[tableId].Description;
             string[] colHeaders = tSeek.ColHeaders.Split(',');

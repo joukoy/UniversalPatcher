@@ -45,11 +45,12 @@ namespace UniversalPatcher
         public ushort Bits { get; set; }
         public bool Signed { get; set; }
         public ushort Decimals { get; set; }
-        public ushort DataType { get; set; }
+        public ushort DataType { get; set; } //"1=Floating, 2=Integer, 3=Hex, 4=Ascii
         public string UseHit { get; set; }
         public string Range { get; set; }
         public string Segments { get; set; }
         public string ValidationSearchStr { get; set; }
+        public string Category { get; set; }
         public string Description { get; set; }
 
         public string seekTables(PcmFile PCM)
@@ -58,6 +59,12 @@ namespace UniversalPatcher
             try
             {
 
+                foundTables = new List<FoundTable>();
+
+                tableCategories = new List<string>();
+                tableCategories.Add("All");
+                for (int c = 0; c < PCM.segmentinfos.Length; c++)
+                    tableCategories.Add(PCM.segmentinfos[c].Name);
                 string fileName = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + PCM.xmlFile + ".xml");
                 if (fileName != tableSeekFile)
                 {
@@ -75,9 +82,9 @@ namespace UniversalPatcher
                     {
                         if (upatcher.Segments[0].CS1Address.StartsWith("GM-V6"))
                         {
+                            if (!tableCategories.Contains("Fuel")) tableCategories.Add("Fuel");
                             tableSeeks = new List<TableSeek>();
                             TableSeek ts = new TableSeek();
-                            foundTables = new List<FoundTable>();
                             FoundTable ft = new FoundTable();
 
                             ft.Address = PCM.v6VeTable.address.ToString("X8");
@@ -86,18 +93,20 @@ namespace UniversalPatcher
                             ft.Columns = 17;
                             ft.configId = 0;
                             ft.Name = "VE";
+                            ft.Category = "Fuel";
                             ft.Description = "Volumetric Efficiency";
                             foundTables.Add(ft);
 
                             ts.Name = "VE";
                             ts.Description = "Volumetric Efficiency";
                             ts.Bits = 8;
-                            ts.DataType = 2;
-                            ts.Decimals = 0;
+                            ts.DataType = 1;
+                            ts.Decimals = 6;
                             ts.Math = "X*0.0002441406";
                             ts.Offset = 0;
                             ts.SavingMath = "X/0.0002441406";
-                            ts.Signed = true;
+                            ts.Signed = false;
+                            ts.Category = "Fuel";
                             ts.ColHeaders = "RPM 0,400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400, 6800";
                             if (ft.Rows == 15)
                                 ts.RowHeaders = "kpa 0,10,20,30,40,50,60,70,80,90,100,110,120,130,140";
@@ -112,6 +121,7 @@ namespace UniversalPatcher
                             ft.Columns = 1;
                             ft.configId = 1;
                             ft.Name = "MAF";
+                            ft.Category = "Fuel";
                             ft.Description = "Grams Per Second";
                             foundTables.Add(ft);
 
@@ -120,8 +130,9 @@ namespace UniversalPatcher
                             ts.Math = "X*0.0078125";
                             ts.SavingMath = "X/0.0078125";
                             ts.DataType = 2;
-                            ts.Decimals = 0;
+                            ts.Decimals = 4;
                             ts.Signed = false;
+                            ts.Category = "Fuel";
                             ts.RowHeaders = "1500,";
                             for (int rh = 1; rh < 82; rh++)
                             {
@@ -145,6 +156,7 @@ namespace UniversalPatcher
                 }
                 for (int s = 0; s < tableSeeks.Count; s++)
                 {
+                    if (!tableCategories.Contains(tableSeeks[s].Category)) tableCategories.Add(tableSeeks[s].Category);
                     uint startAddr = 0;
                     uint endAddr = PCM.fsize;
                     List<Block> addrList = new List<Block>();
@@ -231,6 +243,14 @@ namespace UniversalPatcher
                                 ft.Name = tableSeeks[s].Name.Replace("£", (wHit +1).ToString());
                                 ft.Description = tableSeeks[s].Description.Replace("£", (wHit + 1).ToString());
                                 ft.addrInt = (uint)(sAddr.Addr + tableSeeks[s].Offset);
+                                if (tableSeeks[s].Category != null && tableSeeks[s].Category != "")
+                                {
+                                    ft.Category = tableSeeks[s].Category;
+                                }
+                                else
+                                {
+                                    ft.Category = PCM.GetSegmentName(ft.addrInt);
+                                }
                                 ft.Address = ft.addrInt.ToString("X8");
                                 if (tableSeeks[s].Rows > 0)
                                     ft.Rows = tableSeeks[s].Rows;
@@ -272,7 +292,9 @@ namespace UniversalPatcher
             Address = "";
             configId = -1;
             Description = "";
+            id = foundTables.Count;
         }
+        public int id { get; set; }
         public string Name { get; set; }
 
         public uint addrInt;
@@ -280,6 +302,7 @@ namespace UniversalPatcher
         public byte Rows { get; set; }
         public byte Columns { get; set; }
         public int configId;
+        public string Category { get; set; }
         public string Description { get; set; }
     }
 
