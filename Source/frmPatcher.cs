@@ -3412,6 +3412,23 @@ namespace UniversalPatcher
         {
             CheckSegmentCompatibility();
         }
+
+        private void btnSearchTableSeek_Click(object sender, EventArgs e)
+        {
+            int rowindex = dataGridTableSeek.CurrentCell.RowIndex;
+            for (int i = rowindex +1 ; i < dataGridTableSeek.RowCount; i++)
+            {
+                if (dataGridTableSeek.Rows[i].Cells["Name"].Value.ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()))
+                {
+                    dataGridTableSeek.ClearSelection();
+                    dataGridTableSeek.CurrentCell = dataGridTableSeek.Rows[i].Cells[0];
+                    dataGridTableSeek.CurrentCell.Selected = true;
+                    //dataGridTableSeek.Rows[i].Cells[0].Selected = true;                    
+                    break;
+                }
+            }
+
+        }
     }
 }
 

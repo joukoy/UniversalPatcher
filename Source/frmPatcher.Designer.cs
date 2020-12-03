@@ -116,6 +116,8 @@
             this.btnSaveCsvDTC = new System.Windows.Forms.Button();
             this.dataGridDTC = new System.Windows.Forms.DataGridView();
             this.tabTableSeek = new System.Windows.Forms.TabPage();
+            this.btnSearchTableSeek = new System.Windows.Forms.Button();
+            this.txtSearchTableSeek = new System.Windows.Forms.TextBox();
             this.comboTableCategory = new System.Windows.Forms.ComboBox();
             this.label15 = new System.Windows.Forms.Label();
             this.btnReadTinyTunerDB = new System.Windows.Forms.Button();
@@ -1224,6 +1226,8 @@
             // 
             // tabTableSeek
             // 
+            this.tabTableSeek.Controls.Add(this.btnSearchTableSeek);
+            this.tabTableSeek.Controls.Add(this.txtSearchTableSeek);
             this.tabTableSeek.Controls.Add(this.comboTableCategory);
             this.tabTableSeek.Controls.Add(this.label15);
             this.tabTableSeek.Controls.Add(this.btnReadTinyTunerDB);
@@ -1236,6 +1240,23 @@
             this.tabTableSeek.TabIndex = 11;
             this.tabTableSeek.Text = "Table Seek";
             this.tabTableSeek.UseVisualStyleBackColor = true;
+            // 
+            // btnSearchTableSeek
+            // 
+            this.btnSearchTableSeek.Location = new System.Drawing.Point(486, 4);
+            this.btnSearchTableSeek.Name = "btnSearchTableSeek";
+            this.btnSearchTableSeek.Size = new System.Drawing.Size(65, 22);
+            this.btnSearchTableSeek.TabIndex = 7;
+            this.btnSearchTableSeek.Text = "Search";
+            this.btnSearchTableSeek.UseVisualStyleBackColor = true;
+            this.btnSearchTableSeek.Click += new System.EventHandler(this.btnSearchTableSeek_Click);
+            // 
+            // txtSearchTableSeek
+            // 
+            this.txtSearchTableSeek.Location = new System.Drawing.Point(375, 5);
+            this.txtSearchTableSeek.Name = "txtSearchTableSeek";
+            this.txtSearchTableSeek.Size = new System.Drawing.Size(105, 20);
+            this.txtSearchTableSeek.TabIndex = 6;
             // 
             // comboTableCategory
             // 
@@ -2282,5 +2303,7 @@
         private System.Windows.Forms.ComboBox comboTableCategory;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.CheckBox chkForceCompare;
+        private System.Windows.Forms.Button btnSearchTableSeek;
+        private System.Windows.Forms.TextBox txtSearchTableSeek;
     }
 }
