@@ -34,8 +34,8 @@ namespace UniversalPatcher
 
         public string Name { get; set; }
         public string SearchStr { get; set; }
-        public byte Rows { get; set; }
-        public byte Columns { get; set; }
+        public ushort Rows { get; set; }
+        public ushort Columns { get; set; }
         public string RowHeaders { get; set; }
         public string ColHeaders { get; set; }
         public string Math { get; set; }
@@ -51,6 +51,7 @@ namespace UniversalPatcher
         public string Segments { get; set; }
         public string ValidationSearchStr { get; set; }
         public string Category { get; set; }
+        public string Units { get; set; }
         public string Description { get; set; }
 
         public string seekTables(PcmFile PCM)
@@ -99,14 +100,14 @@ namespace UniversalPatcher
 
                             ts.Name = "VE";
                             ts.Description = "Volumetric Efficiency";
-                            ts.Bits = 8;
+                            ts.Bits = 16;
                             ts.DataType = 1;
                             ts.Decimals = 6;
                             ts.Math = "X*0.0002441406";
                             ts.Offset = 0;
                             ts.SavingMath = "X/0.0002441406";
                             ts.Signed = false;
-                            ts.Category = "Fuel";
+                            ts.Category = "Fuel";                            
                             ts.ColHeaders = "RPM 0,400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400, 6800";
                             if (ft.Rows == 15)
                                 ts.RowHeaders = "kpa 0,10,20,30,40,50,60,70,80,90,100,110,120,130,140";
@@ -126,6 +127,7 @@ namespace UniversalPatcher
                             foundTables.Add(ft);
 
                             ts = new TableSeek();
+                            ts.Bits = 8;
                             ts.Name = "MAF";
                             ts.Math = "X*0.0078125";
                             ts.SavingMath = "X/0.0078125";
@@ -133,6 +135,7 @@ namespace UniversalPatcher
                             ts.Decimals = 4;
                             ts.Signed = false;
                             ts.Category = "Fuel";
+                            ts.Units = "grams/s";
                             ts.RowHeaders = "1500,";
                             for (int rh = 1; rh < 82; rh++)
                             {
@@ -299,8 +302,8 @@ namespace UniversalPatcher
 
         public uint addrInt;
         public string Address { get; set; }
-        public byte Rows { get; set; }
-        public byte Columns { get; set; }
+        public ushort Rows { get; set; }
+        public ushort Columns { get; set; }
         public int configId;
         public string Category { get; set; }
         public string Description { get; set; }

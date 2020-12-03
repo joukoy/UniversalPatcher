@@ -34,6 +34,8 @@ namespace UniversalPatcher
             this.txtMath = new System.Windows.Forms.TextBox();
             this.btnExecute = new System.Windows.Forms.Button();
             this.chkAutoResize = new System.Windows.Forms.CheckBox();
+            this.chkTranspose = new System.Windows.Forms.CheckBox();
+            this.labelUnits = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -46,17 +48,16 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(2, 28);
+            this.dataGridView1.Location = new System.Drawing.Point(2, 40);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(796, 420);
+            this.dataGridView1.Size = new System.Drawing.Size(796, 408);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
-            this.dataGridView1.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridView1_DataBindingComplete);
             // 
             // txtMath
             // 
-            this.txtMath.Location = new System.Drawing.Point(8, 2);
+            this.txtMath.Location = new System.Drawing.Point(8, 0);
             this.txtMath.Name = "txtMath";
             this.txtMath.Size = new System.Drawing.Size(100, 20);
             this.txtMath.TabIndex = 1;
@@ -66,7 +67,7 @@ namespace UniversalPatcher
             // 
             this.btnExecute.Location = new System.Drawing.Point(114, 3);
             this.btnExecute.Name = "btnExecute";
-            this.btnExecute.Size = new System.Drawing.Size(68, 19);
+            this.btnExecute.Size = new System.Drawing.Size(68, 31);
             this.btnExecute.TabIndex = 2;
             this.btnExecute.Text = "Execute";
             this.btnExecute.UseVisualStyleBackColor = true;
@@ -74,9 +75,8 @@ namespace UniversalPatcher
             // 
             // chkAutoResize
             // 
-            this.chkAutoResize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkAutoResize.AutoSize = true;
-            this.chkAutoResize.Location = new System.Drawing.Point(720, 5);
+            this.chkAutoResize.Location = new System.Drawing.Point(188, 2);
             this.chkAutoResize.Name = "chkAutoResize";
             this.chkAutoResize.Size = new System.Drawing.Size(78, 17);
             this.chkAutoResize.TabIndex = 3;
@@ -84,11 +84,33 @@ namespace UniversalPatcher
             this.chkAutoResize.UseVisualStyleBackColor = true;
             this.chkAutoResize.CheckedChanged += new System.EventHandler(this.chkAutoResize_CheckedChanged);
             // 
+            // chkTranspose
+            // 
+            this.chkTranspose.AutoSize = true;
+            this.chkTranspose.Location = new System.Drawing.Point(188, 17);
+            this.chkTranspose.Name = "chkTranspose";
+            this.chkTranspose.Size = new System.Drawing.Size(71, 17);
+            this.chkTranspose.TabIndex = 4;
+            this.chkTranspose.Text = "Swap x/y";
+            this.chkTranspose.UseVisualStyleBackColor = true;
+            this.chkTranspose.CheckedChanged += new System.EventHandler(this.chkTranspose_CheckedChanged);
+            // 
+            // labelUnits
+            // 
+            this.labelUnits.AutoSize = true;
+            this.labelUnits.Location = new System.Drawing.Point(12, 24);
+            this.labelUnits.Name = "labelUnits";
+            this.labelUnits.Size = new System.Drawing.Size(10, 13);
+            this.labelUnits.TabIndex = 5;
+            this.labelUnits.Text = "-";
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.labelUnits);
+            this.Controls.Add(this.chkTranspose);
             this.Controls.Add(this.chkAutoResize);
             this.Controls.Add(this.btnExecute);
             this.Controls.Add(this.txtMath);
@@ -109,5 +131,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.TextBox txtMath;
         private System.Windows.Forms.Button btnExecute;
         private System.Windows.Forms.CheckBox chkAutoResize;
+        private System.Windows.Forms.CheckBox chkTranspose;
+        private System.Windows.Forms.Label labelUnits;
     }
 }

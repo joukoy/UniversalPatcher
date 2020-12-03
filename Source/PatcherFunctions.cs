@@ -254,8 +254,8 @@ public class upatcher
     public struct SearchedAddress
     {
         public uint Addr;
-        public byte Rows;
-        public byte Columns;
+        public ushort Rows;
+        public ushort Columns;
     }
 
     public const short CSMethod_None = 0;
@@ -997,11 +997,11 @@ public class upatcher
                 }
                 if (sParts[p].Contains("r") || sParts[p].Contains("x"))
                 {
-                    retVal.Rows = PCM.buf[(uint)(addr + p)];
+                    retVal.Rows = (ushort)PCM.buf[(uint)(addr + p)];
                 }
                 if (sParts[p].Contains("k") || sParts[p].Contains("y"))
                 {
-                    retVal.Columns = PCM.buf[(uint)(addr + p)];
+                    retVal.Columns = (ushort) PCM.buf[(uint)(addr + p)];
                 }
                 if (sParts[p].Contains("#"))
                 {

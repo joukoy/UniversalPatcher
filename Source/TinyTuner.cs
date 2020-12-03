@@ -6,6 +6,7 @@ using System.Data.OleDb;
 using static upatcher;
 using System.Windows.Forms;
 using System.Data;
+using System.Diagnostics;
 
 namespace UniversalPatcher
 {
@@ -33,6 +34,24 @@ namespace UniversalPatcher
             }
 
             return retVal;
+        }
+
+        public string convertByHeader(string header, int count)
+        {
+            string retVal = "";
+            string[] parts = header.Split(',');
+            if (parts.Length == 3 )
+            {
+                int from = Convert.ToInt32(parts[0]);
+                int step = Convert.ToInt32(parts[2]);
+                for (int i = 0; i < count; i++)
+                {
+                    retVal += (from + i * step).ToString();
+                    if (i < count - 1) retVal += ",";
+                }
+                return retVal;
+            }
+            return header;
         }
         public string readTinyDB(PcmFile PCM)
         {
@@ -93,10 +112,10 @@ namespace UniversalPatcher
 
                     HexToUint(row["StartPosition"].ToString(), out ft.addrInt);
                     ft.Address = ft.addrInt.ToString("X8");
-                    ft.Columns = Convert.ToByte(row["ColumnCount"]);
+                    ft.Columns = Convert.ToUInt16(row["ColumnCount"]);
                     ft.Description = row["TableDescription"].ToString();
                     ft.Name = row["TableName"].ToString();
-                    ft.Rows = Convert.ToByte(row["RowCount"]);
+                    ft.Rows = Convert.ToUInt16(row["RowCount"]);
                     ft.Category = row["MainCategory"].ToString();
                     ft.configId = tableSeeks.Count;
                     foundTables.Add(ft);
@@ -104,17 +123,22 @@ namespace UniversalPatcher
                     ts.Bits = (ushort) (Convert.ToUInt16(row["ElementSize"]) * 8);
                     string colHeaders = row["ColumnHeaders"].ToString();
                     ts.ColHeaders = RemoveDuplicates(colHeaders);
-                    ts.Columns = Convert.ToByte(row["ColumnCount"]);
+                    ts.Columns = Convert.ToUInt16(row["ColumnCount"]);
                     ts.DataType = 1;
                     ts.Decimals = 2;
                     ts.Description = row["TableDescription"].ToString();
                     ts.Math = "X*" + row["Factor"].ToString();
                     ts.Name = row["TableName"].ToString();
+                    ts.Rows = Convert.ToUInt16(row["RowCount"]);
                     ts.RowHeaders = row["RowHeaders"].ToString();
-                    ts.Rows = Convert.ToByte(row["RowCount"]);
+                    if (ts.RowHeaders.Contains(",by,"))
+                    {
+                        ts.RowHeaders = convertByHeader(ts.RowHeaders,ts.Rows);
+                    }
                     ts.SavingMath = "X/" + row["Factor"].ToString();
                     ts.Signed = Convert.ToBoolean(row["AllowNegative"]);
                     ts.Category = row["MainCategory"].ToString();
+                    ts.Units = row["Units"].ToString();
                     tableSeeks.Add(ts);                    
                 }
 
@@ -123,8 +147,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Database failure: " + ex.Message, "TinyTuner DB failure");
-
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
             }
             return "OK";
         }
