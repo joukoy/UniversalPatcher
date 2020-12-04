@@ -286,5 +286,16 @@ namespace UniversalPatcher.Properties {
                 this["TableEditorAutoResize"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=Y:\\Visualstudio\\UniversalPatcher\\Tin" +
+            "yTuner.mdb")]
+        public string TinyTunerConnectionString {
+            get {
+                return ((string)(this["TinyTunerConnectionString"]));
+            }
+        }
     }
 }

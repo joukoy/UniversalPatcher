@@ -30,6 +30,7 @@ namespace UniversalPatcher
             UseHit = "1";
             Range = "";
             Segments = "";
+            RowMajor = true;
         }
 
         public string Name { get; set; }
@@ -52,6 +53,7 @@ namespace UniversalPatcher
         public string ValidationSearchStr { get; set; }
         public string Category { get; set; }
         public string Units { get; set; }
+        public bool RowMajor { get; set; }
         public string Description { get; set; }
 
         public string seekTables(PcmFile PCM)
@@ -113,6 +115,7 @@ namespace UniversalPatcher
                                 ts.RowHeaders = "kpa 0,10,20,30,40,50,60,70,80,90,100,110,120,130,140";
                             else
                                 ts.RowHeaders = "kpa 20,30,40,50,60,70,80,90,100,110,120,130,140";
+                            ts.RowMajor = false;
                             tableSeeks.Add(ts);
 
                             ft = new FoundTable();
@@ -144,6 +147,7 @@ namespace UniversalPatcher
                             }
                             ts.ColHeaders = "g/s";
                             ts.Description = "Grams Per Second";
+                            ts.RowMajor = false;
                             tableSeeks.Add(ts);
 
                             retVal += "OK";

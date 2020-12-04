@@ -192,6 +192,7 @@
             this.dTCSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
@@ -1983,7 +1984,8 @@
             this.fileTypesToolStripMenuItem,
             this.dTCSearchToolStripMenuItem,
             this.tableSeekToolStripMenuItem,
-            this.rememberWindowSizeToolStripMenuItem});
+            this.rememberWindowSizeToolStripMenuItem,
+            this.editDatabaseToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "Settings";
@@ -2050,6 +2052,15 @@
             this.rememberWindowSizeToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.rememberWindowSizeToolStripMenuItem.Text = "Remember window size";
             this.rememberWindowSizeToolStripMenuItem.Click += new System.EventHandler(this.rememberWindowSizeToolStripMenuItem_Click);
+            // 
+            // editDatabaseToolStripMenuItem
+            // 
+            this.editDatabaseToolStripMenuItem.Enabled = false;
+            this.editDatabaseToolStripMenuItem.Name = "editDatabaseToolStripMenuItem";
+            this.editDatabaseToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.editDatabaseToolStripMenuItem.Text = "Edit Database";
+            this.editDatabaseToolStripMenuItem.Visible = false;
+            this.editDatabaseToolStripMenuItem.Click += new System.EventHandler(this.editDatabaseToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -2305,5 +2316,6 @@
         private System.Windows.Forms.CheckBox chkForceCompare;
         private System.Windows.Forms.Button btnSearchTableSeek;
         private System.Windows.Forms.TextBox txtSearchTableSeek;
+        private System.Windows.Forms.ToolStripMenuItem editDatabaseToolStripMenuItem;
     }
 }

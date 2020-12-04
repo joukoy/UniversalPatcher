@@ -76,6 +76,12 @@
     <Compile Include="frmData.Designer.cs">
       <DependentUpon>frmData.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmDbEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmDbEditor.Designer.cs">
+      <DependentUpon>frmDbEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmEditExtra.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -214,6 +220,11 @@
     <Compile Include="TableSeek.cs" />
     <Compile Include="tableSearch.cs" />
     <Compile Include="TinyTuner.cs" />
+    <Compile Include="TinyTunerDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TinyTunerDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="win32.cs" />
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
@@ -226,6 +237,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmData.resx">
       <DependentUpon>frmData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmDbEditor.resx">
+      <DependentUpon>frmDbEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmEditAddress.resx">
       <DependentUpon>frmEditAddress.cs</DependentUpon>
@@ -304,6 +318,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="TinyTunerDataSet.xsc">
+      <DependentUpon>TinyTunerDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="TinyTunerDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>TinyTunerDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="TinyTunerDataSet.xss">
+      <DependentUpon>TinyTunerDataSet.xsd</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">

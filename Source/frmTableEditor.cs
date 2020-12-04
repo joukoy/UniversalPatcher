@@ -95,7 +95,7 @@ namespace UniversalPatcher
             int step = (int)(tSeek.Bits / 8);
             double value = 0;
 
-            if (chkTranspose.Checked)
+            if (chkTranspose.Checked ^ tSeek.RowMajor == false)
             {
                 for (int r=0; r < rowCount; r++)
                     dataGridView1.Rows.Add();

@@ -3219,15 +3219,17 @@ namespace UniversalPatcher
                             tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", foundTables[t].Description);
                             tableText = tableText.Replace("REPLACE-MINVALUE", "0");
                             tableText = tableText.Replace("REPLACE-MAXVALUE", "255");
+                            int tableFlags = 0;
                             if (tableSeeks[id].Signed)
                             {
-                                tableText = tableText.Replace("REPLACE-TYPEFLAGS", "01");
+                                tableFlags++;
                             }
-                            else
+                            if (tableSeeks[id].RowMajor == false)
                             {
-                                tableText = tableText.Replace("REPLACE-TYPEFLAGS", "00");
-
+                                tableFlags += 4;
                             }
+                            tableText = tableText.Replace("REPLACE-TYPEFLAGS", tableFlags.ToString("X2"));
+
                             tableRows = "";
                             if (tableSeeks[id].RowHeaders == "")
                             {
@@ -3428,6 +3430,12 @@ namespace UniversalPatcher
                 }
             }
 
+        }
+
+        private void editDatabaseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmDbEditor fdb = new frmDbEditor();
+            fdb.Show();
         }
     }
 }

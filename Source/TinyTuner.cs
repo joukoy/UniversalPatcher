@@ -139,6 +139,7 @@ namespace UniversalPatcher
                     ts.Signed = Convert.ToBoolean(row["AllowNegative"]);
                     ts.Category = row["MainCategory"].ToString();
                     ts.Units = row["Units"].ToString();
+                    ts.RowMajor = false;
                     tableSeeks.Add(ts);                    
                 }
 

@@ -57,17 +57,20 @@ namespace UniversalPatcher
             // 
             // txtMath
             // 
-            this.txtMath.Location = new System.Drawing.Point(8, 0);
+            this.txtMath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMath.Location = new System.Drawing.Point(98, 17);
             this.txtMath.Name = "txtMath";
-            this.txtMath.Size = new System.Drawing.Size(100, 20);
+            this.txtMath.Size = new System.Drawing.Size(643, 20);
             this.txtMath.TabIndex = 1;
             this.txtMath.Text = "X*1";
             // 
             // btnExecute
             // 
-            this.btnExecute.Location = new System.Drawing.Point(114, 3);
+            this.btnExecute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExecute.Location = new System.Drawing.Point(744, 17);
             this.btnExecute.Name = "btnExecute";
-            this.btnExecute.Size = new System.Drawing.Size(68, 31);
+            this.btnExecute.Size = new System.Drawing.Size(54, 21);
             this.btnExecute.TabIndex = 2;
             this.btnExecute.Text = "Execute";
             this.btnExecute.UseVisualStyleBackColor = true;
@@ -76,7 +79,7 @@ namespace UniversalPatcher
             // chkAutoResize
             // 
             this.chkAutoResize.AutoSize = true;
-            this.chkAutoResize.Location = new System.Drawing.Point(188, 2);
+            this.chkAutoResize.Location = new System.Drawing.Point(2, -1);
             this.chkAutoResize.Name = "chkAutoResize";
             this.chkAutoResize.Size = new System.Drawing.Size(78, 17);
             this.chkAutoResize.TabIndex = 3;
@@ -87,7 +90,7 @@ namespace UniversalPatcher
             // chkTranspose
             // 
             this.chkTranspose.AutoSize = true;
-            this.chkTranspose.Location = new System.Drawing.Point(188, 17);
+            this.chkTranspose.Location = new System.Drawing.Point(2, 17);
             this.chkTranspose.Name = "chkTranspose";
             this.chkTranspose.Size = new System.Drawing.Size(71, 17);
             this.chkTranspose.TabIndex = 4;
@@ -98,7 +101,7 @@ namespace UniversalPatcher
             // labelUnits
             // 
             this.labelUnits.AutoSize = true;
-            this.labelUnits.Location = new System.Drawing.Point(12, 24);
+            this.labelUnits.Location = new System.Drawing.Point(95, 3);
             this.labelUnits.Name = "labelUnits";
             this.labelUnits.Size = new System.Drawing.Size(10, 13);
             this.labelUnits.TabIndex = 5;
