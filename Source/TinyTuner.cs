@@ -157,5 +157,106 @@ namespace UniversalPatcher
             }
             return "OK";
         }
+        public string readTinyDBtoTableData(PcmFile PCM)
+        {
+            string connetionString = null;
+            OleDbConnection cnn;
+            connetionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=TinyTuner.mdb;";
+            cnn = new OleDbConnection(connetionString);
+            try
+            {
+                string query = "Select MapNumber from OSIDData where OSID=" + PCM.OS;
+                OleDbCommand selectCommand = new OleDbCommand(query, cnn);
+                cnn.Open();
+                DataTable table = new DataTable();
+                OleDbDataAdapter adapter = new OleDbDataAdapter();
+                adapter.SelectCommand = selectCommand;
+                adapter.Fill(table);
+                string mapNr = "";
+                foreach (DataRow row in table.Rows)
+                {
+                    mapNr = row["MapNumber"].ToString();
+                }
+                if (mapNr == "")
+                {
+                    MessageBox.Show("OS not found from TinyTuner DB", "OS not found from TinyTuner DB");
+                    return "Not found";
+                }
+
+                query = "select * from CategoryList order by Category";
+                selectCommand = new OleDbCommand(query, cnn);
+                table = new DataTable();
+                adapter = new OleDbDataAdapter();
+                adapter.SelectCommand = selectCommand;
+                adapter.Fill(table);
+
+                if (tableCategories == null) tableCategories = new List<string>();
+                foreach (DataRow row in table.Rows)
+                {
+                    string cat = row["Category"].ToString();
+                    if (!tableCategories.Contains(cat))
+                    {
+                        tableCategories.Add(cat);
+                    }
+                }
+
+                query = "select * from TableData where MapNumber=" + mapNr + " order by TableName";
+                selectCommand = new OleDbCommand(query, cnn);
+                table = new DataTable();
+                adapter = new OleDbDataAdapter();
+                adapter.SelectCommand = selectCommand;
+                adapter.Fill(table);
+
+                if (tableSeeks == null) tableSeeks = new List<TableSeek>();
+                if (foundTables == null) foundTables = new List<FoundTable>();
+                foreach (DataRow row in table.Rows)
+                {
+                    TableData td = new TableData();
+
+                    td.OS = PCM.OS;                    
+                    HexToUint(row["StartPosition"].ToString(), out td.AddrInt);
+                    td.Address = td.AddrInt.ToString("X8");
+                    td.Columns = Convert.ToUInt16(row["ColumnCount"]);
+                    td.TableDescription = row["TableDescription"].ToString();
+                    td.TableName = row["TableName"].ToString();
+                    td.Rows = Convert.ToUInt16(row["RowCount"]);
+                    td.Category = row["MainCategory"].ToString();
+
+                    td.ElementSize = (byte)(Convert.ToByte(row["ElementSize"]));
+                    string colHeaders = row["ColumnHeaders"].ToString();
+                    td.ColumnHeaders = RemoveDuplicates(colHeaders);
+                    td.DataType = 1;
+                    td.Decimals = 2;
+                    td.Math = "X*" + row["Factor"].ToString();
+                    td.RowHeaders = row["RowHeaders"].ToString();
+                    if (td.RowHeaders.Contains(",by,"))
+                    {
+                        td.RowHeaders = convertByHeader(td.RowHeaders, td.Rows);
+                    }
+                    td.SavingMath = "X/" + row["Factor"].ToString();
+                    td.Signed = Convert.ToBoolean(row["AllowNegative"]);
+                    td.Category = row["MainCategory"].ToString();
+                    if (!tableCategories.Contains(td.Category))
+                        tableCategories.Add(td.Category);
+                    td.Units = row["Units"].ToString();
+                    td.RowMajor = false;
+                    tableDatas.Add(td);
+                }
+
+
+                cnn.Close();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+            }
+            return "OK";
+        }
+
     }
 }

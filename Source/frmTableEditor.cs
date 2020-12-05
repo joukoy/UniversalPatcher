@@ -20,8 +20,7 @@ namespace UniversalPatcher
             InitializeComponent();
         }
 
-        private int tId;
-        private TableSeek tSeek;
+        private TableData td;
         private PcmFile PCM;
         private bool tableModified = false;
         private bool commaDecimal = true;
@@ -30,33 +29,34 @@ namespace UniversalPatcher
         private double getValue(uint addr)
         {
             double value = 0;
-            if (tSeek.Bits == 8)
+            if (td.ElementSize == 1)
             {
-                if (tSeek.Signed)
+                if (td.Signed)
                     value = unchecked((sbyte)PCM.buf[addr]);
                 else
                     value = PCM.buf[addr];
             }
-            if (tSeek.Bits == 16)
+            if (td.ElementSize == 2)
             {
-                if (tSeek.Signed)
+                if (td.Signed)
                     value = BEToInt16(PCM.buf, addr);
                 else
                     value = BEToUint16(PCM.buf, addr);
             }
-            if (tSeek.Bits == 32)
+            if (td.ElementSize == 4)
             {
-                if (tSeek.Signed)
+                if (td.Signed)
                     value = BEToInt32(PCM.buf, addr);
                 else
                     value = BEToUint32(PCM.buf, addr);
             }
-            string mathStr = tSeek.Math.ToLower().Replace("x", value.ToString());
+            string mathStr = td.Math.ToLower().Replace("x", value.ToString());
             if (commaDecimal) mathStr = mathStr.Replace(".", ",");
             value = parser.Parse(mathStr, false);
             return value;
         }
-        public void loadTable(int tableId, PcmFile PCM1)
+
+        public void loadSeekTable(int tId, PcmFile PCM1)
         {
 
             var currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
@@ -65,37 +65,77 @@ namespace UniversalPatcher
             else commaDecimal = false;
 
             PCM = PCM1;
-            tId = tableId;
-            tSeek = tableSeeks[foundTables[tableId].configId];
-            this.Text = "Table Editor: " + foundTables[tableId].Name;
-            if (foundTables[tableId].Description.Length > 0)
-                this.Text += " - " + foundTables[tableId].Description;
+            TableSeek tSeek = tableSeeks[foundTables[tId].configId];
+            this.Text = "Table Editor: " + foundTables[tId].Name;
+            if (foundTables[tId].Description.Length > 0)
+                this.Text += " - " + foundTables[tId].Description;
 
-            if (tSeek.Units != null)
-                labelUnits.Text = "units: " + tSeek.Units;
+            FoundTable ft = foundTables[tId];
 
-            int rowCount = foundTables[tId].Rows;
-            int colCount = foundTables[tId].Columns;
+            td = new TableData();
+            td.AddrInt = ft.addrInt;
+            td.Address = ft.Address;
+            td.Category = ft.Category;
+            td.DataType = tSeek.DataType;
+            td.ElementSize = (byte)(tSeek.Bits / 8);
+            td.Math = tSeek.Math;
+            td.SavingMath = tSeek.SavingMath;
+            td.OS = PCM.OS;
+            td.RowMajor = tSeek.RowMajor;
+            td.Rows = ft.Rows;
+            td.Columns = ft.Columns;
+            td.ColumnHeaders = tSeek.ColHeaders;
+            td.RowHeaders = tSeek.RowHeaders;
+            td.Decimals = tSeek.Decimals;
+            td.Signed = tSeek.Signed;
+            td.TableDescription = tSeek.Description;
+            td.TableName = ft.Name;
+            td.Units = tSeek.Units;
 
-            string[] colHeaders = tSeek.ColHeaders.Split(',');
-            string[] rowHeaders = tSeek.RowHeaders.Split(',');
+            loadTable(td, PCM);
+        }
+
+
+        public void loadTable(TableData td1, PcmFile PCM1)
+        {
+
+            var currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+            NumberFormatInfo nfi = new CultureInfo(currentCulture, false).NumberFormat;
+            if (nfi.NumberDecimalSeparator == ",") commaDecimal = true;
+            else commaDecimal = false;
+
+            PCM = PCM1;
+            td = td1;
+
+            this.Text = "Table Editor: " + td.TableName;
+            if (td.TableDescription != null && td.TableDescription.Length > 0)
+                this.Text += " - " + td.TableDescription;
+
+            if (td.Units != null)
+                labelUnits.Text = "units: " + td.Units;
+
+            int rowCount = td.Rows;
+            int colCount = td.Columns;
+
+            string[] colHeaders = td.ColumnHeaders.Split(',');
+            string[] rowHeaders = td.RowHeaders.Split(',');
             if (chkTranspose.Checked)
             {
                 //Swap col/row
-                rowCount = foundTables[tId].Columns;
-                colCount = foundTables[tId].Rows;
-                colHeaders = tSeek.RowHeaders.Split(',');
-                rowHeaders = tSeek.ColHeaders.Split(',');
+                rowCount = td.Columns;
+                colCount = td.Rows;
+                colHeaders = td.RowHeaders.Split(',');
+                rowHeaders = td.ColumnHeaders.Split(',');
             }
             dataGridView1.Rows.Clear();
             dataGridView1.ColumnCount = colCount;
 
             //dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader; // .AutoResizeColumns(DataGridViewAutoSizeColumnsMode.Fill);
-            uint addr = foundTables[tableId].addrInt;
-            int step = (int)(tSeek.Bits / 8);
+            uint addr = td.AddrInt;
+            int step = (int)(td.ElementSize);
             double value = 0;
 
-            if (chkTranspose.Checked ^ tSeek.RowMajor == false)
+            if (chkTranspose.Checked ^ td.RowMajor == false)
             {
                 for (int r=0; r < rowCount; r++)
                     dataGridView1.Rows.Add();
@@ -128,7 +168,7 @@ namespace UniversalPatcher
             for (int c = 0; c < colCount; c++)
             {
                 string headerTxt = "";
-                if (c > colHeaders.Length || colHeaders[0].Length == 0)
+                if (c > colHeaders.Length - 1 || colHeaders[0].Length == 0)
                     headerTxt = "";
                 else
                     headerTxt = colHeaders[c];
@@ -140,7 +180,7 @@ namespace UniversalPatcher
                     dataGridView1.Rows[r].HeaderCell.Value = rowHeaders[r];
             }
             string formatStr = "0";
-            for (int f = 1; f <= tSeek.Decimals; f++)
+            for (int f = 1; f <= td.Decimals; f++)
             {
                 if (f > 0) formatStr += ".";
                 formatStr += "0";
@@ -168,16 +208,16 @@ namespace UniversalPatcher
             MathParser parser = new MathParser();
 
             double value = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
-            string mathStr = tSeek.SavingMath.ToLower().Replace("x", value.ToString());
+            string mathStr = td.SavingMath.ToLower().Replace("x", value.ToString());
             if (commaDecimal) mathStr = mathStr.Replace(".", ",");
             value = parser.Parse(mathStr, true);
-            if (tSeek.Bits == 8)
+            if (td.ElementSize == 1)
             {
                 PCM.buf[addr] = (byte)value;
             }
-            if (tSeek.Bits == 16)
+            if (td.ElementSize == 2)
             {
-                if (tSeek.Signed)
+                if (td.Signed)
                 {
                     short newValue = (short)value;
                     PCM.buf[addr] = (byte)((newValue & 0xFF00) >> 8);
@@ -191,9 +231,9 @@ namespace UniversalPatcher
                 }
 
             }
-            if (tSeek.Bits == 32)
+            if (td.ElementSize == 4)
             {
-                if (tSeek.DataType == 1)
+                if (td.DataType == 1)
                 {
                     byte[] buffer = BitConverter.GetBytes((float)value);
                     PCM.buf[addr] = buffer[0];
@@ -203,7 +243,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    if (tSeek.Signed)
+                    if (td.Signed)
                     {
                         Int32 newValue = (Int32)value;
                         PCM.buf[addr] = (byte)((newValue & 0xFF000000) >> 24);
@@ -368,7 +408,7 @@ namespace UniversalPatcher
 
         private void chkTranspose_CheckedChanged(object sender, EventArgs e)
         {
-            loadTable(tId, PCM);
+            loadTable(td, PCM);
             dataGridView1.AutoResizeColumns();
             dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
             if (chkAutoResize.Checked) AutoResize();

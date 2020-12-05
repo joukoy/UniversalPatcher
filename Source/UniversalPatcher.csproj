@@ -76,12 +76,6 @@
     <Compile Include="frmData.Designer.cs">
       <DependentUpon>frmData.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmDbEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmDbEditor.Designer.cs">
-      <DependentUpon>frmDbEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="frmEditExtra.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -172,6 +166,12 @@
     <Compile Include="frmTableEditor.Designer.cs">
       <DependentUpon>frmTableEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmTuner.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmTuner.Designer.cs">
+      <DependentUpon>frmTuner.cs</DependentUpon>
+    </Compile>
     <Compile Include="GmEeprom.cs" />
     <Compile Include="frmSegmenList.cs">
       <SubType>Form</SubType>
@@ -220,12 +220,8 @@
     <Compile Include="TableSeek.cs" />
     <Compile Include="tableSearch.cs" />
     <Compile Include="TinyTuner.cs" />
-    <Compile Include="TinyTunerDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TinyTunerDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="win32.cs" />
+    <Compile Include="TableData.cs" />
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </EmbeddedResource>
@@ -237,9 +233,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmData.resx">
       <DependentUpon>frmData.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmDbEditor.resx">
-      <DependentUpon>frmDbEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmEditAddress.resx">
       <DependentUpon>frmEditAddress.cs</DependentUpon>
@@ -295,6 +288,9 @@
     <EmbeddedResource Include="frmTableEditor.resx">
       <DependentUpon>frmTableEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmTuner.resx">
+      <DependentUpon>frmTuner.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -318,17 +314,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="TinyTunerDataSet.xsc">
-      <DependentUpon>TinyTunerDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="TinyTunerDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>TinyTunerDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="TinyTunerDataSet.xss">
-      <DependentUpon>TinyTunerDataSet.xsd</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">

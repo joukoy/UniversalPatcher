@@ -132,6 +132,7 @@
             this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tabFunction = new System.Windows.Forms.TabControl();
             this.tabApply = new System.Windows.Forms.TabPage();
+            this.btnTuner = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.btnSwapSegments = new System.Windows.Forms.Button();
             this.btnBinLoadPatch = new System.Windows.Forms.Button();
@@ -192,7 +193,6 @@
             this.dTCSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
@@ -1411,6 +1411,7 @@
             // 
             // tabApply
             // 
+            this.tabApply.Controls.Add(this.btnTuner);
             this.tabApply.Controls.Add(this.button1);
             this.tabApply.Controls.Add(this.btnSwapSegments);
             this.tabApply.Controls.Add(this.btnBinLoadPatch);
@@ -1424,6 +1425,16 @@
             this.tabApply.TabIndex = 1;
             this.tabApply.Text = "Modify bin";
             this.tabApply.UseVisualStyleBackColor = true;
+            // 
+            // btnTuner
+            // 
+            this.btnTuner.Location = new System.Drawing.Point(349, 6);
+            this.btnTuner.Name = "btnTuner";
+            this.btnTuner.Size = new System.Drawing.Size(107, 25);
+            this.btnTuner.TabIndex = 189;
+            this.btnTuner.Text = "Tuner";
+            this.btnTuner.UseVisualStyleBackColor = true;
+            this.btnTuner.Click += new System.EventHandler(this.btnTuner_Click);
             // 
             // button1
             // 
@@ -1984,8 +1995,7 @@
             this.fileTypesToolStripMenuItem,
             this.dTCSearchToolStripMenuItem,
             this.tableSeekToolStripMenuItem,
-            this.rememberWindowSizeToolStripMenuItem,
-            this.editDatabaseToolStripMenuItem});
+            this.rememberWindowSizeToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "Settings";
@@ -2052,15 +2062,6 @@
             this.rememberWindowSizeToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.rememberWindowSizeToolStripMenuItem.Text = "Remember window size";
             this.rememberWindowSizeToolStripMenuItem.Click += new System.EventHandler(this.rememberWindowSizeToolStripMenuItem_Click);
-            // 
-            // editDatabaseToolStripMenuItem
-            // 
-            this.editDatabaseToolStripMenuItem.Enabled = false;
-            this.editDatabaseToolStripMenuItem.Name = "editDatabaseToolStripMenuItem";
-            this.editDatabaseToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
-            this.editDatabaseToolStripMenuItem.Text = "Edit Database";
-            this.editDatabaseToolStripMenuItem.Visible = false;
-            this.editDatabaseToolStripMenuItem.Click += new System.EventHandler(this.editDatabaseToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -2316,6 +2317,6 @@
         private System.Windows.Forms.CheckBox chkForceCompare;
         private System.Windows.Forms.Button btnSearchTableSeek;
         private System.Windows.Forms.TextBox txtSearchTableSeek;
-        private System.Windows.Forms.ToolStripMenuItem editDatabaseToolStripMenuItem;
+        private System.Windows.Forms.Button btnTuner;
     }
 }

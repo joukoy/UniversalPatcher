@@ -65,7 +65,7 @@ namespace UniversalPatcher
         {
             this.Text = "Table data";
             bindingSource.DataSource = null;
-            bindingSource.DataSource = tableDatas;
+            bindingSource.DataSource = tableViews;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
             btnSave.Visible = false;

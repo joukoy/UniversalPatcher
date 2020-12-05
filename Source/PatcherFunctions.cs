@@ -165,9 +165,9 @@ public class upatcher
         public string Description { get; set; }
     }
 
-    public class TableData
+    public class TableView
     {
-        public TableData()
+        public TableView()
         { }
         public uint Row { get; set; }
         public uint addrInt;
@@ -277,7 +277,7 @@ public class upatcher
     //public static List<TableSearchConfig> tableSearchConfig;
     public static List<TableSearchResult> tableSearchResult;
     public static List<TableSearchResult> tableSearchResultNoFilters;
-    public static List<TableData> tableDatas;
+    public static List<TableView> tableViews;
     public static List<referenceCvn> referenceCvnList;
     public static List<FileType> fileTypeList;
     public static List<dtcCode> dtcCodes;
@@ -285,8 +285,12 @@ public class upatcher
     public static List<DtcSearchConfig> dtcSearchConfigs;
     public static List<TableSeek> tableSeeks;
     public static List<FoundTable> foundTables;
-    public static bool dtcCombined = false;
     public static List<string> tableCategories;
+    public static List<UniversalPatcher.TableData> XdfElements;
+    public static List<TableData> tableDatas = new List<TableData>();
+    public static bool dtcCombined = false;
+
+    public static uint lastTableData = 0;
 
     public static string XMLFile;
     public static string tableSearchFile;
@@ -532,9 +536,10 @@ public class upatcher
         return sum;
     }
 
-    public static string SelectFile(string Title = "Select file", string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*")
+    public static string SelectFile(string Title = "Select file", string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*", string defaultFile = "")
     {
         OpenFileDialog fdlg = new OpenFileDialog();
+        fdlg.FileName = defaultFile;
         if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
             fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
         if (Filter.Contains("PATCH") || Filter.Contains("TXT"))
@@ -550,6 +555,9 @@ public class upatcher
             }
             Filter += "|All files (*.*)|*.*";
         }
+        else if (Filter.ToLower().Contains("xdf"))
+            fdlg.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
+
         fdlg.Title = Title;
         fdlg.Filter = Filter;
         fdlg.FilterIndex = 1;

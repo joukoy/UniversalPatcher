@@ -104,6 +104,8 @@ namespace UniversalPatcher
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Segments"));
             if (!Directory.Exists(Path.Combine(Application.StartupPath, "Log")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Log"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Tuner")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Tuner"));
             logFile = Path.Combine(Application.StartupPath, "Log", "universalpatcher" + DateTime.Now.ToString("_yyyyMMdd_hhmm") + ".rtf");
 
             loadXmlFiles();
@@ -1073,18 +1075,11 @@ namespace UniversalPatcher
             }
             if (chkLogtodisplay.Checked)
             {
-                //txtResult.Focus();
-                //int Start = txtResult.Text.Length;
-                //txtResult.AppendText(LogText);
-                //txtResult.Select(Start, LogText.Length);
-                /*txtResult.Select(Start, 1);*/
                 txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Bold);
-                //txtResult.SelectedRtf = @"{\rtf1\ansi \b " + LogText + "\b0  ";
                 txtResult.AppendText(LogText);
                 txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
                 if (NewLine)
                     txtResult.AppendText(Environment.NewLine);
-                //Application.DoEvents();
             }
         }
 
@@ -1098,16 +1093,10 @@ namespace UniversalPatcher
             }
             if (chkLogtodisplay.Checked)
             { 
-                //txtResult.Focus();
                 int Start = txtResult.Text.Length;
-                //txtResult.AppendText(LogText);
-                //txtResult.Select(Start, LogText.Length);
-                /*txtResult.Select(Start  , 1);
-                txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);*/
                 txtResult.AppendText(LogText);
                 if (NewLine)
                     txtResult.AppendText(Environment.NewLine);
-                //Application.DoEvents();
             }
             Application.DoEvents();
         }
@@ -2977,7 +2966,7 @@ namespace UniversalPatcher
 
         private void btnShowTableData_Click(object sender, EventArgs e)
         {
-            tableDatas = new List<TableData>();
+            tableViews = new List<TableView>();
             int dataIndex = dataIndex = dataGridSearchedTables.SelectedCells[0].RowIndex;
             uint StartAddr;
             uint rows;
@@ -2994,26 +2983,26 @@ namespace UniversalPatcher
 
             if (rows == 0)
             {
-                TableData dt = new TableData();
+                TableView dt = new TableView();
                 dt.Row = 0;
                 dt.Address = StartAddr.ToString("X8");
                 dt.addrInt = StartAddr;
                 dt.dataInt = basefile.buf[StartAddr];
                 dt.Data = dt.dataInt.ToString("X2");
-                tableDatas.Add(dt);
+                tableViews.Add(dt);
             }
             else
             {
                 uint row = 0;
                 for (uint addr = StartAddr; addr < StartAddr + rows; addr++)
                 {
-                    TableData dt = new TableData();
+                    TableView dt = new TableView();
                     dt.Row = row;
                     dt.addrInt = addr;
                     dt.Address = addr.ToString("X8");
                     dt.dataInt = basefile.buf[addr];
                     dt.Data = dt.dataInt.ToString("X2");
-                    tableDatas.Add(dt);
+                    tableViews.Add(dt);
                     row++;
                 }
             }
@@ -3039,13 +3028,13 @@ namespace UniversalPatcher
                 xdfText = xdfText.Replace("REPLACE-BINSIZE", basefile.fsize.ToString("X"));
                 for (int s = 1; s < tableCategories.Count ; s++)
                 {
-                    tableText += Environment.NewLine + "     <CATEGORY index = \"0x" + (s-1).ToString("X") + "\" name = \"" + tableCategories[s] + "\" />" + Environment.NewLine;
+                    tableText += "     <CATEGORY index = \"0x" + (s - 1).ToString("X") + "\" name = \"" + tableCategories[s] + "\" />" + Environment.NewLine;
                     lastCategory = s;
                 }
                 dtcCategory = lastCategory + 1;
-                tableText += Environment.NewLine + "     <CATEGORY index = \"0x" + (dtcCategory-1).ToString("X") + "\" name = \"DTC\" />" + Environment.NewLine;
+                tableText += "     <CATEGORY index = \"0x" + (dtcCategory-1).ToString("X") + "\" name = \"DTC\" />" + Environment.NewLine;
                 lastCategory = dtcCategory + 1;
-                tableText += Environment.NewLine + "     <CATEGORY index = \"0x" + (lastCategory-1).ToString("X") + "\" name = \"Other\" />" + Environment.NewLine;
+                tableText += "     <CATEGORY index = \"0x" + (lastCategory-1).ToString("X") + "\" name = \"Other\" />";
                 xdfText = xdfText.Replace("REPLACE-CATEGORYNAME", tableText);
 
                 fName = Path.Combine(Application.StartupPath, "Templates", basefile.xmlFile + "-checksum.txt");
@@ -3079,7 +3068,7 @@ namespace UniversalPatcher
                     }
                     tableText = tableText.Replace("REPLACE-TABLEROWS", tableRows);
                     tableText = tableText.Replace("REPLACE-CATEGORY", dtcCategory.ToString());
-                    xdfText += tableText;       //Add generated table to end of xdfText
+                    xdfText += tableText + Environment.NewLine;       //Add generated table to end of xdfText
 
                     if (!dtcCombined)
                     {
@@ -3235,7 +3224,9 @@ namespace UniversalPatcher
                             {
                                 for (int d = 0; d < foundTables[t].Rows; d++)
                                 {
-                                    tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />" + Environment.NewLine;
+                                    tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />";
+                                    if (d < foundTables[t].Rows - 1)
+                                        tableRows += Environment.NewLine;
                                 }
                             }
                             else
@@ -3243,7 +3234,9 @@ namespace UniversalPatcher
                                 string[] hParts = tableSeeks[t].RowHeaders.Split(',');
                                 for (int row=0; row<hParts.Length;row++)
                                 {
-                                    tableRows += "     <LABEL index=\"" + row.ToString() + "\" value=\"" + hParts[row] + "\" />" + Environment.NewLine;
+                                    tableRows += "     <LABEL index=\"" + row.ToString() + "\" value=\"" + hParts[row] + "\" />" ;
+                                    if (row < hParts.Length - 1)
+                                        tableRows += Environment.NewLine;
                                 }
                             }
                             tableText = tableText.Replace("REPLACE-TABLEROWS", tableRows);
@@ -3252,7 +3245,9 @@ namespace UniversalPatcher
                             {
                                 for (int d = 0; d < foundTables[t].Columns; d++)
                                 {
-                                    tableCols += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />" + Environment.NewLine;
+                                    tableCols += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />" ;
+                                    if (d < foundTables[t].Columns - 1)
+                                        tableCols += Environment.NewLine;
                                 }
                             }
                             else
@@ -3260,11 +3255,12 @@ namespace UniversalPatcher
                                 string[] hParts = tableSeeks[t].ColHeaders.Split(',');
                                 for (int col = 0; col < hParts.Length; col++)
                                 {
-                                    tableCols += "     <LABEL index=\"" + col.ToString() + "\" value=\"" + hParts[col] + "\" />" + Environment.NewLine;
+                                    tableCols += "     <LABEL index=\"" + col.ToString() + "\" value=\"" + hParts[col] + "\" />";
+                                    if (col < hParts.Length - 1)
+                                        tableCols += Environment.NewLine;
                                 }
                             }
                             tableText = tableText.Replace("REPLACE-TABLECOLS", tableCols);
-
 
                             xdfText += tableText;       //Add generated table to end of xdfText
                         }
@@ -3346,7 +3342,7 @@ namespace UniversalPatcher
                 int columnindex = dataGridTableSeek.CurrentCell.ColumnIndex;
                 int codeIndex = Convert.ToInt32( dataGridTableSeek.Rows[rowindex].Cells["id"].Value);
                 frmTableEditor frmT = new frmTableEditor();
-                frmT.loadTable(codeIndex, basefile);
+                frmT.loadSeekTable(codeIndex, basefile);
                 if ((frmT.ShowDialog()) == DialogResult.OK)
                 {
                     LoggerBold("File modified, you can now save it");
@@ -3425,17 +3421,16 @@ namespace UniversalPatcher
                     dataGridTableSeek.ClearSelection();
                     dataGridTableSeek.CurrentCell = dataGridTableSeek.Rows[i].Cells[0];
                     dataGridTableSeek.CurrentCell.Selected = true;
-                    //dataGridTableSeek.Rows[i].Cells[0].Selected = true;                    
                     break;
                 }
             }
 
         }
 
-        private void editDatabaseToolStripMenuItem_Click(object sender, EventArgs e)
+        private void btnTuner_Click(object sender, EventArgs e)
         {
-            frmDbEditor fdb = new frmDbEditor();
-            fdb.Show();
+            frmTuner ft = new frmTuner(basefile);
+            ft.Show();
         }
     }
 }

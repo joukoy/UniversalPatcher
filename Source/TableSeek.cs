@@ -67,7 +67,7 @@ namespace UniversalPatcher
                 tableCategories = new List<string>();
                 tableCategories.Add("All");
                 for (int c = 0; c < PCM.segmentinfos.Length; c++)
-                    tableCategories.Add(PCM.segmentinfos[c].Name);
+                    tableCategories.Add("Seg-" + PCM.segmentinfos[c].Name);
                 string fileName = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + PCM.xmlFile + ".xml");
                 if (fileName != tableSeekFile)
                 {
@@ -130,7 +130,7 @@ namespace UniversalPatcher
                             foundTables.Add(ft);
 
                             ts = new TableSeek();
-                            ts.Bits = 8;
+                            ts.Bits = 16;
                             ts.Name = "MAF";
                             ts.Math = "X*0.0078125";
                             ts.SavingMath = "X/0.0078125";
@@ -163,7 +163,7 @@ namespace UniversalPatcher
                 }
                 for (int s = 0; s < tableSeeks.Count; s++)
                 {
-                    if (!tableCategories.Contains(tableSeeks[s].Category)) tableCategories.Add(tableSeeks[s].Category);
+                    if (tableSeeks[s].Category != null && !tableCategories.Contains(tableSeeks[s].Category)) tableCategories.Add(tableSeeks[s].Category);
                     uint startAddr = 0;
                     uint endAddr = PCM.fsize;
                     List<Block> addrList = new List<Block>();
@@ -256,7 +256,7 @@ namespace UniversalPatcher
                                 }
                                 else
                                 {
-                                    ft.Category = PCM.GetSegmentName(ft.addrInt);
+                                    ft.Category = "Seg-" + PCM.GetSegmentName(ft.addrInt);
                                 }
                                 ft.Address = ft.addrInt.ToString("X8");
                                 if (tableSeeks[s].Rows > 0)

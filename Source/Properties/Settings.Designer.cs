@@ -287,14 +287,39 @@ namespace UniversalPatcher.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=Y:\\Visualstudio\\UniversalPatcher\\Tin" +
-            "yTuner.mdb")]
-        public string TinyTunerConnectionString {
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size TunerWindowSize {
             get {
-                return ((string)(this["TinyTunerConnectionString"]));
+                return ((global::System.Drawing.Size)(this["TunerWindowSize"]));
+            }
+            set {
+                this["TunerWindowSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.Forms.FormWindowState TunerWindowState {
+            get {
+                return ((global::System.Windows.Forms.FormWindowState)(this["TunerWindowState"]));
+            }
+            set {
+                this["TunerWindowState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point TunerWindowLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["TunerWindowLocation"]));
+            }
+            set {
+                this["TunerWindowLocation"] = value;
             }
         }
     }
