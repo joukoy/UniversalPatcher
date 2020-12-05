@@ -419,16 +419,28 @@ namespace UniversalPatcher
 
         private void importXdf()
         {
-            XDocument doc;
-            string fname = SelectFile("Select XDF file", "xdf files (*.xdf)|*.xdf|ALL files (*.*| *.*");
-            if (fname.Length == 0)
-                return;
-            Logger("Importing file " + fname + "...", false);
-            doc = new XDocument(new XComment(" Written " + DateTime.Now.ToString("G", DateTimeFormatInfo.InvariantInfo)), XElement.Load(fname));
-            ConvertXdf(doc);
-            refreshTablelist();
-            Logger("Done");
+            try
+            {
 
+                XDocument doc;
+                string fname = SelectFile("Select XDF file", "xdf files (*.xdf)|*.xdf|ALL files (*.*| *.*");
+                if (fname.Length == 0)
+                    return;
+                Logger("Importing file " + fname + "...", false);
+                doc = new XDocument(new XComment(" Written " + DateTime.Now.ToString("G", DateTimeFormatInfo.InvariantInfo)), XElement.Load(fname));
+                ConvertXdf(doc);
+                refreshTablelist();
+                Logger("Done");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("XdfImport, line " + line + ": " + ex.Message);
+            }
         }
         private void btnImportXdf_Click(object sender, EventArgs e)
         {
