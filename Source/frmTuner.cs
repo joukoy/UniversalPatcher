@@ -22,9 +22,9 @@ namespace UniversalPatcher
             InitializeComponent();
             PCM = PCM1;
             if (upatcher.Segments[0].CS1Address.StartsWith("GM-V6"))
-                btnReadTinyTunerDB.Enabled = true;
+                importTinyTunerDBV6OnlyToolStripMenuItem.Enabled = true;
             else
-                btnReadTinyTunerDB.Enabled = false;
+                importTinyTunerDBV6OnlyToolStripMenuItem.Enabled = false;
         }
 
         private PcmFile PCM;
@@ -211,8 +211,7 @@ namespace UniversalPatcher
             }
             return NeedFix;
         }
-
-        private void btnSaveBin_Click(object sender, EventArgs e)
+        private void SaveBin()
         {
             try
             {
@@ -236,6 +235,10 @@ namespace UniversalPatcher
             }
 
         }
+        private void btnSaveBin_Click(object sender, EventArgs e)
+        {
+            SaveBin();
+        }
         public void refreshTablelist()
         {
             bindingsource.DataSource = null;
@@ -251,24 +254,22 @@ namespace UniversalPatcher
             comboTableCategory.Refresh();
         }
 
-        private void btnImportTableSeek_Click(object sender, EventArgs e)
+        private void importTableSeek()
         {
-            for (int i=0; i< tableSeeks.Count; i++)
+            for (int i = 0; i < tableSeeks.Count; i++)
             {
                 TableData tableData = new TableData();
                 tableData.importSeekTable(i, PCM);
                 tableDatas.Add(tableData);
             }
             refreshTablelist();
-        }
 
-        private void btnImportTableSearch_Click(object sender, EventArgs e)
+        }
+        private void btnImportTableSeek_Click(object sender, EventArgs e)
         {
-            for (int i=0; i< tableSearchResult.Count; i++)
-            {
-
-            }
+            importTableSeek();
         }
+
         private void ConvertXdf(XDocument doc)
         {
             try
@@ -416,7 +417,7 @@ namespace UniversalPatcher
 
         }
 
-        private void btnImportXdf_Click(object sender, EventArgs e)
+        private void importXdf()
         {
             XDocument doc;
             string fname = SelectFile("Select XDF file", "xdf files (*.xdf)|*.xdf|ALL files (*.*| *.*");
@@ -427,9 +428,13 @@ namespace UniversalPatcher
             ConvertXdf(doc);
             refreshTablelist();
             Logger("Done");
-        }
 
-        private void btnLoadXml_Click(object sender, EventArgs e)
+        }
+        private void btnImportXdf_Click(object sender, EventArgs e)
+        {
+            importXdf();
+        }
+        private void LoadXML()
         {
             try
             {
@@ -465,13 +470,17 @@ namespace UniversalPatcher
                 LoggerBold("Error, line " + line + ": " + ex.Message);
             }
         }
+        private void btnLoadXml_Click(object sender, EventArgs e)
+        {
+            LoadXML();
+        }
 
-        private void btnSaveXML_Click(object sender, EventArgs e)
+        private void SaveXML()
         {
             try
             {
                 string defName = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
-                string fName = SelectSaveFile("XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*",defName);
+                string fName = SelectSaveFile("XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
                 if (fName.Length == 0)
                     return;
 
@@ -495,8 +504,12 @@ namespace UniversalPatcher
             }
 
         }
+        private void btnSaveXML_Click(object sender, EventArgs e)
+        {
+            SaveXML();
+        }
 
-        private void btnImportDTC_Click(object sender, EventArgs e)
+        private void importDTC()
         {
             TableData td = new TableData();
             dtcCode dtc = dtcCodes[0];
@@ -512,7 +525,7 @@ namespace UniversalPatcher
             td.OS = PCM.OS;
             for (int i = 0; i < dtcCodes.Count; i++)
             {
-                td.RowHeaders += dtcCodes[i].Code +",";
+                td.RowHeaders += dtcCodes[i].Code + ",";
             }
             td.RowHeaders = td.RowHeaders.Trim(',');
             td.Rows = (ushort)dtcCodes.Count;
@@ -551,6 +564,11 @@ namespace UniversalPatcher
                 tableDatas.Add(td);
             }
             refreshTablelist();
+
+        }
+        private void btnImportDTC_Click(object sender, EventArgs e)
+        {
+            importDTC();
         }
 
         private void frmTuner_Load(object sender, EventArgs e)
@@ -629,13 +647,63 @@ namespace UniversalPatcher
 
         }
 
-        private void btnReadTinyTunerDB_Click(object sender, EventArgs e)
+        private void importTinyTunerDB()
         {
             TinyTuner tt = new TinyTuner();
             Logger("Reading TinyTuner DB...", false);
             Logger(tt.readTinyDBtoTableData(PCM));
             refreshTablelist();
 
+        }
+        private void btnReadTinyTunerDB_Click(object sender, EventArgs e)
+        {
+            importTinyTunerDB();
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void loadXMLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadXML();
+        }
+
+        private void saveXMLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveXML();
+        }
+
+        private void saveBINToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveBin();
+        }
+
+        private void importDTCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importDTC();
+        }
+
+        private void importTableSeekToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importTableSeek();
+        }
+
+        private void importXDFToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importXdf();
+        }
+
+        private void importTinyTunerDBV6OnlyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importTinyTunerDB();
+        }
+
+        private void clearTableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tableDatas = new List<TableData>();
+            refreshTablelist();
         }
     }
 }
