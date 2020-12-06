@@ -3429,6 +3429,12 @@ namespace UniversalPatcher
 
         private void btnTuner_Click(object sender, EventArgs e)
         {
+            if (basefile == null)
+            {
+                LoggerBold("No file loaded");
+                return;
+            }
+            tableDatas = new List<TableData>();
             frmTuner ft = new frmTuner(basefile);
             ft.Show();
         }

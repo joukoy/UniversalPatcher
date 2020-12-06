@@ -10,6 +10,7 @@ using static upatcher;
 using MathParserTK;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 
 namespace UniversalPatcher
 {
@@ -95,7 +96,6 @@ namespace UniversalPatcher
             loadTable(td, PCM);
         }
 
-
         public void loadTable(TableData td1, PcmFile PCM1)
         {
 
@@ -112,14 +112,14 @@ namespace UniversalPatcher
                 this.Text += " - " + td.TableDescription;
 
             if (td.Units != null)
-                labelUnits.Text = "units: " + td.Units;
+                labelUnits.Text = "Units: " + td.Units;
 
             int rowCount = td.Rows;
             int colCount = td.Columns;
 
             string[] colHeaders = td.ColumnHeaders.Split(',');
             string[] rowHeaders = td.RowHeaders.Split(',');
-            if (chkTranspose.Checked)
+            if (swapXyToolStripMenuItem.Checked)
             {
                 //Swap col/row
                 rowCount = td.Columns;
@@ -135,7 +135,7 @@ namespace UniversalPatcher
             int step = (int)(td.ElementSize);
             double value = 0;
 
-            if (chkTranspose.Checked ^ td.RowMajor == false)
+            if (swapXyToolStripMenuItem.Checked ^ td.RowMajor == false)
             {
                 for (int r=0; r < rowCount; r++)
                     dataGridView1.Rows.Add();
@@ -199,7 +199,7 @@ namespace UniversalPatcher
             if (e.RowIndex > -1)
             {
                 tableModified = true;
-                chkTranspose.Enabled = false;
+                swapXyToolStripMenuItem.Enabled = false;
             }
         }
 
@@ -331,7 +331,7 @@ namespace UniversalPatcher
             dataGridView1.AutoResizeColumns();
             dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
 
-            chkAutoResize.Checked = Properties.Settings.Default.TableEditorAutoResize;
+            autoResizeToolStripMenuItem.Checked = Properties.Settings.Default.TableEditorAutoResize;
             if (Properties.Settings.Default.TableEditorAutoResize)
             {
                 AutoResize();
@@ -398,9 +398,9 @@ namespace UniversalPatcher
 
         private void chkAutoResize_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.TableEditorAutoResize = chkAutoResize.Checked;
+            Properties.Settings.Default.TableEditorAutoResize = autoResizeToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
-            if (chkAutoResize.Checked)
+            if (autoResizeToolStripMenuItem.Checked)
             {
                 AutoResize();
             }
@@ -411,7 +411,211 @@ namespace UniversalPatcher
             loadTable(td, PCM);
             dataGridView1.AutoResizeColumns();
             dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
-            if (chkAutoResize.Checked) AutoResize();
+            if (autoResizeToolStripMenuItem.Checked) AutoResize();
+        }
+
+        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Copy to clipboard
+            CopyToClipboard();
+
+            //Clear selected cells
+            foreach (DataGridViewCell dgvCell in dataGridView1.SelectedCells)
+                dgvCell.Value = string.Empty;
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CopyToClipboard();
+        }
+
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Perform paste Operation
+            PasteClipboardValue();
+        }
+        private void CopyToClipboard()
+        {
+            //Copy to clipboard
+            DataObject dataObj = dataGridView1.GetClipboardContent();
+            if (dataObj != null)
+                Clipboard.SetDataObject(dataObj);
+        }
+
+        private void PasteClipboardValue()
+        {
+            //Show Error if no cell is selected
+            if (dataGridView1.SelectedCells.Count == 0)
+            {
+                MessageBox.Show("Please select a cell", "Paste",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            //Get the starting Cell
+            DataGridViewCell startCell = GetStartCell(dataGridView1);
+            //Get the clipboard value in a dictionary
+            Dictionary<int, Dictionary<int, string>> cbValue =
+                    ClipBoardValues(Clipboard.GetText());
+
+            int iRowIndex = startCell.RowIndex;
+            foreach (int rowKey in cbValue.Keys)
+            {
+                int iColIndex = startCell.ColumnIndex;
+                foreach (int cellKey in cbValue[rowKey].Keys)
+                {
+                    //Check if the index is within the limit
+                    if (iColIndex <= dataGridView1.Columns.Count - 1
+                    && iRowIndex <= dataGridView1.Rows.Count - 1)
+                    {
+                        DataGridViewCell cell = dataGridView1[iColIndex, iRowIndex];
+
+                        //Copy to selected cells if 'chkPasteToSelectedCells' is checked
+                        //if ((chkPasteToSelectedCells.Checked && cell.Selected) || (!chkPasteToSelectedCells.Checked))
+                            cell.Value = cbValue[rowKey][cellKey];
+                    }
+                    iColIndex++;
+                }
+                iRowIndex++;
+            }
+        }
+
+        private DataGridViewCell GetStartCell(DataGridView dgView)
+        {
+            //get the smallest row,column index
+            if (dgView.SelectedCells.Count == 0)
+                return null;
+
+            int rowIndex = dgView.Rows.Count - 1;
+            int colIndex = dgView.Columns.Count - 1;
+
+            foreach (DataGridViewCell dgvCell in dgView.SelectedCells)
+            {
+                if (dgvCell.RowIndex < rowIndex)
+                    rowIndex = dgvCell.RowIndex;
+                if (dgvCell.ColumnIndex < colIndex)
+                    colIndex = dgvCell.ColumnIndex;
+            }
+
+            return dgView[colIndex, rowIndex];
+        }
+
+        private Dictionary<int, Dictionary<int, string>> ClipBoardValues(string clipboardValue)
+        {
+            Dictionary<int, Dictionary<int, string>>
+            copyValues = new Dictionary<int, Dictionary<int, string>>();
+
+            String[] lines = clipboardValue.Split('\n');
+
+            for (int i = 0; i <= lines.Length - 1; i++)
+            {
+                copyValues[i] = new Dictionary<int, string>();
+                String[] lineContent = lines[i].Split('\t');
+
+                //if an empty cell value copied, then set the dictionary with an empty string
+                //else Set value to dictionary
+                if (lineContent.Length == 0)
+                    copyValues[i][0] = string.Empty;
+                else
+                {
+                    for (int j = 0; j <= lineContent.Length - 1; j++)
+                        copyValues[i][j] = lineContent[j];
+                }
+            }
+            return copyValues;
+        }
+
+        private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (dataGridView1.SelectedCells.Count > 0)
+                dataGridView1.ContextMenuStrip = contextMenuStrip1;
+        }
+
+        private void exportCsv()
+        {
+            try
+            {
+
+                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                if (FileName.Length == 0)
+                    return;
+                using (StreamWriter writetext = new StreamWriter(FileName))
+                {
+                    string row = ";";
+                    for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                    {
+                        if (i > 0)
+                            row += ";";
+                        row += dataGridView1.Columns[i].HeaderText;
+                    }
+                    writetext.WriteLine(row);
+                    for (int r = 0; r < (dataGridView1.Rows.Count - 1); r++)
+                    {
+                        row = dataGridView1.Rows[r].HeaderCell.Value.ToString() + ";";
+                        for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                        {
+                            if (i > 0)
+                                row += ";";
+                            if (dataGridView1.Rows[r].Cells[i].Value != null)
+                                row += dataGridView1.Rows[r].Cells[i].Value.ToString();
+                        }
+                        writetext.WriteLine(row);
+                    }
+                }
+                MessageBox.Show(FileName, "CSV Export done");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+            }
+
+        }
+        private void exportCsvToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            exportCsv();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveTable();
+        }
+
+        private void exportCSVToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            exportCsv();
+        }
+
+        private void autoResizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (autoResizeToolStripMenuItem.Checked)
+                autoResizeToolStripMenuItem.Checked = false;
+            else
+                autoResizeToolStripMenuItem.Checked = true;
+            Properties.Settings.Default.TableEditorAutoResize = autoResizeToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
+            if (autoResizeToolStripMenuItem.Checked)
+            {
+                AutoResize();
+            }
+
+        }
+
+        private void swapXyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (swapXyToolStripMenuItem.Checked)
+                swapXyToolStripMenuItem.Checked = false;
+            else
+                swapXyToolStripMenuItem.Checked = true;
+            loadTable(td, PCM);
+            dataGridView1.AutoResizeColumns();
+            dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
+            if (autoResizeToolStripMenuItem.Checked) AutoResize();
+
         }
     }
 }

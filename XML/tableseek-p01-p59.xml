@@ -2,7 +2,7 @@
 <ArrayOfTableSeek xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <TableSeek>
     <Name>MBT spark</Name>
-    <SearchStr>74 14 20 7c * * * * 4e b9 * * * * 36</SearchStr>
+    <SearchStr>74 14 20 7c @ @ @ @ 4e b9 * * * * 36</SearchStr>
     <Rows>15</Rows>
     <Columns>20</Columns>
     <RowHeaders>0.08,0.16,0.24,0.32,0.40,0.48,0.56,0.64,0.72,0.80,0.88,0.96,1.04,1.12,1.20</RowHeaders>
@@ -16,14 +16,18 @@
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <RowMajor>true</RowMajor>
+    <Description />
   </TableSeek>
   <TableSeek>
     <Name>LowOct spark</Name>
     <SearchStr>30 38 * * 32 38 * * 74 19 20 7c @ @ @ @ 4e b9 * * * * 26</SearchStr>
     <Rows>29</Rows>
     <Columns>25</Columns>
-    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
-    <ColHeaders>400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000</ColHeaders>
+    <RowHeaders>400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000</RowHeaders>
+    <ColHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</ColHeaders>
     <Math>X*0.021978</Math>
     <SavingMath>X/0.021978</SavingMath>
     <Offset>0</Offset>
@@ -33,6 +37,10 @@
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <RowMajor>true</RowMajor>
+    <Description />
   </TableSeek>
   <TableSeek>
     <Name>HiOct spark</Name>
@@ -50,15 +58,408 @@
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <RowMajor>true</RowMajor>
+    <Description />
   </TableSeek>
   <TableSeek>
-    <Name>max_dwell/mult vs rpm</Name>
-    <SearchStr>36 38 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 24 7C @ @ @ @ F8 12</SearchStr>
-    <Rows>11</Rows>
-    <Columns>1</Columns>
-    <RowHeaders>0,800,1600,2400,3200,4000,4800,5600,6400,7200,8000</RowHeaders>
+    <Name>Clt_spark coolant/airflow</Name>
+    <SearchStr>74 k25 20 7c @ @ @ @ 4e b9</SearchStr>
+    <Rows>29</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
+    <ColHeaders>-40,-35,-30,-25,-20,-15,-10,-5,0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,140</ColHeaders>
+    <Math>X*0.021978</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>1</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <RowMajor>true</RowMajor>
+    <Description>Coolant spark correction coolant va airflow</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>Clt_rpm_modifier</Name>
+    <SearchStr>74 k25 20 7c @ @ @ @ 4e b9</SearchStr>
+    <Rows>21</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000</RowHeaders>
+    <ColHeaders>-40,-35,-30,-25,-20,-15,-10,-5,0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,140</ColHeaders>
+    <Math>X/4096</Math>
+    <SavingMath>X*4096</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>2</UseHit>
+    <Range />
+    <Segments />
+    <RowMajor>true</RowMajor>
+    <Description>Coolant spark multiplier to CLT_spark coolant/rpm</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>Clt_rpm_modifier 06-07</Name>
+    <SearchStr>74 k25 * * 20 7c @ @ @ @ 4e b9</SearchStr>
+    <Rows>21</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000</RowHeaders>
+    <ColHeaders>-40,-35,-30,-25,-20,-15,-10,-5,0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,140</ColHeaders>
+    <Math>X/4096</Math>
+    <SavingMath>X*4096</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <RowMajor>true</RowMajor>
+    <Description>Coolant spark multiplier to CLT_spark coolant/rpm</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>CAT_LIGHTOFF_SPARK_RETARD</Name>
+    <SearchStr>40 60 04 30 3C 14 00 32 * * * 74 k15 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>29</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
+    <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000</ColHeaders>
+    <Math>X*0.021978</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <RowMajor>true</RowMajor>
+    <Description>rpm vs airflow</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_LAUNCH_SPARK</Name>
+    <SearchStr>32 3C 06 00 74 k13 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>7</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
     <ColHeaders />
-    <Math>X</Math>
+    <Math>X*0.021978</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_EQ_RATIO_SPARK -05</Name>
+    <SearchStr>32 38 * * 74 k10 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>21</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X*0.021978</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_EQ_RATIO_SPARK 06-07</Name>
+    <SearchStr>74 k10 * * * * 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>21</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X*0.021978</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_EGR_SPARK -05</Name>
+    <SearchStr>02 24 03 32 38 * * E2 49 30 38 * * 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>29</Rows>
+    <Columns>13</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
+    <ColHeaders />
+    <Math>X*0.021978</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_FFS_E80_SPARK_SHIFT 03-05-1mb</Name>
+    <SearchStr>87 E6 48 60 04 30 3C 11 00 74 k12 20 7C @ @ @ @</SearchStr>
+    <Rows>21</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>GM/S 0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88</RowHeaders>
+    <ColHeaders>RPM 400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Units>-720~720 DEGREES</Units>
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_FFS_E80_SPARK_SHIFT 06-07</Name>
+    <SearchStr>36 3C 11 00 74 k12 * * 20 7C @ @ @ @</SearchStr>
+    <Rows>21</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>GM/S 0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88</RowHeaders>
+    <ColHeaders>RPM 400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Units>-720~720 DEGREES</Units>
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_FFS_E80_MBT_SPARK_SHIFT 03- 1mb</Name>
+    <SearchStr>86 E6 48 60 04 30 3C 11 00 74 k12 20 7C @ @ @ @</SearchStr>
+    <Rows>11</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>GM/S 0.08,0.16,0.24,0.32,0.40,0.48,0.56,0.64,0.72,0.80,0.88</RowHeaders>
+    <ColHeaders>RPM 400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Units>-720~720 DEGREES</Units>
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_IAT_SPARK</Name>
+    <SearchStr>30 3C 14 00 32 38 * * 74 k15 20 7C @ @ @ @ 4E B9 * * * * 38 38</SearchStr>
+    <Rows>29</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
+    <ColHeaders />
+    <Math>X*0.021978</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_MAIN_CT_DRIVE</Name>
+    <SearchStr>30 38 * * 20 7C @ @ @ @ 60 A6</SearchStr>
+    <Rows>29</Rows>
+    <Columns>13</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
+    <ColHeaders />
+    <Math>X*0.021978</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_MAIN_CT_PARK</Name>
+    <SearchStr>67 3e 32 38 * * e2 49 30 38 * * 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>29</Rows>
+    <Columns>13</Columns>
+    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
+    <ColHeaders />
+    <Math>X*0.021978</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_PISTON_SLAP_SPARK_RETARD</Name>
+    <SearchStr>3C 0A 00 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>15</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>mg/cyl 0.08,0.16,0.24,0.32,0.40,0.48,0.56,0.64,0.72,0.80,0.88,0.96,1.04,1.12,1.20</RowHeaders>
+    <ColHeaders>rpm 0,400,800,1200,1600,2000,2400,2800,3200,3600,4000</ColHeaders>
+    <Math>X*0.021978</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>2</UseHit>
+    <Range />
+    <Segments />
+    <Category>SPARK_ADVANCE</Category>
+    <Units>Degrees</Units>
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_PISTON_SLAP_SPARK_RETARD 06-07??</Name>
+    <SearchStr>80 FC 00 14 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>15</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X*0.021978</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>SPARK_ADVANCE</Category>
+    <Units>Degrees</Units>
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>KV_MASS_AIRFLOW</Name>
+    <SearchStr>04 43 0C 00 F8 39 31 40 @ @ @ @</SearchStr>
+    <Rows>85</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>Hz 1500,1625,1750,1875,2000,2125,2250,2375,2500,2625,2750,2875,3000,3125,3250,3375,3500,3625,3750,3875,4000,4125,4250,4375,4500,4625,4750,4875,5000,5125,5250,5375,5500,5625,5750,5875,6000,6125,6250,6375,6500,6625,6750,6875,7000,7125,7250,7375,7500,7625,7750,7875,8000,8125,8250,8375,8500,8625,8750,8875,9000,9125,9250,9375,9500,9625,9750,9875,10000,10125,10250,10375,10500,10625,10750,10875,11000,11125,11250,11375,11500,11625,11750,11875,12000</RowHeaders>
+    <ColHeaders>AFGS</ColHeaders>
+    <Math>X/128</Math>
+    <SavingMath>X*128</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>4</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>MASS_AIR_FLOW_SENSOR</Category>
+    <Units>AFGS</Units>
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>KV_VOLUMETRIC_EFFICIENCY_BARO_CO</Name>
+    <SearchStr>60 02 9A 40 24 7C @ @ @ @ F8 12 51 40 C6 C5 E0 8B E8 8B 0C 43 14 00</SearchStr>
+    <Rows>10</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>KPA 60,65,70,75,80,85,90,95,100,105</RowHeaders>
+    <ColHeaders>%</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>4</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>AIRFLOW</Category>
+    <Units>0-2 multiplier</Units>
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_VOLUMETRIC_EFFICIENCY_CRANK</Name>
+    <SearchStr>04 30 3C 20 00 74 k21 20 7C @ @ @ @</SearchStr>
+    <Rows>9</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>KPA 20,30,40,50,60,70,80,90,100</RowHeaders>
+    <ColHeaders>RPM 0,40,80,120,160,200,240,280,320,360,400,440,480,520,560,600,640,480,720,760,800,840,880,920,960,1000,1040,1080,1120,1160,1200,1240,1280</ColHeaders>
+    <Math>X*0.019531250000</Math>
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
@@ -67,5 +468,261 @@
     <Decimals>2</Decimals>
     <DataType>1</DataType>
     <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>AIRFLOW</Category>
+    <Units>0-100%</Units>
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>K_MAIN_VOLUMETRIC_EFFICIENCY</Name>
+    <SearchStr>B6 40 63 02 20 03 90 49 41 F9 @ @ @ @ E6 48 74 28 4E B9</SearchStr>
+    <Rows>19</Rows>
+    <Columns>20</Columns>
+    <RowHeaders>KPA 15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105</RowHeaders>
+    <ColHeaders>RPM 400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000</ColHeaders>
+    <Math>x*0.000195312500</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>6</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>AIRFLOW</Category>
+    <Units>0-12.799805 gM*k/KPA</Units>
+    <RowMajor>true</RowMajor>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>K_DYNA_AIR_COEFFICIENT</Name>
+    <SearchStr>3D 78 * * * * 3D 78 * * * * 36 39 @ @ @ @ F8 2E 31 40 * * 31 C3 * * 60 06</SearchStr>
+    <Rows>10</Rows>
+    <Columns>18</Columns>
+    <RowHeaders>PREDICTED_1_ahead_corr_4,   SENSED_current_comp_5,    SENSED_1_back_comp_6,      MAP_current_comp_7,       MAP_1_back_comp_8,       MAP_2_back_comp_9,   THROTTLE_Curr_comp_10, THROTTLE_1_back_comp_11, THROTTLE_2_back_comp_12,            BASE_comp_13</RowHeaders>
+    <ColHeaders>1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18</ColHeaders>
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>8</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Units>COEFFICIENT</Units>
+    <RowMajor>false</RowMajor>
+    <Description>DYNA_AIR_COEFFICIENTS</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>KE_VTD_CONFIGURATION</Name>
+    <SearchStr>4A 39 @ @ @ @ 66 0A 72 10 42 00 4E B9</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>8</Bits>
+    <Signed>false</Signed>
+    <Decimals>0</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>VTD</Category>
+    <Units>0=on,1=off</Units>
+    <RowMajor>true</RowMajor>
+    <Description>0=on,1=off</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>KE_ENGINE_IDENTIFIER</Name>
+    <SearchStr>11 C3 * * 11 C3 * * 42 43 16 39 @ @ @ @</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>8</Bits>
+    <Signed>false</Signed>
+    <Decimals>0</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>ENG_CONSTANT</Category>
+    <RowMajor>true</RowMajor>
+    <Description>For information only, dont change</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>KE_VTD_FAIL_ENABLED_BYPASS</Name>
+    <SearchStr>4A 39 @ @ @ @ 66 00 * * 42 01 70 10 4E B9</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>8</Bits>
+    <Signed>false</Signed>
+    <Decimals>0</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>VEH_SYS</Category>
+    <RowMajor>true</RowMajor>
+    <Description>0=??,1=??</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_BARO_OFFSET</Name>
+    <SearchStr>11 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>18</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>RPM 400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200</RowHeaders>
+    <ColHeaders>TPS% 0,10,20,30,40,50,60,70,80,90,100</ColHeaders>
+    <Math>X*0.019531250000</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>BAROMETER</Category>
+    <Units>0-104.98 KPA</Units>
+    <RowMajor>true</RowMajor>
+    <Description>"Sea level pressure offset to be added to the part throttle manifold pressure to correct the barometric pressure., Units: kPA"</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_PE_DELAY_ADJUSTMENT</Name>
+    <SearchStr>0E 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>15</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>RPM 0,400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600</RowHeaders>
+    <ColHeaders>TPS% 0,10,20,30,40,50,60,70,80,90,100</ColHeaders>
+    <Math>X*0.006250000000</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>FUEL_EQ</Category>
+    <Units>0-409 seconds</Units>
+    <RowMajor>true</RowMajor>
+    <Description>"Amount the PE_Delay counter will be decremented by each second PE and PE_Delay conditions are met. Based on engine speed and throttle., Units: Seconds"</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_ETC_AIR_A0_FILT_COEF</Name>
+    <SearchStr>10 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>17</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>RPM 0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000</RowHeaders>
+    <ColHeaders>ROtation 0,10,20,30,40,50,60,70,80,90,100</ColHeaders>
+    <Math>X*0.000488281250</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>2</UseHit>
+    <Range />
+    <Segments />
+    <Category>ETC_DIAG</Category>
+    <Units>-1~1 ms</Units>
+    <RowMajor>true</RowMajor>
+    <Description>" MAP based airflow diagnostic A0 filter time constant in msecs. , Units: Milliseconds"</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_ETC_AIR_B0_FILT_COEF</Name>
+    <SearchStr>10 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>17</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>RPM 0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000</RowHeaders>
+    <ColHeaders>ROtation 0,10,20,30,40,50,60,70,80,90,100</ColHeaders>
+    <Math>X*0.000488281250</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>ETC_DIAG</Category>
+    <Units>0-1 ms</Units>
+    <RowMajor>true</RowMajor>
+    <Description>" MAP based airflow diagnostic B0 filter time constant in msecs. , Units: Milliseconds"</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_ETC_MAF_FILT_A0_COEF</Name>
+    <SearchStr>10 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>17</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>RPM 0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000</RowHeaders>
+    <ColHeaders>ROtation 0,10,20,30,40,50,60,70,80,90,100</ColHeaders>
+    <Math>X*0.000488281250</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>4</UseHit>
+    <Range />
+    <Segments />
+    <Category>ETC_DIAG</Category>
+    <Units>-1~1 ms</Units>
+    <RowMajor>true</RowMajor>
+    <Description>" MAF based airflow diagnostic A0 filter time constant in msecs. , Units: Milliseconds"</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>KA_ETC_MAF_FILT_B0_COEF</Name>
+    <SearchStr>10 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>17</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>RPM 0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000</RowHeaders>
+    <ColHeaders>ROtation 0,10,20,30,40,50,60,70,80,90,100</ColHeaders>
+    <Math>X*0.000488281250</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>3</UseHit>
+    <Range />
+    <Segments />
+    <Category>ETC_DIAG</Category>
+    <Units>0-1 ms</Units>
+    <RowMajor>true</RowMajor>
+    <Description>" MAF based airflow diagnostic B0 filter time constant in msecs. , Units: Milliseconds"</Description>
   </TableSeek>
 </ArrayOfTableSeek>

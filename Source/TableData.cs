@@ -45,7 +45,7 @@ namespace UniversalPatcher
         public string ColumnHeaders { get; set; }
         public string RowHeaders { get; set; }
         public string TableDescription { get; set; }
-        public void importSeekTable(int tId, PcmFile PCM)
+        public void importFoundTable(int tId, PcmFile PCM)
         {
 
             TableSeek tSeek = tableSeeks[foundTables[tId].configId];

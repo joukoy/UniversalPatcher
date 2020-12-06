@@ -82,6 +82,12 @@
     <Compile Include="frmEditExtra.Designer.cs">
       <DependentUpon>frmEditExtra.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmEditFlag.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditFlag.Designer.cs">
+      <DependentUpon>frmEditFlag.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmEditXML.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -222,6 +228,7 @@
     <Compile Include="TinyTuner.cs" />
     <Compile Include="win32.cs" />
     <Compile Include="TableData.cs" />
+    <Compile Include="xdf.cs" />
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </EmbeddedResource>
@@ -242,6 +249,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmEditExtra.resx">
       <DependentUpon>frmEditExtra.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditFlag.resx">
+      <DependentUpon>frmEditFlag.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmEditSegmentAddr.resx">
       <DependentUpon>frmEditSegmentAddr.cs</DependentUpon>

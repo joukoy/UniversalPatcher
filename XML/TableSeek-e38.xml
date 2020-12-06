@@ -62,7 +62,7 @@
   </TableSeek>
   <TableSeek>
     <Name>hi oct spark</Name>
-    <SearchStr>#y21 x21 02</SearchStr>
+    <SearchStr>#k21 r21 02</SearchStr>
     <Rows>0</Rows>
     <Columns>0</Columns>
     <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
@@ -83,7 +83,7 @@
   </TableSeek>
   <TableSeek>
     <Name>low oct spark</Name>
-    <SearchStr>#y21 x21 02</SearchStr>
+    <SearchStr>#k21 r21 02</SearchStr>
     <Rows>0</Rows>
     <Columns>0</Columns>
     <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20,1.24,1.28,1.32,1.36</RowHeaders>
@@ -345,8 +345,365 @@
     <Description />
   </TableSeek>
   <TableSeek>
-    <Name>dwell rpm£/volts</Name>
-    <SearchStr>#00 y11 00 x21 </SearchStr>
+    <Name>IdlePN_CatLightBase</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/128</Math>
+    <SavingMath>x*128</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>2,3,4,5</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description>Base catalyst light off spark table when in Park or Neutral during idle</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>IdleDR_CatLightBase</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/128</Math>
+    <SavingMath>x*128</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>2</UseHit>
+    <Range />
+    <Segments>2,3,4,5</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description>Base catalyst light off spark table when in Drive or Reverse during idle</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>CatLightBase SPARK</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/128</Math>
+    <SavingMath>x*128</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>3</UseHit>
+    <Range />
+    <Segments>2,3,4,5</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description> Base catalyst light off spark table</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>SpeedLoadOffset</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/16</Math>
+    <SavingMath>x*16</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description>Calibration which determines the temperature contribution as a function of engine speed and airflow.</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>EGR_Max</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/655.35999</Math>
+    <SavingMath>X*655.35999</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>2</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description>The maximum percent EGR that can be tolerated without misfire under ideal conditions for a given speed-load point.</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>EGR_MaxDOD</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/655.35999</Math>
+    <SavingMath>X*655.35999</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>3</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description>The maximum percent EGR that can be tolerated without misfire under ideal conditions for a given speed-load point while in \"displacement in demand\" (Cylinder deactivation) mode.</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>EGRNomChargeTemp</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/128</Math>
+    <SavingMath>X*128</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>4</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description>Nominal charge temperature for a given speed-load point used to offset the current charge temperature for the cha</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>EQ_R_OL_Flow</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/32767.999999</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>5</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description> The equivalence ratio gain used when open loop operation is in effect. This gain allows adjustment based on MAP and RPM</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>EQ_R_K_AIR</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/32767.999999</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>6</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description>Base open equivalence ratio gain applied when AIR pump is requesting fuel enrichment. </Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>EQ_R_K_AIR_AirflowMult</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/32767.999999</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>7</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description>Equivalence ratio gain applied when the AIR pump is requesting fuel enrichment. The gain is a function of engine airflow and IVT. </Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>EQ_R_eqr_IVT_OpenLoopDriveE0</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/1024</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>8</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description> Base open loop equivalence ratio applied when in drive with zero percent ethanol fuel</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>EQ_R_eqr_IVT_OpenLoopPNE0</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/1024</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>9</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description>Base open loop equivalence ratio applied when in Park or Neutral with zero percent of ethanol fuel</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>EQ_R_eqr_IVT_OpenLoopDriveE80</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/1024</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>10</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>EQ_R_eqr_IVT_OpenLoopPNE80</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/1024</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>11</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>EQR_K_AIR_Enrich</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/16384</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>12</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description>AIR enrichment factor which is applied to the corrected fuel mass when AIR is active.</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>PistonSlapBase</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/128</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>13</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description>Base piston slap spark retard</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>DwellMain</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders>0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31</RowHeaders>
+    <ColHeaders>0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000</ColHeaders>
+    <Math>X/128</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>14</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description>Base dwell, a f(RPM,Ignvolt)</Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>dwell rpm18/volts</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
     <Rows>0</Rows>
     <Columns>0</Columns>
     <RowHeaders />
@@ -359,10 +716,199 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <DataType>1</DataType>
-    <UseHit>1-3,4-13</UseHit>
+    <UseHit>15</UseHit>
     <Range />
-    <Segments>2,3,4,5,6</Segments>
-    <ValidationSearchStr>3C 60 @ @ 38 63 @ @</ValidationSearchStr>
-    <Description>Dwell £</Description>
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>dwell rpm19/volts</Name>
+    <SearchStr>#00 k11 00 r21 </SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>16</UseHit>
+    <Range />
+    <Segments>6</Segments>
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>EQ_R_OL_IVT_MAP</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X/32767.999999</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>21/21word-2</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>2</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>21/21word-3</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>3</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>21/21word-4</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>4</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>21/21word-5</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>5</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>21/21word--6</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>6</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>21/21word-7</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>7</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description />
+  </TableSeek>
+  <TableSeek>
+    <Name>21/21word--8</Name>
+    <SearchStr>#00 k21 00 r21</SearchStr>
+    <Rows>0</Rows>
+    <Columns>0</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>4</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Decimals>2</Decimals>
+    <DataType>1</DataType>
+    <UseHit>8</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr>3C 60 @ @ 38 63 @ @, 3C 60 @ @ * * * * 38 63 @ @,3C 60 @ @ * * * * * * * * 38 63 @ @</ValidationSearchStr>
+    <Description />
   </TableSeek>
 </ArrayOfTableSeek>

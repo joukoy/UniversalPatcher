@@ -32,7 +32,8 @@ namespace UniversalPatcher
         BindingSource bindingsource = new BindingSource();
         BindingSource categoryBindingSource = new BindingSource();
         private BindingList<TableData> filteredCategories = new BindingList<TableData>();
-        private void btnEditTable_Click(object sender, EventArgs e)
+
+        private void openTableEditor()
         {
             try
             {
@@ -42,18 +43,28 @@ namespace UniversalPatcher
                 int codeIndex = Convert.ToInt32(dataGridView1.Rows[rowindex].Cells["id"].Value);
                 frmTableEditor frmT = new frmTableEditor();
                 TableData td = tableDatas[codeIndex];
-                frmT.loadTable(td, PCM);
-                if ((frmT.ShowDialog()) == DialogResult.OK)
+
+                if (td.Rows < 2 && td.Columns < 2 && td.Units.ToLower().Contains("mask"))
                 {
-                    LoggerBold("File modified, you can now save it");
+                    frmEditFlag ff = new frmEditFlag();
+                    ff.loadFlag(PCM, td);
+                    ff.Show();
                 }
-                frmT.Dispose();
+                else
+                {
+                    frmT.loadTable(td, PCM);
+                    frmT.Show();
+                }
             }
             catch (Exception ex)
             {
                 LoggerBold(ex.Message);
             }
 
+        }
+        private void btnEditTable_Click(object sender, EventArgs e)
+        {
+            openTableEditor();
         }
         public void LoggerBold(string LogText, Boolean NewLine = true)
         {
@@ -256,196 +267,16 @@ namespace UniversalPatcher
 
         private void importTableSeek()
         {
-            for (int i = 0; i < tableSeeks.Count; i++)
+            for (int i = 0; i < foundTables.Count; i++)
             {
                 TableData tableData = new TableData();
-                tableData.importSeekTable(i, PCM);
+                tableData.importFoundTable(i, PCM);
                 tableDatas.Add(tableData);
             }
             refreshTablelist();
 
         }
-        private void btnImportTableSeek_Click(object sender, EventArgs e)
-        {
-            importTableSeek();
-        }
 
-        private void ConvertXdf(XDocument doc)
-        {
-            try
-            {
-
-                List<string> categories = new List<string>();
-
-                foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFHEADER"))
-                {
-                    foreach (XElement cat in element.Elements("CATEGORY"))
-                    {
-                        string category = cat.Attribute("name").Value;
-                        categories.Add(category);
-                        if (!tableCategories.Contains(category))
-                            tableCategories.Add(category);
-                    }
-                }
-                foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFTABLE"))
-                {
-                    TableData xdf = new TableData();
-                    xdf.OS = PCM.OS;
-
-                    string RowHeaders = "";
-                    string ColHeaders = "";
-                    string addr = "";
-                    string size = "";
-                    string math = "";
-                    foreach (XElement axle in element.Elements("XDFAXIS"))
-                    {
-                        if (axle.Attribute("id").Value == "x")
-                        {
-                            xdf.Columns = Convert.ToUInt16(axle.Element("indexcount").Value);
-                            foreach (XElement lbl in axle.Elements("LABEL"))
-                            {
-                                ColHeaders += lbl.Attribute("value").Value + ",";
-                            }
-                            ColHeaders = ColHeaders.Trim(',');
-                            xdf.ColumnHeaders = ColHeaders;
-                        }
-                        if (axle.Attribute("id").Value == "y")
-                        {
-                            xdf.Rows = Convert.ToUInt16(axle.Element("indexcount").Value);
-                            foreach (XElement lbl in axle.Elements("LABEL"))
-                            {
-                                RowHeaders += lbl.Attribute("value").Value + ",";
-                            }
-                            RowHeaders = RowHeaders.Trim(',');
-                            xdf.RowHeaders = RowHeaders;
-                        }
-                        if (axle.Attribute("id").Value == "z")
-                        {
-                            addr = axle.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
-                            xdf.AddrInt = Convert.ToUInt32(addr, 16);
-                            xdf.Address = addr;
-                            string tmp = axle.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim();
-                            size = (Convert.ToInt32(tmp) / 8).ToString();
-                            xdf.ElementSize = (byte)(Convert.ToInt32(tmp) / 8);
-                            math = axle.Element("MATH").Attribute("equation").Value.Trim();
-                            xdf.Math = math;
-                            xdf.SavingMath = xdf.Math.Replace("*", "/");
-                        }
-                    }
-                    xdf.TableName = element.Element("title").Value;
-                    if (element.Element("units") != null)
-                        xdf.Units = element.Element("units").Value;
-                    if (element.Element("datatype") != null)
-                        xdf.DataType = Convert.ToByte(element.Element("datatype").Value);
-                    if (element.Element("EMBEDDEDDATA") != null && element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags") != null)
-                    {
-                        xdf.Signed = Convert.ToBoolean(Convert.ToByte(element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value) & 1);
-                        if ((Convert.ToByte(element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value) & 4) == 4)
-                            xdf.RowMajor = true;
-                        else
-                            xdf.RowMajor = false;
-                    }
-                    int catid = Convert.ToInt16(element.Element("CATEGORYMEM").Attribute("category").Value);
-                    xdf.Category = categories[catid];
-                    if (element.Element("description") != null)
-                        xdf.TableDescription = element.Element("description").Value;
-
-                    tableDatas.Add(xdf);
-                }
-                foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFCONSTANT"))
-                {
-                    TableData xdf = new TableData();
-                    xdf.OS = PCM.OS;
-                    if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
-                    {
-                        xdf.TableName = element.Element("title").Value;
-                        xdf.AddrInt = Convert.ToUInt32(element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim(), 16);
-                        xdf.Address = element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
-                        xdf.ElementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
-                        xdf.Math = element.Element("MATH").Attribute("equation").Value.Trim();
-                        if (element.Element("units") != null)
-                            xdf.Units = element.Element("units").Value;
-                        xdf.DataType = Convert.ToByte(element.Element("datatype").Value);
-                        if (element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags") != null)
-                            xdf.Signed = Convert.ToBoolean(Convert.ToByte(element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value, 16) & 1);
-                        xdf.Columns = 1;
-                        xdf.Rows = 1;
-                        xdf.RowMajor = false;
-                        int catid = Convert.ToInt16(element.Element("CATEGORYMEM").Attribute("category").Value);
-                        xdf.Category = categories[catid];
-                        if (element.Element("description") != null)
-                            xdf.Category = element.Element("description").Value;
-
-                        tableDatas.Add(xdf);
-
-                    }
-                }
-                foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFFLAG"))
-                {
-                    TableData xdf = new TableData();
-                    xdf.OS = PCM.OS;
-                    if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
-                    {
-                        xdf.TableName = element.Element("title").Value;
-                        xdf.AddrInt = Convert.ToUInt32(element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim(), 16);
-                        xdf.Address = element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
-                        xdf.ElementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
-                        xdf.Math = "X";
-                        xdf.Units = "Mask: " + element.Element("mask").Value;
-                        xdf.Columns = 1;
-                        xdf.Rows = 1;
-                        xdf.RowMajor = false;
-                        int catid = Convert.ToInt16(element.Element("CATEGORYMEM").Attribute("category").Value);
-                        xdf.Category = categories[catid];
-                        if (element.Element("description") != null)
-                            xdf.Category = element.Element("description").Value;
-
-                        tableDatas.Add(xdf);
-
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("XdfImport, line " + line + ": " + ex.Message);
-            }
-
-        }
-
-        private void importXdf()
-        {
-            try
-            {
-
-                XDocument doc;
-                string fname = SelectFile("Select XDF file", "xdf files (*.xdf)|*.xdf|ALL files (*.*| *.*");
-                if (fname.Length == 0)
-                    return;
-                Logger("Importing file " + fname + "...", false);
-                doc = new XDocument(new XComment(" Written " + DateTime.Now.ToString("G", DateTimeFormatInfo.InvariantInfo)), XElement.Load(fname));
-                ConvertXdf(doc);
-                refreshTablelist();
-                Logger("Done");
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("XdfImport, line " + line + ": " + ex.Message);
-            }
-        }
-        private void btnImportXdf_Click(object sender, EventArgs e)
-        {
-            importXdf();
-        }
         private void LoadXML()
         {
             try
@@ -525,14 +356,14 @@ namespace UniversalPatcher
         {
             TableData td = new TableData();
             dtcCode dtc = dtcCodes[0];
-            td.Address = dtc.CodeAddr;
-            td.AddrInt = dtc.codeAddrInt;
+            td.Address = dtc.StatusAddr;
+            td.AddrInt = dtc.statusAddrInt;
             td.Category = "DTC";
-            td.ColumnHeaders = "Code";
+            td.ColumnHeaders = "Status";
             td.Columns = 1;
             td.DataType = 2;
             td.Decimals = 0;
-            td.ElementSize = 1;
+            td.ElementSize = 1; // (byte)(dtcCodes[1].codeAddrInt - dtcCodes[0].codeAddrInt);
             td.Math = "X";
             td.OS = PCM.OS;
             for (int i = 0; i < dtcCodes.Count; i++)
@@ -544,9 +375,9 @@ namespace UniversalPatcher
             td.SavingMath = "X";
             td.Signed = false;
             if (dtcCombined)
-                td.TableDescription = "00 MIL and reporting off&#013;&#010;01 type A/no mil&#013;&#010;02 type B/no mil&#013;&#010;03 type C/no mil&#013;&#010;04 not reported/mil &#013;&#010;05 type A/mil &#013;&#010;06 type B/mil &#013;&#010;07 type c/mil";
+                td.TableDescription = "00 MIL and reporting off, 01 type A/no mil, 02 type B/no mil, 03 type C/no mil, 04 not reported/mil, 05 type A/mil, 06 type B/mil, 07 type c/mil";
             else
-                td.TableDescription = "0 = 1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY)&#013;&#010;1 = 2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles)&#013;&#010;2 = Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC)&#013;&#010;3 = Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)";
+                td.TableDescription = "0 = 1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY), 1 = 2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles), 2 = Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC), 3 = Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)";
             td.TableName = "DTC";
 
             tableDatas.Add(td);
@@ -562,7 +393,7 @@ namespace UniversalPatcher
                 td.Columns = 1;
                 td.DataType = 2;
                 td.Decimals = 0;
-                td.ElementSize = 1;
+                td.ElementSize = 1; // (byte)(dtcCodes[1].milAddrInt - dtcCodes[0].milAddrInt);
                 td.Math = "X";
                 td.OS = PCM.OS;
                 for (int i = 0; i < dtcCodes.Count; i++)
@@ -572,7 +403,7 @@ namespace UniversalPatcher
                 td.Rows = (ushort)dtcCodes.Count;
                 td.SavingMath = "X";
                 td.Signed = false;
-                td.TableDescription = "0 = No MIL (Lamp always off)&#013;&#010;1 = MIL (Lamp may be commanded on by PCM)";
+                td.TableDescription = "0 = No MIL (Lamp always off) 1 = MIL (Lamp may be commanded on by PCM)";
                 tableDatas.Add(td);
             }
             refreshTablelist();
@@ -644,19 +475,30 @@ namespace UniversalPatcher
 
         private void btnSearchTableSeek_Click(object sender, EventArgs e)
         {
-            int rowindex = dataGridView1.CurrentCell.RowIndex;
-            for (int i = rowindex + 1; i < dataGridView1.RowCount; i++)
+            try
             {
-                if (dataGridView1.Rows[i].Cells["Name"].Value.ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()))
+                int rowindex = dataGridView1.CurrentCell.RowIndex;
+                for (int i = rowindex + 1; i < dataGridView1.RowCount; i++)
                 {
-                    dataGridView1.ClearSelection();
-                    dataGridView1.CurrentCell = dataGridView1.Rows[i].Cells[0];
-                    dataGridView1.CurrentCell.Selected = true;
-                    //dataGridTableSeek.Rows[i].Cells[0].Selected = true;                    
-                    break;
+                    if (dataGridView1.Rows[i].Cells["TableName"].Value != null && dataGridView1.Rows[i].Cells["TableName"].Value.ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()))
+                    {
+                        dataGridView1.ClearSelection();
+                        dataGridView1.CurrentCell = dataGridView1.Rows[i].Cells[0];
+                        dataGridView1.CurrentCell.Selected = true;
+                        //dataGridTableSeek.Rows[i].Cells[0].Selected = true;                    
+                        break;
+                    }
                 }
             }
-
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, line " + line + ": " + ex.Message);
+            }
         }
 
         private void importTinyTunerDB()
@@ -704,7 +546,9 @@ namespace UniversalPatcher
 
         private void importXDFToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            importXdf();
+            XDF xdf = new XDF();
+            Logger(xdf.importXdf(PCM));
+            refreshTablelist();
         }
 
         private void importTinyTunerDBV6OnlyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -717,5 +561,164 @@ namespace UniversalPatcher
             tableDatas = new List<TableData>();
             refreshTablelist();
         }
+
+
+        private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (dataGridView1.SelectedCells.Count > 0)
+                dataGridView1.ContextMenuStrip = contextMenuStrip1;
+        }
+
+        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Copy to clipboard
+            CopyToClipboard();
+
+            //Clear selected cells
+            foreach (DataGridViewCell dgvCell in dataGridView1.SelectedCells)
+                dgvCell.Value = string.Empty;
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CopyToClipboard();
+        }
+
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Perform paste Operation
+            PasteClipboardValue();
+        }
+
+        private void CopyToClipboard()
+        {
+            //Copy to clipboard
+            DataObject dataObj = dataGridView1.GetClipboardContent();
+            if (dataObj != null)
+                Clipboard.SetDataObject(dataObj);
+        }
+
+        private void PasteClipboardValue()
+        {
+            //Show Error if no cell is selected
+            if (dataGridView1.SelectedCells.Count == 0)
+            {
+                MessageBox.Show("Please select a cell", "Paste",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            //Get the starting Cell
+            DataGridViewCell startCell = GetStartCell(dataGridView1);
+            //Get the clipboard value in a dictionary
+            Dictionary<int, Dictionary<int, string>> cbValue =
+                    ClipBoardValues(Clipboard.GetText());
+
+            int iRowIndex = startCell.RowIndex;
+            foreach (int rowKey in cbValue.Keys)
+            {
+                int iColIndex = startCell.ColumnIndex;
+                foreach (int cellKey in cbValue[rowKey].Keys)
+                {
+                    //Check if the index is within the limit
+                    if (iColIndex <= dataGridView1.Columns.Count - 1
+                    && iRowIndex <= dataGridView1.Rows.Count - 1)
+                    {
+                        DataGridViewCell cell = dataGridView1[iColIndex, iRowIndex];
+
+                        //Copy to selected cells if 'chkPasteToSelectedCells' is checked
+                        /*if ((chkPasteToSelectedCells.Checked && cell.Selected) ||
+                            (!chkPasteToSelectedCells.Checked))*/
+                            cell.Value = cbValue[rowKey][cellKey];
+                    }
+                    iColIndex++;
+                }
+                iRowIndex++;
+            }
+        }
+
+        private DataGridViewCell GetStartCell(DataGridView dgView)
+        {
+            //get the smallest row,column index
+            if (dgView.SelectedCells.Count == 0)
+                return null;
+
+            int rowIndex = dgView.Rows.Count - 1;
+            int colIndex = dgView.Columns.Count - 1;
+
+            foreach (DataGridViewCell dgvCell in dgView.SelectedCells)
+            {
+                if (dgvCell.RowIndex < rowIndex)
+                    rowIndex = dgvCell.RowIndex;
+                if (dgvCell.ColumnIndex < colIndex)
+                    colIndex = dgvCell.ColumnIndex;
+            }
+
+            return dgView[colIndex, rowIndex];
+        }
+
+        private Dictionary<int, Dictionary<int, string>> ClipBoardValues(string clipboardValue)
+        {
+            Dictionary<int, Dictionary<int, string>>
+            copyValues = new Dictionary<int, Dictionary<int, string>>();
+
+            String[] lines = clipboardValue.Split('\n');
+
+            for (int i = 0; i <= lines.Length - 1; i++)
+            {
+                copyValues[i] = new Dictionary<int, string>();
+                String[] lineContent = lines[i].Split('\t');
+
+                //if an empty cell value copied, then set the dictionary with an empty string
+                //else Set value to dictionary
+                if (lineContent.Length == 0)
+                    copyValues[i][0] = string.Empty;
+                else
+                {
+                    for (int j = 0; j <= lineContent.Length - 1; j++)
+                        copyValues[i][j] = lineContent[j];
+                }
+            }
+            return copyValues;
+        }
+
+        private void editTableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openTableEditor();
+        }
+
+        private void exportCsvToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+            Logger("Writing to file: " + Path.GetFileName(FileName), false);
+            using (StreamWriter writetext = new StreamWriter(FileName))
+            {
+                string row = "";
+                for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                {
+                    if (i > 0)
+                        row += ";";
+                    row += dataGridView1.Columns[i].HeaderText;
+                }
+                writetext.WriteLine(row);
+                for (int r = 0; r < (dataGridView1.Rows.Count - 1); r++)
+                {
+                    row = "";
+                    for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                    {
+                        if (i > 0)
+                            row += ";";
+                        if (dataGridView1.Rows[r].Cells[i].Value != null)
+                            row += dataGridView1.Rows[r].Cells[i].Value.ToString();
+                    }
+                    writetext.WriteLine(row);
+                }
+            }
+            Logger(" [OK]");
+
+        }
+
     }
 }
