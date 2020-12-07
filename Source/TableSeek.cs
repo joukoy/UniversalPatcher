@@ -26,7 +26,8 @@ namespace UniversalPatcher
             ConditionalOffset = false;
             Bits = 16;
             Decimals = 2;
-            DataType = 1;
+            OutputType = TypeFloat;
+            Floating = false;
             UseHit = "1";
             Range = "";
             Segments = "";
@@ -46,7 +47,8 @@ namespace UniversalPatcher
         public ushort Bits { get; set; }
         public bool Signed { get; set; }
         public ushort Decimals { get; set; }
-        public ushort DataType { get; set; } //"1=Floating, 2=Integer, 3=Hex, 4=Ascii
+        public bool Floating { get; set; } 
+        public ushort OutputType { get; set; }
         public string UseHit { get; set; }
         public string Range { get; set; }
         public string Segments { get; set; }
@@ -103,7 +105,8 @@ namespace UniversalPatcher
                             ts.Name = "VE";
                             ts.Description = "Volumetric Efficiency";
                             ts.Bits = 16;
-                            ts.DataType = 1;
+                            ts.Floating = true;
+                            ts.OutputType = TypeFloat;
                             ts.Decimals = 6;
                             ts.Math = "X*0.0002441406";
                             ts.Offset = 0;
@@ -134,7 +137,8 @@ namespace UniversalPatcher
                             ts.Name = "MAF";
                             ts.Math = "X*0.0078125";
                             ts.SavingMath = "X/0.0078125";
-                            ts.DataType = 2;
+                            ts.Floating = true;
+                            ts.OutputType = TypeFloat;
                             ts.Decimals = 4;
                             ts.Signed = false;
                             ts.Category = "Fuel";

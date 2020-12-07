@@ -3203,7 +3203,7 @@ namespace UniversalPatcher
                             tableText = tableText.Replace("REPLACE-MATH", tableSeeks[id].Math);
                             tableText = tableText.Replace("REPLACE-BITS", tableSeeks[id].Bits.ToString());
                             tableText = tableText.Replace("REPLACE-DECIMALS", tableSeeks[id].Decimals.ToString());
-                            tableText = tableText.Replace("REPLACE-OUTPUTTYPE", tableSeeks[id].DataType.ToString());
+                            tableText = tableText.Replace("REPLACE-OUTPUTTYPE", tableSeeks[id].OutputType.ToString());
                             tableText = tableText.Replace("REPLACE-TABLEADDRESS", foundTables[t].Address);
                             tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", foundTables[t].Description);
                             tableText = tableText.Replace("REPLACE-MINVALUE", "0");

@@ -124,7 +124,7 @@ namespace UniversalPatcher
                     string colHeaders = row["ColumnHeaders"].ToString();
                     ts.ColHeaders = RemoveDuplicates(colHeaders);
                     ts.Columns = Convert.ToUInt16(row["ColumnCount"]);
-                    ts.DataType = 1;
+                    ts.Floating = true;
                     ts.Decimals = 2;
                     ts.Description = row["TableDescription"].ToString();
                     ts.Math = "X*" + row["Factor"].ToString();
@@ -225,7 +225,7 @@ namespace UniversalPatcher
                     td.ElementSize = (byte)(Convert.ToByte(row["ElementSize"]));
                     string colHeaders = row["ColumnHeaders"].ToString();
                     td.ColumnHeaders = RemoveDuplicates(colHeaders);
-                    td.DataType = 1;
+                    td.Floating = true;
                     td.Decimals = 2;
                     td.Math = "X*" + row["Factor"].ToString();
                     td.RowHeaders = row["RowHeaders"].ToString();

@@ -257,12 +257,22 @@ namespace UniversalPatcher
             bindingsource.DataSource = tableDatas;
             dataGridView1.DataSource = bindingsource;
             dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-            
+            //dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
+            dataGridView1.Columns["OutputType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
+
+            for (int i=0; i< dataGridView1.Rows.Count; i++)
+            {
+                if (dataGridView1.Rows[i].Cells["TableDescription"].Value != null)
+                    dataGridView1.Rows[i].Cells["TableName"].ToolTipText = dataGridView1.Rows[i].Cells["TableDescription"].Value.ToString();
+                dataGridView1.Rows[i].Cells["OutputType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
+            }
+
             comboTableCategory.DataSource = null;
             categoryBindingSource.DataSource = null;
             categoryBindingSource.DataSource = tableCategories;
             comboTableCategory.DataSource = categoryBindingSource;
             comboTableCategory.Refresh();
+
         }
 
         private void importTableSeek()
@@ -361,7 +371,8 @@ namespace UniversalPatcher
             td.Category = "DTC";
             td.ColumnHeaders = "Status";
             td.Columns = 1;
-            td.DataType = 2;
+            td.Floating = false;
+            td.OutputType = TypeInt;
             td.Decimals = 0;
             td.ElementSize = 1; // (byte)(dtcCodes[1].codeAddrInt - dtcCodes[0].codeAddrInt);
             td.Math = "X";
@@ -391,7 +402,8 @@ namespace UniversalPatcher
                 td.Category = "DTC";
                 td.ColumnHeaders = "MIL";
                 td.Columns = 1;
-                td.DataType = 2;
+                td.Floating = false;
+                td.OutputType = TypeInt;
                 td.Decimals = 0;
                 td.ElementSize = 1; // (byte)(dtcCodes[1].milAddrInt - dtcCodes[0].milAddrInt);
                 td.Math = "X";
@@ -567,6 +579,11 @@ namespace UniversalPatcher
         {
             if (dataGridView1.SelectedCells.Count > 0)
                 dataGridView1.ContextMenuStrip = contextMenuStrip1;
+        }
+
+        private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            openTableEditor();
         }
 
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)

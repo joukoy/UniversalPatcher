@@ -57,7 +57,7 @@ namespace UniversalPatcher
             bindingSource.DataSource = tableSeeks;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
-            dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
+            //dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
             dataGridView1.Columns["ConditionalOffset"].ToolTipText = "If set, and Opcode Address last 2 bytes > 0x5000, Offset = -10000";            
         }
 

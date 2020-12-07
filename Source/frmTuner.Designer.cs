@@ -1,4 +1,7 @@
-﻿namespace UniversalPatcher
+﻿using System;
+using System.Windows.Forms;
+
+namespace UniversalPatcher
 {
     partial class frmTuner
     {
@@ -70,6 +73,8 @@
             this.dataGridView1.Size = new System.Drawing.Size(861, 359);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
+            this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
+
             // 
             // btnEditTable
             // 
@@ -296,6 +301,7 @@
             this.PerformLayout();
 
         }
+
 
         #endregion
 

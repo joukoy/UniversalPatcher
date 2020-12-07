@@ -25,6 +25,9 @@ namespace UniversalPatcher
             RowHeaders = "";
             TableDescription = "";
             RowMajor = true;
+            //DataType = TypeFloat;
+            Floating = false;
+            OutputType = TypeFloat;
         }
         public uint id { get; set; }
         public string OS { get; set; }
@@ -35,9 +38,10 @@ namespace UniversalPatcher
         public string Math { get; set; }
         public string SavingMath { get; set; }
         public string Units { get; set; }
-        public ushort DataType { get; set; }
+        public ushort OutputType { get; set; }
         public ushort Decimals { get; set; }
         public bool Signed { get; set; }
+        public bool Floating { get; set; }
         public ushort Columns { get; set; }
         public ushort Rows { get; set; }
         public bool RowMajor { get; set; }
@@ -54,7 +58,8 @@ namespace UniversalPatcher
             AddrInt = ft.addrInt;
             Address = ft.Address;
             Category = ft.Category;
-            DataType = tSeek.DataType;
+            OutputType = tSeek.OutputType;
+            Floating = tSeek.Floating;
             ElementSize = (byte)(tSeek.Bits / 8);
             Math = tSeek.Math;
             SavingMath = tSeek.SavingMath;

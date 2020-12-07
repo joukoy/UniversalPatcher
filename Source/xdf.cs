@@ -78,23 +78,30 @@ namespace UniversalPatcher
                             xdf.Math = math;
                             xdf.SavingMath = xdf.Math.Replace("*", "/");
                             xdf.Decimals = Convert.ToUInt16(axle.Element("decimalpl").Value);
+                            if (axle.Element("outputtype") != null)
+                                xdf.OutputType = Convert.ToUInt16(axle.Element("outputtype").Value);
                         }
                     }
                     xdf.TableName = element.Element("title").Value;
                     if (element.Element("units") != null)
                         xdf.Units = element.Element("units").Value;
-                    if (element.Element("datatype") != null)
-                        xdf.DataType = Convert.ToByte(element.Element("datatype").Value);
+                    /*if (element.Element("datatype") != null)
+                        xdf.DataType = Convert.ToByte(element.Element("datatype").Value);*/
                     if (element.Element("EMBEDDEDDATA") != null && element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags") != null)
                     {
-                        xdf.Signed = Convert.ToBoolean(Convert.ToByte(element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value) & 1);
-                        if ((Convert.ToByte(element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value) & 4) == 4)
+                        byte flags = Convert.ToByte(element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value,16);
+                        xdf.Signed = Convert.ToBoolean(flags & 1);
+                        if ((flags & 0x10000) == 0x10000)
+                            xdf.Floating = true;
+                        else
+                            xdf.Floating = false;
+                        if ((flags & 4) == 4)
                             xdf.RowMajor = true;
                         else
                             xdf.RowMajor = false;
                     }
                     int catid = Convert.ToInt16(element.Element("CATEGORYMEM").Attribute("category").Value);
-                    xdf.Category = categories[catid];
+                    xdf.Category = categories[catid - 1];
                     if (element.Element("description") != null)
                         xdf.TableDescription = element.Element("description").Value;
 
@@ -113,16 +120,22 @@ namespace UniversalPatcher
                         xdf.Math = element.Element("MATH").Attribute("equation").Value.Trim();
                         if (element.Element("units") != null)
                             xdf.Units = element.Element("units").Value;
-                        xdf.DataType = Convert.ToByte(element.Element("datatype").Value);
                         if (element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags") != null)
-                            xdf.Signed = Convert.ToBoolean(Convert.ToByte(element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value, 16) & 1);
+                        {
+                            byte flags = Convert.ToByte(element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value,16);
+                            xdf.Signed = Convert.ToBoolean(flags & 1);
+                            if ((flags & 0x10000) == 0x10000)
+                                xdf.Floating = true;
+                            else
+                                xdf.Floating = false;
+                        }
                         xdf.Columns = 1;
                         xdf.Rows = 1;
                         xdf.RowMajor = false;
                         int catid = Convert.ToInt16(element.Element("CATEGORYMEM").Attribute("category").Value);
-                        xdf.Category = categories[catid];
+                        xdf.Category = categories[catid - 1];
                         if (element.Element("description") != null)
-                            xdf.Category = element.Element("description").Value;
+                            xdf.TableDescription = element.Element("description").Value;
 
                         tableDatas.Add(xdf);
 
@@ -144,9 +157,9 @@ namespace UniversalPatcher
                         xdf.Rows = 1;
                         xdf.RowMajor = false;
                         int catid = Convert.ToInt16(element.Element("CATEGORYMEM").Attribute("category").Value);
-                        xdf.Category = categories[catid];
+                        xdf.Category = categories[catid - 1];
                         if (element.Element("description") != null)
-                            xdf.Category = element.Element("description").Value;
+                            xdf.TableDescription = element.Element("description").Value;
 
                         tableDatas.Add(xdf);
 

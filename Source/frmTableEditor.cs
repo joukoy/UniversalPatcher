@@ -27,36 +27,32 @@ namespace UniversalPatcher
         private bool commaDecimal = true;
         MathParser parser = new MathParser();
 
-        private double getValue(uint addr)
+        private void frmTableEditor_Load(object sender, EventArgs e)
         {
-            double value = 0;
-            if (td.ElementSize == 1)
-            {
-                if (td.Signed)
-                    value = unchecked((sbyte)PCM.buf[addr]);
-                else
-                    value = PCM.buf[addr];
-            }
-            if (td.ElementSize == 2)
-            {
-                if (td.Signed)
-                    value = BEToInt16(PCM.buf, addr);
-                else
-                    value = BEToUint16(PCM.buf, addr);
-            }
-            if (td.ElementSize == 4)
-            {
-                if (td.Signed)
-                    value = BEToInt32(PCM.buf, addr);
-                else
-                    value = BEToUint32(PCM.buf, addr);
-            }
-            string mathStr = td.Math.ToLower().Replace("x", value.ToString());
-            if (commaDecimal) mathStr = mathStr.Replace(".", ",");
-            value = parser.Parse(mathStr, false);
-            return value;
-        }
+            dataGridView1.AutoResizeColumns();
+            dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
 
+            autoResizeToolStripMenuItem.Checked = Properties.Settings.Default.TableEditorAutoResize;
+            if (Properties.Settings.Default.TableEditorAutoResize)
+            {
+                AutoResize();
+            }
+            else if (Properties.Settings.Default.MainWindowPersistence)
+            {
+                if (Properties.Settings.Default.TableEditorWindowSize.Width > 0 || Properties.Settings.Default.TableEditorWindowSize.Height > 0)
+                {
+                    this.WindowState = Properties.Settings.Default.TableEditorWindowState;
+                    if (this.WindowState == FormWindowState.Minimized)
+                    {
+                        this.WindowState = FormWindowState.Normal;
+                    }
+                    this.Location = Properties.Settings.Default.TableEditorWindowLocation;
+                    this.Size = Properties.Settings.Default.TableEditorWindowSize;
+                }
+            }
+            tableModified = false;
+            disableTooltipsToolStripMenuItem.Checked = false;
+        }
         public void loadSeekTable(int tId, PcmFile PCM1)
         {
 
@@ -77,7 +73,7 @@ namespace UniversalPatcher
             td.AddrInt = ft.addrInt;
             td.Address = ft.Address;
             td.Category = ft.Category;
-            td.DataType = tSeek.DataType;
+            td.Floating = tSeek.Floating;
             td.ElementSize = (byte)(tSeek.Bits / 8);
             td.Math = tSeek.Math;
             td.SavingMath = tSeek.SavingMath;
@@ -94,6 +90,118 @@ namespace UniversalPatcher
             td.Units = tSeek.Units;
 
             loadTable(td, PCM);
+        }
+
+        private double getFloatValue(uint addr)
+        {
+            double value = 0;
+            try
+            {
+                if (td.ElementSize == 4 || td.ElementSize == 8)
+                {
+                    byte[] data = new byte[td.ElementSize];
+                    Array.Copy(PCM.buf, addr, data, 0, td.ElementSize);
+                    Array.Reverse(data);
+                    if (td.ElementSize == 4)
+                        value = BitConverter.ToSingle(data, 0);
+                    else
+                        value = BitConverter.ToDouble(data, 0);
+                    string mathStr = td.Math.ToLower().Replace("x", value.ToString());
+                    if (commaDecimal) mathStr = mathStr.Replace(".", ",");
+                    value = parser.Parse(mathStr, false);
+                }
+                else
+                {
+                    throw new Exception("Floating point requires 4 or 8 bytes");
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+            }
+            return value;
+        }
+
+        private double getValue(uint addr)
+        {
+            double value = 0;
+            if (td.ElementSize == 1)
+            {
+                if (td.Signed)
+                    value = (byte)unchecked((sbyte)PCM.buf[addr]);
+                else
+                    value = PCM.buf[addr];
+            }
+            if (td.ElementSize == 2)
+            {
+                if (td.Signed)
+                    value = BEToInt16(PCM.buf, addr);
+                else
+                    value = BEToUint16(PCM.buf, addr);
+            }
+            if (td.ElementSize == 4)
+            {
+                if (td.Signed)
+                    value = BEToInt32(PCM.buf, addr);
+                else
+                    value = BEToUint32(PCM.buf, addr);
+            }
+            if (td.ElementSize == 8)
+            {
+                if (td.Signed)
+                    value = BEToInt64(PCM.buf, addr);
+                else
+                    value = BEToUint64(PCM.buf, addr);
+            }
+            string mathStr = td.Math.ToLower().Replace("x", value.ToString());
+            if (commaDecimal) mathStr = mathStr.Replace(".", ",");
+            value = parser.Parse(mathStr, false);
+            return value;
+        }
+
+        private UInt64 getRawValue(UInt32 addr)
+        {
+            if (td.ElementSize == 2)
+                return BEToUint16(PCM.buf, addr);
+            if (td.ElementSize == 4)
+                return BEToUint32(PCM.buf, addr);
+            if (td.ElementSize == 8)
+                return BEToUint64(PCM.buf, addr);
+            return PCM.buf[addr];
+        }
+
+        public void setCellValue(uint addr, int row, int col)
+        {
+            try
+            {
+                if (showRawHEXValuesToolStripMenuItem.Checked)
+                    dataGridView1.Rows[row].Cells[col].Value = getRawValue(addr);
+                else if (td.OutputType == TypeText)
+                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToChar((ushort)getValue(addr));
+                else if (td.Floating == false)
+                    dataGridView1.Rows[row].Cells[col].Value = getValue(addr);
+                else
+                    dataGridView1.Rows[row].Cells[col].Value = getFloatValue(addr);
+                dataGridView1.Rows[row].Cells[col].Tag = addr;
+
+                if (!disableTooltipsToolStripMenuItem.Checked && td.TableDescription != null)
+                    dataGridView1.Rows[row].Cells[col].ToolTipText = td.TableDescription;
+
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+            }
         }
 
         public void loadTable(TableData td1, PcmFile PCM1)
@@ -133,7 +241,6 @@ namespace UniversalPatcher
             //dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader; // .AutoResizeColumns(DataGridViewAutoSizeColumnsMode.Fill);
             uint addr = td.AddrInt;
             int step = (int)(td.ElementSize);
-            double value = 0;
 
             if (swapXyToolStripMenuItem.Checked ^ td.RowMajor == false)
             {
@@ -143,9 +250,7 @@ namespace UniversalPatcher
                 {
                     for (int r = 0; r < rowCount; r++)
                     {
-                        value = getValue(addr);
-                        dataGridView1.Rows[r].Cells[c].Value = value;
-                        dataGridView1.Rows[r].Cells[c].Tag = addr;
+                        setCellValue(addr, r, c);
                         addr += (uint)step;
                     }
                 }
@@ -158,9 +263,7 @@ namespace UniversalPatcher
                     var index = dataGridView1.Rows.Add();
                     for (int c = 0; c < colCount; c++)
                     {
-                        value = getValue(addr);
-                        dataGridView1.Rows[index].Cells[c].Value = value;
-                        dataGridView1.Rows[index].Cells[c].Tag = addr;
+                        setCellValue(addr, r, c);
                         addr += (uint)step;
                     }
                 }
@@ -179,21 +282,52 @@ namespace UniversalPatcher
                 if (r < rowCount)
                     dataGridView1.Rows[r].HeaderCell.Value = rowHeaders[r];
             }
-            string formatStr = "0";
-            for (int f = 1; f <= td.Decimals; f++)
-            {
-                if (f > 0) formatStr += ".";
-                formatStr += "0";
-            }
-            formatStr += "#";
-            foreach (DataGridViewColumn dgvc in dataGridView1.Columns)
-            {
-                dgvc.SortMode = DataGridViewColumnSortMode.NotSortable;
-                dgvc.DefaultCellStyle.Format = formatStr;
-            }
-            tableModified = false;
+
+            setDataGridLayout();
         }
 
+        private void setDataGridLayout()
+        {
+            try
+            {
+                string formatStr = "0";
+                if (showRawHEXValuesToolStripMenuItem.Checked || td.OutputType == TypeHex)
+                {
+                    formatStr = "X" + (td.ElementSize * 2).ToString();
+                }
+                else if (td.OutputType == TypeText)
+                {
+                    formatStr = "";
+                }
+                else
+                {
+                    for (int f = 1; f <= td.Decimals; f++)
+                    {
+                        if (f == 1) formatStr += ".";
+                        formatStr += "0";
+                    }
+                    formatStr += "#";
+                }
+                foreach (DataGridViewColumn dgvc in dataGridView1.Columns)
+                {
+                    dgvc.SortMode = DataGridViewColumnSortMode.NotSortable;
+                    dgvc.DefaultCellStyle.Format = formatStr;
+                }
+                dataGridView1.AutoResizeColumns();
+                dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
+                if (autoResizeToolStripMenuItem.Checked) AutoResize();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+            }
+
+        }
         private void DataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex > -1)
@@ -233,7 +367,7 @@ namespace UniversalPatcher
             }
             if (td.ElementSize == 4)
             {
-                if (td.DataType == 1)
+                if (td.Floating)
                 {
                     byte[] buffer = BitConverter.GetBytes((float)value);
                     PCM.buf[addr] = buffer[0];
@@ -323,32 +457,7 @@ namespace UniversalPatcher
             if ((dgv_height + 100) > area.Height)
                 this.Height = area.Height - 50;
             else
-                this.Height = dgv_height + 130;
-
-        }
-        private void frmTableEditor_Load(object sender, EventArgs e)
-        {
-            dataGridView1.AutoResizeColumns();
-            dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
-
-            autoResizeToolStripMenuItem.Checked = Properties.Settings.Default.TableEditorAutoResize;
-            if (Properties.Settings.Default.TableEditorAutoResize)
-            {
-                AutoResize();
-            }
-            else if (Properties.Settings.Default.MainWindowPersistence)
-            {
-                if (Properties.Settings.Default.TableEditorWindowSize.Width > 0 || Properties.Settings.Default.TableEditorWindowSize.Height > 0)
-                {
-                    this.WindowState = Properties.Settings.Default.TableEditorWindowState;
-                    if (this.WindowState == FormWindowState.Minimized)
-                    {
-                        this.WindowState = FormWindowState.Normal;
-                    }
-                    this.Location = Properties.Settings.Default.TableEditorWindowLocation;
-                    this.Size = Properties.Settings.Default.TableEditorWindowSize;
-                }
-            }
+                this.Height = dgv_height + 150;
 
         }
         private void frmTableEditor_FormClosing(object sender, EventArgs e)
@@ -611,11 +720,33 @@ namespace UniversalPatcher
                 swapXyToolStripMenuItem.Checked = false;
             else
                 swapXyToolStripMenuItem.Checked = true;
+            chkSwapXY.Checked = swapXyToolStripMenuItem.Checked;
             loadTable(td, PCM);
-            dataGridView1.AutoResizeColumns();
-            dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
-            if (autoResizeToolStripMenuItem.Checked) AutoResize();
 
+        }
+
+        private void chkSwapXY_CheckedChanged(object sender, EventArgs e)
+        {
+            swapXyToolStripMenuItem.Checked = chkSwapXY.Checked;
+            loadTable(td, PCM);
+        }
+
+        private void showRawHEXValuesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (showRawHEXValuesToolStripMenuItem.Checked)
+                showRawHEXValuesToolStripMenuItem.Checked = false;
+            else
+                showRawHEXValuesToolStripMenuItem.Checked = true;
+            loadTable(td, PCM);
+
+        }
+
+        private void disableTooltipsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (disableTooltipsToolStripMenuItem.Checked)
+                disableTooltipsToolStripMenuItem.Checked = false;
+            else
+                disableTooltipsToolStripMenuItem.Checked = true;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace UniversalPatcher
 {
@@ -47,6 +48,9 @@ namespace UniversalPatcher
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoResizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.swapXyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showRawHEXValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chkSwapXY = new System.Windows.Forms.CheckBox();
+            this.disableTooltipsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -93,7 +97,7 @@ namespace UniversalPatcher
             // labelUnits
             // 
             this.labelUnits.AutoSize = true;
-            this.labelUnits.Location = new System.Drawing.Point(5, 50);
+            this.labelUnits.Location = new System.Drawing.Point(6, 50);
             this.labelUnits.Name = "labelUnits";
             this.labelUnits.Size = new System.Drawing.Size(10, 13);
             this.labelUnits.TabIndex = 5;
@@ -175,7 +179,9 @@ namespace UniversalPatcher
             // 
             this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.autoResizeToolStripMenuItem,
-            this.swapXyToolStripMenuItem});
+            this.swapXyToolStripMenuItem,
+            this.showRawHEXValuesToolStripMenuItem,
+            this.disableTooltipsToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "Settings";
@@ -183,22 +189,48 @@ namespace UniversalPatcher
             // autoResizeToolStripMenuItem
             // 
             this.autoResizeToolStripMenuItem.Name = "autoResizeToolStripMenuItem";
-            this.autoResizeToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.autoResizeToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.autoResizeToolStripMenuItem.Text = "Auto Resize";
             this.autoResizeToolStripMenuItem.Click += new System.EventHandler(this.autoResizeToolStripMenuItem_Click);
             // 
             // swapXyToolStripMenuItem
             // 
             this.swapXyToolStripMenuItem.Name = "swapXyToolStripMenuItem";
-            this.swapXyToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.swapXyToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.swapXyToolStripMenuItem.Text = "Swap x/y";
             this.swapXyToolStripMenuItem.Click += new System.EventHandler(this.swapXyToolStripMenuItem_Click);
+            // 
+            // showRawHEXValuesToolStripMenuItem
+            // 
+            this.showRawHEXValuesToolStripMenuItem.Name = "showRawHEXValuesToolStripMenuItem";
+            this.showRawHEXValuesToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.showRawHEXValuesToolStripMenuItem.Text = "Show Raw HEX values";
+            this.showRawHEXValuesToolStripMenuItem.Click += new System.EventHandler(this.showRawHEXValuesToolStripMenuItem_Click);
+            // 
+            // chkSwapXY
+            // 
+            this.chkSwapXY.AutoSize = true;
+            this.chkSwapXY.Location = new System.Drawing.Point(118, 2);
+            this.chkSwapXY.Name = "chkSwapXY";
+            this.chkSwapXY.Size = new System.Drawing.Size(75, 17);
+            this.chkSwapXY.TabIndex = 7;
+            this.chkSwapXY.Text = "Swap X/Y";
+            this.chkSwapXY.UseVisualStyleBackColor = true;
+            this.chkSwapXY.CheckedChanged += new System.EventHandler(this.chkSwapXY_CheckedChanged);
+            // 
+            // disableTooltipsToolStripMenuItem
+            // 
+            this.disableTooltipsToolStripMenuItem.Name = "disableTooltipsToolStripMenuItem";
+            this.disableTooltipsToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.disableTooltipsToolStripMenuItem.Text = "Disable Tooltips";
+            this.disableTooltipsToolStripMenuItem.Click += new System.EventHandler(this.disableTooltipsToolStripMenuItem_Click);
             // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.chkSwapXY);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.labelUnits);
             this.Controls.Add(this.btnExecute);
@@ -236,5 +268,8 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem autoResizeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem swapXyToolStripMenuItem;
+        private System.Windows.Forms.CheckBox chkSwapXY;
+        private System.Windows.Forms.ToolStripMenuItem showRawHEXValuesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem disableTooltipsToolStripMenuItem;
     }
 }

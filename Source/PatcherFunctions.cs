@@ -257,7 +257,7 @@ public class upatcher
         public ushort Rows;
         public ushort Columns;
     }
-
+   
     public const short CSMethod_None = 0;
     public const short CSMethod_crc16 = 1;
     public const short CSMethod_crc32 = 2;
@@ -301,10 +301,11 @@ public class upatcher
     public static string[] dtcStatusCombined = { "MIL and reporting off", "Type A/no MIL", "Type B/no MIL", "Type C/no MIL", "Not reported/MIL", "Type A/MIL", "Type B/MIL", "Type C/MIL" };
     public static string[] dtcStatus = { "1 Trip/immediately", "2 Trips", "Store only", "Disabled" };
 
-    public const ushort TypeText = 0;
-    public const ushort TypeHex = 1;
+    public const ushort TypeFloat = 1;
     public const ushort TypeInt = 2;
-    public const ushort TypeFilename = 3;
+    public const ushort TypeHex = 3;
+    public const ushort TypeText = 4;
+    public const ushort TypeFilename = 5;
 
     public static T DeepClone<T>(T obj)
     {
@@ -1115,6 +1116,13 @@ public class upatcher
         Array.Copy(buf, offset, tmp, 0, 8);
         Array.Reverse(tmp);
         return BitConverter.ToUInt64(tmp,0);
+    }
+    public static Int64 BEToInt64(byte[] buf, uint offset)
+    {
+        byte[] tmp = new byte[8];
+        Array.Copy(buf, offset, tmp, 0, 8);
+        Array.Reverse(tmp);
+        return BitConverter.ToInt64(tmp, 0);
     }
 
     public static uint BEToUint32(byte[] buf, uint offset)
