@@ -370,10 +370,8 @@ namespace UniversalPatcher
                 if (td.Floating)
                 {
                     byte[] buffer = BitConverter.GetBytes((float)value);
-                    PCM.buf[addr] = buffer[0];
-                    PCM.buf[addr + 1] = buffer[1];
-                    PCM.buf[addr + 2] = buffer[2];
-                    PCM.buf[addr + 3] = buffer[3];
+                    Array.Reverse(buffer);
+                    Array.Copy(buffer, 0, PCM.buf, addr, 4);
                 }
                 else
                 {
@@ -392,6 +390,32 @@ namespace UniversalPatcher
                         PCM.buf[addr + 1] = (byte)((newValue & 0xFF0000) >> 16);
                         PCM.buf[addr + 2] = (byte)((newValue & 0xFF00) >> 8);
                         PCM.buf[addr + 3] = (byte)(newValue & 0xFF);
+                    }
+                }
+            }
+            if (td.ElementSize == 8)
+            {
+                if (td.Floating)
+                {
+                    byte[] buffer = BitConverter.GetBytes((double)value);
+                    Array.Reverse(buffer);
+                    Array.Copy(buffer,0, PCM.buf, addr, 8);
+                }
+                else
+                {
+                    if (td.Signed)
+                    {
+                        Int32 newValue = (Int32)value;
+                        byte[] buffer = BitConverter.GetBytes(newValue);
+                        Array.Reverse(buffer);
+                        Array.Copy(buffer, 0, PCM.buf, 0, 8);
+                    }
+                    else
+                    {
+                        UInt32 newValue = (UInt32)value;
+                        byte[] buffer = BitConverter.GetBytes(newValue);
+                        Array.Reverse(buffer);
+                        Array.Copy(buffer, 0, PCM.buf, 0, 8);
                     }
                 }
             }
@@ -744,9 +768,28 @@ namespace UniversalPatcher
         private void disableTooltipsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (disableTooltipsToolStripMenuItem.Checked)
+            {
                 disableTooltipsToolStripMenuItem.Checked = false;
+                for (int r = 0; r < dataGridView1.Rows.Count; r++)
+                {
+                    for (int c = 0; c < dataGridView1.Columns.Count; c++)
+                    {
+                        if (td.TableDescription != null)
+                            dataGridView1.Rows[r].Cells[c].ToolTipText = td.TableDescription;
+                    }
+                }
+            }
             else
+            {
                 disableTooltipsToolStripMenuItem.Checked = true;
+                for (int r = 0; r < dataGridView1.Rows.Count; r++)
+                {
+                    for (int c = 0; c < dataGridView1.Columns.Count; c++)
+                    {
+                        dataGridView1.Rows[r].Cells[c].ToolTipText = null;
+                    }
+                }
+            }
         }
     }
 }
