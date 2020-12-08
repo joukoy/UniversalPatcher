@@ -23,8 +23,10 @@ namespace UniversalPatcher
 
         private TableData td;
         private PcmFile PCM;
-        private bool tableModified = false;
+        //private bool tableModified = false;
         private bool commaDecimal = true;
+        private byte[] dataBuffer;
+        private uint bufSize = 0;
         MathParser parser = new MathParser();
 
         private void frmTableEditor_Load(object sender, EventArgs e)
@@ -50,7 +52,7 @@ namespace UniversalPatcher
                     this.Size = Properties.Settings.Default.TableEditorWindowSize;
                 }
             }
-            tableModified = false;
+            //tableModified = false;
             disableTooltipsToolStripMenuItem.Checked = false;
         }
         public void loadSeekTable(int tId, PcmFile PCM1)
@@ -97,10 +99,11 @@ namespace UniversalPatcher
             double value = 0;
             try
             {
+                UInt32 bufAddr = addr - td.AddrInt; 
                 if (td.ElementSize == 4 || td.ElementSize == 8)
                 {
                     byte[] data = new byte[td.ElementSize];
-                    Array.Copy(PCM.buf, addr, data, 0, td.ElementSize);
+                    Array.Copy(dataBuffer, bufAddr, data, 0, td.ElementSize);
                     Array.Reverse(data);
                     if (td.ElementSize == 4)
                         value = BitConverter.ToSingle(data, 0);
@@ -130,33 +133,34 @@ namespace UniversalPatcher
         private double getValue(uint addr)
         {
             double value = 0;
+            UInt32 bufAddr = addr - td.AddrInt;
             if (td.ElementSize == 1)
             {
                 if (td.Signed)
-                    value = (byte)unchecked((sbyte)PCM.buf[addr]);
+                    value = (byte)unchecked((sbyte)dataBuffer[bufAddr]);
                 else
-                    value = PCM.buf[addr];
+                    value = dataBuffer[bufAddr];
             }
             if (td.ElementSize == 2)
             {
                 if (td.Signed)
-                    value = BEToInt16(PCM.buf, addr);
+                    value = BEToInt16(dataBuffer,bufAddr);
                 else
-                    value = BEToUint16(PCM.buf, addr);
+                    value = BEToUint16(dataBuffer, bufAddr);
             }
             if (td.ElementSize == 4)
             {
                 if (td.Signed)
-                    value = BEToInt32(PCM.buf, addr);
+                    value = BEToInt32(dataBuffer, bufAddr);
                 else
-                    value = BEToUint32(PCM.buf, addr);
+                    value = BEToUint32(dataBuffer, bufAddr);
             }
             if (td.ElementSize == 8)
             {
                 if (td.Signed)
-                    value = BEToInt64(PCM.buf, addr);
+                    value = BEToInt64(dataBuffer, bufAddr);
                 else
-                    value = BEToUint64(PCM.buf, addr);
+                    value = BEToUint64(dataBuffer, bufAddr);
             }
             string mathStr = td.Math.ToLower().Replace("x", value.ToString());
             if (commaDecimal) mathStr = mathStr.Replace(".", ",");
@@ -166,13 +170,14 @@ namespace UniversalPatcher
 
         private UInt64 getRawValue(UInt32 addr)
         {
+            UInt32 bufAddr = addr - td.AddrInt;
             if (td.ElementSize == 2)
-                return BEToUint16(PCM.buf, addr);
+                return BEToUint16(dataBuffer, bufAddr);
             if (td.ElementSize == 4)
-                return BEToUint32(PCM.buf, addr);
+                return BEToUint32(dataBuffer, bufAddr);
             if (td.ElementSize == 8)
-                return BEToUint64(PCM.buf, addr);
-            return PCM.buf[addr];
+                return BEToUint64(dataBuffer, bufAddr);
+            return dataBuffer[bufAddr];
         }
 
         public void setCellValue(uint addr, int row, int col)
@@ -238,6 +243,12 @@ namespace UniversalPatcher
             dataGridView1.Rows.Clear();
             dataGridView1.ColumnCount = colCount;
 
+            if (bufSize == 0)
+            {
+                bufSize = (uint)(td.Rows * td.Columns * td.ElementSize);
+                dataBuffer = new byte[bufSize];
+                Array.Copy(PCM.buf, td.AddrInt, dataBuffer, 0, bufSize);
+            }
             //dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader; // .AutoResizeColumns(DataGridViewAutoSizeColumnsMode.Fill);
             uint addr = td.AddrInt;
             int step = (int)(td.ElementSize);
@@ -332,36 +343,40 @@ namespace UniversalPatcher
         {
             if (e.RowIndex > -1)
             {
-                tableModified = true;
-                swapXyToolStripMenuItem.Enabled = false;
+                //tableModified = true;                
+                SaveValue(Convert.ToUInt32(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag), e.RowIndex, e.ColumnIndex);
             }
         }
 
         private void SaveValue(uint addr,int r, int c)
         {
             MathParser parser = new MathParser();
+            UInt32 bufAddr = addr - td.AddrInt;
 
             double value = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
-            string mathStr = td.SavingMath.ToLower().Replace("x", value.ToString());
-            if (commaDecimal) mathStr = mathStr.Replace(".", ",");
-            value = parser.Parse(mathStr, true);
+            if (!showRawHEXValuesToolStripMenuItem.Checked)
+            {
+                string mathStr = td.SavingMath.ToLower().Replace("x", value.ToString());
+                if (commaDecimal) mathStr = mathStr.Replace(".", ",");
+                value = parser.Parse(mathStr, true);
+            }
             if (td.ElementSize == 1)
             {
-                PCM.buf[addr] = (byte)value;
+                dataBuffer[bufAddr] = (byte)value;
             }
             if (td.ElementSize == 2)
             {
                 if (td.Signed)
                 {
                     short newValue = (short)value;
-                    PCM.buf[addr] = (byte)((newValue & 0xFF00) >> 8);
-                    PCM.buf[addr + 1] = (byte)(newValue & 0xFF);
+                    dataBuffer[bufAddr] = (byte)((newValue & 0xFF00) >> 8);
+                    dataBuffer[bufAddr + 1] = (byte)(newValue & 0xFF);
                 }
                 else
                 {
                     ushort newValue = (ushort)value;
-                    PCM.buf[addr] = (byte)((newValue & 0xFF00) >> 8);
-                    PCM.buf[addr + 1] = (byte)(newValue & 0xFF);
+                    dataBuffer[bufAddr] = (byte)((newValue & 0xFF00) >> 8);
+                    dataBuffer[bufAddr + 1] = (byte)(newValue & 0xFF);
                 }
 
             }
@@ -371,25 +386,23 @@ namespace UniversalPatcher
                 {
                     byte[] buffer = BitConverter.GetBytes((float)value);
                     Array.Reverse(buffer);
-                    Array.Copy(buffer, 0, PCM.buf, addr, 4);
+                    Array.Copy(buffer, 0, dataBuffer, bufAddr, 4);
                 }
                 else
                 {
                     if (td.Signed)
                     {
                         Int32 newValue = (Int32)value;
-                        PCM.buf[addr] = (byte)((newValue & 0xFF000000) >> 24);
-                        PCM.buf[addr + 1] = (byte)((newValue & 0xFF0000) >> 16);
-                        PCM.buf[addr + 2] = (byte)((newValue & 0xFF00) >> 8);
-                        PCM.buf[addr + 3] = (byte)(newValue & 0xFF);
+                        byte[] buffer = BitConverter.GetBytes(value);
+                        Array.Reverse(buffer);
+                        Array.Copy(buffer, 0, dataBuffer, bufAddr, 4);
                     }
                     else
                     {
                         UInt32 newValue = (UInt32)value;
-                        PCM.buf[addr] = (byte)((newValue & 0xFF000000) >> 24);
-                        PCM.buf[addr + 1] = (byte)((newValue & 0xFF0000) >> 16);
-                        PCM.buf[addr + 2] = (byte)((newValue & 0xFF00) >> 8);
-                        PCM.buf[addr + 3] = (byte)(newValue & 0xFF);
+                        byte[] buffer = BitConverter.GetBytes(value);
+                        Array.Reverse(buffer);
+                        Array.Copy(buffer, 0, dataBuffer, bufAddr, 4);
                     }
                 }
             }
@@ -399,7 +412,7 @@ namespace UniversalPatcher
                 {
                     byte[] buffer = BitConverter.GetBytes((double)value);
                     Array.Reverse(buffer);
-                    Array.Copy(buffer,0, PCM.buf, addr, 8);
+                    Array.Copy(buffer, 0, dataBuffer, bufAddr, 4);
                 }
                 else
                 {
@@ -408,14 +421,14 @@ namespace UniversalPatcher
                         Int32 newValue = (Int32)value;
                         byte[] buffer = BitConverter.GetBytes(newValue);
                         Array.Reverse(buffer);
-                        Array.Copy(buffer, 0, PCM.buf, 0, 8);
+                        Array.Copy(buffer, 0, dataBuffer, bufAddr, 4);
                     }
                     else
                     {
                         UInt32 newValue = (UInt32)value;
                         byte[] buffer = BitConverter.GetBytes(newValue);
                         Array.Reverse(buffer);
-                        Array.Copy(buffer, 0, PCM.buf, 0, 8);
+                        Array.Copy(buffer, 0, dataBuffer, bufAddr, 4);
                     }
                 }
             }
@@ -426,13 +439,14 @@ namespace UniversalPatcher
             try
             {
 
-                for (int r=0; r< dataGridView1.Rows.Count; r++)
+                /*for (int r=0; r< dataGridView1.Rows.Count; r++)
                 {
                     for (int c=0; c< dataGridView1.Columns.Count; c++)
                     {
                         SaveValue(Convert.ToUInt32(dataGridView1.Rows[r].Cells[c].Tag), r, c);
                     }
-                }
+                }*/
+                Array.Copy(dataBuffer, 0, PCM.buf, td.AddrInt, bufSize);
 
             }
             catch (Exception ex)
@@ -458,8 +472,9 @@ namespace UniversalPatcher
                     if (commaDecimal) mathStr = mathStr.Replace(".", ",");
                     double newvalue = parser.Parse(mathStr);
                     cell.Value = newvalue;
+                    SaveValue(Convert.ToUInt32(cell.Tag), cell.RowIndex, cell.ColumnIndex);
                 }
-                tableModified = true;
+                //tableModified = true;
             }
             catch (Exception ex)
             {
@@ -502,6 +517,16 @@ namespace UniversalPatcher
                         Properties.Settings.Default.TableEditorWindowSize = this.RestoreBounds.Size;
                     }
                     Properties.Settings.Default.Save();
+                }
+
+                bool tableModified = false;
+                for (int a=0;a<bufSize; a++)
+                {
+                    if (PCM.buf[td.AddrInt + a] != dataBuffer[a])
+                    {
+                        tableModified = true;
+                        break;
+                    }
                 }
 
                 if (tableModified)

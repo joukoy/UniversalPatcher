@@ -17,8 +17,8 @@ namespace UniversalPatcher
             OS = "";
             TableName = "";
             Address = "";
-            Math = "";
-            SavingMath = "";
+            Math = "X";
+            SavingMath = "X";
             Units = "";
             Category = "";
             ColumnHeaders = "";
