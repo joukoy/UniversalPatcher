@@ -39,6 +39,8 @@ namespace UniversalPatcher
         public string SavingMath { get; set; }
         public string Units { get; set; }
         public ushort OutputType { get; set; }
+        public double Min { get; set; }
+        public double Max { get; set; }
         public ushort Decimals { get; set; }
         public bool Signed { get; set; }
         public bool Floating { get; set; }
@@ -74,6 +76,8 @@ namespace UniversalPatcher
             TableDescription = tSeek.Description;
             TableName = ft.Name;
             Units = tSeek.Units;
+            Min = tSeek.Min;
+            Max = tSeek.Max;
             if (!tableCategories.Contains(Category))
                 tableCategories.Add(Category);
 

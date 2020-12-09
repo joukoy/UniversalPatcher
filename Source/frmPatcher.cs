@@ -3206,8 +3206,8 @@ namespace UniversalPatcher
                             tableText = tableText.Replace("REPLACE-OUTPUTTYPE", tableSeeks[id].OutputType.ToString());
                             tableText = tableText.Replace("REPLACE-TABLEADDRESS", foundTables[t].Address);
                             tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", foundTables[t].Description);
-                            tableText = tableText.Replace("REPLACE-MINVALUE", "0");
-                            tableText = tableText.Replace("REPLACE-MAXVALUE", "255");
+                            tableText = tableText.Replace("REPLACE-MINVALUE", tableSeeks[id].Min.ToString());
+                            tableText = tableText.Replace("REPLACE-MAXVALUE", tableSeeks[id].Max.ToString());
                             int tableFlags = 0;
                             if (tableSeeks[id].Signed)
                             {
@@ -3284,8 +3284,8 @@ namespace UniversalPatcher
                             tableText = tableText.Replace("REPLACE-TABLEADDRESS", foundTables[t].Address);
                             tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
                             tableText = tableText.Replace("REPLACE-BITS", "8");
-                            tableText = tableText.Replace("REPLACE-MINVALUE", "0");
-                            tableText = tableText.Replace("REPLACE-MAXVALUE", "255");
+                            tableText = tableText.Replace("REPLACE-MINVALUE", tableSeeks[id].Min.ToString());
+                            tableText = tableText.Replace("REPLACE-MAXVALUE", tableSeeks[id].Max.ToString());
                             xdfText += tableText;       //Add generated table to end of xdfText
                         }
                     }

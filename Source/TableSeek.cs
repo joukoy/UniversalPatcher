@@ -26,6 +26,8 @@ namespace UniversalPatcher
             ConditionalOffset = false;
             Bits = 16;
             Decimals = 2;
+            Min = 0;
+            Max = 255;
             OutputType = TypeFloat;
             Floating = false;
             UseHit = "1";
@@ -49,6 +51,9 @@ namespace UniversalPatcher
         public ushort Decimals { get; set; }
         public bool Floating { get; set; } 
         public ushort OutputType { get; set; }
+        public double Min { get; set; }
+        public double Max { get; set; }
+
         public string UseHit { get; set; }
         public string Range { get; set; }
         public string Segments { get; set; }
