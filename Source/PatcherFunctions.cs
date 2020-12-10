@@ -23,7 +23,7 @@ public class upatcher
         public string compare { get; set; }        //==, <, >, !=      
     }
 
-   
+
     public class XmlPatch
     {
         public XmlPatch() { }
@@ -85,7 +85,7 @@ public class upatcher
 
     public class SegmentInfo
     {
-        public SegmentInfo() 
+        public SegmentInfo()
         {
             Name = "";
             FileName = "";
@@ -106,22 +106,22 @@ public class upatcher
             ExtraInfo = "";
         }
         public string Name { get; set; }
-        public string FileName  { get; set; }
-        public string XmlFile  { get; set; }
+        public string FileName { get; set; }
+        public string XmlFile { get; set; }
         public string Address { get; set; }
         public string SwapAddress { get; set; }
-        public string Size  { get; set; }
+        public string Size { get; set; }
         public string SwapSize { get; set; }
-        public string CS1  { get; set; }
-        public string CS2  { get; set; }
+        public string CS1 { get; set; }
+        public string CS2 { get; set; }
         public string CS1Calc { get; set; }
-        public string CS2Calc  { get; set; }
+        public string CS2Calc { get; set; }
         public string cvn { get; set; }
-        public string Stock  { get; set; }
-        public string PN  { get; set; }
-        public string Ver  { get; set; }
-        public string SegNr  { get; set; }
-        public string ExtraInfo  { get; set; }
+        public string Stock { get; set; }
+        public string PN { get; set; }
+        public string Ver { get; set; }
+        public string SegNr { get; set; }
+        public string ExtraInfo { get; set; }
 
     }
 
@@ -218,7 +218,7 @@ public class upatcher
         public string OS { get; set; }
         public string PN { get; set; }
         public string Ver { get; set; }
-        public string SegNr {get;set; }
+        public string SegNr { get; set; }
         public int SegIndex { get; set; }
         public string Size { get; set; }
         public string Address { get; set; }
@@ -257,7 +257,7 @@ public class upatcher
         public ushort Rows;
         public ushort Columns;
     }
-   
+
     public const short CSMethod_None = 0;
     public const short CSMethod_crc16 = 1;
     public const short CSMethod_crc32 = 2;
@@ -305,8 +305,18 @@ public class upatcher
     public const ushort TypeInt = 2;
     public const ushort TypeHex = 3;
     public const ushort TypeText = 4;
-    public const ushort TypeFilename = 5;
-
+    public const ushort TypeFlag = 5;
+    public const ushort TypeFilename = 10;
+    
+    public enum DataType
+    {
+        Float = 1,
+        Int = 2,
+        Hex = 3,
+        Text = 4,
+        Flag = 5,
+        Filename = 10
+    }
     public static T DeepClone<T>(T obj)
     {
         T objResult;

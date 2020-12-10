@@ -44,7 +44,7 @@ namespace UniversalPatcher
                 frmTableEditor frmT = new frmTableEditor();
                 TableData td = tableDatas[codeIndex];
 
-                if (td.Rows < 2 && td.Columns < 2 && td.Units.ToLower().Contains("mask"))
+                if (td.OutputType == DataType.Flag && td.BitMask != null && td.BitMask.Length > 0)
                 {
                     frmEditFlag ff = new frmEditFlag();
                     ff.loadFlag(PCM, td);
@@ -258,13 +258,13 @@ namespace UniversalPatcher
             dataGridView1.DataSource = bindingsource;
             dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             //dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
-            dataGridView1.Columns["OutputType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
+            dataGridView1.Columns["OutputType"].ToolTipText = "1=Float, 2=Int, 3=Hex, 4=Text, 5=Flag";
 
             for (int i=0; i< dataGridView1.Rows.Count; i++)
             {
+                dataGridView1.Rows[i].Cells["OutputType"].ToolTipText = "1=Float, 2=Int, 3=Hex, 4=Text, 5=Flag";
                 if (dataGridView1.Rows[i].Cells["TableDescription"].Value != null)
                     dataGridView1.Rows[i].Cells["TableName"].ToolTipText = dataGridView1.Rows[i].Cells["TableDescription"].Value.ToString();
-                dataGridView1.Rows[i].Cells["OutputType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
             }
 
             comboTableCategory.DataSource = null;
@@ -372,7 +372,7 @@ namespace UniversalPatcher
             td.ColumnHeaders = "Status";
             td.Columns = 1;
             td.Floating = false;
-            td.OutputType = TypeInt;
+            td.OutputType = DataType.Int;
             td.Decimals = 0;
             td.ElementSize = 1; // (byte)(dtcCodes[1].codeAddrInt - dtcCodes[0].codeAddrInt);
             td.Math = "X";
@@ -403,7 +403,7 @@ namespace UniversalPatcher
                 td.ColumnHeaders = "MIL";
                 td.Columns = 1;
                 td.Floating = false;
-                td.OutputType = TypeInt;
+                td.OutputType = DataType.Int;
                 td.Decimals = 0;
                 td.ElementSize = 1; // (byte)(dtcCodes[1].milAddrInt - dtcCodes[0].milAddrInt);
                 td.Math = "X";
@@ -560,6 +560,7 @@ namespace UniversalPatcher
         {
             XDF xdf = new XDF();
             Logger(xdf.importXdf(PCM));
+            LoggerBold("Note: Only basic XDF conversions are supported, check Math and SavingMath values");
             refreshTablelist();
         }
 

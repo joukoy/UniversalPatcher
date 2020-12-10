@@ -28,7 +28,7 @@ namespace UniversalPatcher
             Decimals = 2;
             Min = 0;
             Max = 255;
-            OutputType = TypeFloat;
+            OutputType = DataType.Float;
             Floating = false;
             UseHit = "1";
             Range = "";
@@ -50,7 +50,7 @@ namespace UniversalPatcher
         public bool Signed { get; set; }
         public ushort Decimals { get; set; }
         public bool Floating { get; set; } 
-        public ushort OutputType { get; set; }
+        public DataType OutputType { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }
 
@@ -60,6 +60,7 @@ namespace UniversalPatcher
         public string ValidationSearchStr { get; set; }
         public string Category { get; set; }
         public string Units { get; set; }
+        public string BitMask { get; set; }
         public bool RowMajor { get; set; }
         public string Description { get; set; }
 
@@ -111,7 +112,7 @@ namespace UniversalPatcher
                             ts.Description = "Volumetric Efficiency";
                             ts.Bits = 16;
                             ts.Floating = true;
-                            ts.OutputType = TypeFloat;
+                            ts.OutputType = DataType.Float;
                             ts.Decimals = 6;
                             ts.Math = "X*0.0002441406";
                             ts.Offset = 0;
@@ -143,7 +144,7 @@ namespace UniversalPatcher
                             ts.Math = "X*0.0078125";
                             ts.SavingMath = "X/0.0078125";
                             ts.Floating = true;
-                            ts.OutputType = TypeFloat;
+                            ts.OutputType = DataType.Float;
                             ts.Decimals = 4;
                             ts.Signed = false;
                             ts.Category = "Fuel";

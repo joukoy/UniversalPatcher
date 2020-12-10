@@ -31,7 +31,7 @@ namespace UniversalPatcher
             else
                 labelDescription.Text = td.TableName;
             this.Text = td.TableName;
-            string maskStr = td.Units.Replace("Mask: 0x", "");
+            string maskStr = td.BitMask;
             if (td.ElementSize == 1)
             {
                 Byte mask = Convert.ToByte(maskStr, 16);
@@ -61,7 +61,7 @@ namespace UniversalPatcher
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            string maskStr = td.Units.Replace("Mask: 0x", "");
+            string maskStr = td.BitMask;
             if (td.ElementSize == 1)
             {
                 byte mask = Convert.ToByte(maskStr, 16);

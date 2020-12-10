@@ -97,7 +97,7 @@ namespace UniversalPatcher
                             xdf.SavingMath = convertMath(xdf.Math);
                             xdf.Decimals = Convert.ToUInt16(axle.Element("decimalpl").Value);
                             if (axle.Element("outputtype") != null)
-                                xdf.OutputType = Convert.ToUInt16(axle.Element("outputtype").Value);
+                                xdf.OutputType = (DataType) Convert.ToUInt16(axle.Element("outputtype").Value);
                         }
                     }
                     xdf.TableName = element.Element("title").Value;
@@ -177,7 +177,8 @@ namespace UniversalPatcher
                         xdf.Address = element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
                         xdf.ElementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
                         xdf.Math = "X";
-                        xdf.Units = "Mask: " + element.Element("mask").Value;
+                        xdf.BitMask = element.Element("mask").Value;
+                        xdf.OutputType = DataType.Flag;
                         xdf.Columns = 1;
                         xdf.Rows = 1;
                         xdf.RowMajor = false;

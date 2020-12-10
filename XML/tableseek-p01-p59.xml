@@ -15,7 +15,7 @@
     <Signed>false</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -37,7 +37,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -59,7 +59,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -81,7 +81,7 @@
     <Signed>true</Signed>
     <Decimals>1</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -103,7 +103,7 @@
     <Signed>false</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>2</UseHit>
     <Range />
     <Segments />
@@ -125,7 +125,7 @@
     <Signed>false</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -147,7 +147,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -169,7 +169,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -191,7 +191,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -213,7 +213,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -235,7 +235,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -257,7 +257,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -280,7 +280,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -303,7 +303,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -326,7 +326,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -348,7 +348,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -370,7 +370,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -392,7 +392,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>2</UseHit>
     <Range />
     <Segments />
@@ -416,7 +416,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -440,7 +440,7 @@
     <Signed>false</Signed>
     <Decimals>4</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -464,7 +464,7 @@
     <Signed>false</Signed>
     <Decimals>4</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -488,7 +488,7 @@
     <Signed>false</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -512,7 +512,7 @@
     <Signed>false</Signed>
     <Decimals>6</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -536,7 +536,7 @@
     <Signed>false</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -559,7 +559,7 @@
     <Signed>false</Signed>
     <Decimals>0</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -583,7 +583,7 @@
     <Signed>false</Signed>
     <Decimals>0</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -606,7 +606,7 @@
     <Signed>false</Signed>
     <Decimals>0</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -629,7 +629,7 @@
     <Signed>false</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -653,7 +653,7 @@
     <Signed>false</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -677,7 +677,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>2</UseHit>
     <Range />
     <Segments />
@@ -701,7 +701,7 @@
     <Signed>false</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -725,7 +725,7 @@
     <Signed>true</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>4</UseHit>
     <Range />
     <Segments />
@@ -749,7 +749,7 @@
     <Signed>false</Signed>
     <Decimals>2</Decimals>
     <Floating>false</Floating>
-    <OutputType>1</OutputType>
+    <OutputType>Float</OutputType>
     <UseHit>3</UseHit>
     <Range />
     <Segments />

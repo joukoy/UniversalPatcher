@@ -27,7 +27,7 @@ namespace UniversalPatcher
             RowMajor = true;
             //DataType = TypeFloat;
             Floating = false;
-            OutputType = TypeFloat;
+            OutputType = DataType.Float;
         }
         public uint id { get; set; }
         public string OS { get; set; }
@@ -38,7 +38,7 @@ namespace UniversalPatcher
         public string Math { get; set; }
         public string SavingMath { get; set; }
         public string Units { get; set; }
-        public ushort OutputType { get; set; }
+        public DataType OutputType { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }
         public ushort Decimals { get; set; }
@@ -46,6 +46,7 @@ namespace UniversalPatcher
         public bool Floating { get; set; }
         public ushort Columns { get; set; }
         public ushort Rows { get; set; }
+        public string BitMask { get; set; }
         public bool RowMajor { get; set; }
         public string Category { get; set; }
         public string ColumnHeaders { get; set; }

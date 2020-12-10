@@ -186,7 +186,7 @@ namespace UniversalPatcher
             {
                 if (showRawHEXValuesToolStripMenuItem.Checked)
                     dataGridView1.Rows[row].Cells[col].Value = getRawValue(addr);
-                else if (td.OutputType == TypeText)
+                else if (td.OutputType == DataType.Text)
                     dataGridView1.Rows[row].Cells[col].Value = Convert.ToChar((ushort)getValue(addr));
                 else if (td.Floating == false)
                     dataGridView1.Rows[row].Cells[col].Value = getValue(addr);
@@ -302,11 +302,11 @@ namespace UniversalPatcher
             try
             {
                 string formatStr = "0";
-                if (showRawHEXValuesToolStripMenuItem.Checked || td.OutputType == TypeHex)
+                if (showRawHEXValuesToolStripMenuItem.Checked || td.OutputType == DataType.Hex)
                 {
                     formatStr = "X" + (td.ElementSize * 2).ToString();
                 }
-                else if (td.OutputType == TypeText)
+                else if (td.OutputType == DataType.Text)
                 {
                     formatStr = "";
                 }
