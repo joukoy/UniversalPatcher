@@ -10,3 +10,7 @@ Configurable for different engine controller binary files
 # Installation:
 Extract UniversalPatcher-Full.Zip to empty folder.
 
+# Creator/Programmer
+joukoy@gmail.com
+# Contributor/GM file specialist
+kur4o@pcmhacking.net
