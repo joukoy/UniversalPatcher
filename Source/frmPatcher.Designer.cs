@@ -110,13 +110,12 @@
             this.dataGridPIDlist = new System.Windows.Forms.DataGridView();
             this.tabDTC = new System.Windows.Forms.TabPage();
             this.btnSetDTC = new System.Windows.Forms.Button();
-            this.btnExportXdf = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
             this.btnClearDTC = new System.Windows.Forms.Button();
             this.btnSaveCsvDTC = new System.Windows.Forms.Button();
             this.dataGridDTC = new System.Windows.Forms.DataGridView();
             this.tabTableSeek = new System.Windows.Forms.TabPage();
-            this.btnSearchTableSeek = new System.Windows.Forms.Button();
+            this.label16 = new System.Windows.Forms.Label();
             this.txtSearchTableSeek = new System.Windows.Forms.TextBox();
             this.comboTableCategory = new System.Windows.Forms.ComboBox();
             this.label15 = new System.Windows.Forms.Label();
@@ -124,6 +123,8 @@
             this.btnEditTable = new System.Windows.Forms.Button();
             this.dataGridTableSeek = new System.Windows.Forms.DataGridView();
             this.btnClearTableSeek = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
+            this.btnCrossTableSearch = new System.Windows.Forms.Button();
             this.chkExtra = new System.Windows.Forms.CheckBox();
             this.chkCS2 = new System.Windows.Forms.CheckBox();
             this.chkCS1 = new System.Windows.Forms.CheckBox();
@@ -153,9 +154,7 @@
             this.chkSearchTables = new System.Windows.Forms.CheckBox();
             this.tabCreate = new System.Windows.Forms.TabPage();
             this.chkForceCompare = new System.Windows.Forms.CheckBox();
-            this.label13 = new System.Windows.Forms.Label();
             this.numCrossVariation = new System.Windows.Forms.NumericUpDown();
-            this.btnCrossTableSearch = new System.Windows.Forms.Button();
             this.checkAppendPatch = new System.Windows.Forms.CheckBox();
             this.txtOS = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -256,7 +255,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtBaseFile.Location = new System.Drawing.Point(96, 34);
             this.txtBaseFile.Name = "txtBaseFile";
-            this.txtBaseFile.Size = new System.Drawing.Size(685, 20);
+            this.txtBaseFile.Size = new System.Drawing.Size(744, 20);
             this.txtBaseFile.TabIndex = 15;
             // 
             // txtModifierFile
@@ -265,7 +264,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtModifierFile.Location = new System.Drawing.Point(90, 6);
             this.txtModifierFile.Name = "txtModifierFile";
-            this.txtModifierFile.Size = new System.Drawing.Size(685, 20);
+            this.txtModifierFile.Size = new System.Drawing.Size(742, 20);
             this.txtModifierFile.TabIndex = 111;
             // 
             // btnCompare
@@ -281,7 +280,7 @@
             // btnSaveBin
             // 
             this.btnSaveBin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveBin.Location = new System.Drawing.Point(666, 6);
+            this.btnSaveBin.Location = new System.Drawing.Point(725, 6);
             this.btnSaveBin.Name = "btnSaveBin";
             this.btnSaveBin.Size = new System.Drawing.Size(108, 25);
             this.btnSaveBin.TabIndex = 188;
@@ -294,7 +293,7 @@
             this.txtPatchDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPatchDescription.Location = new System.Drawing.Point(129, 57);
             this.txtPatchDescription.Name = "txtPatchDescription";
-            this.txtPatchDescription.Size = new System.Drawing.Size(483, 20);
+            this.txtPatchDescription.Size = new System.Drawing.Size(471, 20);
             this.txtPatchDescription.TabIndex = 116;
             // 
             // labelBinSize
@@ -412,7 +411,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 191);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(784, 370);
+            this.tabControl1.Size = new System.Drawing.Size(843, 370);
             this.tabControl1.TabIndex = 200;
             // 
             // tabInfo
@@ -432,14 +431,14 @@
             this.tabInfo.Location = new System.Drawing.Point(4, 22);
             this.tabInfo.Name = "tabInfo";
             this.tabInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabInfo.Size = new System.Drawing.Size(776, 344);
+            this.tabInfo.Size = new System.Drawing.Size(835, 344);
             this.tabInfo.TabIndex = 0;
             this.tabInfo.Text = "Log";
             this.tabInfo.UseVisualStyleBackColor = true;
             // 
             // btnSearch
             // 
-            this.btnSearch.Location = new System.Drawing.Point(539, 1);
+            this.btnSearch.Location = new System.Drawing.Point(549, 1);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(75, 23);
             this.btnSearch.TabIndex = 205;
@@ -479,14 +478,14 @@
             this.txtResult.HideSelection = false;
             this.txtResult.Location = new System.Drawing.Point(2, 26);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(774, 317);
+            this.txtResult.Size = new System.Drawing.Size(833, 317);
             this.txtResult.TabIndex = 202;
             this.txtResult.Text = "";
             // 
             // btnSaveFileInfo
             // 
             this.btnSaveFileInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveFileInfo.Location = new System.Drawing.Point(695, 2);
+            this.btnSaveFileInfo.Location = new System.Drawing.Point(757, 2);
             this.btnSaveFileInfo.Name = "btnSaveFileInfo";
             this.btnSaveFileInfo.Size = new System.Drawing.Size(78, 23);
             this.btnSaveFileInfo.TabIndex = 171;
@@ -503,7 +502,7 @@
             this.tabDebug.Location = new System.Drawing.Point(4, 22);
             this.tabDebug.Name = "tabDebug";
             this.tabDebug.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDebug.Size = new System.Drawing.Size(776, 344);
+            this.tabDebug.Size = new System.Drawing.Size(835, 344);
             this.tabDebug.TabIndex = 1;
             this.tabDebug.Text = "Debug";
             this.tabDebug.UseVisualStyleBackColor = true;
@@ -511,7 +510,7 @@
             // btnSaveDebug
             // 
             this.btnSaveDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveDebug.Location = new System.Drawing.Point(695, 1);
+            this.btnSaveDebug.Location = new System.Drawing.Point(760, -1);
             this.btnSaveDebug.Name = "btnSaveDebug";
             this.btnSaveDebug.Size = new System.Drawing.Size(75, 23);
             this.btnSaveDebug.TabIndex = 214;
@@ -537,7 +536,7 @@
             this.txtDebug.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtDebug.Location = new System.Drawing.Point(2, 24);
             this.txtDebug.Name = "txtDebug";
-            this.txtDebug.Size = new System.Drawing.Size(774, 323);
+            this.txtDebug.Size = new System.Drawing.Size(833, 323);
             this.txtDebug.TabIndex = 212;
             this.txtDebug.Text = "";
             // 
@@ -569,7 +568,7 @@
             this.tabPatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabPatch.Location = new System.Drawing.Point(4, 22);
             this.tabPatch.Name = "tabPatch";
-            this.tabPatch.Size = new System.Drawing.Size(776, 344);
+            this.tabPatch.Size = new System.Drawing.Size(835, 344);
             this.tabPatch.TabIndex = 2;
             this.tabPatch.Text = "Patch editor";
             this.tabPatch.UseVisualStyleBackColor = true;
@@ -577,7 +576,7 @@
             // btnRefresh
             // 
             this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefresh.Location = new System.Drawing.Point(549, 0);
+            this.btnRefresh.Location = new System.Drawing.Point(609, 0);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(59, 23);
             this.btnRefresh.TabIndex = 250;
@@ -588,7 +587,7 @@
             // btnNew
             // 
             this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNew.Location = new System.Drawing.Point(614, 0);
+            this.btnNew.Location = new System.Drawing.Point(674, 0);
             this.btnNew.Name = "btnNew";
             this.btnNew.Size = new System.Drawing.Size(49, 23);
             this.btnNew.TabIndex = 251;
@@ -599,7 +598,7 @@
             // btnLoad
             // 
             this.btnLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLoad.Location = new System.Drawing.Point(667, 0);
+            this.btnLoad.Location = new System.Drawing.Point(727, 0);
             this.btnLoad.Name = "btnLoad";
             this.btnLoad.Size = new System.Drawing.Size(49, 23);
             this.btnLoad.TabIndex = 252;
@@ -610,7 +609,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(722, 0);
+            this.btnSave.Location = new System.Drawing.Point(782, 2);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(49, 23);
             this.btnSave.TabIndex = 253;
@@ -621,7 +620,7 @@
             // btnHelp
             // 
             this.btnHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnHelp.Location = new System.Drawing.Point(729, 138);
+            this.btnHelp.Location = new System.Drawing.Point(789, 140);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(43, 22);
             this.btnHelp.TabIndex = 257;
@@ -632,7 +631,7 @@
             // btnEdit
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEdit.Location = new System.Drawing.Point(729, 56);
+            this.btnEdit.Location = new System.Drawing.Point(789, 58);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(43, 22);
             this.btnEdit.TabIndex = 254;
@@ -643,7 +642,7 @@
             // btnDown
             // 
             this.btnDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDown.Location = new System.Drawing.Point(730, 219);
+            this.btnDown.Location = new System.Drawing.Point(790, 221);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(43, 22);
             this.btnDown.TabIndex = 259;
@@ -654,7 +653,7 @@
             // btnUp
             // 
             this.btnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUp.Location = new System.Drawing.Point(729, 191);
+            this.btnUp.Location = new System.Drawing.Point(789, 193);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(43, 22);
             this.btnUp.TabIndex = 258;
@@ -665,7 +664,7 @@
             // btnDelete
             // 
             this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDelete.Location = new System.Drawing.Point(729, 110);
+            this.btnDelete.Location = new System.Drawing.Point(789, 112);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(43, 22);
             this.btnDelete.TabIndex = 256;
@@ -676,7 +675,7 @@
             // btnManualPatch
             // 
             this.btnManualPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnManualPatch.Location = new System.Drawing.Point(729, 84);
+            this.btnManualPatch.Location = new System.Drawing.Point(789, 86);
             this.btnManualPatch.Name = "btnManualPatch";
             this.btnManualPatch.Size = new System.Drawing.Size(43, 22);
             this.btnManualPatch.TabIndex = 255;
@@ -702,7 +701,7 @@
             this.dataPatch.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataPatch.Location = new System.Drawing.Point(1, 27);
             this.dataPatch.Name = "dataPatch";
-            this.dataPatch.Size = new System.Drawing.Size(722, 320);
+            this.dataPatch.Size = new System.Drawing.Size(783, 320);
             this.dataPatch.TabIndex = 0;
             this.dataPatch.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPatch_CellContentDoubleClick);
             // 
@@ -715,7 +714,7 @@
             this.tabCVN.Controls.Add(this.dataCVN);
             this.tabCVN.Location = new System.Drawing.Point(4, 22);
             this.tabCVN.Name = "tabCVN";
-            this.tabCVN.Size = new System.Drawing.Size(776, 344);
+            this.tabCVN.Size = new System.Drawing.Size(835, 344);
             this.tabCVN.TabIndex = 3;
             this.tabCVN.Text = "CVN";
             this.tabCVN.UseVisualStyleBackColor = true;
@@ -756,7 +755,7 @@
             // btnAddtoStock
             // 
             this.btnAddtoStock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddtoStock.Location = new System.Drawing.Point(637, 5);
+            this.btnAddtoStock.Location = new System.Drawing.Point(696, 3);
             this.btnAddtoStock.Name = "btnAddtoStock";
             this.btnAddtoStock.Size = new System.Drawing.Size(136, 22);
             this.btnAddtoStock.TabIndex = 177;
@@ -772,7 +771,7 @@
             this.dataCVN.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataCVN.Location = new System.Drawing.Point(1, 33);
             this.dataCVN.Name = "dataCVN";
-            this.dataCVN.Size = new System.Drawing.Size(776, 310);
+            this.dataCVN.Size = new System.Drawing.Size(831, 310);
             this.dataCVN.TabIndex = 0;
             // 
             // tabBadCvn
@@ -782,7 +781,7 @@
             this.tabBadCvn.Controls.Add(this.dataGridBadCvn);
             this.tabBadCvn.Location = new System.Drawing.Point(4, 22);
             this.tabBadCvn.Name = "tabBadCvn";
-            this.tabBadCvn.Size = new System.Drawing.Size(776, 344);
+            this.tabBadCvn.Size = new System.Drawing.Size(835, 344);
             this.tabBadCvn.TabIndex = 9;
             this.tabBadCvn.Text = "Mismatch CVN";
             this.tabBadCvn.UseVisualStyleBackColor = true;
@@ -815,7 +814,7 @@
             this.dataGridBadCvn.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridBadCvn.Location = new System.Drawing.Point(0, 34);
             this.dataGridBadCvn.Name = "dataGridBadCvn";
-            this.dataGridBadCvn.Size = new System.Drawing.Size(776, 310);
+            this.dataGridBadCvn.Size = new System.Drawing.Size(839, 310);
             this.dataGridBadCvn.TabIndex = 1;
             // 
             // tabFinfo
@@ -828,7 +827,7 @@
             this.tabFinfo.Controls.Add(this.dataFileInfo);
             this.tabFinfo.Location = new System.Drawing.Point(4, 22);
             this.tabFinfo.Name = "tabFinfo";
-            this.tabFinfo.Size = new System.Drawing.Size(776, 344);
+            this.tabFinfo.Size = new System.Drawing.Size(835, 344);
             this.tabFinfo.TabIndex = 4;
             this.tabFinfo.Text = "File info";
             this.tabFinfo.UseVisualStyleBackColor = true;
@@ -836,7 +835,7 @@
             // btnSaveDecCsv
             // 
             this.btnSaveDecCsv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveDecCsv.Location = new System.Drawing.Point(571, 4);
+            this.btnSaveDecCsv.Location = new System.Drawing.Point(638, 3);
             this.btnSaveDecCsv.Name = "btnSaveDecCsv";
             this.btnSaveDecCsv.Size = new System.Drawing.Size(116, 23);
             this.btnSaveDecCsv.TabIndex = 7;
@@ -870,7 +869,7 @@
             // btnSaveCSV
             // 
             this.btnSaveCSV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveCSV.Location = new System.Drawing.Point(693, 4);
+            this.btnSaveCSV.Location = new System.Drawing.Point(760, 3);
             this.btnSaveCSV.Name = "btnSaveCSV";
             this.btnSaveCSV.Size = new System.Drawing.Size(75, 23);
             this.btnSaveCSV.TabIndex = 4;
@@ -896,7 +895,7 @@
             this.dataFileInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataFileInfo.Location = new System.Drawing.Point(1, 31);
             this.dataFileInfo.Name = "dataFileInfo";
-            this.dataFileInfo.Size = new System.Drawing.Size(778, 312);
+            this.dataFileInfo.Size = new System.Drawing.Size(834, 312);
             this.dataFileInfo.TabIndex = 0;
             this.dataFileInfo.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataFileInfo_CellContentDoubleClick);
             // 
@@ -908,7 +907,7 @@
             this.tabCsAddress.Controls.Add(this.listCSAddresses);
             this.tabCsAddress.Location = new System.Drawing.Point(4, 22);
             this.tabCsAddress.Name = "tabCsAddress";
-            this.tabCsAddress.Size = new System.Drawing.Size(776, 344);
+            this.tabCsAddress.Size = new System.Drawing.Size(835, 344);
             this.tabCsAddress.TabIndex = 5;
             this.tabCsAddress.Text = "Gm-v6 info";
             this.tabCsAddress.UseVisualStyleBackColor = true;
@@ -935,7 +934,7 @@
             // btnSaveCSaddresses
             // 
             this.btnSaveCSaddresses.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveCSaddresses.Location = new System.Drawing.Point(693, 3);
+            this.btnSaveCSaddresses.Location = new System.Drawing.Point(760, 4);
             this.btnSaveCSaddresses.Name = "btnSaveCSaddresses";
             this.btnSaveCSaddresses.Size = new System.Drawing.Size(75, 25);
             this.btnSaveCSaddresses.TabIndex = 1;
@@ -951,7 +950,7 @@
             this.listCSAddresses.HideSelection = false;
             this.listCSAddresses.Location = new System.Drawing.Point(2, 31);
             this.listCSAddresses.Name = "listCSAddresses";
-            this.listCSAddresses.Size = new System.Drawing.Size(774, 316);
+            this.listCSAddresses.Size = new System.Drawing.Size(834, 316);
             this.listCSAddresses.TabIndex = 0;
             this.listCSAddresses.UseCompatibleStateImageBehavior = false;
             // 
@@ -965,7 +964,7 @@
             this.tabBadChkFile.Controls.Add(this.dataBadChkFile);
             this.tabBadChkFile.Location = new System.Drawing.Point(4, 22);
             this.tabBadChkFile.Name = "tabBadChkFile";
-            this.tabBadChkFile.Size = new System.Drawing.Size(776, 344);
+            this.tabBadChkFile.Size = new System.Drawing.Size(835, 344);
             this.tabBadChkFile.TabIndex = 6;
             this.tabBadChkFile.Text = "bad chk file";
             this.tabBadChkFile.UseVisualStyleBackColor = true;
@@ -1004,7 +1003,7 @@
             // btnSaveCsvBadChkFile
             // 
             this.btnSaveCsvBadChkFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveCsvBadChkFile.Location = new System.Drawing.Point(691, 3);
+            this.btnSaveCsvBadChkFile.Location = new System.Drawing.Point(757, 4);
             this.btnSaveCsvBadChkFile.Name = "btnSaveCsvBadChkFile";
             this.btnSaveCsvBadChkFile.Size = new System.Drawing.Size(75, 23);
             this.btnSaveCsvBadChkFile.TabIndex = 8;
@@ -1030,7 +1029,7 @@
             this.dataBadChkFile.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataBadChkFile.Location = new System.Drawing.Point(-1, 30);
             this.dataBadChkFile.Name = "dataBadChkFile";
-            this.dataBadChkFile.Size = new System.Drawing.Size(778, 312);
+            this.dataBadChkFile.Size = new System.Drawing.Size(837, 312);
             this.dataBadChkFile.TabIndex = 6;
             this.dataBadChkFile.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataBadChkFile_CellContentDoubleClick);
             // 
@@ -1043,7 +1042,7 @@
             this.tabSearchedTables.Controls.Add(this.dataGridSearchedTables);
             this.tabSearchedTables.Location = new System.Drawing.Point(4, 22);
             this.tabSearchedTables.Name = "tabSearchedTables";
-            this.tabSearchedTables.Size = new System.Drawing.Size(776, 344);
+            this.tabSearchedTables.Size = new System.Drawing.Size(835, 344);
             this.tabSearchedTables.TabIndex = 7;
             this.tabSearchedTables.Text = "Searched Tables";
             this.tabSearchedTables.UseVisualStyleBackColor = true;
@@ -1097,7 +1096,7 @@
             this.dataGridSearchedTables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridSearchedTables.Location = new System.Drawing.Point(1, 35);
             this.dataGridSearchedTables.Name = "dataGridSearchedTables";
-            this.dataGridSearchedTables.Size = new System.Drawing.Size(775, 308);
+            this.dataGridSearchedTables.Size = new System.Drawing.Size(835, 308);
             this.dataGridSearchedTables.TabIndex = 0;
             this.dataGridSearchedTables.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridSearchedTables_CellContentDoubleClick);
             // 
@@ -1108,7 +1107,7 @@
             this.tabPIDList.Controls.Add(this.dataGridPIDlist);
             this.tabPIDList.Location = new System.Drawing.Point(4, 22);
             this.tabPIDList.Name = "tabPIDList";
-            this.tabPIDList.Size = new System.Drawing.Size(776, 344);
+            this.tabPIDList.Size = new System.Drawing.Size(835, 344);
             this.tabPIDList.TabIndex = 8;
             this.tabPIDList.Text = "PIDs";
             this.tabPIDList.UseVisualStyleBackColor = true;
@@ -1141,27 +1140,26 @@
             this.dataGridPIDlist.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridPIDlist.Location = new System.Drawing.Point(1, 33);
             this.dataGridPIDlist.Name = "dataGridPIDlist";
-            this.dataGridPIDlist.Size = new System.Drawing.Size(774, 310);
+            this.dataGridPIDlist.Size = new System.Drawing.Size(834, 310);
             this.dataGridPIDlist.TabIndex = 0;
             // 
             // tabDTC
             // 
             this.tabDTC.Controls.Add(this.btnSetDTC);
-            this.tabDTC.Controls.Add(this.btnExportXdf);
             this.tabDTC.Controls.Add(this.label14);
             this.tabDTC.Controls.Add(this.btnClearDTC);
             this.tabDTC.Controls.Add(this.btnSaveCsvDTC);
             this.tabDTC.Controls.Add(this.dataGridDTC);
             this.tabDTC.Location = new System.Drawing.Point(4, 22);
             this.tabDTC.Name = "tabDTC";
-            this.tabDTC.Size = new System.Drawing.Size(776, 344);
+            this.tabDTC.Size = new System.Drawing.Size(835, 344);
             this.tabDTC.TabIndex = 10;
             this.tabDTC.Text = "DTC";
             this.tabDTC.UseVisualStyleBackColor = true;
             // 
             // btnSetDTC
             // 
-            this.btnSetDTC.Location = new System.Drawing.Point(251, 3);
+            this.btnSetDTC.Location = new System.Drawing.Point(170, 3);
             this.btnSetDTC.Name = "btnSetDTC";
             this.btnSetDTC.Size = new System.Drawing.Size(75, 23);
             this.btnSetDTC.TabIndex = 10;
@@ -1169,24 +1167,14 @@
             this.btnSetDTC.UseVisualStyleBackColor = true;
             this.btnSetDTC.Click += new System.EventHandler(this.btnSetDTC_Click);
             // 
-            // btnExportXdf
-            // 
-            this.btnExportXdf.Location = new System.Drawing.Point(170, 3);
-            this.btnExportXdf.Name = "btnExportXdf";
-            this.btnExportXdf.Size = new System.Drawing.Size(75, 23);
-            this.btnExportXdf.TabIndex = 9;
-            this.btnExportXdf.Text = "Export xdf";
-            this.btnExportXdf.UseVisualStyleBackColor = true;
-            this.btnExportXdf.Click += new System.EventHandler(this.btnExportXdf_Click);
-            // 
             // label14
             // 
             this.label14.AutoSize = true;
             this.label14.Location = new System.Drawing.Point(337, 8);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(118, 13);
+            this.label14.Size = new System.Drawing.Size(81, 13);
             this.label14.TabIndex = 8;
-            this.label14.Text = "GM DTC codes (BETA)";
+            this.label14.Text = "GM DTC codes";
             this.label14.Click += new System.EventHandler(this.label14_Click);
             // 
             // btnClearDTC
@@ -1221,13 +1209,13 @@
             this.dataGridDTC.Location = new System.Drawing.Point(1, 32);
             this.dataGridDTC.MultiSelect = false;
             this.dataGridDTC.Name = "dataGridDTC";
-            this.dataGridDTC.Size = new System.Drawing.Size(774, 310);
+            this.dataGridDTC.Size = new System.Drawing.Size(831, 310);
             this.dataGridDTC.TabIndex = 5;
             this.dataGridDTC.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridDTC_CellContentDoubleClick);
             // 
             // tabTableSeek
             // 
-            this.tabTableSeek.Controls.Add(this.btnSearchTableSeek);
+            this.tabTableSeek.Controls.Add(this.label16);
             this.tabTableSeek.Controls.Add(this.txtSearchTableSeek);
             this.tabTableSeek.Controls.Add(this.comboTableCategory);
             this.tabTableSeek.Controls.Add(this.label15);
@@ -1237,32 +1225,32 @@
             this.tabTableSeek.Controls.Add(this.btnClearTableSeek);
             this.tabTableSeek.Location = new System.Drawing.Point(4, 22);
             this.tabTableSeek.Name = "tabTableSeek";
-            this.tabTableSeek.Size = new System.Drawing.Size(776, 344);
+            this.tabTableSeek.Size = new System.Drawing.Size(835, 344);
             this.tabTableSeek.TabIndex = 11;
             this.tabTableSeek.Text = "Table Seek";
             this.tabTableSeek.UseVisualStyleBackColor = true;
             // 
-            // btnSearchTableSeek
+            // label16
             // 
-            this.btnSearchTableSeek.Location = new System.Drawing.Point(486, 4);
-            this.btnSearchTableSeek.Name = "btnSearchTableSeek";
-            this.btnSearchTableSeek.Size = new System.Drawing.Size(65, 22);
-            this.btnSearchTableSeek.TabIndex = 7;
-            this.btnSearchTableSeek.Text = "Search";
-            this.btnSearchTableSeek.UseVisualStyleBackColor = true;
-            this.btnSearchTableSeek.Click += new System.EventHandler(this.btnSearchTableSeek_Click);
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(3, 9);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(32, 13);
+            this.label16.TabIndex = 7;
+            this.label16.Text = "Filter:";
             // 
             // txtSearchTableSeek
             // 
-            this.txtSearchTableSeek.Location = new System.Drawing.Point(375, 5);
+            this.txtSearchTableSeek.Location = new System.Drawing.Point(41, 6);
             this.txtSearchTableSeek.Name = "txtSearchTableSeek";
             this.txtSearchTableSeek.Size = new System.Drawing.Size(105, 20);
             this.txtSearchTableSeek.TabIndex = 6;
+            this.txtSearchTableSeek.TextChanged += new System.EventHandler(this.txtSearchTableSeek_TextChanged);
             // 
             // comboTableCategory
             // 
             this.comboTableCategory.FormattingEnabled = true;
-            this.comboTableCategory.Location = new System.Drawing.Point(224, 5);
+            this.comboTableCategory.Location = new System.Drawing.Point(203, 6);
             this.comboTableCategory.Name = "comboTableCategory";
             this.comboTableCategory.Size = new System.Drawing.Size(142, 21);
             this.comboTableCategory.TabIndex = 5;
@@ -1271,7 +1259,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(168, 9);
+            this.label15.Location = new System.Drawing.Point(152, 9);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(52, 13);
             this.label15.TabIndex = 4;
@@ -1281,17 +1269,18 @@
             // 
             this.btnReadTinyTunerDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnReadTinyTunerDB.Enabled = false;
-            this.btnReadTinyTunerDB.Location = new System.Drawing.Point(608, 3);
+            this.btnReadTinyTunerDB.Location = new System.Drawing.Point(793, 3);
             this.btnReadTinyTunerDB.Name = "btnReadTinyTunerDB";
             this.btnReadTinyTunerDB.Size = new System.Drawing.Size(165, 23);
             this.btnReadTinyTunerDB.TabIndex = 3;
             this.btnReadTinyTunerDB.Text = "Read TinyTuner DB (V6 only)";
             this.btnReadTinyTunerDB.UseVisualStyleBackColor = true;
+            this.btnReadTinyTunerDB.Visible = false;
             this.btnReadTinyTunerDB.Click += new System.EventHandler(this.btnReadTinyTunerDB_Click);
             // 
             // btnEditTable
             // 
-            this.btnEditTable.Location = new System.Drawing.Point(84, 3);
+            this.btnEditTable.Location = new System.Drawing.Point(566, 5);
             this.btnEditTable.Name = "btnEditTable";
             this.btnEditTable.Size = new System.Drawing.Size(75, 23);
             this.btnEditTable.TabIndex = 2;
@@ -1309,19 +1298,41 @@
             this.dataGridTableSeek.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridTableSeek.Location = new System.Drawing.Point(-2, 32);
             this.dataGridTableSeek.Name = "dataGridTableSeek";
-            this.dataGridTableSeek.Size = new System.Drawing.Size(775, 312);
+            this.dataGridTableSeek.Size = new System.Drawing.Size(834, 312);
             this.dataGridTableSeek.TabIndex = 1;
             this.dataGridTableSeek.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridTableSeek_CellContentClick);
+            this.dataGridTableSeek.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridTableSeek_CellContentDoubleClick);
             // 
             // btnClearTableSeek
             // 
-            this.btnClearTableSeek.Location = new System.Drawing.Point(3, 3);
+            this.btnClearTableSeek.Location = new System.Drawing.Point(485, 5);
             this.btnClearTableSeek.Name = "btnClearTableSeek";
             this.btnClearTableSeek.Size = new System.Drawing.Size(75, 23);
             this.btnClearTableSeek.TabIndex = 0;
             this.btnClearTableSeek.Text = "Clear";
             this.btnClearTableSeek.UseVisualStyleBackColor = true;
             this.btnClearTableSeek.Click += new System.EventHandler(this.btnClearTableSeek_Click);
+            // 
+            // label13
+            // 
+            this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(714, 36);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(73, 13);
+            this.label13.TabIndex = 120;
+            this.label13.Text = "Max variation:";
+            // 
+            // btnCrossTableSearch
+            // 
+            this.btnCrossTableSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCrossTableSearch.Location = new System.Drawing.Point(717, 57);
+            this.btnCrossTableSearch.Name = "btnCrossTableSearch";
+            this.btnCrossTableSearch.Size = new System.Drawing.Size(116, 23);
+            this.btnCrossTableSearch.TabIndex = 118;
+            this.btnCrossTableSearch.Text = "Cross table search";
+            this.btnCrossTableSearch.UseVisualStyleBackColor = true;
+            this.btnCrossTableSearch.Click += new System.EventHandler(this.btnCrossTableSearch_Click);
             // 
             // chkExtra
             // 
@@ -1406,7 +1417,7 @@
             this.tabFunction.Location = new System.Drawing.Point(2, 60);
             this.tabFunction.Name = "tabFunction";
             this.tabFunction.SelectedIndex = 0;
-            this.tabFunction.Size = new System.Drawing.Size(787, 129);
+            this.tabFunction.Size = new System.Drawing.Size(846, 129);
             this.tabFunction.TabIndex = 100;
             // 
             // tabApply
@@ -1421,7 +1432,7 @@
             this.tabApply.Location = new System.Drawing.Point(4, 22);
             this.tabApply.Name = "tabApply";
             this.tabApply.Padding = new System.Windows.Forms.Padding(3);
-            this.tabApply.Size = new System.Drawing.Size(779, 103);
+            this.tabApply.Size = new System.Drawing.Size(838, 103);
             this.tabApply.TabIndex = 1;
             this.tabApply.Text = "Modify bin";
             this.tabApply.UseVisualStyleBackColor = true;
@@ -1508,7 +1519,7 @@
             this.tabFileinfo.Controls.Add(this.chkSize);
             this.tabFileinfo.Location = new System.Drawing.Point(4, 22);
             this.tabFileinfo.Name = "tabFileinfo";
-            this.tabFileinfo.Size = new System.Drawing.Size(779, 103);
+            this.tabFileinfo.Size = new System.Drawing.Size(838, 103);
             this.tabFileinfo.TabIndex = 2;
             this.tabFileinfo.Text = "File info";
             this.tabFileinfo.UseVisualStyleBackColor = true;
@@ -1573,7 +1584,7 @@
             // btnCustomSearchNext
             // 
             this.btnCustomSearchNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCustomSearchNext.Location = new System.Drawing.Point(691, 77);
+            this.btnCustomSearchNext.Location = new System.Drawing.Point(680, 78);
             this.btnCustomSearchNext.Name = "btnCustomSearchNext";
             this.btnCustomSearchNext.Size = new System.Drawing.Size(75, 23);
             this.btnCustomSearchNext.TabIndex = 184;
@@ -1584,7 +1595,7 @@
             // btnCustomSearch
             // 
             this.btnCustomSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCustomSearch.Location = new System.Drawing.Point(691, 53);
+            this.btnCustomSearch.Location = new System.Drawing.Point(680, 54);
             this.btnCustomSearch.Name = "btnCustomSearch";
             this.btnCustomSearch.Size = new System.Drawing.Size(75, 23);
             this.btnCustomSearch.TabIndex = 183;
@@ -1623,7 +1634,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCustomSearchString.Location = new System.Drawing.Point(492, 31);
             this.txtCustomSearchString.Name = "txtCustomSearchString";
-            this.txtCustomSearchString.Size = new System.Drawing.Size(274, 20);
+            this.txtCustomSearchString.Size = new System.Drawing.Size(341, 20);
             this.txtCustomSearchString.TabIndex = 179;
             // 
             // chkSearchTables
@@ -1654,7 +1665,7 @@
             this.tabCreate.Location = new System.Drawing.Point(4, 22);
             this.tabCreate.Name = "tabCreate";
             this.tabCreate.Padding = new System.Windows.Forms.Padding(3);
-            this.tabCreate.Size = new System.Drawing.Size(779, 103);
+            this.tabCreate.Size = new System.Drawing.Size(838, 103);
             this.tabCreate.TabIndex = 0;
             this.tabCreate.Text = "Create Patch";
             this.tabCreate.UseVisualStyleBackColor = true;
@@ -1670,20 +1681,10 @@
             this.chkForceCompare.UseVisualStyleBackColor = true;
             this.chkForceCompare.CheckedChanged += new System.EventHandler(this.chkForceCompare_CheckedChanged);
             // 
-            // label13
-            // 
-            this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(653, 33);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(73, 13);
-            this.label13.TabIndex = 120;
-            this.label13.Text = "Max variation:";
-            // 
             // numCrossVariation
             // 
             this.numCrossVariation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numCrossVariation.Location = new System.Drawing.Point(730, 29);
+            this.numCrossVariation.Location = new System.Drawing.Point(796, 32);
             this.numCrossVariation.Name = "numCrossVariation";
             this.numCrossVariation.Size = new System.Drawing.Size(36, 20);
             this.numCrossVariation.TabIndex = 119;
@@ -1692,17 +1693,6 @@
             0,
             0,
             0});
-            // 
-            // btnCrossTableSearch
-            // 
-            this.btnCrossTableSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCrossTableSearch.Location = new System.Drawing.Point(655, 52);
-            this.btnCrossTableSearch.Name = "btnCrossTableSearch";
-            this.btnCrossTableSearch.Size = new System.Drawing.Size(116, 23);
-            this.btnCrossTableSearch.TabIndex = 118;
-            this.btnCrossTableSearch.Text = "Cross table search";
-            this.btnCrossTableSearch.UseVisualStyleBackColor = true;
-            this.btnCrossTableSearch.Click += new System.EventHandler(this.btnCrossTableSearch_Click);
             // 
             // checkAppendPatch
             // 
@@ -1741,7 +1731,7 @@
             this.tabExtract.Controls.Add(this.txtExtractRange);
             this.tabExtract.Location = new System.Drawing.Point(4, 22);
             this.tabExtract.Name = "tabExtract";
-            this.tabExtract.Size = new System.Drawing.Size(779, 103);
+            this.tabExtract.Size = new System.Drawing.Size(838, 103);
             this.tabExtract.TabIndex = 3;
             this.tabExtract.Text = "Extract table";
             this.tabExtract.UseVisualStyleBackColor = true;
@@ -1765,7 +1755,7 @@
             // btnExtract
             // 
             this.btnExtract.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExtract.Location = new System.Drawing.Point(637, 9);
+            this.btnExtract.Location = new System.Drawing.Point(764, 9);
             this.btnExtract.Name = "btnExtract";
             this.btnExtract.Size = new System.Drawing.Size(66, 23);
             this.btnExtract.TabIndex = 154;
@@ -1815,7 +1805,7 @@
             this.tabExtractSegments.Controls.Add(this.btnExtractSegments);
             this.tabExtractSegments.Location = new System.Drawing.Point(4, 22);
             this.tabExtractSegments.Name = "tabExtractSegments";
-            this.tabExtractSegments.Size = new System.Drawing.Size(779, 103);
+            this.tabExtractSegments.Size = new System.Drawing.Size(838, 103);
             this.tabExtractSegments.TabIndex = 4;
             this.tabExtractSegments.Text = "Extract segments";
             this.tabExtractSegments.UseVisualStyleBackColor = true;
@@ -1879,7 +1869,7 @@
             // btnExtractSegmentsFolder
             // 
             this.btnExtractSegmentsFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExtractSegmentsFolder.Location = new System.Drawing.Point(603, 8);
+            this.btnExtractSegmentsFolder.Location = new System.Drawing.Point(654, 9);
             this.btnExtractSegmentsFolder.Name = "btnExtractSegmentsFolder";
             this.btnExtractSegmentsFolder.Size = new System.Drawing.Size(171, 26);
             this.btnExtractSegmentsFolder.TabIndex = 505;
@@ -1893,7 +1883,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSegmentDescription.Location = new System.Drawing.Point(84, 45);
             this.txtSegmentDescription.Name = "txtSegmentDescription";
-            this.txtSegmentDescription.Size = new System.Drawing.Size(514, 20);
+            this.txtSegmentDescription.Size = new System.Drawing.Size(564, 20);
             this.txtSegmentDescription.TabIndex = 500;
             // 
             // label8
@@ -1908,7 +1898,7 @@
             // btnExtractSegments
             // 
             this.btnExtractSegments.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExtractSegments.Location = new System.Drawing.Point(604, 41);
+            this.btnExtractSegments.Location = new System.Drawing.Point(654, 41);
             this.btnExtractSegments.Name = "btnExtractSegments";
             this.btnExtractSegments.Size = new System.Drawing.Size(171, 26);
             this.btnExtractSegments.TabIndex = 501;
@@ -1924,7 +1914,7 @@
             this.tabExportXDF.Controls.Add(this.chkExportXdfDTC);
             this.tabExportXDF.Location = new System.Drawing.Point(4, 22);
             this.tabExportXDF.Name = "tabExportXDF";
-            this.tabExportXDF.Size = new System.Drawing.Size(779, 103);
+            this.tabExportXDF.Size = new System.Drawing.Size(838, 103);
             this.tabExportXDF.TabIndex = 5;
             this.tabExportXDF.Text = "Export XDF";
             this.tabExportXDF.UseVisualStyleBackColor = true;
@@ -1980,7 +1970,7 @@
             this.toolStripMenuItem2});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(784, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(843, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuMain";
             // 
@@ -2082,7 +2072,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 561);
+            this.ClientSize = new System.Drawing.Size(843, 561);
             this.Controls.Add(this.tabFunction);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.chkAutodetect);
@@ -2293,7 +2283,6 @@
         private System.Windows.Forms.Button btnSaveCsvDTC;
         private System.Windows.Forms.DataGridView dataGridDTC;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Button btnExportXdf;
         private System.Windows.Forms.Button btnSetDTC;
         private System.Windows.Forms.ToolStripMenuItem dTCSearchToolStripMenuItem;
         private System.Windows.Forms.Button btnShowTableData;
@@ -2315,8 +2304,8 @@
         private System.Windows.Forms.ComboBox comboTableCategory;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.CheckBox chkForceCompare;
-        private System.Windows.Forms.Button btnSearchTableSeek;
         private System.Windows.Forms.TextBox txtSearchTableSeek;
         private System.Windows.Forms.Button btnTuner;
+        private System.Windows.Forms.Label label16;
     }
 }

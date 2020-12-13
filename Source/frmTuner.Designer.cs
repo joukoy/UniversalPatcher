@@ -35,7 +35,6 @@ namespace UniversalPatcher
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.btnEditTable = new System.Windows.Forms.Button();
             this.txtResult = new System.Windows.Forms.RichTextBox();
-            this.btnSearchTableSeek = new System.Windows.Forms.Button();
             this.txtSearchTableSeek = new System.Windows.Forms.TextBox();
             this.comboTableCategory = new System.Windows.Forms.ComboBox();
             this.label15 = new System.Windows.Forms.Label();
@@ -50,13 +49,18 @@ namespace UniversalPatcher
             this.importTableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importXDFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importTinyTunerDBV6OnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importCSVexperimentalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportXDFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label1 = new System.Windows.Forms.Label();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showTablesWithEmptyAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -74,11 +78,10 @@ namespace UniversalPatcher
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
-
             // 
             // btnEditTable
             // 
-            this.btnEditTable.Location = new System.Drawing.Point(12, 27);
+            this.btnEditTable.Location = new System.Drawing.Point(451, 28);
             this.btnEditTable.Name = "btnEditTable";
             this.btnEditTable.Size = new System.Drawing.Size(120, 23);
             this.btnEditTable.TabIndex = 6;
@@ -90,33 +93,25 @@ namespace UniversalPatcher
             // 
             this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtResult.HideSelection = false;
             this.txtResult.Location = new System.Drawing.Point(2, 414);
             this.txtResult.Name = "txtResult";
             this.txtResult.Size = new System.Drawing.Size(861, 79);
             this.txtResult.TabIndex = 7;
             this.txtResult.Text = "";
             // 
-            // btnSearchTableSeek
-            // 
-            this.btnSearchTableSeek.Location = new System.Drawing.Point(443, 27);
-            this.btnSearchTableSeek.Name = "btnSearchTableSeek";
-            this.btnSearchTableSeek.Size = new System.Drawing.Size(65, 22);
-            this.btnSearchTableSeek.TabIndex = 15;
-            this.btnSearchTableSeek.Text = "Search";
-            this.btnSearchTableSeek.UseVisualStyleBackColor = true;
-            this.btnSearchTableSeek.Click += new System.EventHandler(this.btnSearchTableSeek_Click);
-            // 
             // txtSearchTableSeek
             // 
-            this.txtSearchTableSeek.Location = new System.Drawing.Point(342, 29);
+            this.txtSearchTableSeek.Location = new System.Drawing.Point(108, 31);
             this.txtSearchTableSeek.Name = "txtSearchTableSeek";
-            this.txtSearchTableSeek.Size = new System.Drawing.Size(96, 20);
+            this.txtSearchTableSeek.Size = new System.Drawing.Size(131, 20);
             this.txtSearchTableSeek.TabIndex = 14;
+            this.txtSearchTableSeek.TextChanged += new System.EventHandler(this.txtSearchTableSeek_TextChanged);
             // 
             // comboTableCategory
             // 
             this.comboTableCategory.FormattingEnabled = true;
-            this.comboTableCategory.Location = new System.Drawing.Point(191, 29);
+            this.comboTableCategory.Location = new System.Drawing.Point(303, 29);
             this.comboTableCategory.Name = "comboTableCategory";
             this.comboTableCategory.Size = new System.Drawing.Size(142, 21);
             this.comboTableCategory.TabIndex = 13;
@@ -125,7 +120,7 @@ namespace UniversalPatcher
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(135, 33);
+            this.label15.Location = new System.Drawing.Point(245, 34);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(52, 13);
             this.label15.TabIndex = 12;
@@ -136,7 +131,8 @@ namespace UniversalPatcher
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.importToolStripMenuItem,
-            this.exportToolStripMenuItem});
+            this.exportToolStripMenuItem,
+            this.settingsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(862, 24);
@@ -189,7 +185,8 @@ namespace UniversalPatcher
             this.importDTCToolStripMenuItem,
             this.importTableSeekToolStripMenuItem,
             this.importXDFToolStripMenuItem,
-            this.importTinyTunerDBV6OnlyToolStripMenuItem});
+            this.importTinyTunerDBV6OnlyToolStripMenuItem,
+            this.importCSVexperimentalToolStripMenuItem});
             this.importToolStripMenuItem.Name = "importToolStripMenuItem";
             this.importToolStripMenuItem.Size = new System.Drawing.Size(55, 20);
             this.importToolStripMenuItem.Text = "Import";
@@ -221,6 +218,38 @@ namespace UniversalPatcher
             this.importTinyTunerDBV6OnlyToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.importTinyTunerDBV6OnlyToolStripMenuItem.Text = "Import TinyTuner DB (V6 only)";
             this.importTinyTunerDBV6OnlyToolStripMenuItem.Click += new System.EventHandler(this.importTinyTunerDBV6OnlyToolStripMenuItem_Click);
+            // 
+            // importCSVexperimentalToolStripMenuItem
+            // 
+            this.importCSVexperimentalToolStripMenuItem.Enabled = false;
+            this.importCSVexperimentalToolStripMenuItem.Name = "importCSVexperimentalToolStripMenuItem";
+            this.importCSVexperimentalToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+            this.importCSVexperimentalToolStripMenuItem.Text = "Import CSV (experimental)";
+            this.importCSVexperimentalToolStripMenuItem.Visible = false;
+            this.importCSVexperimentalToolStripMenuItem.Click += new System.EventHandler(this.importCSVexperimentalToolStripMenuItem_Click);
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exportCSVToolStripMenuItem,
+            this.exportXDFToolStripMenuItem});
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
+            this.exportToolStripMenuItem.Text = "Export";
+            // 
+            // exportCSVToolStripMenuItem
+            // 
+            this.exportCSVToolStripMenuItem.Name = "exportCSVToolStripMenuItem";
+            this.exportCSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportCSVToolStripMenuItem.Text = "Export CSV";
+            this.exportCSVToolStripMenuItem.Click += new System.EventHandler(this.exportCsvToolStripMenuItem_Click);
+            // 
+            // exportXDFToolStripMenuItem
+            // 
+            this.exportXDFToolStripMenuItem.Name = "exportXDFToolStripMenuItem";
+            this.exportXDFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportXDFToolStripMenuItem.Text = "Export XDF";
+            this.exportXDFToolStripMenuItem.Click += new System.EventHandler(this.exportXDFToolStripMenuItem_Click);
             // 
             // contextMenuStrip1
             // 
@@ -260,27 +289,36 @@ namespace UniversalPatcher
             this.editTableToolStripMenuItem.Text = "Edit table";
             this.editTableToolStripMenuItem.Click += new System.EventHandler(this.editTableToolStripMenuItem_Click);
             // 
-            // exportToolStripMenuItem
+            // label1
             // 
-            this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exportCSVToolStripMenuItem});
-            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
-            this.exportToolStripMenuItem.Text = "Export";
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 33);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(90, 13);
+            this.label1.TabIndex = 17;
+            this.label1.Text = "Filter TableName:";
             // 
-            // exportCSVToolStripMenuItem
+            // settingsToolStripMenuItem
             // 
-            this.exportCSVToolStripMenuItem.Name = "exportCSVToolStripMenuItem";
-            this.exportCSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.exportCSVToolStripMenuItem.Text = "Export CSV";
-            this.exportCSVToolStripMenuItem.Click += new System.EventHandler(this.exportCsvToolStripMenuItem_Click);
+            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showTablesWithEmptyAddressToolStripMenuItem});
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            // 
+            // showTablesWithEmptyAddressToolStripMenuItem
+            // 
+            this.showTablesWithEmptyAddressToolStripMenuItem.Name = "showTablesWithEmptyAddressToolStripMenuItem";
+            this.showTablesWithEmptyAddressToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.showTablesWithEmptyAddressToolStripMenuItem.Text = "Show tables with empty address";
+            this.showTablesWithEmptyAddressToolStripMenuItem.Click += new System.EventHandler(this.showTablesWithEmptyAddressToolStripMenuItem_Click);
             // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(862, 492);
-            this.Controls.Add(this.btnSearchTableSeek);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtSearchTableSeek);
             this.Controls.Add(this.comboTableCategory);
             this.Controls.Add(this.label15);
@@ -308,7 +346,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button btnEditTable;
         private System.Windows.Forms.RichTextBox txtResult;
-        private System.Windows.Forms.Button btnSearchTableSeek;
         private System.Windows.Forms.TextBox txtSearchTableSeek;
         private System.Windows.Forms.ComboBox comboTableCategory;
         private System.Windows.Forms.Label label15;
@@ -330,5 +367,10 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem editTableToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportCSVToolStripMenuItem;
+        private ToolStripMenuItem importCSVexperimentalToolStripMenuItem;
+        private ToolStripMenuItem exportXDFToolStripMenuItem;
+        private Label label1;
+        private ToolStripMenuItem settingsToolStripMenuItem;
+        private ToolStripMenuItem showTablesWithEmptyAddressToolStripMenuItem;
     }
 }

@@ -38,7 +38,7 @@ namespace UniversalPatcher
 
         public byte[] buf;
         public string FileName;
-        public BinFile[] binfile;
+        public SegmentAddressData[] segmentAddressDatas;
         public SegmentInfo[] segmentinfos;
         public uint fsize;
         public string OS;
@@ -73,12 +73,12 @@ namespace UniversalPatcher
         }
         public void GetSegmentAddresses()
         {
-            binfile = new BinFile[Segments.Count];
+            segmentAddressDatas = new SegmentAddressData[Segments.Count];
             for (int i = 0; i < Segments.Count; i++)
             {
                 SegmentConfig S = Segments[i];
                 List<Block> B = new List<Block>();
-                binfile[i].ExcludeBlocks = B;
+                segmentAddressDatas[i].ExcludeBlocks = B;
                 if (S.Eeprom)
                 {
                     //Special case for GM eeprom segment
@@ -86,7 +86,7 @@ namespace UniversalPatcher
                     eeblock.Start = 0x4000;
                     eeblock.End = 0x7fff;
                     B.Add(eeblock);
-                    binfile[i].SegmentBlocks = B;
+                    segmentAddressDatas[i].SegmentBlocks = B;
                 }
                 else if (S.SearchAddresses != null)
                 {
@@ -97,30 +97,30 @@ namespace UniversalPatcher
                 {
                     if (!ParseSegmentAddresses(S.Addresses, S, out B))
                         return;
-                    binfile[i].SegmentBlocks = B;
+                    segmentAddressDatas[i].SegmentBlocks = B;
                 }
                 if (S.SwapAddress != null && S.SwapAddress.Length > 1)
                 { 
                     if (!ParseSegmentAddresses(S.SwapAddress, S, out B))
                         return;
-                    binfile[i].SwapBlocks = B;
+                    segmentAddressDatas[i].SwapBlocks = B;
                 }
                 if (!ParseSegmentAddresses(S.CS1Blocks, S, out B))
                     return;
-                binfile[i].CS1Blocks = B;
+                segmentAddressDatas[i].CS1Blocks = B;
                 if (!ParseSegmentAddresses(S.CS2Blocks, S, out B))
                     return;
-                binfile[i].CS2Blocks = B;
-                binfile[i].CS1Address = ParseAddress(S.CS1Address, i);
-                binfile[i].CS2Address = ParseAddress(S.CS2Address,i);
+                segmentAddressDatas[i].CS2Blocks = B;
+                segmentAddressDatas[i].CS1Address = ParseAddress(S.CS1Address, i);
+                segmentAddressDatas[i].CS2Address = ParseAddress(S.CS2Address,i);
                 if (S.CheckWords != null && S.CheckWords != "")
-                    FindCheckwordData(buf, S, ref binfile[i]);
+                    FindCheckwordData(buf, S, ref segmentAddressDatas[i]);
 
-                if (binfile[i].PNaddr.Bytes == 0)  //if not searched
-                    binfile[i].PNaddr = ParseAddress(S.PNAddr, i);
-                binfile[i].VerAddr = ParseAddress(S.VerAddr,i);
-                binfile[i].SegNrAddr = ParseAddress(S.SegNrAddr, i);
-                binfile[i].ExtraInfo = ParseExtraInfo(S.ExtraInfo, i);
+                if (segmentAddressDatas[i].PNaddr.Bytes == 0)  //if not searched
+                    segmentAddressDatas[i].PNaddr = ParseAddress(S.PNAddr, i);
+                segmentAddressDatas[i].VerAddr = ParseAddress(S.VerAddr,i);
+                segmentAddressDatas[i].SegNrAddr = ParseAddress(S.SegNrAddr, i);
+                segmentAddressDatas[i].ExtraInfo = ParseExtraInfo(S.ExtraInfo, i);
             }
         }
         public void GetInfo()
@@ -140,12 +140,12 @@ namespace UniversalPatcher
                 uint SSize = 0;
                 if (S.SwapAddress != null && S.SwapAddress.Length > 1)
                 { 
-                    for (int s = 0; s < binfile[i].SwapBlocks.Count; s++)
+                    for (int s = 0; s < segmentAddressDatas[i].SwapBlocks.Count; s++)
                     {
                         if (s > 0)
                             tmp += ", ";
-                        tmp += binfile[i].SwapBlocks[s].Start.ToString("X4") + " - " + binfile[i].SwapBlocks[s].End.ToString("X4");
-                        SSize += binfile[i].SwapBlocks[s].End - binfile[i].SwapBlocks[s].Start + 1;
+                        tmp += segmentAddressDatas[i].SwapBlocks[s].Start.ToString("X4") + " - " + segmentAddressDatas[i].SwapBlocks[s].End.ToString("X4");
+                        SSize += segmentAddressDatas[i].SwapBlocks[s].End - segmentAddressDatas[i].SwapBlocks[s].Start + 1;
                     }
                     segmentinfos[i].SwapSize = SSize.ToString("X");
                     segmentinfos[i].SwapAddress = tmp;
@@ -160,16 +160,16 @@ namespace UniversalPatcher
                 {
                     tmp = "";
                     SSize = 0;
-                    for (int s = 0; s < binfile[i].SegmentBlocks.Count; s++)
+                    for (int s = 0; s < segmentAddressDatas[i].SegmentBlocks.Count; s++)
                     {
                         if (s > 0)
                             tmp += ", ";
-                        tmp += binfile[i].SegmentBlocks[s].Start.ToString("X4") + " - " + binfile[i].SegmentBlocks[s].End.ToString("X4");
-                        SSize += binfile[i].SegmentBlocks[s].End - binfile[i].SegmentBlocks[s].Start + 1;
+                        tmp += segmentAddressDatas[i].SegmentBlocks[s].Start.ToString("X4") + " - " + segmentAddressDatas[i].SegmentBlocks[s].End.ToString("X4");
+                        SSize += segmentAddressDatas[i].SegmentBlocks[s].End - segmentAddressDatas[i].SegmentBlocks[s].Start + 1;
                     }
                     segmentinfos[i].Size = SSize.ToString("X");
                     segmentinfos[i].Address = tmp;
-                    segmentinfos[i].PN = ReadInfo(binfile[i].PNaddr);
+                    segmentinfos[i].PN = ReadInfo(segmentAddressDatas[i].PNaddr);
                     if (S.Name == "OS")
                     {
                         OS = segmentinfos[i].PN;
@@ -179,16 +179,16 @@ namespace UniversalPatcher
                     {
                         diagSegment = i;
                     }
-                    segmentinfos[i].Ver = ReadInfo(binfile[i].VerAddr);
-                    segmentinfos[i].SegNr = ReadInfo(binfile[i].SegNrAddr);
-                    if (binfile[i].ExtraInfo != null && binfile[i].ExtraInfo.Count > 0)
+                    segmentinfos[i].Ver = ReadInfo(segmentAddressDatas[i].VerAddr);
+                    segmentinfos[i].SegNr = ReadInfo(segmentAddressDatas[i].SegNrAddr);
+                    if (segmentAddressDatas[i].ExtraInfo != null && segmentAddressDatas[i].ExtraInfo.Count > 0)
                     {
                         string ExtraI = "";
-                        for (int e = 0; e < binfile[i].ExtraInfo.Count; e++)
+                        for (int e = 0; e < segmentAddressDatas[i].ExtraInfo.Count; e++)
                         {
                             if (e > 0)
                                 ExtraI += Environment.NewLine;
-                            ExtraI += " " + binfile[i].ExtraInfo[e].Name + ": " + ReadInfo(binfile[i].ExtraInfo[e]);
+                            ExtraI += " " + segmentAddressDatas[i].ExtraInfo[e].Name + ": " + ReadInfo(segmentAddressDatas[i].ExtraInfo[e]);
                         }
                         segmentinfos[i].ExtraInfo = ExtraI;
                     }
@@ -196,7 +196,7 @@ namespace UniversalPatcher
                     if (S.CS1Method != CSMethod_None)
                     {
                         string HexLength;
-                        if (binfile[i].CS1Address.Bytes == 0)
+                        if (segmentAddressDatas[i].CS1Address.Bytes == 0)
                         {
                             HexLength = "X4";
                             if (S.CS1Method == CSMethod_crc32 || S.CS1Method == CSMethod_Dwordsum)
@@ -204,22 +204,22 @@ namespace UniversalPatcher
                         }
                         else
                         { 
-                            HexLength = "X" + (binfile[i].CS1Address.Bytes * 2).ToString();
+                            HexLength = "X" + (segmentAddressDatas[i].CS1Address.Bytes * 2).ToString();
                         }
-                        uint CS1Calc = CalculateChecksum(buf, binfile[i].CS1Address, binfile[i].CS1Blocks, binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, binfile[i].CS1Address.Bytes, S.CS1SwapBytes);
+                        uint CS1Calc = CalculateChecksum(buf, segmentAddressDatas[i].CS1Address, segmentAddressDatas[i].CS1Blocks, segmentAddressDatas[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, segmentAddressDatas[i].CS1Address.Bytes, S.CS1SwapBytes);
                         segmentinfos[i].CS1Calc = CS1Calc.ToString(HexLength);
                         if (S.CVN == 1)
                         {
                             //segmentinfos[i].cvn = CS1Calc.ToString("X8");
                             segmentinfos[i].cvn = CS1Calc.ToString(HexLength);
                         }
-                        if (binfile[i].CS1Address.Address == uint.MaxValue)
+                        if (segmentAddressDatas[i].CS1Address.Address == uint.MaxValue)
                         {
                             segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true).ToString();
                         }
                         else
                         {
-                            segmentinfos[i].CS1 = ReadInfo(binfile[i].CS1Address);
+                            segmentinfos[i].CS1 = ReadInfo(segmentAddressDatas[i].CS1Address);
                             if (segmentinfos[i].CS1 == segmentinfos[i].CS1Calc)
                             { 
                                 if (S.CVN == 1)
@@ -238,7 +238,7 @@ namespace UniversalPatcher
                     if (S.CS2Method != CSMethod_None)
                     {
                         string HexLength;
-                        if (binfile[i].CS2Address.Bytes == 0)
+                        if (segmentAddressDatas[i].CS2Address.Bytes == 0)
                         {
                             HexLength = "X4";
                             if (S.CS2Method == CSMethod_crc32 || S.CS2Method == CSMethod_Dwordsum)
@@ -246,9 +246,9 @@ namespace UniversalPatcher
                         }
                         else
                         {
-                            HexLength = "X" + (binfile[i].CS2Address.Bytes * 2).ToString();
+                            HexLength = "X" + (segmentAddressDatas[i].CS2Address.Bytes * 2).ToString();
                         }
-                        uint CS2Calc = CalculateChecksum(buf, binfile[i].CS2Address, binfile[i].CS2Blocks, binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, binfile[i].CS2Address.Bytes, S.CS2SwapBytes);
+                        uint CS2Calc = CalculateChecksum(buf, segmentAddressDatas[i].CS2Address, segmentAddressDatas[i].CS2Blocks, segmentAddressDatas[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, segmentAddressDatas[i].CS2Address.Bytes, S.CS2SwapBytes);
                         segmentinfos[i].CS2Calc = CS2Calc.ToString(HexLength);
                         if (S.CVN == 2)
                         {
@@ -256,13 +256,13 @@ namespace UniversalPatcher
                             segmentinfos[i].cvn = CS2Calc.ToString(HexLength);
                         }
 
-                        if (binfile[i].CS2Address.Address == uint.MaxValue)
+                        if (segmentAddressDatas[i].CS2Address.Address == uint.MaxValue)
                         {
                             segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true).ToString();
                         }
                         else
                         {
-                            segmentinfos[i].CS2 = ReadInfo(binfile[i].CS2Address);
+                            segmentinfos[i].CS2 = ReadInfo(segmentAddressDatas[i].CS2Address);
                             if (segmentinfos[i].CS2 == segmentinfos[i].CS2Calc)
                             {
                                 if (S.CVN == 2)
@@ -322,7 +322,7 @@ namespace UniversalPatcher
                 string SearchNot = ForFrom[2].ToLower();
 
                 List<Block> Blocks;
-                binfile[SegNr].SegmentBlocks = new List<Block>();
+                segmentAddressDatas[SegNr].SegmentBlocks = new List<Block>();
                 if (!ParseSegmentAddresses(S.SearchAddresses, S, out Blocks))
                     return false;
                 foreach (Block B in Blocks)
@@ -335,28 +335,28 @@ namespace UniversalPatcher
                         if (Bytes == 8)
                             if (BEToUint64(buf, Addr) == SearchFor)
                             {
-                                binfile[SegNr].SegmentBlocks.Add(B);
+                                segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
                         if (Bytes == 4)
                             if (BEToUint32(buf, Addr) == SearchFor)
                             {
-                                binfile[SegNr].SegmentBlocks.Add(B);
+                                segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
                         if (Bytes == 2)
                             if (BEToUint16(buf, Addr) == SearchFor)
                             {
-                                binfile[SegNr].SegmentBlocks.Add(B);
+                                segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
                         if (Bytes == 1)
                             if (buf[Addr] == SearchFor)
                             {
-                                binfile[SegNr].SegmentBlocks.Add(B);
+                                segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
@@ -366,28 +366,28 @@ namespace UniversalPatcher
                         if (Bytes == 8)
                             if (BEToUint64(buf, Addr) != SearchFor)
                             {
-                                binfile[SegNr].SegmentBlocks.Add(B);
+                                segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
                         if (Bytes == 4)
                             if (BEToUint32(buf, Addr) != SearchFor)
                             {
-                                binfile[SegNr].SegmentBlocks.Add(B);
+                                segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
                         if (Bytes == 2)
                             if (BEToUint16(buf, Addr) != SearchFor)
                             {
-                                binfile[SegNr].SegmentBlocks.Add(B);
+                                segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
                         if (Bytes == 1)
                             if (buf[Addr] != SearchFor)
                             {
-                                binfile[SegNr].SegmentBlocks.Add(B);
+                                segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
@@ -398,7 +398,7 @@ namespace UniversalPatcher
             return false;
         }
 
-        public bool FindCheckwordData(byte[] buf, SegmentConfig S, ref BinFile binfile)
+        public bool FindCheckwordData(byte[] buf, SegmentConfig S, ref SegmentAddressData binfile)
         {
             Debug.WriteLine("Checkwords: " + S.CheckWords);
             if (S.CheckWords == null)
@@ -735,28 +735,28 @@ namespace UniversalPatcher
         {
             uint BufSize = (uint)buf.Length;
             uint GMOS = 0;
-            binfile[SegNr].PNaddr.Address = 0;
+            segmentAddressDatas[SegNr].PNaddr.Address = 0;
             AddressData AD = new AddressData();
 
             for (int i = 2; i < 20; i++)
             {
                 if (BEToUint16(buf, (uint)(BufSize - i)) == 0xA55A) //Read OS version from end of file, before bytes A5 5A
                 {
-                    binfile[SegNr].PNaddr.Address = (uint)(BufSize - (i + 4));
-                    Debug.WriteLine("V6: Found PN address from: " + binfile[SegNr].PNaddr.Address.ToString("X"));
+                    segmentAddressDatas[SegNr].PNaddr.Address = (uint)(BufSize - (i + 4));
+                    Debug.WriteLine("V6: Found PN address from: " + segmentAddressDatas[SegNr].PNaddr.Address.ToString("X"));
                 }
             }
-            if (binfile[SegNr].PNaddr.Address == 0)
+            if (segmentAddressDatas[SegNr].PNaddr.Address == 0)
                 throw new Exception("OS id missing");
-            GMOS = BEToUint32(buf, binfile[SegNr].PNaddr.Address);
-            binfile[SegNr].PNaddr.Bytes = 4;
-            binfile[SegNr].PNaddr.Type = TypeInt;
+            GMOS = BEToUint32(buf, segmentAddressDatas[SegNr].PNaddr.Address);
+            segmentAddressDatas[SegNr].PNaddr.Bytes = 4;
+            segmentAddressDatas[SegNr].PNaddr.Type = TypeInt;
             Block B = new Block();
-            B.Start = binfile[SegNr].PNaddr.Address;
-            B.End = binfile[SegNr].PNaddr.Address + 3;
-            if (binfile[SegNr].ExcludeBlocks == null)
-                binfile[SegNr].ExcludeBlocks = new List<Block>();
-            binfile[SegNr].ExcludeBlocks.Add(B);
+            B.Start = segmentAddressDatas[SegNr].PNaddr.Address;
+            B.End = segmentAddressDatas[SegNr].PNaddr.Address + 3;
+            if (segmentAddressDatas[SegNr].ExcludeBlocks == null)
+                segmentAddressDatas[SegNr].ExcludeBlocks = new List<Block>();
+            segmentAddressDatas[SegNr].ExcludeBlocks.Add(B);
 
             FindV6MAFAddress();
             FindV6VeTable();
@@ -918,7 +918,7 @@ namespace UniversalPatcher
                 {
                     if (Line.StartsWith("#"))
                     {
-                        AD.Address = binfile[SegNr].SegmentBlocks[(binfile[SegNr].SegmentBlocks.Count - 1)].End - AD.Address;
+                        AD.Address = segmentAddressDatas[SegNr].SegmentBlocks[(segmentAddressDatas[SegNr].SegmentBlocks.Count - 1)].End - AD.Address;
                     }
                     else
                     {
@@ -929,7 +929,7 @@ namespace UniversalPatcher
                 {
                     if (Line.StartsWith("#"))
                     {
-                        AD.Address += binfile[SegNr].SegmentBlocks[0].Start;
+                        AD.Address += segmentAddressDatas[SegNr].SegmentBlocks[0].Start;
                     }
                     if (Negative)
                         AD.Address = CWAddr.Address - AD.Address;
@@ -963,7 +963,7 @@ namespace UniversalPatcher
             {
                 throw new Exception("No + or - after Checkword! (" + AddrLine + ")");
             }
-            foreach (CheckWord CW in binfile[SegNr].Checkwords)
+            foreach (CheckWord CW in segmentAddressDatas[SegNr].Checkwords)
             {
                 if (LineParts[0] == (CW.Key))
                 {
@@ -1149,7 +1149,7 @@ namespace UniversalPatcher
 
                 if (AddrParts[1].StartsWith("#"))
                 {
-                    E.Address += binfile[SegNr].SegmentBlocks[0].Start;
+                    E.Address += segmentAddressDatas[SegNr].SegmentBlocks[0].Start;
                 }
 
                 if (AddrParts.Length > 2)
@@ -1174,9 +1174,9 @@ namespace UniversalPatcher
             string retVal = "";
             for (int s = 0; s<segmentinfos.Length; s++)
             {
-                for (int b=0; b< binfile[s].SegmentBlocks.Count; b++)
+                for (int b=0; b< segmentAddressDatas[s].SegmentBlocks.Count; b++)
                 {
-                    if (addr >= binfile[s].SegmentBlocks[b].Start && addr <= binfile[s].SegmentBlocks[b].End)
+                    if (addr >= segmentAddressDatas[s].SegmentBlocks[b].Start && addr <= segmentAddressDatas[s].SegmentBlocks[b].End)
                     {
                         retVal = segmentinfos[s].Name;
                         return retVal;
@@ -1191,9 +1191,9 @@ namespace UniversalPatcher
             int retVal = -1;
             for (int s = 0; s < segmentinfos.Length; s++)
             {
-                for (int b = 0; b < binfile[s].SegmentBlocks.Count; b++)
+                for (int b = 0; b < segmentAddressDatas[s].SegmentBlocks.Count; b++)
                 {
-                    if (addr >= binfile[s].SegmentBlocks[b].Start && addr <= binfile[s].SegmentBlocks[b].End)
+                    if (addr >= segmentAddressDatas[s].SegmentBlocks[b].Start && addr <= segmentAddressDatas[s].SegmentBlocks[b].End)
                     {
                         retVal = s;
                         return retVal;

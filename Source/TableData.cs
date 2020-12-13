@@ -32,6 +32,7 @@ namespace UniversalPatcher
         public uint id { get; set; }
         public string OS { get; set; }
         public string TableName { get; set; }
+        public string Category { get; set; }
         public uint AddrInt;
         public string Address { get; set; }
         public byte ElementSize { get; set; }
@@ -48,7 +49,6 @@ namespace UniversalPatcher
         public ushort Rows { get; set; }
         public string BitMask { get; set; }
         public bool RowMajor { get; set; }
-        public string Category { get; set; }
         public string ColumnHeaders { get; set; }
         public string RowHeaders { get; set; }
         public string TableDescription { get; set; }

@@ -73,7 +73,7 @@ namespace UniversalPatcher
                 foundTables = new List<FoundTable>();
 
                 tableCategories = new List<string>();
-                tableCategories.Add("All");
+                tableCategories.Add("_All");
                 for (int c = 0; c < PCM.segmentinfos.Length; c++)
                     tableCategories.Add("Seg-" + PCM.segmentinfos[c].Name);
                 string fileName = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + PCM.xmlFile + ".xml");
@@ -173,6 +173,8 @@ namespace UniversalPatcher
                 }
                 for (int s = 0; s < tableSeeks.Count; s++)
                 {
+                    if (tableSeeks[s].SearchStr.Length == 0)
+                        continue;   //Can't search if string is empty!
                     if (tableSeeks[s].Category != null && !tableCategories.Contains(tableSeeks[s].Category)) tableCategories.Add(tableSeeks[s].Category);
                     uint startAddr = 0;
                     uint endAddr = PCM.fsize;
@@ -201,8 +203,8 @@ namespace UniversalPatcher
                         {
                             int segNr = 0;
                             if (int.TryParse( segStrings[y], out segNr) == false) throw new Exception("Unknown segment: " + segStrings[y]);
-                            for (int b=0; b< PCM.binfile[segNr].SegmentBlocks.Count; b++)
-                                addrList.Add(PCM.binfile[segNr].SegmentBlocks[b]);
+                            for (int b=0; b< PCM.segmentAddressDatas[segNr].SegmentBlocks.Count; b++)
+                                addrList.Add(PCM.segmentAddressDatas[segNr].SegmentBlocks[b]);
                         }
                     }
                     else

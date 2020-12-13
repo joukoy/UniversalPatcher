@@ -67,7 +67,7 @@ public class upatcher
         PNAddr is segment address +4 => PNaddr = 8004
      3. Read information from file using collected addresses (SegmentInfo)     
      */
-    public struct BinFile
+    public struct SegmentAddressData
     {
         public List<Block> SegmentBlocks;
         public List<Block> SwapBlocks;
@@ -595,15 +595,23 @@ public class upatcher
         saveFileDialog.Filter = Filter;
         saveFileDialog.RestoreDirectory = true;
         saveFileDialog.Title = "Save to file";
-        saveFileDialog.FileName = defaultFileName;
-        if (Filter.Contains("PATCH"))
-            saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
-        if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-            saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
-        else if (Filter.Contains("BIN"))
-            saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
-        else if (Filter.Contains("XDF"))
-            saveFileDialog.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
+        saveFileDialog.FileName = Path.GetFileName(defaultFileName);
+        string defPath = Path.GetDirectoryName(defaultFileName);
+        if (defPath != "")
+        {
+            saveFileDialog.InitialDirectory = defPath;
+        }
+        else
+        {
+            if (Filter.Contains("PATCH"))
+                saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
+            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
+                saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
+            else if (Filter.Contains("BIN"))
+                saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
+            else if (Filter.Contains("XDF"))
+                saveFileDialog.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
+        }
 
         if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {

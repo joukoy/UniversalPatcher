@@ -43,7 +43,16 @@ namespace UniversalPatcher
                 int codeIndex = Convert.ToInt32(dataGridView1.Rows[rowindex].Cells["id"].Value);
                 frmTableEditor frmT = new frmTableEditor();
                 TableData td = tableDatas[codeIndex];
+                if (td.Address == null || td.Address == "")
+                {
+                    Logger("No address defined!");
+                    return;
+                }
 
+                if (td.OS != PCM.OS)
+                {
+                    LoggerBold("WARING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);
+                }
                 if (td.OutputType == DataType.Flag && td.BitMask != null && td.BitMask.Length > 0)
                 {
                     frmEditFlag ff = new frmEditFlag();
@@ -105,50 +114,50 @@ namespace UniversalPatcher
                         if (S.CS1Method != CSMethod_None)
                         {
                             uint CS1 = 0;
-                            uint CS1Calc = CalculateChecksum(PCM.buf, PCM.binfile[i].CS1Address, PCM.binfile[i].CS1Blocks, PCM.binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, PCM.binfile[i].CS1Address.Bytes, S.CS1SwapBytes);
-                            if (PCM.binfile[i].CS1Address.Address < uint.MaxValue)
+                            uint CS1Calc = CalculateChecksum(PCM.buf, PCM.segmentAddressDatas[i].CS1Address, PCM.segmentAddressDatas[i].CS1Blocks, PCM.segmentAddressDatas[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, PCM.segmentAddressDatas[i].CS1Address.Bytes, S.CS1SwapBytes);
+                            if (PCM.segmentAddressDatas[i].CS1Address.Address < uint.MaxValue)
                             {
-                                if (PCM.binfile[i].CS1Address.Bytes == 1)
+                                if (PCM.segmentAddressDatas[i].CS1Address.Bytes == 1)
                                 {
-                                    CS1 = PCM.buf[PCM.binfile[i].CS1Address.Address];
+                                    CS1 = PCM.buf[PCM.segmentAddressDatas[i].CS1Address.Address];
                                 }
-                                else if (PCM.binfile[i].CS1Address.Bytes == 2)
+                                else if (PCM.segmentAddressDatas[i].CS1Address.Bytes == 2)
                                 {
-                                    CS1 = BEToUint16(PCM.buf, PCM.binfile[i].CS1Address.Address);
+                                    CS1 = BEToUint16(PCM.buf, PCM.segmentAddressDatas[i].CS1Address.Address);
                                 }
-                                else if (PCM.binfile[i].CS1Address.Bytes == 4)
+                                else if (PCM.segmentAddressDatas[i].CS1Address.Bytes == 4)
                                 {
-                                    CS1 = BEToUint32(PCM.buf, PCM.binfile[i].CS1Address.Address);
+                                    CS1 = BEToUint32(PCM.buf, PCM.segmentAddressDatas[i].CS1Address.Address);
                                 }
                             }
                             if (CS1 == CS1Calc)
                                 Logger(" Checksum 1: " + CS1.ToString("X4") + " [OK]");
                             else
                             {
-                                if (PCM.binfile[i].CS1Address.Address == uint.MaxValue)
+                                if (PCM.segmentAddressDatas[i].CS1Address.Address == uint.MaxValue)
                                 {
                                     string hexdigits;
-                                    if (PCM.binfile[i].CS1Address.Bytes == 0)
+                                    if (PCM.segmentAddressDatas[i].CS1Address.Bytes == 0)
                                         hexdigits = "X4";
                                     else
-                                        hexdigits = "X" + (PCM.binfile[i].CS1Address.Bytes * 2).ToString();
+                                        hexdigits = "X" + (PCM.segmentAddressDatas[i].CS1Address.Bytes * 2).ToString();
                                     Logger(" Checksum 1: " + CS1Calc.ToString(hexdigits) + " [Not saved]");
                                 }
                                 else
                                 {
-                                    if (PCM.binfile[i].CS1Address.Bytes == 1)
-                                        PCM.buf[PCM.binfile[i].CS1Address.Address] = (byte)CS1Calc;
-                                    else if (PCM.binfile[i].CS1Address.Bytes == 2)
+                                    if (PCM.segmentAddressDatas[i].CS1Address.Bytes == 1)
+                                        PCM.buf[PCM.segmentAddressDatas[i].CS1Address.Address] = (byte)CS1Calc;
+                                    else if (PCM.segmentAddressDatas[i].CS1Address.Bytes == 2)
                                     {
-                                        PCM.buf[PCM.binfile[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF00) >> 8);
-                                        PCM.buf[PCM.binfile[i].CS1Address.Address + 1] = (byte)(CS1Calc & 0xFF);
+                                        PCM.buf[PCM.segmentAddressDatas[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF00) >> 8);
+                                        PCM.buf[PCM.segmentAddressDatas[i].CS1Address.Address + 1] = (byte)(CS1Calc & 0xFF);
                                     }
-                                    else if (PCM.binfile[i].CS1Address.Bytes == 4)
+                                    else if (PCM.segmentAddressDatas[i].CS1Address.Bytes == 4)
                                     {
-                                        PCM.buf[PCM.binfile[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF000000) >> 24);
-                                        PCM.buf[PCM.binfile[i].CS1Address.Address + 1] = (byte)((CS1Calc & 0xFF0000) >> 16);
-                                        PCM.buf[PCM.binfile[i].CS1Address.Address + 2] = (byte)((CS1Calc & 0xFF00) >> 8);
-                                        PCM.buf[PCM.binfile[i].CS1Address.Address + 3] = (byte)(CS1Calc & 0xFF);
+                                        PCM.buf[PCM.segmentAddressDatas[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF000000) >> 24);
+                                        PCM.buf[PCM.segmentAddressDatas[i].CS1Address.Address + 1] = (byte)((CS1Calc & 0xFF0000) >> 16);
+                                        PCM.buf[PCM.segmentAddressDatas[i].CS1Address.Address + 2] = (byte)((CS1Calc & 0xFF00) >> 8);
+                                        PCM.buf[PCM.segmentAddressDatas[i].CS1Address.Address + 3] = (byte)(CS1Calc & 0xFF);
 
                                     }
                                     Logger(" Checksum 1: " + CS1.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
@@ -160,50 +169,50 @@ namespace UniversalPatcher
                         if (S.CS2Method != CSMethod_None)
                         {
                             uint CS2 = 0;
-                            uint CS2Calc = CalculateChecksum(PCM.buf, PCM.binfile[i].CS2Address, PCM.binfile[i].CS2Blocks, PCM.binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, PCM.binfile[i].CS2Address.Bytes, S.CS2SwapBytes);
-                            if (PCM.binfile[i].CS2Address.Address < uint.MaxValue)
+                            uint CS2Calc = CalculateChecksum(PCM.buf, PCM.segmentAddressDatas[i].CS2Address, PCM.segmentAddressDatas[i].CS2Blocks, PCM.segmentAddressDatas[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, PCM.segmentAddressDatas[i].CS2Address.Bytes, S.CS2SwapBytes);
+                            if (PCM.segmentAddressDatas[i].CS2Address.Address < uint.MaxValue)
                             {
-                                if (PCM.binfile[i].CS2Address.Bytes == 1)
+                                if (PCM.segmentAddressDatas[i].CS2Address.Bytes == 1)
                                 {
-                                    CS2 = PCM.buf[PCM.binfile[i].CS2Address.Address];
+                                    CS2 = PCM.buf[PCM.segmentAddressDatas[i].CS2Address.Address];
                                 }
-                                else if (PCM.binfile[i].CS2Address.Bytes == 2)
+                                else if (PCM.segmentAddressDatas[i].CS2Address.Bytes == 2)
                                 {
-                                    CS2 = BEToUint16(PCM.buf, PCM.binfile[i].CS2Address.Address);
+                                    CS2 = BEToUint16(PCM.buf, PCM.segmentAddressDatas[i].CS2Address.Address);
                                 }
-                                else if (PCM.binfile[i].CS2Address.Bytes == 4)
+                                else if (PCM.segmentAddressDatas[i].CS2Address.Bytes == 4)
                                 {
-                                    CS2 = BEToUint32(PCM.buf, PCM.binfile[i].CS2Address.Address);
+                                    CS2 = BEToUint32(PCM.buf, PCM.segmentAddressDatas[i].CS2Address.Address);
                                 }
                             }
                             if (CS2 == CS2Calc)
                                 Logger(" Checksum 2: " + CS2.ToString("X4") + " [OK]");
                             else
                             {
-                                if (PCM.binfile[i].CS2Address.Address == uint.MaxValue)
+                                if (PCM.segmentAddressDatas[i].CS2Address.Address == uint.MaxValue)
                                 {
                                     string hexdigits;
-                                    if (PCM.binfile[i].CS1Address.Bytes == 0)
+                                    if (PCM.segmentAddressDatas[i].CS1Address.Bytes == 0)
                                         hexdigits = "X4";
                                     else
-                                        hexdigits = "X" + (PCM.binfile[i].CS2Address.Bytes * 2).ToString();
+                                        hexdigits = "X" + (PCM.segmentAddressDatas[i].CS2Address.Bytes * 2).ToString();
                                     Logger(" Checksum 2: " + CS2Calc.ToString("X4") + " [Not saved]");
                                 }
                                 else
                                 {
-                                    if (PCM.binfile[i].CS2Address.Bytes == 1)
-                                        PCM.buf[PCM.binfile[i].CS2Address.Address] = (byte)CS2Calc;
-                                    else if (PCM.binfile[i].CS2Address.Bytes == 2)
+                                    if (PCM.segmentAddressDatas[i].CS2Address.Bytes == 1)
+                                        PCM.buf[PCM.segmentAddressDatas[i].CS2Address.Address] = (byte)CS2Calc;
+                                    else if (PCM.segmentAddressDatas[i].CS2Address.Bytes == 2)
                                     {
-                                        PCM.buf[PCM.binfile[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF00) >> 8);
-                                        PCM.buf[PCM.binfile[i].CS2Address.Address + 1] = (byte)(CS2Calc & 0xFF);
+                                        PCM.buf[PCM.segmentAddressDatas[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF00) >> 8);
+                                        PCM.buf[PCM.segmentAddressDatas[i].CS2Address.Address + 1] = (byte)(CS2Calc & 0xFF);
                                     }
-                                    else if (PCM.binfile[i].CS2Address.Bytes == 4)
+                                    else if (PCM.segmentAddressDatas[i].CS2Address.Bytes == 4)
                                     {
-                                        PCM.buf[PCM.binfile[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF000000) >> 24);
-                                        PCM.buf[PCM.binfile[i].CS2Address.Address + 1] = (byte)((CS2Calc & 0xFF0000) >> 16);
-                                        PCM.buf[PCM.binfile[i].CS2Address.Address + 2] = (byte)((CS2Calc & 0xFF00) >> 8);
-                                        PCM.buf[PCM.binfile[i].CS2Address.Address + 3] = (byte)(CS2Calc & 0xFF);
+                                        PCM.buf[PCM.segmentAddressDatas[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF000000) >> 24);
+                                        PCM.buf[PCM.segmentAddressDatas[i].CS2Address.Address + 1] = (byte)((CS2Calc & 0xFF0000) >> 16);
+                                        PCM.buf[PCM.segmentAddressDatas[i].CS2Address.Address + 2] = (byte)((CS2Calc & 0xFF00) >> 8);
+                                        PCM.buf[PCM.segmentAddressDatas[i].CS2Address.Address + 3] = (byte)(CS2Calc & 0xFF);
 
                                     }
                                     Logger(" Checksum 2: " + CS2.ToString("X") + " => " + CS2Calc.ToString("X4") + " [Fixed]");
@@ -256,19 +265,21 @@ namespace UniversalPatcher
             dataGridView1.DataSource = null;
             bindingsource.DataSource = tableDatas;
             dataGridView1.DataSource = bindingsource;
-            dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             //dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
             dataGridView1.Columns["OutputType"].ToolTipText = "1=Float, 2=Int, 3=Hex, 4=Text, 5=Flag";
-
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
             for (int i=0; i< dataGridView1.Rows.Count; i++)
             {
                 dataGridView1.Rows[i].Cells["OutputType"].ToolTipText = "1=Float, 2=Int, 3=Hex, 4=Text, 5=Flag";
                 if (dataGridView1.Rows[i].Cells["TableDescription"].Value != null)
                     dataGridView1.Rows[i].Cells["TableName"].ToolTipText = dataGridView1.Rows[i].Cells["TableDescription"].Value.ToString();
             }
+            Application.DoEvents();
+            dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
 
             comboTableCategory.DataSource = null;
             categoryBindingSource.DataSource = null;
+            tableCategories.Sort();
             categoryBindingSource.DataSource = tableCategories;
             comboTableCategory.DataSource = categoryBindingSource;
             comboTableCategory.Refresh();
@@ -293,7 +304,9 @@ namespace UniversalPatcher
             {
 
                 string defName = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
+                //string defName = PCM.OS + ".xml";
                 string fName = SelectFile("Select XML File", "XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
+                Logger("Loading file: " + fName);
                 if (fName.Length == 0)
                     return;
                 if (File.Exists(fName))
@@ -469,20 +482,28 @@ namespace UniversalPatcher
             refreshTablelist();
         }
 
-        private void comboTableCategory_SelectedIndexChanged(object sender, EventArgs e)
+        private void filterTables()
         {
             try
             {
-                if (comboTableCategory.Text == "All")
-                    bindingsource.DataSource = tableDatas;
-                else
-                {
-                    filteredCategories = new BindingList<TableData>(tableDatas.Where(t => t.Category.ToLower().Contains(comboTableCategory.Text.ToLower())).ToList());
-                    bindingsource.DataSource = filteredCategories;
-                }
+                string cat = comboTableCategory.Text;
+                var results = tableDatas.Where(t => t.TableName.Length > 0); //How should I define empty variable??
+                if (!showTablesWithEmptyAddressToolStripMenuItem.Checked)
+                    results = results.Where(t => t.Address.Length > 0);
+                if (cat != "_All" && cat != "")
+                    results = results.Where(t => t.Category.ToLower().Contains(comboTableCategory.Text.ToLower()));
+                if (txtSearchTableSeek.Text.Length > 0)
+                    results = results.Where(t => t.TableName.ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
+                filteredCategories = new BindingList<TableData>(results.ToList());
+                bindingsource.DataSource = filteredCategories;
             }
             catch { }
 
+        }
+
+        private void comboTableCategory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            filterTables();
         }
 
         private void btnSearchTableSeek_Click(object sender, EventArgs e)
@@ -738,5 +759,72 @@ namespace UniversalPatcher
 
         }
 
+        private void importCSVexperimentalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectFile("Select CSV File","CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+            Logger("Loading file: " + FileName, false);
+            StreamReader sr = new StreamReader(FileName);
+            string csvLine;
+            while ((csvLine = sr.ReadLine()) != null)
+            {
+                string[] cParts = csvLine.Split(',');
+                if (cParts.Length > 2)
+                {
+                    string cat = cParts[0];
+                    string name = cParts[1];
+                    string addr = cParts[2];
+                    bool found = false;
+                    for (int i=0; i< tableDatas.Count;i++)
+                    {
+                        if (tableDatas[i].Category.ToLower() == cat.ToLower() && tableDatas[i].TableName.ToLower() == name.ToLower())
+                        {
+                            tableDatas[i].Address = addr;
+                            tableDatas[i].AddrInt = Convert.ToUInt32(addr, 16);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        Debug.WriteLine(name + ": not found");
+                        for (int i = 0; i < tableDatas.Count; i++)
+                        {
+                            if (cat.ToLower() == "protected" && tableDatas[i].TableName.ToLower() == name.ToLower())
+                            {
+                                tableDatas[i].Address = addr;
+                                tableDatas[i].AddrInt = Convert.ToUInt32(addr, 16);
+                                found = true;
+                                Debug.WriteLine(name + ": PROTECTED");
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            Logger(" [OK]");
+            refreshTablelist();
+        }
+
+        private void exportXDFToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            XDF xdf = new XDF();
+            Logger(xdf.exportXdf(PCM));
+        }
+
+        private void txtSearchTableSeek_TextChanged(object sender, EventArgs e)
+        {
+            filterTables();
+        }
+
+        private void showTablesWithEmptyAddressToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (showTablesWithEmptyAddressToolStripMenuItem.Checked)
+                showTablesWithEmptyAddressToolStripMenuItem.Checked = false;
+            else
+                showTablesWithEmptyAddressToolStripMenuItem.Checked = true;
+            filterTables();
+        }
     }
 }

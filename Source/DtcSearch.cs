@@ -324,9 +324,9 @@ namespace UniversalPatcher
                 string searchStr = "3D 80 * * 39 8C * * 7D 7B DA 14 7C 8C 5A 2E 80 BD";
                 uint opCodeAddr = uint.MaxValue;
                 uint tableStart = 0;
-                for (int b = 0; b < PCM.binfile[PCM.OSSegment].SegmentBlocks.Count; b++)
+                for (int b = 0; b < PCM.segmentAddressDatas[PCM.OSSegment].SegmentBlocks.Count; b++)
                 {
-                    opCodeAddr = searchBytes(PCM, searchStr, PCM.binfile[PCM.OSSegment].SegmentBlocks[b].Start, PCM.binfile[PCM.OSSegment].SegmentBlocks[b].End);
+                    opCodeAddr = searchBytes(PCM, searchStr, PCM.segmentAddressDatas[PCM.OSSegment].SegmentBlocks[b].Start, PCM.segmentAddressDatas[PCM.OSSegment].SegmentBlocks[b].End);
                     if (opCodeAddr < uint.MaxValue)
                     {
                         ushort highBytes = BEToUint16(PCM.buf, (uint)(opCodeAddr + 2));

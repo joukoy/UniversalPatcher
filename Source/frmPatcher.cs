@@ -9,9 +9,8 @@ using System.Windows.Forms;
 using System.IO;
 using static upatcher;
 using System.Text.RegularExpressions;
-
-using System.Threading;
-using System.Threading.Tasks;
+//using System.Threading;
+//using System.Threading.Tasks;
 using System.Diagnostics;
 using UniversalPatcher.Properties;
 using System.Drawing.Text;
@@ -107,8 +106,7 @@ namespace UniversalPatcher
             if (!Directory.Exists(Path.Combine(Application.StartupPath, "Tuner")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Tuner"));
             logFile = Path.Combine(Application.StartupPath, "Log", "universalpatcher" + DateTime.Now.ToString("_yyyyMMdd_hhmm") + ".rtf");
-
-            loadXmlFiles();
+            
 
             if (Properties.Settings.Default.LastXMLfolder == "")
                 Properties.Settings.Default.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
@@ -117,6 +115,8 @@ namespace UniversalPatcher
             chkDebug.Checked = Properties.Settings.Default.DebugOn;
             checkAutorefreshCVNlist.Checked = Properties.Settings.Default.AutorefreshCVNlist;
             checkAutorefreshFileinfo.Checked = Properties.Settings.Default.AutorefreshFileinfo;
+
+            loadSettingFiles();
 
             listCSAddresses.Enabled = true;
             listCSAddresses.Clear();
@@ -133,10 +133,43 @@ namespace UniversalPatcher
             //listCSAddresses.Columns[2].Width = 100;
             //listCSAddresses.Columns[2].Width = 100;
         }
-        private void loadXmlFiles()
+        private void loadSettingFiles()
         {
-            Logger("Loading configurations...", false);
             DetectRules = new List<DetectRule>();
+            StockCVN = new List<CVN>();
+            fileTypeList = new List<FileType>();
+            dtcSearchConfigs = new List<DtcSearchConfig>();
+
+            Logger("Loading configurations... filetypes", false);
+            Application.DoEvents();
+
+            string FileTypeListFile = Path.Combine(Application.StartupPath, "XML", "filetypes.xml");
+            if (File.Exists(FileTypeListFile))
+            {
+                Debug.WriteLine("Loading filetypes.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<FileType>));
+                System.IO.StreamReader file = new System.IO.StreamReader(FileTypeListFile);
+                fileTypeList = (List<FileType>)reader.Deserialize(file);
+                file.Close();
+
+            }
+
+            Logger(",dtcsearch", false);
+            Application.DoEvents();
+
+            string CtsSearchFile = Path.Combine(Application.StartupPath, "XML", "DtcSearch.xml");
+            if (File.Exists(CtsSearchFile))
+            {
+                Debug.WriteLine("Loading DtcSearch.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<DtcSearchConfig>));
+                System.IO.StreamReader file = new System.IO.StreamReader(CtsSearchFile);
+                dtcSearchConfigs = (List<DtcSearchConfig>)reader.Deserialize(file);
+                file.Close();
+
+            }
+            Logger(",autodetect", false);
+            Application.DoEvents();
+
             string AutoDetectFile = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
             if (File.Exists(AutoDetectFile))
             {
@@ -147,7 +180,27 @@ namespace UniversalPatcher
                 file.Close();
             }
 
-            StockCVN = new List<CVN>();
+            Logger(",extractedsegments", false);
+            Application.DoEvents();
+
+            string SwapSegmentListFile = Path.Combine(Application.StartupPath, "Segments", "extractedsegments.xml");
+            if (File.Exists(SwapSegmentListFile))
+            {
+                Debug.WriteLine("Loading extractedsegments.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<SwapSegment>));
+                System.IO.StreamReader file = new System.IO.StreamReader(SwapSegmentListFile);
+                SwapSegments = (List<SwapSegment>)reader.Deserialize(file);
+                file.Close();
+
+            }
+            else
+            {
+                SwapSegments = new List<SwapSegment>();
+            }
+
+            Logger(",stockcvn", false);
+            Application.DoEvents();
+
             string StockCVNFile = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
             if (File.Exists(StockCVNFile))
             {
@@ -167,52 +220,8 @@ namespace UniversalPatcher
             }
             loadReferenceCvn();
 
-            string SwapSegmentListFile = Path.Combine(Application.StartupPath, "Segments", "extractedsegments.xml");
-            if (File.Exists(SwapSegmentListFile))
-            {
-                Debug.WriteLine("Loading extractedsegments.xml");
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<SwapSegment>));
-                System.IO.StreamReader file = new System.IO.StreamReader(SwapSegmentListFile);
-                SwapSegments = (List<SwapSegment>)reader.Deserialize(file);
-                file.Close();
+            Logger(" - Done");
 
-            }
-            else
-            {
-                SwapSegments = new List<SwapSegment>();
-            }
-
-
-            string FileTypeListFile = Path.Combine(Application.StartupPath, "XML", "filetypes.xml");
-            if (File.Exists(FileTypeListFile))
-            {
-                Debug.WriteLine("Loading filetypes.xml");
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<FileType>));
-                System.IO.StreamReader file = new System.IO.StreamReader(FileTypeListFile);
-                fileTypeList = (List<FileType>)reader.Deserialize(file);
-                file.Close();
-
-            }
-            else
-            {
-                fileTypeList = new List<FileType>();
-            }
-
-            string CtsSearchFile = Path.Combine(Application.StartupPath, "XML", "DtcSearch.xml");
-            if (File.Exists(CtsSearchFile))
-            {
-                Debug.WriteLine("Loading DtcSearch.xml");
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<DtcSearchConfig>));
-                System.IO.StreamReader file = new System.IO.StreamReader(CtsSearchFile);
-                dtcSearchConfigs = (List<DtcSearchConfig>)reader.Deserialize(file);
-                file.Close();
-
-            }
-            else
-            {
-                dtcSearchConfigs = new List<DtcSearchConfig>();
-            }
-            Logger(" Done");
         }
         public void refreshSearchedTables()
         {
@@ -274,9 +283,10 @@ namespace UniversalPatcher
             else
                 tabTableSeek.Text = "Table Seek (" + foundTables.Count.ToString() + ")";
             dataGridTableSeek.DataSource = tableSeekBindingSource;
-            dataGridTableSeek.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+            dataGridTableSeek.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             comboTableCategory.DataSource = null;
             categoryBindingSource.DataSource = null;
+            tableCategories.Sort();
             categoryBindingSource.DataSource = tableCategories;
             comboTableCategory.DataSource = categoryBindingSource;
         }
@@ -355,10 +365,10 @@ namespace UniversalPatcher
             labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
             for (int s = 0; s < Segments.Count; s++)
             {
-                string BasePN = basefile.ReadInfo(basefile.binfile[s].PNaddr);
-                string ModPN = modfile.ReadInfo(modfile.binfile[s].PNaddr);
-                string BaseVer = basefile.ReadInfo(basefile.binfile[s].VerAddr);
-                string ModVer = modfile.ReadInfo(modfile.binfile[s].VerAddr);
+                string BasePN = basefile.ReadInfo(basefile.segmentAddressDatas[s].PNaddr);
+                string ModPN = modfile.ReadInfo(modfile.segmentAddressDatas[s].PNaddr);
+                string BaseVer = basefile.ReadInfo(basefile.segmentAddressDatas[s].VerAddr);
+                string ModVer = modfile.ReadInfo(modfile.segmentAddressDatas[s].VerAddr);
 
                 if (chkForceCompare.Checked)
                 {
@@ -414,10 +424,10 @@ namespace UniversalPatcher
                 if (Segments[0].CS1Address.StartsWith("GM-V6"))
                 { 
                     var item = new ListViewItem(PCM.OS);
-                    if (PCM.binfile[0].CS1Address.Address == uint.MaxValue)
+                    if (PCM.segmentAddressDatas[0].CS1Address.Address == uint.MaxValue)
                         item.SubItems.Add("");
                     else
-                        item.SubItems.Add(PCM.binfile[0].CS1Address.Address.ToString("X"));
+                        item.SubItems.Add(PCM.segmentAddressDatas[0].CS1Address.Address.ToString("X"));
                     if (PCM.osStoreAddress == uint.MaxValue)
                         item.SubItems.Add("");
                     else
@@ -474,7 +484,7 @@ namespace UniversalPatcher
                         Logger(" " + PCM.segmentinfos[i].Name.PadRight(11), false);
                         if (S.CS1Method != CSMethod_None && chkCS1.Checked)
                         {
-                            if (PCM.binfile[i].CS1Address.Address == uint.MaxValue)
+                            if (PCM.segmentAddressDatas[i].CS1Address.Address == uint.MaxValue)
                             {
                                 Logger(" Checksum1: " + PCM.segmentinfos[i].CS1Calc, false);
                             }
@@ -493,7 +503,7 @@ namespace UniversalPatcher
 
                         if (S.CS2Method != CSMethod_None && chkCS2.Checked)
                         {
-                            if (PCM.binfile[i].CS2Address.Address == uint.MaxValue)
+                            if (PCM.segmentAddressDatas[i].CS2Address.Address == uint.MaxValue)
                             {
                                 Logger(" Checksum2: " + PCM.segmentinfos[i].CS2Calc, false);
                             }
@@ -619,10 +629,10 @@ namespace UniversalPatcher
                     Logger(TS.seekTables(PCM));
                 }
                 refreshTableSeek();
-                if (upatcher.Segments[0].CS1Address.StartsWith("GM-V6"))
+                /*if (upatcher.Segments[0].CS1Address.StartsWith("GM-V6"))
                     btnReadTinyTunerDB.Enabled = true;
                 else
-                    btnReadTinyTunerDB.Enabled = false;
+                    btnReadTinyTunerDB.Enabled = false;*/
                                     
                 getPidList();
             }
@@ -724,7 +734,7 @@ namespace UniversalPatcher
                                 //Search OS once
                                 for (int s = 0; s < Segments.Count; s++)
                                 {
-                                    string PN = basefile.ReadInfo(basefile.binfile[s].PNaddr);
+                                    string PN = basefile.ReadInfo(basefile.segmentAddressDatas[s].PNaddr);
                                     if (Parts[0] == PN)
                                     {                                        
                                         isCompatible = true;
@@ -951,15 +961,15 @@ namespace UniversalPatcher
                         if (chkSegments[Snr].Enabled && chkSegments[Snr].Checked)
                         {
                             Logger("Comparing segment " + Segments[Snr].Name, false);
-                            for (int p = 0; p < basefile.binfile[Snr].SegmentBlocks.Count; p++)
+                            for (int p = 0; p < basefile.segmentAddressDatas[Snr].SegmentBlocks.Count; p++)
                             {
-                                uint Start = basefile.binfile[Snr].SegmentBlocks[p].Start;
-                                uint End = basefile.binfile[Snr].SegmentBlocks[p].End;
+                                uint Start = basefile.segmentAddressDatas[Snr].SegmentBlocks[p].Start;
+                                uint End = basefile.segmentAddressDatas[Snr].SegmentBlocks[p].End;
                                 AddressData[] SkipList = new AddressData[2];
                                 if (Segments[Snr].CS1Address != null && Segments[Snr].CS1Address != "")
-                                    SkipList[0] = basefile.binfile[Snr].CS1Address;
+                                    SkipList[0] = basefile.segmentAddressDatas[Snr].CS1Address;
                                 if (Segments[Snr].CS2Address != null && Segments[Snr].CS2Address != "")
-                                    SkipList[1] = basefile.binfile[Snr].CS2Address;
+                                    SkipList[1] = basefile.segmentAddressDatas[Snr].CS2Address;
                                 CompareBlock(basefile.buf, modfile.buf, Start, End, Segments[Snr].Name, SkipList);
                             }
                             Logger("");
@@ -1130,50 +1140,50 @@ namespace UniversalPatcher
                         if (S.CS1Method != CSMethod_None)
                         {
                             uint CS1 = 0;
-                            uint CS1Calc = CalculateChecksum(basefile.buf, basefile.binfile[i].CS1Address, basefile.binfile[i].CS1Blocks, basefile.binfile[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, basefile.binfile[i].CS1Address.Bytes, S.CS1SwapBytes);
-                            if (basefile.binfile[i].CS1Address.Address < uint.MaxValue)
+                            uint CS1Calc = CalculateChecksum(basefile.buf, basefile.segmentAddressDatas[i].CS1Address, basefile.segmentAddressDatas[i].CS1Blocks, basefile.segmentAddressDatas[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, basefile.segmentAddressDatas[i].CS1Address.Bytes, S.CS1SwapBytes);
+                            if (basefile.segmentAddressDatas[i].CS1Address.Address < uint.MaxValue)
                             { 
-                                if (basefile.binfile[i].CS1Address.Bytes == 1)
+                                if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 1)
                                 {
-                                    CS1 = basefile.buf[basefile.binfile[i].CS1Address.Address];
+                                    CS1 = basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address];
                                 }
-                                else if (basefile.binfile[i].CS1Address.Bytes == 2)
+                                else if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 2)
                                 {
-                                    CS1 = BEToUint16(basefile.buf, basefile.binfile[i].CS1Address.Address);
+                                    CS1 = BEToUint16(basefile.buf, basefile.segmentAddressDatas[i].CS1Address.Address);
                                 }
-                                else if (basefile.binfile[i].CS1Address.Bytes == 4)
+                                else if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 4)
                                 {
-                                    CS1 = BEToUint32(basefile.buf, basefile.binfile[i].CS1Address.Address);
+                                    CS1 = BEToUint32(basefile.buf, basefile.segmentAddressDatas[i].CS1Address.Address);
                                 }
                             }
                             if (CS1 == CS1Calc)
                                 Logger(" Checksum 1: " + CS1.ToString("X4") + " [OK]");
                             else
                             {
-                                if (basefile.binfile[i].CS1Address.Address == uint.MaxValue)
+                                if (basefile.segmentAddressDatas[i].CS1Address.Address == uint.MaxValue)
                                 {
                                     string hexdigits;
-                                    if (basefile.binfile[i].CS1Address.Bytes == 0)
+                                    if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 0)
                                         hexdigits = "X4";
                                     else
-                                        hexdigits = "X" + (basefile.binfile[i].CS1Address.Bytes * 2).ToString();
+                                        hexdigits = "X" + (basefile.segmentAddressDatas[i].CS1Address.Bytes * 2).ToString();
                                     Logger(" Checksum 1: " + CS1Calc.ToString(hexdigits) + " [Not saved]");
                                 }
                                 else
                                 {
-                                    if (basefile.binfile[i].CS1Address.Bytes == 1)
-                                        basefile.buf[basefile.binfile[i].CS1Address.Address] = (byte)CS1Calc;
-                                    else if (basefile.binfile[i].CS1Address.Bytes == 2)
+                                    if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 1)
+                                        basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address] = (byte)CS1Calc;
+                                    else if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 2)
                                     {
-                                        basefile.buf[basefile.binfile[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF00) >> 8);
-                                        basefile.buf[basefile.binfile[i].CS1Address.Address + 1] = (byte)(CS1Calc & 0xFF);
+                                        basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF00) >> 8);
+                                        basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address + 1] = (byte)(CS1Calc & 0xFF);
                                     }
-                                    else if (basefile.binfile[i].CS1Address.Bytes == 4)
+                                    else if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 4)
                                     {
-                                        basefile.buf[basefile.binfile[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF000000) >> 24);
-                                        basefile.buf[basefile.binfile[i].CS1Address.Address + 1] = (byte)((CS1Calc & 0xFF0000) >> 16);
-                                        basefile.buf[basefile.binfile[i].CS1Address.Address + 2] = (byte)((CS1Calc & 0xFF00) >> 8);
-                                        basefile.buf[basefile.binfile[i].CS1Address.Address + 3] = (byte)(CS1Calc & 0xFF);
+                                        basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF000000) >> 24);
+                                        basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address + 1] = (byte)((CS1Calc & 0xFF0000) >> 16);
+                                        basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address + 2] = (byte)((CS1Calc & 0xFF00) >> 8);
+                                        basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address + 3] = (byte)(CS1Calc & 0xFF);
 
                                     }
                                     Logger(" Checksum 1: " + CS1.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
@@ -1185,50 +1195,50 @@ namespace UniversalPatcher
                         if (S.CS2Method != CSMethod_None)
                         {
                             uint CS2 = 0;
-                            uint CS2Calc = CalculateChecksum(basefile.buf, basefile.binfile[i].CS2Address, basefile.binfile[i].CS2Blocks, basefile.binfile[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, basefile.binfile[i].CS2Address.Bytes, S.CS2SwapBytes);
-                            if (basefile.binfile[i].CS2Address.Address < uint.MaxValue)
+                            uint CS2Calc = CalculateChecksum(basefile.buf, basefile.segmentAddressDatas[i].CS2Address, basefile.segmentAddressDatas[i].CS2Blocks, basefile.segmentAddressDatas[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, basefile.segmentAddressDatas[i].CS2Address.Bytes, S.CS2SwapBytes);
+                            if (basefile.segmentAddressDatas[i].CS2Address.Address < uint.MaxValue)
                             { 
-                                if (basefile.binfile[i].CS2Address.Bytes == 1)
+                                if (basefile.segmentAddressDatas[i].CS2Address.Bytes == 1)
                                 {
-                                    CS2 = basefile.buf[basefile.binfile[i].CS2Address.Address];
+                                    CS2 = basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address];
                                 }
-                                else if (basefile.binfile[i].CS2Address.Bytes == 2)
+                                else if (basefile.segmentAddressDatas[i].CS2Address.Bytes == 2)
                                 {
-                                    CS2 = BEToUint16(basefile.buf, basefile.binfile[i].CS2Address.Address);
+                                    CS2 = BEToUint16(basefile.buf, basefile.segmentAddressDatas[i].CS2Address.Address);
                                 }
-                                else if (basefile.binfile[i].CS2Address.Bytes == 4)
+                                else if (basefile.segmentAddressDatas[i].CS2Address.Bytes == 4)
                                 {
-                                    CS2 = BEToUint32(basefile.buf, basefile.binfile[i].CS2Address.Address);
+                                    CS2 = BEToUint32(basefile.buf, basefile.segmentAddressDatas[i].CS2Address.Address);
                                 }
                             }
                             if (CS2 == CS2Calc)
                                 Logger(" Checksum 2: " + CS2.ToString("X4") + " [OK]");
                             else
                             {
-                                if (basefile.binfile[i].CS2Address.Address == uint.MaxValue)
+                                if (basefile.segmentAddressDatas[i].CS2Address.Address == uint.MaxValue)
                                 {
                                     string hexdigits;
-                                    if (basefile.binfile[i].CS1Address.Bytes == 0)
+                                    if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 0)
                                         hexdigits = "X4";
                                     else
-                                        hexdigits = "X" + (basefile.binfile[i].CS2Address.Bytes * 2).ToString();
+                                        hexdigits = "X" + (basefile.segmentAddressDatas[i].CS2Address.Bytes * 2).ToString();
                                     Logger(" Checksum 2: " + CS2Calc.ToString("X4") + " [Not saved]");
                                 }
                                 else
                                 {
-                                    if (basefile.binfile[i].CS2Address.Bytes == 1)
-                                        basefile.buf[basefile.binfile[i].CS2Address.Address] = (byte)CS2Calc;
-                                    else if (basefile.binfile[i].CS2Address.Bytes == 2)
+                                    if (basefile.segmentAddressDatas[i].CS2Address.Bytes == 1)
+                                        basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address] = (byte)CS2Calc;
+                                    else if (basefile.segmentAddressDatas[i].CS2Address.Bytes == 2)
                                     {
-                                        basefile.buf[basefile.binfile[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF00) >> 8);
-                                        basefile.buf[basefile.binfile[i].CS2Address.Address + 1] = (byte)(CS2Calc & 0xFF);
+                                        basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF00) >> 8);
+                                        basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address + 1] = (byte)(CS2Calc & 0xFF);
                                     }
-                                    else if (basefile.binfile[i].CS2Address.Bytes == 4)
+                                    else if (basefile.segmentAddressDatas[i].CS2Address.Bytes == 4)
                                     {
-                                        basefile.buf[basefile.binfile[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF000000) >> 24);
-                                        basefile.buf[basefile.binfile[i].CS2Address.Address + 1] = (byte)((CS2Calc & 0xFF0000) >> 16);
-                                        basefile.buf[basefile.binfile[i].CS2Address.Address + 2] = (byte)((CS2Calc & 0xFF00) >> 8);
-                                        basefile.buf[basefile.binfile[i].CS2Address.Address + 3] = (byte)(CS2Calc & 0xFF);
+                                        basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF000000) >> 24);
+                                        basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address + 1] = (byte)((CS2Calc & 0xFF0000) >> 16);
+                                        basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address + 2] = (byte)((CS2Calc & 0xFF00) >> 8);
+                                        basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address + 3] = (byte)(CS2Calc & 0xFF);
 
                                     }
                                     Logger(" Checksum 2: " + CS2.ToString("X") + " => " + CS2Calc.ToString("X4") + " [Fixed]");
@@ -2132,12 +2142,12 @@ namespace UniversalPatcher
                             if (PCM.segmentinfos[s].SwapAddress != "")
                             {
                                 Logger("Writing " + PCM.segmentinfos[s].Name + " to file: " + FileName + ", size: " + PCM.segmentinfos[s].SwapSize);
-                                WriteSegmentToFile(FileName, PCM.binfile[s].SwapBlocks, PCM.buf);
+                                WriteSegmentToFile(FileName, PCM.segmentAddressDatas[s].SwapBlocks, PCM.buf);
                             }
                             else
                             { 
                                 Logger("Writing " + PCM.segmentinfos[s].Name + " to file: " + FileName + ", size: " + PCM.segmentinfos[s].Size);
-                                WriteSegmentToFile(FileName, PCM.binfile[s].SegmentBlocks, PCM.buf);
+                                WriteSegmentToFile(FileName, PCM.segmentAddressDatas[s].SegmentBlocks, PCM.buf);
                             }
                             StreamWriter sw = new StreamWriter(FileName + ".txt");
                             sw.WriteLine(Descr);
@@ -2874,7 +2884,7 @@ namespace UniversalPatcher
 
             string tableRows = "";            
             string xdfTxt = templateTxt.Replace("REPLACE-OSID", txtOS.Text);
-            xdfTxt = xdfTxt.Replace("REPLACE-OSADDRESS", basefile.binfile[basefile.OSSegment].PNaddr.Address.ToString("X"));
+            xdfTxt = xdfTxt.Replace("REPLACE-OSADDRESS", basefile.segmentAddressDatas[basefile.OSSegment].PNaddr.Address.ToString("X"));
             if (dtcCombined)
             {
                 for (int d = 0; d < dtcCodes.Count; d++)
@@ -3096,7 +3106,7 @@ namespace UniversalPatcher
                 tableText = tableText.Replace("REPLACE-BITS", "32");
                 tableText = tableText.Replace("REPLACE-MINVALUE", basefile.OS);
                 tableText = tableText.Replace("REPLACE-MAXVALUE", basefile.OS);
-                tableText = tableText.Replace("REPLACE-TABLEADDRESS", basefile.binfile[basefile.OSSegment].PNaddr.Address.ToString("X"));
+                tableText = tableText.Replace("REPLACE-TABLEADDRESS", basefile.segmentAddressDatas[basefile.OSSegment].PNaddr.Address.ToString("X"));
                 tableText = tableText.Replace("REPLACE-CATEGORY", (basefile.OSSegment + 1).ToString("X"));
                 xdfText += tableText;
 
@@ -3203,7 +3213,7 @@ namespace UniversalPatcher
                             tableText = tableText.Replace("REPLACE-MATH", tableSeeks[id].Math);
                             tableText = tableText.Replace("REPLACE-BITS", tableSeeks[id].Bits.ToString());
                             tableText = tableText.Replace("REPLACE-DECIMALS", tableSeeks[id].Decimals.ToString());
-                            tableText = tableText.Replace("REPLACE-OUTPUTTYPE", tableSeeks[id].OutputType.ToString());
+                            tableText = tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)tableSeeks[id].OutputType).ToString());
                             tableText = tableText.Replace("REPLACE-TABLEADDRESS", foundTables[t].Address);
                             tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", foundTables[t].Description);
                             tableText = tableText.Replace("REPLACE-MINVALUE", tableSeeks[id].Min.ToString());
@@ -3283,7 +3293,7 @@ namespace UniversalPatcher
                             tableText = tableText.Replace("REPLACE-TABLEID", foundTables[t].Address);
                             tableText = tableText.Replace("REPLACE-TABLEADDRESS", foundTables[t].Address);
                             tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
-                            tableText = tableText.Replace("REPLACE-BITS", "8");
+                            tableText = tableText.Replace("REPLACE-BITS", (tableDatas[t].ElementSize * 8).ToString());
                             tableText = tableText.Replace("REPLACE-MINVALUE", tableSeeks[id].Min.ToString());
                             tableText = tableText.Replace("REPLACE-MAXVALUE", tableSeeks[id].Max.ToString());
                             xdfText += tableText;       //Add generated table to end of xdfText
@@ -3333,21 +3343,39 @@ namespace UniversalPatcher
             refreshTableSeek();
         }
 
-        private void btnEditTable_Click(object sender, EventArgs e)
+        private void openTableEditor()
         {
             try
             {
 
                 int rowindex = dataGridTableSeek.CurrentCell.RowIndex;
                 int columnindex = dataGridTableSeek.CurrentCell.ColumnIndex;
-                int codeIndex = Convert.ToInt32( dataGridTableSeek.Rows[rowindex].Cells["id"].Value);
-                frmTableEditor frmT = new frmTableEditor();
-                frmT.loadSeekTable(codeIndex, basefile);
-                if ((frmT.ShowDialog()) == DialogResult.OK)
+                int codeIndex = Convert.ToInt32(dataGridTableSeek.Rows[rowindex].Cells["id"].Value);
+                TableSeek ts = tableSeeks[foundTables[codeIndex].configId];
+                if (foundTables[codeIndex].Address == null || foundTables[codeIndex].Address == "")
                 {
-                    LoggerBold("File modified, you can now save it");
+                    Logger("No address defined!");
+                    return;
                 }
-                frmT.Dispose();
+
+                if (ts.OutputType == DataType.Flag && ts.BitMask != null && ts.BitMask.Length > 0)
+                {
+                    frmEditFlag ff = new frmEditFlag();
+                    TableData td = new TableData();
+                    td.importFoundTable(codeIndex, basefile);
+                    ff.loadFlag(basefile, td);
+                    ff.Show();
+                }
+                else
+                {
+                    frmTableEditor frmT = new frmTableEditor();
+                    frmT.loadSeekTable(codeIndex, basefile);
+                    if ((frmT.ShowDialog()) == DialogResult.OK)
+                    {
+                        LoggerBold("File modified, you can now save it");
+                    }
+                    frmT.Dispose();
+                }
             }
             catch (Exception ex)
             {
@@ -3355,9 +3383,14 @@ namespace UniversalPatcher
             }
         }
 
-        private void dataGridTableSeek_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void btnEditTable_Click(object sender, EventArgs e)
         {
+            openTableEditor();
+        }
 
+        private void dataGridTableSeek_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            openTableEditor();
         }
 
         private void rememberWindowSizeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3393,17 +3426,7 @@ namespace UniversalPatcher
 
         private void comboTableCategory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            try
-            {
-                if (comboTableCategory.Text == "All")
-                    tableSeekBindingSource.DataSource = foundTables;
-                else
-                {
-                    filteredCategories = new BindingList<FoundTable>(foundTables.Where(t => t.Category.ToLower().Contains(comboTableCategory.Text.ToLower())).ToList());
-                    tableSeekBindingSource.DataSource = filteredCategories;
-                }
-            }
-            catch { }
+            filterTableSeek();
         }
 
         private void chkForceCompare_CheckedChanged(object sender, EventArgs e)
@@ -3437,6 +3460,32 @@ namespace UniversalPatcher
             tableDatas = new List<TableData>();
             frmTuner ft = new frmTuner(basefile);
             ft.Show();
+        }
+
+        private void filterTableSeek()
+        {
+            try
+            {
+                string cat = comboTableCategory.Text;
+                var results = foundTables.Where(t => t.Name.Length > 0); //How should I define empty variable??
+                if (cat != "_All" && cat != "")
+                    results = results.Where(t => t.Category.ToLower().Contains(comboTableCategory.Text.ToLower()));
+                if (txtSearchTableSeek.Text.Length > 0)
+                    results = results.Where(t => t.Name.ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
+                filteredCategories = new BindingList<FoundTable>(results.ToList());
+                tableSeekBindingSource.DataSource = filteredCategories;
+            }
+            catch { }
+
+        }
+        private void txtSearchTableSeek_TextChanged(object sender, EventArgs e)
+        {
+            filterTableSeek();
+        }
+
+        private void dataGridTableSeek_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

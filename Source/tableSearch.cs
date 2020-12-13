@@ -571,9 +571,9 @@ namespace UniversalPatcher
                         }
                         for (int seg = 0; seg < Segments.Count; seg++)
                         {
-                            for (int b = 0; b < PCM.binfile[seg].SegmentBlocks.Count; b++)
+                            for (int b = 0; b < PCM.segmentAddressDatas[seg].SegmentBlocks.Count; b++)
                             {
-                                if (tsr.AddressInt >= PCM.binfile[seg].SegmentBlocks[b].Start && tsr.AddressInt <= PCM.binfile[seg].SegmentBlocks[b].End)
+                                if (tsr.AddressInt >= PCM.segmentAddressDatas[seg].SegmentBlocks[b].Start && tsr.AddressInt <= PCM.segmentAddressDatas[seg].SegmentBlocks[b].End)
                                     tsr.Segment = PCM.segmentinfos[seg].Name;
                             }
                         }
