@@ -69,7 +69,7 @@ namespace UniversalPatcher
             this.txtResult.Multiline = true;
             this.txtResult.Name = "txtResult";
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtResult.Size = new System.Drawing.Size(477, 39);
+            this.txtResult.Size = new System.Drawing.Size(397, 39);
             this.txtResult.TabIndex = 2;
             this.txtResult.TextChanged += new System.EventHandler(this.txtResult_TextChanged);
             // 
@@ -91,9 +91,8 @@ namespace UniversalPatcher
             this.btnImportCSV.Name = "btnImportCSV";
             this.btnImportCSV.Size = new System.Drawing.Size(75, 23);
             this.btnImportCSV.TabIndex = 4;
-            this.btnImportCSV.Text = "Import CSV";
+            this.btnImportCSV.Text = "(!?)";
             this.btnImportCSV.UseVisualStyleBackColor = true;
-            this.btnImportCSV.Visible = false;
             this.btnImportCSV.Click += new System.EventHandler(this.btnImportCSV_Click);
             // 
             // frmEditXML
@@ -108,8 +107,8 @@ namespace UniversalPatcher
             this.Controls.Add(this.dataGridView1);
             this.Name = "frmEditXML";
             this.Text = "Edit Autodetect";
-            this.Load += new System.EventHandler(this.frmEditXML_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmEditXML_FormClosing);
+            this.Load += new System.EventHandler(this.frmEditXML_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

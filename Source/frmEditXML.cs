@@ -243,43 +243,45 @@ namespace UniversalPatcher
 
         private void btnImportCSV_Click(object sender, EventArgs e)
         {
-            string FileName = SelectFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
-            if (FileName.Length == 0)
-                return;
-            StreamReader sr = new StreamReader(FileName);
-            string line;
-            while ((line = sr.ReadLine()) != null)
-            {
-                string[] lineparts = line.Split(';');
-                if (lineparts.Length == 2)
+            try
+            { 
+                string FileName = SelectFile("Select CSV file", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                if (FileName.Length == 0)
+                    return;
+                StreamReader sr = new StreamReader(FileName);
+                string line;
+                while ((line = sr.ReadLine()) != null)
                 {
-                    CVN C1 = new CVN();
-                    C1.PN = lineparts[0];
-                    C1.cvn = lineparts[1];
-                    bool isinlist = false;
-                    for (int i = 0; i < StockCVN.Count; i++)
+                    string[] lineparts = line.Split(';');
+                    if (lineparts.Length > 5)
                     {
-                        if (StockCVN[i].PN == C1.PN)
+                        for (int i=5; i< lineparts.Length; i+=4)
                         {
-                            isinlist= true;
-                            if (StockCVN[i].cvn != C1.cvn)
-                            {
-                                //Update, is not correct CVN
-                                Logger("Updating PN: " + C1.PN + " Old: " + StockCVN[i].cvn + ", new: " + C1.cvn);
-                                C1.SegmentNr = StockCVN[i].SegmentNr;
-                                C1.Ver = StockCVN[i].Ver;
-                                C1.XmlFile = StockCVN[i].XmlFile;
-                                StockCVN.RemoveAt(i);
-                                StockCVN.Insert(i, C1);
-                            }
+                            TableSeek ts = new TableSeek();
+                            ts.Category = lineparts[0];
+                            ts.Name = lineparts[1];
+                            ts.SearchStr = lineparts[i];
+                            if (lineparts.Length >= i + 1)
+                                ts.UseHit = lineparts[i + 1];
+                            if (lineparts.Length >= i + 2 && lineparts[i+2].Length > 0)
+                                ts.Offset = Convert.ToInt32( lineparts[i + 2]);
+                            if (lineparts.Length >= i + 3 && lineparts[i + 3].Length > 0)
+                                ts.Name += "_" + lineparts[i + 3];
+                            tableSeeks.Add(ts);
                         }
                     }
-                    if (!isinlist)
-                        StockCVN.Add(C1);
                 }
+                sr.Close();
+                bindingSource.DataSource = null;
+                bindingSource.DataSource = tableSeeks;
+                dataGridView1.DataSource = null;
+                dataGridView1.DataSource = bindingSource;
             }
-            sr.Close();
-            LoadStockCVN();
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+
         }
 
         private void txtResult_TextChanged(object sender, EventArgs e)
