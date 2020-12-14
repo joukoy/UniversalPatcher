@@ -320,6 +320,12 @@ namespace UniversalPatcher
                     }
                 }
                 sr.Close();
+
+                for (int s = tableSeeks.Count-1; s >= 0; s--)
+                {
+                    if (tableSeeks[s].SearchStr.Length == 0)
+                        tableSeeks.RemoveAt(s);
+                }
                 bindingSource.DataSource = null;
                 bindingSource.DataSource = tableSeeks;
                 dataGridView1.DataSource = null;
