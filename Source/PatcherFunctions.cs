@@ -62,7 +62,7 @@ public class upatcher
     /*
      File information is read in 3 phases:
      1. XML-file have definitions, how info is stored (SegmentConfig)
-     2. Addresses for information is collected from file (BinFile). 
+     2. Addresses for information is collected from file (SegmentAddressData). 
         For example (OS 12579405): read EngineCal segment address from address 514 => SegmentBlocks => Block1 = 8000 - 15DFFF
         PNAddr is segment address +4 => PNaddr = 8004
      3. Read information from file using collected addresses (SegmentInfo)     

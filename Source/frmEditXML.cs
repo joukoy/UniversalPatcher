@@ -267,7 +267,55 @@ namespace UniversalPatcher
                                 ts.Offset = Convert.ToInt32( lineparts[i + 2]);
                             if (lineparts.Length >= i + 3 && lineparts[i + 3].Length > 0)
                                 ts.Name += "_" + lineparts[i + 3];
-                            tableSeeks.Add(ts);
+
+                            for (int s= 0; s < tableSeeks.Count; s++)
+                            {
+                                if (tableSeeks[s].Name.ToLower() == lineparts[1].ToLower() && tableSeeks[s].Category.ToLower() == ts.Category.ToLower())
+                                {
+                                    if (tableSeeks[s].SearchStr.Length > 0)
+                                    {
+                                        if (tableSeeks[s].SearchStr != ts.SearchStr && tableSeeks[s].UseHit != ts.UseHit && tableSeeks[s].Offset != ts.Offset)
+                                        {
+                                            TableSeek tsNew = new TableSeek();
+                                            tsNew.BitMask = tableSeeks[s].BitMask;
+                                            tsNew.Bits = tableSeeks[s].Bits;
+                                            tsNew.ColHeaders = tableSeeks[s].ColHeaders;
+                                            tsNew.Columns = tableSeeks[s].Columns;
+                                            tsNew.ConditionalOffset = tableSeeks[s].ConditionalOffset;
+                                            tsNew.Decimals = tableSeeks[s].Decimals;
+                                            tsNew.Description = tableSeeks[s].Description;
+                                            tsNew.Floating = tableSeeks[s].Floating;
+                                            tsNew.Math = tableSeeks[s].Math;
+                                            tsNew.Max = tableSeeks[s].Max;
+                                            tsNew.Min = tableSeeks[s].Min;
+                                            tsNew.OutputType = tableSeeks[s].OutputType;
+                                            tsNew.Range = tableSeeks[s].Range;
+                                            tsNew.RowHeaders = tableSeeks[s].RowHeaders;
+                                            tsNew.RowMajor = tableSeeks[s].RowMajor;
+                                            tsNew.Rows = tableSeeks[s].Rows;
+                                            tsNew.SavingMath = tableSeeks[s].SavingMath;
+                                            tsNew.Segments = tableSeeks[s].Segments;
+                                            tsNew.Signed = tableSeeks[s].Signed;
+                                            tsNew.Units = tableSeeks[s].Units;
+                                            tsNew.ValidationSearchStr = tableSeeks[s].ValidationSearchStr;
+                                            tsNew.Name = ts.Name;
+                                            tsNew.SearchStr = ts.SearchStr;
+                                            tsNew.UseHit = ts.UseHit;
+                                            tsNew.Offset = ts.Offset;
+                                            tableSeeks.Add(tsNew);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        tableSeeks[s].SearchStr = ts.SearchStr;
+                                        tableSeeks[s].UseHit = ts.UseHit;
+                                        tableSeeks[s].Offset = ts.Offset;
+                                        tableSeeks[s].Name = ts.Name;
+                                    }
+                                    break;
+                                }
+                            }
+
                         }
                     }
                 }
