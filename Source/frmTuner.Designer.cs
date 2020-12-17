@@ -50,17 +50,18 @@ namespace UniversalPatcher
             this.importXDFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importTinyTunerDBV6OnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importCSVexperimentalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importCSV2ExperimentalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportXDFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showTablesWithEmptyAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showTablesWithEmptyAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -76,8 +77,10 @@ namespace UniversalPatcher
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(861, 359);
             this.dataGridView1.TabIndex = 0;
+            //this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
+            //this.dataGridView1.CellEndEdit += new DataGridViewCellEventHandler(this.dataGridView1_CellEndEdit);
             // 
             // btnEditTable
             // 
@@ -154,28 +157,28 @@ namespace UniversalPatcher
             // loadXMLToolStripMenuItem
             // 
             this.loadXMLToolStripMenuItem.Name = "loadXMLToolStripMenuItem";
-            this.loadXMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadXMLToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.loadXMLToolStripMenuItem.Text = "Load XML";
             this.loadXMLToolStripMenuItem.Click += new System.EventHandler(this.loadXMLToolStripMenuItem_Click);
             // 
             // saveXMLToolStripMenuItem
             // 
             this.saveXMLToolStripMenuItem.Name = "saveXMLToolStripMenuItem";
-            this.saveXMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveXMLToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.saveXMLToolStripMenuItem.Text = "Save XML";
             this.saveXMLToolStripMenuItem.Click += new System.EventHandler(this.saveXMLToolStripMenuItem_Click);
             // 
             // saveBINToolStripMenuItem
             // 
             this.saveBINToolStripMenuItem.Name = "saveBINToolStripMenuItem";
-            this.saveBINToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveBINToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.saveBINToolStripMenuItem.Text = "Save BIN";
             this.saveBINToolStripMenuItem.Click += new System.EventHandler(this.saveBINToolStripMenuItem_Click);
             // 
             // clearTableToolStripMenuItem
             // 
             this.clearTableToolStripMenuItem.Name = "clearTableToolStripMenuItem";
-            this.clearTableToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.clearTableToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.clearTableToolStripMenuItem.Text = "Clear Tablelist";
             this.clearTableToolStripMenuItem.Click += new System.EventHandler(this.clearTableToolStripMenuItem_Click);
             // 
@@ -186,7 +189,8 @@ namespace UniversalPatcher
             this.importTableSeekToolStripMenuItem,
             this.importXDFToolStripMenuItem,
             this.importTinyTunerDBV6OnlyToolStripMenuItem,
-            this.importCSVexperimentalToolStripMenuItem});
+            this.importCSVexperimentalToolStripMenuItem,
+            this.importCSV2ExperimentalToolStripMenuItem});
             this.importToolStripMenuItem.Name = "importToolStripMenuItem";
             this.importToolStripMenuItem.Size = new System.Drawing.Size(55, 20);
             this.importToolStripMenuItem.Text = "Import";
@@ -228,6 +232,15 @@ namespace UniversalPatcher
             this.importCSVexperimentalToolStripMenuItem.Visible = false;
             this.importCSVexperimentalToolStripMenuItem.Click += new System.EventHandler(this.importCSVexperimentalToolStripMenuItem_Click);
             // 
+            // importCSV2ExperimentalToolStripMenuItem
+            // 
+            this.importCSV2ExperimentalToolStripMenuItem.Enabled = false;
+            this.importCSV2ExperimentalToolStripMenuItem.Name = "importCSV2ExperimentalToolStripMenuItem";
+            this.importCSV2ExperimentalToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+            this.importCSV2ExperimentalToolStripMenuItem.Text = "Import CSV 2 (Experimental)";
+            this.importCSV2ExperimentalToolStripMenuItem.Visible = false;
+            this.importCSV2ExperimentalToolStripMenuItem.Click += new System.EventHandler(this.importCSV2ExperimentalToolStripMenuItem_Click);
+            // 
             // exportToolStripMenuItem
             // 
             this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -240,16 +253,31 @@ namespace UniversalPatcher
             // exportCSVToolStripMenuItem
             // 
             this.exportCSVToolStripMenuItem.Name = "exportCSVToolStripMenuItem";
-            this.exportCSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportCSVToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.exportCSVToolStripMenuItem.Text = "Export CSV";
             this.exportCSVToolStripMenuItem.Click += new System.EventHandler(this.exportCsvToolStripMenuItem_Click);
             // 
             // exportXDFToolStripMenuItem
             // 
             this.exportXDFToolStripMenuItem.Name = "exportXDFToolStripMenuItem";
-            this.exportXDFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportXDFToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.exportXDFToolStripMenuItem.Text = "Export XDF";
             this.exportXDFToolStripMenuItem.Click += new System.EventHandler(this.exportXDFToolStripMenuItem_Click);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showTablesWithEmptyAddressToolStripMenuItem});
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            // 
+            // showTablesWithEmptyAddressToolStripMenuItem
+            // 
+            this.showTablesWithEmptyAddressToolStripMenuItem.Name = "showTablesWithEmptyAddressToolStripMenuItem";
+            this.showTablesWithEmptyAddressToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.showTablesWithEmptyAddressToolStripMenuItem.Text = "Show tables with empty address";
+            this.showTablesWithEmptyAddressToolStripMenuItem.Click += new System.EventHandler(this.showTablesWithEmptyAddressToolStripMenuItem_Click);
             // 
             // contextMenuStrip1
             // 
@@ -298,21 +326,6 @@ namespace UniversalPatcher
             this.label1.TabIndex = 17;
             this.label1.Text = "Filter TableName:";
             // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showTablesWithEmptyAddressToolStripMenuItem});
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            // 
-            // showTablesWithEmptyAddressToolStripMenuItem
-            // 
-            this.showTablesWithEmptyAddressToolStripMenuItem.Name = "showTablesWithEmptyAddressToolStripMenuItem";
-            this.showTablesWithEmptyAddressToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
-            this.showTablesWithEmptyAddressToolStripMenuItem.Text = "Show tables with empty address";
-            this.showTablesWithEmptyAddressToolStripMenuItem.Click += new System.EventHandler(this.showTablesWithEmptyAddressToolStripMenuItem_Click);
-            // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -339,6 +352,7 @@ namespace UniversalPatcher
             this.PerformLayout();
 
         }
+
 
 
         #endregion
@@ -372,5 +386,6 @@ namespace UniversalPatcher
         private Label label1;
         private ToolStripMenuItem settingsToolStripMenuItem;
         private ToolStripMenuItem showTablesWithEmptyAddressToolStripMenuItem;
+        private ToolStripMenuItem importCSV2ExperimentalToolStripMenuItem;
     }
 }

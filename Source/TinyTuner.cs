@@ -214,8 +214,8 @@ namespace UniversalPatcher
                     TableData td = new TableData();
 
                     td.OS = PCM.OS;                    
-                    HexToUint(row["StartPosition"].ToString(), out td.AddrInt);
-                    td.Address = td.AddrInt.ToString("X8");
+                    HexToUint(row["StartPosition"].ToString(), out td.addrInt);
+                    //td.Address = td.AddrInt.ToString("X8");
                     td.Columns = Convert.ToUInt16(row["ColumnCount"]);
                     td.TableDescription = row["TableDescription"].ToString();
                     td.TableName = row["TableName"].ToString();

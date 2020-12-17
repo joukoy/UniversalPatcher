@@ -72,8 +72,8 @@ namespace UniversalPatcher
             FoundTable ft = foundTables[tId];
 
             td = new TableData();
-            td.AddrInt = ft.addrInt;
-            td.Address = ft.Address;
+            td.addrInt = ft.addrInt;
+            //td.Address = ft.Address;
             td.Category = ft.Category;
             td.Floating = tSeek.Floating;
             td.ElementSize = (byte)(tSeek.Bits / 8);
@@ -99,7 +99,7 @@ namespace UniversalPatcher
             double value = 0;
             try
             {
-                UInt32 bufAddr = addr - td.AddrInt; 
+                UInt32 bufAddr = addr - td.addrInt; 
                 if (td.ElementSize == 4 || td.ElementSize == 8)
                 {
                     byte[] data = new byte[td.ElementSize];
@@ -133,7 +133,7 @@ namespace UniversalPatcher
         private double getValue(uint addr)
         {
             double value = 0;
-            UInt32 bufAddr = addr - td.AddrInt;
+            UInt32 bufAddr = addr - td.addrInt;
             if (td.ElementSize == 1)
             {
                 if (td.Signed)
@@ -170,7 +170,7 @@ namespace UniversalPatcher
 
         private UInt64 getRawValue(UInt32 addr)
         {
-            UInt32 bufAddr = addr - td.AddrInt;
+            UInt32 bufAddr = addr - td.addrInt;
             if (td.ElementSize == 2)
                 return BEToUint16(dataBuffer, bufAddr);
             if (td.ElementSize == 4)
@@ -247,10 +247,10 @@ namespace UniversalPatcher
             {
                 bufSize = (uint)(td.Rows * td.Columns * td.ElementSize);
                 dataBuffer = new byte[bufSize];
-                Array.Copy(PCM.buf, td.AddrInt, dataBuffer, 0, bufSize);
+                Array.Copy(PCM.buf, td.addrInt, dataBuffer, 0, bufSize);
             }
             //dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader; // .AutoResizeColumns(DataGridViewAutoSizeColumnsMode.Fill);
-            uint addr = td.AddrInt;
+            uint addr = td.addrInt;
             int step = (int)(td.ElementSize);
 
             if (swapXyToolStripMenuItem.Checked ^ td.RowMajor == false)
@@ -351,7 +351,7 @@ namespace UniversalPatcher
         private void SaveValue(uint addr,int r, int c)
         {
             MathParser parser = new MathParser();
-            UInt32 bufAddr = addr - td.AddrInt;
+            UInt32 bufAddr = addr - td.addrInt;
 
             double value = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
             if (!showRawHEXValuesToolStripMenuItem.Checked)
@@ -446,7 +446,7 @@ namespace UniversalPatcher
                         SaveValue(Convert.ToUInt32(dataGridView1.Rows[r].Cells[c].Tag), r, c);
                     }
                 }*/
-                Array.Copy(dataBuffer, 0, PCM.buf, td.AddrInt, bufSize);
+                Array.Copy(dataBuffer, 0, PCM.buf, td.addrInt, bufSize);
 
             }
             catch (Exception ex)
@@ -522,7 +522,7 @@ namespace UniversalPatcher
                 bool tableModified = false;
                 for (int a=0;a<bufSize; a++)
                 {
-                    if (PCM.buf[td.AddrInt + a] != dataBuffer[a])
+                    if (PCM.buf[td.addrInt + a] != dataBuffer[a])
                     {
                         tableModified = true;
                         break;

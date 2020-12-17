@@ -89,8 +89,8 @@ namespace UniversalPatcher
                         if (axle.Attribute("id").Value == "z")
                         {
                             addr = axle.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
-                            xdf.AddrInt = Convert.ToUInt32(addr, 16);
-                            xdf.Address = addr;
+                            xdf.addrInt = Convert.ToUInt32(addr, 16);
+                            //xdf.Address = addr;
                             string tmp = axle.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim();
                             size = (Convert.ToInt32(tmp) / 8).ToString();
                             xdf.ElementSize = (byte)(Convert.ToInt32(tmp) / 8);
@@ -137,7 +137,7 @@ namespace UniversalPatcher
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                     {
                         xdf.TableName = element.Element("title").Value;
-                        xdf.AddrInt = Convert.ToUInt32(element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim(), 16);
+                        //xdf.AddrInt = Convert.ToUInt32(element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim(), 16);
                         xdf.Address = element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
                         xdf.ElementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
                         xdf.Math = element.Element("MATH").Attribute("equation").Value.Trim().Replace("*.", "*0.").Replace("/.", "/0.");
@@ -175,7 +175,7 @@ namespace UniversalPatcher
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                     {
                         xdf.TableName = element.Element("title").Value;
-                        xdf.AddrInt = Convert.ToUInt32(element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim(), 16);
+                        //xdf.AddrInt = Convert.ToUInt32(element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim(), 16);
                         xdf.Address = element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
                         xdf.ElementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
                         xdf.Math = "X";
@@ -293,7 +293,7 @@ namespace UniversalPatcher
                             tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableDatas[t].TableName);
                         else
                             tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableDatas[t].Address);
-                        int s = basefile.GetSegmentNumber(tableDatas[t].AddrInt);
+                        int s = basefile.GetSegmentNumber(tableDatas[t].addrInt);
                         if (s == -1) s = lastCategory;
                         if (tableDatas[t].Category != null && tableDatas[t].Category != "")
                         {
@@ -390,7 +390,7 @@ namespace UniversalPatcher
                             tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableDatas[t].TableName);
                         else
                             tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableDatas[t].Address);
-                        int s = basefile.GetSegmentNumber(tableDatas[t].AddrInt);
+                        int s = basefile.GetSegmentNumber(tableDatas[t].addrInt);
                         if (s == -1) s = lastCategory;
                         tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEID", tableDatas[t].Address);
@@ -414,7 +414,7 @@ namespace UniversalPatcher
                             tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableDatas[t].TableName);
                         else
                             tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableDatas[t].Address);
-                        int s = basefile.GetSegmentNumber(tableDatas[t].AddrInt);
+                        int s = basefile.GetSegmentNumber(tableDatas[t].addrInt);
                         if (s == -1) s = lastCategory;
                         tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEID", tableDatas[t].Address);

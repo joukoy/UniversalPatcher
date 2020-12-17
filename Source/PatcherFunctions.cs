@@ -130,10 +130,10 @@ public class upatcher
         public dtcCode()
         {
             codeInt = 0;
-            codeAddrInt = 0;
-            CodeAddr = "";
-            statusAddrInt = 0;
-            StatusAddr = "";
+            codeAddrInt = uint.MaxValue;
+            //CodeAddr = "";
+            statusAddrInt = uint.MaxValue;
+            //StatusAddr = "";
             Description = "";
             Status = 99;
             MilStatus = 99;
@@ -148,9 +148,54 @@ public class upatcher
         public byte MilStatus { get; set; }
         public string Description { get; set; }
         public uint codeAddrInt;
-        public string CodeAddr { get; set; }
+        public string CodeAddr
+        {
+            get
+            {
+                if (codeAddrInt == uint.MaxValue)
+                    return "";
+                else
+                    return codeAddrInt.ToString("X8");
+            }
+            set
+            {
+                if (value.Length > 0)
+                {
+                    UInt32 prevVal = codeAddrInt;
+                    if (!HexToUint(value, out codeAddrInt))
+                        codeAddrInt = prevVal;
+                }
+                else
+                {
+                    codeAddrInt = uint.MaxValue;
+                }
+            }
+        }
+
         public uint statusAddrInt;
-        public string StatusAddr { get; set; }
+        public string StatusAddr
+        {
+            get
+            {
+                if (statusAddrInt == uint.MaxValue)
+                    return "";
+                else
+                    return statusAddrInt.ToString("X8");
+            }
+            set
+            {
+                if (value.Length > 0)
+                {
+                    UInt32 prevVal = statusAddrInt;
+                    if (!HexToUint(value, out statusAddrInt))
+                        statusAddrInt = prevVal;
+                }
+                else
+                {
+                    statusAddrInt = uint.MaxValue;
+                }
+            }
+        }
         public uint milAddrInt;
         public string MilAddr { get; set; }
     }

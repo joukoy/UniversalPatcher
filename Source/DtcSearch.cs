@@ -269,7 +269,7 @@ namespace UniversalPatcher
                     }
                     dtcCode dtc = dtcCodes[dtcNr];
                     dtc.statusAddrInt = addr2;
-                    dtc.StatusAddr = addr2.ToString("X8");
+                    //dtc.StatusAddr = addr2.ToString("X8");
                     byte statusByte = PCM.buf[addr2];
                     dtc.Status = statusByte;
 
@@ -388,7 +388,7 @@ namespace UniversalPatcher
                         }
                         dtcCode dtc = dtcCodes[dtcNr];
                         dtc.statusAddrInt = addr2;
-                        dtc.StatusAddr = addr2.ToString("X8");
+                        //dtc.StatusAddr = addr2.ToString("X8");
                         //dtc.Status = PCM.buf[addr2];
                         byte statusByte = PCM.buf[addr2];
                         if (statusByte > 3)

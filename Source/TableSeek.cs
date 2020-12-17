@@ -308,7 +308,7 @@ namespace UniversalPatcher
         {
             Name = "";
             addrInt = uint.MaxValue;
-            Address = "";
+            //Address = "";
             configId = -1;
             Description = "";
             id = foundTables.Count;
@@ -317,7 +317,29 @@ namespace UniversalPatcher
         public string Name { get; set; }
 
         public uint addrInt;
-        public string Address { get; set; }
+        public string Address
+        {
+            get
+            {
+                if (addrInt == uint.MaxValue)
+                    return "";
+                else
+                    return addrInt.ToString("X8");
+            }
+            set
+            {
+                if (value.Length > 0)
+                {
+                    UInt32 prevVal = addrInt;
+                    if (!HexToUint(value, out addrInt))
+                        addrInt = prevVal;
+                }
+                else
+                {
+                    addrInt = uint.MaxValue;
+                }
+            }
+        }
         public ushort Rows { get; set; }
         public ushort Columns { get; set; }
         public int configId;

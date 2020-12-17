@@ -43,7 +43,7 @@ namespace UniversalPatcher
                 int codeIndex = Convert.ToInt32(dataGridView1.Rows[rowindex].Cells["id"].Value);
                 frmTableEditor frmT = new frmTableEditor();
                 TableData td = tableDatas[codeIndex];
-                if (td.Address == null || td.Address == "")
+                if (td.addrInt == uint.MaxValue)
                 {
                     Logger("No address defined!");
                     return;
@@ -379,8 +379,8 @@ namespace UniversalPatcher
         {
             TableData td = new TableData();
             dtcCode dtc = dtcCodes[0];
-            td.Address = dtc.StatusAddr;
-            td.AddrInt = dtc.statusAddrInt;
+            //td.Address = dtc.StatusAddr;
+            td.addrInt = dtc.statusAddrInt;
             td.Category = "DTC";
             td.ColumnHeaders = "Status";
             td.Columns = 1;
@@ -410,8 +410,8 @@ namespace UniversalPatcher
             {
                 td = new TableData();
                 td.TableName = "DTC MIL";
-                td.Address = dtc.MilAddr;
-                td.AddrInt = dtc.milAddrInt;
+                //td.Address = dtc.MilAddr;
+                td.addrInt = dtc.milAddrInt;
                 td.Category = "DTC";
                 td.ColumnHeaders = "MIL";
                 td.Columns = 1;
@@ -489,7 +489,7 @@ namespace UniversalPatcher
                 string cat = comboTableCategory.Text;
                 var results = tableDatas.Where(t => t.TableName.Length > 0); //How should I define empty variable??
                 if (!showTablesWithEmptyAddressToolStripMenuItem.Checked)
-                    results = results.Where(t => t.Address.Length > 0);
+                    results = results.Where(t => t.addrInt < uint.MaxValue);
                 if (cat != "_All" && cat != "")
                     results = results.Where(t => t.Category.ToLower().Contains(comboTableCategory.Text.ToLower()));
                 if (txtSearchTableSeek.Text.Length > 0)
@@ -781,7 +781,7 @@ namespace UniversalPatcher
                         if (tableDatas[i].Category.ToLower() == cat.ToLower() && tableDatas[i].TableName.ToLower() == name.ToLower())
                         {
                             tableDatas[i].Address = addr;
-                            tableDatas[i].AddrInt = Convert.ToUInt32(addr, 16);
+                            //tableDatas[i].AddrInt = Convert.ToUInt32(addr, 16);
                             found = true;
                             break;
                         }
@@ -794,7 +794,7 @@ namespace UniversalPatcher
                             if (cat.ToLower() == "protected" && tableDatas[i].TableName.ToLower() == name.ToLower())
                             {
                                 tableDatas[i].Address = addr;
-                                tableDatas[i].AddrInt = Convert.ToUInt32(addr, 16);
+                                //tableDatas[i].AddrInt = Convert.ToUInt32(addr, 16);
                                 found = true;
                                 Debug.WriteLine(name + ": PROTECTED");
                                 break;
@@ -826,5 +826,60 @@ namespace UniversalPatcher
                 showTablesWithEmptyAddressToolStripMenuItem.Checked = true;
             filterTables();
         }
+
+        private void importCSV2ExperimentalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string FileName = SelectFile("Select CSV File", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+
+            Logger("Loading file: " + FileName, false);
+            StreamReader sr = new StreamReader(FileName);
+            string csvLine;
+            while ((csvLine = sr.ReadLine()) != null)
+            {
+                string[] cParts = csvLine.Split(';');
+                if (cParts.Length > 2)
+                {
+                    string cat = cParts[0];
+                    string name = cParts[1];
+                    string addr = cParts[2];
+                    uint lastmask = uint.MaxValue;
+                    uint addrInt = Convert.ToUInt32(addr, 16);
+                    for (int i = 0; i < tableDatas.Count; i++)
+                    {
+                        if (tableDatas[i].Category.ToLower() == cat.ToLower() && tableDatas[i].TableName.ToLower().StartsWith(name.ToLower()))
+                        {
+                            if (name == "K_DYNA_AIR_COEFFICIENT")
+                            {
+                                //tableDatas[i].Address = addrInt.ToString("X8");
+                                tableDatas[i].addrInt = addrInt;
+                                Debug.WriteLine(tableDatas[i].TableName + ": " + addrInt.ToString("X"));
+                                addrInt += 2;
+                            }
+                            else
+                            {
+                                uint mask = Convert.ToUInt32(tableDatas[i].BitMask, 16);
+                                if (lastmask == uint.MaxValue)
+                                    lastmask = mask;
+                                if (mask > lastmask)
+                                {
+                                    addrInt++;
+                                }
+                                lastmask = mask;
+                                //tableDatas[i].Address = addrInt.ToString("X8");
+                                tableDatas[i].addrInt = addrInt;
+                                Debug.WriteLine(tableDatas[i].TableName + ": " + addrInt.ToString("X") + " mask: " + mask.ToString("X"));
+                            }
+                        }
+                    }
+                }
+            }
+            Logger(" [OK]");
+            refreshTablelist();
+
+        }
+
+
     }
 }

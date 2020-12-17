@@ -35,7 +35,7 @@ namespace UniversalPatcher
             if (td.ElementSize == 1)
             {
                 Byte mask = Convert.ToByte(maskStr, 16);
-                if ((PCM.buf[td.AddrInt] & mask) == mask)
+                if ((PCM.buf[td.addrInt] & mask) == mask)
                     chkFlag.Checked = true;
                 else
                     chkFlag.Checked = false;
@@ -43,7 +43,7 @@ namespace UniversalPatcher
             else if (td.ElementSize == 2)
             {
                 ushort mask = Convert.ToUInt16(maskStr, 16);
-                if ((BEToInt16(PCM.buf,td.AddrInt) & mask) == mask)
+                if ((BEToInt16(PCM.buf,td.addrInt) & mask) == mask)
                     chkFlag.Checked = true;
                 else
                     chkFlag.Checked = false;
@@ -51,7 +51,7 @@ namespace UniversalPatcher
             else if (td.ElementSize == 4)
             {
                 UInt32 mask = Convert.ToUInt32(maskStr, 16);
-                if ((BEToInt32(PCM.buf, td.AddrInt) & mask) == mask)
+                if ((BEToInt32(PCM.buf, td.addrInt) & mask) == mask)
                     chkFlag.Checked = true;
                 else
                     chkFlag.Checked = false;
@@ -67,18 +67,18 @@ namespace UniversalPatcher
                 byte mask = Convert.ToByte(maskStr, 16);
                 if (chkFlag.Checked)
                 {                    
-                    PCM.buf[td.AddrInt] = (byte)(PCM.buf[td.AddrInt] | mask);
+                    PCM.buf[td.addrInt] = (byte)(PCM.buf[td.addrInt] | mask);
                 }
                 else
                 {
                     mask = (byte)~mask;
-                    PCM.buf[td.AddrInt] = (byte)(PCM.buf[td.AddrInt] & mask);
+                    PCM.buf[td.addrInt] = (byte)(PCM.buf[td.addrInt] & mask);
                 }
             }
             else if (td.ElementSize == 2)
             {
                 ushort mask = Convert.ToUInt16(maskStr, 16);
-                ushort curVal = BEToUint16(PCM.buf, td.AddrInt);
+                ushort curVal = BEToUint16(PCM.buf, td.addrInt);
                 ushort newVal;
                 if (chkFlag.Checked)
                 {
@@ -90,13 +90,13 @@ namespace UniversalPatcher
                     newVal = (ushort)(curVal & mask);
                 }
                 Byte[] b = BitConverter.GetBytes(newVal);
-                PCM.buf[td.AddrInt] = b[1];
-                PCM.buf[td.AddrInt + 1] = b[0];
+                PCM.buf[td.addrInt] = b[1];
+                PCM.buf[td.addrInt + 1] = b[0];
             }
             else if (td.ElementSize == 4)
             {
                 UInt32 mask = Convert.ToUInt32(maskStr, 16);
-                UInt32 curVal = BEToUint32(PCM.buf, td.AddrInt);
+                UInt32 curVal = BEToUint32(PCM.buf, td.addrInt);
                 UInt32 newVal;
                 if (chkFlag.Checked)
                 {
@@ -108,10 +108,10 @@ namespace UniversalPatcher
                     newVal = (UInt32)(curVal & mask);
                 }
                 Byte[] b = BitConverter.GetBytes(newVal);
-                PCM.buf[td.AddrInt] = b[3];
-                PCM.buf[td.AddrInt + 1] = b[2];
-                PCM.buf[td.AddrInt + 2] = b[1];
-                PCM.buf[td.AddrInt + 3] = b[0];
+                PCM.buf[td.addrInt] = b[3];
+                PCM.buf[td.addrInt + 1] = b[2];
+                PCM.buf[td.addrInt + 2] = b[1];
+                PCM.buf[td.addrInt + 3] = b[0];
             }
             this.Close();
         }

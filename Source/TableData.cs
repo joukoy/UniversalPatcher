@@ -16,7 +16,8 @@ namespace UniversalPatcher
             id = (uint)tableDatas.Count;
             OS = "";
             TableName = "";
-            Address = "";
+            //Address = "";
+            addrInt = uint.MaxValue;
             Math = "X";
             SavingMath = "X";
             Units = "";
@@ -33,8 +34,30 @@ namespace UniversalPatcher
         public string OS { get; set; }
         public string TableName { get; set; }
         public string Category { get; set; }
-        public uint AddrInt;
-        public string Address { get; set; }
+        public uint addrInt;
+        public string Address
+        {
+            get 
+            {
+                if (addrInt == uint.MaxValue)
+                    return "";
+                else
+                    return addrInt.ToString("X8"); 
+            }
+            set 
+            {
+                if (value.Length > 0)
+                {
+                    UInt32 prevVal = addrInt;
+                    if (!HexToUint(value, out addrInt))
+                        addrInt = prevVal;
+                }
+                else
+                {
+                    addrInt = uint.MaxValue;
+                }
+            }         
+        }
         public byte ElementSize { get; set; }
         public string Math { get; set; }
         public string SavingMath { get; set; }
@@ -58,8 +81,8 @@ namespace UniversalPatcher
             TableSeek tSeek = tableSeeks[foundTables[tId].configId];
             FoundTable ft = foundTables[tId];
 
-            AddrInt = ft.addrInt;
-            Address = ft.Address;
+            addrInt = ft.addrInt;
+            //Address = ft.Address;
             Category = ft.Category;
             OutputType = tSeek.OutputType;
             Floating = tSeek.Floating;
