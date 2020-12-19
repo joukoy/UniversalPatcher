@@ -99,7 +99,7 @@ namespace UniversalPatcher
             double value = 0;
             try
             {
-                UInt32 bufAddr = addr - td.addrInt; 
+                UInt32 bufAddr = addr - (uint)(td.addrInt + td.Offset);
                 if (td.ElementSize == 4 || td.ElementSize == 8)
                 {
                     byte[] data = new byte[td.ElementSize];
@@ -133,7 +133,7 @@ namespace UniversalPatcher
         private double getValue(uint addr)
         {
             double value = 0;
-            UInt32 bufAddr = addr - td.addrInt;
+            UInt32 bufAddr = addr - (uint)(td.addrInt + td.Offset);
             if (td.ElementSize == 1)
             {
                 if (td.Signed)
@@ -170,7 +170,7 @@ namespace UniversalPatcher
 
         private UInt64 getRawValue(UInt32 addr)
         {
-            UInt32 bufAddr = addr - td.addrInt;
+            UInt32 bufAddr = addr - (uint)(td.addrInt + td.Offset); 
             if (td.ElementSize == 2)
                 return BEToUint16(dataBuffer, bufAddr);
             if (td.ElementSize == 4)
@@ -209,6 +209,42 @@ namespace UniversalPatcher
             }
         }
 
+        private string loadHeaderFromTable(string tableName, int count)
+        {
+            string headers = "" ;
+            for (int i=0; i < tableDatas.Count; i++)
+            {
+                TableData t = tableDatas[i];
+                if (t.TableName == tableName)
+                {
+                    uint step = t.ElementSize;
+                    uint addr = (uint)(t.addrInt + t.Offset);
+                    for (int a = 0; a < count; a++ )
+                    {                        
+                        if (t.ElementSize == 1)
+                            if(t.Signed)
+                                headers += ((byte)unchecked((sbyte)PCM.buf[addr])).ToString() + ",";
+                            else
+                                headers += PCM.buf[addr].ToString() + ",";
+                        else if (t.ElementSize == 2)
+                            if (t.Signed)
+                                headers += BEToInt16(PCM.buf,addr).ToString() + ",";
+                            else
+                                headers += BEToUint16(PCM.buf, addr).ToString() + ",";
+                        else if (t.ElementSize == 4)
+                            if (t.Signed)
+                            headers += BEToInt32(PCM.buf, addr).ToString() + ",";
+                        else
+                            headers += BEToUint32(PCM.buf, addr).ToString() + ",";
+
+                        addr += step;
+                    }
+                    headers = headers.Trim(',');
+                    break;
+                }
+            }
+            return headers;
+        }
         public void loadTable(TableData td1, PcmFile PCM1)
         {
 
@@ -219,6 +255,8 @@ namespace UniversalPatcher
 
             PCM = PCM1;
             td = td1;
+
+            uint addr = (uint)(td.addrInt + td.Offset);
 
             this.Text = "Table Editor: " + td.TableName;
             if (td.TableDescription != null && td.TableDescription.Length > 0)
@@ -231,7 +269,20 @@ namespace UniversalPatcher
             int colCount = td.Columns;
 
             string[] colHeaders = td.ColumnHeaders.Split(',');
+            if (td.ColumnHeaders.StartsWith("Table: "))
+            {
+                string[] parts = td.ColumnHeaders.Split(' ');
+                colHeaders = loadHeaderFromTable(parts[1],td.Columns).Split(',');
+            }
+
             string[] rowHeaders = td.RowHeaders.Split(',');
+            if (td.RowHeaders.StartsWith("Table: "))
+            {
+                string[] parts = td.RowHeaders.Split(' ');
+                rowHeaders = loadHeaderFromTable(parts[1], td.Rows).Split(',');
+            }
+
+
             if (swapXyToolStripMenuItem.Checked)
             {
                 //Swap col/row
@@ -247,10 +298,9 @@ namespace UniversalPatcher
             {
                 bufSize = (uint)(td.Rows * td.Columns * td.ElementSize);
                 dataBuffer = new byte[bufSize];
-                Array.Copy(PCM.buf, td.addrInt, dataBuffer, 0, bufSize);
+                Array.Copy(PCM.buf, addr, dataBuffer, 0, bufSize);
             }
             //dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader; // .AutoResizeColumns(DataGridViewAutoSizeColumnsMode.Fill);
-            uint addr = td.addrInt;
             int step = (int)(td.ElementSize);
 
             if (swapXyToolStripMenuItem.Checked ^ td.RowMajor == false)
@@ -351,7 +401,7 @@ namespace UniversalPatcher
         private void SaveValue(uint addr,int r, int c)
         {
             MathParser parser = new MathParser();
-            UInt32 bufAddr = addr - td.addrInt;
+            UInt32 bufAddr = addr - (uint)(td.addrInt + td.Offset);
 
             double value = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
             if (!showRawHEXValuesToolStripMenuItem.Checked)
@@ -446,7 +496,7 @@ namespace UniversalPatcher
                         SaveValue(Convert.ToUInt32(dataGridView1.Rows[r].Cells[c].Tag), r, c);
                     }
                 }*/
-                Array.Copy(dataBuffer, 0, PCM.buf, td.addrInt, bufSize);
+                Array.Copy(dataBuffer, 0, PCM.buf, (uint)(td.addrInt + td.Offset), bufSize);
 
             }
             catch (Exception ex)
@@ -520,9 +570,10 @@ namespace UniversalPatcher
                 }
 
                 bool tableModified = false;
+                uint addr = (uint)(td.addrInt + td.Offset);
                 for (int a=0;a<bufSize; a++)
                 {
-                    if (PCM.buf[td.addrInt + a] != dataBuffer[a])
+                    if (PCM.buf[addr + a] != dataBuffer[a])
                     {
                         tableModified = true;
                         break;

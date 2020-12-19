@@ -28,7 +28,7 @@ namespace UniversalPatcher
         }
 
         private PcmFile PCM;
-        
+               
         BindingSource bindingsource = new BindingSource();
         BindingSource categoryBindingSource = new BindingSource();
         private BindingList<TableData> filteredCategories = new BindingList<TableData>();
@@ -879,7 +879,6 @@ namespace UniversalPatcher
             refreshTablelist();
 
         }
-
 
     }
 }

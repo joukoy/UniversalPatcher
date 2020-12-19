@@ -317,7 +317,7 @@ namespace UniversalPatcher
                         tableText = tableText.Replace("REPLACE-BITS", (tableDatas[t].ElementSize * 8).ToString());
                         tableText = tableText.Replace("REPLACE-DECIMALS", tableDatas[t].Decimals.ToString());
                         tableText = tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)tableDatas[t].OutputType).ToString());
-                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", tableDatas[t].Address);
+                        tableText = tableText.Replace("REPLACE-TABLEADDRESS",((uint)(tableDatas[t].addrInt + tableDatas[t].Offset)).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", tableDatas[t].TableDescription);
                         tableText = tableText.Replace("REPLACE-MINVALUE", tableDatas[t].Min.ToString());
                         tableText = tableText.Replace("REPLACE-MAXVALUE", tableDatas[t].Max.ToString());
@@ -393,8 +393,8 @@ namespace UniversalPatcher
                         int s = basefile.GetSegmentNumber(tableDatas[t].addrInt);
                         if (s == -1) s = lastCategory;
                         tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
-                        tableText = tableText.Replace("REPLACE-TABLEID", tableDatas[t].Address);
-                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", tableDatas[t].Address);
+                        tableText = tableText.Replace("REPLACE-TABLEID", ((uint)(tableDatas[t].addrInt + tableDatas[t].Offset)).ToString("X"));
+                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tableDatas[t].addrInt + tableDatas[t].Offset)).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
                         tableText = tableText.Replace("REPLACE-BITS", (tableDatas[t].ElementSize * 8).ToString());
                         tableText = tableText.Replace("REPLACE-MINVALUE", tableDatas[t].Min.ToString());
@@ -418,7 +418,7 @@ namespace UniversalPatcher
                         if (s == -1) s = lastCategory;
                         tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEID", tableDatas[t].Address);
-                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", tableDatas[t].Address);
+                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tableDatas[t].addrInt + tableDatas[t].Offset)).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
                         tableText = tableText.Replace("REPLACE-BITS", (tableDatas[t].ElementSize * 8).ToString());
                         tableText = tableText.Replace("REPLACE-MINVALUE", tableDatas[t].Min.ToString());

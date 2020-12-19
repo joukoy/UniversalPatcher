@@ -58,6 +58,7 @@ namespace UniversalPatcher
                 }
             }         
         }
+        public int Offset { get; set; }
         public byte ElementSize { get; set; }
         public string Math { get; set; }
         public string SavingMath { get; set; }
