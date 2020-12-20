@@ -199,29 +199,29 @@ namespace UniversalPatcher
             }
         }
 
-        private double getHeaderValue(uint addr)
+        private double getHeaderValue(uint addr, TableData t)
         {
             double value = 0;
-            if (td.DataType == InDataType.SBYTE)
+            if (t.DataType == InDataType.SBYTE)
                 value = (byte)unchecked((sbyte)PCM.buf[addr]);
-            if (td.DataType == InDataType.UBYTE)
+            if (t.DataType == InDataType.UBYTE)
                 value = PCM.buf[addr];
-            if (td.DataType == InDataType.SWORD)
+            if (t.DataType == InDataType.SWORD)
                 value = BEToInt16(PCM.buf, addr);
-            if (td.DataType == InDataType.UWORD)
+            if (t.DataType == InDataType.UWORD)
                 value = BEToUint16(PCM.buf, addr);
-            if (td.DataType == InDataType.INT32)
+            if (t.DataType == InDataType.INT32)
                 value = BEToInt32(PCM.buf, addr);
-            if (td.DataType == InDataType.UINT32)
+            if (t.DataType == InDataType.UINT32)
                 value = BEToUint32(PCM.buf, addr);
-            if (td.DataType == InDataType.INT64)
+            if (t.DataType == InDataType.INT64)
                 value = BEToInt64(PCM.buf, addr);
-            if (td.DataType == InDataType.UINT64)
+            if (t.DataType == InDataType.UINT64)
                 value = BEToUint64(PCM.buf, addr);
             
-            //string mathStr = td.Math.ToLower().Replace("x", value.ToString());
-            //if (commaDecimal) mathStr = mathStr.Replace(".", ",");
-            //value = parser.Parse(mathStr, false);
+            string mathStr = t.Math.ToLower().Replace("x", value.ToString());
+            if (commaDecimal) mathStr = mathStr.Replace(".", ",");
+            value = parser.Parse(mathStr, false);
             return value;
         }
 
@@ -237,7 +237,7 @@ namespace UniversalPatcher
                     uint addr = (uint)(t.addrInt + t.Offset);
                     for (int a = 0; a < count; a++ )
                     {
-                        headers += getHeaderValue(addr).ToString();
+                        headers += getHeaderValue(addr,t).ToString() + ",";
                         addr += step;
                     }
                     headers = headers.Trim(',');
