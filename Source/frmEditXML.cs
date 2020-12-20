@@ -64,6 +64,7 @@ namespace UniversalPatcher
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
             btnSave.Visible = false;
+            dataGridView1.Columns["DataType"].ToolTipText = "UBYTE,SBYTE,UWORD,SWORD,UINT32,INT32,UINT64,INT64,FLOAT32,FLOAT64";
         }
 
         public void LoadFileTypes()
@@ -83,19 +84,10 @@ namespace UniversalPatcher
             dataGridView1.DataSource = bindingSource;
             //dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
             dataGridView1.Columns["ConditionalOffset"].ToolTipText = "If set, and Opcode Address last 2 bytes > 0x5000, Offset = -10000";
-
+            dataGridView1.Columns["DataType"].ToolTipText = "UBYTE,SBYTE,UWORD,SWORD,UINT32,INT32,UINT64,INT64,FLOAT32,FLOAT64";
         }
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if ((e.ColumnIndex == this.dataGridView1.Columns["Rating"].Index) && e.Value != null)
-            {
-                DataGridViewCell cell =
-                    this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                if (e.Value.Equals("DataType"))
-                {
-                    cell.ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
-                }
-            }
         }
 
         private void saveThis()
