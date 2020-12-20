@@ -53,12 +53,7 @@ namespace UniversalPatcher
             fileName = fname;
             this.Text = "Edit Table Seek config";
             if (tableSeeks == null) tableSeeks = new List<TableSeek>();
-            bindingSource.DataSource = null;
-            bindingSource.DataSource = tableSeeks;
-            dataGridView1.DataSource = null;
-            dataGridView1.DataSource = bindingSource;
-            //dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
-            dataGridView1.Columns["ConditionalOffset"].ToolTipText = "If set, and Opcode Address last 2 bytes > 0x5000, Offset = -10000";            
+            refreshTableSeek();
         }
 
         public void LoadTableData()
@@ -80,7 +75,16 @@ namespace UniversalPatcher
             dataGridView1.DataSource = bindingSource;
         }
 
+        private void refreshTableSeek()
+        {
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = tableSeeks;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+            //dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
+            dataGridView1.Columns["ConditionalOffset"].ToolTipText = "If set, and Opcode Address last 2 bytes > 0x5000, Offset = -10000";
 
+        }
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             if ((e.ColumnIndex == this.dataGridView1.Columns["Rating"].Index) && e.Value != null)
@@ -94,13 +98,13 @@ namespace UniversalPatcher
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void saveThis()
         {
-            try 
-            { 
+            try
+            {
                 if (this.Text.Contains("CVN"))
                 {
-                    Logger("Saving file stockcvn.xml",false);
+                    Logger("Saving file stockcvn.xml", false);
                     string FileName = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
                     using (FileStream stream = new FileStream(FileName, FileMode.Create))
                     {
@@ -163,6 +167,11 @@ namespace UniversalPatcher
             {
                 Logger(ex.Message);
             }
+
+        }
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            saveThis();
         }
         public void Logger(string LogText, Boolean NewLine = true)
         {
@@ -172,7 +181,7 @@ namespace UniversalPatcher
             Application.DoEvents();
         }
 
-        private void btnSaveCSV_Click(object sender, EventArgs e)
+        private void saveCSV()
         {
             string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
             if (FileName.Length == 0)
@@ -181,7 +190,7 @@ namespace UniversalPatcher
             using (StreamWriter writetext = new StreamWriter(FileName))
             {
                 string row = "";
-                for (int i= 0;i< dataGridView1.Columns.Count; i++)
+                for (int i = 0; i < dataGridView1.Columns.Count; i++)
                 {
                     if (i > 0)
                         row += ";";
@@ -199,9 +208,14 @@ namespace UniversalPatcher
                             row += dataGridView1.Rows[r].Cells[i].Value.ToString();
                     }
                     writetext.WriteLine(row);
-                }                
+                }
             }
             Logger(" [OK]");
+
+        }
+        private void btnSaveCSV_Click(object sender, EventArgs e)
+        {
+            saveCSV();
         }
 
         private void frmEditXML_Load(object sender, EventArgs e)
@@ -240,11 +254,15 @@ namespace UniversalPatcher
             }
         }
 
+        private void importCSV()
+        {
+
+        }
 
         private void btnImportCSV_Click(object sender, EventArgs e)
         {
             try
-            { 
+            {
                 string FileName = SelectFile("Select CSV file", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
                 if (FileName.Length == 0)
                     return;
@@ -255,7 +273,7 @@ namespace UniversalPatcher
                     string[] lineparts = line.Split(';');
                     if (lineparts.Length > 5)
                     {
-                        for (int i=5; i< lineparts.Length; i+=4)
+                        for (int i = 5; i < lineparts.Length; i += 4)
                         {
                             TableSeek ts = new TableSeek();
                             ts.Category = lineparts[0];
@@ -263,12 +281,12 @@ namespace UniversalPatcher
                             ts.SearchStr = lineparts[i];
                             if (lineparts.Length >= i + 1)
                                 ts.UseHit = lineparts[i + 1];
-                            if (lineparts.Length >= i + 2 && lineparts[i+2].Length > 0)
-                                ts.Offset = Convert.ToInt32( lineparts[i + 2]);
+                            if (lineparts.Length >= i + 2 && lineparts[i + 2].Length > 0)
+                                ts.Offset = Convert.ToInt32(lineparts[i + 2]);
                             if (lineparts.Length >= i + 3 && lineparts[i + 3].Length > 0)
                                 ts.Name += "_" + lineparts[i + 3];
 
-                            for (int s= 0; s < tableSeeks.Count; s++)
+                            for (int s = 0; s < tableSeeks.Count; s++)
                             {
                                 if (tableSeeks[s].Name.ToLower() == lineparts[1].ToLower() && tableSeeks[s].Category.ToLower() == ts.Category.ToLower())
                                 {
@@ -278,13 +296,15 @@ namespace UniversalPatcher
                                         {
                                             TableSeek tsNew = new TableSeek();
                                             tsNew.BitMask = tableSeeks[s].BitMask;
-                                            tsNew.Bits = tableSeeks[s].Bits;
+                                            tsNew.DataType = tableSeeks[s].DataType;
+                                            //tsNew.Bits = tableSeeks[s].Bits;
+                                            //tsNew.Floating = tableSeeks[s].Floating;
+                                            //tsNew.Signed = tableSeeks[s].Signed;
                                             tsNew.ColHeaders = tableSeeks[s].ColHeaders;
                                             tsNew.Columns = tableSeeks[s].Columns;
                                             tsNew.ConditionalOffset = tableSeeks[s].ConditionalOffset;
                                             tsNew.Decimals = tableSeeks[s].Decimals;
                                             tsNew.Description = tableSeeks[s].Description;
-                                            tsNew.Floating = tableSeeks[s].Floating;
                                             tsNew.Math = tableSeeks[s].Math;
                                             tsNew.Max = tableSeeks[s].Max;
                                             tsNew.Min = tableSeeks[s].Min;
@@ -295,7 +315,6 @@ namespace UniversalPatcher
                                             tsNew.Rows = tableSeeks[s].Rows;
                                             tsNew.SavingMath = tableSeeks[s].SavingMath;
                                             tsNew.Segments = tableSeeks[s].Segments;
-                                            tsNew.Signed = tableSeeks[s].Signed;
                                             tsNew.Units = tableSeeks[s].Units;
                                             tsNew.ValidationSearchStr = tableSeeks[s].ValidationSearchStr;
                                             tsNew.Name = ts.Name;
@@ -321,7 +340,7 @@ namespace UniversalPatcher
                 }
                 sr.Close();
 
-                for (int s = tableSeeks.Count-1; s >= 0; s--)
+                for (int s = tableSeeks.Count - 1; s >= 0; s--)
                 {
                     if (tableSeeks[s].SearchStr.Length == 0)
                         tableSeeks.RemoveAt(s);
@@ -340,7 +359,7 @@ namespace UniversalPatcher
 
         private void txtResult_TextChanged(object sender, EventArgs e)
         {
-
+            importCSV();
         }
 
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
@@ -353,6 +372,37 @@ namespace UniversalPatcher
                 dataGridView1.Columns["Colheaders"].Width = 100;
                 starting = false;
             }
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveThis();
+        }
+
+        private void saveCSVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveCSV();
+        }
+
+        private void importCSVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importCSV();
+        }
+
+        private void convertToDataTypeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < tableSeeks.Count; i++)
+            {
+                TableSeek t = tableSeeks[i];
+                t.DataType = convertToDataType(t.Bits / 8, t.Signed, t.Floating);
+            }
+
+            refreshTableSeek();
         }
     }
 }

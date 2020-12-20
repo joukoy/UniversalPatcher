@@ -120,11 +120,12 @@ namespace UniversalPatcher
                     ft.configId = tableSeeks.Count;
                     foundTables.Add(ft);
 
-                    ts.Bits = (ushort) (Convert.ToUInt16(row["ElementSize"]) * 8);
+                    ushort elementSize = (ushort) (Convert.ToUInt16(row["ElementSize"]));
+                    bool signed = Convert.ToBoolean(row["AllowNegative"]);
+                    ts.DataType = convertToDataType(elementSize, signed, true);
                     string colHeaders = row["ColumnHeaders"].ToString();
                     ts.ColHeaders = RemoveDuplicates(colHeaders);
                     ts.Columns = Convert.ToUInt16(row["ColumnCount"]);
-                    ts.Floating = true;
                     ts.Decimals = 2;
                     ts.Description = row["TableDescription"].ToString();
                     ts.Math = "X*" + row["Factor"].ToString();
@@ -136,7 +137,6 @@ namespace UniversalPatcher
                         ts.RowHeaders = convertByHeader(ts.RowHeaders,ts.Rows);
                     }
                     ts.SavingMath = "X/" + row["Factor"].ToString();
-                    ts.Signed = Convert.ToBoolean(row["AllowNegative"]);
                     ts.Category = row["MainCategory"].ToString();
                     ts.Units = row["Units"].ToString();
                     ts.RowMajor = false;
@@ -222,10 +222,12 @@ namespace UniversalPatcher
                     td.Rows = Convert.ToUInt16(row["RowCount"]);
                     td.Category = row["MainCategory"].ToString();
 
-                    td.ElementSize = (byte)(Convert.ToByte(row["ElementSize"]));
+                    int elementSize = (byte)(Convert.ToByte(row["ElementSize"]));
+                    bool Signed = Convert.ToBoolean(row["AllowNegative"]);
+                    td.DataType = convertToDataType(elementSize, Signed, false);
                     string colHeaders = row["ColumnHeaders"].ToString();
                     td.ColumnHeaders = RemoveDuplicates(colHeaders);
-                    td.Floating = true;
+                    //td.Floating = true;
                     td.Decimals = 2;
                     td.Math = "X*" + row["Factor"].ToString();
                     td.RowHeaders = row["RowHeaders"].ToString();
@@ -234,7 +236,6 @@ namespace UniversalPatcher
                         td.RowHeaders = convertByHeader(td.RowHeaders, td.Rows);
                     }
                     td.SavingMath = "X/" + row["Factor"].ToString();
-                    td.Signed = Convert.ToBoolean(row["AllowNegative"]);
                     td.Category = row["MainCategory"].ToString();
                     if (!tableCategories.Contains(td.Category))
                         tableCategories.Add(td.Category);

@@ -28,7 +28,7 @@ namespace UniversalPatcher
             Decimals = 2;
             Min = 0;
             Max = 255;
-            OutputType = DataType.Float;
+            OutputType = OutDataType.Float;
             Floating = false;
             UseHit = "1";
             Range = "";
@@ -46,11 +46,12 @@ namespace UniversalPatcher
         public string SavingMath { get; set; }
         public int Offset { get; set; }
         public bool ConditionalOffset { get; set; }
-        public ushort Bits { get; set; }
-        public bool Signed { get; set; }
+        public InDataType DataType { get; set; }
+        public ushort Bits;
+        public bool Signed;
         public ushort Decimals { get; set; }
-        public bool Floating { get; set; } 
-        public DataType OutputType { get; set; }
+        public bool Floating;
+        public OutDataType OutputType { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }
 
@@ -110,14 +111,15 @@ namespace UniversalPatcher
 
                             ts.Name = "VE";
                             ts.Description = "Volumetric Efficiency";
-                            ts.Bits = 16;
-                            ts.Floating = true;
-                            ts.OutputType = DataType.Float;
+                            ts.DataType = InDataType.UWORD;
+                            //ts.Bits = 16;
+                            //ts.Floating = true;
+                            ts.OutputType = OutDataType.Float;
                             ts.Decimals = 6;
                             ts.Math = "X*0.0002441406";
                             ts.Offset = 0;
                             ts.SavingMath = "X/0.0002441406";
-                            ts.Signed = false;
+                            //ts.Signed = false;
                             ts.Category = "Fuel";                            
                             ts.ColHeaders = "RPM 0,400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400, 6800";
                             if (ft.Rows == 15)
@@ -139,14 +141,15 @@ namespace UniversalPatcher
                             foundTables.Add(ft);
 
                             ts = new TableSeek();
-                            ts.Bits = 16;
+                            ts.DataType = InDataType.UWORD;
+                            //ts.Bits = 16;
                             ts.Name = "MAF";
                             ts.Math = "X*0.0078125";
                             ts.SavingMath = "X/0.0078125";
-                            ts.Floating = true;
-                            ts.OutputType = DataType.Float;
+                            //ts.Floating = true;
+                            ts.OutputType = OutDataType.Float;
                             ts.Decimals = 4;
-                            ts.Signed = false;
+                            //ts.Signed = false;
                             ts.Category = "Fuel";
                             ts.Units = "grams/s";
                             ts.RowHeaders = "1500,";

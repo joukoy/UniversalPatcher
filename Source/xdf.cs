@@ -64,6 +64,9 @@ namespace UniversalPatcher
                     string addr = "";
                     string size = "";
                     string math = "";
+                    int elementSize = 0;
+                    bool Signed = false;
+                    bool Floating = false;
                     foreach (XElement axle in element.Elements("XDFAXIS"))
                     {
                         if (axle.Attribute("id").Value == "x")
@@ -93,13 +96,13 @@ namespace UniversalPatcher
                             //xdf.Address = addr;
                             string tmp = axle.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim();
                             size = (Convert.ToInt32(tmp) / 8).ToString();
-                            xdf.ElementSize = (byte)(Convert.ToInt32(tmp) / 8);
+                            elementSize = (byte)(Convert.ToInt32(tmp) / 8);
                             math = axle.Element("MATH").Attribute("equation").Value.Trim().Replace("*.", "*0.");
                             xdf.Math = math.Replace("/.", "/0.");
                             xdf.SavingMath = convertMath(xdf.Math);
                             xdf.Decimals = Convert.ToUInt16(axle.Element("decimalpl").Value);
                             if (axle.Element("outputtype") != null)
-                                xdf.OutputType = (DataType) Convert.ToUInt16(axle.Element("outputtype").Value);
+                                xdf.OutputType = (OutDataType) Convert.ToUInt16(axle.Element("outputtype").Value);
                         }
                     }
                     xdf.TableName = element.Element("title").Value;
@@ -110,11 +113,11 @@ namespace UniversalPatcher
                     if (element.Element("EMBEDDEDDATA") != null && element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags") != null)
                     {
                         byte flags = Convert.ToByte(element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value,16);
-                        xdf.Signed = Convert.ToBoolean(flags & 1);
+                        Signed = Convert.ToBoolean(flags & 1);
                         if ((flags & 0x10000) == 0x10000)
-                            xdf.Floating = true;
+                            Floating = true;
                         else
-                            xdf.Floating = false;
+                            Floating = false;
                         if ((flags & 4) == 4)
                             xdf.RowMajor = true;
                         else
@@ -127,6 +130,7 @@ namespace UniversalPatcher
                     }
                     if (element.Element("description") != null)
                         xdf.TableDescription = element.Element("description").Value;
+                    xdf.DataType = convertToDataType(elementSize, Signed, Floating);
 
                     tableDatas.Add(xdf);
                 }
@@ -134,12 +138,15 @@ namespace UniversalPatcher
                 {
                     TableData xdf = new TableData();
                     xdf.OS = PCM.OS;
+                    int elementSize = 0;
+                    bool Signed = false;
+                    bool Floating = false;
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                     {
                         xdf.TableName = element.Element("title").Value;
                         //xdf.AddrInt = Convert.ToUInt32(element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim(), 16);
                         xdf.Address = element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
-                        xdf.ElementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
+                        elementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
                         xdf.Math = element.Element("MATH").Attribute("equation").Value.Trim().Replace("*.", "*0.").Replace("/.", "/0.");
                         xdf.SavingMath = convertMath(xdf.Math);
                         if (element.Element("units") != null)
@@ -147,11 +154,11 @@ namespace UniversalPatcher
                         if (element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags") != null)
                         {
                             byte flags = Convert.ToByte(element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value,16);
-                            xdf.Signed = Convert.ToBoolean(flags & 1);
+                            Signed = Convert.ToBoolean(flags & 1);
                             if ((flags & 0x10000) == 0x10000)
-                                xdf.Floating = true;
+                                Floating = true;
                             else
-                                xdf.Floating = false;
+                                Floating = false;
                         }
                         xdf.Columns = 1;
                         xdf.Rows = 1;
@@ -163,6 +170,7 @@ namespace UniversalPatcher
                         }
                         if (element.Element("description") != null)
                             xdf.TableDescription = element.Element("description").Value;
+                        xdf.DataType = convertToDataType(elementSize, Signed, Floating);
 
                         tableDatas.Add(xdf);
 
@@ -177,10 +185,10 @@ namespace UniversalPatcher
                         xdf.TableName = element.Element("title").Value;
                         //xdf.AddrInt = Convert.ToUInt32(element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim(), 16);
                         xdf.Address = element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
-                        xdf.ElementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
+                        int elementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
                         xdf.Math = "X";
                         xdf.BitMask = element.Element("mask").Value;
-                        xdf.OutputType = DataType.Flag;
+                        xdf.OutputType = OutDataType.Flag;
                         xdf.Columns = 1;
                         xdf.Rows = 1;
                         xdf.RowMajor = false;
@@ -191,7 +199,7 @@ namespace UniversalPatcher
                         }
                         if (element.Element("description") != null)
                             xdf.TableDescription = element.Element("description").Value;
-
+                        xdf.DataType = convertToDataType(elementSize, false, false);
                         tableDatas.Add(xdf);
 
                     }
@@ -314,7 +322,7 @@ namespace UniversalPatcher
                         tableText = tableText.Replace("REPLACE-ROWCOUNT", tableDatas[t].Rows.ToString());
                         tableText = tableText.Replace("REPLACE-COLCOUNT", tableDatas[t].Columns.ToString());
                         tableText = tableText.Replace("REPLACE-MATH", tableDatas[t].Math);
-                        tableText = tableText.Replace("REPLACE-BITS", (tableDatas[t].ElementSize * 8).ToString());
+                        tableText = tableText.Replace("REPLACE-BITS", getElementSize(tableDatas[t].DataType).ToString());
                         tableText = tableText.Replace("REPLACE-DECIMALS", tableDatas[t].Decimals.ToString());
                         tableText = tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)tableDatas[t].OutputType).ToString());
                         tableText = tableText.Replace("REPLACE-TABLEADDRESS",((uint)(tableDatas[t].addrInt + tableDatas[t].Offset)).ToString("X"));
@@ -322,7 +330,7 @@ namespace UniversalPatcher
                         tableText = tableText.Replace("REPLACE-MINVALUE", tableDatas[t].Min.ToString());
                         tableText = tableText.Replace("REPLACE-MAXVALUE", tableDatas[t].Max.ToString());
                         int tableFlags = 0;
-                        if (tableDatas[t].Signed)
+                        if (getSigned(tableDatas[t].DataType))
                         {
                             tableFlags++;
                         }
@@ -384,7 +392,7 @@ namespace UniversalPatcher
                 for (int t = 0; t < tableDatas.Count; t++)
                 {
                     //Add all constants
-                    if (tableDatas[t].Rows < 2 && tableDatas[t].OutputType != DataType.Flag)
+                    if (tableDatas[t].Rows < 2 && tableDatas[t].OutputType != OutDataType.Flag)
                     {
                         if (tableDatas[t].TableName != null && tableDatas[t].TableName.Length > 1)
                             tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableDatas[t].TableName);
@@ -396,7 +404,7 @@ namespace UniversalPatcher
                         tableText = tableText.Replace("REPLACE-TABLEID", ((uint)(tableDatas[t].addrInt + tableDatas[t].Offset)).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tableDatas[t].addrInt + tableDatas[t].Offset)).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
-                        tableText = tableText.Replace("REPLACE-BITS", (tableDatas[t].ElementSize * 8).ToString());
+                        tableText = tableText.Replace("REPLACE-BITS", getElementSize(tableDatas[t].DataType).ToString());
                         tableText = tableText.Replace("REPLACE-MINVALUE", tableDatas[t].Min.ToString());
                         tableText = tableText.Replace("REPLACE-MAXVALUE", tableDatas[t].Max.ToString());
                         xdfText += tableText;       //Add generated table to end of xdfText
@@ -408,7 +416,7 @@ namespace UniversalPatcher
                 for (int t = 0; t < tableDatas.Count; t++)
                 {
                     //Add all constants
-                    if (tableDatas[t].OutputType == DataType.Flag)
+                    if (tableDatas[t].OutputType == OutDataType.Flag)
                     {
                         if (tableDatas[t].TableName != null && tableDatas[t].TableName.Length > 1)
                             tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableDatas[t].TableName);
@@ -420,7 +428,7 @@ namespace UniversalPatcher
                         tableText = tableText.Replace("REPLACE-TABLEID", tableDatas[t].Address);
                         tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tableDatas[t].addrInt + tableDatas[t].Offset)).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
-                        tableText = tableText.Replace("REPLACE-BITS", (tableDatas[t].ElementSize * 8).ToString());
+                        tableText = tableText.Replace("REPLACE-BITS", getElementSize(tableDatas[t].DataType).ToString());
                         tableText = tableText.Replace("REPLACE-MINVALUE", tableDatas[t].Min.ToString());
                         tableText = tableText.Replace("REPLACE-MAXVALUE", tableDatas[t].Max.ToString());
                         tableText = tableText.Replace("REPLACE-MASK", tableDatas[t].BitMask);

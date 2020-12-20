@@ -62,6 +62,7 @@ namespace UniversalPatcher
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
+            this.convertToDataTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -78,7 +79,6 @@ namespace UniversalPatcher
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(861, 359);
             this.dataGridView1.TabIndex = 0;
-            //this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
             // 
@@ -157,28 +157,28 @@ namespace UniversalPatcher
             // loadXMLToolStripMenuItem
             // 
             this.loadXMLToolStripMenuItem.Name = "loadXMLToolStripMenuItem";
-            this.loadXMLToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.loadXMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadXMLToolStripMenuItem.Text = "Load XML";
             this.loadXMLToolStripMenuItem.Click += new System.EventHandler(this.loadXMLToolStripMenuItem_Click);
             // 
             // saveXMLToolStripMenuItem
             // 
             this.saveXMLToolStripMenuItem.Name = "saveXMLToolStripMenuItem";
-            this.saveXMLToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.saveXMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveXMLToolStripMenuItem.Text = "Save XML";
             this.saveXMLToolStripMenuItem.Click += new System.EventHandler(this.saveXMLToolStripMenuItem_Click);
             // 
             // saveBINToolStripMenuItem
             // 
             this.saveBINToolStripMenuItem.Name = "saveBINToolStripMenuItem";
-            this.saveBINToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.saveBINToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveBINToolStripMenuItem.Text = "Save BIN";
             this.saveBINToolStripMenuItem.Click += new System.EventHandler(this.saveBINToolStripMenuItem_Click);
             // 
             // clearTableToolStripMenuItem
             // 
             this.clearTableToolStripMenuItem.Name = "clearTableToolStripMenuItem";
-            this.clearTableToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.clearTableToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.clearTableToolStripMenuItem.Text = "Clear Tablelist";
             this.clearTableToolStripMenuItem.Click += new System.EventHandler(this.clearTableToolStripMenuItem_Click);
             // 
@@ -190,7 +190,8 @@ namespace UniversalPatcher
             this.importXDFToolStripMenuItem,
             this.importTinyTunerDBV6OnlyToolStripMenuItem,
             this.importCSVexperimentalToolStripMenuItem,
-            this.importCSV2ExperimentalToolStripMenuItem});
+            this.importCSV2ExperimentalToolStripMenuItem,
+            this.convertToDataTypeToolStripMenuItem});
             this.importToolStripMenuItem.Name = "importToolStripMenuItem";
             this.importToolStripMenuItem.Size = new System.Drawing.Size(55, 20);
             this.importToolStripMenuItem.Text = "Import";
@@ -326,6 +327,13 @@ namespace UniversalPatcher
             this.label1.TabIndex = 17;
             this.label1.Text = "Filter TableName:";
             // 
+            // convertToDataTypeToolStripMenuItem
+            // 
+            this.convertToDataTypeToolStripMenuItem.Name = "convertToDataTypeToolStripMenuItem";
+            this.convertToDataTypeToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+            this.convertToDataTypeToolStripMenuItem.Text = "Convert to DataType";
+            this.convertToDataTypeToolStripMenuItem.Click += new System.EventHandler(this.convertToDataTypeToolStripMenuItem_Click);
+            // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -387,5 +395,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem settingsToolStripMenuItem;
         private ToolStripMenuItem showTablesWithEmptyAddressToolStripMenuItem;
         private ToolStripMenuItem importCSV2ExperimentalToolStripMenuItem;
+        private ToolStripMenuItem convertToDataTypeToolStripMenuItem;
     }
 }

@@ -3211,7 +3211,7 @@ namespace UniversalPatcher
                             tableText = tableText.Replace("REPLACE-ROWCOUNT", foundTables[t].Rows.ToString());
                             tableText = tableText.Replace("REPLACE-COLCOUNT", foundTables[t].Columns.ToString());
                             tableText = tableText.Replace("REPLACE-MATH", tableSeeks[id].Math);
-                            tableText = tableText.Replace("REPLACE-BITS", tableSeeks[id].Bits.ToString());
+                            tableText = tableText.Replace("REPLACE-BITS", getBits(tableSeeks[id].DataType).ToString());
                             tableText = tableText.Replace("REPLACE-DECIMALS", tableSeeks[id].Decimals.ToString());
                             tableText = tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)tableSeeks[id].OutputType).ToString());
                             tableText = tableText.Replace("REPLACE-TABLEADDRESS", foundTables[t].Address);
@@ -3219,7 +3219,7 @@ namespace UniversalPatcher
                             tableText = tableText.Replace("REPLACE-MINVALUE", tableSeeks[id].Min.ToString());
                             tableText = tableText.Replace("REPLACE-MAXVALUE", tableSeeks[id].Max.ToString());
                             int tableFlags = 0;
-                            if (tableSeeks[id].Signed)
+                            if (getSigned(tableSeeks[id].DataType))
                             {
                                 tableFlags++;
                             }
@@ -3293,7 +3293,7 @@ namespace UniversalPatcher
                             tableText = tableText.Replace("REPLACE-TABLEID", foundTables[t].Address);
                             tableText = tableText.Replace("REPLACE-TABLEADDRESS", foundTables[t].Address);
                             tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
-                            tableText = tableText.Replace("REPLACE-BITS", (tableDatas[t].ElementSize * 8).ToString());
+                            tableText = tableText.Replace("REPLACE-BITS", (getBits(tableDatas[t].DataType)).ToString());
                             tableText = tableText.Replace("REPLACE-MINVALUE", tableSeeks[id].Min.ToString());
                             tableText = tableText.Replace("REPLACE-MAXVALUE", tableSeeks[id].Max.ToString());
                             xdfText += tableText;       //Add generated table to end of xdfText
@@ -3358,7 +3358,7 @@ namespace UniversalPatcher
                     return;
                 }
 
-                if (ts.OutputType == DataType.Flag && ts.BitMask != null && ts.BitMask.Length > 0)
+                if (ts.OutputType == OutDataType.Flag && ts.BitMask != null && ts.BitMask.Length > 0)
                 {
                     frmEditFlag ff = new frmEditFlag();
                     TableData td = new TableData();

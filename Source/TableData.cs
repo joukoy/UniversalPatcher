@@ -28,7 +28,8 @@ namespace UniversalPatcher
             RowMajor = true;
             //DataType = TypeFloat;
             Floating = false;
-            OutputType = DataType.Float;
+            OutputType = OutDataType.Float;
+            DataType = InDataType.UNKNOWN;
         }
         public uint id { get; set; }
         public string OS { get; set; }
@@ -59,16 +60,17 @@ namespace UniversalPatcher
             }         
         }
         public int Offset { get; set; }
-        public byte ElementSize { get; set; }
+        public InDataType DataType { get; set; }
+        public byte ElementSize;
         public string Math { get; set; }
         public string SavingMath { get; set; }
         public string Units { get; set; }
-        public DataType OutputType { get; set; }
+        public OutDataType OutputType { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }
         public ushort Decimals { get; set; }
-        public bool Signed { get; set; }
-        public bool Floating { get; set; }
+        public bool Signed;
+        public bool Floating;
         public ushort Columns { get; set; }
         public ushort Rows { get; set; }
         public string BitMask { get; set; }
@@ -86,8 +88,9 @@ namespace UniversalPatcher
             //Address = ft.Address;
             Category = ft.Category;
             OutputType = tSeek.OutputType;
-            Floating = tSeek.Floating;
-            ElementSize = (byte)(tSeek.Bits / 8);
+            //Floating = tSeek.Floating;
+            //ElementSize = (byte)(tSeek.Bits / 8);
+            DataType = tSeek.DataType;
             Math = tSeek.Math;
             SavingMath = tSeek.SavingMath;
             OS = PCM.OS;
@@ -97,7 +100,7 @@ namespace UniversalPatcher
             ColumnHeaders = tSeek.ColHeaders;
             RowHeaders = tSeek.RowHeaders;
             Decimals = tSeek.Decimals;
-            Signed = tSeek.Signed;
+            //Signed = tSeek.Signed;
             TableDescription = tSeek.Description;
             TableName = ft.Name;
             Units = tSeek.Units;
@@ -107,6 +110,5 @@ namespace UniversalPatcher
                 tableCategories.Add(Category);
 
         }
-
     }
 }

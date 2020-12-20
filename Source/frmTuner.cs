@@ -53,7 +53,7 @@ namespace UniversalPatcher
                 {
                     LoggerBold("WARING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);
                 }
-                if (td.OutputType == DataType.Flag && td.BitMask != null && td.BitMask.Length > 0)
+                if (td.OutputType == OutDataType.Flag && td.BitMask != null && td.BitMask.Length > 0)
                 {
                     frmEditFlag ff = new frmEditFlag();
                     ff.loadFlag(PCM, td);
@@ -384,10 +384,11 @@ namespace UniversalPatcher
             td.Category = "DTC";
             td.ColumnHeaders = "Status";
             td.Columns = 1;
-            td.Floating = false;
-            td.OutputType = DataType.Int;
+            //td.Floating = false;
+            td.OutputType = OutDataType.Int;
             td.Decimals = 0;
-            td.ElementSize = 1; // (byte)(dtcCodes[1].codeAddrInt - dtcCodes[0].codeAddrInt);
+            //td.ElementSize = 1; // (byte)(dtcCodes[1].codeAddrInt - dtcCodes[0].codeAddrInt);
+            td.DataType = InDataType.UBYTE;
             td.Math = "X";
             td.OS = PCM.OS;
             for (int i = 0; i < dtcCodes.Count; i++)
@@ -397,7 +398,7 @@ namespace UniversalPatcher
             td.RowHeaders = td.RowHeaders.Trim(',');
             td.Rows = (ushort)dtcCodes.Count;
             td.SavingMath = "X";
-            td.Signed = false;
+            //td.Signed = false;
             if (dtcCombined)
                 td.TableDescription = "00 MIL and reporting off, 01 type A/no mil, 02 type B/no mil, 03 type C/no mil, 04 not reported/mil, 05 type A/mil, 06 type B/mil, 07 type c/mil";
             else
@@ -415,10 +416,11 @@ namespace UniversalPatcher
                 td.Category = "DTC";
                 td.ColumnHeaders = "MIL";
                 td.Columns = 1;
-                td.Floating = false;
-                td.OutputType = DataType.Int;
+                //td.Floating = false;
+                td.OutputType = OutDataType.Int;
                 td.Decimals = 0;
-                td.ElementSize = 1; // (byte)(dtcCodes[1].milAddrInt - dtcCodes[0].milAddrInt);
+                //td.ElementSize = 1; // (byte)(dtcCodes[1].milAddrInt - dtcCodes[0].milAddrInt);
+                td.DataType = InDataType.UBYTE;
                 td.Math = "X";
                 td.OS = PCM.OS;
                 for (int i = 0; i < dtcCodes.Count; i++)
@@ -427,7 +429,7 @@ namespace UniversalPatcher
                 }
                 td.Rows = (ushort)dtcCodes.Count;
                 td.SavingMath = "X";
-                td.Signed = false;
+                //td.Signed = false;
                 td.TableDescription = "0 = No MIL (Lamp always off) 1 = MIL (Lamp may be commanded on by PCM)";
                 tableDatas.Add(td);
             }
@@ -880,5 +882,14 @@ namespace UniversalPatcher
 
         }
 
+        private void convertToDataTypeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int i=0; i< tableDatas.Count; i++)
+            {
+                TableData t = tableDatas[i];
+                t.DataType = convertToDataType(t.ElementSize, t.Signed, t.Floating);
+            }
+            refreshTablelist();
+        }
     }
 }

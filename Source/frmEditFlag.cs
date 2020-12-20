@@ -33,7 +33,7 @@ namespace UniversalPatcher
                 labelDescription.Text = td.TableName;
             this.Text = td.TableName;
             string maskStr = td.BitMask;
-            if (td.ElementSize == 1)
+            if (td.DataType == InDataType.UBYTE || td.DataType == InDataType.SBYTE)
             {
                 Byte mask = Convert.ToByte(maskStr, 16);
                 if ((PCM.buf[addr] & mask) == mask)
@@ -41,7 +41,7 @@ namespace UniversalPatcher
                 else
                     chkFlag.Checked = false;
             }
-            else if (td.ElementSize == 2)
+            if (td.DataType == InDataType.UWORD || td.DataType == InDataType.SWORD)
             {
                 ushort mask = Convert.ToUInt16(maskStr, 16);
                 if ((BEToInt16(PCM.buf,addr) & mask) == mask)
@@ -49,10 +49,18 @@ namespace UniversalPatcher
                 else
                     chkFlag.Checked = false;
             }
-            else if (td.ElementSize == 4)
+            if (td.DataType == InDataType.INT32 || td.DataType == InDataType.UINT32)
             {
                 UInt32 mask = Convert.ToUInt32(maskStr, 16);
                 if ((BEToInt32(PCM.buf, addr) & mask) == mask)
+                    chkFlag.Checked = true;
+                else
+                    chkFlag.Checked = false;
+            }
+            if (td.DataType == InDataType.INT64 || td.DataType == InDataType.UINT64)
+            {
+                UInt64 mask = Convert.ToUInt64(maskStr, 16);
+                if ((BEToUint64(PCM.buf, addr) & mask) == mask)
                     chkFlag.Checked = true;
                 else
                     chkFlag.Checked = false;
@@ -64,11 +72,11 @@ namespace UniversalPatcher
         {
             string maskStr = td.BitMask;
             uint addr = (uint)(td.addrInt + td.Offset);
-            if (td.ElementSize == 1)
+            if (td.DataType == InDataType.UBYTE || td.DataType == InDataType.SBYTE)
             {
                 byte mask = Convert.ToByte(maskStr, 16);
                 if (chkFlag.Checked)
-                {                    
+                {
                     PCM.buf[addr] = (byte)(PCM.buf[addr] | mask);
                 }
                 else
@@ -77,7 +85,7 @@ namespace UniversalPatcher
                     PCM.buf[addr] = (byte)(PCM.buf[addr] & mask);
                 }
             }
-            else if (td.ElementSize == 2)
+            else if (td.DataType == InDataType.SWORD || td.DataType == InDataType.UWORD)
             {
                 ushort mask = Convert.ToUInt16(maskStr, 16);
                 ushort curVal = BEToUint16(PCM.buf, addr);
@@ -95,7 +103,7 @@ namespace UniversalPatcher
                 PCM.buf[addr] = b[1];
                 PCM.buf[addr + 1] = b[0];
             }
-            else if (td.ElementSize == 4)
+            else if (td.DataType == InDataType.INT32 || td.DataType == InDataType.UINT32)
             {
                 UInt32 mask = Convert.ToUInt32(maskStr, 16);
                 UInt32 curVal = BEToUint32(PCM.buf, addr);
@@ -114,6 +122,30 @@ namespace UniversalPatcher
                 PCM.buf[addr + 1] = b[2];
                 PCM.buf[addr + 2] = b[1];
                 PCM.buf[addr + 3] = b[0];
+            }
+            else if (td.DataType == InDataType.INT64 || td.DataType == InDataType.UINT64)
+            {
+                UInt64 mask = Convert.ToUInt64(maskStr, 16);
+                UInt64 curVal = BEToUint64(PCM.buf, addr);
+                UInt64 newVal;
+                if (chkFlag.Checked)
+                {
+                    newVal = (UInt64)(curVal | mask);
+                }
+                else
+                {
+                    mask = ~mask;
+                    newVal = (UInt64)(curVal & mask);
+                }
+                Byte[] b = BitConverter.GetBytes(newVal);
+                PCM.buf[addr] = b[7];
+                PCM.buf[addr + 1] = b[6];
+                PCM.buf[addr + 2] = b[5];
+                PCM.buf[addr + 3] = b[4];
+                PCM.buf[addr + 4] = b[3];
+                PCM.buf[addr + 5] = b[2];
+                PCM.buf[addr + 6] = b[1];
+                PCM.buf[addr + 7] = b[0];
             }
             this.Close();
         }

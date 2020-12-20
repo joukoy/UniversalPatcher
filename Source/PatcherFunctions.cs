@@ -353,7 +353,7 @@ public class upatcher
     public const ushort TypeFlag = 5;
     public const ushort TypeFilename = 10;
     
-    public enum DataType
+    public enum OutDataType
     {
         Float = 1,
         Int = 2,
@@ -362,6 +362,22 @@ public class upatcher
         Flag = 5,
         Filename = 10
     }
+
+    public enum InDataType
+    {
+        UBYTE,              //UNSIGNED INTEGER - 8 BIT
+        SBYTE,              //SIGNED INTEGER - 8 BIT
+        UWORD,              //UNSIGNED INTEGER - 16 BIT
+        SWORD,              //SIGNED INTEGER - 16 BIT
+        UINT32,              //UNSIGNED INTEGER - 32 BIT
+        INT32,              //SIGNED INTEGER - 32 BIT
+        UINT64,           //UNSIGNED INTEGER - 64 BIT
+        INT64,            //SIGNED INTEGER - 64 BIT
+        FLOAT32,       //SINGLE PRECISION FLOAT - 32 BIT
+        FLOAT64,        //DOUBLE PRECISION FLOAT - 64 BIT
+        UNKNOWN
+    }
+
     public static T DeepClone<T>(T obj)
     {
         T objResult;
@@ -373,6 +389,98 @@ public class upatcher
             objResult = (T)bf.Deserialize(ms);
         }
         return objResult;
+    }
+
+    public static int getBits(InDataType dataType)
+    {
+        int bits = -1;
+        if (dataType == InDataType.SBYTE || dataType == InDataType.UBYTE)
+            bits = 8;
+        if (dataType == InDataType.SWORD || dataType == InDataType.UWORD)
+            bits = 16;
+        if (dataType == InDataType.INT32 || dataType == InDataType.UINT32 || dataType == InDataType.FLOAT32)
+            bits = 32;
+        if (dataType == InDataType.INT64 || dataType == InDataType.UINT64 || dataType == InDataType.FLOAT64)
+            bits = 64;
+
+        return bits;
+    }
+    public static int getElementSize(InDataType dataType)
+    {
+        return getBits(dataType) / 8;
+    }
+    public static bool getSigned(InDataType dataType)
+    {
+        bool signed = false;
+        if (dataType == InDataType.INT32 || dataType == InDataType.INT64 || dataType == InDataType.SBYTE || dataType == InDataType.SWORD)
+            signed = true;
+        return signed;
+    }
+    public static InDataType convertToDataType(int ElementSize, bool Signed, bool Floating)
+    {
+        InDataType DataType = InDataType.UNKNOWN; 
+        if (ElementSize == 1)
+        {
+            if (Signed == true)
+            {
+                DataType = InDataType.SBYTE;
+            }
+            else
+            {
+                DataType = InDataType.UBYTE;
+            }
+
+        }
+        else if (ElementSize == 2)
+        {
+            if (Signed == true)
+            {
+                DataType = InDataType.SWORD;
+            }
+            else
+            {
+                DataType = InDataType.UWORD;
+            }
+
+        }
+        else if (ElementSize == 4)
+        {
+            if (Floating)
+            {
+                DataType = InDataType.FLOAT32;
+            }
+            else
+            {
+                if (Signed == true)
+                {
+                    DataType = InDataType.UINT32;
+                }
+                else
+                {
+                    DataType = InDataType.INT32;
+                }
+            }
+        }
+        else if (ElementSize == 8)
+        {
+            if (Floating)
+            {
+                DataType = InDataType.FLOAT64;
+            }
+            else
+            {
+                if (Signed == true)
+                {
+                    DataType = InDataType.INT64;
+                }
+                else
+                {
+                    DataType = InDataType.UINT64;
+                }
+            }
+
+        }
+        return DataType;
     }
 
     public static byte[] ReadBin(string FileName, uint FileOffset, uint Length)
