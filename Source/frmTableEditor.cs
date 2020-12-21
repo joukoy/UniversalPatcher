@@ -119,7 +119,7 @@ namespace UniversalPatcher
             if (td.DataType == InDataType.FLOAT32)
                 value = BEToFloat32(dataBuffer, bufAddr);
             if (td.DataType == InDataType.FLOAT64)
-                    value = BEToFloat64(dataBuffer, bufAddr);
+                value = BEToFloat64(dataBuffer, bufAddr);
 
             string mathStr = td.Math.ToLower().Replace("x", value.ToString());
             if (commaDecimal) mathStr = mathStr.Replace(".", ",");
@@ -185,9 +185,9 @@ namespace UniversalPatcher
                 value = BEToInt64(PCM.buf, addr);
             if (t.DataType == InDataType.UINT64)
                 value = BEToUint64(PCM.buf, addr);
-            if (td.DataType == InDataType.FLOAT32)
+            if (t.DataType == InDataType.FLOAT32)
                 value = BEToFloat32(PCM.buf, addr);
-            if (td.DataType == InDataType.FLOAT64)
+            if (t.DataType == InDataType.FLOAT64)
                 value = BEToFloat64(PCM.buf, addr);
 
             string mathStr = t.Math.ToLower().Replace("x", value.ToString());
