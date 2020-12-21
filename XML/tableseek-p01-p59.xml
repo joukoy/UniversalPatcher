@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <ArrayOfTableSeek xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
     <Name>MBT spark</Name>
     <SearchStr>74 14 20 7c @ @ @ @ 4e b9 * * * * 36</SearchStr>
     <Rows>15</Rows>
@@ -11,11 +14,11 @@
     <SavingMath>X/0.021978</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
+    <DataType>UWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -23,6 +26,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>LowOct spark</Name>
     <SearchStr>30 38 * * 32 38 * * 74 19 20 7c @ @ @ @ 4e b9 * * * * 26</SearchStr>
     <Rows>29</Rows>
@@ -33,11 +39,11 @@
     <SavingMath>X/0.021978</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -45,6 +51,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>HiOct spark</Name>
     <SearchStr>30 38 * * 32 38 * * 74 19 20 7c @ @ @ @ 4e b9 * * * * 3c</SearchStr>
     <Rows>29</Rows>
@@ -55,11 +64,11 @@
     <SavingMath>X/0.021978</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -67,6 +76,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>Clt_spark coolant/airflow</Name>
     <SearchStr>74 k25 20 7c @ @ @ @ 4e b9</SearchStr>
     <Rows>29</Rows>
@@ -77,11 +89,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>1</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -89,6 +101,9 @@
     <Description>Coolant spark correction coolant va airflow</Description>
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
     <Name>Clt_rpm_modifier</Name>
     <SearchStr>74 k25 20 7c @ @ @ @ 4e b9</SearchStr>
     <Rows>21</Rows>
@@ -99,11 +114,11 @@
     <SavingMath>X*4096</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
+    <DataType>UWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>2</UseHit>
     <Range />
     <Segments />
@@ -111,6 +126,9 @@
     <Description>Coolant spark multiplier to CLT_spark coolant/rpm</Description>
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
     <Name>Clt_rpm_modifier 06-07</Name>
     <SearchStr>74 k25 * * 20 7c @ @ @ @ 4e b9</SearchStr>
     <Rows>21</Rows>
@@ -121,11 +139,11 @@
     <SavingMath>X*4096</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
+    <DataType>UWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -133,6 +151,9 @@
     <Description>Coolant spark multiplier to CLT_spark coolant/rpm</Description>
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>CAT_LIGHTOFF_SPARK_RETARD</Name>
     <SearchStr>40 60 04 30 3C 14 00 32 * * * 74 k15 20 7C @ @ @ @ 4E B9</SearchStr>
     <Rows>29</Rows>
@@ -143,11 +164,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -155,6 +176,9 @@
     <Description>rpm vs airflow</Description>
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>KA_LAUNCH_SPARK</Name>
     <SearchStr>32 3C 06 00 74 k13 20 7C @ @ @ @ 4E B9</SearchStr>
     <Rows>7</Rows>
@@ -165,11 +189,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -177,6 +201,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>KA_EQ_RATIO_SPARK -05</Name>
     <SearchStr>32 38 * * 74 k10 20 7C @ @ @ @ 4E B9</SearchStr>
     <Rows>21</Rows>
@@ -187,11 +214,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -199,6 +226,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>KA_EQ_RATIO_SPARK 06-07</Name>
     <SearchStr>74 k10 * * * * 20 7C @ @ @ @ 4E B9</SearchStr>
     <Rows>21</Rows>
@@ -209,11 +239,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -221,6 +251,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>KA_EGR_SPARK -05</Name>
     <SearchStr>02 24 03 32 38 * * E2 49 30 38 * * 20 7C @ @ @ @ 4E B9</SearchStr>
     <Rows>29</Rows>
@@ -231,11 +264,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -243,6 +276,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>KA_FFS_E80_SPARK_SHIFT 03-05-1mb</Name>
     <SearchStr>87 E6 48 60 04 30 3C 11 00 74 k12 20 7C @ @ @ @</SearchStr>
     <Rows>21</Rows>
@@ -253,11 +289,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -266,6 +302,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>KA_FFS_E80_SPARK_SHIFT 06-07</Name>
     <SearchStr>36 3C 11 00 74 k12 * * 20 7C @ @ @ @</SearchStr>
     <Rows>21</Rows>
@@ -276,11 +315,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -289,6 +328,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>KA_FFS_E80_MBT_SPARK_SHIFT 03- 1mb</Name>
     <SearchStr>86 E6 48 60 04 30 3C 11 00 74 k12 20 7C @ @ @ @</SearchStr>
     <Rows>11</Rows>
@@ -299,11 +341,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -312,6 +354,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>KA_IAT_SPARK</Name>
     <SearchStr>30 3C 14 00 32 38 * * 74 k15 20 7C @ @ @ @ 4E B9 * * * * 38 38</SearchStr>
     <Rows>29</Rows>
@@ -322,11 +367,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -334,6 +379,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>KA_MAIN_CT_DRIVE</Name>
     <SearchStr>30 38 * * 20 7C @ @ @ @ 60 A6</SearchStr>
     <Rows>29</Rows>
@@ -344,11 +392,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -356,6 +404,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>KA_MAIN_CT_PARK</Name>
     <SearchStr>67 3e 32 38 * * e2 49 30 38 * * 20 7C @ @ @ @ 4E B9</SearchStr>
     <Rows>29</Rows>
@@ -366,11 +417,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -378,6 +429,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>KA_PISTON_SLAP_SPARK_RETARD</Name>
     <SearchStr>3C 0A 00 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
     <Rows>15</Rows>
@@ -388,11 +442,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>2</UseHit>
     <Range />
     <Segments />
@@ -402,6 +456,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>KA_PISTON_SLAP_SPARK_RETARD 06-07??</Name>
     <SearchStr>80 FC 00 14 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
     <Rows>15</Rows>
@@ -412,11 +469,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -426,6 +483,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
     <Name>KV_MASS_AIRFLOW</Name>
     <SearchStr>04 43 0C 00 F8 39 31 40 @ @ @ @</SearchStr>
     <Rows>85</Rows>
@@ -436,11 +496,11 @@
     <SavingMath>X*128</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
+    <DataType>UWORD</DataType>
     <Decimals>4</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -450,6 +510,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
     <Name>KV_VOLUMETRIC_EFFICIENCY_BARO_CO</Name>
     <SearchStr>60 02 9A 40 24 7C @ @ @ @ F8 12 51 40 C6 C5 E0 8B E8 8B 0C 43 14 00</SearchStr>
     <Rows>10</Rows>
@@ -460,11 +523,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
+    <DataType>UWORD</DataType>
     <Decimals>4</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -474,6 +537,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
     <Name>KA_VOLUMETRIC_EFFICIENCY_CRANK</Name>
     <SearchStr>04 30 3C 20 00 74 k21 20 7C @ @ @ @</SearchStr>
     <Rows>9</Rows>
@@ -484,11 +550,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
+    <DataType>UWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -498,6 +564,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
     <Name>K_MAIN_VOLUMETRIC_EFFICIENCY</Name>
     <SearchStr>B6 40 63 02 20 03 90 49 41 F9 @ @ @ @ E6 48 74 28 4E B9</SearchStr>
     <Rows>19</Rows>
@@ -508,11 +577,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
+    <DataType>UWORD</DataType>
     <Decimals>6</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -522,6 +591,9 @@
     <Description />
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
     <Name>K_DYNA_AIR_COEFFICIENT</Name>
     <SearchStr>3D 78 * * * * 3D 78 * * * * 36 39 @ @ @ @ F8 2E 31 40 * * 31 C3 * * 60 06</SearchStr>
     <Rows>10</Rows>
@@ -532,11 +604,11 @@
     <SavingMath>X</SavingMath>
     <Offset>8</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
+    <DataType>UWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -545,6 +617,9 @@
     <Description>DYNA_AIR_COEFFICIENTS</Description>
   </TableSeek>
   <TableSeek>
+    <Bits>8</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
     <Name>KE_VTD_CONFIGURATION</Name>
     <SearchStr>4A 39 @ @ @ @ 66 0A 72 10 42 00 4E B9</SearchStr>
     <Rows>1</Rows>
@@ -555,11 +630,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>8</Bits>
-    <Signed>false</Signed>
+    <DataType>UBYTE</DataType>
     <Decimals>0</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -569,6 +644,9 @@
     <Description>0=on,1=off</Description>
   </TableSeek>
   <TableSeek>
+    <Bits>8</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
     <Name>KE_ENGINE_IDENTIFIER</Name>
     <SearchStr>11 C3 * * 11 C3 * * 42 43 16 39 @ @ @ @</SearchStr>
     <Rows>1</Rows>
@@ -579,11 +657,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>8</Bits>
-    <Signed>false</Signed>
+    <DataType>UBYTE</DataType>
     <Decimals>0</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -592,6 +670,9 @@
     <Description>For information only, dont change</Description>
   </TableSeek>
   <TableSeek>
+    <Bits>8</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
     <Name>KE_VTD_FAIL_ENABLED_BYPASS</Name>
     <SearchStr>4A 39 @ @ @ @ 66 00 * * 42 01 70 10 4E B9</SearchStr>
     <Rows>1</Rows>
@@ -602,11 +683,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>8</Bits>
-    <Signed>false</Signed>
+    <DataType>UBYTE</DataType>
     <Decimals>0</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -615,6 +696,9 @@
     <Description>0=??,1=??</Description>
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
     <Name>KA_BARO_OFFSET</Name>
     <SearchStr>11 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
     <Rows>18</Rows>
@@ -625,11 +709,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
+    <DataType>UWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -639,6 +723,9 @@
     <Description>"Sea level pressure offset to be added to the part throttle manifold pressure to correct the barometric pressure., Units: kPA"</Description>
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
     <Name>KA_PE_DELAY_ADJUSTMENT</Name>
     <SearchStr>0E 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
     <Rows>15</Rows>
@@ -649,11 +736,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
+    <DataType>UWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -663,6 +750,9 @@
     <Description>"Amount the PE_Delay counter will be decremented by each second PE and PE_Delay conditions are met. Based on engine speed and throttle., Units: Seconds"</Description>
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>KA_ETC_AIR_A0_FILT_COEF</Name>
     <SearchStr>10 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
     <Rows>17</Rows>
@@ -673,11 +763,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>2</UseHit>
     <Range />
     <Segments />
@@ -687,6 +777,9 @@
     <Description>" MAP based airflow diagnostic A0 filter time constant in msecs. , Units: Milliseconds"</Description>
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
     <Name>KA_ETC_AIR_B0_FILT_COEF</Name>
     <SearchStr>10 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
     <Rows>17</Rows>
@@ -697,11 +790,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
+    <DataType>UWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
@@ -711,6 +804,9 @@
     <Description>" MAP based airflow diagnostic B0 filter time constant in msecs. , Units: Milliseconds"</Description>
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>true</Signed>
+    <Floating>false</Floating>
     <Name>KA_ETC_MAF_FILT_A0_COEF</Name>
     <SearchStr>10 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
     <Rows>17</Rows>
@@ -721,11 +817,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
+    <DataType>SWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>4</UseHit>
     <Range />
     <Segments />
@@ -735,6 +831,9 @@
     <Description>" MAF based airflow diagnostic A0 filter time constant in msecs. , Units: Milliseconds"</Description>
   </TableSeek>
   <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
     <Name>KA_ETC_MAF_FILT_B0_COEF</Name>
     <SearchStr>10 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
     <Rows>17</Rows>
@@ -745,11 +844,11 @@
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
+    <DataType>UWORD</DataType>
     <Decimals>2</Decimals>
-    <Floating>false</Floating>
     <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
     <UseHit>3</UseHit>
     <Range />
     <Segments />

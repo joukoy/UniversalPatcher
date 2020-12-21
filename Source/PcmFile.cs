@@ -61,6 +61,134 @@ namespace UniversalPatcher
             osStoreAddress = uint.MaxValue;
         }
 
+        public string FixCheckSums()
+        {
+            string retVal = "";
+            try
+            {
+                retVal += "Fixing Checksums:" + Environment.NewLine;
+                for (int i = 0; i < Segments.Count; i++)
+                {
+                    SegmentConfig S = Segments[i];
+                    retVal += S.Name + Environment.NewLine;
+                    if (S.Eeprom)
+                    {
+                        string Ret = GmEeprom.FixEepromKey(buf);
+                        retVal += Ret + Environment.NewLine;
+                    }
+                    else
+                    {
+                        if (S.CS1Method != CSMethod_None)
+                        {
+                            uint CS1 = 0;
+                            uint CS1Calc = CalculateChecksum(buf, segmentAddressDatas[i].CS1Address, segmentAddressDatas[i].CS1Blocks, segmentAddressDatas[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, segmentAddressDatas[i].CS1Address.Bytes, S.CS1SwapBytes);
+                            if (segmentAddressDatas[i].CS1Address.Address < uint.MaxValue)
+                            {
+                                if (segmentAddressDatas[i].CS1Address.Bytes == 1)
+                                {
+                                    CS1 = buf[segmentAddressDatas[i].CS1Address.Address];
+                                }
+                                else if (segmentAddressDatas[i].CS1Address.Bytes == 2)
+                                {
+                                    CS1 = BEToUint16(buf, segmentAddressDatas[i].CS1Address.Address);
+                                }
+                                else if (segmentAddressDatas[i].CS1Address.Bytes == 4)
+                                {
+                                    CS1 = BEToUint32(buf, segmentAddressDatas[i].CS1Address.Address);
+                                }
+                            }
+                            if (CS1 == CS1Calc)
+                                retVal += " Checksum 1: " + CS1.ToString("X4") + " [OK]" + Environment.NewLine;
+                            else
+                            {
+                                if (segmentAddressDatas[i].CS1Address.Address == uint.MaxValue)
+                                {
+                                    string hexdigits;
+                                    if (segmentAddressDatas[i].CS1Address.Bytes == 0)
+                                        hexdigits = "X4";
+                                    else
+                                        hexdigits = "X" + (segmentAddressDatas[i].CS1Address.Bytes * 2).ToString();
+                                    retVal += " Checksum 1: " + CS1Calc.ToString(hexdigits) + " [Not saved]" + Environment.NewLine;
+                                }
+                                else
+                                {
+                                    if (segmentAddressDatas[i].CS1Address.Bytes == 1)
+                                        buf[segmentAddressDatas[i].CS1Address.Address] = (byte)CS1Calc;
+                                    else if (segmentAddressDatas[i].CS1Address.Bytes == 2)
+                                    {
+                                        SaveUshort(buf, segmentAddressDatas[i].CS1Address.Address, (ushort)CS1Calc);
+                                    }
+                                    else if (segmentAddressDatas[i].CS1Address.Bytes == 4)
+                                    {
+                                        SaveUint32(buf, segmentAddressDatas[i].CS1Address.Address, CS1Calc);
+
+                                    }
+                                    retVal += " Checksum 1: " + CS1.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]" + Environment.NewLine;
+                                }
+                            }
+                        }
+
+                        if (S.CS2Method != CSMethod_None)
+                        {
+                            uint CS2 = 0;
+                            uint CS2Calc = CalculateChecksum(buf, segmentAddressDatas[i].CS2Address, segmentAddressDatas[i].CS2Blocks, segmentAddressDatas[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, segmentAddressDatas[i].CS2Address.Bytes, S.CS2SwapBytes);
+                            if (segmentAddressDatas[i].CS2Address.Address < uint.MaxValue)
+                            {
+                                if (segmentAddressDatas[i].CS2Address.Bytes == 1)
+                                {
+                                    CS2 = buf[segmentAddressDatas[i].CS2Address.Address];
+                                }
+                                else if (segmentAddressDatas[i].CS2Address.Bytes == 2)
+                                {
+                                    CS2 = BEToUint16(buf, segmentAddressDatas[i].CS2Address.Address);
+                                }
+                                else if (segmentAddressDatas[i].CS2Address.Bytes == 4)
+                                {
+                                    CS2 = BEToUint32(buf, segmentAddressDatas[i].CS2Address.Address);
+                                }
+                            }
+                            if (CS2 == CS2Calc)
+                                retVal += " Checksum 2: " + CS2.ToString("X4") + " [OK]" + Environment.NewLine;
+                            else
+                            {
+                                if (segmentAddressDatas[i].CS2Address.Address == uint.MaxValue)
+                                {
+                                    string hexdigits;
+                                    if (segmentAddressDatas[i].CS1Address.Bytes == 0)
+                                        hexdigits = "X4";
+                                    else
+                                        hexdigits = "X" + (segmentAddressDatas[i].CS2Address.Bytes * 2).ToString();
+                                    retVal += " Checksum 2: " + CS2Calc.ToString("X4") + " [Not saved]" + Environment.NewLine;
+                                }
+                                else
+                                {
+                                    if (segmentAddressDatas[i].CS2Address.Bytes == 1)
+                                        buf[segmentAddressDatas[i].CS2Address.Address] = (byte)CS2Calc;
+                                    else if (segmentAddressDatas[i].CS2Address.Bytes == 2)
+                                    {
+                                        SaveUshort(buf, segmentAddressDatas[i].CS2Address.Address, (ushort)CS2Calc);
+                                    }
+                                    else if (segmentAddressDatas[i].CS2Address.Bytes == 4)
+                                    {
+                                        SaveUint32(buf, segmentAddressDatas[i].CS2Address.Address, CS2Calc);
+
+                                    }
+                                    retVal += " Checksum 2: " + CS2.ToString("X") + " => " + CS2Calc.ToString("X4") + " [Fixed]" + Environment.NewLine;
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                retVal += "Error: " + ex.Message + Environment.NewLine;
+            }
+            return retVal;
+        }
+
         public void loadAddresses()
         {
             string FileName = Path.Combine(Application.StartupPath, "XML", "addresses-" + OS + ".xml");

@@ -1059,7 +1059,7 @@ namespace UniversalPatcher
                 if (FileName.Length == 0)
                     return;
 
-                FixCheckSums();
+                Logger(basefile.FixCheckSums());
                 Logger("Saving to file: " + FileName);
                 WriteBinToFile(FileName, basefile.buf);
                 Logger("Done.");
@@ -1115,147 +1115,8 @@ namespace UniversalPatcher
         {
             if (Segments != null && Segments.Count > 0)
             { 
-                FixCheckSums();
+                Logger(basefile.FixCheckSums());
             }
-        }
-        private bool FixCheckSums()
-        {
-            bool NeedFix = false;
-            try
-            {
-                Logger("Fixing Checksums:");
-                for (int i = 0; i < Segments.Count; i++)
-                {
-                    SegmentConfig S = Segments[i];
-                    Logger(S.Name);
-                    if (S.Eeprom)
-                    {
-                        string Ret = GmEeprom.FixEepromKey(basefile.buf);
-                        if (Ret.Contains("Fixed"))
-                            NeedFix = true;
-                        Logger(Ret);
-                    }
-                    else
-                    {
-                        if (S.CS1Method != CSMethod_None)
-                        {
-                            uint CS1 = 0;
-                            uint CS1Calc = CalculateChecksum(basefile.buf, basefile.segmentAddressDatas[i].CS1Address, basefile.segmentAddressDatas[i].CS1Blocks, basefile.segmentAddressDatas[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, basefile.segmentAddressDatas[i].CS1Address.Bytes, S.CS1SwapBytes);
-                            if (basefile.segmentAddressDatas[i].CS1Address.Address < uint.MaxValue)
-                            { 
-                                if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 1)
-                                {
-                                    CS1 = basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address];
-                                }
-                                else if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 2)
-                                {
-                                    CS1 = BEToUint16(basefile.buf, basefile.segmentAddressDatas[i].CS1Address.Address);
-                                }
-                                else if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 4)
-                                {
-                                    CS1 = BEToUint32(basefile.buf, basefile.segmentAddressDatas[i].CS1Address.Address);
-                                }
-                            }
-                            if (CS1 == CS1Calc)
-                                Logger(" Checksum 1: " + CS1.ToString("X4") + " [OK]");
-                            else
-                            {
-                                if (basefile.segmentAddressDatas[i].CS1Address.Address == uint.MaxValue)
-                                {
-                                    string hexdigits;
-                                    if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 0)
-                                        hexdigits = "X4";
-                                    else
-                                        hexdigits = "X" + (basefile.segmentAddressDatas[i].CS1Address.Bytes * 2).ToString();
-                                    Logger(" Checksum 1: " + CS1Calc.ToString(hexdigits) + " [Not saved]");
-                                }
-                                else
-                                {
-                                    if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 1)
-                                        basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address] = (byte)CS1Calc;
-                                    else if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 2)
-                                    {
-                                        basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF00) >> 8);
-                                        basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address + 1] = (byte)(CS1Calc & 0xFF);
-                                    }
-                                    else if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 4)
-                                    {
-                                        basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address] = (byte)((CS1Calc & 0xFF000000) >> 24);
-                                        basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address + 1] = (byte)((CS1Calc & 0xFF0000) >> 16);
-                                        basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address + 2] = (byte)((CS1Calc & 0xFF00) >> 8);
-                                        basefile.buf[basefile.segmentAddressDatas[i].CS1Address.Address + 3] = (byte)(CS1Calc & 0xFF);
-
-                                    }
-                                    Logger(" Checksum 1: " + CS1.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
-                                    NeedFix = true;
-                                }
-                            }
-                        }
-
-                        if (S.CS2Method != CSMethod_None)
-                        {
-                            uint CS2 = 0;
-                            uint CS2Calc = CalculateChecksum(basefile.buf, basefile.segmentAddressDatas[i].CS2Address, basefile.segmentAddressDatas[i].CS2Blocks, basefile.segmentAddressDatas[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, basefile.segmentAddressDatas[i].CS2Address.Bytes, S.CS2SwapBytes);
-                            if (basefile.segmentAddressDatas[i].CS2Address.Address < uint.MaxValue)
-                            { 
-                                if (basefile.segmentAddressDatas[i].CS2Address.Bytes == 1)
-                                {
-                                    CS2 = basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address];
-                                }
-                                else if (basefile.segmentAddressDatas[i].CS2Address.Bytes == 2)
-                                {
-                                    CS2 = BEToUint16(basefile.buf, basefile.segmentAddressDatas[i].CS2Address.Address);
-                                }
-                                else if (basefile.segmentAddressDatas[i].CS2Address.Bytes == 4)
-                                {
-                                    CS2 = BEToUint32(basefile.buf, basefile.segmentAddressDatas[i].CS2Address.Address);
-                                }
-                            }
-                            if (CS2 == CS2Calc)
-                                Logger(" Checksum 2: " + CS2.ToString("X4") + " [OK]");
-                            else
-                            {
-                                if (basefile.segmentAddressDatas[i].CS2Address.Address == uint.MaxValue)
-                                {
-                                    string hexdigits;
-                                    if (basefile.segmentAddressDatas[i].CS1Address.Bytes == 0)
-                                        hexdigits = "X4";
-                                    else
-                                        hexdigits = "X" + (basefile.segmentAddressDatas[i].CS2Address.Bytes * 2).ToString();
-                                    Logger(" Checksum 2: " + CS2Calc.ToString("X4") + " [Not saved]");
-                                }
-                                else
-                                {
-                                    if (basefile.segmentAddressDatas[i].CS2Address.Bytes == 1)
-                                        basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address] = (byte)CS2Calc;
-                                    else if (basefile.segmentAddressDatas[i].CS2Address.Bytes == 2)
-                                    {
-                                        basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF00) >> 8);
-                                        basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address + 1] = (byte)(CS2Calc & 0xFF);
-                                    }
-                                    else if (basefile.segmentAddressDatas[i].CS2Address.Bytes == 4)
-                                    {
-                                        basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address] = (byte)((CS2Calc & 0xFF000000) >> 24);
-                                        basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address + 1] = (byte)((CS2Calc & 0xFF0000) >> 16);
-                                        basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address + 2] = (byte)((CS2Calc & 0xFF00) >> 8);
-                                        basefile.buf[basefile.segmentAddressDatas[i].CS2Address.Address + 3] = (byte)(CS2Calc & 0xFF);
-
-                                    }
-                                    Logger(" Checksum 2: " + CS2.ToString("X") + " => " + CS2Calc.ToString("X4") + " [Fixed]");
-                                    NeedFix = true;
-                                }
-                            }
-                        }
-
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger("Error: " + ex.Message);
-            }
-            return NeedFix;
         }
 
         private bool CheckRule(DetectRule DR, PcmFile PCM)
@@ -2219,7 +2080,7 @@ namespace UniversalPatcher
             if (frmSw.ShowDialog(this) == DialogResult.OK)
             {
                 basefile = frmSw.PCM;
-                FixCheckSums();
+                Logger(basefile.FixCheckSums());
                 Logger("");
                 Logger("Segment(s) swapped and checksums fixed (you can save BIN now)");
             }
@@ -2232,7 +2093,9 @@ namespace UniversalPatcher
             {
                 basefile = new PcmFile(FileName);
                 GetFileInfo(FileName, ref basefile, true, false);
-                if (FixCheckSums())
+                string res = basefile.FixCheckSums();
+                Logger(res);
+                if (res.Contains("Fixed"))
                 {
                     Logger("Saving file: " + FileName);
                     WriteBinToFile(FileName, basefile.buf);

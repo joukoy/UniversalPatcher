@@ -95,42 +95,6 @@ namespace UniversalPatcher
             loadTable(td, PCM);
         }
 
-        private double getFloatValue(uint addr)
-        {
-            double value = 0;
-            try
-            {
-                UInt32 bufAddr = addr - td.addrInt;
-                if (td.DataType == InDataType.FLOAT32 || td.DataType == InDataType.FLOAT64)
-                {
-                    int elementSize = getBits(td.DataType) / 8;
-                    byte[] data = new byte[elementSize];
-                    Array.Copy(dataBuffer, bufAddr, data, 0, elementSize);
-                    Array.Reverse(data);
-                    if (elementSize == 4)
-                        value = BitConverter.ToSingle(data, 0);
-                    else
-                        value = BitConverter.ToDouble(data, 0);
-                    string mathStr = td.Math.ToLower().Replace("x", value.ToString());
-                    if (commaDecimal) mathStr = mathStr.Replace(".", ",");
-                    value = parser.Parse(mathStr, false);
-                }
-                else
-                {
-                    throw new Exception("Incompatible data type");
-                }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
-            }
-            return value;
-        }
 
         private double getValue(uint addr)
         {
@@ -152,6 +116,11 @@ namespace UniversalPatcher
                 value = BEToInt64(dataBuffer, bufAddr);
             if (td.DataType == InDataType.UINT64)
                 value = BEToUint64(dataBuffer, bufAddr);
+            if (td.DataType == InDataType.FLOAT32)
+                value = BEToFloat32(dataBuffer, bufAddr);
+            if (td.DataType == InDataType.FLOAT64)
+                    value = BEToFloat64(dataBuffer, bufAddr);
+
             string mathStr = td.Math.ToLower().Replace("x", value.ToString());
             if (commaDecimal) mathStr = mathStr.Replace(".", ",");
             value = parser.Parse(mathStr, false);
@@ -178,8 +147,6 @@ namespace UniversalPatcher
                     dataGridView1.Rows[row].Cells[col].Value = getRawValue(addr);
                 else if (td.OutputType == OutDataType.Text)
                     dataGridView1.Rows[row].Cells[col].Value = Convert.ToChar((ushort)getValue(addr));
-                else if (td.DataType == InDataType.FLOAT32 || td.DataType == InDataType.FLOAT64)
-                    dataGridView1.Rows[row].Cells[col].Value = getFloatValue(addr);
                 else
                     dataGridView1.Rows[row].Cells[col].Value = getValue(addr);
                 dataGridView1.Rows[row].Cells[col].Tag = addr;
@@ -218,7 +185,11 @@ namespace UniversalPatcher
                 value = BEToInt64(PCM.buf, addr);
             if (t.DataType == InDataType.UINT64)
                 value = BEToUint64(PCM.buf, addr);
-            
+            if (td.DataType == InDataType.FLOAT32)
+                value = BEToFloat32(PCM.buf, addr);
+            if (td.DataType == InDataType.FLOAT64)
+                value = BEToFloat64(PCM.buf, addr);
+
             string mathStr = t.Math.ToLower().Replace("x", value.ToString());
             if (commaDecimal) mathStr = mathStr.Replace(".", ",");
             value = parser.Parse(mathStr, false);
@@ -237,7 +208,7 @@ namespace UniversalPatcher
                     uint addr = (uint)(t.addrInt + t.Offset);
                     for (int a = 0; a < count; a++ )
                     {
-                        headers += getHeaderValue(addr,t).ToString() + ",";
+                        headers += t.Units.Trim() + " " +  getHeaderValue(addr,t).ToString() + ",";
                         addr += step;
                     }
                     headers = headers.Trim(',');
@@ -414,61 +385,23 @@ namespace UniversalPatcher
                 value = parser.Parse(mathStr, true);
             }
             if (td.DataType == InDataType.UBYTE || td.DataType == InDataType.SBYTE)
-            {
                 dataBuffer[bufAddr] = (byte)value;
-            }
             if (td.DataType == InDataType.SWORD)
-            {
-                short newValue = (short)value;
-                dataBuffer[bufAddr] = (byte)((newValue & 0xFF00) >> 8);
-                dataBuffer[bufAddr + 1] = (byte)(newValue & 0xFF);
-            }
+                SaveShort(dataBuffer, bufAddr, (short)value);
             if (td.DataType == InDataType.UWORD)
-            {
-                ushort newValue = (ushort)value;
-                dataBuffer[bufAddr] = (byte)((newValue & 0xFF00) >> 8);
-                dataBuffer[bufAddr + 1] = (byte)(newValue & 0xFF);
-            }
+                SaveUshort(dataBuffer, bufAddr, (ushort)value);
             if (td.DataType == InDataType.FLOAT32)
-            {
-                byte[] buffer = BitConverter.GetBytes((float)value);
-                Array.Reverse(buffer);
-                Array.Copy(buffer, 0, dataBuffer, bufAddr, 4);
-            }
+                SaveFloat32(dataBuffer, bufAddr, (Single)value);
             if (td.DataType == InDataType.INT32)
-            {
-                Int32 newValue = (Int32)value;
-                byte[] buffer = BitConverter.GetBytes(value);
-                Array.Reverse(buffer);
-                Array.Copy(buffer, 0, dataBuffer, bufAddr, 4);
-            }
+                SaveInt32(dataBuffer, bufAddr, (Int32)value);
             if (td.DataType == InDataType.UINT32)
-            {
-                UInt32 newValue = (UInt32)value;
-                byte[] buffer = BitConverter.GetBytes(value);
-                Array.Reverse(buffer);
-                Array.Copy(buffer, 0, dataBuffer, bufAddr, 4);
-            }
+                SaveUint32(dataBuffer, bufAddr, (UInt32)value);
             if (td.DataType == InDataType.FLOAT64)
-            {
-                byte[] buffer = BitConverter.GetBytes((double)value);
-                    Array.Reverse(buffer);
-                    Array.Copy(buffer, 0, dataBuffer, bufAddr, 4);
-                }
+                SaveFloat64(dataBuffer, bufAddr, value);
             if (td.DataType == InDataType.INT64)
-            {
-                Int64 newValue = (Int64)value;
-                byte[] buffer = BitConverter.GetBytes(newValue);
-                Array.Reverse(buffer);
-                Array.Copy(buffer, 0, dataBuffer, bufAddr, 8);
-                    }
+                SaveInt64(dataBuffer, bufAddr, (Int64)value);
             if (td.DataType == InDataType.UINT64)
-            {
-                UInt64 newValue = (UInt64)value;
-                byte[] buffer = BitConverter.GetBytes(newValue);
-                Array.Reverse(buffer);
-                Array.Copy(buffer, 0, dataBuffer, bufAddr, 8);
-            }
+                SaveUint64(dataBuffer, bufAddr, (UInt64)value);
 
         }
         private void saveTable()

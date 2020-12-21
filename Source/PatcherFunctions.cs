@@ -1288,12 +1288,27 @@ public class upatcher
         Array.Reverse(tmp);
         return BitConverter.ToUInt64(tmp,0);
     }
+
     public static Int64 BEToInt64(byte[] buf, uint offset)
     {
         byte[] tmp = new byte[8];
         Array.Copy(buf, offset, tmp, 0, 8);
         Array.Reverse(tmp);
         return BitConverter.ToInt64(tmp, 0);
+    }
+    public static Double BEToFloat64(byte[] buf, uint offset)
+    {
+        byte[] tmp = new byte[8];
+        Array.Copy(buf, offset, tmp, 0, 8);
+        Array.Reverse(tmp);
+        return BitConverter.ToDouble(tmp, 0);
+    }
+    public static float BEToFloat32(byte[] buf, uint offset)
+    {
+        byte[] tmp = new byte[4];
+        Array.Copy(buf, offset, tmp, 0, 4);
+        Array.Reverse(tmp);
+        return BitConverter.ToSingle(tmp, 0);
     }
 
     public static uint BEToUint32(byte[] buf, uint offset)
@@ -1316,6 +1331,64 @@ public class upatcher
     public static Int16 BEToInt16(byte[] buf, uint offset)
     {
         return (Int16)((buf[offset] << 8) | buf[offset + 1]);
+    }
+    public static void SaveFloat32(byte[] buf, uint offset, Single data)
+    {
+        byte[] tmp = new byte[4];
+        tmp = BitConverter.GetBytes(data);
+        Array.Reverse(tmp);
+        Array.Copy(tmp, 0, buf, offset, 4);
+    }
+    public static void SaveFloat64(byte[] buf, uint offset, double data)
+    {
+        byte[] tmp = new byte[8];
+        tmp = BitConverter.GetBytes(data);
+        Array.Reverse(tmp);
+        Array.Copy(tmp, 0, buf, offset, 8);
+    }
+
+    public static void SaveUint64(byte[] buf, uint offset, UInt64 data)
+    {
+        byte[] tmp = new byte[8];
+        tmp = BitConverter.GetBytes(data);
+        Array.Reverse(tmp);
+        Array.Copy(tmp,0,buf,offset,8);
+    }
+
+    public static void SaveInt64(byte[] buf, uint offset, Int64 data)
+    {
+        byte[] tmp = new byte[8];
+        tmp = BitConverter.GetBytes(data);
+        Array.Reverse(tmp);
+        Array.Copy(tmp, 0, buf, offset, 8);
+    }
+    public static void SaveUint32(byte[] buf, uint offset, UInt32 data)
+    {
+        byte[] tmp = new byte[4];
+        tmp = BitConverter.GetBytes(data);
+        Array.Reverse(tmp);
+        Array.Copy(tmp, 0, buf, offset, 4);
+    }
+    public static void SaveInt32(byte[] buf, uint offset, Int32 data)
+    {
+        byte[] tmp = new byte[4];
+        tmp = BitConverter.GetBytes(data);
+        Array.Reverse(tmp);
+        Array.Copy(tmp, 0, buf, offset, 4);
+    }
+    public static void SaveUshort(byte[] buf, uint offset, ushort data)
+    {
+        byte[] tmp = new byte[2];
+        tmp = BitConverter.GetBytes(data);
+        Array.Reverse(tmp);
+        Array.Copy(tmp, 0, buf, offset, 2);
+    }
+    public static void SaveShort(byte[] buf, uint offset, short data)
+    {
+        byte[] tmp = new byte[2];
+        tmp = BitConverter.GetBytes(data);
+        Array.Reverse(tmp);
+        Array.Copy(tmp, 0, buf, offset, 2);
     }
 
     public static ushort SwapBytes(ushort x)
