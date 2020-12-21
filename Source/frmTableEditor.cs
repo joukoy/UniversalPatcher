@@ -208,7 +208,7 @@ namespace UniversalPatcher
                     uint addr = (uint)(t.addrInt + t.Offset);
                     for (int a = 0; a < count; a++ )
                     {
-                        headers += t.Units.Trim() + " " +  getHeaderValue(addr,t).ToString() + ",";
+                        headers += t.Units.Trim() + " " +  getHeaderValue(addr,t).ToString().Replace(",",".") + ",";
                         addr += step;
                     }
                     headers = headers.Trim(',');
@@ -260,8 +260,11 @@ namespace UniversalPatcher
                 //Swap col/row
                 rowCount = td.Columns;
                 colCount = td.Rows;
-                colHeaders = td.RowHeaders.Split(',');
-                rowHeaders = td.ColumnHeaders.Split(',');
+                string[] tmp = rowHeaders;
+                rowHeaders = colHeaders;
+                colHeaders = tmp;
+                //colHeaders = td.RowHeaders.Split(',');
+                //rowHeaders = td.ColumnHeaders.Split(',');
             }
             dataGridView1.Rows.Clear();
             dataGridView1.ColumnCount = colCount;

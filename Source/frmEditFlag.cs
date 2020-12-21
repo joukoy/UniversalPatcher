@@ -99,9 +99,7 @@ namespace UniversalPatcher
                     mask = (byte)~mask;
                     newVal = (ushort)(curVal & mask);
                 }
-                Byte[] b = BitConverter.GetBytes(newVal);
-                PCM.buf[addr] = b[1];
-                PCM.buf[addr + 1] = b[0];
+                SaveUshort(PCM.buf, addr, newVal);
             }
             else if (td.DataType == InDataType.INT32 || td.DataType == InDataType.UINT32)
             {
@@ -117,11 +115,7 @@ namespace UniversalPatcher
                     mask = ~mask;
                     newVal = (UInt32)(curVal & mask);
                 }
-                Byte[] b = BitConverter.GetBytes(newVal);
-                PCM.buf[addr] = b[3];
-                PCM.buf[addr + 1] = b[2];
-                PCM.buf[addr + 2] = b[1];
-                PCM.buf[addr + 3] = b[0];
+                SaveUint32(PCM.buf, addr, newVal);
             }
             else if (td.DataType == InDataType.INT64 || td.DataType == InDataType.UINT64)
             {
@@ -137,15 +131,7 @@ namespace UniversalPatcher
                     mask = ~mask;
                     newVal = (UInt64)(curVal & mask);
                 }
-                Byte[] b = BitConverter.GetBytes(newVal);
-                PCM.buf[addr] = b[7];
-                PCM.buf[addr + 1] = b[6];
-                PCM.buf[addr + 2] = b[5];
-                PCM.buf[addr + 3] = b[4];
-                PCM.buf[addr + 4] = b[3];
-                PCM.buf[addr + 5] = b[2];
-                PCM.buf[addr + 6] = b[1];
-                PCM.buf[addr + 7] = b[0];
+                SaveUint64(PCM.buf, addr, newVal);
             }
             this.Close();
         }
