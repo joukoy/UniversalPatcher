@@ -101,7 +101,7 @@ namespace UniversalPatcher
             double value = 0;
             UInt32 bufAddr = addr - td.addrInt;
             if (td.DataType == InDataType.SBYTE)
-                value = (byte)unchecked((sbyte)dataBuffer[bufAddr]);
+                value = (sbyte)dataBuffer[bufAddr];
             if (td.DataType == InDataType.UBYTE)
                 value = dataBuffer[bufAddr];
             if (td.DataType == InDataType.SWORD)
@@ -170,7 +170,7 @@ namespace UniversalPatcher
         {
             double value = 0;
             if (t.DataType == InDataType.SBYTE)
-                value = (byte)unchecked((sbyte)PCM.buf[addr]);
+                value = (sbyte)PCM.buf[addr];
             if (t.DataType == InDataType.UBYTE)
                 value = PCM.buf[addr];
             if (t.DataType == InDataType.SWORD)
