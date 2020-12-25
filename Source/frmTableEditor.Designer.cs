@@ -49,8 +49,11 @@ namespace UniversalPatcher
             this.autoResizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.swapXyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showRawHEXValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkSwapXY = new System.Windows.Forms.CheckBox();
             this.disableTooltipsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showTableDescriptionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chkSwapXY = new System.Windows.Forms.CheckBox();
+            this.comboPossibleValues = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -145,7 +148,8 @@ namespace UniversalPatcher
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.settingsToolStripMenuItem});
+            this.settingsToolStripMenuItem,
+            this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(800, 24);
@@ -164,14 +168,14 @@ namespace UniversalPatcher
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exportCSVToolStripMenuItem1
             // 
             this.exportCSVToolStripMenuItem1.Name = "exportCSVToolStripMenuItem1";
-            this.exportCSVToolStripMenuItem1.Size = new System.Drawing.Size(132, 22);
+            this.exportCSVToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.exportCSVToolStripMenuItem1.Text = "Export CSV";
             this.exportCSVToolStripMenuItem1.Click += new System.EventHandler(this.exportCSVToolStripMenuItem1_Click);
             // 
@@ -207,17 +211,6 @@ namespace UniversalPatcher
             this.showRawHEXValuesToolStripMenuItem.Text = "Show Raw HEX values";
             this.showRawHEXValuesToolStripMenuItem.Click += new System.EventHandler(this.showRawHEXValuesToolStripMenuItem_Click);
             // 
-            // chkSwapXY
-            // 
-            this.chkSwapXY.AutoSize = true;
-            this.chkSwapXY.Location = new System.Drawing.Point(118, 2);
-            this.chkSwapXY.Name = "chkSwapXY";
-            this.chkSwapXY.Size = new System.Drawing.Size(75, 17);
-            this.chkSwapXY.TabIndex = 7;
-            this.chkSwapXY.Text = "Swap X/Y";
-            this.chkSwapXY.UseVisualStyleBackColor = true;
-            this.chkSwapXY.CheckedChanged += new System.EventHandler(this.chkSwapXY_CheckedChanged);
-            // 
             // disableTooltipsToolStripMenuItem
             // 
             this.disableTooltipsToolStripMenuItem.Name = "disableTooltipsToolStripMenuItem";
@@ -225,11 +218,52 @@ namespace UniversalPatcher
             this.disableTooltipsToolStripMenuItem.Text = "Disable Tooltips";
             this.disableTooltipsToolStripMenuItem.Click += new System.EventHandler(this.disableTooltipsToolStripMenuItem_Click);
             // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showTableDescriptionToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // showTableDescriptionToolStripMenuItem
+            // 
+            this.showTableDescriptionToolStripMenuItem.Name = "showTableDescriptionToolStripMenuItem";
+            this.showTableDescriptionToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.showTableDescriptionToolStripMenuItem.Text = "Show Table Description";
+            this.showTableDescriptionToolStripMenuItem.Click += new System.EventHandler(this.showTableDescriptionToolStripMenuItem_Click);
+            // 
+            // chkSwapXY
+            // 
+            this.chkSwapXY.AutoSize = true;
+            this.chkSwapXY.Location = new System.Drawing.Point(160, 2);
+            this.chkSwapXY.Name = "chkSwapXY";
+            this.chkSwapXY.Size = new System.Drawing.Size(75, 17);
+            this.chkSwapXY.TabIndex = 7;
+            this.chkSwapXY.Text = "Swap X/Y";
+            this.chkSwapXY.UseVisualStyleBackColor = true;
+            this.chkSwapXY.CheckedChanged += new System.EventHandler(this.chkSwapXY_CheckedChanged);
+            // 
+            // comboPossibleValues
+            // 
+            this.comboPossibleValues.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboPossibleValues.Enabled = false;
+            this.comboPossibleValues.FormattingEnabled = true;
+            this.comboPossibleValues.Location = new System.Drawing.Point(2, 72);
+            this.comboPossibleValues.Name = "comboPossibleValues";
+            this.comboPossibleValues.Size = new System.Drawing.Size(796, 21);
+            this.comboPossibleValues.Sorted = true;
+            this.comboPossibleValues.TabIndex = 8;
+            this.comboPossibleValues.Visible = false;
+            this.comboPossibleValues.SelectedIndexChanged += new System.EventHandler(this.comboPossibleValues_SelectedIndexChanged);
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.comboPossibleValues);
             this.Controls.Add(this.chkSwapXY);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.labelUnits);
@@ -271,5 +305,8 @@ namespace UniversalPatcher
         private System.Windows.Forms.CheckBox chkSwapXY;
         private System.Windows.Forms.ToolStripMenuItem showRawHEXValuesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem disableTooltipsToolStripMenuItem;
+        private ToolStripMenuItem helpToolStripMenuItem;
+        private ToolStripMenuItem showTableDescriptionToolStripMenuItem;
+        private ComboBox comboPossibleValues;
     }
 }
