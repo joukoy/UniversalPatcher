@@ -53,16 +53,16 @@ namespace UniversalPatcher
                 {
                     LoggerBold("WARING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);
                 }
-                if (td.OutputType == OutDataType.Flag && td.BitMask != null && td.BitMask.Length > 0)
+/*                if (td.OutputType == OutDataType.Flag && td.BitMask != null && td.BitMask.Length > 0)
                 {
                     frmEditFlag ff = new frmEditFlag();
                     ff.loadFlag(PCM, td);
                     ff.Show();
                 }
-                else
+                else*/
                 {
-                    frmT.loadTable(td, PCM);
                     frmT.Show();
+                    frmT.loadTable(td, PCM);
                 }
             }
             catch (Exception ex)
