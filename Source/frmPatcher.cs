@@ -3233,11 +3233,7 @@ namespace UniversalPatcher
                 {
                     frmTableEditor frmT = new frmTableEditor();
                     frmT.loadSeekTable(codeIndex, basefile);
-                    if ((frmT.ShowDialog()) == DialogResult.OK)
-                    {
-                        LoggerBold("File modified, you can now save it");
-                    }
-                    frmT.Dispose();
+                    frmT.Show();
                 }
             }
             catch (Exception ex)
@@ -3347,6 +3343,11 @@ namespace UniversalPatcher
         }
 
         private void dataGridTableSeek_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
         }

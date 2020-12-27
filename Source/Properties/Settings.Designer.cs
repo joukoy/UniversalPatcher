@@ -322,5 +322,41 @@ namespace UniversalPatcher.Properties {
                 this["TunerWindowLocation"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size frmGraphicsWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["frmGraphicsWindowSize"]));
+            }
+            set {
+                this["frmGraphicsWindowSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.Forms.FormWindowState frmGraphicsWindowState {
+            get {
+                return ((global::System.Windows.Forms.FormWindowState)(this["frmGraphicsWindowState"]));
+            }
+            set {
+                this["frmGraphicsWindowState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point frmGraphicsWindowLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["frmGraphicsWindowLocation"]));
+            }
+            set {
+                this["frmGraphicsWindowLocation"] = value;
+            }
+        }
     }
 }

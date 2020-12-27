@@ -54,6 +54,8 @@ namespace UniversalPatcher
             this.showTableDescriptionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkSwapXY = new System.Windows.Forms.CheckBox();
             this.comboPossibleValues = new System.Windows.Forms.ComboBox();
+            this.graphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showGraphicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -149,7 +151,8 @@ namespace UniversalPatcher
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.settingsToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.helpToolStripMenuItem,
+            this.graphToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(800, 24);
@@ -168,14 +171,14 @@ namespace UniversalPatcher
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exportCSVToolStripMenuItem1
             // 
             this.exportCSVToolStripMenuItem1.Name = "exportCSVToolStripMenuItem1";
-            this.exportCSVToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.exportCSVToolStripMenuItem1.Size = new System.Drawing.Size(132, 22);
             this.exportCSVToolStripMenuItem1.Text = "Export CSV";
             this.exportCSVToolStripMenuItem1.Click += new System.EventHandler(this.exportCSVToolStripMenuItem1_Click);
             // 
@@ -236,7 +239,7 @@ namespace UniversalPatcher
             // chkSwapXY
             // 
             this.chkSwapXY.AutoSize = true;
-            this.chkSwapXY.Location = new System.Drawing.Point(160, 2);
+            this.chkSwapXY.Location = new System.Drawing.Point(200, 2);
             this.chkSwapXY.Name = "chkSwapXY";
             this.chkSwapXY.Size = new System.Drawing.Size(75, 17);
             this.chkSwapXY.TabIndex = 7;
@@ -257,6 +260,21 @@ namespace UniversalPatcher
             this.comboPossibleValues.TabIndex = 8;
             this.comboPossibleValues.Visible = false;
             this.comboPossibleValues.SelectedIndexChanged += new System.EventHandler(this.comboPossibleValues_SelectedIndexChanged);
+            // 
+            // graphToolStripMenuItem
+            // 
+            this.graphToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showGraphicToolStripMenuItem});
+            this.graphToolStripMenuItem.Name = "graphToolStripMenuItem";
+            this.graphToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
+            this.graphToolStripMenuItem.Text = "Graph";
+            // 
+            // showGraphicToolStripMenuItem
+            // 
+            this.showGraphicToolStripMenuItem.Name = "showGraphicToolStripMenuItem";
+            this.showGraphicToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showGraphicToolStripMenuItem.Text = "Show graphic";
+            this.showGraphicToolStripMenuItem.Click += new System.EventHandler(this.showGraphicToolStripMenuItem_Click);
             // 
             // frmTableEditor
             // 
@@ -308,5 +326,7 @@ namespace UniversalPatcher
         private ToolStripMenuItem helpToolStripMenuItem;
         private ToolStripMenuItem showTableDescriptionToolStripMenuItem;
         private ComboBox comboPossibleValues;
+        private ToolStripMenuItem graphToolStripMenuItem;
+        private ToolStripMenuItem showGraphicToolStripMenuItem;
     }
 }

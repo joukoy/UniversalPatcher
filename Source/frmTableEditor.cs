@@ -11,6 +11,7 @@ using MathParserTK;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace UniversalPatcher
 {
@@ -784,7 +785,7 @@ namespace UniversalPatcher
             int dgv_width = dataGridView1.Columns.GetColumnsWidth(DataGridViewElementStates.Visible);
             if (dgv_width < 175) dgv_width = 175;
             int dgv_height = dataGridView1.Rows.GetRowsHeight(DataGridViewElementStates.Visible);
-            Screen myScreen = Screen.FromPoint(Cursor.Position);
+            Screen myScreen = Screen.FromPoint(MousePosition);
             System.Drawing.Rectangle area = myScreen.WorkingArea;
             if ((dgv_width + 125) > area.Width)
                 this.Width = area.Width - 50;
@@ -1131,6 +1132,36 @@ namespace UniversalPatcher
                 //DataGridViewCell cell = dataGridView1.Rows[0].Cells[0];
                 SaveValue(Convert.ToUInt32(comboPossibleValues.Tag), 0,0,td);
             }
+        }
+
+        private void showGraphicToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmGraphics fg = new frmGraphics();
+            fg.Text = td.TableName;
+            fg.Show();
+            fg.chart1.Series.Clear();
+            double minVal = double.MaxValue;
+            double maxVal = double.MinValue;
+
+            for (int r=0; r<dataGridView1.Rows.Count; r++)
+            {
+                fg.chart1.Series.Add(new Series());
+                fg.chart1.Series[r].ChartType = SeriesChartType.Line;                
+                fg.chart1.Series[r].Name = dataGridView1.Rows[r].HeaderCell.Value.ToString();
+                fg.chart1.Series[r].ToolTip = "[#SERIESNAME][#VALX]: #VAL";
+                int point = 0;
+                for (int c=0; c< dataGridView1.Columns.Count; c++)
+                {
+                    double val = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
+                    if (val > maxVal) maxVal = val;
+                    if (val < minVal) minVal = val;
+                    fg.chart1.Series[r].Points.AddXY(dataGridView1.Columns[c].HeaderCell.Value, val);
+                    fg.chart1.Series[r].Points[point].MarkerStyle = MarkerStyle.Circle;
+                    fg.chart1.Series[r].Points[point].MarkerSize = 5;
+                    point++;
+                }
+            }
+            //fg.chart1.ChartAreas[0].AxisY.Interval = 10;
         }
     }
 }
