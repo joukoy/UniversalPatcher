@@ -299,12 +299,23 @@ namespace UniversalPatcher
             for (int t = 0; t < filteredTables.Count; t++)
             {
                 string[] tParts = filteredTables[t].TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
-                if (!rowHeaders.Contains(tParts[1]))
-                    rowHeaders.Add(tParts[1]);
                 if (tParts.Length > 2)
                 {
-                    if (!colHeaders.Contains(tParts[2]))
-                        colHeaders.Add(tParts[2]);
+                    if (!rowHeaders.Contains(tParts[1]))
+                        rowHeaders.Add(tParts[1]);
+                    string colHdr = tParts[2];
+                    if (filteredTables[t].ColumnHeaders != "")
+                        colHdr += " " + filteredTables[t].ColumnHeaders.Trim();
+                    if (!colHeaders.Contains(colHdr))
+                        colHeaders.Add(colHdr);
+                }
+                else
+                {
+                    string colHdr = tParts[1];
+                    if (filteredTables[t].ColumnHeaders != "")
+                        colHdr += " " + filteredTables[t].ColumnHeaders.Trim();
+                    if (!colHeaders.Contains(colHdr))
+                        colHeaders.Add(colHdr);
                 }
             }
 
@@ -319,6 +330,11 @@ namespace UniversalPatcher
                 else
                     colHeaders.Add("");
             }
+            if (rows == 0)
+            {
+                rows = 1;
+                rowHeaders.Add("");
+            }
             if (bufSize == 0)
             {
                 int elementSize = getBits(td.DataType) / 8;
@@ -326,6 +342,17 @@ namespace UniversalPatcher
                 bufSize = (uint)(filteredTables[filteredTables.Count-1].addrInt - filteredTables[0].addrInt + td.Offset + singleTableSize);
                 dataBuffer = new byte[bufSize];
                 Array.Copy(PCM.buf, td.addrInt, dataBuffer, 0, bufSize);
+            }
+
+            if (rowHeaders.Count < 2)
+            {
+                if (filteredTables[0].RowHeaders.Contains(','))
+                {
+                    rowHeaders.Clear();
+                    string[] rParts = filteredTables[0].RowHeaders.Split(',');
+                    for (int r = 0; r < rParts.Length; r++)
+                        rowHeaders.Add(rParts[r]);
+                }
             }
 
             if (td.Rows < 2 && td.Columns < 2 && td.RowHeaders.Contains(",") && showRawHEXValuesToolStripMenuItem.Checked == false)
