@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.IO;
 using static upatcher;
 using UniversalPatcher.Properties;
+using System.Diagnostics;
 
 namespace UniversalPatcher
 {
@@ -29,6 +30,7 @@ namespace UniversalPatcher
             bindingSource.DataSource = DetectRules;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
+            UseComboBoxForEnums(dataGridView1);
         }
 
         public void LoadStockCVN()
@@ -38,6 +40,7 @@ namespace UniversalPatcher
             bindingSource.DataSource = StockCVN;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
+            UseComboBoxForEnums(dataGridView1);
         }
         public void LoadDTCSearchConfig()
         {
@@ -47,6 +50,7 @@ namespace UniversalPatcher
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
             dataGridView1.Columns["ConditionalOffset"].ToolTipText = "Possible values:code,status,mil (Multiple values allowed)";
+            UseComboBoxForEnums(dataGridView1);
         }
         public void LoadTableSeek(string fname)
         {
@@ -65,6 +69,7 @@ namespace UniversalPatcher
             dataGridView1.DataSource = bindingSource;
             btnSave.Visible = false;
             dataGridView1.Columns["DataType"].ToolTipText = "UBYTE,SBYTE,UWORD,SWORD,UINT32,INT32,UINT64,INT64,FLOAT32,FLOAT64";
+            UseComboBoxForEnums(dataGridView1);
         }
 
         public void LoadFileTypes()
@@ -83,8 +88,9 @@ namespace UniversalPatcher
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
             //dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
-            dataGridView1.Columns["ConditionalOffset"].ToolTipText = "If set, and Opcode Address last 2 bytes > 0x5000, Offset = -10000";
-            dataGridView1.Columns["DataType"].ToolTipText = "UBYTE,SBYTE,UWORD,SWORD,UINT32,INT32,UINT64,INT64,FLOAT32,FLOAT64";
+            //dataGridView1.Columns["ConditionalOffset"].ToolTipText = "If set, and Opcode Address last 2 bytes > 0x5000, Offset = -10000";
+            //dataGridView1.Columns["DataType"].ToolTipText = "UBYTE,SBYTE,UWORD,SWORD,UINT32,INT32,UINT64,INT64,FLOAT32,FLOAT64";
+            UseComboBoxForEnums(dataGridView1);
         }
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
@@ -396,5 +402,10 @@ namespace UniversalPatcher
 
             refreshTableSeek();
         }
+        private void dataGridView1_Dataerror(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            Debug.WriteLine(e.Exception);
+        }
+
     }
 }

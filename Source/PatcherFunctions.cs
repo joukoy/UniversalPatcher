@@ -8,6 +8,7 @@ using UniversalPatcher;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using UniversalPatcher.Properties;
+using System.Linq;
 
 public class upatcher
 {
@@ -703,16 +704,11 @@ public class upatcher
     public static string SelectFile(string Title = "Select file", string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*", string defaultFile = "")
     {
         OpenFileDialog fdlg = new OpenFileDialog();
-        fdlg.FileName = defaultFile;
-        if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
-        if (Filter.Contains("PATCH") || Filter.Contains("TXT"))
-            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
-        else if (Filter.Contains("BIN"))
+        if (Filter.Contains("BIN"))
         {
             fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
             Filter = "BIN files (*.bin)|*.bin";
-            for (int f=0;f<fileTypeList.Count;f++)
+            for (int f = 0; f < fileTypeList.Count; f++)
             {
                 string newFilter = "|" + fileTypeList[f].Description + "|" + "*." + fileTypeList[f].Extension;
                 Filter += newFilter;
@@ -720,7 +716,22 @@ public class upatcher
             Filter += "|All files (*.*)|*.*";
         }
         else if (Filter.ToLower().Contains("xdf"))
+        {
             fdlg.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
+        }
+        else if (defaultFile.Length > 0)
+        {
+
+            fdlg.FileName = Path.GetFileName(defaultFile);
+            fdlg.InitialDirectory = Path.GetDirectoryName(defaultFile);
+        }
+        else
+        {
+            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
+                fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
+            if (Filter.Contains("PATCH") || Filter.Contains("TXT"))
+                fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
+        }
 
         fdlg.Title = Title;
         fdlg.Filter = Filter;
@@ -885,6 +896,7 @@ public class upatcher
                 throw new Exception("Can't convert from HEX: " + cvn);
             }
             string refString = "";
+            if (referenceCvnList == null) return "";
             for (int r = 0; r < referenceCvnList.Count; r++)
             {
                 if (PN == referenceCvnList[r].PN)
@@ -1404,5 +1416,32 @@ public class upatcher
                ((x & 0xff000000) >> 24);
     }
 
-    
+    public static void UseComboBoxForEnums(DataGridView g)
+    {
+        g.Columns.Cast<DataGridViewColumn>()
+         .Where(x => x.ValueType.IsEnum)
+         .ToList().ForEach(x =>
+         {
+             var index = x.Index;
+             g.Columns.RemoveAt(index);
+             var c = new DataGridViewComboBoxColumn();
+             c.ValueType = x.ValueType;
+             c.ValueMember = "Value";
+             c.DisplayMember = "Name";
+             c.DataPropertyName = x.DataPropertyName;
+             c.HeaderText = x.HeaderText;
+             c.Name = x.Name;
+             if (x.ValueType.IsEnum)
+             {
+                 c.DataSource = Enum.GetValues(x.ValueType).Cast<object>().Select(v => new
+                 {
+                     Value = (int)v,
+                     Name = Enum.GetName(x.ValueType, v) /* or any other logic to get text */
+                 }).ToList();
+             }
+
+             g.Columns.Insert(index, c);
+         });
+    }
+
 }

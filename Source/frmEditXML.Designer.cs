@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace UniversalPatcher
 {
@@ -56,6 +57,7 @@ namespace UniversalPatcher
             this.dataGridView1.Size = new System.Drawing.Size(650, 397);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridView1_DataBindingComplete);
+            this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_Dataerror);
             // 
             // btnSave
             // 

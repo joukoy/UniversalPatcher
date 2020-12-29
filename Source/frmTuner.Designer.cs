@@ -81,6 +81,7 @@ namespace UniversalPatcher
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
+            this.dataGridView1.DataError += new DataGridViewDataErrorEventHandler(this.DataGridView1_DataError);
             // 
             // btnEditTable
             // 
@@ -360,7 +361,6 @@ namespace UniversalPatcher
             this.PerformLayout();
 
         }
-
 
 
         #endregion

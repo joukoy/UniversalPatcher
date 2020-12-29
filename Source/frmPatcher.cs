@@ -139,6 +139,12 @@ namespace UniversalPatcher
             StockCVN = new List<CVN>();
             fileTypeList = new List<FileType>();
             dtcSearchConfigs = new List<DtcSearchConfig>();
+            SwapSegments = new List<SwapSegment>();
+            //Dirty fix to make system work without stockcvn.xml
+            CVN ctmp = new CVN();
+            ctmp.cvn = "";
+            ctmp.PN = "";
+            StockCVN.Add(ctmp);
 
             Logger("Loading configurations... filetypes", false);
             Application.DoEvents();
@@ -193,10 +199,6 @@ namespace UniversalPatcher
                 file.Close();
 
             }
-            else
-            {
-                SwapSegments = new List<SwapSegment>();
-            }
 
             Logger(",stockcvn", false);
             Application.DoEvents();
@@ -209,14 +211,6 @@ namespace UniversalPatcher
                 System.IO.StreamReader file = new System.IO.StreamReader(StockCVNFile);
                 StockCVN = (List<CVN>)reader.Deserialize(file);
                 file.Close();
-            }
-            else
-            {
-                //Dirty fix to make system work without stockcvn.xml
-                CVN ctmp = new CVN();
-                ctmp.cvn = "";
-                ctmp.PN = "";
-                StockCVN.Add(ctmp);
             }
             loadReferenceCvn();
 
@@ -3221,7 +3215,7 @@ namespace UniversalPatcher
                     return;
                 }
 
-                if (ts.OutputType == OutDataType.Flag && ts.BitMask != null && ts.BitMask.Length > 0)
+/*                if (ts.OutputType == OutDataType.Flag && ts.BitMask != null && ts.BitMask.Length > 0)
                 {
                     frmEditFlag ff = new frmEditFlag();
                     TableData td = new TableData();
@@ -3229,7 +3223,7 @@ namespace UniversalPatcher
                     ff.loadFlag(basefile, td);
                     ff.Show();
                 }
-                else
+                else*/
                 {
                     frmTableEditor frmT = new frmTableEditor();
                     frmT.loadSeekTable(codeIndex, basefile);
@@ -3342,10 +3336,6 @@ namespace UniversalPatcher
             filterTableSeek();
         }
 
-        private void dataGridTableSeek_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {

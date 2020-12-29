@@ -1300,7 +1300,6 @@
             this.dataGridTableSeek.Name = "dataGridTableSeek";
             this.dataGridTableSeek.Size = new System.Drawing.Size(834, 312);
             this.dataGridTableSeek.TabIndex = 1;
-            this.dataGridTableSeek.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridTableSeek_CellContentClick);
             this.dataGridTableSeek.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridTableSeek_CellContentDoubleClick);
             // 
             // btnClearTableSeek

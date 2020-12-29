@@ -80,9 +80,9 @@ namespace UniversalPatcher
                 string fileName = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + PCM.xmlFile + ".xml");
                 if (fileName != tableSeekFile)
                 {
+                    tableSeekFile = fileName;
                     if (File.Exists(fileName))
-                    {
-                        tableSeekFile = fileName;
+                    {                        
                         Debug.WriteLine("Loading " + fileName);
                         System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSeek>));
                         System.IO.StreamReader file = new System.IO.StreamReader(fileName);
