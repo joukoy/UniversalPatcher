@@ -30,6 +30,7 @@ namespace UniversalPatcher
             Floating = false;
             OutputType = OutDataType.Float;
             DataType = InDataType.UNKNOWN;
+            Values = "";
         }
         public uint id { get; set; }
         public string OS { get; set; }
@@ -65,6 +66,7 @@ namespace UniversalPatcher
         public string Math { get; set; }
         public string SavingMath { get; set; }
         public string Units { get; set; }
+        public string Values { get; set; }
         public OutDataType OutputType { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }

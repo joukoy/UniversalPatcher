@@ -131,27 +131,10 @@ namespace UniversalPatcher
             if (mathTd.DataType == InDataType.FLOAT64)
                 value = BEToFloat64(dataBuffer, bufAddr);
 
-            double multiplier = 1;
-            if (td.TableName.EndsWith(".Data") && !mathTd.TableName.EndsWith(".xVal") && !mathTd.TableName.EndsWith(".yVal"))
-            {
-                string xTbName = td.TableName.Replace(".Data", ".xVal");
-                for (int x = 0; x < tableDatas.Count; x++)
-                {
-                    if (tableDatas[x].TableName == xTbName)
-                    {
-                        TableData xtb = tableDatas[x];
-                        uint xaddr = (uint)(xtb.addrInt + xtb.Offset);
-                        multiplier = getHeaderValue(xaddr, xtb);    //GetHeaderValue gets from full buffer, not from tablebuffer
-                        break;
-                    }
-                }
-            }
-
 
             string mathStr = mathTd.Math.ToLower().Replace("x", value.ToString());
             if (commaDecimal) mathStr = mathStr.Replace(".", ",");
             value = parser.Parse(mathStr, false);
-            value = value * multiplier;
             return value;
         }
 
@@ -211,7 +194,7 @@ namespace UniversalPatcher
             }
         }
 
-        private double getHeaderValue(uint addr, TableData mathTd, bool useMultiplier = false)
+        private double getHeaderValue(uint addr, TableData mathTd)
         {
             double value = 0;
             if (mathTd.DataType == InDataType.SBYTE)
@@ -235,30 +218,14 @@ namespace UniversalPatcher
             if (mathTd.DataType == InDataType.FLOAT64)
                 value = BEToFloat64(PCM.buf, addr);
 
-            double multiplier = 1;
-            if (useMultiplier && td.TableName.EndsWith(".Data") && !mathTd.TableName.EndsWith(".xVal") && !mathTd.TableName.EndsWith(".yVal"))
-            {
-                string yTbName = td.TableName.Replace(".Data", ".yVal");
-                for (int y=0; y<tableDatas.Count; y++)
-                {
-                    if (tableDatas[y].TableName == yTbName)
-                    {
-                        TableData ytb = tableDatas[y];
-                        uint xaddr = (uint)(ytb.addrInt + ytb.Offset);
-                        multiplier = getHeaderValue(xaddr, ytb);
-                        break;
-                    }
-                }                
-            }
 
             string mathStr = mathTd.Math.ToLower().Replace("x", value.ToString());
             if (commaDecimal) mathStr = mathStr.Replace(".", ",");
             value = parser.Parse(mathStr, false);
-            value = value * multiplier;
             return value;
         }
 
-        private string loadHeaderFromTable(string tableName, int count, bool useMultiplier = false)
+        private string loadHeaderFromTable(string tableName, int count)
         {
             string headers = "" ;
             for (int i=0; i < tableDatas.Count; i++)
@@ -270,7 +237,7 @@ namespace UniversalPatcher
                     uint addr = (uint)(t.addrInt + t.Offset);
                     for (int a = 0; a < count; a++ )
                     {
-                        headers += t.Units.Trim() + " " +  getHeaderValue(addr,t,useMultiplier).ToString().Replace(",",".") + ",";
+                        headers += t.Units.Trim() + " " +  getHeaderValue(addr,t).ToString().Replace(",",".") + ",";
                         addr += step;
                     }
                     headers = headers.Trim(',');
@@ -283,7 +250,7 @@ namespace UniversalPatcher
         private void parseEnumHeaders(TableData hTd)
         {
             if (possibleVals.Count > 0) return;
-            string[] posVals = hTd.RowHeaders.Split(',');
+            string[] posVals = hTd.Values.Replace("Enum: ","").Split(',');
             for (int r = 0; r < posVals.Length; r++)
             {
                 string[] parts = posVals[r].Split(':');
@@ -327,6 +294,39 @@ namespace UniversalPatcher
                     ind = c;
                 }
                 
+            }
+            return ind;
+        }
+        private int getColumnByTableData_XySwap(TableData cTd, int col)
+        {
+            int ind = int.MinValue;
+            string colName = "";
+
+            if (cTd.Rows == dataGridView1.Columns.Count)
+                return col;
+
+            if (cTd.Rows == 1)
+            {
+                string[] tParts = cTd.TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
+                if (tParts.Length > 2)
+                {
+                    colName = tParts[tParts.Length - 2].Trim();
+                }
+            }
+            else if (cTd.RowHeaders.Contains(','))
+            {
+                string[] tParts = cTd.RowHeaders.Split(',');
+                if (tParts.Length >= (col - 1))
+                    colName = tParts[col].Trim();
+            }
+            if (colName != "")
+            {
+                for (int c = 0; c < dataGridView1.Columns.Count; c++)
+                {
+                    if (dataGridView1.Columns[c].HeaderText == colName)
+                        ind = c;
+                }
+
             }
             return ind;
         }
@@ -380,6 +380,56 @@ namespace UniversalPatcher
             return ind;
         }
 
+        private int getRowByTableData_XySwap(TableData cTd, int row)
+        {
+            int ind = int.MinValue;
+            string rowName = "";
+
+            if (cTd.Columns == dataGridView1.Rows.Count)
+            {
+                Debug.WriteLine("getRowByTableData_XySwap: cTd.Columns == dataGridView1.Rows.Count");
+                return row;
+            }
+
+            if (cTd.Columns == 1)
+            {
+                string[] tParts = cTd.TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
+                if (tParts.Length > 1)
+                {
+                    rowName = tParts[tParts.Length - 1].Trim();
+                    if (cTd.ColumnHeaders != null && cTd.ColumnHeaders.Length > 0)
+                        rowName += " " + cTd.ColumnHeaders.Trim();
+                    Debug.WriteLine("getRowByTableData_XySwap: By tablename: " + rowName);
+                }
+            }
+            if (cTd.ColumnHeaders.Contains(','))
+            {
+                string[] tParts = cTd.ColumnHeaders.Split(',');
+                if (tParts.Length >= (row - 1))
+                {
+                    rowName = tParts[row].Trim();
+                    Debug.WriteLine("getRowByTableData_XySwap: By current TD " + rowName);
+                }
+            }
+            else if (td.ColumnHeaders.Contains(','))
+            {
+                string[] tParts = td.ColumnHeaders.Split(',');
+                if (tParts.Length >= (row - 1))
+                {
+                    rowName = tParts[row].Trim();
+                    Debug.WriteLine("getRowByTableData_XySwap: By main TD " + rowName);
+                }
+            }
+            if (rowName != "")
+            {
+                for (int c = 0; c < dataGridView1.Rows.Count; c++)
+                {
+                    if (dataGridView1.Rows[c].HeaderCell.Value.ToString() == rowName)
+                        ind = c;
+                }
+            }
+            return ind;
+        }
 
         private void loadMultiTable(string tableName)
         {
@@ -388,8 +438,8 @@ namespace UniversalPatcher
                 labelUnits.Text = "Units: " + td.Units;
 
 
-            swapXyToolStripMenuItem.Enabled = false;
-            chkSwapXY.Enabled = false;
+            //swapXyToolStripMenuItem.Enabled = false;
+            //chkSwapXY.Enabled = false;
 
             var results = tableDatas.Where(t => t.TableName.StartsWith(tableName)); 
             filteredTables = new List<TableData>(results.ToList());
@@ -429,7 +479,7 @@ namespace UniversalPatcher
                     if (!colHeaders.Contains(colHdr))
                     {
                         colHeaders.Add(colHdr);
-                        if (filteredTables[t].Rows < 2 && filteredTables[t].RowHeaders.Contains(","))
+                        if (filteredTables[t].Values.StartsWith("Enum: "))
                         {
                             comboTb = true;
                             parseEnumHeaders(filteredTables[t]);
@@ -448,7 +498,7 @@ namespace UniversalPatcher
                     if (!colHeaders.Contains(colHdr))
                     {
                         colHeaders.Add(colHdr);
-                        if (filteredTables[t].Rows < 2 && filteredTables[t].RowHeaders.Contains(","))
+                        if (filteredTables[t].Values.StartsWith("Enum:"))
                         {
                             comboTb = true;
                             parseEnumHeaders(filteredTables[t]);
@@ -508,91 +558,226 @@ namespace UniversalPatcher
             dataGridView1.Rows.Clear();
             dataGridView1.Columns.Clear();
 
-            for (int c = 0; c < colHeaders.Count; c++)
+            bool xySwapped = false;
+            if (chkSwapXY.Checked)
             {
-                string hdrTxt = colHeaders[c];
-                if (colHeaders.Count == 1)
-                    dataGridView1.Columns[c].HeaderText = td.Units;
-
-                if (flagCols[c])
+                xySwapped = true;
+            }
+            //If there is different kind of columns, X/Y can't be swapped
+            int boolCols = 0;
+            int combCols = 0;
+            int regCols = 0;
+            for (int c = 0; c < comboCols.Count; c++)
+            {
+                if (comboCols[c]) combCols++;
+                else if (flagCols[c]) boolCols++;
+                else regCols++;
+            }
+            if ((boolCols > 0 ^ combCols > 0 ^ regCols > 0) && !(boolCols > 0 && combCols > 0 && regCols > 0))
+            {
+                //Only regular, combo, or Flag columns used, can swap
+                if (rowHeaders.Count == 1 && colHeaders.Count > 1)
                 {
-                    DataGridViewCheckBoxColumn col_chkbox = new DataGridViewCheckBoxColumn();
-                    dataGridView1.Columns.Add(col_chkbox);
+                    //Invert checkbox, swap by default
+                    if (!chkSwapXY.Checked)
+                        xySwapped = true;
+                    else
+                        xySwapped = false;
                 }
-                else if (comboCols[c])
-                {
-                    DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
-                    comboCol.DataSource = new BindingSource(possibleVals, null);
-                    comboCol.DisplayMember = "Value";
-                    comboCol.ValueMember = "Key";
-                    dataGridView1.Columns.Add(comboCol);
-                }
-                else
-                {
-                    dataGridView1.Columns.Add(hdrTxt, hdrTxt);
-                }
-                dataGridView1.Columns[c].HeaderText = hdrTxt;
-
+            }
+            else
+            {
+                chkSwapXY.Enabled = false;
+                swapXyToolStripMenuItem.Enabled = false;
             }
 
-            for (int r = 0; r < rowHeaders.Count; r++)
+            if (xySwapped)
             {
-                dataGridView1.Rows.Add();
-                if (rowHeaders.Count == 1)
-                    dataGridView1.Rows[r].HeaderCell.Value = td.Units;
-                else
-                    dataGridView1.Rows[r].HeaderCell.Value = rowHeaders[r];
-            }
-
-            int gridRow = 0;
-            for (int tbl = 0; tbl<filteredTables.Count; tbl++)
-            {
-                TableData ft = filteredTables[tbl];
-                int elementsize = getElementSize(ft.DataType);
-                int gridCol = 0;
-                uint addr = (uint)(ft.addrInt + ft.Offset);
-                if (ft.RowMajor)
+                //Swapped, put ROW headers to COLUMNS
+                for (int r = 0; r < rowHeaders.Count; r++)
                 {
-                    for (int r = 0; r < ft.Rows; r++)
+                    string hdrTxt = rowHeaders[r];
+                    if (rowHeaders.Count == 1)
+                        hdrTxt = td.Units;
+                    if (flagCols[0])
                     {
-                        if (dataGridView1.Rows.Count > 1)
-                            gridRow = getRowByTableData(ft, r);
-                        for (int c = 0; c < ft.Columns; c++)
-                        {
-                            if (dataGridView1.Columns.Count > 1)
-                                gridCol = getColumnByTableData(ft, c);
-                            setCellValue(addr, gridRow, gridCol, ft);
-                            addr += (uint)elementsize;
-                        }
+                        DataGridViewCheckBoxColumn col_chkbox = new DataGridViewCheckBoxColumn();
+                        dataGridView1.Columns.Add(col_chkbox);
                     }
+                    else if (comboCols[0])
+                    {
+                        DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
+                        comboCol.DataSource = new BindingSource(possibleVals, null);
+                        comboCol.DisplayMember = "Value";
+                        comboCol.ValueMember = "Key";
+                        dataGridView1.Columns.Add(comboCol);
+                    }
+                    else
+                    {
+                        dataGridView1.Columns.Add(hdrTxt, hdrTxt);
+
+                    }
+                    dataGridView1.Columns[r].HeaderText = hdrTxt;
                 }
-                else
+
+                for (int c = 0; c < colHeaders.Count; c++)
                 {
-                    for (int c = 0; c < ft.Columns; c++)
+                    dataGridView1.Rows.Add();
+                    if (colHeaders.Count == 1)
+                        dataGridView1.Rows[c].HeaderCell.Value = td.Units;
+                    else
+                        dataGridView1.Rows[c].HeaderCell.Value = colHeaders[c];
+                }
+
+
+                int gridRow = 0;
+                for (int tbl = 0; tbl < filteredTables.Count; tbl++)
+                {
+                    int gridCol = 0;
+                    TableData ft = filteredTables[tbl];
+                    int elementsize = getElementSize(ft.DataType);
+                    uint addr = (uint)(ft.addrInt + ft.Offset);
+                    if (!ft.RowMajor)
                     {
                         for (int r = 0; r < ft.Rows; r++)
                         {
                             if (dataGridView1.Columns.Count > 1)
-                                gridCol = getColumnByTableData(ft, c);
-                            if (dataGridView1.Rows.Count > 1)
-                                gridRow = getRowByTableData(ft, r);
-                            setCellValue(addr, gridRow, gridCol, ft);
-                            addr += (uint)elementsize;
+                                gridCol = getColumnByTableData_XySwap(ft, r);
+                            for (int c = 0; c < ft.Columns; c++)
+                            {
+                                if (dataGridView1.Rows.Count > 1)
+                                    gridRow = getRowByTableData_XySwap(ft, c);
+                                setCellValue(addr, gridRow, gridCol, ft);
+                                addr += (uint)elementsize;
+                            }
                         }
                     }
+                    else
+                    {
+                        for (int c = 0; c < ft.Columns; c++)
+                        {
+                            if (dataGridView1.Rows.Count > 1)
+                                gridRow = getRowByTableData_XySwap(ft, c);
+                            for (int r = 0; r < ft.Rows; r++)
+                            {
+                                if (dataGridView1.Columns.Count > 1)
+                                    gridCol = getColumnByTableData_XySwap(ft, r);
+                                setCellValue(addr, gridRow, gridCol, ft);
+                                addr += (uint)elementsize;
+                            }
+                        }
 
+                    }
+
+                }
+            }
+            else //xyswapped
+            {
+                for (int c = 0; c < colHeaders.Count; c++)
+                {
+                    string hdrTxt = colHeaders[c];
+                    if (colHeaders.Count == 1)
+                        dataGridView1.Columns[c].HeaderText = td.Units;
+
+                    if (flagCols[c])
+                    {
+                        DataGridViewCheckBoxColumn col_chkbox = new DataGridViewCheckBoxColumn();
+                        dataGridView1.Columns.Add(col_chkbox);
+                    }
+                    else if (comboCols[c])
+                    {
+                        DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
+                        comboCol.DataSource = new BindingSource(possibleVals, null);
+                        comboCol.DisplayMember = "Value";
+                        comboCol.ValueMember = "Key";
+                        dataGridView1.Columns.Add(comboCol);
+                    }
+                    else
+                    {
+                        dataGridView1.Columns.Add(hdrTxt, hdrTxt);
+                    }
+                    dataGridView1.Columns[c].HeaderText = hdrTxt;
+
+                }
+
+                for (int r = 0; r < rowHeaders.Count; r++)
+                {
+                    dataGridView1.Rows.Add();
+                    if (rowHeaders.Count == 1)
+                        dataGridView1.Rows[r].HeaderCell.Value = td.Units;
+                    else
+                        dataGridView1.Rows[r].HeaderCell.Value = rowHeaders[r];
+                }
+
+                int gridRow = 0;
+                for (int tbl = 0; tbl < filteredTables.Count; tbl++)
+                {
+                    TableData ft = filteredTables[tbl];
+                    int elementsize = getElementSize(ft.DataType);
+                    int gridCol = 0;
+                    uint addr = (uint)(ft.addrInt + ft.Offset);
+                    if (ft.RowMajor)
+                    {
+                        for (int r = 0; r < ft.Rows; r++)
+                        {
+                            if (dataGridView1.Rows.Count > 1)
+                                gridRow = getRowByTableData(ft, r);
+                            for (int c = 0; c < ft.Columns; c++)
+                            {
+                                if (dataGridView1.Columns.Count > 1)
+                                    gridCol = getColumnByTableData(ft, c);
+                                setCellValue(addr, gridRow, gridCol, ft);
+                                addr += (uint)elementsize;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int c = 0; c < ft.Columns; c++)
+                        {
+                            for (int r = 0; r < ft.Rows; r++)
+                            {
+                                if (dataGridView1.Columns.Count > 1)
+                                    gridCol = getColumnByTableData(ft, c);
+                                if (dataGridView1.Rows.Count > 1)
+                                    gridRow = getRowByTableData(ft, r);
+                                setCellValue(addr, gridRow, gridCol, ft);
+                                addr += (uint)elementsize;
+                            }
+                        }
+
+                    }
                 }
             }
             setDataGridLayout();
         }
 
+        public int getColumnsFromTable()
+        {
+            int cols = td.Columns;
+
+            string yTbName = td.TableName.Replace(".Data", ".xVal");
+            for (int y = 0; y < tableDatas.Count; y++)
+            {
+                if (tableDatas[y].TableName == yTbName)
+                {
+                    TableData ytb = tableDatas[y];
+                    uint xaddr = (uint)(ytb.addrInt + ytb.Offset);
+                    cols = (int)getHeaderValue(xaddr, ytb);
+                    break;
+                }
+            }
+
+            return cols;
+
+        }
         public int getRowCountFromTable()
         {
             int rows = td.Rows;
 
             for (int x=0; x< tableDatas.Count; x++)
             {
-                if (tableDatas[x].TableName == td.TableName.Replace(".Data", ".Size"))
+                if (tableDatas[x].TableName == td.TableName.Replace(".Data", ".Size") || tableDatas[x].TableName == td.TableName.Replace(".Data", ".yVal"))
                 {
                     uint addr = (uint)(tableDatas[x].addrInt + tableDatas[x].Offset);
                     rows = (int)getHeaderValue(addr, tableDatas[x]);
@@ -667,6 +852,7 @@ namespace UniversalPatcher
                 if (td.TableName.ToLower().EndsWith(".data"))
                 {
                     rowCount = getRowCountFromTable();
+                    colCount = getColumnsFromTable();
                 }
 
                 string[] colHeaders = td.ColumnHeaders.Split(',');
@@ -680,7 +866,7 @@ namespace UniversalPatcher
                 if (td.RowHeaders.StartsWith("Table: "))
                 {
                     string[] parts = td.RowHeaders.Split(' ');
-                    rowHeaders = loadHeaderFromTable(parts[1], td.Rows, true).Split(',');
+                    rowHeaders = loadHeaderFromTable(parts[1], td.Rows).Split(',');
                 }
 
 
@@ -706,7 +892,7 @@ namespace UniversalPatcher
                         dataGridView1.Columns.Add(col_chkbox);
                     }
                 }
-                else if (rowCount < 2 && colCount < 2 && td.RowHeaders.Contains(",") && showRawHEXValuesToolStripMenuItem.Checked == false)
+                else if (td.Values.Contains(",") && showRawHEXValuesToolStripMenuItem.Checked == false)
                 {
                     //Special case, possible values in rowheader
                     combo = true;
