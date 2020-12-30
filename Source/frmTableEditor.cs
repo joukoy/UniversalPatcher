@@ -900,22 +900,24 @@ namespace UniversalPatcher
                 {
                     //Special case, possible values in rowheader
                     combo = true;
-                    chkSwapXY.Enabled = false;
-                    swapXyToolStripMenuItem.Enabled = false;
+                    //chkSwapXY.Enabled = false;
+                    //swapXyToolStripMenuItem.Enabled = false;
                     //showRawHEXValuesToolStripMenuItem.Enabled = false;
                     txtMath.Enabled = false;
                     btnExecute.Enabled = false;
                     exportCSVToolStripMenuItem1.Enabled = false;
 
                     parseEnumHeaders(td);
+                    for (int c = 0; c < colCount; c++)
+                    {
+                        DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
 
-                    DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
-
-                    comboCol.DataSource = new BindingSource(possibleVals, null);
-                    comboCol.DisplayMember = "Value";
-                    comboCol.ValueMember = "Key";
-                    dataGridView1.Columns.Add(comboCol);
-                    Array.Clear(rowHeaders, 0, rowHeaders.Length);
+                        comboCol.DataSource = new BindingSource(possibleVals, null);
+                        comboCol.DisplayMember = "Value";
+                        comboCol.ValueMember = "Key";
+                        dataGridView1.Columns.Add(comboCol);
+                    }
+                    //Array.Clear(rowHeaders, 0, rowHeaders.Length);
 
                 }
                 else
