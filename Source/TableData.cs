@@ -66,7 +66,6 @@ namespace UniversalPatcher
         public string Math { get; set; }
         public string SavingMath { get; set; }
         public string Units { get; set; }
-        public string Values { get; set; }
         public OutDataType OutputType { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }
@@ -77,6 +76,7 @@ namespace UniversalPatcher
         public ushort Rows { get; set; }
         public string BitMask { get; set; }
         public bool RowMajor { get; set; }
+        public string Values { get; set; }
         public string ColumnHeaders { get; set; }
         public string RowHeaders { get; set; }
         public string TableDescription { get; set; }

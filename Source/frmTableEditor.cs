@@ -436,6 +436,8 @@ namespace UniversalPatcher
             this.Text = "Table Editor: " + tableName;
             if (td.Units != null)
                 labelUnits.Text = "Units: " + td.Units;
+            if (td.Values != null && !td.Values.StartsWith("Enum:"))
+                labelUnits.Text += ", Values: " +  td.Values;
 
 
             //swapXyToolStripMenuItem.Enabled = false;
@@ -837,6 +839,8 @@ namespace UniversalPatcher
 
                 if (td.Units != null)
                     labelUnits.Text = "Units: " + td.Units;
+                if (td.Values != null && !td.Values.StartsWith("Enum:"))
+                    labelUnits.Text += ", Values: " +  td.Values;
 
                 if (bufSize == 0)
                 {
