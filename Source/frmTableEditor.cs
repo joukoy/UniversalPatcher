@@ -31,10 +31,11 @@ namespace UniversalPatcher
         private PcmFile PCM;
         //private bool tableModified = false;
         private bool commaDecimal = true;
-        private byte[] dataBuffer;
+        private byte[] tableBuffer;
         private uint bufSize = 0;
         MathParser parser = new MathParser();
         Dictionary<double, string> possibleVals = new Dictionary<double, string>();
+        bool disableMultiTable = false;
 
         List<TableData> filteredTables;
         bool combo = false;
@@ -102,34 +103,44 @@ namespace UniversalPatcher
             td.TableName = ft.Name;
             td.Units = tSeek.Units;
 
-            loadTable(td, PCM);
+            loadTable(td, PCM, disableMultiTable);
         }
 
 
         private double getValue(uint addr, TableData mathTd)
         {
             double value = 0;
+
+            Byte[] myBuffer = tableBuffer;
             UInt32 bufAddr = addr - td.addrInt;
+
+            if ((int)(addr - td.addrInt) < 0 || (int)(addr - td.addrInt) > bufSize)
+            {
+                //Read data from other table
+                myBuffer = PCM.buf;
+                bufAddr = addr;
+            }
+
             if (mathTd.DataType == InDataType.SBYTE)
-                value = (sbyte)dataBuffer[bufAddr];
+                value = (sbyte)myBuffer[bufAddr];
             if (mathTd.DataType == InDataType.UBYTE)
-                value = dataBuffer[bufAddr];
+                value = myBuffer[bufAddr];
             if (mathTd.DataType == InDataType.SWORD)
-                value = BEToInt16(dataBuffer,bufAddr);
+                value = BEToInt16(myBuffer,bufAddr);
             if (mathTd.DataType == InDataType.UWORD)
-                value = BEToUint16(dataBuffer, bufAddr);
+                value = BEToUint16(myBuffer, bufAddr);
             if (mathTd.DataType == InDataType.INT32)
-                value = BEToInt32(dataBuffer, bufAddr);
+                value = BEToInt32(myBuffer, bufAddr);
             if (mathTd.DataType == InDataType.UINT32)
-                value = BEToUint32(dataBuffer, bufAddr);
+                value = BEToUint32(myBuffer, bufAddr);
             if (mathTd.DataType == InDataType.INT64)
-                value = BEToInt64(dataBuffer, bufAddr);
+                value = BEToInt64(myBuffer, bufAddr);
             if (mathTd.DataType == InDataType.UINT64)
-                value = BEToUint64(dataBuffer, bufAddr);
+                value = BEToUint64(myBuffer, bufAddr);
             if (mathTd.DataType == InDataType.FLOAT32)
-                value = BEToFloat32(dataBuffer, bufAddr);
+                value = BEToFloat32(myBuffer, bufAddr);
             if (mathTd.DataType == InDataType.FLOAT64)
-                value = BEToFloat64(dataBuffer, bufAddr);
+                value = BEToFloat64(myBuffer, bufAddr);
 
 
             string mathStr = mathTd.Math.ToLower().Replace("x", value.ToString());
@@ -142,12 +153,12 @@ namespace UniversalPatcher
         {
             UInt32 bufAddr = addr - td.addrInt; 
             if (mathTd.DataType == InDataType.UWORD || mathTd.DataType == InDataType.SWORD)
-                return BEToUint16(dataBuffer, bufAddr);
+                return BEToUint16(tableBuffer, bufAddr);
             if (mathTd.DataType == InDataType.INT32 || mathTd.DataType == InDataType.UINT32 || mathTd.DataType == InDataType.FLOAT32)
-                return BEToUint32(dataBuffer, bufAddr);
+                return BEToUint32(tableBuffer, bufAddr);
             if (mathTd.DataType == InDataType.INT64 || mathTd.DataType == InDataType.UINT64 || mathTd.DataType == InDataType.FLOAT64)
-                return BEToUint64(dataBuffer, bufAddr);
-            return dataBuffer[bufAddr];
+                return BEToUint64(tableBuffer, bufAddr);
+            return tableBuffer[bufAddr];
         }
 
         public void setCellValue(uint addr, int row, int col, TableData mathTd)
@@ -194,37 +205,6 @@ namespace UniversalPatcher
             }
         }
 
-        private double getHeaderValue(uint addr, TableData mathTd)
-        {
-            double value = 0;
-            if (mathTd.DataType == InDataType.SBYTE)
-                value = (sbyte)PCM.buf[addr];
-            if (mathTd.DataType == InDataType.UBYTE)
-                value = PCM.buf[addr];
-            if (mathTd.DataType == InDataType.SWORD)
-                value = BEToInt16(PCM.buf, addr);
-            if (mathTd.DataType == InDataType.UWORD)
-                value = BEToUint16(PCM.buf, addr);
-            if (mathTd.DataType == InDataType.INT32)
-                value = BEToInt32(PCM.buf, addr);
-            if (mathTd.DataType == InDataType.UINT32)
-                value = BEToUint32(PCM.buf, addr);
-            if (mathTd.DataType == InDataType.INT64)
-                value = BEToInt64(PCM.buf, addr);
-            if (mathTd.DataType == InDataType.UINT64)
-                value = BEToUint64(PCM.buf, addr);
-            if (mathTd.DataType == InDataType.FLOAT32)
-                value = BEToFloat32(PCM.buf, addr);
-            if (mathTd.DataType == InDataType.FLOAT64)
-                value = BEToFloat64(PCM.buf, addr);
-
-
-            string mathStr = mathTd.Math.ToLower().Replace("x", value.ToString());
-            if (commaDecimal) mathStr = mathStr.Replace(".", ",");
-            value = parser.Parse(mathStr, false);
-            return value;
-        }
-
         private string loadHeaderFromTable(string tableName, int count)
         {
             string headers = "" ;
@@ -237,7 +217,10 @@ namespace UniversalPatcher
                     uint addr = (uint)(t.addrInt + t.Offset);
                     for (int a = 0; a < count; a++ )
                     {
-                        headers += t.Units.Trim() + " " +  getHeaderValue(addr,t).ToString().Replace(",",".") + ",";
+                        string formatStr = "0.####";
+                        if (t.Units.Contains("%"))
+                            formatStr = "0";
+                        headers += t.Units.Trim() + " " + getValue(addr, t).ToString(formatStr).Replace(",", ".") + ",";
                         addr += step;
                     }
                     headers = headers.Trim(',');
@@ -454,8 +437,8 @@ namespace UniversalPatcher
                 int elementSize = getBits(td.DataType) / 8;
                 int singleTableSize = td.Rows * td.Columns * elementSize;
                 bufSize = (uint)(filteredTables[filteredTables.Count - 1].addrInt - filteredTables[0].addrInt + td.Offset + singleTableSize);
-                dataBuffer = new byte[bufSize];
-                Array.Copy(PCM.buf, td.addrInt, dataBuffer, 0, bufSize);
+                tableBuffer = new byte[bufSize];
+                Array.Copy(PCM.buf, td.addrInt, tableBuffer, 0, bufSize);
             }
 
             List<string> colHeaders = new List<string>();
@@ -500,7 +483,7 @@ namespace UniversalPatcher
                     if (!colHeaders.Contains(colHdr))
                     {
                         colHeaders.Add(colHdr);
-                        if (filteredTables[t].Values.StartsWith("Enum:"))
+                        if (filteredTables[t].Values != null && filteredTables[t].Values.StartsWith("Enum:"))
                         {
                             comboTb = true;
                             parseEnumHeaders(filteredTables[t]);
@@ -571,11 +554,11 @@ namespace UniversalPatcher
             int regCols = 0;
             for (int c = 0; c < comboCols.Count; c++)
             {
-                if (comboCols[c]) combCols++;
-                else if (flagCols[c]) boolCols++;
-                else regCols++;
+                if (comboCols[c]) combCols = 1;
+                else if (flagCols[c]) boolCols = 1;
+                else regCols = 1;
             }
-            if ((boolCols > 0 ^ combCols > 0 ^ regCols > 0) && !(boolCols > 0 && combCols > 0 && regCols > 0))
+            if ((boolCols + combCols + regCols) == 1)
             {
                 //Only regular, combo, or Flag columns used, can swap
                 if (rowHeaders.Count == 1 && colHeaders.Count > 1)
@@ -765,7 +748,7 @@ namespace UniversalPatcher
                 {
                     TableData ytb = tableDatas[y];
                     uint xaddr = (uint)(ytb.addrInt + ytb.Offset);
-                    cols = (int)getHeaderValue(xaddr, ytb);
+                    cols = (int)getValue(xaddr, ytb);
                     break;
                 }
             }
@@ -782,15 +765,16 @@ namespace UniversalPatcher
                 if (tableDatas[x].TableName == td.TableName.Replace(".Data", ".Size") || tableDatas[x].TableName == td.TableName.Replace(".Data", ".yVal"))
                 {
                     uint addr = (uint)(tableDatas[x].addrInt + tableDatas[x].Offset);
-                    rows = (int)getHeaderValue(addr, tableDatas[x]);
+                    rows = (int)getValue(addr, tableDatas[x]);
                     break;
                 }
             }
 
             return rows;
         }
-        public void loadTable(TableData td1, PcmFile PCM1)
+        public void loadTable(TableData td1, PcmFile PCM1, bool disableMultiTable1)
         {
+            disableMultiTable = disableMultiTable1;
             try
             {
                 var currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
@@ -804,9 +788,9 @@ namespace UniversalPatcher
                 if (showRawHEXValuesToolStripMenuItem.Checked)
                     combo = false;
 
-                if (td.TableName.Contains("[") || td.TableName.Contains("."))
+                if (!disableMultiTable && (td.TableName.Contains("[") || td.TableName.Contains(".")))
                 {
-                    if (td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".xVal") || td.TableName.EndsWith(".yVal") || td.TableName.EndsWith(".Size"))
+                    if (td.TableName.StartsWith("Header.") || td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".xVal") || td.TableName.EndsWith(".yVal") || td.TableName.EndsWith(".Size"))
                     {
                         //Special case, "Normal" table, but header values from tables, WITH different table as multiplier
                         Debug.WriteLine("Special case, not real multitable");
@@ -821,7 +805,7 @@ namespace UniversalPatcher
                         string tbName = td.TableName.Substring(0, location);
                         for (int t = 0; t < tableDatas.Count; t++)
                         {
-                            if (tableDatas[t].TableName.StartsWith(tbName) && tableDatas[t].TableName != td.TableName)
+                            if (tableDatas[t].Category == td.Category && tableDatas[t].TableName.StartsWith(tbName) && tableDatas[t].TableName != td.TableName)
                             {
                                 //It is multitable
                                 loadMultiTable(tbName);
@@ -846,8 +830,8 @@ namespace UniversalPatcher
                 {
                     int elementSize = getBits(td.DataType) / 8;
                     bufSize = (uint)(td.Rows * td.Columns * elementSize + td.Offset);
-                    dataBuffer = new byte[bufSize];
-                    Array.Copy(PCM.buf, td.addrInt, dataBuffer, 0, bufSize);
+                    tableBuffer = new byte[bufSize];
+                    Array.Copy(PCM.buf, td.addrInt, tableBuffer, 0, bufSize);
                 }
 
                 int rowCount = td.Rows;
@@ -1050,24 +1034,26 @@ namespace UniversalPatcher
 
         private void saveFlag(uint bufAddr, bool flag, TableData mathTd)
         {
-            string maskStr = mathTd.BitMask.Replace("0x", "");
+            string maskStr = "FF";
+            if (mathTd.BitMask != null)
+                maskStr = mathTd.BitMask.Replace("0x", "");
             if (mathTd.DataType == InDataType.UBYTE || mathTd.DataType == InDataType.SBYTE)
             {
                 byte mask = Convert.ToByte(maskStr, 16);
                 if (flag)
                 {
-                    dataBuffer[bufAddr] = (byte)(dataBuffer[bufAddr] | mask);
+                    tableBuffer[bufAddr] = (byte)(tableBuffer[bufAddr] | mask);
                 }
                 else
                 {
                     mask = (byte)~mask;
-                    dataBuffer[bufAddr] = (byte)(dataBuffer[bufAddr] & mask);
+                    tableBuffer[bufAddr] = (byte)(tableBuffer[bufAddr] & mask);
                 }
             }
             else if (mathTd.DataType == InDataType.SWORD || mathTd.DataType == InDataType.UWORD)
             {
                 ushort mask = Convert.ToUInt16(maskStr, 16);
-                ushort curVal = BEToUint16(dataBuffer, bufAddr);
+                ushort curVal = BEToUint16(tableBuffer, bufAddr);
                 ushort newVal;
                 if (flag)
                 {
@@ -1078,12 +1064,12 @@ namespace UniversalPatcher
                     mask = (byte)~mask;
                     newVal = (ushort)(curVal & mask);
                 }
-                SaveUshort(dataBuffer,bufAddr, newVal);
+                SaveUshort(tableBuffer,bufAddr, newVal);
             }
             else if (mathTd.DataType == InDataType.INT32 || mathTd.DataType == InDataType.UINT32)
             {
                 UInt32 mask = Convert.ToUInt32(maskStr, 16);
-                UInt32 curVal = BEToUint32(dataBuffer,bufAddr);
+                UInt32 curVal = BEToUint32(tableBuffer,bufAddr);
                 UInt32 newVal;
                 if (flag)
                 {
@@ -1094,12 +1080,12 @@ namespace UniversalPatcher
                     mask = ~mask;
                     newVal = (UInt32)(curVal & mask);
                 }
-                SaveUint32(dataBuffer, bufAddr, newVal);
+                SaveUint32(tableBuffer, bufAddr, newVal);
             }
             else if (mathTd.DataType == InDataType.INT64 || mathTd.DataType == InDataType.UINT64)
             {
                 UInt64 mask = Convert.ToUInt64(maskStr, 16);
-                UInt64 curVal = BEToUint64(dataBuffer,bufAddr);
+                UInt64 curVal = BEToUint64(tableBuffer,bufAddr);
                 UInt64 newVal;
                 if (flag)
                 {
@@ -1110,7 +1096,7 @@ namespace UniversalPatcher
                     mask = ~mask;
                     newVal = (UInt64)(curVal & mask);
                 }
-                SaveUint64(dataBuffer,bufAddr, newVal);
+                SaveUint64(tableBuffer,bufAddr, newVal);
             }
 
         }
@@ -1148,30 +1134,30 @@ namespace UniversalPatcher
                 value = parser.Parse(mathStr, true);
             }
             if (td.DataType == InDataType.UBYTE || td.DataType == InDataType.SBYTE)
-                dataBuffer[bufAddr] = (byte)value;
+                tableBuffer[bufAddr] = (byte)value;
             if (td.DataType == InDataType.SWORD)
-                SaveShort(dataBuffer, bufAddr, (short)value);
+                SaveShort(tableBuffer, bufAddr, (short)value);
             if (td.DataType == InDataType.UWORD)
-                SaveUshort(dataBuffer, bufAddr, (ushort)value);
+                SaveUshort(tableBuffer, bufAddr, (ushort)value);
             if (td.DataType == InDataType.FLOAT32)
-                SaveFloat32(dataBuffer, bufAddr, (Single)value);
+                SaveFloat32(tableBuffer, bufAddr, (Single)value);
             if (td.DataType == InDataType.INT32)
-                SaveInt32(dataBuffer, bufAddr, (Int32)value);
+                SaveInt32(tableBuffer, bufAddr, (Int32)value);
             if (td.DataType == InDataType.UINT32)
-                SaveUint32(dataBuffer, bufAddr, (UInt32)value);
+                SaveUint32(tableBuffer, bufAddr, (UInt32)value);
             if (td.DataType == InDataType.FLOAT64)
-                SaveFloat64(dataBuffer, bufAddr, value);
+                SaveFloat64(tableBuffer, bufAddr, value);
             if (td.DataType == InDataType.INT64)
-                SaveInt64(dataBuffer, bufAddr, (Int64)value);
+                SaveInt64(tableBuffer, bufAddr, (Int64)value);
             if (td.DataType == InDataType.UINT64)
-                SaveUint64(dataBuffer, bufAddr, (UInt64)value);
+                SaveUint64(tableBuffer, bufAddr, (UInt64)value);
 
         }
         private void saveTable()
         {
             try
             {
-                Array.Copy(dataBuffer, 0, PCM.buf, td.addrInt, bufSize);
+                Array.Copy(tableBuffer, 0, PCM.buf, td.addrInt, bufSize);
             }
             catch (Exception ex)
             {
@@ -1251,7 +1237,7 @@ namespace UniversalPatcher
                 uint addr = td.addrInt;
                 for (int a=0;a<bufSize; a++)
                 {
-                    if (PCM.buf[addr + a] != dataBuffer[a])
+                    if (PCM.buf[addr + a] != tableBuffer[a])
                     {
                         tableModified = true;
                         break;
@@ -1295,7 +1281,7 @@ namespace UniversalPatcher
 
         private void chkTranspose_CheckedChanged(object sender, EventArgs e)
         {
-            loadTable(td, PCM);
+            loadTable(td, PCM, disableMultiTable);
             dataGridView1.AutoResizeColumns();
             dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
             if (autoResizeToolStripMenuItem.Checked) AutoResize();
@@ -1499,14 +1485,14 @@ namespace UniversalPatcher
             else
                 swapXyToolStripMenuItem.Checked = true;
             chkSwapXY.Checked = swapXyToolStripMenuItem.Checked;
-            loadTable(td, PCM);
+            loadTable(td, PCM, disableMultiTable);
 
         }
 
         private void chkSwapXY_CheckedChanged(object sender, EventArgs e)
         {
             swapXyToolStripMenuItem.Checked = chkSwapXY.Checked;
-            loadTable(td, PCM);
+            loadTable(td, PCM, disableMultiTable);
         }
 
         private void showRawHEXValuesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1515,7 +1501,7 @@ namespace UniversalPatcher
                 showRawHEXValuesToolStripMenuItem.Checked = false;
             else
                 showRawHEXValuesToolStripMenuItem.Checked = true;
-            loadTable(td, PCM);
+            loadTable(td, PCM, disableMultiTable);
         }
 
         private void disableTooltipsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1583,5 +1569,10 @@ namespace UniversalPatcher
             }
             //fg.chart1.ChartAreas[0].AxisY.Interval = 10;
         }
+        private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            Debug.WriteLine(e.Exception);
+        }
+
     }
 }

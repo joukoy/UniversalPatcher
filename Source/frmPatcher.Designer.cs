@@ -182,6 +182,10 @@
             this.chkExportXdfTables = new System.Windows.Forms.CheckBox();
             this.chkExportXdfDTC = new System.Windows.Forms.CheckBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.loadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setupSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -194,6 +198,7 @@
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.disableTunerAutloadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -327,7 +332,7 @@
             // 
             this.labelXML.AutoSize = true;
             this.labelXML.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelXML.Location = new System.Drawing.Point(260, 8);
+            this.labelXML.Location = new System.Drawing.Point(275, 9);
             this.labelXML.Name = "labelXML";
             this.labelXML.Size = new System.Drawing.Size(13, 16);
             this.labelXML.TabIndex = 16;
@@ -383,7 +388,7 @@
             this.chkAutodetect.AutoSize = true;
             this.chkAutodetect.Checked = true;
             this.chkAutodetect.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutodetect.Location = new System.Drawing.Point(130, 9);
+            this.chkAutodetect.Location = new System.Drawing.Point(150, 7);
             this.chkAutodetect.Name = "chkAutodetect";
             this.chkAutodetect.Size = new System.Drawing.Size(110, 17);
             this.chkAutodetect.TabIndex = 11;
@@ -1965,6 +1970,7 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem3,
             this.toolStripMenuItem1,
             this.toolStripMenuItem2});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -1973,6 +1979,37 @@
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuMain";
             this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openToolStripMenuItem,
+            this.saveToolStripMenuItem,
+            this.saveAsToolStripMenuItem});
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(37, 20);
+            this.toolStripMenuItem3.Text = "File";
+            // 
+            // openToolStripMenuItem
+            // 
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click_1);
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Text = "Save as...";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -1985,7 +2022,8 @@
             this.fileTypesToolStripMenuItem,
             this.dTCSearchToolStripMenuItem,
             this.tableSeekToolStripMenuItem,
-            this.rememberWindowSizeToolStripMenuItem});
+            this.rememberWindowSizeToolStripMenuItem,
+            this.disableTunerAutloadConfigToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "Settings";
@@ -1993,63 +2031,63 @@
             // loadConfigToolStripMenuItem
             // 
             this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
-            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.loadConfigToolStripMenuItem.Text = "Load config";
             this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
             // 
             // setupSegmentsToolStripMenuItem
             // 
             this.setupSegmentsToolStripMenuItem.Name = "setupSegmentsToolStripMenuItem";
-            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.setupSegmentsToolStripMenuItem.Text = "Edit XML";
             this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
             // 
             // autodetectToolStripMenuItem
             // 
             this.autodetectToolStripMenuItem.Name = "autodetectToolStripMenuItem";
-            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.autodetectToolStripMenuItem.Text = "Autodetect";
             this.autodetectToolStripMenuItem.Click += new System.EventHandler(this.autodetectToolStripMenuItem_Click);
             // 
             // stockCVNToolStripMenuItem
             // 
             this.stockCVNToolStripMenuItem.Name = "stockCVNToolStripMenuItem";
-            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.stockCVNToolStripMenuItem.Text = "Stock CVN";
             this.stockCVNToolStripMenuItem.Click += new System.EventHandler(this.stockCVNToolStripMenuItem_Click);
             // 
             // editTableSearchToolStripMenuItem
             // 
             this.editTableSearchToolStripMenuItem.Name = "editTableSearchToolStripMenuItem";
-            this.editTableSearchToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.editTableSearchToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.editTableSearchToolStripMenuItem.Text = "Table Search ";
             this.editTableSearchToolStripMenuItem.Click += new System.EventHandler(this.editTableSearchToolStripMenuItem_Click);
             // 
             // fileTypesToolStripMenuItem
             // 
             this.fileTypesToolStripMenuItem.Name = "fileTypesToolStripMenuItem";
-            this.fileTypesToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.fileTypesToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.fileTypesToolStripMenuItem.Text = "File Types";
             this.fileTypesToolStripMenuItem.Click += new System.EventHandler(this.fileTypesToolStripMenuItem_Click);
             // 
             // dTCSearchToolStripMenuItem
             // 
             this.dTCSearchToolStripMenuItem.Name = "dTCSearchToolStripMenuItem";
-            this.dTCSearchToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.dTCSearchToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.dTCSearchToolStripMenuItem.Text = "DTC Search";
             this.dTCSearchToolStripMenuItem.Click += new System.EventHandler(this.dTCSearchToolStripMenuItem_Click);
             // 
             // tableSeekToolStripMenuItem
             // 
             this.tableSeekToolStripMenuItem.Name = "tableSeekToolStripMenuItem";
-            this.tableSeekToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.tableSeekToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.tableSeekToolStripMenuItem.Text = "TableSeek";
             this.tableSeekToolStripMenuItem.Click += new System.EventHandler(this.tableSeekToolStripMenuItem_Click);
             // 
             // rememberWindowSizeToolStripMenuItem
             // 
             this.rememberWindowSizeToolStripMenuItem.Name = "rememberWindowSizeToolStripMenuItem";
-            this.rememberWindowSizeToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.rememberWindowSizeToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.rememberWindowSizeToolStripMenuItem.Text = "Remember window size";
             this.rememberWindowSizeToolStripMenuItem.Click += new System.EventHandler(this.rememberWindowSizeToolStripMenuItem_Click);
             // 
@@ -2067,6 +2105,13 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // disableTunerAutloadConfigToolStripMenuItem
+            // 
+            this.disableTunerAutloadConfigToolStripMenuItem.Name = "disableTunerAutloadConfigToolStripMenuItem";
+            this.disableTunerAutloadConfigToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.disableTunerAutloadConfigToolStripMenuItem.Text = "Disable tuner autoload config";
+            this.disableTunerAutloadConfigToolStripMenuItem.Click += new System.EventHandler(this.disableTunerAutloadConfigToolStripMenuItem_Click);
             // 
             // FrmPatcher
             // 
@@ -2307,5 +2352,10 @@
         private System.Windows.Forms.TextBox txtSearchTableSeek;
         private System.Windows.Forms.Button btnTuner;
         private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem disableTunerAutloadConfigToolStripMenuItem;
     }
 }

@@ -115,6 +115,7 @@ namespace UniversalPatcher
             chkDebug.Checked = Properties.Settings.Default.DebugOn;
             checkAutorefreshCVNlist.Checked = Properties.Settings.Default.AutorefreshCVNlist;
             checkAutorefreshFileinfo.Checked = Properties.Settings.Default.AutorefreshFileinfo;
+            disableTunerAutloadConfigToolStripMenuItem.Checked = Properties.Settings.Default.disableTunerAutoloadSettings;
 
             loadSettingFiles();
 
@@ -635,17 +636,24 @@ namespace UniversalPatcher
                 Logger(ex.Message);
             }
         }
-        private void btnOrgFile_Click(object sender, EventArgs e)
+
+        private void openBaseFile()
         {
-            string FileName = SelectFile();
-            if (FileName.Length > 1)
+            string fileName = SelectFile();
+            if (fileName.Length > 1)
             {
-                txtBaseFile.Text = FileName;
-                basefile = new PcmFile(FileName);
+                txtBaseFile.Text = fileName;
+                basefile = new PcmFile(fileName);
                 labelBinSize.Text = basefile.fsize.ToString();
                 GetFileInfo(txtBaseFile.Text, ref basefile, false);
+                this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
                 txtOS.Text = basefile.OS;
             }
+
+        }
+        private void btnOrgFile_Click(object sender, EventArgs e)
+        {
+            openBaseFile();
         }
 
         private void btnModFile_Click(object sender, EventArgs e)
@@ -1049,13 +1057,13 @@ namespace UniversalPatcher
                     Logger("Nothing to save");
                     return;
                 }
-                string FileName = SelectSaveFile("BIN files (*.bin)|*.bin|ALL files(*.*)|*.*",Path.GetFileName(txtBaseFile.Text));
-                if (FileName.Length == 0)
+                string fileName = SelectSaveFile("BIN files (*.bin)|*.bin|ALL files(*.*)|*.*",Path.GetFileName(txtBaseFile.Text));
+                if (fileName.Length == 0)
                     return;
 
-                Logger(basefile.FixCheckSums());
-                Logger("Saving to file: " + FileName);
-                WriteBinToFile(FileName, basefile.buf);
+                Logger("Saving to file: " + fileName);
+                Logger(basefile.saveBin(fileName));
+                this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
                 Logger("Done.");
             }
             catch (Exception ex)
@@ -2081,18 +2089,18 @@ namespace UniversalPatcher
             frmSw.Dispose();
         }
 
-        private void FixFileChecksum(string FileName)
+        private void FixFileChecksum(string fileName)
         {
             try
             {
-                basefile = new PcmFile(FileName);
-                GetFileInfo(FileName, ref basefile, true, false);
+                basefile = new PcmFile(fileName);
+                GetFileInfo(fileName, ref basefile, true, false);
                 string res = basefile.FixCheckSums();
                 Logger(res);
                 if (res.Contains("Fixed"))
                 {
-                    Logger("Saving file: " + FileName);
-                    WriteBinToFile(FileName, basefile.buf);
+                    Logger("Saving file: " + fileName);
+                    basefile.saveBin(fileName);
                     Logger("[OK]");
                 }
             }
@@ -3340,6 +3348,30 @@ namespace UniversalPatcher
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openBaseFile();
+        }
+
+        private void saveToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {            
+            Logger("Saving file: " + basefile.FileName);
+            Logger(basefile.saveBin(basefile.FileName));
+            Logger("OK");
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveBin();
+        }
+
+        private void disableTunerAutloadConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            disableTunerAutloadConfigToolStripMenuItem.Checked = !disableTunerAutloadConfigToolStripMenuItem.Checked;
+            Properties.Settings.Default.disableTunerAutoloadSettings = disableTunerAutloadConfigToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
         }
     }
 }

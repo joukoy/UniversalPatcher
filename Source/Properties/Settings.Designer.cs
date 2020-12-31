@@ -358,5 +358,17 @@ namespace UniversalPatcher.Properties {
                 this["frmGraphicsWindowLocation"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool disableTunerAutoloadSettings {
+            get {
+                return ((bool)(this["disableTunerAutoloadSettings"]));
+            }
+            set {
+                this["disableTunerAutoloadSettings"] = value;
+            }
+        }
     }
 }

@@ -64,6 +64,7 @@ namespace UniversalPatcher
             this.editTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.comboFilterBy = new System.Windows.Forms.ComboBox();
+            this.disableMultitableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -159,28 +160,28 @@ namespace UniversalPatcher
             // loadXMLToolStripMenuItem
             // 
             this.loadXMLToolStripMenuItem.Name = "loadXMLToolStripMenuItem";
-            this.loadXMLToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.loadXMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadXMLToolStripMenuItem.Text = "Load XML";
             this.loadXMLToolStripMenuItem.Click += new System.EventHandler(this.loadXMLToolStripMenuItem_Click);
             // 
             // saveXMLToolStripMenuItem
             // 
             this.saveXMLToolStripMenuItem.Name = "saveXMLToolStripMenuItem";
-            this.saveXMLToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.saveXMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveXMLToolStripMenuItem.Text = "Save XML";
             this.saveXMLToolStripMenuItem.Click += new System.EventHandler(this.saveXMLToolStripMenuItem_Click);
             // 
             // saveBINToolStripMenuItem
             // 
             this.saveBINToolStripMenuItem.Name = "saveBINToolStripMenuItem";
-            this.saveBINToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.saveBINToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveBINToolStripMenuItem.Text = "Save BIN";
             this.saveBINToolStripMenuItem.Click += new System.EventHandler(this.saveBINToolStripMenuItem_Click);
             // 
             // clearTableToolStripMenuItem
             // 
             this.clearTableToolStripMenuItem.Name = "clearTableToolStripMenuItem";
-            this.clearTableToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.clearTableToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.clearTableToolStripMenuItem.Text = "Clear Tablelist";
             this.clearTableToolStripMenuItem.Click += new System.EventHandler(this.clearTableToolStripMenuItem_Click);
             // 
@@ -277,7 +278,8 @@ namespace UniversalPatcher
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showTablesWithEmptyAddressToolStripMenuItem});
+            this.showTablesWithEmptyAddressToolStripMenuItem,
+            this.disableMultitableToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "Settings";
@@ -345,6 +347,13 @@ namespace UniversalPatcher
             this.comboFilterBy.TabIndex = 18;
             this.comboFilterBy.SelectedIndexChanged += new System.EventHandler(this.comboFilterBy_SelectedIndexChanged);
             // 
+            // disableMultitableToolStripMenuItem
+            // 
+            this.disableMultitableToolStripMenuItem.Name = "disableMultitableToolStripMenuItem";
+            this.disableMultitableToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.disableMultitableToolStripMenuItem.Text = "Disable multitable";
+            this.disableMultitableToolStripMenuItem.Click += new System.EventHandler(this.disableMultitableToolStripMenuItem_Click);
+            // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -408,5 +417,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem importCSV2ExperimentalToolStripMenuItem;
         private ToolStripMenuItem convertToDataTypeToolStripMenuItem;
         private ComboBox comboFilterBy;
+        private ToolStripMenuItem disableMultitableToolStripMenuItem;
     }
 }

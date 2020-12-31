@@ -52,15 +52,30 @@ namespace UniversalPatcher
         public List<osAddresses> osAddressList;
         public string xmlFile;
 
-        public PcmFile(string FName)
+        public PcmFile(string Fname)
         {
-            FileName = FName;
+            FileName = Fname;
             fsize = (uint)new FileInfo(FileName).Length;
             buf = ReadBin(FileName, 0, fsize);
             OS = "";
             osStoreAddress = uint.MaxValue;
         }
 
+        public string saveBin(string fName)
+        {
+            string retVal = "";
+            try
+            {
+                retVal = FixCheckSums();
+                WriteBinToFile(fName, buf);
+                FileName = fName;
+            }
+            catch (Exception ex)
+            {
+                retVal += Environment.NewLine + ex.Message;
+            }
+            return retVal;
+        }
         public string FixCheckSums()
         {
             string retVal = "";

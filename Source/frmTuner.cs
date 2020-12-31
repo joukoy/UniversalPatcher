@@ -21,10 +21,29 @@ namespace UniversalPatcher
         {
             InitializeComponent();
             PCM = PCM1;
+            this.Text = "Tuner " + Path.GetFileName(PCM.FileName);
+
             if (upatcher.Segments[0].CS1Address.StartsWith("GM-V6"))
                 importTinyTunerDBV6OnlyToolStripMenuItem.Enabled = true;
             else
                 importTinyTunerDBV6OnlyToolStripMenuItem.Enabled = false;
+
+            if (!Properties.Settings.Default.disableTunerAutoloadSettings)
+            {
+                string defaultXml = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
+                if (File.Exists(defaultXml))
+                {
+                    LoadXML(defaultXml);
+                }
+                else
+                {
+                    Logger("File not found: " + defaultXml);
+                    if (dtcCodes.Count > 0)
+                        importDTC();
+                    if (tableSeeks.Count > 0)
+                        importTableSeek();
+                }
+            }
         }
 
         private PcmFile PCM;
@@ -41,7 +60,6 @@ namespace UniversalPatcher
                 int rowindex = dataGridView1.CurrentCell.RowIndex;
                 int columnindex = dataGridView1.CurrentCell.ColumnIndex;
                 int codeIndex = Convert.ToInt32(dataGridView1.Rows[rowindex].Cells["id"].Value);
-                frmTableEditor frmT = new frmTableEditor();
                 TableData td = tableDatas[codeIndex];
                 if (td.addrInt == uint.MaxValue)
                 {
@@ -61,8 +79,9 @@ namespace UniversalPatcher
                 }
                 else*/
                 {
+                    frmTableEditor frmT = new frmTableEditor();
                     frmT.Show();
-                    frmT.loadTable(td, PCM);
+                    frmT.loadTable(td, PCM, disableMultitableToolStripMenuItem.Checked);
                 }
             }
             catch (Exception ex)
@@ -101,13 +120,13 @@ namespace UniversalPatcher
                     Logger("Nothing to save");
                     return;
                 }
-                string FileName = SelectSaveFile("BIN files (*.bin)|*.bin|ALL files(*.*)|*.*");
-                if (FileName.Length == 0)
+                string fileName = SelectSaveFile("BIN files (*.bin)|*.bin|ALL files(*.*)|*.*");
+                if (fileName.Length == 0)
                     return;
 
-                Logger(PCM.FixCheckSums());
-                Logger("Saving to file: " + FileName);
-                WriteBinToFile(FileName, PCM.buf);
+                Logger("Saving to file: " + fileName);
+                Logger(PCM.saveBin(fileName));
+                this.Text = "Tuner " + Path.GetFileName(fileName);
                 Logger("Done.");
             }
             catch (Exception ex)
@@ -158,6 +177,7 @@ namespace UniversalPatcher
 
         private void importTableSeek()
         {
+            Logger("Importing TableSeek tables... ", false);
             for (int i = 0; i < foundTables.Count; i++)
             {
                 TableData tableData = new TableData();
@@ -165,17 +185,18 @@ namespace UniversalPatcher
                 tableDatas.Add(tableData);
             }
             refreshTablelist();
-
+            Logger("OK");
         }
 
-        private void LoadXML()
+        private void LoadXML(string fName="")
         {
             try
             {
 
                 string defName = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
                 //string defName = PCM.OS + ".xml";
-                string fName = SelectFile("Select XML File", "XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
+                if (fName == "")
+                    fName = SelectFile("Select XML File", "XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
                 Logger("Loading file: " + fName);
                 if (fName.Length == 0)
                     return;
@@ -247,12 +268,13 @@ namespace UniversalPatcher
 
         private void importDTC()
         {
+            Logger("Importing DTC codes... ", false);
             TableData td = new TableData();
             dtcCode dtc = dtcCodes[0];
             //td.Address = dtc.StatusAddr;
             td.addrInt = dtc.statusAddrInt;
             td.Category = "DTC";
-            td.ColumnHeaders = "Status";
+            //td.ColumnHeaders = "Status";
             td.Columns = 1;
             //td.Floating = false;
             td.OutputType = OutDataType.Int;
@@ -270,24 +292,31 @@ namespace UniversalPatcher
             td.SavingMath = "X";
             //td.Signed = false;
             if (dtcCombined)
-                td.TableDescription = "00 MIL and reporting off, 01 type A/no mil, 02 type B/no mil, 03 type C/no mil, 04 not reported/mil, 05 type A/mil, 06 type B/mil, 07 type c/mil";
+            {
+                //td.TableDescription = "00 MIL and reporting off, 01 type A/no mil, 02 type B/no mil, 03 type C/no mil, 04 not reported/mil, 05 type A/mil, 06 type B/mil, 07 type c/mil";
+                td.Values = "Enum: 00:MIL and reporting off,01:type A/no mil,02:type B/no mil,03:type C/no mil, 04:not reported/mil,05:type A/mil,06:type B/mil,07:type c/mil";
+                td.TableName = "DTC";
+            }
             else
-                td.TableDescription = "0 = 1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY), 1 = 2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles), 2 = Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC), 3 = Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)";
-            td.TableName = "DTC";
+            {
+                //td.TableDescription = "0 = 1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY), 1 = 2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles), 2 = Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC), 3 = Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)";
+                td.Values = "Enum: 0:1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY),1:2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles),2:Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC),3:Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)";
+                td.TableName = "DTC.Codes";
+            }
 
             tableDatas.Add(td);
 
             if (!dtcCombined)
             {
                 td = new TableData();
-                td.TableName = "DTC MIL";
+                td.TableName = "DTC.MIL_Enable";
                 //td.Address = dtc.MilAddr;
                 td.addrInt = dtc.milAddrInt;
                 td.Category = "DTC";
-                td.ColumnHeaders = "MIL";
+                //td.ColumnHeaders = "MIL";
                 td.Columns = 1;
                 //td.Floating = false;
-                td.OutputType = OutDataType.Int;
+                td.OutputType = OutDataType.Flag;
                 td.Decimals = 0;
                 //td.ElementSize = 1; // (byte)(dtcCodes[1].milAddrInt - dtcCodes[0].milAddrInt);
                 td.DataType = InDataType.UBYTE;
@@ -301,10 +330,11 @@ namespace UniversalPatcher
                 td.SavingMath = "X";
                 //td.Signed = false;
                 td.TableDescription = "0 = No MIL (Lamp always off) 1 = MIL (Lamp may be commanded on by PCM)";
+                //td.Values = "Enum: 0:No MIL (Lamp always off),1:MIL (Lamp may be commanded on by PCM)";
                 tableDatas.Add(td);
             }
             refreshTablelist();
-
+            Logger("OK");
         }
         private void btnImportDTC_Click(object sender, EventArgs e)
         {
@@ -812,6 +842,11 @@ namespace UniversalPatcher
         private void comboFilterBy_SelectedIndexChanged(object sender, EventArgs e)
         {
             filterTables();
+        }
+
+        private void disableMultitableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            disableMultitableToolStripMenuItem.Checked = !disableMultitableToolStripMenuItem.Checked;
         }
     }
 }
