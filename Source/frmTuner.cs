@@ -56,11 +56,23 @@ namespace UniversalPatcher
         {
             try
             {
-
-                int rowindex = dataGridView1.CurrentCell.RowIndex;
-                int columnindex = dataGridView1.CurrentCell.ColumnIndex;
-                int codeIndex = Convert.ToInt32(dataGridView1.Rows[rowindex].Cells["id"].Value);
-                TableData td = tableDatas[codeIndex];
+                List<int> tableIds = new List<int>();
+                for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
+                {
+                    int row = dataGridView1.SelectedCells[i].RowIndex;
+                    int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
+                    if (!tableIds.Contains(id))
+                        tableIds.Add(id);
+                }
+                for (int i=1; i< tableIds.Count;i++)
+                {
+                    if (tableDatas[tableIds[i]].Rows != tableDatas[tableIds[0]].Rows || tableDatas[tableIds[i]].Columns != tableDatas[tableIds[0]].Columns)
+                    {
+                        LoggerBold("Can't load multible tables with different size");
+                        return;
+                    }
+                }
+                TableData td = tableDatas[tableIds[0]];
                 if (td.addrInt == uint.MaxValue)
                 {
                     Logger("No address defined!");
@@ -81,7 +93,10 @@ namespace UniversalPatcher
                 {
                     frmTableEditor frmT = new frmTableEditor();
                     frmT.Show();
-                    frmT.loadTable(td, PCM, disableMultitableToolStripMenuItem.Checked);
+                    frmT.PCM = PCM;
+                    frmT.tableIds = tableIds;
+                    frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
+                    frmT.loadTable(td);
                 }
             }
             catch (Exception ex)
@@ -120,7 +135,7 @@ namespace UniversalPatcher
                     Logger("Nothing to save");
                     return;
                 }
-                string fileName = SelectSaveFile("BIN files (*.bin)|*.bin|ALL files(*.*)|*.*");
+                string fileName = SelectSaveFile("BIN files (*.bin)|*.bin|ALL files(*.*)|*.*",PCM.FileName);
                 if (fileName.Length == 0)
                     return;
 
@@ -509,7 +524,10 @@ namespace UniversalPatcher
 
         private void saveBINToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveBin();
+            Logger("Saving to file: " + PCM.FileName);
+            Logger(PCM.saveBin(PCM.FileName));
+            Logger("Done.");
+
         }
 
         private void importDTCToolStripMenuItem_Click(object sender, EventArgs e)
@@ -847,6 +865,11 @@ namespace UniversalPatcher
         private void disableMultitableToolStripMenuItem_Click(object sender, EventArgs e)
         {
             disableMultitableToolStripMenuItem.Checked = !disableMultitableToolStripMenuItem.Checked;
+        }
+
+        private void saveBinAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveBin();
         }
     }
 }

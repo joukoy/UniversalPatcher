@@ -27,15 +27,29 @@ namespace UniversalPatcher
             public uint addr { get; set;}
             public int id { get; set; }
         }
+
+        private enum ColType
+        {
+            Flag,
+            Combo,
+            Value
+        }
+        private class ColumnInfo
+        {
+            public ColType  columnType { get; set; }
+            public Dictionary<double, string> enumVals { get; set; }
+        }
         private TableData td;
-        private PcmFile PCM;
+        public PcmFile PCM;
         //private bool tableModified = false;
         private bool commaDecimal = true;
         private byte[] tableBuffer;
         private uint bufSize = 0;
         MathParser parser = new MathParser();
-        Dictionary<double, string> possibleVals = new Dictionary<double, string>();
-        bool disableMultiTable = false;
+        //Dictionary<double, string> possibleVals = new Dictionary<double, string>();
+        
+        public bool disableMultiTable = false;
+        public List<int> tableIds = new List<int>();
 
         List<TableData> filteredTables;
         bool combo = false;
@@ -103,7 +117,7 @@ namespace UniversalPatcher
             td.TableName = ft.Name;
             td.Units = tSeek.Units;
 
-            loadTable(td, PCM, disableMultiTable);
+            loadTable(td);
         }
 
 
@@ -181,13 +195,13 @@ namespace UniversalPatcher
                     dataGridView1.Rows[row].Cells[col].Value = 0;
                 }
             }
-            else if (combo)
+            /*else if (combo)
             {
                 double val = getValue(addr, mathTd);
                 if (!possibleVals.ContainsKey(val))
                     val = double.MaxValue;
                 dataGridView1.Rows[row].Cells[col].Value = val;
-            }
+            }*/
             else
                 dataGridView1.Rows[row].Cells[col].Value = getValue(addr, mathTd);
 
@@ -230,20 +244,21 @@ namespace UniversalPatcher
             return headers;
         }
 
-        private void parseEnumHeaders(TableData hTd)
+        private Dictionary<double, string> parseEnumHeaders(string  eVals)
         {
-            if (possibleVals.Count > 0) return;
-            string[] posVals = hTd.Values.Replace("Enum: ","").Split(',');
+            Dictionary<double, string> retVal = new Dictionary<double, string>();
+            string[] posVals = eVals.Split(',');
             for (int r = 0; r < posVals.Length; r++)
             {
                 string[] parts = posVals[r].Split(':');
                 double val = 0;
                 double.TryParse(parts[0], out val);
                 string txt = posVals[r];
-                if (!possibleVals.ContainsKey(val))
-                    possibleVals.Add(val, txt);
+                if (!retVal.ContainsKey(val))
+                    retVal.Add(val, txt);
             }
-            possibleVals.Add(double.MaxValue, "------------");
+            retVal.Add(double.MaxValue, "------------");
+            return retVal;
         }
 
         private int getColumnByTableData(TableData cTd,int col)
@@ -256,17 +271,26 @@ namespace UniversalPatcher
 
             if (cTd.Columns == 1)
             {
-                string[] tParts = cTd.TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
-                colName = tParts[tParts.Length - 1].Trim();
-                if (cTd.ColumnHeaders.Length > 0)
-                    colName += " " + cTd.ColumnHeaders.Trim(); 
+                if (tableIds.Count > 1)
+                {
+                    colName = cTd.TableName;
+                    if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
+                        colName += " " + cTd.ColumnHeaders.Trim();
+                }
+                else
+                {
+                    string[] tParts = cTd.TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
+                    colName = tParts[tParts.Length - 1].Trim();
+                    if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
+                        colName += " " + cTd.ColumnHeaders.Trim();
+                }
             }
             else if (cTd.ColumnHeaders.Contains(','))
             {
                 string[] tParts = cTd.ColumnHeaders.Split(',');
                 if (tParts.Length >= (col -1))
                     colName = tParts[col].Trim();
-                if (cTd.ColumnHeaders.Length > 0)
+                if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
                     colName += " " + cTd.ColumnHeaders.Trim();
             }
             if (colName != "")
@@ -376,13 +400,23 @@ namespace UniversalPatcher
 
             if (cTd.Columns == 1)
             {
-                string[] tParts = cTd.TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
-                if (tParts.Length > 1)
+                if (tableIds.Count > 1)
                 {
-                    rowName = tParts[tParts.Length - 1].Trim();
-                    if (cTd.ColumnHeaders != null && cTd.ColumnHeaders.Length > 0)
+                    rowName = cTd.TableName;
+                    if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
                         rowName += " " + cTd.ColumnHeaders.Trim();
                     Debug.WriteLine("getRowByTableData_XySwap: By tablename: " + rowName);
+                }
+                else
+                {
+                    string[] tParts = cTd.TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (tParts.Length > 1)
+                    {
+                        rowName = tParts[tParts.Length - 1].Trim();
+                        if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
+                            rowName += " " + cTd.ColumnHeaders.Trim();
+                        Debug.WriteLine("getRowByTableData_XySwap: By tablename: " + rowName);
+                    }
                 }
             }
             if (cTd.ColumnHeaders.Contains(','))
@@ -414,8 +448,36 @@ namespace UniversalPatcher
             return ind;
         }
 
-        private void loadMultiTable(string tableName)
+        private ColumnInfo getColinfoByTableData (TableData td1)
         {
+            ColumnInfo colInfo = new ColumnInfo();
+            if (showRawHEXValuesToolStripMenuItem.Checked)
+            {
+                colInfo.columnType = ColType.Value;
+            }
+            else if (td1.Values != null && td1.Values.StartsWith("Enum: "))
+            {
+                colInfo.columnType = ColType.Combo;
+                string enumStr = td1.Values.Replace("Enum: ", "");
+                colInfo.enumVals = parseEnumHeaders(enumStr);
+            }
+            else if (td1.OutputType == OutDataType.Flag)
+            {
+                colInfo.columnType = ColType.Flag;
+            }
+            else
+            {
+                colInfo.columnType = ColType.Value;
+            }
+            return colInfo;
+        }
+
+        public void loadMultiTable(string tableName)
+        {
+            List<string> colHeaders = new List<string>();
+            List<string> rowHeaders = new List<string>();
+            List<ColumnInfo> coliInfos = new List<ColumnInfo>();
+
             this.Text = "Table Editor: " + tableName;
             if (td.Units != null)
                 labelUnits.Text = "Units: " + td.Units;
@@ -426,10 +488,30 @@ namespace UniversalPatcher
             //swapXyToolStripMenuItem.Enabled = false;
             //chkSwapXY.Enabled = false;
 
-            var results = tableDatas.Where(t => t.TableName.StartsWith(tableName)); 
-            filteredTables = new List<TableData>(results.ToList());
-            filteredTables = filteredTables.OrderBy(o => o.addrInt).ToList();
-
+            if (tableIds.Count > 1)
+            {
+                List<TableData> tmpList = new List<TableData>();
+                for (int i = 0; i < tableIds.Count; i++)
+                {
+                    ColumnInfo colInfo = getColinfoByTableData(tableDatas[tableIds[i]]);
+                    coliInfos.Add(colInfo);
+                    string colHdr = tableDatas[tableIds[i]].TableName;
+                    if (tableDatas[tableIds[i]].ColumnHeaders != "" && !tableDatas[tableIds[i]].ColumnHeaders.Contains(","))
+                        colHdr += " " + tableDatas[tableIds[i]].ColumnHeaders.Trim();
+                    colHeaders.Add(colHdr);
+                    tmpList.Add(tableDatas[tableIds[i]]);
+                }
+                filteredTables = new List<TableData>(tmpList.OrderBy(o => o.addrInt).ToList());
+                if (td.RowHeaders == null || td.RowHeaders.Length == 0)
+                    for (int r = 0; r < td.Rows; r++)
+                        rowHeaders.Add("");
+            }
+            else
+            {
+                var results = tableDatas.Where(t => t.TableName.StartsWith(tableName));
+                filteredTables = new List<TableData>(results.ToList());
+                filteredTables = filteredTables.OrderBy(o => o.addrInt).ToList();
+            }
             td = filteredTables[0];
 
             if (bufSize == 0)
@@ -441,62 +523,46 @@ namespace UniversalPatcher
                 Array.Copy(PCM.buf, td.addrInt, tableBuffer, 0, bufSize);
             }
 
-            List<string> colHeaders = new List<string>();
-            List<string> rowHeaders = new List<string>();
-            List<bool> comboCols = new List<bool>();
-            List<bool> flagCols = new List<bool>();
-
-            for (int t = 0; t < filteredTables.Count; t++)
+            if (tableIds.Count < 2)
             {
-                //Collect all different row & column labels from table names
-
-                bool comboTb = false;
-                bool flagCol = false;
-
-                string[] tParts = filteredTables[t].TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
-                if (tParts.Length > 2)
+                for (int t = 0; t < filteredTables.Count; t++)
                 {
-                    if (!rowHeaders.Contains(tParts[1]))
-                        rowHeaders.Add(tParts[1].Trim());
-                    string colHdr = tParts[2].Trim();
-                    if (filteredTables[t].ColumnHeaders != "")
-                        colHdr += " " + filteredTables[t].ColumnHeaders.Trim();
-                    if (!colHeaders.Contains(colHdr))
+                    //Collect all different row & column labels from table names
+
+                    //bool comboTb = false;
+                    //bool flagCol = false;
+
+                    ColumnInfo colInfo = new ColumnInfo();
+                    string[] tParts = filteredTables[t].TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (tParts.Length > 2)
                     {
-                        colHeaders.Add(colHdr);
-                        if (filteredTables[t].Values.StartsWith("Enum: "))
+                        if (!rowHeaders.Contains(tParts[1]))
+                            rowHeaders.Add(tParts[1].Trim());
+                        string colHdr = tParts[2].Trim();
+                        if (filteredTables[t].ColumnHeaders != null &&  filteredTables[t].ColumnHeaders != "" && !filteredTables[t].ColumnHeaders.Contains(","))
+                            colHdr += " " + filteredTables[t].ColumnHeaders.Trim();
+                        if (!colHeaders.Contains(colHdr))
                         {
-                            comboTb = true;
-                            parseEnumHeaders(filteredTables[t]);
+                            colHeaders.Add(colHdr);
+                            colInfo = getColinfoByTableData(filteredTables[t]);
+                            coliInfos.Add(colInfo);
                         }
-                        comboCols.Add(comboTb);
-                        if (filteredTables[t].OutputType == OutDataType.Flag)
-                            flagCol = true;
-                        flagCols.Add(flagCol);
+                    }
+                    else
+                    {
+                        string colHdr = tParts[1].Trim();
+                        if (filteredTables[t].ColumnHeaders != null && filteredTables[t].ColumnHeaders != "" && !filteredTables[t].ColumnHeaders.Contains(","))
+                            colHdr += " " + filteredTables[t].ColumnHeaders.Trim();
+                        if (!colHeaders.Contains(colHdr))
+                        {
+                            colHeaders.Add(colHdr);
+                            colInfo = getColinfoByTableData(filteredTables[t]);
+                            coliInfos.Add(colInfo);
+                        }
                     }
                 }
-                else
-                {
-                    string colHdr = tParts[1].Trim();
-                    if (filteredTables[t].ColumnHeaders != "")
-                        colHdr += " " + filteredTables[t].ColumnHeaders.Trim();
-                    if (!colHeaders.Contains(colHdr))
-                    {
-                        colHeaders.Add(colHdr);
-                        if (filteredTables[t].Values != null && filteredTables[t].Values.StartsWith("Enum:"))
-                        {
-                            comboTb = true;
-                            parseEnumHeaders(filteredTables[t]);
-                        }
-                        comboCols.Add(comboTb);
-                        if (filteredTables[t].OutputType == OutDataType.Flag)
-                            flagCol = true;
-                        flagCols.Add(flagCol);
-                    }
-                }
+
             }
-
-
             if (rowHeaders.Count < 2 && td.Rows > 1)
             {
                 if (filteredTables[0].RowHeaders.Contains(','))
@@ -514,17 +580,11 @@ namespace UniversalPatcher
                 colHeaders.Clear();
                 string[] parts = td.ColumnHeaders.Split(' ');
                 string[] colHeaderStr = loadHeaderFromTable(parts[1], td.Columns).Split(',');
-                bool comboTb = false;
-                bool flagCol = false;
-                if (td.OutputType == OutDataType.Flag)
-                    flagCol = true;
-                if (td.Rows < 2 && td.RowHeaders.Contains(","))
-                    comboTb = true;
+                ColumnInfo colInfo = new ColumnInfo();
+                colInfo = getColinfoByTableData(td);
                 for (int p = 0; p < colHeaderStr.Length; p++)
                 {
-                    colHeaders.Add(colHeaderStr[p]);
-                    comboCols.Add(comboTb);
-                    flagCols.Add(flagCol);
+                    coliInfos.Add(colInfo);
                 }
             }
 
@@ -552,10 +612,10 @@ namespace UniversalPatcher
             int boolCols = 0;
             int combCols = 0;
             int regCols = 0;
-            for (int c = 0; c < comboCols.Count; c++)
+            for (int c = 0; c < coliInfos.Count; c++)
             {
-                if (comboCols[c]) combCols = 1;
-                else if (flagCols[c]) boolCols = 1;
+                if (coliInfos[c].columnType == ColType.Combo) combCols = 1;
+                else if (coliInfos[c].columnType == ColType.Flag) boolCols = 1;
                 else regCols = 1;
             }
             if ((boolCols + combCols + regCols) == 1)
@@ -584,15 +644,15 @@ namespace UniversalPatcher
                     string hdrTxt = rowHeaders[r];
                     if (rowHeaders.Count == 1)
                         hdrTxt = td.Units;
-                    if (flagCols[0])
+                    if (coliInfos[0].columnType == ColType.Flag)
                     {
                         DataGridViewCheckBoxColumn col_chkbox = new DataGridViewCheckBoxColumn();
                         dataGridView1.Columns.Add(col_chkbox);
                     }
-                    else if (comboCols[0])
+                    else if (coliInfos[0].columnType == ColType.Combo)
                     {
                         DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
-                        comboCol.DataSource = new BindingSource(possibleVals, null);
+                        comboCol.DataSource = new BindingSource(coliInfos[0].enumVals, null);
                         comboCol.DisplayMember = "Value";
                         comboCol.ValueMember = "Key";
                         dataGridView1.Columns.Add(comboCol);
@@ -664,15 +724,15 @@ namespace UniversalPatcher
                     if (colHeaders.Count == 1)
                         dataGridView1.Columns[c].HeaderText = td.Units;
 
-                    if (flagCols[c])
+                    if (coliInfos[c].columnType == ColType.Flag)
                     {
                         DataGridViewCheckBoxColumn col_chkbox = new DataGridViewCheckBoxColumn();
                         dataGridView1.Columns.Add(col_chkbox);
                     }
-                    else if (comboCols[c])
+                    else if (coliInfos[c].columnType == ColType.Combo)
                     {
                         DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
-                        comboCol.DataSource = new BindingSource(possibleVals, null);
+                        comboCol.DataSource = new BindingSource(coliInfos[0].enumVals, null);
                         comboCol.DisplayMember = "Value";
                         comboCol.ValueMember = "Key";
                         dataGridView1.Columns.Add(comboCol);
@@ -772,9 +832,8 @@ namespace UniversalPatcher
 
             return rows;
         }
-        public void loadTable(TableData td1, PcmFile PCM1, bool disableMultiTable1)
+        public void loadTable(TableData td1)
         {
-            disableMultiTable = disableMultiTable1;
             try
             {
                 var currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
@@ -782,12 +841,16 @@ namespace UniversalPatcher
                 if (nfi.NumberDecimalSeparator == ",") commaDecimal = true;
                 else commaDecimal = false;
 
-                PCM = PCM1;
                 td = td1;
 
                 if (showRawHEXValuesToolStripMenuItem.Checked)
                     combo = false;
 
+                if (tableIds.Count > 1)
+                {
+                    loadMultiTable(td.TableName);
+                    return;
+                }
                 if (!disableMultiTable && (td.TableName.Contains("[") || td.TableName.Contains(".")))
                 {
                     if (td.TableName.StartsWith("Header.") || td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".xVal") || td.TableName.EndsWith(".yVal") || td.TableName.EndsWith(".Size"))
@@ -891,7 +954,7 @@ namespace UniversalPatcher
                     btnExecute.Enabled = false;
                     exportCSVToolStripMenuItem1.Enabled = false;
 
-                    parseEnumHeaders(td);
+                    Dictionary<double, string> possibleVals = parseEnumHeaders(td.Values.Replace("Enum: ",""));
                     for (int c = 0; c < colCount; c++)
                     {
                         DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
@@ -1281,7 +1344,7 @@ namespace UniversalPatcher
 
         private void chkTranspose_CheckedChanged(object sender, EventArgs e)
         {
-            loadTable(td, PCM, disableMultiTable);
+            loadTable(td);
             dataGridView1.AutoResizeColumns();
             dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
             if (autoResizeToolStripMenuItem.Checked) AutoResize();
@@ -1485,14 +1548,14 @@ namespace UniversalPatcher
             else
                 swapXyToolStripMenuItem.Checked = true;
             chkSwapXY.Checked = swapXyToolStripMenuItem.Checked;
-            loadTable(td, PCM, disableMultiTable);
+            loadTable(td);
 
         }
 
         private void chkSwapXY_CheckedChanged(object sender, EventArgs e)
         {
             swapXyToolStripMenuItem.Checked = chkSwapXY.Checked;
-            loadTable(td, PCM, disableMultiTable);
+            loadTable(td);
         }
 
         private void showRawHEXValuesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1501,7 +1564,7 @@ namespace UniversalPatcher
                 showRawHEXValuesToolStripMenuItem.Checked = false;
             else
                 showRawHEXValuesToolStripMenuItem.Checked = true;
-            loadTable(td, PCM, disableMultiTable);
+            loadTable(td);
         }
 
         private void disableTooltipsToolStripMenuItem_Click(object sender, EventArgs e)

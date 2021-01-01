@@ -759,11 +759,14 @@ public class upatcher
         saveFileDialog.Filter = Filter;
         saveFileDialog.RestoreDirectory = true;
         saveFileDialog.Title = "Save to file";
-        saveFileDialog.FileName = Path.GetFileName(defaultFileName);
-        string defPath = Path.GetDirectoryName(defaultFileName);
-        if (defPath != "")
+        if (defaultFileName.Length > 0)
         {
-            saveFileDialog.InitialDirectory = defPath;
+            saveFileDialog.FileName = Path.GetFileName(defaultFileName);
+            string defPath = Path.GetDirectoryName(defaultFileName);
+            if (defPath != "")
+            {
+                saveFileDialog.InitialDirectory = defPath;
+            }
         }
         else
         {
