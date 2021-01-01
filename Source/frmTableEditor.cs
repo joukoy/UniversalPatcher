@@ -489,7 +489,9 @@ namespace UniversalPatcher
             if (tableIds.Count > 1)
             {
                 //Manually selected multiple tables
-                List<TableData> tmpList = new List<TableData>();
+                filteredTables = new List<TableData>();
+                tableIds.Sort();
+                tableIds.Reverse();
                 for (int i = 0; i < tableIds.Count; i++)
                 {
                     ColumnInfo colInfo = getColinfoByTableData(tableDatas[tableIds[i]]);
@@ -498,9 +500,10 @@ namespace UniversalPatcher
                     if (tableDatas[tableIds[i]].ColumnHeaders != "" && !tableDatas[tableIds[i]].ColumnHeaders.Contains(","))
                         colHdr += " " + tableDatas[tableIds[i]].ColumnHeaders.Trim();
                     colHeaders.Add(colHdr);
-                    tmpList.Add(tableDatas[tableIds[i]]);
+                    filteredTables.Add(tableDatas[tableIds[i]]);
                 }
-                filteredTables = new List<TableData>(tmpList.OrderBy(o => o.addrInt).ToList());
+                //filteredTables = new List<TableData>(tmpList.OrderBy(o => o.addrInt).ToList());
+                //filteredTables = new List<TableData>(filteredTables.OrderByDescending(o => o.id).ToList());
                 if (td.RowHeaders == null || td.RowHeaders.Length == 0)
                     for (int r = 0; r < td.Rows; r++)
                         rowHeaders.Add("");
@@ -516,12 +519,15 @@ namespace UniversalPatcher
 
             if (bufSize == 0)
             {
-                int elementSize = getElementSize(filteredTables[filteredTables.Count - 1].DataType); //Last table in list
+                List<TableData> sizeList = new List<TableData>(filteredTables.OrderBy(o => o.addrInt).ToList());
+                int elementSize = getElementSize(sizeList[sizeList.Count - 1].DataType); //Last table in list
                 int singleTableSize = td.Rows * td.Columns * elementSize;
-                bufSize = (uint)(filteredTables[filteredTables.Count - 1].addrInt - filteredTables[0].addrInt + filteredTables[filteredTables.Count - 1].Offset + singleTableSize);
+                bufSize = (uint)(sizeList[sizeList.Count - 1].addrInt - sizeList[0].addrInt + sizeList[sizeList.Count - 1].Offset + singleTableSize);
                 tableBuffer = new byte[bufSize];
                 Array.Copy(PCM.buf, td.addrInt, tableBuffer, 0, bufSize);
             }
+
+            //filteredTables = new List<TableData>(filteredTables.OrderBy(o => o.id).ToList());
 
             if (tableIds.Count < 2)
             {
