@@ -38,6 +38,7 @@ namespace UniversalPatcher
         {
             public ColType  columnType { get; set; }
             public Dictionary<double, string> enumVals { get; set; }
+            public string enumStr { get; set; }
         }
         private TableData td;
         public PcmFile PCM;
@@ -269,7 +270,7 @@ namespace UniversalPatcher
             if (cTd.Columns == dataGridView1.Columns.Count)
                 return col;
 
-            if (cTd.Columns == 1)
+            //if (cTd.Columns == 1)
             {
                 if (tableIds.Count > 1)
                 {
@@ -285,7 +286,7 @@ namespace UniversalPatcher
                         colName += " " + cTd.ColumnHeaders.Trim();
                 }
             }
-            else if (cTd.ColumnHeaders.Contains(','))
+            if (cTd.ColumnHeaders.Contains(','))
             {
                 string[] tParts = cTd.ColumnHeaders.Split(',');
                 if (tParts.Length >= (col -1))
@@ -460,6 +461,7 @@ namespace UniversalPatcher
                 colInfo.columnType = ColType.Combo;
                 string enumStr = td1.Values.Replace("Enum: ", "");
                 colInfo.enumVals = parseEnumHeaders(enumStr);
+                colInfo.enumStr = enumStr;
             }
             else if (td1.OutputType == OutDataType.Flag)
             {
@@ -484,12 +486,9 @@ namespace UniversalPatcher
             if (td.Values != null && !td.Values.StartsWith("Enum:"))
                 labelUnits.Text += ", Values: " +  td.Values;
 
-
-            //swapXyToolStripMenuItem.Enabled = false;
-            //chkSwapXY.Enabled = false;
-
             if (tableIds.Count > 1)
             {
+                //Manually selected multiple tables
                 List<TableData> tmpList = new List<TableData>();
                 for (int i = 0; i < tableIds.Count; i++)
                 {
@@ -508,6 +507,7 @@ namespace UniversalPatcher
             }
             else
             {
+                //Multible tables which are meant to be linked together
                 var results = tableDatas.Where(t => t.TableName.StartsWith(tableName));
                 filteredTables = new List<TableData>(results.ToList());
                 filteredTables = filteredTables.OrderBy(o => o.addrInt).ToList();
@@ -516,9 +516,9 @@ namespace UniversalPatcher
 
             if (bufSize == 0)
             {
-                int elementSize = getBits(td.DataType) / 8;
+                int elementSize = getElementSize(filteredTables[filteredTables.Count - 1].DataType); //Last table in list
                 int singleTableSize = td.Rows * td.Columns * elementSize;
-                bufSize = (uint)(filteredTables[filteredTables.Count - 1].addrInt - filteredTables[0].addrInt + td.Offset + singleTableSize);
+                bufSize = (uint)(filteredTables[filteredTables.Count - 1].addrInt - filteredTables[0].addrInt + filteredTables[filteredTables.Count - 1].Offset + singleTableSize);
                 tableBuffer = new byte[bufSize];
                 Array.Copy(PCM.buf, td.addrInt, tableBuffer, 0, bufSize);
             }
@@ -528,9 +528,6 @@ namespace UniversalPatcher
                 for (int t = 0; t < filteredTables.Count; t++)
                 {
                     //Collect all different row & column labels from table names
-
-                    //bool comboTb = false;
-                    //bool flagCol = false;
 
                     ColumnInfo colInfo = new ColumnInfo();
                     string[] tParts = filteredTables[t].TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
@@ -565,7 +562,7 @@ namespace UniversalPatcher
             }
             if (rowHeaders.Count < 2 && td.Rows > 1)
             {
-                if (filteredTables[0].RowHeaders.Contains(','))
+                if (filteredTables[0].RowHeaders!= null && filteredTables[0].RowHeaders.Contains(','))
                 {
                     rowHeaders.Clear();
                     string[] rParts = filteredTables[0].RowHeaders.Split(',');
@@ -603,32 +600,31 @@ namespace UniversalPatcher
             dataGridView1.Rows.Clear();
             dataGridView1.Columns.Clear();
 
-            bool xySwapped = false;
-            if (chkSwapXY.Checked)
-            {
-                xySwapped = true;
-            }
+            bool xySwapped = chkSwapXY.Checked;
+ 
             //If there is different kind of columns, X/Y can't be swapped
             int boolCols = 0;
             int combCols = 0;
             int regCols = 0;
             for (int c = 0; c < coliInfos.Count; c++)
             {
-                if (coliInfos[c].columnType == ColType.Combo) combCols = 1;
+                if (coliInfos[c].columnType == ColType.Combo)
+                {
+                    if (c > 0 && coliInfos[c].enumStr != coliInfos[c-1].enumStr)
+                    {   //Diffrent values in comboboxes, not possible to put in one column                       
+                        combCols = 10;
+                        break;
+                    }
+                    combCols = 1;
+                }
                 else if (coliInfos[c].columnType == ColType.Flag) boolCols = 1;
                 else regCols = 1;
             }
             if ((boolCols + combCols + regCols) == 1)
             {
                 //Only regular, combo, or Flag columns used, can swap
-                if (rowHeaders.Count == 1 && colHeaders.Count > 1)
-                {
-                    //Invert checkbox, swap by default
-                    if (!chkSwapXY.Checked)
-                        xySwapped = true;
-                    else
-                        xySwapped = false;
-                }
+                if (rowHeaders.Count == 1 && colHeaders.Count > 1)                    
+                    xySwapped = !chkSwapXY.Checked; //Invert checkbox meaning, swap by default
             }
             else
             {
@@ -638,7 +634,7 @@ namespace UniversalPatcher
 
             if (xySwapped)
             {
-                //Swapped, put ROW headers to COLUMNS
+                //Swapped, put ROWheaders to COLUMNS
                 for (int r = 0; r < rowHeaders.Count; r++)
                 {
                     string hdrTxt = rowHeaders[r];
@@ -665,6 +661,7 @@ namespace UniversalPatcher
                     dataGridView1.Columns[r].HeaderText = hdrTxt;
                 }
 
+                //Put ColHeaders to ROWLables
                 for (int c = 0; c < colHeaders.Count; c++)
                 {
                     dataGridView1.Rows.Add();
@@ -676,19 +673,19 @@ namespace UniversalPatcher
 
 
                 int gridRow = 0;
-                for (int tbl = 0; tbl < filteredTables.Count; tbl++)
+                for (int tbl = 0; tbl < filteredTables.Count; tbl++) ///Go thru all filtered tables
                 {
                     int gridCol = 0;
                     TableData ft = filteredTables[tbl];
                     int elementsize = getElementSize(ft.DataType);
                     uint addr = (uint)(ft.addrInt + ft.Offset);
-                    if (!ft.RowMajor)
+                    if (!ft.RowMajor) 
                     {
-                        for (int r = 0; r < ft.Rows; r++)
+                        for (int r = 0; r < ft.Rows; r++) //All rows from table
                         {
                             if (dataGridView1.Columns.Count > 1)
                                 gridCol = getColumnByTableData_XySwap(ft, r);
-                            for (int c = 0; c < ft.Columns; c++)
+                            for (int c = 0; c < ft.Columns; c++) //All columns from table
                             {
                                 if (dataGridView1.Rows.Count > 1)
                                     gridRow = getRowByTableData_XySwap(ft, c);
@@ -697,7 +694,7 @@ namespace UniversalPatcher
                             }
                         }
                     }
-                    else
+                    else //Rowmajor
                     {
                         for (int c = 0; c < ft.Columns; c++)
                         {
@@ -716,7 +713,7 @@ namespace UniversalPatcher
 
                 }
             }
-            else //xyswapped
+            else //Not xyswapped
             {
                 for (int c = 0; c < colHeaders.Count; c++)
                 {
@@ -732,7 +729,7 @@ namespace UniversalPatcher
                     else if (coliInfos[c].columnType == ColType.Combo)
                     {
                         DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
-                        comboCol.DataSource = new BindingSource(coliInfos[0].enumVals, null);
+                        comboCol.DataSource = new BindingSource(coliInfos[c].enumVals, null);
                         comboCol.DisplayMember = "Value";
                         comboCol.ValueMember = "Key";
                         dataGridView1.Columns.Add(comboCol);

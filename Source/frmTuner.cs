@@ -12,6 +12,8 @@ using System.Xml.Linq;
 using System.Globalization;
 using static upatcher;
 using System.Diagnostics;
+using System.Linq.Expressions;
+using System.Web.UI.WebControls;
 
 namespace UniversalPatcher
 {
@@ -47,7 +49,8 @@ namespace UniversalPatcher
         }
 
         private PcmFile PCM;
-               
+        private string sortBy = "id";
+        private int sortIndex = 0;
         BindingSource bindingsource = new BindingSource();
         BindingSource categoryBindingSource = new BindingSource();
         private BindingList<TableData> filteredCategories = new BindingList<TableData>();
@@ -403,59 +406,30 @@ namespace UniversalPatcher
         {
             try
             {
-                string cat = comboTableCategory.Text;
-                var results = tableDatas.Where(t => t.TableName.Length > 0); //How should I define empty variable??
-                if (txtSearchTableSeek.Text.Length > 0)
+
+                string strColumnName = sortBy;
+                SortOrder strSortOrder = getSortOrder(sortIndex);
+                List<TableData> compareList = new List<TableData>();
+                if (strSortOrder == SortOrder.Ascending)
                 {
-                    if (comboFilterBy.Text == "TableName")
-                        results = results.Where(t => t.TableName.ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "Address")
-                        results = results.Where(t => t.Address.ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "Category")
-                        results = results.Where(t => t.Category.ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "Units")
-                        results = results.Where(t => t.Units.ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "Values")
-                        results = results.Where(t => t.Values.ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "OutputType")
-                        results = results.Where(t => t.OutputType.ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "DataType")
-                        results = results.Where(t => t.DataType.ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "TableDescription")
-                        results = results.Where(t => t.TableDescription.ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "BitMask")
-                        results = results.Where(t => t.BitMask.ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "ColumnHeaders")
-                        results = results.Where(t => t.ColumnHeaders.ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "Columns")
-                        results = results.Where(t => t.Columns.ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "RowHeaders")
-                        results = results.Where(t => t.RowHeaders.ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "Rows")
-                        results = results.Where(t => t.Rows.ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "Decimals")
-                        results = results.Where(t => t.Decimals.ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "id")
-                        results = results.Where(t => t.id.ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "Math")
-                        results = results.Where(t => t.Math.ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "SavingMath")
-                        results = results.Where(t => t.SavingMath.ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "OS")
-                        results = results.Where(t => t.OS.ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "Offset")
-                        results = results.Where(t => t.Offset.ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "Min")
-                        results = results.Where(t => t.Min.ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
-                    if (comboFilterBy.Text == "Max")
-                        results = results.Where(t => t.Max.ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
+                    compareList = tableDatas.OrderBy(x => typeof(TableData).GetProperty(strColumnName).GetValue(x, null)).ToList();
                 }
+                else
+                {
+                    compareList = tableDatas.OrderByDescending(x => typeof(TableData).GetProperty(strColumnName).GetValue(x, null)).ToList();
+                }
+
+                string cat = comboTableCategory.Text;
+                var results = compareList.Where(t => t.TableName.Length > 0); //How should I define empty variable??
+                if (txtSearchTableSeek.Text.Length > 0)
+                    results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t,null).ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
                 if (!showTablesWithEmptyAddressToolStripMenuItem.Checked)
                     results = results.Where(t => t.addrInt < uint.MaxValue);
                 if (cat != "_All" && cat != "")
                     results = results.Where(t => t.Category.ToLower().Contains(comboTableCategory.Text.ToLower()));
                 filteredCategories = new BindingList<TableData>(results.ToList());
                 bindingsource.DataSource = filteredCategories;
+                dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
             }
             catch { }
 
@@ -871,5 +845,35 @@ namespace UniversalPatcher
         {
             SaveBin();
         }
+
+        private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            sortBy = dataGridView1.Columns[e.ColumnIndex].Name;
+            sortIndex = e.ColumnIndex;
+            filterTables();
+        }
+
+        private SortOrder getSortOrder(int columnIndex)
+        {
+            if (dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.Descending 
+                ||dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.None)
+            {
+                dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
+                return SortOrder.Ascending;
+            }
+            else
+            {
+                dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Descending;
+                return SortOrder.Descending;
+            }
+        }
+        private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            foreach (DataGridViewColumn column in ((DataGridView)sender).Columns)
+            {
+                column.SortMode = DataGridViewColumnSortMode.Programmatic;
+            }
+        }
+
     }
 }
