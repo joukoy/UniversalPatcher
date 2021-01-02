@@ -191,6 +191,7 @@ namespace UniversalPatcher
                 comboFilterBy.Items.Add(dataGridView1.Columns[col].HeaderText);
             }
             comboFilterBy.Text = "TableName";
+            filterTables();
         }
 
         private void importTableSeek()

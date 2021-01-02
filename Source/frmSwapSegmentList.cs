@@ -502,7 +502,7 @@ namespace UniversalPatcher
                     labelSelectedSegment.Text = "Selected: " + tmpPCM.segmentinfos[Seg].PN + tmpPCM.segmentinfos[Seg].Ver + "  (From file: " + Path.GetFileName(FileName) +")";
                     labelSelectedSegment.Tag = FileName;
                     uint Offset = 0;
-                    if (PCM.segmentinfos[Seg].SwapAddress.Length > 1)
+                    if (PCM.segmentinfos[Seg].SwapAddress.Length == 0)
                     {
                         for (int s = 0; s < PCM.segmentAddressDatas[Seg].SegmentBlocks.Count; s++)
                         {

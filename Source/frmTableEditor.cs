@@ -40,6 +40,35 @@ namespace UniversalPatcher
             public Dictionary<double, string> enumVals { get; set; }
             public string enumStr { get; set; }
         }
+        private class MultiTableName
+        {
+            public MultiTableName(string fullName)
+            {
+                RowName = "";
+                string[] nParts = fullName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
+                TableName = nParts[0];
+                if (nParts.Length == 2)
+                {
+                    columnName = nParts[1].Trim();
+                }
+                if (nParts.Length == 3)
+                {
+                    columnName = nParts[1].Trim();
+                    RowName = nParts[2].Trim();
+                }
+                if (nParts.Length > 3)
+                {
+                    columnName = nParts[2].Trim();
+                    RowName = "[" + nParts[1].Trim() + "][" + nParts[3].Trim() +"]";
+                    //SubTable = nParts[1].Trim();
+                }
+
+            }
+            public string TableName { get; set;}
+            public string columnName { get; set; }
+            public string RowName { get; set; }
+            public string SubTable { get; set; }
+        }
         private TableData td;
         public PcmFile PCM;
         //private bool tableModified = false;
@@ -196,13 +225,16 @@ namespace UniversalPatcher
                     dataGridView1.Rows[row].Cells[col].Value = 0;
                 }
             }
-            /*else if (combo)
+            else if (mathTd.OutputType == OutDataType.Hex)
             {
                 double val = getValue(addr, mathTd);
-                if (!possibleVals.ContainsKey(val))
-                    val = double.MaxValue;
-                dataGridView1.Rows[row].Cells[col].Value = val;
-            }*/
+                dataGridView1.Rows[row].Cells[col].Value =(uint)val;
+            }
+            else if ( mathTd.OutputType == OutDataType.Int)
+            {
+                double val = getValue(addr, mathTd);
+                dataGridView1.Rows[row].Cells[col].Value = (int)val;
+            }
             else
                 dataGridView1.Rows[row].Cells[col].Value = getValue(addr, mathTd);
 
@@ -270,7 +302,7 @@ namespace UniversalPatcher
             if (cTd.Columns == dataGridView1.Columns.Count)
                 return col;
 
-            //if (cTd.Columns == 1)
+            if (cTd.Columns == 1)
             {
                 if (tableIds.Count > 1)
                 {
@@ -280,8 +312,8 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    string[] tParts = cTd.TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
-                    colName = tParts[tParts.Length - 1].Trim();
+                    MultiTableName mtn = new MultiTableName(cTd.TableName);
+                    colName = mtn.columnName;
                     if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
                         colName += " " + cTd.ColumnHeaders.Trim();
                 }
@@ -315,11 +347,8 @@ namespace UniversalPatcher
 
             if (cTd.Rows == 1)
             {
-                string[] tParts = cTd.TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
-                if (tParts.Length > 2)
-                {
-                    colName = tParts[tParts.Length - 2].Trim();
-                }
+                MultiTableName mtn = new MultiTableName(cTd.TableName);
+                colName = mtn.RowName;
             }
             else if (cTd.RowHeaders.Contains(','))
             {
@@ -352,12 +381,9 @@ namespace UniversalPatcher
 
             if (cTd.Rows == 1)
             {
-                string[] tParts = cTd.TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
-                if (tParts.Length > 2)
-                {
-                    rowName = tParts[tParts.Length - 2].Trim();
-                    Debug.WriteLine("getRowByTableData: By tablename: " + rowName);
-                }
+                MultiTableName mtn = new MultiTableName(cTd.TableName);
+                rowName = mtn.RowName;
+                Debug.WriteLine("getRowByTableData: By tablename: " + rowName);
             }
             if (cTd.RowHeaders.Contains(','))
             {
@@ -410,14 +436,11 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    string[] tParts = cTd.TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (tParts.Length > 1)
-                    {
-                        rowName = tParts[tParts.Length - 1].Trim();
-                        if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
-                            rowName += " " + cTd.ColumnHeaders.Trim();
-                        Debug.WriteLine("getRowByTableData_XySwap: By tablename: " + rowName);
-                    }
+                    MultiTableName mtn = new MultiTableName(cTd.TableName);
+                    rowName = mtn.columnName;
+                    if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
+                        rowName += " " + cTd.ColumnHeaders.Trim();
+                    Debug.WriteLine("getRowByTableData_XySwap: By tablename: " + rowName);
                 }
             }
             if (cTd.ColumnHeaders.Contains(','))
@@ -491,7 +514,6 @@ namespace UniversalPatcher
                 //Manually selected multiple tables
                 filteredTables = new List<TableData>();
                 tableIds.Sort();
-                tableIds.Reverse();
                 for (int i = 0; i < tableIds.Count; i++)
                 {
                     ColumnInfo colInfo = getColinfoByTableData(tableDatas[tableIds[i]]);
@@ -527,7 +549,6 @@ namespace UniversalPatcher
                 Array.Copy(PCM.buf, td.addrInt, tableBuffer, 0, bufSize);
             }
 
-            //filteredTables = new List<TableData>(filteredTables.OrderBy(o => o.id).ToList());
 
             if (tableIds.Count < 2)
             {
@@ -536,32 +557,17 @@ namespace UniversalPatcher
                     //Collect all different row & column labels from table names
 
                     ColumnInfo colInfo = new ColumnInfo();
-                    string[] tParts = filteredTables[t].TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (tParts.Length > 2)
+                    MultiTableName mtn = new MultiTableName(filteredTables[t].TableName);
+                    if (!rowHeaders.Contains(mtn.RowName))
+                        rowHeaders.Add(mtn.RowName);
+                    string colHdr = mtn.columnName;
+                    if (filteredTables[t].ColumnHeaders != null &&  filteredTables[t].ColumnHeaders != "" && !filteredTables[t].ColumnHeaders.Contains(","))
+                        colHdr += " " + filteredTables[t].ColumnHeaders.Trim();
+                    if (!colHeaders.Contains(colHdr))
                     {
-                        if (!rowHeaders.Contains(tParts[1]))
-                            rowHeaders.Add(tParts[1].Trim());
-                        string colHdr = tParts[2].Trim();
-                        if (filteredTables[t].ColumnHeaders != null &&  filteredTables[t].ColumnHeaders != "" && !filteredTables[t].ColumnHeaders.Contains(","))
-                            colHdr += " " + filteredTables[t].ColumnHeaders.Trim();
-                        if (!colHeaders.Contains(colHdr))
-                        {
-                            colHeaders.Add(colHdr);
-                            colInfo = getColinfoByTableData(filteredTables[t]);
-                            coliInfos.Add(colInfo);
-                        }
-                    }
-                    else
-                    {
-                        string colHdr = tParts[1].Trim();
-                        if (filteredTables[t].ColumnHeaders != null && filteredTables[t].ColumnHeaders != "" && !filteredTables[t].ColumnHeaders.Contains(","))
-                            colHdr += " " + filteredTables[t].ColumnHeaders.Trim();
-                        if (!colHeaders.Contains(colHdr))
-                        {
-                            colHeaders.Add(colHdr);
-                            colInfo = getColinfoByTableData(filteredTables[t]);
-                            coliInfos.Add(colInfo);
-                        }
+                        colHeaders.Add(colHdr);
+                        colInfo = getColinfoByTableData(filteredTables[t]);
+                        coliInfos.Add(colInfo);
                     }
                 }
 
@@ -863,18 +869,13 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        int location = 0;
-                        if (td.TableName.Contains("["))
-                            location = td.TableName.IndexOf('[');
-                        else
-                            location = td.TableName.LastIndexOf('.');
-                        string tbName = td.TableName.Substring(0, location);
+                        MultiTableName mtn = new MultiTableName(td.TableName);
                         for (int t = 0; t < tableDatas.Count; t++)
                         {
-                            if (tableDatas[t].Category == td.Category && tableDatas[t].TableName.StartsWith(tbName) && tableDatas[t].TableName != td.TableName)
+                            if (tableDatas[t].Category == td.Category && tableDatas[t].TableName.StartsWith(mtn.TableName) && tableDatas[t].TableName != td.TableName)
                             {
                                 //It is multitable
-                                loadMultiTable(tbName);
+                                loadMultiTable(mtn.TableName);
                                 return;
                             }
                         }
