@@ -42,7 +42,7 @@ namespace UniversalPatcher
         }
         private class MultiTableName
         {
-            public MultiTableName(string fullName)
+            public MultiTableName(string fullName, int columnPos)
             {
                 RowName = "";
                 string[] nParts = fullName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
@@ -57,9 +57,11 @@ namespace UniversalPatcher
                     RowName = nParts[2].Trim();
                 }
                 if (nParts.Length > 3)
-                {
-                    columnName = nParts[2].Trim();
-                    RowName = "[" + nParts[1].Trim() + "][" + nParts[3].Trim() +"]";
+                {                    
+                    columnName = nParts[columnPos].Trim();
+                    for (int i = 1; i < 4; i++)
+                        if (i != columnPos)
+                        RowName += "[" + nParts[i].Trim() + "]";
                 }
 
             }
@@ -310,7 +312,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    MultiTableName mtn = new MultiTableName(cTd.TableName);
+                    MultiTableName mtn = new MultiTableName(cTd.TableName, (int)numColumn.Value);
                     colName = mtn.columnName;
                     if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
                         colName += " " + cTd.ColumnHeaders.Trim();
@@ -345,7 +347,7 @@ namespace UniversalPatcher
 
             if (cTd.Rows == 1)
             {
-                MultiTableName mtn = new MultiTableName(cTd.TableName);
+                MultiTableName mtn = new MultiTableName(cTd.TableName, (int)numColumn.Value);
                 colName = mtn.RowName;
             }
             else if (cTd.RowHeaders.Contains(','))
@@ -379,7 +381,7 @@ namespace UniversalPatcher
 
             if (cTd.Rows == 1)
             {
-                MultiTableName mtn = new MultiTableName(cTd.TableName);
+                MultiTableName mtn = new MultiTableName(cTd.TableName, (int)numColumn.Value);
                 rowName = mtn.RowName;
                 Debug.WriteLine("getRowByTableData: By tablename: " + rowName);
             }
@@ -434,7 +436,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    MultiTableName mtn = new MultiTableName(cTd.TableName);
+                    MultiTableName mtn = new MultiTableName(cTd.TableName, (int)numColumn.Value);
                     rowName = mtn.columnName;
                     if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
                         rowName += " " + cTd.ColumnHeaders.Trim();
@@ -555,7 +557,7 @@ namespace UniversalPatcher
                     //Collect all different row & column labels from table names
 
                     ColumnInfo colInfo = new ColumnInfo();
-                    MultiTableName mtn = new MultiTableName(filteredTables[t].TableName);
+                    MultiTableName mtn = new MultiTableName(filteredTables[t].TableName, (int)numColumn.Value);
                     if (!rowHeaders.Contains(mtn.RowName))
                         rowHeaders.Add(mtn.RowName);
                     string colHdr = mtn.columnName;
@@ -580,7 +582,12 @@ namespace UniversalPatcher
                         rowHeaders.Add(rParts[r].Trim());
                 }
             }
-
+            if (rowHeaders[0].Contains("]["))
+            { //Tablename Have [][][]
+                numColumn.Enabled = true;
+                numColumn.Visible = true;
+                labelColumn.Visible = true;
+            }
 
             if (td.ColumnHeaders.StartsWith("Table: "))
             {
@@ -867,7 +874,7 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        MultiTableName mtn = new MultiTableName(td.TableName);
+                        MultiTableName mtn = new MultiTableName(td.TableName, (int)numColumn.Value);
                         for (int t = 0; t < tableDatas.Count; t++)
                         {
                             if (tableDatas[t].Category == td.Category && tableDatas[t].TableName.StartsWith(mtn.TableName) && tableDatas[t].TableName != td.TableName)
@@ -1639,5 +1646,10 @@ namespace UniversalPatcher
             Debug.WriteLine(e.Exception);
         }
 
+        private void numColumn_ValueChanged(object sender, EventArgs e)
+        {
+            MultiTableName mtn = new MultiTableName(td.TableName, (int)numColumn.Value);
+            loadMultiTable(mtn.TableName);
+        }
     }
 }

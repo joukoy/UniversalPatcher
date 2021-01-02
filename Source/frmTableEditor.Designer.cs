@@ -55,9 +55,12 @@ namespace UniversalPatcher
             this.graphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showGraphicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkSwapXY = new System.Windows.Forms.CheckBox();
+            this.numColumn = new System.Windows.Forms.NumericUpDown();
+            this.labelColumn = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numColumn)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -74,9 +77,9 @@ namespace UniversalPatcher
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridView1.Size = new System.Drawing.Size(796, 376);
             this.dataGridView1.TabIndex = 0;
-            this.dataGridView1.DataError += new DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
             this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
+            this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
             // 
             // txtMath
             // 
@@ -254,7 +257,7 @@ namespace UniversalPatcher
             // chkSwapXY
             // 
             this.chkSwapXY.AutoSize = true;
-            this.chkSwapXY.Location = new System.Drawing.Point(200, 2);
+            this.chkSwapXY.Location = new System.Drawing.Point(200, 6);
             this.chkSwapXY.Name = "chkSwapXY";
             this.chkSwapXY.Size = new System.Drawing.Size(75, 17);
             this.chkSwapXY.TabIndex = 7;
@@ -262,11 +265,48 @@ namespace UniversalPatcher
             this.chkSwapXY.UseVisualStyleBackColor = true;
             this.chkSwapXY.CheckedChanged += new System.EventHandler(this.chkSwapXY_CheckedChanged);
             // 
+            // numColumn
+            // 
+            this.numColumn.Enabled = false;
+            this.numColumn.Location = new System.Drawing.Point(335, 2);
+            this.numColumn.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.numColumn.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numColumn.Name = "numColumn";
+            this.numColumn.Size = new System.Drawing.Size(34, 20);
+            this.numColumn.TabIndex = 8;
+            this.numColumn.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numColumn.Visible = false;
+            this.numColumn.ValueChanged += new System.EventHandler(this.numColumn_ValueChanged);
+            // 
+            // labelColumn
+            // 
+            this.labelColumn.AutoSize = true;
+            this.labelColumn.Location = new System.Drawing.Point(284, 6);
+            this.labelColumn.Name = "labelColumn";
+            this.labelColumn.Size = new System.Drawing.Size(45, 13);
+            this.labelColumn.TabIndex = 9;
+            this.labelColumn.Text = "Column:";
+            this.labelColumn.Visible = false;
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.labelColumn);
+            this.Controls.Add(this.numColumn);
             this.Controls.Add(this.chkSwapXY);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.labelUnits);
@@ -282,6 +322,7 @@ namespace UniversalPatcher
             this.contextMenuStrip1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numColumn)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -312,5 +353,7 @@ namespace UniversalPatcher
         private ToolStripMenuItem showTableDescriptionToolStripMenuItem;
         private ToolStripMenuItem graphToolStripMenuItem;
         private ToolStripMenuItem showGraphicToolStripMenuItem;
+        private Label labelColumn;
+        public NumericUpDown numColumn;
     }
 }
