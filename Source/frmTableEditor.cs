@@ -60,14 +60,12 @@ namespace UniversalPatcher
                 {
                     columnName = nParts[2].Trim();
                     RowName = "[" + nParts[1].Trim() + "][" + nParts[3].Trim() +"]";
-                    //SubTable = nParts[1].Trim();
                 }
 
             }
             public string TableName { get; set;}
             public string columnName { get; set; }
             public string RowName { get; set; }
-            public string SubTable { get; set; }
         }
         private TableData td;
         public PcmFile PCM;
