@@ -54,6 +54,7 @@ namespace UniversalPatcher
         BindingSource bindingsource = new BindingSource();
         BindingSource categoryBindingSource = new BindingSource();
         private BindingList<TableData> filteredCategories = new BindingList<TableData>();
+        SortOrder strSortOrder;
 
         private void openTableEditor()
         {
@@ -408,22 +409,16 @@ namespace UniversalPatcher
             try
             {
 
-                string strColumnName = sortBy;
-                SortOrder strSortOrder = getSortOrder(sortIndex);
                 List<TableData> compareList = new List<TableData>();
                 if (strSortOrder == SortOrder.Ascending)
-                {
-                    compareList = tableDatas.OrderBy(x => typeof(TableData).GetProperty(strColumnName).GetValue(x, null)).ToList();
-                }
+                    compareList = tableDatas.OrderBy(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
                 else
-                {
-                    compareList = tableDatas.OrderByDescending(x => typeof(TableData).GetProperty(strColumnName).GetValue(x, null)).ToList();
-                }
+                    compareList = tableDatas.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
 
                 string cat = comboTableCategory.Text;
                 var results = compareList.Where(t => t.TableName.Length > 0); //How should I define empty variable??
                 if (txtSearchTableSeek.Text.Length > 0)
-                    results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t,null).ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
+                    results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
                 if (!showTablesWithEmptyAddressToolStripMenuItem.Checked)
                     results = results.Where(t => t.addrInt < uint.MaxValue);
                 if (cat != "_All" && cat != "")
@@ -851,6 +846,7 @@ namespace UniversalPatcher
         {
             sortBy = dataGridView1.Columns[e.ColumnIndex].Name;
             sortIndex = e.ColumnIndex;
+            strSortOrder = getSortOrder(sortIndex);
             filterTables();
         }
 
@@ -870,11 +866,17 @@ namespace UniversalPatcher
         }
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-            foreach (DataGridViewColumn column in ((DataGridView)sender).Columns)
+/*            foreach (DataGridViewColumn column in ((DataGridView)sender).Columns)
             {
                 column.SortMode = DataGridViewColumnSortMode.Programmatic;
-            }
+            }*/
         }
 
+        private void unitsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmEditXML fe = new frmEditXML();
+            fe.Show();
+            fe.LoadUnits();
+        }
     }
 }

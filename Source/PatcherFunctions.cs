@@ -333,6 +333,7 @@ public class upatcher
     public static List<FoundTable> foundTables;
     public static List<string> tableCategories;
     public static List<UniversalPatcher.TableData> XdfElements;
+    public static List<Units> unitList;
     public static List<TableData> tableDatas = new List<TableData>();
     public static bool dtcCombined = false;
 

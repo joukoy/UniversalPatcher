@@ -240,6 +240,7 @@
     <Compile Include="TableSeek.cs" />
     <Compile Include="tableSearch.cs" />
     <Compile Include="TinyTuner.cs" />
+    <Compile Include="Units.cs" />
     <Compile Include="win32.cs" />
     <Compile Include="TableData.cs" />
     <Compile Include="xdf.cs" />

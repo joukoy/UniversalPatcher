@@ -66,6 +66,7 @@ namespace UniversalPatcher
             this.editTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.comboFilterBy = new System.Windows.Forms.ComboBox();
+            this.unitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -85,8 +86,8 @@ namespace UniversalPatcher
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
             this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_ColumnHeaderMouseClick);
+            this.dataGridView1.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridView1_DataBindingComplete);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.DataGridView1_DataError);
-            this.dataGridView1.DataBindingComplete += new DataGridViewBindingCompleteEventHandler(this.dataGridView1_DataBindingComplete);
             // 
             // btnEditTable
             // 
@@ -290,7 +291,8 @@ namespace UniversalPatcher
             // 
             this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showTablesWithEmptyAddressToolStripMenuItem,
-            this.disableMultitableToolStripMenuItem});
+            this.disableMultitableToolStripMenuItem,
+            this.unitsToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "&Settings";
@@ -365,6 +367,13 @@ namespace UniversalPatcher
             this.comboFilterBy.TabIndex = 18;
             this.comboFilterBy.SelectedIndexChanged += new System.EventHandler(this.comboFilterBy_SelectedIndexChanged);
             // 
+            // unitsToolStripMenuItem
+            // 
+            this.unitsToolStripMenuItem.Name = "unitsToolStripMenuItem";
+            this.unitsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.unitsToolStripMenuItem.Text = "Units";
+            this.unitsToolStripMenuItem.Click += new System.EventHandler(this.unitsToolStripMenuItem_Click);
+            // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -429,5 +438,6 @@ namespace UniversalPatcher
         private ComboBox comboFilterBy;
         private ToolStripMenuItem disableMultitableToolStripMenuItem;
         private ToolStripMenuItem saveBinAsToolStripMenuItem;
+        private ToolStripMenuItem unitsToolStripMenuItem;
     }
 }

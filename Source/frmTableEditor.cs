@@ -504,8 +504,7 @@ namespace UniversalPatcher
             List<ColumnInfo> coliInfos = new List<ColumnInfo>();
 
             this.Text = "Table Editor: " + tableName;
-            if (td.Units != null)
-                labelUnits.Text = "Units: " + td.Units;
+            labelUnits.Text = "Units: " + getUnitFromTableData(td);
             if (td.Values != null && !td.Values.StartsWith("Enum:"))
                 labelUnits.Text += ", Values: " +  td.Values;
 
@@ -846,6 +845,20 @@ namespace UniversalPatcher
 
             return rows;
         }
+
+        private string getUnitFromTableData(TableData tData)
+        {
+            string retVal = "";
+
+            for (int i = 0; i < unitList.Count; i++)
+                if (tData.TableName.Contains(unitList[i].Abbreviation))
+                    return unitList[i].Unit;
+
+            if (tData.Units != null)
+                retVal = tData.Units;
+            
+            return retVal;
+        }
         public void loadTable(TableData td1)
         {
             try
@@ -893,8 +906,8 @@ namespace UniversalPatcher
                 //if (td.TableDescription != null && td.TableDescription.Length > 0)
                 //  this.Text += " - " + td.TableDescription;
 
-                if (td.Units != null)
-                    labelUnits.Text = "Units: " + td.Units;
+                
+                labelUnits.Text = "Units: " + getUnitFromTableData(td);
                 if (td.Values != null && !td.Values.StartsWith("Enum:"))
                     labelUnits.Text += ", Values: " +  td.Values;
 

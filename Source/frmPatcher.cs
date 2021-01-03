@@ -141,6 +141,7 @@ namespace UniversalPatcher
             fileTypeList = new List<FileType>();
             dtcSearchConfigs = new List<DtcSearchConfig>();
             SwapSegments = new List<SwapSegment>();
+            unitList = new List<Units>();
             //Dirty fix to make system work without stockcvn.xml
             CVN ctmp = new CVN();
             ctmp.cvn = "";
@@ -197,6 +198,20 @@ namespace UniversalPatcher
                 System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<SwapSegment>));
                 System.IO.StreamReader file = new System.IO.StreamReader(SwapSegmentListFile);
                 SwapSegments = (List<SwapSegment>)reader.Deserialize(file);
+                file.Close();
+
+            }
+
+            Logger(",units", false);
+            Application.DoEvents();
+
+            string unitsFile = Path.Combine(Application.StartupPath, "Tuner", "units.xml");
+            if (File.Exists(unitsFile))
+            {
+                Debug.WriteLine("Loading units.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<Units>));
+                System.IO.StreamReader file = new System.IO.StreamReader(unitsFile);
+                unitList = (List<Units>)reader.Deserialize(file);
                 file.Close();
 
             }

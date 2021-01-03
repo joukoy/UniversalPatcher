@@ -80,6 +80,14 @@ namespace UniversalPatcher
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
         }
+        public void LoadUnits()
+        {
+            this.Text = "Units";
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = unitList;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+        }
 
         private void refreshTableSeek()
         {
@@ -143,6 +151,18 @@ namespace UniversalPatcher
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSeek>));
                         writer.Serialize(stream, tableSeeks);
+                        stream.Close();
+                    }
+                    Logger(" [OK]");
+                }
+                else if (this.Text.Contains("Units"))
+                {
+                    fileName = Path.Combine(Application.StartupPath, "Tuner", "units.xml");
+                    Logger("Saving file " + fileName, false);
+                    using (FileStream stream = new FileStream(fileName, FileMode.Create))
+                    {
+                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<Units>));
+                        writer.Serialize(stream, unitList);
                         stream.Close();
                     }
                     Logger(" [OK]");
