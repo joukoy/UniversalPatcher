@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ArrayOfUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Units>
+		<Abbreviation>_b_</Abbreviation>
+		<Unit>byte boolean</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_k_</Abbreviation>
+		<Unit>coefficient small 0-1</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_K_</Abbreviation>
+		<Unit>coefficient big 0-xx</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_p_</Abbreviation>
+		<Unit>pressure kpa,psi</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_v_</Abbreviation>
+		<Unit>speed vehicle</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_Pct_</Abbreviation>
+		<Unit>percent</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_M_</Abbreviation>
+		<Unit>torque Nm</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_Cf_</Abbreviation>
+		<Unit>configuration</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_GearRatio[]</Abbreviation>
+		<Unit>-ratio</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_Cnt_</Abbreviation>
+		<Unit>control,count</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_t_</Abbreviation>
+		<Unit>time seconds</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_dm_</Abbreviation>
+		<Unit>??? g/s Dynamic?? dynamic mass g/s</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_e_</Abbreviation>
+		<Unit>??? enable/disable; enumeration</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_r_</Abbreviation>
+		<Unit>ratio</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_n_</Abbreviation>
+		<Unit>engine speed RPM</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_phi_</Abbreviation>
+		<Unit>degrees advance??</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_Faultinfo[]</Abbreviation>
+	</Units>
+	<Units>
+		<Abbreviation>_IM_</Abbreviation>
+		<Unit>monitor</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_I_</Abbreviation>
+		<Unit> current AMPeres</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_m_</Abbreviation>
+		<Unit>mass grams</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_T_</Abbreviation>
+		<Unit>temperature Celsius</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_R_</Abbreviation>
+		<Unit>resistance ohms</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_DeltTPS_</Abbreviation>
+		<Unit>delta tps%</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_DFCO_</Abbreviation>
+		<Unit>deceleration fuel cut off</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_Green_</Abbreviation>
+	</Units>
+	<Units>
+		<Abbreviation>_m_Green_</Abbreviation>
+	</Units>
+	<Units>
+		<Abbreviation>_O2_</Abbreviation>
+	</Units>
+	<Units>
+		<Abbreviation>_U_</Abbreviation>
+		<Unit>mv voltage</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_x_ST_</Abbreviation>
+		<Unit>count???</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_f_</Abbreviation>
+		<Unit>frequency Hz</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_h_</Abbreviation>
+		<Unit>???counts</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_a_</Abbreviation>
+		<Unit>acceleration kph/s</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_Scl_</Abbreviation>
+		<Unit>??? multiplier</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_d2V_</Abbreviation>
+		<Unit>???</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_l_</Abbreviation>
+		<Unit>distance km??</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_d_</Abbreviation>
+		<Unit>???</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_c_</Abbreviation>
+		<Unit>sample count</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_i_</Abbreviation>
+		<Unit>index</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_eqr_</Abbreviation>
+		<Unit>equivalence ratio</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_P_</Abbreviation>
+		<Unit>???</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_y_</Abbreviation>
+		<Unit>???</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_dn_</Abbreviation>
+		<Unit>dynamic engine speed rpm/s</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_dV_</Abbreviation>
+		<Unit>dynamic volume Litre/s</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_far_</Abbreviation>
+		<Unit>fuel air ratio</Unit>
+	</Units>
+	<Units>
+		<Abbreviation>_V_</Abbreviation>
+		<Unit>volume liters</Unit>
+	</Units>
+</ArrayOfUnits>
