@@ -54,7 +54,7 @@ namespace UniversalPatcher
         BindingSource bindingsource = new BindingSource();
         BindingSource categoryBindingSource = new BindingSource();
         private BindingList<TableData> filteredCategories = new BindingList<TableData>();
-        SortOrder strSortOrder;
+        SortOrder strSortOrder = SortOrder.Ascending;
 
         private void openTableEditor()
         {
@@ -109,6 +109,7 @@ namespace UniversalPatcher
             }
 
         }
+
         private void btnEditTable_Click(object sender, EventArgs e)
         {
             openTableEditor();
@@ -160,6 +161,9 @@ namespace UniversalPatcher
         }
         public void refreshTablelist()
         {
+            //Fix table-ID's
+            for (int tbId = 0; tbId < tableDatas.Count; tbId++)
+                tableDatas[tbId].id = (uint)tbId;
             bindingsource.DataSource = null;
             dataGridView1.DataSource = null;
             bindingsource.DataSource = tableDatas;
@@ -694,10 +698,13 @@ namespace UniversalPatcher
 
         private void importCSVexperimentalToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            for (int i = 0; i < tableDatas.Count; i++)
+                tableDatas[i].addrInt = uint.MaxValue;
             string FileName = SelectFile("Select CSV File","CSV files (*.csv)|*.csv|All files (*.*)|*.*");
             if (FileName.Length == 0)
                 return;
             Logger("Loading file: " + FileName, false);
+            string osNew = Path.GetFileName(FileName).Replace("-cross2.csv", "");
             StreamReader sr = new StreamReader(FileName);
             string csvLine;
             while ((csvLine = sr.ReadLine()) != null)
@@ -714,6 +721,8 @@ namespace UniversalPatcher
                         if (tableDatas[i].Category.ToLower() == cat.ToLower() && tableDatas[i].TableName.ToLower() == name.ToLower())
                         {
                             tableDatas[i].Address = addr;
+                            tableDatas[i].OS = osNew;
+                            Debug.WriteLine(tableDatas[i].TableName);
                             //tableDatas[i].AddrInt = Convert.ToUInt32(addr, 16);
                             found = true;
                             break;
@@ -727,6 +736,7 @@ namespace UniversalPatcher
                             if (cat.ToLower() == "protected" && tableDatas[i].TableName.ToLower() == name.ToLower())
                             {
                                 tableDatas[i].Address = addr;
+                                tableDatas[i].OS = osNew;
                                 //tableDatas[i].AddrInt = Convert.ToUInt32(addr, 16);
                                 found = true;
                                 Debug.WriteLine(name + ": PROTECTED");
@@ -735,6 +745,11 @@ namespace UniversalPatcher
                         }
                     }
                 }
+            }
+            for (int i = tableDatas.Count -1; i >= 0; i--)
+            {
+                if (tableDatas[i].addrInt == uint.MaxValue)
+                    tableDatas.RemoveAt(i);
             }
             Logger(" [OK]");
             refreshTablelist();

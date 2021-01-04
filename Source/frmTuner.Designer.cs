@@ -59,6 +59,7 @@ namespace UniversalPatcher
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showTablesWithEmptyAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableMultitableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.unitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,7 +67,6 @@ namespace UniversalPatcher
             this.editTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.comboFilterBy = new System.Windows.Forms.ComboBox();
-            this.unitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -259,9 +259,11 @@ namespace UniversalPatcher
             // 
             // convertToDataTypeToolStripMenuItem
             // 
+            this.convertToDataTypeToolStripMenuItem.Enabled = false;
             this.convertToDataTypeToolStripMenuItem.Name = "convertToDataTypeToolStripMenuItem";
             this.convertToDataTypeToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.convertToDataTypeToolStripMenuItem.Text = "Convert to DataType";
+            this.convertToDataTypeToolStripMenuItem.Visible = false;
             this.convertToDataTypeToolStripMenuItem.Click += new System.EventHandler(this.convertToDataTypeToolStripMenuItem_Click);
             // 
             // exportToolStripMenuItem
@@ -276,14 +278,14 @@ namespace UniversalPatcher
             // exportCSVToolStripMenuItem
             // 
             this.exportCSVToolStripMenuItem.Name = "exportCSVToolStripMenuItem";
-            this.exportCSVToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.exportCSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exportCSVToolStripMenuItem.Text = "Export CSV";
             this.exportCSVToolStripMenuItem.Click += new System.EventHandler(this.exportCsvToolStripMenuItem_Click);
             // 
             // exportXDFToolStripMenuItem
             // 
             this.exportXDFToolStripMenuItem.Name = "exportXDFToolStripMenuItem";
-            this.exportXDFToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.exportXDFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exportXDFToolStripMenuItem.Text = "Export XDF";
             this.exportXDFToolStripMenuItem.Click += new System.EventHandler(this.exportXDFToolStripMenuItem_Click);
             // 
@@ -310,6 +312,13 @@ namespace UniversalPatcher
             this.disableMultitableToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.disableMultitableToolStripMenuItem.Text = "Disable multitable";
             this.disableMultitableToolStripMenuItem.Click += new System.EventHandler(this.disableMultitableToolStripMenuItem_Click);
+            // 
+            // unitsToolStripMenuItem
+            // 
+            this.unitsToolStripMenuItem.Name = "unitsToolStripMenuItem";
+            this.unitsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.unitsToolStripMenuItem.Text = "Units";
+            this.unitsToolStripMenuItem.Click += new System.EventHandler(this.unitsToolStripMenuItem_Click);
             // 
             // contextMenuStrip1
             // 
@@ -366,13 +375,6 @@ namespace UniversalPatcher
             this.comboFilterBy.Size = new System.Drawing.Size(121, 21);
             this.comboFilterBy.TabIndex = 18;
             this.comboFilterBy.SelectedIndexChanged += new System.EventHandler(this.comboFilterBy_SelectedIndexChanged);
-            // 
-            // unitsToolStripMenuItem
-            // 
-            this.unitsToolStripMenuItem.Name = "unitsToolStripMenuItem";
-            this.unitsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
-            this.unitsToolStripMenuItem.Text = "Units";
-            this.unitsToolStripMenuItem.Click += new System.EventHandler(this.unitsToolStripMenuItem_Click);
             // 
             // frmTuner
             // 

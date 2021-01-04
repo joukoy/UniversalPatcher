@@ -850,9 +850,9 @@ namespace UniversalPatcher
         {
             string retVal = "";
 
-            for (int i = 0; i < unitList.Count; i++)
-                if (tData.TableName.Contains(unitList[i].Abbreviation))
-                    return unitList[i].Unit;
+            /*for (int i = 0; i < unitList.Count; i++)
+                if (tData.TableName.Contains(unitList[i].Abbreviation) && unitList[i].Unit != null && unitList[i].Unit.Length > 0)
+                    return unitList[i].Unit;*/
 
             if (tData.Units != null)
                 retVal = tData.Units;

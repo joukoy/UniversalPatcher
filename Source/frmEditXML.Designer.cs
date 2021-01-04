@@ -128,9 +128,11 @@ namespace UniversalPatcher
             // 
             // convertToDataTypeToolStripMenuItem
             // 
+            this.convertToDataTypeToolStripMenuItem.Enabled = false;
             this.convertToDataTypeToolStripMenuItem.Name = "convertToDataTypeToolStripMenuItem";
             this.convertToDataTypeToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.convertToDataTypeToolStripMenuItem.Text = "Convert to DataType";
+            this.convertToDataTypeToolStripMenuItem.Visible = false;
             this.convertToDataTypeToolStripMenuItem.Click += new System.EventHandler(this.convertToDataTypeToolStripMenuItem_Click);
             // 
             // importToolStripMenuItem
@@ -144,7 +146,7 @@ namespace UniversalPatcher
             // importCSVToolStripMenuItem
             // 
             this.importCSVToolStripMenuItem.Name = "importCSVToolStripMenuItem";
-            this.importCSVToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.importCSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.importCSVToolStripMenuItem.Text = "Import CSV";
             this.importCSVToolStripMenuItem.Click += new System.EventHandler(this.importCSVToolStripMenuItem_Click);
             // 
