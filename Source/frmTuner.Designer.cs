@@ -241,11 +241,9 @@ namespace UniversalPatcher
             // 
             // importCSVexperimentalToolStripMenuItem
             // 
-            this.importCSVexperimentalToolStripMenuItem.Enabled = false;
             this.importCSVexperimentalToolStripMenuItem.Name = "importCSVexperimentalToolStripMenuItem";
             this.importCSVexperimentalToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.importCSVexperimentalToolStripMenuItem.Text = "Import CSV (experimental)";
-            this.importCSVexperimentalToolStripMenuItem.Visible = false;
             this.importCSVexperimentalToolStripMenuItem.Click += new System.EventHandler(this.importCSVexperimentalToolStripMenuItem_Click);
             // 
             // importCSV2ExperimentalToolStripMenuItem
@@ -278,14 +276,14 @@ namespace UniversalPatcher
             // exportCSVToolStripMenuItem
             // 
             this.exportCSVToolStripMenuItem.Name = "exportCSVToolStripMenuItem";
-            this.exportCSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportCSVToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.exportCSVToolStripMenuItem.Text = "Export CSV";
             this.exportCSVToolStripMenuItem.Click += new System.EventHandler(this.exportCsvToolStripMenuItem_Click);
             // 
             // exportXDFToolStripMenuItem
             // 
             this.exportXDFToolStripMenuItem.Name = "exportXDFToolStripMenuItem";
-            this.exportXDFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportXDFToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.exportXDFToolStripMenuItem.Text = "Export XDF";
             this.exportXDFToolStripMenuItem.Click += new System.EventHandler(this.exportXDFToolStripMenuItem_Click);
             // 

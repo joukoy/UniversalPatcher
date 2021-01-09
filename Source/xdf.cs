@@ -103,6 +103,12 @@ namespace UniversalPatcher
                             xdf.Decimals = Convert.ToUInt16(axle.Element("decimalpl").Value);
                             if (axle.Element("outputtype") != null)
                                 xdf.OutputType = (OutDataType) Convert.ToUInt16(axle.Element("outputtype").Value);
+                            foreach (XElement rowMath in axle.Elements("MATH"))
+                                if (rowMath.Element("VAR").Attribute("address") != null)
+                                {
+                                    Debug.WriteLine(rowMath.Element("VAR").Attribute("address").Value);
+                                    Debug.WriteLine(rowMath.Attribute("equation").Value);
+                                }
                         }
                     }
                     xdf.TableName = element.Element("title").Value;

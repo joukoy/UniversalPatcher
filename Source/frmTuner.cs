@@ -704,7 +704,8 @@ namespace UniversalPatcher
             if (FileName.Length == 0)
                 return;
             Logger("Loading file: " + FileName, false);
-            string osNew = Path.GetFileName(FileName).Replace("-cross2.csv", "");
+            //string osNew = Path.GetFileName(FileName).Replace("Addresses-", "").Replace(".csv","");
+            string osNew = "12587603";
             StreamReader sr = new StreamReader(FileName);
             string csvLine;
             while ((csvLine = sr.ReadLine()) != null)
@@ -750,6 +751,12 @@ namespace UniversalPatcher
             {
                 if (tableDatas[i].addrInt == uint.MaxValue)
                     tableDatas.RemoveAt(i);
+            }
+            //Fix table names:
+            for (int i = 0; i < tableDatas.Count; i++)
+            {
+                if (tableDatas[i].TableName.ToLower().StartsWith("ka_") || tableDatas[i].TableName.ToLower().StartsWith("ke_") || tableDatas[i].TableName.ToLower().StartsWith("kv_"))
+                    tableDatas[i].TableName = tableDatas[i].TableName.Substring(3);
             }
             Logger(" [OK]");
             refreshTablelist();
@@ -892,6 +899,16 @@ namespace UniversalPatcher
             frmEditXML fe = new frmEditXML();
             fe.Show();
             fe.LoadUnits();
+        }
+
+        private void fixTableNamesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int i=0;i<tableDatas.Count; i++)
+            {
+                if (tableDatas[i].TableName.ToLower().StartsWith("ka_") || tableDatas[i].TableName.ToLower().StartsWith("ke_") || tableDatas[i].TableName.ToLower().StartsWith("kv_"))
+                    tableDatas[i].TableName = tableDatas[i].TableName.Substring(3);
+            }
+            refreshTablelist();
         }
     }
 }

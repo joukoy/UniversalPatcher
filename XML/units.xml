@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<ArrayOfUnits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Units>
+    <Abbreviation>_b_</Abbreviation>
+    <Unit>BOOLEAN</Unit>
+  </Units>
+  <Units>
+    <Abbreviation>Kb</Abbreviation>
+    <Unit>BOOLEAN</Unit>
+  </Units>
+  <Units>
+    <Abbreviation>_T_</Abbreviation>
+    <Unit>deg C</Unit>
+  </Units>
+  <Units>
+    <Abbreviation>_t_</Abbreviation>
+    <Unit>s</Unit>
+  </Units>
+  <Units>
+    <Abbreviation>_phi_</Abbreviation>
+    <Unit>deg</Unit>
+  </Units>
+  <Units>
+    <Abbreviation>_i_</Abbreviation>
+    <Unit>index</Unit>
+  </Units>
+  <Units>
+    <Abbreviation>_n_</Abbreviation>
+    <Unit>rpm</Unit>
+  </Units>
+  <Units>
+    <Abbreviation>_eqr_</Abbreviation>
+    <Unit>eq ratio</Unit>
+  </Units>
+  <Units>
+    <Abbreviation>_K_</Abbreviation>
+    <Unit>coeff</Unit>
+  </Units>
+  <Units>
+    <Abbreviation>_k_</Abbreviation>
+    <Unit>coeff</Unit>
+  </Units>
+  <Units>
+    <Abbreviation>_R_</Abbreviation>
+    <Unit>ohms</Unit>
+  </Units>
+  <Units>
+    <Abbreviation>_M_</Abbreviation>
+    <Unit>Nm</Unit>
+  </Units>
+  <Units>
+    <Abbreviation>_e_</Abbreviation>
+    <Unit>enum</Unit>
+  </Units>
+</ArrayOfUnits>
