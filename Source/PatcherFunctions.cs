@@ -380,19 +380,6 @@ public class upatcher
         UNKNOWN
     }
 
-    public static T DeepClone<T>(T obj)
-    {
-        T objResult;
-        using (MemoryStream ms = new MemoryStream())
-        {
-            BinaryFormatter bf = new BinaryFormatter();
-            bf.Serialize(ms, obj);
-            ms.Position = 0;
-            objResult = (T)bf.Deserialize(ms);
-        }
-        return objResult;
-    }
-
     public static int getBits(InDataType dataType)
     {
         int bits = -1;
@@ -1447,5 +1434,12 @@ public class upatcher
              g.Columns.Insert(index, c);
          });
     }
-
+    public static void Logger(string LogText, Boolean NewLine = true)
+    {
+        frmpatcher.Logger(LogText, NewLine);
+    }
+    public static void LoggerBold(string LogText, Boolean NewLine = true)
+    {
+        frmpatcher.LoggerBold(LogText, NewLine);
+    }
 }

@@ -191,13 +191,6 @@ namespace UniversalPatcher
         {
             saveThis();
         }
-        public void Logger(string LogText, Boolean NewLine = true)
-        {
-            txtResult.AppendText(LogText);
-            if (NewLine)
-                txtResult.AppendText(Environment.NewLine);
-            Application.DoEvents();
-        }
 
         private void saveCSV()
         {
@@ -273,11 +266,6 @@ namespace UniversalPatcher
         }
 
         private void importCSV()
-        {
-
-        }
-
-        private void btnImportCSV_Click(object sender, EventArgs e)
         {
             try
             {

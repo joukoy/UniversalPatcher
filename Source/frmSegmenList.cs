@@ -144,7 +144,6 @@ namespace UniversalPatcher
         {
             Segments.Clear();
             listSegments.Items.Clear();
-            txtStatus.Text = "";
             txtVersion.Text = "1";
             XMLFile = "";
             labelXML.Text = "";
@@ -247,13 +246,6 @@ namespace UniversalPatcher
         private void listSegments_SelectedIndexChanged(object sender, EventArgs e)
         {
 
-        }
-        public void Logger(string LogText, Boolean NewLine = true)
-        {
-            txtStatus.AppendText(LogText);
-            if (NewLine)
-                txtStatus.AppendText(Environment.NewLine);
-            Application.DoEvents();
         }
 
         private void btnSaveOnly_Click(object sender, EventArgs e)

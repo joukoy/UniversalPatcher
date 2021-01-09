@@ -4,8 +4,9 @@
     <CATEGORYMEM index="0" category="REPLACE-CATEGORY" />
     <XDFAXIS id="x" uniqueid="0x0">
       <EMBEDDEDDATA mmedelementsizebits="REPLACE-BITS" mmedmajorstridebits="-32" mmedminorstridebits="0" />
+      <units>REPLACE-UNITS</units>
       <indexcount>REPLACE-COLCOUNT</indexcount>
-      <outputtype>2</outputtype>
+      <outputtype>4</outputtype>
       <datatype>0</datatype>
       <unittype>0</unittype>
       <DALINK index="0" />

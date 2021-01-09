@@ -114,7 +114,8 @@ namespace UniversalPatcher
         {
             openTableEditor();
         }
-        public void LoggerBold(string LogText, Boolean NewLine = true)
+
+/*      public void LoggerBold(string LogText, Boolean NewLine = true)
         {
             txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Bold);
             txtResult.AppendText(LogText);
@@ -131,6 +132,7 @@ namespace UniversalPatcher
                 txtResult.AppendText(Environment.NewLine);
             Application.DoEvents();
         }
+*/
         private void SaveBin()
         {
             try
@@ -145,7 +147,7 @@ namespace UniversalPatcher
                     return;
 
                 Logger("Saving to file: " + fileName);
-                Logger(PCM.saveBin(fileName));
+                PCM.saveBin(fileName);
                 this.Text = "Tuner " + Path.GetFileName(fileName);
                 Logger("Done.");
             }
@@ -161,9 +163,6 @@ namespace UniversalPatcher
         }
         public void refreshTablelist()
         {
-            //Fix table-ID's
-            for (int tbId = 0; tbId < tableDatas.Count; tbId++)
-                tableDatas[tbId].id = (uint)tbId;
             bindingsource.DataSource = null;
             dataGridView1.DataSource = null;
             bindingsource.DataSource = tableDatas;
@@ -412,6 +411,9 @@ namespace UniversalPatcher
         {
             try
             {
+                //Fix table-ID's
+                for (int tbId = 0; tbId < tableDatas.Count; tbId++)
+                    tableDatas[tbId].id = (uint)tbId;
 
                 List<TableData> compareList = new List<TableData>();
                 if (strSortOrder == SortOrder.Ascending)
@@ -499,7 +501,7 @@ namespace UniversalPatcher
         private void saveBINToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Logger("Saving to file: " + PCM.FileName);
-            Logger(PCM.saveBin(PCM.FileName));
+            PCM.saveBin(PCM.FileName);
             Logger("Done.");
 
         }
@@ -747,11 +749,11 @@ namespace UniversalPatcher
                     }
                 }
             }
-            for (int i = tableDatas.Count -1; i >= 0; i--)
+/*            for (int i = tableDatas.Count -1; i >= 0; i--)
             {
                 if (tableDatas[i].addrInt == uint.MaxValue)
                     tableDatas.RemoveAt(i);
-            }
+            }*/
             //Fix table names:
             for (int i = 0; i < tableDatas.Count; i++)
             {
@@ -764,6 +766,7 @@ namespace UniversalPatcher
 
         private void exportXDFToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Logger("Generating xdf...");
             XDF xdf = new XDF();
             Logger(xdf.exportXdf(PCM));
         }
@@ -910,5 +913,18 @@ namespace UniversalPatcher
             }
             refreshTablelist();
         }
+
+        private void DataGridView1_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
+        {
+            for (int r=0; r< dataGridView1.SelectedRows.Count; r++)
+            {
+                int row = dataGridView1.SelectedRows[r].Index;
+                int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
+                tableDatas.RemoveAt(id);
+                filterTables();
+            }
+        }
+
+
     }
 }

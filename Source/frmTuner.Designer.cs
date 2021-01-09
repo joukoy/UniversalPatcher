@@ -34,7 +34,6 @@ namespace UniversalPatcher
             this.components = new System.ComponentModel.Container();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.btnEditTable = new System.Windows.Forms.Button();
-            this.txtResult = new System.Windows.Forms.RichTextBox();
             this.txtSearchTableSeek = new System.Windows.Forms.TextBox();
             this.comboTableCategory = new System.Windows.Forms.ComboBox();
             this.label15 = new System.Windows.Forms.Label();
@@ -81,13 +80,14 @@ namespace UniversalPatcher
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Location = new System.Drawing.Point(2, 56);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(861, 359);
+            this.dataGridView1.Size = new System.Drawing.Size(861, 437);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
             this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_ColumnHeaderMouseClick);
             this.dataGridView1.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridView1_DataBindingComplete);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.DataGridView1_DataError);
+            this.dataGridView1.UserDeletingRow += new DataGridViewRowCancelEventHandler(this.DataGridView1_UserDeletingRow);
             // 
             // btnEditTable
             // 
@@ -98,17 +98,6 @@ namespace UniversalPatcher
             this.btnEditTable.Text = "Edit Table";
             this.btnEditTable.UseVisualStyleBackColor = true;
             this.btnEditTable.Click += new System.EventHandler(this.btnEditTable_Click);
-            // 
-            // txtResult
-            // 
-            this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtResult.HideSelection = false;
-            this.txtResult.Location = new System.Drawing.Point(2, 414);
-            this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(861, 79);
-            this.txtResult.TabIndex = 7;
-            this.txtResult.Text = "";
             // 
             // txtSearchTableSeek
             // 
@@ -384,7 +373,6 @@ namespace UniversalPatcher
             this.Controls.Add(this.txtSearchTableSeek);
             this.Controls.Add(this.comboTableCategory);
             this.Controls.Add(this.label15);
-            this.Controls.Add(this.txtResult);
             this.Controls.Add(this.btnEditTable);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.menuStrip1);
@@ -406,7 +394,6 @@ namespace UniversalPatcher
 
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button btnEditTable;
-        private System.Windows.Forms.RichTextBox txtResult;
         private System.Windows.Forms.TextBox txtSearchTableSeek;
         private System.Windows.Forms.ComboBox comboTableCategory;
         private System.Windows.Forms.Label label15;

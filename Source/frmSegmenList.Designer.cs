@@ -40,7 +40,6 @@
             this.btnNewXML = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
-            this.txtStatus = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtVersion = new System.Windows.Forms.TextBox();
             this.btnSaveOnly = new System.Windows.Forms.Button();
@@ -166,14 +165,6 @@
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
-            // txtStatus
-            // 
-            this.txtStatus.Location = new System.Drawing.Point(243, 325);
-            this.txtStatus.Multiline = true;
-            this.txtStatus.Name = "txtStatus";
-            this.txtStatus.Size = new System.Drawing.Size(220, 35);
-            this.txtStatus.TabIndex = 11;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -209,7 +200,6 @@
             this.Controls.Add(this.btnSaveOnly);
             this.Controls.Add(this.txtVersion);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.btnNewXML);
@@ -243,7 +233,6 @@
         private System.Windows.Forms.Button btnNewXML;
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.TextBox txtStatus;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtVersion;
         private System.Windows.Forms.Button btnSaveOnly;

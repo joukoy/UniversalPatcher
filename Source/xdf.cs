@@ -67,6 +67,10 @@ namespace UniversalPatcher
                     int elementSize = 0;
                     bool Signed = false;
                     bool Floating = false;
+
+                    List<string> multiMath = new List<string>();
+                    List<string> multiAddr = new List<string>();
+
                     foreach (XElement axle in element.Elements("XDFAXIS"))
                     {
                         if (axle.Attribute("id").Value == "x")
@@ -104,11 +108,16 @@ namespace UniversalPatcher
                             if (axle.Element("outputtype") != null)
                                 xdf.OutputType = (OutDataType) Convert.ToUInt16(axle.Element("outputtype").Value);
                             foreach (XElement rowMath in axle.Elements("MATH"))
+                            {
                                 if (rowMath.Element("VAR").Attribute("address") != null)
                                 {
+                                    //Table have different address for every (?) row
                                     Debug.WriteLine(rowMath.Element("VAR").Attribute("address").Value);
                                     Debug.WriteLine(rowMath.Attribute("equation").Value);
+                                    multiAddr.Add(rowMath.Element("VAR").Attribute("address").Value);
+                                    multiMath.Add(rowMath.Attribute("equation").Value);
                                 }
+                            }
                         }
                     }
                     xdf.TableName = element.Element("title").Value;
@@ -138,7 +147,27 @@ namespace UniversalPatcher
                         xdf.TableDescription = element.Element("description").Value;
                     xdf.DataType = convertToDataType(elementSize, Signed, Floating);
 
-                    tableDatas.Add(xdf);
+                    if (multiMath.Count > 0 && xdf.Rows == multiMath.Count)
+                    {
+                        string[] rowHdr = xdf.RowHeaders.Replace(".","").Split(',');
+                        for (int m=0; m< multiMath.Count; m++)
+                        {
+                            TableData tdNew = new TableData();
+                            tdNew = xdf.ShallowCopy();
+                            tdNew.Rows = 1; //Convert to single-row, multitable
+                            tdNew.Math = multiMath[m];
+                            tdNew.Address = multiAddr[m];
+                            if (rowHdr.Length >= m - 1)
+                                tdNew.TableName += "." + rowHdr[m];
+                            else
+                                tdNew.TableName += "." + m.ToString();
+                            tableDatas.Add(tdNew);
+                        }
+                    }
+                    else
+                    {
+                        tableDatas.Add(xdf);
+                    }
                 }
                 foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFCONSTANT"))
                 {
@@ -324,15 +353,26 @@ namespace UniversalPatcher
                         {
                             tableText = tableText.Replace("REPLACE-CATEGORY", s.ToString());
                         }
+                        string descr = tableDatas[t].TableDescription;
+                        /*if (tableDatas[t].Values.StartsWith("Enum: ") && !descr.ToLower().Contains("enum"))
+                        {
+                            string[] hParts = tableDatas[t].Values.Substring(6).Split(',');
+                            for (int x = 0; x < hParts.Length; x++)
+                            {
+                                descr += Environment.NewLine + hParts[x];
+                            }
+                        }*/
+
                         tableText = tableText.Replace("REPLACE-TABLEID", tableDatas[t].Address);
+                        tableText = tableText.Replace("REPLACE-UNITS", tableDatas[t].Units);
                         tableText = tableText.Replace("REPLACE-ROWCOUNT", tableDatas[t].Rows.ToString());
                         tableText = tableText.Replace("REPLACE-COLCOUNT", tableDatas[t].Columns.ToString());
                         tableText = tableText.Replace("REPLACE-MATH", tableDatas[t].Math);
-                        tableText = tableText.Replace("REPLACE-BITS", getElementSize(tableDatas[t].DataType).ToString());
+                        tableText = tableText.Replace("REPLACE-BITS", getBits(tableDatas[t].DataType).ToString());
                         tableText = tableText.Replace("REPLACE-DECIMALS", tableDatas[t].Decimals.ToString());
                         tableText = tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)tableDatas[t].OutputType).ToString());
                         tableText = tableText.Replace("REPLACE-TABLEADDRESS",((uint)(tableDatas[t].addrInt + tableDatas[t].Offset)).ToString("X"));
-                        tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", tableDatas[t].TableDescription);
+                        tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
                         tableText = tableText.Replace("REPLACE-MINVALUE", tableDatas[t].Min.ToString());
                         tableText = tableText.Replace("REPLACE-MAXVALUE", tableDatas[t].Max.ToString());
                         int tableFlags = 0;
@@ -376,7 +416,7 @@ namespace UniversalPatcher
                                 if (d < tableDatas[t].Columns - 1)
                                     tableCols += Environment.NewLine;
                             }
-                        }
+                        }                        
                         else
                         {
                             string[] hParts = tableDatas[t].ColumnHeaders.Split(',');
@@ -410,7 +450,7 @@ namespace UniversalPatcher
                         tableText = tableText.Replace("REPLACE-TABLEID", ((uint)(tableDatas[t].addrInt + tableDatas[t].Offset)).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tableDatas[t].addrInt + tableDatas[t].Offset)).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
-                        tableText = tableText.Replace("REPLACE-BITS", getElementSize(tableDatas[t].DataType).ToString());
+                        tableText = tableText.Replace("REPLACE-BITS", getBits(tableDatas[t].DataType).ToString());
                         tableText = tableText.Replace("REPLACE-MINVALUE", tableDatas[t].Min.ToString());
                         tableText = tableText.Replace("REPLACE-MAXVALUE", tableDatas[t].Max.ToString());
                         xdfText += tableText;       //Add generated table to end of xdfText
@@ -434,7 +474,7 @@ namespace UniversalPatcher
                         tableText = tableText.Replace("REPLACE-TABLEID", tableDatas[t].Address);
                         tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tableDatas[t].addrInt + tableDatas[t].Offset)).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
-                        tableText = tableText.Replace("REPLACE-BITS", getElementSize(tableDatas[t].DataType).ToString());
+                        tableText = tableText.Replace("REPLACE-BITS", getBits(tableDatas[t].DataType).ToString());
                         tableText = tableText.Replace("REPLACE-MINVALUE", tableDatas[t].Min.ToString());
                         tableText = tableText.Replace("REPLACE-MAXVALUE", tableDatas[t].Max.ToString());
                         tableText = tableText.Replace("REPLACE-MASK", tableDatas[t].BitMask);
@@ -444,7 +484,8 @@ namespace UniversalPatcher
                 }
 
                 xdfText += "</XDFFORMAT>" + Environment.NewLine;
-                string fileName = SelectSaveFile("XDF Files(*.xdf)|*.xdf|ALL Files (*.*)|*.*", basefile.OS + "-generated.xdf");
+                string defFname = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions", basefile.OS + "-generated.xdf");
+                string fileName = SelectSaveFile("XDF Files(*.xdf)|*.xdf|ALL Files (*.*)|*.*",defFname);
                 if (fileName.Length == 0)
                     return "";
                 retVal += "Writing to file: " + Path.GetFileName(fileName);

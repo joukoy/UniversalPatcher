@@ -134,7 +134,7 @@
             this.tabFunction = new System.Windows.Forms.TabControl();
             this.tabApply = new System.Windows.Forms.TabPage();
             this.btnTuner = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnFixFilesChecksum = new System.Windows.Forms.Button();
             this.btnSwapSegments = new System.Windows.Forms.Button();
             this.btnBinLoadPatch = new System.Windows.Forms.Button();
             this.btnCheckSums = new System.Windows.Forms.Button();
@@ -1427,7 +1427,7 @@
             // tabApply
             // 
             this.tabApply.Controls.Add(this.btnTuner);
-            this.tabApply.Controls.Add(this.button1);
+            this.tabApply.Controls.Add(this.btnFixFilesChecksum);
             this.tabApply.Controls.Add(this.btnSwapSegments);
             this.tabApply.Controls.Add(this.btnBinLoadPatch);
             this.tabApply.Controls.Add(this.btnCheckSums);
@@ -1451,15 +1451,15 @@
             this.btnTuner.UseVisualStyleBackColor = true;
             this.btnTuner.Click += new System.EventHandler(this.btnTuner_Click);
             // 
-            // button1
+            // btnFixFilesChecksum
             // 
-            this.button1.Location = new System.Drawing.Point(181, 37);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(162, 25);
-            this.button1.TabIndex = 186;
-            this.button1.Text = "Fix checksum of files...";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnFixFilesChecksum.Location = new System.Drawing.Point(181, 37);
+            this.btnFixFilesChecksum.Name = "btnFixFilesChecksum";
+            this.btnFixFilesChecksum.Size = new System.Drawing.Size(162, 25);
+            this.btnFixFilesChecksum.TabIndex = 186;
+            this.btnFixFilesChecksum.Text = "Fix checksum of files...";
+            this.btnFixFilesChecksum.UseVisualStyleBackColor = true;
+            this.btnFixFilesChecksum.Click += new System.EventHandler(this.btnFixFilesChecksum_Click);
             // 
             // btnSwapSegments
             // 
@@ -1993,21 +1993,21 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.saveToolStripMenuItem.Text = "&Save bin";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click_1);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.saveAsToolStripMenuItem.Text = "Save bin &as...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
@@ -2109,7 +2109,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -2272,7 +2272,7 @@
         private System.Windows.Forms.RadioButton radioReplace;
         private System.Windows.Forms.RadioButton radioSkip;
         private System.Windows.Forms.Button btnSwapSegments;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnFixFilesChecksum;
         private System.Windows.Forms.CheckBox checkExtractShowinfo;
         private System.Windows.Forms.CheckBox checkAutorefreshFileinfo;
         private System.Windows.Forms.Button btnRefreshFileinfo;

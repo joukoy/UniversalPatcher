@@ -16,8 +16,7 @@ namespace UniversalPatcher
     {
         public frmSwapSegmentList()
         {
-            InitializeComponent();
-            txtResult.EnableContextMenu();
+            InitializeComponent();            
             lvwColumnSorter = new ListViewColumnSorter();
             this.listSegments.ListViewItemSorter = lvwColumnSorter;
         }
@@ -338,17 +337,6 @@ namespace UniversalPatcher
         private void comboSegments_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadSegments();
-        }
-        public void Logger(string LogText, Boolean NewLine = true)
-        {
-            txtResult.Focus();
-            int Start = txtResult.Text.Length;
-            txtResult.AppendText(LogText);
-            txtResult.Select(Start, LogText.Length);
-            if (NewLine)
-                txtResult.AppendText(Environment.NewLine);
-            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
-            //Application.DoEvents();
         }
 
         private void listSegments_SelectedIndexChanged(object sender, EventArgs e)

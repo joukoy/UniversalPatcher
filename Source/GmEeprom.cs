@@ -112,22 +112,24 @@ namespace UniversalPatcher
             return tmpKey;
         }
 
-        public static string FixEepromKey(byte[] buf)
+        public static bool FixEepromKey(byte[] buf)
         {
+            bool needFix = false;
             EepromKey Key;
             Key = GetEepromKey(buf);
-            string Ret = "Seed: ".PadRight(16) + Key.Seed.ToString("X4") + Environment.NewLine + "Bin Key: ".PadRight(16) + Key.Key.ToString("X4");
+            Logger("Seed: ".PadRight(16) + Key.Seed.ToString("X4") + Environment.NewLine + "Bin Key: ".PadRight(16) + Key.Key.ToString("X4"),false);
             if (Key.Key != Key.NewKey)
             {
+                needFix = true;
                 uint VINAddr = GetVINAddr(buf);
 
                 buf[VINAddr + 2] = (byte)((Key.NewKey & 0xFF00) >> 8);
                 buf[VINAddr + 3] = (byte)(Key.NewKey & 0xFF);
-                Ret += "  *  Calculated: ".PadRight(16) + Key.NewKey.ToString("X4") + " [Fixed]";
+                Logger("  *  Calculated: ".PadRight(16) + Key.NewKey.ToString("X4") + " [Fixed]");
             }
             else
-                Ret += " [OK]";
-            return Ret;
+                Logger(" [OK]");
+            return needFix;
         }
         public static string GetKeyStatus(byte[]buf)
         {

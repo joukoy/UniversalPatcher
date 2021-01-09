@@ -9,3 +9,4 @@
     <REGION type="0xFFFFFFFF" startaddress="0x0" size="0xREPLACE-BINSIZE" regionflags="0x0" name="Binary File" desc="This region describes the bin file edited by this XDF" />
 REPLACE-CATEGORYNAME
   </XDFHEADER>
+  

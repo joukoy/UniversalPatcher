@@ -61,35 +61,33 @@ namespace UniversalPatcher
             osStoreAddress = uint.MaxValue;
         }
 
-        public string saveBin(string fName)
+        public void saveBin(string fName)
         {
-            string retVal = "";
             try
             {
-                retVal = FixCheckSums();
+                FixCheckSums();
                 WriteBinToFile(fName, buf);
                 FileName = fName;
             }
             catch (Exception ex)
             {
-                retVal += Environment.NewLine + ex.Message;
+                LoggerBold(Environment.NewLine + ex.Message);
             }
-            return retVal;
         }
-        public string FixCheckSums()
+        public bool FixCheckSums()
         {
-            string retVal = "";
+            bool needFix = false;
             try
             {
-                retVal += "Fixing Checksums:" + Environment.NewLine;
+                Logger("Fixing Checksums:");
                 for (int i = 0; i < Segments.Count; i++)
                 {
                     SegmentConfig S = Segments[i];
-                    retVal += S.Name + Environment.NewLine;
+                    Logger(S.Name);
                     if (S.Eeprom)
                     {
-                        string Ret = GmEeprom.FixEepromKey(buf);
-                        retVal += Ret + Environment.NewLine;
+                        if (GmEeprom.FixEepromKey(buf))
+                            needFix = true;
                     }
                     else
                     {
@@ -113,7 +111,7 @@ namespace UniversalPatcher
                                 }
                             }
                             if (CS1 == CS1Calc)
-                                retVal += " Checksum 1: " + CS1.ToString("X4") + " [OK]" + Environment.NewLine;
+                                Logger(" Checksum 1: " + CS1.ToString("X4") + " [OK]");
                             else
                             {
                                 if (segmentAddressDatas[i].CS1Address.Address == uint.MaxValue)
@@ -123,10 +121,11 @@ namespace UniversalPatcher
                                         hexdigits = "X4";
                                     else
                                         hexdigits = "X" + (segmentAddressDatas[i].CS1Address.Bytes * 2).ToString();
-                                    retVal += " Checksum 1: " + CS1Calc.ToString(hexdigits) + " [Not saved]" + Environment.NewLine;
+                                    Logger("Checksum 1: " + CS1Calc.ToString(hexdigits) + " [Not saved]");
                                 }
                                 else
                                 {
+                                    needFix = true;
                                     if (segmentAddressDatas[i].CS1Address.Bytes == 1)
                                         buf[segmentAddressDatas[i].CS1Address.Address] = (byte)CS1Calc;
                                     else if (segmentAddressDatas[i].CS1Address.Bytes == 2)
@@ -138,7 +137,7 @@ namespace UniversalPatcher
                                         SaveUint32(buf, segmentAddressDatas[i].CS1Address.Address, CS1Calc);
 
                                     }
-                                    retVal += " Checksum 1: " + CS1.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]" + Environment.NewLine;
+                                    Logger(" Checksum 1: " + CS1.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
                                 }
                             }
                         }
@@ -163,7 +162,7 @@ namespace UniversalPatcher
                                 }
                             }
                             if (CS2 == CS2Calc)
-                                retVal += " Checksum 2: " + CS2.ToString("X4") + " [OK]" + Environment.NewLine;
+                                Logger(" Checksum 2: " + CS2.ToString("X4") + " [OK]");
                             else
                             {
                                 if (segmentAddressDatas[i].CS2Address.Address == uint.MaxValue)
@@ -173,10 +172,11 @@ namespace UniversalPatcher
                                         hexdigits = "X4";
                                     else
                                         hexdigits = "X" + (segmentAddressDatas[i].CS2Address.Bytes * 2).ToString();
-                                    retVal += " Checksum 2: " + CS2Calc.ToString("X4") + " [Not saved]" + Environment.NewLine;
+                                    Logger(" Checksum 2: " + CS2Calc.ToString("X4") + " [Not saved]");
                                 }
                                 else
                                 {
+                                    needFix = true;
                                     if (segmentAddressDatas[i].CS2Address.Bytes == 1)
                                         buf[segmentAddressDatas[i].CS2Address.Address] = (byte)CS2Calc;
                                     else if (segmentAddressDatas[i].CS2Address.Bytes == 2)
@@ -188,7 +188,7 @@ namespace UniversalPatcher
                                         SaveUint32(buf, segmentAddressDatas[i].CS2Address.Address, CS2Calc);
 
                                     }
-                                    retVal += " Checksum 2: " + CS2.ToString("X") + " => " + CS2Calc.ToString("X4") + " [Fixed]" + Environment.NewLine;
+                                    Logger(" Checksum 2: " + CS2.ToString("X") + " => " + CS2Calc.ToString("X4") + " [Fixed]");
                                 }
                             }
                         }
@@ -199,9 +199,9 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                retVal += "Error: " + ex.Message + Environment.NewLine;
+                LoggerBold("Error: " + ex.Message);
             }
-            return retVal;
+            return needFix;
         }
 
         public void loadAddresses()

@@ -51,7 +51,7 @@ namespace UniversalPatcher
                 if (value.Length > 0)
                 {
                     UInt32 prevVal = addrInt;
-                    if (!HexToUint(value, out addrInt))
+                    if (!HexToUint(value.Replace("0x",""), out addrInt))
                         addrInt = prevVal;
                 }
                 else
@@ -80,6 +80,12 @@ namespace UniversalPatcher
         public string ColumnHeaders { get; set; }
         public string RowHeaders { get; set; }
         public string TableDescription { get; set; }
+
+        public TableData ShallowCopy()
+        {
+            return (TableData)this.MemberwiseClone();
+        }
+
         public void importFoundTable(int tId, PcmFile PCM)
         {
 

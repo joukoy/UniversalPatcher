@@ -657,6 +657,7 @@ namespace UniversalPatcher
             string fileName = SelectFile();
             if (fileName.Length > 1)
             {
+                tableCategories = new List<string>(); //Clear list
                 txtBaseFile.Text = fileName;
                 basefile = new PcmFile(fileName);
                 labelBinSize.Text = basefile.fsize.ToString();
@@ -1077,7 +1078,7 @@ namespace UniversalPatcher
                     return;
 
                 Logger("Saving to file: " + fileName);
-                Logger(basefile.saveBin(fileName));
+                basefile.saveBin(fileName);
                 this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
                 Logger("Done.");
             }
@@ -1132,7 +1133,7 @@ namespace UniversalPatcher
         {
             if (Segments != null && Segments.Count > 0)
             { 
-                Logger(basefile.FixCheckSums());
+                basefile.FixCheckSums();
             }
         }
 
@@ -2097,7 +2098,7 @@ namespace UniversalPatcher
             if (frmSw.ShowDialog(this) == DialogResult.OK)
             {
                 basefile = frmSw.PCM;
-                Logger(basefile.FixCheckSums());
+                basefile.FixCheckSums();
                 Logger("");
                 Logger("Segment(s) swapped and checksums fixed (you can save BIN now)");
             }
@@ -2109,11 +2110,9 @@ namespace UniversalPatcher
             try
             {
                 basefile = new PcmFile(fileName);
-                GetFileInfo(fileName, ref basefile, true, false);
-                string res = basefile.FixCheckSums();
-                Logger(res);
-                if (res.Contains("Fixed"))
-                {
+                GetFileInfo(fileName, ref basefile, true, false);                
+                if (basefile.FixCheckSums())  //Returns true, if need fix for checksum
+                {  
                     Logger("Saving file: " + fileName);
                     basefile.saveBin(fileName);
                     Logger("[OK]");
@@ -2125,7 +2124,7 @@ namespace UniversalPatcher
             }
 
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void btnFixFilesChecksum_Click(object sender, EventArgs e)
         {
             frmFileSelection frmF = new frmFileSelection();
             frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
@@ -3373,7 +3372,7 @@ namespace UniversalPatcher
         private void saveToolStripMenuItem_Click_1(object sender, EventArgs e)
         {            
             Logger("Saving file: " + basefile.FileName);
-            Logger(basefile.saveBin(basefile.FileName));
+            basefile.saveBin(basefile.FileName);
             Logger("OK");
         }
 
