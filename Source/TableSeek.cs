@@ -33,6 +33,8 @@ namespace UniversalPatcher
             UseHit = "1";
             Range = "";
             Segments = "";
+            Units = "";
+            Values = "";
             RowMajor = true;
         }
 
@@ -61,9 +63,14 @@ namespace UniversalPatcher
         public string ValidationSearchStr { get; set; }
         public string Category { get; set; }
         public string Units { get; set; }
+        public string Values { get; set; }
         public string BitMask { get; set; }
         public bool RowMajor { get; set; }
         public string Description { get; set; }
+        public TableSeek ShallowCopy()
+        {
+            return (TableSeek)this.MemberwiseClone();
+        }
 
         public string seekTables(PcmFile PCM)
         {

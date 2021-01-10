@@ -87,7 +87,7 @@ namespace UniversalPatcher
             this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_ColumnHeaderMouseClick);
             this.dataGridView1.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridView1_DataBindingComplete);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.DataGridView1_DataError);
-            this.dataGridView1.UserDeletingRow += new DataGridViewRowCancelEventHandler(this.DataGridView1_UserDeletingRow);
+            this.dataGridView1.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.DataGridView1_UserDeletingRow);
             // 
             // btnEditTable
             // 
@@ -237,11 +237,9 @@ namespace UniversalPatcher
             // 
             // importCSV2ExperimentalToolStripMenuItem
             // 
-            this.importCSV2ExperimentalToolStripMenuItem.Enabled = false;
             this.importCSV2ExperimentalToolStripMenuItem.Name = "importCSV2ExperimentalToolStripMenuItem";
             this.importCSV2ExperimentalToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.importCSV2ExperimentalToolStripMenuItem.Text = "Import CSV 2 (Experimental)";
-            this.importCSV2ExperimentalToolStripMenuItem.Visible = false;
             this.importCSV2ExperimentalToolStripMenuItem.Click += new System.EventHandler(this.importCSV2ExperimentalToolStripMenuItem_Click);
             // 
             // convertToDataTypeToolStripMenuItem

@@ -802,6 +802,9 @@ namespace UniversalPatcher
                     string cat = cParts[0];
                     string name = cParts[1];
                     string addr = cParts[2];
+                    if (name.ToLower().StartsWith("ka_") || name.ToLower().StartsWith("ke_") || name.ToLower().StartsWith("kv_"))
+                        name = name.Substring(3);
+
                     uint lastmask = uint.MaxValue;
                     uint addrInt = Convert.ToUInt32(addr, 16);
                     for (int i = 0; i < tableDatas.Count; i++)

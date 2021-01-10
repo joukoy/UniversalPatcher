@@ -294,39 +294,14 @@ namespace UniversalPatcher
 
                             for (int s = 0; s < tableSeeks.Count; s++)
                             {
-                                if (tableSeeks[s].Name.ToLower() == lineparts[1].ToLower() && tableSeeks[s].Category.ToLower() == ts.Category.ToLower())
+                                if (tableSeeks[s].Name != null && tableSeeks[s].Category != null && tableSeeks[s].Name.ToLower() == lineparts[1].ToLower() && tableSeeks[s].Category.ToLower() == ts.Category.ToLower())
                                 {
                                     if (tableSeeks[s].SearchStr.Length > 0)
                                     {
                                         if (tableSeeks[s].SearchStr != ts.SearchStr && tableSeeks[s].UseHit != ts.UseHit && tableSeeks[s].Offset != ts.Offset)
                                         {
                                             TableSeek tsNew = new TableSeek();
-                                            tsNew.BitMask = tableSeeks[s].BitMask;
-                                            tsNew.DataType = tableSeeks[s].DataType;
-                                            //tsNew.Bits = tableSeeks[s].Bits;
-                                            //tsNew.Floating = tableSeeks[s].Floating;
-                                            //tsNew.Signed = tableSeeks[s].Signed;
-                                            tsNew.ColHeaders = tableSeeks[s].ColHeaders;
-                                            tsNew.Columns = tableSeeks[s].Columns;
-                                            tsNew.ConditionalOffset = tableSeeks[s].ConditionalOffset;
-                                            tsNew.Decimals = tableSeeks[s].Decimals;
-                                            tsNew.Description = tableSeeks[s].Description;
-                                            tsNew.Math = tableSeeks[s].Math;
-                                            tsNew.Max = tableSeeks[s].Max;
-                                            tsNew.Min = tableSeeks[s].Min;
-                                            tsNew.OutputType = tableSeeks[s].OutputType;
-                                            tsNew.Range = tableSeeks[s].Range;
-                                            tsNew.RowHeaders = tableSeeks[s].RowHeaders;
-                                            tsNew.RowMajor = tableSeeks[s].RowMajor;
-                                            tsNew.Rows = tableSeeks[s].Rows;
-                                            tsNew.SavingMath = tableSeeks[s].SavingMath;
-                                            tsNew.Segments = tableSeeks[s].Segments;
-                                            tsNew.Units = tableSeeks[s].Units;
-                                            tsNew.ValidationSearchStr = tableSeeks[s].ValidationSearchStr;
-                                            tsNew.Name = ts.Name;
-                                            tsNew.SearchStr = ts.SearchStr;
-                                            tsNew.UseHit = ts.UseHit;
-                                            tsNew.Offset = ts.Offset;
+                                            tsNew = tableSeeks[s].ShallowCopy();
                                             tableSeeks.Add(tsNew);
                                         }
                                     }

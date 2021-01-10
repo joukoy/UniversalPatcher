@@ -127,25 +127,7 @@ namespace UniversalPatcher
             FoundTable ft = foundTables[tId];
 
             td = new TableData();
-            td.addrInt = ft.addrInt;
-            //td.Address = ft.Address;
-            td.Category = ft.Category;
-            //td.Floating = tSeek.Floating;
-            //td.ElementSize = (byte)(tSeek.Bits / 8);
-            //td.Signed = tSeek.Signed;
-            td.DataType = tSeek.DataType;
-            td.Math = tSeek.Math;
-            td.SavingMath = tSeek.SavingMath;
-            td.OS = PCM.OS;
-            td.RowMajor = tSeek.RowMajor;
-            td.Rows = ft.Rows;
-            td.Columns = ft.Columns;
-            td.ColumnHeaders = tSeek.ColHeaders;
-            td.RowHeaders = tSeek.RowHeaders;
-            td.Decimals = tSeek.Decimals;            
-            td.TableDescription = tSeek.Description;
-            td.TableName = ft.Name;
-            td.Units = tSeek.Units;
+            td.importFoundTable(tId, PCM);
 
             loadTable(td);
         }

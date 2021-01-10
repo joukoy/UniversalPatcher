@@ -112,6 +112,7 @@ namespace UniversalPatcher
             TableDescription = tSeek.Description;
             TableName = ft.Name;
             Units = tSeek.Units;
+            Values = tSeek.Values;
             Min = tSeek.Min;
             Max = tSeek.Max;
             if (!tableCategories.Contains(Category))
