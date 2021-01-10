@@ -115,7 +115,7 @@ namespace UniversalPatcher
             openTableEditor();
         }
 
-/*      public void LoggerBold(string LogText, Boolean NewLine = true)
+      public void LoggerBold(string LogText, Boolean NewLine = true)
         {
             txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Bold);
             txtResult.AppendText(LogText);
@@ -132,7 +132,7 @@ namespace UniversalPatcher
                 txtResult.AppendText(Environment.NewLine);
             Application.DoEvents();
         }
-*/
+
         private void SaveBin()
         {
             try
@@ -757,6 +757,7 @@ namespace UniversalPatcher
             //Fix table names:
             for (int i = 0; i < tableDatas.Count; i++)
             {
+                tableDatas[i].OS = osNew;
                 if (tableDatas[i].TableName.ToLower().StartsWith("ka_") || tableDatas[i].TableName.ToLower().StartsWith("ke_") || tableDatas[i].TableName.ToLower().StartsWith("kv_"))
                     tableDatas[i].TableName = tableDatas[i].TableName.Substring(3);
             }
@@ -928,6 +929,26 @@ namespace UniversalPatcher
             }
         }
 
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+        }
 
+        private void DataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedCells.Count < 1)
+            {
+                txtDescription.Text = "";
+                return;
+            }
+            int ind = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
+            txtDescription.Text = tableDatas[ind].TableName + Environment.NewLine;
+            if (tableDatas[ind].TableDescription != null)
+                txtDescription.Text += tableDatas[ind].TableDescription;
+        }
+
+        private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

@@ -486,7 +486,10 @@ namespace UniversalPatcher
             List<ColumnInfo> coliInfos = new List<ColumnInfo>();
 
             this.Text = "Table Editor: " + tableName;
-            labelUnits.Text = "Units: " + getUnitFromTableData(td);
+            if (td.Units.ToLower().Contains("bitmask"))
+                labelUnits.Text = "Units: Boolean";
+            else
+                labelUnits.Text = "Units: " + getUnitFromTableData(td);
             if (td.Values != null && !td.Values.StartsWith("Enum:"))
                 labelUnits.Text += ", Values: " +  td.Values;
 
@@ -637,7 +640,12 @@ namespace UniversalPatcher
                 {
                     string hdrTxt = rowHeaders[r];
                     if (rowHeaders.Count == 1)
-                        hdrTxt = td.Units;
+                    {
+                        if (td.Units.ToLower().Contains("bitmask"))
+                            hdrTxt = "Boolean";
+                        else
+                            hdrTxt = td.Units;
+                    }
                     if (coliInfos[0].columnType == ColType.Flag)
                     {
                         DataGridViewCheckBoxColumn col_chkbox = new DataGridViewCheckBoxColumn();
@@ -664,9 +672,16 @@ namespace UniversalPatcher
                 {
                     dataGridView1.Rows.Add();
                     if (colHeaders.Count == 1)
-                        dataGridView1.Rows[c].HeaderCell.Value = td.Units;
+                    {
+                        if (td.Units.ToLower().Contains("bitmask"))
+                            dataGridView1.Rows[c].HeaderCell.Value = "Boolean";
+                        else
+                            dataGridView1.Rows[c].HeaderCell.Value = td.Units;
+                    }
                     else
+                    {
                         dataGridView1.Rows[c].HeaderCell.Value = colHeaders[c];
+                    }
                 }
 
 
@@ -717,7 +732,12 @@ namespace UniversalPatcher
                 {
                     string hdrTxt = colHeaders[c];
                     if (colHeaders.Count == 1)
-                        dataGridView1.Columns[c].HeaderText = td.Units;
+                    {
+                        if (td.Units.ToLower().Contains("bitmask"))
+                            dataGridView1.Columns[c].HeaderText = "Boolean";
+                        else
+                            dataGridView1.Columns[c].HeaderText = td.Units;
+                    }
 
                     if (coliInfos[c].columnType == ColType.Flag)
                     {
@@ -744,7 +764,12 @@ namespace UniversalPatcher
                 {
                     dataGridView1.Rows.Add();
                     if (rowHeaders.Count == 1)
-                        dataGridView1.Rows[r].HeaderCell.Value = td.Units;
+                    {
+                        if (td.Units.ToLower().Contains("bitmask"))
+                            dataGridView1.Rows[r].HeaderCell.Value = "Boolean";
+                        else
+                            dataGridView1.Rows[r].HeaderCell.Value = td.Units;
+                    }
                     else
                         dataGridView1.Rows[r].HeaderCell.Value = rowHeaders[r];
                 }
