@@ -22,6 +22,9 @@ namespace UniversalPatcher
         public frmTuner(PcmFile PCM1)
         {
             InitializeComponent();
+
+            enableConfigModeToolStripMenuItem.Checked = Properties.Settings.Default.TunerConfigMode;
+
             PCM = PCM1;
             this.Text = "Tuner " + Path.GetFileName(PCM.FileName);
 
@@ -36,6 +39,18 @@ namespace UniversalPatcher
                 if (File.Exists(defaultXml))
                 {
                     LoadXML(defaultXml);
+                    bool haveDTC = false;
+                    for (int t=0; t < tableDatas.Count; t++)
+                    {
+                        if (tableDatas[t].TableName.StartsWith("DTC"))
+                        {
+                            haveDTC = true;
+                            break;
+                        }
+                    }
+                    if (!haveDTC)
+                        if (dtcCodes.Count > 0)
+                            importDTC();
                 }
                 else
                 {
@@ -55,6 +70,7 @@ namespace UniversalPatcher
         BindingSource categoryBindingSource = new BindingSource();
         private BindingList<TableData> filteredCategories = new BindingList<TableData>();
         SortOrder strSortOrder = SortOrder.Ascending;
+        private string currentXmlFile;
 
         private void openTableEditor()
         {
@@ -179,8 +195,6 @@ namespace UniversalPatcher
                 if (dataGridView1.Rows[i].Cells["TableDescription"].Value != null)
                     dataGridView1.Rows[i].Cells["TableName"].ToolTipText = dataGridView1.Rows[i].Cells["TableDescription"].Value.ToString();
             }*/
-            Application.DoEvents();
-            dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
 
             comboTableCategory.DataSource = null;
             categoryBindingSource.DataSource = null;
@@ -220,11 +234,12 @@ namespace UniversalPatcher
                 //string defName = PCM.OS + ".xml";
                 if (fName == "")
                     fName = SelectFile("Select XML File", "XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
-                Logger("Loading file: " + fName);
+                Logger("Loading file: " + fName, false);
                 if (fName.Length == 0)
                     return;
                 if (File.Exists(fName))
                 {
+                    currentXmlFile = fName;
                     Debug.WriteLine("Loading " + fName + "...");
                     System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
                     System.IO.StreamReader file = new System.IO.StreamReader(fName);
@@ -237,8 +252,10 @@ namespace UniversalPatcher
                     if (!tableCategories.Contains(category))
                         tableCategories.Add(category);
                 }
-                Logger("OK");
+                Logger(" [OK]");
                 refreshTablelist();
+                Application.DoEvents();
+                dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             }
             catch (Exception ex)
             {
@@ -255,12 +272,13 @@ namespace UniversalPatcher
             LoadXML();
         }
 
-        private void SaveXML()
+        private void SaveXML(string fName ="")
         {
             try
             {
                 string defName = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
-                string fName = SelectSaveFile("XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
+                if (fName.Length == 0)
+                    fName = SelectSaveFile("XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
                 if (fName.Length == 0)
                     return;
 
@@ -327,7 +345,7 @@ namespace UniversalPatcher
                 td.TableName = "DTC.Codes";
             }
 
-            tableDatas.Add(td);
+            tableDatas.Insert(0,td);
 
             if (!dtcCombined)
             {
@@ -354,7 +372,7 @@ namespace UniversalPatcher
                 //td.Signed = false;
                 td.TableDescription = "0 = No MIL (Lamp always off) 1 = MIL (Lamp may be commanded on by PCM)";
                 //td.Values = "Enum: 0:No MIL (Lamp always off),1:MIL (Lamp may be commanded on by PCM)";
-                tableDatas.Add(td);
+                tableDatas.Insert(1,td);
             }
             refreshTablelist();
             Logger("OK");
@@ -366,6 +384,8 @@ namespace UniversalPatcher
 
         private void frmTuner_Load(object sender, EventArgs e)
         {
+            enableConfigModeToolStripMenuItem.Checked = Properties.Settings.Default.TunerConfigMode;
+
             if (Properties.Settings.Default.MainWindowPersistence)
             {
                 if (Properties.Settings.Default.TunerWindowSize.Width > 0 || Properties.Settings.Default.TunerWindowSize.Height > 0)
@@ -396,9 +416,9 @@ namespace UniversalPatcher
                     Properties.Settings.Default.TunerWindowLocation = this.RestoreBounds.Location;
                     Properties.Settings.Default.TunerWindowSize = this.RestoreBounds.Size;
                 }
-                Properties.Settings.Default.Save();
             }
-
+            Properties.Settings.Default.TunerConfigMode = enableConfigModeToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
         }
 
         private void btnClear_Click(object sender, EventArgs e)
@@ -411,6 +431,23 @@ namespace UniversalPatcher
         {
             try
             {
+                string[] devColumns = Properties.Settings.Default.TunerModeColumns.ToLower().Split(',');
+                for (int c=0; c< dataGridView1.Columns.Count; c++)
+                {
+                    if (enableConfigModeToolStripMenuItem.Checked)
+                    {
+                        dataGridView1.Columns[c].ReadOnly = false;
+                        dataGridView1.Columns[c].Visible = true;
+                    }
+                    else
+                    {
+                        dataGridView1.Columns[c].ReadOnly = true;
+                        if (dataGridView1.Columns[c].HeaderText.ToLower() == "id" || devColumns.Contains(dataGridView1.Columns[c].HeaderText.ToLower()))
+                            dataGridView1.Columns[c].Visible = true;
+                        else
+                            dataGridView1.Columns[c].Visible = false;
+                    }
+                }
                 //Fix table-ID's
                 for (int tbId = 0; tbId < tableDatas.Count; tbId++)
                     tableDatas[tbId].id = (uint)tbId;
@@ -432,6 +469,7 @@ namespace UniversalPatcher
                 filteredCategories = new BindingList<TableData>(results.ToList());
                 bindingsource.DataSource = filteredCategories;
                 dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
+
             }
             catch { }
 
@@ -895,10 +933,11 @@ namespace UniversalPatcher
         }
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-/*            foreach (DataGridViewColumn column in ((DataGridView)sender).Columns)
-            {
-                column.SortMode = DataGridViewColumnSortMode.Programmatic;
-            }*/
+
+            /*            foreach (DataGridViewColumn column in ((DataGridView)sender).Columns)
+                        {
+                            column.SortMode = DataGridViewColumnSortMode.Programmatic;
+                        }*/
         }
 
         private void unitsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -920,6 +959,11 @@ namespace UniversalPatcher
 
         private void DataGridView1_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
+            if (!enableConfigModeToolStripMenuItem.Checked)
+            {
+                e.Cancel = true;
+                return;
+            }
             for (int r=0; r< dataGridView1.SelectedRows.Count; r++)
             {
                 int row = dataGridView1.SelectedRows[r].Index;
@@ -943,11 +987,144 @@ namespace UniversalPatcher
             int ind = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
             txtDescription.Text = tableDatas[ind].TableName + Environment.NewLine;
             if (tableDatas[ind].TableDescription != null)
-                txtDescription.Text += tableDatas[ind].TableDescription;
+                txtDescription.Text += tableDatas[ind].TableDescription + Environment.NewLine;
+            if (tableDatas[ind].ExtraDescription != null)
+                txtDescription.Text += tableDatas[ind].ExtraDescription;
+
         }
 
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
         {
+
+        }
+
+        private void setConfigMode()
+        {
+            importCSV2ExperimentalToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
+            importCSVexperimentalToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
+            //ConfigModeColumnsToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
+            importXMLgeneratorCSVToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
+            exportXMLgeneratorCSVToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;            
+        }
+        private void enableConfigModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            enableConfigModeToolStripMenuItem.Checked = !enableConfigModeToolStripMenuItem.Checked;
+            filterTables();
+            setConfigMode();
+            Application.DoEvents();
+            dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+        }
+
+        private void tunerModeColumnsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmData frmd = new frmData();
+            frmd.txtData.Text = Properties.Settings.Default.TunerModeColumns;
+            frmd.Text = "Columns visible in tuner mode:";
+            if (frmd.ShowDialog() == DialogResult.OK)
+            {
+                Properties.Settings.Default.TunerModeColumns = frmd.txtData.Text;
+            }
+            frmd.Dispose();
+        }
+
+        private void exportXMLgeneratorCSVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string fName = SelectSaveFile("CSV files (*.csv)|*.csv|ALL files|*.*");
+                if (fName.Length == 0) return;
+
+                Logger("Generating CSV...");
+
+                string csvData = "Tablename;Size;OS;Address";
+                for (int row = 0; row < tableDatas.Count; row++)
+                {
+                    int tbSize = tableDatas[row].Rows * tableDatas[row].Columns * getElementSize(tableDatas[row].DataType);
+                    csvData += tableDatas[row].TableName + ";";
+                    csvData += tbSize.ToString() + ";";
+                    csvData += tableDatas[row].OS + ";";
+                    csvData += tableDatas[row].Address + Environment.NewLine;
+                }
+                Logger("Writing to file: " + fName, false);
+                WriteTextFile(fName, csvData);
+                Logger("OK");
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+        }
+        struct OsAddrStruct
+        {
+            public string tableName;
+            public string OS;
+            public string addr;
+        }
+
+        private void importXMLgeneratorCSVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try 
+            {
+                List<OsAddrStruct> osAddrList = new List<OsAddrStruct>();
+                List<string> osList = new List<string>();
+
+                LoggerBold("Supply CSV file in format: Tablename;Size;OS1;Address1;OS2;Address2;...");
+                string fName = SelectFile("Select CSV file for XML generator","CSV files (*.csv)|*.csv|ALL files|*.*");
+                if (fName.Length == 0) return;
+                Logger("Using file: " + currentXmlFile + " as template");
+                Logger("Reading file: " + fName, false);
+                
+                StreamReader sr = new StreamReader(fName);
+                string csvLine;
+                while ((csvLine = sr.ReadLine()) != null)
+                {
+                    string[] lParts = csvLine.Split(';');
+                    if (lParts.Length > 3)
+                    {
+                        for (int x=2; x< lParts.Length; x+=2)
+                        {
+                            OsAddrStruct oa;
+                            oa.tableName = lParts[0];
+                            oa.OS = lParts[x];
+                            oa.addr = lParts[x + 1];
+                            osAddrList.Add(oa);
+                            if (!osList.Contains(oa.OS))
+                                osList.Add(oa.OS);
+                        }
+                    }
+                }
+                Logger(" [OK]");
+                for (int o=0; o<osList.Count; o++)
+                {
+                    fName = Path.Combine(Application.StartupPath, "Tuner", osList[o] + "-export.xml");
+                    LoadXML(currentXmlFile);
+                    for (int t = 0; t < tableDatas.Count; t++) 
+                        tableDatas[t].addrInt = uint.MaxValue;  //Set all addresses to maxuint
+                    for (int x = 0; x < osAddrList.Count; x++)
+                    {
+                        if (osAddrList[x].OS == osList[o])
+                        {
+                            for (int t = 0; t < tableDatas.Count; t++)
+                            {
+                                if (tableDatas[t].TableName == osAddrList[x].tableName)
+                                {
+                                    tableDatas[t].Address = osAddrList[x].addr;
+                                    tableDatas[t].OS = osList[o];
+                                    Debug.WriteLine(tableDatas[t].TableName + ", addr:" + osAddrList[x].addr);
+                                }
+                            }
+                        }
+                    }
+                    for (int t = tableDatas.Count - 1; t >= 0; t--)
+                        if (tableDatas[t].addrInt == uint.MaxValue)
+                            tableDatas.RemoveAt(t);  //Remove rows where address was not available
+                    SaveXML(fName);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
 
         }
     }

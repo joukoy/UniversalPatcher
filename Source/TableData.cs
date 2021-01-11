@@ -31,6 +31,7 @@ namespace UniversalPatcher
             OutputType = OutDataType.Float;
             DataType = InDataType.UNKNOWN;
             Values = "";
+            ExtraDescription = "";
         }
         public uint id { get; set; }
         public string OS { get; set; }
@@ -80,6 +81,7 @@ namespace UniversalPatcher
         public string ColumnHeaders { get; set; }
         public string RowHeaders { get; set; }
         public string TableDescription { get; set; }
+        public string ExtraDescription { get; set; }
 
         public TableData ShallowCopy()
         {

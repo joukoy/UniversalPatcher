@@ -370,5 +370,29 @@ namespace UniversalPatcher.Properties {
                 this["disableTunerAutoloadSettings"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("id,TableName,Category,Units,Min,Max,Columns,Rows,Values")]
+        public string TunerModeColumns {
+            get {
+                return ((string)(this["TunerModeColumns"]));
+            }
+            set {
+                this["TunerModeColumns"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TunerConfigMode {
+            get {
+                return ((bool)(this["TunerConfigMode"]));
+            }
+            set {
+                this["TunerConfigMode"] = value;
+            }
+        }
     }
 }

@@ -89,5 +89,11 @@
     <Setting Name="disableTunerAutoloadSettings" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="TunerModeColumns" Type="System.String" Scope="User">
+      <Value Profile="(Default)">id,TableName,Category,Units,Min,Max,Columns,Rows,Values</Value>
+    </Setting>
+    <Setting Name="TunerConfigMode" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

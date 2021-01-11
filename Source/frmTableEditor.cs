@@ -814,6 +814,17 @@ namespace UniversalPatcher
                     }
                 }
             }
+            for (int r=0; r< dataGridView1.Rows.Count; r++)
+            {
+                for (int c=0; c<dataGridView1.Columns.Count; c++)
+                {
+                    if (dataGridView1.Rows[r].Cells[c].Tag == null)
+                    {
+                        dataGridView1.Rows[r].Cells[c].ReadOnly = true;
+                        dataGridView1.Rows[r].Cells[c].Style.BackColor = Color.DarkGray;
+                    }
+                }
+            }
             setDataGridLayout();
         }
 
