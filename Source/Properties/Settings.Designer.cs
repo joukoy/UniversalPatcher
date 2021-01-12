@@ -394,5 +394,17 @@ namespace UniversalPatcher.Properties {
                 this["TunerConfigMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ConfigModeColumnOrder {
+            get {
+                return ((string)(this["ConfigModeColumnOrder"]));
+            }
+            set {
+                this["ConfigModeColumnOrder"] = value;
+            }
+        }
     }
 }

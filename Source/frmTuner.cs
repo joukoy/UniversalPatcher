@@ -431,21 +431,28 @@ namespace UniversalPatcher
         {
             try
             {
-                string[] devColumns = Properties.Settings.Default.TunerModeColumns.ToLower().Split(',');
+                string[] tunerColumns = Properties.Settings.Default.TunerModeColumns.ToLower().Split(',');
+                string[] configColumns = Properties.Settings.Default.ConfigModeColumnOrder.ToLower().Split(',');
                 for (int c=0; c< dataGridView1.Columns.Count; c++)
                 {
                     if (enableConfigModeToolStripMenuItem.Checked)
                     {
                         dataGridView1.Columns[c].ReadOnly = false;
                         dataGridView1.Columns[c].Visible = true;
+                        dataGridView1.Columns[c].DisplayIndex = Array.IndexOf(configColumns, dataGridView1.Columns[c].HeaderText.ToLower());
                     }
                     else
                     {
                         dataGridView1.Columns[c].ReadOnly = true;
-                        if (dataGridView1.Columns[c].HeaderText.ToLower() == "id" || devColumns.Contains(dataGridView1.Columns[c].HeaderText.ToLower()))
+                        if (dataGridView1.Columns[c].HeaderText.ToLower() == "id" || tunerColumns.Contains(dataGridView1.Columns[c].HeaderText.ToLower()))
+                        {
                             dataGridView1.Columns[c].Visible = true;
+                            dataGridView1.Columns[c].DisplayIndex = Array.IndexOf(tunerColumns, dataGridView1.Columns[c].HeaderText.ToLower());
+                        }
                         else
+                        {
                             dataGridView1.Columns[c].Visible = false;
+                        }
                     }
                 }
                 //Fix table-ID's
@@ -933,11 +940,15 @@ namespace UniversalPatcher
         }
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-
-            /*            foreach (DataGridViewColumn column in ((DataGridView)sender).Columns)
-                        {
-                            column.SortMode = DataGridViewColumnSortMode.Programmatic;
-                        }*/
+            if (Properties.Settings.Default.ConfigModeColumnOrder == null || Properties.Settings.Default.ConfigModeColumnOrder.Length == 0)
+            {
+                string cOrder = "";
+                for (int c = 0; c < dataGridView1.Columns.Count; c++)
+                {
+                    cOrder += dataGridView1.Columns[c].HeaderText + ",";
+                }
+                Properties.Settings.Default.ConfigModeColumnOrder = cOrder.Trim(',');
+            }
         }
 
         private void unitsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1004,7 +1015,8 @@ namespace UniversalPatcher
             importCSVexperimentalToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
             //ConfigModeColumnsToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
             importXMLgeneratorCSVToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
-            exportXMLgeneratorCSVToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;            
+            exportXMLgeneratorCSVToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;     
+            configModeColumnOrderToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
         }
         private void enableConfigModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1024,7 +1036,9 @@ namespace UniversalPatcher
             {
                 Properties.Settings.Default.TunerModeColumns = frmd.txtData.Text;
             }
+            Properties.Settings.Default.Save();
             frmd.Dispose();
+            filterTables();
         }
 
         private void exportXMLgeneratorCSVToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1145,6 +1159,20 @@ namespace UniversalPatcher
         private void saveXMLAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveXML();
+        }
+
+        private void configModeColumnOrderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmData frmd = new frmData();
+            frmd.Text = "Column order in config mode:";
+            frmd.txtData.Text = Properties.Settings.Default.ConfigModeColumnOrder;
+            if (frmd.ShowDialog() == DialogResult.OK)
+            {
+                Properties.Settings.Default.ConfigModeColumnOrder = frmd.txtData.Text;
+            }
+            Properties.Settings.Default.Save();
+            frmd.Dispose();
+            filterTables();
         }
     }
 }

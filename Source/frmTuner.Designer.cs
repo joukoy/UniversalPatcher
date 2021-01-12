@@ -41,6 +41,7 @@ namespace UniversalPatcher
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveXMLAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveBINToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveBinAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,6 +64,7 @@ namespace UniversalPatcher
             this.unitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableConfigModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TunerModeColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.configModeColumnOrderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -74,7 +76,6 @@ namespace UniversalPatcher
             this.txtDescription = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.saveXMLAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -172,35 +173,42 @@ namespace UniversalPatcher
             // loadXMLToolStripMenuItem
             // 
             this.loadXMLToolStripMenuItem.Name = "loadXMLToolStripMenuItem";
-            this.loadXMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadXMLToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.loadXMLToolStripMenuItem.Text = "Load XML";
             this.loadXMLToolStripMenuItem.Click += new System.EventHandler(this.loadXMLToolStripMenuItem_Click);
             // 
             // saveXMLToolStripMenuItem
             // 
             this.saveXMLToolStripMenuItem.Name = "saveXMLToolStripMenuItem";
-            this.saveXMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveXMLToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.saveXMLToolStripMenuItem.Text = "Save XML";
             this.saveXMLToolStripMenuItem.Click += new System.EventHandler(this.saveXMLToolStripMenuItem_Click);
+            // 
+            // saveXMLAsToolStripMenuItem
+            // 
+            this.saveXMLAsToolStripMenuItem.Name = "saveXMLAsToolStripMenuItem";
+            this.saveXMLAsToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.saveXMLAsToolStripMenuItem.Text = "Save XML As...";
+            this.saveXMLAsToolStripMenuItem.Click += new System.EventHandler(this.saveXMLAsToolStripMenuItem_Click);
             // 
             // saveBINToolStripMenuItem
             // 
             this.saveBINToolStripMenuItem.Name = "saveBINToolStripMenuItem";
-            this.saveBINToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveBINToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.saveBINToolStripMenuItem.Text = "&Save BIN";
             this.saveBINToolStripMenuItem.Click += new System.EventHandler(this.saveBINToolStripMenuItem_Click);
             // 
             // saveBinAsToolStripMenuItem
             // 
             this.saveBinAsToolStripMenuItem.Name = "saveBinAsToolStripMenuItem";
-            this.saveBinAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveBinAsToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.saveBinAsToolStripMenuItem.Text = "Save bin &As...";
             this.saveBinAsToolStripMenuItem.Click += new System.EventHandler(this.saveBinAsToolStripMenuItem_Click);
             // 
             // clearTableToolStripMenuItem
             // 
             this.clearTableToolStripMenuItem.Name = "clearTableToolStripMenuItem";
-            this.clearTableToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.clearTableToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.clearTableToolStripMenuItem.Text = "&Clear Tablelist";
             this.clearTableToolStripMenuItem.Click += new System.EventHandler(this.clearTableToolStripMenuItem_Click);
             // 
@@ -317,7 +325,8 @@ namespace UniversalPatcher
             this.disableMultitableToolStripMenuItem,
             this.unitsToolStripMenuItem,
             this.enableConfigModeToolStripMenuItem,
-            this.TunerModeColumnsToolStripMenuItem});
+            this.TunerModeColumnsToolStripMenuItem,
+            this.configModeColumnOrderToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "&Settings";
@@ -356,6 +365,14 @@ namespace UniversalPatcher
             this.TunerModeColumnsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.TunerModeColumnsToolStripMenuItem.Text = "Tuner mode columns...";
             this.TunerModeColumnsToolStripMenuItem.Click += new System.EventHandler(this.tunerModeColumnsToolStripMenuItem_Click);
+            // 
+            // configModeColumnOrderToolStripMenuItem
+            // 
+            this.configModeColumnOrderToolStripMenuItem.Name = "configModeColumnOrderToolStripMenuItem";
+            this.configModeColumnOrderToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.configModeColumnOrderToolStripMenuItem.Text = "Config mode column order...";
+            this.configModeColumnOrderToolStripMenuItem.Visible = false;
+            this.configModeColumnOrderToolStripMenuItem.Click += new System.EventHandler(this.configModeColumnOrderToolStripMenuItem_Click);
             // 
             // contextMenuStrip1
             // 
@@ -470,13 +487,6 @@ namespace UniversalPatcher
             this.splitContainer2.SplitterDistance = 409;
             this.splitContainer2.TabIndex = 22;
             // 
-            // saveXMLAsToolStripMenuItem
-            // 
-            this.saveXMLAsToolStripMenuItem.Name = "saveXMLAsToolStripMenuItem";
-            this.saveXMLAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.saveXMLAsToolStripMenuItem.Text = "Save XML As...";
-            this.saveXMLAsToolStripMenuItem.Click += new System.EventHandler(this.saveXMLAsToolStripMenuItem_Click);
-            // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -559,5 +569,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem importXMLgeneratorCSVToolStripMenuItem;
         private ToolStripMenuItem exportXMLgeneratorCSVToolStripMenuItem;
         private ToolStripMenuItem saveXMLAsToolStripMenuItem;
+        private ToolStripMenuItem configModeColumnOrderToolStripMenuItem;
     }
 }
