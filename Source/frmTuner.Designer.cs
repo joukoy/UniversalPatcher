@@ -65,16 +65,19 @@ namespace UniversalPatcher
             this.enableConfigModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TunerModeColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.configModeColumnOrderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveColumnLayoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideInTunerModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showColumnInTunerModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.comboFilterBy = new System.Windows.Forms.ComboBox();
             this.txtResult = new System.Windows.Forms.RichTextBox();
-            this.txtDescription = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.txtDescription = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -101,6 +104,7 @@ namespace UniversalPatcher
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
+            this.dataGridView1.ColumnDisplayIndexChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView1_ColumnDisplayIndexChanged);
             this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_ColumnHeaderMouseClick);
             this.dataGridView1.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridView1_DataBindingComplete);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.DataGridView1_DataError);
@@ -326,7 +330,8 @@ namespace UniversalPatcher
             this.unitsToolStripMenuItem,
             this.enableConfigModeToolStripMenuItem,
             this.TunerModeColumnsToolStripMenuItem,
-            this.configModeColumnOrderToolStripMenuItem});
+            this.configModeColumnOrderToolStripMenuItem,
+            this.saveColumnLayoutToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "&Settings";
@@ -364,6 +369,7 @@ namespace UniversalPatcher
             this.TunerModeColumnsToolStripMenuItem.Name = "TunerModeColumnsToolStripMenuItem";
             this.TunerModeColumnsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.TunerModeColumnsToolStripMenuItem.Text = "Tuner mode columns...";
+            this.TunerModeColumnsToolStripMenuItem.Visible = false;
             this.TunerModeColumnsToolStripMenuItem.Click += new System.EventHandler(this.tunerModeColumnsToolStripMenuItem_Click);
             // 
             // configModeColumnOrderToolStripMenuItem
@@ -374,43 +380,67 @@ namespace UniversalPatcher
             this.configModeColumnOrderToolStripMenuItem.Visible = false;
             this.configModeColumnOrderToolStripMenuItem.Click += new System.EventHandler(this.configModeColumnOrderToolStripMenuItem_Click);
             // 
+            // saveColumnLayoutToolStripMenuItem
+            // 
+            this.saveColumnLayoutToolStripMenuItem.Name = "saveColumnLayoutToolStripMenuItem";
+            this.saveColumnLayoutToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.saveColumnLayoutToolStripMenuItem.Text = "Save column layout";
+            this.saveColumnLayoutToolStripMenuItem.Click += new System.EventHandler(this.saveColumnLayoutToolStripMenuItem_Click);
+            // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cutToolStripMenuItem,
             this.copyToolStripMenuItem,
             this.pasteToolStripMenuItem,
-            this.editTableToolStripMenuItem});
+            this.editTableToolStripMenuItem,
+            this.hideInTunerModeToolStripMenuItem,
+            this.showColumnInTunerModeToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(124, 92);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(226, 136);
             // 
             // cutToolStripMenuItem
             // 
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.cutToolStripMenuItem.Text = "Cut";
             this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // editTableToolStripMenuItem
             // 
             this.editTableToolStripMenuItem.Name = "editTableToolStripMenuItem";
-            this.editTableToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.editTableToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.editTableToolStripMenuItem.Text = "Edit table";
             this.editTableToolStripMenuItem.Click += new System.EventHandler(this.editTableToolStripMenuItem_Click);
+            // 
+            // hideInTunerModeToolStripMenuItem
+            // 
+            this.hideInTunerModeToolStripMenuItem.Name = "hideInTunerModeToolStripMenuItem";
+            this.hideInTunerModeToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.hideInTunerModeToolStripMenuItem.Text = "Hide column in tuner mode";
+            this.hideInTunerModeToolStripMenuItem.Visible = false;
+            this.hideInTunerModeToolStripMenuItem.Click += new System.EventHandler(this.hideInTunerModeToolStripMenuItem_Click);
+            // 
+            // showColumnInTunerModeToolStripMenuItem
+            // 
+            this.showColumnInTunerModeToolStripMenuItem.Name = "showColumnInTunerModeToolStripMenuItem";
+            this.showColumnInTunerModeToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.showColumnInTunerModeToolStripMenuItem.Text = "Show column in tuner mode";
+            this.showColumnInTunerModeToolStripMenuItem.Click += new System.EventHandler(this.showColumnInTunerModeToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -433,21 +463,13 @@ namespace UniversalPatcher
             // txtResult
             // 
             this.txtResult.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtResult.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtResult.HideSelection = false;
             this.txtResult.Location = new System.Drawing.Point(0, 0);
             this.txtResult.Name = "txtResult";
             this.txtResult.Size = new System.Drawing.Size(424, 89);
             this.txtResult.TabIndex = 19;
             this.txtResult.Text = "";
-            // 
-            // txtDescription
-            // 
-            this.txtDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtDescription.Location = new System.Drawing.Point(0, 0);
-            this.txtDescription.Multiline = true;
-            this.txtDescription.Name = "txtDescription";
-            this.txtDescription.Size = new System.Drawing.Size(422, 89);
-            this.txtDescription.TabIndex = 20;
             // 
             // splitContainer1
             // 
@@ -466,6 +488,16 @@ namespace UniversalPatcher
             this.splitContainer1.Size = new System.Drawing.Size(850, 89);
             this.splitContainer1.SplitterDistance = 424;
             this.splitContainer1.TabIndex = 21;
+            // 
+            // txtDescription
+            // 
+            this.txtDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtDescription.HideSelection = false;
+            this.txtDescription.Location = new System.Drawing.Point(0, 0);
+            this.txtDescription.Name = "txtDescription";
+            this.txtDescription.Size = new System.Drawing.Size(422, 89);
+            this.txtDescription.TabIndex = 0;
+            this.txtDescription.Text = "";
             // 
             // splitContainer2
             // 
@@ -511,7 +543,6 @@ namespace UniversalPatcher
             this.contextMenuStrip1.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
@@ -561,7 +592,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem saveBinAsToolStripMenuItem;
         private ToolStripMenuItem unitsToolStripMenuItem;
         private RichTextBox txtResult;
-        private TextBox txtDescription;
         private SplitContainer splitContainer1;
         private SplitContainer splitContainer2;
         private ToolStripMenuItem enableConfigModeToolStripMenuItem;
@@ -570,5 +600,9 @@ namespace UniversalPatcher
         private ToolStripMenuItem exportXMLgeneratorCSVToolStripMenuItem;
         private ToolStripMenuItem saveXMLAsToolStripMenuItem;
         private ToolStripMenuItem configModeColumnOrderToolStripMenuItem;
+        private ToolStripMenuItem saveColumnLayoutToolStripMenuItem;
+        private ToolStripMenuItem hideInTunerModeToolStripMenuItem;
+        private ToolStripMenuItem showColumnInTunerModeToolStripMenuItem;
+        private RichTextBox txtDescription;
     }
 }

@@ -406,5 +406,29 @@ namespace UniversalPatcher.Properties {
                 this["ConfigModeColumnOrder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ConfigModeColumnWidth {
+            get {
+                return ((string)(this["ConfigModeColumnWidth"]));
+            }
+            set {
+                this["ConfigModeColumnWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TunerModeColumnWidth {
+            get {
+                return ((string)(this["TunerModeColumnWidth"]));
+            }
+            set {
+                this["TunerModeColumnWidth"] = value;
+            }
+        }
     }
 }

@@ -133,7 +133,7 @@ namespace UniversalPatcher
         }
 
 
-        private double getValue(uint addr, TableData mathTd)
+        public double getValue(uint addr, TableData mathTd)
         {
             double value = 0;
 
@@ -175,7 +175,7 @@ namespace UniversalPatcher
             return value;
         }
 
-        private UInt64 getRawValue(UInt32 addr, TableData mathTd)
+        public UInt64 getRawValue(UInt32 addr, TableData mathTd)
         {
             UInt32 bufAddr = addr - td.addrInt; 
             if (mathTd.DataType == InDataType.UWORD || mathTd.DataType == InDataType.SWORD)

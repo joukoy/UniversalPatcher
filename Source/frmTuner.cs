@@ -23,6 +23,8 @@ namespace UniversalPatcher
         {
             InitializeComponent();
 
+            contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(cms_Opening);
+
             enableConfigModeToolStripMenuItem.Checked = Properties.Settings.Default.TunerConfigMode;
 
             PCM = PCM1;
@@ -255,7 +257,7 @@ namespace UniversalPatcher
                 Logger(" [OK]");
                 refreshTablelist();
                 Application.DoEvents();
-                dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+                //dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             }
             catch (Exception ex)
             {
@@ -433,6 +435,8 @@ namespace UniversalPatcher
             {
                 string[] tunerColumns = Properties.Settings.Default.TunerModeColumns.ToLower().Split(',');
                 string[] configColumns = Properties.Settings.Default.ConfigModeColumnOrder.ToLower().Split(',');
+                string[] configWidth = Properties.Settings.Default.ConfigModeColumnWidth.Split(',');
+                string[] tunerWidth = Properties.Settings.Default.TunerModeColumnWidth.Split(',');
                 for (int c=0; c< dataGridView1.Columns.Count; c++)
                 {
                     if (enableConfigModeToolStripMenuItem.Checked)
@@ -440,14 +444,22 @@ namespace UniversalPatcher
                         dataGridView1.Columns[c].ReadOnly = false;
                         dataGridView1.Columns[c].Visible = true;
                         dataGridView1.Columns[c].DisplayIndex = Array.IndexOf(configColumns, dataGridView1.Columns[c].HeaderText.ToLower());
+                        dataGridView1.Columns[c].Width = Convert.ToInt32(configWidth[c]);
                     }
                     else
                     {
                         dataGridView1.Columns[c].ReadOnly = true;
-                        if (dataGridView1.Columns[c].HeaderText.ToLower() == "id" || tunerColumns.Contains(dataGridView1.Columns[c].HeaderText.ToLower()))
+                        if (dataGridView1.Columns[c].HeaderText.ToLower() == "id")
+                        {
+                            dataGridView1.Columns[c].DisplayIndex = 0;
+                            dataGridView1.Columns[c].Visible = true;
+                            dataGridView1.Columns[c].Width = Convert.ToInt32(tunerWidth[c]);
+                        }
+                        else if (tunerColumns.Contains(dataGridView1.Columns[c].HeaderText.ToLower()))
                         {
                             dataGridView1.Columns[c].Visible = true;
                             dataGridView1.Columns[c].DisplayIndex = Array.IndexOf(tunerColumns, dataGridView1.Columns[c].HeaderText.ToLower());
+                            dataGridView1.Columns[c].Width = Convert.ToInt32(tunerWidth[c]);
                         }
                         else
                         {
@@ -478,7 +490,10 @@ namespace UniversalPatcher
                 dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
 
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
 
         }
 
@@ -926,17 +941,25 @@ namespace UniversalPatcher
 
         private SortOrder getSortOrder(int columnIndex)
         {
-            if (dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.Descending 
-                ||dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.None)
+            try
             {
-                dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
-                return SortOrder.Ascending;
+                if (dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.Descending
+                    || dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.None)
+                {
+                    dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
+                    return SortOrder.Ascending;
+                }
+                else
+                {
+                    dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Descending;
+                    return SortOrder.Descending;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Descending;
-                return SortOrder.Descending;
+                Debug.WriteLine(ex.Message);
             }
+            return SortOrder.Ascending;
         }
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
@@ -949,6 +972,24 @@ namespace UniversalPatcher
                 }
                 Properties.Settings.Default.ConfigModeColumnOrder = cOrder.Trim(',');
             }
+
+            if (Properties.Settings.Default.ConfigModeColumnWidth == null || Properties.Settings.Default.ConfigModeColumnWidth.Length == 0)
+            {
+                string columnWidth = "";
+                for (int c = 0; c < dataGridView1.Columns.Count; c++)
+                    columnWidth += dataGridView1.Columns[c].Width.ToString() + ",";
+                Properties.Settings.Default.ConfigModeColumnWidth = columnWidth.Trim(',');
+            }
+            if (Properties.Settings.Default.TunerModeColumnWidth == null || Properties.Settings.Default.TunerModeColumnWidth.Length == 0)
+            {
+                string columnWidth = "";
+                for (int c = 0; c < dataGridView1.Columns.Count; c++)
+                    if (dataGridView1.Columns[c].Visible)
+                        columnWidth += dataGridView1.Columns[c].Width.ToString() + ",";
+                Properties.Settings.Default.TunerModeColumnWidth = columnWidth.Trim(',');
+
+            }
+
         }
 
         private void unitsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -990,17 +1031,29 @@ namespace UniversalPatcher
 
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
+            txtDescription.Text = "";
             if (dataGridView1.SelectedCells.Count < 1)
             {
-                txtDescription.Text = "";
                 return;
             }
             int ind = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
-            txtDescription.Text = tableDatas[ind].TableName + Environment.NewLine;
+            txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Bold);
+            txtDescription.AppendText(tableDatas[ind].TableName + Environment.NewLine); 
+            txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
             if (tableDatas[ind].TableDescription != null)
-                txtDescription.Text += tableDatas[ind].TableDescription + Environment.NewLine;
+                txtDescription.AppendText(tableDatas[ind].TableDescription + Environment.NewLine);
             if (tableDatas[ind].ExtraDescription != null)
-                txtDescription.Text += tableDatas[ind].ExtraDescription;
+                txtDescription.AppendText(tableDatas[ind].ExtraDescription + Environment.NewLine);
+            if (tableDatas[ind].Rows == 1 && tableDatas[ind].Columns == 1)
+            {
+                frmTableEditor frmT = new frmTableEditor();
+                frmT.PCM = PCM;
+                frmT.loadTable(tableDatas[ind]);
+                double curVal = frmT.getValue((uint)(tableDatas[ind].addrInt + tableDatas[ind].Offset), tableDatas[ind]);
+                UInt64 rawVal = frmT.getRawValue((uint)(tableDatas[ind].addrInt + tableDatas[ind].Offset), tableDatas[ind]);
+                txtDescription.SelectionColor = Color.Blue;
+                txtDescription.AppendText("Current value: " + curVal.ToString() + " [" + rawVal.ToString("X") + "]");
+            }
 
         }
 
@@ -1024,7 +1077,7 @@ namespace UniversalPatcher
             filterTables();
             setConfigMode();
             Application.DoEvents();
-            dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+            //dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
         }
 
         private void tunerModeColumnsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1173,6 +1226,138 @@ namespace UniversalPatcher
             Properties.Settings.Default.Save();
             frmd.Dispose();
             filterTables();
+        }
+        
+        private struct DisplayOrder
+        {
+            public int index;
+            public string columnName;
+        }
+        private void DataGridView1_ColumnDisplayIndexChanged(object sender, DataGridViewColumnEventArgs e)
+        {
+        }
+
+        private void saveGridLayout()
+        {
+            if (dataGridView1.Columns.Count < 2) return;
+            string columnWidth = "";
+            List<DisplayOrder> displayOrder = new List<DisplayOrder>();
+            for (int c = 0; c < dataGridView1.Columns.Count; c++)
+            {
+                columnWidth += dataGridView1.Columns[c].Width.ToString() + ","; 
+                if (dataGridView1.Columns[c].Visible)
+                {
+                    DisplayOrder dispO = new DisplayOrder();
+                    dispO.columnName = dataGridView1.Columns[c].Name;
+                    dispO.index = dataGridView1.Columns[c].DisplayIndex;
+                    displayOrder.Add(dispO);
+                }
+            }
+            string order = "";
+            for (int i = 0; i < displayOrder.Count; i++)
+            {
+                for (int j = 0; j < displayOrder.Count; j++)
+                {
+                    if (displayOrder[j].index == i)
+                    {
+                        order += displayOrder[j].columnName + ",";
+                        break;
+                    }
+                }
+            }
+            if (enableConfigModeToolStripMenuItem.Checked)
+            {
+                //Config mode
+                Properties.Settings.Default.ConfigModeColumnOrder = order.Trim(',');
+                Properties.Settings.Default.ConfigModeColumnWidth = columnWidth.Trim(',');
+            }
+            else
+            {
+                //Tuner mode
+                Properties.Settings.Default.TunerModeColumns = order.Trim(',');
+                Properties.Settings.Default.TunerModeColumnWidth = columnWidth.Trim(',');
+            }
+            Properties.Settings.Default.Save();
+        }
+
+        private void saveColumnLayoutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveGridLayout();
+        }
+
+        private void hideInTunerModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string selectedColumn = "";
+            if (dataGridView1.SelectedColumns.Count == 1)
+                selectedColumn = dataGridView1.SelectedColumns[0].Name;
+            else if (dataGridView1.SelectedCells.Count == 1)
+                selectedColumn = dataGridView1.Columns[dataGridView1.SelectedCells[0].ColumnIndex].Name;
+
+            if (selectedColumn.Length == 0 || selectedColumn.ToLower() == "id") return;
+
+            Logger("Hiding column: " + selectedColumn);
+            string tmp = Properties.Settings.Default.TunerModeColumns.Replace(selectedColumn, "");
+            Properties.Settings.Default.TunerModeColumns = tmp.Replace(",,", "").Trim(',');
+            Properties.Settings.Default.Save();
+        }
+
+        private void showColumnInTunerModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showColumnInTunerModeToolStripMenuItem.Checked = !showColumnInTunerModeToolStripMenuItem.Checked;
+
+            string selectedColumn = "";
+
+            if (dataGridView1.SelectedColumns.Count == 1)
+                selectedColumn = dataGridView1.SelectedColumns[0].Name;
+            else if (dataGridView1.SelectedCells.Count == 1)
+                selectedColumn = dataGridView1.Columns[dataGridView1.SelectedCells[0].ColumnIndex].Name;
+
+            if (selectedColumn.Length == 0 || selectedColumn.ToLower() == "id") return;
+
+            if (showColumnInTunerModeToolStripMenuItem.Checked)
+            {
+                Logger("Adding column: " + selectedColumn);
+                if (!Properties.Settings.Default.TunerModeColumns.Contains(selectedColumn))
+                    Properties.Settings.Default.TunerModeColumns += "," + selectedColumn;
+            }
+            else
+            {
+                Logger("Hiding column: " + selectedColumn);
+                string[] tunerModCols = Properties.Settings.Default.TunerModeColumns.Split(',');
+                string cols = "";
+                for (int i = 0; i < tunerModCols.Length; i++)
+                {
+                    if (tunerModCols[i] != selectedColumn)
+                    {
+                        cols += tunerModCols[i] + ",";
+                    }
+                }
+                Properties.Settings.Default.TunerModeColumns = cols.Trim(',');
+                Properties.Settings.Default.Save();
+            }
+            Properties.Settings.Default.Save();
+            if (!enableConfigModeToolStripMenuItem.Checked)
+                filterTables();
+        }
+        void cms_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string selectedColumn = "";
+            if (dataGridView1.SelectedColumns.Count == 1)
+                selectedColumn = dataGridView1.SelectedColumns[0].Name;
+            else if (dataGridView1.SelectedCells.Count == 1)
+                selectedColumn = dataGridView1.Columns[dataGridView1.SelectedCells[0].ColumnIndex].Name;
+
+            showColumnInTunerModeToolStripMenuItem.Checked = false;
+
+            string[] tunerModCols = Properties.Settings.Default.TunerModeColumns.Split(',');
+            for (int i = 0; i < tunerModCols.Length; i++)
+            {
+                if (tunerModCols[i] == selectedColumn)
+                {
+                    showColumnInTunerModeToolStripMenuItem.Checked = true;
+                    break;
+                }
+            }
         }
     }
 }
