@@ -71,8 +71,7 @@ namespace UniversalPatcher
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hideInTunerModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showColumnInTunerModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tuneModeColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.comboFilterBy = new System.Windows.Forms.ComboBox();
             this.txtResult = new System.Windows.Forms.RichTextBox();
@@ -394,53 +393,43 @@ namespace UniversalPatcher
             this.copyToolStripMenuItem,
             this.pasteToolStripMenuItem,
             this.editTableToolStripMenuItem,
-            this.hideInTunerModeToolStripMenuItem,
-            this.showColumnInTunerModeToolStripMenuItem});
+            this.tuneModeColumnsToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(226, 136);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(204, 114);
             // 
             // cutToolStripMenuItem
             // 
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.cutToolStripMenuItem.Text = "Cut";
             this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // editTableToolStripMenuItem
             // 
             this.editTableToolStripMenuItem.Name = "editTableToolStripMenuItem";
-            this.editTableToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.editTableToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.editTableToolStripMenuItem.Text = "Edit table";
             this.editTableToolStripMenuItem.Click += new System.EventHandler(this.editTableToolStripMenuItem_Click);
             // 
-            // hideInTunerModeToolStripMenuItem
+            // tuneModeColumnsToolStripMenuItem
             // 
-            this.hideInTunerModeToolStripMenuItem.Name = "hideInTunerModeToolStripMenuItem";
-            this.hideInTunerModeToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
-            this.hideInTunerModeToolStripMenuItem.Text = "Hide column in tuner mode";
-            this.hideInTunerModeToolStripMenuItem.Visible = false;
-            this.hideInTunerModeToolStripMenuItem.Click += new System.EventHandler(this.hideInTunerModeToolStripMenuItem_Click);
-            // 
-            // showColumnInTunerModeToolStripMenuItem
-            // 
-            this.showColumnInTunerModeToolStripMenuItem.Name = "showColumnInTunerModeToolStripMenuItem";
-            this.showColumnInTunerModeToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
-            this.showColumnInTunerModeToolStripMenuItem.Text = "Show column in tuner mode";
-            this.showColumnInTunerModeToolStripMenuItem.Click += new System.EventHandler(this.showColumnInTunerModeToolStripMenuItem_Click);
+            this.tuneModeColumnsToolStripMenuItem.Name = "tuneModeColumnsToolStripMenuItem";
+            this.tuneModeColumnsToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.tuneModeColumnsToolStripMenuItem.Text = "* Tuner mode columns *";
             // 
             // label1
             // 
@@ -601,8 +590,7 @@ namespace UniversalPatcher
         private ToolStripMenuItem saveXMLAsToolStripMenuItem;
         private ToolStripMenuItem configModeColumnOrderToolStripMenuItem;
         private ToolStripMenuItem saveColumnLayoutToolStripMenuItem;
-        private ToolStripMenuItem hideInTunerModeToolStripMenuItem;
-        private ToolStripMenuItem showColumnInTunerModeToolStripMenuItem;
         private RichTextBox txtDescription;
+        private ToolStripMenuItem tuneModeColumnsToolStripMenuItem;
     }
 }

@@ -402,6 +402,15 @@ namespace UniversalPatcher
                 }
             }
 
+            TableData tdTmp = new TableData();
+            foreach (var prop in tdTmp.GetType().GetProperties())
+            {
+                ToolStripMenuItem menuItem = new ToolStripMenuItem(prop.Name);
+                menuItem.Name = prop.Name;
+                contextMenuStrip1.Items.Add(menuItem);
+                menuItem.Click += new EventHandler(columnSelection_Click);
+            }
+
         }
         private void frmTuner_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -1241,6 +1250,7 @@ namespace UniversalPatcher
         {
             if (dataGridView1.Columns.Count < 2) return;
             string columnWidth = "";
+            int maxDispIndex = 0;
             List<DisplayOrder> displayOrder = new List<DisplayOrder>();
             for (int c = 0; c < dataGridView1.Columns.Count; c++)
             {
@@ -1251,10 +1261,12 @@ namespace UniversalPatcher
                     dispO.columnName = dataGridView1.Columns[c].Name;
                     dispO.index = dataGridView1.Columns[c].DisplayIndex;
                     displayOrder.Add(dispO);
+                    if (dispO.index > maxDispIndex)
+                        maxDispIndex = dispO.index;
                 }
             }
             string order = "";
-            for (int i = 0; i < displayOrder.Count; i++)
+            for (int i = 0; i <= maxDispIndex; i++)
             {
                 for (int j = 0; j < displayOrder.Count; j++)
                 {
@@ -1285,79 +1297,52 @@ namespace UniversalPatcher
             saveGridLayout();
         }
 
-        private void hideInTunerModeToolStripMenuItem_Click(object sender, EventArgs e)
+
+        void cms_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            string selectedColumn = "";
-            if (dataGridView1.SelectedColumns.Count == 1)
-                selectedColumn = dataGridView1.SelectedColumns[0].Name;
-            else if (dataGridView1.SelectedCells.Count == 1)
-                selectedColumn = dataGridView1.Columns[dataGridView1.SelectedCells[0].ColumnIndex].Name;
-
-            if (selectedColumn.Length == 0 || selectedColumn.ToLower() == "id") return;
-
-            Logger("Hiding column: " + selectedColumn);
-            string tmp = Properties.Settings.Default.TunerModeColumns.Replace(selectedColumn, "");
-            Properties.Settings.Default.TunerModeColumns = tmp.Replace(",,", "").Trim(',');
-            Properties.Settings.Default.Save();
-        }
-
-        private void showColumnInTunerModeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            showColumnInTunerModeToolStripMenuItem.Checked = !showColumnInTunerModeToolStripMenuItem.Checked;
-
-            string selectedColumn = "";
-
-            if (dataGridView1.SelectedColumns.Count == 1)
-                selectedColumn = dataGridView1.SelectedColumns[0].Name;
-            else if (dataGridView1.SelectedCells.Count == 1)
-                selectedColumn = dataGridView1.Columns[dataGridView1.SelectedCells[0].ColumnIndex].Name;
-
-            if (selectedColumn.Length == 0 || selectedColumn.ToLower() == "id") return;
-
-            if (showColumnInTunerModeToolStripMenuItem.Checked)
+            string[] tunerModCols = Properties.Settings.Default.TunerModeColumns.Split(',');
+           
+            foreach (ToolStripMenuItem menuItem in contextMenuStrip1.Items)
             {
-                Logger("Adding column: " + selectedColumn);
-                if (!Properties.Settings.Default.TunerModeColumns.Contains(selectedColumn))
-                    Properties.Settings.Default.TunerModeColumns += "," + selectedColumn;
-            }
-            else
-            {
-                Logger("Hiding column: " + selectedColumn);
-                string[] tunerModCols = Properties.Settings.Default.TunerModeColumns.Split(',');
-                string cols = "";
+                menuItem.Checked = false;
                 for (int i = 0; i < tunerModCols.Length; i++)
                 {
-                    if (tunerModCols[i] != selectedColumn)
+                    if (menuItem.Name == tunerModCols[i])
                     {
-                        cols += tunerModCols[i] + ",";
+                        menuItem.Checked = true;
+                        break;
                     }
                 }
-                Properties.Settings.Default.TunerModeColumns = cols.Trim(',');
-                Properties.Settings.Default.Save();
             }
+        }
+
+/*        private void selectTunerModeColumns()
+        {
+            string tColumns = "";
+            foreach (ToolStripMenuItem menuItem in contextMenuStrip1.Items)
+            {
+                if (menuItem.Checked)
+                {
+                    tColumns += menuItem.Name + ",";
+                }
+            }
+            Properties.Settings.Default.TunerModeColumns = tColumns.Trim(',');
             Properties.Settings.Default.Save();
             if (!enableConfigModeToolStripMenuItem.Checked)
                 filterTables();
         }
-        void cms_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+*/
+        void columnSelection_Click(object sender, EventArgs e)
         {
-            string selectedColumn = "";
-            if (dataGridView1.SelectedColumns.Count == 1)
-                selectedColumn = dataGridView1.SelectedColumns[0].Name;
-            else if (dataGridView1.SelectedCells.Count == 1)
-                selectedColumn = dataGridView1.Columns[dataGridView1.SelectedCells[0].ColumnIndex].Name;
-
-            showColumnInTunerModeToolStripMenuItem.Checked = false;
-
-            string[] tunerModCols = Properties.Settings.Default.TunerModeColumns.Split(',');
-            for (int i = 0; i < tunerModCols.Length; i++)
-            {
-                if (tunerModCols[i] == selectedColumn)
-                {
-                    showColumnInTunerModeToolStripMenuItem.Checked = true;
-                    break;
-                }
-            }
+            ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
+            menuItem.Checked = !menuItem.Checked;
+            Debug.WriteLine(menuItem.Name);
+            //selectTunerModeColumns();
+            dataGridView1.Columns[menuItem.Name].Visible = menuItem.Checked;
+            saveGridLayout();
+            if (!enableConfigModeToolStripMenuItem.Checked)
+                filterTables();
         }
+
     }
 }
