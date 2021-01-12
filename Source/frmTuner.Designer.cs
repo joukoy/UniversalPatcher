@@ -74,6 +74,7 @@ namespace UniversalPatcher
             this.txtDescription = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.saveXMLAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -160,6 +161,7 @@ namespace UniversalPatcher
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadXMLToolStripMenuItem,
             this.saveXMLToolStripMenuItem,
+            this.saveXMLAsToolStripMenuItem,
             this.saveBINToolStripMenuItem,
             this.saveBinAsToolStripMenuItem,
             this.clearTableToolStripMenuItem});
@@ -170,35 +172,35 @@ namespace UniversalPatcher
             // loadXMLToolStripMenuItem
             // 
             this.loadXMLToolStripMenuItem.Name = "loadXMLToolStripMenuItem";
-            this.loadXMLToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.loadXMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadXMLToolStripMenuItem.Text = "Load XML";
             this.loadXMLToolStripMenuItem.Click += new System.EventHandler(this.loadXMLToolStripMenuItem_Click);
             // 
             // saveXMLToolStripMenuItem
             // 
             this.saveXMLToolStripMenuItem.Name = "saveXMLToolStripMenuItem";
-            this.saveXMLToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.saveXMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveXMLToolStripMenuItem.Text = "Save XML";
             this.saveXMLToolStripMenuItem.Click += new System.EventHandler(this.saveXMLToolStripMenuItem_Click);
             // 
             // saveBINToolStripMenuItem
             // 
             this.saveBINToolStripMenuItem.Name = "saveBINToolStripMenuItem";
-            this.saveBINToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.saveBINToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveBINToolStripMenuItem.Text = "&Save BIN";
             this.saveBINToolStripMenuItem.Click += new System.EventHandler(this.saveBINToolStripMenuItem_Click);
             // 
             // saveBinAsToolStripMenuItem
             // 
             this.saveBinAsToolStripMenuItem.Name = "saveBinAsToolStripMenuItem";
-            this.saveBinAsToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.saveBinAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveBinAsToolStripMenuItem.Text = "Save bin &As...";
             this.saveBinAsToolStripMenuItem.Click += new System.EventHandler(this.saveBinAsToolStripMenuItem_Click);
             // 
             // clearTableToolStripMenuItem
             // 
             this.clearTableToolStripMenuItem.Name = "clearTableToolStripMenuItem";
-            this.clearTableToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.clearTableToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.clearTableToolStripMenuItem.Text = "&Clear Tablelist";
             this.clearTableToolStripMenuItem.Click += new System.EventHandler(this.clearTableToolStripMenuItem_Click);
             // 
@@ -468,6 +470,13 @@ namespace UniversalPatcher
             this.splitContainer2.SplitterDistance = 409;
             this.splitContainer2.TabIndex = 22;
             // 
+            // saveXMLAsToolStripMenuItem
+            // 
+            this.saveXMLAsToolStripMenuItem.Name = "saveXMLAsToolStripMenuItem";
+            this.saveXMLAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveXMLAsToolStripMenuItem.Text = "Save XML As...";
+            this.saveXMLAsToolStripMenuItem.Click += new System.EventHandler(this.saveXMLAsToolStripMenuItem_Click);
+            // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -549,5 +558,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem TunerModeColumnsToolStripMenuItem;
         private ToolStripMenuItem importXMLgeneratorCSVToolStripMenuItem;
         private ToolStripMenuItem exportXMLgeneratorCSVToolStripMenuItem;
+        private ToolStripMenuItem saveXMLAsToolStripMenuItem;
     }
 }

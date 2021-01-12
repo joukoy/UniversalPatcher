@@ -281,7 +281,7 @@ namespace UniversalPatcher
                     fName = SelectSaveFile("XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
                 if (fName.Length == 0)
                     return;
-
+                currentXmlFile = fName;
                 Logger("Saving file " + fName + "...", false);
                 using (FileStream stream = new FileStream(fName, FileMode.Create))
                 {
@@ -533,7 +533,7 @@ namespace UniversalPatcher
 
         private void saveXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveXML();
+            SaveXML(currentXmlFile);
         }
 
         private void saveBINToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1036,18 +1036,20 @@ namespace UniversalPatcher
 
                 Logger("Generating CSV...");
 
-                string csvData = "Tablename;Size;OS;Address";
+                string csvData = "Tablename;Category;Size;OS1;Address1;OS2;Address2" + Environment.NewLine;
                 for (int row = 0; row < tableDatas.Count; row++)
                 {
                     int tbSize = tableDatas[row].Rows * tableDatas[row].Columns * getElementSize(tableDatas[row].DataType);
                     csvData += tableDatas[row].TableName + ";";
+                    csvData += tableDatas[row].Category + ";";
                     csvData += tbSize.ToString() + ";";
-                    csvData += tableDatas[row].OS + ";";
-                    csvData += tableDatas[row].Address + Environment.NewLine;
+                    //csvData += tableDatas[row].OS + ";";
+                    //csvData += tableDatas[row].Address;
+                    csvData += Environment.NewLine;
                 }
                 Logger("Writing to file: " + fName, false);
                 WriteTextFile(fName, csvData);
-                Logger("OK");
+                Logger(" [OK]");
             }
             catch (Exception ex)
             {
@@ -1057,6 +1059,7 @@ namespace UniversalPatcher
         struct OsAddrStruct
         {
             public string tableName;
+            public string category;
             public string OS;
             public string addr;
         }
@@ -1068,7 +1071,7 @@ namespace UniversalPatcher
                 List<OsAddrStruct> osAddrList = new List<OsAddrStruct>();
                 List<string> osList = new List<string>();
 
-                LoggerBold("Supply CSV file in format: Tablename;Size;OS1;Address1;OS2;Address2;...");
+                LoggerBold("Supply CSV file in format: Tablename;Category;Size;OS1;Address1;OS2;Address2;...");
                 string fName = SelectFile("Select CSV file for XML generator","CSV files (*.csv)|*.csv|ALL files|*.*");
                 if (fName.Length == 0) return;
                 Logger("Using file: " + currentXmlFile + " as template");
@@ -1076,28 +1079,31 @@ namespace UniversalPatcher
                 
                 StreamReader sr = new StreamReader(fName);
                 string csvLine;
-                while ((csvLine = sr.ReadLine()) != null)
+                while ((csvLine = sr.ReadLine()) != null )
                 {
-                    string[] lParts = csvLine.Split(';');
-                    if (lParts.Length > 3)
+                    if (!csvLine.ToLower().StartsWith("tablename"))
                     {
-                        for (int x=2; x< lParts.Length; x+=2)
+                        string[] lParts = csvLine.Split(';');
+                        if (lParts.Length > 4)
                         {
-                            OsAddrStruct oa;
-                            oa.tableName = lParts[0];
-                            oa.OS = lParts[x];
-                            oa.addr = lParts[x + 1];
-                            osAddrList.Add(oa);
-                            if (!osList.Contains(oa.OS))
-                                osList.Add(oa.OS);
+                            for (int x = 3; x < lParts.Length; x += 2)
+                            {
+                                OsAddrStruct oa;
+                                oa.tableName = lParts[0];
+                                oa.category = lParts[1];
+                                oa.OS = lParts[x];
+                                oa.addr = lParts[x + 1];
+                                osAddrList.Add(oa);
+                                if (!osList.Contains(oa.OS))
+                                    osList.Add(oa.OS);
+                            }
                         }
                     }
                 }
                 Logger(" [OK]");
                 for (int o=0; o<osList.Count; o++)
                 {
-                    fName = Path.Combine(Application.StartupPath, "Tuner", osList[o] + "-export.xml");
-                    LoadXML(currentXmlFile);
+                    List<TableData> newTds = new List<TableData>();
                     for (int t = 0; t < tableDatas.Count; t++) 
                         tableDatas[t].addrInt = uint.MaxValue;  //Set all addresses to maxuint
                     for (int x = 0; x < osAddrList.Count; x++)
@@ -1106,19 +1112,27 @@ namespace UniversalPatcher
                         {
                             for (int t = 0; t < tableDatas.Count; t++)
                             {
-                                if (tableDatas[t].TableName == osAddrList[x].tableName)
+                                if (tableDatas[t].TableName == osAddrList[x].tableName && tableDatas[t].Category == osAddrList[x].category)
                                 {
-                                    tableDatas[t].Address = osAddrList[x].addr;
-                                    tableDatas[t].OS = osList[o];
+                                    TableData newTd = tableDatas[t].ShallowCopy();
+                                    newTd.OS = osList[o];
+                                    newTd.Address = osAddrList[x].addr;
+                                    newTds.Add(newTd);
                                     Debug.WriteLine(tableDatas[t].TableName + ", addr:" + osAddrList[x].addr);
                                 }
                             }
                         }
                     }
-                    for (int t = tableDatas.Count - 1; t >= 0; t--)
-                        if (tableDatas[t].addrInt == uint.MaxValue)
-                            tableDatas.RemoveAt(t);  //Remove rows where address was not available
-                    SaveXML(fName);
+                    fName = Path.Combine(Application.StartupPath, "Tuner", osList[o] + "-export.xml");
+                    Logger("Saving file " + fName + "...", false);
+                    using (FileStream stream = new FileStream(fName, FileMode.Create))
+                    {
+                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
+                        writer.Serialize(stream, newTds);
+                        stream.Close();
+                    }
+                    Logger(" [OK]");
+
                 }
             }
             catch (Exception ex)
@@ -1126,6 +1140,11 @@ namespace UniversalPatcher
                 LoggerBold(ex.Message);
             }
 
+        }
+
+        private void saveXMLAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveXML();
         }
     }
 }
