@@ -313,69 +313,69 @@ namespace UniversalPatcher
         private void importDTC()
         {
             Logger("Importing DTC codes... ", false);
-            TableData td = new TableData();
+            TableData dtcTd = new TableData();
             dtcCode dtc = dtcCodes[0];
             //td.Address = dtc.StatusAddr;
-            td.addrInt = dtc.statusAddrInt;
-            td.Category = "DTC";
+            dtcTd.addrInt = dtc.statusAddrInt;
+            dtcTd.Category = "DTC";
             //td.ColumnHeaders = "Status";
-            td.Columns = 1;
+            dtcTd.Columns = 1;
             //td.Floating = false;
-            td.OutputType = OutDataType.Int;
-            td.Decimals = 0;
+            dtcTd.OutputType = OutDataType.Int;
+            dtcTd.Decimals = 0;
             //td.ElementSize = 1; // (byte)(dtcCodes[1].codeAddrInt - dtcCodes[0].codeAddrInt);
-            td.DataType = InDataType.UBYTE;
-            td.Math = "X";
-            td.OS = PCM.OS;
+            dtcTd.DataType = InDataType.UBYTE;
+            dtcTd.Math = "X";
+            dtcTd.OS = PCM.OS;
             for (int i = 0; i < dtcCodes.Count; i++)
             {
-                td.RowHeaders += dtcCodes[i].Code + ",";
+                dtcTd.RowHeaders += dtcCodes[i].Code + ",";
             }
-            td.RowHeaders = td.RowHeaders.Trim(',');
-            td.Rows = (ushort)dtcCodes.Count;
-            td.SavingMath = "X";
+            dtcTd.RowHeaders = dtcTd.RowHeaders.Trim(',');
+            dtcTd.Rows = (ushort)dtcCodes.Count;
+            dtcTd.SavingMath = "X";
             //td.Signed = false;
             if (dtcCombined)
             {
                 //td.TableDescription = "00 MIL and reporting off, 01 type A/no mil, 02 type B/no mil, 03 type C/no mil, 04 not reported/mil, 05 type A/mil, 06 type B/mil, 07 type c/mil";
-                td.Values = "Enum: 00:MIL and reporting off,01:type A/no mil,02:type B/no mil,03:type C/no mil, 04:not reported/mil,05:type A/mil,06:type B/mil,07:type c/mil";
-                td.TableName = "DTC";
+                dtcTd.Values = "Enum: 00:MIL and reporting off,01:type A/no mil,02:type B/no mil,03:type C/no mil, 04:not reported/mil,05:type A/mil,06:type B/mil,07:type c/mil";
+                dtcTd.TableName = "DTC";
             }
             else
             {
                 //td.TableDescription = "0 = 1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY), 1 = 2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles), 2 = Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC), 3 = Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)";
-                td.Values = "Enum: 0:1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY),1:2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles),2:Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC),3:Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)";
-                td.TableName = "DTC.Codes";
+                dtcTd.Values = "Enum: 0:1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY),1:2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles),2:Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC),3:Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)";
+                dtcTd.TableName = "DTC.Codes";
             }
 
-            tableDatas.Insert(0,td);
+            tableDatas.Insert(0,dtcTd);
 
             if (!dtcCombined)
             {
-                td = new TableData();
-                td.TableName = "DTC.MIL_Enable";
+                dtcTd = new TableData();
+                dtcTd.TableName = "DTC.MIL_Enable";
                 //td.Address = dtc.MilAddr;
-                td.addrInt = dtc.milAddrInt;
-                td.Category = "DTC";
+                dtcTd.addrInt = dtc.milAddrInt;
+                dtcTd.Category = "DTC";
                 //td.ColumnHeaders = "MIL";
-                td.Columns = 1;
+                dtcTd.Columns = 1;
                 //td.Floating = false;
-                td.OutputType = OutDataType.Flag;
-                td.Decimals = 0;
+                dtcTd.OutputType = OutDataType.Flag;
+                dtcTd.Decimals = 0;
                 //td.ElementSize = 1; // (byte)(dtcCodes[1].milAddrInt - dtcCodes[0].milAddrInt);
-                td.DataType = InDataType.UBYTE;
-                td.Math = "X";
-                td.OS = PCM.OS;
+                dtcTd.DataType = InDataType.UBYTE;
+                dtcTd.Math = "X";
+                dtcTd.OS = PCM.OS;
                 for (int i = 0; i < dtcCodes.Count; i++)
                 {
-                    td.RowHeaders += dtcCodes[i].Code + ",";
+                    dtcTd.RowHeaders += dtcCodes[i].Code + ",";
                 }
-                td.Rows = (ushort)dtcCodes.Count;
-                td.SavingMath = "X";
+                dtcTd.Rows = (ushort)dtcCodes.Count;
+                dtcTd.SavingMath = "X";
                 //td.Signed = false;
-                td.TableDescription = "0 = No MIL (Lamp always off) 1 = MIL (Lamp may be commanded on by PCM)";
+                dtcTd.TableDescription = "0 = No MIL (Lamp always off) 1 = MIL (Lamp may be commanded on by PCM)";
                 //td.Values = "Enum: 0:No MIL (Lamp always off),1:MIL (Lamp may be commanded on by PCM)";
-                tableDatas.Insert(1,td);
+                tableDatas.Insert(1,dtcTd);
             }
             refreshTablelist();
             Logger("OK");
@@ -992,7 +992,8 @@ namespace UniversalPatcher
         }
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-/*            if (Properties.Settings.Default.ConfigModeColumnOrder == null || Properties.Settings.Default.ConfigModeColumnOrder.Length == 0)
+            //Set default values for datagrid, if not set previously:
+            if (Properties.Settings.Default.ConfigModeColumnOrder == null || Properties.Settings.Default.ConfigModeColumnOrder.Length == 0)
             {
                 string cOrder = "";
                 for (int c = 0; c < dataGridView1.Columns.Count; c++)
@@ -1018,7 +1019,7 @@ namespace UniversalPatcher
                 Properties.Settings.Default.TunerModeColumnWidth = columnWidth.Trim(',');
 
             }
-*/
+
         }
 
         private void unitsToolStripMenuItem_Click(object sender, EventArgs e)
