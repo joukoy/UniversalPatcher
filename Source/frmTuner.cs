@@ -1077,6 +1077,7 @@ namespace UniversalPatcher
             {
                 frmTableEditor frmT = new frmTableEditor();
                 frmT.PCM = PCM;
+                frmT.disableMultiTable = true;
                 frmT.loadTable(tableDatas[ind]);
                 double curVal = frmT.getValue((uint)(tableDatas[ind].addrInt + tableDatas[ind].Offset), tableDatas[ind]);
                 UInt64 rawVal = frmT.getRawValue((uint)(tableDatas[ind].addrInt + tableDatas[ind].Offset), tableDatas[ind]);
