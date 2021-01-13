@@ -23,7 +23,7 @@ namespace UniversalPatcher
         {
             InitializeComponent();
 
-            contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(cms_Opening);
+            contextMenuStrip2.Opening += new System.ComponentModel.CancelEventHandler(cms_Opening);
 
             enableConfigModeToolStripMenuItem.Checked = Properties.Settings.Default.TunerConfigMode;
 
@@ -68,6 +68,7 @@ namespace UniversalPatcher
         private PcmFile PCM;
         private string sortBy = "id";
         private int sortIndex = 0;
+        private bool columnsModified = false;
         BindingSource bindingsource = new BindingSource();
         BindingSource categoryBindingSource = new BindingSource();
         private BindingList<TableData> filteredCategories = new BindingList<TableData>();
@@ -400,15 +401,23 @@ namespace UniversalPatcher
                     this.Location = Properties.Settings.Default.TunerWindowLocation;
                     this.Size = Properties.Settings.Default.TunerWindowSize;
                 }
+                if (Properties.Settings.Default.TunerLogWindowSize.Width > 0 || Properties.Settings.Default.TunerLogWindowSize.Height > 0)
+                {
+                    this.splitContainer2.SplitterDistance = Properties.Settings.Default.TunerLogWindowSize.Width;
+                    this.splitContainer1.SplitterDistance = Properties.Settings.Default.TunerLogWindowSize.Height;
+                }
             }
 
             TableData tdTmp = new TableData();
             foreach (var prop in tdTmp.GetType().GetProperties())
             {
-                ToolStripMenuItem menuItem = new ToolStripMenuItem(prop.Name);
-                menuItem.Name = prop.Name;
-                contextMenuStrip1.Items.Add(menuItem);
-                menuItem.Click += new EventHandler(columnSelection_Click);
+                if (prop.Name != "id")
+                {
+                    ToolStripMenuItem menuItem = new ToolStripMenuItem(prop.Name);
+                    menuItem.Name = prop.Name;
+                    contextMenuStrip2.Items.Add(menuItem);
+                    menuItem.Click += new EventHandler(columnSelection_Click);
+                }
             }
 
         }
@@ -428,6 +437,10 @@ namespace UniversalPatcher
                     Properties.Settings.Default.TunerWindowSize = this.RestoreBounds.Size;
                 }
             }
+            Size logSize = new Size(); 
+            logSize.Width = this.splitContainer2.SplitterDistance;
+            logSize.Height = this.splitContainer1.SplitterDistance;
+            Properties.Settings.Default.TunerLogWindowSize = logSize;
             Properties.Settings.Default.TunerConfigMode = enableConfigModeToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
         }
@@ -607,8 +620,8 @@ namespace UniversalPatcher
 
         private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (dataGridView1.SelectedCells.Count > 0)
-                dataGridView1.ContextMenuStrip = contextMenuStrip1;
+            if (dataGridView1.SelectedCells.Count > 0 && e.Button == MouseButtons.Right)
+                contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
         }
 
         private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -942,10 +955,17 @@ namespace UniversalPatcher
 
         private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            sortBy = dataGridView1.Columns[e.ColumnIndex].Name;
-            sortIndex = e.ColumnIndex;
-            strSortOrder = getSortOrder(sortIndex);
-            filterTables();
+            if (e.Button == MouseButtons.Left)
+            {
+                sortBy = dataGridView1.Columns[e.ColumnIndex].Name;
+                sortIndex = e.ColumnIndex;
+                strSortOrder = getSortOrder(sortIndex);
+                filterTables();
+            }
+            else if (!enableConfigModeToolStripMenuItem.Checked)
+            {
+                contextMenuStrip2.Show(Cursor.Position.X, Cursor.Position.Y);
+            }
         }
 
         private SortOrder getSortOrder(int columnIndex)
@@ -972,7 +992,7 @@ namespace UniversalPatcher
         }
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-            if (Properties.Settings.Default.ConfigModeColumnOrder == null || Properties.Settings.Default.ConfigModeColumnOrder.Length == 0)
+/*            if (Properties.Settings.Default.ConfigModeColumnOrder == null || Properties.Settings.Default.ConfigModeColumnOrder.Length == 0)
             {
                 string cOrder = "";
                 for (int c = 0; c < dataGridView1.Columns.Count; c++)
@@ -998,7 +1018,7 @@ namespace UniversalPatcher
                 Properties.Settings.Default.TunerModeColumnWidth = columnWidth.Trim(',');
 
             }
-
+*/
         }
 
         private void unitsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1075,10 +1095,8 @@ namespace UniversalPatcher
         {
             importCSV2ExperimentalToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
             importCSVexperimentalToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
-            //ConfigModeColumnsToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
             importXMLgeneratorCSVToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
             exportXMLgeneratorCSVToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;     
-            configModeColumnOrderToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
         }
         private void enableConfigModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1244,6 +1262,23 @@ namespace UniversalPatcher
         }
         private void DataGridView1_ColumnDisplayIndexChanged(object sender, DataGridViewColumnEventArgs e)
         {
+            columnsModified = true;
+        }
+        private void DataGridView1_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
+        {
+            columnsModified = true;
+        }
+
+        private void DataGridView1_MouseDown(object sender, MouseEventArgs e)
+        {
+            columnsModified = false;
+        }
+
+        private void DataGridView1_MouseUp(object sender, MouseEventArgs e)
+        {
+            //If columns are modified AFTER mouse button is pressed and BEFORE it is released => User has changed columns
+            if (columnsModified)
+                saveGridLayout();
         }
 
         private void saveGridLayout()
@@ -1255,7 +1290,7 @@ namespace UniversalPatcher
             for (int c = 0; c < dataGridView1.Columns.Count; c++)
             {
                 columnWidth += dataGridView1.Columns[c].Width.ToString() + ","; 
-                if (dataGridView1.Columns[c].Visible)
+                if (dataGridView1.Columns[c].Visible && dataGridView1.Columns[c].Name != "id")
                 {
                     DisplayOrder dispO = new DisplayOrder();
                     dispO.columnName = dataGridView1.Columns[c].Name;
@@ -1265,7 +1300,9 @@ namespace UniversalPatcher
                         maxDispIndex = dispO.index;
                 }
             }
-            string order = "";
+
+
+            string order = "id,";
             for (int i = 0; i <= maxDispIndex; i++)
             {
                 for (int j = 0; j < displayOrder.Count; j++)
@@ -1277,6 +1314,7 @@ namespace UniversalPatcher
                     }
                 }
             }
+            Debug.WriteLine("Display order: " + order);
             if (enableConfigModeToolStripMenuItem.Checked)
             {
                 //Config mode
@@ -1290,19 +1328,15 @@ namespace UniversalPatcher
                 Properties.Settings.Default.TunerModeColumnWidth = columnWidth.Trim(',');
             }
             Properties.Settings.Default.Save();
+
         }
 
-        private void saveColumnLayoutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            saveGridLayout();
-        }
-
-
+       
         void cms_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             string[] tunerModCols = Properties.Settings.Default.TunerModeColumns.Split(',');
            
-            foreach (ToolStripMenuItem menuItem in contextMenuStrip1.Items)
+            foreach (ToolStripMenuItem menuItem in contextMenuStrip2.Items)
             {
                 menuItem.Checked = false;
                 for (int i = 0; i < tunerModCols.Length; i++)
@@ -1315,23 +1349,7 @@ namespace UniversalPatcher
                 }
             }
         }
-
-/*        private void selectTunerModeColumns()
-        {
-            string tColumns = "";
-            foreach (ToolStripMenuItem menuItem in contextMenuStrip1.Items)
-            {
-                if (menuItem.Checked)
-                {
-                    tColumns += menuItem.Name + ",";
-                }
-            }
-            Properties.Settings.Default.TunerModeColumns = tColumns.Trim(',');
-            Properties.Settings.Default.Save();
-            if (!enableConfigModeToolStripMenuItem.Checked)
-                filterTables();
-        }
-*/
+        
         void columnSelection_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
@@ -1344,5 +1362,11 @@ namespace UniversalPatcher
                 filterTables();
         }
 
+        private void resetTunerModeColumnsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.TunerModeColumns = "id,TableName,Category,Units,Columns,Rows,TableDescription";
+            Properties.Settings.Default.Save();
+            filterTables();
+        }
     }
 }

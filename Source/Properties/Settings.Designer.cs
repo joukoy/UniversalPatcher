@@ -373,7 +373,7 @@ namespace UniversalPatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("id,TableName,Category,Units,Min,Max,Columns,Rows,Values")]
+        [global::System.Configuration.DefaultSettingValueAttribute("id,TableName,Category,Units,Columns,Rows,TableDescription")]
         public string TunerModeColumns {
             get {
                 return ((string)(this["TunerModeColumns"]));
@@ -428,6 +428,30 @@ namespace UniversalPatcher.Properties {
             }
             set {
                 this["TunerModeColumnWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size TunerLogWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["TunerLogWindowSize"]));
+            }
+            set {
+                this["TunerLogWindowSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Setting1 {
+            get {
+                return ((string)(this["Setting1"]));
+            }
+            set {
+                this["Setting1"] = value;
             }
         }
     }

@@ -63,21 +63,19 @@ namespace UniversalPatcher
             this.disableMultitableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.unitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableConfigModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.TunerModeColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.configModeColumnOrderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveColumnLayoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tuneModeColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.comboFilterBy = new System.Windows.Forms.ComboBox();
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.txtDescription = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.resetTunerModeColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -105,10 +103,13 @@ namespace UniversalPatcher
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
             this.dataGridView1.ColumnDisplayIndexChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView1_ColumnDisplayIndexChanged);
             this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_ColumnHeaderMouseClick);
+            this.dataGridView1.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView1_ColumnWidthChanged);
             this.dataGridView1.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridView1_DataBindingComplete);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.DataGridView1_DataError);
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
             this.dataGridView1.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.DataGridView1_UserDeletingRow);
+            this.dataGridView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DataGridView1_MouseDown);
+            this.dataGridView1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DataGridView1_MouseUp);
             // 
             // btnEditTable
             // 
@@ -328,9 +329,7 @@ namespace UniversalPatcher
             this.disableMultitableToolStripMenuItem,
             this.unitsToolStripMenuItem,
             this.enableConfigModeToolStripMenuItem,
-            this.TunerModeColumnsToolStripMenuItem,
-            this.configModeColumnOrderToolStripMenuItem,
-            this.saveColumnLayoutToolStripMenuItem});
+            this.resetTunerModeColumnsToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "&Settings";
@@ -363,73 +362,43 @@ namespace UniversalPatcher
             this.enableConfigModeToolStripMenuItem.Text = "Enable config mode";
             this.enableConfigModeToolStripMenuItem.Click += new System.EventHandler(this.enableConfigModeToolStripMenuItem_Click);
             // 
-            // TunerModeColumnsToolStripMenuItem
-            // 
-            this.TunerModeColumnsToolStripMenuItem.Name = "TunerModeColumnsToolStripMenuItem";
-            this.TunerModeColumnsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
-            this.TunerModeColumnsToolStripMenuItem.Text = "Tuner mode columns...";
-            this.TunerModeColumnsToolStripMenuItem.Visible = false;
-            this.TunerModeColumnsToolStripMenuItem.Click += new System.EventHandler(this.tunerModeColumnsToolStripMenuItem_Click);
-            // 
-            // configModeColumnOrderToolStripMenuItem
-            // 
-            this.configModeColumnOrderToolStripMenuItem.Name = "configModeColumnOrderToolStripMenuItem";
-            this.configModeColumnOrderToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
-            this.configModeColumnOrderToolStripMenuItem.Text = "Config mode column order...";
-            this.configModeColumnOrderToolStripMenuItem.Visible = false;
-            this.configModeColumnOrderToolStripMenuItem.Click += new System.EventHandler(this.configModeColumnOrderToolStripMenuItem_Click);
-            // 
-            // saveColumnLayoutToolStripMenuItem
-            // 
-            this.saveColumnLayoutToolStripMenuItem.Name = "saveColumnLayoutToolStripMenuItem";
-            this.saveColumnLayoutToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
-            this.saveColumnLayoutToolStripMenuItem.Text = "Save column layout";
-            this.saveColumnLayoutToolStripMenuItem.Click += new System.EventHandler(this.saveColumnLayoutToolStripMenuItem_Click);
-            // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cutToolStripMenuItem,
             this.copyToolStripMenuItem,
             this.pasteToolStripMenuItem,
-            this.editTableToolStripMenuItem,
-            this.tuneModeColumnsToolStripMenuItem});
+            this.editTableToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(204, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(124, 92);
             // 
             // cutToolStripMenuItem
             // 
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.cutToolStripMenuItem.Text = "Cut";
             this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // editTableToolStripMenuItem
             // 
             this.editTableToolStripMenuItem.Name = "editTableToolStripMenuItem";
-            this.editTableToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.editTableToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.editTableToolStripMenuItem.Text = "Edit table";
             this.editTableToolStripMenuItem.Click += new System.EventHandler(this.editTableToolStripMenuItem_Click);
-            // 
-            // tuneModeColumnsToolStripMenuItem
-            // 
-            this.tuneModeColumnsToolStripMenuItem.Name = "tuneModeColumnsToolStripMenuItem";
-            this.tuneModeColumnsToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.tuneModeColumnsToolStripMenuItem.Text = "* Tuner mode columns *";
             // 
             // label1
             // 
@@ -508,6 +477,18 @@ namespace UniversalPatcher
             this.splitContainer2.SplitterDistance = 409;
             this.splitContainer2.TabIndex = 22;
             // 
+            // contextMenuStrip2
+            // 
+            this.contextMenuStrip2.Name = "contextMenuStrip2";
+            this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
+            // 
+            // resetTunerModeColumnsToolStripMenuItem
+            // 
+            this.resetTunerModeColumnsToolStripMenuItem.Name = "resetTunerModeColumnsToolStripMenuItem";
+            this.resetTunerModeColumnsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.resetTunerModeColumnsToolStripMenuItem.Text = "Reset tuner mode columns";
+            this.resetTunerModeColumnsToolStripMenuItem.Click += new System.EventHandler(this.resetTunerModeColumnsToolStripMenuItem_Click);
+            // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -584,13 +565,11 @@ namespace UniversalPatcher
         private SplitContainer splitContainer1;
         private SplitContainer splitContainer2;
         private ToolStripMenuItem enableConfigModeToolStripMenuItem;
-        private ToolStripMenuItem TunerModeColumnsToolStripMenuItem;
         private ToolStripMenuItem importXMLgeneratorCSVToolStripMenuItem;
         private ToolStripMenuItem exportXMLgeneratorCSVToolStripMenuItem;
         private ToolStripMenuItem saveXMLAsToolStripMenuItem;
-        private ToolStripMenuItem configModeColumnOrderToolStripMenuItem;
-        private ToolStripMenuItem saveColumnLayoutToolStripMenuItem;
         private RichTextBox txtDescription;
-        private ToolStripMenuItem tuneModeColumnsToolStripMenuItem;
+        private ContextMenuStrip contextMenuStrip2;
+        private ToolStripMenuItem resetTunerModeColumnsToolStripMenuItem;
     }
 }

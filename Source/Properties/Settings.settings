@@ -90,7 +90,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="TunerModeColumns" Type="System.String" Scope="User">
-      <Value Profile="(Default)">id,TableName,Category,Units,Min,Max,Columns,Rows,Values</Value>
+      <Value Profile="(Default)">id,TableName,Category,Units,Columns,Rows,TableDescription</Value>
     </Setting>
     <Setting Name="TunerConfigMode" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -102,6 +102,12 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="TunerModeColumnWidth" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="TunerLogWindowSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">0, 0</Value>
+    </Setting>
+    <Setting Name="Setting1" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>
