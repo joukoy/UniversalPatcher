@@ -87,6 +87,32 @@ namespace UniversalPatcher
             {
                 rememberWindowSizeToolStripMenuItem.Checked = false;
             }
+            //Set default values for Tuner datagrid, if not set previously:
+            TableData tdTmp = new TableData();
+            if (Properties.Settings.Default.ConfigModeColumnOrder == null || Properties.Settings.Default.ConfigModeColumnOrder.Length == 0)
+            {
+                string cOrder = "";
+                foreach (var prop in tdTmp.GetType().GetProperties())
+                {
+                    cOrder += prop.Name + ",";
+                }
+                Properties.Settings.Default.ConfigModeColumnOrder = cOrder.Trim(',');
+            }
+
+            if (Properties.Settings.Default.TunerModeColumns == null || Properties.Settings.Default.TunerModeColumns.Length == 0)
+            {
+                Properties.Settings.Default.ConfigModeColumnOrder = "id,TableName,Category,Units,Columns,Rows,TableDescription";
+            }
+
+            if (Properties.Settings.Default.ConfigModeColumnWidth == null || Properties.Settings.Default.ConfigModeColumnWidth.Length == 0)
+            {
+                Properties.Settings.Default.ConfigModeColumnWidth = "35,200,234,135,100,100,100,100,100,114,100,100,100,100,60,46,100,100,100,100,100,100,100";
+            }
+            if (Properties.Settings.Default.TunerModeColumnWidth == null || Properties.Settings.Default.TunerModeColumnWidth.Length == 0)
+            {
+                Properties.Settings.Default.TunerModeColumnWidth = "35,100,237,135,100,100,100,100,100,114,100,100,100,100,60,46,100,100,100,100,100,493,100,";
+
+            }
 
             Application.DoEvents();
 

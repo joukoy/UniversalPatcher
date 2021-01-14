@@ -182,10 +182,6 @@ namespace UniversalPatcher
         }
         public void refreshTablelist()
         {
-            bindingsource.DataSource = null;
-            dataGridView1.DataSource = null;
-            bindingsource.DataSource = tableDatas;
-            dataGridView1.DataSource = bindingsource;
             UseComboBoxForEnums(dataGridView1);
             //dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
             //dataGridView1.Columns["OutputType"].ToolTipText = "1=Float, 2=Int, 3=Hex, 4=Text, 5=Flag";
@@ -199,19 +195,17 @@ namespace UniversalPatcher
                     dataGridView1.Rows[i].Cells["TableName"].ToolTipText = dataGridView1.Rows[i].Cells["TableDescription"].Value.ToString();
             }*/
 
+            //Don't fire events when adding data to combobox!
+            this.comboTableCategory.SelectedIndexChanged -= new System.EventHandler(this.comboTableCategory_SelectedIndexChanged);
             comboTableCategory.DataSource = null;
             categoryBindingSource.DataSource = null;
             tableCategories.Sort();
             categoryBindingSource.DataSource = tableCategories;
             comboTableCategory.DataSource = categoryBindingSource;
             comboTableCategory.Refresh();
+            this.comboTableCategory.SelectedIndexChanged += new System.EventHandler(this.comboTableCategory_SelectedIndexChanged);
 
-            comboFilterBy.Items.Clear();
-            for (int col=0;col<dataGridView1.Columns.Count;col++)
-            {
-                comboFilterBy.Items.Add(dataGridView1.Columns[col].HeaderText);
-            }
-            comboFilterBy.Text = "TableName";
+            Application.DoEvents();
             filterTables();
         }
 
@@ -315,15 +309,12 @@ namespace UniversalPatcher
             Logger("Importing DTC codes... ", false);
             TableData dtcTd = new TableData();
             dtcCode dtc = dtcCodes[0];
-            //td.Address = dtc.StatusAddr;
             dtcTd.addrInt = dtc.statusAddrInt;
             dtcTd.Category = "DTC";
-            //td.ColumnHeaders = "Status";
             dtcTd.Columns = 1;
             //td.Floating = false;
             dtcTd.OutputType = OutDataType.Int;
             dtcTd.Decimals = 0;
-            //td.ElementSize = 1; // (byte)(dtcCodes[1].codeAddrInt - dtcCodes[0].codeAddrInt);
             dtcTd.DataType = InDataType.UBYTE;
             dtcTd.Math = "X";
             dtcTd.OS = PCM.OS;
@@ -334,7 +325,6 @@ namespace UniversalPatcher
             dtcTd.RowHeaders = dtcTd.RowHeaders.Trim(',');
             dtcTd.Rows = (ushort)dtcCodes.Count;
             dtcTd.SavingMath = "X";
-            //td.Signed = false;
             if (dtcCombined)
             {
                 //td.TableDescription = "00 MIL and reporting off, 01 type A/no mil, 02 type B/no mil, 03 type C/no mil, 04 not reported/mil, 05 type A/mil, 06 type B/mil, 07 type c/mil";
@@ -354,15 +344,12 @@ namespace UniversalPatcher
             {
                 dtcTd = new TableData();
                 dtcTd.TableName = "DTC.MIL_Enable";
-                //td.Address = dtc.MilAddr;
                 dtcTd.addrInt = dtc.milAddrInt;
                 dtcTd.Category = "DTC";
                 //td.ColumnHeaders = "MIL";
                 dtcTd.Columns = 1;
-                //td.Floating = false;
                 dtcTd.OutputType = OutDataType.Flag;
                 dtcTd.Decimals = 0;
-                //td.ElementSize = 1; // (byte)(dtcCodes[1].milAddrInt - dtcCodes[0].milAddrInt);
                 dtcTd.DataType = InDataType.UBYTE;
                 dtcTd.Math = "X";
                 dtcTd.OS = PCM.OS;
@@ -406,11 +393,15 @@ namespace UniversalPatcher
                     this.splitContainer2.SplitterDistance = Properties.Settings.Default.TunerLogWindowSize.Width;
                     this.splitContainer1.SplitterDistance = Properties.Settings.Default.TunerLogWindowSize.Height;
                 }
+
             }
 
+            comboFilterBy.Items.Clear();
             TableData tdTmp = new TableData();
             foreach (var prop in tdTmp.GetType().GetProperties())
             {
+                //Add to filter by-combo
+                comboFilterBy.Items.Add(prop.Name);
                 if (prop.Name != "id")
                 {
                     ToolStripMenuItem menuItem = new ToolStripMenuItem(prop.Name);
@@ -419,6 +410,10 @@ namespace UniversalPatcher
                     menuItem.Click += new EventHandler(columnSelection_Click);
                 }
             }
+            comboFilterBy.Text = "TableName";
+
+            dataGridView1.DataSource = bindingsource;
+            filterTables();
 
         }
         private void frmTuner_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -451,7 +446,7 @@ namespace UniversalPatcher
             refreshTablelist();
         }
 
-        private void filterTables()
+        private void reorderColumns()
         {
             try
             {
@@ -459,7 +454,11 @@ namespace UniversalPatcher
                 string[] configColumns = Properties.Settings.Default.ConfigModeColumnOrder.ToLower().Split(',');
                 string[] configWidth = Properties.Settings.Default.ConfigModeColumnWidth.Split(',');
                 string[] tunerWidth = Properties.Settings.Default.TunerModeColumnWidth.Split(',');
-                for (int c=0; c< dataGridView1.Columns.Count; c++)
+                Debug.WriteLine("Tuner order: " + Properties.Settings.Default.TunerModeColumns);
+                Debug.WriteLine("Config order: " + Properties.Settings.Default.ConfigModeColumnOrder);
+
+                int invisibleIndex = tunerColumns.Length;
+                for (int c = 0; c < dataGridView1.Columns.Count; c++)
                 {
                     if (enableConfigModeToolStripMenuItem.Checked)
                     {
@@ -480,15 +479,38 @@ namespace UniversalPatcher
                         else if (tunerColumns.Contains(dataGridView1.Columns[c].HeaderText.ToLower()))
                         {
                             dataGridView1.Columns[c].Visible = true;
-                            dataGridView1.Columns[c].DisplayIndex = Array.IndexOf(tunerColumns, dataGridView1.Columns[c].HeaderText.ToLower());
                             dataGridView1.Columns[c].Width = Convert.ToInt32(tunerWidth[c]);
+                            dataGridView1.Columns[c].DisplayIndex = Array.IndexOf(tunerColumns, dataGridView1.Columns[c].HeaderText.ToLower());
                         }
                         else
                         {
+                            dataGridView1.Columns[c].DisplayIndex = invisibleIndex;
+                            invisibleIndex++;
                             dataGridView1.Columns[c].Visible = false;
                         }
                     }
+                    //Debug.WriteLine("Column: " + c + ":, " + dataGridView1.Columns[c].HeaderText + ", index: ", dataGridView1.Columns[c].DisplayIndex.ToString());
                 }
+                dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
+
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("reorderColumns, line " + line + ": " + ex.Message);
+            }
+
+        }
+        private void filterTables()
+        {
+            try
+            {
+                //Save settings before reordering
+                saveGridLayout();
                 //Fix table-ID's
                 for (int tbId = 0; tbId < tableDatas.Count; tbId++)
                     tableDatas[tbId].id = (uint)tbId;
@@ -509,8 +531,7 @@ namespace UniversalPatcher
                     results = results.Where(t => t.Category.ToLower().Contains(comboTableCategory.Text.ToLower()));
                 filteredCategories = new BindingList<TableData>(results.ToList());
                 bindingsource.DataSource = filteredCategories;
-                dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
-
+                reorderColumns();
             }
             catch (Exception ex)
             {
@@ -521,6 +542,7 @@ namespace UniversalPatcher
 
         private void comboTableCategory_SelectedIndexChanged(object sender, EventArgs e)
         {
+            Debug.WriteLine("comboTableCategory_SelectedIndexChanged");
             filterTables();
         }
 
@@ -536,7 +558,6 @@ namespace UniversalPatcher
                         dataGridView1.ClearSelection();
                         dataGridView1.CurrentCell = dataGridView1.Rows[i].Cells[0];
                         dataGridView1.CurrentCell.Selected = true;
-                        //dataGridTableSeek.Rows[i].Cells[0].Selected = true;                    
                         break;
                     }
                 }
@@ -940,6 +961,7 @@ namespace UniversalPatcher
 
         private void comboFilterBy_SelectedIndexChanged(object sender, EventArgs e)
         {
+            Debug.WriteLine("comboFilterBy_SelectedIndexChanged");
             filterTables();
         }
 
@@ -957,6 +979,7 @@ namespace UniversalPatcher
         {
             if (e.Button == MouseButtons.Left)
             {
+                //saveGridLayout(); //Save before reorder!
                 sortBy = dataGridView1.Columns[e.ColumnIndex].Name;
                 sortIndex = e.ColumnIndex;
                 strSortOrder = getSortOrder(sortIndex);
@@ -992,34 +1015,7 @@ namespace UniversalPatcher
         }
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-            //Set default values for datagrid, if not set previously:
-            if (Properties.Settings.Default.ConfigModeColumnOrder == null || Properties.Settings.Default.ConfigModeColumnOrder.Length == 0)
-            {
-                string cOrder = "";
-                for (int c = 0; c < dataGridView1.Columns.Count; c++)
-                {
-                    cOrder += dataGridView1.Columns[c].HeaderText + ",";
-                }
-                Properties.Settings.Default.ConfigModeColumnOrder = cOrder.Trim(',');
-            }
-
-            if (Properties.Settings.Default.ConfigModeColumnWidth == null || Properties.Settings.Default.ConfigModeColumnWidth.Length == 0)
-            {
-                string columnWidth = "";
-                for (int c = 0; c < dataGridView1.Columns.Count; c++)
-                    columnWidth += dataGridView1.Columns[c].Width.ToString() + ",";
-                Properties.Settings.Default.ConfigModeColumnWidth = columnWidth.Trim(',');
-            }
-            if (Properties.Settings.Default.TunerModeColumnWidth == null || Properties.Settings.Default.TunerModeColumnWidth.Length == 0)
-            {
-                string columnWidth = "";
-                for (int c = 0; c < dataGridView1.Columns.Count; c++)
-                    if (dataGridView1.Columns[c].Visible)
-                        columnWidth += dataGridView1.Columns[c].Width.ToString() + ",";
-                Properties.Settings.Default.TunerModeColumnWidth = columnWidth.Trim(',');
-
-            }
-
+            Debug.WriteLine("Databindingcomplete");
         }
 
         private void unitsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1264,27 +1260,52 @@ namespace UniversalPatcher
         }
         private void DataGridView1_ColumnDisplayIndexChanged(object sender, DataGridViewColumnEventArgs e)
         {
+            Debug.WriteLine("Displayindex: " + e.Column.HeaderText);
             columnsModified = true;
         }
         private void DataGridView1_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
         {
             columnsModified = true;
+            //saveGridLayout();
+            Debug.WriteLine("Columnwidth: " + e.Column.HeaderText);
         }
 
         private void DataGridView1_MouseDown(object sender, MouseEventArgs e)
         {
-            columnsModified = false;
+            try
+            {
+                var info = dataGridView1.HitTest(e.X, e.Y);
+                if (e.Button == MouseButtons.Left && info.RowIndex == -1)
+                {
+                    this.dataGridView1.ColumnDisplayIndexChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView1_ColumnDisplayIndexChanged);
+                    this.dataGridView1.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView1_ColumnWidthChanged);
+                    Debug.WriteLine("Enabling event");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         private void DataGridView1_MouseUp(object sender, MouseEventArgs e)
         {
-            //If columns are modified AFTER mouse button is pressed and BEFORE it is released => User has changed columns
-            if (columnsModified)
-                saveGridLayout();
+            try
+            {
+                Debug.WriteLine("Disabling event");
+                this.dataGridView1.ColumnDisplayIndexChanged -= new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView1_ColumnDisplayIndexChanged);
+                this.dataGridView1.ColumnWidthChanged -= new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView1_ColumnWidthChanged);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         private void saveGridLayout()
         {
+            if (!columnsModified) return;
+
             if (dataGridView1.Columns.Count < 2) return;
             string columnWidth = "";
             int maxDispIndex = 0;
@@ -1317,6 +1338,7 @@ namespace UniversalPatcher
                 }
             }
             Debug.WriteLine("Display order: " + order);
+            Debug.WriteLine("Column width: " + columnWidth);
             if (enableConfigModeToolStripMenuItem.Checked)
             {
                 //Config mode
@@ -1330,7 +1352,7 @@ namespace UniversalPatcher
                 Properties.Settings.Default.TunerModeColumnWidth = columnWidth.Trim(',');
             }
             Properties.Settings.Default.Save();
-
+            columnsModified = false;
         }
 
        
@@ -1338,6 +1360,7 @@ namespace UniversalPatcher
         {
             string[] tunerModCols = Properties.Settings.Default.TunerModeColumns.Split(',');
            
+            //Mark checked all visible columns
             foreach (ToolStripMenuItem menuItem in contextMenuStrip2.Items)
             {
                 menuItem.Checked = false;
@@ -1357,9 +1380,7 @@ namespace UniversalPatcher
             ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
             menuItem.Checked = !menuItem.Checked;
             Debug.WriteLine(menuItem.Name);
-            //selectTunerModeColumns();
             dataGridView1.Columns[menuItem.Name].Visible = menuItem.Checked;
-            saveGridLayout();
             if (!enableConfigModeToolStripMenuItem.Checked)
                 filterTables();
         }
@@ -1367,6 +1388,7 @@ namespace UniversalPatcher
         private void resetTunerModeColumnsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.TunerModeColumns = "id,TableName,Category,Units,Columns,Rows,TableDescription";
+            Properties.Settings.Default.TunerModeColumnWidth = "35,100,237,135,100,100,100,100,100,114,100,100,100,100,60,46,100,100,100,100,100,493,100,";           
             Properties.Settings.Default.Save();
             filterTables();
         }
