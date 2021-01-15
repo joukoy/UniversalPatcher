@@ -647,6 +647,9 @@ namespace UniversalPatcher
 
         private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
+            DataGridView.HitTestInfo hitTst = dataGridView1.HitTest(e.X, e.Y);
+            if (hitTst.RowIndex == -1 || hitTst.ColumnIndex == -1)
+                return;
             openTableEditor();
         }
 
@@ -1066,10 +1069,6 @@ namespace UniversalPatcher
             txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Bold);
             txtDescription.AppendText(tableDatas[ind].TableName + Environment.NewLine); 
             txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
-            if (tableDatas[ind].TableDescription != null)
-                txtDescription.AppendText(tableDatas[ind].TableDescription + Environment.NewLine);
-            if (tableDatas[ind].ExtraDescription != null)
-                txtDescription.AppendText(tableDatas[ind].ExtraDescription + Environment.NewLine);
             if (tableDatas[ind].Rows == 1 && tableDatas[ind].Columns == 1)
             {
                 frmTableEditor frmT = new frmTableEditor();
@@ -1078,10 +1077,27 @@ namespace UniversalPatcher
                 frmT.loadTable(tableDatas[ind]);
                 double curVal = frmT.getValue((uint)(tableDatas[ind].addrInt + tableDatas[ind].Offset), tableDatas[ind]);
                 UInt64 rawVal = frmT.getRawValue((uint)(tableDatas[ind].addrInt + tableDatas[ind].Offset), tableDatas[ind]);
+                string valTxt = curVal.ToString();
+                if (tableDatas[ind].OutputType == OutDataType.Flag || tableDatas[ind].Units.ToLower().StartsWith("boolean"))
+                {
+                    if (curVal > 0)
+                        valTxt = "Set";
+                    else
+                        valTxt = "Unset";
+                }
                 txtDescription.SelectionColor = Color.Blue;
-                txtDescription.AppendText("Current value: " + curVal.ToString() + " [" + rawVal.ToString("X") + "]");
+                txtDescription.AppendText("Current value: " + valTxt + " [" + rawVal.ToString("X") + "]" ) ;
+                if (tableDatas[ind].TableDescription != null && !tableDatas[ind].TableDescription.Contains(tableDatas[ind].Units)) 
+                    txtDescription.AppendText(", Units: " + tableDatas[ind].Units);
+                txtDescription.AppendText(Environment.NewLine);
             }
-
+            txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
+            if (tableDatas[ind].TableDescription != null)
+                txtDescription.AppendText(tableDatas[ind].TableDescription + Environment.NewLine);
+            if (tableDatas[ind].ExtraDescription != null)
+                txtDescription.AppendText(tableDatas[ind].ExtraDescription + Environment.NewLine);
+            if (tableDatas[ind].TableDescription != null && !tableDatas[ind].TableDescription.ToLower().Contains("values:"))
+                txtDescription.AppendText("Values: " + tableDatas[ind].Values);
         }
 
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
@@ -1381,6 +1397,7 @@ namespace UniversalPatcher
             menuItem.Checked = !menuItem.Checked;
             Debug.WriteLine(menuItem.Name);
             dataGridView1.Columns[menuItem.Name].Visible = menuItem.Checked;
+            columnsModified = true;
             if (!enableConfigModeToolStripMenuItem.Checked)
                 filterTables();
         }

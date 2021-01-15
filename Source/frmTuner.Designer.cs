@@ -63,6 +63,7 @@ namespace UniversalPatcher
             this.disableMultitableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.unitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableConfigModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetTunerModeColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,7 +76,6 @@ namespace UniversalPatcher
             this.txtDescription = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.resetTunerModeColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -359,6 +359,13 @@ namespace UniversalPatcher
             this.enableConfigModeToolStripMenuItem.Text = "Enable config mode";
             this.enableConfigModeToolStripMenuItem.Click += new System.EventHandler(this.enableConfigModeToolStripMenuItem_Click);
             // 
+            // resetTunerModeColumnsToolStripMenuItem
+            // 
+            this.resetTunerModeColumnsToolStripMenuItem.Name = "resetTunerModeColumnsToolStripMenuItem";
+            this.resetTunerModeColumnsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.resetTunerModeColumnsToolStripMenuItem.Text = "Reset tuner mode columns";
+            this.resetTunerModeColumnsToolStripMenuItem.Click += new System.EventHandler(this.resetTunerModeColumnsToolStripMenuItem_Click);
+            // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -447,7 +454,6 @@ namespace UniversalPatcher
             // txtDescription
             // 
             this.txtDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtDescription.HideSelection = false;
             this.txtDescription.Location = new System.Drawing.Point(0, 0);
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(422, 89);
@@ -478,13 +484,6 @@ namespace UniversalPatcher
             // 
             this.contextMenuStrip2.Name = "contextMenuStrip2";
             this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
-            // 
-            // resetTunerModeColumnsToolStripMenuItem
-            // 
-            this.resetTunerModeColumnsToolStripMenuItem.Name = "resetTunerModeColumnsToolStripMenuItem";
-            this.resetTunerModeColumnsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
-            this.resetTunerModeColumnsToolStripMenuItem.Text = "Reset tuner mode columns";
-            this.resetTunerModeColumnsToolStripMenuItem.Click += new System.EventHandler(this.resetTunerModeColumnsToolStripMenuItem_Click);
             // 
             // frmTuner
             // 
