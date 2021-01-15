@@ -259,7 +259,7 @@ namespace UniversalPatcher
             return headers;
         }
 
-        private Dictionary<double, string> parseEnumHeaders(string  eVals)
+        public Dictionary<double, string> parseEnumHeaders(string  eVals)
         {
             Dictionary<double, string> retVal = new Dictionary<double, string>();
             string[] posVals = eVals.Split(',');
