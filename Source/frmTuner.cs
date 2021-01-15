@@ -182,7 +182,6 @@ namespace UniversalPatcher
         }
         public void refreshTablelist()
         {
-            UseComboBoxForEnums(dataGridView1);
             //dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
             //dataGridView1.Columns["OutputType"].ToolTipText = "1=Float, 2=Int, 3=Hex, 4=Text, 5=Flag";
             //dataGridView1.Columns["DataType"].ToolTipText = "UBYTE,SBYTE,UWORD,SWORD,UINT32,INT32,UINT64,INT64,FLOAT32,FLOAT64";
@@ -464,7 +463,9 @@ namespace UniversalPatcher
                     {
                         dataGridView1.Columns[c].ReadOnly = false;
                         dataGridView1.Columns[c].Visible = true;
-                        dataGridView1.Columns[c].DisplayIndex = Array.IndexOf(configColumns, dataGridView1.Columns[c].HeaderText.ToLower());
+                        int order = Array.IndexOf(configColumns, dataGridView1.Columns[c].HeaderText.ToLower());
+                        if (order > -1 && order < dataGridView1.Columns.Count)
+                            dataGridView1.Columns[c].DisplayIndex = order;
                         dataGridView1.Columns[c].Width = Convert.ToInt32(configWidth[c]);
                     }
                     else
@@ -480,7 +481,9 @@ namespace UniversalPatcher
                         {
                             dataGridView1.Columns[c].Visible = true;
                             dataGridView1.Columns[c].Width = Convert.ToInt32(tunerWidth[c]);
-                            dataGridView1.Columns[c].DisplayIndex = Array.IndexOf(tunerColumns, dataGridView1.Columns[c].HeaderText.ToLower());
+                            int order = Array.IndexOf(tunerColumns, dataGridView1.Columns[c].HeaderText.ToLower());
+                            if (order > -1 && order < dataGridView1.Columns.Count)
+                                dataGridView1.Columns[c].DisplayIndex = order;
                         }
                         else
                         {
@@ -1023,6 +1026,8 @@ namespace UniversalPatcher
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             Debug.WriteLine("Databindingcomplete");
+            UseComboBoxForEnums(dataGridView1);
+
         }
 
         private void unitsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1062,6 +1067,98 @@ namespace UniversalPatcher
         {
         }
 
+        private void peekTableValues(int ind)
+        {
+            frmTableEditor frmT = new frmTableEditor();
+            frmT.PCM = PCM;
+            frmT.disableMultiTable = true;
+            frmT.loadTable(tableDatas[ind]);
+            txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
+            txtDescription.SelectionColor = Color.Blue;
+            if (tableDatas[ind].Rows == 1 && tableDatas[ind].Columns == 1)
+            {
+                double curVal = frmT.getValue((uint)(tableDatas[ind].addrInt + tableDatas[ind].Offset), tableDatas[ind]);
+                UInt64 rawVal = frmT.getRawValue((uint)(tableDatas[ind].addrInt + tableDatas[ind].Offset), tableDatas[ind]);
+                string valTxt = curVal.ToString();
+                string unitTxt = " " + tableDatas[ind].Units;
+                string maskTxt = "";
+                if (tableDatas[ind].OutputType == OutDataType.Flag || tableDatas[ind].Units.ToLower().StartsWith("boolean"))
+                {
+                    unitTxt = ", Unset/Set";
+                    if (curVal > 0)
+                        valTxt = "Set, " + valTxt;
+                    else
+                        valTxt = "Unset, " + valTxt;
+                    if (tableDatas[ind].BitMask != null && tableDatas[ind].BitMask.Length > 0)
+                    {
+                        unitTxt = "";
+                        long maskVal = Convert.ToInt64(tableDatas[ind].BitMask.Replace("0x", ""), 16);
+                        string maskBits = Convert.ToString(maskVal, 2);
+                        int bit = -1;
+                        for (int i = 0; 1 <= maskBits.Length; i++)
+                        {
+                            if (((maskVal & (1 << i)) != 0))
+                            {
+                                bit = i + 1;
+                                break;
+                            }
+                        }
+                        if (bit > -1)
+                        {
+                            string rawBinVal = Convert.ToString((Int64)rawVal, 2);
+                            rawBinVal = rawBinVal.PadLeft(getBits(tableDatas[ind].DataType), '0');
+                            maskTxt = " [" + rawBinVal + "], bit $" + bit.ToString();
+                        }
+                    }
+                }
+                else if (tableDatas[ind].Values.StartsWith("Enum: "))
+                {
+                    Dictionary<double, string> possibleVals = frmT.parseEnumHeaders(tableDatas[ind].Values.Replace("Enum: ", ""));
+                    unitTxt = " (" + possibleVals[curVal] + ")";
+                }
+                string formatStr = "X" + (getElementSize(tableDatas[ind].DataType) * 2).ToString();
+                txtDescription.AppendText("Current value: " + valTxt + unitTxt + " [" + rawVal.ToString(formatStr) + "]" + maskTxt);
+                txtDescription.AppendText(Environment.NewLine);
+            }
+            else
+            {
+                string tblData = "Current values: " + Environment.NewLine ;
+                uint addr = (uint)(tableDatas[ind].addrInt + tableDatas[ind].Offset);
+                if (tableDatas[ind].RowMajor)
+                {
+                    for (int r=0; r< tableDatas[ind].Rows; r++)
+                    {
+                        for (int c=0; c<tableDatas[ind].Columns; c++)
+                        {
+                            double curVal = frmT.getValue(addr, tableDatas[ind]);
+                            addr += (uint)getElementSize(tableDatas[ind].DataType);
+                            tblData += "[" + curVal.ToString("#0.0") + "]";
+                        }
+                        tblData += Environment.NewLine;
+                    }
+                }
+                else
+                {
+                    List<string> tblRows = new List<string>();
+                    for (int r = 0; r < tableDatas[ind].Rows; r++)
+                        tblRows.Add("");
+                    for (int c = 0; c < tableDatas[ind].Columns; c++)
+                    {
+                        
+                        for (int r = 0; r < tableDatas[ind].Rows; r++)
+                        {
+                            double curVal = frmT.getValue(addr, tableDatas[ind]);
+                            addr += (uint)getElementSize(tableDatas[ind].DataType);
+                            tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
+                        }
+                    }
+                    for (int r = 0; r < tableDatas[ind].Rows; r++)
+                        tblData += tblRows[r] + Environment.NewLine;
+                }
+                txtDescription.AppendText(tblData);
+            }
+
+        }
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             txtDescription.Text = "";
@@ -1077,34 +1174,8 @@ namespace UniversalPatcher
                 txtDescription.AppendText(tableDatas[ind].TableDescription + Environment.NewLine);
             if (tableDatas[ind].ExtraDescription != null)
                 txtDescription.AppendText(tableDatas[ind].ExtraDescription + Environment.NewLine);
-            if (tableDatas[ind].Rows == 1 && tableDatas[ind].Columns == 1)
-            {
-                frmTableEditor frmT = new frmTableEditor();
-                frmT.PCM = PCM;
-                frmT.disableMultiTable = true;
-                frmT.loadTable(tableDatas[ind]);
-                double curVal = frmT.getValue((uint)(tableDatas[ind].addrInt + tableDatas[ind].Offset), tableDatas[ind]);
-                UInt64 rawVal = frmT.getRawValue((uint)(tableDatas[ind].addrInt + tableDatas[ind].Offset), tableDatas[ind]);
-                string valTxt = curVal.ToString();
-                string unitTxt = " " + tableDatas[ind].Units;
-                if (tableDatas[ind].OutputType == OutDataType.Flag || tableDatas[ind].Units.ToLower().StartsWith("boolean"))
-                {
-                    unitTxt = ", Unset/Set";
-                    if (curVal > 0)
-                        valTxt = "Set";
-                    else
-                        valTxt = "Unset";
-                }
-                else if (tableDatas[ind].Values.StartsWith("Enum: "))
-                {
-                    Dictionary<double, string> possibleVals = frmT.parseEnumHeaders(tableDatas[ind].Values.Replace("Enum: ", ""));
-                    unitTxt = " (" + possibleVals[curVal] +")";
-                }
-                txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
-                txtDescription.SelectionColor = Color.Blue;
-                txtDescription.AppendText("Current value: " + valTxt  + unitTxt + " [" + rawVal.ToString("X") + "]");
-                txtDescription.AppendText(Environment.NewLine);
-            }
+
+            peekTableValues(ind);
         }
 
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
