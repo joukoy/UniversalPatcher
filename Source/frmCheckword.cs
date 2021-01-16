@@ -18,8 +18,10 @@ namespace UniversalPatcher
         }
 
         public int CurrentSegment;
-        public void InitMe(int SegmentNr)
+        private PcmFile PCM;
+        public void InitMe(PcmFile PCM1, int SegmentNr)
         {
+            PCM = PCM1;
             CurrentSegment = SegmentNr;
             listCheckwords.Clear();
             listCheckwords.View = View.Details;
@@ -35,7 +37,7 @@ namespace UniversalPatcher
             listCheckwords.CheckBoxes = false;
             listCheckwords.FullRowSelect = true;
 
-            SegmentConfig S = Segments[SegmentNr];
+            SegmentConfig S = PCM.Segments[SegmentNr];
 
             if (S.CheckWords == null)
                 return;
@@ -86,7 +88,7 @@ namespace UniversalPatcher
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            SegmentConfig S = Segments[CurrentSegment];
+            SegmentConfig S = PCM.Segments[CurrentSegment];
             S.CheckWords = "";
             for (int s = 0; s < listCheckwords.Items.Count; s++)
             {
@@ -94,7 +96,7 @@ namespace UniversalPatcher
                     S.CheckWords += ",";
                 S.CheckWords += listCheckwords.Items[s].SubItems[0].Text + ":" + listCheckwords.Items[s].SubItems[1].Text + ":" + listCheckwords.Items[s].SubItems[2].Text + ":" + listCheckwords.Items[s].SubItems[3].Text;
             }
-            Segments[CurrentSegment] = S;
+            PCM.Segments[CurrentSegment] = S;
             this.DialogResult = DialogResult.OK;
             this.Close();
         }

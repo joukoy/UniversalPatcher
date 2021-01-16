@@ -31,6 +31,7 @@ namespace UniversalPatcher
             }
             frmSL = new frmSegmenList();
             frmSL.Show(this);
+            PcmFile PCM = new PcmFile();
             frmSL.InitMe();
 
         }

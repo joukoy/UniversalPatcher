@@ -178,7 +178,7 @@ namespace UniversalPatcher
                     var item = new ListViewItem(Path.GetFileName(SwapSegments[i].FileName));
                     item.Tag = Application.StartupPath + SwapSegments[i].FileName;
                     if (SwapSegments[i].Cvn != null && SwapSegments[i].Cvn != "")
-                        item.SubItems.Add(CheckStockCVN(SwapSegments[i].PN, SwapSegments[i].Ver, SwapSegments[i].SegNr, SwapSegments[i].Cvn, false));
+                        item.SubItems.Add(CheckStockCVN(SwapSegments[i].PN, SwapSegments[i].Ver, SwapSegments[i].SegNr, SwapSegments[i].Cvn, false, PCM.configFile + ".xml"));
                     else
                         item.SubItems.Add(SwapSegments[i].Stock);
                     SegmentData swapdata;                    
@@ -479,9 +479,9 @@ namespace UniversalPatcher
                 }
                 else if (fsize == PCM.fsize)
                 { 
-                    PcmFile tmpPCM = new PcmFile(FileName);
-                    tmpPCM.GetSegmentAddresses();
-                    tmpPCM.GetInfo();
+                    PcmFile tmpPCM = new PcmFile(FileName,true,PCM.configFileFullName);
+                    //tmpPCM.GetSegmentAddresses();
+                    //tmpPCM.GetInfo();
                     /*if (tmpPCM.OS != PCM.OS)
                     {
                         throw new Exception(Environment.NewLine +  "OS mismatch: " + PCM.OS + " <> " + tmpPCM.OS);

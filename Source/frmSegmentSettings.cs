@@ -19,10 +19,10 @@ namespace UniversalPatcher
         }
 
         private int CurrentSegment;
-
+        private PcmFile PCM;
         private void btnApply_Click(object sender, EventArgs e)
         {
-            SegmentConfig S = Segments[CurrentSegment];
+            SegmentConfig S = PCM.Segments[CurrentSegment];
 
             S.Name = txtSegmentName.Text;
             S.Addresses = txtSegmentAddress.Text;
@@ -89,15 +89,16 @@ namespace UniversalPatcher
             if (comboCVN.Text == "Checksum 2")
                 S.CVN = 2;
 
-            Segments[CurrentSegment] = S;
+            PCM.Segments[CurrentSegment] = S;
 
         }
 
-        public void EditSegment(int SegNr)
+        public void EditSegment(PcmFile PCM1, int SegNr)
         {
-            labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
+            PCM = PCM1;
+            labelXML.Text = PCM.configFile + " (v " + PCM.Segments[0].Version + ")";
             CurrentSegment = SegNr;
-            SegmentConfig S = Segments[SegNr];
+            SegmentConfig S = PCM.Segments[SegNr];
             txtSegmentName.Text = S.Name;
             txtSegmentAddress.Text = S.Addresses;
             txtSwapAddr.Text = S.SwapAddress;
@@ -192,7 +193,7 @@ namespace UniversalPatcher
         private string EditExtra(string OldAddress)
         {
             frmEditExtra frmE = new frmEditExtra();
-            frmE.InitMe(OldAddress, Segments[CurrentSegment]);
+            frmE.InitMe(OldAddress, PCM.Segments[CurrentSegment]);
             string Res = OldAddress;
             if (frmE.ShowDialog(this) == DialogResult.OK)
             {
@@ -303,7 +304,7 @@ namespace UniversalPatcher
         private void btnFindSegment_Click(object sender, EventArgs e)
         {
             frmSearchSegment frmSS = new frmSearchSegment();
-            frmSS.InitMe(CurrentSegment);
+            frmSS.InitMe(PCM, CurrentSegment);
             if (frmSS.ShowDialog(this) == DialogResult.OK)
             {
                 txtSegmentAddress.Text = "Search";
@@ -313,9 +314,9 @@ namespace UniversalPatcher
         private void btnCheckword_Click(object sender, EventArgs e)
         {
             frmCheckword frmCw = new frmCheckword();
-            frmCw.InitMe(CurrentSegment);
+            frmCw.InitMe(PCM, CurrentSegment);
             if (frmCw.ShowDialog(this) == DialogResult.OK)
-                txtCheckWords.Text = Segments[CurrentSegment].CheckWords;
+                txtCheckWords.Text = PCM.Segments[CurrentSegment].CheckWords;
         }
 
         private void label4_Click(object sender, EventArgs e)

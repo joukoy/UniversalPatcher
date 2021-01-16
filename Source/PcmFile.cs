@@ -17,7 +17,39 @@ namespace UniversalPatcher
         {
             OSSegment = -1;
             diagSegment = -1;
-            xmlFile = "";
+            configFile = "";
+            Segments = new List<SegmentConfig>();
+            dtcCodes = new List<dtcCode>();
+            tableDatas = new List<TableData>();
+            foundTables = new List<FoundTable>();
+            tableCategories = new List<string>();
+        }
+        public PcmFile(string Fname, bool autodetect, string cnfFile)
+        {
+            Segments = new List<SegmentConfig>();
+            dtcCodes = new List<dtcCode>();
+            tableDatas = new List<TableData>();
+            foundTables = new List<FoundTable>();
+            tableCategories = new List<string>();
+            FileName = Fname;
+            fsize = (uint)new FileInfo(FileName).Length;
+            buf = ReadBin(FileName, 0, fsize);
+            OS = "";
+            osStoreAddress = uint.MaxValue;
+            if (autodetect)
+            {
+                configFile = autoDetect(this).Replace(".xml", "");
+            }
+            else
+            {
+                configFile = cnfFile;
+            }
+            if (configFile.Length > 0)
+            {
+                LoadConfigFile(configFileFullName);
+                GetSegmentAddresses();
+                GetInfo();
+            }
         }
         public struct V6Table
         {
@@ -50,15 +82,45 @@ namespace UniversalPatcher
         public List<V6Table> v6tables;
         public V6Table v6VeTable;
         public List<osAddresses> osAddressList;
-        public string xmlFile;
+        public string configFile;
+        public List<SegmentConfig> Segments = new List<SegmentConfig>();
+        public List<FoundTable> foundTables;
+        public List<dtcCode> dtcCodes;
+        public List<string> tableCategories;
+        public List<TableData> tableDatas = new List<TableData>();
+        public bool dtcCombined = false;
 
-        public PcmFile(string Fname)
+        public string configFileFullName
         {
-            FileName = Fname;
-            fsize = (uint)new FileInfo(FileName).Length;
-            buf = ReadBin(FileName, 0, fsize);
-            OS = "";
-            osStoreAddress = uint.MaxValue;
+            get
+            {
+                return Path.Combine(Application.StartupPath, "XML", configFile + ".xml");
+            }
+        }
+        public void LoadConfigFile(string FileName)
+        {
+            try
+            {
+                Segments.Clear();
+                Logger("Loading file: " + Path.GetFileName(FileName), false);
+                System.Xml.Serialization.XmlSerializer reader =
+                    new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentConfig>));
+                System.IO.StreamReader file = new System.IO.StreamReader(FileName);
+                Segments = (List<SegmentConfig>)reader.Deserialize(file);
+                file.Close();
+
+                if (Segments[0].Version == null || Segments[0].Version == "")
+                {
+                    SegmentConfig S = Segments[0];
+                    S.Version = "1";
+                    Segments[0] = S;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+
         }
 
         public void saveBin(string fName)
@@ -214,7 +276,7 @@ namespace UniversalPatcher
             osAddressList = (List<osAddresses>)reader.Deserialize(file);
             file.Close();
         }
-        public void GetSegmentAddresses()
+        private void GetSegmentAddresses()
         {
             segmentAddressDatas = new SegmentAddressData[Segments.Count];
             for (int i = 0; i < Segments.Count; i++)
@@ -266,7 +328,7 @@ namespace UniversalPatcher
                 segmentAddressDatas[i].ExtraInfo = ParseExtraInfo(S.ExtraInfo, i);
             }
         }
-        public void GetInfo()
+        private void GetInfo()
         {
             if (SegmentList == null)
                 SegmentList = new List<SegmentInfo>();
@@ -278,7 +340,7 @@ namespace UniversalPatcher
                 segmentinfos[i] = new SegmentInfo();
                 segmentinfos[i].Name = S.Name;
                 segmentinfos[i].FileName = FileName;
-                segmentinfos[i].XmlFile = Path.GetFileName(XMLFile);
+                segmentinfos[i].XmlFile = configFile + ".xml";
                 string tmp = "";
                 uint SSize = 0;
                 if (S.SwapAddress != null && S.SwapAddress.Length > 1)
@@ -358,7 +420,7 @@ namespace UniversalPatcher
                         }
                         if (segmentAddressDatas[i].CS1Address.Address == uint.MaxValue)
                         {
-                            segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true).ToString();
+                            segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true,configFile + ".xml").ToString();
                         }
                         else
                         {
@@ -367,7 +429,7 @@ namespace UniversalPatcher
                             { 
                                 if (S.CVN == 1)
                                 {
-                                    segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true).ToString();
+                                    segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true,configFile + ".pcm").ToString();
                                 }
                             }
                             else
@@ -401,7 +463,7 @@ namespace UniversalPatcher
 
                         if (segmentAddressDatas[i].CS2Address.Address == uint.MaxValue)
                         {
-                            segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true).ToString();
+                            segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true, configFile + ".xml").ToString();
                         }
                         else
                         {
@@ -410,7 +472,7 @@ namespace UniversalPatcher
                             {
                                 if (S.CVN == 2)
                                 {
-                                    segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true).ToString();
+                                    segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true, configFile + ".xml").ToString();
                                 }
                             }
                             else

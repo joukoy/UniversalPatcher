@@ -311,7 +311,6 @@ public class upatcher
     public const short CSMethod_Wordsum = 4;
     public const short CSMethod_Dwordsum = 5;
 
-    public static List<SegmentConfig> Segments = new List<SegmentConfig>();
     public static List<DetectRule> DetectRules;
     public static List<XmlPatch> PatchList;
     public static List<CVN> StockCVN;
@@ -326,20 +325,12 @@ public class upatcher
     public static List<TableView> tableViews;
     public static List<referenceCvn> referenceCvnList;
     public static List<FileType> fileTypeList;
-    public static List<dtcCode> dtcCodes;
     public static List<OBD2Code> OBD2Codes;
     public static List<DtcSearchConfig> dtcSearchConfigs;
     public static List<TableSeek> tableSeeks;
-    public static List<FoundTable> foundTables;
-    public static List<string> tableCategories;
     public static List<UniversalPatcher.TableData> XdfElements;
     public static List<Units> unitList;
-    public static List<TableData> tableDatas = new List<TableData>();
-    public static bool dtcCombined = false;
 
-    public static uint lastTableData = 0;
-
-    public static string XMLFile;
     public static string tableSearchFile;
     public static string tableSeekFile = "";
 
@@ -547,6 +538,11 @@ public class upatcher
 
     }
 
+    public static string autoDetect(PcmFile PCM)
+    {
+        AutoDetect autod = new AutoDetect();
+        return autod.autoDetect(PCM);
+    }
     public static uint CalculateChecksum(byte[] Data, AddressData CSAddress, List<Block> CSBlocks,List<Block> ExcludeBlocks, short Method, short Complement, ushort Bytes, Boolean SwapB)
     {
         Debug.WriteLine("Calculating checksum, method: " + Method);
@@ -846,7 +842,8 @@ public class upatcher
             Marshal.FreeCoTaskMem(nativeFile);
         }
     }
-    public static string CheckStockCVN(string PN, string Ver, string SegNr, string cvn, bool AddToList)
+
+    public static string CheckStockCVN(string PN, string Ver, string SegNr, string cvn, bool AddToList, string XMLFile)
     {
         string retVal = "[n/a]";
         for (int c = 0; c < StockCVN.Count; c++)

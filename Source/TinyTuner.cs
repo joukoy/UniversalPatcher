@@ -86,13 +86,13 @@ namespace UniversalPatcher
                 adapter.SelectCommand = selectCommand;
                 adapter.Fill(table);
 
-                if (tableCategories == null) tableCategories = new List<string>();
+                if (PCM.tableCategories == null) PCM.tableCategories = new List<string>();
                 foreach (DataRow row in table.Rows)
                 {
                     string cat = row["Category"].ToString();
-                    if (!tableCategories.Contains(cat))
+                    if (!PCM.tableCategories.Contains(cat))
                     {
-                        tableCategories.Add(cat);
+                        PCM.tableCategories.Add(cat);
                     }
                 }
 
@@ -104,11 +104,11 @@ namespace UniversalPatcher
                 adapter.Fill(table);
 
                 if (tableSeeks == null) tableSeeks = new List<TableSeek>();
-                if (foundTables == null) foundTables = new List<FoundTable>();
+                if (PCM.foundTables == null) PCM.foundTables = new List<FoundTable>();
                 foreach (DataRow row in table.Rows)
                 {
                     TableSeek ts = new TableSeek();
-                    FoundTable ft = new FoundTable();
+                    FoundTable ft = new FoundTable(PCM);
 
                     HexToUint(row["StartPosition"].ToString(), out ft.addrInt);
                     ft.Address = ft.addrInt.ToString("X8");
@@ -118,7 +118,7 @@ namespace UniversalPatcher
                     ft.Rows = Convert.ToUInt16(row["RowCount"]);
                     ft.Category = row["MainCategory"].ToString();
                     ft.configId = tableSeeks.Count;
-                    foundTables.Add(ft);
+                    PCM.foundTables.Add(ft);
 
                     ushort elementSize = (ushort) (Convert.ToUInt16(row["ElementSize"]));
                     bool signed = Convert.ToBoolean(row["AllowNegative"]);
@@ -190,13 +190,13 @@ namespace UniversalPatcher
                 adapter.SelectCommand = selectCommand;
                 adapter.Fill(table);
 
-                if (tableCategories == null) tableCategories = new List<string>();
+                if (PCM.tableCategories == null) PCM.tableCategories = new List<string>();
                 foreach (DataRow row in table.Rows)
                 {
                     string cat = row["Category"].ToString();
-                    if (!tableCategories.Contains(cat))
+                    if (!PCM.tableCategories.Contains(cat))
                     {
-                        tableCategories.Add(cat);
+                        PCM.tableCategories.Add(cat);
                     }
                 }
 
@@ -208,7 +208,7 @@ namespace UniversalPatcher
                 adapter.Fill(table);
 
                 if (tableSeeks == null) tableSeeks = new List<TableSeek>();
-                if (foundTables == null) foundTables = new List<FoundTable>();
+                if (PCM.foundTables == null) PCM.foundTables = new List<FoundTable>();
                 foreach (DataRow row in table.Rows)
                 {
                     TableData td = new TableData();
@@ -237,11 +237,11 @@ namespace UniversalPatcher
                     }
                     td.SavingMath = "X/" + row["Factor"].ToString();
                     td.Category = row["MainCategory"].ToString();
-                    if (!tableCategories.Contains(td.Category))
-                        tableCategories.Add(td.Category);
+                    if (!PCM.tableCategories.Contains(td.Category))
+                        PCM.tableCategories.Add(td.Category);
                     td.Units = row["Units"].ToString();
                     td.RowMajor = false;
-                    tableDatas.Add(td);
+                    PCM.tableDatas.Add(td);
                 }
 
 

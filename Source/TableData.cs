@@ -13,7 +13,7 @@ namespace UniversalPatcher
     {
         public TableData()
         {
-            id = (uint)tableDatas.Count;
+            //id = (uint)tableDatas.Count;
             OS = "";
             TableName = "";
             //Address = "";
@@ -91,8 +91,8 @@ namespace UniversalPatcher
         public void importFoundTable(int tId, PcmFile PCM)
         {
 
-            TableSeek tSeek = tableSeeks[foundTables[tId].configId];
-            FoundTable ft = foundTables[tId];
+            TableSeek tSeek = tableSeeks[PCM.foundTables[tId].configId];
+            FoundTable ft = PCM.foundTables[tId];
 
             addrInt = ft.addrInt;
             //Address = ft.Address;
@@ -117,8 +117,8 @@ namespace UniversalPatcher
             Values = tSeek.Values;
             Min = tSeek.Min;
             Max = tSeek.Max;
-            if (!tableCategories.Contains(Category))
-                tableCategories.Add(Category);
+            if (!PCM.tableCategories.Contains(Category))
+                PCM.tableCategories.Add(Category);
 
         }
     }

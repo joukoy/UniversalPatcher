@@ -119,12 +119,12 @@ namespace UniversalPatcher
             else commaDecimal = false;
 
             PCM = PCM1;
-            TableSeek tSeek = tableSeeks[foundTables[tId].configId];
-            this.Text = "Table Editor: " + foundTables[tId].Name;
-            //if (foundTables[tId].Description.Length > 0)
-            //    this.Text += " - " + foundTables[tId].Description;
+            TableSeek tSeek = tableSeeks[PCM.foundTables[tId].configId];
+            this.Text = "Table Editor: " + PCM.foundTables[tId].Name;
+            //if (PCM.foundTables[tId].Description.Length > 0)
+            //    this.Text += " - " + PCM.foundTables[tId].Description;
 
-            FoundTable ft = foundTables[tId];
+            FoundTable ft = PCM.foundTables[tId];
 
             td = new TableData();
             td.importFoundTable(tId, PCM);
@@ -237,9 +237,9 @@ namespace UniversalPatcher
         private string loadHeaderFromTable(string tableName, int count)
         {
             string headers = "" ;
-            for (int i=0; i < tableDatas.Count; i++)
+            for (int i=0; i < PCM.tableDatas.Count; i++)
             {
-                TableData t = tableDatas[i];
+                TableData t = PCM.tableDatas[i];
                 if (t.TableName == tableName)
                 {
                     uint step = (uint)(getBits(t.DataType) / 8);
@@ -500,13 +500,13 @@ namespace UniversalPatcher
                 tableIds.Sort();
                 for (int i = 0; i < tableIds.Count; i++)
                 {
-                    ColumnInfo colInfo = getColinfoByTableData(tableDatas[tableIds[i]]);
+                    ColumnInfo colInfo = getColinfoByTableData(PCM.tableDatas[tableIds[i]]);
                     coliInfos.Add(colInfo);
-                    string colHdr = tableDatas[tableIds[i]].TableName;
-                    if (tableDatas[tableIds[i]].ColumnHeaders != "" && !tableDatas[tableIds[i]].ColumnHeaders.Contains(","))
-                        colHdr += " " + tableDatas[tableIds[i]].ColumnHeaders.Trim();
+                    string colHdr = PCM.tableDatas[tableIds[i]].TableName;
+                    if (PCM.tableDatas[tableIds[i]].ColumnHeaders != "" && !PCM.tableDatas[tableIds[i]].ColumnHeaders.Contains(","))
+                        colHdr += " " + PCM.tableDatas[tableIds[i]].ColumnHeaders.Trim();
                     colHeaders.Add(colHdr);
-                    filteredTables.Add(tableDatas[tableIds[i]]);
+                    filteredTables.Add(PCM.tableDatas[tableIds[i]]);
                 }
                 //filteredTables = new List<TableData>(tmpList.OrderBy(o => o.addrInt).ToList());
                 //filteredTables = new List<TableData>(filteredTables.OrderByDescending(o => o.id).ToList());
@@ -517,7 +517,7 @@ namespace UniversalPatcher
             else
             {
                 //Multible tables which are meant to be linked together
-                var results = tableDatas.Where(t => t.TableName.StartsWith(tableName));
+                var results = PCM.tableDatas.Where(t => t.TableName.StartsWith(tableName));
                 filteredTables = new List<TableData>(results.ToList());
                 filteredTables = filteredTables.OrderBy(o => o.addrInt).ToList();
             }
@@ -833,11 +833,11 @@ namespace UniversalPatcher
             int cols = td.Columns;
 
             string yTbName = td.TableName.Replace(".Data", ".xVal");
-            for (int y = 0; y < tableDatas.Count; y++)
+            for (int y = 0; y < PCM.tableDatas.Count; y++)
             {
-                if (tableDatas[y].TableName == yTbName)
+                if (PCM.tableDatas[y].TableName == yTbName)
                 {
-                    TableData ytb = tableDatas[y];
+                    TableData ytb = PCM.tableDatas[y];
                     uint xaddr = (uint)(ytb.addrInt + ytb.Offset);
                     cols = (int)getValue(xaddr, ytb);
                     break;
@@ -851,12 +851,12 @@ namespace UniversalPatcher
         {
             int rows = td.Rows;
 
-            for (int x=0; x< tableDatas.Count; x++)
+            for (int x=0; x< PCM.tableDatas.Count; x++)
             {
-                if (tableDatas[x].TableName == td.TableName.Replace(".Data", ".Size") || tableDatas[x].TableName == td.TableName.Replace(".Data", ".yVal"))
+                if (PCM.tableDatas[x].TableName == td.TableName.Replace(".Data", ".Size") || PCM.tableDatas[x].TableName == td.TableName.Replace(".Data", ".yVal"))
                 {
-                    uint addr = (uint)(tableDatas[x].addrInt + tableDatas[x].Offset);
-                    rows = (int)getValue(addr, tableDatas[x]);
+                    uint addr = (uint)(PCM.tableDatas[x].addrInt + PCM.tableDatas[x].Offset);
+                    rows = (int)getValue(addr, PCM.tableDatas[x]);
                     break;
                 }
             }
@@ -887,7 +887,6 @@ namespace UniversalPatcher
                 else commaDecimal = false;
 
                 td = td1;
-
                 if (showRawHEXValuesToolStripMenuItem.Checked)
                     combo = false;
 
@@ -906,9 +905,9 @@ namespace UniversalPatcher
                     else
                     {
                         MultiTableName mtn = new MultiTableName(td.TableName, (int)numColumn.Value);
-                        for (int t = 0; t < tableDatas.Count; t++)
+                        for (int t = 0; t < PCM.tableDatas.Count; t++)
                         {
-                            if (tableDatas[t].Category == td.Category && tableDatas[t].TableName.StartsWith(mtn.TableName) && tableDatas[t].TableName != td.TableName)
+                            if (PCM.tableDatas[t].Category == td.Category && PCM.tableDatas[t].TableName.StartsWith(mtn.TableName) && PCM.tableDatas[t].TableName != td.TableName)
                             {
                                 //It is multitable
                                 loadMultiTable(mtn.TableName);
@@ -1111,7 +1110,7 @@ namespace UniversalPatcher
                 if (e.RowIndex > -1)
                 {
                     Tagi t = (Tagi)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag;
-                    SaveValue(t.addr, e.RowIndex, e.ColumnIndex, tableDatas[t.id]);
+                    SaveValue(t.addr, e.RowIndex, e.ColumnIndex, PCM.tableDatas[t.id]);
                 }
             }
             catch (Exception ex)
@@ -1278,7 +1277,7 @@ namespace UniversalPatcher
                     uint addr = 0;
                     int id = 0;
                     Tagi t = (Tagi)dataGridView1.Rows[cell.RowIndex].Cells[cell.ColumnIndex].Tag;
-                    SaveValue(addr, cell.RowIndex, cell.ColumnIndex, tableDatas[t.id]);
+                    SaveValue(addr, cell.RowIndex, cell.ColumnIndex, PCM.tableDatas[t.id]);
 
                 }
                 //tableModified = true;
@@ -1672,5 +1671,6 @@ namespace UniversalPatcher
             MultiTableName mtn = new MultiTableName(td.TableName, (int)numColumn.Value);
             loadMultiTable(mtn.TableName);
         }
+
     }
 }

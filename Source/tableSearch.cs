@@ -569,7 +569,7 @@ namespace UniversalPatcher
 
 
                         }
-                        for (int seg = 0; seg < Segments.Count; seg++)
+                        for (int seg = 0; seg < PCM.Segments.Count; seg++)
                         {
                             for (int b = 0; b < PCM.segmentAddressDatas[seg].SegmentBlocks.Count; b++)
                             {
@@ -629,7 +629,7 @@ namespace UniversalPatcher
 
                 if (CustomSearch == "")
                 {
-                    string searchXMLFile = Path.Combine(Application.StartupPath, "XML", "SearchTables-" + Path.GetFileName(XMLFile));
+                    string searchXMLFile = Path.Combine(Application.StartupPath, "XML", "SearchTables-" + PCM.configFile + ".xml");
 
                     if (!File.Exists(searchXMLFile))
                         return;

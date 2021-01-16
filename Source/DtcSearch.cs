@@ -112,14 +112,14 @@ namespace UniversalPatcher
                 string searchStr;
                 int configIndex = 0;
                 uint startAddr = 0;
-                dtcCombined = false;
+                PCM.dtcCombined = false;
                 bool condOffset = false;
                 uint statusAddr = uint.MaxValue;
                 uint milAddr = uint.MaxValue;
 
                 for (configIndex = 0; configIndex < dtcSearchConfigs.Count; configIndex++)
                 {
-                    if (PCM.xmlFile == dtcSearchConfigs[configIndex].XMLFile.ToLower())
+                    if (PCM.configFile == dtcSearchConfigs[configIndex].XMLFile.ToLower())
                     {
                         searchStr = dtcSearchConfigs[configIndex].CodeSearch;
                         startAddr = 0;
@@ -149,9 +149,9 @@ namespace UniversalPatcher
 
                 if (codeAddr == 0)
                 {
-                    if (PCM.xmlFile == "e38" || PCM.xmlFile == "e67")
+                    if (PCM.configFile == "e38" || PCM.configFile == "e67")
                     {
-                        dtcCombined = true;
+                        PCM.dtcCombined = true;
                         string retval = SearchDtcE38(PCM);
                         return retval;
                     }
@@ -168,7 +168,7 @@ namespace UniversalPatcher
                     dtc.codeInt = BEToUint16(PCM.buf, addr);
 
                     string codeTmp = dtc.codeInt.ToString("X");
-                    if (dCodes && !codeTmp.StartsWith("D") || (dtc.codeInt < 10 && dtcCodes.Count > 10))
+                    if (dCodes && !codeTmp.StartsWith("D") || (dtc.codeInt < 10 && PCM.dtcCodes.Count > 10))
                     {
                         break;
                     }
@@ -184,15 +184,15 @@ namespace UniversalPatcher
                             break;
                         }
                     }
-                    dtcCodes.Add(dtc);
+                    PCM.dtcCodes.Add(dtc);
                 }
 
                 List<uint> milAddrList = new List<uint>();
 
                 if (dtcSearchConfigs[configIndex].MilTable == "afterstatus")
                 {
-                    milAddr = (uint)(statusAddr + dtcCodes.Count + (uint)dtcSearchConfigs[configIndex].MilOffset);
-                    if (PCM.xmlFile == "p01-p59" && PCM.buf[milAddr - 1] == 0xFF) milAddr++; //P59 hack: If there is FF before first byte, skip first byte 
+                    milAddr = (uint)(statusAddr + PCM.dtcCodes.Count + (uint)dtcSearchConfigs[configIndex].MilOffset);
+                    if (PCM.configFile == "p01-p59" && PCM.buf[milAddr - 1] == 0xFF) milAddr++; //P59 hack: If there is FF before first byte, skip first byte 
                     milAddrList.Add(milAddr);
                 }
                 else if (dtcSearchConfigs[configIndex].MilTable == "combined")
@@ -200,7 +200,7 @@ namespace UniversalPatcher
                     //Do nothing for now
                     milAddr = 0;
                     milAddrList.Add(milAddr);
-                    dtcCombined = true;
+                    PCM.dtcCombined = true;
                 }
                 else
                 {
@@ -236,8 +236,8 @@ namespace UniversalPatcher
                     for (int m = 0; m < milAddrList.Count; m++)
                     {
                         Debug.WriteLine("MIL Start: " + (milAddrList[m] - 1).ToString("X"));
-                        Debug.WriteLine("MIL End: " + (milAddrList[m] + dtcCodes.Count).ToString("X"));
-                        if (PCM.buf[milAddrList[m] - 2] == 0xFF && PCM.buf[milAddrList[m] + dtcCodes.Count] == 0xFF)
+                        Debug.WriteLine("MIL End: " + (milAddrList[m] + PCM.dtcCodes.Count).ToString("X"));
+                        if (PCM.buf[milAddrList[m] - 2] == 0xFF && PCM.buf[milAddrList[m] + PCM.dtcCodes.Count] == 0xFF)
                         {
                             milAddr = milAddrList[m];
                             break;
@@ -259,21 +259,21 @@ namespace UniversalPatcher
                 //Read DTC status bytes:
                 int dtcNr = 0;
                 uint addr3 = milAddr;
-                for (uint addr2 = statusAddr; dtcNr < dtcCodes.Count; addr2+= (uint)dtcSearchConfigs[configIndex].StatusSteps, addr3+= (uint)dtcSearchConfigs[configIndex].MilSteps)
+                for (uint addr2 = statusAddr; dtcNr < PCM.dtcCodes.Count; addr2+= (uint)dtcSearchConfigs[configIndex].StatusSteps, addr3+= (uint)dtcSearchConfigs[configIndex].MilSteps)
                 {
                     if (PCM.buf[addr2] > 7)
                         break;
-                    if (!dtcCombined && PCM.buf[addr2] > 3) //DTC = 0-3
+                    if (!PCM.dtcCombined && PCM.buf[addr2] > 3) //DTC = 0-3
                     {
                         break;
                     }
-                    dtcCode dtc = dtcCodes[dtcNr];
+                    dtcCode dtc = PCM.dtcCodes[dtcNr];
                     dtc.statusAddrInt = addr2;
                     //dtc.StatusAddr = addr2.ToString("X8");
                     byte statusByte = PCM.buf[addr2];
                     dtc.Status = statusByte;
 
-                    if (dtcCombined)
+                    if (PCM.dtcCombined)
                     {
                         dtc.StatusTxt = dtcStatusCombined[dtc.Status];
                         if (statusByte > 4)
@@ -289,8 +289,8 @@ namespace UniversalPatcher
                         dtc.MilAddr = addr3.ToString("X8");
                         dtc.MilStatus = PCM.buf[addr3];
                     }
-                    dtcCodes.RemoveAt(dtcNr);
-                    dtcCodes.Insert(dtcNr, dtc);
+                    PCM.dtcCodes.RemoveAt(dtcNr);
+                    PCM.dtcCodes.Insert(dtcNr, dtc);
                     dtcNr++;
                 }
 
@@ -360,13 +360,13 @@ namespace UniversalPatcher
                                     break;
                                 }
                             }
-                            dtcCodes.Add(dtc);
+                            PCM.dtcCodes.Add(dtc);
                         }
                         break;
                     }
                 }
 
-                int dtcCount = dtcCodes.Count;
+                int dtcCount = PCM.dtcCodes.Count;
 
                 //Search by opcode:
                 opCodeAddr = searchBytes(PCM, "3C A0 * * 38 A5 * * 7D 85 50", 0, PCM.fsize);
@@ -386,7 +386,7 @@ namespace UniversalPatcher
                         {
                             return "";
                         }
-                        dtcCode dtc = dtcCodes[dtcNr];
+                        dtcCode dtc = PCM.dtcCodes[dtcNr];
                         dtc.statusAddrInt = addr2;
                         //dtc.StatusAddr = addr2.ToString("X8");
                         //dtc.Status = PCM.buf[addr2];
@@ -398,8 +398,8 @@ namespace UniversalPatcher
                         dtc.Status = statusByte;
                         dtc.StatusTxt = dtcStatusCombined[dtc.Status];
 
-                        dtcCodes.RemoveAt(dtcNr);
-                        dtcCodes.Insert(dtcNr, dtc);
+                        PCM.dtcCodes.RemoveAt(dtcNr);
+                        PCM.dtcCodes.Insert(dtcNr, dtc);
                         dtcNr++;
                     }
                 }

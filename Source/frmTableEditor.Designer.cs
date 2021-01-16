@@ -50,8 +50,6 @@ namespace UniversalPatcher
             this.swapXyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showRawHEXValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTooltipsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showTableDescriptionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showGraphicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkSwapXY = new System.Windows.Forms.CheckBox();
@@ -154,7 +152,6 @@ namespace UniversalPatcher
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.settingsToolStripMenuItem,
-            this.helpToolStripMenuItem,
             this.graphToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -174,14 +171,14 @@ namespace UniversalPatcher
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exportCSVToolStripMenuItem1
             // 
             this.exportCSVToolStripMenuItem1.Name = "exportCSVToolStripMenuItem1";
-            this.exportCSVToolStripMenuItem1.Size = new System.Drawing.Size(132, 22);
+            this.exportCSVToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.exportCSVToolStripMenuItem1.Text = "Export CSV";
             this.exportCSVToolStripMenuItem1.Click += new System.EventHandler(this.exportCSVToolStripMenuItem1_Click);
             // 
@@ -224,21 +221,6 @@ namespace UniversalPatcher
             this.disableTooltipsToolStripMenuItem.Text = "Disable Tooltips";
             this.disableTooltipsToolStripMenuItem.Click += new System.EventHandler(this.disableTooltipsToolStripMenuItem_Click);
             // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showTableDescriptionToolStripMenuItem});
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.helpToolStripMenuItem.Text = "Help";
-            // 
-            // showTableDescriptionToolStripMenuItem
-            // 
-            this.showTableDescriptionToolStripMenuItem.Name = "showTableDescriptionToolStripMenuItem";
-            this.showTableDescriptionToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
-            this.showTableDescriptionToolStripMenuItem.Text = "Show Table Description";
-            this.showTableDescriptionToolStripMenuItem.Click += new System.EventHandler(this.showTableDescriptionToolStripMenuItem_Click);
-            // 
             // graphToolStripMenuItem
             // 
             this.graphToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -257,7 +239,7 @@ namespace UniversalPatcher
             // chkSwapXY
             // 
             this.chkSwapXY.AutoSize = true;
-            this.chkSwapXY.Location = new System.Drawing.Point(200, 6);
+            this.chkSwapXY.Location = new System.Drawing.Point(226, 6);
             this.chkSwapXY.Name = "chkSwapXY";
             this.chkSwapXY.Size = new System.Drawing.Size(75, 17);
             this.chkSwapXY.TabIndex = 7;
@@ -268,7 +250,7 @@ namespace UniversalPatcher
             // numColumn
             // 
             this.numColumn.Enabled = false;
-            this.numColumn.Location = new System.Drawing.Point(335, 2);
+            this.numColumn.Location = new System.Drawing.Point(358, 3);
             this.numColumn.Maximum = new decimal(new int[] {
             3,
             0,
@@ -293,7 +275,7 @@ namespace UniversalPatcher
             // labelColumn
             // 
             this.labelColumn.AutoSize = true;
-            this.labelColumn.Location = new System.Drawing.Point(284, 6);
+            this.labelColumn.Location = new System.Drawing.Point(307, 7);
             this.labelColumn.Name = "labelColumn";
             this.labelColumn.Size = new System.Drawing.Size(45, 13);
             this.labelColumn.TabIndex = 9;
@@ -349,8 +331,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.CheckBox chkSwapXY;
         private System.Windows.Forms.ToolStripMenuItem showRawHEXValuesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem disableTooltipsToolStripMenuItem;
-        private ToolStripMenuItem helpToolStripMenuItem;
-        private ToolStripMenuItem showTableDescriptionToolStripMenuItem;
         private ToolStripMenuItem graphToolStripMenuItem;
         private ToolStripMenuItem showGraphicToolStripMenuItem;
         private Label labelColumn;

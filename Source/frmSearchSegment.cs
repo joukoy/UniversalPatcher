@@ -18,27 +18,28 @@ namespace UniversalPatcher
         }
 
         public int CurrentSegment;
-
-        public void InitMe(int SegmentNr)
+        private PcmFile PCM;
+        public void InitMe(PcmFile PCM1, int SegmentNr)
         {
             CurrentSegment = SegmentNr;
-            if (Segments[SegmentNr].SearchAddresses != null && Segments[SegmentNr].SearchAddresses != "")
+            PCM = PCM1;
+            if (PCM.Segments[SegmentNr].SearchAddresses != null && PCM.Segments[SegmentNr].SearchAddresses != "")
             {
-                txtSearchAddresses.Text = Segments[SegmentNr].SearchAddresses;
-                txtSearchfor.Text = Segments[SegmentNr].Searchfor;
-                //txtSearchfrom.Text = Segments[SegmentNr].Searchfrom;
-                //chkNot.Checked = Segments[SegmentNr].SearchNot;
+                txtSearchAddresses.Text = PCM.Segments[SegmentNr].SearchAddresses;
+                txtSearchfor.Text = PCM.Segments[SegmentNr].Searchfor;
+                //txtSearchfrom.Text = PCM.Segments[SegmentNr].Searchfrom;
+                //chkNot.Checked = PCM.Segments[SegmentNr].SearchNot;
             }
         }
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            SegmentConfig S = Segments[CurrentSegment];
+            SegmentConfig S = PCM.Segments[CurrentSegment];
             S.SearchAddresses = txtSearchAddresses.Text;
             S.Searchfor = txtSearchfor.Text;
             //S.Searchfrom = txtSearchfrom.Text;
             //S.SearchNot = chkNot.Checked;
-            Segments[CurrentSegment] = S;
+            PCM.Segments[CurrentSegment] = S;
             this.DialogResult = DialogResult.OK;
         }
     }

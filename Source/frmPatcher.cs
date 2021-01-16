@@ -28,12 +28,7 @@ namespace UniversalPatcher
             txtResult.EnableContextMenu();
             txtDebug.EnableContextMenu();
             frmpatcher = this;
-        }
-        private struct DetectGroup
-        {
-            public string Logic;
-            public uint Hits;
-            public uint Miss;
+            pcmConfigFile = "";
         }
 
         private frmSegmenList frmSL;
@@ -41,6 +36,7 @@ namespace UniversalPatcher
         private PcmFile modfile;
         private CheckBox[] chkSegments;
         private CheckBox[] chkExtractSegments;
+        public string pcmConfigFile;
         private string LastXML = "";
         private BindingSource bindingSource = new BindingSource();
         private BindingSource CvnSource = new BindingSource();
@@ -61,13 +57,15 @@ namespace UniversalPatcher
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
             this.Show();
-            string[] args = Environment.GetCommandLineArgs();
+            /*string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1 && File.Exists(args[1]))
             {
                 Logger(args[1]);
                 frmSegmenList frmSL = new frmSegmenList();
                 frmSL.LoadFile(args[1]);
-            }
+            }*/
+            basefile = new PcmFile();
+            tableSeeks = new List<TableSeek>();
 
             if (Properties.Settings.Default.MainWindowPersistence)
             {
@@ -300,11 +298,11 @@ namespace UniversalPatcher
         {
             dtcBindingSource.DataSource = null;
             dataGridDTC.DataSource = null;
-            dtcBindingSource.DataSource = dtcCodes;
-            if (dtcCodes.Count == 0)
+            dtcBindingSource.DataSource = basefile.dtcCodes;
+            if (basefile.dtcCodes.Count == 0)
                 tabDTC.Text = "DTC";
             else
-                tabDTC.Text = "DTC (" + dtcCodes.Count.ToString() + ")";
+                tabDTC.Text = "DTC (" + basefile.dtcCodes.Count.ToString() + ")";
             dataGridDTC.DataSource = dtcBindingSource;
             dataGridDTC.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
 
@@ -313,17 +311,17 @@ namespace UniversalPatcher
         {
             tableSeekBindingSource.DataSource = null;
             dataGridTableSeek.DataSource = null;
-            tableSeekBindingSource.DataSource = foundTables;
-            if (foundTables.Count == 0)
+            tableSeekBindingSource.DataSource = basefile.foundTables;
+            if (basefile.foundTables.Count == 0)
                 tabTableSeek.Text = "Table Seek";
             else
-                tabTableSeek.Text = "Table Seek (" + foundTables.Count.ToString() + ")";
+                tabTableSeek.Text = "Table Seek (" + basefile.foundTables.Count.ToString() + ")";
             dataGridTableSeek.DataSource = tableSeekBindingSource;
             dataGridTableSeek.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             comboTableCategory.DataSource = null;
             categoryBindingSource.DataSource = null;
-            tableCategories.Sort();
-            categoryBindingSource.DataSource = tableCategories;
+            basefile.tableCategories.Sort();
+            categoryBindingSource.DataSource = basefile.tableCategories;
             comboTableCategory.DataSource = categoryBindingSource;
         }
 
@@ -352,7 +350,7 @@ namespace UniversalPatcher
         }
         public void addCheckBoxes()
         {
-            if (LastXML == XMLFile && chkSegments != null && chkSegments.Length == Segments.Count)
+            if (LastXML == pcmConfigFile && chkSegments != null && chkSegments.Length == basefile.Segments.Count)
                 return;
             if (chkSegments != null)
             {
@@ -363,14 +361,14 @@ namespace UniversalPatcher
                 }
             }
             int Left = 6;
-            chkSegments = new CheckBox[Segments.Count];
-            chkExtractSegments = new CheckBox[Segments.Count];
-            for (int s = 0; s < Segments.Count; s++)
+            chkSegments = new CheckBox[basefile.Segments.Count];
+            chkExtractSegments = new CheckBox[basefile.Segments.Count];
+            for (int s = 0; s < basefile.Segments.Count; s++)
             {
                 CheckBox chk = new CheckBox();
                 tabCreate.Controls.Add(chk);
                 chk.Location = new Point(Left, 80);
-                chk.Text = Segments[s].Name;
+                chk.Text = basefile.Segments[s].Name;
                 chk.AutoSize = true;
                 chk.Tag = s;
                 if (!chk.Text.ToLower().Contains("eeprom"))
@@ -380,7 +378,7 @@ namespace UniversalPatcher
                 chk = new CheckBox();
                 tabExtractSegments.Controls.Add(chk);
                 chk.Location = new Point(Left, 80);
-                chk.Text = Segments[s].Name;
+                chk.Text = basefile.Segments[s].Name;
                 chk.AutoSize = true;
                 chk.Tag = s;
                 chk.Checked = true;
@@ -389,7 +387,7 @@ namespace UniversalPatcher
                 Left += chk.Width + 5;
 
             }
-            LastXML = XMLFile;
+            LastXML = pcmConfigFile;
 
         }
 
@@ -398,8 +396,8 @@ namespace UniversalPatcher
             if ( txtBaseFile.Text == "" || txtModifierFile.Text == "")
                 return;
 
-            labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
-            for (int s = 0; s < Segments.Count; s++)
+            labelXML.Text = Path.GetFileName(pcmConfigFile) + " (v " + basefile.Segments[0].Version + ")";
+            for (int s = 0; s < basefile.Segments.Count; s++)
             {
                 string BasePN = basefile.ReadInfo(basefile.segmentAddressDatas[s].PNaddr);
                 string ModPN = modfile.ReadInfo(modfile.segmentAddressDatas[s].PNaddr);
@@ -417,7 +415,7 @@ namespace UniversalPatcher
                 {
                     if (BasePN != ModPN || BaseVer != ModVer)
                     {
-                        Logger(Segments[s].Name.PadLeft(11) + " differ: " + BasePN.ToString().PadRight(8) + " " + BaseVer + " <> " + ModPN.ToString().PadRight(8) + " " + ModVer);
+                        Logger(basefile.Segments[s].Name.PadLeft(11) + " differ: " + BasePN.ToString().PadRight(8) + " " + BaseVer + " <> " + ModPN.ToString().PadRight(8) + " " + ModVer);
                         chkSegments[s].Enabled = false;
                     }
                     else
@@ -457,7 +455,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (Segments[0].CS1Address.StartsWith("GM-V6"))
+                if (PCM.Segments[0].CS1Address.StartsWith("GM-V6"))
                 { 
                     var item = new ListViewItem(PCM.OS);
                     if (PCM.segmentAddressDatas[0].CS1Address.Address == uint.MaxValue)
@@ -485,9 +483,9 @@ namespace UniversalPatcher
                     listCSAddresses.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
                     tabCsAddress.Text = "Gm-v6 info (" + listCSAddresses.Items.Count.ToString() + ")";
                 }
-                for (int i = 0; i < Segments.Count; i++)
+                for (int i = 0; i < PCM.Segments.Count; i++)
                 {
-                    SegmentConfig S = Segments[i];
+                    SegmentConfig S = PCM.Segments[i];
                     Logger(" " + PCM.segmentinfos[i].Name.PadRight(11), false);
                     if (PCM.segmentinfos[i].PN.Length > 1)
                     {
@@ -514,9 +512,9 @@ namespace UniversalPatcher
                 if (chkCS1.Checked || chkCS2.Checked)
                 {
                     Logger("Checksums:");
-                    for (int i = 0; i < Segments.Count; i++)
+                    for (int i = 0; i < PCM.Segments.Count; i++)
                     {
-                        SegmentConfig S = Segments[i];
+                        SegmentConfig S = PCM.Segments[i];
                         Logger(" " + PCM.segmentinfos[i].Name.PadRight(11), false);
                         if (S.CS1Method != CSMethod_None && chkCS1.Checked)
                         {
@@ -587,49 +585,53 @@ namespace UniversalPatcher
         {
             try
             {
-                if (chkAutodetect.Checked)
-                {
-                    string ConfFile = Autodetect(PCM);
-                    Logger("Autodetect: " + ConfFile);
-                    if (ConfFile == "" || ConfFile.Contains(Environment.NewLine))
-                    {
-                        labelXML.Text = "";
-                        XMLFile = "";
-                        Segments.Clear();
-                    }
-                    else
-                    {
-                        ConfFile = Path.Combine(Application.StartupPath, "XML", ConfFile);
-                        if (File.Exists(ConfFile))
-                        {
-                            frmSegmenList frmSL = new frmSegmenList();
-                            frmSL.LoadFile(ConfFile);
-                        }
-                        else
-                        {
-                            Logger("XML File not found");
-                            labelXML.Text = "";
-                            XMLFile = "";
-                            Segments.Clear();
-                            Logger(Environment.NewLine + Path.GetFileName(FileName));
-                            return;
-                        }
-                    }
-                }
-                PCM.xmlFile = Path.GetFileNameWithoutExtension(XMLFile).ToLower();
-                if (Segments == null || Segments.Count == 0)
+                /*                
+                                if (chkAutodetect.Checked)
+                                {
+                                    string ConfFile = autoDetect(PCM);
+                                    Logger("Autodetect: " + ConfFile);
+                                    if (ConfFile == "" || ConfFile.Contains(Environment.NewLine))
+                                    {
+                                        labelXML.Text = "";
+                                        pcmConfigFile = "";
+                                        PCM.Segments.Clear();
+                                    }
+                                    else
+                                    {
+                                        ConfFile = Path.Combine(Application.StartupPath, "XML", ConfFile);
+                                        if (File.Exists(ConfFile))
+                                        {
+                                            PCM.LoadConfigFile(ConfFile);
+                                        }
+                                        else
+                                        {
+                                            Logger("XML File not found");
+                                            labelXML.Text = "";
+                                            pcmConfigFile = "";
+                                            PCM.Segments.Clear();
+                                            Logger(Environment.NewLine + Path.GetFileName(FileName));
+                                            return;
+                                        }
+                                    }
+                                    pcmConfigFile = ConfFile;
+                                }
+
+                                PCM.configFile = Path.GetFileNameWithoutExtension(pcmConfigFile).ToLower();
+                */
+                pcmConfigFile = PCM.configFileFullName;
+                if (PCM.Segments == null || PCM.Segments.Count == 0)
                 {
                     labelXML.Text = "";
                     Logger(Environment.NewLine + Path.GetFileName(FileName));
                     addCheckBoxes();
                     return;
                 }
-                labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
+                labelXML.Text = Path.GetFileName(pcmConfigFile) + " (v " + PCM.Segments[0].Version + ")";
                 Logger(Environment.NewLine + Path.GetFileName(FileName) + " (" + labelXML.Text + ")" + Environment.NewLine);
-                PCM.GetSegmentAddresses();
-                if (Segments.Count > 0)
+                //PCM.GetSegmentAddresses();
+                if (PCM.Segments.Count > 0)
                     Logger("Segments:");
-                PCM.GetInfo();
+                //PCM.GetInfo();
                 if (chkSearchTables.Checked)
                 {
                     TableFinder tableFinder = new TableFinder();
@@ -648,7 +650,7 @@ namespace UniversalPatcher
                 }
                 RefreshBadCVNlist();
 
-                dtcCodes = new List<dtcCode>();
+                basefile.dtcCodes = new List<dtcCode>();
                 DtcSearch DS = new DtcSearch();
                 string dtcSearchResult = "";
                 if (chkSearchDTC.Checked)
@@ -665,7 +667,7 @@ namespace UniversalPatcher
                     Logger(TS.seekTables(PCM));
                 }
                 refreshTableSeek();
-                /*if (upatcher.Segments[0].CS1Address.StartsWith("GM-V6"))
+                /*if (upatcher.basefile.Segments[0].CS1Address.StartsWith("GM-V6"))
                     btnReadTinyTunerDB.Enabled = true;
                 else
                     btnReadTinyTunerDB.Enabled = false;*/
@@ -683,9 +685,9 @@ namespace UniversalPatcher
             string fileName = SelectFile();
             if (fileName.Length > 1)
             {
-                tableCategories = new List<string>(); //Clear list
+                basefile.tableCategories = new List<string>(); //Clear list
                 txtBaseFile.Text = fileName;
-                basefile = new PcmFile(fileName);
+                basefile = new PcmFile(fileName, chkAutodetect.Checked, pcmConfigFile);
                 labelBinSize.Text = basefile.fsize.ToString();
                 GetFileInfo(txtBaseFile.Text, ref basefile, false);
                 this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
@@ -704,7 +706,7 @@ namespace UniversalPatcher
             if (FileName.Length > 1)
             {
                 txtModifierFile.Text = FileName;
-                modfile = new PcmFile(FileName);
+                modfile = new PcmFile(FileName, chkAutodetect.Checked,pcmConfigFile);
                 GetFileInfo(txtModifierFile.Text, ref modfile, false);
             }
 
@@ -746,7 +748,7 @@ namespace UniversalPatcher
                     Parts = PatchList[0].XmlFile.Split(',');
                     foreach (string Part in Parts)
                     {
-                        if (Part == Path.GetFileName(XMLFile))
+                        if (Part == Path.GetFileName(pcmConfigFile))
                             isCompatible = true;
                     }
                     if (!isCompatible)
@@ -776,7 +778,7 @@ namespace UniversalPatcher
                             if (BinPN == "")
                             { 
                                 //Search OS once
-                                for (int s = 0; s < Segments.Count; s++)
+                                for (int s = 0; s < basefile.Segments.Count; s++)
                                 {
                                     string PN = basefile.ReadInfo(basefile.segmentAddressDatas[s].PNaddr);
                                     if (Parts[0] == PN)
@@ -930,7 +932,7 @@ namespace UniversalPatcher
                         {
                             //Start new block 
                             xpatch = new XmlPatch();
-                            xpatch.XmlFile = Path.GetFileName(XMLFile);
+                            xpatch.XmlFile = Path.GetFileName(pcmConfigFile);
                             xpatch.Data = "";
                             xpatch.Description = "";
                             xpatch.Segment = CurrentSegment;
@@ -978,15 +980,15 @@ namespace UniversalPatcher
                     Logger("Files are different size, will not compare!");
                     return;
                 }
-                basefile = new PcmFile(txtBaseFile.Text);
-                modfile = new PcmFile(txtModifierFile.Text);
+                basefile = new PcmFile(txtBaseFile.Text,chkAutodetect.Checked,pcmConfigFile);
+                modfile = new PcmFile(txtModifierFile.Text, chkAutodetect.Checked, pcmConfigFile);
                 if (!checkAppendPatch.Checked || PatchList == null)
                     PatchList = new List<XmlPatch>();
                 GetFileInfo(txtBaseFile.Text, ref basefile, false, false);
                 GetFileInfo(txtModifierFile.Text, ref modfile, false, false);
 
                 labelBinSize.Text = fsize.ToString();
-                if (Segments.Count == 0)
+                if (basefile.Segments.Count == 0)
                 {
                     Logger("No segments defined, comparing complete file");
                     AddressData[] SkipList = new AddressData[0];
@@ -1000,21 +1002,21 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    for (int Snr = 0; Snr < Segments.Count; Snr++)
+                    for (int Snr = 0; Snr < basefile.Segments.Count; Snr++)
                     {
                         if (chkSegments[Snr].Enabled && chkSegments[Snr].Checked)
                         {
-                            Logger("Comparing segment " + Segments[Snr].Name, false);
+                            Logger("Comparing segment " + basefile.Segments[Snr].Name, false);
                             for (int p = 0; p < basefile.segmentAddressDatas[Snr].SegmentBlocks.Count; p++)
                             {
                                 uint Start = basefile.segmentAddressDatas[Snr].SegmentBlocks[p].Start;
                                 uint End = basefile.segmentAddressDatas[Snr].SegmentBlocks[p].End;
                                 AddressData[] SkipList = new AddressData[2];
-                                if (Segments[Snr].CS1Address != null && Segments[Snr].CS1Address != "")
+                                if (basefile.Segments[Snr].CS1Address != null && basefile.Segments[Snr].CS1Address != "")
                                     SkipList[0] = basefile.segmentAddressDatas[Snr].CS1Address;
-                                if (Segments[Snr].CS2Address != null && Segments[Snr].CS2Address != "")
+                                if (basefile.Segments[Snr].CS2Address != null && basefile.Segments[Snr].CS2Address != "")
                                     SkipList[1] = basefile.segmentAddressDatas[Snr].CS2Address;
-                                CompareBlock(basefile.buf, modfile.buf, Start, End, Segments[Snr].Name, SkipList);
+                                CompareBlock(basefile.buf, modfile.buf, Start, End, basefile.Segments[Snr].Name, SkipList);
                             }
                             Logger("");
                         }
@@ -1036,9 +1038,9 @@ namespace UniversalPatcher
             Properties.Settings.Default.Save();
             if (txtBaseFile.Text.Length == 0 || txtModifierFile.Text.Length == 0)
                 return;
-            if (Segments != null && Segments.Count > 0)
+            if (basefile.Segments != null && basefile.Segments.Count > 0)
             { 
-                labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
+                labelXML.Text = Path.GetFileName(pcmConfigFile) + " (v " + basefile.Segments[0].Version + ")";
             }
             if (txtOS.Text.Length == 0)
             {
@@ -1157,151 +1159,13 @@ namespace UniversalPatcher
 
         private void btnCheckSums_Click(object sender, EventArgs e)
         {
-            if (Segments != null && Segments.Count > 0)
+            if (basefile.Segments != null && basefile.Segments.Count > 0)
             { 
                 basefile.FixCheckSums();
             }
         }
 
-        private bool CheckRule(DetectRule DR, PcmFile PCM)
-        {
-            try { 
-            
-                UInt64 Data = 0;
-                uint Addr = 0;
-                if (DR.address == "filesize")
-                {
-                    Data = (UInt64)new FileInfo(PCM.FileName).Length;
-                }
-                else
-                {
-                    string[] Parts = DR.address.Split(':');
-                    HexToUint(Parts[0].Replace("@", ""),out Addr);
-                    if (DR.address.StartsWith("@"))
-                        Addr = BEToUint32(PCM.buf, Addr);
-                    if (Parts[0].EndsWith("@"))
-                        Addr = (uint)PCM.buf.Length - Addr;
-                    if (Parts.Length == 1)
-                        Data = BEToUint16(PCM.buf, Addr);
-                    else
-                    {
-                        if (Parts[1] == "1")
-                            Data = (uint)PCM.buf[Addr];
-                        if (Parts[1] == "2")
-                            Data = (uint)BEToUint16(PCM.buf, Addr);
-                        if (Parts[1] == "4")
-                            Data = BEToUint32(PCM.buf, Addr);
-                        if (Parts[1] == "8")
-                            Data = BEToUint64(PCM.buf, Addr);
 
-                    }
-                }
-
-                //Logger(DR.xml + ": " + DR.address + ": " + DR.data.ToString("X") + DR.compare + "(" + DR.grouplogic + ") " + " [" + Addr.ToString("X") + ": " + Data.ToString("X") + "]");
-
-                if (DR.compare == "==")
-                {
-                    if (Data == DR.data)
-                        return true;
-                }
-                if (DR.compare == "<")
-                {
-                    if (Data < DR.data)
-                        return true;
-                }
-                if (DR.compare == ">")
-                {
-                    if (Data > DR.data)
-                        return true;
-                }
-                if (DR.compare == "!=")
-                {
-                    if (Data != DR.data)
-                        return true;
-                }
-                //Logger("Not match");
-                return false;
-            }
-            catch (Exception ex)
-            {
-                //Something wrong, just skip this part and continue
-                Debug.WriteLine(ex.Message);
-                return false;
-            }
-        }
-
-        private string Autodetect(PcmFile PCM)
-        {
-            string Result = "";
-            
-            List<string> XmlList = new List<string>();
-            XmlList.Add(DetectRules[0].xml.ToLower());
-            for (int s = 0; s < DetectRules.Count; s++)
-            {
-                //Create list of XML files we know:
-                if (!XmlList.Contains(DetectRules[s].xml.ToLower()))
-                    XmlList.Add(DetectRules[s].xml.ToLower());
-            }
-            for (int x=0; x < XmlList.Count;x++)
-            {
-                uint MaxGroup = 0;
-                
-                //Check if compatible with THIS xml
-                List<DetectRule> DRL = new List<DetectRule>();
-                for (int s = 0; s < DetectRules.Count; s++)
-                {                    
-                    if (XmlList[x] == DetectRules[s].xml.ToLower())
-                    {
-                        DRL.Add(DetectRules[s]);
-                        if (DetectRules[s].group > MaxGroup)
-                            MaxGroup = DetectRules[s].group;
-                    }
-                }
-                //Now all rules for this XML are in DRL (DetectRuleList)
-                DetectGroup[] DG = new DetectGroup[MaxGroup + 1];
-                for (int d=0; d < DRL.Count; d++)
-                {
-                    //This list have only rules for one XML, lets go thru them
-                    DG[DRL[d].group].Logic = DRL[d].grouplogic;
-                    if (CheckRule(DRL[d], PCM))
-                        //This check matches
-                        DG[DRL[d].group].Hits++;
-                    else
-                        DG[DRL[d].group].Miss++;
-                }
-                //Now we have array DG, where hits & misses are counted per group, for this XML
-                bool Detection = true;
-                for (int g = 1; g <= MaxGroup; g++)
-                {
-                    //If all groups match, then this XML, match.
-                    if (DG[g].Logic == "And")
-                    {
-                        //Logic = and => if any Miss, not detection
-                        if (DG[g].Miss > 0)
-                            Detection = false;
-                    }
-                    if (DG[g].Logic == "Or")
-                    {
-                        if (DG[g].Hits == 0)
-                            Detection = false;
-                    }
-                    if (DG[g].Logic == "Xor")
-                    {
-                        if (DG[g].Hits != 1)
-                            Detection = false;
-                    }
-                }
-                if (Detection)
-                {
-                    //All groups have hit (if grouplogic = or, only one hit per group is a hit)
-                    if (Result != "")
-                        Result += Environment.NewLine;
-                    Result += XmlList[x];
-                    Debug.WriteLine("Autodetect: " + XmlList[x]);
-                }
-            }
-            return Result.ToLower();
-        }
 
         private void btnLoadFolder_Click(object sender, EventArgs e)
         {
@@ -1316,7 +1180,7 @@ namespace UniversalPatcher
                 for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                    PcmFile PCM = new PcmFile(FileName);
+                    PcmFile PCM = new PcmFile(FileName, chkAutodetect.Checked, pcmConfigFile);
                     GetFileInfo(FileName, ref PCM, true);
                 }
                 if (!chkLogtodisplay.Checked)
@@ -1365,7 +1229,7 @@ namespace UniversalPatcher
                 xpatch.CompatibleOS = OSlist[0] + ":" + Start.ToString("X"); 
                 for (int i=1;i < OSlist.Length; i++)
                     xpatch.CompatibleOS += "," + OSlist[i] + ":" + Start.ToString("X");
-                xpatch.XmlFile = Path.GetFileName(XMLFile);
+                xpatch.XmlFile = Path.GetFileName(pcmConfigFile);
                 xpatch.Description = txtExtractDescription.Text;
                 Logger("Extracting " + Start.ToString("X") + " - " + End.ToString("X"));
                 for (uint i = Start; i <= End; i++)
@@ -1402,7 +1266,7 @@ namespace UniversalPatcher
             string MaskText = "";
             if (txtBaseFile.Text.Length == 0)
                 return;
-            basefile = new PcmFile(txtBaseFile.Text);
+            basefile = new PcmFile(txtBaseFile.Text,chkAutodetect.Checked, pcmConfigFile);
             GetFileInfo(txtBaseFile.Text, ref basefile, true, false);
             if (txtCompatibleOS.Text.Length == 0)
                 txtCompatibleOS.Text = basefile.OS;
@@ -1497,8 +1361,8 @@ namespace UniversalPatcher
                     frmM.txtCompOS.Text = txtOS.Text + ":";
                 else
                     frmM.txtCompOS.Text = "ALL:";
-                if (XMLFile != null && XMLFile.Length > 0)
-                    frmM.txtXML.Text = Path.GetFileName(XMLFile);
+                if (pcmConfigFile != null && pcmConfigFile.Length > 0)
+                    frmM.txtXML.Text = Path.GetFileName(pcmConfigFile);
             }
             
             if (frmM.ShowDialog(this) == DialogResult.OK)
@@ -1636,13 +1500,11 @@ namespace UniversalPatcher
 
         private void loadXMLfile()
         {
-            string FileName = SelectFile("Select XML file", "XML files (*.xml)|*.xml|All files (*.*)|*.*");
-            if (FileName.Length < 1)
+            string fileName = SelectFile("Select XML file", "XML files (*.xml)|*.xml|All files (*.*)|*.*");
+            if (fileName.Length < 1)
                 return;
-            frmSegmenList frmSL = new frmSegmenList();
-            frmSL.LoadFile(FileName);
-            frmSL.Dispose();
-            labelXML.Text = Path.GetFileName(XMLFile) + " (v " + Segments[0].Version + ")";
+            basefile.LoadConfigFile(fileName);
+            labelXML.Text = Path.GetFileName(pcmConfigFile) + " (v " + basefile.Segments[0].Version + ")";
             addCheckBoxes();
 
         }
@@ -1659,7 +1521,9 @@ namespace UniversalPatcher
                 return;
             }
             frmSL = new frmSegmenList();
+            frmSL.PCM = basefile;
             frmSL.InitMe();
+            frmSL.LoadFile(pcmConfigFile);
             if (frmSL.ShowDialog() == DialogResult.OK)
             {
                 //addCheckBoxes();
@@ -1768,7 +1632,7 @@ namespace UniversalPatcher
                 {
                     CVN stock = ListCVN[i];
                     counter++;
-                    if (CheckStockCVN(stock.PN,stock.Ver,stock.SegmentNr,stock.cvn , false) != "[stock]")
+                    if (CheckStockCVN(stock.PN,stock.Ver,stock.SegmentNr,stock.cvn , false, pcmConfigFile) != "[stock]")
                     {
                         //Add if not already in list
                         StockCVN.Add(stock);
@@ -2095,7 +1959,7 @@ namespace UniversalPatcher
                 for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                    PcmFile PCM = new PcmFile(FileName);
+                    PcmFile PCM = new PcmFile(FileName,chkAutodetect.Checked, pcmConfigFile);
                     GetFileInfo(FileName, ref PCM, true,checkExtractShowinfo.Checked);
                     ExtractSegments(PCM, Path.GetFileName(FileName).Replace(".bin", ""), true, dstFolder);
                 }
@@ -2135,7 +1999,7 @@ namespace UniversalPatcher
         {
             try
             {
-                basefile = new PcmFile(fileName);
+                basefile = new PcmFile(fileName,chkAutodetect.Checked, pcmConfigFile);
                 GetFileInfo(fileName, ref basefile, true, false);                
                 if (basefile.FixCheckSums())  //Returns true, if need fix for checksum
                 {  
@@ -2775,7 +2639,7 @@ namespace UniversalPatcher
         {
 
             
-            string FileName = Path.Combine(Application.StartupPath, "XML", basefile.xmlFile + "-template.xdf");
+            string FileName = Path.Combine(Application.StartupPath, "XML", basefile.configFile + "-template.xdf");
             if (!File.Exists(FileName))
             {
                 LoggerBold("File not found: " + FileName);
@@ -2790,26 +2654,26 @@ namespace UniversalPatcher
             string tableRows = "";            
             string xdfTxt = templateTxt.Replace("REPLACE-OSID", txtOS.Text);
             xdfTxt = xdfTxt.Replace("REPLACE-OSADDRESS", basefile.segmentAddressDatas[basefile.OSSegment].PNaddr.Address.ToString("X"));
-            if (dtcCombined)
+            if (basefile.dtcCombined)
             {
-                for (int d = 0; d < dtcCodes.Count; d++)
+                for (int d = 0; d < basefile.dtcCodes.Count; d++)
                 {
-                    tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + dtcCodes[d].Code + "\" />" + Environment.NewLine;
+                    tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + basefile.dtcCodes[d].Code + "\" />" + Environment.NewLine;
                 }
 
-                xdfTxt = xdfTxt.Replace("REPLACE-DTCCOUNT", dtcCodes.Count.ToString());
-                xdfTxt = xdfTxt.Replace("REPLACE-DTCADDRESS", dtcCodes[0].statusAddrInt.ToString("X"));
+                xdfTxt = xdfTxt.Replace("REPLACE-DTCCOUNT", basefile.dtcCodes.Count.ToString());
+                xdfTxt = xdfTxt.Replace("REPLACE-DTCADDRESS", basefile.dtcCodes[0].statusAddrInt.ToString("X"));
             }
             else
             {
-                for (int d = 0; d < dtcCodes.Count; d++)
+                for (int d = 0; d < basefile.dtcCodes.Count; d++)
                 {
-                    tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + dtcCodes[d].Code + "\" />" + Environment.NewLine;
+                    tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + basefile.dtcCodes[d].Code + "\" />" + Environment.NewLine;
                 }
 
-                xdfTxt = xdfTxt.Replace("REPLACE-DTCCOUNT", dtcCodes.Count.ToString());
-                xdfTxt = xdfTxt.Replace("REPLACE-DTCADDRESS", dtcCodes[0].statusAddrInt.ToString("X"));
-                xdfTxt = xdfTxt.Replace("REPLACE-MILADDRESS", dtcCodes[0].milAddrInt.ToString("X"));
+                xdfTxt = xdfTxt.Replace("REPLACE-DTCCOUNT", basefile.dtcCodes.Count.ToString());
+                xdfTxt = xdfTxt.Replace("REPLACE-DTCADDRESS", basefile.dtcCodes[0].statusAddrInt.ToString("X"));
+                xdfTxt = xdfTxt.Replace("REPLACE-MILADDRESS", basefile.dtcCodes[0].milAddrInt.ToString("X"));
 
             }
             xdfTxt = xdfTxt.Replace("REPLACE-DTCCODES", tableRows);
@@ -2825,30 +2689,30 @@ namespace UniversalPatcher
         {
             int codeIndex = dataGridDTC.SelectedCells[0].RowIndex;
             frmSetDTC frmS = new frmSetDTC();
-            frmS.startMe(codeIndex, basefile.xmlFile);
+            frmS.startMe(codeIndex, basefile);
             if (frmS.ShowDialog() == DialogResult.OK)
             {
-                dtcCodes[codeIndex].Status = (byte)frmS.comboDtcStatus.SelectedIndex;
+                basefile.dtcCodes[codeIndex].Status = (byte)frmS.comboDtcStatus.SelectedIndex;
 
-                basefile.buf[dtcCodes[codeIndex].statusAddrInt] = dtcCodes[codeIndex].Status;
-                if (dtcCombined)
+                basefile.buf[basefile.dtcCodes[codeIndex].statusAddrInt] = basefile.dtcCodes[codeIndex].Status;
+                if (basefile.dtcCombined)
                 {
-                    dtcCodes[codeIndex].StatusTxt = dtcStatusCombined[dtcCodes[codeIndex].Status];
-                    dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = dtcCodes[codeIndex].StatusTxt;
+                    basefile.dtcCodes[codeIndex].StatusTxt = dtcStatusCombined[basefile.dtcCodes[codeIndex].Status];
+                    dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = basefile.dtcCodes[codeIndex].StatusTxt;
 
-                    if (dtcCodes[codeIndex].Status > 3)
-                        dtcCodes[codeIndex].MilStatus = 1;
+                    if (basefile.dtcCodes[codeIndex].Status > 3)
+                        basefile.dtcCodes[codeIndex].MilStatus = 1;
                     else
-                        dtcCodes[codeIndex].MilStatus = 0;
+                        basefile.dtcCodes[codeIndex].MilStatus = 0;
                 }
                 else
                 {
-                    dtcCodes[codeIndex].MilStatus = (byte)frmS.comboMIL.SelectedIndex;
-                    dtcCodes[codeIndex].StatusTxt = dtcStatus[dtcCodes[codeIndex].Status];
-                    basefile.buf[dtcCodes[codeIndex].milAddrInt] = dtcCodes[codeIndex].MilStatus;
-                    dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = dtcCodes[codeIndex].StatusTxt;
+                    basefile.dtcCodes[codeIndex].MilStatus = (byte)frmS.comboMIL.SelectedIndex;
+                    basefile.dtcCodes[codeIndex].StatusTxt = dtcStatus[basefile.dtcCodes[codeIndex].Status];
+                    basefile.buf[basefile.dtcCodes[codeIndex].milAddrInt] = basefile.dtcCodes[codeIndex].MilStatus;
+                    dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = basefile.dtcCodes[codeIndex].StatusTxt;
                 }
-                dataGridDTC.Rows[codeIndex].Cells["Status"].Value = dtcCodes[codeIndex].Status;
+                dataGridDTC.Rows[codeIndex].Cells["Status"].Value = basefile.dtcCodes[codeIndex].Status;
                 
 
                 tabFunction.SelectedTab = tabApply;
@@ -2941,9 +2805,9 @@ namespace UniversalPatcher
                 xdfText = xdfText.Replace("REPLACE-TIMESTAMP", DateTime.Today.ToString("MM/dd/yyyy H:mm"));
                 xdfText = xdfText.Replace("REPLACE-OSID", basefile.OS);
                 xdfText = xdfText.Replace("REPLACE-BINSIZE", basefile.fsize.ToString("X"));
-                for (int s = 1; s < tableCategories.Count ; s++)
+                for (int s = 1; s < basefile.tableCategories.Count ; s++)
                 {
-                    tableText += "     <CATEGORY index = \"0x" + (s - 1).ToString("X") + "\" name = \"" + tableCategories[s] + "\" />" + Environment.NewLine;
+                    tableText += "     <CATEGORY index = \"0x" + (s - 1).ToString("X") + "\" name = \"" + basefile.tableCategories[s] + "\" />" + Environment.NewLine;
                     lastCategory = s;
                 }
                 dtcCategory = lastCategory + 1;
@@ -2952,7 +2816,7 @@ namespace UniversalPatcher
                 tableText += "     <CATEGORY index = \"0x" + (lastCategory-1).ToString("X") + "\" name = \"Other\" />";
                 xdfText = xdfText.Replace("REPLACE-CATEGORYNAME", tableText);
 
-                fName = Path.Combine(Application.StartupPath, "Templates", basefile.xmlFile + "-checksum.txt");
+                fName = Path.Combine(Application.StartupPath, "Templates", basefile.configFile + "-checksum.txt");
                 xdfText += ReadTextFile(fName);
 
                 if (chkExportXdfDTC.Checked)
@@ -2962,9 +2826,9 @@ namespace UniversalPatcher
                     templateTxt = ReadTextFile(fName);
                     tableText = templateTxt.Replace("REPLACE-TABLETITLE", "DTC Codes");
                     tableText = tableText.Replace("REPLACE-TABLEID", "1E2E");
-                    tableText = tableText.Replace("REPLACE-ROWCOUNT", dtcCodes.Count.ToString());
-                    tableText = tableText.Replace("REPLACE-TABLEADDRESS", dtcCodes[0].statusAddrInt.ToString("X"));
-                    if (dtcCombined)
+                    tableText = tableText.Replace("REPLACE-ROWCOUNT", basefile.dtcCodes.Count.ToString());
+                    tableText = tableText.Replace("REPLACE-TABLEADDRESS", basefile.dtcCodes[0].statusAddrInt.ToString("X"));
+                    if (basefile.dtcCombined)
                     {
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "00 MIL and reporting off&#013;&#010;01 type A/no mil&#013;&#010;02 type B/no mil&#013;&#010;03 type C/no mil&#013;&#010;04 not reported/mil &#013;&#010;05 type A/mil &#013;&#010;06 type B/mil &#013;&#010;07 type c/mil");
                         tableText = tableText.Replace("REPLACE-MINVALUE", "0");
@@ -2977,21 +2841,21 @@ namespace UniversalPatcher
                         tableText = tableText.Replace("REPLACE-MAXVALUE", "3");
 
                     }
-                    for (int d = 0; d < dtcCodes.Count; d++)
+                    for (int d = 0; d < basefile.dtcCodes.Count; d++)
                     {
-                        tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + dtcCodes[d].Code + "\" />" + Environment.NewLine;
+                        tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + basefile.dtcCodes[d].Code + "\" />" + Environment.NewLine;
                     }
                     tableText = tableText.Replace("REPLACE-TABLEROWS", tableRows);
                     tableText = tableText.Replace("REPLACE-CATEGORY", dtcCategory.ToString());
                     xdfText += tableText + Environment.NewLine;       //Add generated table to end of xdfText
 
-                    if (!dtcCombined)
+                    if (!basefile.dtcCombined)
                     {
                         //Create another table for MIL codes
                         tableText = templateTxt.Replace("REPLACE-TABLETITLE", "DTC MIL"); //Yes, use templatetext (New table
                         tableText = tableText.Replace("REPLACE-TABLEID", "1654");
-                        tableText = tableText.Replace("REPLACE-ROWCOUNT", dtcCodes.Count.ToString());
-                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", dtcCodes[0].milAddrInt.ToString("X"));
+                        tableText = tableText.Replace("REPLACE-ROWCOUNT", basefile.dtcCodes.Count.ToString());
+                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", basefile.dtcCodes[0].milAddrInt.ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEROWS", tableRows);
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "0 = No MIL (Lamp always off)&#013;&#010;1 = MIL (Lamp may be commanded on by PCM)");
                         tableText = tableText.Replace("REPLACE-CATEGORY", dtcCategory.ToString());
@@ -3086,23 +2950,23 @@ namespace UniversalPatcher
                 {
                     fName = Path.Combine(Application.StartupPath, "Templates", "xdftableseek.txt");
                     templateTxt = ReadTextFile(fName);
-                    for (int t = 0; t < foundTables.Count; t++)
+                    for (int t = 0; t < basefile.foundTables.Count; t++)
                     {
                         //Add all tables
-                        int id = foundTables[t].configId;
-                        if (foundTables[t].Rows > 0)
+                        int id = basefile.foundTables[t].configId;
+                        if (basefile.foundTables[t].Rows > 0)
                         {
                             if (tableSeeks[id].Name != null && tableSeeks[id].Name.Length > 1)
                                 tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableSeeks[id].Name);
                             else
-                                tableText = templateTxt.Replace("REPLACE-TABLETITLE", foundTables[t].Address);
-                            int s = basefile.GetSegmentNumber(foundTables[t].addrInt);
+                                tableText = templateTxt.Replace("REPLACE-TABLETITLE", basefile.foundTables[t].Address);
+                            int s = basefile.GetSegmentNumber(basefile.foundTables[t].addrInt);
                             if (s == -1) s = lastCategory;
                             if (tableSeeks[id].Category != null && tableSeeks[id].Category != "")
                             {
-                                for (int c = 1; c < tableCategories.Count; c++)
+                                for (int c = 1; c < basefile.tableCategories.Count; c++)
                                 {
-                                    if (tableCategories[c] == tableSeeks[id].Category)
+                                    if (basefile.tableCategories[c] == tableSeeks[id].Category)
                                     {
                                         tableText = tableText.Replace("REPLACE-CATEGORY", c.ToString());
                                     }
@@ -3112,15 +2976,15 @@ namespace UniversalPatcher
                             {
                                 tableText = tableText.Replace("REPLACE-CATEGORY", s.ToString());
                             }
-                            tableText = tableText.Replace("REPLACE-TABLEID", foundTables[t].Address);
-                            tableText = tableText.Replace("REPLACE-ROWCOUNT", foundTables[t].Rows.ToString());
-                            tableText = tableText.Replace("REPLACE-COLCOUNT", foundTables[t].Columns.ToString());
+                            tableText = tableText.Replace("REPLACE-TABLEID", basefile.foundTables[t].Address);
+                            tableText = tableText.Replace("REPLACE-ROWCOUNT", basefile.foundTables[t].Rows.ToString());
+                            tableText = tableText.Replace("REPLACE-COLCOUNT", basefile.foundTables[t].Columns.ToString());
                             tableText = tableText.Replace("REPLACE-MATH", tableSeeks[id].Math);
                             tableText = tableText.Replace("REPLACE-BITS", getBits(tableSeeks[id].DataType).ToString());
                             tableText = tableText.Replace("REPLACE-DECIMALS", tableSeeks[id].Decimals.ToString());
                             tableText = tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)tableSeeks[id].OutputType).ToString());
-                            tableText = tableText.Replace("REPLACE-TABLEADDRESS", foundTables[t].Address);
-                            tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", foundTables[t].Description);
+                            tableText = tableText.Replace("REPLACE-TABLEADDRESS", basefile.foundTables[t].Address);
+                            tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", basefile.foundTables[t].Description);
                             tableText = tableText.Replace("REPLACE-MINVALUE", tableSeeks[id].Min.ToString());
                             tableText = tableText.Replace("REPLACE-MAXVALUE", tableSeeks[id].Max.ToString());
                             int tableFlags = 0;
@@ -3137,10 +3001,10 @@ namespace UniversalPatcher
                             tableRows = "";
                             if (tableSeeks[id].RowHeaders == "")
                             {
-                                for (int d = 0; d < foundTables[t].Rows; d++)
+                                for (int d = 0; d < basefile.foundTables[t].Rows; d++)
                                 {
                                     tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />";
-                                    if (d < foundTables[t].Rows - 1)
+                                    if (d < basefile.foundTables[t].Rows - 1)
                                         tableRows += Environment.NewLine;
                                 }
                             }
@@ -3158,10 +3022,10 @@ namespace UniversalPatcher
                             string tableCols = "";
                             if (tableSeeks[id].ColHeaders == "")
                             {
-                                for (int d = 0; d < foundTables[t].Columns; d++)
+                                for (int d = 0; d < basefile.foundTables[t].Columns; d++)
                                 {
                                     tableCols += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />" ;
-                                    if (d < foundTables[t].Columns - 1)
+                                    if (d < basefile.foundTables[t].Columns - 1)
                                         tableCols += Environment.NewLine;
                                 }
                             }
@@ -3182,23 +3046,23 @@ namespace UniversalPatcher
                     }
                     fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
                     templateTxt = ReadTextFile(fName);
-                    for (int t = 0; t < foundTables.Count; t++)
+                    for (int t = 0; t < basefile.foundTables.Count; t++)
                     {
                         //Add all constants
-                        int id = foundTables[t].configId;
-                        if (foundTables[t].Rows == 0)
+                        int id = basefile.foundTables[t].configId;
+                        if (basefile.foundTables[t].Rows == 0)
                         {
-                            if (foundTables[t].Name != null && foundTables[t].Name.Length > 1)
-                                tableText = templateTxt.Replace("REPLACE-TABLETITLE", foundTables[t].Name);
+                            if (basefile.foundTables[t].Name != null && basefile.foundTables[t].Name.Length > 1)
+                                tableText = templateTxt.Replace("REPLACE-TABLETITLE", basefile.foundTables[t].Name);
                             else
-                                tableText = templateTxt.Replace("REPLACE-TABLETITLE", foundTables[t].Address);
-                            int s = basefile.GetSegmentNumber(foundTables[t].addrInt);
+                                tableText = templateTxt.Replace("REPLACE-TABLETITLE", basefile.foundTables[t].Address);
+                            int s = basefile.GetSegmentNumber(basefile.foundTables[t].addrInt);
                             if (s == -1) s = lastCategory;
                             tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
-                            tableText = tableText.Replace("REPLACE-TABLEID", foundTables[t].Address);
-                            tableText = tableText.Replace("REPLACE-TABLEADDRESS", foundTables[t].Address);
+                            tableText = tableText.Replace("REPLACE-TABLEID", basefile.foundTables[t].Address);
+                            tableText = tableText.Replace("REPLACE-TABLEADDRESS", basefile.foundTables[t].Address);
                             tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
-                            tableText = tableText.Replace("REPLACE-BITS", (getBits(tableDatas[t].DataType)).ToString());
+                            tableText = tableText.Replace("REPLACE-BITS", (getBits(basefile.tableDatas[t].DataType)).ToString());
                             tableText = tableText.Replace("REPLACE-MINVALUE", tableSeeks[id].Min.ToString());
                             tableText = tableText.Replace("REPLACE-MAXVALUE", tableSeeks[id].Max.ToString());
                             xdfText += tableText;       //Add generated table to end of xdfText
@@ -3207,7 +3071,8 @@ namespace UniversalPatcher
                 }
 
                 xdfText += "</XDFFORMAT>" + Environment.NewLine;
-                string fileName = SelectSaveFile("XDF Files(*.xdf)|*.xdf|ALL Files (*.*)|*.*",basefile.OS + "-generated.xdf");
+                string defFname = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions", basefile.OS + "-generated.xdf");
+                string fileName = SelectSaveFile("XDF Files(*.xdf)|*.xdf|ALL Files (*.*)|*.*", defFname);
                 if (fileName.Length == 0)
                     return;
                 Logger("Writing to file: " + Path.GetFileName(fileName), false);
@@ -3231,13 +3096,14 @@ namespace UniversalPatcher
 
         private void tableSeekToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (XMLFile == null)
+            if (pcmConfigFile == null)
             {
                 Logger("No file/XML selected");
                 return;
             }
             frmEditXML frmE = new frmEditXML();
-            frmE.LoadTableSeek(Path.Combine(Application.StartupPath, "XML", "TableSeek-" + basefile.xmlFile + ".xml") );
+            
+            frmE.LoadTableSeek(Path.Combine(Application.StartupPath, "XML", "TableSeek-" + basefile.configFile + ".xml") );
             frmE.Show();
 
         }
@@ -3256,8 +3122,8 @@ namespace UniversalPatcher
                 int rowindex = dataGridTableSeek.CurrentCell.RowIndex;
                 int columnindex = dataGridTableSeek.CurrentCell.ColumnIndex;
                 int codeIndex = Convert.ToInt32(dataGridTableSeek.Rows[rowindex].Cells["id"].Value);
-                TableSeek ts = tableSeeks[foundTables[codeIndex].configId];
-                if (foundTables[codeIndex].Address == null || foundTables[codeIndex].Address == "")
+                TableSeek ts = tableSeeks[basefile.foundTables[codeIndex].configId];
+                if (basefile.foundTables[codeIndex].Address == null || basefile.foundTables[codeIndex].Address == "")
                 {
                     Logger("No address defined!");
                     return;
@@ -3356,9 +3222,9 @@ namespace UniversalPatcher
             if (basefile == null)
             {
                 LoggerBold("No file loaded");
-                return;
+                //return;
             }
-            tableDatas = new List<TableData>();
+            //basefile.tableDatas = new List<TableData>();
             frmTuner ft = new frmTuner(basefile);
             ft.Show();
         }
@@ -3368,7 +3234,7 @@ namespace UniversalPatcher
             try
             {
                 string cat = comboTableCategory.Text;
-                var results = foundTables.Where(t => t.Name.Length > 0); //How should I define empty variable??
+                var results = basefile.foundTables.Where(t => t.Name.Length > 0); //How should I define empty variable??
                 if (cat != "_All" && cat != "")
                     results = results.Where(t => t.Category.ToLower().Contains(comboTableCategory.Text.ToLower()));
                 if (txtSearchTableSeek.Text.Length > 0)

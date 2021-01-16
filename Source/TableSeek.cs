@@ -72,19 +72,20 @@ namespace UniversalPatcher
             return (TableSeek)this.MemberwiseClone();
         }
 
-        public string seekTables(PcmFile PCM)
+        private PcmFile PCM;
+        public string seekTables(PcmFile PCM1)
         {
+            PCM = PCM1;
             string retVal = "";
             try
             {
 
-                foundTables = new List<FoundTable>();
+                PCM.foundTables = new List<FoundTable>();
 
-                tableCategories = new List<string>();
-                tableCategories.Add("_All");
+                PCM.tableCategories = new List<string>();
                 for (int c = 0; c < PCM.segmentinfos.Length; c++)
-                    tableCategories.Add("Seg-" + PCM.segmentinfos[c].Name);
-                string fileName = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + PCM.xmlFile + ".xml");
+                    PCM.tableCategories.Add("Seg-" + PCM.segmentinfos[c].Name);
+                string fileName = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + PCM.configFile + ".xml");
                 if (fileName != tableSeekFile)
                 {
                     tableSeekFile = fileName;
@@ -99,12 +100,12 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        if (upatcher.Segments[0].CS1Address.StartsWith("GM-V6"))
+                        if (PCM.Segments[0].CS1Address.StartsWith("GM-V6"))
                         {
-                            if (!tableCategories.Contains("Fuel")) tableCategories.Add("Fuel");
+                            if (!PCM.tableCategories.Contains("Fuel")) PCM.tableCategories.Add("Fuel");
                             tableSeeks = new List<TableSeek>();
                             TableSeek ts = new TableSeek();
-                            FoundTable ft = new FoundTable();
+                            FoundTable ft = new FoundTable(PCM);
 
                             ft.Address = PCM.v6VeTable.address.ToString("X8");
                             ft.addrInt = PCM.v6VeTable.address;
@@ -114,7 +115,7 @@ namespace UniversalPatcher
                             ft.Name = "VE";
                             ft.Category = "Fuel";
                             ft.Description = "Volumetric Efficiency";
-                            foundTables.Add(ft);
+                            PCM.foundTables.Add(ft);
 
                             ts.Name = "VE";
                             ts.Description = "Volumetric Efficiency";
@@ -136,7 +137,7 @@ namespace UniversalPatcher
                             ts.RowMajor = false;
                             tableSeeks.Add(ts);
 
-                            ft = new FoundTable();
+                            ft = new FoundTable(PCM);
                             HexToUint(PCM.mafAddress, out ft.addrInt);
                             ft.Address = ft.addrInt.ToString("X8");
                             ft.Rows = 81;
@@ -145,7 +146,7 @@ namespace UniversalPatcher
                             ft.Name = "MAF";
                             ft.Category = "Fuel";
                             ft.Description = "Grams Per Second";
-                            foundTables.Add(ft);
+                            PCM.foundTables.Add(ft);
 
                             ts = new TableSeek();
                             ts.DataType = InDataType.UWORD;
@@ -185,7 +186,7 @@ namespace UniversalPatcher
                 {
                     if (tableSeeks[s].SearchStr.Length == 0)
                         continue;   //Can't search if string is empty!
-                    if (tableSeeks[s].Category != null && !tableCategories.Contains(tableSeeks[s].Category)) tableCategories.Add(tableSeeks[s].Category);
+                    if (tableSeeks[s].Category != null && !PCM.tableCategories.Contains(tableSeeks[s].Category)) PCM.tableCategories.Add(tableSeeks[s].Category);
                     uint startAddr = 0;
                     uint endAddr = PCM.fsize;
                     List<Block> addrList = new List<Block>();
@@ -267,7 +268,7 @@ namespace UniversalPatcher
                             }
                             if (hit == wantedHit && sAddr.Addr < PCM.fsize)
                             {
-                                FoundTable ft = new FoundTable();
+                                FoundTable ft = new FoundTable(PCM);
                                 ft.configId = s;
                                 ft.Name = tableSeeks[s].Name.Replace("£", (wHit +1).ToString());
                                 ft.Description = tableSeeks[s].Description.Replace("£", (wHit + 1).ToString());
@@ -289,7 +290,7 @@ namespace UniversalPatcher
                                     ft.Columns = tableSeeks[s].Columns;
                                 else
                                     ft.Columns = sAddr.Columns;
-                                foundTables.Add(ft);
+                                PCM.foundTables.Add(ft);
                                 wHit++;
                             }
                             if (wHit >= wantedHitList.Count) break;
@@ -314,14 +315,14 @@ namespace UniversalPatcher
 
     public class FoundTable
     {
-        public FoundTable()
+        public FoundTable(PcmFile PCM)
         {
             Name = "";
             addrInt = uint.MaxValue;
             //Address = "";
             configId = -1;
             Description = "";
-            id = foundTables.Count;
+            id = PCM.foundTables.Count;
         }
         public int id { get; set; }
         public string Name { get; set; }
