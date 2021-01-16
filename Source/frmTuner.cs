@@ -52,6 +52,9 @@ namespace UniversalPatcher
             else
                 importTinyTunerDBV6OnlyToolStripMenuItem.Enabled = false;
             filterTables();
+            foreach (ToolStripMenuItem mi in compareWithToolStripMenuItem.DropDownItems)
+                mi.Enabled = true;
+            compareWithToolStripMenuItem.DropDownItems[Path.GetFileName(PCM.FileName)].Enabled = false;
         }
 
         private void loadConfigforPCM()
@@ -84,7 +87,7 @@ namespace UniversalPatcher
             }
 
         }
-        private void openTableEditor()
+        private void openTableEditor(PcmFile comparePCM)
         {
             try
             {
@@ -124,10 +127,28 @@ namespace UniversalPatcher
                 else*/
                 {
                     frmTableEditor frmT = new frmTableEditor();
-                    frmT.Show();
                     frmT.PCM = PCM;
                     frmT.tableIds = tableIds;
                     frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
+                    if (comparePCM != null)
+                    {
+                        bool tblFound = false;
+                        for (int x=0; x < comparePCM.tableDatas.Count; x++)
+                        {
+                            if (comparePCM.tableDatas[x].TableName == td.TableName && comparePCM.tableDatas[x].Category == td.Category)
+                            {
+                                tblFound = true;
+                                frmT.loadCompareTable(comparePCM, comparePCM.tableDatas[x]);
+                                break;
+                            }
+                        }
+                        if (!tblFound)
+                        {
+                            LoggerBold("Table not found from: " + Path.GetFileName(comparePCM.FileName));
+                            return;
+                        }
+                    }
+                    frmT.Show();
                     frmT.loadTable(td);
                 }
             }
@@ -140,7 +161,7 @@ namespace UniversalPatcher
 
         private void btnEditTable_Click(object sender, EventArgs e)
         {
-            openTableEditor();
+            openTableEditor(null);
         }
 
       public void LoggerBold(string LogText, Boolean NewLine = true)
@@ -678,7 +699,7 @@ namespace UniversalPatcher
                 Point p = g.PointToClient(MousePosition);
                 DataGridView.HitTestInfo  hti = g.HitTest(p.X, p.Y);
                 if (hti.Type != DataGridViewHitTestType.ColumnHeader && hti.Type != DataGridViewHitTestType.RowHeader)
-                    openTableEditor();
+                    openTableEditor(null);
             }
         }
 
@@ -797,7 +818,7 @@ namespace UniversalPatcher
 
         private void editTableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openTableEditor();
+            openTableEditor(null);
         }
 
         private void exportCsvToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1537,6 +1558,12 @@ namespace UniversalPatcher
             currentFileToolStripMenuItem.DropDownItems.Add(menuitem);
             menuitem.Click += Menuitem_Click;
 
+            ToolStripMenuItem cmpMenuitem = new ToolStripMenuItem(menuitem.Name);
+            cmpMenuitem.Name = menuitem.Name;
+            cmpMenuitem.Tag = newPCM;
+            compareWithToolStripMenuItem.DropDownItems.Add(cmpMenuitem);
+            cmpMenuitem.Click += compareMenuitem_Click;
+
         }
         private void Menuitem_Click(object sender, EventArgs e)
         {
@@ -1547,6 +1574,17 @@ namespace UniversalPatcher
             menuitem.Checked = !isChecked;
             PCM = (PcmFile)menuitem.Tag;
             selectPCM();
+        }
+
+        private void compareWithToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void compareMenuitem_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
+            PcmFile cmpPCM = (PcmFile)menuitem.Tag;
+            openTableEditor(cmpPCM);
         }
     }
 }

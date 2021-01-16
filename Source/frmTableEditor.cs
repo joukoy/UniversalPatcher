@@ -71,6 +71,7 @@ namespace UniversalPatcher
         }
         private TableData td;
         public PcmFile PCM;
+        private frmTableEditor compareEditor;
         //private bool tableModified = false;
         private bool commaDecimal = true;
         private byte[] tableBuffer;
@@ -109,6 +110,16 @@ namespace UniversalPatcher
             }
             //tableModified = false;
             disableTooltipsToolStripMenuItem.Checked = false;
+        }
+
+        public void loadCompareTable(PcmFile cmpPCM, TableData td1)
+        {
+            compareEditor = new frmTableEditor();
+            compareEditor.PCM = cmpPCM;
+            compareEditor.tableIds = tableIds;
+            compareEditor.disableMultiTable = disableMultiTable;
+            compareEditor.loadTable(td1);
+            dataGridView1.BackgroundColor = Color.Red;
         }
         public void loadSeekTable(int tId, PcmFile PCM1)
         {
@@ -172,7 +183,12 @@ namespace UniversalPatcher
             string mathStr = mathTd.Math.ToLower().Replace("x", value.ToString());
             if (commaDecimal) mathStr = mathStr.Replace(".", ",");
             value = parser.Parse(mathStr, false);
-            return value;
+            double cmpVal = 0;
+            if (compareEditor != null)
+            {
+                cmpVal = compareEditor.getValue(addr, mathTd);
+            }
+            return value - cmpVal;
         }
 
         public UInt64 getRawValue(UInt32 addr, TableData mathTd)
@@ -485,7 +501,11 @@ namespace UniversalPatcher
             List<string> rowHeaders = new List<string>();
             List<ColumnInfo> coliInfos = new List<ColumnInfo>();
 
-            this.Text = "Table Editor: " + tableName;
+            if (compareEditor == null)
+                this.Text = "Table Editor: " + tableName;
+            else
+                this.Text = "Compare: " + tableName + ", "  + Path.GetFileName(PCM.FileName) + " - " + Path.GetFileName(compareEditor.PCM.FileName);
+
             if (td.Units.ToLower().Contains("bitmask"))
                 labelUnits.Text = "Units: Boolean";
             else
@@ -917,7 +937,10 @@ namespace UniversalPatcher
                     }
                 }
 
-                this.Text = "Table Editor: " + td.TableName;
+                if (compareEditor == null)
+                    this.Text = "Table Editor: " + td.TableName;
+                else
+                    this.Text = "Compare: " + td.TableName +", "+ Path.GetFileName(PCM.FileName) + " - " + Path.GetFileName(compareEditor.PCM.FileName);
                 
                 labelUnits.Text = "Units: " + getUnitFromTableData(td);
                 if (td.Values != null && !td.Values.StartsWith("Enum:"))
