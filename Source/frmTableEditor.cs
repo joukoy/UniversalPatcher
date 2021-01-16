@@ -918,12 +918,7 @@ namespace UniversalPatcher
                     }
                 }
 
-                //uint addr = (uint)(td.addrInt + td.Offset);
-
                 this.Text = "Table Editor: " + td.TableName;
-                //if (td.TableDescription != null && td.TableDescription.Length > 0)
-                //  this.Text += " - " + td.TableDescription;
-
                 
                 labelUnits.Text = "Units: " + getUnitFromTableData(td);
                 if (td.Values != null && !td.Values.StartsWith("Enum:"))
@@ -969,8 +964,6 @@ namespace UniversalPatcher
                     string[] tmp = rowHeaders;
                     rowHeaders = colHeaders;
                     colHeaders = tmp;
-                    //colHeaders = td.RowHeaders.Split(',');
-                    //rowHeaders = td.ColumnHeaders.Split(',');
                 }
 
                 dataGridView1.Rows.Clear();
@@ -987,9 +980,6 @@ namespace UniversalPatcher
                 {
                     //Special case, possible values in rowheader
                     combo = true;
-                    //chkSwapXY.Enabled = false;
-                    //swapXyToolStripMenuItem.Enabled = false;
-                    //showRawHEXValuesToolStripMenuItem.Enabled = false;
                     txtMath.Enabled = false;
                     btnExecute.Enabled = false;
                     exportCSVToolStripMenuItem1.Enabled = false;

@@ -1222,15 +1222,15 @@ namespace UniversalPatcher
 
                 Logger("Generating CSV...");
 
-                string csvData = "Tablename;Category;Size;OS1;Address1;OS2;Address2" + Environment.NewLine;
+                string csvData = "Category;Tablename;Size;" + tableDatas[0].OS + ";" + Environment.NewLine;
                 for (int row = 0; row < tableDatas.Count; row++)
                 {
                     int tbSize = tableDatas[row].Rows * tableDatas[row].Columns * getElementSize(tableDatas[row].DataType);
-                    csvData += tableDatas[row].TableName + ";";
                     csvData += tableDatas[row].Category + ";";
+                    csvData += tableDatas[row].TableName + ";";
                     csvData += tbSize.ToString() + ";";
                     //csvData += tableDatas[row].OS + ";";
-                    //csvData += tableDatas[row].Address;
+                    csvData += tableDatas[row].Address;
                     csvData += Environment.NewLine;
                 }
                 Logger("Writing to file: " + fName, false);
@@ -1257,7 +1257,8 @@ namespace UniversalPatcher
                 List<OsAddrStruct> osAddrList = new List<OsAddrStruct>();
                 List<string> osList = new List<string>();
 
-                LoggerBold("Supply CSV file in format: Tablename;Category;Size;OS1;Address1;OS2;Address2;...");
+                LoggerBold("Supply CSV file in format: Category;Tablename;Size;OS1Address1;OS2Address2;...");
+                LoggerBold("OS versions in header, for example: Category;Tablename;Size;12587603;12582405;12587656;");
                 string fName = SelectFile("Select CSV file for XML generator","CSV files (*.csv)|*.csv|ALL files|*.*");
                 if (fName.Length == 0) return;
                 Logger("Using file: " + currentXmlFile + " as template");
@@ -1265,24 +1266,30 @@ namespace UniversalPatcher
                 
                 StreamReader sr = new StreamReader(fName);
                 string csvLine;
+                if ((csvLine = sr.ReadLine()) == null)
+                    throw new Exception("Empty file");
+
+                string[] hdrParts = csvLine.Split(';');
+                if (hdrParts.Length < 4)
+                    throw new Exception("Header too sort");
+
+                for (int h=4; h < hdrParts.Length; h++)
+                    if (hdrParts[h].Length > 2)
+                        osList.Add(hdrParts[h]);
+
                 while ((csvLine = sr.ReadLine()) != null )
                 {
-                    if (!csvLine.ToLower().StartsWith("tablename"))
+                    string[] lParts = csvLine.Split(';');
+                    if (lParts.Length > 4)
                     {
-                        string[] lParts = csvLine.Split(';');
-                        if (lParts.Length > 4)
+                        for (int x = 4; x < lParts.Length; x++)
                         {
-                            for (int x = 3; x < lParts.Length; x += 2)
-                            {
-                                OsAddrStruct oa;
-                                oa.tableName = lParts[0];
-                                oa.category = lParts[1];
-                                oa.OS = lParts[x];
-                                oa.addr = lParts[x + 1];
-                                osAddrList.Add(oa);
-                                if (!osList.Contains(oa.OS))
-                                    osList.Add(oa.OS);
-                            }
+                            OsAddrStruct oa;
+                            oa.tableName = lParts[1];
+                            oa.category = lParts[0];
+                            oa.OS = osList[x-4];
+                            oa.addr = lParts[x];
+                            osAddrList.Add(oa);
                         }
                     }
                 }
@@ -1290,8 +1297,6 @@ namespace UniversalPatcher
                 for (int o=0; o<osList.Count; o++)
                 {
                     List<TableData> newTds = new List<TableData>();
-                    for (int t = 0; t < tableDatas.Count; t++) 
-                        tableDatas[t].addrInt = uint.MaxValue;  //Set all addresses to maxuint
                     for (int x = 0; x < osAddrList.Count; x++)
                     {
                         if (osAddrList[x].OS == osList[o])
