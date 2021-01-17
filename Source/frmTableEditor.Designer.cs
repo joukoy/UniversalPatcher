@@ -53,14 +53,18 @@ namespace UniversalPatcher
             this.graphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showGraphicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showDifferenceMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkSwapXY = new System.Windows.Forms.CheckBox();
             this.numColumn = new System.Windows.Forms.NumericUpDown();
             this.labelColumn = new System.Windows.Forms.Label();
+            this.groupSelectCompare = new System.Windows.Forms.GroupBox();
+            this.radioDifference = new System.Windows.Forms.RadioButton();
+            this.radioCompareFile = new System.Windows.Forms.RadioButton();
+            this.radioOriginal = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numColumn)).BeginInit();
+            this.groupSelectCompare.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -77,25 +81,22 @@ namespace UniversalPatcher
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridView1.Size = new System.Drawing.Size(796, 376);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
             this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
-            this.dataGridView1.CellBeginEdit += new DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
             // 
             // txtMath
             // 
-            this.txtMath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtMath.Location = new System.Drawing.Point(2, 25);
+            this.txtMath.Location = new System.Drawing.Point(9, 47);
             this.txtMath.Name = "txtMath";
-            this.txtMath.Size = new System.Drawing.Size(736, 20);
+            this.txtMath.Size = new System.Drawing.Size(82, 20);
             this.txtMath.TabIndex = 1;
             this.txtMath.Text = "X*1";
             // 
             // btnExecute
             // 
-            this.btnExecute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExecute.Location = new System.Drawing.Point(744, 25);
+            this.btnExecute.Location = new System.Drawing.Point(97, 47);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(54, 21);
             this.btnExecute.TabIndex = 2;
@@ -106,7 +107,7 @@ namespace UniversalPatcher
             // labelUnits
             // 
             this.labelUnits.AutoSize = true;
-            this.labelUnits.Location = new System.Drawing.Point(6, 50);
+            this.labelUnits.Location = new System.Drawing.Point(157, 50);
             this.labelUnits.Name = "labelUnits";
             this.labelUnits.Size = new System.Drawing.Size(10, 13);
             this.labelUnits.TabIndex = 5;
@@ -242,24 +243,14 @@ namespace UniversalPatcher
             // 
             // compareToolStripMenuItem
             // 
-            this.compareToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showDifferenceMenuItem});
             this.compareToolStripMenuItem.Name = "compareToolStripMenuItem";
-            this.compareToolStripMenuItem.Size = new System.Drawing.Size(68, 20);
-            this.compareToolStripMenuItem.Text = "Compare";
-            // 
-            // showDifferenceMenuItem
-            // 
-            this.showDifferenceMenuItem.Enabled = false;
-            this.showDifferenceMenuItem.Name = "showDifferenceMenuItem";
-            this.showDifferenceMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.showDifferenceMenuItem.Text = "Show difference";
-            this.showDifferenceMenuItem.Click += new System.EventHandler(this.compareSelection_Click);
+            this.compareToolStripMenuItem.Size = new System.Drawing.Size(87, 20);
+            this.compareToolStripMenuItem.Text = "Compare file";
             // 
             // chkSwapXY
             // 
             this.chkSwapXY.AutoSize = true;
-            this.chkSwapXY.Location = new System.Drawing.Point(226, 6);
+            this.chkSwapXY.Location = new System.Drawing.Point(247, 6);
             this.chkSwapXY.Name = "chkSwapXY";
             this.chkSwapXY.Size = new System.Drawing.Size(75, 17);
             this.chkSwapXY.TabIndex = 7;
@@ -270,7 +261,7 @@ namespace UniversalPatcher
             // numColumn
             // 
             this.numColumn.Enabled = false;
-            this.numColumn.Location = new System.Drawing.Point(358, 3);
+            this.numColumn.Location = new System.Drawing.Point(379, 3);
             this.numColumn.Maximum = new decimal(new int[] {
             3,
             0,
@@ -295,18 +286,67 @@ namespace UniversalPatcher
             // labelColumn
             // 
             this.labelColumn.AutoSize = true;
-            this.labelColumn.Location = new System.Drawing.Point(307, 7);
+            this.labelColumn.Location = new System.Drawing.Point(328, 7);
             this.labelColumn.Name = "labelColumn";
             this.labelColumn.Size = new System.Drawing.Size(45, 13);
             this.labelColumn.TabIndex = 9;
             this.labelColumn.Text = "Column:";
             this.labelColumn.Visible = false;
             // 
+            // groupSelectCompare
+            // 
+            this.groupSelectCompare.Controls.Add(this.radioDifference);
+            this.groupSelectCompare.Controls.Add(this.radioCompareFile);
+            this.groupSelectCompare.Controls.Add(this.radioOriginal);
+            this.groupSelectCompare.Enabled = false;
+            this.groupSelectCompare.Location = new System.Drawing.Point(9, 27);
+            this.groupSelectCompare.Name = "groupSelectCompare";
+            this.groupSelectCompare.Size = new System.Drawing.Size(288, 20);
+            this.groupSelectCompare.TabIndex = 10;
+            this.groupSelectCompare.TabStop = false;
+            this.groupSelectCompare.Text = "Show";
+            // 
+            // radioDifference
+            // 
+            this.radioDifference.AutoSize = true;
+            this.radioDifference.Location = new System.Drawing.Point(207, 0);
+            this.radioDifference.Name = "radioDifference";
+            this.radioDifference.Size = new System.Drawing.Size(74, 17);
+            this.radioDifference.TabIndex = 2;
+            this.radioDifference.Text = "Difference";
+            this.radioDifference.UseVisualStyleBackColor = true;
+            this.radioDifference.CheckedChanged += new System.EventHandler(this.radioDifference_CheckedChanged);
+            // 
+            // radioCompareFile
+            // 
+            this.radioCompareFile.AutoSize = true;
+            this.radioCompareFile.Location = new System.Drawing.Point(118, 0);
+            this.radioCompareFile.Name = "radioCompareFile";
+            this.radioCompareFile.Size = new System.Drawing.Size(83, 17);
+            this.radioCompareFile.TabIndex = 1;
+            this.radioCompareFile.Text = "Compare file";
+            this.radioCompareFile.UseVisualStyleBackColor = true;
+            this.radioCompareFile.CheckedChanged += new System.EventHandler(this.radioCompareFile_CheckedChanged);
+            // 
+            // radioOriginal
+            // 
+            this.radioOriginal.AutoSize = true;
+            this.radioOriginal.Checked = true;
+            this.radioOriginal.Location = new System.Drawing.Point(52, 0);
+            this.radioOriginal.Name = "radioOriginal";
+            this.radioOriginal.Size = new System.Drawing.Size(60, 17);
+            this.radioOriginal.TabIndex = 0;
+            this.radioOriginal.TabStop = true;
+            this.radioOriginal.Text = "Original";
+            this.radioOriginal.UseVisualStyleBackColor = true;
+            this.radioOriginal.CheckedChanged += new System.EventHandler(this.radioOriginal_CheckedChanged);
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.groupSelectCompare);
             this.Controls.Add(this.labelColumn);
             this.Controls.Add(this.numColumn);
             this.Controls.Add(this.chkSwapXY);
@@ -325,6 +365,8 @@ namespace UniversalPatcher
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numColumn)).EndInit();
+            this.groupSelectCompare.ResumeLayout(false);
+            this.groupSelectCompare.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -356,6 +398,9 @@ namespace UniversalPatcher
         private Label labelColumn;
         public NumericUpDown numColumn;
         private ToolStripMenuItem compareToolStripMenuItem;
-        private ToolStripMenuItem showDifferenceMenuItem;
+        private GroupBox groupSelectCompare;
+        private RadioButton radioDifference;
+        private RadioButton radioCompareFile;
+        private RadioButton radioOriginal;
     }
 }

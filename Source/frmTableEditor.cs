@@ -111,28 +111,29 @@ namespace UniversalPatcher
             disableTooltipsToolStripMenuItem.Checked = false;
         }
 
-        public void loadCompareTable(PcmFile cmpPCM, TableData td1)
+        public void addCompareFiletoMenu(PcmFile cmpPCM)
+        {
+            ToolStripMenuItem menuitem = new ToolStripMenuItem(cmpPCM.FileName);
+            menuitem.Tag = cmpPCM;
+            menuitem.Name = Path.GetFileName(cmpPCM.FileName);
+            menuitem.Click += compareSelection_Click;
+            if (compareToolStripMenuItem.DropDownItems.Count == 0)
+            {
+                //First file selected by default
+                menuitem.Checked = true;
+                loadCompareTable(cmpPCM);
+                groupSelectCompare.Enabled = true;
+            }
+            compareToolStripMenuItem.DropDownItems.Add(menuitem);
+        }
+        public void loadCompareTable(PcmFile cmpPCM)
         {
             disableSaving = true;
             compareEditor = new frmTableEditor();
             compareEditor.PCM = cmpPCM;
             compareEditor.tableIds = tableIds;
             compareEditor.disableMultiTable = disableMultiTable;
-            compareEditor.loadTable(td1);
-            dataGridView1.BackgroundColor = Color.Red;
-            ToolStripMenuItem mi0 = (ToolStripMenuItem) compareToolStripMenuItem.DropDownItems[0];
-            mi0.Enabled = true;
-            mi0.Checked = true;
-
-            ToolStripMenuItem menuitem = new ToolStripMenuItem("Show " + Path.GetFileName(PCM.FileName));
-            menuitem.Name = "showOriginalMenuItem";
-            menuitem.Click += compareSelection_Click;
-            compareToolStripMenuItem.DropDownItems.Add(menuitem);
-
-            menuitem = new ToolStripMenuItem("Show " + Path.GetFileName(cmpPCM.FileName) + " (comparefile)");
-            menuitem.Name = "showCompareFileMenuItem";
-            compareToolStripMenuItem.DropDownItems.Add(menuitem);
-            menuitem.Click += compareSelection_Click;
+            compareEditor.loadTable(cmpPCM.selectedTable);
         }
 
         private void compareSelection_Click(object sender, EventArgs e)
@@ -141,10 +142,8 @@ namespace UniversalPatcher
                 mi.Checked = false;
             ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
             menuitem.Checked = true;
-            if (menuitem.Name == "showOriginalMenuItem")
-                disableSaving = false;
-            else
-                disableSaving = true;
+            PcmFile cmpPCM = (PcmFile)menuitem.Tag;
+            loadCompareTable(cmpPCM);
             loadTable(td);
         }
 
@@ -204,30 +203,24 @@ namespace UniversalPatcher
             if (mathTd.DataType == InDataType.FLOAT64)
                 value = BEToFloat64(myBuffer, bufAddr);
 
-
             string mathStr = mathTd.Math.ToLower().Replace("x", value.ToString());
             if (commaDecimal) mathStr = mathStr.Replace(".", ",");
             value = parser.Parse(mathStr, false);
-            double cmpVal = 0;
             if (compareEditor != null)
             {
                 int currentOffset = (int)(addr - (td.addrInt + td.Offset) ); //Bytes from (table start + offset)
                 int currentSteps = (int)currentOffset / getElementSize(td.DataType); 
                 uint cmpAddr = (uint)(currentSteps * getElementSize(compareEditor.td.DataType) + compareEditor.td.addrInt + compareEditor.td.Offset);
-                string cmpSelect = "";
-                foreach (ToolStripMenuItem mi in compareToolStripMenuItem.DropDownItems)
-                    if (mi.Checked)
-                        cmpSelect = mi.Name;
-                if (cmpSelect == "showDifferenceMenuItem")
+                if (radioDifference.Checked)
                 {
-                    cmpVal = compareEditor.getValue(cmpAddr, mathTd);
+                    double cmpVal = compareEditor.getValue(cmpAddr, mathTd);
                     return value - cmpVal;
                 }
-                if (cmpSelect == "showOriginalMenuItem")
+                if (radioOriginal.Checked)
                 {
                     return value;
                 }
-                if (cmpSelect == "showCompareFileMenuItem")
+                if (radioCompareFile.Checked)
                 {
                     return compareEditor.getValue(cmpAddr, mathTd);
                 }
@@ -1748,5 +1741,34 @@ namespace UniversalPatcher
             loadMultiTable(mtn.TableName);
         }
 
+        private void radioCompareFile_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioCompareFile.Checked)
+            {
+                dataGridView1.BackgroundColor = Color.Red;
+                disableSaving = true;
+            }
+            loadTable(td);
+        }
+
+        private void radioDifference_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioDifference.Checked)
+            {
+                dataGridView1.BackgroundColor = Color.Red;
+                disableSaving = true;
+            }
+            loadTable(td);
+        }
+
+        private void radioOriginal_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioOriginal.Checked)
+            {
+                dataGridView1.BackgroundColor = Color.Gray;
+                disableSaving = false;
+            }
+            loadTable(td);
+        }
     }
 }

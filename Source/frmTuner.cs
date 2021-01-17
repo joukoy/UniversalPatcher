@@ -87,7 +87,7 @@ namespace UniversalPatcher
             }
 
         }
-        private void openTableEditor(PcmFile comparePCM)
+        private void openTableEditor()
         {
             try
             {
@@ -130,43 +130,59 @@ namespace UniversalPatcher
                     frmT.PCM = PCM;
                     frmT.tableIds = tableIds;
                     frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
-                    if (comparePCM != null)
+                    foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                     {
-                        if (td.OutputType == OutDataType.Flag || td.Units.ToLower().StartsWith("boolean"))
+                        PcmFile comparePCM = (PcmFile)mi.Tag;
+                        bool addtoCompareMenu = true;
+                        if (PCM.FileName == comparePCM.FileName)
                         {
-                            LoggerBold("Not implemented for flags");
-                            return;
+                            Debug.WriteLine("Don't add original file to menu");
+                            addtoCompareMenu = false;
                         }
-                        if (td.Values.StartsWith("Enum: "))
+                        else if (td.OutputType == OutDataType.Flag || td.Units.ToLower().StartsWith("boolean"))
                         {
-                            LoggerBold("Not implemented for Enum tables");
-                            return;
+                            Debug.WriteLine("Not implemented for flags");
+                            addtoCompareMenu = false;
                         }
-                        if (PCM.configFile != comparePCM.configFile)
+                        else if (td.Values.StartsWith("Enum: "))
                         {
-                            LoggerBold("Warning: file type different, results undefined!");
+                            Debug.WriteLine("Not implemented for Enum tables");
+                            addtoCompareMenu = false;
                         }
-                        bool tblFound = false;
-                        for (int x=0; x < comparePCM.tableDatas.Count; x++)
+                        if (addtoCompareMenu)
                         {
-                            if (comparePCM.tableDatas[x].TableName == td.TableName && comparePCM.tableDatas[x].Category == td.Category)
+                            Logger("Adding file: " + Path.GetFileName(comparePCM.FileName) + " to compare menu...", false);
+                            if (PCM.configFile != comparePCM.configFile)
                             {
-                                if (comparePCM.tableDatas[x].Rows != td.Rows || comparePCM.tableDatas[x].Columns != td.Columns || comparePCM.tableDatas[x].RowMajor != td.RowMajor)
-                                {
-                                    Logger("Table size not match!");
-                                }
-                                else
-                                {
-                                    tblFound = true;
-                                    frmT.loadCompareTable(comparePCM, comparePCM.tableDatas[x]);
-                                    break;
-                                }
+                                LoggerBold(Environment.NewLine + "Warning: file type different, results undefined!");
                             }
-                        }
-                        if (!tblFound)
-                        {
-                            LoggerBold("Table not found from: " + Path.GetFileName(comparePCM.FileName));
-                            return;
+                            bool tblFound = false;
+                            string tbName = td.TableName;
+                            if (td.TableName.Contains("*"))
+                            {
+                                tbName = td.TableName.Substring(0, td.TableName.IndexOf('*') );
+                            }
+                            for (int x = 0; x < comparePCM.tableDatas.Count; x++)
+                            {
+                                if (comparePCM.tableDatas[x].Category == td.Category && comparePCM.tableDatas[x].TableName.StartsWith(tbName))
+                                {
+                                    if (comparePCM.tableDatas[x].Rows != td.Rows || comparePCM.tableDatas[x].Columns != td.Columns || comparePCM.tableDatas[x].RowMajor != td.RowMajor)
+                                    {
+                                        Logger("Table size not match!");
+                                    }
+                                    else
+                                    {
+                                        tblFound = true;
+                                        comparePCM.selectedTable = comparePCM.tableDatas[x];
+                                        frmT.addCompareFiletoMenu(comparePCM);
+                                        break;
+                                    }
+                                }
+                            }                            
+                            if (!tblFound)
+                            {
+                                LoggerBold(" Table not found" );
+                            }
                         }
                     }
                     frmT.Show();
@@ -182,7 +198,7 @@ namespace UniversalPatcher
 
         private void btnEditTable_Click(object sender, EventArgs e)
         {
-            openTableEditor(null);
+            openTableEditor();
         }
 
       public void LoggerBold(string LogText, Boolean NewLine = true)
@@ -720,7 +736,7 @@ namespace UniversalPatcher
                 Point p = g.PointToClient(MousePosition);
                 DataGridView.HitTestInfo  hti = g.HitTest(p.X, p.Y);
                 if (hti.Type != DataGridViewHitTestType.ColumnHeader && hti.Type != DataGridViewHitTestType.RowHeader)
-                    openTableEditor(null);
+                    openTableEditor();
             }
         }
 
@@ -839,7 +855,7 @@ namespace UniversalPatcher
 
         private void editTableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openTableEditor(null);
+            openTableEditor();
         }
 
         private void exportCsvToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1609,9 +1625,9 @@ namespace UniversalPatcher
 
         private void compareMenuitem_Click(object sender, EventArgs e)
         {
-            ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
-            PcmFile cmpPCM = (PcmFile)menuitem.Tag;
-            openTableEditor(cmpPCM);
+            //ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
+            //PcmFile cmpPCM = (PcmFile)menuitem.Tag;
+            //openTableEditor(cmpPCM);
         }
     }
 }

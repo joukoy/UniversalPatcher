@@ -15,26 +15,14 @@ namespace UniversalPatcher
     {
         public PcmFile()
         {
-            OSSegment = -1;
-            diagSegment = -1;
-            configFile = "";
-            Segments = new List<SegmentConfig>();
-            dtcCodes = new List<dtcCode>();
-            tableDatas = new List<TableData>();
-            foundTables = new List<FoundTable>();
-            tableCategories = new List<string>();
+            setDefaultValues();
         }
         public PcmFile(string Fname, bool autodetect, string cnfFile)
         {
-            Segments = new List<SegmentConfig>();
-            dtcCodes = new List<dtcCode>();
-            tableDatas = new List<TableData>();
-            foundTables = new List<FoundTable>();
-            tableCategories = new List<string>();
+            setDefaultValues();
             FileName = Fname;
             fsize = (uint)new FileInfo(FileName).Length;
             buf = ReadBin(FileName, 0, fsize);
-            OS = "";
             osStoreAddress = uint.MaxValue;
             if (autodetect)
             {
@@ -89,7 +77,20 @@ namespace UniversalPatcher
         public List<string> tableCategories;
         public List<TableData> tableDatas = new List<TableData>();
         public bool dtcCombined = false;
+        public TableData selectedTable; //Required for Tuner/Compare
+        private void setDefaultValues()
+        {
+            OS = "";
+            OSSegment = -1;
+            diagSegment = -1;
+            configFile = "";
+            Segments = new List<SegmentConfig>();
+            dtcCodes = new List<dtcCode>();
+            tableDatas = new List<TableData>();
+            foundTables = new List<FoundTable>();
+            tableCategories = new List<string>();
 
+        }
         public string configFileFullName
         {
             get
