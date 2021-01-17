@@ -147,9 +147,16 @@ namespace UniversalPatcher
                         {
                             if (comparePCM.tableDatas[x].TableName == td.TableName && comparePCM.tableDatas[x].Category == td.Category)
                             {
-                                tblFound = true;
-                                frmT.loadCompareTable(comparePCM, comparePCM.tableDatas[x]);
-                                break;
+                                if (comparePCM.tableDatas[x].Rows != td.Rows || comparePCM.tableDatas[x].Columns != td.Columns)
+                                {
+                                    Logger("Table size not match!");
+                                }
+                                else
+                                {
+                                    tblFound = true;
+                                    frmT.loadCompareTable(comparePCM, comparePCM.tableDatas[x]);
+                                    break;
+                                }
                             }
                         }
                         if (!tblFound)
