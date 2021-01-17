@@ -137,6 +137,11 @@ namespace UniversalPatcher
                             LoggerBold("Not implemented for flags");
                             return;
                         }
+                        if (td.Values.StartsWith("Enum: "))
+                        {
+                            LoggerBold("Not implemented for Enum tables");
+                            return;
+                        }
                         bool tblFound = false;
                         for (int x=0; x < comparePCM.tableDatas.Count; x++)
                         {

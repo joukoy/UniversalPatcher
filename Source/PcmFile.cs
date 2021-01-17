@@ -108,7 +108,7 @@ namespace UniversalPatcher
                 System.IO.StreamReader file = new System.IO.StreamReader(FileName);
                 Segments = (List<SegmentConfig>)reader.Deserialize(file);
                 file.Close();
-
+                Logger(" [OK]");
                 if (Segments[0].Version == null || Segments[0].Version == "")
                 {
                     SegmentConfig S = Segments[0];
