@@ -211,13 +211,16 @@ namespace UniversalPatcher
             double cmpVal = 0;
             if (compareEditor != null)
             {
+                int currentOffset = (int)(addr - (td.addrInt + td.Offset) ); //Bytes from (table start + offset)
+                int currentSteps = (int)currentOffset / getElementSize(td.DataType); 
+                uint cmpAddr = (uint)(currentSteps * getElementSize(compareEditor.td.DataType) + compareEditor.td.addrInt + compareEditor.td.Offset);
                 string cmpSelect = "";
                 foreach (ToolStripMenuItem mi in compareToolStripMenuItem.DropDownItems)
                     if (mi.Checked)
                         cmpSelect = mi.Name;
                 if (cmpSelect == "showDifferenceMenuItem")
                 {
-                    cmpVal = compareEditor.getValue(addr, mathTd);
+                    cmpVal = compareEditor.getValue(cmpAddr, mathTd);
                     return value - cmpVal;
                 }
                 if (cmpSelect == "showOriginalMenuItem")
@@ -226,7 +229,7 @@ namespace UniversalPatcher
                 }
                 if (cmpSelect == "showCompareFileMenuItem")
                 {
-                    return compareEditor.getValue(addr, mathTd);
+                    return compareEditor.getValue(cmpAddr, mathTd);
                 }
 
             }

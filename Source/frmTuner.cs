@@ -142,12 +142,16 @@ namespace UniversalPatcher
                             LoggerBold("Not implemented for Enum tables");
                             return;
                         }
+                        if (PCM.configFile != comparePCM.configFile)
+                        {
+                            LoggerBold("Warning: file type different, results undefined!");
+                        }
                         bool tblFound = false;
                         for (int x=0; x < comparePCM.tableDatas.Count; x++)
                         {
                             if (comparePCM.tableDatas[x].TableName == td.TableName && comparePCM.tableDatas[x].Category == td.Category)
                             {
-                                if (comparePCM.tableDatas[x].Rows != td.Rows || comparePCM.tableDatas[x].Columns != td.Columns)
+                                if (comparePCM.tableDatas[x].Rows != td.Rows || comparePCM.tableDatas[x].Columns != td.Columns || comparePCM.tableDatas[x].RowMajor != td.RowMajor)
                                 {
                                     Logger("Table size not match!");
                                 }
