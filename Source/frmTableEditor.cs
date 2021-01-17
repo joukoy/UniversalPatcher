@@ -72,7 +72,7 @@ namespace UniversalPatcher
         private TableData td;
         public PcmFile PCM;
         private frmTableEditor compareEditor;
-        //private bool tableModified = false;
+        private bool disableSaving = false;
         private bool commaDecimal = true;
         private byte[] tableBuffer;
         private uint bufSize = 0;
@@ -108,19 +108,46 @@ namespace UniversalPatcher
                     this.Size = Properties.Settings.Default.TableEditorWindowSize;
                 }
             }
-            //tableModified = false;
             disableTooltipsToolStripMenuItem.Checked = false;
         }
 
         public void loadCompareTable(PcmFile cmpPCM, TableData td1)
         {
+            disableSaving = true;
             compareEditor = new frmTableEditor();
             compareEditor.PCM = cmpPCM;
             compareEditor.tableIds = tableIds;
             compareEditor.disableMultiTable = disableMultiTable;
             compareEditor.loadTable(td1);
             dataGridView1.BackgroundColor = Color.Red;
+            ToolStripMenuItem mi0 = (ToolStripMenuItem) compareToolStripMenuItem.DropDownItems[0];
+            mi0.Enabled = true;
+            mi0.Checked = true;
+
+            ToolStripMenuItem menuitem = new ToolStripMenuItem("Show " + Path.GetFileName(PCM.FileName));
+            menuitem.Name = "showOriginalMenuItem";
+            menuitem.Click += compareSelection_Click;
+            compareToolStripMenuItem.DropDownItems.Add(menuitem);
+
+            menuitem = new ToolStripMenuItem("Show " + Path.GetFileName(cmpPCM.FileName) + " (comparefile)");
+            menuitem.Name = "showCompareFileMenuItem";
+            compareToolStripMenuItem.DropDownItems.Add(menuitem);
+            menuitem.Click += compareSelection_Click;
         }
+
+        private void compareSelection_Click(object sender, EventArgs e)
+        {
+            foreach (ToolStripMenuItem mi in compareToolStripMenuItem.DropDownItems)
+                mi.Checked = false;
+            ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
+            menuitem.Checked = true;
+            if (menuitem.Name == "showOriginalMenuItem")
+                disableSaving = false;
+            else
+                disableSaving = true;
+            loadTable(td);
+        }
+
         public void loadSeekTable(int tId, PcmFile PCM1)
         {
 
@@ -132,8 +159,6 @@ namespace UniversalPatcher
             PCM = PCM1;
             TableSeek tSeek = tableSeeks[PCM.foundTables[tId].configId];
             this.Text = "Table Editor: " + PCM.foundTables[tId].Name;
-            //if (PCM.foundTables[tId].Description.Length > 0)
-            //    this.Text += " - " + PCM.foundTables[tId].Description;
 
             FoundTable ft = PCM.foundTables[tId];
 
@@ -186,9 +211,26 @@ namespace UniversalPatcher
             double cmpVal = 0;
             if (compareEditor != null)
             {
-                cmpVal = compareEditor.getValue(addr, mathTd);
+                string cmpSelect = "";
+                foreach (ToolStripMenuItem mi in compareToolStripMenuItem.DropDownItems)
+                    if (mi.Checked)
+                        cmpSelect = mi.Name;
+                if (cmpSelect == "showDifferenceMenuItem")
+                {
+                    cmpVal = compareEditor.getValue(addr, mathTd);
+                    return value - cmpVal;
+                }
+                if (cmpSelect == "showOriginalMenuItem")
+                {
+                    return value;
+                }
+                if (cmpSelect == "showCompareFileMenuItem")
+                {
+                    return compareEditor.getValue(addr, mathTd);
+                }
+
             }
-            return value - cmpVal;
+            return value;
         }
 
         public UInt64 getRawValue(UInt32 addr, TableData mathTd)
@@ -502,9 +544,9 @@ namespace UniversalPatcher
             List<ColumnInfo> coliInfos = new List<ColumnInfo>();
 
             if (compareEditor == null)
-                this.Text = "Table Editor: " + tableName;
+                this.Text = "Table Editor: " + tableName + " [" + Path.GetFileName(PCM.FileName) + "]";
             else
-                this.Text = "Compare: " + tableName + ", "  + Path.GetFileName(PCM.FileName) + " - " + Path.GetFileName(compareEditor.PCM.FileName);
+                this.Text = "Compare: " + tableName + ", ["  + Path.GetFileName(PCM.FileName) + " - " + Path.GetFileName(compareEditor.PCM.FileName) +"]";
 
             if (td.Units.ToLower().Contains("bitmask"))
                 labelUnits.Text = "Units: Boolean";
@@ -528,8 +570,6 @@ namespace UniversalPatcher
                     colHeaders.Add(colHdr);
                     filteredTables.Add(PCM.tableDatas[tableIds[i]]);
                 }
-                //filteredTables = new List<TableData>(tmpList.OrderBy(o => o.addrInt).ToList());
-                //filteredTables = new List<TableData>(filteredTables.OrderByDescending(o => o.id).ToList());
                 if (td.RowHeaders == null || td.RowHeaders.Length == 0)
                     for (int r = 0; r < td.Rows; r++)
                         rowHeaders.Add("");
@@ -938,9 +978,9 @@ namespace UniversalPatcher
                 }
 
                 if (compareEditor == null)
-                    this.Text = "Table Editor: " + td.TableName;
+                    this.Text = "Table Editor: " + td.TableName + " ["+Path.GetFileName(PCM.FileName) + "]";
                 else
-                    this.Text = "Compare: " + td.TableName +", "+ Path.GetFileName(PCM.FileName) + " - " + Path.GetFileName(compareEditor.PCM.FileName);
+                    this.Text = "Compare: " + td.TableName +", ["+ Path.GetFileName(PCM.FileName) + " - " + Path.GetFileName(compareEditor.PCM.FileName) + "]";
                 
                 labelUnits.Text = "Units: " + getUnitFromTableData(td);
                 if (td.Values != null && !td.Values.StartsWith("Enum:"))
@@ -1126,6 +1166,16 @@ namespace UniversalPatcher
             }
 
         }
+        private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            if (disableSaving)
+            {
+                e.Cancel = true;
+                return;
+            }
+        }
+
+
         private void DataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             try
@@ -1314,7 +1364,7 @@ namespace UniversalPatcher
         private void AutoResize()
         {
             int dgv_width = dataGridView1.Columns.GetColumnsWidth(DataGridViewElementStates.Visible) + dataGridView1.RowHeadersWidth;
-            if (dgv_width < 175) dgv_width = 175;
+            if (dgv_width < 300) dgv_width = 300;
             int dgv_height = dataGridView1.Rows.GetRowsHeight(DataGridViewElementStates.Visible) + dataGridView1.ColumnHeadersHeight;
             Screen myScreen = Screen.FromPoint(MousePosition);
             System.Drawing.Rectangle area = myScreen.WorkingArea;

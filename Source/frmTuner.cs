@@ -132,6 +132,11 @@ namespace UniversalPatcher
                     frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
                     if (comparePCM != null)
                     {
+                        if (td.OutputType == OutDataType.Flag || td.Units.ToLower().StartsWith("boolean"))
+                        {
+                            LoggerBold("Not implemented for flags");
+                            return;
+                        }
                         bool tblFound = false;
                         for (int x=0; x < comparePCM.tableDatas.Count; x++)
                         {
@@ -1112,95 +1117,101 @@ namespace UniversalPatcher
 
         private void peekTableValues(int ind)
         {
-            frmTableEditor frmT = new frmTableEditor();
-            frmT.PCM = PCM;
-            frmT.disableMultiTable = true;
-            frmT.loadTable(PCM.tableDatas[ind]);
-            txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
-            txtDescription.SelectionColor = Color.Blue;
-            if (PCM.tableDatas[ind].Rows == 1 && PCM.tableDatas[ind].Columns == 1)
+            try
             {
-                double curVal = frmT.getValue((uint)(PCM.tableDatas[ind].addrInt + PCM.tableDatas[ind].Offset), PCM.tableDatas[ind]);
-                UInt64 rawVal = frmT.getRawValue((uint)(PCM.tableDatas[ind].addrInt + PCM.tableDatas[ind].Offset), PCM.tableDatas[ind]);
-                string valTxt = curVal.ToString();
-                string unitTxt = " " + PCM.tableDatas[ind].Units;
-                string maskTxt = "";
-                if (PCM.tableDatas[ind].OutputType == OutDataType.Flag || PCM.tableDatas[ind].Units.ToLower().StartsWith("boolean"))
+                frmTableEditor frmT = new frmTableEditor();
+                frmT.PCM = PCM;
+                frmT.disableMultiTable = true;
+                frmT.loadTable(PCM.tableDatas[ind]);
+                txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
+                txtDescription.SelectionColor = Color.Blue;
+                if (PCM.tableDatas[ind].Rows == 1 && PCM.tableDatas[ind].Columns == 1)
                 {
-                    unitTxt = ", Unset/Set";
-                    if (curVal > 0)
-                        valTxt = "Set, " + valTxt;
-                    else
-                        valTxt = "Unset, " + valTxt;
-                    if (PCM.tableDatas[ind].BitMask != null && PCM.tableDatas[ind].BitMask.Length > 0)
+                    double curVal = frmT.getValue((uint)(PCM.tableDatas[ind].addrInt + PCM.tableDatas[ind].Offset), PCM.tableDatas[ind]);
+                    UInt64 rawVal = frmT.getRawValue((uint)(PCM.tableDatas[ind].addrInt + PCM.tableDatas[ind].Offset), PCM.tableDatas[ind]);
+                    string valTxt = curVal.ToString();
+                    string unitTxt = " " + PCM.tableDatas[ind].Units;
+                    string maskTxt = "";
+                    if (PCM.tableDatas[ind].OutputType == OutDataType.Flag || PCM.tableDatas[ind].Units.ToLower().StartsWith("boolean"))
                     {
-                        unitTxt = "";
-                        long maskVal = Convert.ToInt64(PCM.tableDatas[ind].BitMask.Replace("0x", ""), 16);
-                        string maskBits = Convert.ToString(maskVal, 2);
-                        int bit = -1;
-                        for (int i = 0; 1 <= maskBits.Length; i++)
+                        unitTxt = ", Unset/Set";
+                        if (curVal > 0)
+                            valTxt = "Set, " + valTxt;
+                        else
+                            valTxt = "Unset, " + valTxt;
+                        if (PCM.tableDatas[ind].BitMask != null && PCM.tableDatas[ind].BitMask.Length > 0)
                         {
-                            if (((maskVal & (1 << i)) != 0))
+                            unitTxt = "";
+                            long maskVal = Convert.ToInt64(PCM.tableDatas[ind].BitMask.Replace("0x", ""), 16);
+                            string maskBits = Convert.ToString(maskVal, 2);
+                            int bit = -1;
+                            for (int i = 0; 1 <= maskBits.Length; i++)
                             {
-                                bit = i + 1;
-                                break;
+                                if (((maskVal & (1 << i)) != 0))
+                                {
+                                    bit = i + 1;
+                                    break;
+                                }
+                            }
+                            if (bit > -1)
+                            {
+                                string rawBinVal = Convert.ToString((Int64)rawVal, 2);
+                                rawBinVal = rawBinVal.PadLeft(getBits(PCM.tableDatas[ind].DataType), '0');
+                                maskTxt = " [" + rawBinVal + "], bit $" + bit.ToString();
                             }
                         }
-                        if (bit > -1)
-                        {
-                            string rawBinVal = Convert.ToString((Int64)rawVal, 2);
-                            rawBinVal = rawBinVal.PadLeft(getBits(PCM.tableDatas[ind].DataType), '0');
-                            maskTxt = " [" + rawBinVal + "], bit $" + bit.ToString();
-                        }
                     }
-                }
-                else if (PCM.tableDatas[ind].Values.StartsWith("Enum: "))
-                {
-                    Dictionary<double, string> possibleVals = frmT.parseEnumHeaders(PCM.tableDatas[ind].Values.Replace("Enum: ", ""));
-                    unitTxt = " (" + possibleVals[curVal] + ")";
-                }
-                string formatStr = "X" + (getElementSize(PCM.tableDatas[ind].DataType) * 2).ToString();
-                txtDescription.AppendText("Current value: " + valTxt + unitTxt + " [" + rawVal.ToString(formatStr) + "]" + maskTxt);
-                txtDescription.AppendText(Environment.NewLine);
-            }
-            else
-            {
-                string tblData = "Current values: " + Environment.NewLine ;
-                uint addr = (uint)(PCM.tableDatas[ind].addrInt + PCM.tableDatas[ind].Offset);
-                if (PCM.tableDatas[ind].RowMajor)
-                {
-                    for (int r=0; r< PCM.tableDatas[ind].Rows; r++)
+                    else if (PCM.tableDatas[ind].Values.StartsWith("Enum: "))
                     {
-                        for (int c=0; c<PCM.tableDatas[ind].Columns; c++)
-                        {
-                            double curVal = frmT.getValue(addr, PCM.tableDatas[ind]);
-                            addr += (uint)getElementSize(PCM.tableDatas[ind].DataType);
-                            tblData += "[" + curVal.ToString("#0.0") + "]";
-                        }
-                        tblData += Environment.NewLine;
+                        Dictionary<double, string> possibleVals = frmT.parseEnumHeaders(PCM.tableDatas[ind].Values.Replace("Enum: ", ""));
+                        unitTxt = " (" + possibleVals[curVal] + ")";
                     }
+                    string formatStr = "X" + (getElementSize(PCM.tableDatas[ind].DataType) * 2).ToString();
+                    txtDescription.AppendText("Current value: " + valTxt + unitTxt + " [" + rawVal.ToString(formatStr) + "]" + maskTxt);
+                    txtDescription.AppendText(Environment.NewLine);
                 }
                 else
                 {
-                    List<string> tblRows = new List<string>();
-                    for (int r = 0; r < PCM.tableDatas[ind].Rows; r++)
-                        tblRows.Add("");
-                    for (int c = 0; c < PCM.tableDatas[ind].Columns; c++)
+                    string tblData = "Current values: " + Environment.NewLine;
+                    uint addr = (uint)(PCM.tableDatas[ind].addrInt + PCM.tableDatas[ind].Offset);
+                    if (PCM.tableDatas[ind].RowMajor)
                     {
-                        
                         for (int r = 0; r < PCM.tableDatas[ind].Rows; r++)
                         {
-                            double curVal = frmT.getValue(addr, PCM.tableDatas[ind]);
-                            addr += (uint)getElementSize(PCM.tableDatas[ind].DataType);
-                            tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
+                            for (int c = 0; c < PCM.tableDatas[ind].Columns; c++)
+                            {
+                                double curVal = frmT.getValue(addr, PCM.tableDatas[ind]);
+                                addr += (uint)getElementSize(PCM.tableDatas[ind].DataType);
+                                tblData += "[" + curVal.ToString("#0.0") + "]";
+                            }
+                            tblData += Environment.NewLine;
                         }
                     }
-                    for (int r = 0; r < PCM.tableDatas[ind].Rows; r++)
-                        tblData += tblRows[r] + Environment.NewLine;
-                }
-                txtDescription.AppendText(tblData);
-            }
+                    else
+                    {
+                        List<string> tblRows = new List<string>();
+                        for (int r = 0; r < PCM.tableDatas[ind].Rows; r++)
+                            tblRows.Add("");
+                        for (int c = 0; c < PCM.tableDatas[ind].Columns; c++)
+                        {
 
+                            for (int r = 0; r < PCM.tableDatas[ind].Rows; r++)
+                            {
+                                double curVal = frmT.getValue(addr, PCM.tableDatas[ind]);
+                                addr += (uint)getElementSize(PCM.tableDatas[ind].DataType);
+                                tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
+                            }
+                        }
+                        for (int r = 0; r < PCM.tableDatas[ind].Rows; r++)
+                            tblData += tblRows[r] + Environment.NewLine;
+                    }
+                    txtDescription.AppendText(tblData);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {

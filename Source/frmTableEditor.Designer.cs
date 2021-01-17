@@ -52,6 +52,8 @@ namespace UniversalPatcher
             this.disableTooltipsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showGraphicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.compareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showDifferenceMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkSwapXY = new System.Windows.Forms.CheckBox();
             this.numColumn = new System.Windows.Forms.NumericUpDown();
             this.labelColumn = new System.Windows.Forms.Label();
@@ -78,6 +80,7 @@ namespace UniversalPatcher
             this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
+            this.dataGridView1.CellBeginEdit += new DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
             // 
             // txtMath
             // 
@@ -152,7 +155,8 @@ namespace UniversalPatcher
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.settingsToolStripMenuItem,
-            this.graphToolStripMenuItem});
+            this.graphToolStripMenuItem,
+            this.compareToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(800, 24);
@@ -171,14 +175,14 @@ namespace UniversalPatcher
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exportCSVToolStripMenuItem1
             // 
             this.exportCSVToolStripMenuItem1.Name = "exportCSVToolStripMenuItem1";
-            this.exportCSVToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.exportCSVToolStripMenuItem1.Size = new System.Drawing.Size(132, 22);
             this.exportCSVToolStripMenuItem1.Text = "Export CSV";
             this.exportCSVToolStripMenuItem1.Click += new System.EventHandler(this.exportCSVToolStripMenuItem1_Click);
             // 
@@ -235,6 +239,22 @@ namespace UniversalPatcher
             this.showGraphicToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.showGraphicToolStripMenuItem.Text = "Show graphic";
             this.showGraphicToolStripMenuItem.Click += new System.EventHandler(this.showGraphicToolStripMenuItem_Click);
+            // 
+            // compareToolStripMenuItem
+            // 
+            this.compareToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showDifferenceMenuItem});
+            this.compareToolStripMenuItem.Name = "compareToolStripMenuItem";
+            this.compareToolStripMenuItem.Size = new System.Drawing.Size(68, 20);
+            this.compareToolStripMenuItem.Text = "Compare";
+            // 
+            // showDifferenceMenuItem
+            // 
+            this.showDifferenceMenuItem.Enabled = false;
+            this.showDifferenceMenuItem.Name = "showDifferenceMenuItem";
+            this.showDifferenceMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showDifferenceMenuItem.Text = "Show difference";
+            this.showDifferenceMenuItem.Click += new System.EventHandler(this.compareSelection_Click);
             // 
             // chkSwapXY
             // 
@@ -335,5 +355,7 @@ namespace UniversalPatcher
         private ToolStripMenuItem showGraphicToolStripMenuItem;
         private Label labelColumn;
         public NumericUpDown numColumn;
+        private ToolStripMenuItem compareToolStripMenuItem;
+        private ToolStripMenuItem showDifferenceMenuItem;
     }
 }
