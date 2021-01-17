@@ -2,7 +2,8 @@
 - Make/apply patches for bin files
 - Get information of PCM binary files
 - Extract / swap segments
-- Generate minimal XDF files for Tunerpro (GM E38/E67/P59 only)
+- Generate XDF files for Tunerpro
+- Modify calibrations (Tuner)
 
 Configurable for different engine controller binary files
  * Mostly for GM PCM 1997 ->
