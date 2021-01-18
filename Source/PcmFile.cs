@@ -91,6 +91,11 @@ namespace UniversalPatcher
             tableCategories = new List<string>();
 
         }
+        public PcmFile ShallowCopy()
+        {
+            return (PcmFile)this.MemberwiseClone();
+        }
+
         public string configFileFullName
         {
             get

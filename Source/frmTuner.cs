@@ -2,18 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Linq;
-using System.Globalization;
 using static upatcher;
-using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Web.UI.WebControls;
 
 namespace UniversalPatcher
 {
@@ -54,7 +48,7 @@ namespace UniversalPatcher
             filterTables();
             foreach (ToolStripMenuItem mi in compareWithToolStripMenuItem.DropDownItems)
                 mi.Enabled = true;
-            compareWithToolStripMenuItem.DropDownItems[Path.GetFileName(PCM.FileName)].Enabled = false;
+            compareWithToolStripMenuItem.DropDownItems[PCM.FileName].Enabled = false;
         }
 
         private void loadConfigforPCM()
@@ -75,8 +69,7 @@ namespace UniversalPatcher
                         }
                     }
                     if (!haveDTC)
-                        if (PCM.dtcCodes.Count > 0)
-                            importDTC();
+                        importDTC();
                 }
                 else
                 {
@@ -151,11 +144,7 @@ namespace UniversalPatcher
                         }
                         if (addtoCompareMenu)
                         {
-                            Logger("Adding file: " + Path.GetFileName(comparePCM.FileName) + " to compare menu...", false);
-                            if (PCM.configFile != comparePCM.configFile)
-                            {
-                                LoggerBold(Environment.NewLine + "Warning: file type different, results undefined!");
-                            }
+                            Logger("Adding file: " + Path.GetFileName(comparePCM.FileName) + " to compare menu... ", false);
                             bool tblFound = false;
                             string tbName = td.TableName;
                             if (td.TableName.Contains("*"))
@@ -175,13 +164,21 @@ namespace UniversalPatcher
                                         tblFound = true;
                                         comparePCM.selectedTable = comparePCM.tableDatas[x];
                                         frmT.addCompareFiletoMenu(comparePCM);
+                                        if (PCM.configFile != comparePCM.configFile)
+                                        {
+                                            LoggerBold(Environment.NewLine + "Warning: file type different, results undefined!");
+                                        }
+                                        else
+                                        {
+                                            Logger("[OK]");
+                                        }
                                         break;
                                     }
                                 }
                             }                            
                             if (!tblFound)
                             {
-                                LoggerBold(" Table not found" );
+                                LoggerBold("Table not found" );
                             }
                         }
                     }
@@ -1594,8 +1591,8 @@ namespace UniversalPatcher
         {
             foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                 mi.Checked = false;
-            ToolStripMenuItem menuitem = new ToolStripMenuItem(Path.GetFileName(newPCM.FileName));
-            menuitem.Name = Path.GetFileName(newPCM.FileName);
+            ToolStripMenuItem menuitem = new ToolStripMenuItem(newPCM.FileName);
+            menuitem.Name = newPCM.FileName;
             menuitem.Tag = newPCM;
             menuitem.Checked = true;
             currentFileToolStripMenuItem.DropDownItems.Add(menuitem);
@@ -1628,6 +1625,105 @@ namespace UniversalPatcher
             //ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
             //PcmFile cmpPCM = (PcmFile)menuitem.Tag;
             //openTableEditor(cmpPCM);
+        }
+
+        int diffMissingTables;
+        private bool compareTable(int tInd,PcmFile pcm1, PcmFile pcm2)
+        {
+            TableData td1 = pcm1.tableDatas[tInd];
+            TableData td2 = td1.ShallowCopy();
+            int tbSize = td1.Rows * td1.Columns * getElementSize(td1.DataType);
+            if (pcm1.OS != pcm2.OS)
+            {
+                bool found = false;
+                //Not 100% compatible file, find table by name & category
+                for (int t = 0; t < pcm2.tableDatas.Count; t++)
+                {
+                    if (pcm2.tableDatas[t].TableName == td1.TableName && pcm2.tableDatas[t].Category == td1.Category)
+                    {
+                        td2 = pcm2.tableDatas[t];
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    //Logger("Table not found: " + td1.TableName + "[" + pcm2.FileName + "]");
+                    diffMissingTables++;
+                    return false;
+                }
+                int tb2size = td2.Rows * td2.Columns * getElementSize(td2.DataType);
+                if (tbSize != tb2size)
+                    return false;
+            }
+
+            byte[] buff1 = new byte[tbSize];
+            byte[] buff2 = new byte[tbSize];
+            Array.Copy(pcm1.buf, td1.addrInt + td1.Offset, buff1, 0, tbSize);
+            Array.Copy(pcm2.buf, td2.addrInt + td2.Offset, buff2, 0, tbSize);
+            if (buff1.SequenceEqual(buff2))
+                return true;
+            else
+                return false;
+
+        }
+        private void findDifferencesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Logger("Finding tables with different data...", false);
+            List<PcmFile> pcmfiles = new List<PcmFile>();
+            bool menuExist = false;
+            PcmFile diffPCM = PCM.ShallowCopy();
+            diffPCM.FileName = "(Table Differences)";
+            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+            {
+                if (mi.Name == "(Table Differences)")
+                {
+                    menuExist = true;
+                    diffPCM = (PcmFile)mi.Tag;
+                    mi.Checked = true;
+                }
+                else
+                {
+                    pcmfiles.Add((PcmFile)mi.Tag);
+                    mi.Checked = false;
+                }
+            }
+            if (!menuExist)
+                addtoCurrentFileMenu(diffPCM);
+
+            diffPCM.tableDatas = new List<TableData>();
+            for (int p1=0; p1 < pcmfiles.Count; p1++)
+            {
+                for (int p2 = 0; p2< pcmfiles.Count; p2++)
+                {
+                    if (p1 != p2)
+                    {
+                        diffMissingTables = 0;
+                        for (int t1 = 0; t1 < pcmfiles[p1].tableDatas.Count; t1++)
+                        {
+                            if (!compareTable(t1, pcmfiles[p1], pcmfiles[p2]))
+                            {
+                                bool found = false;
+                                for (int t2 = 0; t2 < diffPCM.tableDatas.Count; t2++)
+                                {
+                                    if (diffPCM.tableDatas[t2].TableName == pcmfiles[p1].tableDatas[t1].TableName && diffPCM.tableDatas[t2].Category == pcmfiles[p1].tableDatas[t1].Category)
+                                    {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if (!found) //Not previously added
+                                    diffPCM.tableDatas.Add(pcmfiles[p1].tableDatas[t1]);
+                            }
+                        }
+                        if (diffMissingTables > 0)
+                            Logger(pcmfiles[p1].FileName + " <> " + pcmfiles[p2].FileName + ": " + diffMissingTables.ToString() + " Tables not found");
+                    }
+                }
+            }
+            PCM = diffPCM;
+            filterTables();
+            Logger(" [OK]");
         }
     }
 }
