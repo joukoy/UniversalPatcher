@@ -237,7 +237,7 @@ namespace UniversalPatcher
             // showGraphicToolStripMenuItem
             // 
             this.showGraphicToolStripMenuItem.Name = "showGraphicToolStripMenuItem";
-            this.showGraphicToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.showGraphicToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showGraphicToolStripMenuItem.Text = "Show graphic";
             this.showGraphicToolStripMenuItem.Click += new System.EventHandler(this.showGraphicToolStripMenuItem_Click);
             // 

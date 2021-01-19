@@ -121,5 +121,72 @@ namespace UniversalPatcher
                 PCM.tableCategories.Add(Category);
 
         }
+        public void importDTC(ref PcmFile PCM)
+        {
+            if (PCM.dtcCodes.Count == 0)
+            {
+                DtcSearch DS = new DtcSearch();
+                Logger(DS.searchDtc(PCM));
+            }
+            TableData dtcTd = new TableData();
+            dtcCode dtc = PCM.dtcCodes[0];
+            dtcTd.addrInt = dtc.statusAddrInt;
+            dtcTd.Category = "DTC";
+            dtcTd.Columns = 1;
+            //td.Floating = false;
+            dtcTd.OutputType = OutDataType.Int;
+            dtcTd.Decimals = 0;
+            dtcTd.DataType = InDataType.UBYTE;
+            dtcTd.Math = "X";
+            dtcTd.OS = PCM.OS;
+            for (int i = 0; i < PCM.dtcCodes.Count; i++)
+            {
+                dtcTd.RowHeaders += PCM.dtcCodes[i].Code + ",";
+            }
+            dtcTd.RowHeaders = dtcTd.RowHeaders.Trim(',');
+            dtcTd.Rows = (ushort)PCM.dtcCodes.Count;
+            dtcTd.SavingMath = "X";
+            if (PCM.dtcCombined)
+            {
+                //td.TableDescription = "00 MIL and reporting off, 01 type A/no mil, 02 type B/no mil, 03 type C/no mil, 04 not reported/mil, 05 type A/mil, 06 type B/mil, 07 type c/mil";
+                dtcTd.Values = "Enum: 00:MIL and reporting off,01:type A/no mil,02:type B/no mil,03:type C/no mil,04:not reported/mil,05:type A/mil,06:type B/mil,07:type c/mil";
+                dtcTd.TableName = "DTC";
+            }
+            else
+            {
+                //td.TableDescription = "0 = 1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY), 1 = 2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles), 2 = Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC), 3 = Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)";
+                dtcTd.Values = "Enum: 0:1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY),1:2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles),2:Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC),3:Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)";
+                dtcTd.TableName = "DTC.Codes";
+            }
+
+            PCM.tableDatas.Insert(0, dtcTd);
+
+            if (!PCM.dtcCombined)
+            {
+                dtcTd = new TableData();
+                dtcTd.TableName = "DTC.MIL_Enable";
+                dtcTd.addrInt = dtc.milAddrInt;
+                dtcTd.Category = "DTC";
+                //td.ColumnHeaders = "MIL";
+                dtcTd.Columns = 1;
+                dtcTd.OutputType = OutDataType.Flag;
+                dtcTd.Decimals = 0;
+                dtcTd.DataType = InDataType.UBYTE;
+                dtcTd.Math = "X";
+                dtcTd.OS = PCM.OS;
+                for (int i = 0; i < PCM.dtcCodes.Count; i++)
+                {
+                    dtcTd.RowHeaders += PCM.dtcCodes[i].Code + ",";
+                }
+                dtcTd.Rows = (ushort)PCM.dtcCodes.Count;
+                dtcTd.SavingMath = "X";
+                //td.Signed = false;
+                dtcTd.TableDescription = "0 = No MIL (Lamp always off) 1 = MIL (Lamp may be commanded on by PCM)";
+                //td.Values = "Enum: 0:No MIL (Lamp always off),1:MIL (Lamp may be commanded on by PCM)";
+                PCM.tableDatas.Insert(1, dtcTd);
+            }
+            Logger("OK");
+        }
+
     }
 }

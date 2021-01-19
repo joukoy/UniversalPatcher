@@ -40,15 +40,21 @@ namespace UniversalPatcher
 
         private void selectPCM()
         {
-            this.Text = "Tuner " + Path.GetFileName(PCM.FileName);
+            this.Text = "Tuner " + PCM.FileName;
             if (PCM.Segments[0].CS1Address.StartsWith("GM-V6"))
                 importTinyTunerDBV6OnlyToolStripMenuItem.Enabled = true;
             else
                 importTinyTunerDBV6OnlyToolStripMenuItem.Enabled = false;
             filterTables();
-            foreach (ToolStripMenuItem mi in compareWithToolStripMenuItem.DropDownItems)
+            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                mi.Checked = false;
+            foreach (ToolStripMenuItem mi in findDifferencesToolStripMenuItem.DropDownItems)
                 mi.Enabled = true;
-            compareWithToolStripMenuItem.DropDownItems[PCM.FileName].Enabled = false;
+            if (!PCM.FileName.StartsWith("(Table Differences)"))
+                findDifferencesToolStripMenuItem.DropDownItems[PCM.FileName].Enabled = false;
+
+            ToolStripMenuItem mitem = (ToolStripMenuItem)currentFileToolStripMenuItem.DropDownItems[PCM.FileName];
+            mitem.Checked = true;
         }
 
         private void loadConfigforPCM()
@@ -375,74 +381,6 @@ namespace UniversalPatcher
             SaveXML();
         }
 
-        private void importDTC()
-        {
-            if (PCM.dtcCodes.Count == 0)
-            {
-                DtcSearch DS = new DtcSearch();
-                Logger(DS.searchDtc(PCM));
-            }
-            Logger("Importing DTC codes... ", false);
-            TableData dtcTd = new TableData();
-            dtcCode dtc = PCM.dtcCodes[0];
-            dtcTd.addrInt = dtc.statusAddrInt;
-            dtcTd.Category = "DTC";
-            dtcTd.Columns = 1;
-            //td.Floating = false;
-            dtcTd.OutputType = OutDataType.Int;
-            dtcTd.Decimals = 0;
-            dtcTd.DataType = InDataType.UBYTE;
-            dtcTd.Math = "X";
-            dtcTd.OS = PCM.OS;
-            for (int i = 0; i < PCM.dtcCodes.Count; i++)
-            {
-                dtcTd.RowHeaders += PCM.dtcCodes[i].Code + ",";
-            }
-            dtcTd.RowHeaders = dtcTd.RowHeaders.Trim(',');
-            dtcTd.Rows = (ushort)PCM.dtcCodes.Count;
-            dtcTd.SavingMath = "X";
-            if (PCM.dtcCombined)
-            {
-                //td.TableDescription = "00 MIL and reporting off, 01 type A/no mil, 02 type B/no mil, 03 type C/no mil, 04 not reported/mil, 05 type A/mil, 06 type B/mil, 07 type c/mil";
-                dtcTd.Values = "Enum: 00:MIL and reporting off,01:type A/no mil,02:type B/no mil,03:type C/no mil, 04:not reported/mil,05:type A/mil,06:type B/mil,07:type c/mil";
-                dtcTd.TableName = "DTC";
-            }
-            else
-            {
-                //td.TableDescription = "0 = 1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY), 1 = 2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles), 2 = Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC), 3 = Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)";
-                dtcTd.Values = "Enum: 0:1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY),1:2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles),2:Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC),3:Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)";
-                dtcTd.TableName = "DTC.Codes";
-            }
-
-            PCM.tableDatas.Insert(0,dtcTd);
-
-            if (!PCM.dtcCombined)
-            {
-                dtcTd = new TableData();
-                dtcTd.TableName = "DTC.MIL_Enable";
-                dtcTd.addrInt = dtc.milAddrInt;
-                dtcTd.Category = "DTC";
-                //td.ColumnHeaders = "MIL";
-                dtcTd.Columns = 1;
-                dtcTd.OutputType = OutDataType.Flag;
-                dtcTd.Decimals = 0;
-                dtcTd.DataType = InDataType.UBYTE;
-                dtcTd.Math = "X";
-                dtcTd.OS = PCM.OS;
-                for (int i = 0; i < PCM.dtcCodes.Count; i++)
-                {
-                    dtcTd.RowHeaders += PCM.dtcCodes[i].Code + ",";
-                }
-                dtcTd.Rows = (ushort)PCM.dtcCodes.Count;
-                dtcTd.SavingMath = "X";
-                //td.Signed = false;
-                dtcTd.TableDescription = "0 = No MIL (Lamp always off) 1 = MIL (Lamp may be commanded on by PCM)";
-                //td.Values = "Enum: 0:No MIL (Lamp always off),1:MIL (Lamp may be commanded on by PCM)";
-                PCM.tableDatas.Insert(1,dtcTd);
-            }
-            refreshTablelist();
-            Logger("OK");
-        }
         private void btnImportDTC_Click(object sender, EventArgs e)
         {
             importDTC();
@@ -689,6 +627,12 @@ namespace UniversalPatcher
 
         }
 
+        private void importDTC()
+        {
+            Logger("Importing DTC codes... ", false);
+            TableData tdTmp = new TableData();
+            tdTmp.importDTC(ref PCM);
+        }
         private void importDTCToolStripMenuItem_Click(object sender, EventArgs e)
         {
             importDTC();
@@ -1043,7 +987,8 @@ namespace UniversalPatcher
         }
         private void DataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            Debug.WriteLine(e.Exception);
+            if (!e.Exception.Message.Contains("DataGridViewComboBoxCell"))
+                Debug.WriteLine(e.Exception);
         }
 
         private void comboFilterBy_SelectedIndexChanged(object sender, EventArgs e)
@@ -1144,34 +1089,61 @@ namespace UniversalPatcher
         {
         }
 
-        private void peekTableValues(int ind)
+        private void peekTableValuesWithCompare(int ind)
+        {
+            if (!PCM.FileName.StartsWith("(Table Differences)"))
+                peekTableValues(ind, PCM);
+            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+            {
+                PcmFile peekPCM = (PcmFile)mi.Tag;
+                if (peekPCM.FileName != PCM.FileName)
+                {
+                    for (int t = 0; t < peekPCM.tableDatas.Count; t++)
+                    {
+                        if (peekPCM.tableDatas[t].TableName == PCM.tableDatas[ind].TableName && peekPCM.tableDatas[t].Category == PCM.tableDatas[ind].Category)
+                        {
+                            txtDescription.AppendText(peekPCM.FileName + ": " + Environment.NewLine);
+                            peekTableValues(t, peekPCM);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void peekTableValues(int ind, PcmFile peekPCM)
         {
             try
             {
+                if (peekPCM.tableDatas[ind].addrInt >= peekPCM.fsize)
+                {
+                    Debug.WriteLine("No address defined");
+                    return;
+                }
                 frmTableEditor frmT = new frmTableEditor();
-                frmT.PCM = PCM;
+                frmT.PCM = peekPCM;
                 frmT.disableMultiTable = true;
-                frmT.loadTable(PCM.tableDatas[ind]);
+                frmT.loadTable(peekPCM.tableDatas[ind]);
                 txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
                 txtDescription.SelectionColor = Color.Blue;
-                if (PCM.tableDatas[ind].Rows == 1 && PCM.tableDatas[ind].Columns == 1)
+                if (peekPCM.tableDatas[ind].Rows == 1 && peekPCM.tableDatas[ind].Columns == 1)
                 {
-                    double curVal = frmT.getValue((uint)(PCM.tableDatas[ind].addrInt + PCM.tableDatas[ind].Offset), PCM.tableDatas[ind]);
-                    UInt64 rawVal = frmT.getRawValue((uint)(PCM.tableDatas[ind].addrInt + PCM.tableDatas[ind].Offset), PCM.tableDatas[ind]);
+                    double curVal = frmT.getValue((uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind]);
+                    UInt64 rawVal = frmT.getRawValue((uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind]);
                     string valTxt = curVal.ToString();
-                    string unitTxt = " " + PCM.tableDatas[ind].Units;
+                    string unitTxt = " " + peekPCM.tableDatas[ind].Units;
                     string maskTxt = "";
-                    if (PCM.tableDatas[ind].OutputType == OutDataType.Flag || PCM.tableDatas[ind].Units.ToLower().StartsWith("boolean"))
+                    if (peekPCM.tableDatas[ind].OutputType == OutDataType.Flag || peekPCM.tableDatas[ind].Units.ToLower().StartsWith("boolean"))
                     {
                         unitTxt = ", Unset/Set";
                         if (curVal > 0)
                             valTxt = "Set, " + valTxt;
                         else
                             valTxt = "Unset, " + valTxt;
-                        if (PCM.tableDatas[ind].BitMask != null && PCM.tableDatas[ind].BitMask.Length > 0)
+                        if (peekPCM.tableDatas[ind].BitMask != null && peekPCM.tableDatas[ind].BitMask.Length > 0)
                         {
                             unitTxt = "";
-                            long maskVal = Convert.ToInt64(PCM.tableDatas[ind].BitMask.Replace("0x", ""), 16);
+                            long maskVal = Convert.ToInt64(peekPCM.tableDatas[ind].BitMask.Replace("0x", ""), 16);
                             string maskBits = Convert.ToString(maskVal, 2);
                             int bit = -1;
                             for (int i = 0; 1 <= maskBits.Length; i++)
@@ -1185,32 +1157,32 @@ namespace UniversalPatcher
                             if (bit > -1)
                             {
                                 string rawBinVal = Convert.ToString((Int64)rawVal, 2);
-                                rawBinVal = rawBinVal.PadLeft(getBits(PCM.tableDatas[ind].DataType), '0');
+                                rawBinVal = rawBinVal.PadLeft(getBits(peekPCM.tableDatas[ind].DataType), '0');
                                 maskTxt = " [" + rawBinVal + "], bit $" + bit.ToString();
                             }
                         }
                     }
-                    else if (PCM.tableDatas[ind].Values.StartsWith("Enum: "))
+                    else if (peekPCM.tableDatas[ind].Values.StartsWith("Enum: "))
                     {
-                        Dictionary<double, string> possibleVals = frmT.parseEnumHeaders(PCM.tableDatas[ind].Values.Replace("Enum: ", ""));
+                        Dictionary<double, string> possibleVals = frmT.parseEnumHeaders(peekPCM.tableDatas[ind].Values.Replace("Enum: ", ""));
                         unitTxt = " (" + possibleVals[curVal] + ")";
                     }
-                    string formatStr = "X" + (getElementSize(PCM.tableDatas[ind].DataType) * 2).ToString();
+                    string formatStr = "X" + (getElementSize(peekPCM.tableDatas[ind].DataType) * 2).ToString();
                     txtDescription.AppendText("Current value: " + valTxt + unitTxt + " [" + rawVal.ToString(formatStr) + "]" + maskTxt);
                     txtDescription.AppendText(Environment.NewLine);
                 }
                 else
                 {
                     string tblData = "Current values: " + Environment.NewLine;
-                    uint addr = (uint)(PCM.tableDatas[ind].addrInt + PCM.tableDatas[ind].Offset);
-                    if (PCM.tableDatas[ind].RowMajor)
+                    uint addr = (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset);
+                    if (peekPCM.tableDatas[ind].RowMajor)
                     {
-                        for (int r = 0; r < PCM.tableDatas[ind].Rows; r++)
+                        for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
                         {
-                            for (int c = 0; c < PCM.tableDatas[ind].Columns; c++)
+                            for (int c = 0; c < peekPCM.tableDatas[ind].Columns; c++)
                             {
-                                double curVal = frmT.getValue(addr, PCM.tableDatas[ind]);
-                                addr += (uint)getElementSize(PCM.tableDatas[ind].DataType);
+                                double curVal = frmT.getValue(addr, peekPCM.tableDatas[ind]);
+                                addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
                                 tblData += "[" + curVal.ToString("#0.0") + "]";
                             }
                             tblData += Environment.NewLine;
@@ -1219,19 +1191,19 @@ namespace UniversalPatcher
                     else
                     {
                         List<string> tblRows = new List<string>();
-                        for (int r = 0; r < PCM.tableDatas[ind].Rows; r++)
+                        for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
                             tblRows.Add("");
-                        for (int c = 0; c < PCM.tableDatas[ind].Columns; c++)
+                        for (int c = 0; c < peekPCM.tableDatas[ind].Columns; c++)
                         {
 
-                            for (int r = 0; r < PCM.tableDatas[ind].Rows; r++)
+                            for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
                             {
-                                double curVal = frmT.getValue(addr, PCM.tableDatas[ind]);
-                                addr += (uint)getElementSize(PCM.tableDatas[ind].DataType);
+                                double curVal = frmT.getValue(addr, peekPCM.tableDatas[ind]);
+                                addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
                                 tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
                             }
                         }
-                        for (int r = 0; r < PCM.tableDatas[ind].Rows; r++)
+                        for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
                             tblData += tblRows[r] + Environment.NewLine;
                     }
                     txtDescription.AppendText(tblData);
@@ -1258,7 +1230,7 @@ namespace UniversalPatcher
             if (PCM.tableDatas[ind].ExtraDescription != null)
                 txtDescription.AppendText(PCM.tableDatas[ind].ExtraDescription + Environment.NewLine);
 
-            peekTableValues(ind);
+            peekTableValuesWithCompare(ind);
         }
 
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
@@ -1598,19 +1570,21 @@ namespace UniversalPatcher
             currentFileToolStripMenuItem.DropDownItems.Add(menuitem);
             menuitem.Click += Menuitem_Click;
 
-            ToolStripMenuItem cmpMenuitem = new ToolStripMenuItem(menuitem.Name);
-            cmpMenuitem.Name = menuitem.Name;
-            cmpMenuitem.Tag = newPCM;
-            compareWithToolStripMenuItem.DropDownItems.Add(cmpMenuitem);
-            cmpMenuitem.Click += compareMenuitem_Click;
-
+            if (!newPCM.FileName.StartsWith("(Table Differences)"))
+            {
+                ToolStripMenuItem cmpMenuitem = new ToolStripMenuItem(menuitem.Name);
+                cmpMenuitem.Name = menuitem.Name;
+                cmpMenuitem.Tag = newPCM;
+                findDifferencesToolStripMenuItem.DropDownItems.Add(cmpMenuitem);
+                cmpMenuitem.Click += compareMenuitem_Click;
+            }
         }
         private void Menuitem_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
             bool isChecked = menuitem.Checked;
-            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
-                mi.Checked = false;
+//            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+//                mi.Checked = false;
             menuitem.Checked = !isChecked;
             PCM = (PcmFile)menuitem.Tag;
             selectPCM();
@@ -1622,9 +1596,9 @@ namespace UniversalPatcher
 
         private void compareMenuitem_Click(object sender, EventArgs e)
         {
-            //ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
-            //PcmFile cmpPCM = (PcmFile)menuitem.Tag;
-            //openTableEditor(cmpPCM);
+            ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
+            PcmFile cmpWithPcm = (PcmFile)menuitem.Tag;
+            findTableDifferences(cmpWithPcm);
         }
 
         int diffMissingTables;
@@ -1633,6 +1607,11 @@ namespace UniversalPatcher
             TableData td1 = pcm1.tableDatas[tInd];
             TableData td2 = td1.ShallowCopy();
             int tbSize = td1.Rows * td1.Columns * getElementSize(td1.DataType);
+            if ((td1.addrInt + tbSize) > pcm1.fsize || (td2.addrInt + tbSize) > pcm2.fsize)
+            {
+                LoggerBold("Table address out of range: " + td1.TableName);
+                return false;
+            }
             if (pcm1.OS != pcm2.OS)
             {
                 bool found = false;
@@ -1667,24 +1646,25 @@ namespace UniversalPatcher
                 return false;
 
         }
-        private void findDifferencesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void findTableDifferences(PcmFile cmpWithPcm)
         {
-            Logger("Finding tables with different data...", false);
-            List<PcmFile> pcmfiles = new List<PcmFile>();
+            Logger("Finding tables with different data");
+            Logger(PCM.FileName + " <> " + cmpWithPcm.FileName);
             bool menuExist = false;
             PcmFile diffPCM = PCM.ShallowCopy();
-            diffPCM.FileName = "(Table Differences)";
+            diffPCM.FileName = "(Table Differences) " + PCM.FileName +" - " + cmpWithPcm.FileName;
             foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
             {
-                if (mi.Name == "(Table Differences)")
+                if (mi.Name.StartsWith("(Table Differences)"))
                 {
                     menuExist = true;
                     diffPCM = (PcmFile)mi.Tag;
+                    mi.Name = diffPCM.FileName;
+                    mi.Text = diffPCM.FileName;
                     mi.Checked = true;
                 }
                 else
                 {
-                    pcmfiles.Add((PcmFile)mi.Tag);
                     mi.Checked = false;
                 }
             }
@@ -1692,38 +1672,32 @@ namespace UniversalPatcher
                 addtoCurrentFileMenu(diffPCM);
 
             diffPCM.tableDatas = new List<TableData>();
-            for (int p1=0; p1 < pcmfiles.Count; p1++)
+            for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
             {
-                for (int p2 = 0; p2< pcmfiles.Count; p2++)
+                if (!compareTable(t1, PCM, cmpWithPcm))
                 {
-                    if (p1 != p2)
+                    bool found = false;
+                    for (int t2 = 0; t2 < diffPCM.tableDatas.Count; t2++)
                     {
-                        diffMissingTables = 0;
-                        for (int t1 = 0; t1 < pcmfiles[p1].tableDatas.Count; t1++)
+                        if (diffPCM.tableDatas[t2].TableName == PCM.tableDatas[t1].TableName && diffPCM.tableDatas[t2].Category == PCM.tableDatas[t1].Category)
                         {
-                            if (!compareTable(t1, pcmfiles[p1], pcmfiles[p2]))
-                            {
-                                bool found = false;
-                                for (int t2 = 0; t2 < diffPCM.tableDatas.Count; t2++)
-                                {
-                                    if (diffPCM.tableDatas[t2].TableName == pcmfiles[p1].tableDatas[t1].TableName && diffPCM.tableDatas[t2].Category == pcmfiles[p1].tableDatas[t1].Category)
-                                    {
-                                        found = true;
-                                        break;
-                                    }
-                                }
-                                if (!found) //Not previously added
-                                    diffPCM.tableDatas.Add(pcmfiles[p1].tableDatas[t1]);
-                            }
+                            found = true;
+                            break;
                         }
-                        if (diffMissingTables > 0)
-                            Logger(pcmfiles[p1].FileName + " <> " + pcmfiles[p2].FileName + ": " + diffMissingTables.ToString() + " Tables not found");
                     }
+                    if (!found) //Not previously added
+                        diffPCM.tableDatas.Add(PCM.tableDatas[t1]);
                 }
             }
+            if (diffMissingTables > 0)
+                Logger(diffMissingTables.ToString() + " Tables not found");
             PCM = diffPCM;
-            filterTables();
+            selectPCM();
             Logger(" [OK]");
+
+        }
+        private void findDifferencesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
         }
     }
 }

@@ -83,6 +83,7 @@ namespace UniversalPatcher
                 PCM.foundTables = new List<FoundTable>();
 
                 PCM.tableCategories = new List<string>();
+                PCM.tableCategories.Add("_All");
                 for (int c = 0; c < PCM.segmentinfos.Length; c++)
                     PCM.tableCategories.Add("Seg-" + PCM.segmentinfos[c].Name);
                 string fileName = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + PCM.configFile + ".xml");

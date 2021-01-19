@@ -34,11 +34,14 @@ namespace UniversalPatcher
             Combo,
             Value
         }
+
         private class ColumnInfo
         {
             public ColType  columnType { get; set; }
             public Dictionary<double, string> enumVals { get; set; }
+            public Dictionary<int, string> enumIntVals { get; set; }
             public string enumStr { get; set; }
+            public OutDataType outputType { get; set; }
         }
         private class MultiTableName
         {
@@ -329,6 +332,22 @@ namespace UniversalPatcher
             retVal.Add(double.MaxValue, "------------");
             return retVal;
         }
+        public Dictionary<int, string> parseIntEnumHeaders(string eVals)
+        {
+            Dictionary<int, string> retVal = new Dictionary<int, string>();
+            string[] posVals = eVals.Split(',');
+            for (int r = 0; r < posVals.Length; r++)
+            {
+                string[] parts = posVals[r].Split(':');
+                int val = 0;
+                int.TryParse(parts[0], out val);
+                string txt = posVals[r];
+                if (!retVal.ContainsKey(val))
+                    retVal.Add(val, txt);
+            }
+            retVal.Add(int.MaxValue, "------------");
+            return retVal;
+        }
 
         private int getColumnByTableData(TableData cTd,int col)
         {
@@ -520,6 +539,8 @@ namespace UniversalPatcher
                 colInfo.columnType = ColType.Combo;
                 string enumStr = td1.Values.Replace("Enum: ", "");
                 colInfo.enumVals = parseEnumHeaders(enumStr);
+                colInfo.enumIntVals = parseIntEnumHeaders(enumStr);
+                //colInfo.enumVals = parseEnumHeadersToList(enumStr);
                 colInfo.enumStr = enumStr;
             }
             else if (td1.OutputType == OutDataType.Flag)
@@ -530,6 +551,7 @@ namespace UniversalPatcher
             {
                 colInfo.columnType = ColType.Value;
             }
+            colInfo.outputType = td1.OutputType;
             return colInfo;
         }
 
@@ -702,6 +724,7 @@ namespace UniversalPatcher
                         else
                             hdrTxt = td.Units;
                     }
+                    //Setup Checkbox & Combo -columns
                     if (coliInfos[0].columnType == ColType.Flag)
                     {
                         DataGridViewCheckBoxColumn col_chkbox = new DataGridViewCheckBoxColumn();
@@ -710,7 +733,10 @@ namespace UniversalPatcher
                     else if (coliInfos[0].columnType == ColType.Combo)
                     {
                         DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
-                        comboCol.DataSource = new BindingSource(coliInfos[0].enumVals, null);
+                        if (coliInfos[0].outputType == OutDataType.Float)
+                            comboCol.DataSource = new BindingSource(coliInfos[0].enumVals, null);
+                        else
+                            comboCol.DataSource = new BindingSource(coliInfos[0].enumIntVals, null);
                         comboCol.DisplayMember = "Value";
                         comboCol.ValueMember = "Key";
                         dataGridView1.Columns.Add(comboCol);
@@ -718,7 +744,6 @@ namespace UniversalPatcher
                     else
                     {
                         dataGridView1.Columns.Add(hdrTxt, hdrTxt);
-
                     }
                     dataGridView1.Columns[r].HeaderText = hdrTxt;
                 }
@@ -781,6 +806,8 @@ namespace UniversalPatcher
                     }
 
                 }
+
+
             }
             else //Not xyswapped
             {
@@ -794,7 +821,7 @@ namespace UniversalPatcher
                         else
                             dataGridView1.Columns[c].HeaderText = td.Units;
                     }
-
+                    //Setup comboboxes & checkboxes
                     if (coliInfos[c].columnType == ColType.Flag)
                     {
                         DataGridViewCheckBoxColumn col_chkbox = new DataGridViewCheckBoxColumn();
@@ -803,7 +830,10 @@ namespace UniversalPatcher
                     else if (coliInfos[c].columnType == ColType.Combo)
                     {
                         DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
-                        comboCol.DataSource = new BindingSource(coliInfos[c].enumVals, null);
+                        if (coliInfos[c].outputType == OutDataType.Float)
+                            comboCol.DataSource = new BindingSource(coliInfos[c].enumVals, null);
+                        else
+                            comboCol.DataSource = new BindingSource(coliInfos[c].enumIntVals, null);
                         comboCol.DisplayMember = "Value";
                         comboCol.ValueMember = "Key";
                         dataGridView1.Columns.Add(comboCol);
@@ -869,6 +899,7 @@ namespace UniversalPatcher
 
                     }
                 }
+
             }
             for (int r=0; r< dataGridView1.Rows.Count; r++)
             {
@@ -1043,11 +1074,17 @@ namespace UniversalPatcher
                     exportCSVToolStripMenuItem1.Enabled = false;
 
                     Dictionary<double, string> possibleVals = parseEnumHeaders(td.Values.Replace("Enum: ",""));
+                    Dictionary<int, string> possibleIntVals = parseIntEnumHeaders(td.Values.Replace("Enum: ", ""));
+                    //List <comboValues> possibleVals = parseEnumHeadersToList(td.Values.Replace("Enum: ", ""));
                     for (int c = 0; c < colCount; c++)
                     {
                         DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
-
-                        comboCol.DataSource = new BindingSource(possibleVals, null);
+                        if (td.OutputType == OutDataType.Float)
+                            comboCol.DataSource = new BindingSource(possibleVals,null);
+                        else
+                            comboCol.DataSource = new BindingSource(possibleIntVals, null);
+                        //comboCol.DataSource = possibleVals;
+                        //comboCol.DataPropertyName = "value";
                         comboCol.DisplayMember = "Value";
                         comboCol.ValueMember = "Key";
                         dataGridView1.Columns.Add(comboCol);
@@ -1143,7 +1180,7 @@ namespace UniversalPatcher
                 foreach (DataGridViewColumn dgvc in dataGridView1.Columns)
                 {
                     dgvc.SortMode = DataGridViewColumnSortMode.NotSortable;
-                    if (formatStr != "")
+                    if (formatStr != "" && dgvc.GetType() != typeof(DataGridViewComboBoxColumn) )
                         dgvc.DefaultCellStyle.Format = formatStr;
                 }
                 dataGridView1.AutoResizeColumns();
@@ -1732,7 +1769,8 @@ namespace UniversalPatcher
         }
         private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            Debug.WriteLine(e.Exception);
+            if (!e.Exception.Message.Contains("DataGridViewComboBoxCell"))
+                Debug.WriteLine(e.Exception);
         }
 
         private void numColumn_ValueChanged(object sender, EventArgs e)
