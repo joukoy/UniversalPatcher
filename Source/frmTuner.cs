@@ -1165,7 +1165,10 @@ namespace UniversalPatcher
                     else if (peekPCM.tableDatas[ind].Values.StartsWith("Enum: "))
                     {
                         Dictionary<double, string> possibleVals = frmT.parseEnumHeaders(peekPCM.tableDatas[ind].Values.Replace("Enum: ", ""));
-                        unitTxt = " (" + possibleVals[curVal] + ")";
+                        if (possibleVals.ContainsKey(curVal))
+                            unitTxt = " (" + possibleVals[curVal] + ")";
+                        else
+                            unitTxt = " (Out of range)";
                     }
                     string formatStr = "X" + (getElementSize(peekPCM.tableDatas[ind].DataType) * 2).ToString();
                     txtDescription.AppendText("Current value: " + valTxt + unitTxt + " [" + rawVal.ToString(formatStr) + "]" + maskTxt);
