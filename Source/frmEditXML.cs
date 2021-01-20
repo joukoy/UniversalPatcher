@@ -22,6 +22,9 @@ namespace UniversalPatcher
 
         private BindingSource bindingSource = new BindingSource();
         private bool starting = true;
+        private string sortBy = "";
+        private int sortIndex = 0;
+        SortOrder strSortOrder = SortOrder.Ascending;
 
         string fileName = "";
         public void LoadRules()
@@ -95,15 +98,12 @@ namespace UniversalPatcher
             bindingSource.DataSource = tableSeeks;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
+
             //dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
             //dataGridView1.Columns["ConditionalOffset"].ToolTipText = "If set, and Opcode Address last 2 bytes > 0x5000, Offset = -10000";
             //dataGridView1.Columns["DataType"].ToolTipText = "UBYTE,SBYTE,UWORD,SWORD,UINT32,INT32,UINT64,INT64,FLOAT32,FLOAT64";
             UseComboBoxForEnums(dataGridView1);
         }
-        private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-        }
-
         private void saveThis()
         {
             try
@@ -267,6 +267,9 @@ namespace UniversalPatcher
 
         private void importCSV()
         {
+            //Example:
+            //SPARK_ADVANCE;KA_PISTON_SLAP_SPARK_RETARD;00013D8E;81294;330;3C 0A 00 74 0B 20 7C @ @ @ @ 4E B9;2;;-05;80 FC 00 14 74 0B 20 7C @ @ @ @ 4E B9;1;;06-07
+            //06-07 is "extension", add *extension to tablename
             try
             {
                 string FileName = SelectFile("Select CSV file", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
@@ -279,39 +282,35 @@ namespace UniversalPatcher
                     string[] lineparts = line.Split(';');
                     if (lineparts.Length > 5)
                     {
+                        Debug.WriteLine(line);
                         for (int i = 5; i < lineparts.Length; i += 4)
                         {
                             TableSeek ts = new TableSeek();
                             ts.Category = lineparts[0];
                             ts.Name = lineparts[1];
                             ts.SearchStr = lineparts[i];
+                            string xtension = "";
                             if (lineparts.Length >= i + 1)
                                 ts.UseHit = lineparts[i + 1];
                             if (lineparts.Length >= i + 2 && lineparts[i + 2].Length > 0)
                                 ts.Offset = Convert.ToInt32(lineparts[i + 2]);
                             if (lineparts.Length >= i + 3 && lineparts[i + 3].Length > 0)
-                                ts.Name += "*" + lineparts[i + 3];  //Modified 20.1.2021, is this correct place?
+                                xtension = lineparts[i + 3];
+                            // ts.Name += "*" + lineparts[i + 3];
 
                             for (int s = 0; s < tableSeeks.Count; s++)
                             {
                                 if (tableSeeks[s].Name != null && tableSeeks[s].Category != null && tableSeeks[s].Name.ToLower() == lineparts[1].ToLower() && tableSeeks[s].Category.ToLower() == ts.Category.ToLower())
                                 {
-                                    if (tableSeeks[s].SearchStr.Length > 0)
-                                    {
-                                        if (tableSeeks[s].SearchStr != ts.SearchStr && tableSeeks[s].UseHit != ts.UseHit && tableSeeks[s].Offset != ts.Offset)
-                                        {
-                                            TableSeek tsNew = new TableSeek();
-                                            tsNew = tableSeeks[s].ShallowCopy();
-                                            tableSeeks.Add(tsNew);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        tableSeeks[s].SearchStr = ts.SearchStr;
-                                        tableSeeks[s].UseHit = ts.UseHit;
-                                        tableSeeks[s].Offset = ts.Offset;
-                                        tableSeeks[s].Name = ts.Name;
-                                    }
+                                    TableSeek tsNew = new TableSeek();
+                                    tsNew = tableSeeks[s].ShallowCopy();
+                                    tsNew.SearchStr = ts.SearchStr;
+                                    tsNew.UseHit = ts.UseHit;
+                                    tsNew.Offset = ts.Offset;
+                                    if (xtension.Length > 0)
+                                        tsNew.Name += "*" + xtension;
+                                    tableSeeks.Add(tsNew);
+                                    Debug.WriteLine(tsNew.Name);
                                     break;
                                 }
                             }
@@ -323,6 +322,8 @@ namespace UniversalPatcher
 
                 for (int s = tableSeeks.Count - 1; s >= 0; s--)
                 {
+                    if (tableSeeks[s].Name.ToLower().StartsWith("ka_") || tableSeeks[s].Name.ToLower().StartsWith("ke_") || tableSeeks[s].Name.ToLower().StartsWith("kv_"))
+                        tableSeeks[s].Name = tableSeeks[s].Name.Substring(3);
                     if (tableSeeks[s].SearchStr.Length == 0)
                         tableSeeks.RemoveAt(s);
                 }
@@ -388,6 +389,87 @@ namespace UniversalPatcher
         private void dataGridView1_Dataerror(object sender, DataGridViewDataErrorEventArgs e)
         {
             Debug.WriteLine(e.Exception);
+        }
+
+        public void filterTables()
+        {
+            try
+            {
+                if (this.Text.Contains("Table Seek"))
+                {
+                    List<TableSeek> compareList = new List<TableSeek>();
+                    if (strSortOrder == SortOrder.Ascending)
+                        compareList = tableSeeks.OrderBy(x => typeof(TableSeek).GetProperty(sortBy).GetValue(x, null)).ToList();
+                    else
+                        compareList = tableSeeks.OrderByDescending(x => typeof(TableSeek).GetProperty(sortBy).GetValue(x, null)).ToList();
+                    bindingSource.DataSource = compareList;
+                }
+                else if (this.Text.Contains("Autodetect"))
+                {
+                    List<DetectRule> compareList = new List<DetectRule>();
+                    if (strSortOrder == SortOrder.Ascending)
+                        compareList = DetectRules.OrderBy(x => typeof(DetectRule).GetProperty(sortBy).GetValue(x, null)).ToList();
+                    else
+                        compareList = DetectRules.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
+                    bindingSource.DataSource = compareList;
+                }
+                else if (this.Text.Contains("stock CVN"))
+                {
+                    List<CVN> compareList = new List<CVN>();
+                    if (strSortOrder == SortOrder.Ascending)
+                        compareList = StockCVN.OrderBy(x => typeof(CVN).GetProperty(sortBy).GetValue(x, null)).ToList();
+                    else
+                        compareList = StockCVN.OrderByDescending(x => typeof(CVN).GetProperty(sortBy).GetValue(x, null)).ToList();
+                    bindingSource.DataSource = compareList;
+                }
+                else if (this.Text.Contains("DTC Search"))
+                {
+                    List<DtcSearchConfig> compareList = new List<DtcSearchConfig>();
+                    if (strSortOrder == SortOrder.Ascending)
+                        compareList = dtcSearchConfigs.OrderBy(x => typeof(DtcSearchConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
+                    else
+                        compareList = dtcSearchConfigs.OrderByDescending(x => typeof(DtcSearchConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
+                    bindingSource.DataSource = compareList;
+                }
+                dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        private void DataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                sortBy = dataGridView1.Columns[e.ColumnIndex].Name;
+                sortIndex = e.ColumnIndex;
+                strSortOrder = getSortOrder(sortIndex);
+                filterTables();
+            }
+        }
+        private SortOrder getSortOrder(int columnIndex)
+        {
+            try
+            {
+                if (dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.Descending
+                    || dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.None)
+                {
+                    dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
+                    return SortOrder.Ascending;
+                }
+                else
+                {
+                    dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Descending;
+                    return SortOrder.Descending;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return SortOrder.Ascending;
         }
 
     }
