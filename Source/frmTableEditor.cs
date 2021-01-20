@@ -86,7 +86,6 @@ namespace UniversalPatcher
         public List<int> tableIds = new List<int>();
 
         List<TableData> filteredTables;
-        bool combo = false;
 
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
@@ -974,8 +973,6 @@ namespace UniversalPatcher
                 else commaDecimal = false;
 
                 td = td1;
-                if (showRawHEXValuesToolStripMenuItem.Checked)
-                    combo = false;
 
                 if (tableIds.Count > 1)
                 {
@@ -1068,7 +1065,6 @@ namespace UniversalPatcher
                 else if (td.Values.Contains(",") && showRawHEXValuesToolStripMenuItem.Checked == false)
                 {
                     //Special case, possible values in rowheader
-                    combo = true;
                     txtMath.Enabled = false;
                     btnExecute.Enabled = false;
                     exportCSVToolStripMenuItem1.Enabled = false;
@@ -1314,7 +1310,7 @@ namespace UniversalPatcher
             if (value == double.MaxValue) return;
             if (!showRawHEXValuesToolStripMenuItem.Checked)
             {
-                if (!combo)
+                if (dataGridView1.Columns[c].GetType() != typeof(DataGridViewComboBoxColumn))
                 {
                     if (value > mathTd.Max)
                     {

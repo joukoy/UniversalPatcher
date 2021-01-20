@@ -290,7 +290,7 @@ namespace UniversalPatcher
                             if (lineparts.Length >= i + 2 && lineparts[i + 2].Length > 0)
                                 ts.Offset = Convert.ToInt32(lineparts[i + 2]);
                             if (lineparts.Length >= i + 3 && lineparts[i + 3].Length > 0)
-                                ts.Name += "_" + lineparts[i + 3];
+                                ts.Name += "*" + lineparts[i + 3];  //Modified 20.1.2021, is this correct place?
 
                             for (int s = 0; s < tableSeeks.Count; s++)
                             {
