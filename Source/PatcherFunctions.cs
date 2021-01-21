@@ -1446,4 +1446,17 @@ public class upatcher
     {
         frmpatcher.LoggerBold(LogText, NewLine);
     }
+
+    public static UInt64 readTableData(byte[] buf, TableData td)
+    {
+        //Get raw hex data from table, for bitmask etc
+        UInt32 bufAddr = (uint)(td.addrInt + td.Offset);
+        if (td.DataType == InDataType.UWORD || td.DataType == InDataType.SWORD)
+            return BEToUint16(buf, bufAddr);
+        if (td.DataType == InDataType.INT32 || td.DataType == InDataType.UINT32 || td.DataType == InDataType.FLOAT32)
+            return BEToUint32(buf, bufAddr);
+        if (td.DataType == InDataType.INT64 || td.DataType == InDataType.UINT64 || td.DataType == InDataType.FLOAT64)
+            return BEToUint64(buf, bufAddr);
+        return buf[bufAddr];
+    }
 }

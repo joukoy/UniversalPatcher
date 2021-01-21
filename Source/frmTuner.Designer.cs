@@ -46,6 +46,7 @@ namespace UniversalPatcher
             this.saveXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveXMLAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findDifferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importDTCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importTableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,7 +79,7 @@ namespace UniversalPatcher
             this.txtDescription = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.findDifferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showTablelistToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -226,6 +227,13 @@ namespace UniversalPatcher
             this.clearTableToolStripMenuItem.Text = "&Clear Tablelist";
             this.clearTableToolStripMenuItem.Click += new System.EventHandler(this.clearTableToolStripMenuItem_Click);
             // 
+            // findDifferencesToolStripMenuItem
+            // 
+            this.findDifferencesToolStripMenuItem.Name = "findDifferencesToolStripMenuItem";
+            this.findDifferencesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.findDifferencesToolStripMenuItem.Text = "Find differences";
+            this.findDifferencesToolStripMenuItem.Click += new System.EventHandler(this.findDifferencesToolStripMenuItem_Click);
+            // 
             // importToolStripMenuItem
             // 
             this.importToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -329,7 +337,8 @@ namespace UniversalPatcher
             this.disableMultitableToolStripMenuItem,
             this.unitsToolStripMenuItem,
             this.enableConfigModeToolStripMenuItem,
-            this.resetTunerModeColumnsToolStripMenuItem});
+            this.resetTunerModeColumnsToolStripMenuItem,
+            this.showTablelistToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "&Settings";
@@ -504,12 +513,11 @@ namespace UniversalPatcher
             this.contextMenuStrip2.Name = "contextMenuStrip2";
             this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
             // 
-            // findDifferencesToolStripMenuItem
+            // showTablelistToolStripMenuItem
             // 
-            this.findDifferencesToolStripMenuItem.Name = "findDifferencesToolStripMenuItem";
-            this.findDifferencesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.findDifferencesToolStripMenuItem.Text = "Find differences";
-            this.findDifferencesToolStripMenuItem.Click += new System.EventHandler(this.findDifferencesToolStripMenuItem_Click);
+            this.showTablelistToolStripMenuItem.Name = "showTablelistToolStripMenuItem";
+            this.showTablelistToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.showTablelistToolStripMenuItem.Text = "Show tablelist";
             // 
             // frmTuner
             // 
@@ -596,5 +604,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem currentFileToolStripMenuItem;
         private ToolStripMenuItem compareWithToolStripMenuItem;
         private ToolStripMenuItem findDifferencesToolStripMenuItem;
+        private ToolStripMenuItem showTablelistToolStripMenuItem;
     }
 }

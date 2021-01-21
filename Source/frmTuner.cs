@@ -22,6 +22,7 @@ namespace UniversalPatcher
             enableConfigModeToolStripMenuItem.Checked = Properties.Settings.Default.TunerConfigMode;
 
             PCM = PCM1;
+            tableDataList = PCM.tableDatas;
             if (PCM == null || PCM1.fsize == 0) return; //No file selected
             addtoCurrentFileMenu(PCM);
             loadConfigforPCM();
@@ -29,6 +30,7 @@ namespace UniversalPatcher
         }
 
         private PcmFile PCM;
+        private List<TableData> tableDataList;
         private string sortBy = "id";
         private int sortIndex = 0;
         private bool columnsModified = false;
@@ -41,6 +43,20 @@ namespace UniversalPatcher
         private void selectPCM()
         {
             this.Text = "Tuner " + PCM.FileName;
+            tableDataList = PCM.tableDatas;
+            foreach (ToolStripMenuItem mi in showTablelistToolStripMenuItem.DropDownItems)
+            {
+                if (mi.Name == "Normal tablelist")
+                {
+                    mi.Checked = true;
+                    mi.Tag = PCM.tableDatas;
+                }
+                else
+                {
+                    mi.Checked = false;
+                }
+            }
+
             if (PCM.Segments[0].CS1Address.StartsWith("GM-V6"))
                 importTinyTunerDBV6OnlyToolStripMenuItem.Enabled = true;
             else
@@ -50,11 +66,12 @@ namespace UniversalPatcher
                 mi.Checked = false;
             foreach (ToolStripMenuItem mi in findDifferencesToolStripMenuItem.DropDownItems)
                 mi.Enabled = true;
-            if (!PCM.FileName.StartsWith("(Table Differences)"))
-                findDifferencesToolStripMenuItem.DropDownItems[PCM.FileName].Enabled = false;
+                
+            findDifferencesToolStripMenuItem.DropDownItems[PCM.FileName].Enabled = false;
 
             ToolStripMenuItem mitem = (ToolStripMenuItem)currentFileToolStripMenuItem.DropDownItems[PCM.FileName];
             mitem.Checked = true;
+
         }
 
         private void loadConfigforPCM()
@@ -100,13 +117,13 @@ namespace UniversalPatcher
                 }
                 for (int i=1; i< tableIds.Count;i++)
                 {
-                    if (PCM.tableDatas[tableIds[i]].Rows != PCM.tableDatas[tableIds[0]].Rows || PCM.tableDatas[tableIds[i]].Columns != PCM.tableDatas[tableIds[0]].Columns)
+                    if (tableDataList[tableIds[i]].Rows != tableDataList[tableIds[0]].Rows || tableDataList[tableIds[i]].Columns != tableDataList[tableIds[0]].Columns)
                     {
                         LoggerBold("Can't load multible tables with different size");
                         return;
                     }
                 }
-                TableData td = PCM.tableDatas[tableIds[0]];
+                TableData td = tableDataList[tableIds[0]];
                 if (td.addrInt == uint.MaxValue)
                 {
                     Logger("No address defined!");
@@ -132,23 +149,7 @@ namespace UniversalPatcher
                     foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                     {
                         PcmFile comparePCM = (PcmFile)mi.Tag;
-                        bool addtoCompareMenu = true;
-                        if (PCM.FileName == comparePCM.FileName)
-                        {
-                            Debug.WriteLine("Don't add original file to menu");
-                            addtoCompareMenu = false;
-                        }
-                        else if (td.OutputType == OutDataType.Flag || td.Units.ToLower().StartsWith("boolean"))
-                        {
-                            Debug.WriteLine("Not implemented for flags");
-                            addtoCompareMenu = false;
-                        }
-                        else if (td.Values.StartsWith("Enum: "))
-                        {
-                            Debug.WriteLine("Not implemented for Enum tables");
-                            addtoCompareMenu = false;
-                        }
-                        if (addtoCompareMenu)
+                        if (PCM.FileName != comparePCM.FileName)
                         {
                             Logger("Adding file: " + Path.GetFileName(comparePCM.FileName) + " to compare menu... ", false);
                             bool tblFound = false;
@@ -425,6 +426,13 @@ namespace UniversalPatcher
                 }
             }
             comboFilterBy.Text = "TableName";
+            tableDataList = PCM.tableDatas;
+            ToolStripMenuItem miNormal = new ToolStripMenuItem("Normal tablelist");
+            miNormal.Name = "Normal tablelist";
+            miNormal.Tag = PCM.tableDatas;
+            miNormal.Checked = true;
+            showTablelistToolStripMenuItem.DropDownItems.Add(miNormal);
+            miNormal.Click += tablelistSelect_Click;
 
             dataGridView1.DataSource = bindingsource;
             filterTables();
@@ -530,14 +538,14 @@ namespace UniversalPatcher
                 //Save settings before reordering
                 saveGridLayout();
                 //Fix table-ID's
-                for (int tbId = 0; tbId < PCM.tableDatas.Count; tbId++)
-                    PCM.tableDatas[tbId].id = (uint)tbId;
+                for (int tbId = 0; tbId < tableDataList.Count; tbId++)
+                    tableDataList[tbId].id = (uint)tbId;
 
                 List<TableData> compareList = new List<TableData>();
                 if (strSortOrder == SortOrder.Ascending)
-                    compareList = PCM.tableDatas.OrderBy(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
+                    compareList = tableDataList.OrderBy(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
                 else
-                    compareList = PCM.tableDatas.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
+                    compareList = tableDataList.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
 
                 string cat = comboTableCategory.Text;
                 var results = compareList.Where(t => t.TableName.Length > 0); //How should I define empty variable??
@@ -834,8 +842,8 @@ namespace UniversalPatcher
 
         private void importCSVexperimentalToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < PCM.tableDatas.Count; i++)
-                PCM.tableDatas[i].addrInt = uint.MaxValue;
+            for (int i = 0; i < tableDataList.Count; i++)
+                tableDataList[i].addrInt = uint.MaxValue;
             string FileName = SelectFile("Select CSV File","CSV files (*.csv)|*.csv|All files (*.*)|*.*");
             if (FileName.Length == 0)
                 return;
@@ -853,14 +861,14 @@ namespace UniversalPatcher
                     string name = cParts[1];
                     string addr = cParts[2];
                     bool found = false;
-                    for (int i=0; i< PCM.tableDatas.Count;i++)
+                    for (int i=0; i< tableDataList.Count;i++)
                     {
-                        if (PCM.tableDatas[i].Category.ToLower() == cat.ToLower() && PCM.tableDatas[i].TableName.ToLower() == name.ToLower())
+                        if (tableDataList[i].Category.ToLower() == cat.ToLower() && tableDataList[i].TableName.ToLower() == name.ToLower())
                         {
-                            PCM.tableDatas[i].Address = addr;
-                            PCM.tableDatas[i].OS = osNew;
-                            Debug.WriteLine(PCM.tableDatas[i].TableName);
-                            //PCM.tableDatas[i].AddrInt = Convert.ToUInt32(addr, 16);
+                            tableDataList[i].Address = addr;
+                            tableDataList[i].OS = osNew;
+                            Debug.WriteLine(tableDataList[i].TableName);
+                            //tableDataList[i].AddrInt = Convert.ToUInt32(addr, 16);
                             found = true;
                             break;
                         }
@@ -868,13 +876,13 @@ namespace UniversalPatcher
                     if (!found)
                     {
                         Debug.WriteLine(name + ": not found");
-                        for (int i = 0; i < PCM.tableDatas.Count; i++)
+                        for (int i = 0; i < tableDataList.Count; i++)
                         {
-                            if (cat.ToLower() == "protected" && PCM.tableDatas[i].TableName.ToLower() == name.ToLower())
+                            if (cat.ToLower() == "protected" && tableDataList[i].TableName.ToLower() == name.ToLower())
                             {
-                                PCM.tableDatas[i].Address = addr;
-                                PCM.tableDatas[i].OS = osNew;
-                                //PCM.tableDatas[i].AddrInt = Convert.ToUInt32(addr, 16);
+                                tableDataList[i].Address = addr;
+                                tableDataList[i].OS = osNew;
+                                //tableDataList[i].AddrInt = Convert.ToUInt32(addr, 16);
                                 found = true;
                                 Debug.WriteLine(name + ": PROTECTED");
                                 break;
@@ -883,17 +891,17 @@ namespace UniversalPatcher
                     }
                 }
             }
-/*            for (int i = PCM.tableDatas.Count -1; i >= 0; i--)
+/*            for (int i = tableDataList.Count -1; i >= 0; i--)
             {
-                if (PCM.tableDatas[i].addrInt == uint.MaxValue)
-                    PCM.tableDatas.RemoveAt(i);
+                if (tableDataList[i].addrInt == uint.MaxValue)
+                    tableDataList.RemoveAt(i);
             }*/
             //Fix table names:
-            for (int i = 0; i < PCM.tableDatas.Count; i++)
+            for (int i = 0; i < tableDataList.Count; i++)
             {
-                PCM.tableDatas[i].OS = osNew;
-                if (PCM.tableDatas[i].TableName.ToLower().StartsWith("ka_") || PCM.tableDatas[i].TableName.ToLower().StartsWith("ke_") || PCM.tableDatas[i].TableName.ToLower().StartsWith("kv_"))
-                    PCM.tableDatas[i].TableName = PCM.tableDatas[i].TableName.Substring(3);
+                tableDataList[i].OS = osNew;
+                if (tableDataList[i].TableName.ToLower().StartsWith("ka_") || tableDataList[i].TableName.ToLower().StartsWith("ke_") || tableDataList[i].TableName.ToLower().StartsWith("kv_"))
+                    tableDataList[i].TableName = tableDataList[i].TableName.Substring(3);
             }
             Logger(" [OK]");
             refreshTablelist();
@@ -942,20 +950,20 @@ namespace UniversalPatcher
 
                     uint lastmask = uint.MaxValue;
                     uint addrInt = Convert.ToUInt32(addr, 16);
-                    for (int i = 0; i < PCM.tableDatas.Count; i++)
+                    for (int i = 0; i < tableDataList.Count; i++)
                     {
-                        if (PCM.tableDatas[i].Category.ToLower() == cat.ToLower() && PCM.tableDatas[i].TableName.ToLower().StartsWith(name.ToLower()))
+                        if (tableDataList[i].Category.ToLower() == cat.ToLower() && tableDataList[i].TableName.ToLower().StartsWith(name.ToLower()))
                         {
                             if (name == "K_DYNA_AIR_COEFFICIENT")
                             {
-                                //PCM.tableDatas[i].Address = addrInt.ToString("X8");
-                                PCM.tableDatas[i].addrInt = addrInt;
-                                Debug.WriteLine(PCM.tableDatas[i].TableName + ": " + addrInt.ToString("X"));
+                                //tableDataList[i].Address = addrInt.ToString("X8");
+                                tableDataList[i].addrInt = addrInt;
+                                Debug.WriteLine(tableDataList[i].TableName + ": " + addrInt.ToString("X"));
                                 addrInt += 2;
                             }
                             else
                             {
-                                uint mask = Convert.ToUInt32(PCM.tableDatas[i].BitMask, 16);
+                                uint mask = Convert.ToUInt32(tableDataList[i].BitMask, 16);
                                 if (lastmask == uint.MaxValue)
                                     lastmask = mask;
                                 if (mask > lastmask)
@@ -963,9 +971,9 @@ namespace UniversalPatcher
                                     addrInt++;
                                 }
                                 lastmask = mask;
-                                //PCM.tableDatas[i].Address = addrInt.ToString("X8");
-                                PCM.tableDatas[i].addrInt = addrInt;
-                                Debug.WriteLine(PCM.tableDatas[i].TableName + ": " + addrInt.ToString("X") + " mask: " + mask.ToString("X"));
+                                //tableDataList[i].Address = addrInt.ToString("X8");
+                                tableDataList[i].addrInt = addrInt;
+                                Debug.WriteLine(tableDataList[i].TableName + ": " + addrInt.ToString("X") + " mask: " + mask.ToString("X"));
                             }
                         }
                     }
@@ -978,9 +986,9 @@ namespace UniversalPatcher
 
         private void convertToDataTypeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            for (int i=0; i< PCM.tableDatas.Count; i++)
+            for (int i=0; i< tableDataList.Count; i++)
             {
-                TableData t = PCM.tableDatas[i];
+                TableData t = tableDataList[i];
                 t.DataType = convertToDataType(t.ElementSize, t.Signed, t.Floating);
             }
             refreshTablelist();
@@ -1061,10 +1069,10 @@ namespace UniversalPatcher
 
         private void fixTableNamesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            for (int i=0;i<PCM.tableDatas.Count; i++)
+            for (int i=0;i<tableDataList.Count; i++)
             {
-                if (PCM.tableDatas[i].TableName.ToLower().StartsWith("ka_") || PCM.tableDatas[i].TableName.ToLower().StartsWith("ke_") || PCM.tableDatas[i].TableName.ToLower().StartsWith("kv_"))
-                    PCM.tableDatas[i].TableName = PCM.tableDatas[i].TableName.Substring(3);
+                if (tableDataList[i].TableName.ToLower().StartsWith("ka_") || tableDataList[i].TableName.ToLower().StartsWith("ke_") || tableDataList[i].TableName.ToLower().StartsWith("kv_"))
+                    tableDataList[i].TableName = tableDataList[i].TableName.Substring(3);
             }
             refreshTablelist();
         }
@@ -1080,7 +1088,7 @@ namespace UniversalPatcher
             {
                 int row = dataGridView1.SelectedRows[r].Index;
                 int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
-                PCM.tableDatas.RemoveAt(id);
+                tableDataList.RemoveAt(id);
                 filterTables();
             }
         }
@@ -1091,21 +1099,23 @@ namespace UniversalPatcher
 
         private void peekTableValuesWithCompare(int ind)
         {
-            if (!PCM.FileName.StartsWith("(Table Differences)"))
-                peekTableValues(ind, PCM);
+            int myInd = findTableDataId(tableDataList[ind], PCM);
+            if (myInd == -1)
+            {
+                LoggerBold("Table missing: " + tableDataList[ind].TableName);
+                return;
+            }
+            peekTableValues(myInd, PCM);
             foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
             {
                 PcmFile peekPCM = (PcmFile)mi.Tag;
                 if (peekPCM.FileName != PCM.FileName)
                 {
-                    for (int t = 0; t < peekPCM.tableDatas.Count; t++)
+                    myInd = findTableDataId(tableDataList[ind], peekPCM);
+                    if (myInd > 0)
                     {
-                        if (peekPCM.tableDatas[t].TableName == PCM.tableDatas[ind].TableName && peekPCM.tableDatas[t].Category == PCM.tableDatas[ind].Category)
-                        {
-                            txtDescription.AppendText(peekPCM.FileName + ": " + Environment.NewLine);
-                            peekTableValues(t, peekPCM);
-                            break;
-                        }
+                        txtDescription.AppendText(peekPCM.FileName + ": " + Environment.NewLine);
+                        peekTableValues(myInd, peekPCM);
                     }
                 }
             }
@@ -1135,20 +1145,19 @@ namespace UniversalPatcher
                     string maskTxt = "";
                     if (peekPCM.tableDatas[ind].OutputType == OutDataType.Flag || peekPCM.tableDatas[ind].Units.ToLower().StartsWith("boolean"))
                     {
-                        unitTxt = ", Unset/Set";
-                        if (curVal > 0)
-                            valTxt = "Set, " + valTxt;
-                        else
-                            valTxt = "Unset, " + valTxt;
                         if (peekPCM.tableDatas[ind].BitMask != null && peekPCM.tableDatas[ind].BitMask.Length > 0)
                         {
                             unitTxt = "";
-                            long maskVal = Convert.ToInt64(peekPCM.tableDatas[ind].BitMask.Replace("0x", ""), 16);
-                            string maskBits = Convert.ToString(maskVal, 2);
+                            UInt64 maskVal = Convert.ToUInt64(peekPCM.tableDatas[ind].BitMask.Replace("0x", ""), 16);
+                            if ((rawVal & maskVal) == maskVal)
+                                valTxt = "Set";
+                            else
+                                valTxt = "Unset";
+                            string maskBits = Convert.ToString((Int64)maskVal, 2);
                             int bit = -1;
                             for (int i = 0; 1 <= maskBits.Length; i++)
                             {
-                                if (((maskVal & (1 << i)) != 0))
+                                if (((maskVal & (UInt64)(1 << i)) != 0))
                                 {
                                     bit = i + 1;
                                     break;
@@ -1160,6 +1169,14 @@ namespace UniversalPatcher
                                 rawBinVal = rawBinVal.PadLeft(getBits(peekPCM.tableDatas[ind].DataType), '0');
                                 maskTxt = " [" + rawBinVal + "], bit $" + bit.ToString();
                             }
+                        }
+                        else
+                        {
+                            unitTxt = ", Unset/Set";
+                            if (curVal > 0)
+                                valTxt = "Set, " + valTxt;
+                            else
+                                valTxt = "Unset, " + valTxt;
                         }
                     }
                     else if (peekPCM.tableDatas[ind].Values.StartsWith("Enum: "))
@@ -1217,6 +1234,18 @@ namespace UniversalPatcher
                 LoggerBold(ex.Message);
             }
         }
+
+        private int findTableDataId(TableData refTd, PcmFile pcm1)
+        {
+            for (int t = 0; t < pcm1.tableDatas.Count; t++)
+            {
+                if (pcm1.tableDatas[t].TableName == refTd.TableName && pcm1.tableDatas[t].Category == refTd.Category)
+                {
+                    return t;
+                }
+            }
+            return -1;
+        }
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             txtDescription.Text = "";
@@ -1226,12 +1255,12 @@ namespace UniversalPatcher
             }
             int ind = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
             txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Bold);
-            txtDescription.AppendText(PCM.tableDatas[ind].TableName + Environment.NewLine); 
+            txtDescription.AppendText(tableDataList[ind].TableName + Environment.NewLine); 
             txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
-            if (PCM.tableDatas[ind].TableDescription != null)
-                txtDescription.AppendText(PCM.tableDatas[ind].TableDescription + Environment.NewLine);
-            if (PCM.tableDatas[ind].ExtraDescription != null)
-                txtDescription.AppendText(PCM.tableDatas[ind].ExtraDescription + Environment.NewLine);
+            if (tableDataList[ind].TableDescription != null)
+                txtDescription.AppendText(tableDataList[ind].TableDescription + Environment.NewLine);
+            if (tableDataList[ind].ExtraDescription != null)
+                txtDescription.AppendText(tableDataList[ind].ExtraDescription + Environment.NewLine);
 
             peekTableValuesWithCompare(ind);
         }
@@ -1280,15 +1309,15 @@ namespace UniversalPatcher
 
                 Logger("Generating CSV...");
 
-                string csvData = "Category;Tablename;Size;" + PCM.tableDatas[0].OS + ";" + Environment.NewLine;
-                for (int row = 0; row < PCM.tableDatas.Count; row++)
+                string csvData = "Category;Tablename;Size;" + tableDataList[0].OS + ";" + Environment.NewLine;
+                for (int row = 0; row < tableDataList.Count; row++)
                 {
-                    int tbSize = PCM.tableDatas[row].Rows * PCM.tableDatas[row].Columns * getElementSize(PCM.tableDatas[row].DataType);
-                    csvData += PCM.tableDatas[row].Category + ";";
-                    csvData += PCM.tableDatas[row].TableName + ";";
+                    int tbSize = tableDataList[row].Rows * tableDataList[row].Columns * getElementSize(tableDataList[row].DataType);
+                    csvData += tableDataList[row].Category + ";";
+                    csvData += tableDataList[row].TableName + ";";
                     csvData += tbSize.ToString() + ";";
-                    //csvData += PCM.tableDatas[row].OS + ";";
-                    csvData += PCM.tableDatas[row].Address;
+                    //csvData += tableDataList[row].OS + ";";
+                    csvData += tableDataList[row].Address;
                     csvData += Environment.NewLine;
                 }
                 Logger("Writing to file: " + fName, false);
@@ -1359,15 +1388,15 @@ namespace UniversalPatcher
                     {
                         if (osAddrList[x].OS == osList[o])
                         {
-                            for (int t = 0; t < PCM.tableDatas.Count; t++)
+                            for (int t = 0; t < tableDataList.Count; t++)
                             {
-                                if (PCM.tableDatas[t].TableName == osAddrList[x].tableName && PCM.tableDatas[t].Category == osAddrList[x].category)
+                                if (tableDataList[t].TableName == osAddrList[x].tableName && tableDataList[t].Category == osAddrList[x].category)
                                 {
-                                    TableData newTd = PCM.tableDatas[t].ShallowCopy();
+                                    TableData newTd = tableDataList[t].ShallowCopy();
                                     newTd.OS = osList[o];
                                     newTd.Address = osAddrList[x].addr;
                                     newTds.Add(newTd);
-                                    Debug.WriteLine(PCM.tableDatas[t].TableName + ", addr:" + osAddrList[x].addr);
+                                    Debug.WriteLine(tableDataList[t].TableName + ", addr:" + osAddrList[x].addr);
                                 }
                             }
                         }
@@ -1573,14 +1602,11 @@ namespace UniversalPatcher
             currentFileToolStripMenuItem.DropDownItems.Add(menuitem);
             menuitem.Click += Menuitem_Click;
 
-            if (!newPCM.FileName.StartsWith("(Table Differences)"))
-            {
-                ToolStripMenuItem cmpMenuitem = new ToolStripMenuItem(menuitem.Name);
-                cmpMenuitem.Name = menuitem.Name;
-                cmpMenuitem.Tag = newPCM;
-                findDifferencesToolStripMenuItem.DropDownItems.Add(cmpMenuitem);
-                cmpMenuitem.Click += compareMenuitem_Click;
-            }
+            ToolStripMenuItem cmpMenuitem = new ToolStripMenuItem(menuitem.Name);
+            cmpMenuitem.Name = menuitem.Name;
+            cmpMenuitem.Tag = newPCM;
+            findDifferencesToolStripMenuItem.DropDownItems.Add(cmpMenuitem);
+            cmpMenuitem.Click += compareMenuitem_Click;
         }
         private void Menuitem_Click(object sender, EventArgs e)
         {
@@ -1610,11 +1636,6 @@ namespace UniversalPatcher
             TableData td1 = pcm1.tableDatas[tInd];
             TableData td2 = td1.ShallowCopy();
             int tbSize = td1.Rows * td1.Columns * getElementSize(td1.DataType);
-            if ((td1.addrInt + tbSize) > pcm1.fsize || (td2.addrInt + tbSize) > pcm2.fsize)
-            {
-                LoggerBold("Table address out of range: " + td1.TableName);
-                return false;
-            }
             if (pcm1.OS != pcm2.OS)
             {
                 bool found = false;
@@ -1638,7 +1659,23 @@ namespace UniversalPatcher
                 if (tbSize != tb2size)
                     return false;
             }
+            if ((td1.addrInt + tbSize) > pcm1.fsize || (td2.addrInt + tbSize) > pcm2.fsize)
+            {
+                LoggerBold("Table address out of range: " + td1.TableName);
+                return false;
+            }
 
+            if (td1.BitMask != null && td1.BitMask.Length > 0)
+            {
+                //Check only bit
+                UInt64 mask = Convert.ToUInt64(td1.BitMask.Replace("0x", ""), 16);
+                UInt64 orgVal = (readTableData(pcm1.buf, td1) & mask);
+                UInt64 compVal = (readTableData(pcm2.buf, td2) & mask);
+                if (orgVal == compVal)
+                    return true;
+                else
+                    return false;
+            }
             byte[] buff1 = new byte[tbSize];
             byte[] buff2 = new byte[tbSize];
             Array.Copy(pcm1.buf, td1.addrInt + td1.Offset, buff1, 0, tbSize);
@@ -1652,19 +1689,17 @@ namespace UniversalPatcher
         private void findTableDifferences(PcmFile cmpWithPcm)
         {
             Logger("Finding tables with different data");
-            Logger(PCM.FileName + " <> " + cmpWithPcm.FileName);
+            string newMenuTxt = PCM.FileName + " <> " + cmpWithPcm.FileName;
+            Logger(newMenuTxt);
             bool menuExist = false;
-            PcmFile diffPCM = PCM.ShallowCopy();
-            diffPCM.FileName = "(Table Differences) " + PCM.FileName +" - " + cmpWithPcm.FileName;
-            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+            List<TableData> newTableDatas = new List<TableData>();
+            foreach (ToolStripMenuItem mi in showTablelistToolStripMenuItem.DropDownItems)
             {
-                if (mi.Name.StartsWith("(Table Differences)"))
+                if (mi.Name == newMenuTxt)
                 {
                     menuExist = true;
-                    diffPCM = (PcmFile)mi.Tag;
-                    mi.Name = diffPCM.FileName;
-                    mi.Text = diffPCM.FileName;
                     mi.Checked = true;
+                    mi.Tag = newTableDatas;
                 }
                 else
                 {
@@ -1672,35 +1707,56 @@ namespace UniversalPatcher
                 }
             }
             if (!menuExist)
-                addtoCurrentFileMenu(diffPCM);
+            {
+                ToolStripMenuItem miNew = new ToolStripMenuItem(newMenuTxt);
+                miNew.Name = newMenuTxt;
+                miNew.Checked = true;
+                miNew.Tag = newTableDatas;
+                showTablelistToolStripMenuItem.DropDownItems.Add(miNew);
+                miNew.Click += tablelistSelect_Click; 
+            }
 
-            diffPCM.tableDatas = new List<TableData>();
+            List<TableData> diffTableDatas = new List<TableData>();
             for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
             {
                 if (!compareTable(t1, PCM, cmpWithPcm))
                 {
                     bool found = false;
-                    for (int t2 = 0; t2 < diffPCM.tableDatas.Count; t2++)
+                    for (int t2 = 0; t2 < newTableDatas.Count; t2++)
                     {
-                        if (diffPCM.tableDatas[t2].TableName == PCM.tableDatas[t1].TableName && diffPCM.tableDatas[t2].Category == PCM.tableDatas[t1].Category)
+                        if (newTableDatas[t2].TableName == PCM.tableDatas[t1].TableName && newTableDatas[t2].Category == PCM.tableDatas[t1].Category)
                         {
                             found = true;
                             break;
                         }
                     }
                     if (!found) //Not previously added
-                        diffPCM.tableDatas.Add(PCM.tableDatas[t1]);
+                        newTableDatas.Add(PCM.tableDatas[t1]);
                 }
             }
             if (diffMissingTables > 0)
                 Logger(diffMissingTables.ToString() + " Tables not found");
-            PCM = diffPCM;
-            selectPCM();
+            tableDataList = newTableDatas;
+            filterTables();
             Logger(" [OK]");
 
         }
-        private void findDifferencesToolStripMenuItem_Click(object sender, EventArgs e)
+
+        private void tablelistSelect_Click(object sender, EventArgs e)
         {
+            ToolStripMenuItem mItem = (ToolStripMenuItem)sender;
+            tableDataList = (List<TableData>)mItem.Tag;
+            filterTables();
+            foreach (ToolStripMenuItem mi in showTablelistToolStripMenuItem.DropDownItems)
+            {
+                mi.Checked = false;
+            }
+            mItem.Checked = true;
+        }
+
+         private void findDifferencesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

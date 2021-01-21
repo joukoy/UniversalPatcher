@@ -74,6 +74,7 @@ namespace UniversalPatcher
         }
         private TableData td;
         public PcmFile PCM;
+        string tableName = "";
         private frmTableEditor compareEditor;
         private bool disableSaving = false;
         private bool commaDecimal = true;
@@ -130,7 +131,6 @@ namespace UniversalPatcher
         }
         public void loadCompareTable(PcmFile cmpPCM)
         {
-            disableSaving = true;
             compareEditor = new frmTableEditor();
             compareEditor.PCM = cmpPCM;
             compareEditor.tableIds = tableIds;
@@ -560,10 +560,7 @@ namespace UniversalPatcher
             List<string> rowHeaders = new List<string>();
             List<ColumnInfo> coliInfos = new List<ColumnInfo>();
 
-            if (compareEditor == null)
-                this.Text = "Table Editor: " + tableName + " [" + Path.GetFileName(PCM.FileName) + "]";
-            else
-                this.Text = "Compare: " + tableName + ", ["  + Path.GetFileName(PCM.FileName) + " - " + Path.GetFileName(compareEditor.PCM.FileName) +"]";
+            this.tableName = tableName;
 
             if (td.Units.ToLower().Contains("bitmask"))
                 labelUnits.Text = "Units: Boolean";
@@ -973,6 +970,8 @@ namespace UniversalPatcher
                 else commaDecimal = false;
 
                 td = td1;
+                if (td.OutputType == OutDataType.Flag || td.Units.ToLower().StartsWith("boolean") || td.Values.StartsWith("Enum: "))
+                    radioDifference.Enabled = false;
 
                 if (tableIds.Count > 1)
                 {
@@ -1001,10 +1000,8 @@ namespace UniversalPatcher
                     }
                 }
 
-                if (compareEditor == null)
-                    this.Text = "Table Editor: " + td.TableName + " ["+Path.GetFileName(PCM.FileName) + "]";
-                else
-                    this.Text = "Compare: " + td.TableName +", ["+ Path.GetFileName(PCM.FileName) + " - " + Path.GetFileName(compareEditor.PCM.FileName) + "]";
+                tableName = td.TableName;
+                setMyText();
                 
                 labelUnits.Text = "Units: " + getUnitFromTableData(td);
                 if (td.Values != null && !td.Values.StartsWith("Enum:"))
@@ -1781,6 +1778,7 @@ namespace UniversalPatcher
             {
                 dataGridView1.BackgroundColor = Color.Red;
                 disableSaving = true;
+                setMyText();
             }
             loadTable(td);
         }
@@ -1791,6 +1789,7 @@ namespace UniversalPatcher
             {
                 dataGridView1.BackgroundColor = Color.Red;
                 disableSaving = true;
+                setMyText();
             }
             loadTable(td);
         }
@@ -1801,8 +1800,20 @@ namespace UniversalPatcher
             {
                 dataGridView1.BackgroundColor = Color.Gray;
                 disableSaving = false;
+                setMyText();
             }
             loadTable(td);
+        }
+
+        private void setMyText()
+        {
+            this.Text = "Tuner: " + tableName + " [";
+            if (radioOriginal.Checked)
+                this.Text += PCM.FileName + "]";
+            if (radioDifference.Checked)
+                this.Text += PCM.FileName + " <> " + compareEditor.PCM.FileName + "]";
+            if (radioCompareFile.Checked)
+                this.Text += compareEditor.PCM.FileName + "]";
         }
     }
 }
