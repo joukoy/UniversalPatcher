@@ -121,7 +121,7 @@ namespace UniversalPatcher
                 PCM.tableCategories.Add(Category);
 
         }
-        public void importDTC(ref PcmFile PCM)
+        public void importDTC(PcmFile PCM, ref List<TableData>tdList)
         {
             if (PCM.dtcCodes.Count == 0)
             {
@@ -159,7 +159,7 @@ namespace UniversalPatcher
                 dtcTd.TableName = "DTC.Codes";
             }
 
-            PCM.tableDatas.Insert(0, dtcTd);
+            tdList.Insert(0, dtcTd);
 
             if (!PCM.dtcCombined)
             {
@@ -183,7 +183,7 @@ namespace UniversalPatcher
                 //td.Signed = false;
                 dtcTd.TableDescription = "0 = No MIL (Lamp always off) 1 = MIL (Lamp may be commanded on by PCM)";
                 //td.Values = "Enum: 0:No MIL (Lamp always off),1:MIL (Lamp may be commanded on by PCM)";
-                PCM.tableDatas.Insert(1, dtcTd);
+                tdList.Insert(1, dtcTd);
             }
             Logger("OK");
         }

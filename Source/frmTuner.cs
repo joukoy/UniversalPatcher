@@ -44,9 +44,9 @@ namespace UniversalPatcher
         {
             this.Text = "Tuner " + PCM.FileName;
             tableDataList = PCM.tableDatas;
-            foreach (ToolStripMenuItem mi in showTablelistToolStripMenuItem.DropDownItems)
+            foreach (ToolStripMenuItem mi in tableListToolStripMenuItem.DropDownItems)
             {
-                if (mi.Name == "Normal tablelist")
+                if (mi.Name == PCM.FileName)
                 {
                     mi.Checked = true;
                     mi.Tag = PCM.tableDatas;
@@ -58,9 +58,9 @@ namespace UniversalPatcher
             }
 
             if (PCM.Segments[0].CS1Address.StartsWith("GM-V6"))
-                importTinyTunerDBV6OnlyToolStripMenuItem.Enabled = true;
+                tinyTunerDBV6OnlyToolStripMenuItem.Enabled = true;
             else
-                importTinyTunerDBV6OnlyToolStripMenuItem.Enabled = false;
+                tinyTunerDBV6OnlyToolStripMenuItem.Enabled = false;
             filterTables();
             foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                 mi.Checked = false;
@@ -76,12 +76,13 @@ namespace UniversalPatcher
 
         private void loadConfigforPCM()
         {
+            tableDataList = PCM.tableDatas;
             if (!Properties.Settings.Default.disableTunerAutoloadSettings)
             {
                 string defaultXml = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
                 if (File.Exists(defaultXml))
                 {
-                    LoadXML(defaultXml);
+                    LoadTableList(defaultXml);
                     bool haveDTC = false;
                     for (int t = 0; t < PCM.tableDatas.Count; t++)
                     {
@@ -300,7 +301,7 @@ namespace UniversalPatcher
             Logger("OK");
         }
 
-        private void LoadXML(string fName="")
+        private void LoadTableList(string fName="")
         {
             try
             {
@@ -327,6 +328,8 @@ namespace UniversalPatcher
                     if (!PCM.tableCategories.Contains(category))
                         PCM.tableCategories.Add(category);
                 }
+                tableListToolStripMenuItem.DropDownItems[PCM.FileName].Tag = PCM.tableDatas;
+                tableDataList = PCM.tableDatas;
                 Logger(" [OK]");
                 refreshTablelist();
                 Application.DoEvents();
@@ -344,10 +347,10 @@ namespace UniversalPatcher
         }
         private void btnLoadXml_Click(object sender, EventArgs e)
         {
-            LoadXML();
+            LoadTableList();
         }
 
-        private void SaveXML(string fName ="")
+        private void SaveTableList(string fName ="")
         {
             try
             {
@@ -361,7 +364,7 @@ namespace UniversalPatcher
                 using (FileStream stream = new FileStream(fName, FileMode.Create))
                 {
                     System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
-                    writer.Serialize(stream, PCM.tableDatas);
+                    writer.Serialize(stream, tableDataList);
                     stream.Close();
                 }
                 Logger(" [OK]");
@@ -379,7 +382,7 @@ namespace UniversalPatcher
         }
         private void btnSaveXML_Click(object sender, EventArgs e)
         {
-            SaveXML();
+            SaveTableList();
         }
 
         private void btnImportDTC_Click(object sender, EventArgs e)
@@ -427,12 +430,12 @@ namespace UniversalPatcher
             }
             comboFilterBy.Text = "TableName";
             tableDataList = PCM.tableDatas;
-            ToolStripMenuItem miNormal = new ToolStripMenuItem("Normal tablelist");
-            miNormal.Name = "Normal tablelist";
-            miNormal.Tag = PCM.tableDatas;
-            miNormal.Checked = true;
-            showTablelistToolStripMenuItem.DropDownItems.Add(miNormal);
-            miNormal.Click += tablelistSelect_Click;
+            //ToolStripMenuItem miNormal = new ToolStripMenuItem("Normal tablelist");
+            //miNormal.Name = "Normal tablelist";
+            //miNormal.Tag = PCM.tableDatas;
+            //miNormal.Checked = true;
+            //tableListToolStripMenuItem.DropDownItems.Add(miNormal);
+            //miNormal.Click += tablelistSelect_Click;
 
             dataGridView1.DataSource = bindingsource;
             filterTables();
@@ -534,7 +537,9 @@ namespace UniversalPatcher
         {
             try
             {
-                if (PCM == null || PCM.fsize == 0) return;
+                //if (PCM == null || PCM.fsize == 0) return;
+                if (tableDataList == null)
+                    return;
                 //Save settings before reordering
                 saveGridLayout();
                 //Fix table-ID's
@@ -603,7 +608,7 @@ namespace UniversalPatcher
         {
             TinyTuner tt = new TinyTuner();
             Logger("Reading TinyTuner DB...", false);
-            Logger(tt.readTinyDBtoTableData(PCM));
+            Logger(tt.readTinyDBtoTableData(PCM,tableDataList));
             refreshTablelist();
 
         }
@@ -619,12 +624,12 @@ namespace UniversalPatcher
 
         private void loadXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            LoadXML();
+            LoadTableList();
         }
 
         private void saveXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveXML(currentXmlFile);
+            SaveTableList(currentXmlFile);
         }
 
         private void saveBINToolStripMenuItem_Click(object sender, EventArgs e)
@@ -639,34 +644,32 @@ namespace UniversalPatcher
         {
             Logger("Importing DTC codes... ", false);
             TableData tdTmp = new TableData();
-            tdTmp.importDTC(ref PCM);
+            tdTmp.importDTC(PCM, ref tableDataList);
+            Logger(" [OK]");
+            filterTables();
         }
         private void importDTCToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            importDTC();
         }
 
         private void importTableSeekToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            importTableSeek();
         }
 
         private void importXDFToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            XDF xdf = new XDF();
-            Logger(xdf.importXdf(PCM));
-            LoggerBold("Note: Only basic XDF conversions are supported, check Math and SavingMath values");
-            refreshTablelist();
         }
 
         private void importTinyTunerDBV6OnlyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            importTinyTunerDB();
         }
 
         private void clearTableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PCM.tableDatas = new List<TableData>();
+            tableDataList = new List<TableData>();
+            foreach (ToolStripMenuItem mi in tableListToolStripMenuItem.DropDownItems)
+                if (mi.Checked)
+                    mi.Tag = tableDataList;
             refreshTablelist();
         }
 
@@ -807,7 +810,7 @@ namespace UniversalPatcher
             openTableEditor();
         }
 
-        private void exportCsvToolStripMenuItem_Click(object sender, EventArgs e)
+        private void exportCSV()
         {
             string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
             if (FileName.Length == 0)
@@ -839,12 +842,16 @@ namespace UniversalPatcher
             Logger(" [OK]");
 
         }
+        private void exportCsvToolStripMenuItem_Click(object sender, EventArgs e)
+        {
 
-        private void importCSVexperimentalToolStripMenuItem_Click(object sender, EventArgs e)
+        }
+
+        private void importxperimentalCSV()
         {
             for (int i = 0; i < tableDataList.Count; i++)
                 tableDataList[i].addrInt = uint.MaxValue;
-            string FileName = SelectFile("Select CSV File","CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            string FileName = SelectFile("Select CSV File", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
             if (FileName.Length == 0)
                 return;
             Logger("Loading file: " + FileName, false);
@@ -861,7 +868,7 @@ namespace UniversalPatcher
                     string name = cParts[1];
                     string addr = cParts[2];
                     bool found = false;
-                    for (int i=0; i< tableDataList.Count;i++)
+                    for (int i = 0; i < tableDataList.Count; i++)
                     {
                         if (tableDataList[i].Category.ToLower() == cat.ToLower() && tableDataList[i].TableName.ToLower() == name.ToLower())
                         {
@@ -891,11 +898,11 @@ namespace UniversalPatcher
                     }
                 }
             }
-/*            for (int i = tableDataList.Count -1; i >= 0; i--)
-            {
-                if (tableDataList[i].addrInt == uint.MaxValue)
-                    tableDataList.RemoveAt(i);
-            }*/
+            /*            for (int i = tableDataList.Count -1; i >= 0; i--)
+                        {
+                            if (tableDataList[i].addrInt == uint.MaxValue)
+                                tableDataList.RemoveAt(i);
+                        }*/
             //Fix table names:
             for (int i = 0; i < tableDataList.Count; i++)
             {
@@ -905,13 +912,14 @@ namespace UniversalPatcher
             }
             Logger(" [OK]");
             refreshTablelist();
+
+        }
+        private void importCSVexperimentalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
         }
 
         private void exportXDFToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Logger("Generating xdf...");
-            XDF xdf = new XDF();
-            Logger(xdf.exportXdf(PCM));
         }
 
         private void txtSearchTableSeek_TextChanged(object sender, EventArgs e)
@@ -928,7 +936,7 @@ namespace UniversalPatcher
             filterTables();
         }
 
-        private void importCSV2ExperimentalToolStripMenuItem_Click(object sender, EventArgs e)
+        private void importXperimentalCsv2()
         {
             string FileName = SelectFile("Select CSV File", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
             if (FileName.Length == 0)
@@ -981,6 +989,10 @@ namespace UniversalPatcher
             }
             Logger(" [OK]");
             refreshTablelist();
+
+        }
+        private void importCSV2ExperimentalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
 
         }
 
@@ -1249,7 +1261,7 @@ namespace UniversalPatcher
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             txtDescription.Text = "";
-            if (dataGridView1.SelectedCells.Count < 1)
+            if (dataGridView1.SelectedCells.Count < 1 || tableDataList.Count == 0)
             {
                 return;
             }
@@ -1272,10 +1284,10 @@ namespace UniversalPatcher
 
         private void setConfigMode()
         {
-            importCSV2ExperimentalToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
-            importCSVexperimentalToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
-            importXMLgeneratorCSVToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
-            exportXMLgeneratorCSVToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;     
+            cSVexperimentalToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
+            cSV2ExperimentalToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
+            xMLGeneratorExportToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
+            xMlgeneratorImportCSVToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;     
         }
         private void enableConfigModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1300,7 +1312,7 @@ namespace UniversalPatcher
             filterTables();
         }
 
-        private void exportXMLgeneratorCSVToolStripMenuItem_Click(object sender, EventArgs e)
+        private void exportXMLgeneratorCSV()
         {
             try
             {
@@ -1328,6 +1340,10 @@ namespace UniversalPatcher
             {
                 LoggerBold(ex.Message);
             }
+
+        }
+        private void exportXMLgeneratorCSVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
         }
         struct OsAddrStruct
         {
@@ -1337,20 +1353,20 @@ namespace UniversalPatcher
             public string addr;
         }
 
-        private void importXMLgeneratorCSVToolStripMenuItem_Click(object sender, EventArgs e)
+        private void importXMLGeneratorCsv()
         {
-            try 
+            try
             {
                 List<OsAddrStruct> osAddrList = new List<OsAddrStruct>();
                 List<string> osList = new List<string>();
 
                 LoggerBold("Supply CSV file in format: Category;Tablename;Size;OS1Address1;OS2Address2;...");
                 LoggerBold("OS versions in header, for example: Category;Tablename;Size;12587603;12582405;12587656;");
-                string fName = SelectFile("Select CSV file for XML generator","CSV files (*.csv)|*.csv|ALL files|*.*");
+                string fName = SelectFile("Select CSV file for XML generator", "CSV files (*.csv)|*.csv|ALL files|*.*");
                 if (fName.Length == 0) return;
                 Logger("Using file: " + currentXmlFile + " as template");
                 Logger("Reading file: " + fName, false);
-                
+
                 StreamReader sr = new StreamReader(fName);
                 string csvLine;
                 if ((csvLine = sr.ReadLine()) == null)
@@ -1360,11 +1376,11 @@ namespace UniversalPatcher
                 if (hdrParts.Length < 4)
                     throw new Exception("Header too sort");
 
-                for (int h=4; h < hdrParts.Length; h++)
+                for (int h = 4; h < hdrParts.Length; h++)
                     if (hdrParts[h].Length > 2)
                         osList.Add(hdrParts[h]);
 
-                while ((csvLine = sr.ReadLine()) != null )
+                while ((csvLine = sr.ReadLine()) != null)
                 {
                     string[] lParts = csvLine.Split(';');
                     if (lParts.Length > 4)
@@ -1374,14 +1390,14 @@ namespace UniversalPatcher
                             OsAddrStruct oa;
                             oa.tableName = lParts[1];
                             oa.category = lParts[0];
-                            oa.OS = osList[x-4];
+                            oa.OS = osList[x - 4];
                             oa.addr = lParts[x];
                             osAddrList.Add(oa);
                         }
                     }
                 }
                 Logger(" [OK]");
-                for (int o=0; o<osList.Count; o++)
+                for (int o = 0; o < osList.Count; o++)
                 {
                     List<TableData> newTds = new List<TableData>();
                     for (int x = 0; x < osAddrList.Count; x++)
@@ -1419,10 +1435,14 @@ namespace UniversalPatcher
             }
 
         }
+        private void importXMLgeneratorCSVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
 
         private void saveXMLAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveXML();
+            SaveTableList();
         }
 
         private void configModeColumnOrderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1607,6 +1627,12 @@ namespace UniversalPatcher
             cmpMenuitem.Tag = newPCM;
             findDifferencesToolStripMenuItem.DropDownItems.Add(cmpMenuitem);
             cmpMenuitem.Click += compareMenuitem_Click;
+
+            ToolStripMenuItem tdMenuItem = new ToolStripMenuItem(newPCM.FileName);
+            tdMenuItem.Name = newPCM.FileName;
+            tdMenuItem.Tag = newPCM.tableDatas;
+            tableListToolStripMenuItem.DropDownItems.Add(tdMenuItem);
+            tdMenuItem.Click += tablelistSelect_Click;
         }
         private void Menuitem_Click(object sender, EventArgs e)
         {
@@ -1693,7 +1719,7 @@ namespace UniversalPatcher
             Logger(newMenuTxt);
             bool menuExist = false;
             List<TableData> newTableDatas = new List<TableData>();
-            foreach (ToolStripMenuItem mi in showTablelistToolStripMenuItem.DropDownItems)
+            foreach (ToolStripMenuItem mi in tableListToolStripMenuItem.DropDownItems)
             {
                 if (mi.Name == newMenuTxt)
                 {
@@ -1712,7 +1738,7 @@ namespace UniversalPatcher
                 miNew.Name = newMenuTxt;
                 miNew.Checked = true;
                 miNew.Tag = newTableDatas;
-                showTablelistToolStripMenuItem.DropDownItems.Add(miNew);
+                tableListToolStripMenuItem.DropDownItems.Add(miNew);
                 miNew.Click += tablelistSelect_Click; 
             }
 
@@ -1744,18 +1770,108 @@ namespace UniversalPatcher
 
         private void tablelistSelect_Click(object sender, EventArgs e)
         {
-            ToolStripMenuItem mItem = (ToolStripMenuItem)sender;
-            tableDataList = (List<TableData>)mItem.Tag;
-            filterTables();
-            foreach (ToolStripMenuItem mi in showTablelistToolStripMenuItem.DropDownItems)
+            foreach (ToolStripMenuItem mi in tableListToolStripMenuItem.DropDownItems)
             {
+                //Save current list:
+                if (mi.Checked)
+                    mi.Tag = tableDataList;
+                //Reset all to uncheck
                 mi.Checked = false;
             }
+
+            ToolStripMenuItem mItem = (ToolStripMenuItem)sender;
+            tableDataList = (List<TableData>)mItem.Tag;
             mItem.Checked = true;
+            filterTables();
         }
 
-         private void findDifferencesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void findDifferencesToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
+        }
+
+        private void cSVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            exportCSV();
+        }
+
+        private void xDFToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Logger("Generating xdf...");
+            XDF xdf = new XDF();
+            Logger(xdf.exportXdf(PCM, tableDataList));
+
+        }
+
+        private void xMLGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            exportXMLgeneratorCSV();
+        }
+
+        private void dTCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importDTC();
+        }
+
+        private void tableSeekToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importTableSeek();
+        }
+
+        private void xDFToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            XDF xdf = new XDF();
+            Logger(xdf.importXdf(PCM, tableDataList));
+            Debug.WriteLine("Categories: " + PCM.tableCategories.Count);
+            LoggerBold("Note: Only basic XDF conversions are supported, check Math and SavingMath values");
+            refreshTablelist();
+        }
+
+        private void tinyTunerDBV6OnlyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importTinyTunerDB();
+        }
+
+        private void xMgeneratorCSVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importXMLGeneratorCsv();
+        }
+
+        private void cSVexperimentalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importxperimentalCSV();
+        }
+
+        private void cSV2ExperimentalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importXperimentalCsv2();
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmData frmD = new frmData();
+            frmD.Text = "Tablelist name:";
+            if (frmD.ShowDialog() == DialogResult.OK)
+            {
+                foreach (ToolStripMenuItem mi in tableListToolStripMenuItem.DropDownItems)
+                {
+                    //Save current list:
+                    if (mi.Checked)
+                        mi.Tag = tableDataList;
+                    //Reset all to uncheck
+                    mi.Checked = false;
+                }
+                ToolStripMenuItem mItem = new ToolStripMenuItem(frmD.txtData.Text);
+                mItem.Name = frmD.txtData.Text;
+                tableDataList = new List<TableData>();
+                TableData tdTmp = new TableData();
+                tableDataList.Add(tdTmp);
+                mItem.Tag = tableDataList;
+                mItem.Checked = true;
+                tableListToolStripMenuItem.DropDownItems.Add(mItem);
+                mItem.Click += tablelistSelect_Click;
+                filterTables();
+            }
 
         }
     }

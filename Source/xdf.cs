@@ -19,7 +19,7 @@ namespace UniversalPatcher
 
         }
         private PcmFile PCM;
-
+        private List<TableData> tdList;
         private string convertMath(string math)
         {
             string retVal = math.ToLower();
@@ -161,12 +161,12 @@ namespace UniversalPatcher
                                 tdNew.TableName += "." + rowHdr[m];
                             else
                                 tdNew.TableName += "." + m.ToString();
-                            PCM.tableDatas.Add(tdNew);
+                            tdList.Add(tdNew);
                         }
                     }
                     else
                     {
-                        PCM.tableDatas.Add(xdf);
+                        tdList.Add(xdf);
                     }
                 }
                 foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFCONSTANT"))
@@ -207,7 +207,7 @@ namespace UniversalPatcher
                             xdf.TableDescription = element.Element("description").Value;
                         xdf.DataType = convertToDataType(elementSize, Signed, Floating);
 
-                        PCM.tableDatas.Add(xdf);
+                        tdList.Add(xdf);
 
                     }
                 }
@@ -235,7 +235,7 @@ namespace UniversalPatcher
                         if (element.Element("description") != null)
                             xdf.TableDescription = element.Element("description").Value;
                         xdf.DataType = convertToDataType(elementSize, false, false);
-                        PCM.tableDatas.Add(xdf);
+                        tdList.Add(xdf);
 
                     }
                 }
@@ -253,12 +253,13 @@ namespace UniversalPatcher
 
         }
 
-        public string  importXdf(PcmFile PCM1)
+        public string  importXdf(PcmFile PCM1, List<TableData> tdList1)
         {
             string retVal = "";
             try
             {
                 PCM = PCM1;
+                tdList = tdList1;
                 XDocument doc;
                 string fname = SelectFile("Select XDF file", "xdf files (*.xdf)|*.xdf|ALL files (*.*| *.*");
                 if (fname.Length == 0)
@@ -281,14 +282,17 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        public string exportXdf(PcmFile basefile)
+        public string exportXdf(PcmFile basefile, List<TableData> tdList1)
         {
+            PCM = basefile;
+            tdList = tdList1;
             string retVal = "";
             string tableRows = "";
             String tableText = "";
             string templateTxt = "";
             int lastCategory = 0;
             int dtcCategory = 0;
+
             try
             {
 
@@ -297,9 +301,9 @@ namespace UniversalPatcher
                 xdfText = xdfText.Replace("REPLACE-TIMESTAMP", DateTime.Today.ToString("MM/dd/yyyy H:mm"));
                 xdfText = xdfText.Replace("REPLACE-OSID", basefile.OS);
                 xdfText = xdfText.Replace("REPLACE-BINSIZE", basefile.fsize.ToString("X"));
-                for (int s = 1; s < PCM.tableCategories.Count; s++)
+                for (int s = 1; s < basefile.tableCategories.Count; s++)
                 {
-                    tableText += "     <CATEGORY index = \"0x" + (s - 1).ToString("X") + "\" name = \"" + PCM.tableCategories[s] + "\" />" + Environment.NewLine;
+                    tableText += "     <CATEGORY index = \"0x" + (s - 1).ToString("X") + "\" name = \"" + basefile.tableCategories[s] + "\" />" + Environment.NewLine;
                     lastCategory = s;
                 }
                 dtcCategory = lastCategory + 1;
@@ -327,22 +331,22 @@ namespace UniversalPatcher
 
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdftableseek.txt");
                 templateTxt = ReadTextFile(fName);
-                for (int t = 0; t < PCM.tableDatas.Count; t++)
+                for (int t = 0; t < tdList.Count; t++)
                 {
                     //Add all tables
-                    if (PCM.tableDatas[t].Rows > 1)
+                    if (tdList[t].Rows > 1)
                     {
-                        if (PCM.tableDatas[t].TableName != null && PCM.tableDatas[t].TableName.Length > 1)
-                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", PCM.tableDatas[t].TableName);
+                        if (tdList[t].TableName != null && tdList[t].TableName.Length > 1)
+                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].TableName);
                         else
-                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", PCM.tableDatas[t].Address);
-                        int s = basefile.GetSegmentNumber(PCM.tableDatas[t].addrInt);
+                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].Address);
+                        int s = basefile.GetSegmentNumber(tdList[t].addrInt);
                         if (s == -1) s = lastCategory;
-                        if (PCM.tableDatas[t].Category != null && PCM.tableDatas[t].Category != "")
+                        if (tdList[t].Category != null && tdList[t].Category != "")
                         {
                             for (int c = 1; c < PCM.tableCategories.Count; c++)
                             {
-                                if (PCM.tableCategories[c] == PCM.tableDatas[t].Category)
+                                if (PCM.tableCategories[c] == tdList[t].Category)
                                 {
                                     tableText = tableText.Replace("REPLACE-CATEGORY", c.ToString());
                                     break;
@@ -353,52 +357,52 @@ namespace UniversalPatcher
                         {
                             tableText = tableText.Replace("REPLACE-CATEGORY", s.ToString());
                         }
-                        string descr = PCM.tableDatas[t].TableDescription;
-                        /*if (PCM.tableDatas[t].Values.StartsWith("Enum: ") && !descr.ToLower().Contains("enum"))
+                        string descr = tdList[t].TableDescription;
+                        /*if (tdList[t].Values.StartsWith("Enum: ") && !descr.ToLower().Contains("enum"))
                         {
-                            string[] hParts = PCM.tableDatas[t].Values.Substring(6).Split(',');
+                            string[] hParts = tdList[t].Values.Substring(6).Split(',');
                             for (int x = 0; x < hParts.Length; x++)
                             {
                                 descr += Environment.NewLine + hParts[x];
                             }
                         }*/
 
-                        tableText = tableText.Replace("REPLACE-TABLEID", PCM.tableDatas[t].Address);
-                        tableText = tableText.Replace("REPLACE-UNITS", PCM.tableDatas[t].Units);
-                        tableText = tableText.Replace("REPLACE-ROWCOUNT", PCM.tableDatas[t].Rows.ToString());
-                        tableText = tableText.Replace("REPLACE-COLCOUNT", PCM.tableDatas[t].Columns.ToString());
-                        tableText = tableText.Replace("REPLACE-MATH", PCM.tableDatas[t].Math);
-                        tableText = tableText.Replace("REPLACE-BITS", getBits(PCM.tableDatas[t].DataType).ToString());
-                        tableText = tableText.Replace("REPLACE-DECIMALS", PCM.tableDatas[t].Decimals.ToString());
-                        tableText = tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)PCM.tableDatas[t].OutputType).ToString());
-                        tableText = tableText.Replace("REPLACE-TABLEADDRESS",((uint)(PCM.tableDatas[t].addrInt + PCM.tableDatas[t].Offset)).ToString("X"));
+                        tableText = tableText.Replace("REPLACE-TABLEID", tdList[t].Address);
+                        tableText = tableText.Replace("REPLACE-UNITS", tdList[t].Units);
+                        tableText = tableText.Replace("REPLACE-ROWCOUNT", tdList[t].Rows.ToString());
+                        tableText = tableText.Replace("REPLACE-COLCOUNT", tdList[t].Columns.ToString());
+                        tableText = tableText.Replace("REPLACE-MATH", tdList[t].Math);
+                        tableText = tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
+                        tableText = tableText.Replace("REPLACE-DECIMALS", tdList[t].Decimals.ToString());
+                        tableText = tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)tdList[t].OutputType).ToString());
+                        tableText = tableText.Replace("REPLACE-TABLEADDRESS",((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
-                        tableText = tableText.Replace("REPLACE-MINVALUE", PCM.tableDatas[t].Min.ToString());
-                        tableText = tableText.Replace("REPLACE-MAXVALUE", PCM.tableDatas[t].Max.ToString());
+                        tableText = tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
+                        tableText = tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
                         int tableFlags = 0;
-                        if (getSigned(PCM.tableDatas[t].DataType))
+                        if (getSigned(tdList[t].DataType))
                         {
                             tableFlags++;
                         }
-                        if (PCM.tableDatas[t].RowMajor == false)
+                        if (tdList[t].RowMajor == false)
                         {
                             tableFlags += 4;
                         }
                         tableText = tableText.Replace("REPLACE-TYPEFLAGS", tableFlags.ToString("X2"));
 
                         tableRows = "";
-                        if (PCM.tableDatas[t].RowHeaders == "")
+                        if (tdList[t].RowHeaders == "")
                         {
-                            for (int d = 0; d < PCM.tableDatas[t].Rows; d++)
+                            for (int d = 0; d < tdList[t].Rows; d++)
                             {
                                 tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />";
-                                if (d < PCM.tableDatas[t].Rows - 1)
+                                if (d < tdList[t].Rows - 1)
                                     tableRows += Environment.NewLine;
                             }
                         }
                         else
                         {
-                            string[] hParts = PCM.tableDatas[t].RowHeaders.Split(',');
+                            string[] hParts = tdList[t].RowHeaders.Split(',');
                             for (int row = 0; row < hParts.Length; row++)
                             {
                                 tableRows += "     <LABEL index=\"" + row.ToString() + "\" value=\"" + hParts[row] + "\" />";
@@ -408,18 +412,18 @@ namespace UniversalPatcher
                         }
                         tableText = tableText.Replace("REPLACE-TABLEROWS", tableRows);
                         string tableCols = "";
-                        if (PCM.tableDatas[t].ColumnHeaders == "")
+                        if (tdList[t].ColumnHeaders == "")
                         {
-                            for (int d = 0; d < PCM.tableDatas[t].Columns; d++)
+                            for (int d = 0; d < tdList[t].Columns; d++)
                             {
                                 tableCols += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />";
-                                if (d < PCM.tableDatas[t].Columns - 1)
+                                if (d < tdList[t].Columns - 1)
                                     tableCols += Environment.NewLine;
                             }
                         }                        
                         else
                         {
-                            string[] hParts = PCM.tableDatas[t].ColumnHeaders.Split(',');
+                            string[] hParts = tdList[t].ColumnHeaders.Split(',');
                             for (int col = 0; col < hParts.Length; col++)
                             {
                                 tableCols += "     <LABEL index=\"" + col.ToString() + "\" value=\"" + hParts[col] + "\" />";
@@ -435,49 +439,49 @@ namespace UniversalPatcher
 
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
                 templateTxt = ReadTextFile(fName);
-                for (int t = 0; t < PCM.tableDatas.Count; t++)
+                for (int t = 0; t < tdList.Count; t++)
                 {
                     //Add all constants
-                    if (PCM.tableDatas[t].Rows < 2 && PCM.tableDatas[t].OutputType != OutDataType.Flag)
+                    if (tdList[t].Rows < 2 && tdList[t].OutputType != OutDataType.Flag)
                     {
-                        if (PCM.tableDatas[t].TableName != null && PCM.tableDatas[t].TableName.Length > 1)
-                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", PCM.tableDatas[t].TableName);
+                        if (tdList[t].TableName != null && tdList[t].TableName.Length > 1)
+                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].TableName);
                         else
-                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", PCM.tableDatas[t].Address);
-                        int s = basefile.GetSegmentNumber(PCM.tableDatas[t].addrInt);
+                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].Address);
+                        int s = basefile.GetSegmentNumber(tdList[t].addrInt);
                         if (s == -1) s = lastCategory;
                         tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
-                        tableText = tableText.Replace("REPLACE-TABLEID", ((uint)(PCM.tableDatas[t].addrInt + PCM.tableDatas[t].Offset)).ToString("X"));
-                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(PCM.tableDatas[t].addrInt + PCM.tableDatas[t].Offset)).ToString("X"));
+                        tableText = tableText.Replace("REPLACE-TABLEID", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
+                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
-                        tableText = tableText.Replace("REPLACE-BITS", getBits(PCM.tableDatas[t].DataType).ToString());
-                        tableText = tableText.Replace("REPLACE-MINVALUE", PCM.tableDatas[t].Min.ToString());
-                        tableText = tableText.Replace("REPLACE-MAXVALUE", PCM.tableDatas[t].Max.ToString());
+                        tableText = tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
+                        tableText = tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
+                        tableText = tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
                         xdfText += tableText;       //Add generated table to end of xdfText
                     }
                 }
 
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdfFlag.txt");
                 templateTxt = ReadTextFile(fName);
-                for (int t = 0; t < PCM.tableDatas.Count; t++)
+                for (int t = 0; t < tdList.Count; t++)
                 {
                     //Add all constants
-                    if (PCM.tableDatas[t].OutputType == OutDataType.Flag)
+                    if (tdList[t].OutputType == OutDataType.Flag)
                     {
-                        if (PCM.tableDatas[t].TableName != null && PCM.tableDatas[t].TableName.Length > 1)
-                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", PCM.tableDatas[t].TableName);
+                        if (tdList[t].TableName != null && tdList[t].TableName.Length > 1)
+                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].TableName);
                         else
-                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", PCM.tableDatas[t].Address);
-                        int s = basefile.GetSegmentNumber(PCM.tableDatas[t].addrInt);
+                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].Address);
+                        int s = basefile.GetSegmentNumber(tdList[t].addrInt);
                         if (s == -1) s = lastCategory;
                         tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
-                        tableText = tableText.Replace("REPLACE-TABLEID", PCM.tableDatas[t].Address);
-                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(PCM.tableDatas[t].addrInt + PCM.tableDatas[t].Offset)).ToString("X"));
+                        tableText = tableText.Replace("REPLACE-TABLEID", tdList[t].Address);
+                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
-                        tableText = tableText.Replace("REPLACE-BITS", getBits(PCM.tableDatas[t].DataType).ToString());
-                        tableText = tableText.Replace("REPLACE-MINVALUE", PCM.tableDatas[t].Min.ToString());
-                        tableText = tableText.Replace("REPLACE-MAXVALUE", PCM.tableDatas[t].Max.ToString());
-                        tableText = tableText.Replace("REPLACE-MASK", PCM.tableDatas[t].BitMask);
+                        tableText = tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
+                        tableText = tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
+                        tableText = tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
+                        tableText = tableText.Replace("REPLACE-MASK", tdList[t].BitMask);
                         xdfText += tableText;       //Add generated table to end of xdfText
 
                     }

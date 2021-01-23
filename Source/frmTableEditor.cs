@@ -170,9 +170,9 @@ namespace UniversalPatcher
         }
 
 
-        public double getValue(uint addr, TableData mathTd)
+        public double getValue(uint addr, TableData mathTd, bool cmp = false)
         {
-            double value = 0;
+            double retVal = 0;
 
             Byte[] myBuffer = tableBuffer;
             UInt32 bufAddr = addr - td.addrInt;
@@ -185,29 +185,29 @@ namespace UniversalPatcher
             }
 
             if (mathTd.DataType == InDataType.SBYTE)
-                value = (sbyte)myBuffer[bufAddr];
+                retVal = (sbyte)myBuffer[bufAddr];
             if (mathTd.DataType == InDataType.UBYTE)
-                value = myBuffer[bufAddr];
+                retVal = myBuffer[bufAddr];
             if (mathTd.DataType == InDataType.SWORD)
-                value = BEToInt16(myBuffer,bufAddr);
+                retVal = BEToInt16(myBuffer,bufAddr);
             if (mathTd.DataType == InDataType.UWORD)
-                value = BEToUint16(myBuffer, bufAddr);
+                retVal = BEToUint16(myBuffer, bufAddr);
             if (mathTd.DataType == InDataType.INT32)
-                value = BEToInt32(myBuffer, bufAddr);
+                retVal = BEToInt32(myBuffer, bufAddr);
             if (mathTd.DataType == InDataType.UINT32)
-                value = BEToUint32(myBuffer, bufAddr);
+                retVal = BEToUint32(myBuffer, bufAddr);
             if (mathTd.DataType == InDataType.INT64)
-                value = BEToInt64(myBuffer, bufAddr);
+                retVal = BEToInt64(myBuffer, bufAddr);
             if (mathTd.DataType == InDataType.UINT64)
-                value = BEToUint64(myBuffer, bufAddr);
+                retVal = BEToUint64(myBuffer, bufAddr);
             if (mathTd.DataType == InDataType.FLOAT32)
-                value = BEToFloat32(myBuffer, bufAddr);
+                retVal = BEToFloat32(myBuffer, bufAddr);
             if (mathTd.DataType == InDataType.FLOAT64)
-                value = BEToFloat64(myBuffer, bufAddr);
+                retVal = BEToFloat64(myBuffer, bufAddr);
 
-            string mathStr = mathTd.Math.ToLower().Replace("x", value.ToString());
+            string mathStr = mathTd.Math.ToLower().Replace("x", retVal.ToString());
             if (commaDecimal) mathStr = mathStr.Replace(".", ",");
-            value = parser.Parse(mathStr, false);
+            retVal = parser.Parse(mathStr, false);
             if (compareEditor != null)
             {
                 int currentOffset = (int)(addr - (td.addrInt + td.Offset) ); //Bytes from (table start + offset)
@@ -216,35 +216,128 @@ namespace UniversalPatcher
                 if (radioDifference.Checked)
                 {
                     double cmpVal = compareEditor.getValue(cmpAddr, mathTd);
-                    return value - cmpVal;
+                    return retVal - cmpVal;
                 }
                 if (radioOriginal.Checked)
                 {
-                    return value;
+                    return retVal;
                 }
-                if (radioCompareFile.Checked)
+                if (radioCompareFile.Checked || cmp)
                 {
                     return compareEditor.getValue(cmpAddr, mathTd);
                 }
 
             }
-            return value;
+            return retVal;
         }
 
-        public UInt64 getRawValue(UInt32 addr, TableData mathTd)
+        public UInt64 getRawValue(UInt32 addr, TableData mathTd, bool cmp = false)
         {
-            UInt32 bufAddr = addr - td.addrInt; 
+            UInt32 bufAddr = addr - td.addrInt;
+            UInt64 retVal = 0;
             if (mathTd.DataType == InDataType.UWORD || mathTd.DataType == InDataType.SWORD)
-                return BEToUint16(tableBuffer, bufAddr);
+                retVal = BEToUint16(tableBuffer, bufAddr);
             if (mathTd.DataType == InDataType.INT32 || mathTd.DataType == InDataType.UINT32 || mathTd.DataType == InDataType.FLOAT32)
-                return BEToUint32(tableBuffer, bufAddr);
+                retVal = BEToUint32(tableBuffer, bufAddr);
             if (mathTd.DataType == InDataType.INT64 || mathTd.DataType == InDataType.UINT64 || mathTd.DataType == InDataType.FLOAT64)
-                return BEToUint64(tableBuffer, bufAddr);
-            return tableBuffer[bufAddr];
+                retVal = BEToUint64(tableBuffer, bufAddr);
+            if (mathTd.DataType == InDataType.UBYTE || mathTd.DataType == InDataType.SBYTE)
+                retVal =  tableBuffer[bufAddr];
+            if (compareEditor != null)
+            {
+                int currentOffset = (int)(addr - (td.addrInt + td.Offset)); //Bytes from (table start + offset)
+                int currentSteps = (int)currentOffset / getElementSize(td.DataType);
+                uint cmpAddr = (uint)(currentSteps * getElementSize(compareEditor.td.DataType) + compareEditor.td.addrInt + compareEditor.td.Offset);
+                if (radioDifference.Checked)
+                {
+                    UInt64 cmpVal = compareEditor.getRawValue(cmpAddr, mathTd);
+                    return retVal - cmpVal;
+                }
+                if (radioOriginal.Checked)
+                {
+                    return retVal;
+                }
+                if (radioCompareFile.Checked || cmp)
+                {
+                    return compareEditor.getRawValue(cmpAddr, mathTd);
+                }
+
+            }
+            return retVal;
         }
 
         public void setCellValue(uint addr, int row, int col, TableData mathTd)
         {
+            if (radioSideBySide.Checked)
+            {
+                double orgVal;
+                double cmpVal;
+                string orgTxt = "";
+                string cmpTxt = "";
+                string formatStr = "0";
+                if (showRawHEXValuesToolStripMenuItem.Checked)
+                {
+                    orgVal = getRawValue(addr, mathTd);
+                    cmpVal = getRawValue(addr, mathTd, true);
+                    formatStr = "X" + (getElementSize(mathTd.DataType) * 2).ToString();
+                    orgTxt = ((uint)orgVal).ToString(formatStr);
+                    cmpTxt = ((uint)cmpVal).ToString(formatStr);
+                }
+                else
+                {
+                    orgVal = getValue(addr, mathTd);
+                    cmpVal = getValue(addr, mathTd, true);
+                    if (td.OutputType == OutDataType.Text)
+                    {
+                        orgTxt = Convert.ToChar((ushort)orgVal).ToString();
+                        cmpTxt = Convert.ToChar((ushort)cmpVal).ToString();
+                    }
+                    else if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
+                    {
+                        UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
+                        if ((getRawValue(addr, mathTd) & mask) == mask)
+                            orgTxt = "1";
+                        else
+                            orgTxt = "0";
+                        if ((getRawValue(addr, mathTd, true) & mask) == mask)
+                            cmpTxt = "1";
+                        else
+                            cmpTxt = "0";
+                    }
+                    else if (mathTd.OutputType == OutDataType.Hex)
+                    {
+                        double val = getValue(addr, mathTd);
+                        dataGridView1.Rows[row].Cells[col].Value = (uint)val;
+                    }
+                    else if (mathTd.OutputType == OutDataType.Int)
+                    {
+                        orgTxt = ((int)orgVal).ToString();
+                        cmpTxt = ((int)cmpVal).ToString();
+                    }
+                    else
+                    {
+
+                        for (int f = 1; f <= (int)numDecimals.Value; f++)
+                        {
+                            if (f == 1) formatStr += ".";
+                            formatStr += "0";
+                        }
+                        formatStr += "#";
+                        orgTxt = orgVal.ToString(formatStr);
+                        cmpTxt = cmpVal.ToString(formatStr);
+                    }
+                }
+                dataGridView1.Rows[row].Cells[col].Value = orgTxt + " [" + cmpTxt + "]";
+                Tagi ta = new Tagi();
+                ta.addr = addr;
+                ta.id = (int)mathTd.id;
+                dataGridView1.Rows[row].Cells[col].Tag = ta;
+                if (orgVal == cmpVal)
+                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightBlue;
+                else
+                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
+                return;
+            }
             if (showRawHEXValuesToolStripMenuItem.Checked)
                 dataGridView1.Rows[row].Cells[col].Value = getRawValue(addr, mathTd);
             else if (td.OutputType == OutDataType.Text)
@@ -529,7 +622,7 @@ namespace UniversalPatcher
         private ColumnInfo getColinfoByTableData (TableData td1)
         {
             ColumnInfo colInfo = new ColumnInfo();
-            if (showRawHEXValuesToolStripMenuItem.Checked)
+            if (showRawHEXValuesToolStripMenuItem.Checked || radioSideBySide.Checked)
             {
                 colInfo.columnType = ColType.Value;
             }
@@ -1051,7 +1144,11 @@ namespace UniversalPatcher
 
                 dataGridView1.Rows.Clear();
                 dataGridView1.Columns.Clear();
-                if (td.OutputType == OutDataType.Flag || (td.Units != null && td.Units.ToLower().Contains("boolean")))
+                if (radioSideBySide.Checked)
+                {
+                    dataGridView1.ColumnCount = colCount;
+                }
+                else if (td.OutputType == OutDataType.Flag || (td.Units != null && td.Units.ToLower().Contains("boolean")))
                 {
                     for (int c = 0; c < colCount; c++)
                     {
@@ -1152,18 +1249,20 @@ namespace UniversalPatcher
         {
             try
             {
+                if (numDecimals.Value < 0 && td != null)
+                    numDecimals.Value = td.Decimals;
                 string formatStr = "0";
                 if (showRawHEXValuesToolStripMenuItem.Checked || td.OutputType == OutDataType.Hex)
                 {
-                    formatStr = "X" + (getBits(td.DataType)/4).ToString();
+                    formatStr = "X" + ((int)numDecimals.Value).ToString() ;
                 }
-                else if (td.OutputType == OutDataType.Text || td.OutputType == OutDataType.Flag)
+                else if (td.OutputType == OutDataType.Text || td.OutputType == OutDataType.Flag || radioSideBySide.Checked)
                 {
                     formatStr = "";
                 }
                 else
                 {
-                    for (int f = 1; f <= td.Decimals; f++)
+                    for (int f = 1; f <= (int)numDecimals.Value ; f++)
                     {
                         if (f == 1) formatStr += ".";
                         formatStr += "0";
@@ -1390,7 +1489,7 @@ namespace UniversalPatcher
         private void AutoResize()
         {
             int dgv_width = dataGridView1.Columns.GetColumnsWidth(DataGridViewElementStates.Visible) + dataGridView1.RowHeadersWidth;
-            if (dgv_width < 300) dgv_width = 300;
+            if (dgv_width < 500) dgv_width = 500;
             int dgv_height = dataGridView1.Rows.GetRowsHeight(DataGridViewElementStates.Visible) + dataGridView1.ColumnHeadersHeight;
             Screen myScreen = Screen.FromPoint(MousePosition);
             System.Drawing.Rectangle area = myScreen.WorkingArea;
@@ -1793,6 +1892,18 @@ namespace UniversalPatcher
             }
             loadTable(td);
         }
+        private void radioSideBySide_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioSideBySide.Checked)
+            {
+                dataGridView1.BackgroundColor = Color.Red;
+                disableSaving = true;
+                setMyText();
+            }
+            graphToolStripMenuItem.Enabled = !radioSideBySide.Checked;            
+
+            loadTable(td);
+        }
 
         private void radioOriginal_CheckedChanged(object sender, EventArgs e)
         {
@@ -1814,6 +1925,11 @@ namespace UniversalPatcher
                 this.Text += PCM.FileName + " <> " + compareEditor.PCM.FileName + "]";
             if (radioCompareFile.Checked)
                 this.Text += compareEditor.PCM.FileName + "]";
+        }
+
+        private void numDecimals_ValueChanged(object sender, EventArgs e)
+        {
+            loadTable(td);
         }
     }
 }

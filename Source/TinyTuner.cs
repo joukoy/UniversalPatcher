@@ -157,7 +157,7 @@ namespace UniversalPatcher
             }
             return "OK";
         }
-        public string readTinyDBtoTableData(PcmFile PCM)
+        public string readTinyDBtoTableData(PcmFile PCM, List<TableData> tdList)
         {
             string connetionString = null;
             OleDbConnection cnn;
@@ -241,7 +241,7 @@ namespace UniversalPatcher
                         PCM.tableCategories.Add(td.Category);
                     td.Units = row["Units"].ToString();
                     td.RowMajor = false;
-                    PCM.tableDatas.Add(td);
+                    tdList.Add(td);
                 }
 
 
