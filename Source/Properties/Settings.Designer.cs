@@ -454,5 +454,16 @@ namespace UniversalPatcher.Properties {
                 this["Setting1"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Font TableEditorFont {
+            get {
+                return ((global::System.Drawing.Font)(this["TableEditorFont"]));
+            }
+            set {
+                this["TableEditorFont"] = value;
+            }
+        }
     }
 }

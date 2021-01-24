@@ -81,6 +81,7 @@ namespace UniversalPatcher
         private byte[] tableBuffer;
         private uint bufSize = 0;
         MathParser parser = new MathParser();
+        Font dataFont;
         //Dictionary<double, string> possibleVals = new Dictionary<double, string>();
         
         public bool disableMultiTable = false;
@@ -92,6 +93,10 @@ namespace UniversalPatcher
         {
             dataGridView1.AutoResizeColumns();
             dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
+            if (Properties.Settings.Default.TableEditorFont == null)
+                dataFont = new Font("Consolas", 9);
+            else
+                dataFont = Properties.Settings.Default.TableEditorFont;
 
             autoResizeToolStripMenuItem.Checked = Properties.Settings.Default.TableEditorAutoResize;
             if (Properties.Settings.Default.TableEditorAutoResize)
@@ -170,7 +175,7 @@ namespace UniversalPatcher
         }
 
 
-        public double getValue(uint addr, TableData mathTd, bool cmp = false)
+        public double getValue(uint addr, TableData mathTd, bool getCompare = false)
         {
             double retVal = 0;
 
@@ -222,7 +227,7 @@ namespace UniversalPatcher
                 {
                     return retVal;
                 }
-                if (radioCompareFile.Checked || cmp)
+                if (radioCompareFile.Checked || getCompare)
                 {
                     return compareEditor.getValue(cmpAddr, mathTd);
                 }
@@ -231,7 +236,7 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        public UInt64 getRawValue(UInt32 addr, TableData mathTd, bool cmp = false)
+        public UInt64 getRawValue(UInt32 addr, TableData mathTd, bool getCompare = false)
         {
             UInt32 bufAddr = addr - td.addrInt;
             UInt64 retVal = 0;
@@ -257,7 +262,7 @@ namespace UniversalPatcher
                 {
                     return retVal;
                 }
-                if (radioCompareFile.Checked || cmp)
+                if (radioCompareFile.Checked || getCompare)
                 {
                     return compareEditor.getRawValue(cmpAddr, mathTd);
                 }
@@ -322,7 +327,7 @@ namespace UniversalPatcher
                             if (f == 1) formatStr += ".";
                             formatStr += "0";
                         }
-                        formatStr += "#";
+                        //formatStr += "#";
                         orgTxt = orgVal.ToString(formatStr);
                         cmpTxt = cmpVal.ToString(formatStr);
                     }
@@ -344,30 +349,43 @@ namespace UniversalPatcher
                 dataGridView1.Rows[row].Cells[col].Value = Convert.ToChar((ushort)getValue(addr, mathTd));
             else if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
             {
-                UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""),16);
+                UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
                 if ((getRawValue(addr, mathTd) & mask) == mask)
                 {
-                    Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + ", mask: " + mask.ToString("X")+ ", Data: " + getRawValue(addr, mathTd).ToString("X") + " Row: " + row + ", Col: " + col + ", true");
-                    dataGridView1.Rows[row].Cells[col].Value = 1 ;
+                    Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + ", mask: " + mask.ToString("X") + ", Data: " + getRawValue(addr, mathTd).ToString("X") + " Row: " + row + ", Col: " + col + ", true");
+                    dataGridView1.Rows[row].Cells[col].Value = 1;
                 }
                 else
                 {
-                    Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + " mask: " + mask.ToString("X") +  ", Data: " + getRawValue(addr, mathTd).ToString("X") + " Row: " + row + ", Col: " + col + ", false");
+                    Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + " mask: " + mask.ToString("X") + ", Data: " + getRawValue(addr, mathTd).ToString("X") + " Row: " + row + ", Col: " + col + ", false");
                     dataGridView1.Rows[row].Cells[col].Value = 0;
                 }
             }
             else if (mathTd.OutputType == OutDataType.Hex)
             {
                 double val = getValue(addr, mathTd);
-                dataGridView1.Rows[row].Cells[col].Value =(uint)val;
+                dataGridView1.Rows[row].Cells[col].Value = (uint)val;
             }
-            else if ( mathTd.OutputType == OutDataType.Int)
+            else if (mathTd.OutputType == OutDataType.Int)
             {
                 double val = getValue(addr, mathTd);
                 dataGridView1.Rows[row].Cells[col].Value = (int)val;
             }
             else
-                dataGridView1.Rows[row].Cells[col].Value = getValue(addr, mathTd);
+            {
+                double cellValue = getValue(addr, mathTd);
+                dataGridView1.Rows[row].Cells[col].Value = cellValue;
+                if (cellValue < (mathTd.Max * 0.9) && cellValue > (mathTd.Min * 1.1))
+                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.White;
+                else if (cellValue > mathTd.Max)
+                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Pink;
+                else if (cellValue > (0.9 * mathTd.Max))
+                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
+                else if (cellValue < mathTd.Min)
+                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.AliceBlue;
+                else if (cellValue < (1.1 * mathTd.Min))
+                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightBlue;
+            }
 
             Tagi t = new Tagi();
             t.addr = addr;
@@ -1267,11 +1285,13 @@ namespace UniversalPatcher
                         if (f == 1) formatStr += ".";
                         formatStr += "0";
                     }
-                    formatStr += "#";
+                    //formatStr += "#";
                 }
                 foreach (DataGridViewColumn dgvc in dataGridView1.Columns)
                 {
                     dgvc.SortMode = DataGridViewColumnSortMode.NotSortable;
+                    dgvc.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                    dgvc.DefaultCellStyle.Font = dataFont;
                     if (formatStr != "" && dgvc.GetType() != typeof(DataGridViewComboBoxColumn) )
                         dgvc.DefaultCellStyle.Format = formatStr;
                 }
@@ -1929,6 +1949,24 @@ namespace UniversalPatcher
 
         private void numDecimals_ValueChanged(object sender, EventArgs e)
         {
+            loadTable(td);
+        }
+
+        private void dataFontToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FontDialog fontDlg = new FontDialog();
+            fontDlg.ShowColor = true;
+            fontDlg.ShowApply = true;
+            fontDlg.ShowEffects = true;
+            fontDlg.ShowHelp = true;
+            fontDlg.Font = dataFont;
+            if (fontDlg.ShowDialog() != DialogResult.Cancel)
+            {
+                dataFont = fontDlg.Font;
+                Properties.Settings.Default.TableEditorFont = dataFont;
+                Properties.Settings.Default.Save();
+            }
+            fontDlg.Dispose();
             loadTable(td);
         }
     }

@@ -63,6 +63,7 @@ namespace UniversalPatcher
             this.radioOriginal = new System.Windows.Forms.RadioButton();
             this.numDecimals = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
+            this.dataFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -197,7 +198,8 @@ namespace UniversalPatcher
             this.autoResizeToolStripMenuItem,
             this.swapXyToolStripMenuItem,
             this.showRawHEXValuesToolStripMenuItem,
-            this.disableTooltipsToolStripMenuItem});
+            this.disableTooltipsToolStripMenuItem,
+            this.dataFontToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "Settings";
@@ -385,6 +387,13 @@ namespace UniversalPatcher
             this.label1.TabIndex = 12;
             this.label1.Text = "Decimals:";
             // 
+            // dataFontToolStripMenuItem
+            // 
+            this.dataFontToolStripMenuItem.Name = "dataFontToolStripMenuItem";
+            this.dataFontToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.dataFontToolStripMenuItem.Text = "Data font...";
+            this.dataFontToolStripMenuItem.Click += new System.EventHandler(this.dataFontToolStripMenuItem_Click);
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -452,5 +461,6 @@ namespace UniversalPatcher
         private RadioButton radioSideBySide;
         private NumericUpDown numDecimals;
         private Label label1;
+        private ToolStripMenuItem dataFontToolStripMenuItem;
     }
 }
