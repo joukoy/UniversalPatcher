@@ -273,6 +273,7 @@ namespace UniversalPatcher
 
         public void setCellValue(uint addr, int row, int col, TableData mathTd)
         {
+            double val = 0;
             if (radioSideBySide.Checked)
             {
                 double orgVal;
@@ -311,7 +312,7 @@ namespace UniversalPatcher
                     }
                     else if (mathTd.OutputType == OutDataType.Hex)
                     {
-                        double val = getValue(addr, mathTd);
+                        val = getValue(addr, mathTd);
                         dataGridView1.Rows[row].Cells[col].Value = (uint)val;
                     }
                     else if (mathTd.OutputType == OutDataType.Int)
@@ -363,30 +364,33 @@ namespace UniversalPatcher
             }
             else if (mathTd.OutputType == OutDataType.Hex)
             {
-                double val = getValue(addr, mathTd);
+                val = getValue(addr, mathTd);
                 dataGridView1.Rows[row].Cells[col].Value = (uint)val;
             }
             else if (mathTd.OutputType == OutDataType.Int)
             {
-                double val = getValue(addr, mathTd);
+                val = getValue(addr, mathTd);
                 dataGridView1.Rows[row].Cells[col].Value = (int)val;
             }
             else
             {
-                double cellValue = getValue(addr, mathTd);
-                dataGridView1.Rows[row].Cells[col].Value = cellValue;
-                if (cellValue < (mathTd.Max * 0.9) && cellValue > (mathTd.Min * 1.1))
-                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.White;
-                else if (cellValue > mathTd.Max)
-                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Pink;
-                else if (cellValue > (0.9 * mathTd.Max))
-                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
-                else if (cellValue < mathTd.Min)
-                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.AliceBlue;
-                else if (cellValue < (1.1 * mathTd.Min))
-                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightBlue;
+                val = getValue(addr, mathTd);
+                dataGridView1.Rows[row].Cells[col].Value = val;
             }
 
+            if (dataGridView1.Columns[col].GetType() != typeof(DataGridViewComboBoxColumn) && dataGridView1.Columns[col].GetType() != typeof(DataGridViewCheckBoxColumn))
+            {
+                if (val < (mathTd.Max * 0.9) && val > (mathTd.Min * 1.1))
+                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.White;
+                else if (val > mathTd.Max)
+                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Pink;
+                else if (val > (0.9 * mathTd.Max))
+                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
+                else if (val < mathTd.Min)
+                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.AliceBlue;
+                else if (val < (1.1 * mathTd.Min))
+                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightBlue;
+            }
             Tagi t = new Tagi();
             t.addr = addr;
             t.id = (int)mathTd.id;
@@ -702,7 +706,8 @@ namespace UniversalPatcher
             else
             {
                 //Multible tables which are meant to be linked together
-                var results = PCM.tableDatas.Where(t => t.TableName.StartsWith(tableName));
+                string filterName = td.TableName.Substring(0, tableName.Length + 1);
+                var results = PCM.tableDatas.Where(t => t.TableName.StartsWith(filterName));
                 filteredTables = new List<TableData>(results.ToList());
                 filteredTables = filteredTables.OrderBy(o => o.addrInt).ToList();
             }

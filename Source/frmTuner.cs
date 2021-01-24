@@ -851,13 +851,13 @@ namespace UniversalPatcher
         {
             for (int i = 0; i < tableDataList.Count; i++)
                 tableDataList[i].addrInt = uint.MaxValue;
-            string FileName = SelectFile("Select CSV File", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
-            if (FileName.Length == 0)
+            string fileName = SelectFile("Select CSV File", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (fileName.Length == 0)
                 return;
-            Logger("Loading file: " + FileName, false);
+            Logger("Loading file: " + fileName, false);
             //string osNew = Path.GetFileName(FileName).Replace("Addresses-", "").Replace(".csv","");
             string osNew = "12587603";
-            StreamReader sr = new StreamReader(FileName);
+            StreamReader sr = new StreamReader(fileName);
             string csvLine;
             while ((csvLine = sr.ReadLine()) != null)
             {
