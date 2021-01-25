@@ -687,46 +687,37 @@ namespace UniversalPatcher
                 return "";
             }
             string Result = "";
-            if (AD.Type == TypeFilename)
+
+            if (AD.Type == TypeHex)
+            {
+                for (int a = 0; a < AD.Bytes; a++)
+                    Result += buf[AD.Address + a].ToString("X2");
+            }
+            else if (AD.Type == TypeText)
+            {
+                Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
+            }
+            else if (AD.Type == TypeFilename)
             {
                 Result = AD.Address.ToString();
             }
             else if (AD.Bytes == 1)
             {
-                if (AD.Type == TypeHex)
-                    Result = buf[AD.Address].ToString("X2");
-                else if (AD.Type == TypeText)
-                    Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
-                else
                     Result = buf[AD.Address].ToString();
             }
             else if (AD.Bytes == 2)
             {
-                if (AD.Type == TypeHex)
-                    Result = BEToUint16(buf, AD.Address).ToString("X4");
-                else if (AD.Type == TypeText)
-                    Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
-                else
                     Result = BEToUint16(buf, AD.Address).ToString();
             }
             else if (AD.Bytes == 8)
             {
-                if (AD.Type == TypeHex)
-                    Result = BEToUint64(buf, AD.Address).ToString("X4");
-                else if (AD.Type == TypeText)
-                    Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
-                else
                     Result = BEToUint64(buf, AD.Address).ToString();
             }
             else //Default is 4 bytes
             {
-                if (AD.Type == TypeHex)
-                    Result = BEToUint32(buf, AD.Address).ToString("X4");
-                else if (AD.Type == TypeText)
-                    Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
-                else
                     Result = BEToUint32(buf, AD.Address).ToString();
             }
+
             Debug.WriteLine("Result: " + Result);
             return Result;
         }
