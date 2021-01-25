@@ -128,6 +128,8 @@ namespace UniversalPatcher
                 DtcSearch DS = new DtcSearch();
                 Logger(DS.searchDtc(PCM));
             }
+            if (PCM.dtcCodes.Count == 0)
+                return;
             TableData dtcTd = new TableData();
             dtcCode dtc = PCM.dtcCodes[0];
             dtcTd.addrInt = dtc.statusAddrInt;

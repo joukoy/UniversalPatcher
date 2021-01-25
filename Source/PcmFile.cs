@@ -100,7 +100,10 @@ namespace UniversalPatcher
         {
             get
             {
-                return Path.Combine(Application.StartupPath, "XML", configFile + ".xml");
+                if (configFile.Length == 0)
+                    return "";
+                else
+                    return Path.Combine(Application.StartupPath, "XML", configFile + ".xml");
             }
         }
         public void LoadConfigFile(string FileName)

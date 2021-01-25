@@ -1504,7 +1504,7 @@ namespace UniversalPatcher
             if (fileName.Length < 1)
                 return;
             basefile.LoadConfigFile(fileName);
-            labelXML.Text = Path.GetFileName(pcmConfigFile) + " (v " + basefile.Segments[0].Version + ")";
+            labelXML.Text = Path.GetFileName(fileName) + " (v " + basefile.Segments[0].Version + ")";
             addCheckBoxes();
 
         }
@@ -1523,7 +1523,8 @@ namespace UniversalPatcher
             frmSL = new frmSegmenList();
             frmSL.PCM = basefile;
             frmSL.InitMe();
-            frmSL.LoadFile(pcmConfigFile);
+            if (pcmConfigFile.Length > 0)
+                frmSL.LoadFile(pcmConfigFile);
             if (frmSL.ShowDialog() == DialogResult.OK)
             {
                 //addCheckBoxes();

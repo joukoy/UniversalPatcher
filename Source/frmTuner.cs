@@ -57,7 +57,7 @@ namespace UniversalPatcher
                 }
             }
 
-            if (PCM.Segments[0].CS1Address.StartsWith("GM-V6"))
+            if (PCM.Segments.Count > 0 &&  PCM.Segments[0].CS1Address.StartsWith("GM-V6"))
                 tinyTunerDBV6OnlyToolStripMenuItem.Enabled = true;
             else
                 tinyTunerDBV6OnlyToolStripMenuItem.Enabled = false;

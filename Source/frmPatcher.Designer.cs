@@ -2032,14 +2032,14 @@
             // 
             this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
             this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.loadConfigToolStripMenuItem.Text = "Load config";
+            this.loadConfigToolStripMenuItem.Text = "Load config (XML)";
             this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
             // 
             // setupSegmentsToolStripMenuItem
             // 
             this.setupSegmentsToolStripMenuItem.Name = "setupSegmentsToolStripMenuItem";
             this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.setupSegmentsToolStripMenuItem.Text = "Edit XML";
+            this.setupSegmentsToolStripMenuItem.Text = "Edit config (XML)";
             this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
             // 
             // autodetectToolStripMenuItem
