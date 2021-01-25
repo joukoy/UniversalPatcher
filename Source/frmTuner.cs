@@ -1604,7 +1604,7 @@ namespace UniversalPatcher
         {
             string newFile = SelectFile();
             if (newFile.Length == 0) return;
-            PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName);
+            PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName, null);
             addtoCurrentFileMenu(newPCM);
             PCM = newPCM;
             loadConfigforPCM();

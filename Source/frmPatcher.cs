@@ -687,7 +687,7 @@ namespace UniversalPatcher
             {
                 basefile.tableCategories = new List<string>(); //Clear list
                 txtBaseFile.Text = fileName;
-                basefile = new PcmFile(fileName, chkAutodetect.Checked, pcmConfigFile);
+                basefile = new PcmFile(fileName, chkAutodetect.Checked, pcmConfigFile, basefile.Segments);
                 labelBinSize.Text = basefile.fsize.ToString();
                 GetFileInfo(txtBaseFile.Text, ref basefile, false);
                 this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
@@ -706,7 +706,7 @@ namespace UniversalPatcher
             if (FileName.Length > 1)
             {
                 txtModifierFile.Text = FileName;
-                modfile = new PcmFile(FileName, chkAutodetect.Checked,pcmConfigFile);
+                modfile = new PcmFile(FileName, chkAutodetect.Checked,pcmConfigFile, modfile.Segments);
                 GetFileInfo(txtModifierFile.Text, ref modfile, false);
             }
 
@@ -980,8 +980,8 @@ namespace UniversalPatcher
                     Logger("Files are different size, will not compare!");
                     return;
                 }
-                basefile = new PcmFile(txtBaseFile.Text,chkAutodetect.Checked,pcmConfigFile);
-                modfile = new PcmFile(txtModifierFile.Text, chkAutodetect.Checked, pcmConfigFile);
+                basefile = new PcmFile(txtBaseFile.Text,chkAutodetect.Checked,pcmConfigFile,basefile.Segments);
+                modfile = new PcmFile(txtModifierFile.Text, chkAutodetect.Checked, pcmConfigFile, basefile.Segments);
                 if (!checkAppendPatch.Checked || PatchList == null)
                     PatchList = new List<XmlPatch>();
                 GetFileInfo(txtBaseFile.Text, ref basefile, false, false);
@@ -1180,7 +1180,7 @@ namespace UniversalPatcher
                 for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                    PcmFile PCM = new PcmFile(FileName, chkAutodetect.Checked, pcmConfigFile);
+                    PcmFile PCM = new PcmFile(FileName, chkAutodetect.Checked, pcmConfigFile, basefile.Segments);
                     GetFileInfo(FileName, ref PCM, true);
                 }
                 if (!chkLogtodisplay.Checked)
@@ -1266,7 +1266,7 @@ namespace UniversalPatcher
             string MaskText = "";
             if (txtBaseFile.Text.Length == 0)
                 return;
-            basefile = new PcmFile(txtBaseFile.Text,chkAutodetect.Checked, pcmConfigFile);
+            basefile = new PcmFile(txtBaseFile.Text,chkAutodetect.Checked, pcmConfigFile, basefile.Segments);
             GetFileInfo(txtBaseFile.Text, ref basefile, true, false);
             if (txtCompatibleOS.Text.Length == 0)
                 txtCompatibleOS.Text = basefile.OS;
@@ -1504,6 +1504,7 @@ namespace UniversalPatcher
             if (fileName.Length < 1)
                 return;
             basefile.LoadConfigFile(fileName);
+            pcmConfigFile = fileName;
             labelXML.Text = Path.GetFileName(fileName) + " (v " + basefile.Segments[0].Version + ")";
             addCheckBoxes();
 
@@ -1960,7 +1961,7 @@ namespace UniversalPatcher
                 for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                    PcmFile PCM = new PcmFile(FileName,chkAutodetect.Checked, pcmConfigFile);
+                    PcmFile PCM = new PcmFile(FileName,chkAutodetect.Checked, pcmConfigFile, basefile.Segments);
                     GetFileInfo(FileName, ref PCM, true,checkExtractShowinfo.Checked);
                     ExtractSegments(PCM, Path.GetFileName(FileName).Replace(".bin", ""), true, dstFolder);
                 }
@@ -2000,7 +2001,7 @@ namespace UniversalPatcher
         {
             try
             {
-                basefile = new PcmFile(fileName,chkAutodetect.Checked, pcmConfigFile);
+                basefile = new PcmFile(fileName,chkAutodetect.Checked, pcmConfigFile, basefile.Segments);
                 GetFileInfo(fileName, ref basefile, true, false);                
                 if (basefile.FixCheckSums())  //Returns true, if need fix for checksum
                 {  

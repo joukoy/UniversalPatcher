@@ -17,7 +17,7 @@ namespace UniversalPatcher
         {
             setDefaultValues();
         }
-        public PcmFile(string Fname, bool autodetect, string cnfFile)
+        public PcmFile(string Fname, bool autodetect, string cnfFile, List<SegmentConfig> oldSegments)
         {
             setDefaultValues();
             FileName = Fname;
@@ -27,14 +27,16 @@ namespace UniversalPatcher
             if (autodetect)
             {
                 configFile = autoDetect(this).Replace(".xml", "");
+                if (configFile.Length > 0)
+                    LoadConfigFile(configFileFullName);
             }
             else
             {
-                configFile = cnfFile;
+                Segments = oldSegments;
+                configFile = Path.GetFileNameWithoutExtension(cnfFile).ToLower();
             }
             if (configFile.Length > 0)
             {
-                LoadConfigFile(configFileFullName);
                 GetSegmentAddresses();
                 GetInfo();
             }
