@@ -1745,6 +1745,7 @@ namespace UniversalPatcher
                 miNew.Click += tablelistSelect_Click; 
             }
 
+            cmpWithPcm.selectTableDatas(0, "");
             List<TableData> diffTableDatas = new List<TableData>();
             for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
             {
