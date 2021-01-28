@@ -21,6 +21,7 @@ namespace UniversalPatcher
         {
             setDefaultValues();
             FileName = Fname;
+            altTableDatas[0].Name = Fname;
             fsize = (uint)new FileInfo(FileName).Length;
             buf = ReadBin(FileName, 0, fsize);
             osStoreAddress = uint.MaxValue;
@@ -58,6 +59,11 @@ namespace UniversalPatcher
             public uint size { get; set; }            
         }
 
+        public class AltTableData
+        {
+            public List<TableData> tableDatas { get; set; }
+            public string Name { get; set; }
+        }
         public byte[] buf;
         public string FileName;
         public SegmentAddressData[] segmentAddressDatas;
@@ -80,6 +86,9 @@ namespace UniversalPatcher
         public List<TableData> tableDatas = new List<TableData>();
         public bool dtcCombined = false;
         public TableData selectedTable; //Required for Tuner/Compare
+        public int tableDataIndex; //Tuner tabledatalist id
+        public List<AltTableData> altTableDatas;
+        private int currentTableDatasList;
         private void setDefaultValues()
         {
             OS = "";
@@ -91,13 +100,38 @@ namespace UniversalPatcher
             tableDatas = new List<TableData>();
             foundTables = new List<FoundTable>();
             tableCategories = new List<string>();
-
+            altTableDatas = new List<AltTableData>();
+            currentTableDatasList = 0;
+            selectTableDatas(0, "");
         }
         public PcmFile ShallowCopy()
         {
             return (PcmFile)this.MemberwiseClone();
         }
 
+        public void addTableDatas(string name)
+        {
+            AltTableData tdl = new AltTableData();
+            tdl.Name = name;
+            tdl.tableDatas = new List<TableData>();
+            altTableDatas.Add(tdl);
+        }
+        public void selectTableDatas(int listNumber, string name)
+        {
+            if (altTableDatas.Count < (listNumber + 1))
+            {
+                addTableDatas(name);
+            }
+            if (listNumber != currentTableDatasList)
+            {
+                //Store old list:
+                altTableDatas[currentTableDatasList].tableDatas = tableDatas;
+
+                //Select new:
+                currentTableDatasList = listNumber;
+                tableDatas = altTableDatas[currentTableDatasList].tableDatas;
+            }
+        }
         public string configFileFullName
         {
             get
