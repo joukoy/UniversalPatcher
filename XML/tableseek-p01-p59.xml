@@ -4,857 +4,2800 @@
     <Bits>16</Bits>
     <Signed>false</Signed>
     <Floating>false</Floating>
-    <Name>MBT spark</Name>
-    <SearchStr>74 14 20 7c @ @ @ @ 4e b9 * * * * 36</SearchStr>
-    <Rows>15</Rows>
-    <Columns>20</Columns>
-    <RowHeaders>0.08,0.16,0.24,0.32,0.40,0.48,0.56,0.64,0.72,0.80,0.88,0.96,1.04,1.12,1.20</RowHeaders>
-    <ColHeaders>400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000</ColHeaders>
-    <Math>X*0.021978</Math>
-    <SavingMath>X/0.021978</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>UWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>LowOct spark</Name>
-    <SearchStr>30 38 * * 32 38 * * 74 19 20 7c @ @ @ @ 4e b9 * * * * 26</SearchStr>
-    <Rows>29</Rows>
-    <Columns>25</Columns>
-    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
-    <ColHeaders>400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000</ColHeaders>
-    <Math>X*0.021978</Math>
-    <SavingMath>X/0.021978</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>HiOct spark</Name>
-    <SearchStr>30 38 * * 32 38 * * 74 19 20 7c @ @ @ @ 4e b9 * * * * 3c</SearchStr>
-    <Rows>29</Rows>
-    <Columns>25</Columns>
-    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
-    <ColHeaders>400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000</ColHeaders>
-    <Math>X*0.021978</Math>
-    <SavingMath>X/0.021978</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>Clt_spark coolant/airflow</Name>
-    <SearchStr>74 k25 20 7c @ @ @ @ 4e b9</SearchStr>
-    <Rows>29</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
-    <ColHeaders>-40,-35,-30,-25,-20,-15,-10,-5,0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,140</ColHeaders>
-    <Math>X*0.021978</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>1</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <RowMajor>true</RowMajor>
-    <Description>Coolant spark correction coolant va airflow</Description>
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
-    <Floating>false</Floating>
-    <Name>Clt_rpm_modifier</Name>
-    <SearchStr>74 k25 20 7c @ @ @ @ 4e b9</SearchStr>
-    <Rows>21</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000</RowHeaders>
-    <ColHeaders>-40,-35,-30,-25,-20,-15,-10,-5,0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,140</ColHeaders>
-    <Math>X/4096</Math>
-    <SavingMath>X*4096</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>UWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>2</UseHit>
-    <Range />
-    <Segments />
-    <RowMajor>true</RowMajor>
-    <Description>Coolant spark multiplier to CLT_spark coolant/rpm</Description>
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
-    <Floating>false</Floating>
-    <Name>Clt_rpm_modifier 06-07</Name>
-    <SearchStr>74 k25 * * 20 7c @ @ @ @ 4e b9</SearchStr>
-    <Rows>21</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000</RowHeaders>
-    <ColHeaders>-40,-35,-30,-25,-20,-15,-10,-5,0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,140</ColHeaders>
-    <Math>X/4096</Math>
-    <SavingMath>X*4096</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>UWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <RowMajor>true</RowMajor>
-    <Description>Coolant spark multiplier to CLT_spark coolant/rpm</Description>
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>CAT_LIGHTOFF_SPARK_RETARD</Name>
-    <SearchStr>40 60 04 30 3C 14 00 32 * * * 74 k15 20 7C @ @ @ @ 4E B9</SearchStr>
-    <Rows>29</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
-    <ColHeaders>0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000</ColHeaders>
-    <Math>X*0.021978</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <RowMajor>true</RowMajor>
-    <Description>rpm vs airflow</Description>
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>KA_LAUNCH_SPARK</Name>
-    <SearchStr>32 3C 06 00 74 k13 20 7C @ @ @ @ 4E B9</SearchStr>
-    <Rows>7</Rows>
-    <Columns>0</Columns>
-    <RowHeaders />
-    <ColHeaders />
-    <Math>X*0.021978</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>KA_EQ_RATIO_SPARK -05</Name>
-    <SearchStr>32 38 * * 74 k10 20 7C @ @ @ @ 4E B9</SearchStr>
-    <Rows>21</Rows>
-    <Columns>0</Columns>
-    <RowHeaders />
-    <ColHeaders />
-    <Math>X*0.021978</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>KA_EQ_RATIO_SPARK 06-07</Name>
-    <SearchStr>74 k10 * * * * 20 7C @ @ @ @ 4E B9</SearchStr>
-    <Rows>21</Rows>
-    <Columns>0</Columns>
-    <RowHeaders />
-    <ColHeaders />
-    <Math>X*0.021978</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>KA_EGR_SPARK -05</Name>
-    <SearchStr>02 24 03 32 38 * * E2 49 30 38 * * 20 7C @ @ @ @ 4E B9</SearchStr>
-    <Rows>29</Rows>
-    <Columns>13</Columns>
-    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
-    <ColHeaders />
-    <Math>X*0.021978</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>KA_FFS_E80_SPARK_SHIFT 03-05-1mb</Name>
-    <SearchStr>87 E6 48 60 04 30 3C 11 00 74 k12 20 7C @ @ @ @</SearchStr>
-    <Rows>21</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>GM/S 0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88</RowHeaders>
-    <ColHeaders>RPM 400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200</ColHeaders>
-    <Math>X*0.021972656250</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <Units>-720~720 DEGREES</Units>
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>KA_FFS_E80_SPARK_SHIFT 06-07</Name>
-    <SearchStr>36 3C 11 00 74 k12 * * 20 7C @ @ @ @</SearchStr>
-    <Rows>21</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>GM/S 0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88</RowHeaders>
-    <ColHeaders>RPM 400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200</ColHeaders>
-    <Math>X*0.021972656250</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <Units>-720~720 DEGREES</Units>
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>KA_FFS_E80_MBT_SPARK_SHIFT 03- 1mb</Name>
-    <SearchStr>86 E6 48 60 04 30 3C 11 00 74 k12 20 7C @ @ @ @</SearchStr>
-    <Rows>11</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>GM/S 0.08,0.16,0.24,0.32,0.40,0.48,0.56,0.64,0.72,0.80,0.88</RowHeaders>
-    <ColHeaders>RPM 400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200</ColHeaders>
-    <Math>X*0.021972656250</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <Units>-720~720 DEGREES</Units>
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>KA_IAT_SPARK</Name>
-    <SearchStr>30 3C 14 00 32 38 * * 74 k15 20 7C @ @ @ @ 4E B9 * * * * 38 38</SearchStr>
-    <Rows>29</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
-    <ColHeaders />
-    <Math>X*0.021978</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>KA_MAIN_CT_DRIVE</Name>
-    <SearchStr>30 38 * * 20 7C @ @ @ @ 60 A6</SearchStr>
-    <Rows>29</Rows>
-    <Columns>13</Columns>
-    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
-    <ColHeaders />
-    <Math>X*0.021978</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>KA_MAIN_CT_PARK</Name>
-    <SearchStr>67 3e 32 38 * * e2 49 30 38 * * 20 7C @ @ @ @ 4E B9</SearchStr>
-    <Rows>29</Rows>
-    <Columns>13</Columns>
-    <RowHeaders>0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36,0.40,0.44,0.48,0.52,0.56,0.60,0.64,0.68,0.72,0.76,0.80,0.84,0.88,0.92,0.96,1.00,1.04,1.08,1.12,1.16,1.20</RowHeaders>
-    <ColHeaders />
-    <Math>X*0.021978</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>KA_PISTON_SLAP_SPARK_RETARD</Name>
-    <SearchStr>3C 0A 00 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
-    <Rows>15</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>mg/cyl 0.08,0.16,0.24,0.32,0.40,0.48,0.56,0.64,0.72,0.80,0.88,0.96,1.04,1.12,1.20</RowHeaders>
-    <ColHeaders>rpm 0,400,800,1200,1600,2000,2400,2800,3200,3600,4000</ColHeaders>
-    <Math>X*0.021978</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>2</UseHit>
-    <Range />
-    <Segments />
-    <Category>SPARK_ADVANCE</Category>
-    <Units>Degrees</Units>
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>KA_PISTON_SLAP_SPARK_RETARD 06-07??</Name>
-    <SearchStr>80 FC 00 14 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
-    <Rows>15</Rows>
-    <Columns>0</Columns>
-    <RowHeaders />
-    <ColHeaders />
-    <Math>X*0.021978</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <Category>SPARK_ADVANCE</Category>
-    <Units>Degrees</Units>
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
-    <Floating>false</Floating>
-    <Name>KV_MASS_AIRFLOW</Name>
-    <SearchStr>04 43 0C 00 F8 39 31 40 @ @ @ @</SearchStr>
-    <Rows>85</Rows>
-    <Columns>1</Columns>
-    <RowHeaders>Hz 1500,1625,1750,1875,2000,2125,2250,2375,2500,2625,2750,2875,3000,3125,3250,3375,3500,3625,3750,3875,4000,4125,4250,4375,4500,4625,4750,4875,5000,5125,5250,5375,5500,5625,5750,5875,6000,6125,6250,6375,6500,6625,6750,6875,7000,7125,7250,7375,7500,7625,7750,7875,8000,8125,8250,8375,8500,8625,8750,8875,9000,9125,9250,9375,9500,9625,9750,9875,10000,10125,10250,10375,10500,10625,10750,10875,11000,11125,11250,11375,11500,11625,11750,11875,12000</RowHeaders>
-    <ColHeaders>AFGS</ColHeaders>
-    <Math>X/128</Math>
-    <SavingMath>X*128</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>UWORD</DataType>
-    <Decimals>4</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <Category>MASS_AIR_FLOW_SENSOR</Category>
-    <Units>AFGS</Units>
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
-    <Floating>false</Floating>
-    <Name>KV_VOLUMETRIC_EFFICIENCY_BARO_CO</Name>
-    <SearchStr>60 02 9A 40 24 7C @ @ @ @ F8 12 51 40 C6 C5 E0 8B E8 8B 0C 43 14 00</SearchStr>
-    <Rows>10</Rows>
-    <Columns>1</Columns>
-    <RowHeaders>KPA 60,65,70,75,80,85,90,95,100,105</RowHeaders>
-    <ColHeaders>%</ColHeaders>
-    <Math>X*0.000244140625</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>UWORD</DataType>
-    <Decimals>4</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <Category>AIRFLOW</Category>
-    <Units>0-2 multiplier</Units>
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
-    <Floating>false</Floating>
-    <Name>KA_VOLUMETRIC_EFFICIENCY_CRANK</Name>
-    <SearchStr>04 30 3C 20 00 74 k21 20 7C @ @ @ @</SearchStr>
-    <Rows>9</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>KPA 20,30,40,50,60,70,80,90,100</RowHeaders>
-    <ColHeaders>RPM 0,40,80,120,160,200,240,280,320,360,400,440,480,520,560,600,640,480,720,760,800,840,880,920,960,1000,1040,1080,1120,1160,1200,1240,1280</ColHeaders>
-    <Math>X*0.019531250000</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>UWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <Category>AIRFLOW</Category>
-    <Units>0-100%</Units>
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
-    <Floating>false</Floating>
-    <Name>K_MAIN_VOLUMETRIC_EFFICIENCY</Name>
-    <SearchStr>B6 40 63 02 20 03 90 49 41 F9 @ @ @ @ E6 48 74 28 4E B9</SearchStr>
-    <Rows>19</Rows>
-    <Columns>20</Columns>
-    <RowHeaders>KPA 15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105</RowHeaders>
-    <ColHeaders>RPM 400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200,7600,8000</ColHeaders>
-    <Math>x*0.000195312500</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>UWORD</DataType>
-    <Decimals>6</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <Category>AIRFLOW</Category>
-    <Units>0-12.799805 gM*k/KPA</Units>
-    <RowMajor>true</RowMajor>
-    <Description />
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>false</Signed>
-    <Floating>false</Floating>
-    <Name>K_DYNA_AIR_COEFFICIENT</Name>
-    <SearchStr>3D 78 * * * * 3D 78 * * * * 36 39 @ @ @ @ F8 2E 31 40 * * 31 C3 * * 60 06</SearchStr>
-    <Rows>10</Rows>
-    <Columns>18</Columns>
-    <RowHeaders>PREDICTED_1_ahead_corr_4,   SENSED_current_comp_5,    SENSED_1_back_comp_6,      MAP_current_comp_7,       MAP_1_back_comp_8,       MAP_2_back_comp_9,   THROTTLE_Curr_comp_10, THROTTLE_1_back_comp_11, THROTTLE_2_back_comp_12,            BASE_comp_13</RowHeaders>
-    <ColHeaders>1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18</ColHeaders>
-    <Math>X</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>8</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>UWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>1</UseHit>
-    <Range />
-    <Segments />
-    <Units>COEFFICIENT</Units>
-    <RowMajor>false</RowMajor>
-    <Description>DYNA_AIR_COEFFICIENTS</Description>
-  </TableSeek>
-  <TableSeek>
-    <Bits>8</Bits>
-    <Signed>false</Signed>
-    <Floating>false</Floating>
-    <Name>KE_VTD_CONFIGURATION</Name>
-    <SearchStr>4A 39 @ @ @ @ 66 0A 72 10 42 00 4E B9</SearchStr>
+    <Name>CIC_Medium_Res_Ref_Filter</Name>
+    <SearchStr>FF FA 16 39 @ @ @ @ E7 0B 02 03 00</SearchStr>
     <Rows>1</Rows>
     <Columns>1</Columns>
     <RowHeaders />
-    <ColHeaders />
-    <Math>X</Math>
-    <SavingMath>X</SavingMath>
+    <ColHeaders>microseconds</ColHeaders>
+    <Math>X*4.000000000000</Math>
+    <SavingMath>X/4.000000000000</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
     <DataType>UBYTE</DataType>
-    <Decimals>0</Decimals>
+    <Decimals>4</Decimals>
     <OutputType>Float</OutputType>
     <Min>0</Min>
-    <Max>255</Max>
+    <Max>124</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
-    <Category>VTD</Category>
-    <Units>0=on,1=off</Units>
+    <Category>CIC</Category>
+    <Units>microseconds</Units>
+    <Values>0 - 124</Values>
     <RowMajor>true</RowMajor>
-    <Description>0=on,1=off</Description>
+    <Description>TiMe constant for Medium Resolution reference filter in CIC.Values above 40-50 uSec. may filter out actual 24Xe signal athigh engine speed.  MEDRES output from the CIC is delayed/skewedfrom the 24Xe input by approx. the amount of this calibration., Units:</Description>
   </TableSeek>
   <TableSeek>
-    <Bits>8</Bits>
+    <Bits>16</Bits>
     <Signed>false</Signed>
     <Floating>false</Floating>
-    <Name>KE_ENGINE_IDENTIFIER</Name>
+    <Name>Engine_Schedule_RPM_Hi</Name>
+    <SearchStr>66 10 B6 79 @ @ @ @ 65</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>RPM</ColHeaders>
+    <Math>X*0.195312500000</Math>
+    <SavingMath>X/0.195312500000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>12799.804688</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Eng_Constants</Category>
+    <Units>RPM</Units>
+    <Values>0 - 12799.804688</Values>
+    <RowMajor>true</RowMajor>
+    <Description>The engine speed above which some of the sync. code activation rate is changed., Units: RPM</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Engine_Schedule_RPM_Lo</Name>
+    <SearchStr>60 18 B6 79 @ @ @ @ 64 10 4a</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>RPM</ColHeaders>
+    <Math>X*0.195312500000</Math>
+    <SavingMath>X/0.195312500000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>12799.804688</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Eng_Constants</Category>
+    <Units>RPM</Units>
+    <Values>0 - 12799.804688</Values>
+    <RowMajor>true</RowMajor>
+    <Description>The engine speed below which some of the sync. code activation rate is changed., Units: RPM</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Engine_Identifier</Name>
     <SearchStr>11 C3 * * 11 C3 * * 42 43 16 39 @ @ @ @</SearchStr>
     <Rows>1</Rows>
     <Columns>1</Columns>
     <RowHeaders />
-    <ColHeaders />
+    <ColHeaders>Engine_Identifier_Type</ColHeaders>
     <Math>X</Math>
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
     <DataType>UBYTE</DataType>
-    <Decimals>0</Decimals>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>7</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Eng_Constants</Category>
+    <Units>Engine_Identifier_Type</Units>
+    <Values>Enum: 0:OHV_5p3L,1:OHV_5p7L,2:OHV_4p8L,3:OHV_6p0L,4:OHV_4p3L,5:OHV_5p0L,6:OHV_8p1L,7:OHV_5p7L_High_Output</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Describes the type of engine associated with the vehicle including the engine displacement and valve train geometry., Units: Engine_Identifier_Type</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Number_Cylinders</Name>
+    <SearchStr>42 43 16 39 @ @ @ @ 78 30</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>SHORTCARD</ColHeaders>
+    <Math>X*1.0</Math>
+    <SavingMath>X/1.0</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
     <OutputType>Float</OutputType>
     <Min>0</Min>
     <Max>255</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
-    <Category>ENG_CONSTANT</Category>
+    <Category>Eng_Constants</Category>
+    <Units>SHORTCARD</Units>
+    <Values>0 - 255</Values>
     <RowMajor>true</RowMajor>
-    <Description>For information only, dont change</Description>
+    <Description>Number of cylinders for this engine application., Units: SHORTCARD</Description>
   </TableSeek>
   <TableSeek>
-    <Bits>8</Bits>
+    <Bits>16</Bits>
     <Signed>false</Signed>
     <Floating>false</Floating>
-    <Name>KE_VTD_FAIL_ENABLED_BYPASS</Name>
+    <Name>Low_Resolution_Reference_Angl</Name>
+    <SearchStr>3C 80 00 B0 79 @ @ @ @ 6D 04</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Degrees</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Eng_Constants</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Identifies the number of degrees from a low resolution pulse to Top Dead Center of the cylinder., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Type_Of_Knock_Sensors</Name>
+    <SearchStr>E7 C0 00 4A 39 @ @ @ @ 66 04 42</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Knock_Sensor_Type</ColHeaders>
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Eng_Constants</Category>
+    <Units>Knock_Sensor_Type</Units>
+    <Values>Enum: 0:Resonant,1:Flat_Response</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Identifies whether the engine is equipped with resonant( 0 ) or flat response( 1 ) knock sensors., Units: Knock_Sensor_Type</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Ambiguous_Cam_Transition_Low</Name>
+    <SearchStr>04 62 10 B6 39 @ @ @ @ 65 08</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>24X Region</ColHeaders>
+    <Math>X*1.0</Math>
+    <SavingMath>X/1.0</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>23</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Eng_Constants</Category>
+    <Units>24X Region</Units>
+    <Values>0 - 23</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Cam sensor transition low limit based on 24X regions., Units: 24X Region</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Ambiguous_Cam_Transition_High</Name>
+    <SearchStr>00 01 28 B6 39 @ @ @ @ 62 00</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>24X Region</ColHeaders>
+    <Math>X*1.0</Math>
+    <SavingMath>X/1.0</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>23</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Eng_Constants</Category>
+    <Units>24X Region</Units>
+    <Values>0 - 23</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Cam sensor transition high limit based on 24X regions., Units: 24X Region</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>VE_Temperature</Name>
+    <SearchStr>00 00 00 3A 39 @ @ @ @ CA F8</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>sqrt deg K</ColHeaders>
+    <Math>X*0.000488281250</Math>
+    <SavingMath>X/0.000488281250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>31.999512</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Airflow</Category>
+    <Units>sqrt deg K</Units>
+    <Values>0 - 31.999512</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Square root of the Kelvin inlet temperature at which volumetric efficiency tables were calibrated.  Needed because volumetric efficiency is directly proportional to Square root of the Kelvin inlet temperature., Units: sqrt deg K</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Volumetric_Efficiency_Baro_Co</Name>
+    <SearchStr>60 02 9A 40 24 7C @ @ @ @ F8 12 51 40 C6 C5 E0 8B E8 8B 0C 43 14 00</SearchStr>
+    <Rows>10</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>kPa  60,kPa  65,kPa  70,kPa  75,kPa  80,kPa  85,kPa  90,kPa  95,kPa 100,kPa 105</RowHeaders>
+    <ColHeaders>Multiplier</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X/0.000244140625</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>2</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Airflow</Category>
+    <Units>Multiplier</Units>
+    <Values>0 - 2</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Term used to correct barometric efficiency for the change in throttle and pumping efficiency of the engine as the barometric pressure varies., Units: NONE 0-2</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Volumetric_Efficiency_Crank</Name>
+    <SearchStr>04 30 3C 20 00 74 21 20 7C @ @ @ @</SearchStr>
+    <Rows>9</Rows>
+    <Columns>33</Columns>
+    <RowHeaders> 20, 30, 40, 50, 60, 70, 80, 90, 100</RowHeaders>
+    <ColHeaders> 0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440, 480, 520, 560, 600, 640, 680, 720, 760, 800, 840, 880, 920, 960, 1000, 1040, 1080, 1120, 1160, 1200, 1240, 1280</ColHeaders>
+    <Math>X*0.019531250000</Math>
+    <SavingMath>X/0.019531250000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>100</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Airflow</Category>
+    <Units>Percent</Units>
+    <Values>0 - 100</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Volumetric efficiency at cranking speeds., Units: Percent</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>K_Main_Volumetric_Efficiency</Name>
+    <SearchStr>B6 40 63 02 20 03 90 49 41 F9 @ @ @ @ E6 48 74 28 4E B9</SearchStr>
+    <Rows>19</Rows>
+    <Columns>20</Columns>
+    <RowHeaders> 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105</RowHeaders>
+    <ColHeaders> 400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000, 4400, 4800, 5200, 5600, 6000, 6400, 6800, 7200, 7600, 8000</ColHeaders>
+    <Math>X*0.000195312500</Math>
+    <SavingMath>X/0.000195312500</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>12.799805</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Airflow</Category>
+    <Units>gm*K/kPa</Units>
+    <Values>0 - 12.799805</Values>
+    <RowMajor>true</RowMajor>
+    <Description>The volumetric efficiency term used for modeling the air per cylinder for Dyna-Air calculations., Units: gm*K/kPa</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Gamma_Init_Coolant_Breakpoint</Name>
+    <SearchStr>38 * * B6 79 @ @ @ @ 6C 04 42 04</SearchStr>
+    <Rows>2</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>Cold Break.oint,Warm Break.oint</RowHeaders>
+    <ColHeaders>Degrees C</ColHeaders>
+    <Math>X*0.039062500000</Math>
+    <SavingMath>X/0.039062500000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-40</Min>
+    <Max>139.960938</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Airflow</Category>
+    <Units>Degrees C</Units>
+    <Values>-40 - 139.960938</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Breakpoints for selection coolant zone for initializing Filtered_VE_Correction_Factor., Units: Deg C</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Gamma_Init_Table</Name>
+    <SearchStr>4b f8 30 31 40 09 B0 @ @ @ @ 31 C3</SearchStr>
+    <Rows>3</Rows>
+    <Columns>5</Columns>
+    <RowHeaders>Cold Zone,Warm Zone,Hot Zone</RowHeaders>
+    <ColHeaders> 0, 1, 2, 3, 4</ColHeaders>
+    <Math>X*0.000488281250</Math>
+    <SavingMath>X/0.000488281250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>2</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Airflow</Category>
+    <Units>Unitless</Units>
+    <Values>0 - 2</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Initialize Filtered_VE_Correction_Factor to this value., Units: NONE 0-2</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>K_Cylinder_Volume</Name>
+    <SearchStr>3C 14 00 C6 F9 @ @ @ @ 86 FC 14 00</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Multiplier</ColHeaders>
+    <Math>X*0.000030517578</Math>
+    <SavingMath>X/0.000030517578</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1.999969</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Airflow</Category>
+    <Units>Multiplier</Units>
+    <Values>0 - 1.999969</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Volume of each cylinder in the engine., Units: Liter</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Baro_Offset</Name>
+    <SearchStr>11 00 E2 48 74 0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>18</Rows>
+    <Columns>11</Columns>
+    <RowHeaders>RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200</RowHeaders>
+    <ColHeaders>Percent   0,Percent  10,Percent  20,Percent  30,Percent  40,Percent  50,Percent  60,Percent  70,Percent  80,Percent  90,Percent 100</ColHeaders>
+    <Math>X*0.019531250000</Math>
+    <SavingMath>X/0.019531250000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>104.980469</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Barometer</Category>
+    <Units>kPa</Units>
+    <Values>0 - 104.980469</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Sea level pressure offset to be added to the part throttle manifold pressure to correct the barometric pressure., Units: kPA</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>COT_Temperature_Stoich_Stable</Name>
+    <SearchStr>04 30 3C 14 00 74 15 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>15</Rows>
+    <Columns>21</Columns>
+    <RowHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600</RowHeaders>
+    <ColHeaders>GPS   0,GPS  16,GPS  32,GPS  48,GPS  64,GPS  80,GPS  96,GPS 112,GPS 128,GPS 144,GPS 160,GPS 176,GPS 192,GPS 208,GPS 224,GPS 240,GPS 256,GPS 272,GPS 288,GPS 304,GPS 320</ColHeaders>
+    <Math>X*0.039062500000</Math>
+    <SavingMath>X/0.039062500000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-1280</Min>
+    <Max>1279.960938</Max>
+    <UseHit>4</UseHit>
+    <Range />
+    <Segments />
+    <Category>Converter</Category>
+    <Units>Degrees_C</Units>
+    <Values>-1280 - 1279.960938</Values>
+    <RowMajor>true</RowMajor>
+    <Description>A prediction of the stabilized catalytic converter bed .temperature based on air-fuel ratio., Units: Degrees_C</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Two_Bank_Fuel_Control</Name>
+    <SearchStr>75 48 E7 E3 00 4A 39 @ @ @ @ 67 00</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>BOOLEAN</ColHeaders>
+    <Math>X*1.0</Math>
+    <SavingMath>X/1.0</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Fuel</Category>
+    <Units>BOOLEAN</Units>
+    <Values>0 - 1</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Used to determine if two bank fuel control is to be used or not., Units: BOOLEAN</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>ETC_PM_Torque</Name>
+    <SearchStr>3C 0A 00 74 0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>9</Rows>
+    <Columns>11</Columns>
+    <RowHeaders>RPM     0,RPM   500,RPM  1000,RPM  1500,RPM  2000,RPM  2500,RPM  3000,RPM  3500,RPM  4000</RowHeaders>
+    <ColHeaders>Percent 0,Percent 2,Percent 4,Percent 6,Percent 8,Percent 10,Percent 12,Percent 14,Percent 16,Percent 18,Percent 20</ColHeaders>
+    <Math>X*0.019531250000</Math>
+    <SavingMath>X/0.019531250000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-640</Min>
+    <Max>639.980469</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>ETC_Serial_Data</Category>
+    <Units>Foot_Pounds</Units>
+    <Values>-640 - 639.980469</Values>
+    <RowMajor>true</RowMajor>
+    <Description> Lookup of power management torque based on desired throttle  position and engine speed , Units: Foot_Pounds_S</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>LC_Fuel_Delta</Name>
+    <SearchStr>04 30 3C 14 00 74 15 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>15</Rows>
+    <Columns>21</Columns>
+    <RowHeaders>G per Cyl 0.08,G per Cyl 0.16,G per Cyl 0.24,G per Cyl 0.32,G per Cyl 0.40,G per Cyl 0.48,G per Cyl 0.56,G per Cyl 0.64,G per Cyl 0.72,G per Cyl 0.80,G per Cyl 0.88,G per Cyl 0.96,G Per Cyl 1.04,G Per Cyl 1.12,G Per Cyl 1.20</RowHeaders>
+    <ColHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200,RPM 7600,RPM 8000</ColHeaders>
+    <Math>X*0.000976562500</Math>
+    <SavingMath>X/0.000976562500</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>31.999023</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Fuel_Eq</Category>
+    <Units>Ratio</Units>
+    <Values>0 - 31.999023</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Returns the target  for Lean EQ based on the engine load. , Units: Equiv_Ratio</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>PE_Delay_Adjustment</Name>
+    <SearchStr>0E 00 E2 48 74 0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>15</Rows>
+    <Columns>11</Columns>
+    <RowHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600</RowHeaders>
+    <ColHeaders>Percent   0,Percent  10,Percent  20,Percent  30,Percent  40,Percent  50,Percent  60,Percent  70,Percent  80,Percent  90,Percent 100</ColHeaders>
+    <Math>X*0.006250000000</Math>
+    <SavingMath>X/0.006250000000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>409.59375</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Fuel_Eq</Category>
+    <Units>Seconds</Units>
+    <Values>0 - 409.59375</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Amount the PE_Delay counter will be decremented by each second PE and PE_Delay conditions are met. Based on engine speed and throttle., Units: Seconds</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Injector_Offset</Name>
+    <SearchStr>@ @ @ @ 74 22 4E B9</SearchStr>
+    <Rows>28</Rows>
+    <Columns>17</Columns>
+    <RowHeaders>Volts 4.5,Volts 5.0,Volts 5.5,Volts 6.0,Volts 6.5,Volts 7.0,Volts 7.5,Volts 8.0,Volts 8.5,Volts 9.0,Volts 9.5,Volts 10.0,Volts 10.5,Volts 11.0,Volts 11.5,Volts 12.0,Volts 12.5,Volts 13.0,Volts 13.5,Volts 14.0,Volts 14.5,Volts 15.0,Volts 15.5,Volts 16.0,Volts 16.5,Volts 17.0,Volts 17.5,Vlots 18.0</RowHeaders>
+    <ColHeaders>kPa   0,kPa   5,kPa  10,kPa  15,kPa  20,kPa  25,kPa  30,kPa  35,kPa  40,kPa  45,kPa  50,kPa  55,kPa  60,kPa  65,kPa  70,kPa  75,kPa  80</ColHeaders>
+    <Math>X*0.015466666667</Math>
+    <SavingMath>X/0.015466666667</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1013.608</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Fuel_IO</Category>
+    <Units>Milliseconds</Units>
+    <Values>0 - 1013.608</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This is the pulse width offset added to the nominal injector pulse to account for injector dynamics due to voltage and injector delta pressure., Units: Milliseconds</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Short_Pulse_Adjustment</Name>
+    <SearchStr>36 3C 42 00 F8 39 39 40 @ @ @ @</SearchStr>
+    <Rows>67</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>ms 0.000,ms 0.061,ms 0.123,ms 0.185,ms 0.247,ms 0.309,ms 0.371,ms 0.433,ms 0.494,ms 0.556,ms 0.618,ms 0.680,ms 0.742,ms 0.804,ms 0.866,ms 0.928,ms 0.989,ms 1.051,ms 1.113,ms 1.175,ms 1.237,ms 1.299,ms 1.361,ms 1.423,ms 1.484,ms 1.546,ms 1.608,ms 1.670,ms 1.732,ms 1.794,ms 1.856,ms 1.917,ms 1.979,ms 2.041,ms 2.103,ms 2.165,ms 2.227,ms 2.289,ms 2.351,ms 2.412,ms 2.474,ms 2.536,ms 2.598,ms 2.660,ms 2.722,ms 2.784,ms 2.846,ms 2.907,ms 2.969,ms 3.031,ms 3.093,ms 3.155,ms 3.217,ms 3.279,ms 3.340,ms 3.402,ms 3.464,ms 3.526,ms 3.588,ms 3.650,ms 3.712,ms 3.774,ms 3.835,ms 3.897,ms 3.959,ms 4.021,ms 4.083</RowHeaders>
+    <ColHeaders>Milliseconds</ColHeaders>
+    <Math>X*0.015466666667</Math>
+    <SavingMath>X/0.015466666667</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-506.811733</Min>
+    <Max>506.796267</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Fuel_Pl</Category>
+    <Units>Milliseconds</Units>
+    <Values>-506.811733 - 506.796267</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Adjustment to pulse which is smaller than KE_Short_Pulse_ Limit based on the calculated pulse width (used by  both SCPI and SFI system)., Units: Milliseconds</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Mass_Airflow</Name>
+    <SearchStr>04 43 0C 00 F8 39 31 40 @ @ @ @</SearchStr>
+    <Rows>85</Rows>
+    <Columns>1</Columns>
+    <RowHeaders> 1500, 1625, 1750, 1875, 2000, 2125, 2250, 2375, 2500, 2625, 2750, 2875, 3000, 3125, 3250, 3375, 3500, 3625, 3750, 3875, 4000, 4125, 4250, 4375, 4500, 4625, 4750, 4875, 5000, 5125, 5250, 5375, 5500, 5625, 5750, 5875, 6000, 6125, 6250, 6375, 6500, 6625, 6750, 6875, 7000, 7125, 7250, 7375, 7500, 7625, 7750, 7875, 8000, 8125, 8250, 8375, 8500, 8625, 8750, 8875, 9000, 9125, 9250, 9375, 9500, 9625, 9750, 9875, 10000, 10125, 10250, 10375, 10500, 10625, 10750, 10875, 11000, 11125, 11250, 11375, 11500, 11625, 11750, 11875, 12000</RowHeaders>
+    <ColHeaders>GPS</ColHeaders>
+    <Math>X*0.007812500000</Math>
+    <SavingMath>X/0.007812500000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>511.992188</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Mass_Air_Flow_Sensor</Category>
+    <Units>GPS</Units>
+    <Values>0 - 511.992188</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Mass Air Flow rate from sensor, Units: Gram/Sec</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Cat_Lightoff_Spark_Retard</Name>
+    <SearchStr>40 60 04 30 3C 14 00 32 * * * 74 15 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>29</Rows>
+    <Columns>21</Columns>
+    <RowHeaders>G per Cyl 0.080,G per Cyl 0.120,G per Cyl 0.160,G per Cyl 0.200,G per Cyl 0.240,G per Cyl 0.280,G per Cyl 0.320,G per Cyl 0.360,G per Cyl 0.400,G per Cyl 0.440,G per Cyl 0.480,G per Cyl 0.520,G per Cyl 0.560,G per Cyl 0.600,G per Cyl 0.640,G per Cyl 0.680,G per Cyl 0.720,G per Cyl 0.760,G per Cyl 0.800,G per Cyl 0.840,G per Cyl 0.880,G per Cyl 0.920,G per Cyl 0.960,G Per Cyl 1.000,G Per Cyl 1.040,G Per Cyl 1.080,G Per Cyl 1.120,G Per Cyl 1.160,G Per Cyl 1.200</RowHeaders>
+    <ColHeaders>RPM     0,RPM   200,RPM   400,RPM   600,RPM   800,RPM  1000,RPM  1200,RPM  1400,RPM  1600,RPM  1800,RPM  2000,RPM  2200,RPM  2400,RPM  2600,RPM  2800,RPM  3000,RPM  3200,RPM  3400,RPM  3600,RPM  3800,RPM  4000</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>The amount of spark retard to apply to lightoff the catalytic converter. , Units: Degrees_POSITIVE</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>MBT_Spark</Name>
+    <SearchStr>74 14 20 7c @ @ @ @ 4e b9 * * * * 36</SearchStr>
+    <Rows>15</Rows>
+    <Columns>20</Columns>
+    <RowHeaders>G per Cyl 0.08,G per Cyl 0.16,G per Cyl 0.24,G per Cyl 0.32,G per Cyl 0.40,G per Cyl 0.48,G per Cyl 0.56,G per Cyl 0.64,G per Cyl 0.72,G per Cyl 0.80,G per Cyl 0.88,G per Cyl 0.96,G Per Cyl 1.04,G Per Cyl 1.12,G Per Cyl 1.20</RowHeaders>
+    <ColHeaders>RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200,RPM 7600,RPM 8000</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Spark Advance for mean best timing., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Main_OT_High_Octane</Name>
+    <SearchStr>30 38 * * 32 38 * * 74 19 20 7c @ @ @ @ 4e b9 * * * * 3c</SearchStr>
+    <Rows>29</Rows>
+    <Columns>25</Columns>
+    <RowHeaders>G per Cyl 0.080,G per Cyl 0.120,G per Cyl 0.160,G per Cyl 0.200,G per Cyl 0.240,G per Cyl 0.280,G per Cyl 0.320,G per Cyl 0.360,G per Cyl 0.400,G per Cyl 0.440,G per Cyl 0.480,G per Cyl 0.520,G per Cyl 0.560,G per Cyl 0.600,G per Cyl 0.640,G per Cyl 0.680,G per Cyl 0.720,G per Cyl 0.760,G per Cyl 0.800,G per Cyl 0.840,G per Cyl 0.880,G per Cyl 0.920,G per Cyl 0.960,G Per Cyl 1.000,G Per Cyl 1.040,G Per Cyl 1.080,G Per Cyl 1.120,G Per Cyl 1.160,G Per Cyl 1.200</RowHeaders>
+    <ColHeaders>RPM   400,RPM   600,RPM   800,RPM  1000,RPM  1200,RPM  1400,RPM  1600,RPM  1800,RPM  2000,RPM  2200,RPM  2400,RPM  2800,RPM  3200,RPM  3600,RPM  4000,RPM  4400,RPM  4800,RPM  5200,RPM  5600,RPM  6000,RPM  6400,RPM  6800,RPM  7200,RPM  7600,RPM  8000</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This calibration determines base spark 'good fuel' contribution to spark advance., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Main_OT_Low_Octane</Name>
+    <SearchStr>30 38 * * 32 38 * * 74 19 20 7c @ @ @ @ 4e b9 * * * * 3c</SearchStr>
+    <Rows>29</Rows>
+    <Columns>25</Columns>
+    <RowHeaders>G per Cyl 0.080,G per Cyl 0.120,G per Cyl 0.160,G per Cyl 0.200,G per Cyl 0.240,G per Cyl 0.280,G per Cyl 0.320,G per Cyl 0.360,G per Cyl 0.400,G per Cyl 0.440,G per Cyl 0.480,G per Cyl 0.520,G per Cyl 0.560,G per Cyl 0.600,G per Cyl 0.640,G per Cyl 0.680,G per Cyl 0.720,G per Cyl 0.760,G per Cyl 0.800,G per Cyl 0.840,G per Cyl 0.880,G per Cyl 0.920,G per Cyl 0.960,G Per Cyl 1.000,G Per Cyl 1.040,G Per Cyl 1.080,G Per Cyl 1.120,G Per Cyl 1.160,G Per Cyl 1.200</RowHeaders>
+    <ColHeaders>RPM   400,RPM   600,RPM   800,RPM  1000,RPM  1200,RPM  1400,RPM  1600,RPM  1800,RPM  2000,RPM  2200,RPM  2400,RPM  2800,RPM  3200,RPM  3600,RPM  4000,RPM  4400,RPM  4800,RPM  5200,RPM  5600,RPM  6000,RPM  6400,RPM  6800,RPM  7200,RPM  7600,RPM  8000</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This calibration determines base spark 'bad fuel' contribution to spark advance., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Launch_Spark</Name>
+    <SearchStr>32 3C 06 00 74 13 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>7</Rows>
+    <Columns>19</Columns>
+    <RowHeaders>Seconds    0,Seconds  20,Seconds  40,Seconds  60,Seconds   80,Seconds  100,Seconds  120</RowHeaders>
+    <ColHeaders>Deg C -40,Deg C -30,Deg C -20,Deg C -10,Deg C   0,Deg C  10,Deg C  20,Deg C  30,Deg C  40,Deg C  50,Deg C  60,Deg C  70,Deg C  80,Deg C  90,Deg C 100,Deg C 110,Deg C 120,Deg C 130,Deg C 140</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This calibration is a spark advance or retard based on Coolant Temperature and Engine Run Time., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Eq_Ratio_Spark*-05</Name>
+    <SearchStr>32 38 * * 74 10 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>21</Rows>
+    <Columns>16</Columns>
+    <RowHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200,RPM 7600,RPM 8000</RowHeaders>
+    <ColHeaders>EQ Ratio 0.80,EQ Ratio 0.85,EQ Ratio 0.90,EQ Ratio 0.95,EQ Ratio 1.00,EQ Ratio 1.05,EQ Ratio 1.10,EQ Ratio 1.15,EQ Ratio 1.20,EQ Ratio 1.25,EQ Ratio 1.30,EQ Ratio 1.35,EQ Ratio 1.40,EQ Ratio 1.45,EQ Ratio 1.50,EQ Ratio 1.55</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Equivalence ratio contribution to spark., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Eq_Ratio_Spark*06-07</Name>
+    <SearchStr>74 10 * * * * 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>21</Rows>
+    <Columns>16</Columns>
+    <RowHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200,RPM 7600,RPM 8000</RowHeaders>
+    <ColHeaders>EQ Ratio 0.80,EQ Ratio 0.85,EQ Ratio 0.90,EQ Ratio 0.95,EQ Ratio 1.00,EQ Ratio 1.05,EQ Ratio 1.10,EQ Ratio 1.15,EQ Ratio 1.20,EQ Ratio 1.25,EQ Ratio 1.30,EQ Ratio 1.35,EQ Ratio 1.40,EQ Ratio 1.45,EQ Ratio 1.50,EQ Ratio 1.55</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Equivalence ratio contribution to spark., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>EGR_Spark</Name>
+    <SearchStr>02 24 03 32 38 * * E2 49 30 38 * * 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>29</Rows>
+    <Columns>13</Columns>
+    <RowHeaders>G per Cyl 0.080,G per Cyl 0.120,G per Cyl 0.160,G per Cyl 0.200,G per Cyl 0.240,G per Cyl 0.280,G per Cyl 0.320,G per Cyl 0.360,G per Cyl 0.400,G per Cyl 0.440,G per Cyl 0.480,G per Cyl 0.520,G per Cyl 0.560,G per Cyl 0.600,G per Cyl 0.640,G per Cyl 0.680,G per Cyl 0.720,G per Cyl 0.760,G per Cyl 0.800,G per Cyl 0.840,G per Cyl 0.880,G per Cyl 0.920,G per Cyl 0.960,G Per Cyl 1.000,G Per Cyl 1.040,G Per Cyl 1.080,G Per Cyl 1.120,G Per Cyl 1.160,G Per Cyl 1.200</RowHeaders>
+    <ColHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>EGR contribution to spark., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>IAT_Spark</Name>
+    <SearchStr>30 3C 14 00 32 38 * * 74 15 20 7C @ @ @ @ 4E B9 * * * * 38 38</SearchStr>
+    <Rows>29</Rows>
+    <Columns>21</Columns>
+    <RowHeaders>G per Cyl 0.080,G per Cyl 0.120,G per Cyl 0.160,G per Cyl 0.200,G per Cyl 0.240,G per Cyl 0.280,G per Cyl 0.320,G per Cyl 0.360,G per Cyl 0.400,G per Cyl 0.440,G per Cyl 0.480,G per Cyl 0.520,G per Cyl 0.560,G per Cyl 0.600,G per Cyl 0.640,G per Cyl 0.680,G per Cyl 0.720,G per Cyl 0.760,G per Cyl 0.800,G per Cyl 0.840,G per Cyl 0.880,G per Cyl 0.920,G per Cyl 0.960,G Per Cyl 1.000,G Per Cyl 1.040,G Per Cyl 1.080,G Per Cyl 1.120,G Per Cyl 1.160,G Per Cyl 1.200</RowHeaders>
+    <ColHeaders>Deg C  m10,Deg C  m05,Deg C  000,Deg C  005,Deg C  010,Deg C  015,Deg C  020,Deg C  025,Deg C  030,Deg C  035,Deg C  040,Deg C  045,Deg C  050,Deg C  055,Deg C  060,Deg C  065,Deg C  070,Deg C  075,Deg C  080,Deg C  085,Deg C  090</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This calibration determines the main induction air temperature spark., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Main_CT_Drive</Name>
+    <SearchStr>30 38 * * 20 7C @ @ @ @ 60 A6</SearchStr>
+    <Rows>29</Rows>
+    <Columns>13</Columns>
+    <RowHeaders>G per Cyl 0.080,G per Cyl 0.120,G per Cyl 0.160,G per Cyl 0.200,G per Cyl 0.240,G per Cyl 0.280,G per Cyl 0.320,G per Cyl 0.360,G per Cyl 0.400,G per Cyl 0.440,G per Cyl 0.480,G per Cyl 0.520,G per Cyl 0.560,G per Cyl 0.600,G per Cyl 0.640,G per Cyl 0.680,G per Cyl 0.720,G per Cyl 0.760,G per Cyl 0.800,G per Cyl 0.840,G per Cyl 0.880,G per Cyl 0.920,G per Cyl 0.960,G Per Cyl 1.000,G Per Cyl 1.040,G Per Cyl 1.080,G Per Cyl 1.120,G Per Cyl 1.160,G Per Cyl 1.200</RowHeaders>
+    <ColHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This calibration determines base spark closed throttle and drive contribution to spark advance., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Main_CT_Park</Name>
+    <SearchStr>67 3e 32 38 * * e2 49 30 38 * * 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>29</Rows>
+    <Columns>13</Columns>
+    <RowHeaders>G per Cyl 0.080,G per Cyl 0.120,G per Cyl 0.160,G per Cyl 0.200,G per Cyl 0.240,G per Cyl 0.280,G per Cyl 0.320,G per Cyl 0.360,G per Cyl 0.400,G per Cyl 0.440,G per Cyl 0.480,G per Cyl 0.520,G per Cyl 0.560,G per Cyl 0.600,G per Cyl 0.640,G per Cyl 0.680,G per Cyl 0.720,G per Cyl 0.760,G per Cyl 0.800,G per Cyl 0.840,G per Cyl 0.880,G per Cyl 0.920,G per Cyl 0.960,G Per Cyl 1.000,G Per Cyl 1.040,G Per Cyl 1.080,G Per Cyl 1.120,G Per Cyl 1.160,G Per Cyl 1.200</RowHeaders>
+    <ColHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This calibration determines base spark closed throttle and park or neutral contribution to spark advance., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Clt_Spark</Name>
+    <SearchStr>32 38 * * 74 25 20 7c @ @ @ @ 4e b9</SearchStr>
+    <Rows>29</Rows>
+    <Columns>37</Columns>
+    <RowHeaders>G per Cyl 0.080,G per Cyl 0.120,G per Cyl 0.160,G per Cyl 0.200,G per Cyl 0.240,G per Cyl 0.280,G per Cyl 0.320,G per Cyl 0.360,G per Cyl 0.400,G per Cyl 0.440,G per Cyl 0.480,G per Cyl 0.520,G per Cyl 0.560,G per Cyl 0.600,G per Cyl 0.640,G per Cyl 0.680,G per Cyl 0.720,G per Cyl 0.760,G per Cyl 0.800,G per Cyl 0.840,G per Cyl 0.880,G per Cyl 0.920,G per Cyl 0.960,G Per Cyl 1.000,G Per Cyl 1.040,G Per Cyl 1.080,G Per Cyl 1.120,G Per Cyl 1.160,G Per Cyl 1.200</RowHeaders>
+    <ColHeaders>Deg C  m40,Deg C  m35,Deg C  m30,Deg C  m25,Deg C  m20,Deg C  m15,Deg C  m10,Deg C  m05,Deg C  000,Deg C  005,Deg C  010,Deg C  015,Deg C  020,Deg C  025,Deg C  030,Deg C  035,Deg C  040,Deg C  045,Deg C  050,Deg C  055,Deg C  060,Deg C  065,Deg C  070,Deg C  075,Deg C  080,Deg C  085,Deg C  090,Deg C  095,Deg C  100,Deg C  105,Deg C  110,Deg C  115,Deg C  120,Deg C  125,Deg C  130,Deg C  135,Deg C  140</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Coolant temperature spark contribution., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Applied_Octane_Scaler_Mult</Name>
+    <SearchStr>28 03 36 7C 04 00 D8 4B D8 44 F8 39 41 40 * * * * 31 C4 * * 28 03 D8 4B 6A 02 52 44 E2 44 F8 39 41 40 * * * * 31 C4 * * 28 03 D8 4B F8 39 41 40 @ @ @ @ 31 C4 * * 28 03 D8 4B 24 7C * * * * F8 12 41 40 31 C4 * * D6 4B 24 7C * * * * F8 12 39 40 31 C3 * * 4E 75</SearchStr>
+    <Rows>19</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>Deg C -40,Deg C -30,Deg C -20,Deg C -10,Deg C   0,Deg C  10,Deg C  20,Deg C  30,Deg C  40,Deg C  50,Deg C  60,Deg C  70,Deg C  80,Deg C  90,Deg C 100,Deg C 110,Deg C 120,Deg C 130,Deg C 140</RowHeaders>
+    <ColHeaders>Multiplier</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X/0.000244140625</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Multiplier</Units>
+    <Values>0 - 1</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Modifies the calculated octane scaler to establish authority based on temperature., Units: Multiplier_0_to_1</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Eng_Protection_Spark_Advance</Name>
+    <SearchStr>4A 38 * * 67 22 36 38 * * 24 7C @ @ @ @ F8 12 39 40 31 C3 * * 42 38 * * 42 38 * * 42 38 * * 42 38 * * 4A 38 * * 67 00 00 * 36 38 * * B6 79 * * * * 64 00 00 * B6 79 * * * * 63 00 00 * 4A 38 * * 67 00 00 *</SearchStr>
+    <Rows>21</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200,RPM 7600,RPM 8000</RowHeaders>
+    <ColHeaders>Degrees</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Spark advance value based on engine speed if engine protection is enabled., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Eq_Ratio_Map_Modifier*-05</Name>
+    <SearchStr>32 38 * * 74 10 20 7C * * * * 4E B9 * * * * 36 00 30 38 * * 24 7C @ @ @ @</SearchStr>
+    <Rows>17</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>kPa  20,kPa  25,kPa  30,kPa  35,kPa  40,kPa  45,kPa  50,kPa  55,kPa  60,kPa  65,kPa  70,kPa  75,kPa  80,kPa  85,kPa  90,kPa  95,kPa 100</RowHeaders>
+    <ColHeaders>Multiplier</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X/0.000244140625</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>2</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Multiplier</Units>
+    <Values>0 - 2</Values>
+    <RowMajor>true</RowMajor>
+    <Description>A MAP modifier applied to the equivalence ratio angle., Units: Multiplier_0_to_2</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Eq_Ratio_Map_Modifier*06-07</Name>
+    <SearchStr>74 10 * * * * 20 7C * * * * 4E B9 * * * * 36 00 30 38 * * 24 7C @ @ @ @</SearchStr>
+    <Rows>17</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>kPa  20,kPa  25,kPa  30,kPa  35,kPa  40,kPa  45,kPa  50,kPa  55,kPa  60,kPa  65,kPa  70,kPa  75,kPa  80,kPa  85,kPa  90,kPa  95,kPa 100</RowHeaders>
+    <ColHeaders>Multiplier</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X/0.000244140625</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>2</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Multiplier</Units>
+    <Values>0 - 2</Values>
+    <RowMajor>true</RowMajor>
+    <Description>A MAP modifier applied to the equivalence ratio angle., Units: Multiplier_0_to_2</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>IAT_RPM_Modifier</Name>
+    <SearchStr>30 3C 14 00 32 38 * * 74 15 20 7C * * * * 4E B9 * * * * 38 38 * * 36 38 * * 24 7C @ @ @ @ F8 12</SearchStr>
+    <Rows>21</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200,RPM 7600,RPM 8000</RowHeaders>
+    <ColHeaders>Multiplier</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X/0.000244140625</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>2</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Multiplier</Units>
+    <Values>0 - 2</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Induction air temperature spark modifier based on engine speed., Units: Multiplier</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>IAT_Spark_Coolant_Modifier</Name>
+    <SearchStr>28 03 36 7C 04 00 D8 4B D8 44 F8 39 41 40 @ @ @ @ 31 C4 * * 28 03 D8 4B 6A 02 52 44 E2 44 F8 39 41 40 * * * * 31 C4 * * 28 03 D8 4B F8 39 41 40 * * * * 31 C4 * * 28 03 D8 4B 24 7C * * * * F8 12 41 40 31 C4 * * D6 4B 24 7C * * * * F8 12 39 40 31 C3 * * 4E 75</SearchStr>
+    <Rows>37</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>Deg C  m40,Deg C  m35,Deg C  m30,Deg C  m25,Deg C  m20,Deg C  m15,Deg C  m10,Deg C  m05,Deg C  000,Deg C  005,Deg C  010,Deg C  015,Deg C  020,Deg C  025,Deg C  030,Deg C  035,Deg C  040,Deg C  045,Deg C  050,Deg C  055,Deg C  060,Deg C  065,Deg C  070,Deg C  075,Deg C  080,Deg C  085,Deg C  090,Deg C  095,Deg C  100,Deg C  105,Deg C  110,Deg C  115,Deg C  120,Deg C  125,Deg C  130,Deg C  135,Deg C  140</RowHeaders>
+    <ColHeaders>Multiplier</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X/0.000244140625</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Multiplier</Units>
+    <Values>0 - 1</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Induction air temperature spark modifier based on coolant temperature., Units: Multiplier_0_to_1</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Idle_Flare_Coolant_Mult</Name>
+    <SearchStr>28 03 36 7C 04 00 D8 4B D8 44 F8 39 41 40 * * * * 31 C4 * * 28 03 D8 4B 6A 02 52 44 E2 44 F8 39 41 40 @ @ @ @ 31 C4 * * 28 03 D8 4B F8 39 41 40 * * * * 31 C4 * * 28 03 D8 4B 24 7C * * * * F8 12 41 40 31 C4 * * D6 4B 24 7C * * * * F8 12 39 40 31 C3 * * 4E 75</SearchStr>
+    <Rows>10</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>Degrees C -40,Degrees C -20,Degrees C   0,Degrees C  20,Degrees C  40,Degrees C  60,Degrees C  80,Degrees C 100,Degrees C 120,Degrees C 140</RowHeaders>
+    <ColHeaders>Multiplier</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X/0.000244140625</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Multiplier</Units>
+    <Values>0 - 1</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Modifies the flare control idle spark as a function of coolant temperature., Units: Multiplier_0_to_1</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Clt_RPM_Modifier*-05</Name>
+    <SearchStr>30 38 * * 74 25 20 7c @ @ @ @ 4e b9</SearchStr>
+    <Rows>21</Rows>
+    <Columns>37</Columns>
+    <RowHeaders>RPM     0,RPM   200,RPM   400,RPM   600,RPM   800,RPM  1000,RPM  1200,RPM  1400,RPM  1600,RPM  1800,RPM  2000,RPM  2200,RPM  2400,RPM  2600,RPM  2800,RPM  3000,RPM  3200,RPM  3400,RPM  3600,RPM  3800,RPM  4000</RowHeaders>
+    <ColHeaders>Deg C  m40,Deg C  m35,Deg C  m30,Deg C  m25,Deg C  m20,Deg C  m15,Deg C  m10,Deg C  m05,Deg C  000,Deg C  005,Deg C  010,Deg C  015,Deg C  020,Deg C  025,Deg C  030,Deg C  035,Deg C  040,Deg C  045,Deg C  050,Deg C  055,Deg C  060,Deg C  065,Deg C  070,Deg C  075,Deg C  080,Deg C  085,Deg C  090,Deg C  095,Deg C  100,Deg C  105,Deg C  110,Deg C  115,Deg C  120,Deg C  125,Deg C  130,Deg C  135,Deg C  140</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X/0.000244140625</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>2</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Multiplier</Units>
+    <Values>0 - 2</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Coolant temperature spark modifier based on engine speed and coolant temperature., Units: 0 to 2</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Clt_RPM_Modifier*06-07</Name>
+    <SearchStr>74 25 * * 20 7c @ @ @ @ 4e b9</SearchStr>
+    <Rows>21</Rows>
+    <Columns>37</Columns>
+    <RowHeaders>RPM     0,RPM   200,RPM   400,RPM   600,RPM   800,RPM  1000,RPM  1200,RPM  1400,RPM  1600,RPM  1800,RPM  2000,RPM  2200,RPM  2400,RPM  2600,RPM  2800,RPM  3000,RPM  3200,RPM  3400,RPM  3600,RPM  3800,RPM  4000</RowHeaders>
+    <ColHeaders>Deg C  m40,Deg C  m35,Deg C  m30,Deg C  m25,Deg C  m20,Deg C  m15,Deg C  m10,Deg C  m05,Deg C  000,Deg C  005,Deg C  010,Deg C  015,Deg C  020,Deg C  025,Deg C  030,Deg C  035,Deg C  040,Deg C  045,Deg C  050,Deg C  055,Deg C  060,Deg C  065,Deg C  070,Deg C  075,Deg C  080,Deg C  085,Deg C  090,Deg C  095,Deg C  100,Deg C  105,Deg C  110,Deg C  115,Deg C  120,Deg C  125,Deg C  130,Deg C  135,Deg C  140</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X/0.000244140625</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>2</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Multiplier</Units>
+    <Values>0 - 2</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Coolant temperature spark modifier based on engine speed and coolant temperature., Units: 0 to 2</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Crank_Spark_Med_Res</Name>
+    <SearchStr>4A 38 * * 67 06 42 78 * * 60 16 36 38 * * 06 43 04 00 24 7C @ @ @ @ F8 12 39 40 31 C3 * *</SearchStr>
+    <Rows>19</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>Deg C -40,Deg C -30,Deg C -20,Deg C -10,Deg C   0,Deg C  10,Deg C  20,Deg C  30,Deg C  40,Deg C  50,Deg C  60,Deg C  70,Deg C  80,Deg C  90,Deg C 100,Deg C 110,Deg C 120,Deg C 130,Deg C 140</RowHeaders>
+    <ColHeaders>Degrees</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Spark advance when engine is cranking., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Idle_Flare_Control</Name>
+    <SearchStr>36 3C 0A 00 F8 39 39 40 @ @ @ @ 22 03 C3 F8</SearchStr>
+    <Rows>11</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>RPM    0,RPM 100,RPM   200,RPM 300,RPM  400,RPM 500,RPM  600,RPM 700,RPM 800,RPM 900,RPM 1000</RowHeaders>
+    <ColHeaders>Degrees</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Spark modifier based on input from IAC to control engine startup idle flare., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Idle_Overspeed_Error</Name>
+    <SearchStr>36 3C 09 00 32 03 24 7C @ @ @ @ F8 12 19 40</SearchStr>
+    <Rows>10</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>RPM   0,RPM   12p5,RPM   25,RPM  37p5,RPM  50,RPM  100,RPM  150,RPM  200,RPM  250,RPM  300</RowHeaders>
+    <ColHeaders>Degrees</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This is the spark idle overspeed modifier., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Idle_Underspeed_Error</Name>
+    <SearchStr>36 3C 09 00 24 7C @ @ @ @ F8 12 39 40 32 03</SearchStr>
+    <Rows>10</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>RPM S  -300,RPM S  -250,RPM S  -200,RPM S  -150,RPM S  -100,RPM S  -50,RPM S -37.5,RPM S  -25,RPM S  -12.5,RPM S  0</RowHeaders>
+    <ColHeaders>Degrees</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This is the spark idle underspeed modifier., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Shift_Dr_To_PN_Inhibit</Name>
+    <SearchStr>28 03 36 7C 04 00 D8 4B 24 7C * * * * F8 12 41 40 31 C4 * * D6 4B 24 7C @ @ @ @ F8 12</SearchStr>
+    <Rows>19</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>Deg C -40,Deg C -30,Deg C -20,Deg C -10,Deg C   0,Deg C  10,Deg C  20,Deg C  30,Deg C  40,Deg C  50,Deg C  60,Deg C  70,Deg C  80,Deg C  90,Deg C 100,Deg C 110,Deg C 120,Deg C 130,Deg C 140</RowHeaders>
+    <ColHeaders>Seconds</ColHeaders>
+    <Math>X*0.006250000000</Math>
+    <SavingMath>X/0.006250000000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>409.59375</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Seconds</Units>
+    <Values>0 - 409.59375</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Inhibits the drive to park spark transition until this time is expired., Units: Seconds</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Shift_PN_To_Dr_Inhibit</Name>
+    <SearchStr>28 03 36 7C 04 00 D8 4B 24 7C @ @ @ @ F8 12 41 40 31 C4 * * D6 4B 24 7C * * * * F8 12</SearchStr>
+    <Rows>19</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>Deg C -40,Deg C -30,Deg C -20,Deg C -10,Deg C   0,Deg C  10,Deg C  20,Deg C  30,Deg C  40,Deg C  50,Deg C  60,Deg C  70,Deg C  80,Deg C  90,Deg C 100,Deg C 110,Deg C 120,Deg C 130,Deg C 140</RowHeaders>
+    <ColHeaders>Seconds</ColHeaders>
+    <Math>X*0.006250000000</Math>
+    <SavingMath>X/0.006250000000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>409.59375</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Seconds</Units>
+    <Values>0 - 409.59375</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Inhibits the park to drive spark transition until this time is expired., Units: Seconds</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>FFS_E80_Spark_Shift*03-05</Name>
+    <SearchStr>87 E6 48 60 04 30 3C 11 00 74 12 20 7C @ @ @ @</SearchStr>
+    <Rows>21</Rows>
+    <Columns>18</Columns>
+    <RowHeaders>GPC 0.08,GPC 0.12,GPC 0.16,GPC 0.20,GPC 0.24,GPC 0.28,GPC 0.32,GPC 0.36,GPC 0.40,GPC 0.44,GPC 0.48,GPC 0.52,GPC 0.56,GPC 0.60,GPC 0.64,GPC 0.68,GPC 0.72,GPC 0.76,GPC 0.80,GPC 0.84,GPC 0.88</RowHeaders>
+    <ColHeaders>RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This cal determines the flex fuel contribution to spark advance assuming E80 fuel (80% ethanol)., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>FFS_E80_Spark_Shift*06-07</Name>
+    <SearchStr>36 3C 11 00 74 12 * * 20 7C @ @ @ @</SearchStr>
+    <Rows>21</Rows>
+    <Columns>18</Columns>
+    <RowHeaders>GPC 0.08,GPC 0.12,GPC 0.16,GPC 0.20,GPC 0.24,GPC 0.28,GPC 0.32,GPC 0.36,GPC 0.40,GPC 0.44,GPC 0.48,GPC 0.52,GPC 0.56,GPC 0.60,GPC 0.64,GPC 0.68,GPC 0.72,GPC 0.76,GPC 0.80,GPC 0.84,GPC 0.88</RowHeaders>
+    <ColHeaders>RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This cal determines the flex fuel contribution to spark advance assuming E80 fuel (80% ethanol)., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>FFS_E80_MBT_Spark_Shift*03- 1mb</Name>
+    <SearchStr>86 E6 48 60 04 30 3C 11 00 74 12 20 7C @ @ @ @</SearchStr>
+    <Rows>11</Rows>
+    <Columns>18</Columns>
+    <RowHeaders>GPC 0.080,GPC 0.160,GPC 0.240,GPC 0.320,GPC 0.400,GPC 0.480,GPC 0.560,GPC 0.640,GPC 0.720,GPC 0.800,GPC 0.880</RowHeaders>
+    <ColHeaders>RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This cal determines the flex fuel contribution to MBT assuming E80 fuel (80% ethanol)., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>HVS_Test_RPM_Hi</Name>
+    <SearchStr>4A 38 * * 67 22 36 38 * * 24 7C * * * * F8 12 39 40 31 C3 * * 42 38 * * 42 38 * * 42 38 * * 42 38 * * 4A 38 * * 67 00 00 * 36 38 * * B6 79 @ @ @ @ 64 00 00 * B6 79 * * * * 63 00 00 * 4A 38 * * 67 00 00 *</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>RPM</ColHeaders>
+    <Math>X*0.195312500000</Math>
+    <SavingMath>X/0.195312500000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>12799.804688</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>RPM</Units>
+    <Values>0 - 12799.804688</Values>
+    <RowMajor>true</RowMajor>
+    <Description>HVS position monitoring and limit adjusting logic is performed below this RPM., Units: RPM</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>HVS_Test_RPM_Lo</Name>
+    <SearchStr>4A 38 * * 67 22 36 38 * * 24 7C * * * * F8 12 39 40 31 C3 * * 42 38 * * 42 38 * * 42 38 * * 42 38 * * 4A 38 * * 67 00 00 * 36 38 * * B6 79 * * * * 64 00 00 * B6 79 @ @ @ @ 63 00 00 * 4A 38 * * 67 00 00 *</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>RPM</ColHeaders>
+    <Math>X*0.195312500000</Math>
+    <SavingMath>X/0.195312500000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>12799.804688</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>RPM</Units>
+    <Values>0 - 12799.804688</Values>
+    <RowMajor>true</RowMajor>
+    <Description>HVS position monitoring and limit adjusting logic is performed above this RPM., Units: RPM</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Crank_Afterstart_Step</Name>
+    <SearchStr>28 03 36 7C 04 00 D8 4B D8 44 F8 39 41 40 * * * * 31 C4 * * 28 03 D8 4B 6A 02 52 44 E2 44 F8 39 41 40 * * * * 31 C4 * * 28 03 D8 4B F8 39 41 40 * * * * 31 C4 * * 28 03 D8 4B 24 7C * * * * F8 12 41 40 31 C4 * * D6 4B 24 7C @ @ @ @ F8 12 39 40 31 C3 * * 4E 75</SearchStr>
+    <Rows>19</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>Deg C -40,Deg C -30,Deg C -20,Deg C -10,Deg C   0,Deg C  10,Deg C  20,Deg C  30,Deg C  40,Deg C  50,Deg C  60,Deg C  70,Deg C  80,Deg C  90,Deg C 100,Deg C 110,Deg C 120,Deg C 130,Deg C 140</RowHeaders>
+    <ColHeaders>Degrees</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Crank to Run spark blending step size to be used when engine run time is less than Kx_Afterstart_Time time and the engine is not flaring., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Crank_Afterstart_Time</Name>
+    <SearchStr>28 03 36 7C 04 00 D8 4B D8 44 F8 39 41 40 * * * * 31 C4 * * 28 03 D8 4B 6A 02 52 44 E2 44 F8 39 41 40 * * * * 31 C4 * * 28 03 D8 4B F8 39 41 40 * * * * 31 C4 * * 28 03 D8 4B 24 7C @ @ @ @ F8 12 41 40 31 C4 * * D6 4B 24 7C * * * * F8 12 39 40 31 C3 * * 4E 75</SearchStr>
+    <Rows>19</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>Deg C -40,Deg C -30,Deg C -20,Deg C -10,Deg C   0,Deg C  10,Deg C  20,Deg C  30,Deg C  40,Deg C  50,Deg C  60,Deg C  70,Deg C  80,Deg C  90,Deg C 100,Deg C 110,Deg C 120,Deg C 130,Deg C 140</RowHeaders>
+    <ColHeaders>Seconds</ColHeaders>
+    <Math>X*0.006250000000</Math>
+    <SavingMath>X/0.006250000000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>409.59375</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Seconds</Units>
+    <Values>0 - 409.59375</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Engine run time below which crank to run blend is controlled by either Kx_Afterstart_Blend_Step or Kx_Spark_Blend_Step., Units: Seconds</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Piston_Slap_Spark_Retard*-05</Name>
+    <SearchStr>3C 0A 00 74 0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>15</Rows>
+    <Columns>11</Columns>
+    <RowHeaders>G per Cyl 0.08,G per Cyl 0.16,G per Cyl 0.24,G per Cyl 0.32,G per Cyl 0.40,G per Cyl 0.48,G per Cyl 0.56,G per Cyl 0.64,G per Cyl 0.72,G per Cyl 0.80,G per Cyl 0.88,G per Cyl 0.96,G Per Cyl 1.04,G Per Cyl 1.12,G Per Cyl 1.20</RowHeaders>
+    <ColHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>2</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This calibration determines the Piston Slap contribution to spark advance., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Piston_Slap_Spark_Retard*06-07</Name>
+    <SearchStr>80 FC 00 14 74 0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>15</Rows>
+    <Columns>11</Columns>
+    <RowHeaders>G per Cyl 0.08,G per Cyl 0.16,G per Cyl 0.24,G per Cyl 0.32,G per Cyl 0.40,G per Cyl 0.48,G per Cyl 0.56,G per Cyl 0.64,G per Cyl 0.72,G per Cyl 0.80,G per Cyl 0.88,G per Cyl 0.96,G Per Cyl 1.04,G Per Cyl 1.12,G Per Cyl 1.20</RowHeaders>
+    <ColHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This calibration determines the Piston Slap contribution to spark advance., Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Piston_Slap_Coolant_Mult*-05</Name>
+    <SearchStr>3C 0A 00 74 0B 20 7C * * * * 4E B9 * * * * 36 00 3A 38 * * F8 39 51 40 @ @ @ @ C7 C5</SearchStr>
+    <Rows>19</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>Deg C -40,Deg C -30,Deg C -20,Deg C -10,Deg C   0,Deg C  10,Deg C  20,Deg C  30,Deg C  40,Deg C  50,Deg C  60,Deg C  70,Deg C  80,Deg C  90,Deg C 100,Deg C 110,Deg C 120,Deg C 130,Deg C 140</RowHeaders>
+    <ColHeaders>Multiplier</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X/0.000244140625</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Advance</Category>
+    <Units>Multiplier</Units>
+    <Values>0 - 1</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This calibration is a Piston Slap Spark modifier based on Coolant Temperature., Units: Unitless</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Main_Dwell_Time</Name>
+    <SearchStr>3E 3C 1A 00 BE 41 62 02 22 07 74 15 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>27</Rows>
+    <Columns>21</Columns>
+    <RowHeaders>Volts 0,Volts 1,Volts 2,Volts 3,Volts 4,Volts 5,Volts 6,Volts 7,Volts 8,Volts 9,Volts 10,Volts 11,Volts 12,Volts 13,Volts 14,Volts 15,Volts 16,Volts 17,Volts 18,Volts 19,Volts 20,Volts 21,Volts 22,Volts 23,Volts 24,Volts 25,Volts 26</RowHeaders>
+    <ColHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200,RPM 7600,RPM 8000</ColHeaders>
+    <Math>X*0.015466666667</Math>
+    <SavingMath>X/0.015466666667</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1013.608</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Dwell</Category>
+    <Units>Milliseconds</Units>
+    <Values>0 - 1013.608</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This determines the base dwell time., Units: Milliseconds</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Modifier_Dwell_Time</Name>
+    <SearchStr>32 38 * * BE 40 62 02 20 07 74 1B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>10</Rows>
+    <Columns>27</Columns>
+    <RowHeaders>Degrees C -40,Degrees C -20,Degrees C   0,Degrees C  20,Degrees C  40,Degrees C  60,Degrees C  80,Degrees C 100,Degrees C 120,Degrees C 140</RowHeaders>
+    <ColHeaders>Volts 0,Volts 1,Volts 2,Volts 3,Volts 4,Volts 5,Volts 6,Volts 7,Volts 8,Volts 9,Volts 10,Volts 11,Volts 12,Volts 13,Volts 14,Volts 15,Volts 16,Volts 17,Volts 18,Volts 19,Volts 20,Volts 21,Volts 22,Volts 23,Volts 24,Volts 25,Volts 26</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X/0.000244140625</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>2</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Dwell</Category>
+    <Units>Multiplier</Units>
+    <Values>0 - 2</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This determines the modifier which is possibly a energy reducer since faster charging is a result of lower resistances at lower temperatures., Units: Multiplier_0_to_2</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>100mS_Steady_State_RPM</Name>
+    <SearchStr>44 40 B0 79 @ @ @ @ 64 * 36</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>RPM</ColHeaders>
+    <Math>X*0.195312500000</Math>
+    <SavingMath>X/0.195312500000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>12799.804688</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Dwell</Category>
+    <Units>RPM</Units>
+    <Values>0 - 12799.804688</Values>
+    <RowMajor>true</RowMajor>
+    <Description>An RPM change less than this amount over a 100 msec period indicates engine speed is stable enough to apply a MAP modifier to the calculated dwell., Units: RPM</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Crank_Boost_Dwell</Name>
+    <SearchStr>66 16 0C 38 00 01 * * 66 0E C2 F9 @ @ @ @</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>0_to_4</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X/0.000244140625</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>4</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Dwell</Category>
+    <Units>0_to_4</Units>
+    <Values>0 - 4</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Cold start crank mode modifier to the core dwell., Units: Multiplier_0_to_4</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Initial_Dwell</Name>
+    <SearchStr>31 F9 @ @ @ @ * * 42 43 16 39 * * * * C6 F8 * * 78 64 86 C4 68 04 36 3C FF FF 31 C3 * * 42 43 16 39 * * * * C6 F8 * * 86 C4</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Milliseconds</ColHeaders>
+    <Math>X*0.015466666667</Math>
+    <SavingMath>X/0.015466666667</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1013.608</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Dwell</Category>
+    <Units>Milliseconds</Units>
+    <Values>0 - 1013.608</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Dwell is initialized to this value at powerup., Units: Milliseconds</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Initial_Max_Dwell</Name>
+    <SearchStr>31 F9 * * * * * * 42 43 16 39 @ @ @ @ C6 F8 * * 78 64 86 C4 68 04 36 3C FF FF 31 C3 * * 42 43 16 39 * * * * C6 F8 * * 86 C4</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Multiplier_1p1_to_1p3</ColHeaders>
+    <Math>X*0.010000000000</Math>
+    <SavingMath>X/0.010000000000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>1.1</Min>
+    <Max>1.3</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Dwell</Category>
+    <Units>Multiplier_1p1_to_1p3</Units>
+    <Values>1.1 - 1.3</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Initial dwell multiplier to determine max dwell atpowerup., Units: Multiplier_1p1_to_1p3</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Initial_Min_Dwell</Name>
+    <SearchStr>31 F9 * * * * * * 42 43 16 39 * * * * C6 F8 * * 78 64 86 C4 68 04 36 3C FF FF 31 C3 * * 42 43 16 39 @ @ @ @ C6 F8 * * 86 C4</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Multiplier_0_to_1p0</ColHeaders>
+    <Math>X*0.010000000000</Math>
+    <SavingMath>X/0.010000000000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Dwell</Category>
+    <Units>Multiplier_0_to_1p0</Units>
+    <Values>0 - 1</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Initial dwell multiplier to determine min dwell atpowerup., Units: Multiplier_0_to_1p0</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>HVS_Min_Run_Dwell</Name>
+    <SearchStr>0C 43 A0 00 64 04 E6 4B 60 04 36 3C 14 00 F8 39 31 40 * * * * 31 c3 * * 4c df</SearchStr>
+    <Rows>21</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200,RPM 7600,RPM 8000</RowHeaders>
+    <ColHeaders>Milliseconds</ColHeaders>
+    <Math>X*0.015466666667</Math>
+    <SavingMath>X/0.015466666667</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1013.608</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Dwell</Category>
+    <Units>Milliseconds</Units>
+    <Values>0 - 1013.608</Values>
+    <RowMajor>true</RowMajor>
+    <Description>The minimum dwell required at a given RPM in low-res only ignition systems., Units: Millisec_vs_RPM_0to8000_Table</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Max_Dwell*01-06</Name>
+    <SearchStr>32 3C FF FF 31 C1 * * 36 38 * * 24 7C @ @ @ @</SearchStr>
+    <Rows>21</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200,RPM 7600,RPM 8000</RowHeaders>
+    <ColHeaders>Multiplier_1p1_to_1p3</ColHeaders>
+    <Math>X*0.010000000000</Math>
+    <SavingMath>X/0.010000000000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>1.1</Min>
+    <Max>1.3</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Dwell</Category>
+    <Units>Multiplier_1p1_to_1p3</Units>
+    <Values>1.1 - 1.3</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This determines the max dwell time ., Units: Mult1p1to1p3_vs_RPM_0to8000_Tbl</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Max_Dwell*-07</Name>
+    <SearchStr>32 3C FF FF 31 C1 * * 42 43 16 39 @ @ @ @</SearchStr>
+    <Rows>21</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200,RPM 7600,RPM 8000</RowHeaders>
+    <ColHeaders>Multiplier_1p1_to_1p3</ColHeaders>
+    <Math>X*0.010000000000</Math>
+    <SavingMath>X/0.010000000000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>1.1</Min>
+    <Max>1.3</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Dwell</Category>
+    <Units>Multiplier_1p1_to_1p3</Units>
+    <Values>1.1 - 1.3</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This determines the max dwell time ., Units: Mult1p1to1p3_vs_RPM_0to8000_Tbl</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Dwell_Map_Modifier*01-06</Name>
+    <SearchStr>44 40 B0 79 * * * * 64 18 36 38 * * 24 7C @ @ @ @</SearchStr>
+    <Rows>17</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>kPa  20,kPa  25,kPa  30,kPa  35,kPa  40,kPa  45,kPa  50,kPa  55,kPa  60,kPa  65,kPa  70,kPa  75,kPa  80,kPa  85,kPa  90,kPa  95,kPa 100</RowHeaders>
+    <ColHeaders>Multiplier</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X/0.000244140625</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>2</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Dwell</Category>
+    <Units>Multiplier</Units>
+    <Values>0 - 2</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Modifier applied to the calculated dwell to adjust the value as a function of manifold pressure., Units: Mult_0to2_vs_kPa_20to100_Table</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Dwell_Map_Modifier*-07</Name>
+    <SearchStr>44 40 B0 79 * * * * 64 10 36 39 @ @ @ @</SearchStr>
+    <Rows>17</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>kPa  20,kPa  25,kPa  30,kPa  35,kPa  40,kPa  45,kPa  50,kPa  55,kPa  60,kPa  65,kPa  70,kPa  75,kPa  80,kPa  85,kPa  90,kPa  95,kPa 100</RowHeaders>
+    <ColHeaders>Multiplier</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X/0.000244140625</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>2</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Dwell</Category>
+    <Units>Multiplier</Units>
+    <Values>0 - 2</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Modifier applied to the calculated dwell to adjust the value as a function of manifold pressure., Units: Mult_0to2_vs_kPa_20to100_Table</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Min_Dwell*01-06</Name>
+    <SearchStr>32 38 * * 24 7C @ @ @ @ F8 12 11 00 02 41</SearchStr>
+    <Rows>21</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200,RPM 7600,RPM 8000</RowHeaders>
+    <ColHeaders>Multiplier_0_to_1p0</ColHeaders>
+    <Math>X*0.010000000000</Math>
+    <SavingMath>X/0.010000000000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Dwell</Category>
+    <Units>Multiplier_0_to_1p0</Units>
+    <Values>0 - 1</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This determines the min dwell time ., Units: Mult0to1p0_vs_RPM_0to8000_Table</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Min_Dwell*-07</Name>
+    <SearchStr>3E AA * * 42 43 16 39 @ @ @ @</SearchStr>
+    <Rows>21</Rows>
+    <Columns>1</Columns>
+    <RowHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200,RPM 7600,RPM 8000</RowHeaders>
+    <ColHeaders>Multiplier_0_to_1p0</ColHeaders>
+    <Math>X*0.010000000000</Math>
+    <SavingMath>X/0.010000000000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Dwell</Category>
+    <Units>Multiplier_0_to_1p0</Units>
+    <Values>0 - 1</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This determines the min dwell time ., Units: Mult0to1p0_vs_RPM_0to8000_Table</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>HVS_Max_Crank_Dwell</Name>
+    <SearchStr>54 43 64 04 36 3C FF FF 31 C3 * * B6 79 @ @ @ @ 63 0c</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Seconds</ColHeaders>
+    <Math>X*0.006250000000</Math>
+    <SavingMath>X/0.006250000000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>409.59375</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Dwell</Category>
+    <Units>Seconds</Units>
+    <Values>0 - 409.59375</Values>
+    <RowMajor>true</RowMajor>
+    <Description>EST will be forced off after this amount of time to prevent coil damage., Units: Seconds</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Gate_Delay</Name>
+    <SearchStr>04 30 3C 14 00 74 15 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>7</Rows>
+    <Columns>21</Columns>
+    <RowHeaders>kPa 40,kPa 50,kPa 60,kPa 70,kPa 80,kPa 90,kPa100</RowHeaders>
+    <ColHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200,RPM 7600,RPM 8000</ColHeaders>
+    <Math>X*0.015466666667</Math>
+    <SavingMath>X/0.015466666667</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1013.608</Max>
+    <UseHit>3</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Knock</Category>
+    <Units>Milliseconds</Units>
+    <Values>0 - 1013.608</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Time delay from the TDC_Reference -MEDRES- to wherethe WINGATE goes high - start of integration., Units: Microsecs.</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Knock_Energy_MAD_Gain</Name>
+    <SearchStr>04 30 3C 14 00 74 15 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>17</Rows>
+    <Columns>21</Columns>
+    <RowHeaders>kPa  20,kPa  25,kPa  30,kPa  35,kPa  40,kPa  45,kPa  50,kPa  55,kPa  60,kPa  65,kPa  70,kPa  75,kPa  80,kPa  85,kPa  90,kPa  95,kPa 100</RowHeaders>
+    <ColHeaders>RPM    0,RPM  400,RPM  800,RPM 1200,RPM 1600,RPM 2000,RPM 2400,RPM 2800,RPM 3200,RPM 3600,RPM 4000,RPM 4400,RPM 4800,RPM 5200,RPM 5600,RPM 6000,RPM 6400,RPM 6800,RPM 7200,RPM 7600,RPM 8000</ColHeaders>
+    <Math>X*0.000244140625</Math>
+    <SavingMath>X/0.000244140625</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>8</Max>
+    <UseHit>2</UseHit>
+    <Range />
+    <Segments />
+    <Category>Spark_Knock</Category>
+    <Units>Factor</Units>
+    <Values>0 - 8</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This calibration is used with the Integrated energy read to establish a knock threshold., Units: Multiplier</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Spark_Retard_For_Torque_Loss*04-</Name>
+    <SearchStr>32 38 * * 74 21 20 7C @ @ @ @</SearchStr>
+    <Rows>5</Rows>
+    <Columns>33</Columns>
+    <RowHeaders>Percent b 0,Percent b 10,Percent b 20,Percent b 50,Percent b 80</RowHeaders>
+    <ColHeaders>Percent 0.0,Percent 3.125,Percent 6.25,Percent 9.375,Percent 12.5,Percent 15.625,Percent 18.75,Percent 21.875,Percent 25.0,Percent 28.125,Percent 31.25,Percent 34.375,Percent 37.5,Percent 40.625,Percent 43.75,Percent 46.875,Percent 50.0,Percent 53.125,Percent 56.25,Percent 59.375,Percent 62.5,Percent 65.625,Percent 68.75,Percent 71.875,Percent 75.0,Percent 78.125,Percent 81.25,Percent 84.375,Percent 87.5,Percent 90.625,Percent 93.75,Percent 96.875,Percent 100.0</ColHeaders>
+    <Math>X*0.021972656250</Math>
+    <SavingMath>X/0.021972656250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-720</Min>
+    <Max>719.978027</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Traction</Category>
+    <Units>Degrees</Units>
+    <Values>-720 - 719.978027</Values>
+    <RowMajor>true</RowMajor>
+    <Description>MBT spark retard as a function  of a given torque loss value , Units: Degrees</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>ETC_Air_A0_Filt_Coef</Name>
+    <SearchStr>10 00 E2 48 74 0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>17</Rows>
+    <Columns>11</Columns>
+    <RowHeaders>RPM     0,RPM   500,RPM  1000,RPM  1500,RPM  2000,RPM  2500,RPM  3000,RPM  3500,RPM  4000,RPM  4500,RPM  5000,RPM  5500,RPM  6000,RPM  6500,RPM  7000,RPM  7500,RPM  8000</RowHeaders>
+    <ColHeaders>Rotation  0,Rotation 10,Rotation 20,Rotation 30,Rotation 40,Rotation 50,Rotation 60,Rotation 70,Rotation 80,Rotation 90,Rotation 100</ColHeaders>
+    <Math>X*0.000488281250</Math>
+    <SavingMath>X/0.000488281250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-1</Min>
+    <Max>1</Max>
+    <UseHit>2</UseHit>
+    <Range />
+    <Segments />
+    <Category>ETC_Diag</Category>
+    <Units>Milliseconds</Units>
+    <Values>-1 - 1</Values>
+    <RowMajor>true</RowMajor>
+    <Description> MAP based airflow diagnostic A0 filter time constant in msecs. , Units: Milliseconds</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>ETC_Air_B0_Filt_Coef</Name>
+    <SearchStr>10 00 E2 48 74 0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>17</Rows>
+    <Columns>11</Columns>
+    <RowHeaders>RPM     0,RPM   500,RPM  1000,RPM  1500,RPM  2000,RPM  2500,RPM  3000,RPM  3500,RPM  4000,RPM  4500,RPM  5000,RPM  5500,RPM  6000,RPM  6500,RPM  7000,RPM  7500,RPM  8000</RowHeaders>
+    <ColHeaders>Rotation  0,Rotation 10,Rotation 20,Rotation 30,Rotation 40,Rotation 50,Rotation 60,Rotation 70,Rotation 80,Rotation 90,Rotation 100</ColHeaders>
+    <Math>X*0.000488281250</Math>
+    <SavingMath>X/0.000488281250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>ETC_Diag</Category>
+    <Units>Scaler_0_to_1</Units>
+    <Values>0 - 1</Values>
+    <RowMajor>true</RowMajor>
+    <Description> MAP based airflow diagnostic B0 filter time constant in msecs. , Units: Milliseconds</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>ETC_MAF_Filt_A0_Coef</Name>
+    <SearchStr>10 00 E2 48 74 0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>17</Rows>
+    <Columns>11</Columns>
+    <RowHeaders>RPM     0,RPM   500,RPM  1000,RPM  1500,RPM  2000,RPM  2500,RPM  3000,RPM  3500,RPM  4000,RPM  4500,RPM  5000,RPM  5500,RPM  6000,RPM  6500,RPM  7000,RPM  7500,RPM  8000</RowHeaders>
+    <ColHeaders>Rotation  0,Rotation 10,Rotation 20,Rotation 30,Rotation 40,Rotation 50,Rotation 60,Rotation 70,Rotation 80,Rotation 90,Rotation 100</ColHeaders>
+    <Math>X*0.000488281250</Math>
+    <SavingMath>X/0.000488281250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>-1</Min>
+    <Max>1</Max>
+    <UseHit>4</UseHit>
+    <Range />
+    <Segments />
+    <Category>ETC_Diag</Category>
+    <Units>Milliseconds</Units>
+    <Values>-1 - 1</Values>
+    <RowMajor>true</RowMajor>
+    <Description> MAF based airflow diagnostic A0 filter time constant in msecs. , Units: Milliseconds</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>ETC_MAF_Filt_B0_Coef</Name>
+    <SearchStr>10 00 E2 48 74 0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Rows>17</Rows>
+    <Columns>11</Columns>
+    <RowHeaders>RPM     0,RPM   500,RPM  1000,RPM  1500,RPM  2000,RPM  2500,RPM  3000,RPM  3500,RPM  4000,RPM  4500,RPM  5000,RPM  5500,RPM  6000,RPM  6500,RPM  7000,RPM  7500,RPM  8000</RowHeaders>
+    <ColHeaders>Rotation  0,Rotation 10,Rotation 20,Rotation 30,Rotation 40,Rotation 50,Rotation 60,Rotation 70,Rotation 80,Rotation 90,Rotation 100</ColHeaders>
+    <Math>X*0.000488281250</Math>
+    <SavingMath>X/0.000488281250</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>3</UseHit>
+    <Range />
+    <Segments />
+    <Category>ETC_Diag</Category>
+    <Units>Scaler_0_to_1</Units>
+    <Values>0 - 1</Values>
+    <RowMajor>true</RowMajor>
+    <Description> MAF based airflow diagnostic B0 filter time constant in msecs. , Units: Milliseconds</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Hot_Mode_Stator_Delay_Timer</Name>
+    <SearchStr>67 * 4A 39 @ @ @ @ 66 18 08</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Seconds</ColHeaders>
+    <Math>X*0.006250000000</Math>
+    <SavingMath>X/0.006250000000</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UWORD</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>409.59375</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>XTEMP_Status</Category>
+    <Units>Seconds</Units>
+    <Values>0 - 409.59375</Values>
+    <RowMajor>true</RowMajor>
+    <Description> Maximum amount of time before Hot_Mode_Stator_Delay_Timer  and Hot_Mode_Stator_Entrance_Timer are reset to zero., Units: Seconds</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Option_Matrix</Name>
+    <SearchStr>39 * * * * C6 FC 00 0C 11 F0 39 B0 @ @ @ @</SearchStr>
+    <Rows>13</Rows>
+    <Columns>12</Columns>
+    <RowHeaders>F,Y,V,GMT530,GMT540,GMT560,GMT610,GMT800,ML,ST,P,GMT370,H2</RowHeaders>
+    <ColHeaders>ETC Equi..ed,AIR Equi..ed,PSPS Equi..ed,Trans Hot SW,Alt L Ter-,Alt F Ter-,Cruise Status Equi..ed,Oil Pres Equi..ed,BTM Equi..ed,PTO Equi..ed,Low Res Only Equi..ed,Pad Byte 0</ColHeaders>
+    <Math>X*1.0</Math>
+    <SavingMath>X/1.0</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Veh_Sys</Category>
+    <Units>Platform_Option_Table_Type</Units>
+    <Values>0 - 1</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Allows selection of options for a given platform., Units: Platform_Option_Table_Type</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Option_Matrix_99-00</Name>
+    <SearchStr>39 * * * * C6 C7 4A 30 39 B0 @ @ @ @ 67</SearchStr>
+    <Rows>8</Rows>
+    <Columns>10</Columns>
+    <RowHeaders>X,F,Y,X,GMT800,X,X,V,ML,ST,P,GMT370,H2</RowHeaders>
+    <ColHeaders>ETC Equi..ed,AIR Equi..ed,PSPS Equi..ed,Trans Hot SW,Alt L Ter-,Alt F Ter-,Cruise Status Equi..ed,Oil Pres Equi..ed,BTM Equi..ed,PTO Equi..ed,Low Res Only Equi..ed,Pad Byte 0</ColHeaders>
+    <Math>X*1.0</Math>
+    <SavingMath>X/1.0</SavingMath>
+    <Offset>1</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Veh_Sys</Category>
+    <Units>Platform_Option_Table_Type</Units>
+    <Values>0 - 1</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Allows selection of options for a given platform., Units: Platform_Option_Table_Type</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Type_Of_Discrete_Gear_Select</Name>
+    <SearchStr>0C 39 00 01 @ @ @ @ 66 * 16 38</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Selection_List</ColHeaders>
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>2</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Veh_Sys</Category>
+    <Units>Selection_List</Units>
+    <Values>Enum: 0:_None,1:_PRNDL_Equipped,2:_PN_Switch_Equipped</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Describes if the vehicle is equipped with PRNDL input, Park/Neutral switch or neither., Units: Selection_List</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Type_Of_Instrument_Cluster*1mb only</Name>
+    <SearchStr>67 * 4A 39 @ @ @ @ 66 18 4a</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Instrument_Cluster_Type</ColHeaders>
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Veh_Sys</Category>
+    <Units>Instrument_Cluster_Type</Units>
+    <Values>Enum: 0:PPEI_Or_Smart_Cluster,1:Discrete_Wired_Cluster</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Descibe the type of instrument cluster supported. Used byClass 2 to determine correct data for Mode 22 PID 1103(and potentially other areas, Units: Instrument_Cluster_Type</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Drivetrain_Type</Name>
+    <SearchStr>38 * * 14 39 @ @ @ @ 0C 02 00 01</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Drivetrain_Type</ColHeaders>
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>4</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Veh_Sys</Category>
+    <Units>Drivetrain_Type</Units>
+    <Values>Enum: 0:_Dual_Axle,1:_Four_Wheel_Drive_ATC,2:_Four_Wheel_Drive_No_ATC,3:_Two_Wheel_Drive,4:_All_Wheel_Drive</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Describes the type of drivetrain used on the vehicle, Units: Drivetrain_Type</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Platform</Name>
+    <SearchStr>39 @ @ @ @ C6 FC 00 0C 11 F0 39 B0 * * * *</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Platform_Type</ColHeaders>
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>12</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Veh_Sys</Category>
+    <Units>Platform_Type</Units>
+    <Values>Enum: 0:F,1:Y,2:V,3:GMT530,4:GMT540,5:GMT560,6:GMT610,7:GMT800,8:ML,9:ST,10:P,11:GMT370,12:H2</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Identifies platform type -- F, Y, V, GMT530, GMT540, GMT560,GMT610, GMT800, ML, ST, P, GMT370, H2., Units: Platform_Type</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Platform_99-00</Name>
+    <SearchStr>39 @ @ @ @ C6 C7 4A 30 39 B0 * * * * 67</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Platform_Type</ColHeaders>
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>8</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Veh_Sys</Category>
+    <Units>Platform_Type</Units>
+    <Values>Enum: 0:X,1:X,2:F,3:Y,4:X,5:GMT800,6:X,7:X,8:V</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Identifies platform type -- F, Y, V, GMT530, GMT540, GMT560,GMT610, GMT800, ML, ST, P, GMT370, H2., Units: Platform_Type</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>Type_Of_Fans_On_Vehicle</Name>
+    <SearchStr>e7 * 00 14 39 @ @ @ @ 0C 02 00 02</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Unitless</ColHeaders>
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>3</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Veh_Sys</Category>
+    <Units>Unitless</Units>
+    <Values>Enum: 0:Series_Parallel_Fans,1:Auxilliary_Fan,2:No_Fans,3:EV_Fan</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Type of engine cooling system supported on vehicle, Units: Unitless</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>VTD_Configuration</Name>
+    <SearchStr>4A 39 @ @ @ @ 66 0A 72 10 42 00 4E B9</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Unitless</ColHeaders>
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Veh_Sys</Category>
+    <Units>Unitless</Units>
+    <Values>Enum: 0:Class2_VTD,1:None_VTD</Values>
+    <RowMajor>true</RowMajor>
+    <Description>This is used to activate the different VTD functionalities within the PCM., Units: Unitless</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>VTD_Fail_Enabled_Bypass</Name>
     <SearchStr>4A 39 @ @ @ @ 66 00 * * 42 01 70 10 4E B9</SearchStr>
     <Rows>1</Rows>
     <Columns>1</Columns>
     <RowHeaders />
-    <ColHeaders />
-    <Math>X</Math>
-    <SavingMath>X</SavingMath>
+    <ColHeaders>BOOLEAN</ColHeaders>
+    <Math>X*1.0</Math>
+    <SavingMath>X/1.0</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
     <DataType>UBYTE</DataType>
     <Decimals>0</Decimals>
     <OutputType>Float</OutputType>
     <Min>0</Min>
-    <Max>255</Max>
+    <Max>1</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
-    <Category>VEH_SYS</Category>
+    <Category>Veh_Sys</Category>
+    <Units>BOOLEAN</Units>
+    <Values>0 - 1</Values>
     <RowMajor>true</RowMajor>
-    <Description>0=??,1=??</Description>
+    <Description>Enables or disables the theft Fail-Enabled mode.  Thiscapability is required for export vehicles. , Units: BOOLEAN</Description>
   </TableSeek>
   <TableSeek>
     <Bits>16</Bits>
     <Signed>false</Signed>
     <Floating>false</Floating>
-    <Name>KA_BARO_OFFSET</Name>
-    <SearchStr>11 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
+    <Name>Auto_Recirculation_Option</Name>
+    <SearchStr>80 00 07 16 39 @ @ @ @ 67 06 08</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>boolean</ColHeaders>
+    <Math>X*1.0</Math>
+    <SavingMath>X/1.0</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>1</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Category>Air_Conditioning</Category>
+    <Units>boolean</Units>
+    <Values>0 - 1</Values>
+    <RowMajor>true</RowMajor>
+    <Description>Auto recirculation mode is present on vehicle. , Units: boolean</Description>
+  </TableSeek>
+  <TableSeek>
+    <Bits>16</Bits>
+    <Signed>false</Signed>
+    <Floating>false</Floating>
+    <Name>AC_Pressure_Conversion</Name>
+    <SearchStr>0F F8 39 31 40 @ @ @ @ 31 C3</SearchStr>
     <Rows>18</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>RPM 400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600,6000,6400,6800,7200</RowHeaders>
-    <ColHeaders>TPS% 0,10,20,30,40,50,60,70,80,90,100</ColHeaders>
-    <Math>X*0.019531250000</Math>
-    <SavingMath>X</SavingMath>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>PSI</ColHeaders>
+    <Math>X*0.195312500000</Math>
+    <SavingMath>X/0.195312500000</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
     <DataType>UWORD</DataType>
-    <Decimals>2</Decimals>
+    <Decimals>4</Decimals>
     <OutputType>Float</OutputType>
     <Min>0</Min>
-    <Max>255</Max>
+    <Max>500</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
-    <Category>BAROMETER</Category>
-    <Units>0-104.98 KPA</Units>
+    <Category>Air_Conditioning</Category>
+    <Units>PSI</Units>
+    <Values>0 - 500</Values>
     <RowMajor>true</RowMajor>
-    <Description>"Sea level pressure offset to be added to the part throttle manifold pressure to correct the barometric pressure., Units: kPA"</Description>
+    <Description>Convert Raw, non-linear, AD input for AC pressure transducerto units of PSI, Units: PSI</Description>
   </TableSeek>
   <TableSeek>
     <Bits>16</Bits>
     <Signed>false</Signed>
     <Floating>false</Floating>
-    <Name>KA_PE_DELAY_ADJUSTMENT</Name>
-    <SearchStr>0E 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
-    <Rows>15</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>RPM 0,400,800,1200,1600,2000,2400,2800,3200,3600,4000,4400,4800,5200,5600</RowHeaders>
-    <ColHeaders>TPS% 0,10,20,30,40,50,60,70,80,90,100</ColHeaders>
-    <Math>X*0.006250000000</Math>
+    <Name>Type_Of_AC_On_Vehicle</Name>
+    <SearchStr>0C 39 00 05 @ @ @ @ 67 06</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Unitless</ColHeaders>
+    <Math>X</Math>
     <SavingMath>X</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <DataType>UWORD</DataType>
-    <Decimals>2</Decimals>
+    <DataType>UBYTE</DataType>
+    <Decimals>4</Decimals>
     <OutputType>Float</OutputType>
     <Min>0</Min>
-    <Max>255</Max>
+    <Max>5</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
-    <Category>FUEL_EQ</Category>
-    <Units>0-409 seconds</Units>
+    <Category>Air_Conditioning</Category>
+    <Units>Unitless</Units>
+    <Values>Enum: 0:PPEI_V7,1:PPEI_Cycling,2:Non_PPEI_V7,3:Non_PPEI_Cycling,4:Passive_AC,5:No_AC</Values>
     <RowMajor>true</RowMajor>
-    <Description>"Amount the PE_Delay counter will be decremented by each second PE and PE_Delay conditions are met. Based on engine speed and throttle., Units: Seconds"</Description>
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>KA_ETC_AIR_A0_FILT_COEF</Name>
-    <SearchStr>10 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
-    <Rows>17</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>RPM 0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000</RowHeaders>
-    <ColHeaders>ROtation 0,10,20,30,40,50,60,70,80,90,100</ColHeaders>
-    <Math>X*0.000488281250</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>2</UseHit>
-    <Range />
-    <Segments />
-    <Category>ETC_DIAG</Category>
-    <Units>-1~1 ms</Units>
-    <RowMajor>true</RowMajor>
-    <Description>" MAP based airflow diagnostic A0 filter time constant in msecs. , Units: Milliseconds"</Description>
+    <Description>Type of Air Conditioning System supported, Units: Unitless</Description>
   </TableSeek>
   <TableSeek>
     <Bits>16</Bits>
     <Signed>false</Signed>
     <Floating>false</Floating>
-    <Name>KA_ETC_AIR_B0_FILT_COEF</Name>
-    <SearchStr>10 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
-    <Rows>17</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>RPM 0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000</RowHeaders>
-    <ColHeaders>ROtation 0,10,20,30,40,50,60,70,80,90,100</ColHeaders>
-    <Math>X*0.000488281250</Math>
-    <SavingMath>X</SavingMath>
+    <Name>Column_Lock_Present</Name>
+    <SearchStr>66 00 00 9A 4A 39 @ @ @ @</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>Boolean</ColHeaders>
+    <Math>X*1.0</Math>
+    <SavingMath>X/1.0</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
-    <DataType>UWORD</DataType>
-    <Decimals>2</Decimals>
+    <DataType>UBYTE</DataType>
+    <Decimals>0</Decimals>
     <OutputType>Float</OutputType>
     <Min>0</Min>
-    <Max>255</Max>
+    <Max>1</Max>
     <UseHit>1</UseHit>
     <Range />
     <Segments />
-    <Category>ETC_DIAG</Category>
-    <Units>0-1 ms</Units>
+    <Category>Column_Lock</Category>
+    <Units>Boolean</Units>
+    <Values>0 - 1</Values>
     <RowMajor>true</RowMajor>
-    <Description>" MAP based airflow diagnostic B0 filter time constant in msecs. , Units: Milliseconds"</Description>
-  </TableSeek>
-  <TableSeek>
-    <Bits>16</Bits>
-    <Signed>true</Signed>
-    <Floating>false</Floating>
-    <Name>KA_ETC_MAF_FILT_A0_COEF</Name>
-    <SearchStr>10 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
-    <Rows>17</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>RPM 0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000</RowHeaders>
-    <ColHeaders>ROtation 0,10,20,30,40,50,60,70,80,90,100</ColHeaders>
-    <Math>X*0.000488281250</Math>
-    <SavingMath>X</SavingMath>
-    <Offset>0</Offset>
-    <ConditionalOffset>false</ConditionalOffset>
-    <DataType>SWORD</DataType>
-    <Decimals>2</Decimals>
-    <OutputType>Float</OutputType>
-    <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>4</UseHit>
-    <Range />
-    <Segments />
-    <Category>ETC_DIAG</Category>
-    <Units>-1~1 ms</Units>
-    <RowMajor>true</RowMajor>
-    <Description>" MAF based airflow diagnostic A0 filter time constant in msecs. , Units: Milliseconds"</Description>
+    <Description>This calibration enables/disables the Column Lockfunctionality. Currently ONLY Y car should be TRUE., Units: Boolean</Description>
   </TableSeek>
   <TableSeek>
     <Bits>16</Bits>
     <Signed>false</Signed>
     <Floating>false</Floating>
-    <Name>KA_ETC_MAF_FILT_B0_COEF</Name>
-    <SearchStr>10 00 E2 48 74 k0B 20 7C @ @ @ @ 4E B9</SearchStr>
-    <Rows>17</Rows>
-    <Columns>0</Columns>
-    <RowHeaders>RPM 0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000</RowHeaders>
-    <ColHeaders>ROtation 0,10,20,30,40,50,60,70,80,90,100</ColHeaders>
-    <Math>X*0.000488281250</Math>
-    <SavingMath>X</SavingMath>
+    <Name>Column_Lock_VSS_Fuel_Disable</Name>
+    <SearchStr>60 40 36 39 @ @ @ @ B6 78</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>MPH/Sec</ColHeaders>
+    <Math>X*0.007812500000</Math>
+    <SavingMath>X/0.007812500000</SavingMath>
     <Offset>0</Offset>
     <ConditionalOffset>false</ConditionalOffset>
     <DataType>UWORD</DataType>
-    <Decimals>2</Decimals>
+    <Decimals>4</Decimals>
     <OutputType>Float</OutputType>
     <Min>0</Min>
-    <Max>255</Max>
-    <UseHit>3</UseHit>
+    <Max>255.992188</Max>
+    <UseHit>1</UseHit>
     <Range />
     <Segments />
-    <Category>ETC_DIAG</Category>
-    <Units>0-1 ms</Units>
+    <Category>Column_Lock</Category>
+    <Units>MPH/Sec</Units>
+    <Values>0 - 255.992188</Values>
     <RowMajor>true</RowMajor>
-    <Description>" MAF based airflow diagnostic B0 filter time constant in msecs. , Units: Milliseconds"</Description>
+    <Description>Vehicle speed at which the fuel must be discontinuedwhen the steering column can not be unlocked., Units: MPH</Description>
   </TableSeek>
 </ArrayOfTableSeek>

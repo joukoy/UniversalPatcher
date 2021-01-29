@@ -1438,6 +1438,19 @@ public class upatcher
             Debug.WriteLine(ex.Message);
         }
     }
+
+    public static int findTableDataId(TableData refTd, PcmFile pcm1)
+    {
+        for (int t = 0; t < pcm1.tableDatas.Count; t++)
+        {
+            if (pcm1.tableDatas[t].TableName == refTd.TableName && pcm1.tableDatas[t].Category == refTd.Category)
+            {
+                return t;
+            }
+        }
+        return -1;
+    }
+
     public static void Logger(string LogText, Boolean NewLine = true)
     {
         frmpatcher.Logger(LogText, NewLine);

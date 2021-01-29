@@ -156,7 +156,9 @@ namespace UniversalPatcher
                 string defaultXml = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
                 if (File.Exists(defaultXml))
                 {
-                    LoadTableList(defaultXml);
+                    Logger(PCM.LoadTableList(defaultXml));
+                    currentXmlFile = PCM.configFileFullName;
+                    refreshTablelist();
                     bool haveDTC = false;
                     for (int t = 0; t < PCM.tableDatas.Count; t++)
                     {
@@ -377,51 +379,11 @@ namespace UniversalPatcher
             Logger("OK");
         }
 
-        private void LoadTableList(string fName="")
-        {
-            try
-            {
-
-                string defName = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
-                //string defName = PCM.OS + ".xml";
-                if (fName == "")
-                    fName = SelectFile("Select XML File", "XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
-                Logger("Loading file: " + fName, false);
-                if (fName.Length == 0)
-                    return;
-                if (File.Exists(fName))
-                {
-                    currentXmlFile = fName;
-                    Debug.WriteLine("Loading " + fName + "...");
-                    System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
-                    System.IO.StreamReader file = new System.IO.StreamReader(fName);
-                    PCM.tableDatas = (List<TableData>)reader.Deserialize(file);
-                    file.Close();
-                }
-                for (int t = 0; t < PCM.tableDatas.Count; t++)
-                {
-                    string category = PCM.tableDatas[t].Category;
-                    if (!PCM.tableCategories.Contains(category))
-                        PCM.tableCategories.Add(category);
-                }
-                Logger(" [OK]");
-                refreshTablelist();
-                Application.DoEvents();
-                //dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("Error, line " + line + ": " + ex.Message);
-            }
-        }
         private void btnLoadXml_Click(object sender, EventArgs e)
         {
-            LoadTableList();
+            Logger(PCM.LoadTableList());
+            currentXmlFile = PCM.configFileFullName;
+            refreshTablelist();
         }
 
         private void SaveTableList(string fName ="")
@@ -625,7 +587,9 @@ namespace UniversalPatcher
 
         private void loadXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            LoadTableList();
+            PCM.LoadTableList();
+            refreshTablelist();
+            currentXmlFile = PCM.configFileFullName;
         }
 
         private void saveXMLToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1244,17 +1208,6 @@ namespace UniversalPatcher
             }
         }
 
-        private int findTableDataId(TableData refTd, PcmFile pcm1)
-        {
-            for (int t = 0; t < pcm1.tableDatas.Count; t++)
-            {
-                if (pcm1.tableDatas[t].TableName == refTd.TableName && pcm1.tableDatas[t].Category == refTd.Category)
-                {
-                    return t;
-                }
-            }
-            return -1;
-        }
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             txtDescription.Text = "";
@@ -1912,6 +1865,17 @@ namespace UniversalPatcher
             TableData newTd = PCM.tableDatas[lastSelectedId].ShallowCopy();
             PCM.tableDatas.Insert(lastSelectedId, newTd);
             filterTables();
+        }
+
+        private void searchAndCompareToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmMassCompare fmc = new frmMassCompare();
+            fmc.PCM = PCM;
+            int id = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
+            fmc.td = PCM.tableDatas[id];
+            fmc.Text = "Search and Compare: " + fmc.td.TableName;
+            fmc.Show();
+            fmc.selectCmpFiles();
         }
     }
 }

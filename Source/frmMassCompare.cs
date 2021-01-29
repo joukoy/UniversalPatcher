@@ -1,0 +1,245 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using static upatcher;
+
+namespace UniversalPatcher
+{
+    public partial class frmMassCompare : Form
+    {
+        public frmMassCompare()
+        {
+            InitializeComponent();
+        }
+
+        public PcmFile PCM;
+        public TableData td;
+
+        private void peekTableValues(int ind, PcmFile peekPCM)
+        {
+            try
+            {
+                frmTableEditor frmT = new frmTableEditor();
+                frmT.PCM = peekPCM;
+                frmT.disableMultiTable = true;
+                frmT.loadTable(peekPCM.tableDatas[ind]);
+                //txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
+                //txtResult.SelectionColor = Color.Blue;
+                if (peekPCM.tableDatas[ind].Rows == 1 && peekPCM.tableDatas[ind].Columns == 1)
+                {
+                    double curVal = frmT.getValue((uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind]);
+                    UInt64 rawVal = frmT.getRawValue((uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind]);
+                    string valTxt = curVal.ToString();
+                    string unitTxt = " " + peekPCM.tableDatas[ind].Units;
+                    string maskTxt = "";
+                    if (peekPCM.tableDatas[ind].OutputType == OutDataType.Flag || peekPCM.tableDatas[ind].Units.ToLower().StartsWith("boolean"))
+                    {
+                        if (peekPCM.tableDatas[ind].BitMask != null && peekPCM.tableDatas[ind].BitMask.Length > 0)
+                        {
+                            unitTxt = "";
+                            UInt64 maskVal = Convert.ToUInt64(peekPCM.tableDatas[ind].BitMask.Replace("0x", ""), 16);
+                            if ((rawVal & maskVal) == maskVal)
+                                valTxt = "Set";
+                            else
+                                valTxt = "Unset";
+                            string maskBits = Convert.ToString((Int64)maskVal, 2);
+                            int bit = -1;
+                            for (int i = 0; 1 <= maskBits.Length; i++)
+                            {
+                                if (((maskVal & (UInt64)(1 << i)) != 0))
+                                {
+                                    bit = i + 1;
+                                    break;
+                                }
+                            }
+                            if (bit > -1)
+                            {
+                                string rawBinVal = Convert.ToString((Int64)rawVal, 2);
+                                rawBinVal = rawBinVal.PadLeft(getBits(peekPCM.tableDatas[ind].DataType), '0');
+                                maskTxt = " [" + rawBinVal + "], bit $" + bit.ToString();
+                            }
+                        }
+                        else
+                        {
+                            unitTxt = ", Unset/Set";
+                            if (curVal > 0)
+                                valTxt = "Set, " + valTxt;
+                            else
+                                valTxt = "Unset, " + valTxt;
+                        }
+                    }
+                    else if (peekPCM.tableDatas[ind].Values.StartsWith("Enum: "))
+                    {
+                        Dictionary<double, string> possibleVals = frmT.parseEnumHeaders(peekPCM.tableDatas[ind].Values.Replace("Enum: ", ""));
+                        if (possibleVals.ContainsKey(curVal))
+                            unitTxt = " (" + possibleVals[curVal] + ")";
+                        else
+                            unitTxt = " (Out of range)";
+                    }
+                    string formatStr = "X" + (getElementSize(peekPCM.tableDatas[ind].DataType) * 2).ToString();
+                    Logger("Current value: " + valTxt + unitTxt + " [" + rawVal.ToString(formatStr) + "]" + maskTxt);
+                    //txtResult.AppendText(Environment.NewLine);
+                }
+                else
+                {
+                    string tblData = ""; //"Current values: " + Environment.NewLine;
+                    uint addr = (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset);
+                    if (peekPCM.tableDatas[ind].RowMajor)
+                    {
+                        for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
+                        {
+                            for (int c = 0; c < peekPCM.tableDatas[ind].Columns; c++)
+                            {
+                                double curVal = frmT.getValue(addr, peekPCM.tableDatas[ind]);
+                                addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
+                                tblData += "[" + curVal.ToString("#0.0") + "]";
+                            }
+                            tblData += Environment.NewLine;
+                        }
+                    }
+                    else
+                    {
+                        List<string> tblRows = new List<string>();
+                        for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
+                            tblRows.Add("");
+                        for (int c = 0; c < peekPCM.tableDatas[ind].Columns; c++)
+                        {
+
+                            for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
+                            {
+                                double curVal = frmT.getValue(addr, peekPCM.tableDatas[ind]);
+                                addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
+                                tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
+                            }
+                        }
+                        for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
+                            tblData += tblRows[r];
+                    }
+                    Logger(tblData);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+        }
+
+        private void compareTable(string fName)
+        {
+            LoggerBold(fName);
+            PcmFile cmpPCM = new PcmFile(fName,true,"",null);
+            loadConfigforPCM(cmpPCM);
+            int id = findTableDataId(td, cmpPCM);
+            if (id < 0)
+            {
+                Logger("Table not found");
+                return;
+            }
+            peekTableValues(id,cmpPCM);
+
+        }
+        private void loadConfigforPCM(PcmFile cmpPCM)
+        {
+            if (!Properties.Settings.Default.disableTunerAutoloadSettings)
+            {
+                string defaultXml = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
+                if (File.Exists(defaultXml))
+                {
+                    cmpPCM.LoadTableList(defaultXml);
+                    bool haveDTC = false;
+                    for (int t = 0; t < PCM.tableDatas.Count; t++)
+                    {
+                        if (PCM.tableDatas[t].TableName.StartsWith("DTC"))
+                        {
+                            haveDTC = true;
+                            break;
+                        }
+                    }
+                    if (!haveDTC)
+                        importDTC();
+                }
+                else
+                {
+                    Logger("File not found: " + defaultXml);
+                    importDTC();
+                    importTableSeek();
+                }
+            }
+
+        }
+        private void importTableSeek()
+        {
+            if (PCM.foundTables.Count == 0)
+            {
+                TableSeek TS = new TableSeek();
+                Logger("Seeking tables...", false);
+                Logger(TS.seekTables(PCM));
+            }
+            Logger("Importing TableSeek tables... ", false);
+            for (int i = 0; i < PCM.foundTables.Count; i++)
+            {
+                TableData tableData = new TableData();
+                tableData.importFoundTable(i, PCM);
+                PCM.tableDatas.Add(tableData);
+            }
+            Logger("OK");
+        }
+
+        private void importDTC()
+        {
+            Logger("Importing DTC codes... ", false);
+            TableData tdTmp = new TableData();
+            tdTmp.importDTC(PCM, ref PCM.tableDatas);
+            Logger(" [OK]");
+        }
+
+        public void selectCmpFiles()
+        {
+            frmFileSelection frmF = new frmFileSelection();
+            frmF.btnOK.Text = "Compare files";
+            frmF.Text = "Search and Compare: " + td.TableName;
+            frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+            if (frmF.ShowDialog(this) == DialogResult.OK)
+            {
+                for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                {
+                    string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
+                    compareTable(FileName);
+                }
+
+            }
+
+        }
+        private void btnSelectFiles_Click(object sender, EventArgs e)
+        {
+            selectCmpFiles();
+        }
+        public void LoggerBold(string LogText, Boolean NewLine = true)
+        {
+            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Bold);
+            txtResult.AppendText(LogText);
+            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
+            if (NewLine)
+                txtResult.AppendText(Environment.NewLine);
+        }
+
+        public void Logger(string LogText, Boolean NewLine = true)
+        {
+            int Start = txtResult.Text.Length;
+            txtResult.AppendText(LogText);
+            if (NewLine)
+                txtResult.AppendText(Environment.NewLine);
+        }
+
+        private void frmMassCompare_Load(object sender, EventArgs e)
+        {
+        }
+    }
+}

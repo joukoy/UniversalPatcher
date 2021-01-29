@@ -108,6 +108,49 @@ namespace UniversalPatcher
         {
             return (PcmFile)this.MemberwiseClone();
         }
+        public string LoadTableList(string fName = "")
+        {
+            string retVal = "";
+            try
+            {
+
+                string defName = Path.Combine(Application.StartupPath, "Tuner", OS + ".xml");
+                //string defName = PCM.OS + ".xml";
+                if (fName == "")
+                    fName = SelectFile("Select XML File", "XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
+                if (fName.Length == 0)
+                    return retVal;
+                retVal = "Loading file: " + fName;
+                if (File.Exists(fName))
+                {
+                    Debug.WriteLine("Loading " + fName + "...");
+                    System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
+                    System.IO.StreamReader file = new System.IO.StreamReader(fName);
+                    tableDatas = (List<TableData>)reader.Deserialize(file);
+                    file.Close();
+                }
+                for (int t = 0; t < tableDatas.Count; t++)
+                {
+                    string category = tableDatas[t].Category;
+                    if (!tableCategories.Contains(category))
+                        tableCategories.Add(category);
+                }
+                retVal += " [OK]" + Environment.NewLine;
+                Application.DoEvents();
+                //dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, line " + line + ": " + ex.Message);
+                retVal += "Error, line " + line + ": " + ex.Message;
+            }
+            return retVal;
+        }
 
         public void addTableDatas(string name)
         {
