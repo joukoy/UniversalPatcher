@@ -501,5 +501,41 @@ namespace UniversalPatcher.Properties {
                 this["frmTdWindowLocaction"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size MassCompareWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["MassCompareWindowSize"]));
+            }
+            set {
+                this["MassCompareWindowSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.Forms.FormWindowState MassCompareWindowState {
+            get {
+                return ((global::System.Windows.Forms.FormWindowState)(this["MassCompareWindowState"]));
+            }
+            set {
+                this["MassCompareWindowState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point MassCompareWindowLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["MassCompareWindowLocation"]));
+            }
+            set {
+                this["MassCompareWindowLocation"] = value;
+            }
+        }
     }
 }

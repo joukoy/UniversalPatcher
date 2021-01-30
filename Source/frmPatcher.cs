@@ -64,6 +64,7 @@ namespace UniversalPatcher
                 frmSegmenList frmSL = new frmSegmenList();
                 frmSL.LoadFile(args[1]);
             }*/
+            LogReceivers = new List<RichTextBox>();
             basefile = new PcmFile();
             tableSeeks = new List<TableSeek>();
 
@@ -1149,7 +1150,6 @@ namespace UniversalPatcher
             }
             if (chkLogtodisplay.Checked)
             { 
-                int Start = txtResult.Text.Length;
                 txtResult.AppendText(LogText);
                 if (NewLine)
                     txtResult.AppendText(Environment.NewLine);

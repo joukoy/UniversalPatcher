@@ -22,8 +22,47 @@ namespace UniversalPatcher
         public PcmFile PCM;
         public TableData td;
 
-        private void peekTableValues(int ind, PcmFile peekPCM)
+        private void frmMassCompare_Load(object sender, EventArgs e)
         {
+            if (Properties.Settings.Default.MainWindowPersistence)
+            {
+                if (Properties.Settings.Default.MassCompareWindowSize.Width > 0 || Properties.Settings.Default.MassCompareWindowSize.Height > 0)
+                {
+                    this.WindowState = Properties.Settings.Default.MassCompareWindowState;
+                    if (this.WindowState == FormWindowState.Minimized)
+                    {
+                        this.WindowState = FormWindowState.Normal;
+                    }
+                    this.Location = Properties.Settings.Default.MassCompareWindowLocation;
+                    this.Size = Properties.Settings.Default.MassCompareWindowSize;
+                }
+
+            }
+
+            setupDataGrid();
+        }
+        private void FrmMassCompare_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
+        {
+            if (Properties.Settings.Default.MainWindowPersistence)
+            {
+                Properties.Settings.Default.MassCompareWindowState = this.WindowState;
+                if (this.WindowState == FormWindowState.Normal)
+                {
+                    Properties.Settings.Default.MassCompareWindowLocation = this.Location;
+                    Properties.Settings.Default.MassCompareWindowSize = this.Size;
+                }
+                else
+                {
+                    Properties.Settings.Default.MassCompareWindowLocation = this.RestoreBounds.Location;
+                    Properties.Settings.Default.MassCompareWindowSize = this.RestoreBounds.Size;
+                }
+            }
+
+        }
+
+        private string peekTableValues(int ind, PcmFile peekPCM)
+        {
+            string retVal = "";
             try
             {
                 frmTableEditor frmT = new frmTableEditor();
@@ -84,7 +123,7 @@ namespace UniversalPatcher
                             unitTxt = " (Out of range)";
                     }
                     string formatStr = "X" + (getElementSize(peekPCM.tableDatas[ind].DataType) * 2).ToString();
-                    Logger("Current value: " + valTxt + unitTxt + " [" + rawVal.ToString(formatStr) + "]" + maskTxt);
+                    retVal = valTxt + unitTxt + " [" + rawVal.ToString(formatStr) + "]" + maskTxt;
                     //txtResult.AppendText(Environment.NewLine);
                 }
                 else
@@ -120,17 +159,31 @@ namespace UniversalPatcher
                             }
                         }
                         for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
-                            tblData += tblRows[r];
+                            tblData += tblRows[r] + Environment.NewLine;
                     }
-                    Logger(tblData);
+                    retVal = tblData;
                 }
             }
             catch (Exception ex)
             {
                 LoggerBold(ex.Message);
             }
+            return retVal;
         }
 
+        private void setupDataGrid()
+        {
+            //dataGridView1.Columns.Add("File", "File");
+            dataGridView1.Columns.Add("OS", "OS");
+            dataGridView1.Columns.Add("Segment", "Segment");
+            dataGridView1.Columns.Add("PN", "PN");
+            dataGridView1.Columns.Add("Table Name", "Table Name");
+            dataGridView1.Columns.Add("Table Address", "Table Address");
+            dataGridView1.Columns.Add("Stock", "Stcok");
+            dataGridView1.Columns.Add("Current Value", "Current Value");
+            dataGridView1.Columns["Current Value"].DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            dataGridView1.RowHeadersWidth = 200;
+        }
         private void compareTable(string fName)
         {
             LoggerBold(fName);
@@ -142,61 +195,74 @@ namespace UniversalPatcher
                 Logger("Table not found");
                 return;
             }
-            peekTableValues(id,cmpPCM);
-
+            TableData cmpTd = cmpPCM.tableDatas[id];
+            int row = dataGridView1.Rows.Add();
+            dataGridView1.Rows[row].HeaderCell.Value = cmpPCM.FileName;
+            dataGridView1.Rows[row].Cells["OS"].Value = cmpPCM.OS;
+            dataGridView1.Rows[row].Cells["Segment"].Value = cmpPCM.GetSegmentName(cmpTd.addrInt);
+            int segNr = cmpPCM.GetSegmentNumber(cmpTd.addrInt);
+            if (segNr > -1)
+            {
+                dataGridView1.Rows[row].Cells["PN"].Value = cmpPCM.segmentinfos[segNr].PN;
+                dataGridView1.Rows[row].Cells["Stock"].Value = cmpPCM.segmentinfos[segNr].Stock;
+            }
+            dataGridView1.Rows[row].Cells["Table Name"].Value = cmpTd.TableName;
+            dataGridView1.Rows[row].Cells["Table Address"].Value = cmpTd.Address;
+            dataGridView1.Rows[row].Cells["Current Value"].Value = peekTableValues(id, cmpPCM);
+            //dataGridView1.Rows[row].Height = 50;
         }
         private void loadConfigforPCM(PcmFile cmpPCM)
         {
             if (!Properties.Settings.Default.disableTunerAutoloadSettings)
             {
-                string defaultXml = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
+                string defaultXml = Path.Combine(Application.StartupPath, "Tuner", cmpPCM.OS + ".xml");
                 if (File.Exists(defaultXml))
                 {
                     cmpPCM.LoadTableList(defaultXml);
                     bool haveDTC = false;
-                    for (int t = 0; t < PCM.tableDatas.Count; t++)
+                    for (int t = 0; t < cmpPCM.tableDatas.Count; t++)
                     {
-                        if (PCM.tableDatas[t].TableName.StartsWith("DTC"))
+                        if (cmpPCM.tableDatas[t].TableName.StartsWith("DTC"))
                         {
                             haveDTC = true;
                             break;
                         }
                     }
                     if (!haveDTC)
-                        importDTC();
+                        importDTC(cmpPCM);
                 }
                 else
                 {
                     Logger("File not found: " + defaultXml);
-                    importDTC();
-                    importTableSeek();
+                    importDTC(cmpPCM);
+                    importTableSeek(cmpPCM);
                 }
             }
 
         }
-        private void importTableSeek()
+        private void importTableSeek(PcmFile cmpPCM)
         {
-            if (PCM.foundTables.Count == 0)
+            if (cmpPCM.foundTables.Count == 0)
             {
                 TableSeek TS = new TableSeek();
                 Logger("Seeking tables...", false);
-                Logger(TS.seekTables(PCM));
+                Logger(TS.seekTables(cmpPCM));
             }
             Logger("Importing TableSeek tables... ", false);
-            for (int i = 0; i < PCM.foundTables.Count; i++)
+            for (int i = 0; i < cmpPCM.foundTables.Count; i++)
             {
                 TableData tableData = new TableData();
-                tableData.importFoundTable(i, PCM);
-                PCM.tableDatas.Add(tableData);
+                tableData.importFoundTable(i, cmpPCM);
+                cmpPCM.tableDatas.Add(tableData);
             }
             Logger("OK");
         }
 
-        private void importDTC()
+        private void importDTC(PcmFile cmpPCM)
         {
             Logger("Importing DTC codes... ", false);
             TableData tdTmp = new TableData();
-            tdTmp.importDTC(PCM, ref PCM.tableDatas);
+            tdTmp.importDTC(cmpPCM, ref cmpPCM.tableDatas);
             Logger(" [OK]");
         }
 
@@ -215,7 +281,9 @@ namespace UniversalPatcher
                 }
 
             }
-
+            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+            Logger("Done");
         }
         private void btnSelectFiles_Click(object sender, EventArgs e)
         {
@@ -237,9 +305,39 @@ namespace UniversalPatcher
             if (NewLine)
                 txtResult.AppendText(Environment.NewLine);
         }
-
-        private void frmMassCompare_Load(object sender, EventArgs e)
+        private void saveCSV()
         {
+            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+            Logger("Writing to file: " + Path.GetFileName(FileName), false);
+            using (StreamWriter writetext = new StreamWriter(FileName))
+            {
+                string row = "File;";
+                for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                {
+                    row += dataGridView1.Columns[i].HeaderText + ";";
+                }
+                writetext.WriteLine(row);
+                for (int r = 0; r < (dataGridView1.Rows.Count - 1); r++)
+                {
+                    row = dataGridView1.Rows[r].HeaderCell.Value.ToString();
+                    for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                    {
+                        if (dataGridView1.Rows[r].Cells[i].Value != null)
+                            row += dataGridView1.Rows[r].Cells[i].Value.ToString();
+                        row += ";";
+                    }
+                    writetext.WriteLine(row);
+                }
+            }
+            Logger(" [OK]");
+
+        }
+
+        private void btnSaveCsv_Click(object sender, EventArgs e)
+        {
+            saveCSV();
         }
     }
 }

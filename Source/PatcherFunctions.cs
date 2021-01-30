@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using UniversalPatcher.Properties;
 using System.Linq;
+using System.Drawing;
 
 public class upatcher
 {
@@ -330,6 +331,7 @@ public class upatcher
     public static List<TableSeek> tableSeeks;
     public static List<UniversalPatcher.TableData> XdfElements;
     public static List<Units> unitList;
+    public static List<RichTextBox> LogReceivers;
 
     public static string tableSearchFile;
     public static string tableSeekFile = "";
@@ -1454,10 +1456,25 @@ public class upatcher
     public static void Logger(string LogText, Boolean NewLine = true)
     {
         frmpatcher.Logger(LogText, NewLine);
+        for (int l=0; l< LogReceivers.Count; l++)
+        {
+            LogReceivers[l].AppendText(LogText);
+            if (NewLine)
+                LogReceivers[l].AppendText(Environment.NewLine);
+        }
     }
     public static void LoggerBold(string LogText, Boolean NewLine = true)
     {
         frmpatcher.LoggerBold(LogText, NewLine);
+        for (int l = 0; l < LogReceivers.Count; l++)
+        {
+            LogReceivers[l].SelectionFont = new Font(LogReceivers[l].Font, FontStyle.Bold);
+            LogReceivers[l].AppendText(LogText);
+            LogReceivers[l].SelectionFont = new Font(LogReceivers[l].Font, FontStyle.Regular);
+            if (NewLine)
+                LogReceivers[l].AppendText(Environment.NewLine);
+
+        }
     }
 
     public static UInt64 readTableData(byte[] buf, TableData td)

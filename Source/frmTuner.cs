@@ -47,6 +47,9 @@ namespace UniversalPatcher
             deleteRowToolStripMenuItem.Enabled = Properties.Settings.Default.TunerConfigMode;
             editRowToolStripMenuItem.Enabled = Properties.Settings.Default.TunerConfigMode;
             duplicateTableConfigToolStripMenuItem.Enabled = Properties.Settings.Default.TunerConfigMode;
+            disableConfigAutloadToolStripMenuItem.Checked = Properties.Settings.Default.disableTunerAutoloadSettings;
+
+            LogReceivers.Add(txtResult);
 
             if (Properties.Settings.Default.MainWindowPersistence)
             {
@@ -158,18 +161,8 @@ namespace UniversalPatcher
                 {
                     Logger(PCM.LoadTableList(defaultXml));
                     currentXmlFile = PCM.configFileFullName;
+                    importDTC();
                     refreshTablelist();
-                    bool haveDTC = false;
-                    for (int t = 0; t < PCM.tableDatas.Count; t++)
-                    {
-                        if (PCM.tableDatas[t].TableName.StartsWith("DTC"))
-                        {
-                            haveDTC = true;
-                            break;
-                        }
-                    }
-                    if (!haveDTC)
-                        importDTC();
                 }
                 else
                 {
@@ -295,7 +288,6 @@ namespace UniversalPatcher
 
         public void Logger(string LogText, Boolean NewLine = true)
         {
-            int Start = txtResult.Text.Length;
             txtResult.AppendText(LogText);
             if (NewLine)
                 txtResult.AppendText(Environment.NewLine);
@@ -608,10 +600,23 @@ namespace UniversalPatcher
         private void importDTC()
         {
             Logger("Importing DTC codes... ", false);
-            TableData tdTmp = new TableData();
-            tdTmp.importDTC(PCM, ref PCM.tableDatas);
-            Logger(" [OK]");
-            filterTables();
+            bool haveDTC = false;
+            for (int t = 0; t < PCM.tableDatas.Count; t++)
+            {
+                if (PCM.tableDatas[t].TableName.StartsWith("DTC"))
+                {
+                    haveDTC = true;
+                    Logger(" DTC codes already defined");
+                    break;
+                }
+            }
+            if (!haveDTC)
+            {
+                TableData tdTmp = new TableData();
+                tdTmp.importDTC(PCM, ref PCM.tableDatas);
+                Logger(" [OK]");
+                filterTables();
+            }
         }
         private void importDTCToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1389,10 +1394,6 @@ namespace UniversalPatcher
             }
 
         }
-        private void importXMLgeneratorCSVToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void saveXMLAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1786,10 +1787,6 @@ namespace UniversalPatcher
             importTinyTunerDB();
         }
 
-        private void xMgeneratorCSVToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            importXMLGeneratorCsv();
-        }
 
         private void cSVexperimentalToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1801,7 +1798,7 @@ namespace UniversalPatcher
             importXperimentalCsv2();
         }
 
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        private void addNewTableList()
         {
             frmData frmD = new frmData();
             frmD.Text = "Tablelist name:";
@@ -1822,6 +1819,11 @@ namespace UniversalPatcher
                 filterTables();
             }
 
+
+        }
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            addNewTableList();
         }
 
         private void insertRowToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1876,6 +1878,78 @@ namespace UniversalPatcher
             fmc.Text = "Search and Compare: " + fmc.td.TableName;
             fmc.Show();
             fmc.selectCmpFiles();
+        }
+
+
+        private void xMlgeneratorImportCSVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importXMLGeneratorCsv();
+        }
+
+        private void xMLGeneratorExportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            exportXMLgeneratorCSV();
+        }
+
+        private void loadTablelistxmlTableseekImportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PCM.LoadTableList();
+            importDTC();
+            importTableSeek();
+            filterTables();
+        }
+
+        private void loadTablelistnewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            addNewTableList();
+            PCM.LoadTableList();
+            filterTables();
+        }
+
+        private void openMultipleBINToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmFileSelection frmF = new frmFileSelection();
+            frmF.btnOK.Text = "Open files";
+            frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+            if (frmF.ShowDialog(this) == DialogResult.OK)
+            {
+                for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                {
+                    string newFile = frmF.listFiles.CheckedItems[i].Tag.ToString();
+                    Logger("Opening file: " + newFile);
+                    PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName, null);
+                    addtoCurrentFileMenu(newPCM);
+                    PCM = newPCM;
+                    loadConfigforPCM();
+                }
+
+            }
+
+        }
+
+        private void disableConfigAutloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            disableConfigAutloadToolStripMenuItem.Checked = !disableConfigAutloadToolStripMenuItem.Checked;
+            
+            Properties.Settings.Default.disableTunerAutoloadSettings = disableConfigAutloadToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
+
+        }
+
+        private void saveAllBINFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+            {
+                PcmFile pcmFile = (PcmFile)mi.Tag;
+                Logger("Saving file:" + pcmFile.FileName);
+                pcmFile.saveBin(pcmFile.FileName);
+            }
+            Logger("OK");
+        }
+
+        private void findDifferencesToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+
         }
     }
 }
