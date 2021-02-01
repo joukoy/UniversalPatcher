@@ -120,17 +120,20 @@ namespace UniversalPatcher
                     fName = SelectFile("Select XML File", "XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
                 if (fName.Length == 0)
                     return retVal;
+                List<TableData> tmpTableDatas = new List<TableData>();
                 retVal = "Loading file: " + fName;
                 if (File.Exists(fName))
                 {
                     Debug.WriteLine("Loading " + fName + "...");
                     System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
                     System.IO.StreamReader file = new System.IO.StreamReader(fName);
-                    tableDatas = (List<TableData>)reader.Deserialize(file);
+                    tmpTableDatas = (List<TableData>)reader.Deserialize(file);
                     file.Close();
                 }
-                for (int t = 0; t < tableDatas.Count; t++)
+                for (int t = 0; t < tmpTableDatas.Count; t++)
                 {
+                    tmpTableDatas[t].Origin = "xml";
+                    tableDatas.Add(tmpTableDatas[t]);
                     string category = tableDatas[t].Category;
                     if (!tableCategories.Contains(category))
                         tableCategories.Add(category);

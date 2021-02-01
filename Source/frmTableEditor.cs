@@ -1946,7 +1946,7 @@ namespace UniversalPatcher
             this.Text = "Tuner: " + tableName + " [";
             if (radioOriginal.Checked)
                 this.Text += PCM.FileName + "]";
-            if (radioDifference.Checked)
+            if (radioDifference.Checked || radioSideBySide.Checked)
                 this.Text += PCM.FileName + " <> " + compareEditor.PCM.FileName + "]";
             if (radioCompareFile.Checked)
                 this.Text += compareEditor.PCM.FileName + "]";

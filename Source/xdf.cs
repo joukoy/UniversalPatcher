@@ -58,7 +58,7 @@ namespace UniversalPatcher
                 {
                     TableData xdf = new TableData();
                     xdf.OS = PCM.OS;
-
+                    xdf.Origin = "xdf";
                     string RowHeaders = "";
                     string ColHeaders = "";
                     string addr = "";
@@ -173,6 +173,7 @@ namespace UniversalPatcher
                 {
                     TableData xdf = new TableData();
                     xdf.OS = PCM.OS;
+                    xdf.Origin = "xdf";
                     int elementSize = 0;
                     bool Signed = false;
                     bool Floating = false;
@@ -215,6 +216,7 @@ namespace UniversalPatcher
                 {
                     TableData xdf = new TableData();
                     xdf.OS = PCM.OS;
+                    xdf.Origin = "xdf";
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                     {
                         xdf.TableName = element.Element("title").Value;

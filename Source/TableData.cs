@@ -30,6 +30,7 @@ namespace UniversalPatcher
             Floating = false;
             OutputType = OutDataType.Float;
             DataType = InDataType.UNKNOWN;
+            Origin = "";
             Values = "";
             ExtraDescription = "";
         }
@@ -77,6 +78,7 @@ namespace UniversalPatcher
         public ushort Rows { get; set; }
         public string BitMask { get; set; }
         public bool RowMajor { get; set; }
+        public string Origin { get; set; }
         public string Values { get; set; }
         public string ColumnHeaders { get; set; }
         public string RowHeaders { get; set; }
@@ -114,6 +116,7 @@ namespace UniversalPatcher
             TableDescription = tSeek.Description;
             TableName = ft.Name;
             Units = tSeek.Units;
+            Origin = "seek";
             Values = tSeek.Values;
             Min = tSeek.Min;
             Max = tSeek.Max;
@@ -132,6 +135,7 @@ namespace UniversalPatcher
                 return;
             TableData dtcTd = new TableData();
             dtcCode dtc = PCM.dtcCodes[0];
+            dtcTd.Origin = "seek";
             dtcTd.addrInt = dtc.statusAddrInt;
             dtcTd.Category = "DTC";
             dtcTd.Columns = 1;
@@ -169,6 +173,7 @@ namespace UniversalPatcher
                 dtcTd.TableName = "DTC.MIL_Enable";
                 dtcTd.addrInt = dtc.milAddrInt;
                 dtcTd.Category = "DTC";
+                dtcTd.Origin = "seek";
                 //td.ColumnHeaders = "MIL";
                 dtcTd.Columns = 1;
                 dtcTd.OutputType = OutDataType.Flag;

@@ -213,7 +213,8 @@ namespace UniversalPatcher
                 {
                     TableData td = new TableData();
 
-                    td.OS = PCM.OS;                    
+                    td.OS = PCM.OS;
+                    td.Origin = "TinyTuner";
                     HexToUint(row["StartPosition"].ToString(), out td.addrInt);
                     //td.Address = td.AddrInt.ToString("X8");
                     td.Columns = Convert.ToUInt16(row["ColumnCount"]);

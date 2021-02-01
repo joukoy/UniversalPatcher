@@ -581,7 +581,7 @@ namespace UniversalPatcher
         {
             PCM.LoadTableList();
             refreshTablelist();
-            currentXmlFile = PCM.configFileFullName;
+            //currentXmlFile = PCM.configFileFullName;
         }
 
         private void saveXMLToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1922,7 +1922,7 @@ namespace UniversalPatcher
                     PCM = newPCM;
                     loadConfigforPCM();
                 }
-
+                selectPCM();
             }
 
         }
