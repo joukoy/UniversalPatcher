@@ -67,6 +67,7 @@ namespace UniversalPatcher
             this.cSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xDFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xMLGeneratorExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findDifferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadTablelistxmlTableseekImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -92,7 +93,7 @@ namespace UniversalPatcher
             this.txtDescription = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.findDifferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.searchAndCompareAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -192,35 +193,35 @@ namespace UniversalPatcher
             // loadBINToolStripMenuItem
             // 
             this.loadBINToolStripMenuItem.Name = "loadBINToolStripMenuItem";
-            this.loadBINToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadBINToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.loadBINToolStripMenuItem.Text = "Open BIN";
             this.loadBINToolStripMenuItem.Click += new System.EventHandler(this.loadBINToolStripMenuItem_Click);
             // 
             // saveBINToolStripMenuItem
             // 
             this.saveBINToolStripMenuItem.Name = "saveBINToolStripMenuItem";
-            this.saveBINToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveBINToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.saveBINToolStripMenuItem.Text = "&Save BIN";
             this.saveBINToolStripMenuItem.Click += new System.EventHandler(this.saveBINToolStripMenuItem_Click);
             // 
             // saveBinAsToolStripMenuItem
             // 
             this.saveBinAsToolStripMenuItem.Name = "saveBinAsToolStripMenuItem";
-            this.saveBinAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveBinAsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.saveBinAsToolStripMenuItem.Text = "Save BIN &As...";
             this.saveBinAsToolStripMenuItem.Click += new System.EventHandler(this.saveBinAsToolStripMenuItem_Click);
             // 
             // openMultipleBINToolStripMenuItem
             // 
             this.openMultipleBINToolStripMenuItem.Name = "openMultipleBINToolStripMenuItem";
-            this.openMultipleBINToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openMultipleBINToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.openMultipleBINToolStripMenuItem.Text = "Open multiple BIN";
             this.openMultipleBINToolStripMenuItem.Click += new System.EventHandler(this.openMultipleBINToolStripMenuItem_Click);
             // 
             // saveAllBINFilesToolStripMenuItem
             // 
             this.saveAllBINFilesToolStripMenuItem.Name = "saveAllBINFilesToolStripMenuItem";
-            this.saveAllBINFilesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAllBINFilesToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.saveAllBINFilesToolStripMenuItem.Text = "Save All BIN files";
             this.saveAllBINFilesToolStripMenuItem.Click += new System.EventHandler(this.saveAllBINFilesToolStripMenuItem_Click);
             // 
@@ -321,7 +322,7 @@ namespace UniversalPatcher
             this.cSVexperimentalToolStripMenuItem,
             this.cSV2ExperimentalToolStripMenuItem});
             this.importToolStripMenuItem1.Name = "importToolStripMenuItem1";
-            this.importToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.importToolStripMenuItem1.Size = new System.Drawing.Size(158, 22);
             this.importToolStripMenuItem1.Text = "Import";
             // 
             // dTCToolStripMenuItem
@@ -380,7 +381,7 @@ namespace UniversalPatcher
             this.xDFToolStripMenuItem,
             this.xMLGeneratorExportToolStripMenuItem});
             this.exportToolStripMenuItem1.Name = "exportToolStripMenuItem1";
-            this.exportToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.exportToolStripMenuItem1.Size = new System.Drawing.Size(158, 22);
             this.exportToolStripMenuItem1.Text = "Export";
             // 
             // cSVToolStripMenuItem
@@ -403,6 +404,13 @@ namespace UniversalPatcher
             this.xMLGeneratorExportToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.xMLGeneratorExportToolStripMenuItem.Text = "XML Generator CSV";
             this.xMLGeneratorExportToolStripMenuItem.Click += new System.EventHandler(this.xMLGeneratorExportToolStripMenuItem_Click);
+            // 
+            // findDifferencesToolStripMenuItem
+            // 
+            this.findDifferencesToolStripMenuItem.Name = "findDifferencesToolStripMenuItem";
+            this.findDifferencesToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.findDifferencesToolStripMenuItem.Text = "Find differences";
+            this.findDifferencesToolStripMenuItem.Click += new System.EventHandler(this.findDifferencesToolStripMenuItem_Click);
             // 
             // xmlToolStripMenuItem
             // 
@@ -467,59 +475,60 @@ namespace UniversalPatcher
             this.pasteToolStripMenuItem,
             this.editTableToolStripMenuItem,
             this.searchAndCompareToolStripMenuItem,
+            this.searchAndCompareAllToolStripMenuItem,
             this.toolStripSeparator1,
             this.editRowToolStripMenuItem,
             this.insertRowToolStripMenuItem,
             this.deleteRowToolStripMenuItem,
             this.duplicateTableConfigToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(191, 208);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(200, 252);
             // 
             // cutToolStripMenuItem
             // 
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.cutToolStripMenuItem.Text = "Cut";
             this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // editTableToolStripMenuItem
             // 
             this.editTableToolStripMenuItem.Name = "editTableToolStripMenuItem";
-            this.editTableToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.editTableToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.editTableToolStripMenuItem.Text = "Edit table";
             this.editTableToolStripMenuItem.Click += new System.EventHandler(this.editTableToolStripMenuItem_Click);
             // 
             // searchAndCompareToolStripMenuItem
             // 
             this.searchAndCompareToolStripMenuItem.Name = "searchAndCompareToolStripMenuItem";
-            this.searchAndCompareToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.searchAndCompareToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.searchAndCompareToolStripMenuItem.Text = "Search and compare";
             this.searchAndCompareToolStripMenuItem.Click += new System.EventHandler(this.searchAndCompareToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(187, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(196, 6);
             // 
             // editRowToolStripMenuItem
             // 
             this.editRowToolStripMenuItem.Enabled = false;
             this.editRowToolStripMenuItem.Name = "editRowToolStripMenuItem";
-            this.editRowToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.editRowToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.editRowToolStripMenuItem.Text = "Edit table config";
             this.editRowToolStripMenuItem.Click += new System.EventHandler(this.editRowToolStripMenuItem_Click);
             // 
@@ -527,7 +536,7 @@ namespace UniversalPatcher
             // 
             this.insertRowToolStripMenuItem.Enabled = false;
             this.insertRowToolStripMenuItem.Name = "insertRowToolStripMenuItem";
-            this.insertRowToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.insertRowToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.insertRowToolStripMenuItem.Text = "Insert table config";
             this.insertRowToolStripMenuItem.Click += new System.EventHandler(this.insertRowToolStripMenuItem_Click);
             // 
@@ -535,7 +544,7 @@ namespace UniversalPatcher
             // 
             this.deleteRowToolStripMenuItem.Enabled = false;
             this.deleteRowToolStripMenuItem.Name = "deleteRowToolStripMenuItem";
-            this.deleteRowToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.deleteRowToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.deleteRowToolStripMenuItem.Text = "Delete table config";
             this.deleteRowToolStripMenuItem.Click += new System.EventHandler(this.deleteRowToolStripMenuItem_Click);
             // 
@@ -543,7 +552,7 @@ namespace UniversalPatcher
             // 
             this.duplicateTableConfigToolStripMenuItem.Enabled = false;
             this.duplicateTableConfigToolStripMenuItem.Name = "duplicateTableConfigToolStripMenuItem";
-            this.duplicateTableConfigToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.duplicateTableConfigToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.duplicateTableConfigToolStripMenuItem.Text = "Duplicate table config";
             this.duplicateTableConfigToolStripMenuItem.Click += new System.EventHandler(this.duplicateTableConfigToolStripMenuItem_Click);
             // 
@@ -628,12 +637,12 @@ namespace UniversalPatcher
             this.contextMenuStrip2.Name = "contextMenuStrip2";
             this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
             // 
-            // findDifferencesToolStripMenuItem
+            // searchAndCompareAllToolStripMenuItem
             // 
-            this.findDifferencesToolStripMenuItem.Name = "findDifferencesToolStripMenuItem";
-            this.findDifferencesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.findDifferencesToolStripMenuItem.Text = "Find differences";
-            this.findDifferencesToolStripMenuItem.Click += new System.EventHandler(this.findDifferencesToolStripMenuItem_Click);
+            this.searchAndCompareAllToolStripMenuItem.Name = "searchAndCompareAllToolStripMenuItem";
+            this.searchAndCompareAllToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.searchAndCompareAllToolStripMenuItem.Text = "Search and compare All";
+            this.searchAndCompareAllToolStripMenuItem.Click += new System.EventHandler(this.searchAndCompareAllToolStripMenuItem_Click);
             // 
             // frmTuner
             // 
@@ -734,5 +743,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem saveAllBINFilesToolStripMenuItem;
         private ToolStripMenuItem disableConfigAutloadToolStripMenuItem;
         private ToolStripMenuItem findDifferencesToolStripMenuItem;
+        private ToolStripMenuItem searchAndCompareAllToolStripMenuItem;
     }
 }

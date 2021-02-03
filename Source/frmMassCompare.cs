@@ -21,7 +21,14 @@ namespace UniversalPatcher
 
         public PcmFile PCM;
         public TableData td;
+        public bool compareAll = false;
 
+        public class DgvRow
+        {
+            public int id;
+            public List<DataGridViewRow> gdvrows = new List<DataGridViewRow>();
+        }
+        private List<DgvRow> tableDgvRows = new List<DgvRow>();
         private void frmMassCompare_Load(object sender, EventArgs e)
         {
             if (Properties.Settings.Default.MainWindowPersistence)
@@ -36,7 +43,8 @@ namespace UniversalPatcher
                     this.Location = Properties.Settings.Default.MassCompareWindowLocation;
                     this.Size = Properties.Settings.Default.MassCompareWindowSize;
                 }
-
+                if (Properties.Settings.Default.MassCompareSplitWidth > 0)
+                    splitContainer1.SplitterDistance = Properties.Settings.Default.MassCompareSplitWidth;
             }
 
             setupDataGrid();
@@ -56,6 +64,8 @@ namespace UniversalPatcher
                     Properties.Settings.Default.MassCompareWindowLocation = this.RestoreBounds.Location;
                     Properties.Settings.Default.MassCompareWindowSize = this.RestoreBounds.Size;
                 }
+                if (!compareAll)
+                    Properties.Settings.Default.MassCompareSplitWidth = splitContainer1.SplitterDistance;
             }
 
         }
@@ -184,11 +194,8 @@ namespace UniversalPatcher
             dataGridView1.Columns["Current Value"].DefaultCellStyle.WrapMode = DataGridViewTriState.True;
             dataGridView1.RowHeadersWidth = 200;
         }
-        private void compareTable(string fName)
+        private void compareTable(PcmFile cmpPCM)
         {
-            LoggerBold(fName);
-            PcmFile cmpPCM = new PcmFile(fName,true,"",null);
-            loadConfigforPCM(cmpPCM);
             int id = findTableDataId(td, cmpPCM);
             if (id < 0)
             {
@@ -211,6 +218,8 @@ namespace UniversalPatcher
             dataGridView1.Rows[row].Cells["Current Value"].Value = peekTableValues(id, cmpPCM);
             //dataGridView1.Rows[row].Height = 50;
         }
+
+
         private void loadConfigforPCM(PcmFile cmpPCM)
         {
             if (!Properties.Settings.Default.disableTunerAutoloadSettings)
@@ -266,18 +275,90 @@ namespace UniversalPatcher
             Logger(" [OK]");
         }
 
+        private void compareAllTables(List<string> files)
+        {
+            List<PcmFile> pcmfiles = new List<PcmFile>();
+            //Load all files:
+            for (int i=0; i < files.Count; i++)
+            {
+                string fName = files[i];
+                LoggerBold(fName);
+                PcmFile cmpPCM = new PcmFile(fName, true, "", null);
+                loadConfigforPCM(cmpPCM);
+                pcmfiles.Add(cmpPCM);
+            }
+            Logger("Reading tables ", false);
+            for (int i = 0; i < PCM.tableDatas.Count; i++)
+            {
+                td = PCM.tableDatas[i];
+                int row = dataGridViewTableList.Rows.Add();
+                dataGridViewTableList.Rows[row].Cells[0].Value = td.TableName;
+                dataGridViewTableList.Rows[row].Cells[1].Value = td.Category;
+                dataGridView1.Rows.Clear();
+                for (int p = 0; p < pcmfiles.Count; p++)
+                {
+                    PcmFile cmpPCM = pcmfiles[p];
+                    int id = findTableDataId(td, cmpPCM);
+                    if (id < 0)
+                    {
+                        continue;
+                    }
+                    compareTable(cmpPCM);
+                    dataGridViewTableList.Rows[row].Cells[2].Value = Convert.ToInt32(dataGridViewTableList.Rows[row].Cells[2].Value) + 1;
+                }
+
+                DgvRow dgvRow = new DgvRow();
+                for (int r=0; r < dataGridView1.Rows.Count; r++)
+                {
+                    dgvRow.id = r;
+                    dgvRow.gdvrows.Add(dataGridView1.Rows[r]);
+                }
+                tableDgvRows.Add(dgvRow);
+                dataGridViewTableList.Rows[row].Tag = tableDgvRows.Count - 1;
+                if ((i % 10) == 0)
+                    Logger(".", false);
+            }
+        }
+
+        private void initCompareAll()
+        {
+            dataGridViewTableList.Rows.Clear();
+            dataGridViewTableList.Columns.Clear();
+            dataGridViewTableList.Columns.Add("Table Name", "Table Name");
+            dataGridViewTableList.Columns.Add("Category", "Category");
+            dataGridViewTableList.Columns.Add("Hits", "Hits");
+        }
         public void selectCmpFiles()
         {
+            if (!compareAll)
+                splitContainer1.SplitterDistance = 0;
             frmFileSelection frmF = new frmFileSelection();
             frmF.btnOK.Text = "Compare files";
             frmF.Text = "Search and Compare: " + td.TableName;
             frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
             if (frmF.ShowDialog(this) == DialogResult.OK)
             {
-                for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                if (compareAll)
                 {
-                    string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                    compareTable(FileName);
+                    List<string> files = new List<string>();
+                    for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                    {
+                        string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
+                        files.Add(FileName);
+                    }
+                    initCompareAll();
+                    compareAllTables(files);
+                }
+                else
+                {
+                    for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                    {
+                        string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
+                        PcmFile cmpPcm = new PcmFile(FileName,true,"",PCM.Segments);
+                        LoggerBold(FileName);
+                        loadConfigforPCM(cmpPcm);
+                        compareTable(cmpPcm);
+                    }
                 }
 
             }
@@ -304,6 +385,7 @@ namespace UniversalPatcher
             txtResult.AppendText(LogText);
             if (NewLine)
                 txtResult.AppendText(Environment.NewLine);
+            Application.DoEvents();
         }
         private void saveCSV()
         {
@@ -338,6 +420,21 @@ namespace UniversalPatcher
         private void btnSaveCsv_Click(object sender, EventArgs e)
         {
             saveCSV();
+        }
+
+        private void dataGridViewTableList_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                dataGridView1.Rows.Clear();
+                int id = (int)dataGridViewTableList.Rows[e.RowIndex].Tag;
+                for (int r = 0; r < tableDgvRows[id].gdvrows.Count; r++)
+                    dataGridView1.Rows.Add(tableDgvRows[id].gdvrows[r]);
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
         }
     }
 }

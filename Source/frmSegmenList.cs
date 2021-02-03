@@ -133,6 +133,7 @@ namespace UniversalPatcher
         private void btnNewXML_Click(object sender, EventArgs e)
         {
             PCM.Segments.Clear();
+            PCM.configFile = "";
             listSegments.Items.Clear();
             txtVersion.Text = "1";
             XMLFile = "";

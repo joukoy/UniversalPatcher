@@ -1951,5 +1951,18 @@ namespace UniversalPatcher
         {
 
         }
+
+        private void searchAndCompareAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmMassCompare fmc = new frmMassCompare();
+            fmc.PCM = PCM;
+            fmc.compareAll = true;
+            int id = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
+            fmc.td = PCM.tableDatas[id];
+            fmc.Text = "Search and Compare: " + fmc.td.TableName;
+            fmc.Show();
+            fmc.selectCmpFiles();
+
+        }
     }
 }
