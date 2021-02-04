@@ -1964,5 +1964,52 @@ namespace UniversalPatcher
             fmc.selectCmpFiles();
 
         }
+
+        private void compareSelectedTablesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dataGridView1.SelectedCells.Count != 2 && dataGridView1.SelectedRows.Count != 2)
+                {
+                    Logger("Select 2 tables!");
+                    return;
+                }
+                int row1 = dataGridView1.SelectedCells[0].RowIndex;
+                int row2 = dataGridView1.SelectedCells[1].RowIndex;
+                if (row1 == row2)
+                {
+                    row1 = dataGridView1.SelectedRows[0].Index;
+                    row2 = dataGridView1.SelectedRows[1].Index;
+                }
+                Logger("Comparing....");
+
+                int id1 = Convert.ToInt32(dataGridView1.Rows[row1].Cells["id"].Value);
+                int id2 = Convert.ToInt32(dataGridView1.Rows[row2].Cells["id"].Value);
+                TableData td1 = PCM.tableDatas[id1];
+                TableData td2 = PCM.tableDatas[id2];
+                if (td1.Rows != td2.Rows || td1.Columns != td2.Columns)
+                {
+                    Logger("Select 2 tables with equal size!");
+                    return;
+                }
+                frmTableEditor frmT = new frmTableEditor();
+                frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
+                frmT.PCM = PCM;
+                List<int> tableIds = new List<int>();
+                tableIds.Add(id1);
+                frmT.tableIds = tableIds;
+                PcmFile comparePCM = PCM.ShallowCopy();
+                comparePCM.FileName = td2.TableName;
+                comparePCM.selectedTable = td2;
+                frmT.addCompareFiletoMenu(comparePCM);
+                frmT.Show();
+                frmT.loadTable(td1);
+
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+        }
     }
 }

@@ -707,7 +707,7 @@ namespace UniversalPatcher
             if (FileName.Length > 1)
             {
                 txtModifierFile.Text = FileName;
-                modfile = new PcmFile(FileName, chkAutodetect.Checked,pcmConfigFile, modfile.Segments);
+                modfile = new PcmFile(FileName, chkAutodetect.Checked,pcmConfigFile, basefile.Segments);
                 GetFileInfo(txtModifierFile.Text, ref modfile, false);
             }
 
