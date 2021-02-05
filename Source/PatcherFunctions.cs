@@ -1106,6 +1106,7 @@ public class upatcher
             modStr = modStr.Replace("x", "");
             modStr = modStr.Replace("y", "");
             modStr = modStr.Replace("@", "*");
+            modStr = modStr.Replace("+", "*");
             modStr = modStr.Replace("# ", "* "); //# alone at beginning or middle
             if (modStr.EndsWith("#"))
                 modStr = modStr.Replace(" #", " *"); //# alone at end
@@ -1164,6 +1165,7 @@ public class upatcher
             int l = 0;
             string addrStr = "*";
             if (searchStr.Contains("@")) addrStr = "@";
+            else if (searchStr.Contains("+")) addrStr = "+";
             else if (searchStr.Contains("*") || searchStr.Contains("#")) addrStr = "*";
             else
             {
@@ -1196,14 +1198,28 @@ public class upatcher
                 return retVal;
             }
 
-            if (l < 4)
+            //We are here, so we must have @ @ @ @ or + + + or + + in searchsting
+            if (searchStr.Contains("+") && l != 2 && l != 4)
             {
-                Debug.WriteLine("Less than 4 * in searchstring, address need 4 bytes!");
+                Logger("Need 2 or 4 '+' in searchsting! (" + searchStr +")");
+                retVal.Addr = uint.MaxValue;
+            }
+            else if (l < 4)
+            {
+                Logger("Less than 4 * in searchstring, address need 4 bytes! ("+ searchStr +")");
                 retVal.Addr = uint.MaxValue;
             }
 
             retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 24 | PCM.buf[addr + locations[1]] << 16 | PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
-            if (conditionalOffset)
+            if (searchStr.Contains("+"))
+            {
+                //Read table address from address we found by searchstring
+                if (l == 2)
+                    retVal.Addr = (uint)BEToUint16(PCM.buf, retVal.Addr);
+                else
+                    retVal.Addr = BEToUint32(PCM.buf, retVal.Addr);
+            }
+            else if (conditionalOffset)
             {
                 ushort addrWord = (ushort)(PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
                 if (addrWord > 0x5000)
