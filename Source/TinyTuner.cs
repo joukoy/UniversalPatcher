@@ -179,7 +179,7 @@ namespace UniversalPatcher
                 }
                 if (mapNr == "")
                 {
-                    MessageBox.Show("OS not found from TinyTuner DB", "OS not found from TinyTuner DB");
+                    LoggerBold("OS not found from TinyTuner DB");
                     return "Not found";
                 }
 
@@ -255,7 +255,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+                LoggerBold("Error, line " + line + ": " + ex.Message);
             }
             return "OK";
         }
