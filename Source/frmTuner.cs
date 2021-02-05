@@ -169,6 +169,8 @@ namespace UniversalPatcher
                     Logger("File not found: " + defaultXml);
                     importDTC();
                     importTableSeek();
+                    if (PCM.Segments.Count > 0 && PCM.Segments[0].CS1Address.StartsWith("GM-V6"))
+                        importTinyTunerDB();
                 }
             }
 

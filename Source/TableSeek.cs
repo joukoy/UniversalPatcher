@@ -47,6 +47,7 @@ namespace UniversalPatcher
         public string Math { get; set; }
         public string SavingMath { get; set; }
         public int Offset { get; set; }
+        public EResultType ResultType { get; set; }
         public bool ConditionalOffset { get; set; }
         public InDataType DataType { get; set; }
         public ushort Bits;
@@ -72,6 +73,12 @@ namespace UniversalPatcher
             return (TableSeek)this.MemberwiseClone();
         }
 
+        public enum EResultType
+        {
+            TableStart,
+            TableAddressWord,
+            TableAddressDWord
+        }
         private PcmFile PCM;
         public string seekTables(PcmFile PCM1)
         {
@@ -264,6 +271,14 @@ namespace UniversalPatcher
                             wantedHit = wantedHitList[wHit];
                             Debug.WriteLine("TableSeek: Searching: " + tableSeeks[s].SearchStr + ", Start: " + startAddr.ToString("X") + ", end: " + endAddr.ToString("X"));
                             sAddr = getAddrbySearchString(PCM, tableSeeks[s].SearchStr, ref startAddr, endAddr, tableSeeks[s].ConditionalOffset, tableSeeks[s].ValidationSearchStr);
+                            if (tableSeeks[s].ResultType == EResultType.TableAddressWord)
+                            {
+                                sAddr.Addr = BEToUint16(PCM.buf, sAddr.Addr);
+                            }
+                            else if (tableSeeks[s].ResultType == EResultType.TableAddressDWord)
+                            {
+                                sAddr.Addr = BEToUint32(PCM.buf, sAddr.Addr);
+                            }
                             if (sAddr.Addr < PCM.fsize)
                             {
                                 hit++;
