@@ -1369,7 +1369,31 @@ namespace UniversalPatcher
                 if (e.RowIndex > -1)
                 {
                     Tagi t = (Tagi)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag;
-                    SaveValue(t.addr, e.RowIndex, e.ColumnIndex, PCM.tableDatas[t.id]);
+                    if (td.TableName.StartsWith("DTC") && t.addr == (uint.MaxValue - 1))
+                    {
+                        //OBD2 Description
+                        OBD2Code oc = new OBD2Code();
+                        oc.Code = dataGridView1.Rows[e.RowIndex].HeaderCell.Value.ToString();
+                        oc.Description = dataGridView1.Rows[e.RowIndex].Cells["Description"].Value.ToString();
+                        bool codeFoumd = false;
+                        for (int o = 0; o < OBD2Codes.Count; o++)
+                        {
+                            if (OBD2Codes[o].Code == oc.Code)
+                            {
+                                OBD2Codes[o].Description = oc.Description;
+                                codeFoumd = true;
+                                break;
+                            }
+                        }
+                        if (!codeFoumd)
+                        {
+                            OBD2Codes.Add(oc);
+                        }
+                    }
+                    else
+                    {
+                        SaveValue(t.addr, e.RowIndex, e.ColumnIndex, PCM.tableDatas[t.id]);
+                    }
                 }
             }
             catch (Exception ex)
@@ -1456,28 +1480,6 @@ namespace UniversalPatcher
             MathParser parser = new MathParser();
             UInt32 bufAddr = addr - td.addrInt;
 
-            if (td.TableName.StartsWith("DTC") && addr == (uint.MaxValue - 1))
-            {
-                //OBD2 Description
-                OBD2Code oc = new OBD2Code();
-                oc.Code = dataGridView1.Rows[r].HeaderCell.Value.ToString();
-                oc.Description = dataGridView1.Rows[r].Cells[c].Value.ToString();
-                bool codeFoumd = false;
-                for (int o = 0; o < OBD2Codes.Count; o++)
-                {
-                    if (OBD2Codes[o].Code == oc.Code)
-                    {
-                        OBD2Codes[o].Description = oc.Description;
-                        codeFoumd = true;
-                        break;
-                    }
-                }
-                if (!codeFoumd)
-                {
-                    OBD2Codes.Add(oc);
-                }
-                return;
-            }
             if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != "")
             {
                 bool flag = Convert.ToBoolean(dataGridView1.Rows[r].Cells[c].Value);
@@ -2037,5 +2039,13 @@ namespace UniversalPatcher
         {
             saveOBD2Codes();
         }
+        private void DataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (!td.TableName.StartsWith("DTC"))
+                return;
+            string url = "https://www.google.com/search?q=Chevrolet+" + dataGridView1.Rows[e.RowIndex].HeaderCell.Value.ToString();
+            System.Diagnostics.Process.Start(url);
+        }
+
     }
 }

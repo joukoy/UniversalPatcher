@@ -45,6 +45,7 @@ namespace UniversalPatcher
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportCSVToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveOBD2DescriptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoResizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.swapXyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,7 +65,6 @@ namespace UniversalPatcher
             this.radioOriginal = new System.Windows.Forms.RadioButton();
             this.numDecimals = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
-            this.saveOBD2DescriptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -91,6 +91,7 @@ namespace UniversalPatcher
             this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
+            this.dataGridView1.CellDoubleClick += DataGridView1_CellDoubleClick;
             // 
             // txtMath
             // 
@@ -193,6 +194,13 @@ namespace UniversalPatcher
             this.exportCSVToolStripMenuItem1.Size = new System.Drawing.Size(199, 22);
             this.exportCSVToolStripMenuItem1.Text = "Export CSV";
             this.exportCSVToolStripMenuItem1.Click += new System.EventHandler(this.exportCSVToolStripMenuItem1_Click);
+            // 
+            // saveOBD2DescriptionsToolStripMenuItem
+            // 
+            this.saveOBD2DescriptionsToolStripMenuItem.Name = "saveOBD2DescriptionsToolStripMenuItem";
+            this.saveOBD2DescriptionsToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.saveOBD2DescriptionsToolStripMenuItem.Text = "Save OBD2 Descriptions";
+            this.saveOBD2DescriptionsToolStripMenuItem.Click += new System.EventHandler(this.saveOBD2DescriptionsToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem
             // 
@@ -396,13 +404,6 @@ namespace UniversalPatcher
             this.label1.TabIndex = 12;
             this.label1.Text = "Decimals:";
             // 
-            // saveOBD2DescriptionsToolStripMenuItem
-            // 
-            this.saveOBD2DescriptionsToolStripMenuItem.Name = "saveOBD2DescriptionsToolStripMenuItem";
-            this.saveOBD2DescriptionsToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
-            this.saveOBD2DescriptionsToolStripMenuItem.Text = "Save OBD2 Descriptions";
-            this.saveOBD2DescriptionsToolStripMenuItem.Click += new System.EventHandler(this.saveOBD2DescriptionsToolStripMenuItem_Click);
-            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -436,6 +437,7 @@ namespace UniversalPatcher
             this.PerformLayout();
 
         }
+
 
         #endregion
 

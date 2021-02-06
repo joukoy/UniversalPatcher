@@ -6877,6 +6877,10 @@
     <Description>Transmission Range Display Circuit Malfunction</Description>
   </OBD2Code>
   <OBD2Code>
+    <Code>P1ECF</Code>
+    <Description>Throttle Control Data Recorder Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
     <Code>C1091</Code>
     <Description>Speed Wheel Sensor All Coherency Failure</Description>
   </OBD2Code>
@@ -14679,5 +14683,121 @@
   <OBD2Code>
     <Code>U2500</Code>
     <Description>(CAN) Lack of Acknowledgement From Engine Management</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2025</Code>
+    <Description>Internal Mode Switch Circuit ‘C’ High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2026</Code>
+    <Description>EVAP Fuel Vapor Temp Sensor Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2027</Code>
+    <Description>EVAP Fuel Vapor Temp Sensor Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2066</Code>
+    <Description>Fuel Level Sensor 'B' Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2067</Code>
+    <Description>Fuel Level Sensor 'B' Circuit Low</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2068</Code>
+    <Description>Fuel Level Sensor 'B' Circuit High</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2101</Code>
+    <Description>Throttle Actuator A Control Motor Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2108</Code>
+    <Description>Throttle Actuator Control Module Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2119</Code>
+    <Description>Throttle Closed Position Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2120</Code>
+    <Description>Accelerator Pedal Position Sensor 1 Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2121</Code>
+    <Description>Throttle/Pedal Position Sensor/Switch D Circuit Range/Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2125</Code>
+    <Description>Accelerator Pedal Position Sensor 2 Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2126</Code>
+    <Description>Throttle Position Sensor E Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2130</Code>
+    <Description>Throttle Position Sensor/Swith F Circuit Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2131</Code>
+    <Description>Throttle Position Sensor F Circuit Range/Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2135</Code>
+    <Description>TPS Sensor Voltage Correlation DTC</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2279</Code>
+    <Description>Intake Air System Leak</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2610</Code>
+    <Description>ECM/PCM Internal Engine Off Timer Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2636</Code>
+    <Description>Fuel Pump 'B' Low Flow/Performance</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2761</Code>
+    <Description>Torque Converter Clutch Pressure Control Solenoid Valve Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P2771</Code>
+    <Description>Four Wheel Drive Low Switch Circuit</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P00B6</Code>
+    <Description>P00B6 Radiator Coolant Temperature/Engine Coolant Temperature Correlation</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P013A</Code>
+    <Description>O2 Sensor Slow Response - Rich to Lean (Bank 1 Sensor 2)</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P013B</Code>
+    <Description>O2 Sensor Slow Response - Lean to Rich (Bank 1 Sensor 2)</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P013C</Code>
+    <Description>O2 Sensor Slow Response - Rich to Lean (Bank 2 Sensor 2)</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P013D</Code>
+    <Description>O2 Sensor Slow Response - Lean to Rich (Bank 2 Sensor 2)</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P013E</Code>
+    <Description>HO2S Delay Response Rich to Lean Bank 1 Sensor 2</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P013F</Code>
+    <Description>HO2S Delay Response Lean to Rich Bank 1 Sensor 2</Description>
+  </OBD2Code>
+  <OBD2Code>
+    <Code>P014A</Code>
+    <Description>O2 Sensor Delayed Response - Rich to Lean (Bank 2 Sensor 2)</Description>
   </OBD2Code>
 </ArrayOfOBD2Code>

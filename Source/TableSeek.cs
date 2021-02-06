@@ -273,9 +273,9 @@ namespace UniversalPatcher
                                 uint currentAddr = (uint)(sAddr.Addr + offset);
                                 Debug.WriteLine("seekTables: Reading new address from:" + currentAddr.ToString("X"));
                                 if (ssParts[jump].Contains("D"))
-                                    sAddr.Addr = (uint)(BEToUint32(PCM.buf, currentAddr) + offset);
+                                    sAddr.Addr = (uint)(BEToUint32(PCM.buf, currentAddr));
                                 else
-                                    sAddr.Addr = (uint)(BEToUint16(PCM.buf, currentAddr) + offset);
+                                    sAddr.Addr = (uint)(BEToUint16(PCM.buf, currentAddr));
                                 Debug.WriteLine("seekTables: New address:" + sAddr.Addr.ToString("X"));
                             }
 
