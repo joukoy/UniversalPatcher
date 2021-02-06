@@ -744,7 +744,15 @@ namespace UniversalPatcher
                         coliInfos.Add(colInfo);
                     }
                 }
-
+/*                if (filteredTables[0].TableName.StartsWith("DTC") )
+                {
+                    colHeaders.Add("Description");
+                    ColumnInfo colInfo = new ColumnInfo();
+                    colInfo.columnType = ColType.Value;
+                    colInfo.outputType = OutDataType.Text;
+                    coliInfos.Add(colInfo);
+                }
+*/
             }
             if (rowHeaders.Count < 2 && td.Rows > 1)
             {
@@ -1011,6 +1019,10 @@ namespace UniversalPatcher
 
                     }
                 }
+                if (td.TableName.StartsWith("DTC"))
+                {
+                    showDtdDescriptions();
+                }
 
             }
             for (int r=0; r< dataGridView1.Rows.Count; r++)
@@ -1027,6 +1039,22 @@ namespace UniversalPatcher
             setDataGridLayout();
         }
 
+        private void showDtdDescriptions()
+        {
+            DtcSearch ds = new DtcSearch();
+            if (OBD2Codes == null || OBD2Codes.Count == 0)
+                ds.loadOBD2Codes();
+            if (OBD2Codes.Count == 0)
+                return;
+            chkSwapXY.Enabled = false;
+            swapXyToolStripMenuItem.Enabled = false;
+            int col = dataGridView1.Columns.Add("Description", "Description");
+            for (int r = 0; r < dataGridView1.Rows.Count; r++)
+            {
+                string descr = ds.getDtcDescription(dataGridView1.Rows[r].HeaderCell.Value.ToString());
+                dataGridView1.Rows[r].Cells["Description"].Value = descr;
+            }
+        }
         public int getColumnsFromTable()
         {
             int cols = td.Columns;
@@ -1255,6 +1283,10 @@ namespace UniversalPatcher
                     if (r < rowCount)
                         dataGridView1.Rows[r].HeaderCell.Value = rowHeaders[r];
                 }
+                if (td.TableName == "DTC" && this.Visible)
+                {
+                    showDtdDescriptions();
+                }
                 setDataGridLayout();
             }
             catch (Exception ex)
@@ -1295,7 +1327,8 @@ namespace UniversalPatcher
                 foreach (DataGridViewColumn dgvc in dataGridView1.Columns)
                 {
                     dgvc.SortMode = DataGridViewColumnSortMode.NotSortable;
-                    dgvc.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                    if (dgvc.HeaderText != "Description")
+                        dgvc.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
                     dgvc.DefaultCellStyle.Font = dataFont;
                     if (formatStr != "" && dgvc.GetType() != typeof(DataGridViewComboBoxColumn) )
                         dgvc.DefaultCellStyle.Format = formatStr;

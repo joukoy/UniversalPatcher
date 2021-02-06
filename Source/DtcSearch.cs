@@ -65,7 +65,7 @@ namespace UniversalPatcher
         }
 
 
-        private string decodeDTC(string code)
+        public string decodeDTC(string code)
         {
             if (code.StartsWith("5"))
             {
@@ -89,24 +89,42 @@ namespace UniversalPatcher
             }
 
         }
+
+        public string getDtcDescription(string dtcCode)
+        {
+            string retVal = "";
+            for (int o = 0; o < OBD2Codes.Count; o++)
+            {
+                if (dtcCode == OBD2Codes[o].Code)
+                {
+                    retVal = OBD2Codes[o].Description;
+                    break;
+                }
+            }
+            return retVal;
+        }
+        public void loadOBD2Codes()
+        {
+            string OBD2CodeFile = Path.Combine(Application.StartupPath, "XML", "OBD2Codes.xml");
+            if (File.Exists(OBD2CodeFile))
+            {
+                Debug.WriteLine("Loading OBD2Codes.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<OBD2Code>));
+                System.IO.StreamReader file = new System.IO.StreamReader(OBD2CodeFile);
+                OBD2Codes = (List<OBD2Code>)reader.Deserialize(file);
+                file.Close();
+            }
+            else
+            {
+                OBD2Codes = new List<OBD2Code>();
+            }
+
+        }
         public string searchDtc(PcmFile PCM)
         {
             try
             {
-                string OBD2CodeFile = Path.Combine(Application.StartupPath, "XML", "OBD2Codes.xml");
-                if (File.Exists(OBD2CodeFile))
-                {
-                    Debug.WriteLine("Loading OBD2Codes.xml");
-                    System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<OBD2Code>));
-                    System.IO.StreamReader file = new System.IO.StreamReader(OBD2CodeFile);
-                    OBD2Codes = (List<OBD2Code>)reader.Deserialize(file);
-                    file.Close();
-                }
-                else
-                {
-                    OBD2Codes = new List<OBD2Code>();
-                }
-
+                loadOBD2Codes();
                 //Search DTC codes:
                 uint codeAddr = uint.MaxValue;
                 string searchStr;
@@ -176,14 +194,7 @@ namespace UniversalPatcher
                     dtc.Code = decodeDTC(codeTmp);
                     if (codeTmp.StartsWith("D")) dCodes = true;
                     //Find description for code:
-                    for (int o = 0; o < OBD2Codes.Count; o++)
-                    {
-                        if (dtc.Code == OBD2Codes[o].Code)
-                        {
-                            dtc.Description = OBD2Codes[o].Description;
-                            break;
-                        }
-                    }
+                    dtc.Description = getDtcDescription(dtc.Code);
                     PCM.dtcCodes.Add(dtc);
                 }
 
@@ -352,14 +363,7 @@ namespace UniversalPatcher
                                 dCodes = true;
                             }
                             dtc.Code = decodeDTC(codeTmp);
-                            for (int o = 0; o < OBD2Codes.Count; o++)
-                            {
-                                if (dtc.Code == OBD2Codes[o].Code)
-                                {
-                                    dtc.Description = OBD2Codes[o].Description;
-                                    break;
-                                }
-                            }
+                            dtc.Description = getDtcDescription(dtc.Code);
                             PCM.dtcCodes.Add(dtc);
                         }
                         break;

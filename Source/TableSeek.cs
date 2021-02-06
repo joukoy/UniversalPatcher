@@ -262,8 +262,27 @@ namespace UniversalPatcher
                         while (startAddr < PCM.fsize) 
                         {
                             wantedHit = wantedHitList[wHit];
-                            Debug.WriteLine("TableSeek: Searching: " + tableSeeks[s].SearchStr + ", Start: " + startAddr.ToString("X") + ", end: " + endAddr.ToString("X"));
-                            sAddr = getAddrbySearchString(PCM, tableSeeks[s].SearchStr, ref startAddr, endAddr, tableSeeks[s].ConditionalOffset, tableSeeks[s].ValidationSearchStr);
+                            string[] ssParts = tableSeeks[s].SearchStr.Split('+');     //At end of string can be +D4 +1W6 etc, for reading next address from found addr
+                            Debug.WriteLine("TableSeek: Searching: " + tableSeeks[s].SearchStr + ", Start: " + startAddr.ToString("X") + ", end: " + endAddr.ToString("X"));                            
+                            sAddr = getAddrbySearchString(PCM, ssParts[0], ref startAddr, endAddr, tableSeeks[s].ConditionalOffset, tableSeeks[s].ValidationSearchStr);
+                            int offset = tableSeeks[s].Offset;
+                            for (int i = 1; i < ssParts.Length && sAddr.Addr < uint.MaxValue; i++)
+                            {
+                                //Read table address from address we found by searchstring
+                                if (i > 1)
+                                {
+                                    string numOnly = ssParts[i].Replace("+", "").Replace("D", "").Replace("W", "");
+                                    offset = Convert.ToInt32(numOnly);  //For first jump, use tableseek offset, for other jumps use searchstring offset
+                                }
+                                uint currentAddr = (uint)(sAddr.Addr + offset);
+                                Debug.WriteLine("seekTables: Reading new address from:" + currentAddr.ToString("X"));
+                                if (ssParts[i].Contains("D"))
+                                    sAddr.Addr = (uint)(BEToUint32(PCM.buf, currentAddr) + offset);
+                                else
+                                    sAddr.Addr = (uint)(BEToUint16(PCM.buf, currentAddr) + offset);
+                                Debug.WriteLine("seekTables: New address:" + sAddr.Addr.ToString("X"));
+                            }
+
                             if (sAddr.Addr < PCM.fsize)
                             {
                                 hit++;
