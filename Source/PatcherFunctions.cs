@@ -540,6 +540,19 @@ public class upatcher
 
     }
 
+    public static void saveOBD2Codes()
+    {
+        string OBD2CodeFile = Path.Combine(Application.StartupPath, "XML", "OBD2Codes.xml");
+        Logger("Saving file " + OBD2CodeFile + "...", false);
+        using (FileStream stream = new FileStream(OBD2CodeFile, FileMode.Create))
+        {
+            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<OBD2Code>));
+            writer.Serialize(stream, OBD2Codes);
+            stream.Close();
+        }
+        Logger(" [OK]");
+
+    }
     public static string autoDetect(PcmFile PCM)
     {
         AutoDetect autod = new AutoDetect();

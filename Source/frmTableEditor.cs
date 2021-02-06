@@ -82,7 +82,6 @@ namespace UniversalPatcher
         private uint bufSize = 0;
         MathParser parser = new MathParser();
         Font dataFont;
-        //Dictionary<double, string> possibleVals = new Dictionary<double, string>();
         
         public bool disableMultiTable = false;
         public List<int> tableIds = new List<int>();
@@ -1053,6 +1052,10 @@ namespace UniversalPatcher
             {
                 string descr = ds.getDtcDescription(dataGridView1.Rows[r].HeaderCell.Value.ToString());
                 dataGridView1.Rows[r].Cells["Description"].Value = descr;
+                Tagi tg = new Tagi();
+                tg.addr = uint.MaxValue - 1;
+                tg.id = r;
+                dataGridView1.Rows[r].Cells["Description"].Tag = tg;
             }
         }
         public int getColumnsFromTable()
@@ -1453,6 +1456,28 @@ namespace UniversalPatcher
             MathParser parser = new MathParser();
             UInt32 bufAddr = addr - td.addrInt;
 
+            if (td.TableName.StartsWith("DTC") && addr == (uint.MaxValue - 1))
+            {
+                //OBD2 Description
+                OBD2Code oc = new OBD2Code();
+                oc.Code = dataGridView1.Rows[r].HeaderCell.Value.ToString();
+                oc.Description = dataGridView1.Rows[r].Cells[c].Value.ToString();
+                bool codeFoumd = false;
+                for (int o = 0; o < OBD2Codes.Count; o++)
+                {
+                    if (OBD2Codes[o].Code == oc.Code)
+                    {
+                        OBD2Codes[o].Description = oc.Description;
+                        codeFoumd = true;
+                        break;
+                    }
+                }
+                if (!codeFoumd)
+                {
+                    OBD2Codes.Add(oc);
+                }
+                return;
+            }
             if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != "")
             {
                 bool flag = Convert.ToBoolean(dataGridView1.Rows[r].Cells[c].Value);
@@ -2006,6 +2031,11 @@ namespace UniversalPatcher
             }
             fontDlg.Dispose();
             loadTable(td);
+        }
+
+        private void saveOBD2DescriptionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveOBD2Codes();
         }
     }
 }

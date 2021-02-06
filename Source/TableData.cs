@@ -161,7 +161,7 @@ namespace UniversalPatcher
             else
             {
                 //td.TableDescription = "0 = 1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY), 1 = 2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles), 2 = Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC), 3 = Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)";
-                dtcTd.Values = "Enum: 0:1 Trip (MIL IMMEDIATELY),1:2 Trips (MIL if DTC active two drive cycles),2:(No MIL, store DTC),3:Not Reported (DTC Disabled)";
+                dtcTd.Values = "Enum: 0:1 Trip (MIL IMMEDIATELY),1:2 Trips (MIL if DTC active two drive cycles),2:(No MIL store DTC),3:Not Reported (DTC Disabled)";
                 dtcTd.TableName = "DTC.Codes";
             }
 
