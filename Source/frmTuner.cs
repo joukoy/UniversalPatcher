@@ -390,6 +390,7 @@ namespace UniversalPatcher
                 if (fName.Length == 0)
                     return;
                 currentXmlFile = fName;
+                dataGridView1.EndEdit();
                 Logger("Saving file " + fName + "...", false);
                 using (FileStream stream = new FileStream(fName, FileMode.Create))
                 {
@@ -509,14 +510,56 @@ namespace UniversalPatcher
                 else
                     compareList = PCM.tableDatas.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
 
-                string cat = comboTableCategory.Text;
                 var results = compareList.Where(t => t.id < uint.MaxValue); //How should I define empty variable??
+
                 if (txtSearchTableSeek.Text.Length > 0)
-                    results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(txtSearchTableSeek.Text.ToLower()));
+                {
+                    if (txtSearchTableSeek.Text.Contains("|"))
+                    {
+                        string[] orStr = txtSearchTableSeek.Text.Split('|');
+                        if (orStr.Length == 2)
+                            results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0]) ||
+                            typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1]));
+                        if (orStr.Length == 3)
+                            results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0]) ||
+                            typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1]) ||
+                            typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2]));
+                        if (orStr.Length == 4)
+                            results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0]) ||
+                            typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1]) ||
+                            typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2]) ||
+                            typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[3]));
+                    }
+                    else
+                    {
+                        string[] andStr = txtSearchTableSeek.Text.Split('&');
+                        foreach (string sStr in andStr)
+                            results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(sStr));
+                    }
+                }
+
                 if (!showTablesWithEmptyAddressToolStripMenuItem.Checked)
                     results = results.Where(t => t.addrInt < uint.MaxValue);
+
+                string cat = comboTableCategory.Text;
                 if (cat != "_All" && cat != "")
-                    results = results.Where(t => t.Category.ToLower().Contains(comboTableCategory.Text.ToLower()));
+                {
+                    if (cat.StartsWith("Seg-"))
+                    {
+                        string seg = cat.Substring(4, cat.Length - 4);
+                        int segNr = 0;
+                        for (int s = 0; s < PCM.segmentinfos.Length; s++)
+                            if (PCM.segmentinfos[s].Name == seg)
+                                segNr = s;
+                        uint addrStart = PCM.segmentAddressDatas[segNr].SegmentBlocks[0].Start;
+                        uint addrEnd = PCM.segmentAddressDatas[segNr].SegmentBlocks[PCM.segmentAddressDatas[segNr].SegmentBlocks.Count - 1].End;
+                        results = results.Where(t => t.addrInt >= addrStart && t.addrInt <= addrEnd);
+                    }
+                    else
+                    {
+                        results = results.Where(t => t.Category.ToLower().Contains(comboTableCategory.Text.ToLower()));
+                    }
+                }
                 filteredCategories = new BindingList<TableData>(results.ToList());
                 bindingsource.DataSource = filteredCategories;
                 reorderColumns();

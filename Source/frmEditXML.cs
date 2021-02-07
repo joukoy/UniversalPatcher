@@ -108,6 +108,7 @@ namespace UniversalPatcher
         {
             try
             {
+                dataGridView1.EndEdit();
                 if (this.Text.Contains("CVN"))
                 {
                     Logger("Saving file stockcvn.xml", false);

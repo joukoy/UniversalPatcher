@@ -670,372 +670,375 @@ namespace UniversalPatcher
 
         public void loadMultiTable(string tableName)
         {
-            List<string> colHeaders = new List<string>();
-            List<string> rowHeaders = new List<string>();
-            List<ColumnInfo> coliInfos = new List<ColumnInfo>();
-
-            this.tableName = tableName;
-
-            if (td.Units.ToLower().Contains("bitmask"))
-                labelUnits.Text = "Units: Boolean";
-            else
-                labelUnits.Text = "Units: " + getUnitFromTableData(td);
-            if (td.Values != null && !td.Values.StartsWith("Enum:"))
-                labelUnits.Text += ", Values: " +  td.Values;
-
-            if (tableIds.Count > 1)
+            try
             {
-                //Manually selected multiple tables
-                filteredTables = new List<TableData>();
-                tableIds.Sort();
-                for (int i = 0; i < tableIds.Count; i++)
+                List<string> colHeaders = new List<string>();
+                List<string> rowHeaders = new List<string>();
+                List<ColumnInfo> coliInfos = new List<ColumnInfo>();
+
+                this.tableName = tableName;
+
+                if (td.Units.ToLower().Contains("bitmask"))
+                    labelUnits.Text = "Units: Boolean";
+                else
+                    labelUnits.Text = "Units: " + getUnitFromTableData(td);
+                if (td.Values != null && !td.Values.StartsWith("Enum:"))
+                    labelUnits.Text += ", Values: " + td.Values;
+
+                if (tableIds.Count > 1)
                 {
-                    ColumnInfo colInfo = getColinfoByTableData(PCM.tableDatas[tableIds[i]]);
-                    coliInfos.Add(colInfo);
-                    string colHdr = PCM.tableDatas[tableIds[i]].TableName;
-                    if (PCM.tableDatas[tableIds[i]].ColumnHeaders != "" && !PCM.tableDatas[tableIds[i]].ColumnHeaders.Contains(","))
-                        colHdr += " " + PCM.tableDatas[tableIds[i]].ColumnHeaders.Trim();
-                    colHeaders.Add(colHdr);
-                    filteredTables.Add(PCM.tableDatas[tableIds[i]]);
-                }
-                if (td.RowHeaders == null || td.RowHeaders.Length == 0)
-                    for (int r = 0; r < td.Rows; r++)
-                        rowHeaders.Add("");
-            }
-            else
-            {
-                //Multible tables which are meant to be linked together
-                string filterName = td.TableName.Substring(0, tableName.Length + 1);
-                var results = PCM.tableDatas.Where(t => t.TableName.StartsWith(filterName));
-                filteredTables = new List<TableData>(results.ToList());
-                filteredTables = filteredTables.OrderBy(o => o.addrInt).ToList();
-            }
-            td = filteredTables[0];
-
-            if (bufSize == 0)
-            {
-                List<TableData> sizeList = new List<TableData>(filteredTables.OrderBy(o => o.addrInt).ToList());
-                int elementSize = getElementSize(sizeList[sizeList.Count - 1].DataType); //Last table in list
-                int singleTableSize = td.Rows * td.Columns * elementSize;
-                bufSize = (uint)(sizeList[sizeList.Count - 1].addrInt - sizeList[0].addrInt + sizeList[sizeList.Count - 1].Offset + singleTableSize);
-                tableBuffer = new byte[bufSize];
-                Array.Copy(PCM.buf, td.addrInt, tableBuffer, 0, bufSize);
-            }
-
-
-            if (tableIds.Count < 2)
-            {
-                for (int t = 0; t < filteredTables.Count; t++)
-                {
-                    //Collect all different row & column labels from table names
-
-                    ColumnInfo colInfo = new ColumnInfo();
-                    MultiTableName mtn = new MultiTableName(filteredTables[t].TableName, (int)numColumn.Value);
-                    if (!rowHeaders.Contains(mtn.RowName))
-                        rowHeaders.Add(mtn.RowName);
-                    string colHdr = mtn.columnName;
-                    if (filteredTables[t].ColumnHeaders != null &&  filteredTables[t].ColumnHeaders != "" && !filteredTables[t].ColumnHeaders.Contains(","))
-                        colHdr += " " + filteredTables[t].ColumnHeaders.Trim();
-                    if (!colHeaders.Contains(colHdr))
+                    //Manually selected multiple tables
+                    filteredTables = new List<TableData>();
+                    tableIds.Sort();
+                    for (int i = 0; i < tableIds.Count; i++)
                     {
+                        ColumnInfo colInfo = getColinfoByTableData(PCM.tableDatas[tableIds[i]]);
+                        coliInfos.Add(colInfo);
+                        string colHdr = PCM.tableDatas[tableIds[i]].TableName;
+                        if (PCM.tableDatas[tableIds[i]].ColumnHeaders != "" && !PCM.tableDatas[tableIds[i]].ColumnHeaders.Contains(","))
+                            colHdr += " " + PCM.tableDatas[tableIds[i]].ColumnHeaders.Trim();
                         colHeaders.Add(colHdr);
-                        colInfo = getColinfoByTableData(filteredTables[t]);
+                        filteredTables.Add(PCM.tableDatas[tableIds[i]]);
+                    }
+                    if (td.RowHeaders == null || td.RowHeaders.Length == 0)
+                        for (int r = 0; r < td.Rows; r++)
+                            rowHeaders.Add("");
+                }
+                else
+                {
+                    //Multible tables which are meant to be linked together
+                    string filterName = td.TableName.Substring(0, tableName.Length + 1);
+                    var results = PCM.tableDatas.Where(t => t.TableName.StartsWith(filterName));
+                    filteredTables = new List<TableData>(results.ToList());
+                    filteredTables = filteredTables.OrderBy(o => o.addrInt).ToList();
+                }
+                td = filteredTables[0];
+
+                if (bufSize == 0)
+                {
+                    List<TableData> sizeList = new List<TableData>(filteredTables.OrderBy(o => o.addrInt).ToList());
+                    int elementSize = getElementSize(sizeList[sizeList.Count - 1].DataType); //Last table in list
+                    int singleTableSize = td.Rows * td.Columns * elementSize;
+                    bufSize = (uint)(sizeList[sizeList.Count - 1].addrInt - sizeList[0].addrInt + sizeList[sizeList.Count - 1].Offset + singleTableSize);
+                    tableBuffer = new byte[bufSize];
+                    Array.Copy(PCM.buf, td.addrInt, tableBuffer, 0, bufSize);
+                }
+
+
+                if (tableIds.Count < 2)
+                {
+                    for (int t = 0; t < filteredTables.Count; t++)
+                    {
+                        //Collect all different row & column labels from table names
+
+                        ColumnInfo colInfo = new ColumnInfo();
+                        MultiTableName mtn = new MultiTableName(filteredTables[t].TableName, (int)numColumn.Value);
+                        if (!rowHeaders.Contains(mtn.RowName))
+                            rowHeaders.Add(mtn.RowName);
+                        string colHdr = mtn.columnName;
+                        if (filteredTables[t].ColumnHeaders != null && filteredTables[t].ColumnHeaders != "" && !filteredTables[t].ColumnHeaders.Contains(","))
+                            colHdr += " " + filteredTables[t].ColumnHeaders.Trim();
+                        if (!colHeaders.Contains(colHdr))
+                        {
+                            colHeaders.Add(colHdr);
+                            colInfo = getColinfoByTableData(filteredTables[t]);
+                            coliInfos.Add(colInfo);
+                        }
+                    }
+                }
+                if (rowHeaders.Count < 2 && td.Rows > 1)
+                {
+                    if (filteredTables[0].RowHeaders != null && filteredTables[0].RowHeaders.Contains(','))
+                    {
+                        rowHeaders.Clear();
+                        string[] rParts = filteredTables[0].RowHeaders.Split(',');
+                        for (int r = 0; r < rParts.Length; r++)
+                            rowHeaders.Add(rParts[r].Trim());
+                    }
+                }
+                if (rowHeaders.Count > 0 && rowHeaders[0].Contains("]["))
+                { //Tablename Have [][][]
+                    numColumn.Enabled = true;
+                    numColumn.Visible = true;
+                    labelColumn.Visible = true;
+                }
+
+                if (td.ColumnHeaders.StartsWith("Table: "))
+                {
+                    colHeaders.Clear();
+                    string[] parts = td.ColumnHeaders.Split(' ');
+                    string[] colHeaderStr = loadHeaderFromTable(parts[1], td.Columns).Split(',');
+                    ColumnInfo colInfo = new ColumnInfo();
+                    colInfo = getColinfoByTableData(td);
+                    for (int p = 0; p < colHeaderStr.Length; p++)
+                    {
                         coliInfos.Add(colInfo);
                     }
                 }
-/*                if (filteredTables[0].TableName.StartsWith("DTC") )
-                {
-                    colHeaders.Add("Description");
-                    ColumnInfo colInfo = new ColumnInfo();
-                    colInfo.columnType = ColType.Value;
-                    colInfo.outputType = OutDataType.Text;
-                    coliInfos.Add(colInfo);
-                }
-*/
-            }
-            if (rowHeaders.Count < 2 && td.Rows > 1)
-            {
-                if (filteredTables[0].RowHeaders!= null && filteredTables[0].RowHeaders.Contains(','))
+
+                if (td.RowHeaders.StartsWith("Table: "))
                 {
                     rowHeaders.Clear();
-                    string[] rParts = filteredTables[0].RowHeaders.Split(',');
-                    for (int r = 0; r < rParts.Length; r++)
-                        rowHeaders.Add(rParts[r].Trim());
-                }
-            }
-            if (rowHeaders[0].Contains("]["))
-            { //Tablename Have [][][]
-                numColumn.Enabled = true;
-                numColumn.Visible = true;
-                labelColumn.Visible = true;
-            }
-
-            if (td.ColumnHeaders.StartsWith("Table: "))
-            {
-                colHeaders.Clear();
-                string[] parts = td.ColumnHeaders.Split(' ');
-                string[] colHeaderStr = loadHeaderFromTable(parts[1], td.Columns).Split(',');
-                ColumnInfo colInfo = new ColumnInfo();
-                colInfo = getColinfoByTableData(td);
-                for (int p = 0; p < colHeaderStr.Length; p++)
-                {
-                    coliInfos.Add(colInfo);
-                }
-            }
-
-            if (td.RowHeaders.StartsWith("Table: "))
-            {
-                rowHeaders.Clear();
-                string[] parts = td.RowHeaders.Split(' ');
-                string[] rowHeaderStr = loadHeaderFromTable(parts[1], td.Rows).Split(',');
-                for (int p = 0; p < rowHeaderStr.Length; p++)
-                    rowHeaders.Add(rowHeaderStr[p]);
-            }
-
-            if (rowHeaders.Count == 0)
-                rowHeaders.Add("");
-
-            dataGridView1.Rows.Clear();
-            dataGridView1.Columns.Clear();
-
-            bool xySwapped = chkSwapXY.Checked;
- 
-            //If there is different kind of columns, X/Y can't be swapped
-            int boolCols = 0;
-            int combCols = 0;
-            int regCols = 0;
-            for (int c = 0; c < coliInfos.Count; c++)
-            {
-                if (coliInfos[c].columnType == ColType.Combo)
-                {
-                    if (c > 0 && coliInfos[c].enumStr != coliInfos[c-1].enumStr)
-                    {   //Diffrent values in comboboxes, not possible to put in one column                       
-                        combCols = 10;
-                        break;
-                    }
-                    combCols = 1;
-                }
-                else if (coliInfos[c].columnType == ColType.Flag) boolCols = 1;
-                else regCols = 1;
-            }
-            if ((boolCols + combCols + regCols) == 1)
-            {
-                //Only regular, combo, or Flag columns used, can swap
-                if (rowHeaders.Count == 1 && colHeaders.Count > 1)                    
-                    xySwapped = !chkSwapXY.Checked; //Invert checkbox meaning, swap by default
-            }
-            else
-            {
-                chkSwapXY.Enabled = false;
-                swapXyToolStripMenuItem.Enabled = false;
-            }
-
-            if (xySwapped)
-            {
-                //Swapped, put ROWheaders to COLUMNS
-                for (int r = 0; r < rowHeaders.Count; r++)
-                {
-                    string hdrTxt = rowHeaders[r];
-                    if (rowHeaders.Count == 1)
-                    {
-                        if (td.Units.ToLower().Contains("bitmask"))
-                            hdrTxt = "Boolean";
-                        else
-                            hdrTxt = td.Units;
-                    }
-                    //Setup Checkbox & Combo -columns
-                    if (coliInfos[0].columnType == ColType.Flag)
-                    {
-                        DataGridViewCheckBoxColumn col_chkbox = new DataGridViewCheckBoxColumn();
-                        dataGridView1.Columns.Add(col_chkbox);
-                    }
-                    else if (coliInfos[0].columnType == ColType.Combo)
-                    {
-                        DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
-                        if (coliInfos[0].outputType == OutDataType.Float)
-                            comboCol.DataSource = new BindingSource(coliInfos[0].enumVals, null);
-                        else
-                            comboCol.DataSource = new BindingSource(coliInfos[0].enumIntVals, null);
-                        comboCol.DisplayMember = "Value";
-                        comboCol.ValueMember = "Key";
-                        dataGridView1.Columns.Add(comboCol);
-                    }
-                    else
-                    {
-                        dataGridView1.Columns.Add(hdrTxt, hdrTxt);
-                    }
-                    dataGridView1.Columns[r].HeaderText = hdrTxt;
+                    string[] parts = td.RowHeaders.Split(' ');
+                    string[] rowHeaderStr = loadHeaderFromTable(parts[1], td.Rows).Split(',');
+                    for (int p = 0; p < rowHeaderStr.Length; p++)
+                        rowHeaders.Add(rowHeaderStr[p]);
                 }
 
-                //Put ColHeaders to ROWLables
-                for (int c = 0; c < colHeaders.Count; c++)
+                if (rowHeaders.Count == 0)
+                    rowHeaders.Add("");
+
+                dataGridView1.Rows.Clear();
+                dataGridView1.Columns.Clear();
+
+                bool xySwapped = chkSwapXY.Checked;
+
+                //If there is different kind of columns, X/Y can't be swapped
+                int boolCols = 0;
+                int combCols = 0;
+                int regCols = 0;
+                for (int c = 0; c < coliInfos.Count; c++)
                 {
-                    dataGridView1.Rows.Add();
-                    if (colHeaders.Count == 1)
+                    if (coliInfos[c].columnType == ColType.Combo)
                     {
-                        if (td.Units.ToLower().Contains("bitmask"))
-                            dataGridView1.Rows[c].HeaderCell.Value = "Boolean";
-                        else
-                            dataGridView1.Rows[c].HeaderCell.Value = td.Units;
+                        if (c > 0 && coliInfos[c].enumStr != coliInfos[c - 1].enumStr)
+                        {   //Diffrent values in comboboxes, not possible to put in one column                       
+                            combCols = 10;
+                            break;
+                        }
+                        combCols = 1;
                     }
-                    else
-                    {
-                        dataGridView1.Rows[c].HeaderCell.Value = colHeaders[c];
-                    }
+                    else if (coliInfos[c].columnType == ColType.Flag) boolCols = 1;
+                    else regCols = 1;
+                }
+                if ((boolCols + combCols + regCols) == 1)
+                {
+                    //Only regular, combo, or Flag columns used, can swap
+                    if (rowHeaders.Count == 1 && colHeaders.Count > 1)
+                        xySwapped = !chkSwapXY.Checked; //Invert checkbox meaning, swap by default
+                }
+                else
+                {
+                    chkSwapXY.Enabled = false;
+                    swapXyToolStripMenuItem.Enabled = false;
                 }
 
-
-                int gridRow = 0;
-                for (int tbl = 0; tbl < filteredTables.Count; tbl++) ///Go thru all filtered tables
+                if (xySwapped)
                 {
-                    int gridCol = 0;
-                    TableData ft = filteredTables[tbl];
-                    int elementsize = getElementSize(ft.DataType);
-                    uint addr = (uint)(ft.addrInt + ft.Offset);
-                    if (!ft.RowMajor) 
+                    //Swapped, put ROWheaders to COLUMNS
+                    for (int r = 0; r < rowHeaders.Count; r++)
                     {
-                        for (int r = 0; r < ft.Rows; r++) //All rows from table
+                        string hdrTxt = rowHeaders[r];
+                        if (rowHeaders.Count == 1)
                         {
-                            if (dataGridView1.Columns.Count > 1)
-                                gridCol = getColumnByTableData_XySwap(ft, r);
-                            for (int c = 0; c < ft.Columns; c++) //All columns from table
-                            {
-                                if (dataGridView1.Rows.Count > 1)
-                                    gridRow = getRowByTableData_XySwap(ft, c);
-                                setCellValue(addr, gridRow, gridCol, ft);
-                                addr += (uint)elementsize;
-                            }
+                            if (td.Units.ToLower().Contains("bitmask"))
+                                hdrTxt = "Boolean";
+                            else
+                                hdrTxt = td.Units;
+                        }
+                        //Setup Checkbox & Combo -columns
+                        if (coliInfos[0].columnType == ColType.Flag)
+                        {
+                            DataGridViewCheckBoxColumn col_chkbox = new DataGridViewCheckBoxColumn();
+                            dataGridView1.Columns.Add(col_chkbox);
+                        }
+                        else if (coliInfos[0].columnType == ColType.Combo)
+                        {
+                            DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
+                            if (coliInfos[0].outputType == OutDataType.Float)
+                                comboCol.DataSource = new BindingSource(coliInfos[0].enumVals, null);
+                            else
+                                comboCol.DataSource = new BindingSource(coliInfos[0].enumIntVals, null);
+                            comboCol.DisplayMember = "Value";
+                            comboCol.ValueMember = "Key";
+                            dataGridView1.Columns.Add(comboCol);
+                        }
+                        else
+                        {
+                            dataGridView1.Columns.Add(hdrTxt, hdrTxt);
+                        }
+                        dataGridView1.Columns[r].HeaderText = hdrTxt;
+                    }
+
+                    //Put ColHeaders to ROWLables
+                    for (int c = 0; c < colHeaders.Count; c++)
+                    {
+                        dataGridView1.Rows.Add();
+                        if (colHeaders.Count == 1)
+                        {
+                            if (td.Units.ToLower().Contains("bitmask"))
+                                dataGridView1.Rows[c].HeaderCell.Value = "Boolean";
+                            else
+                                dataGridView1.Rows[c].HeaderCell.Value = td.Units;
+                        }
+                        else
+                        {
+                            dataGridView1.Rows[c].HeaderCell.Value = colHeaders[c];
                         }
                     }
-                    else //Rowmajor
+
+
+                    int gridRow = 0;
+                    for (int tbl = 0; tbl < filteredTables.Count; tbl++) ///Go thru all filtered tables
                     {
-                        for (int c = 0; c < ft.Columns; c++)
+                        int gridCol = 0;
+                        TableData ft = filteredTables[tbl];
+                        int elementsize = getElementSize(ft.DataType);
+                        uint addr = (uint)(ft.addrInt + ft.Offset);
+                        if (!ft.RowMajor)
                         {
-                            if (dataGridView1.Rows.Count > 1)
-                                gridRow = getRowByTableData_XySwap(ft, c);
-                            for (int r = 0; r < ft.Rows; r++)
+                            for (int r = 0; r < ft.Rows; r++) //All rows from table
                             {
                                 if (dataGridView1.Columns.Count > 1)
                                     gridCol = getColumnByTableData_XySwap(ft, r);
-                                setCellValue(addr, gridRow, gridCol, ft);
-                                addr += (uint)elementsize;
+                                for (int c = 0; c < ft.Columns; c++) //All columns from table
+                                {
+                                    if (dataGridView1.Rows.Count > 1)
+                                        gridRow = getRowByTableData_XySwap(ft, c);
+                                    setCellValue(addr, gridRow, gridCol, ft);
+                                    addr += (uint)elementsize;
+                                }
                             }
                         }
-
-                    }
-
-                }
-
-
-            }
-            else //Not xyswapped
-            {
-                for (int c = 0; c < colHeaders.Count; c++)
-                {
-                    string hdrTxt = colHeaders[c];
-                    if (colHeaders.Count == 1)
-                    {
-                        if (td.Units.ToLower().Contains("bitmask"))
-                            dataGridView1.Columns[c].HeaderText = "Boolean";
-                        else
-                            dataGridView1.Columns[c].HeaderText = td.Units;
-                    }
-                    //Setup comboboxes & checkboxes
-                    if (coliInfos[c].columnType == ColType.Flag)
-                    {
-                        DataGridViewCheckBoxColumn col_chkbox = new DataGridViewCheckBoxColumn();
-                        dataGridView1.Columns.Add(col_chkbox);
-                    }
-                    else if (coliInfos[c].columnType == ColType.Combo)
-                    {
-                        DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
-                        if (coliInfos[c].outputType == OutDataType.Float)
-                            comboCol.DataSource = new BindingSource(coliInfos[c].enumVals, null);
-                        else
-                            comboCol.DataSource = new BindingSource(coliInfos[c].enumIntVals, null);
-                        comboCol.DisplayMember = "Value";
-                        comboCol.ValueMember = "Key";
-                        dataGridView1.Columns.Add(comboCol);
-                    }
-                    else
-                    {
-                        dataGridView1.Columns.Add(hdrTxt, hdrTxt);
-                    }
-                    dataGridView1.Columns[c].HeaderText = hdrTxt;
-
-                }
-
-                for (int r = 0; r < rowHeaders.Count; r++)
-                {
-                    dataGridView1.Rows.Add();
-                    if (rowHeaders.Count == 1)
-                    {
-                        if (td.Units.ToLower().Contains("bitmask"))
-                            dataGridView1.Rows[r].HeaderCell.Value = "Boolean";
-                        else
-                            dataGridView1.Rows[r].HeaderCell.Value = td.Units;
-                    }
-                    else
-                        dataGridView1.Rows[r].HeaderCell.Value = rowHeaders[r];
-                }
-
-                int gridRow = 0;
-                for (int tbl = 0; tbl < filteredTables.Count; tbl++)
-                {
-                    TableData ft = filteredTables[tbl];
-                    int elementsize = getElementSize(ft.DataType);
-                    int gridCol = 0;
-                    uint addr = (uint)(ft.addrInt + ft.Offset);
-                    if (ft.RowMajor)
-                    {
-                        for (int r = 0; r < ft.Rows; r++)
+                        else //Rowmajor
                         {
-                            if (dataGridView1.Rows.Count > 1)
-                                gridRow = getRowByTableData(ft, r);
                             for (int c = 0; c < ft.Columns; c++)
                             {
-                                if (dataGridView1.Columns.Count > 1)
-                                    gridCol = getColumnByTableData(ft, c);
-                                setCellValue(addr, gridRow, gridCol, ft);
-                                addr += (uint)elementsize;
+                                if (dataGridView1.Rows.Count > 1)
+                                    gridRow = getRowByTableData_XySwap(ft, c);
+                                for (int r = 0; r < ft.Rows; r++)
+                                {
+                                    if (dataGridView1.Columns.Count > 1)
+                                        gridCol = getColumnByTableData_XySwap(ft, r);
+                                    setCellValue(addr, gridRow, gridCol, ft);
+                                    addr += (uint)elementsize;
+                                }
                             }
+
                         }
+
                     }
-                    else
+
+
+                }
+                else //Not xyswapped
+                {
+                    for (int c = 0; c < colHeaders.Count; c++)
                     {
-                        for (int c = 0; c < ft.Columns; c++)
+                        string hdrTxt = colHeaders[c];
+                        if (colHeaders.Count == 1)
+                        {
+                            if (td.Units.ToLower().Contains("bitmask"))
+                                dataGridView1.Columns[c].HeaderText = "Boolean";
+                            else
+                                dataGridView1.Columns[c].HeaderText = td.Units;
+                        }
+                        //Setup comboboxes & checkboxes
+                        if (coliInfos[c].columnType == ColType.Flag)
+                        {
+                            DataGridViewCheckBoxColumn col_chkbox = new DataGridViewCheckBoxColumn();
+                            dataGridView1.Columns.Add(col_chkbox);
+                        }
+                        else if (coliInfos[c].columnType == ColType.Combo)
+                        {
+                            DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
+                            if (coliInfos[c].outputType == OutDataType.Float)
+                                comboCol.DataSource = new BindingSource(coliInfos[c].enumVals, null);
+                            else
+                                comboCol.DataSource = new BindingSource(coliInfos[c].enumIntVals, null);
+                            comboCol.DisplayMember = "Value";
+                            comboCol.ValueMember = "Key";
+                            dataGridView1.Columns.Add(comboCol);
+                        }
+                        else
+                        {
+                            dataGridView1.Columns.Add(hdrTxt, hdrTxt);
+                        }
+                        dataGridView1.Columns[c].HeaderText = hdrTxt;
+
+                    }
+
+                    for (int r = 0; r < rowHeaders.Count; r++)
+                    {
+                        dataGridView1.Rows.Add();
+                        if (rowHeaders.Count == 1)
+                        {
+                            if (td.Units.ToLower().Contains("bitmask"))
+                                dataGridView1.Rows[r].HeaderCell.Value = "Boolean";
+                            else
+                                dataGridView1.Rows[r].HeaderCell.Value = td.Units;
+                        }
+                        else
+                            dataGridView1.Rows[r].HeaderCell.Value = rowHeaders[r];
+                    }
+
+                    int gridRow = 0;
+                    for (int tbl = 0; tbl < filteredTables.Count; tbl++)
+                    {
+                        TableData ft = filteredTables[tbl];
+                        int elementsize = getElementSize(ft.DataType);
+                        int gridCol = 0;
+                        uint addr = (uint)(ft.addrInt + ft.Offset);
+                        if (ft.RowMajor)
                         {
                             for (int r = 0; r < ft.Rows; r++)
                             {
-                                if (dataGridView1.Columns.Count > 1)
-                                    gridCol = getColumnByTableData(ft, c);
                                 if (dataGridView1.Rows.Count > 1)
                                     gridRow = getRowByTableData(ft, r);
-                                setCellValue(addr, gridRow, gridCol, ft);
-                                addr += (uint)elementsize;
+                                for (int c = 0; c < ft.Columns; c++)
+                                {
+                                    if (dataGridView1.Columns.Count > 1)
+                                        gridCol = getColumnByTableData(ft, c);
+                                    setCellValue(addr, gridRow, gridCol, ft);
+                                    addr += (uint)elementsize;
+                                }
                             }
                         }
+                        else
+                        {
+                            for (int c = 0; c < ft.Columns; c++)
+                            {
+                                for (int r = 0; r < ft.Rows; r++)
+                                {
+                                    if (dataGridView1.Columns.Count > 1)
+                                        gridCol = getColumnByTableData(ft, c);
+                                    if (dataGridView1.Rows.Count > 1)
+                                        gridRow = getRowByTableData(ft, r);
+                                    setCellValue(addr, gridRow, gridCol, ft);
+                                    addr += (uint)elementsize;
+                                }
+                            }
 
+                        }
                     }
-                }
-                if (td.TableName.StartsWith("DTC"))
-                {
-                    showDtdDescriptions();
-                }
-
-            }
-            for (int r=0; r< dataGridView1.Rows.Count; r++)
-            {
-                for (int c=0; c<dataGridView1.Columns.Count; c++)
-                {
-                    if (dataGridView1.Rows[r].Cells[c].Tag == null)
+                    if (td.TableName.StartsWith("DTC"))
                     {
-                        dataGridView1.Rows[r].Cells[c].ReadOnly = true;
-                        dataGridView1.Rows[r].Cells[c].Style.BackColor = Color.DarkGray;
+                        showDtdDescriptions();
+                    }
+
+                }
+                for (int r = 0; r < dataGridView1.Rows.Count; r++)
+                {
+                    for (int c = 0; c < dataGridView1.Columns.Count; c++)
+                    {
+                        if (dataGridView1.Rows[r].Cells[c].Tag == null)
+                        {
+                            dataGridView1.Rows[r].Cells[c].ReadOnly = true;
+                            dataGridView1.Rows[r].Cells[c].Style.BackColor = Color.DarkGray;
+                        }
                     }
                 }
+                setDataGridLayout();
             }
-            setDataGridLayout();
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+            }
         }
 
         private void showDtdDescriptions()
@@ -1047,7 +1050,12 @@ namespace UniversalPatcher
                 return;
             chkSwapXY.Enabled = false;
             swapXyToolStripMenuItem.Enabled = false;
-            int col = dataGridView1.Columns.Add("Description", "Description");
+            searchCodeFromGoogleToolStripMenuItem.Visible = true;
+            DataGridViewColumn dgc = new DataGridViewColumn();
+            dgc.Name = "Description";
+            dgc.HeaderText = "Description";
+            dgc.CellTemplate = new DataGridViewTextBoxCell();
+            dataGridView1.Columns.Insert(0,dgc);
             for (int r = 0; r < dataGridView1.Rows.Count; r++)
             {
                 string descr = ds.getDtcDescription(dataGridView1.Rows[r].HeaderCell.Value.ToString());
@@ -1532,6 +1540,7 @@ namespace UniversalPatcher
         {
             try
             {
+                dataGridView1.EndEdit();
                 Array.Copy(tableBuffer, 0, PCM.buf, td.addrInt, bufSize);
             }
             catch (Exception ex)
@@ -2037,15 +2046,20 @@ namespace UniversalPatcher
 
         private void saveOBD2DescriptionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            dataGridView1.EndEdit();
             saveOBD2Codes();
         }
         private void DataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (!td.TableName.StartsWith("DTC"))
-                return;
-            string url = "https://www.google.com/search?q=Chevrolet+" + dataGridView1.Rows[e.RowIndex].HeaderCell.Value.ToString();
-            System.Diagnostics.Process.Start(url);
         }
 
+        private void searchCodeFromGoogleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!td.TableName.StartsWith("DTC"))
+                return;
+            string url = "https://www.google.com/search?q=Chevrolet+" + dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].HeaderCell.Value.ToString();
+            System.Diagnostics.Process.Start(url);
+
+        }
     }
 }

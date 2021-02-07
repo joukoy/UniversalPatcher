@@ -41,6 +41,7 @@ namespace UniversalPatcher
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportCsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.searchCodeFromGoogleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,7 +92,6 @@ namespace UniversalPatcher
             this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
-            this.dataGridView1.CellDoubleClick += DataGridView1_CellDoubleClick;
             // 
             // txtMath
             // 
@@ -126,37 +126,46 @@ namespace UniversalPatcher
             this.cutToolStripMenuItem,
             this.copyToolStripMenuItem,
             this.pasteToolStripMenuItem,
-            this.exportCsvToolStripMenuItem});
+            this.exportCsvToolStripMenuItem,
+            this.searchCodeFromGoogleToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(129, 92);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(196, 136);
             // 
             // cutToolStripMenuItem
             // 
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.cutToolStripMenuItem.Text = "Cut";
             this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // exportCsvToolStripMenuItem
             // 
             this.exportCsvToolStripMenuItem.Name = "exportCsvToolStripMenuItem";
-            this.exportCsvToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.exportCsvToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.exportCsvToolStripMenuItem.Text = "Export csv";
             this.exportCsvToolStripMenuItem.Click += new System.EventHandler(this.exportCsvToolStripMenuItem_Click);
+            // 
+            // searchCodeFromGoogleToolStripMenuItem
+            // 
+            this.searchCodeFromGoogleToolStripMenuItem.Name = "searchCodeFromGoogleToolStripMenuItem";
+            this.searchCodeFromGoogleToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.searchCodeFromGoogleToolStripMenuItem.Text = "Search code by Google";
+            this.searchCodeFromGoogleToolStripMenuItem.Visible = false;
+            this.searchCodeFromGoogleToolStripMenuItem.Click += new System.EventHandler(this.searchCodeFromGoogleToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 
@@ -474,5 +483,6 @@ namespace UniversalPatcher
         private Label label1;
         private ToolStripMenuItem dataFontToolStripMenuItem;
         private ToolStripMenuItem saveOBD2DescriptionsToolStripMenuItem;
+        private ToolStripMenuItem searchCodeFromGoogleToolStripMenuItem;
     }
 }
