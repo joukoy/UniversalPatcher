@@ -230,7 +230,10 @@ namespace UniversalPatcher
                     td.ColumnHeaders = RemoveDuplicates(colHeaders);
                     //td.Floating = true;
                     td.Decimals = 2;
-                    td.Math = "X*" + row["Factor"].ToString();
+                    if (row["Factor"].ToString().Length > 0)
+                        td.Math = "X*" + row["Factor"].ToString();
+                    else
+                        td.Math = "X*1";
                     td.RowHeaders = row["RowHeaders"].ToString();
                     if (td.RowHeaders.Contains(",by,"))
                     {
