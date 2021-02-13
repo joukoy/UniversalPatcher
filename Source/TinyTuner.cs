@@ -239,7 +239,10 @@ namespace UniversalPatcher
                     {
                         td.RowHeaders = convertByHeader(td.RowHeaders, td.Rows);
                     }
-                    td.SavingMath = "X/" + row["Factor"].ToString();
+                    if (row["Factor"].ToString().Length > 0)
+                        td.SavingMath = "X/" + row["Factor"].ToString();
+                    else
+                        td.SavingMath = "X/1";
                     td.Category = row["MainCategory"].ToString();
                     if (!PCM.tableCategories.Contains(td.Category))
                         PCM.tableCategories.Add(td.Category);
