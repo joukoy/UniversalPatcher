@@ -1457,9 +1457,16 @@ public class upatcher
 
     public static int findTableDataId(TableData refTd, PcmFile pcm1)
     {
+        int pos1 = refTd.TableName.IndexOf("*");
+        if (pos1 < 0)
+            pos1 = refTd.TableName.Length;
+
         for (int t = 0; t < pcm1.tableDatas.Count; t++)
         {
-            if (pcm1.tableDatas[t].TableName == refTd.TableName && pcm1.tableDatas[t].Category == refTd.Category)
+            int pos2 = pcm1.tableDatas[t].TableName.IndexOf("*");
+            if (pos2 < 0)
+                pos2 = pcm1.tableDatas[t].TableName.Length;
+            if (pcm1.tableDatas[t].TableName.Substring(0, pos2) == refTd.TableName.Substring(0, pos1) && pcm1.tableDatas[t].Category == refTd.Category)
             {
                 return t;
             }

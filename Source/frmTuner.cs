@@ -650,7 +650,7 @@ namespace UniversalPatcher
             bool haveDTC = false;
             for (int t = 0; t < PCM.tableDatas.Count; t++)
             {
-                if (PCM.tableDatas[t].TableName.StartsWith("DTC"))
+                if (PCM.tableDatas[t].TableName == "DTC" || PCM.tableDatas[t].TableName == "DTC.Codes")
                 {
                     haveDTC = true;
                     Logger(" DTC codes already defined");
@@ -1668,21 +1668,14 @@ namespace UniversalPatcher
             {
                 bool found = false;
                 //Not 100% compatible file, find table by name & category
-                for (int t = 0; t < pcm2.tableDatas.Count; t++)
-                {
-                    if (pcm2.tableDatas[t].TableName == td1.TableName && pcm2.tableDatas[t].Category == td1.Category)
-                    {
-                        td2 = pcm2.tableDatas[t];
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
+                int t = findTableDataId(td1, pcm2);
+                if (t < 0)
                 {
                     //Logger("Table not found: " + td1.TableName + "[" + pcm2.FileName + "]");
                     diffMissingTables++;
                     return false;
                 }
+                td2 = pcm2.tableDatas[t];
                 int tb2size = td2.Rows * td2.Columns * getElementSize(td2.DataType);
                 if (tbSize != tb2size)
                     return false;
