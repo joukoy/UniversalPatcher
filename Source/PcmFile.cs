@@ -115,13 +115,21 @@ namespace UniversalPatcher
             {
 
                 string defName = Path.Combine(Application.StartupPath, "Tuner", OS + ".xml");
+                if (!File.Exists(defName) && File.Exists(defName.Replace(".xml", ".txt")))
+                    defName = defName.Replace(".xml", ".txt");
                 //string defName = PCM.OS + ".xml";
                 if (fName == "")
-                    fName = SelectFile("Select XML File", "XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
+                    fName = SelectFile("Select XML File", "XML/TXT Files (*.xml,*.txt)|*.xml;*.txt|ALL Files (*.*)|*.*", defName);
                 if (fName.Length == 0)
                     return retVal;
                 List<TableData> tmpTableDatas = new List<TableData>();
-                retVal = "Loading file: " + fName;
+                if (fName.ToLower().EndsWith(".txt"))
+                {
+                    string compXml = ReadTextFile(fName);
+                    retVal += Path.GetFileName(fName) + " => " + compXml + Environment.NewLine;
+                    fName = Path.Combine(Path.GetDirectoryName(fName),compXml);
+                }
+                retVal += "Loading file: " + fName;
                 if (File.Exists(fName))
                 {
                     Debug.WriteLine("Loading " + fName + "...");
@@ -138,7 +146,7 @@ namespace UniversalPatcher
                     if (!tableCategories.Contains(category))
                         tableCategories.Add(category);
                 }
-                retVal += " [OK]" + Environment.NewLine;
+                retVal += " [OK]";
                 Application.DoEvents();
                 //dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             }

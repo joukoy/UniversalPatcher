@@ -40,6 +40,7 @@ namespace UniversalPatcher
         SortOrder strSortOrder = SortOrder.Ascending;
         private string currentXmlFile;
         private int lastSelectedId;
+        string compXml = "";
         private void frmTuner_Load(object sender, EventArgs e)
         {
             enableConfigModeToolStripMenuItem.Checked = Properties.Settings.Default.TunerConfigMode;
@@ -157,6 +158,17 @@ namespace UniversalPatcher
             if (!Properties.Settings.Default.disableTunerAutoloadSettings)
             {
                 string defaultXml = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
+                string defaultTxt = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".txt");
+                if (!File.Exists(defaultXml) && File.Exists(defaultTxt))
+                {
+                    compXml = ReadTextFile(defaultTxt);
+                    defaultXml = Path.Combine(Application.StartupPath, "Tuner", compXml);
+                    Logger("Using compatible file: " + compXml);
+                }
+                else
+                {
+                    compXml = "";
+                }
                 if (File.Exists(defaultXml))
                 {
                     Logger(PCM.LoadTableList(defaultXml));
@@ -204,7 +216,7 @@ namespace UniversalPatcher
                     return;
                 }
 
-                if (td.OS != PCM.OS)
+                if (td.OS != PCM.OS && !td.CompatibleOS.Contains("," + PCM.OS +","))
                 {
                     LoggerBold("WARING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);
                 }
@@ -385,6 +397,8 @@ namespace UniversalPatcher
             try
             {
                 string defName = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
+                if (compXml.Length > 0)
+                    defName = Path.Combine(Application.StartupPath, "Tuner", compXml);
                 if (fName.Length == 0)
                     fName = SelectSaveFile("XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
                 if (fName.Length == 0)
@@ -626,7 +640,7 @@ namespace UniversalPatcher
 
         private void loadXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PCM.LoadTableList();
+            Logger(PCM.LoadTableList());
             refreshTablelist();
             //currentXmlFile = PCM.configFileFullName;
         }
@@ -1664,7 +1678,7 @@ namespace UniversalPatcher
             TableData td1 = pcm1.tableDatas[tInd];
             TableData td2 = td1.ShallowCopy();
             int tbSize = td1.Rows * td1.Columns * getElementSize(td1.DataType);
-            if (pcm1.OS != pcm2.OS)
+            if (pcm1.OS != pcm2.OS && !td1.CompatibleOS.Contains("," + pcm2.OS + ","))
             {
                 bool found = false;
                 //Not 100% compatible file, find table by name & category
@@ -2050,6 +2064,12 @@ namespace UniversalPatcher
             {
                 Logger(ex.Message);
             }
+        }
+
+        private void convertTableNamesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < PCM.tableDatas.Count; i++)
+                PCM.tableDatas[i].TableName = PCM.tableDatas[i].TableName.Replace("_", " ");
         }
     }
 }

@@ -1609,7 +1609,6 @@ namespace UniversalPatcher
                     double newvalue = parser.Parse(mathStr);
                     cell.Value = newvalue;
                     uint addr = 0;
-                    int id = 0;
                     Tagi t = (Tagi)dataGridView1.Rows[cell.RowIndex].Cells[cell.ColumnIndex].Tag;
                     SaveValue(addr, cell.RowIndex, cell.ColumnIndex, PCM.tableDatas[t.id]);
 

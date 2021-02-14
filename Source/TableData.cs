@@ -33,6 +33,7 @@ namespace UniversalPatcher
             Origin = "";
             Values = "";
             ExtraDescription = "";
+            CompatibleOS = "";
         }
         public uint id { get; set; }
         public string OS { get; set; }
@@ -84,6 +85,22 @@ namespace UniversalPatcher
         public string RowHeaders { get; set; }
         public string TableDescription { get; set; }
         public string ExtraDescription { get; set; }
+        private string altOS;
+        public string CompatibleOS 
+        { 
+            get { return altOS; }
+            set
+            {
+                altOS = value;
+                if (altOS.Length > 0)
+                {
+                    if (!altOS.StartsWith(","))
+                        altOS = "," + altOS;
+                    if (!altOS.EndsWith(","))
+                        altOS += ",";
+                }
+            }
+        }
 
         public TableData ShallowCopy()
         {
