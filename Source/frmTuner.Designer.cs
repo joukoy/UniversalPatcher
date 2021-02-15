@@ -95,7 +95,7 @@ namespace UniversalPatcher
             this.txtDescription = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.convertTableNamesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.massModifyTableListsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -309,7 +309,7 @@ namespace UniversalPatcher
             this.importToolStripMenuItem1,
             this.exportToolStripMenuItem1,
             this.findDifferencesToolStripMenuItem,
-            this.convertTableNamesToolStripMenuItem});
+            this.massModifyTableListsToolStripMenuItem});
             this.utilitiesToolStripMenuItem.Name = "utilitiesToolStripMenuItem";
             this.utilitiesToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
             this.utilitiesToolStripMenuItem.Text = "Utilities";
@@ -325,7 +325,7 @@ namespace UniversalPatcher
             this.cSVexperimentalToolStripMenuItem,
             this.cSV2ExperimentalToolStripMenuItem});
             this.importToolStripMenuItem1.Name = "importToolStripMenuItem1";
-            this.importToolStripMenuItem1.Size = new System.Drawing.Size(183, 22);
+            this.importToolStripMenuItem1.Size = new System.Drawing.Size(195, 22);
             this.importToolStripMenuItem1.Text = "Import";
             // 
             // dTCToolStripMenuItem
@@ -384,7 +384,7 @@ namespace UniversalPatcher
             this.xDFToolStripMenuItem,
             this.xMLGeneratorExportToolStripMenuItem});
             this.exportToolStripMenuItem1.Name = "exportToolStripMenuItem1";
-            this.exportToolStripMenuItem1.Size = new System.Drawing.Size(183, 22);
+            this.exportToolStripMenuItem1.Size = new System.Drawing.Size(195, 22);
             this.exportToolStripMenuItem1.Text = "Export";
             // 
             // cSVToolStripMenuItem
@@ -411,7 +411,7 @@ namespace UniversalPatcher
             // findDifferencesToolStripMenuItem
             // 
             this.findDifferencesToolStripMenuItem.Name = "findDifferencesToolStripMenuItem";
-            this.findDifferencesToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.findDifferencesToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.findDifferencesToolStripMenuItem.Text = "Find differences";
             this.findDifferencesToolStripMenuItem.Click += new System.EventHandler(this.findDifferencesToolStripMenuItem_Click);
             // 
@@ -655,12 +655,12 @@ namespace UniversalPatcher
             this.contextMenuStrip2.Name = "contextMenuStrip2";
             this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
             // 
-            // convertTableNamesToolStripMenuItem
+            // massModifyTableListsToolStripMenuItem
             // 
-            this.convertTableNamesToolStripMenuItem.Name = "convertTableNamesToolStripMenuItem";
-            this.convertTableNamesToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
-            this.convertTableNamesToolStripMenuItem.Text = "Convert TableNames";
-            this.convertTableNamesToolStripMenuItem.Click += new System.EventHandler(this.convertTableNamesToolStripMenuItem_Click);
+            this.massModifyTableListsToolStripMenuItem.Name = "massModifyTableListsToolStripMenuItem";
+            this.massModifyTableListsToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.massModifyTableListsToolStripMenuItem.Text = "Mass modify TableLists";
+            this.massModifyTableListsToolStripMenuItem.Click += new System.EventHandler(this.massModifyTableListsToolStripMenuItem_Click);
             // 
             // frmTuner
             // 
@@ -763,6 +763,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem findDifferencesToolStripMenuItem;
         private ToolStripMenuItem searchAndCompareAllToolStripMenuItem;
         private ToolStripMenuItem compareSelectedTablesToolStripMenuItem;
-        private ToolStripMenuItem convertTableNamesToolStripMenuItem;
+        private ToolStripMenuItem massModifyTableListsToolStripMenuItem;
     }
 }

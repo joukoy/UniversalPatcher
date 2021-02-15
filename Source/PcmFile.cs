@@ -19,28 +19,36 @@ namespace UniversalPatcher
         }
         public PcmFile(string Fname, bool autodetect, string cnfFile, List<SegmentConfig> oldSegments)
         {
-            setDefaultValues();
-            FileName = Fname;
-            altTableDatas[0].Name = Fname;
-            fsize = (uint)new FileInfo(FileName).Length;
-            buf = ReadBin(FileName, 0, fsize);
-            osStoreAddress = uint.MaxValue;
-            if (autodetect)
+            try
             {
-                configFile = autoDetect(this).Replace(".xml", "");
+                setDefaultValues();
+                FileName = Fname;
+                altTableDatas[0].Name = Fname;
+                fsize = (uint)new FileInfo(FileName).Length;
+                buf = ReadBin(FileName, 0, fsize);
+                osStoreAddress = uint.MaxValue;
+                if (autodetect)
+                {
+                    configFile = autoDetect(this).Replace(".xml", "");
+                    if (configFile.Length > 0)
+                        LoadConfigFile(configFileFullName);
+                }
+                else
+                {
+                    Segments = oldSegments;
+                    configFile = Path.GetFileNameWithoutExtension(cnfFile).ToLower();
+                }
                 if (configFile.Length > 0)
-                    LoadConfigFile(configFileFullName);
+                {
+                    GetSegmentAddresses();
+                    GetInfo();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Segments = oldSegments;
-                configFile = Path.GetFileNameWithoutExtension(cnfFile).ToLower();
+                LoggerBold(ex.Message);
             }
-            if (configFile.Length > 0)
-            {
-                GetSegmentAddresses();
-                GetInfo();
-            }
+
         }
         public struct V6Table
         {
@@ -115,15 +123,14 @@ namespace UniversalPatcher
             {
 
                 string defName = Path.Combine(Application.StartupPath, "Tuner", OS + ".xml");
-                if (!File.Exists(defName) && File.Exists(defName.Replace(".xml", ".txt")))
-                    defName = defName.Replace(".xml", ".txt");
                 //string defName = PCM.OS + ".xml";
                 if (fName == "")
-                    fName = SelectFile("Select XML File", "XML/TXT Files (*.xml,*.txt)|*.xml;*.txt|ALL Files (*.*)|*.*", defName);
+                    fName = SelectFile("Select XML File", "XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
                 if (fName.Length == 0)
                     return retVal;
                 List<TableData> tmpTableDatas = new List<TableData>();
-                if (fName.ToLower().EndsWith(".txt"))
+                long conFileSize = new FileInfo(fName).Length;
+                if (conFileSize < 255)
                 {
                     string compXml = ReadTextFile(fName);
                     retVal += Path.GetFileName(fName) + " => " + compXml + Environment.NewLine;

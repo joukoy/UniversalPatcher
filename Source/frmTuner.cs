@@ -158,16 +158,17 @@ namespace UniversalPatcher
             if (!Properties.Settings.Default.disableTunerAutoloadSettings)
             {
                 string defaultXml = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
-                string defaultTxt = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".txt");
-                if (!File.Exists(defaultXml) && File.Exists(defaultTxt))
+                //string defaultTxt = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".txt");
+                compXml = "";
+                if (File.Exists(defaultXml))
                 {
-                    compXml = ReadTextFile(defaultTxt);
-                    defaultXml = Path.Combine(Application.StartupPath, "Tuner", compXml);
-                    Logger("Using compatible file: " + compXml);
-                }
-                else
-                {
-                    compXml = "";
+                    long conFileSize = new FileInfo(defaultXml).Length;
+                    if (conFileSize < 255)
+                    {
+                        compXml = ReadTextFile(defaultXml);
+                        defaultXml = Path.Combine(Application.StartupPath, "Tuner", compXml);
+                        Logger("Using compatible file: " + compXml);
+                    }
                 }
                 if (File.Exists(defaultXml))
                 {
@@ -2066,10 +2067,11 @@ namespace UniversalPatcher
             }
         }
 
-        private void convertTableNamesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void massModifyTableListsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < PCM.tableDatas.Count; i++)
-                PCM.tableDatas[i].TableName = PCM.tableDatas[i].TableName.Replace("_", " ");
+            frmMassModifyTableData fmm = new frmMassModifyTableData();
+            fmm.Show();
+            fmm.loadData();
         }
     }
 }

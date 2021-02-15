@@ -115,6 +115,12 @@
     <Compile Include="frmMassCompare.Designer.cs">
       <DependentUpon>frmMassCompare.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmMassModifyTableData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMassModifyTableData.Designer.cs">
+      <DependentUpon>frmMassModifyTableData.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmRenameXML.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -298,6 +304,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmMassCompare.resx">
       <DependentUpon>frmMassCompare.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmMassModifyTableData.resx">
+      <DependentUpon>frmMassModifyTableData.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmRenameXML.resx">
       <DependentUpon>frmRenameXML.cs</DependentUpon>

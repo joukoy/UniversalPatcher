@@ -10,8 +10,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UniversalPatcher.Properties;
 using System.Linq;
 using System.Drawing;
+using System.Xml.Serialization;
 
-public class upatcher
+public static class upatcher
 {
     public class DetectRule
     {
@@ -1466,7 +1467,8 @@ public class upatcher
             int pos2 = pcm1.tableDatas[t].TableName.IndexOf("*");
             if (pos2 < 0)
                 pos2 = pcm1.tableDatas[t].TableName.Length;
-            if (pcm1.tableDatas[t].TableName.Substring(0, pos2) == refTd.TableName.Substring(0, pos1) && pcm1.tableDatas[t].Category == refTd.Category)
+            //if (pcm1.tableDatas[t].TableName.ToLower().Substring(0, pos2) == refTd.TableName.ToLower().Substring(0, pos1) && pcm1.tableDatas[t].Category.ToLower() == refTd.Category.ToLower())
+            if (pcm1.tableDatas[t].TableName.ToLower().Substring(0, pos2).Replace(" ","_") == refTd.TableName.ToLower().Substring(0, pos1).Replace(" ", "_"))
             {
                 return t;
             }
@@ -1533,4 +1535,15 @@ public class upatcher
             return BEToUint64(buf, bufAddr);
         return buf[bufAddr];
     }
+    public static string SerializeObject<T>(this T toSerialize)
+    {
+        XmlSerializer xmlSerializer = new XmlSerializer(toSerialize.GetType());
+
+        using (StringWriter textWriter = new StringWriter())
+        {
+            xmlSerializer.Serialize(textWriter, toSerialize);
+            return textWriter.ToString();
+        }
+    }
+
 }
