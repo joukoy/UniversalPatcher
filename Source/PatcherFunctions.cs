@@ -12,7 +12,7 @@ using System.Linq;
 using System.Drawing;
 using System.Xml.Serialization;
 
-public static class upatcher
+public class upatcher
 {
     public class DetectRule
     {
@@ -1534,16 +1534,6 @@ public static class upatcher
         if (td.DataType == InDataType.INT64 || td.DataType == InDataType.UINT64 || td.DataType == InDataType.FLOAT64)
             return BEToUint64(buf, bufAddr);
         return buf[bufAddr];
-    }
-    public static string SerializeObject<T>(this T toSerialize)
-    {
-        XmlSerializer xmlSerializer = new XmlSerializer(toSerialize.GetType());
-
-        using (StringWriter textWriter = new StringWriter())
-        {
-            xmlSerializer.Serialize(textWriter, toSerialize);
-            return textWriter.ToString();
-        }
     }
 
 }

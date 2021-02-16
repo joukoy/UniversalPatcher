@@ -256,6 +256,7 @@
       <DependentUpon>frmSearchTables.cs</DependentUpon>
     </Compile>
     <Compile Include="PidSearch.cs" />
+    <Compile Include="Serializer.cs" />
     <Compile Include="TableSeek.cs" />
     <Compile Include="tableSearch.cs" />
     <Compile Include="TinyTuner.cs" />
