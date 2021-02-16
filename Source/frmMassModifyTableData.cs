@@ -255,17 +255,17 @@ namespace UniversalPatcher
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            for (int f = 0; f < modifiedFiles.Count; f++)
+            for (int modF = 0; modF < modifiedFiles.Count; modF++)
             {
-                Logger("Saving file: " + modifiedFiles[f], false);
-                for (int t=0; t < tunerFiles.Count; t++)
+                Logger("Saving file: " + modifiedFiles[modF], false);
+                for (int tunerF=0; tunerF < tunerFiles.Count; tunerF++)
                 {
-                    if (tunerFiles[t].fileName == modifiedFiles[f])
+                    if (tunerFiles[tunerF].fileName == modifiedFiles[modF])
                     {
-                        using (FileStream stream = new FileStream(tunerFiles[f].fileName, FileMode.Create))
+                        using (FileStream stream = new FileStream(tunerFiles[tunerF].fileName, FileMode.Create))
                         {
                             System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
-                            writer.Serialize(stream, tunerFiles[f].tableDatas);
+                            writer.Serialize(stream, tunerFiles[tunerF].tableDatas);
                             stream.Close();
                         }
                         Logger(" [OK]");
