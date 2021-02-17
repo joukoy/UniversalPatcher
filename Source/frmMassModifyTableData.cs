@@ -26,16 +26,16 @@ namespace UniversalPatcher
             public string fileName { get; set; }
         }
 
-        public class MassModProperties
+        public class ClibBrd
         {
-            public string TableName { get; set; }
-            public string Category { get; set; }
-            public string TableDescription { get; set; }
-            public string ExtraDescription { get; set; }
-            public string ColumnHeaders { get; set; }
-            public string RowHeaders { get; set; }
-            public string Units { get; set; }
-            public string Values { get; set; }
+            public string Property { get; set; }
+            public string Value { get; set; }
+        }
+        public class MassModProperties : TableData
+        {
+            public string UsedInOS { get; set; }
+            public List<int> UsingTunerFiles = new List<int>();
+            public TableData td { get; set; }
         }
         private List<TunerFile> tunerFiles = new List<TunerFile>();
         private List<string> modifiedFiles = new List<string>();
@@ -45,12 +45,89 @@ namespace UniversalPatcher
         SortOrder strSortOrder = SortOrder.Ascending;
         private string sortBy = "TableName";
         private int sortIndex = 0;
+        private List<ClibBrd> clipBrd = new List<ClibBrd>();
 
         private void frmMassModifyTableData_Load(object sender, EventArgs e)
         {
+            if (Properties.Settings.Default.MainWindowPersistence)
+            {
+                if (Properties.Settings.Default.MassModifyTableDataWindowSize.Width > 0 || Properties.Settings.Default.MassModifyTableDataWindowSize.Height > 0)
+                {
+                    this.WindowState = Properties.Settings.Default.MassModifyTableDataWindowState;
+                    if (this.WindowState == FormWindowState.Minimized)
+                    {
+                        this.WindowState = FormWindowState.Normal;
+                    }
+                    this.Location = Properties.Settings.Default.MassModifyTableDataWindowLocation;
+                    this.Size = Properties.Settings.Default.MassModifyTableDataWindowSize;
+                }
+                if (Properties.Settings.Default.MassModifyTableDataWindowSplitterDistance > 0)
+                    splitContainer1.SplitterDistance = Properties.Settings.Default.MassModifyTableDataWindowSplitterDistance;
+            }
+            this.FormClosing += FrmMassModifyTableData_FormClosing;
+            dataGridView1.CellMouseClick += DataGridView1_CellMouseClick;
         }
 
-        public void loadData()
+        private void FrmMassModifyTableData_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (Properties.Settings.Default.MainWindowPersistence)
+            {
+                Properties.Settings.Default.MassModifyTableDataWindowState = this.WindowState;
+                if (this.WindowState == FormWindowState.Normal)
+                {
+                    Properties.Settings.Default.MassModifyTableDataWindowLocation = this.Location;
+                    Properties.Settings.Default.MassModifyTableDataWindowSize = this.Size;
+                }
+                else
+                {
+                    Properties.Settings.Default.MassModifyTableDataWindowLocation = this.RestoreBounds.Location;
+                    Properties.Settings.Default.MassModifyTableDataWindowSize = this.RestoreBounds.Size;
+                }
+                Properties.Settings.Default.MassModifyTableDataWindowSplitterDistance = splitContainer1.SplitterDistance;
+            }
+        }
+
+        private void DataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                if (dataGridView1.Columns.Count < 4)
+                    return;
+                int row = dataGridView2.Rows.Add();
+                dataGridView2.Rows[row].Cells["Property"].Value = dataGridView1.Columns[e.ColumnIndex].Name;
+                TableData td = (TableData)dataGridView1.Rows[e.RowIndex].Cells["td"].Value;
+                if (td != null)
+                {
+                    Type type = td.GetType();
+                    PropertyInfo prop = type.GetProperty(dataGridView1.Columns[e.ColumnIndex].Name);
+                    dataGridView2.Rows[row].Cells["OldValue"].Value = prop.GetValue(td, null); ;
+                }
+                dataGridView2.Rows[row].Cells["TableName"].Value = dataGridView1.Rows[e.RowIndex].Cells["TableName"].Value;
+                dataGridView2.Rows[row].Cells["NewValue"].Value = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                if (dataGridView2.Rows.Count < 3)
+                    dataGridView2.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+        }
+
+        private void DataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            try
+            {
+
+                if (dataGridView1.SelectedCells.Count > 0 && e.Button == MouseButtons.Right)
+                {
+                    //lastSelectedId = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
+                    contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
+                }
+            }
+            catch { }
+        }
+
+        public void loadData(List<string> fileList)
         {
             dataGridView2.Columns.Add("TableName", "TableName");
             dataGridView2.Columns.Add("Property", "Property");
@@ -65,25 +142,26 @@ namespace UniversalPatcher
             }
             comboFilterBy.Text = "TableName";
 
-            string folder = Path.Combine(Application.StartupPath, "Tuner");
-            DirectoryInfo d = new DirectoryInfo(folder);
-            FileInfo[] Files = d.GetFiles("*.xml", SearchOption.AllDirectories);
-
-            foreach (FileInfo file in Files)
+            foreach (string fName in fileList)
             {
-                long conFileSize = new FileInfo(file.FullName).Length;
-                if (conFileSize < 255 || file.Name.ToLower() == "units.xml")
+                long conFileSize = new FileInfo(fName).Length;
+                if (conFileSize < 255 || Path.GetFileName(fName).ToLower() == "units.xml")
                     continue;
                 TunerFile tf = new TunerFile();
-                tf.tableDatas = loadTableDataFile(file.FullName);
-                tf.fileName = file.FullName;
+                tf.tableDatas = loadTableDataFile(fName);
+                tf.fileName = fName;
                 tunerFiles.Add(tf);
                 addTableListTodgrid(tf.tableDatas);
             }
             dataGridView1.DataSource = bindingSource;
             filterData();
+            dataGridView1.Columns.Add("td", "td");
+            dataGridView1.Columns["td"].Visible = false;
+            dataGridView1.Columns.Add("td", "td");
+
             dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
             dataGridView1.CellValidating += DataGridView1_CellValidating;
+            dataGridView1.CellValueChanged += DataGridView1_CellValueChanged;
             Application.DoEvents();
             
             dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
@@ -92,14 +170,16 @@ namespace UniversalPatcher
 
         private void DataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
-            if (e.FormattedValue == dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value)
+            return;
+            if (dataGridView1.Columns.Count < 4 || e.FormattedValue == dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value)
                 return;
             int row = dataGridView2.Rows.Add();
             dataGridView2.Rows[row].Cells["Property"].Value = dataGridView1.Columns[e.ColumnIndex].Name;
             dataGridView2.Rows[row].Cells["OldValue"].Value = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
             dataGridView2.Rows[row].Cells["TableName"].Value = dataGridView1.Rows[e.RowIndex].Cells["TableName"].Value;
             dataGridView2.Rows[row].Cells["NewValue"].Value = e.FormattedValue;
-
+            if (dataGridView2.Rows.Count < 3)
+                dataGridView2.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
         }
 
 
@@ -182,25 +262,41 @@ namespace UniversalPatcher
             for (int i=0; i< tdList.Count; i++)
             {
                 MassModProperties mmp = new MassModProperties();
-                mmp.Category = tdList[i].Category;
-                mmp.ColumnHeaders = tdList[i].ColumnHeaders;
-                mmp.ExtraDescription = tdList[i].ExtraDescription;
-                mmp.RowHeaders = tdList[i].RowHeaders;
-                mmp.TableDescription = tdList[i].TableDescription;
-                mmp.TableName = tdList[i].TableName;
-                mmp.Units = tdList[i].Units;
-                mmp.Values = tdList[i].Values; 
+                /*                mmp.Category = tdList[i].Category;
+                                mmp.ColumnHeaders = tdList[i].ColumnHeaders;
+                                mmp.ExtraDescription = tdList[i].ExtraDescription;
+                                mmp.RowHeaders = tdList[i].RowHeaders;
+                                mmp.TableDescription = tdList[i].TableDescription;
+                                mmp.TableName = tdList[i].TableName;
+                                mmp.Units = tdList[i].Units;
+                                mmp.Values = tdList[i].Values;
+                */
+                mmp.td = tdList[i];
                 //string ser = upatcher.SerializeObject<MassModProperties>(mmp);
                 string ser = "";
-                foreach (var prop in mmp.GetType().GetProperties())
+                TableData td = tdList[i];
+                foreach (var prop in td.GetType().GetProperties())
                 {
-                    ser += prop.GetValue(mmp,null);
+                    if (prop.Name !=  "id" && prop.Name != "Address" && prop.Name != "CompatibleOS" && prop.Name != "OS")
+                        ser += prop.GetValue(td,null);
+
+                    Type type = mmp.GetType();
+                    PropertyInfo mmpProp = type.GetProperty(prop.Name);
+                    mmpProp.SetValue(mmp, prop.GetValue(td, null),null);
                 }
 
-                if (!tableRows.Contains(ser))
+                int ind = tableRows.IndexOf(ser);
+                if (ind < 0)
                 {
                     tableRows.Add(ser);
+                    mmp.UsedInOS = tdList[i].OS;
+                    mmp.UsingTunerFiles.Add(tunerFiles.Count - 1);
                     displayDatas.Add(mmp);
+                }
+                else
+                {
+                    displayDatas[ind].UsedInOS += "," + tdList[i].OS;
+                    displayDatas[ind].UsingTunerFiles.Add(tunerFiles.Count - 1);
                 }
             }
         }
@@ -326,5 +422,90 @@ namespace UniversalPatcher
             return tmpTableDatas;
         }
 
+        private void copyRowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int row = -1;
+            if (dataGridView1.SelectedCells.Count > 0)
+                row = dataGridView1.SelectedCells[0].RowIndex;
+            else if (dataGridView1.SelectedRows.Count > 0)
+                row = dataGridView1.SelectedRows[0].Index;
+            else
+                return;
+
+            clipBrd = new List<ClibBrd>();
+            for (int c = 0; c < dataGridView1.Columns.Count; c++)
+            {
+                if (dataGridView1.Rows[row].Cells[c].Value != null)
+                {
+                    ClibBrd cb = new ClibBrd();
+                    cb.Property = dataGridView1.Columns[c].Name;
+                    cb.Value = dataGridView1.Rows[row].Cells[c].Value.ToString();
+                    clipBrd.Add(cb);
+                }
+            }
+            dataClipBoard.DataSource = null;
+            dataClipBoard.DataSource = clipBrd;
+
+        }
+
+        private void copyValueToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            clipBrd = new List<ClibBrd>();
+            ClibBrd cb = new ClibBrd();
+            cb.Property = dataGridView1.Columns[dataGridView1.SelectedCells[0].ColumnIndex].Name;
+            cb.Value = dataGridView1.SelectedCells[0].Value.ToString();
+            clipBrd.Add(cb);
+            dataClipBoard.DataSource = null;
+            dataClipBoard.DataSource = clipBrd;
+
+        }
+
+        private void copyValuesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int row = -1;
+            if (dataGridView1.SelectedCells.Count > 0)
+                row = dataGridView1.SelectedCells[0].RowIndex;
+            else if (dataGridView1.SelectedRows.Count > 0)
+                row = dataGridView1.SelectedRows[0].Index;
+            else
+                return;
+
+            clipBrd = new List<ClibBrd>();
+            frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
+            TableData td = (TableData)dataGridView1.Rows[row].Cells["td"].Value;
+            fst.loadProperties(td);
+            if (fst.ShowDialog() == DialogResult.OK)
+            {
+                for (int p=0; p< fst.chkBoxes.Count; p++)
+                {
+                    CheckBox chk = fst.chkBoxes[p];
+                    if (chk.Checked && chk.Tag != null)
+                    {
+                        ClibBrd cb = new ClibBrd();
+                        cb.Property = chk.Name;
+                        cb.Value = chk.Tag.ToString();
+                        clipBrd.Add(cb);
+                    }
+                }
+                dataClipBoard.DataSource = null;
+                dataClipBoard.DataSource = clipBrd;
+            }
+        }
+
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int row = -1;
+            if (dataGridView1.SelectedCells.Count > 0)
+                row = dataGridView1.SelectedCells[0].RowIndex;
+            else if (dataGridView1.SelectedRows.Count > 0)
+                row = dataGridView1.SelectedRows[0].Index;
+            else
+                return;
+            
+            for (int r = 0; r < clipBrd.Count; r++)
+            {
+                dataGridView1.Rows[row].Cells[clipBrd[r].Property].Value = clipBrd[r].Value;
+            }
+        }
     }
 }

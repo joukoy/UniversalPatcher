@@ -1503,7 +1503,7 @@ namespace UniversalPatcher
             string fileName = SelectFile("Select XML file", "XML files (*.xml)|*.xml|All files (*.*)|*.*");
             if (fileName.Length < 1)
                 return;
-            basefile.LoadConfigFile(fileName);
+            basefile.loadConfigFile(fileName);
             pcmConfigFile = fileName;
             labelXML.Text = Path.GetFileName(fileName) + " (v " + basefile.Segments[0].Version + ")";
             addCheckBoxes();

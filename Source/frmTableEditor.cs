@@ -2102,5 +2102,10 @@ namespace UniversalPatcher
             System.Diagnostics.Process.Start(url);
 
         }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }

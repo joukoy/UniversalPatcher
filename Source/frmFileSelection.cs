@@ -16,7 +16,13 @@ namespace UniversalPatcher
         public frmFileSelection()
         {
             InitializeComponent();
+            lvwColumnSorter = new ListViewColumnSorter();
+            this.listFiles.ListViewItemSorter = lvwColumnSorter;
+
         }
+
+        public string filter = ".bin";
+        private ListViewColumnSorter lvwColumnSorter;
 
         public void LoadFiles(string Folder)
         {
@@ -25,8 +31,10 @@ namespace UniversalPatcher
             listFiles.View = View.Details;
             listFiles.Columns.Add("File");
             listFiles.Columns.Add("Folder");
+            listFiles.Columns.Add("Size");
             listFiles.Columns[0].Width = 300;
             listFiles.Columns[1].Width = 500;
+            listFiles.Columns[2].Width = 200;
 
             listFiles.CheckBoxes = true;
             if (Folder == "")
@@ -42,14 +50,14 @@ namespace UniversalPatcher
             if (fileTypeList != null && fileTypeList.Count > 0 && chkIncludeCustomFileTypes.Checked)
             {
                 filters = new string[fileTypeList.Count + 1];
-                filters[0] = ".bin";
+                filters[0] = filter;
                 for (int f = 0; f < fileTypeList.Count; f++)
                     filters[f + 1] = "." + fileTypeList[f].Extension;
             }
             else
             {
                 filters = new string[1];
-                filters[0] = ".bin";
+                filters[0] = filter;
             }
             foreach (FileInfo file in Files)
             {
@@ -60,6 +68,10 @@ namespace UniversalPatcher
                         var item = new ListViewItem(file.Name);
                         item.Tag = file.FullName;
                         item.SubItems.Add(file.DirectoryName);
+                        string filesize = file.Length.ToString();
+                        //if (file.Length > 1023)
+                          //  filesize = ((int)(file.Length / 1024)).ToString() + " k";
+                        item.SubItems.Add(filesize);
                         listFiles.Items.Add(item);
                         break;
                     }
@@ -75,7 +87,7 @@ namespace UniversalPatcher
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            string Folder = SelectFolder("Select folder");
+            string Folder = SelectFolder("Select folder", txtFolder.Text);
             if (Folder.Length > 0)
                 LoadFiles(Folder);
         }
@@ -127,8 +139,35 @@ namespace UniversalPatcher
                     this.Size = Properties.Settings.Default.FileSelectionWindowSize;
                 }
             }
-
+            listFiles.ColumnClick += ListFiles_ColumnClick;
         }
+
+        private void ListFiles_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            // Determine if clicked column is already the column that is being sorted.
+            if (e.Column == lvwColumnSorter.SortColumn)
+            {
+                // Reverse the current sort direction for this column.
+                if (lvwColumnSorter.Order == SortOrder.Ascending)
+                {
+                    lvwColumnSorter.Order = SortOrder.Descending;                    
+                }
+                else
+                {
+                    lvwColumnSorter.Order = SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                lvwColumnSorter.SortColumn = e.Column;
+                lvwColumnSorter.Order = SortOrder.Ascending;
+            }
+
+            // Perform the sort with these new sort options.
+            this.listFiles.Sort();
+        }
+
         private void frmFileSelection_FormClosing(object sender, EventArgs e)
         {
             if (Properties.Settings.Default.MainWindowPersistence)

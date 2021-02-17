@@ -796,7 +796,7 @@ public class upatcher
 
     }
 
-    public static string SelectFolder(string Title)
+    public static string SelectFolder(string Title, string defaultFolder = "")
     {
         string folderPath = "";
         OpenFileDialog folderBrowser = new OpenFileDialog();
@@ -805,7 +805,10 @@ public class upatcher
         folderBrowser.ValidateNames = false;
         folderBrowser.CheckFileExists = false;
         folderBrowser.CheckPathExists = true;
-        folderBrowser.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
+        if (defaultFolder.Length > 0)
+            folderBrowser.InitialDirectory = defaultFolder;
+        else
+            folderBrowser.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
         // Always default to Folder Selection.
         folderBrowser.Title = Title;
         folderBrowser.FileName = "Folder Selection";

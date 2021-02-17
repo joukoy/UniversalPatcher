@@ -49,7 +49,7 @@ namespace UniversalPatcher
             this.listFiles.HideSelection = false;
             this.listFiles.Location = new System.Drawing.Point(3, 83);
             this.listFiles.Name = "listFiles";
-            this.listFiles.Size = new System.Drawing.Size(546, 368);
+            this.listFiles.Size = new System.Drawing.Size(546, 367);
             this.listFiles.TabIndex = 0;
             this.listFiles.UseCompatibleStateImageBehavior = false;
             // 
@@ -157,8 +157,8 @@ namespace UniversalPatcher
             this.Controls.Add(this.listFiles);
             this.Name = "frmFileSelection";
             this.Text = "Select files";
-            this.Load += new System.EventHandler(this.frmFileSelection_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmFileSelection_FormClosing);
+            this.Load += new System.EventHandler(this.frmFileSelection_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

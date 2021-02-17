@@ -65,7 +65,7 @@ namespace UniversalPatcher
                 }
                 Logger(" [OK]");
                 XMLFile = FileName;
-                labelXML.Text = Path.GetFileName(XMLFile);
+                labelXML.Text = Path.GetFileNameWithoutExtension(XMLFile);
                 txtVersion.Text = PCM.Segments[0].Version;
             }
             catch (Exception ex)
@@ -80,34 +80,13 @@ namespace UniversalPatcher
             string FileName = SelectFile("Select XML file", "XML files (*.xml)|*.xml|All files (*.*)|*.*");
             if (FileName.Length < 1)
                 return;
-            PCM.LoadConfigFile(FileName);
+            PCM.loadConfigFile(FileName);
             LoadFile(FileName);
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            try
-            {
-                string FileName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
-                if (FileName.Length < 1)
-                    return;
-                Logger("Saving to file: " + Path.GetFileName(FileName), false);
-
-                using (FileStream stream = new FileStream(FileName, FileMode.Create))
-                {
-                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentConfig>));
-                    writer.Serialize(stream, PCM.Segments);
-                    stream.Close();
-                }
-                Logger(" [OK]");
-                XMLFile = FileName;
-                labelXML.Text = Path.GetFileName(XMLFile);
-            }
-            catch (Exception ex)
-            {
-                Logger(ex.Message);
-            }
-
+            saveXML("");
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
@@ -197,29 +176,27 @@ namespace UniversalPatcher
 
         }
 
-        private void saveXML()
+        private void saveXML(string fileName)
         {
             try
             {
-                string FileName;
-                if (XMLFile == "")
-                    FileName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
-                else
-                    FileName = XMLFile;
-                if (FileName.Length < 1)
+                if (fileName.Length == 0)
+                    fileName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
+                if (fileName.Length == 0)
                     return;
-                SegmentConfig S = PCM.Segments[0];
-                S.Version = txtVersion.Text;
-                PCM.Segments[0] = S;
-                Logger("Saving to file: " + Path.GetFileName(FileName), false);
-                Debug.WriteLine("Saving to file: " + Path.GetFileName(FileName));
 
-                using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                if (PCM.Segments.Count > 0)
                 {
-                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentConfig>));
-                    writer.Serialize(stream, PCM.Segments);
-                    stream.Close();
+                    SegmentConfig S = PCM.Segments[0];
+                    S.Version = txtVersion.Text;
+                    PCM.Segments[0] = S;
                 }
+                Logger("Saving to file: " + Path.GetFileName(fileName), false);
+                Debug.WriteLine("Saving to file: " + Path.GetFileName(fileName));
+
+                PCM.saveConfigFile(fileName);
+                XMLFile = PCM.configFile;
+                labelXML.Text = Path.GetFileNameWithoutExtension(XMLFile);
                 Logger(" [OK]");
             }
             catch (Exception ex)
@@ -230,7 +207,8 @@ namespace UniversalPatcher
         }
         private void btnOK_Click(object sender, EventArgs e)
         {
-            saveXML();
+
+            saveXML(XMLFile);
             this.Close();
         }
 
@@ -241,7 +219,7 @@ namespace UniversalPatcher
 
         private void btnSaveOnly_Click(object sender, EventArgs e)
         {
-            saveXML();
+            saveXML(XMLFile);
         }
     }
 }

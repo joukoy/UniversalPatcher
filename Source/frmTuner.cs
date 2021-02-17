@@ -2069,9 +2069,38 @@ namespace UniversalPatcher
 
         private void massModifyTableListsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            string folder = Path.Combine(Application.StartupPath, "Tuner"); ;
+            DirectoryInfo d = new DirectoryInfo(folder);
+            FileInfo[] Files = d.GetFiles("*.xml", SearchOption.AllDirectories);
+            List<string> tunerFiles = new List<string>();
+            foreach (FileInfo file in Files)
+            {
+                tunerFiles.Add(file.FullName);
+            }
             frmMassModifyTableData fmm = new frmMassModifyTableData();
             fmm.Show();
-            fmm.loadData();
+            fmm.loadData(tunerFiles);
+        }
+
+        private void massModifyTableListsSelectFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmFileSelection frmF = new frmFileSelection();
+            frmF.btnOK.Text = "Open files";
+            frmF.filter = ".xml";
+            frmF.LoadFiles(Path.Combine(Application.StartupPath, "Tuner"));
+            List<string> tunerFiles = new List<string>();
+            if (frmF.ShowDialog(this) == DialogResult.OK)
+            {
+                for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                {
+                    string newFile = frmF.listFiles.CheckedItems[i].Tag.ToString();
+                    tunerFiles.Add(newFile);
+                }
+            }
+            frmF.Dispose();
+            frmMassModifyTableData fmm = new frmMassModifyTableData();            
+            fmm.Show();
+            fmm.loadData(tunerFiles);
         }
     }
 }

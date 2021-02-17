@@ -175,6 +175,12 @@
     <Compile Include="frmEditAddress.Designer.cs">
       <DependentUpon>frmEditAddress.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmSelectTableDataProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSelectTableDataProperties.Designer.cs">
+      <DependentUpon>frmSelectTableDataProperties.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmSetDTC.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -329,6 +335,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmPatcher.resx">
       <DependentUpon>frmPatcher.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSelectTableDataProperties.resx">
+      <DependentUpon>frmSelectTableDataProperties.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmSetDTC.resx">
       <DependentUpon>frmSetDTC.cs</DependentUpon>

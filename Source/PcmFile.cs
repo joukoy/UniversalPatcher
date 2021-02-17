@@ -31,7 +31,7 @@ namespace UniversalPatcher
                 {
                     configFile = autoDetect(this).Replace(".xml", "");
                     if (configFile.Length > 0)
-                        LoadConfigFile(configFileFullName);
+                        loadConfigFile(configFileFullName);
                 }
                 else
                 {
@@ -203,15 +203,15 @@ namespace UniversalPatcher
                     return Path.Combine(Application.StartupPath, "XML", configFile + ".xml");
             }
         }
-        public void LoadConfigFile(string FileName)
+        public void loadConfigFile(string fileName)
         {
             try
             {
                 Segments.Clear();
-                Logger("Loading file: " + Path.GetFileName(FileName), false);
+                Logger("Loading file: " + Path.GetFileName(fileName), false);
                 System.Xml.Serialization.XmlSerializer reader =
                     new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentConfig>));
-                System.IO.StreamReader file = new System.IO.StreamReader(FileName);
+                System.IO.StreamReader file = new System.IO.StreamReader(fileName);
                 Segments = (List<SegmentConfig>)reader.Deserialize(file);
                 file.Close();
                 Logger(" [OK]");
@@ -224,9 +224,27 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger(ex.Message);
+                LoggerBold(ex.Message);
             }
 
+        }
+
+        public void saveConfigFile(string fileName)
+        {
+            try
+            {
+                using (FileStream stream = new FileStream(fileName, FileMode.Create))
+                {
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentConfig>));
+                    writer.Serialize(stream, Segments);
+                    stream.Close();
+                }
+                configFile = Path.GetFileNameWithoutExtension(fileName).ToLower();
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         public void saveBin(string fName)

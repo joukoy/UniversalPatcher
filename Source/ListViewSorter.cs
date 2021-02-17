@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 /// <summary>
@@ -50,7 +51,9 @@ public class ListViewColumnSorter : IComparer
         listviewY = (ListViewItem)y;
 
         // Compare the two items
-        compareResult = ObjectCompare.Compare(listviewX.SubItems[ColumnToSort].Text, listviewY.SubItems[ColumnToSort].Text);
+        //compareResult = ObjectCompare.Compare(listviewX.SubItems[ColumnToSort].Text, listviewY.SubItems[ColumnToSort].Text);     
+        MyComparer mc = new MyComparer();
+        compareResult = mc.Compare(listviewX.SubItems[ColumnToSort].Text, listviewY.SubItems[ColumnToSort].Text);
 
         // Calculate correct return value based on object comparison
         if (OrderOfSort == SortOrder.Ascending)
@@ -70,6 +73,23 @@ public class ListViewColumnSorter : IComparer
         }
     }
 
+    class MyComparer : IComparer<string>
+    {
+        public int Compare(string x, string y)
+        {
+            int xVal, yVal;
+            var xIsNumeric = int.TryParse(x, out xVal);
+            var yIsNumeric = int.TryParse(y, out yVal);
+
+            if (xIsNumeric && yIsNumeric)
+                return xVal.CompareTo(yVal);
+            if (!xIsNumeric && !yIsNumeric)
+                return x.CompareTo(y);
+            if (xIsNumeric)
+                return -1;
+            return 1;
+        }
+    }
     /// <summary>
     /// Gets or sets the number of the column to which to apply the sorting operation (Defaults to '0').
     /// </summary>
@@ -99,5 +119,4 @@ public class ListViewColumnSorter : IComparer
             return OrderOfSort;
         }
     }
-
 }
