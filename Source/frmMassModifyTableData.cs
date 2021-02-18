@@ -466,7 +466,7 @@ namespace UniversalPatcher
             clipBrd = new List<ClibBrd>();
             for (int c = 0; c < dataGridView1.Columns.Count; c++)
             {
-                if (dataGridView1.Columns[c].Name != "id"  && dataGridView1.Columns[c].Name != "UsedInOS" && dataGridView1.Rows[row].Cells[c].Value != null)
+                if (dataGridView1.Columns[c].Name != "id"  && dataGridView1.Columns[c].Name != "UsedInOS" && dataGridView1.Columns[c].Name != "OS" && dataGridView1.Columns[c].Name != "Address" && dataGridView1.Rows[row].Cells[c].Value != null)
                 {
                     ClibBrd cb = new ClibBrd();
                     cb.Property = dataGridView1.Columns[c].Name;
