@@ -3245,6 +3245,7 @@ namespace UniversalPatcher
             Properties.Settings.Default.disableTunerAutoloadSettings = disableTunerAutloadConfigToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
         }
+
     }
 }
 

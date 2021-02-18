@@ -27,7 +27,7 @@ namespace UniversalPatcher
             TableDescription = "";
             RowMajor = true;
             //DataType = TypeFloat;
-            Floating = false;
+            //Floating = false;
             OutputType = OutDataType.Float;
             DataType = InDataType.UNKNOWN;
             Origin = "";
@@ -65,7 +65,7 @@ namespace UniversalPatcher
         }
         public int Offset { get; set; }
         public InDataType DataType { get; set; }
-        public byte ElementSize;
+        //public byte ElementSize;
         public string Math { get; set; }
         public string SavingMath { get; set; }
         public string Units { get; set; }
@@ -73,8 +73,8 @@ namespace UniversalPatcher
         public double Min { get; set; }
         public double Max { get; set; }
         public ushort Decimals { get; set; }
-        public bool Signed;
-        public bool Floating;
+        //public bool Signed;
+        //public bool Floating;
         public ushort Columns { get; set; }
         public ushort Rows { get; set; }
         public string BitMask { get; set; }

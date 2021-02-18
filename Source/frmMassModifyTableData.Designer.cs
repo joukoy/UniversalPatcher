@@ -32,7 +32,11 @@ namespace UniversalPatcher
             this.components = new System.ComponentModel.Container();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.dataClipBoard = new System.Windows.Forms.DataGridView();
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.comboFilterBy = new System.Windows.Forms.ComboBox();
@@ -43,22 +47,19 @@ namespace UniversalPatcher
             this.copyRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.dataClipBoard = new System.Windows.Forms.DataGridView();
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chkLimitUsedInOS = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
-            this.contextMenuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataClipBoard)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -68,7 +69,7 @@ namespace UniversalPatcher
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(802, 182);
+            this.dataGridView1.Size = new System.Drawing.Size(826, 210);
             this.dataGridView1.TabIndex = 1;
             // 
             // splitContainer1
@@ -76,7 +77,7 @@ namespace UniversalPatcher
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(0, 33);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 34);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -87,9 +88,31 @@ namespace UniversalPatcher
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
-            this.splitContainer1.Size = new System.Drawing.Size(802, 290);
-            this.splitContainer1.SplitterDistance = 182;
+            this.splitContainer1.Size = new System.Drawing.Size(826, 335);
+            this.splitContainer1.SplitterDistance = 210;
             this.splitContainer1.TabIndex = 3;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(826, 121);
+            this.tabControl1.TabIndex = 1;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.dataGridView2);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(818, 95);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Queue";
+            this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // dataGridView2
             // 
@@ -97,14 +120,34 @@ namespace UniversalPatcher
             this.dataGridView2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView2.Location = new System.Drawing.Point(3, 3);
             this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.Size = new System.Drawing.Size(788, 72);
+            this.dataGridView2.Size = new System.Drawing.Size(812, 89);
             this.dataGridView2.TabIndex = 0;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.dataClipBoard);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(794, 78);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "ClipBoard";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // dataClipBoard
+            // 
+            this.dataClipBoard.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataClipBoard.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataClipBoard.Location = new System.Drawing.Point(3, 3);
+            this.dataClipBoard.Name = "dataClipBoard";
+            this.dataClipBoard.Size = new System.Drawing.Size(788, 72);
+            this.dataClipBoard.TabIndex = 0;
             // 
             // txtSearch
             // 
-            this.txtSearch.Location = new System.Drawing.Point(234, 8);
+            this.txtSearch.Location = new System.Drawing.Point(208, 7);
             this.txtSearch.Name = "txtSearch";
-            this.txtSearch.Size = new System.Drawing.Size(187, 20);
+            this.txtSearch.Size = new System.Drawing.Size(160, 20);
             this.txtSearch.TabIndex = 5;
             this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
             // 
@@ -120,7 +163,7 @@ namespace UniversalPatcher
             // comboFilterBy
             // 
             this.comboFilterBy.FormattingEnabled = true;
-            this.comboFilterBy.Location = new System.Drawing.Point(76, 7);
+            this.comboFilterBy.Location = new System.Drawing.Point(50, 7);
             this.comboFilterBy.Name = "comboFilterBy";
             this.comboFilterBy.Size = new System.Drawing.Size(152, 21);
             this.comboFilterBy.TabIndex = 7;
@@ -128,7 +171,7 @@ namespace UniversalPatcher
             // btnExecute
             // 
             this.btnExecute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExecute.Location = new System.Drawing.Point(632, 4);
+            this.btnExecute.Location = new System.Drawing.Point(656, 4);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(75, 23);
             this.btnExecute.TabIndex = 8;
@@ -139,7 +182,7 @@ namespace UniversalPatcher
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(713, 4);
+            this.btnSave.Location = new System.Drawing.Point(737, 4);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 9;
@@ -152,9 +195,9 @@ namespace UniversalPatcher
             this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtResult.HideSelection = false;
-            this.txtResult.Location = new System.Drawing.Point(1, 328);
+            this.txtResult.Location = new System.Drawing.Point(1, 368);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(800, 121);
+            this.txtResult.Size = new System.Drawing.Size(824, 128);
             this.txtResult.TabIndex = 10;
             this.txtResult.Text = "";
             // 
@@ -166,7 +209,7 @@ namespace UniversalPatcher
             this.copyValuesToolStripMenuItem,
             this.pasteToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(148, 92);
             // 
             // copyRowToolStripMenuItem
             // 
@@ -189,60 +232,30 @@ namespace UniversalPatcher
             this.copyValuesToolStripMenuItem.Text = "Copy values...";
             this.copyValuesToolStripMenuItem.Click += new System.EventHandler(this.copyValuesToolStripMenuItem_Click);
             // 
-            // tabControl1
-            // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(802, 104);
-            this.tabControl1.TabIndex = 1;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.dataGridView2);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(794, 78);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Queue";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.dataClipBoard);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(794, 78);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "ClipBoard";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // dataClipBoard
-            // 
-            this.dataClipBoard.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataClipBoard.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataClipBoard.Location = new System.Drawing.Point(3, 3);
-            this.dataClipBoard.Name = "dataClipBoard";
-            this.dataClipBoard.Size = new System.Drawing.Size(788, 72);
-            this.dataClipBoard.TabIndex = 0;
-            // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
+            // 
+            // chkLimitUsedInOS
+            // 
+            this.chkLimitUsedInOS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkLimitUsedInOS.AutoSize = true;
+            this.chkLimitUsedInOS.Location = new System.Drawing.Point(529, 8);
+            this.chkLimitUsedInOS.Name = "chkLimitUsedInOS";
+            this.chkLimitUsedInOS.Size = new System.Drawing.Size(121, 17);
+            this.chkLimitUsedInOS.TabIndex = 11;
+            this.chkLimitUsedInOS.Text = "Limit to \"UsedInOS\"";
+            this.chkLimitUsedInOS.UseVisualStyleBackColor = true;
             // 
             // frmMassModifyTableData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(824, 497);
+            this.Controls.Add(this.chkLimitUsedInOS);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnExecute);
@@ -258,12 +271,12 @@ namespace UniversalPatcher
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
-            this.contextMenuStrip1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataClipBoard)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -288,5 +301,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.DataGridView dataClipBoard;
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
+        private System.Windows.Forms.CheckBox chkLimitUsedInOS;
     }
 }

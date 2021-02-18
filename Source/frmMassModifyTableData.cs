@@ -33,9 +33,14 @@ namespace UniversalPatcher
         }
         public class MassModProperties : TableData
         {
+            public MassModProperties()
+            {
+                UsingTunerFiles = new List<int>();
+            }
+            //public int mmId { get; set; }
             public string UsedInOS { get; set; }
-            public List<int> UsingTunerFiles = new List<int>();
-            public TableData td { get; set; }
+            public List<int> UsingTunerFiles;
+            public TableData td;
         }
         private List<TunerFile> tunerFiles = new List<TunerFile>();
         private List<string> modifiedFiles = new List<string>();
@@ -66,6 +71,25 @@ namespace UniversalPatcher
             }
             this.FormClosing += FrmMassModifyTableData_FormClosing;
             dataGridView1.CellMouseClick += DataGridView1_CellMouseClick;
+            dataGridView1.DataBindingComplete += DataGridView1_DataBindingComplete;
+            dataGridView1.DataError += DataGridView1_DataError;
+        }
+
+        private void DataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            if (dataGridView1.Columns[e.ColumnIndex].Name == "id" || dataGridView1.Columns[e.ColumnIndex].Name == "UsedInOS")
+                e.Cancel = true;
+        }
+
+
+        private void DataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            
+        }
+
+        private void DataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            UseComboBoxForEnums(dataGridView1);
         }
 
         private void FrmMassModifyTableData_FormClosing(object sender, FormClosingEventArgs e)
@@ -93,16 +117,22 @@ namespace UniversalPatcher
             {
                 if (dataGridView1.Columns.Count < 4)
                     return;
+                if (dataGridView1.Columns[e.ColumnIndex].Name == "id" || dataGridView1.Columns[e.ColumnIndex].Name == "UsedInOS")
+                    return;
                 int row = dataGridView2.Rows.Add();
                 dataGridView2.Rows[row].Cells["Property"].Value = dataGridView1.Columns[e.ColumnIndex].Name;
-                TableData td = (TableData)dataGridView1.Rows[e.RowIndex].Cells["td"].Value;
+                int mmid = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value);
+                TableData td = displayDatas[mmid].td;
                 if (td != null)
                 {
                     Type type = td.GetType();
                     PropertyInfo prop = type.GetProperty(dataGridView1.Columns[e.ColumnIndex].Name);
-                    dataGridView2.Rows[row].Cells["OldValue"].Value = prop.GetValue(td, null); ;
+                    if (prop != null)
+                        dataGridView2.Rows[row].Cells["OldValue"].Value = prop.GetValue(td, null); ;
                 }
-                dataGridView2.Rows[row].Cells["TableName"].Value = dataGridView1.Rows[e.RowIndex].Cells["TableName"].Value;
+                dataGridView2.Rows[row].Cells["TableName"].Value = td.TableName;
+                dataGridView2.Rows[row].Cells["OS"].Value = dataGridView1.Rows[e.RowIndex].Cells["UsedInOS"].Value;
+                dataGridView2.Rows[row].Cells["OS"].Tag = displayDatas[mmid].UsingTunerFiles;
                 dataGridView2.Rows[row].Cells["NewValue"].Value = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
                 if (dataGridView2.Rows.Count < 3)
                     dataGridView2.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
@@ -133,6 +163,7 @@ namespace UniversalPatcher
             dataGridView2.Columns.Add("Property", "Property");
             dataGridView2.Columns.Add("OldValue", "OldValue");
             dataGridView2.Columns.Add("NewValue", "NewValue");
+            dataGridView2.Columns.Add("OS", "OS");
 
             MassModProperties tmpMmp = new MassModProperties();
             foreach (var prop in tmpMmp.GetType().GetProperties())
@@ -153,34 +184,22 @@ namespace UniversalPatcher
                 tunerFiles.Add(tf);
                 addTableListTodgrid(tf.tableDatas);
             }
+            for (int i = 0; i < displayDatas.Count; i++)
+                displayDatas[i].id = (uint)i;
             dataGridView1.DataSource = bindingSource;
             filterData();
-            dataGridView1.Columns.Add("td", "td");
-            dataGridView1.Columns["td"].Visible = false;
-            dataGridView1.Columns.Add("td", "td");
 
             dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
-            dataGridView1.CellValidating += DataGridView1_CellValidating;
             dataGridView1.CellValueChanged += DataGridView1_CellValueChanged;
+            dataGridView1.CellBeginEdit += DataGridView1_CellBeginEdit;
             Application.DoEvents();
             
             dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+            if (dataGridView1.Columns[0].Width > 500)
+                dataGridView1.Columns[0].Width = 500;
             Logger("Files loaded");
         }
 
-        private void DataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
-        {
-            return;
-            if (dataGridView1.Columns.Count < 4 || e.FormattedValue == dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value)
-                return;
-            int row = dataGridView2.Rows.Add();
-            dataGridView2.Rows[row].Cells["Property"].Value = dataGridView1.Columns[e.ColumnIndex].Name;
-            dataGridView2.Rows[row].Cells["OldValue"].Value = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
-            dataGridView2.Rows[row].Cells["TableName"].Value = dataGridView1.Rows[e.RowIndex].Cells["TableName"].Value;
-            dataGridView2.Rows[row].Cells["NewValue"].Value = e.FormattedValue;
-            if (dataGridView2.Rows.Count < 3)
-                dataGridView2.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
-        }
 
 
         private void DataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -301,14 +320,14 @@ namespace UniversalPatcher
             }
         }
 
-        private void addToGrid(string Property, string oldVal, string newVal)
+/*        private void addToGrid(string Property, string oldVal, string newVal)
         {
             int row = dataGridView2.Rows.Add();
             dataGridView2.Rows[row].Cells["Property"].Value = Property;
             dataGridView2.Rows[row].Cells["OldValue"].Value = oldVal;
             dataGridView2.Rows[row].Cells["NewValue"].Value = newVal;
         }
-
+*/
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
             filterData();
@@ -316,37 +335,49 @@ namespace UniversalPatcher
 
         private void btnExecute_Click(object sender, EventArgs e)
         {
-            dataGridView1.EndEdit();
-            dataGridView2.EndEdit();
-            for (int row = 0; row < dataGridView2.Rows.Count ; row++)
+            try
             {
-                if (dataGridView2.Rows[row].Cells["TableName"].Value == null)
-                    break;
-                string tableName = dataGridView2.Rows[row].Cells["TableName"].Value.ToString();
-                string Property = dataGridView2.Rows[row].Cells["Property"].Value.ToString();
-                string oldVal = dataGridView2.Rows[row].Cells["OldValue"].Value.ToString();
-                string newVal = dataGridView2.Rows[row].Cells["NewValue"].Value.ToString();
-                for (int t = 0; t < tunerFiles.Count; t++ )
+                dataGridView1.EndEdit();
+                dataGridView2.EndEdit();
+                for (int row = 0; row < dataGridView2.Rows.Count; row++)
                 {
-                    for (int i=0; i< tunerFiles[t].tableDatas.Count; i++)
+                    if (dataGridView2.Rows[row].Cells["TableName"].Value == null)
+                        break;
+                    string tableName = dataGridView2.Rows[row].Cells["TableName"].Value.ToString();
+                    string Property = dataGridView2.Rows[row].Cells["Property"].Value.ToString();
+                    string oldVal = dataGridView2.Rows[row].Cells["OldValue"].Value.ToString();
+                    string newVal = dataGridView2.Rows[row].Cells["NewValue"].Value.ToString();
+                    List<int> tFiles = (List<int>)dataGridView2.Rows[row].Cells["OS"].Tag;
+                    for (int t = 0; t < tunerFiles.Count; t++)
                     {
-                        if (tunerFiles[t].tableDatas[i].TableName == tableName)
+                        if (chkLimitUsedInOS.Checked && !tFiles.Contains(t))
+                            continue;
+                        for (int i = 0; i < tunerFiles[t].tableDatas.Count; i++)
                         {
-                            Logger("File: " + tunerFiles[t].fileName);
-                            Logger("Modifying table: " + tableName + ", " + Property + ": " + oldVal + " => " + newVal);
-                            if (!modifiedFiles.Contains(tunerFiles[t].fileName))
-                                modifiedFiles.Add(tunerFiles[t].fileName);
+                            if (tunerFiles[t].tableDatas[i].TableName == tableName)
+                            {
+                                Logger("File: " + tunerFiles[t].fileName);
+                                Logger("Modifying table: " + tableName + ", " + Property + ": " + oldVal + " => " + newVal);
+                                if (!modifiedFiles.Contains(tunerFiles[t].fileName))
+                                    modifiedFiles.Add(tunerFiles[t].fileName);
 
-                            Type type = tunerFiles[t].tableDatas[i].GetType();
-                            PropertyInfo prop = type.GetProperty(Property);
-                            prop.SetValue(tunerFiles[t].tableDatas[i], newVal, null);
+                                Type type = tunerFiles[t].tableDatas[i].GetType();
+                                PropertyInfo prop = type.GetProperty(Property);
+                                if (prop.PropertyType.IsEnum)
+                                    prop.SetValue(tunerFiles[t].tableDatas[i], Enum.Parse(prop.PropertyType, newVal), null);
+                                else
+                                    prop.SetValue(tunerFiles[t].tableDatas[i], Convert.ChangeType(newVal, prop.PropertyType), null);
+                            }
                         }
                     }
                 }
+                dataGridView2.Rows.Clear();
+                Logger("Done");
             }
-            dataGridView2.Rows.Clear();
-            Logger("Done");
-
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -435,7 +466,7 @@ namespace UniversalPatcher
             clipBrd = new List<ClibBrd>();
             for (int c = 0; c < dataGridView1.Columns.Count; c++)
             {
-                if (dataGridView1.Rows[row].Cells[c].Value != null)
+                if (dataGridView1.Columns[c].Name != "id"  && dataGridView1.Columns[c].Name != "UsedInOS" && dataGridView1.Rows[row].Cells[c].Value != null)
                 {
                     ClibBrd cb = new ClibBrd();
                     cb.Property = dataGridView1.Columns[c].Name;
@@ -472,7 +503,8 @@ namespace UniversalPatcher
 
             clipBrd = new List<ClibBrd>();
             frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
-            TableData td = (TableData)dataGridView1.Rows[row].Cells["td"].Value;
+            int mmid = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
+            TableData td = displayDatas[mmid].td;
             fst.loadProperties(td);
             if (fst.ShowDialog() == DialogResult.OK)
             {
@@ -501,11 +533,26 @@ namespace UniversalPatcher
                 row = dataGridView1.SelectedRows[0].Index;
             else
                 return;
-            
-            for (int r = 0; r < clipBrd.Count; r++)
+            try
             {
-                dataGridView1.Rows[row].Cells[clipBrd[r].Property].Value = clipBrd[r].Value;
+                for (int r = 0; r < clipBrd.Count; r++)
+                {
+                    dataGridView1.Rows[row].Cells[clipBrd[r].Property].Value = clipBrd[r].Value;
+                }
             }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void radioTableName_CheckedChanged(object sender, EventArgs e)
+        {
         }
     }
 }
