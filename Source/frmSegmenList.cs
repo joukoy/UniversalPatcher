@@ -20,10 +20,8 @@ namespace UniversalPatcher
         }
 
         public PcmFile PCM;
-        private string XMLFile;
         public void InitMe()
         {
-            XMLFile = PCM.configFileFullName;
             labelXML.Text = PCM.configFile;
             listSegments.Clear();
             listSegments.View = View.Details;
@@ -64,8 +62,7 @@ namespace UniversalPatcher
                     listSegments.Items.Add(item);
                 }
                 Logger(" [OK]");
-                XMLFile = FileName;
-                labelXML.Text = Path.GetFileNameWithoutExtension(XMLFile);
+                labelXML.Text = PCM.configFile;
                 txtVersion.Text = PCM.Segments[0].Version;
             }
             catch (Exception ex)
@@ -111,11 +108,9 @@ namespace UniversalPatcher
 
         private void btnNewXML_Click(object sender, EventArgs e)
         {
-            PCM.Segments.Clear();
-            PCM.configFile = "";
+            PCM.setDefaultValues();
             listSegments.Items.Clear();
             txtVersion.Text = "1";
-            XMLFile = "";
             labelXML.Text = "";
         }
 
@@ -195,8 +190,8 @@ namespace UniversalPatcher
                 Debug.WriteLine("Saving to file: " + Path.GetFileName(fileName));
 
                 PCM.saveConfigFile(fileName);
-                XMLFile = PCM.configFile;
-                labelXML.Text = Path.GetFileNameWithoutExtension(XMLFile);
+                labelXML.Text = PCM.configFile;
+                frmpatcher.labelXML.Text = PCM.configFile + " (v " + txtVersion.Text + ")"; ;
                 Logger(" [OK]");
             }
             catch (Exception ex)
@@ -208,7 +203,7 @@ namespace UniversalPatcher
         private void btnOK_Click(object sender, EventArgs e)
         {
 
-            saveXML(XMLFile);
+            saveXML(PCM.configFileFullName);
             this.Close();
         }
 
@@ -219,7 +214,7 @@ namespace UniversalPatcher
 
         private void btnSaveOnly_Click(object sender, EventArgs e)
         {
-            saveXML(XMLFile);
+            saveXML(PCM.configFileFullName);
         }
     }
 }

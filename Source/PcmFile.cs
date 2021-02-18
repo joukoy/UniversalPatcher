@@ -17,7 +17,7 @@ namespace UniversalPatcher
         {
             setDefaultValues();
         }
-        public PcmFile(string Fname, bool autodetect, string cnfFile, List<SegmentConfig> oldSegments)
+        public PcmFile(string Fname, bool autodetect, string cnfFile)
         {
             try
             {
@@ -29,17 +29,19 @@ namespace UniversalPatcher
                 osStoreAddress = uint.MaxValue;
                 if (autodetect)
                 {
-                    configFile = autoDetect(this).Replace(".xml", "");
-                    if (configFile.Length > 0)
-                        loadConfigFile(configFileFullName);
+                    string cfgFile = autoDetect(this);
+                    if (cfgFile.Length > 0)
+                    {
+                        _configFileFullName = Path.Combine(Application.StartupPath, "XML", cfgFile);
+                    }
                 }
                 else
                 {
-                    Segments = oldSegments;
-                    configFile = Path.GetFileNameWithoutExtension(cnfFile).ToLower();
+                    _configFileFullName = cnfFile;
                 }
-                if (configFile.Length > 0)
+                if (configFileFullName.Length > 0)
                 {
+                    loadConfigFile(configFileFullName);
                     GetSegmentAddresses();
                     GetInfo();
                 }
@@ -86,23 +88,27 @@ namespace UniversalPatcher
         public List<V6Table> v6tables;
         public V6Table v6VeTable;
         public List<osAddresses> osAddressList;
-        public string configFile;
-        public List<SegmentConfig> Segments = new List<SegmentConfig>();
+        public List<SegmentConfig> Segments;
         public List<FoundTable> foundTables;
         public List<dtcCode> dtcCodes;
         public List<string> tableCategories;
-        public List<TableData> tableDatas = new List<TableData>();
+        public List<TableData> tableDatas;
         public bool dtcCombined = false;
         public TableData selectedTable; //Required for Tuner/Compare
         public int tableDataIndex; //Tuner tabledatalist id
         public List<AltTableData> altTableDatas;
         private int currentTableDatasList;
-        private void setDefaultValues()
+        private string _configFileFullName;
+        public string configFileFullName { get { return _configFileFullName; } }
+        public string configFile { get { return Path.GetFileNameWithoutExtension(configFileFullName); } }
+
+
+        public void setDefaultValues()
         {
             OS = "";
             OSSegment = -1;
             diagSegment = -1;
-            configFile = "";
+            _configFileFullName = "";
             Segments = new List<SegmentConfig>();
             dtcCodes = new List<dtcCode>();
             tableDatas = new List<TableData>();
@@ -193,16 +199,6 @@ namespace UniversalPatcher
                 tableDatas = altTableDatas[currentTableDatasList].tableDatas;
             }
         }
-        public string configFileFullName
-        {
-            get
-            {
-                if (configFile.Length == 0)
-                    return "";
-                else
-                    return Path.Combine(Application.StartupPath, "XML", configFile + ".xml");
-            }
-        }
         public void loadConfigFile(string fileName)
         {
             try
@@ -214,6 +210,7 @@ namespace UniversalPatcher
                 System.IO.StreamReader file = new System.IO.StreamReader(fileName);
                 Segments = (List<SegmentConfig>)reader.Deserialize(file);
                 file.Close();
+                _configFileFullName = fileName;
                 Logger(" [OK]");
                 if (Segments[0].Version == null || Segments[0].Version == "")
                 {
@@ -239,7 +236,7 @@ namespace UniversalPatcher
                     writer.Serialize(stream, Segments);
                     stream.Close();
                 }
-                configFile = Path.GetFileNameWithoutExtension(fileName).ToLower();
+                _configFileFullName = fileName;
             }
             catch (Exception ex)
             {

@@ -283,7 +283,7 @@ namespace UniversalPatcher
             {
                 string fName = files[i];
                 LoggerBold(fName);
-                PcmFile cmpPCM = new PcmFile(fName, true, "", null);
+                PcmFile cmpPCM = new PcmFile(fName, true, "");
                 loadConfigforPCM(cmpPCM);
                 pcmfiles.Add(cmpPCM);
             }
@@ -354,7 +354,7 @@ namespace UniversalPatcher
                     for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                     {
                         string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                        PcmFile cmpPcm = new PcmFile(FileName,true,"",PCM.Segments);
+                        PcmFile cmpPcm = new PcmFile(FileName,true,"");
                         LoggerBold(FileName);
                         loadConfigforPCM(cmpPcm);
                         compareTable(cmpPcm);

@@ -165,7 +165,7 @@ namespace UniversalPatcher
                     }
                 }
 
-                if (codeAddr == 0)
+                if (codeAddr == uint.MaxValue)
                 {
                     if (PCM.configFile == "e38" || PCM.configFile == "e67")
                     {

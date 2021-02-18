@@ -2196,7 +2196,6 @@
         public System.Windows.Forms.Button btnOrgFile;
         public System.Windows.Forms.Button btnModFile;
         private System.Windows.Forms.Label labelDescr;
-        private System.Windows.Forms.Label labelXML;
         private System.Windows.Forms.NumericUpDown numSuppress;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
@@ -2357,5 +2356,6 @@
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem disableTunerAutloadConfigToolStripMenuItem;
+        public System.Windows.Forms.Label labelXML;
     }
 }

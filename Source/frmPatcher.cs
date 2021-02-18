@@ -28,7 +28,6 @@ namespace UniversalPatcher
             txtResult.EnableContextMenu();
             txtDebug.EnableContextMenu();
             frmpatcher = this;
-            pcmConfigFile = "";
         }
 
         private frmSegmenList frmSL;
@@ -36,7 +35,7 @@ namespace UniversalPatcher
         private PcmFile modfile;
         private CheckBox[] chkSegments;
         private CheckBox[] chkExtractSegments;
-        public string pcmConfigFile;
+        //public string pcmConfigFile;
         private string LastXML = "";
         private BindingSource bindingSource = new BindingSource();
         private BindingSource CvnSource = new BindingSource();
@@ -351,7 +350,7 @@ namespace UniversalPatcher
         }
         public void addCheckBoxes()
         {
-            if (LastXML == pcmConfigFile && chkSegments != null && chkSegments.Length == basefile.Segments.Count)
+            if (LastXML == basefile.configFileFullName && chkSegments != null && chkSegments.Length == basefile.Segments.Count)
                 return;
             if (chkSegments != null)
             {
@@ -388,7 +387,7 @@ namespace UniversalPatcher
                 Left += chk.Width + 5;
 
             }
-            LastXML = pcmConfigFile;
+            LastXML = basefile.configFileFullName;
 
         }
 
@@ -397,7 +396,7 @@ namespace UniversalPatcher
             if ( txtBaseFile.Text == "" || txtModifierFile.Text == "")
                 return;
 
-            labelXML.Text = Path.GetFileName(pcmConfigFile) + " (v " + basefile.Segments[0].Version + ")";
+            labelXML.Text = Path.GetFileName(basefile.configFileFullName) + " (v " + basefile.Segments[0].Version + ")";
             for (int s = 0; s < basefile.Segments.Count; s++)
             {
                 string BasePN = basefile.ReadInfo(basefile.segmentAddressDatas[s].PNaddr);
@@ -586,40 +585,6 @@ namespace UniversalPatcher
         {
             try
             {
-                /*                
-                                if (chkAutodetect.Checked)
-                                {
-                                    string ConfFile = autoDetect(PCM);
-                                    Logger("Autodetect: " + ConfFile);
-                                    if (ConfFile == "" || ConfFile.Contains(Environment.NewLine))
-                                    {
-                                        labelXML.Text = "";
-                                        pcmConfigFile = "";
-                                        PCM.Segments.Clear();
-                                    }
-                                    else
-                                    {
-                                        ConfFile = Path.Combine(Application.StartupPath, "XML", ConfFile);
-                                        if (File.Exists(ConfFile))
-                                        {
-                                            PCM.LoadConfigFile(ConfFile);
-                                        }
-                                        else
-                                        {
-                                            Logger("XML File not found");
-                                            labelXML.Text = "";
-                                            pcmConfigFile = "";
-                                            PCM.Segments.Clear();
-                                            Logger(Environment.NewLine + Path.GetFileName(FileName));
-                                            return;
-                                        }
-                                    }
-                                    pcmConfigFile = ConfFile;
-                                }
-
-                                PCM.configFile = Path.GetFileNameWithoutExtension(pcmConfigFile).ToLower();
-                */
-                pcmConfigFile = PCM.configFileFullName;
                 if (PCM.Segments == null || PCM.Segments.Count == 0)
                 {
                     labelXML.Text = "";
@@ -627,7 +592,7 @@ namespace UniversalPatcher
                     addCheckBoxes();
                     return;
                 }
-                labelXML.Text = Path.GetFileName(pcmConfigFile) + " (v " + PCM.Segments[0].Version + ")";
+                labelXML.Text = PCM.configFile + " (v " + PCM.Segments[0].Version + ")";
                 Logger(Environment.NewLine + Path.GetFileName(FileName) + " (" + labelXML.Text + ")" + Environment.NewLine);
                 //PCM.GetSegmentAddresses();
                 if (PCM.Segments.Count > 0)
@@ -640,7 +605,7 @@ namespace UniversalPatcher
                 }
 
                 if (PCM.OS == null || PCM.OS == "")
-                    LoggerBold("Warning: No OS segment defined, limiting functions");
+                    LoggerBold("Warning: No OS defined, limiting functions");
                 if (checkAutorefreshCVNlist.Checked)
                     RefreshCVNlist();
                 if (Show)
@@ -688,7 +653,7 @@ namespace UniversalPatcher
             {
                 basefile.tableCategories = new List<string>(); //Clear list
                 txtBaseFile.Text = fileName;
-                basefile = new PcmFile(fileName, chkAutodetect.Checked, pcmConfigFile, basefile.Segments);
+                basefile = new PcmFile(fileName, chkAutodetect.Checked, basefile.configFileFullName);
                 labelBinSize.Text = basefile.fsize.ToString();
                 GetFileInfo(txtBaseFile.Text, ref basefile, false);
                 this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
@@ -707,7 +672,7 @@ namespace UniversalPatcher
             if (FileName.Length > 1)
             {
                 txtModifierFile.Text = FileName;
-                modfile = new PcmFile(FileName, chkAutodetect.Checked,pcmConfigFile, basefile.Segments);
+                modfile = new PcmFile(FileName, chkAutodetect.Checked,basefile.configFileFullName);
                 GetFileInfo(txtModifierFile.Text, ref modfile, false);
             }
 
@@ -749,7 +714,7 @@ namespace UniversalPatcher
                     Parts = PatchList[0].XmlFile.Split(',');
                     foreach (string Part in Parts)
                     {
-                        if (Part == Path.GetFileName(pcmConfigFile))
+                        if (Part == Path.GetFileName(basefile.configFileFullName))
                             isCompatible = true;
                     }
                     if (!isCompatible)
@@ -933,7 +898,7 @@ namespace UniversalPatcher
                         {
                             //Start new block 
                             xpatch = new XmlPatch();
-                            xpatch.XmlFile = Path.GetFileName(pcmConfigFile);
+                            xpatch.XmlFile = Path.GetFileName(basefile.configFileFullName);
                             xpatch.Data = "";
                             xpatch.Description = "";
                             xpatch.Segment = CurrentSegment;
@@ -981,8 +946,8 @@ namespace UniversalPatcher
                     Logger("Files are different size, will not compare!");
                     return;
                 }
-                basefile = new PcmFile(txtBaseFile.Text,chkAutodetect.Checked,pcmConfigFile,basefile.Segments);
-                modfile = new PcmFile(txtModifierFile.Text, chkAutodetect.Checked, pcmConfigFile, basefile.Segments);
+                basefile = new PcmFile(txtBaseFile.Text,chkAutodetect.Checked,basefile.configFileFullName);
+                modfile = new PcmFile(txtModifierFile.Text, chkAutodetect.Checked, basefile.configFileFullName);
                 if (!checkAppendPatch.Checked || PatchList == null)
                     PatchList = new List<XmlPatch>();
                 GetFileInfo(txtBaseFile.Text, ref basefile, false, false);
@@ -1041,7 +1006,7 @@ namespace UniversalPatcher
                 return;
             if (basefile.Segments != null && basefile.Segments.Count > 0)
             { 
-                labelXML.Text = Path.GetFileName(pcmConfigFile) + " (v " + basefile.Segments[0].Version + ")";
+                labelXML.Text = basefile.configFile + " (v " + basefile.Segments[0].Version + ")";
             }
             if (txtOS.Text.Length == 0)
             {
@@ -1180,7 +1145,7 @@ namespace UniversalPatcher
                 for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                    PcmFile PCM = new PcmFile(FileName, chkAutodetect.Checked, pcmConfigFile, basefile.Segments);
+                    PcmFile PCM = new PcmFile(FileName, chkAutodetect.Checked, basefile.configFileFullName);
                     GetFileInfo(FileName, ref PCM, true);
                 }
                 if (!chkLogtodisplay.Checked)
@@ -1229,7 +1194,7 @@ namespace UniversalPatcher
                 xpatch.CompatibleOS = OSlist[0] + ":" + Start.ToString("X"); 
                 for (int i=1;i < OSlist.Length; i++)
                     xpatch.CompatibleOS += "," + OSlist[i] + ":" + Start.ToString("X");
-                xpatch.XmlFile = Path.GetFileName(pcmConfigFile);
+                xpatch.XmlFile = Path.GetFileName(basefile.configFileFullName);
                 xpatch.Description = txtExtractDescription.Text;
                 Logger("Extracting " + Start.ToString("X") + " - " + End.ToString("X"));
                 for (uint i = Start; i <= End; i++)
@@ -1266,7 +1231,7 @@ namespace UniversalPatcher
             string MaskText = "";
             if (txtBaseFile.Text.Length == 0)
                 return;
-            basefile = new PcmFile(txtBaseFile.Text,chkAutodetect.Checked, pcmConfigFile, basefile.Segments);
+            basefile = new PcmFile(txtBaseFile.Text,chkAutodetect.Checked, basefile.configFileFullName);
             GetFileInfo(txtBaseFile.Text, ref basefile, true, false);
             if (txtCompatibleOS.Text.Length == 0)
                 txtCompatibleOS.Text = basefile.OS;
@@ -1361,8 +1326,8 @@ namespace UniversalPatcher
                     frmM.txtCompOS.Text = txtOS.Text + ":";
                 else
                     frmM.txtCompOS.Text = "ALL:";
-                if (pcmConfigFile != null && pcmConfigFile.Length > 0)
-                    frmM.txtXML.Text = Path.GetFileName(pcmConfigFile);
+                if (basefile.configFileFullName != null && basefile.configFileFullName.Length > 0)
+                    frmM.txtXML.Text = Path.GetFileName(basefile.configFileFullName);
             }
             
             if (frmM.ShowDialog(this) == DialogResult.OK)
@@ -1504,7 +1469,6 @@ namespace UniversalPatcher
             if (fileName.Length < 1)
                 return;
             basefile.loadConfigFile(fileName);
-            pcmConfigFile = fileName;
             labelXML.Text = Path.GetFileName(fileName) + " (v " + basefile.Segments[0].Version + ")";
             addCheckBoxes();
 
@@ -1524,10 +1488,10 @@ namespace UniversalPatcher
             frmSL = new frmSegmenList();
             frmSL.PCM = basefile;
             frmSL.InitMe();
-            if (pcmConfigFile.Length > 0)
-                frmSL.LoadFile(pcmConfigFile);
+            if (basefile.configFileFullName.Length > 0)
+                frmSL.LoadFile(basefile.configFileFullName);
             if (frmSL.ShowDialog() == DialogResult.OK)
-            {
+            {               
                 //addCheckBoxes();
             }
 
@@ -1634,7 +1598,7 @@ namespace UniversalPatcher
                 {
                     CVN stock = ListCVN[i];
                     counter++;
-                    if (CheckStockCVN(stock.PN,stock.Ver,stock.SegmentNr,stock.cvn , false, pcmConfigFile) != "[stock]")
+                    if (CheckStockCVN(stock.PN,stock.Ver,stock.SegmentNr,stock.cvn , false, basefile.configFileFullName) != "[stock]")
                     {
                         //Add if not already in list
                         StockCVN.Add(stock);
@@ -1961,7 +1925,7 @@ namespace UniversalPatcher
                 for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
                 {
                     string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                    PcmFile PCM = new PcmFile(FileName,chkAutodetect.Checked, pcmConfigFile, basefile.Segments);
+                    PcmFile PCM = new PcmFile(FileName,chkAutodetect.Checked, basefile.configFileFullName);
                     GetFileInfo(FileName, ref PCM, true,checkExtractShowinfo.Checked);
                     ExtractSegments(PCM, Path.GetFileName(FileName).Replace(".bin", ""), true, dstFolder);
                 }
@@ -2001,7 +1965,7 @@ namespace UniversalPatcher
         {
             try
             {
-                basefile = new PcmFile(fileName,chkAutodetect.Checked, pcmConfigFile, basefile.Segments);
+                basefile = new PcmFile(fileName,chkAutodetect.Checked, basefile.configFileFullName);
                 GetFileInfo(fileName, ref basefile, true, false);                
                 if (basefile.FixCheckSums())  //Returns true, if need fix for checksum
                 {  
@@ -3098,7 +3062,7 @@ namespace UniversalPatcher
 
         private void tableSeekToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (pcmConfigFile == null)
+            if (basefile.configFileFullName == null)
             {
                 Logger("No file/XML selected");
                 return;

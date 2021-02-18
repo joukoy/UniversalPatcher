@@ -1621,7 +1621,7 @@ namespace UniversalPatcher
         {
             string newFile = SelectFile();
             if (newFile.Length == 0) return;
-            PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName, null);
+            PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName);
             addtoCurrentFileMenu(newPCM);
             PCM = newPCM;
             loadConfigforPCM();
@@ -1972,7 +1972,7 @@ namespace UniversalPatcher
                 {
                     string newFile = frmF.listFiles.CheckedItems[i].Tag.ToString();
                     Logger("Opening file: " + newFile);
-                    PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName, null);
+                    PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName);
                     addtoCurrentFileMenu(newPCM);
                     PCM = newPCM;
                     loadConfigforPCM();

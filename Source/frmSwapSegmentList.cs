@@ -479,7 +479,7 @@ namespace UniversalPatcher
                 }
                 else if (fsize == PCM.fsize)
                 { 
-                    PcmFile tmpPCM = new PcmFile(FileName,true,PCM.configFileFullName, PCM.Segments);
+                    PcmFile tmpPCM = new PcmFile(FileName,true,PCM.configFileFullName);
                     //tmpPCM.GetSegmentAddresses();
                     //tmpPCM.GetInfo();
                     /*if (tmpPCM.OS != PCM.OS)
