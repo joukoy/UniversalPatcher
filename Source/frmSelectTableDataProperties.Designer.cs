@@ -32,12 +32,13 @@ namespace UniversalPatcher
             this.btnOK = new System.Windows.Forms.Button();
             this.chkSelectAll = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.labelAction = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(391, 2);
+            this.btnOK.Location = new System.Drawing.Point(384, 4);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 0;
@@ -48,7 +49,7 @@ namespace UniversalPatcher
             // chkSelectAll
             // 
             this.chkSelectAll.AutoSize = true;
-            this.chkSelectAll.Location = new System.Drawing.Point(17, 8);
+            this.chkSelectAll.Location = new System.Drawing.Point(12, 11);
             this.chkSelectAll.Name = "chkSelectAll";
             this.chkSelectAll.Size = new System.Drawing.Size(69, 17);
             this.chkSelectAll.TabIndex = 1;
@@ -67,11 +68,22 @@ namespace UniversalPatcher
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             // 
+            // labelAction
+            // 
+            this.labelAction.AutoSize = true;
+            this.labelAction.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelAction.Location = new System.Drawing.Point(101, 11);
+            this.labelAction.Name = "labelAction";
+            this.labelAction.Size = new System.Drawing.Size(131, 16);
+            this.labelAction.TabIndex = 3;
+            this.labelAction.Text = "Select properties:";
+            // 
             // frmSelectTableDataProperties
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(471, 450);
+            this.Controls.Add(this.labelAction);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.chkSelectAll);
             this.Controls.Add(this.btnOK);
@@ -83,9 +95,9 @@ namespace UniversalPatcher
         }
 
         #endregion
-
-        private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.CheckBox chkSelectAll;
         private System.Windows.Forms.GroupBox groupBox1;
+        public System.Windows.Forms.Button btnOK;
+        public System.Windows.Forms.Label labelAction;
     }
 }

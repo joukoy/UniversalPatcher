@@ -47,8 +47,8 @@ namespace UniversalPatcher
             this.copyRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyRowToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkLimitUsedInOS = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -129,7 +129,7 @@ namespace UniversalPatcher
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(794, 78);
+            this.tabPage2.Size = new System.Drawing.Size(818, 95);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "ClipBoard";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -140,7 +140,7 @@ namespace UniversalPatcher
             this.dataClipBoard.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataClipBoard.Location = new System.Drawing.Point(3, 3);
             this.dataClipBoard.Name = "dataClipBoard";
-            this.dataClipBoard.Size = new System.Drawing.Size(788, 72);
+            this.dataClipBoard.Size = new System.Drawing.Size(812, 89);
             this.dataClipBoard.TabIndex = 0;
             // 
             // txtSearch
@@ -207,55 +207,51 @@ namespace UniversalPatcher
             this.copyRowToolStripMenuItem,
             this.copyValueToolStripMenuItem,
             this.copyValuesToolStripMenuItem,
+            this.copyRowToToolStripMenuItem,
             this.pasteToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(148, 92);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(149, 114);
             // 
             // copyRowToolStripMenuItem
             // 
             this.copyRowToolStripMenuItem.Name = "copyRowToolStripMenuItem";
-            this.copyRowToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.copyRowToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.copyRowToolStripMenuItem.Text = "Copy row";
             this.copyRowToolStripMenuItem.Click += new System.EventHandler(this.copyRowToolStripMenuItem_Click);
             // 
             // copyValueToolStripMenuItem
             // 
             this.copyValueToolStripMenuItem.Name = "copyValueToolStripMenuItem";
-            this.copyValueToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.copyValueToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.copyValueToolStripMenuItem.Text = "Copy value";
             this.copyValueToolStripMenuItem.Click += new System.EventHandler(this.copyValueToolStripMenuItem_Click);
             // 
             // copyValuesToolStripMenuItem
             // 
             this.copyValuesToolStripMenuItem.Name = "copyValuesToolStripMenuItem";
-            this.copyValuesToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.copyValuesToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.copyValuesToolStripMenuItem.Text = "Copy values...";
             this.copyValuesToolStripMenuItem.Click += new System.EventHandler(this.copyValuesToolStripMenuItem_Click);
+            // 
+            // copyRowToToolStripMenuItem
+            // 
+            this.copyRowToToolStripMenuItem.Name = "copyRowToToolStripMenuItem";
+            this.copyRowToToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.copyRowToToolStripMenuItem.Text = "Copy row to...";
+            this.copyRowToToolStripMenuItem.Click += new System.EventHandler(this.copyRowToToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
-            // 
-            // chkLimitUsedInOS
-            // 
-            this.chkLimitUsedInOS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkLimitUsedInOS.AutoSize = true;
-            this.chkLimitUsedInOS.Location = new System.Drawing.Point(529, 8);
-            this.chkLimitUsedInOS.Name = "chkLimitUsedInOS";
-            this.chkLimitUsedInOS.Size = new System.Drawing.Size(121, 17);
-            this.chkLimitUsedInOS.TabIndex = 11;
-            this.chkLimitUsedInOS.Text = "Limit to \"UsedInOS\"";
-            this.chkLimitUsedInOS.UseVisualStyleBackColor = true;
             // 
             // frmMassModifyTableData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(824, 497);
-            this.Controls.Add(this.chkLimitUsedInOS);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnExecute);
@@ -301,6 +297,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.DataGridView dataClipBoard;
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
-        private System.Windows.Forms.CheckBox chkLimitUsedInOS;
+        private System.Windows.Forms.ToolStripMenuItem copyRowToToolStripMenuItem;
     }
 }

@@ -26,30 +26,43 @@ namespace UniversalPatcher
             public string fileName { get; set; }
         }
 
-        public class ClibBrd
+        private class ClibBrd
         {
             public string Property { get; set; }
             public string Value { get; set; }
         }
-        public class MassModProperties : TableData
+        private class TableDataPointer
+        {
+            public int tunerFile { get; set; }
+            public int tableData { get; set; }
+        }
+
+        private class MassModProperties : TableData
         {
             public MassModProperties()
             {
-                UsingTunerFiles = new List<int>();
+                UsingTableDatas = new List<TableDataPointer>();
             }
-            //public int mmId { get; set; }
             public string UsedInOS { get; set; }
-            public List<int> UsingTunerFiles;
+            public List<TableDataPointer> UsingTableDatas;
             public TableData td;
         }
+
+        public class TableDataExtended : TableData
+        {
+            public bool Select { get; set; }
+            public string File { get; set; }
+            public int fileId { get; set; }
+        }
+
         private List<TunerFile> tunerFiles = new List<TunerFile>();
-        private List<string> modifiedFiles = new List<string>();
+        private List<int> modifiedFiles = new List<int>();
         private List<string> tableRows = new List<string>();
         private List<MassModProperties> displayDatas = new List<MassModProperties>();
         private BindingSource bindingSource = new BindingSource();
         SortOrder strSortOrder = SortOrder.Ascending;
         private string sortBy = "TableName";
-        private int sortIndex = 0;
+        private int sortIndex = 1;
         private List<ClibBrd> clipBrd = new List<ClibBrd>();
 
         private void frmMassModifyTableData_Load(object sender, EventArgs e)
@@ -128,11 +141,11 @@ namespace UniversalPatcher
                     Type type = td.GetType();
                     PropertyInfo prop = type.GetProperty(dataGridView1.Columns[e.ColumnIndex].Name);
                     if (prop != null)
-                        dataGridView2.Rows[row].Cells["OldValue"].Value = prop.GetValue(td, null); ;
+                        dataGridView2.Rows[row].Cells["OldValue"].Value = prop.GetValue(td, null); 
                 }
                 dataGridView2.Rows[row].Cells["TableName"].Value = td.TableName;
                 dataGridView2.Rows[row].Cells["OS"].Value = dataGridView1.Rows[e.RowIndex].Cells["UsedInOS"].Value;
-                dataGridView2.Rows[row].Cells["OS"].Tag = displayDatas[mmid].UsingTunerFiles;
+                dataGridView2.Rows[row].Cells["OS"].Tag = displayDatas[mmid].UsingTableDatas;
                 dataGridView2.Rows[row].Cells["NewValue"].Value = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
                 if (dataGridView2.Rows.Count < 3)
                     dataGridView2.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
@@ -200,6 +213,48 @@ namespace UniversalPatcher
             Logger("Files loaded");
         }
 
+        private void addTableListTodgrid(List<TableData> tdList)
+        {
+            for (int t = 0; t < tdList.Count; t++)
+            {
+                MassModProperties mmp = new MassModProperties();
+                mmp.td = tdList[t];
+                //string ser = upatcher.SerializeObject<MassModProperties>(mmp);
+                string ser = "";
+                TableData td = tdList[t];
+                foreach (var prop in td.GetType().GetProperties())
+                {
+                    if (prop.Name != "id" && prop.Name != "Address" && prop.Name != "CompatibleOS" && prop.Name != "OS")
+                        ser += prop.GetValue(td, null);
+
+                    Type type = mmp.GetType();
+                    PropertyInfo mmpProp = type.GetProperty(prop.Name);
+                    mmpProp.SetValue(mmp, prop.GetValue(td, null), null);
+                }
+
+                int ind = tableRows.IndexOf(ser);
+                if (ind < 0)
+                {
+                    tableRows.Add(ser);
+                    mmp.UsedInOS = tdList[t].OS;
+                    //mmp.UsingTunerFiles.Add(tunerFiles.Count - 1);
+                    TableDataPointer tdp = new TableDataPointer();
+                    tdp.tableData = t;
+                    tdp.tunerFile = tunerFiles.Count - 1;
+                    mmp.UsingTableDatas.Add(tdp);
+                    displayDatas.Add(mmp);
+                }
+                else
+                {
+                    displayDatas[ind].UsedInOS += "," + tdList[t].OS;
+                    //displayDatas[ind].UsingTunerFiles.Add(tunerFiles.Count - 1);
+                    TableDataPointer tdp = new TableDataPointer();
+                    tdp.tableData = t;
+                    tdp.tunerFile = tunerFiles.Count - 1;
+                    displayDatas[ind].UsingTableDatas.Add(tdp);
+                }
+            }
+        }
 
 
         private void DataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -276,49 +331,6 @@ namespace UniversalPatcher
             bindingSource.DataSource = results;
             dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
         }
-        private void addTableListTodgrid(List<TableData> tdList)
-        {
-            for (int i=0; i< tdList.Count; i++)
-            {
-                MassModProperties mmp = new MassModProperties();
-                /*                mmp.Category = tdList[i].Category;
-                                mmp.ColumnHeaders = tdList[i].ColumnHeaders;
-                                mmp.ExtraDescription = tdList[i].ExtraDescription;
-                                mmp.RowHeaders = tdList[i].RowHeaders;
-                                mmp.TableDescription = tdList[i].TableDescription;
-                                mmp.TableName = tdList[i].TableName;
-                                mmp.Units = tdList[i].Units;
-                                mmp.Values = tdList[i].Values;
-                */
-                mmp.td = tdList[i];
-                //string ser = upatcher.SerializeObject<MassModProperties>(mmp);
-                string ser = "";
-                TableData td = tdList[i];
-                foreach (var prop in td.GetType().GetProperties())
-                {
-                    if (prop.Name !=  "id" && prop.Name != "Address" && prop.Name != "CompatibleOS" && prop.Name != "OS")
-                        ser += prop.GetValue(td,null);
-
-                    Type type = mmp.GetType();
-                    PropertyInfo mmpProp = type.GetProperty(prop.Name);
-                    mmpProp.SetValue(mmp, prop.GetValue(td, null),null);
-                }
-
-                int ind = tableRows.IndexOf(ser);
-                if (ind < 0)
-                {
-                    tableRows.Add(ser);
-                    mmp.UsedInOS = tdList[i].OS;
-                    mmp.UsingTunerFiles.Add(tunerFiles.Count - 1);
-                    displayDatas.Add(mmp);
-                }
-                else
-                {
-                    displayDatas[ind].UsedInOS += "," + tdList[i].OS;
-                    displayDatas[ind].UsingTunerFiles.Add(tunerFiles.Count - 1);
-                }
-            }
-        }
 
 /*        private void addToGrid(string Property, string oldVal, string newVal)
         {
@@ -347,28 +359,22 @@ namespace UniversalPatcher
                     string Property = dataGridView2.Rows[row].Cells["Property"].Value.ToString();
                     string oldVal = dataGridView2.Rows[row].Cells["OldValue"].Value.ToString();
                     string newVal = dataGridView2.Rows[row].Cells["NewValue"].Value.ToString();
-                    List<int> tFiles = (List<int>)dataGridView2.Rows[row].Cells["OS"].Tag;
-                    for (int t = 0; t < tunerFiles.Count; t++)
+                    List<TableDataPointer> tFiles = (List<TableDataPointer>)dataGridView2.Rows[row].Cells["OS"].Tag;
+                    for (int ptr = 0; ptr < tFiles.Count; ptr++)
                     {
-                        if (chkLimitUsedInOS.Checked && !tFiles.Contains(t))
-                            continue;
-                        for (int i = 0; i < tunerFiles[t].tableDatas.Count; i++)
-                        {
-                            if (tunerFiles[t].tableDatas[i].TableName == tableName)
-                            {
-                                Logger("File: " + tunerFiles[t].fileName);
-                                Logger("Modifying table: " + tableName + ", " + Property + ": " + oldVal + " => " + newVal);
-                                if (!modifiedFiles.Contains(tunerFiles[t].fileName))
-                                    modifiedFiles.Add(tunerFiles[t].fileName);
+                        int tf = tFiles[ptr].tunerFile;
+                        int t = tFiles[ptr].tableData;
+                        Logger("File: " + tunerFiles[tf].fileName);
+                        Logger("Modifying table: " + tableName + ", " + Property + ": " + oldVal + " => " + newVal);
+                        if (!modifiedFiles.Contains(tf))
+                            modifiedFiles.Add(tf);
 
-                                Type type = tunerFiles[t].tableDatas[i].GetType();
-                                PropertyInfo prop = type.GetProperty(Property);
-                                if (prop.PropertyType.IsEnum)
-                                    prop.SetValue(tunerFiles[t].tableDatas[i], Enum.Parse(prop.PropertyType, newVal), null);
-                                else
-                                    prop.SetValue(tunerFiles[t].tableDatas[i], Convert.ChangeType(newVal, prop.PropertyType), null);
-                            }
-                        }
+                        Type type = tunerFiles[tf].tableDatas[t].GetType();
+                        PropertyInfo prop = type.GetProperty(Property);
+                        if (prop.PropertyType.IsEnum)
+                            prop.SetValue(tunerFiles[tf].tableDatas[t], Enum.Parse(prop.PropertyType, newVal), null);
+                        else
+                            prop.SetValue(tunerFiles[tf].tableDatas[t], Convert.ChangeType(newVal, prop.PropertyType), null);
                     }
                 }
                 dataGridView2.Rows.Clear();
@@ -385,21 +391,17 @@ namespace UniversalPatcher
             for (int modF = 0; modF < modifiedFiles.Count; modF++)
             {
                 Logger("Saving file: " + modifiedFiles[modF], false);
-                for (int tunerF=0; tunerF < tunerFiles.Count; tunerF++)
+                int tf = modifiedFiles[modF];
+                using (FileStream stream = new FileStream(tunerFiles[tf].fileName, FileMode.Create))
                 {
-                    if (tunerFiles[tunerF].fileName == modifiedFiles[modF])
-                    {
-                        using (FileStream stream = new FileStream(tunerFiles[tunerF].fileName, FileMode.Create))
-                        {
-                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
-                            writer.Serialize(stream, tunerFiles[tunerF].tableDatas);
-                            stream.Close();
-                        }
-                        Logger(" [OK]");
-                        break;
-                    }
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
+                    writer.Serialize(stream, tunerFiles[tf].tableDatas);
+                    stream.Close();
                 }
+                Logger(" [OK]");
+                break;
             }
+            modifiedFiles = new List<int>();
             Logger("Files saved");
         }
         private void Logger(string LogText, Boolean NewLine = true)
@@ -551,8 +553,140 @@ namespace UniversalPatcher
 
         }
 
-        private void radioTableName_CheckedChanged(object sender, EventArgs e)
+        private void copyRowToToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            int row = -1;
+            if (dataGridView1.SelectedCells.Count > 0)
+                row = dataGridView1.SelectedCells[0].RowIndex;
+            else if (dataGridView1.SelectedRows.Count > 0)
+                row = dataGridView1.SelectedRows[0].Index;
+            else
+                return;
+
+            frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
+            int mmid = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
+            TableData td = displayDatas[mmid].td;
+            fst.loadProperties(td);
+            fst.btnOK.Text = "Next >";
+            if (fst.ShowDialog() != DialogResult.OK)
+            {
+                fst.Dispose();
+                return;
+            }
+            fst.Dispose();
+
+            List<ClibBrd> myClipBrd = new List<ClibBrd>();
+            for (int p = 0; p < fst.chkBoxes.Count; p++)
+            {
+                CheckBox chk = fst.chkBoxes[p];
+                if (chk.Checked && chk.Tag != null)
+                {
+                    ClibBrd cb = new ClibBrd();
+                    cb.Property = chk.Name;
+                    cb.Value = chk.Tag.ToString();
+                    myClipBrd.Add(cb);
+                }
+            }
+
+
+            fst = new frmSelectTableDataProperties();
+            fst.loadProperties(td);
+            for (int c=0; c < fst.chkBoxes.Count; c++)
+            {
+                if (fst.chkBoxes[c].Name == "TableName" )
+                    fst.chkBoxes[c].Checked = true;
+                else
+                    fst.chkBoxes[c].Checked = false;
+            }
+            fst.btnOK.Text = "Next >";
+            fst.Text = "Select table search criteria";
+            fst.labelAction.Text = "Select table search criteria";
+            if (fst.ShowDialog() != DialogResult.OK)
+            {
+                fst.Dispose();
+                return;
+            }
+            fst.Dispose();
+
+            List<ClibBrd> myCriteria = new List<ClibBrd>();
+            for (int p = 0; p < fst.chkBoxes.Count; p++)
+            {
+                CheckBox chk = fst.chkBoxes[p];
+                if (chk.Checked && chk.Tag != null)
+                {
+                    ClibBrd cb = new ClibBrd();
+                    cb.Property = chk.Name;
+                    cb.Value = chk.Tag.ToString();
+                    myCriteria.Add(cb);
+                }
+            }
+
+            List<TableDataExtended> tdeList = new List<TableDataExtended>();
+            for (int tf=0; tf < tunerFiles.Count; tf++)
+            {
+                for (int t=0; t< tunerFiles[tf].tableDatas.Count; t++)
+                {
+                    bool match = true;
+                    Type type = tunerFiles[tf].tableDatas[t].GetType();
+                    for (int mc = 0; mc < myCriteria.Count; mc++)
+                    {
+                        PropertyInfo prop = type.GetProperty(myCriteria[mc].Property);
+                        if ((string)prop.GetValue(tunerFiles[tf].tableDatas[t], null) != myCriteria[mc].Value)
+                        {
+                            match = false;
+                            break;
+                        }
+                    }
+                    if (match)
+                    {
+                        //This table definition match criteria
+                        TableDataExtended tde = new TableDataExtended();
+                        TableData tabledata = tunerFiles[tf].tableDatas[t];
+                        foreach (var tdProp in tabledata.GetType().GetProperties())
+                        {
+
+                            Type tdeType = tde.GetType();
+                            PropertyInfo tdeProp = tdeType.GetProperty(tdProp.Name);
+                            tdeProp.SetValue(tde, tdProp.GetValue(tabledata, null), null);
+                        }
+                        tde.id = (uint)t;
+                        tde.fileId = tf;
+                        tde.File = tunerFiles[tf].fileName;
+                        tde.Select = true;
+                        tdeList.Add(tde);
+                    }
+                }
+            }
+            frmSelectMassTarget frmSmt = new frmSelectMassTarget();
+            frmSmt.loadData(tdeList);
+            if (frmSmt.ShowDialog() != DialogResult.OK)
+            {
+                frmSmt.Dispose();
+                return;
+            }
+
+            for (int r = 0; r < frmSmt.dataGridView1.Rows.Count; r++)
+            {
+                if (Convert.ToBoolean(frmSmt.dataGridView1.Rows[r].Cells["Select"].Value) == true)
+                {
+                    int tf = Convert.ToInt32(frmSmt.dataGridView1.Rows[r].Cells["fileId"].Value);
+                    int t = Convert.ToInt32(frmSmt.dataGridView1.Rows[r].Cells["id"].Value);
+                    Logger("Updating table list: " + tunerFiles[tf].fileName);
+                    for (int cb = 0; cb < myClipBrd.Count; cb++)
+                    {
+                        TableData tabledata = tunerFiles[tf].tableDatas[t];
+                        Type tdType = tabledata.GetType();
+                        PropertyInfo tdProp = tdType.GetProperty(myClipBrd[cb].Property);
+                        if (tdProp.PropertyType.IsEnum)
+                            tdProp.SetValue(tunerFiles[tf].tableDatas[t], Enum.Parse(tdProp.PropertyType, myClipBrd[cb].Value), null);
+                        else
+                            tdProp.SetValue(tunerFiles[tf].tableDatas[t], Convert.ChangeType(myClipBrd[cb].Value, tdProp.PropertyType), null);
+                        Logger("Property: " + myClipBrd[cb].Property + ", value: " + myClipBrd[cb].Value);
+                    }
+                    modifiedFiles.Add(tf);
+                }
+            }
+            Logger("Done. (Save files manually)");
         }
     }
 }

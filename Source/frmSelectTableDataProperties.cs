@@ -33,11 +33,40 @@ namespace UniversalPatcher
                 chk.Name = prop.Name;
                 chk.Text = prop.Name + ": " + prop.GetValue(td, null);
                 chk.Tag = prop.GetValue(td, null);
+                if (prop.Name == "TableName")
+                    chk.Checked = true;
                 chk.AutoSize = true;
                 chkBoxes.Add(chk);
                 groupBox1.Controls.Add(chk);
                 chk.Location = new Point(11, top);
                 top += 23;
+            }
+            this.Height = top + 50;
+        }
+
+        public void loadFiles(List<frmMassModifyTableData.TunerFile> tunerFiles, List<string> tableNames)
+        {
+            //This is not in use, filelist needs scrollbars...
+            chkBoxes = new List<CheckBox>();
+            int top = 19;
+            for (int f = 0; f < tunerFiles.Count; f++)
+            {
+                for (int t = 0; t < tunerFiles[f].tableDatas.Count; t++)
+                {
+                    if (tableNames.Contains(tunerFiles[f].tableDatas[t].TableName) )
+                    {
+                        CheckBox chk = new CheckBox();
+                        chk.Name = chk + f.ToString();
+                        chk.Text = tunerFiles[f].fileName;
+                        chk.Checked = true;
+                        chk.Tag = f;
+                        chkBoxes.Add(chk);
+                        groupBox1.Controls.Add(chk);
+                        chk.Location = new Point(11, top);
+                        top += 23;
+                        break;
+                    }
+                }
             }
             this.Height = top + 50;
         }

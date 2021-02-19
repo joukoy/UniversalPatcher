@@ -49,14 +49,14 @@ namespace UniversalPatcher
             this.listFiles.HideSelection = false;
             this.listFiles.Location = new System.Drawing.Point(3, 83);
             this.listFiles.Name = "listFiles";
-            this.listFiles.Size = new System.Drawing.Size(546, 367);
+            this.listFiles.Size = new System.Drawing.Size(777, 367);
             this.listFiles.TabIndex = 0;
             this.listFiles.UseCompatibleStateImageBehavior = false;
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(447, 50);
+            this.btnOK.Location = new System.Drawing.Point(678, 50);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(89, 27);
             this.btnOK.TabIndex = 1;
@@ -67,7 +67,7 @@ namespace UniversalPatcher
             // btnBrowse
             // 
             this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowse.Location = new System.Drawing.Point(479, 1);
+            this.btnBrowse.Location = new System.Drawing.Point(710, 1);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(57, 24);
             this.btnBrowse.TabIndex = 2;
@@ -91,7 +91,7 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFolder.Location = new System.Drawing.Point(3, 3);
             this.txtFolder.Name = "txtFolder";
-            this.txtFolder.Size = new System.Drawing.Size(470, 20);
+            this.txtFolder.Size = new System.Drawing.Size(701, 20);
             this.txtFolder.TabIndex = 4;
             this.txtFolder.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtFolder_KeyDown);
             // 
@@ -113,7 +113,7 @@ namespace UniversalPatcher
             this.labelCustomdst.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.labelCustomdst.Location = new System.Drawing.Point(204, 54);
             this.labelCustomdst.Name = "labelCustomdst";
-            this.labelCustomdst.Size = new System.Drawing.Size(239, 23);
+            this.labelCustomdst.Size = new System.Drawing.Size(470, 23);
             this.labelCustomdst.TabIndex = 6;
             this.labelCustomdst.Visible = false;
             // 
@@ -145,7 +145,7 @@ namespace UniversalPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(548, 450);
+            this.ClientSize = new System.Drawing.Size(779, 450);
             this.Controls.Add(this.chkIncludeCustomFileTypes);
             this.Controls.Add(this.chkSubfolders);
             this.Controls.Add(this.labelCustomdst);
