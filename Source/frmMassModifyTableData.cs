@@ -553,7 +553,7 @@ namespace UniversalPatcher
 
         }
 
-        private void copyRowToToolStripMenuItem_Click(object sender, EventArgs e)
+        private void pasteSpecialToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int row = -1;
             if (dataGridView1.SelectedCells.Count > 0)
@@ -563,33 +563,10 @@ namespace UniversalPatcher
             else
                 return;
 
-            frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
             int mmid = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
             TableData td = displayDatas[mmid].td;
-            fst.loadProperties(td);
-            fst.btnOK.Text = "Next >";
-            if (fst.ShowDialog() != DialogResult.OK)
-            {
-                fst.Dispose();
-                return;
-            }
-            fst.Dispose();
 
-            List<ClibBrd> myClipBrd = new List<ClibBrd>();
-            for (int p = 0; p < fst.chkBoxes.Count; p++)
-            {
-                CheckBox chk = fst.chkBoxes[p];
-                if (chk.Checked && chk.Tag != null)
-                {
-                    ClibBrd cb = new ClibBrd();
-                    cb.Property = chk.Name;
-                    cb.Value = chk.Tag.ToString();
-                    myClipBrd.Add(cb);
-                }
-            }
-
-
-            fst = new frmSelectTableDataProperties();
+            frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
             fst.loadProperties(td);
             for (int c=0; c < fst.chkBoxes.Count; c++)
             {
@@ -631,7 +608,7 @@ namespace UniversalPatcher
                     for (int mc = 0; mc < myCriteria.Count; mc++)
                     {
                         PropertyInfo prop = type.GetProperty(myCriteria[mc].Property);
-                        if ((string)prop.GetValue(tunerFiles[tf].tableDatas[t], null) != myCriteria[mc].Value)
+                        if ((string)prop.GetValue(tunerFiles[tf].tableDatas[t], null).ToString() != myCriteria[mc].Value)
                         {
                             match = false;
                             break;
@@ -672,21 +649,23 @@ namespace UniversalPatcher
                     int tf = Convert.ToInt32(frmSmt.dataGridView1.Rows[r].Cells["fileId"].Value);
                     int t = Convert.ToInt32(frmSmt.dataGridView1.Rows[r].Cells["id"].Value);
                     Logger("Updating table list: " + tunerFiles[tf].fileName);
-                    for (int cb = 0; cb < myClipBrd.Count; cb++)
+                    for (int cb = 0; cb < clipBrd.Count; cb++)
                     {
                         TableData tabledata = tunerFiles[tf].tableDatas[t];
                         Type tdType = tabledata.GetType();
-                        PropertyInfo tdProp = tdType.GetProperty(myClipBrd[cb].Property);
+                        PropertyInfo tdProp = tdType.GetProperty(clipBrd[cb].Property);
                         if (tdProp.PropertyType.IsEnum)
-                            tdProp.SetValue(tunerFiles[tf].tableDatas[t], Enum.Parse(tdProp.PropertyType, myClipBrd[cb].Value), null);
+                            tdProp.SetValue(tunerFiles[tf].tableDatas[t], Enum.Parse(tdProp.PropertyType, clipBrd[cb].Value), null);
                         else
-                            tdProp.SetValue(tunerFiles[tf].tableDatas[t], Convert.ChangeType(myClipBrd[cb].Value, tdProp.PropertyType), null);
-                        Logger("Property: " + myClipBrd[cb].Property + ", value: " + myClipBrd[cb].Value);
+                            tdProp.SetValue(tunerFiles[tf].tableDatas[t], Convert.ChangeType(clipBrd[cb].Value, tdProp.PropertyType), null);
+                        Logger("Property: " + clipBrd[cb].Property + ", value: " + clipBrd[cb].Value);
                     }
                     modifiedFiles.Add(tf);
                 }
             }
             Logger("Done. (Save files manually)");
         }
+
+
     }
 }

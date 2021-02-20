@@ -47,8 +47,8 @@ namespace UniversalPatcher
             this.copyRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.copyRowToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pasteSpecialToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -207,10 +207,10 @@ namespace UniversalPatcher
             this.copyRowToolStripMenuItem,
             this.copyValueToolStripMenuItem,
             this.copyValuesToolStripMenuItem,
-            this.copyRowToToolStripMenuItem,
-            this.pasteToolStripMenuItem});
+            this.pasteToolStripMenuItem,
+            this.pasteSpecialToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(149, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 136);
             // 
             // copyRowToolStripMenuItem
             // 
@@ -233,19 +233,19 @@ namespace UniversalPatcher
             this.copyValuesToolStripMenuItem.Text = "Copy values...";
             this.copyValuesToolStripMenuItem.Click += new System.EventHandler(this.copyValuesToolStripMenuItem_Click);
             // 
-            // copyRowToToolStripMenuItem
-            // 
-            this.copyRowToToolStripMenuItem.Name = "copyRowToToolStripMenuItem";
-            this.copyRowToToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.copyRowToToolStripMenuItem.Text = "Copy row to...";
-            this.copyRowToToolStripMenuItem.Click += new System.EventHandler(this.copyRowToToolStripMenuItem_Click);
-            // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
             this.pasteToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
+            // 
+            // pasteSpecialToolStripMenuItem
+            // 
+            this.pasteSpecialToolStripMenuItem.Name = "pasteSpecialToolStripMenuItem";
+            this.pasteSpecialToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pasteSpecialToolStripMenuItem.Text = "Paste special...";
+            this.pasteSpecialToolStripMenuItem.Click += new System.EventHandler(this.pasteSpecialToolStripMenuItem_Click);
             // 
             // frmMassModifyTableData
             // 
@@ -297,6 +297,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.DataGridView dataClipBoard;
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem copyRowToToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pasteSpecialToolStripMenuItem;
     }
 }
