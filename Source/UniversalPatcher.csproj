@@ -70,6 +70,7 @@
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </Compile>
     <Compile Include="AutoDetect.cs" />
+    <Compile Include="ComputeSimilarity.cs" />
     <Compile Include="Crc.cs" />
     <Compile Include="Debug.cs" />
     <Compile Include="ExtensionMethods.cs" />

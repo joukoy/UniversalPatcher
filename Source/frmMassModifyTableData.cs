@@ -651,7 +651,16 @@ namespace UniversalPatcher
                     for (int mc = 0; mc < myCriteria.Count; mc++)
                     {
                         PropertyInfo prop = type.GetProperty(myCriteria[mc].Property);
-                        if ((string)prop.GetValue(tunerFiles[tf].tableDatas[t], null).ToString() != myCriteria[mc].Value)
+                        if (prop.PropertyType == typeof(string))
+                        {
+                            double percentage = ComputeSimilarity.CalculateSimilarity((string)prop.GetValue(tunerFiles[tf].tableDatas[t], null), myCriteria[mc].Value);
+                            if ((percentage * 100) < (double)numDiff.Value)
+                            {
+                                match = false;
+                                break;
+                            }
+                        }
+                        else if ((string)prop.GetValue(tunerFiles[tf].tableDatas[t], null).ToString() != myCriteria[mc].Value)
                         {
                             match = false;
                             break;
@@ -774,7 +783,10 @@ namespace UniversalPatcher
                     {
                         for (int x=0; x < tunerFiles[dstF].tableDatas.Count; x++)
                         {
-                            if (tunerFiles[dstF].tableDatas[x].TableName == tunerFiles[sourceId].tableDatas[t].TableName)
+                            double percentage = ComputeSimilarity.CalculateSimilarity(tunerFiles[dstF].tableDatas[x].TableName, tunerFiles[dstF].tableDatas[x].TableName);
+                            if (percentage > 0 && percentage < 1)
+                                Debug.WriteLine(percentage.ToString() + ", " + tunerFiles[dstF].tableDatas[x].TableName + ", " + tunerFiles[dstF].tableDatas[x].TableName);
+                            if ((percentage * 100) >= (double)numDiff.Value)
                             {
                                 foreach (var prop in sourceTd.GetType().GetProperties())
                                 {

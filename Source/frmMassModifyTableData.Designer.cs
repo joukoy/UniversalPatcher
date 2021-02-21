@@ -60,6 +60,8 @@ namespace UniversalPatcher
             this.dataGridTd = new System.Windows.Forms.DataGridView();
             this.comboFiles = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.numDiff = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -78,6 +80,7 @@ namespace UniversalPatcher
             this.contextMenuStripFiles.SuspendLayout();
             this.tabTableData.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridTd)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDiff)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -372,11 +375,34 @@ namespace UniversalPatcher
             this.label2.TabIndex = 2;
             this.label2.Text = "File:";
             // 
+            // numDiff
+            // 
+            this.numDiff.Location = new System.Drawing.Point(520, 8);
+            this.numDiff.Name = "numDiff";
+            this.numDiff.Size = new System.Drawing.Size(45, 20);
+            this.numDiff.TabIndex = 11;
+            this.numDiff.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(387, 10);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(127, 13);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "% Min match in searches:";
+            // 
             // frmMassModifyTableData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(824, 497);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.numDiff);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnExecute);
@@ -406,6 +432,7 @@ namespace UniversalPatcher
             this.tabTableData.ResumeLayout(false);
             this.tabTableData.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridTd)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDiff)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -442,5 +469,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.ComboBox comboFiles;
         private System.Windows.Forms.DataGridView dataGridTd;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.NumericUpDown numDiff;
+        private System.Windows.Forms.Label label3;
     }
 }
