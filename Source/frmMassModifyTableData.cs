@@ -22,8 +22,10 @@ namespace UniversalPatcher
 
         public class TunerFile
         {
+            public bool Select { get; set; }
+            public int id { get; set; }
             public List<TableData> tableDatas = new List<TableData>();
-            public string fileName { get; set; }
+            public string FileName { get; set; }
         }
 
         private class ClibBrd
@@ -97,7 +99,7 @@ namespace UniversalPatcher
 
         private void DataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            
+
         }
 
         private void DataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
@@ -141,7 +143,7 @@ namespace UniversalPatcher
                     Type type = td.GetType();
                     PropertyInfo prop = type.GetProperty(dataGridView1.Columns[e.ColumnIndex].Name);
                     if (prop != null)
-                        dataGridView2.Rows[row].Cells["OldValue"].Value = prop.GetValue(td, null); 
+                        dataGridView2.Rows[row].Cells["OldValue"].Value = prop.GetValue(td, null);
                 }
                 dataGridView2.Rows[row].Cells["TableName"].Value = td.TableName;
                 dataGridView2.Rows[row].Cells["OS"].Value = dataGridView1.Rows[e.RowIndex].Cells["UsedInOS"].Value;
@@ -193,10 +195,12 @@ namespace UniversalPatcher
                     continue;
                 TunerFile tf = new TunerFile();
                 tf.tableDatas = loadTableDataFile(fName);
-                tf.fileName = fName;
+                tf.FileName = fName;
                 tunerFiles.Add(tf);
                 addTableListTodgrid(tf.tableDatas);
             }
+            for (int f = 0; f < tunerFiles.Count; f++)
+                tunerFiles[f].id = f;
             for (int i = 0; i < displayDatas.Count; i++)
                 displayDatas[i].id = (uint)i;
             dataGridView1.DataSource = bindingSource;
@@ -206,11 +210,50 @@ namespace UniversalPatcher
             dataGridView1.CellValueChanged += DataGridView1_CellValueChanged;
             dataGridView1.CellBeginEdit += DataGridView1_CellBeginEdit;
             Application.DoEvents();
-            
+
             dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             if (dataGridView1.Columns[0].Width > 500)
                 dataGridView1.Columns[0].Width = 500;
+
+            dataGridFiles.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            dataGridFiles.DataSource = tunerFiles;
+            dataGridFiles.DataBindingComplete += DataGridFiles_DataBindingComplete;
+            dataGridFiles.CellMouseClick += DataGridFiles_CellMouseClick;
+
+            comboFiles.DataSource = tunerFiles;
+            comboFiles.DisplayMember = "FileName";
+            comboFiles.ValueMember = "id";
+            comboFiles.SelectedIndexChanged += ComboFiles_SelectedIndexChanged;
+            refreshTdList();
             Logger("Files loaded");
+        }
+
+        private void DataGridFiles_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            dataGridFiles.Columns["Select"].Visible = false;
+            dataGridFiles.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+        }
+
+        private void ComboFiles_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            refreshTdList();
+        }
+
+        private void refreshTdList()
+        {
+            dataGridTd.DataSource = null;
+            dataGridTd.DataSource = tunerFiles[comboFiles.SelectedIndex].tableDatas;
+            dataGridTd.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+
+        }
+
+        private void DataGridFiles_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (dataGridFiles.SelectedCells.Count > 0 && e.Button == MouseButtons.Right)
+            {
+                contextMenuStripFiles.Show(Cursor.Position.X, Cursor.Position.Y);
+            }
+
         }
 
         private void addTableListTodgrid(List<TableData> tdList)
@@ -332,14 +375,14 @@ namespace UniversalPatcher
             dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
         }
 
-/*        private void addToGrid(string Property, string oldVal, string newVal)
-        {
-            int row = dataGridView2.Rows.Add();
-            dataGridView2.Rows[row].Cells["Property"].Value = Property;
-            dataGridView2.Rows[row].Cells["OldValue"].Value = oldVal;
-            dataGridView2.Rows[row].Cells["NewValue"].Value = newVal;
-        }
-*/
+        /*        private void addToGrid(string Property, string oldVal, string newVal)
+                {
+                    int row = dataGridView2.Rows.Add();
+                    dataGridView2.Rows[row].Cells["Property"].Value = Property;
+                    dataGridView2.Rows[row].Cells["OldValue"].Value = oldVal;
+                    dataGridView2.Rows[row].Cells["NewValue"].Value = newVal;
+                }
+        */
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
             filterData();
@@ -364,7 +407,7 @@ namespace UniversalPatcher
                     {
                         int tf = tFiles[ptr].tunerFile;
                         int t = tFiles[ptr].tableData;
-                        Logger("File: " + tunerFiles[tf].fileName);
+                        Logger("File: " + tunerFiles[tf].FileName);
                         Logger("Modifying table: " + tableName + ", " + Property + ": " + oldVal + " => " + newVal);
                         if (!modifiedFiles.Contains(tf))
                             modifiedFiles.Add(tf);
@@ -392,7 +435,7 @@ namespace UniversalPatcher
             {
                 Logger("Saving file: " + modifiedFiles[modF], false);
                 int tf = modifiedFiles[modF];
-                using (FileStream stream = new FileStream(tunerFiles[tf].fileName, FileMode.Create))
+                using (FileStream stream = new FileStream(tunerFiles[tf].FileName, FileMode.Create))
                 {
                     System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
                     writer.Serialize(stream, tunerFiles[tf].tableDatas);
@@ -468,7 +511,7 @@ namespace UniversalPatcher
             clipBrd = new List<ClibBrd>();
             for (int c = 0; c < dataGridView1.Columns.Count; c++)
             {
-                if (dataGridView1.Columns[c].Name != "id"  && dataGridView1.Columns[c].Name != "UsedInOS" && dataGridView1.Columns[c].Name != "OS" && dataGridView1.Columns[c].Name != "Address" && dataGridView1.Rows[row].Cells[c].Value != null)
+                if (dataGridView1.Columns[c].Name != "id" && dataGridView1.Columns[c].Name != "UsedInOS" && dataGridView1.Columns[c].Name != "OS" && dataGridView1.Columns[c].Name != "Address" && dataGridView1.Rows[row].Cells[c].Value != null)
                 {
                     ClibBrd cb = new ClibBrd();
                     cb.Property = dataGridView1.Columns[c].Name;
@@ -510,7 +553,7 @@ namespace UniversalPatcher
             fst.loadProperties(td);
             if (fst.ShowDialog() == DialogResult.OK)
             {
-                for (int p=0; p< fst.chkBoxes.Count; p++)
+                for (int p = 0; p < fst.chkBoxes.Count; p++)
                 {
                     CheckBox chk = fst.chkBoxes[p];
                     if (chk.Checked && chk.Tag != null)
@@ -568,9 +611,9 @@ namespace UniversalPatcher
 
             frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
             fst.loadProperties(td);
-            for (int c=0; c < fst.chkBoxes.Count; c++)
+            for (int c = 0; c < fst.chkBoxes.Count; c++)
             {
-                if (fst.chkBoxes[c].Name == "TableName" )
+                if (fst.chkBoxes[c].Name == "TableName")
                     fst.chkBoxes[c].Checked = true;
                 else
                     fst.chkBoxes[c].Checked = false;
@@ -599,9 +642,9 @@ namespace UniversalPatcher
             }
 
             List<TableDataExtended> tdeList = new List<TableDataExtended>();
-            for (int tf=0; tf < tunerFiles.Count; tf++)
+            for (int tf = 0; tf < tunerFiles.Count; tf++)
             {
-                for (int t=0; t< tunerFiles[tf].tableDatas.Count; t++)
+                for (int t = 0; t < tunerFiles[tf].tableDatas.Count; t++)
                 {
                     bool match = true;
                     Type type = tunerFiles[tf].tableDatas[t].GetType();
@@ -621,20 +664,20 @@ namespace UniversalPatcher
                         TableData tabledata = tunerFiles[tf].tableDatas[t];
                         foreach (var tdProp in tabledata.GetType().GetProperties())
                         {
-
                             Type tdeType = tde.GetType();
                             PropertyInfo tdeProp = tdeType.GetProperty(tdProp.Name);
                             tdeProp.SetValue(tde, tdProp.GetValue(tabledata, null), null);
                         }
                         tde.id = (uint)t;
                         tde.fileId = tf;
-                        tde.File = tunerFiles[tf].fileName;
+                        tde.File = tunerFiles[tf].FileName;
                         tde.Select = true;
                         tdeList.Add(tde);
                     }
                 }
             }
             frmSelectMassTarget frmSmt = new frmSelectMassTarget();
+            Application.DoEvents();
             frmSmt.loadData(tdeList);
             if (frmSmt.ShowDialog() != DialogResult.OK)
             {
@@ -648,7 +691,7 @@ namespace UniversalPatcher
                 {
                     int tf = Convert.ToInt32(frmSmt.dataGridView1.Rows[r].Cells["fileId"].Value);
                     int t = Convert.ToInt32(frmSmt.dataGridView1.Rows[r].Cells["id"].Value);
-                    Logger("Updating table list: " + tunerFiles[tf].fileName);
+                    Logger("Updating table list: " + tunerFiles[tf].FileName);
                     for (int cb = 0; cb < clipBrd.Count; cb++)
                     {
                         TableData tabledata = tunerFiles[tf].tableDatas[t];
@@ -666,6 +709,110 @@ namespace UniversalPatcher
             Logger("Done. (Save files manually)");
         }
 
+        private void copyTablestoFile(bool duplicatesOnly)
+        {
+            int row = -1;
+            if (dataGridFiles.SelectedCells.Count > 0)
+                row = dataGridFiles.SelectedCells[0].RowIndex;
+            else if (dataGridFiles.SelectedRows.Count > 0)
+                row = dataGridFiles.SelectedRows[0].Index;
+            else
+                return;
+            int sourceId = Convert.ToInt32(dataGridFiles.Rows[row].Cells["id"].Value);
 
+            frmSelectMassTarget frmS = new frmSelectMassTarget();
+            frmS.dataGridView1.DataSource = tunerFiles;
+            frmS.dataGridView1.Columns[0].Width = 50;
+            frmS.dataGridView1.Columns[1].Width = 50;
+            frmS.dataGridView1.Columns[2].Width = 1000;
+            frmS.Text = "Select target file(s)";
+            frmS.btnOK.Text = "Next >";
+            if (frmS.ShowDialog() != DialogResult.OK)
+                return;
+
+            List<int> selectedFiles = new List<int>();
+            for (int r = 0; r < frmS.dataGridView1.Rows.Count; r++)
+            {
+                if (Convert.ToBoolean(frmS.dataGridView1.Rows[r].Cells["Select"].Value) == true)
+                {
+                    int tId = Convert.ToInt32(frmS.dataGridView1.Rows[r].Cells["id"].Value);
+                    if (sourceId == tId)
+                        LoggerBold("Source can't be destination! (" + tunerFiles[sourceId].FileName +")");
+                    else
+                        selectedFiles.Add(tId);
+                }
+            }
+            frmS.Dispose();
+
+            frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
+            TableData tmpTd = new TableData();
+            fst.loadProperties(tmpTd, false);
+            if (fst.ShowDialog() != DialogResult.OK)
+                return;
+
+            List<string> selectedProps = new List<string>();
+            for (int p = 0; p < fst.chkBoxes.Count; p++)
+            {
+                CheckBox chk = fst.chkBoxes[p];
+                if (chk.Checked)
+                {
+                    selectedProps.Add(chk.Name);
+                }
+            }
+
+            Logger("Copying tables...");
+            //Now we have list of target files, and list of properties to copy, lets do it
+            for (int tf = 0; tf < selectedFiles.Count; tf++)
+            {
+                int dstF = selectedFiles[tf];
+                Logger(tunerFiles[dstF].FileName,false);
+                Application.DoEvents();
+                for (int t = 0; t < tunerFiles[sourceId].tableDatas.Count; t++)
+                {
+                    TableData sourceTd = tunerFiles[sourceId].tableDatas[t];
+                    if (duplicatesOnly)
+                    {
+                        for (int x=0; x < tunerFiles[dstF].tableDatas.Count; x++)
+                        {
+                            if (tunerFiles[dstF].tableDatas[x].TableName == tunerFiles[sourceId].tableDatas[t].TableName)
+                            {
+                                foreach (var prop in sourceTd.GetType().GetProperties())
+                                {
+                                    if (selectedProps.Contains(prop.Name))
+                                        prop.SetValue(tunerFiles[dstF].tableDatas[x], prop.GetValue(sourceTd, null), null);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        TableData newTd = new TableData();
+                        Type type = newTd.GetType();
+                        foreach (var prop in sourceTd.GetType().GetProperties())
+                        {
+                            if (selectedProps.Contains(prop.Name))
+                                prop.SetValue(newTd, prop.GetValue(sourceTd, null), null);
+                        }
+                        tunerFiles[dstF].tableDatas.Add(newTd);
+                    }
+                }
+                if (!modifiedFiles.Contains(dstF))
+                    modifiedFiles.Add(dstF);
+                Logger(" [OK]");
+            }
+            Logger("Done");
+        }
+
+
+        private void copyTablesToToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            copyTablestoFile(false);
+
+        }
+
+        private void copyDuplicateTablesToToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            copyTablestoFile(true);
+        }
     }
 }

@@ -19,11 +19,12 @@ namespace UniversalPatcher
 
         public void loadData(List<frmMassModifyTableData.TableDataExtended> tdeList)
         {
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
             dataGridView1.DataSource = tdeList;
             dataGridView1.DataBindingComplete += DataGridView1_DataBindingComplete;
-            dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             dataGridView1.DataError += DataGridView1_DataError;
         }
+
 
         private void DataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
@@ -33,6 +34,7 @@ namespace UniversalPatcher
         private void DataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             UseComboBoxForEnums(dataGridView1);
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
         }
 
         private void btnOK_Click(object sender, EventArgs e)

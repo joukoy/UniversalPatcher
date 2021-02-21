@@ -41,15 +41,15 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 1);
+            this.dataGridView1.Location = new System.Drawing.Point(0, 32);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(797, 414);
+            this.dataGridView1.Size = new System.Drawing.Size(797, 417);
             this.dataGridView1.TabIndex = 0;
             // 
             // btnOK
             // 
-            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(713, 421);
+            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOK.Location = new System.Drawing.Point(713, 3);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 1;
@@ -59,11 +59,10 @@ namespace UniversalPatcher
             // 
             // chkSelectAll
             // 
-            this.chkSelectAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkSelectAll.AutoSize = true;
             this.chkSelectAll.Checked = true;
             this.chkSelectAll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSelectAll.Location = new System.Drawing.Point(9, 427);
+            this.chkSelectAll.Location = new System.Drawing.Point(12, 7);
             this.chkSelectAll.Name = "chkSelectAll";
             this.chkSelectAll.Size = new System.Drawing.Size(70, 17);
             this.chkSelectAll.TabIndex = 2;
@@ -89,8 +88,8 @@ namespace UniversalPatcher
         }
 
         #endregion
-        private System.Windows.Forms.Button btnOK;
         public System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.CheckBox chkSelectAll;
+        public System.Windows.Forms.Button btnOK;
     }
 }

@@ -22,7 +22,7 @@ namespace UniversalPatcher
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
-        public void loadProperties(TableData td)
+        public void loadProperties(TableData td, bool showValues=true)
         {
             int top = 19;
             foreach (var prop in td.GetType().GetProperties())
@@ -31,8 +31,12 @@ namespace UniversalPatcher
                     continue;
                 CheckBox chk = new CheckBox();
                 chk.Name = prop.Name;
-                chk.Text = prop.Name + ": " + prop.GetValue(td, null);
-                chk.Tag = prop.GetValue(td, null);
+                chk.Text = prop.Name;
+                if (showValues)
+                {
+                    chk.Text += ": " + prop.GetValue(td, null);
+                    chk.Tag = prop.GetValue(td, null);
+                }
                 if (prop.Name == "TableName")
                     chk.Checked = true;
                 chk.AutoSize = true;
@@ -57,7 +61,7 @@ namespace UniversalPatcher
                     {
                         CheckBox chk = new CheckBox();
                         chk.Name = chk + f.ToString();
-                        chk.Text = tunerFiles[f].fileName;
+                        chk.Text = tunerFiles[f].FileName;
                         chk.Checked = true;
                         chk.Tag = f;
                         chkBoxes.Add(chk);

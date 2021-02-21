@@ -32,6 +32,10 @@ namespace UniversalPatcher
             this.components = new System.ComponentModel.Container();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.tabControl2 = new System.Windows.Forms.TabControl();
+            this.tabTableDatas = new System.Windows.Forms.TabPage();
+            this.tabTunerFiles = new System.Windows.Forms.TabPage();
+            this.dataGridFiles = new System.Windows.Forms.DataGridView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
@@ -49,17 +53,31 @@ namespace UniversalPatcher
             this.copyValuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteSpecialToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStripFiles = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copyTablesToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyDuplicateTablesToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabTableData = new System.Windows.Forms.TabPage();
+            this.dataGridTd = new System.Windows.Forms.DataGridView();
+            this.comboFiles = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.tabControl2.SuspendLayout();
+            this.tabTableDatas.SuspendLayout();
+            this.tabTunerFiles.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridFiles)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataClipBoard)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
+            this.contextMenuStripFiles.SuspendLayout();
+            this.tabTableData.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridTd)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -67,9 +85,9 @@ namespace UniversalPatcher
             this.dataGridView1.AllowUserToOrderColumns = true;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(826, 210);
+            this.dataGridView1.Size = new System.Drawing.Size(812, 178);
             this.dataGridView1.TabIndex = 1;
             // 
             // splitContainer1
@@ -83,7 +101,7 @@ namespace UniversalPatcher
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
+            this.splitContainer1.Panel1.Controls.Add(this.tabControl2);
             // 
             // splitContainer1.Panel2
             // 
@@ -91,6 +109,49 @@ namespace UniversalPatcher
             this.splitContainer1.Size = new System.Drawing.Size(826, 335);
             this.splitContainer1.SplitterDistance = 210;
             this.splitContainer1.TabIndex = 3;
+            // 
+            // tabControl2
+            // 
+            this.tabControl2.Controls.Add(this.tabTableDatas);
+            this.tabControl2.Controls.Add(this.tabTunerFiles);
+            this.tabControl2.Controls.Add(this.tabTableData);
+            this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl2.Location = new System.Drawing.Point(0, 0);
+            this.tabControl2.Name = "tabControl2";
+            this.tabControl2.SelectedIndex = 0;
+            this.tabControl2.Size = new System.Drawing.Size(826, 210);
+            this.tabControl2.TabIndex = 2;
+            // 
+            // tabTableDatas
+            // 
+            this.tabTableDatas.Controls.Add(this.dataGridView1);
+            this.tabTableDatas.Location = new System.Drawing.Point(4, 22);
+            this.tabTableDatas.Name = "tabTableDatas";
+            this.tabTableDatas.Padding = new System.Windows.Forms.Padding(3);
+            this.tabTableDatas.Size = new System.Drawing.Size(818, 184);
+            this.tabTableDatas.TabIndex = 0;
+            this.tabTableDatas.Text = "Unique tables";
+            this.tabTableDatas.UseVisualStyleBackColor = true;
+            // 
+            // tabTunerFiles
+            // 
+            this.tabTunerFiles.Controls.Add(this.dataGridFiles);
+            this.tabTunerFiles.Location = new System.Drawing.Point(4, 22);
+            this.tabTunerFiles.Name = "tabTunerFiles";
+            this.tabTunerFiles.Padding = new System.Windows.Forms.Padding(3);
+            this.tabTunerFiles.Size = new System.Drawing.Size(818, 184);
+            this.tabTunerFiles.TabIndex = 1;
+            this.tabTunerFiles.Text = "Files";
+            this.tabTunerFiles.UseVisualStyleBackColor = true;
+            // 
+            // dataGridFiles
+            // 
+            this.dataGridFiles.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridFiles.Location = new System.Drawing.Point(3, 3);
+            this.dataGridFiles.Name = "dataGridFiles";
+            this.dataGridFiles.Size = new System.Drawing.Size(812, 178);
+            this.dataGridFiles.TabIndex = 0;
             // 
             // tabControl1
             // 
@@ -210,42 +271,106 @@ namespace UniversalPatcher
             this.pasteToolStripMenuItem,
             this.pasteSpecialToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 136);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(151, 114);
             // 
             // copyRowToolStripMenuItem
             // 
             this.copyRowToolStripMenuItem.Name = "copyRowToolStripMenuItem";
-            this.copyRowToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.copyRowToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.copyRowToolStripMenuItem.Text = "Copy row";
             this.copyRowToolStripMenuItem.Click += new System.EventHandler(this.copyRowToolStripMenuItem_Click);
             // 
             // copyValueToolStripMenuItem
             // 
             this.copyValueToolStripMenuItem.Name = "copyValueToolStripMenuItem";
-            this.copyValueToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.copyValueToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.copyValueToolStripMenuItem.Text = "Copy value";
             this.copyValueToolStripMenuItem.Click += new System.EventHandler(this.copyValueToolStripMenuItem_Click);
             // 
             // copyValuesToolStripMenuItem
             // 
             this.copyValuesToolStripMenuItem.Name = "copyValuesToolStripMenuItem";
-            this.copyValuesToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.copyValuesToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.copyValuesToolStripMenuItem.Text = "Copy values...";
             this.copyValuesToolStripMenuItem.Click += new System.EventHandler(this.copyValuesToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // pasteSpecialToolStripMenuItem
             // 
             this.pasteSpecialToolStripMenuItem.Name = "pasteSpecialToolStripMenuItem";
-            this.pasteSpecialToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pasteSpecialToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.pasteSpecialToolStripMenuItem.Text = "Paste special...";
             this.pasteSpecialToolStripMenuItem.Click += new System.EventHandler(this.pasteSpecialToolStripMenuItem_Click);
+            // 
+            // contextMenuStripFiles
+            // 
+            this.contextMenuStripFiles.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyTablesToToolStripMenuItem,
+            this.copyDuplicateTablesToToolStripMenuItem});
+            this.contextMenuStripFiles.Name = "contextMenuStripFiles";
+            this.contextMenuStripFiles.Size = new System.Drawing.Size(212, 48);
+            // 
+            // copyTablesToToolStripMenuItem
+            // 
+            this.copyTablesToToolStripMenuItem.Name = "copyTablesToToolStripMenuItem";
+            this.copyTablesToToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.copyTablesToToolStripMenuItem.Text = "Copy tables to...";
+            this.copyTablesToToolStripMenuItem.Click += new System.EventHandler(this.copyTablesToToolStripMenuItem_Click);
+            // 
+            // copyDuplicateTablesToToolStripMenuItem
+            // 
+            this.copyDuplicateTablesToToolStripMenuItem.Name = "copyDuplicateTablesToToolStripMenuItem";
+            this.copyDuplicateTablesToToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.copyDuplicateTablesToToolStripMenuItem.Text = "Copy duplicate tables to...";
+            this.copyDuplicateTablesToToolStripMenuItem.Click += new System.EventHandler(this.copyDuplicateTablesToToolStripMenuItem_Click);
+            // 
+            // tabTableData
+            // 
+            this.tabTableData.Controls.Add(this.label2);
+            this.tabTableData.Controls.Add(this.comboFiles);
+            this.tabTableData.Controls.Add(this.dataGridTd);
+            this.tabTableData.Location = new System.Drawing.Point(4, 22);
+            this.tabTableData.Name = "tabTableData";
+            this.tabTableData.Size = new System.Drawing.Size(818, 184);
+            this.tabTableData.TabIndex = 2;
+            this.tabTableData.Text = "Table List";
+            this.tabTableData.UseVisualStyleBackColor = true;
+            // 
+            // dataGridTd
+            // 
+            this.dataGridTd.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridTd.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridTd.Location = new System.Drawing.Point(0, 30);
+            this.dataGridTd.Name = "dataGridTd";
+            this.dataGridTd.Size = new System.Drawing.Size(815, 154);
+            this.dataGridTd.TabIndex = 0;
+            // 
+            // comboFiles
+            // 
+            this.comboFiles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboFiles.FormattingEnabled = true;
+            this.comboFiles.Location = new System.Drawing.Point(40, 3);
+            this.comboFiles.Name = "comboFiles";
+            this.comboFiles.Size = new System.Drawing.Size(775, 21);
+            this.comboFiles.TabIndex = 1;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(8, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(26, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "File:";
             // 
             // frmMassModifyTableData
             // 
@@ -267,12 +392,20 @@ namespace UniversalPatcher
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.tabControl2.ResumeLayout(false);
+            this.tabTableDatas.ResumeLayout(false);
+            this.tabTunerFiles.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridFiles)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataClipBoard)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
+            this.contextMenuStripFiles.ResumeLayout(false);
+            this.tabTableData.ResumeLayout(false);
+            this.tabTableData.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridTd)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -298,5 +431,16 @@ namespace UniversalPatcher
         private System.Windows.Forms.DataGridView dataClipBoard;
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pasteSpecialToolStripMenuItem;
+        private System.Windows.Forms.TabControl tabControl2;
+        private System.Windows.Forms.TabPage tabTableDatas;
+        private System.Windows.Forms.TabPage tabTunerFiles;
+        private System.Windows.Forms.DataGridView dataGridFiles;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStripFiles;
+        private System.Windows.Forms.ToolStripMenuItem copyTablesToToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyDuplicateTablesToToolStripMenuItem;
+        private System.Windows.Forms.TabPage tabTableData;
+        private System.Windows.Forms.ComboBox comboFiles;
+        private System.Windows.Forms.DataGridView dataGridTd;
+        private System.Windows.Forms.Label label2;
     }
 }
