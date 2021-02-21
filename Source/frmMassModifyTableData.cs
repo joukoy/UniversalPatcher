@@ -62,9 +62,12 @@ namespace UniversalPatcher
         private List<string> tableRows = new List<string>();
         private List<MassModProperties> displayDatas = new List<MassModProperties>();
         private BindingSource bindingSource = new BindingSource();
+        private BindingSource tdBindingSource = new BindingSource();
         SortOrder strSortOrder = SortOrder.Ascending;
+        SortOrder tdSortOrder = SortOrder.Ascending;
         private string sortBy = "TableName";
         private int sortIndex = 1;
+        private int tdSortIndex = 1;
         private List<ClibBrd> clipBrd = new List<ClibBrd>();
 
         private void frmMassModifyTableData_Load(object sender, EventArgs e)
@@ -236,15 +239,29 @@ namespace UniversalPatcher
 
         private void ComboFiles_SelectedIndexChanged(object sender, EventArgs e)
         {
-            refreshTdList();
+            filterTableList();
         }
 
         private void refreshTdList()
         {
             dataGridTd.DataSource = null;
-            dataGridTd.DataSource = tunerFiles[comboFiles.SelectedIndex].tableDatas;
+            dataGridTd.DataSource = tdBindingSource;
+            tdBindingSource.DataSource = tunerFiles[comboFiles.SelectedIndex].tableDatas;
             dataGridTd.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+            dataGridTd.ColumnHeaderMouseClick += DataGridTd_ColumnHeaderMouseClick;
+            dataGridTd.Columns[tdSortIndex].HeaderCell.SortGlyphDirection = tdSortOrder;
+        }
 
+        private void DataGridTd_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                //saveGridLayout(); //Save before reorder!
+                sortBy = dataGridTd.Columns[e.ColumnIndex].Name;
+                tdSortIndex = e.ColumnIndex;
+                tdSortOrder = getSortOrder(dataGridTd, tdSortIndex);
+                filterTableList();
+            }
         }
 
         private void DataGridFiles_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -307,23 +324,23 @@ namespace UniversalPatcher
                 //saveGridLayout(); //Save before reorder!
                 sortBy = dataGridView1.Columns[e.ColumnIndex].Name;
                 sortIndex = e.ColumnIndex;
-                strSortOrder = getSortOrder(sortIndex);
+                strSortOrder = getSortOrder(dataGridView1, sortIndex);
                 filterData();
             }
         }
-        private SortOrder getSortOrder(int columnIndex)
+        private SortOrder getSortOrder(DataGridView dgv, int columnIndex)
         {
             try
             {
-                if (dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.Descending
-                    || dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.None)
+                if (dgv.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.Descending
+                    || dgv.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.None)
                 {
-                    dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
+                    dgv.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
                     return SortOrder.Ascending;
                 }
                 else
                 {
-                    dataGridView1.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Descending;
+                    dgv.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Descending;
                     return SortOrder.Descending;
                 }
             }
@@ -372,20 +389,56 @@ namespace UniversalPatcher
                 }
             }
             bindingSource.DataSource = results;
-            dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
+            if (dataGridView1.Columns.Count > sortIndex)
+                dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
+
         }
 
-        /*        private void addToGrid(string Property, string oldVal, string newVal)
+        private void filterTableList()
+        {
+            List<TableData> compareList = new List<TableData>();
+            if (tdSortOrder == SortOrder.Ascending)
+                compareList = tunerFiles[comboFiles.SelectedIndex].tableDatas.OrderBy(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
+            else
+                compareList = tunerFiles[comboFiles.SelectedIndex].tableDatas.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
+
+            var results = compareList.Where(t => t.TableName != ""); //How should I define empty variable??
+
+            if (txtSearch.Text.Length > 0)
+            {
+                string newStr = txtSearch.Text.Replace("OR", "|");
+                if (newStr.Contains("|"))
                 {
-                    int row = dataGridView2.Rows.Add();
-                    dataGridView2.Rows[row].Cells["Property"].Value = Property;
-                    dataGridView2.Rows[row].Cells["OldValue"].Value = oldVal;
-                    dataGridView2.Rows[row].Cells["NewValue"].Value = newVal;
+                    string[] orStr = newStr.Split('|');
+                    if (orStr.Length == 2)
+                        results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
+                        typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()));
+                    if (orStr.Length == 3)
+                        results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
+                        typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()) ||
+                        typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2].Trim()));
+                    if (orStr.Length == 4)
+                        results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
+                        typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()) ||
+                        typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2].Trim()) ||
+                        typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[3].Trim()));
                 }
-        */
+                else
+                {
+                    newStr = txtSearch.Text.Replace("AND", "&");
+                    string[] andStr = newStr.Split('&');
+                    foreach (string sStr in andStr)
+                        results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(sStr.Trim()));
+                }
+            }
+            tdBindingSource.DataSource = results;
+            if (dataGridTd.Columns.Count > tdSortIndex)
+                dataGridTd.Columns[tdSortIndex].HeaderCell.SortGlyphDirection = tdSortOrder;
+        }
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
             filterData();
+            filterTableList();
         }
 
         private void btnExecute_Click(object sender, EventArgs e)
@@ -654,6 +707,7 @@ namespace UniversalPatcher
                         if (prop.PropertyType == typeof(string))
                         {
                             double percentage = ComputeSimilarity.CalculateSimilarity((string)prop.GetValue(tunerFiles[tf].tableDatas[t], null), myCriteria[mc].Value);
+                            Debug.WriteLine((percentage * 100).ToString() + " % " + (string)prop.GetValue(tunerFiles[tf].tableDatas[t], null) + ", " + myCriteria[mc].Value);
                             if ((percentage * 100) < (double)numDiff.Value)
                             {
                                 match = false;
@@ -718,7 +772,7 @@ namespace UniversalPatcher
             Logger("Done. (Save files manually)");
         }
 
-        private void copyTablestoFile(bool duplicatesOnly)
+        private void copyTablestoFile(string style)
         {
             int row = -1;
             if (dataGridFiles.SelectedCells.Count > 0)
@@ -730,6 +784,7 @@ namespace UniversalPatcher
             int sourceId = Convert.ToInt32(dataGridFiles.Rows[row].Cells["id"].Value);
 
             frmSelectMassTarget frmS = new frmSelectMassTarget();
+            frmS.chkSelectAll.Checked = false;
             frmS.dataGridView1.DataSource = tunerFiles;
             frmS.dataGridView1.Columns[0].Width = 50;
             frmS.dataGridView1.Columns[1].Width = 50;
@@ -776,16 +831,17 @@ namespace UniversalPatcher
                 int dstF = selectedFiles[tf];
                 Logger(tunerFiles[dstF].FileName,false);
                 Application.DoEvents();
+                int copiedTables = 0;
                 for (int t = 0; t < tunerFiles[sourceId].tableDatas.Count; t++)
                 {
                     TableData sourceTd = tunerFiles[sourceId].tableDatas[t];
-                    if (duplicatesOnly)
+                    if (style == "duplicates")
                     {
                         for (int x=0; x < tunerFiles[dstF].tableDatas.Count; x++)
                         {
-                            double percentage = ComputeSimilarity.CalculateSimilarity(tunerFiles[dstF].tableDatas[x].TableName, tunerFiles[dstF].tableDatas[x].TableName);
+                            double percentage = ComputeSimilarity.CalculateSimilarity(sourceTd.TableName, tunerFiles[dstF].tableDatas[x].TableName);
                             if (percentage > 0 && percentage < 1)
-                                Debug.WriteLine(percentage.ToString() + ", " + tunerFiles[dstF].tableDatas[x].TableName + ", " + tunerFiles[dstF].tableDatas[x].TableName);
+                                Debug.WriteLine((percentage * 100).ToString() + " % " + sourceTd.TableName + ", " + tunerFiles[dstF].tableDatas[x].TableName);
                             if ((percentage * 100) >= (double)numDiff.Value)
                             {
                                 foreach (var prop in sourceTd.GetType().GetProperties())
@@ -793,7 +849,35 @@ namespace UniversalPatcher
                                     if (selectedProps.Contains(prop.Name))
                                         prop.SetValue(tunerFiles[dstF].tableDatas[x], prop.GetValue(sourceTd, null), null);
                                 }
+                                copiedTables++;
                             }
+                        }
+                    }
+                    else if (style == "missing")
+                    {
+                        bool missing = true;
+                        for (int x = 0; x < tunerFiles[dstF].tableDatas.Count; x++)
+                        {
+                            double percentage = ComputeSimilarity.CalculateSimilarity(sourceTd.TableName, tunerFiles[dstF].tableDatas[x].TableName);
+                            if (percentage > 0 && percentage < 1)
+                                Debug.WriteLine((percentage * 100).ToString() + " % " + sourceTd.TableName + ", " + tunerFiles[dstF].tableDatas[x].TableName);
+                            if ((percentage * 100) >= (double)numDiff.Value)
+                            {
+                                missing = false;
+                                break;
+                            }
+                        }
+                        if (missing)
+                        {
+                            TableData newTd = new TableData();
+                            Type type = newTd.GetType();
+                            foreach (var prop in sourceTd.GetType().GetProperties())
+                            {
+                                if (selectedProps.Contains(prop.Name))
+                                    prop.SetValue(newTd, prop.GetValue(sourceTd, null), null);
+                            }
+                            tunerFiles[dstF].tableDatas.Add(newTd);
+                            copiedTables++;
                         }
                     }
                     else
@@ -806,11 +890,12 @@ namespace UniversalPatcher
                                 prop.SetValue(newTd, prop.GetValue(sourceTd, null), null);
                         }
                         tunerFiles[dstF].tableDatas.Add(newTd);
+                        copiedTables++;
                     }
                 }
                 if (!modifiedFiles.Contains(dstF))
                     modifiedFiles.Add(dstF);
-                Logger(" [OK]");
+                Logger(" [OK] (" + copiedTables.ToString() + " tables)");
             }
             Logger("Done");
         }
@@ -818,13 +903,18 @@ namespace UniversalPatcher
 
         private void copyTablesToToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            copyTablestoFile(false);
+            copyTablestoFile("all");
 
         }
 
         private void copyDuplicateTablesToToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            copyTablestoFile(true);
+            copyTablestoFile("duplicates");
+        }
+
+        private void copyMissingTablesToToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            copyTablestoFile("missing");
         }
     }
 }

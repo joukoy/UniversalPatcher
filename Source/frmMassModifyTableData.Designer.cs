@@ -36,6 +36,10 @@ namespace UniversalPatcher
             this.tabTableDatas = new System.Windows.Forms.TabPage();
             this.tabTunerFiles = new System.Windows.Forms.TabPage();
             this.dataGridFiles = new System.Windows.Forms.DataGridView();
+            this.tabTableData = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
+            this.comboFiles = new System.Windows.Forms.ComboBox();
+            this.dataGridTd = new System.Windows.Forms.DataGridView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
@@ -56,12 +60,10 @@ namespace UniversalPatcher
             this.contextMenuStripFiles = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyTablesToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyDuplicateTablesToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabTableData = new System.Windows.Forms.TabPage();
-            this.dataGridTd = new System.Windows.Forms.DataGridView();
-            this.comboFiles = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.numDiff = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.copyMissingTablesToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -71,6 +73,8 @@ namespace UniversalPatcher
             this.tabTableDatas.SuspendLayout();
             this.tabTunerFiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridFiles)).BeginInit();
+            this.tabTableData.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridTd)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
@@ -78,8 +82,6 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.dataClipBoard)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStripFiles.SuspendLayout();
-            this.tabTableData.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridTd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDiff)).BeginInit();
             this.SuspendLayout();
             // 
@@ -123,7 +125,7 @@ namespace UniversalPatcher
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
             this.tabControl2.Size = new System.Drawing.Size(826, 210);
-            this.tabControl2.TabIndex = 2;
+            this.tabControl2.TabIndex = 8;
             // 
             // tabTableDatas
             // 
@@ -156,6 +158,48 @@ namespace UniversalPatcher
             this.dataGridFiles.Size = new System.Drawing.Size(812, 178);
             this.dataGridFiles.TabIndex = 0;
             // 
+            // tabTableData
+            // 
+            this.tabTableData.Controls.Add(this.label2);
+            this.tabTableData.Controls.Add(this.comboFiles);
+            this.tabTableData.Controls.Add(this.dataGridTd);
+            this.tabTableData.Location = new System.Drawing.Point(4, 22);
+            this.tabTableData.Name = "tabTableData";
+            this.tabTableData.Size = new System.Drawing.Size(818, 184);
+            this.tabTableData.TabIndex = 2;
+            this.tabTableData.Text = "Table List";
+            this.tabTableData.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(8, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(26, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "File:";
+            // 
+            // comboFiles
+            // 
+            this.comboFiles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboFiles.FormattingEnabled = true;
+            this.comboFiles.Location = new System.Drawing.Point(40, 3);
+            this.comboFiles.Name = "comboFiles";
+            this.comboFiles.Size = new System.Drawing.Size(775, 21);
+            this.comboFiles.TabIndex = 9;
+            // 
+            // dataGridTd
+            // 
+            this.dataGridTd.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridTd.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridTd.Location = new System.Drawing.Point(0, 30);
+            this.dataGridTd.Name = "dataGridTd";
+            this.dataGridTd.Size = new System.Drawing.Size(815, 154);
+            this.dataGridTd.TabIndex = 0;
+            // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
@@ -165,7 +209,7 @@ namespace UniversalPatcher
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(826, 121);
-            this.tabControl1.TabIndex = 1;
+            this.tabControl1.TabIndex = 11;
             // 
             // tabPage1
             // 
@@ -212,7 +256,7 @@ namespace UniversalPatcher
             this.txtSearch.Location = new System.Drawing.Point(208, 7);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(160, 20);
-            this.txtSearch.TabIndex = 5;
+            this.txtSearch.TabIndex = 2;
             this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
             // 
             // label1
@@ -230,7 +274,7 @@ namespace UniversalPatcher
             this.comboFilterBy.Location = new System.Drawing.Point(50, 7);
             this.comboFilterBy.Name = "comboFilterBy";
             this.comboFilterBy.Size = new System.Drawing.Size(152, 21);
-            this.comboFilterBy.TabIndex = 7;
+            this.comboFilterBy.TabIndex = 1;
             // 
             // btnExecute
             // 
@@ -238,7 +282,7 @@ namespace UniversalPatcher
             this.btnExecute.Location = new System.Drawing.Point(656, 4);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(75, 23);
-            this.btnExecute.TabIndex = 8;
+            this.btnExecute.TabIndex = 4;
             this.btnExecute.Text = "Execute";
             this.btnExecute.UseVisualStyleBackColor = true;
             this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
@@ -249,7 +293,7 @@ namespace UniversalPatcher
             this.btnSave.Location = new System.Drawing.Point(737, 4);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 9;
+            this.btnSave.TabIndex = 5;
             this.btnSave.Text = "Save Files!";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -315,9 +359,10 @@ namespace UniversalPatcher
             // 
             this.contextMenuStripFiles.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyTablesToToolStripMenuItem,
+            this.copyMissingTablesToToolStripMenuItem,
             this.copyDuplicateTablesToToolStripMenuItem});
             this.contextMenuStripFiles.Name = "contextMenuStripFiles";
-            this.contextMenuStripFiles.Size = new System.Drawing.Size(212, 48);
+            this.contextMenuStripFiles.Size = new System.Drawing.Size(212, 70);
             // 
             // copyTablesToToolStripMenuItem
             // 
@@ -333,54 +378,12 @@ namespace UniversalPatcher
             this.copyDuplicateTablesToToolStripMenuItem.Text = "Copy duplicate tables to...";
             this.copyDuplicateTablesToToolStripMenuItem.Click += new System.EventHandler(this.copyDuplicateTablesToToolStripMenuItem_Click);
             // 
-            // tabTableData
-            // 
-            this.tabTableData.Controls.Add(this.label2);
-            this.tabTableData.Controls.Add(this.comboFiles);
-            this.tabTableData.Controls.Add(this.dataGridTd);
-            this.tabTableData.Location = new System.Drawing.Point(4, 22);
-            this.tabTableData.Name = "tabTableData";
-            this.tabTableData.Size = new System.Drawing.Size(818, 184);
-            this.tabTableData.TabIndex = 2;
-            this.tabTableData.Text = "Table List";
-            this.tabTableData.UseVisualStyleBackColor = true;
-            // 
-            // dataGridTd
-            // 
-            this.dataGridTd.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridTd.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridTd.Location = new System.Drawing.Point(0, 30);
-            this.dataGridTd.Name = "dataGridTd";
-            this.dataGridTd.Size = new System.Drawing.Size(815, 154);
-            this.dataGridTd.TabIndex = 0;
-            // 
-            // comboFiles
-            // 
-            this.comboFiles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboFiles.FormattingEnabled = true;
-            this.comboFiles.Location = new System.Drawing.Point(40, 3);
-            this.comboFiles.Name = "comboFiles";
-            this.comboFiles.Size = new System.Drawing.Size(775, 21);
-            this.comboFiles.TabIndex = 1;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 6);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(26, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "File:";
-            // 
             // numDiff
             // 
-            this.numDiff.Location = new System.Drawing.Point(520, 8);
+            this.numDiff.Location = new System.Drawing.Point(520, 7);
             this.numDiff.Name = "numDiff";
             this.numDiff.Size = new System.Drawing.Size(45, 20);
-            this.numDiff.TabIndex = 11;
+            this.numDiff.TabIndex = 3;
             this.numDiff.Value = new decimal(new int[] {
             100,
             0,
@@ -390,17 +393,35 @@ namespace UniversalPatcher
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(387, 10);
+            this.label3.Location = new System.Drawing.Point(374, 9);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(127, 13);
+            this.label3.Size = new System.Drawing.Size(140, 13);
             this.label3.TabIndex = 12;
-            this.label3.Text = "% Min match in searches:";
+            this.label3.Text = "Minimum match in searches:";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(571, 10);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(20, 16);
+            this.label4.TabIndex = 13;
+            this.label4.Text = "%";
+            // 
+            // copyMissingTablesToToolStripMenuItem
+            // 
+            this.copyMissingTablesToToolStripMenuItem.Name = "copyMissingTablesToToolStripMenuItem";
+            this.copyMissingTablesToToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.copyMissingTablesToToolStripMenuItem.Text = "Copy missing tables to...";
+            this.copyMissingTablesToToolStripMenuItem.Click += new System.EventHandler(this.copyMissingTablesToToolStripMenuItem_Click);
             // 
             // frmMassModifyTableData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(824, 497);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.numDiff);
             this.Controls.Add(this.txtResult);
@@ -422,6 +443,9 @@ namespace UniversalPatcher
             this.tabTableDatas.ResumeLayout(false);
             this.tabTunerFiles.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridFiles)).EndInit();
+            this.tabTableData.ResumeLayout(false);
+            this.tabTableData.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridTd)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
@@ -429,9 +453,6 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.dataClipBoard)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.contextMenuStripFiles.ResumeLayout(false);
-            this.tabTableData.ResumeLayout(false);
-            this.tabTableData.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridTd)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDiff)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -471,5 +492,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown numDiff;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ToolStripMenuItem copyMissingTablesToToolStripMenuItem;
     }
 }

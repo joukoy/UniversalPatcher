@@ -89,7 +89,7 @@ namespace UniversalPatcher
 
         #endregion
         public System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.CheckBox chkSelectAll;
         public System.Windows.Forms.Button btnOK;
+        public System.Windows.Forms.CheckBox chkSelectAll;
     }
 }
