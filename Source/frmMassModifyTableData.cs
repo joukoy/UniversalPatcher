@@ -785,7 +785,7 @@ namespace UniversalPatcher
 
             frmSelectMassTarget frmS = new frmSelectMassTarget();
             frmS.chkSelectAll.Checked = false;
-            frmS.dataGridView1.DataSource = tunerFiles;
+            frmS.dataGridView1.DataSource = tunerFiles.Where(t=>t.id != sourceId).ToList();
             frmS.dataGridView1.Columns[0].Width = 50;
             frmS.dataGridView1.Columns[1].Width = 50;
             frmS.dataGridView1.Columns[2].Width = 1000;
@@ -835,19 +835,33 @@ namespace UniversalPatcher
                 for (int t = 0; t < tunerFiles[sourceId].tableDatas.Count; t++)
                 {
                     TableData sourceTd = tunerFiles[sourceId].tableDatas[t];
+                    Type tdType = sourceTd.GetType();
                     if (style == "duplicates")
                     {
                         for (int x=0; x < tunerFiles[dstF].tableDatas.Count; x++)
                         {
-                            double percentage = ComputeSimilarity.CalculateSimilarity(sourceTd.TableName, tunerFiles[dstF].tableDatas[x].TableName);
-                            if (percentage > 0 && percentage < 1)
-                                Debug.WriteLine((percentage * 100).ToString() + " % " + sourceTd.TableName + ", " + tunerFiles[dstF].tableDatas[x].TableName);
-                            if ((percentage * 100) >= (double)numDiff.Value)
+                            bool match = false;
+                            if ((int)(numDiff.Value) == 100)
                             {
-                                foreach (var prop in sourceTd.GetType().GetProperties())
+                                if (sourceTd.TableName == tunerFiles[dstF].tableDatas[x].TableName)
+                                    match = true;
+                            }
+                            else
+                            {
+                                //double percentage = ComputeSimilarity.CalculateSimilarity(sourceTd.TableName, tunerFiles[dstF].tableDatas[x].TableName);
+                                double percentage = ComputeSimilarity.Compare(sourceTd.TableName, tunerFiles[dstF].tableDatas[x].TableName);
+                                if ((percentage * 100) >= (double)numDiff.Value)
                                 {
-                                    if (selectedProps.Contains(prop.Name))
-                                        prop.SetValue(tunerFiles[dstF].tableDatas[x], prop.GetValue(sourceTd, null), null);
+                                    match = true;
+                                    Debug.WriteLine((percentage * 100).ToString() + " % " + sourceTd.TableName + ", " + tunerFiles[dstF].tableDatas[x].TableName);
+                                }
+                            }
+                            if (match)
+                            {
+                                for (int s = 0; s < selectedProps.Count; s++)
+                                {
+                                    PropertyInfo tdProp = tdType.GetProperty(selectedProps[s]);
+                                    tdProp.SetValue(tunerFiles[dstF].tableDatas[x], tdProp.GetValue(sourceTd, null), null);
                                 }
                                 copiedTables++;
                             }
@@ -858,13 +872,23 @@ namespace UniversalPatcher
                         bool missing = true;
                         for (int x = 0; x < tunerFiles[dstF].tableDatas.Count; x++)
                         {
-                            double percentage = ComputeSimilarity.CalculateSimilarity(sourceTd.TableName, tunerFiles[dstF].tableDatas[x].TableName);
-                            if (percentage > 0 && percentage < 1)
-                                Debug.WriteLine((percentage * 100).ToString() + " % " + sourceTd.TableName + ", " + tunerFiles[dstF].tableDatas[x].TableName);
-                            if ((percentage * 100) >= (double)numDiff.Value)
+                            if ((int)(numDiff.Value) == 100)
                             {
-                                missing = false;
-                                break;
+                                if (sourceTd.TableName == tunerFiles[dstF].tableDatas[x].TableName)
+                                {
+                                    missing = false;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                double percentage = ComputeSimilarity.CalculateSimilarity(sourceTd.TableName, tunerFiles[dstF].tableDatas[x].TableName);
+                                if ((percentage * 100) >= (double)numDiff.Value)
+                                {
+                                    missing = false;
+                                    Debug.WriteLine((percentage * 100).ToString() + " % " + sourceTd.TableName + ", " + tunerFiles[dstF].tableDatas[x].TableName);
+                                    break;
+                                }
                             }
                         }
                         if (missing)

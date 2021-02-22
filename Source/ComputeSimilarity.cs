@@ -62,5 +62,43 @@ namespace UniversalPatcher
 
             return distance[sourceWordCount, targetWordCount];
         }
+
+        public static double Compare(string str1, string str2)
+        {
+            str1 = str1.ToLower();
+            str2 = str2.ToLower();
+            int count = str2.Length;
+            if (str1.Length > str2.Length)
+                count = str1.Length;
+            int hits = 0;
+            int i = 0;
+            int j = 0;
+            for (i = 0; i < str1.Length ; i++)
+            {
+                if (str1[i] == ' ')
+                {
+                    i += 1;
+                    j = str2.IndexOf(" ", j) + 1;
+                    hits += 1;
+                }
+                while (j < str2.Length && str2[j] != ' ')
+                {
+                    if (str1[i] == str2[j])
+                    {
+                        hits++;
+                        j++;
+                        break;
+                    }
+                    else
+                    {
+                        j++;
+                    }
+                }
+                if (!(j<str2.Length && str2[j] != ' ')) 
+                    j--;
+            }
+            double retVal = (double)((double)hits / (double)count);
+            return retVal;
+        }
     }
 }
