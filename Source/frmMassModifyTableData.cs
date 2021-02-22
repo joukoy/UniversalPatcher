@@ -601,6 +601,7 @@ namespace UniversalPatcher
 
             clipBrd = new List<ClibBrd>();
             frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
+            fst.groupBox2.Visible = false;
             int mmid = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
             TableData td = displayDatas[mmid].td;
             fst.loadProperties(td);
