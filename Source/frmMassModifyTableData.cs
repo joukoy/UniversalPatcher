@@ -772,7 +772,15 @@ namespace UniversalPatcher
             Logger("Done. (Save files manually)");
         }
 
-        private void copyTablestoFile(string style, bool fileSelected)
+        private enum CopyMode
+        {
+            add,
+            addMissing,
+            overwrite,
+            overwriteAdd
+        }
+
+        private void copyTablestoFile(bool fileSelected)
         {
             int sourceId;
             List<TableData> sourceTdList = new List<TableData>();
@@ -844,6 +852,14 @@ namespace UniversalPatcher
                     selectedProps.Add(chk.Name);
                 }
             }
+            CopyMode copyMode = CopyMode.add;
+            if (fst.radioAddMissing.Checked)
+                copyMode = CopyMode.addMissing;
+            if (fst.radioOwerwrite.Checked)
+                copyMode = CopyMode.overwrite;
+            if (fst.radioOwerwriteAdd.Checked)
+                copyMode = CopyMode.overwriteAdd;
+            fst.Dispose();
 
             Logger("Copying tables...");
             //Now we have list of target files, and list of properties to copy, lets do it
@@ -857,7 +873,7 @@ namespace UniversalPatcher
                 {
                     TableData sourceTd = sourceTdList[t];
                     Type tdType = sourceTd.GetType();
-                    if (style == "duplicates")
+                    if (copyMode == CopyMode.overwrite)
                     {
                         for (int x=0; x < tunerFiles[dstF].tableDatas.Count; x++)
                         {
@@ -888,7 +904,7 @@ namespace UniversalPatcher
                             }
                         }
                     }
-                    else if (style == "missing")
+                    else if (copyMode == CopyMode.addMissing || copyMode == CopyMode.overwriteAdd)
                     {
                         bool missing = true;
                         for (int x = 0; x < tunerFiles[dstF].tableDatas.Count; x++)
@@ -897,6 +913,15 @@ namespace UniversalPatcher
                             {
                                 if (sourceTd.TableName == tunerFiles[dstF].tableDatas[x].TableName)
                                 {
+                                    if (copyMode == CopyMode.overwriteAdd)
+                                    {
+                                        for (int s = 0; s < selectedProps.Count; s++)
+                                        {
+                                            PropertyInfo tdProp = tdType.GetProperty(selectedProps[s]);
+                                            tdProp.SetValue(tunerFiles[dstF].tableDatas[x], tdProp.GetValue(sourceTd, null), null);
+                                        }
+                                        copiedTables++;
+                                    }
                                     missing = false;
                                     break;
                                 }
@@ -906,6 +931,15 @@ namespace UniversalPatcher
                                 double percentage = ComputeSimilarity.CalculateSimilarity(sourceTd.TableName, tunerFiles[dstF].tableDatas[x].TableName);
                                 if ((percentage * 100) >= (double)numDiff.Value)
                                 {
+                                    if (copyMode == CopyMode.overwriteAdd)
+                                    {
+                                        for (int s = 0; s < selectedProps.Count; s++)
+                                        {
+                                            PropertyInfo tdProp = tdType.GetProperty(selectedProps[s]);
+                                            tdProp.SetValue(tunerFiles[dstF].tableDatas[x], tdProp.GetValue(sourceTd, null), null);
+                                        }
+                                        copiedTables++;
+                                    }
                                     missing = false;
                                     Debug.WriteLine((percentage * 100).ToString() + " % " + sourceTd.TableName + ", " + tunerFiles[dstF].tableDatas[x].TableName);
                                     break;
@@ -948,33 +982,15 @@ namespace UniversalPatcher
 
         private void copyTablesToToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            copyTablestoFile("all",true);
+            copyTablestoFile(true);
 
         }
 
-        private void copyDuplicateTablesToToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            copyTablestoFile("duplicates", true);
-        }
-
-        private void copyMissingTablesToToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            copyTablestoFile("missing",true);
-        }
 
         private void copyTablesToduplicatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            copyTablestoFile("duplicates", false);
+            copyTablestoFile(false);
         }
 
-        private void copyTablesTomissingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            copyTablestoFile("missing", false);
-        }
-
-        private void copyTablesToaddToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            copyTablestoFile("all", false);
-        }
     }
 }
