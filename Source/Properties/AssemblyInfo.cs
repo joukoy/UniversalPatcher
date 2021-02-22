@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Creator: joukoy@gmail.com \r\nContributor: kur4o@pcmhacking.net")]
 [assembly: AssemblyProduct("Universal Patcher")]
-[assembly: AssemblyCopyright("Copyright © joukoy@gmail.com 2020")]
+[assembly: AssemblyCopyright("Copyright © joukoy@gmail.com")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.16.60")]
-[assembly: AssemblyFileVersion("0.16.60")]
+[assembly: AssemblyVersion("0.16.61")]
+[assembly: AssemblyFileVersion("0.16.61")]

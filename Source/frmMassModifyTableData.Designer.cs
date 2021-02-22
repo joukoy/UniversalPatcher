@@ -59,11 +59,14 @@ namespace UniversalPatcher
             this.pasteSpecialToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripFiles = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyTablesToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyMissingTablesToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyDuplicateTablesToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.numDiff = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.copyMissingTablesToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyTablesToduplicatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyTablesTomissingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyTablesToaddToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -316,42 +319,45 @@ namespace UniversalPatcher
             this.copyValueToolStripMenuItem,
             this.copyValuesToolStripMenuItem,
             this.pasteToolStripMenuItem,
-            this.pasteSpecialToolStripMenuItem});
+            this.pasteSpecialToolStripMenuItem,
+            this.copyTablesToduplicatesToolStripMenuItem,
+            this.copyTablesTomissingToolStripMenuItem,
+            this.copyTablesToaddToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(151, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(215, 180);
             // 
             // copyRowToolStripMenuItem
             // 
             this.copyRowToolStripMenuItem.Name = "copyRowToolStripMenuItem";
-            this.copyRowToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.copyRowToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.copyRowToolStripMenuItem.Text = "Copy row";
             this.copyRowToolStripMenuItem.Click += new System.EventHandler(this.copyRowToolStripMenuItem_Click);
             // 
             // copyValueToolStripMenuItem
             // 
             this.copyValueToolStripMenuItem.Name = "copyValueToolStripMenuItem";
-            this.copyValueToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.copyValueToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.copyValueToolStripMenuItem.Text = "Copy value";
             this.copyValueToolStripMenuItem.Click += new System.EventHandler(this.copyValueToolStripMenuItem_Click);
             // 
             // copyValuesToolStripMenuItem
             // 
             this.copyValuesToolStripMenuItem.Name = "copyValuesToolStripMenuItem";
-            this.copyValuesToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.copyValuesToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.copyValuesToolStripMenuItem.Text = "Copy values...";
             this.copyValuesToolStripMenuItem.Click += new System.EventHandler(this.copyValuesToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // pasteSpecialToolStripMenuItem
             // 
             this.pasteSpecialToolStripMenuItem.Name = "pasteSpecialToolStripMenuItem";
-            this.pasteSpecialToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.pasteSpecialToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.pasteSpecialToolStripMenuItem.Text = "Paste special...";
             this.pasteSpecialToolStripMenuItem.Click += new System.EventHandler(this.pasteSpecialToolStripMenuItem_Click);
             // 
@@ -362,14 +368,21 @@ namespace UniversalPatcher
             this.copyMissingTablesToToolStripMenuItem,
             this.copyDuplicateTablesToToolStripMenuItem});
             this.contextMenuStripFiles.Name = "contextMenuStripFiles";
-            this.contextMenuStripFiles.Size = new System.Drawing.Size(212, 70);
+            this.contextMenuStripFiles.Size = new System.Drawing.Size(212, 92);
             // 
             // copyTablesToToolStripMenuItem
             // 
             this.copyTablesToToolStripMenuItem.Name = "copyTablesToToolStripMenuItem";
             this.copyTablesToToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
-            this.copyTablesToToolStripMenuItem.Text = "Copy tables to...";
+            this.copyTablesToToolStripMenuItem.Text = "Copy tables to... (add)";
             this.copyTablesToToolStripMenuItem.Click += new System.EventHandler(this.copyTablesToToolStripMenuItem_Click);
+            // 
+            // copyMissingTablesToToolStripMenuItem
+            // 
+            this.copyMissingTablesToToolStripMenuItem.Name = "copyMissingTablesToToolStripMenuItem";
+            this.copyMissingTablesToToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.copyMissingTablesToToolStripMenuItem.Text = "Copy missing tables to...";
+            this.copyMissingTablesToToolStripMenuItem.Click += new System.EventHandler(this.copyMissingTablesToToolStripMenuItem_Click);
             // 
             // copyDuplicateTablesToToolStripMenuItem
             // 
@@ -409,12 +422,26 @@ namespace UniversalPatcher
             this.label4.TabIndex = 13;
             this.label4.Text = "%";
             // 
-            // copyMissingTablesToToolStripMenuItem
+            // copyTablesToduplicatesToolStripMenuItem
             // 
-            this.copyMissingTablesToToolStripMenuItem.Name = "copyMissingTablesToToolStripMenuItem";
-            this.copyMissingTablesToToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
-            this.copyMissingTablesToToolStripMenuItem.Text = "Copy missing tables to...";
-            this.copyMissingTablesToToolStripMenuItem.Click += new System.EventHandler(this.copyMissingTablesToToolStripMenuItem_Click);
+            this.copyTablesToduplicatesToolStripMenuItem.Name = "copyTablesToduplicatesToolStripMenuItem";
+            this.copyTablesToduplicatesToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.copyTablesToduplicatesToolStripMenuItem.Text = "Copy duplicate tables to... ";
+            this.copyTablesToduplicatesToolStripMenuItem.Click += new System.EventHandler(this.copyTablesToduplicatesToolStripMenuItem_Click);
+            // 
+            // copyTablesTomissingToolStripMenuItem
+            // 
+            this.copyTablesTomissingToolStripMenuItem.Name = "copyTablesTomissingToolStripMenuItem";
+            this.copyTablesTomissingToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.copyTablesTomissingToolStripMenuItem.Text = "Copymissing tables to...";
+            this.copyTablesTomissingToolStripMenuItem.Click += new System.EventHandler(this.copyTablesTomissingToolStripMenuItem_Click);
+            // 
+            // copyTablesToaddToolStripMenuItem
+            // 
+            this.copyTablesToaddToolStripMenuItem.Name = "copyTablesToaddToolStripMenuItem";
+            this.copyTablesToaddToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.copyTablesToaddToolStripMenuItem.Text = "Copy tables to... (add)";
+            this.copyTablesToaddToolStripMenuItem.Click += new System.EventHandler(this.copyTablesToaddToolStripMenuItem_Click);
             // 
             // frmMassModifyTableData
             // 
@@ -494,5 +521,8 @@ namespace UniversalPatcher
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ToolStripMenuItem copyMissingTablesToToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyTablesToduplicatesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyTablesTomissingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyTablesToaddToolStripMenuItem;
     }
 }

@@ -50,12 +50,15 @@ namespace UniversalPatcher
         private BindingList<FoundTable> filteredCategories = new BindingList<FoundTable>();
         private BindingSource categoryBindingSource = new BindingSource();
 
+        private frmSplashScreen frmSplash = new frmSplashScreen();
+
         private uint lastCustomSearchResult = 0;
         private string logFile;
         StreamWriter logwriter;
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
             this.Show();
+
             /*string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1 && File.Exists(args[1]))
             {
@@ -85,6 +88,11 @@ namespace UniversalPatcher
             {
                 rememberWindowSizeToolStripMenuItem.Checked = false;
             }
+            frmSplash.Show(this);
+            System.Drawing.Point xy = new Point((int)(this.Location.X + 300),(int)(this.Location.Y + 150));
+            frmSplash.moveMe(xy);
+            frmSplash.labelProgress.Text = "";
+
             //Set default values for Tuner datagrid, if not set previously:
             TableData tdTmp = new TableData();
             if (Properties.Settings.Default.ConfigModeColumnOrder == null || Properties.Settings.Default.ConfigModeColumnOrder.Length == 0)
@@ -142,7 +150,7 @@ namespace UniversalPatcher
             disableTunerAutloadConfigToolStripMenuItem.Checked = Properties.Settings.Default.disableTunerAutoloadSettings;
 
             loadSettingFiles();
-
+            frmSplash.Dispose();
             listCSAddresses.Enabled = true;
             listCSAddresses.Clear();
             listCSAddresses.View = View.Details;
@@ -153,11 +161,15 @@ namespace UniversalPatcher
             listCSAddresses.Columns.Add("MAF Address");
             listCSAddresses.Columns.Add("VE table");
             listCSAddresses.Columns.Add("3d tables");
-            //listCSAddresses.Columns[0].Width = 100;
-            //listCSAddresses.Columns[1].Width = 100;
-            //listCSAddresses.Columns[2].Width = 100;
-            //listCSAddresses.Columns[2].Width = 100;
         }
+
+        private void ShowSplash (string txt, bool newLine = true)
+        {
+            frmSplash.labelProgress.Text += txt;
+            if (newLine)
+                frmSplash.labelProgress.Text += Environment.NewLine;
+        }
+
         private void loadSettingFiles()
         {
             DetectRules = new List<DetectRule>();
@@ -173,6 +185,8 @@ namespace UniversalPatcher
             StockCVN.Add(ctmp);
 
             Logger("Loading configurations... filetypes", false);
+            ShowSplash("Loading configurations...");
+            ShowSplash("filetypes");
             Application.DoEvents();
 
             string FileTypeListFile = Path.Combine(Application.StartupPath, "XML", "filetypes.xml");
@@ -187,6 +201,7 @@ namespace UniversalPatcher
             }
 
             Logger(",dtcsearch", false);
+            ShowSplash("dtcsearch");
             Application.DoEvents();
 
             string CtsSearchFile = Path.Combine(Application.StartupPath, "XML", "DtcSearch.xml");
@@ -200,6 +215,7 @@ namespace UniversalPatcher
 
             }
             Logger(",autodetect", false);
+            ShowSplash("autodetect");
             Application.DoEvents();
 
             string AutoDetectFile = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
@@ -213,6 +229,7 @@ namespace UniversalPatcher
             }
 
             Logger(",extractedsegments", false);
+            ShowSplash("extractedsegments");
             Application.DoEvents();
 
             string SwapSegmentListFile = Path.Combine(Application.StartupPath, "Segments", "extractedsegments.xml");
@@ -227,6 +244,7 @@ namespace UniversalPatcher
             }
 
             Logger(",units", false);
+            ShowSplash("units");
             Application.DoEvents();
 
             string unitsFile = Path.Combine(Application.StartupPath, "Tuner", "units.xml");
@@ -241,6 +259,7 @@ namespace UniversalPatcher
             }
 
             Logger(",stockcvn", false);
+            ShowSplash("stockcvn");
             Application.DoEvents();
 
             string StockCVNFile = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
@@ -255,6 +274,7 @@ namespace UniversalPatcher
             loadReferenceCvn();
 
             Logger(" - Done");
+            ShowSplash("Done");
 
         }
         public void refreshSearchedTables()
@@ -594,10 +614,8 @@ namespace UniversalPatcher
                 }
                 labelXML.Text = PCM.configFile + " (v " + PCM.Segments[0].Version + ")";
                 Logger(Environment.NewLine + Path.GetFileName(FileName) + " (" + labelXML.Text + ")" + Environment.NewLine);
-                //PCM.GetSegmentAddresses();
                 if (PCM.Segments.Count > 0)
                     Logger("Segments:");
-                //PCM.GetInfo();
                 if (chkSearchTables.Checked)
                 {
                     TableFinder tableFinder = new TableFinder();
@@ -633,10 +651,6 @@ namespace UniversalPatcher
                     Logger(TS.seekTables(PCM));
                 }
                 refreshTableSeek();
-                /*if (upatcher.basefile.Segments[0].CS1Address.StartsWith("GM-V6"))
-                    btnReadTinyTunerDB.Enabled = true;
-                else
-                    btnReadTinyTunerDB.Enabled = false;*/
                                     
                 getPidList();
             }

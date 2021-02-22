@@ -33,12 +33,12 @@ namespace UniversalPatcher
             this.listFiles = new System.Windows.Forms.ListView();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnBrowse = new System.Windows.Forms.Button();
-            this.btnSelectAll = new System.Windows.Forms.Button();
             this.txtFolder = new System.Windows.Forms.TextBox();
             this.btnCustomdst = new System.Windows.Forms.Button();
             this.labelCustomdst = new System.Windows.Forms.Label();
             this.chkSubfolders = new System.Windows.Forms.CheckBox();
             this.chkIncludeCustomFileTypes = new System.Windows.Forms.CheckBox();
+            this.chkSelectAll = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // listFiles
@@ -74,16 +74,6 @@ namespace UniversalPatcher
             this.btnBrowse.Text = "Browse";
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
-            // 
-            // btnSelectAll
-            // 
-            this.btnSelectAll.Location = new System.Drawing.Point(5, 50);
-            this.btnSelectAll.Name = "btnSelectAll";
-            this.btnSelectAll.Size = new System.Drawing.Size(70, 27);
-            this.btnSelectAll.TabIndex = 3;
-            this.btnSelectAll.Text = "Select All";
-            this.btnSelectAll.UseVisualStyleBackColor = true;
-            this.btnSelectAll.Click += new System.EventHandler(this.btnSelectAll_Click);
             // 
             // txtFolder
             // 
@@ -141,17 +131,28 @@ namespace UniversalPatcher
             this.chkIncludeCustomFileTypes.UseVisualStyleBackColor = true;
             this.chkIncludeCustomFileTypes.CheckedChanged += new System.EventHandler(this.chkIncludeCustomFileTypes_CheckedChanged);
             // 
+            // chkSelectAll
+            // 
+            this.chkSelectAll.AutoSize = true;
+            this.chkSelectAll.Location = new System.Drawing.Point(6, 54);
+            this.chkSelectAll.Name = "chkSelectAll";
+            this.chkSelectAll.Size = new System.Drawing.Size(69, 17);
+            this.chkSelectAll.TabIndex = 9;
+            this.chkSelectAll.Text = "Select all";
+            this.chkSelectAll.UseVisualStyleBackColor = true;
+            this.chkSelectAll.CheckedChanged += new System.EventHandler(this.chkSelectAll_CheckedChanged);
+            // 
             // frmFileSelection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(779, 450);
+            this.Controls.Add(this.chkSelectAll);
             this.Controls.Add(this.chkIncludeCustomFileTypes);
             this.Controls.Add(this.chkSubfolders);
             this.Controls.Add(this.labelCustomdst);
             this.Controls.Add(this.btnCustomdst);
             this.Controls.Add(this.txtFolder);
-            this.Controls.Add(this.btnSelectAll);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.listFiles);
@@ -167,12 +168,12 @@ namespace UniversalPatcher
         #endregion
         public System.Windows.Forms.ListView listFiles;
         private System.Windows.Forms.Button btnBrowse;
-        private System.Windows.Forms.Button btnSelectAll;
         private System.Windows.Forms.TextBox txtFolder;
         public System.Windows.Forms.Button btnCustomdst;
         public System.Windows.Forms.Label labelCustomdst;
         public System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.CheckBox chkSubfolders;
         private System.Windows.Forms.CheckBox chkIncludeCustomFileTypes;
+        private System.Windows.Forms.CheckBox chkSelectAll;
     }
 }

@@ -772,16 +772,37 @@ namespace UniversalPatcher
             Logger("Done. (Save files manually)");
         }
 
-        private void copyTablestoFile(string style)
+        private void copyTablestoFile(string style, bool fileSelected)
         {
-            int row = -1;
-            if (dataGridFiles.SelectedCells.Count > 0)
-                row = dataGridFiles.SelectedCells[0].RowIndex;
-            else if (dataGridFiles.SelectedRows.Count > 0)
-                row = dataGridFiles.SelectedRows[0].Index;
+            int sourceId;
+            List<TableData> sourceTdList = new List<TableData>();
+            if (fileSelected)
+            {
+                int row = -1;
+                if (dataGridFiles.SelectedCells.Count > 0)
+                    row = dataGridFiles.SelectedCells[0].RowIndex;
+                else if (dataGridFiles.SelectedRows.Count > 0)
+                    row = dataGridFiles.SelectedRows[0].Index;
+                else
+                    return;
+                sourceId = Convert.ToInt32(dataGridFiles.Rows[row].Cells["id"].Value);
+                for (int t = 0; t < tunerFiles[sourceId].tableDatas.Count; t++)
+                {
+                    sourceTdList.Add(tunerFiles[sourceId].tableDatas[t]);
+                }
+            }
             else
-                return;
-            int sourceId = Convert.ToInt32(dataGridFiles.Rows[row].Cells["id"].Value);
+            {
+                //Tables selected from datagridview1
+                sourceId = -1;
+                for (int c = 0; c < dataGridView1.SelectedCells.Count; c++)
+                {
+                    int r = dataGridView1.SelectedCells[c].RowIndex;
+                    int id = Convert.ToInt32(dataGridView1.Rows[r].Cells["id"].Value);
+                    sourceTdList.Add(displayDatas[id].td);
+                }
+            }
+            
 
             frmSelectMassTarget frmS = new frmSelectMassTarget();
             frmS.chkSelectAll.Checked = false;
@@ -832,9 +853,9 @@ namespace UniversalPatcher
                 Logger(tunerFiles[dstF].FileName,false);
                 Application.DoEvents();
                 int copiedTables = 0;
-                for (int t = 0; t < tunerFiles[sourceId].tableDatas.Count; t++)
+                for (int t = 0; t < sourceTdList.Count; t++)
                 {
-                    TableData sourceTd = tunerFiles[sourceId].tableDatas[t];
+                    TableData sourceTd = sourceTdList[t];
                     Type tdType = sourceTd.GetType();
                     if (style == "duplicates")
                     {
@@ -927,18 +948,33 @@ namespace UniversalPatcher
 
         private void copyTablesToToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            copyTablestoFile("all");
+            copyTablestoFile("all",true);
 
         }
 
         private void copyDuplicateTablesToToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            copyTablestoFile("duplicates");
+            copyTablestoFile("duplicates", true);
         }
 
         private void copyMissingTablesToToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            copyTablestoFile("missing");
+            copyTablestoFile("missing",true);
+        }
+
+        private void copyTablesToduplicatesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            copyTablestoFile("duplicates", false);
+        }
+
+        private void copyTablesTomissingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            copyTablestoFile("missing", false);
+        }
+
+        private void copyTablesToaddToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            copyTablestoFile("all", false);
         }
     }
 }

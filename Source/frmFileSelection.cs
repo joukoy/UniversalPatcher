@@ -33,7 +33,7 @@ namespace UniversalPatcher
             listFiles.Columns.Add("Folder");
             listFiles.Columns.Add("Size");
             listFiles.Columns[0].Width = 300;
-            listFiles.Columns[1].Width = 500;
+            listFiles.Columns[1].Width = 300;
             listFiles.Columns[2].Width = 200;
 
             listFiles.CheckBoxes = true;
@@ -92,13 +92,6 @@ namespace UniversalPatcher
                 LoadFiles(Folder);
         }
 
-        private void btnSelectAll_Click(object sender, EventArgs e)
-        {
-            for (int i=0; i< listFiles.Items.Count; i++)
-            {
-                listFiles.Items[i].Checked = true;
-            }
-        }
 
         private void txtFolder_KeyDown(object sender, KeyEventArgs e)
         {
@@ -187,6 +180,16 @@ namespace UniversalPatcher
             }
         }
 
+        private void chkSelectAll_CheckedChanged(object sender, EventArgs e)
+        {
+            for (int i = 0; i < listFiles.Items.Count; i++)
+            {
+                if (chkSelectAll.Checked)
+                    listFiles.Items[i].Checked = true;
+                else
+                    listFiles.Items[i].Checked = false;
+            }
 
+        }
     }
 }
