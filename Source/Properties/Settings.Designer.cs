@@ -597,5 +597,41 @@ namespace UniversalPatcher.Properties {
                 this["MassModifyTableDataWindowSplitterDistance"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int TunerMinTableEquivalency {
+            get {
+                return ((int)(this["TunerMinTableEquivalency"]));
+            }
+            set {
+                this["TunerMinTableEquivalency"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int TableEditorMinTableEquivalency {
+            get {
+                return ((int)(this["TableEditorMinTableEquivalency"]));
+            }
+            set {
+                this["TableEditorMinTableEquivalency"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int keyPressWait100ms {
+            get {
+                return ((int)(this["keyPressWait100ms"]));
+            }
+            set {
+                this["keyPressWait100ms"] = value;
+            }
+        }
     }
 }

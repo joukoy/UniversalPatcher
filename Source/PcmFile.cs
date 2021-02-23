@@ -449,7 +449,8 @@ namespace UniversalPatcher
                 segmentAddressDatas[i].ExtraInfo = ParseExtraInfo(S.ExtraInfo, i);
             }
         }
-        private void GetInfo()
+
+        public void GetInfo()
         {
             if (SegmentList == null)
                 SegmentList = new List<SegmentInfo>();

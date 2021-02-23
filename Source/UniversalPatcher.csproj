@@ -176,12 +176,6 @@
     <Compile Include="frmEditAddress.Designer.cs">
       <DependentUpon>frmEditAddress.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmSelectCopyMode.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmSelectCopyMode.Designer.cs">
-      <DependentUpon>frmSelectCopyMode.cs</DependentUpon>
-    </Compile>
     <Compile Include="frmSelectMassTarget.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -235,6 +229,12 @@
     </Compile>
     <Compile Include="frmTuner.Designer.cs">
       <DependentUpon>frmTuner.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmMoreSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMoreSettings.Designer.cs">
+      <DependentUpon>frmMoreSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="GmEeprom.cs" />
     <Compile Include="frmSegmenList.cs">
@@ -355,9 +355,6 @@
     <EmbeddedResource Include="frmPatcher.resx">
       <DependentUpon>frmPatcher.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmSelectCopyMode.resx">
-      <DependentUpon>frmSelectCopyMode.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="frmSelectMassTarget.resx">
       <DependentUpon>frmSelectMassTarget.cs</DependentUpon>
     </EmbeddedResource>
@@ -387,6 +384,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmTuner.resx">
       <DependentUpon>frmTuner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmMoreSettings.resx">
+      <DependentUpon>frmMoreSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

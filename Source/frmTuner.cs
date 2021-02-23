@@ -41,6 +41,8 @@ namespace UniversalPatcher
         private string currentXmlFile;
         private int lastSelectedId;
         string compXml = "";
+        int keyDelayCounter = 0;
+
         private void frmTuner_Load(object sender, EventArgs e)
         {
             enableConfigModeToolStripMenuItem.Checked = Properties.Settings.Default.TunerConfigMode;
@@ -48,7 +50,7 @@ namespace UniversalPatcher
             deleteRowToolStripMenuItem.Enabled = Properties.Settings.Default.TunerConfigMode;
             editRowToolStripMenuItem.Enabled = Properties.Settings.Default.TunerConfigMode;
             duplicateTableConfigToolStripMenuItem.Enabled = Properties.Settings.Default.TunerConfigMode;
-            disableConfigAutloadToolStripMenuItem.Checked = Properties.Settings.Default.disableTunerAutoloadSettings;
+            disableConfigAutoloadToolStripMenuItem.Checked = Properties.Settings.Default.disableTunerAutoloadSettings;
 
             LogReceivers.Add(txtResult);
 
@@ -961,7 +963,9 @@ namespace UniversalPatcher
 
         private void txtSearchTableSeek_TextChanged(object sender, EventArgs e)
         {
-            filterTables();
+            //filterTables();
+            keyDelayCounter = 0;
+            timerFilter.Enabled = true;
         }
 
         private void showTablesWithEmptyAddressToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1795,10 +1799,6 @@ namespace UniversalPatcher
             filterTables();
         }
 
-        private void findDifferencesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void cSVToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1982,11 +1982,11 @@ namespace UniversalPatcher
 
         }
 
-        private void disableConfigAutloadToolStripMenuItem_Click(object sender, EventArgs e)
+        private void disableConfigAutoloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            disableConfigAutloadToolStripMenuItem.Checked = !disableConfigAutloadToolStripMenuItem.Checked;
+            disableConfigAutoloadToolStripMenuItem.Checked = !disableConfigAutoloadToolStripMenuItem.Checked;
             
-            Properties.Settings.Default.disableTunerAutoloadSettings = disableConfigAutloadToolStripMenuItem.Checked;
+            Properties.Settings.Default.disableTunerAutoloadSettings = disableConfigAutoloadToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
 
         }
@@ -2101,6 +2101,22 @@ namespace UniversalPatcher
             frmMassModifyTableData fmm = new frmMassModifyTableData();            
             fmm.Show();
             fmm.loadData(tunerFiles);
+        }
+
+        private void moreSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmMoreSettings frmTS = new frmMoreSettings();
+            frmTS.Show();
+        }
+
+        private void timerFilter_Tick(object sender, EventArgs e)
+        {
+            keyDelayCounter++;
+            if (keyDelayCounter > Properties.Settings.Default.keyPressWait100ms)
+            {
+                filterTables();
+                timerFilter.Enabled = false;
+            }
         }
     }
 }

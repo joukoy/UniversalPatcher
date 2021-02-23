@@ -146,5 +146,14 @@
     <Setting Name="MassModifyTableDataWindowSplitterDistance" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="TunerMinTableEquivalency" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="TableEditorMinTableEquivalency" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="keyPressWait100ms" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

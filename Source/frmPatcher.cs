@@ -1963,13 +1963,26 @@ namespace UniversalPatcher
                 Logger("No OS segment defined");
                 return;
             }
+            List <string> currentSegements = new List<string>();
+            for (int s = 0; s < basefile.Segments.Count; s++)
+            {
+                string seg = basefile.segmentinfos[s].Name.PadRight(15) + basefile.segmentinfos[s].PN + basefile.segmentinfos[s].Ver;
+                currentSegements.Add(seg);
+            }
             frmSwapSegmentList frmSw = new frmSwapSegmentList();
             frmSw.LoadSegmentList(ref basefile);
             if (frmSw.ShowDialog(this) == DialogResult.OK)
             {
                 basefile = frmSw.PCM;
+                basefile.GetInfo();
                 basefile.FixCheckSums();
-                Logger("");
+                LoggerBold(Environment.NewLine + "Swapped segments:");
+                for (int s = 0; s < basefile.Segments.Count; s++)
+                {
+                    string newPN = basefile.segmentinfos[s].PN + basefile.segmentinfos[s].Ver;
+                    if (!currentSegements[s].EndsWith(newPN))
+                        Logger(currentSegements[s] + " => " + basefile.segmentinfos[s].PN + basefile.segmentinfos[s].Ver);
+                }
                 Logger("Segment(s) swapped and checksums fixed (you can save BIN now)");
             }
             frmSw.Dispose();
@@ -3260,6 +3273,11 @@ namespace UniversalPatcher
             Properties.Settings.Default.Save();
         }
 
+        private void moreSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmMoreSettings frmTS = new frmMoreSettings();
+            frmTS.Show();
+        }
     }
 }
 

@@ -32,12 +32,12 @@ namespace UniversalPatcher
             this.btnOK = new System.Windows.Forms.Button();
             this.chkSelectAll = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.labelAction = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.radioAddMissing = new System.Windows.Forms.RadioButton();
             this.radioOwerwriteAdd = new System.Windows.Forms.RadioButton();
             this.radioOwerwrite = new System.Windows.Forms.RadioButton();
             this.radioAdd = new System.Windows.Forms.RadioButton();
+            this.labelAction = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -76,16 +76,6 @@ namespace UniversalPatcher
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             // 
-            // labelAction
-            // 
-            this.labelAction.AutoSize = true;
-            this.labelAction.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelAction.Location = new System.Drawing.Point(101, 11);
-            this.labelAction.Name = "labelAction";
-            this.labelAction.Size = new System.Drawing.Size(131, 16);
-            this.labelAction.TabIndex = 3;
-            this.labelAction.Text = "Select properties:";
-            // 
             // groupBox2
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -99,6 +89,7 @@ namespace UniversalPatcher
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Copy mode:";
+            this.groupBox2.Visible = false;
             // 
             // radioAddMissing
             // 
@@ -141,6 +132,16 @@ namespace UniversalPatcher
             this.radioAdd.TabStop = true;
             this.radioAdd.Text = "Add as new";
             this.radioAdd.UseVisualStyleBackColor = true;
+            // 
+            // labelAction
+            // 
+            this.labelAction.AutoSize = true;
+            this.labelAction.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelAction.Location = new System.Drawing.Point(101, 11);
+            this.labelAction.Name = "labelAction";
+            this.labelAction.Size = new System.Drawing.Size(131, 16);
+            this.labelAction.TabIndex = 3;
+            this.labelAction.Text = "Select properties:";
             // 
             // frmSelectTableDataProperties
             // 

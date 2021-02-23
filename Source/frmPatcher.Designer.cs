@@ -199,6 +199,7 @@
             this.disableTunerAutloadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -2023,7 +2024,8 @@
             this.dTCSearchToolStripMenuItem,
             this.tableSeekToolStripMenuItem,
             this.rememberWindowSizeToolStripMenuItem,
-            this.disableTunerAutloadConfigToolStripMenuItem});
+            this.disableTunerAutloadConfigToolStripMenuItem,
+            this.moreSettingsToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "&Settings";
@@ -2112,6 +2114,13 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // moreSettingsToolStripMenuItem
+            // 
+            this.moreSettingsToolStripMenuItem.Name = "moreSettingsToolStripMenuItem";
+            this.moreSettingsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.moreSettingsToolStripMenuItem.Text = "More settings...";
+            this.moreSettingsToolStripMenuItem.Click += new System.EventHandler(this.moreSettingsToolStripMenuItem_Click);
             // 
             // FrmPatcher
             // 
@@ -2357,5 +2366,6 @@
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem disableTunerAutloadConfigToolStripMenuItem;
         public System.Windows.Forms.Label labelXML;
+        private System.Windows.Forms.ToolStripMenuItem moreSettingsToolStripMenuItem;
     }
 }

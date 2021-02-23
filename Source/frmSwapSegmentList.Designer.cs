@@ -48,6 +48,7 @@
             this.txtSkiptext = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.radioShowSize = new System.Windows.Forms.RadioButton();
+            this.labelCurrentPN = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -55,9 +56,9 @@
             // comboSegments
             // 
             this.comboSegments.FormattingEnabled = true;
-            this.comboSegments.Location = new System.Drawing.Point(58, 28);
+            this.comboSegments.Location = new System.Drawing.Point(63, 28);
             this.comboSegments.Name = "comboSegments";
-            this.comboSegments.Size = new System.Drawing.Size(330, 21);
+            this.comboSegments.Size = new System.Drawing.Size(325, 21);
             this.comboSegments.TabIndex = 0;
             this.comboSegments.SelectedIndexChanged += new System.EventHandler(this.comboSegments_SelectedIndexChanged);
             // 
@@ -78,7 +79,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1, 31);
+            this.label1.Location = new System.Drawing.Point(5, 31);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(52, 13);
             this.label1.TabIndex = 2;
@@ -107,7 +108,7 @@
             // labelSelectedSegment
             // 
             this.labelSelectedSegment.AutoSize = true;
-            this.labelSelectedSegment.Location = new System.Drawing.Point(0, 75);
+            this.labelSelectedSegment.Location = new System.Drawing.Point(5, 75);
             this.labelSelectedSegment.Name = "labelSelectedSegment";
             this.labelSelectedSegment.Size = new System.Drawing.Size(10, 13);
             this.labelSelectedSegment.TabIndex = 5;
@@ -276,11 +277,21 @@
             this.radioShowSize.UseVisualStyleBackColor = true;
             this.radioShowSize.CheckedChanged += new System.EventHandler(this.radioShowSize_CheckedChanged);
             // 
+            // labelCurrentPN
+            // 
+            this.labelCurrentPN.AutoSize = true;
+            this.labelCurrentPN.Location = new System.Drawing.Point(5, 56);
+            this.labelCurrentPN.Name = "labelCurrentPN";
+            this.labelCurrentPN.Size = new System.Drawing.Size(10, 13);
+            this.labelCurrentPN.TabIndex = 16;
+            this.labelCurrentPN.Text = "-";
+            // 
             // frmSwapSegmentList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(782, 363);
+            this.Controls.Add(this.labelCurrentPN);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.btnSavelist);
             this.Controls.Add(this.groupBox1);
@@ -326,5 +337,6 @@
         private System.Windows.Forms.TextBox txtSkiptext;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.RadioButton radioShowSize;
+        private System.Windows.Forms.Label labelCurrentPN;
     }
 }

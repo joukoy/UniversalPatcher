@@ -158,6 +158,7 @@ namespace UniversalPatcher
             labelSelectedSegment.Text = "-";
             string SegNr = ((SegmentInfo)comboSegments.SelectedItem).SegNr;
             int SegIndex = comboSegments.SelectedIndex;
+            labelCurrentPN.Text = "Current P/N: " + PCM.segmentinfos[SegIndex].PN + PCM.segmentinfos[SegIndex].Ver;
             for (int i=0;i< SwapSegments.Count;i++)
             {
                 string SegSize;

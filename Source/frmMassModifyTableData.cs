@@ -22,9 +22,15 @@ namespace UniversalPatcher
 
         public class TunerFile
         {
+            public TunerFile()
+            {
+                Modified = false;
+                tableDatas = new List<TableData>();
+            }
             public bool Select { get; set; }
+            public bool Modified { get; set; }
             public int id { get; set; }
-            public List<TableData> tableDatas = new List<TableData>();
+            public List<TableData> tableDatas;
             public string FileName { get; set; }
         }
 
@@ -69,6 +75,7 @@ namespace UniversalPatcher
         private int sortIndex = 1;
         private int tdSortIndex = 1;
         private List<ClibBrd> clipBrd = new List<ClibBrd>();
+        int keyDelayCounter = 0;
 
         private void frmMassModifyTableData_Load(object sender, EventArgs e)
         {
@@ -87,6 +94,7 @@ namespace UniversalPatcher
                 if (Properties.Settings.Default.MassModifyTableDataWindowSplitterDistance > 0)
                     splitContainer1.SplitterDistance = Properties.Settings.Default.MassModifyTableDataWindowSplitterDistance;
             }
+            numDiff.Value = Properties.Settings.Default.TableEditorMinTableEquivalency;
             this.FormClosing += FrmMassModifyTableData_FormClosing;
             dataGridView1.CellMouseClick += DataGridView1_CellMouseClick;
             dataGridView1.DataBindingComplete += DataGridView1_DataBindingComplete;
@@ -112,6 +120,19 @@ namespace UniversalPatcher
 
         private void FrmMassModifyTableData_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (modifiedFiles.Count > 0)
+            {
+                DialogResult dr = MessageBox.Show("Files modified, save?", "Save files", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                if (dr == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                if (dr == DialogResult.Yes)
+                {
+                    saveFiles();
+                }
+            }
             if (Properties.Settings.Default.MainWindowPersistence)
             {
                 Properties.Settings.Default.MassModifyTableDataWindowState = this.WindowState;
@@ -437,8 +458,10 @@ namespace UniversalPatcher
         }
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
-            filterData();
-            filterTableList();
+            //filterData();
+            //filterTableList();
+            keyDelayCounter = 0;
+            timerFilter.Enabled = true;
         }
 
         private void btnExecute_Click(object sender, EventArgs e)
@@ -464,6 +487,7 @@ namespace UniversalPatcher
                         Logger("Modifying table: " + tableName + ", " + Property + ": " + oldVal + " => " + newVal);
                         if (!modifiedFiles.Contains(tf))
                             modifiedFiles.Add(tf);
+                        tunerFiles[tf].Modified = true;
 
                         Type type = tunerFiles[tf].tableDatas[t].GetType();
                         PropertyInfo prop = type.GetProperty(Property);
@@ -482,7 +506,7 @@ namespace UniversalPatcher
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void saveFiles()
         {
             for (int modF = 0; modF < modifiedFiles.Count; modF++)
             {
@@ -494,11 +518,17 @@ namespace UniversalPatcher
                     writer.Serialize(stream, tunerFiles[tf].tableDatas);
                     stream.Close();
                 }
+                tunerFiles[tf].Modified = false;
                 Logger(" [OK]");
                 break;
             }
             modifiedFiles = new List<int>();
             Logger("Files saved");
+
+        }
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            saveFiles();
         }
         private void Logger(string LogText, Boolean NewLine = true)
         {
@@ -768,6 +798,7 @@ namespace UniversalPatcher
                         Logger("Property: " + clipBrd[cb].Property + ", value: " + clipBrd[cb].Value);
                     }
                     modifiedFiles.Add(tf);
+                    tunerFiles[tf].Modified = true;
                 }
             }
             Logger("Done. (Save files manually)");
@@ -838,7 +869,14 @@ namespace UniversalPatcher
             }
             frmS.Dispose();
 
+            if (selectedFiles.Count == 0)
+            {
+                Logger("No files selected");
+                return;
+            }
+
             frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
+            fst.groupBox2.Visible = true;
             TableData tmpTd = new TableData();
             fst.loadProperties(tmpTd, false);
             if (fst.ShowDialog() != DialogResult.OK)
@@ -975,9 +1013,10 @@ namespace UniversalPatcher
                 }
                 if (!modifiedFiles.Contains(dstF))
                     modifiedFiles.Add(dstF);
+                tunerFiles[dstF].Modified = true;
                 Logger(" [OK] (" + copiedTables.ToString() + " tables)");
             }
-            Logger("Done");
+            Logger("Done, you can now save files");
         }
 
 
@@ -993,5 +1032,20 @@ namespace UniversalPatcher
             copyTablestoFile(false);
         }
 
+        private void numDiff_ValueChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.TableEditorMinTableEquivalency = (int)numDiff.Value;
+        }
+
+        private void timerFilter_Tick(object sender, EventArgs e)
+        {
+            keyDelayCounter++;
+            if (keyDelayCounter > Properties.Settings.Default.keyPressWait100ms)
+            {
+                filterData();
+                filterTableList();
+                timerFilter.Enabled = false;
+            }
+        }
     }
 }

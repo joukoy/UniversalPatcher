@@ -1465,17 +1465,34 @@ public class upatcher
         if (pos1 < 0)
             pos1 = refTd.TableName.Length;
 
+        string refTableName = refTd.TableName.ToLower().Substring(0, pos1).Replace(" ", "_");
         for (int t = 0; t < pcm1.tableDatas.Count; t++)
         {
             int pos2 = pcm1.tableDatas[t].TableName.IndexOf("*");
             if (pos2 < 0)
                 pos2 = pcm1.tableDatas[t].TableName.Length;
             //if (pcm1.tableDatas[t].TableName.ToLower().Substring(0, pos2) == refTd.TableName.ToLower().Substring(0, pos1) && pcm1.tableDatas[t].Category.ToLower() == refTd.Category.ToLower())
-            if (pcm1.tableDatas[t].TableName.ToLower().Substring(0, pos2).Replace(" ","_") == refTd.TableName.ToLower().Substring(0, pos1).Replace(" ", "_"))
+            if (pcm1.tableDatas[t].TableName.ToLower().Substring(0, pos2).Replace(" ","_") == refTableName)
             {
                 return t;
             }
         }
+        //Not found (exact match) maybe close enough?
+        int required = UniversalPatcher.Properties.Settings.Default.TunerMinTableEquivalency;
+        if (required == 100)
+            return -1;  //already searched for 100% match
+        for (int t = 0; t < pcm1.tableDatas.Count; t++)
+        {
+            int pos2 = pcm1.tableDatas[t].TableName.IndexOf("*");
+            if (pos2 < 0)
+                pos2 = pcm1.tableDatas[t].TableName.Length;
+            double percentage = ComputeSimilarity.CalculateSimilarity(pcm1.tableDatas[t].TableName.ToLower().Substring(0, pos2).Replace(" ", "_"), refTableName);
+            if ((int)(percentage * 100) >= required )
+            {
+                return t;
+            }
+        }
+
         return -1;
     }
 
