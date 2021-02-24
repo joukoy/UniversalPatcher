@@ -376,7 +376,7 @@ public class upatcher
 
     public static int getBits(InDataType dataType)
     {
-        int bits = -1;
+        int bits = 8; // Assume one byte if not defined. OK?
         if (dataType == InDataType.SBYTE || dataType == InDataType.UBYTE)
             bits = 8;
         if (dataType == InDataType.SWORD || dataType == InDataType.UWORD)
@@ -385,6 +385,8 @@ public class upatcher
             bits = 32;
         if (dataType == InDataType.INT64 || dataType == InDataType.UINT64 || dataType == InDataType.FLOAT64)
             bits = 64;
+        if (dataType == InDataType.UNKNOWN)
+            Logger("Warning, unknown data type. Assuming 8 bits");
 
         return bits;
     }
@@ -1459,20 +1461,20 @@ public class upatcher
         }
     }
 
-    public static int findTableDataId(TableData refTd, PcmFile pcm1)
+    public static int findTableDataId(TableData refTd, List<TableData> tdList)
     {
         int pos1 = refTd.TableName.IndexOf("*");
         if (pos1 < 0)
             pos1 = refTd.TableName.Length;
 
         string refTableName = refTd.TableName.ToLower().Substring(0, pos1).Replace(" ", "_");
-        for (int t = 0; t < pcm1.tableDatas.Count; t++)
+        for (int t = 0; t < tdList.Count; t++)
         {
-            int pos2 = pcm1.tableDatas[t].TableName.IndexOf("*");
+            int pos2 = tdList[t].TableName.IndexOf("*");
             if (pos2 < 0)
-                pos2 = pcm1.tableDatas[t].TableName.Length;
+                pos2 = tdList[t].TableName.Length;
             //if (pcm1.tableDatas[t].TableName.ToLower().Substring(0, pos2) == refTd.TableName.ToLower().Substring(0, pos1) && pcm1.tableDatas[t].Category.ToLower() == refTd.Category.ToLower())
-            if (pcm1.tableDatas[t].TableName.ToLower().Substring(0, pos2).Replace(" ","_") == refTableName)
+            if (tdList[t].TableName.ToLower().Substring(0, pos2).Replace(" ","_") == refTableName)
             {
                 return t;
             }
@@ -1481,14 +1483,15 @@ public class upatcher
         int required = UniversalPatcher.Properties.Settings.Default.TunerMinTableEquivalency;
         if (required == 100)
             return -1;  //already searched for 100% match
-        for (int t = 0; t < pcm1.tableDatas.Count; t++)
+        for (int t = 0; t < tdList.Count; t++)
         {
-            int pos2 = pcm1.tableDatas[t].TableName.IndexOf("*");
+            int pos2 = tdList[t].TableName.IndexOf("*");
             if (pos2 < 0)
-                pos2 = pcm1.tableDatas[t].TableName.Length;
-            double percentage = ComputeSimilarity.CalculateSimilarity(pcm1.tableDatas[t].TableName.ToLower().Substring(0, pos2).Replace(" ", "_"), refTableName);
+                pos2 = tdList[t].TableName.Length;
+            double percentage = ComputeSimilarity.CalculateSimilarity(tdList[t].TableName.ToLower().Substring(0, pos2).Replace(" ", "_"), refTableName);
             if ((int)(percentage * 100) >= required )
             {
+                Debug.WriteLine(refTd.TableName + " <=> " + tdList[t].TableName + "; Equivalency: " + (percentage * 100).ToString() + "%");
                 return t;
             }
         }

@@ -196,7 +196,7 @@ namespace UniversalPatcher
         }
         private void compareTable(PcmFile cmpPCM)
         {
-            int id = findTableDataId(td, cmpPCM);
+            int id = findTableDataId(td, cmpPCM.tableDatas);
             if (id < 0)
             {
                 Logger("Table not found");
@@ -298,7 +298,7 @@ namespace UniversalPatcher
                 for (int p = 0; p < pcmfiles.Count; p++)
                 {
                     PcmFile cmpPCM = pcmfiles[p];
-                    int id = findTableDataId(td, cmpPCM);
+                    int id = findTableDataId(td, cmpPCM.tableDatas);
                     if (id < 0)
                     {
                         continue;

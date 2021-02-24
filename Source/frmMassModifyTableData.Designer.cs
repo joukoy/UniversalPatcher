@@ -60,10 +60,8 @@ namespace UniversalPatcher
             this.pasteSpecialToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripFiles = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyTablesToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.numDiff = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.timerFilter = new System.Windows.Forms.Timer(this.components);
+            this.btnSettings = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -82,7 +80,6 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.dataClipBoard)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.contextMenuStripFiles.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numDiff)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -377,50 +374,27 @@ namespace UniversalPatcher
             this.copyTablesToToolStripMenuItem.Text = "Copy tables to...";
             this.copyTablesToToolStripMenuItem.Click += new System.EventHandler(this.copyTablesToToolStripMenuItem_Click);
             // 
-            // numDiff
-            // 
-            this.numDiff.Location = new System.Drawing.Point(520, 7);
-            this.numDiff.Name = "numDiff";
-            this.numDiff.Size = new System.Drawing.Size(45, 20);
-            this.numDiff.TabIndex = 3;
-            this.numDiff.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.numDiff.ValueChanged += new System.EventHandler(this.numDiff_ValueChanged);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(374, 9);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(140, 13);
-            this.label3.TabIndex = 12;
-            this.label3.Text = "Minimum match in searches:";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(571, 10);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(20, 16);
-            this.label4.TabIndex = 13;
-            this.label4.Text = "%";
-            // 
             // timerFilter
             // 
             this.timerFilter.Tick += new System.EventHandler(this.timerFilter_Tick);
+            // 
+            // btnSettings
+            // 
+            this.btnSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSettings.Location = new System.Drawing.Point(575, 4);
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Size = new System.Drawing.Size(75, 23);
+            this.btnSettings.TabIndex = 11;
+            this.btnSettings.Text = "Settings";
+            this.btnSettings.UseVisualStyleBackColor = true;
+            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
             // 
             // frmMassModifyTableData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(824, 497);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.numDiff);
+            this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnExecute);
@@ -450,7 +424,6 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.dataClipBoard)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.contextMenuStripFiles.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numDiff)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -486,10 +459,8 @@ namespace UniversalPatcher
         private System.Windows.Forms.ComboBox comboFiles;
         private System.Windows.Forms.DataGridView dataGridTd;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.NumericUpDown numDiff;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ToolStripMenuItem copyTablesToduplicatesToolStripMenuItem;
         private System.Windows.Forms.Timer timerFilter;
+        private System.Windows.Forms.Button btnSettings;
     }
 }

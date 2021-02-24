@@ -94,7 +94,6 @@ namespace UniversalPatcher
                 if (Properties.Settings.Default.MassModifyTableDataWindowSplitterDistance > 0)
                     splitContainer1.SplitterDistance = Properties.Settings.Default.MassModifyTableDataWindowSplitterDistance;
             }
-            numDiff.Value = Properties.Settings.Default.TableEditorMinTableEquivalency;
             this.FormClosing += FrmMassModifyTableData_FormClosing;
             dataGridView1.CellMouseClick += DataGridView1_CellMouseClick;
             dataGridView1.DataBindingComplete += DataGridView1_DataBindingComplete;
@@ -738,11 +737,14 @@ namespace UniversalPatcher
                         if (prop.PropertyType == typeof(string))
                         {
                             double percentage = ComputeSimilarity.CalculateSimilarity((string)prop.GetValue(tunerFiles[tf].tableDatas[t], null), myCriteria[mc].Value);
-                            Debug.WriteLine((percentage * 100).ToString() + " % " + (string)prop.GetValue(tunerFiles[tf].tableDatas[t], null) + ", " + myCriteria[mc].Value);
-                            if ((percentage * 100) < (double)numDiff.Value)
+                            if ((percentage * 100) < (double)Properties.Settings.Default.TableEditorMinOtherEquivalency)
                             {
                                 match = false;
                                 break;
+                            }
+                            else
+                            {
+                                Debug.WriteLine((string)prop.GetValue(tunerFiles[tf].tableDatas[t], null) + " <=> " + myCriteria[mc].Value + "; Equivalency: " + (percentage * 100).ToString() + "%");
                             }
                         }
                         else if ((string)prop.GetValue(tunerFiles[tf].tableDatas[t], null).ToString() != myCriteria[mc].Value)
@@ -912,81 +914,36 @@ namespace UniversalPatcher
                 {
                     TableData sourceTd = sourceTdList[t];
                     Type tdType = sourceTd.GetType();
+                    int dstId = findTableDataId(sourceTd, tunerFiles[dstF].tableDatas);
                     if (copyMode == CopyMode.overwrite)
                     {
-                        for (int x=0; x < tunerFiles[dstF].tableDatas.Count; x++)
+                        if (dstId > -1)
                         {
-                            bool match = false;
-                            if ((int)(numDiff.Value) == 100)
+                            for (int s = 0; s < selectedProps.Count; s++)
                             {
-                                if (sourceTd.TableName == tunerFiles[dstF].tableDatas[x].TableName)
-                                    match = true;
+                                PropertyInfo tdProp = tdType.GetProperty(selectedProps[s]);
+                                tdProp.SetValue(tunerFiles[dstF].tableDatas[dstId], tdProp.GetValue(sourceTd, null), null);
                             }
-                            else
-                            {
-                                //double percentage = ComputeSimilarity.CalculateSimilarity(sourceTd.TableName, tunerFiles[dstF].tableDatas[x].TableName);
-                                double percentage = ComputeSimilarity.Compare(sourceTd.TableName, tunerFiles[dstF].tableDatas[x].TableName);
-                                if ((percentage * 100) >= (double)numDiff.Value)
-                                {
-                                    match = true;
-                                    Debug.WriteLine((percentage * 100).ToString() + " % " + sourceTd.TableName + ", " + tunerFiles[dstF].tableDatas[x].TableName);
-                                }
-                            }
-                            if (match)
-                            {
-                                for (int s = 0; s < selectedProps.Count; s++)
-                                {
-                                    PropertyInfo tdProp = tdType.GetProperty(selectedProps[s]);
-                                    tdProp.SetValue(tunerFiles[dstF].tableDatas[x], tdProp.GetValue(sourceTd, null), null);
-                                }
-                                copiedTables++;
-                            }
+                            copiedTables++;
                         }
                     }
                     else if (copyMode == CopyMode.addMissing || copyMode == CopyMode.overwriteAdd)
                     {
-                        bool missing = true;
-                        for (int x = 0; x < tunerFiles[dstF].tableDatas.Count; x++)
-                        {
-                            if ((int)(numDiff.Value) == 100)
+                        if (dstId > -1)
+                        { 
+                            if (copyMode == CopyMode.overwriteAdd)
                             {
-                                if (sourceTd.TableName == tunerFiles[dstF].tableDatas[x].TableName)
+                                for (int s = 0; s < selectedProps.Count; s++)
                                 {
-                                    if (copyMode == CopyMode.overwriteAdd)
-                                    {
-                                        for (int s = 0; s < selectedProps.Count; s++)
-                                        {
-                                            PropertyInfo tdProp = tdType.GetProperty(selectedProps[s]);
-                                            tdProp.SetValue(tunerFiles[dstF].tableDatas[x], tdProp.GetValue(sourceTd, null), null);
-                                        }
-                                        copiedTables++;
-                                    }
-                                    missing = false;
-                                    break;
+                                    PropertyInfo tdProp = tdType.GetProperty(selectedProps[s]);
+                                    tdProp.SetValue(tunerFiles[dstF].tableDatas[dstId], tdProp.GetValue(sourceTd, null), null);
                                 }
-                            }
-                            else
-                            {
-                                double percentage = ComputeSimilarity.CalculateSimilarity(sourceTd.TableName, tunerFiles[dstF].tableDatas[x].TableName);
-                                if ((percentage * 100) >= (double)numDiff.Value)
-                                {
-                                    if (copyMode == CopyMode.overwriteAdd)
-                                    {
-                                        for (int s = 0; s < selectedProps.Count; s++)
-                                        {
-                                            PropertyInfo tdProp = tdType.GetProperty(selectedProps[s]);
-                                            tdProp.SetValue(tunerFiles[dstF].tableDatas[x], tdProp.GetValue(sourceTd, null), null);
-                                        }
-                                        copiedTables++;
-                                    }
-                                    missing = false;
-                                    Debug.WriteLine((percentage * 100).ToString() + " % " + sourceTd.TableName + ", " + tunerFiles[dstF].tableDatas[x].TableName);
-                                    break;
-                                }
+                                copiedTables++;
                             }
                         }
-                        if (missing)
+                        else
                         {
+                            //Not found, add it
                             TableData newTd = new TableData();
                             Type type = newTd.GetType();
                             foreach (var prop in sourceTd.GetType().GetProperties())
@@ -998,7 +955,7 @@ namespace UniversalPatcher
                             copiedTables++;
                         }
                     }
-                    else
+                    else if (copyMode == CopyMode.add)
                     {
                         TableData newTd = new TableData();
                         Type type = newTd.GetType();
@@ -1032,10 +989,6 @@ namespace UniversalPatcher
             copyTablestoFile(false);
         }
 
-        private void numDiff_ValueChanged(object sender, EventArgs e)
-        {
-            Properties.Settings.Default.TableEditorMinTableEquivalency = (int)numDiff.Value;
-        }
 
         private void timerFilter_Tick(object sender, EventArgs e)
         {
@@ -1046,6 +999,22 @@ namespace UniversalPatcher
                 filterTableList();
                 timerFilter.Enabled = false;
             }
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            frmMoreSettings frmMS = new frmMoreSettings();
+            frmMS.Show();
         }
     }
 }

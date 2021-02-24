@@ -341,17 +341,9 @@ namespace UniversalPatcher
         }
         public void refreshTablelist()
         {
-            //dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
-            //dataGridView1.Columns["OutputType"].ToolTipText = "1=Float, 2=Int, 3=Hex, 4=Text, 5=Flag";
-            //dataGridView1.Columns["DataType"].ToolTipText = "UBYTE,SBYTE,UWORD,SWORD,UINT32,INT32,UINT64,INT64,FLOAT32,FLOAT64";
+            this.dataGridView1.SelectionChanged -= new System.EventHandler(this.DataGridView1_SelectionChanged);
+
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
-            /*for (int i=0; i< dataGridView1.Rows.Count; i++)
-            {
-                dataGridView1.Rows[i].Cells["OutputType"].ToolTipText = "1=Float, 2=Int, 3=Hex, 4=Text, 5=Flag";
-                dataGridView1.Rows[i].Cells["DataType"].ToolTipText = "UBYTE,SBYTE,UWORD,SWORD,UINT32,INT32,UINT64,INT64,FLOAT32,FLOAT64";
-                if (dataGridView1.Rows[i].Cells["TableDescription"].Value != null)
-                    dataGridView1.Rows[i].Cells["TableName"].ToolTipText = dataGridView1.Rows[i].Cells["TableDescription"].Value.ToString();
-            }*/
 
             //Don't fire events when adding data to combobox!
             this.comboTableCategory.SelectedIndexChanged -= new System.EventHandler(this.comboTableCategory_SelectedIndexChanged);
@@ -512,6 +504,8 @@ namespace UniversalPatcher
         {
             try
             {
+                this.dataGridView1.SelectionChanged -= new System.EventHandler(this.DataGridView1_SelectionChanged);
+
                 //if (PCM == null || PCM.fsize == 0) return;
                 if (PCM == null || PCM.tableDatas == null)
                     return;
@@ -582,6 +576,8 @@ namespace UniversalPatcher
                 filteredCategories = new BindingList<TableData>(results.ToList());
                 bindingsource.DataSource = filteredCategories;
                 reorderColumns();
+                txtDescription.Text = "";
+                this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
             }
             catch (Exception ex)
             {
@@ -1101,7 +1097,6 @@ namespace UniversalPatcher
         {
             Debug.WriteLine("Databindingcomplete");
             UseComboBoxForEnums(dataGridView1);
-
         }
 
         private void unitsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1143,22 +1138,22 @@ namespace UniversalPatcher
 
         private void peekTableValuesWithCompare(int ind)
         {
-            int myInd = findTableDataId(PCM.tableDatas[ind], PCM);
+            int myInd = findTableDataId(PCM.tableDatas[ind], PCM.tableDatas);
             if (myInd == -1)
             {
                 LoggerBold("Table missing: " + PCM.tableDatas[ind].TableName);
                 return;
             }
-            peekTableValues(myInd, PCM);
+            peekTableValues(myInd, PCM); //Show values from current file 
             foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
             {
                 PcmFile peekPCM = (PcmFile)mi.Tag;
                 if (peekPCM.FileName != PCM.FileName)
                 {
-                    myInd = findTableDataId(PCM.tableDatas[ind], peekPCM);
-                    if (myInd > 0)
+                    myInd = findTableDataId(PCM.tableDatas[ind], peekPCM.tableDatas);
+                    if (myInd > -1)
                     {
-                        txtDescription.AppendText(peekPCM.FileName + ": " + Environment.NewLine);
+                        txtDescription.AppendText(peekPCM.FileName + ": [" + peekPCM.tableDatas[myInd].TableName + "]" + Environment.NewLine);
                         peekTableValues(myInd, peekPCM);
                     }
                 }
@@ -1279,7 +1274,7 @@ namespace UniversalPatcher
             }
         }
 
-        private void DataGridView1_SelectionChanged(object sender, EventArgs e)
+        private void showTableDescription()
         {
             txtDescription.Text = "";
             if (dataGridView1.SelectedCells.Count < 1 || PCM.tableDatas.Count == 0)
@@ -1288,7 +1283,7 @@ namespace UniversalPatcher
             }
             int ind = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
             txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Bold);
-            txtDescription.AppendText(PCM.tableDatas[ind].TableName + Environment.NewLine); 
+            txtDescription.AppendText(PCM.tableDatas[ind].TableName + Environment.NewLine);
             txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
             if (PCM.tableDatas[ind].TableDescription != null)
                 txtDescription.AppendText(PCM.tableDatas[ind].TableDescription + Environment.NewLine);
@@ -1296,6 +1291,12 @@ namespace UniversalPatcher
                 txtDescription.AppendText(PCM.tableDatas[ind].ExtraDescription + Environment.NewLine);
 
             peekTableValuesWithCompare(ind);
+
+        }
+
+        private void DataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            showTableDescription();
         }
 
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
@@ -1687,7 +1688,7 @@ namespace UniversalPatcher
             {
                 bool found = false;
                 //Not 100% compatible file, find table by name & category
-                int t = findTableDataId(td1, pcm2);
+                int t = findTableDataId(td1, pcm2.tableDatas);
                 if (t < 0)
                 {
                     //Logger("Table not found: " + td1.TableName + "[" + pcm2.FileName + "]");

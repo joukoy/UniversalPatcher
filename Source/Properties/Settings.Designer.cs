@@ -633,5 +633,17 @@ namespace UniversalPatcher.Properties {
                 this["keyPressWait100ms"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int TableEditorMinOtherEquivalency {
+            get {
+                return ((int)(this["TableEditorMinOtherEquivalency"]));
+            }
+            set {
+                this["TableEditorMinOtherEquivalency"] = value;
+            }
+        }
     }
 }
