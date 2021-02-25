@@ -99,6 +99,7 @@ namespace UniversalPatcher
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.timerFilter = new System.Windows.Forms.Timer(this.components);
+            this.caseSensitiveFilteringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -238,6 +239,7 @@ namespace UniversalPatcher
             this.enableConfigModeToolStripMenuItem,
             this.resetTunerModeColumnsToolStripMenuItem,
             this.disableConfigAutoloadToolStripMenuItem,
+            this.caseSensitiveFilteringToolStripMenuItem,
             this.moreSettingsToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
@@ -683,6 +685,13 @@ namespace UniversalPatcher
             // 
             this.timerFilter.Tick += new System.EventHandler(this.timerFilter_Tick);
             // 
+            // caseSensitiveFilteringToolStripMenuItem
+            // 
+            this.caseSensitiveFilteringToolStripMenuItem.Name = "caseSensitiveFilteringToolStripMenuItem";
+            this.caseSensitiveFilteringToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.caseSensitiveFilteringToolStripMenuItem.Text = "Case sensitive filtering";
+            this.caseSensitiveFilteringToolStripMenuItem.Click += new System.EventHandler(this.caseSensitiveFilteringToolStripMenuItem_Click);
+            // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -788,5 +797,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem massModifyTableListsSelectFilesToolStripMenuItem;
         private ToolStripMenuItem moreSettingsToolStripMenuItem;
         private Timer timerFilter;
+        private ToolStripMenuItem caseSensitiveFilteringToolStripMenuItem;
     }
 }

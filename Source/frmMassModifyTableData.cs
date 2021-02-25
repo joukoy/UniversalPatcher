@@ -386,26 +386,50 @@ namespace UniversalPatcher
                 string newStr = txtSearch.Text.Replace("OR", "|");
                 if (newStr.Contains("|"))
                 {
-                    string[] orStr = newStr.Split('|');
-                    if (orStr.Length == 2)
-                        results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
-                        typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()));
-                    if (orStr.Length == 3)
-                        results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
-                        typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()) ||
-                        typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2].Trim()));
-                    if (orStr.Length == 4)
-                        results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
-                        typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()) ||
-                        typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2].Trim()) ||
-                        typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[3].Trim()));
+                    if (chkCaseSensitive.Checked)
+                    {
+                        string[] orStr = newStr.Split('|');
+                        if (orStr.Length == 2)
+                            results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[0].Trim()) ||
+                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[1].Trim()));
+                        if (orStr.Length == 3)
+                            results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[0].Trim()) ||
+                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[1].Trim()) ||
+                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[2].Trim()));
+                        if (orStr.Length == 4)
+                            results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[0].Trim()) ||
+                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[1].Trim()) ||
+                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[2].Trim()) ||
+                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[3].Trim()));
+                    }
+                    else
+                    {
+                        string[] orStr = newStr.ToLower().Split('|');
+                        if (orStr.Length == 2)
+                            results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
+                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()));
+                        if (orStr.Length == 3)
+                            results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
+                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()) ||
+                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2].Trim()));
+                        if (orStr.Length == 4)
+                            results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
+                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()) ||
+                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2].Trim()) ||
+                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[3].Trim()));
+                    }
                 }
                 else
                 {
                     newStr = txtSearch.Text.Replace("AND", "&");
                     string[] andStr = newStr.Split('&');
                     foreach (string sStr in andStr)
-                        results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(sStr.Trim()));
+                    {
+                        if (chkCaseSensitive.Checked)
+                            results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(sStr.Trim()));
+                        else
+                            results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(sStr.ToLower().Trim()));
+                    }
                 }
             }
             bindingSource.DataSource = results;
@@ -1015,6 +1039,12 @@ namespace UniversalPatcher
         {
             frmMoreSettings frmMS = new frmMoreSettings();
             frmMS.Show();
+        }
+
+        private void chkCaseSensitive_CheckedChanged(object sender, EventArgs e)
+        {
+            filterData();
+            filterTableList();
         }
     }
 }

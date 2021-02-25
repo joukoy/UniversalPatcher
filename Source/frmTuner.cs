@@ -528,26 +528,51 @@ namespace UniversalPatcher
                     string newStr = txtSearchTableSeek.Text.Replace("OR", "|");
                     if (newStr.Contains("|"))
                     {
-                        string[] orStr = newStr.Split('|');
-                        if (orStr.Length == 2)
-                            results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
-                            typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()));
-                        if (orStr.Length == 3)
-                            results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
-                            typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()) ||
-                            typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2].Trim()));
-                        if (orStr.Length == 4)
-                            results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
-                            typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()) ||
-                            typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2].Trim()) ||
-                            typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[3].Trim()));
+                        if (caseSensitiveFilteringToolStripMenuItem.Checked)
+                        {
+                            string[] orStr = newStr.Split('|');
+                            if (orStr.Length == 2)
+                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[0].Trim()) ||
+                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[1].Trim()));
+                            if (orStr.Length == 3)
+                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[0].Trim()) ||
+                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[1].Trim()) ||
+                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[2].Trim()));
+                            if (orStr.Length == 4)
+                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[0].Trim()) ||
+                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[1].Trim()) ||
+                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[2].Trim()) ||
+                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[3].Trim()));
+                        }
+                        else
+                        {
+                            string[] orStr = newStr.ToLower().Split('|');
+                            if (orStr.Length == 2)
+                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
+                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()));
+                            if (orStr.Length == 3)
+                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
+                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()) ||
+                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2].Trim()));
+                            if (orStr.Length == 4)
+                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
+                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()) ||
+                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2].Trim()) ||
+                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[3].Trim()));
+
+                        }
                     }
                     else
                     {
                         newStr = txtSearchTableSeek.Text.Replace("AND", "&");
                         string[] andStr = newStr.Split('&');
                         foreach (string sStr in andStr)
-                            results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(sStr.Trim()));
+                        {
+                            if (caseSensitiveFilteringToolStripMenuItem.Checked)
+                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(sStr.Trim()));
+                            else
+                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(sStr.ToLower().Trim()));
+                        }
                     }
                 }
 
@@ -2118,6 +2143,12 @@ namespace UniversalPatcher
                 filterTables();
                 timerFilter.Enabled = false;
             }
+        }
+
+        private void caseSensitiveFilteringToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            caseSensitiveFilteringToolStripMenuItem.Checked = !caseSensitiveFilteringToolStripMenuItem.Checked;
+            filterTables();
         }
     }
 }

@@ -62,6 +62,7 @@ namespace UniversalPatcher
             this.copyTablesToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timerFilter = new System.Windows.Forms.Timer(this.components);
             this.btnSettings = new System.Windows.Forms.Button();
+            this.chkCaseSensitive = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -389,11 +390,23 @@ namespace UniversalPatcher
             this.btnSettings.UseVisualStyleBackColor = true;
             this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
             // 
+            // chkCaseSensitive
+            // 
+            this.chkCaseSensitive.AutoSize = true;
+            this.chkCaseSensitive.Location = new System.Drawing.Point(374, 9);
+            this.chkCaseSensitive.Name = "chkCaseSensitive";
+            this.chkCaseSensitive.Size = new System.Drawing.Size(94, 17);
+            this.chkCaseSensitive.TabIndex = 12;
+            this.chkCaseSensitive.Text = "Case sensitive";
+            this.chkCaseSensitive.UseVisualStyleBackColor = true;
+            this.chkCaseSensitive.CheckedChanged += new System.EventHandler(this.chkCaseSensitive_CheckedChanged);
+            // 
             // frmMassModifyTableData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(824, 497);
+            this.Controls.Add(this.chkCaseSensitive);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.btnSave);
@@ -462,5 +475,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem copyTablesToduplicatesToolStripMenuItem;
         private System.Windows.Forms.Timer timerFilter;
         private System.Windows.Forms.Button btnSettings;
+        private System.Windows.Forms.CheckBox chkCaseSensitive;
     }
 }
