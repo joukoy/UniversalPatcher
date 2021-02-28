@@ -1175,23 +1175,26 @@ namespace UniversalPatcher
                     loadMultiTable(td.TableName);
                     return;
                 }
-                if (!disableMultiTable && (td.TableName.Contains("[") || td.TableName.Contains(".")));
+                if (!disableMultiTable)
                 {
-                    if (td.TableName.ToLower().Contains(" vs.") || td.TableName.StartsWith("Header.") || td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".xVal") || td.TableName.EndsWith(".yVal") || td.TableName.EndsWith(".Size"))
+                    if (td.TableName.Contains("[") || td.TableName.Contains("."))
                     {
-                        //Special case, "Normal" table, but header values from tables, WITH different table as multiplier
-                        Debug.WriteLine("Special case, not real multitable");
-                    }
-                    else
-                    {
-                        MultiTableName mtn = new MultiTableName(td.TableName, (int)numColumn.Value);
-                        for (int t = 0; t < PCM.tableDatas.Count; t++)
+                        if (td.TableName.ToLower().Contains(" vs.") || td.TableName.StartsWith("Header.") || td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".xVal") || td.TableName.EndsWith(".yVal") || td.TableName.EndsWith(".Size"))
                         {
-                            if (PCM.tableDatas[t].Category == td.Category && PCM.tableDatas[t].TableName.StartsWith(mtn.TableName) && PCM.tableDatas[t].TableName != td.TableName)
+                            //Special case, "Normal" table, but header values from tables, WITH different table as multiplier
+                            Debug.WriteLine("Special case, not real multitable");
+                        }
+                        else
+                        {
+                            MultiTableName mtn = new MultiTableName(td.TableName, (int)numColumn.Value);
+                            for (int t = 0; t < PCM.tableDatas.Count; t++)
                             {
-                                //It is multitable
-                                loadMultiTable(mtn.TableName);
-                                return;
+                                if (PCM.tableDatas[t].Category == td.Category && PCM.tableDatas[t].TableName.StartsWith(mtn.TableName) && PCM.tableDatas[t].TableName != td.TableName)
+                                {
+                                    //It is multitable
+                                    loadMultiTable(mtn.TableName);
+                                    return;
+                                }
                             }
                         }
                     }

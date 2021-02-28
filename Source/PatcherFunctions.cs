@@ -386,7 +386,7 @@ public class upatcher
         if (dataType == InDataType.INT64 || dataType == InDataType.UINT64 || dataType == InDataType.FLOAT64)
             bits = 64;
         if (dataType == InDataType.UNKNOWN)
-            Logger("Warning, unknown data type. Assuming 8 bits");
+            Logger("Warning, unknown data type. Assuming UBYTE");
 
         return bits;
     }
