@@ -533,8 +533,8 @@ namespace UniversalPatcher
         {
             for (int modF = 0; modF < modifiedFiles.Count; modF++)
             {
-                Logger("Saving file: " + modifiedFiles[modF], false);
                 int tf = modifiedFiles[modF];
+                Logger("Saving file: " + tunerFiles[tf].FileName, false);
                 using (FileStream stream = new FileStream(tunerFiles[tf].FileName, FileMode.Create))
                 {
                     System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
@@ -543,7 +543,6 @@ namespace UniversalPatcher
                 }
                 tunerFiles[tf].Modified = false;
                 Logger(" [OK]");
-                break;
             }
             modifiedFiles = new List<int>();
             Logger("Files saved");

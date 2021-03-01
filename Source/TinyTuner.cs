@@ -7,6 +7,7 @@ using static upatcher;
 using System.Windows.Forms;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
 
 namespace UniversalPatcher
 {
@@ -57,7 +58,8 @@ namespace UniversalPatcher
         {
             string connetionString = null;
             OleDbConnection cnn;
-            connetionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=TinyTuner.mdb;";
+            string dbFile = Path.Combine(Application.StartupPath, "TinyTuner.mdb");
+            connetionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + dbFile;
             cnn = new OleDbConnection(connetionString);
             try
             {
@@ -161,7 +163,8 @@ namespace UniversalPatcher
         {
             string connetionString = null;
             OleDbConnection cnn;
-            connetionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=TinyTuner.mdb;";
+            string dbFile = Path.Combine(Application.StartupPath, "TinyTuner.mdb");
+            connetionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + dbFile;
             cnn = new OleDbConnection(connetionString);
             try
             {
