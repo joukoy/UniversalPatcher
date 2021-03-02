@@ -101,7 +101,8 @@ namespace UniversalPatcher
         private string _configFileFullName;
         public string configFileFullName { get { return _configFileFullName; } }
         public string configFile { get { return Path.GetFileNameWithoutExtension(configFileFullName); } }
-
+        public string tunerFile { get; set; }
+        public List<string> tunerFileList { get; set; }
 
         public void setDefaultValues()
         {
@@ -115,6 +116,7 @@ namespace UniversalPatcher
             foundTables = new List<FoundTable>();
             tableCategories = new List<string>();
             altTableDatas = new List<AltTableData>();
+            tunerFileList = new List<string>();
             currentTableDatasList = 0;
             selectTableDatas(0, "");
         }
@@ -146,6 +148,7 @@ namespace UniversalPatcher
                 if (File.Exists(fName))
                 {
                     Debug.WriteLine("Loading " + fName + "...");
+                    tunerFile = fName;
                     System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
                     System.IO.StreamReader file = new System.IO.StreamReader(fName);
                     tmpTableDatas = (List<TableData>)reader.Deserialize(file);
@@ -176,13 +179,40 @@ namespace UniversalPatcher
             return retVal;
         }
 
+        public void SaveTableList(string fName)
+        {
+            try
+            {
+                using (FileStream stream = new FileStream(fName, FileMode.Create))
+                {
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
+                    writer.Serialize(stream, tableDatas);
+                    stream.Close();
+                }
+                tunerFile = fName;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, line " + line + ": " + ex.Message);
+            }
+
+        }
+
         public void addTableDatas(string name)
         {
             AltTableData tdl = new AltTableData();
             tdl.Name = name;
             tdl.tableDatas = new List<TableData>();
             altTableDatas.Add(tdl);
+            tunerFile = "";
+            tunerFileList.Add("");
         }
+
         public void selectTableDatas(int listNumber, string name)
         {
             if (altTableDatas.Count < (listNumber + 1))
@@ -193,12 +223,14 @@ namespace UniversalPatcher
             {
                 //Store old list:
                 altTableDatas[currentTableDatasList].tableDatas = tableDatas;
-
+                tunerFileList[currentTableDatasList] = tunerFile;
                 //Select new:
                 currentTableDatasList = listNumber;
                 tableDatas = altTableDatas[currentTableDatasList].tableDatas;
+                tunerFile = tunerFileList[listNumber];
             }
         }
+
         public void loadConfigFile(string fileName)
         {
             try

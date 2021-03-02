@@ -38,7 +38,6 @@ namespace UniversalPatcher
         BindingSource categoryBindingSource = new BindingSource();
         private BindingList<TableData> filteredCategories = new BindingList<TableData>();
         SortOrder strSortOrder = SortOrder.Ascending;
-        private string currentXmlFile;
         private int lastSelectedId;
         string compXml = "";
         int keyDelayCounter = 0;
@@ -159,29 +158,28 @@ namespace UniversalPatcher
         {
             if (!Properties.Settings.Default.disableTunerAutoloadSettings)
             {
-                string defaultXml = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
+                string defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
                 //string defaultTxt = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".txt");
                 compXml = "";
-                if (File.Exists(defaultXml))
+                if (File.Exists(defaultTunerFile))
                 {
-                    long conFileSize = new FileInfo(defaultXml).Length;
+                    long conFileSize = new FileInfo(defaultTunerFile).Length;
                     if (conFileSize < 255)
                     {
-                        compXml = ReadTextFile(defaultXml);
-                        defaultXml = Path.Combine(Application.StartupPath, "Tuner", compXml);
+                        compXml = ReadTextFile(defaultTunerFile);
+                        defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", compXml);
                         Logger("Using compatible file: " + compXml);
                     }
                 }
-                if (File.Exists(defaultXml))
+                if (File.Exists(defaultTunerFile))
                 {
-                    Logger(PCM.LoadTableList(defaultXml));
-                    currentXmlFile = PCM.configFileFullName;
+                    Logger(PCM.LoadTableList(defaultTunerFile));
                     importDTC();
                     refreshTablelist();
                 }
                 else
                 {
-                    Logger("File not found: " + defaultXml);
+                    Logger("File not found: " + defaultTunerFile);
                     importDTC();
                     importTableSeek();
                     if (PCM.Segments.Count > 0 && PCM.Segments[0].CS1Address.StartsWith("GM-V6"))
@@ -383,7 +381,6 @@ namespace UniversalPatcher
         private void btnLoadXml_Click(object sender, EventArgs e)
         {
             Logger(PCM.LoadTableList());
-            currentXmlFile = PCM.configFileFullName;
             refreshTablelist();
         }
 
@@ -398,15 +395,9 @@ namespace UniversalPatcher
                     fName = SelectSaveFile("XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
                 if (fName.Length == 0)
                     return;
-                currentXmlFile = fName;
                 dataGridView1.EndEdit();
                 Logger("Saving file " + fName + "...", false);
-                using (FileStream stream = new FileStream(fName, FileMode.Create))
-                {
-                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
-                    writer.Serialize(stream, PCM.tableDatas);
-                    stream.Close();
-                }
+                PCM.SaveTableList(fName);
                 Logger(" [OK]");
             }
             catch (Exception ex)
@@ -420,6 +411,7 @@ namespace UniversalPatcher
             }
 
         }
+
         private void btnSaveXML_Click(object sender, EventArgs e)
         {
             SaveTableList();
@@ -671,7 +663,7 @@ namespace UniversalPatcher
 
         private void saveXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveTableList(currentXmlFile);
+            SaveTableList(PCM.tunerFile);
         }
 
         private void saveBINToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1415,7 +1407,7 @@ namespace UniversalPatcher
                 LoggerBold("OS versions in header, for example: Category;Tablename;Size;12587603;12582405;12587656;");
                 string fName = SelectFile("Select CSV file for XML generator", "CSV files (*.csv)|*.csv|ALL files|*.*");
                 if (fName.Length == 0) return;
-                Logger("Using file: " + currentXmlFile + " as template");
+                Logger("Using file: " + PCM.tunerFile + " as template");
                 Logger("Reading file: " + fName, false);
 
                 StreamReader sr = new StreamReader(fName);
