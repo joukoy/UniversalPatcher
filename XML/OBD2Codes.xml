@@ -1817,16 +1817,20 @@
     <Description>Evaporative Emission Control System Vent Valve/Solenoid Circuit Malfunction</Description>
   </OBD2Code>
   <OBD2Code>
+    <Code>P0450</Code>
+    <Description>Evaporative Emission Control System Pressure Sensor Malfunction</Description>
+  </OBD2Code>
+  <OBD2Code>
     <Code>P0451</Code>
     <Description>Evaporative Emission Control System Pressure Sensor Range/Performance</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P0452</Code>
-    <Description>Evaporative Emission Fuel Tank Pressure Sensor Circuit Low Input Conditions</Description>
+    <Description>Evaporative Emission Control System Pressure Sensor Low Input</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P0453</Code>
-    <Description>Evaporative Emissions Control System Pressure Sensor High Input</Description>
+    <Description>Evaporative Emission Control System Pressure Sensor High Input</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P0454</Code>
@@ -1834,50 +1838,22 @@
   </OBD2Code>
   <OBD2Code>
     <Code>P0455</Code>
-    <Description>Evaporative Emissions Control System Leak Detected Conditions</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P0455</Code>
-    <Description>Evaporative Emissions Control System Small Leak Detected</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P0460</Code>
-    <Description>Evaporative Emission Control System Pressure Sensor Malfunction</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P0461</Code>
-    <Description>Evaporative Emission Control System Pressure Sensor Range/Performance</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P0462</Code>
-    <Description>Evaporative Emission Control System Pressure Sensor Low Input</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P0463</Code>
-    <Description>Evaporative Emission Control System Pressure Sensor High Input</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P0464</Code>
-    <Description>Evaporative Emission Control System Pressure Sensor Intermittent</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P0465</Code>
     <Description>Evaporative Emission Control System Tank Detected (gross leak)</Description>
   </OBD2Code>
   <OBD2Code>
-    <Code>P0466</Code>
+    <Code>P0456</Code>
     <Description>Evaporative Emission System Leak Detected (very small leak)</Description>
   </OBD2Code>
   <OBD2Code>
-    <Code>P0467</Code>
+    <Code>P0457</Code>
     <Description>Evaporative Emission System Leak Detected (fuel cap loose/off)</Description>
   </OBD2Code>
   <OBD2Code>
-    <Code>P0468</Code>
+    <Code>P0458</Code>
     <Description>Evaporative Emission System Purge Control Valve Circuit Low</Description>
   </OBD2Code>
   <OBD2Code>
-    <Code>P0469</Code>
+    <Code>P0459</Code>
     <Description>Evaporative Emission System Purge Control Valve Circuit High</Description>
   </OBD2Code>
   <OBD2Code>
@@ -5218,83 +5194,7 @@
   </OBD2Code>
   <OBD2Code>
     <Code>P1441</Code>
-    <Description>Evaporative Emission Control (EVAP) System Leak</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>AUDI EGR Vacuum Regulator Solenoid Valve Open/Short To Ground</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>BMW Leakage Diagnostic Pump Control Open Circuit</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>BUICK EVAP System Flow During Non-Purge Condition</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>CADILLAC EVAP System Flow During Non-Purge Condition</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>CHEVROLET EVAP System Flow During Non-Purge Condition</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>DODGE EVAP System Flow During Non-Purge Condition</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>GMC EVAP System Flow During Non-Purge Condition</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>INFINITI Evaporative Emission Control System Very Small Leak</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>ISUZU EVAP System Flow During Non-Purge</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>LEXUS Secondary Air Injection System Switching Valve No.2 Stuck Open Bank 1</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>MINI Leakage Diagnostic Pump Control Open Circuit</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>NISSAN Evaporative Emission Control System Very Small Leak</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>PONTIAC EVAP System Flow During Non-Purge Condition</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>SATURN EVAP System Flow During Non-Purge Condition</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>SATURN EVAP System Flow During Non-Purge Condition</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>SCION Secondary Air Injection System Switching Valve No.2 Stuck Open Bank 1</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>SUBARU Fuel Tank Pressure Control System High Input</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>TOYOTA Secondary Air Injection System Switching Valve No.2 Stuck Open Bank 1</Description>
-  </OBD2Code>
-  <OBD2Code>
-    <Code>P1441</Code>
-    <Description>VOLKSWAGEN EGR Vacuum Regulator Solenoid Valve Open/Short To Ground</Description>
+    <Description>EVAP System Flow During Non-Purge Condition</Description>
   </OBD2Code>
   <OBD2Code>
     <Code>P1442</Code>
