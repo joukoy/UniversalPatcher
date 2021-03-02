@@ -80,11 +80,11 @@ namespace UniversalPatcher
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 16);
+            this.label3.Location = new System.Drawing.Point(6, 18);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(211, 13);
+            this.label3.Size = new System.Drawing.Size(213, 13);
             this.label3.TabIndex = 4;
-            this.label3.Text = "x 100ms wait after key press, before search";
+            this.label3.Text = "x 100ms wait between keypress and search";
             // 
             // numKeypressWait
             // 
