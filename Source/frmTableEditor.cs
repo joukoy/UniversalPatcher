@@ -111,6 +111,49 @@ namespace UniversalPatcher
                 }
             }
             disableTooltipsToolStripMenuItem.Checked = false;
+            dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
+        }
+
+        private void enableValueSelector()
+        {
+            if (dataGridView1.SelectedCells.Count == 0)
+                return;
+            if (dataGridView1.SelectedCells[0].GetType() == typeof(DataGridViewComboBoxCell)
+                || dataGridView1.SelectedCells[0].GetType() == typeof(DataGridViewCheckBoxCell)
+                || dataGridView1.Columns[dataGridView1.SelectedCells[0].ColumnIndex].GetType() == typeof(DataGridViewComboBoxColumn)
+                || dataGridView1.Columns[dataGridView1.SelectedCells[0].ColumnIndex].GetType() == typeof(DataGridViewCheckBoxColumn))
+            {
+                numDataValue.Enabled = false;
+                return;
+            }
+            else
+            {
+                numDataValue.Enabled = true;
+            }
+            if (td.OutputType == OutDataType.Float)
+            {
+                if (numDecimals.Value > 0)
+                    numDataValue.DecimalPlaces = (int)numDecimals.Value;
+                numDataValue.Increment = 0.1M;
+            }
+            else
+            {
+                numDataValue.DecimalPlaces = 0;
+                numDataValue.Increment = 1;
+            }
+            decimal curVal = Convert.ToDecimal(dataGridView1.SelectedCells[0].Value);
+            numDataValue.Minimum = (decimal)td.Min;
+            numDataValue.Maximum = (decimal)td.Max;
+            if (curVal >= (decimal)td.Min && curVal <= (decimal)td.Max)
+                numDataValue.Value = curVal;
+            else
+                numDataValue.Enabled = false;
+
+        }
+
+        private void DataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            enableValueSelector();
         }
 
         public void addCompareFiletoMenu(PcmFile cmpPCM)
@@ -984,6 +1027,7 @@ namespace UniversalPatcher
                     }
                 }
                 setDataGridLayout();
+                enableValueSelector();
             }
             catch (Exception ex)
             {
@@ -1258,6 +1302,7 @@ namespace UniversalPatcher
                     showDtdDescriptions();
                 }
                 setDataGridLayout();
+                enableValueSelector();
             }
             catch (Exception ex)
             {
@@ -2042,7 +2087,13 @@ namespace UniversalPatcher
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            enableValueSelector();
+        }
 
+        private void numDataValue_ValueChanged(object sender, EventArgs e)
+        {
+            dataGridView1.BeginEdit(false);
+            dataGridView1.SelectedCells[0].Value = Convert.ToDecimal(numDataValue.Value);
         }
     }
 }
