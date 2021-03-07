@@ -352,19 +352,7 @@ namespace UniversalPatcher
 
         private void importTableSeek()
         {
-            if (PCM.foundTables.Count == 0)
-            {
-                TableSeek TS = new TableSeek();
-                Logger("Seeking tables...", false);
-                Logger(TS.seekTables(PCM));
-            }
-            Logger("Importing TableSeek tables... ", false);
-            for (int i = 0; i < PCM.foundTables.Count; i++)
-            {
-                TableData tableData = new TableData();
-                tableData.importFoundTable(i, PCM);
-                PCM.tableDatas.Add(tableData);
-            }
+            PCM.importSeekTables();
             refreshTablelist();
             Logger("OK");
         }

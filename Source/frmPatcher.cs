@@ -3122,20 +3122,9 @@ namespace UniversalPatcher
                     return;
                 }
 
-/*                if (ts.OutputType == OutDataType.Flag && ts.BitMask != null && ts.BitMask.Length > 0)
-                {
-                    frmEditFlag ff = new frmEditFlag();
-                    TableData td = new TableData();
-                    td.importFoundTable(codeIndex, basefile);
-                    ff.loadFlag(basefile, td);
-                    ff.Show();
-                }
-                else*/
-                {
-                    frmTableEditor frmT = new frmTableEditor();
-                    frmT.loadSeekTable(codeIndex, basefile);
-                    frmT.Show();
-                }
+                frmTableEditor frmT = new frmTableEditor();
+                frmT.loadSeekTable(codeIndex, basefile);
+                frmT.Show();
             }
             catch (Exception ex)
             {

@@ -103,6 +103,7 @@ namespace UniversalPatcher
         public string configFile { get { return Path.GetFileNameWithoutExtension(configFileFullName); } }
         public string tunerFile { get; set; }
         public List<string> tunerFileList { get; set; }
+        public bool seekTablesImported;
 
         public void setDefaultValues()
         {
@@ -119,11 +120,34 @@ namespace UniversalPatcher
             tunerFileList = new List<string>();
             currentTableDatasList = 0;
             selectTableDatas(0, "");
+            seekTablesImported = false;
         }
         public PcmFile ShallowCopy()
         {
             return (PcmFile)this.MemberwiseClone();
         }
+
+        public void importSeekTables()
+        {
+            if (foundTables.Count == 0)
+            {
+                TableSeek TS = new TableSeek();
+                Logger("Seeking tables...", false);
+                Logger(TS.seekTables(this));
+            }
+            Logger("Importing TableSeek tables... ", false);
+            for (int i = 0; i < foundTables.Count; i++)
+            {
+                TableData tableData = new TableData();
+                tableData.importFoundTable(i, this);
+                tableDatas.Add(tableData);
+            }
+            //Fix table id's
+            for (int i = 0; i < tableDatas.Count; i++)
+                tableDatas[i].id = (uint)i;
+            seekTablesImported = true;
+        }
+
         public string LoadTableList(string fName = "")
         {
             string retVal = "";

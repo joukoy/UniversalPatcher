@@ -156,15 +156,23 @@ namespace UniversalPatcher
             else commaDecimal = false;
 
             PCM = PCM1;
+            if (!PCM.seekTablesImported)
+                PCM.importSeekTables();
             TableSeek tSeek = tableSeeks[PCM.foundTables[tId].configId];
             this.Text = "Table Editor: " + PCM.foundTables[tId].Name;
 
             FoundTable ft = PCM.foundTables[tId];
-
-            td = new TableData();
-            td.importFoundTable(tId, PCM);
-
-            loadTable(td);
+            for (int f=0; f< PCM.tableDatas.Count; f++)
+            {
+                if (PCM.tableDatas[f].TableName == tSeek.Name && PCM.tableDatas[f].addrInt == ft.addrInt)
+                {
+                    td = PCM.tableDatas[f];
+                    tableIds = new List<int>();
+                    tableIds.Add(f);
+                    loadTable(td);
+                    break;
+                }
+            }
         }
 
 
