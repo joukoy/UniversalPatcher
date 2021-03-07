@@ -194,6 +194,27 @@ namespace UniversalPatcher
             dataGridView1.Columns["Current Value"].DefaultCellStyle.WrapMode = DataGridViewTriState.True;
             dataGridView1.RowHeadersWidth = 200;
         }
+
+        private void DataGridViewTableList_SelectionChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dataGridViewTableList.SelectedCells.Count == 0)
+                    return;
+                if (dataGridViewTableList.Rows[dataGridViewTableList.SelectedCells[0].RowIndex].Tag == null)
+                    return;
+                dataGridView1.Rows.Clear();
+                int id = (int)dataGridViewTableList.Rows[dataGridViewTableList.SelectedCells[0].RowIndex].Tag;
+                for (int r = 0; r < tableDgvRows[id].gdvrows.Count; r++)
+                    dataGridView1.Rows.Add(tableDgvRows[id].gdvrows[r]);
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+
+        }
+
         private void compareTable(PcmFile cmpPCM)
         {
             int id = findTableDataId(td, cmpPCM.tableDatas);
@@ -277,6 +298,7 @@ namespace UniversalPatcher
 
         private void compareAllTables(List<string> files)
         {
+            dataGridViewTableList.SelectionChanged -= DataGridViewTableList_SelectionChanged;
             List<PcmFile> pcmfiles = new List<PcmFile>();
             //Load all files:
             for (int i=0; i < files.Count; i++)
@@ -318,6 +340,7 @@ namespace UniversalPatcher
                 if ((i % 10) == 0)
                     Logger(".", false);
             }
+            dataGridViewTableList.SelectionChanged += DataGridViewTableList_SelectionChanged;
         }
 
         private void initCompareAll()

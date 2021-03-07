@@ -35,14 +35,6 @@ namespace UniversalPatcher
             Value
         }
 
-        private class ColumnInfo
-        {
-            public ColType  columnType { get; set; }
-            public Dictionary<double, string> enumVals { get; set; }
-            public Dictionary<int, string> enumIntVals { get; set; }
-            public string enumStr { get; set; }
-            public OutDataType outputType { get; set; }
-        }
         private class MultiTableName
         {
             public MultiTableName(string fullName, int columnPos)
@@ -84,6 +76,8 @@ namespace UniversalPatcher
         Font dataFont;
         
         public bool disableMultiTable = false;
+        public bool multiSelect = false;
+        private bool duplicateTableName = false;
         public List<int> tableIds = new List<int>();
 
         List<TableData> filteredTables;
@@ -508,13 +502,18 @@ namespace UniversalPatcher
         {
             int ind = int.MinValue;
             string colName = "";
-
-            if (cTd.Columns == dataGridView1.Columns.Count)
-                return col;
-
-            if (cTd.Columns == 1)
+            if (multiSelect)
             {
-                if (tableIds.Count > 1)
+                colName = "[" + cTd.TableName + "] ";
+                if (duplicateTableName)
+                    colName += " [" + cTd.Address + "] ";
+            }
+            //if (cTd.Columns == dataGridView1.Columns.Count)
+            //  return col;
+
+            if (cTd.Columns == 1 && multiSelect == false)
+            {
+                if (multiSelect)
                 {
                     colName = cTd.TableName;
                     if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
@@ -528,14 +527,30 @@ namespace UniversalPatcher
                         colName += " " + cTd.ColumnHeaders.Trim();
                 }
             }
-            if (cTd.ColumnHeaders.Contains(','))
+            else if (cTd.ColumnHeaders.StartsWith("Table: "))
             {
+                string[] parts = cTd.ColumnHeaders.Split(' ');
+                string[] colHeaders = loadHeaderFromTable(parts[1], cTd.Columns).Split(',');
+                colName += colHeaders[col];
+            }
+            else if (cTd.ColumnHeaders.Contains(','))
+            {
+                if (multiSelect)
+                    colName = "[" + cTd.TableName + "] ";
+                if (duplicateTableName)
+                    colName += "(" + cTd.Address + ") ";
+
                 string[] tParts = cTd.ColumnHeaders.Split(',');
                 if (tParts.Length >= (col -1))
-                    colName = tParts[col].Trim();
+                    colName += tParts[col].Trim();
                 if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
                     colName += " " + cTd.ColumnHeaders.Trim();
             }
+            else if (cTd.ColumnHeaders != "")
+            {
+                colName += cTd.ColumnHeaders;
+            }
+
             if (colName != "")
             {
                 for (int c = 0; c < dataGridView1.Columns.Count; c++)
@@ -545,26 +560,43 @@ namespace UniversalPatcher
                 }
                 
             }
+            if (ind < 0)
+            {
+                ind = dataGridView1.Columns.Add(colName, colName);
+            }
             return ind;
         }
+
         private int getColumnByTableData_XySwap(TableData cTd, int col)
         {
             int ind = int.MinValue;
             string colName = "";
 
-            if (cTd.Rows == dataGridView1.Columns.Count)
-                return col;
+            //if (cTd.Rows == dataGridView1.Columns.Count)
+            //  return col;
 
-            if (cTd.Rows == 1)
+            if (cTd.Rows == 1 && multiSelect == false)
             {
                 MultiTableName mtn = new MultiTableName(cTd.TableName, (int)numColumn.Value);
                 colName = mtn.RowName;
+                if (colName == "")
+                    colName = mtn.TableName;
+            }
+            else if (cTd.RowHeaders.StartsWith("Table: "))
+            {
+                string[] parts = cTd.RowHeaders.Split(' ');
+                string[] colHeaders = loadHeaderFromTable(parts[1], cTd.Rows).Split(',');
+                colName += colHeaders[col];
             }
             else if (cTd.RowHeaders.Contains(','))
             {
                 string[] tParts = cTd.RowHeaders.Split(',');
                 if (tParts.Length >= (col - 1))
                     colName = tParts[col].Trim();
+            }
+            else if (cTd.RowHeaders != "")
+            {
+                colName += cTd.RowHeaders;
             }
             if (colName != "")
             {
@@ -574,6 +606,10 @@ namespace UniversalPatcher
                         ind = c;
                 }
 
+            }
+            if (ind<0)
+            {
+                ind = dataGridView1.Columns.Add(colName, colName);
             }
             return ind;
         }
@@ -586,16 +622,24 @@ namespace UniversalPatcher
             if (cTd.Rows == dataGridView1.Rows.Count)
             {
                 Debug.WriteLine("getRowByTableData: cTd.Rows == dataGridView1.Rows.Count");
-                return row;
+                //return row;
             }
 
-            if (cTd.Rows == 1)
+            if (cTd.Rows == 1 && multiSelect == false)
             {
                 MultiTableName mtn = new MultiTableName(cTd.TableName, (int)numColumn.Value);
                 rowName = mtn.RowName;
+                if (rowName == "")
+                    rowName = mtn.TableName;
                 Debug.WriteLine("getRowByTableData: By tablename: " + rowName);
             }
-            if (cTd.RowHeaders.Contains(','))
+            else if (cTd.RowHeaders.StartsWith("Table: "))
+            {
+                string[] parts = cTd.RowHeaders.Split(' ');
+                string[] rowHeaders = loadHeaderFromTable(parts[1], cTd.Rows).Split(',');
+                rowName += rowHeaders[row];
+            }
+            else if (cTd.RowHeaders.Contains(','))
             {
                 string[] tParts = cTd.RowHeaders.Split(',');
                 if (tParts.Length >= (row - 1))
@@ -604,7 +648,7 @@ namespace UniversalPatcher
                     Debug.WriteLine("getRowByTableData: By current TD " + rowName);
                 }
             }
-            else if (td.RowHeaders.Contains(','))
+            else if (td.RowHeaders.Contains(',') && multiSelect == false)
             {
                 string[] tParts = td.RowHeaders.Split(',');
                 if (tParts.Length >= (row - 1))
@@ -612,6 +656,10 @@ namespace UniversalPatcher
                     rowName = tParts[row].Trim();
                     Debug.WriteLine("getRowByTableData: By main TD " + rowName);
                 }
+            }
+            else if (cTd.RowHeaders != "")
+            {
+                rowName += cTd.RowHeaders;
             }
             if (rowName != "")
             {
@@ -621,6 +669,11 @@ namespace UniversalPatcher
                         ind = c;
                 }
             }
+            if (ind < 0)
+            {
+                ind = dataGridView1.Rows.Add();
+                dataGridView1.Rows[ind].HeaderCell.Value = rowName;
+            }
             return ind;
         }
 
@@ -628,14 +681,20 @@ namespace UniversalPatcher
         {
             int ind = int.MinValue;
             string rowName = "";
+            if (multiSelect)
+            {
+                rowName = "[" + cTd.TableName + "] ";
+                if (duplicateTableName)
+                    rowName += " [" + cTd.Address + "] ";
+            }
 
             if (cTd.Columns == dataGridView1.Rows.Count)
             {
                 Debug.WriteLine("getRowByTableData_XySwap: cTd.Columns == dataGridView1.Rows.Count");
-                return row;
+                //return row;
             }
 
-            if (cTd.Columns == 1)
+            if (cTd.Columns == 1 && multiSelect == false)
             {
                 if (tableIds.Count > 1)
                 {
@@ -653,8 +712,19 @@ namespace UniversalPatcher
                     Debug.WriteLine("getRowByTableData_XySwap: By tablename: " + rowName);
                 }
             }
-            if (cTd.ColumnHeaders.Contains(','))
+            else if (cTd.ColumnHeaders.StartsWith("Table: "))
             {
+                string[] parts = cTd.ColumnHeaders.Split(' ');
+                string[] rowHeaders = loadHeaderFromTable(parts[1], cTd.Columns).Split(',');
+                rowName += rowHeaders[row];
+            }
+            else if (cTd.ColumnHeaders.Contains(','))
+            {
+                if (multiSelect)
+                    rowName = "[" + cTd.TableName + "] ";
+                if (duplicateTableName)
+                    rowName += "(" + cTd.Address + ") ";
+
                 string[] tParts = cTd.ColumnHeaders.Split(',');
                 if (tParts.Length >= (row - 1))
                 {
@@ -662,7 +732,7 @@ namespace UniversalPatcher
                     Debug.WriteLine("getRowByTableData_XySwap: By current TD " + rowName);
                 }
             }
-            else if (td.ColumnHeaders.Contains(','))
+            else if (td.ColumnHeaders.Contains(',') && multiSelect == false)
             {
                 string[] tParts = td.ColumnHeaders.Split(',');
                 if (tParts.Length >= (row - 1))
@@ -670,6 +740,10 @@ namespace UniversalPatcher
                     rowName = tParts[row].Trim();
                     Debug.WriteLine("getRowByTableData_XySwap: By main TD " + rowName);
                 }
+            }
+            else if (cTd.ColumnHeaders != "")
+            {
+                rowName += cTd.ColumnHeaders;
             }
             if (rowName != "")
             {
@@ -679,44 +753,37 @@ namespace UniversalPatcher
                         ind = c;
                 }
             }
+            if (ind < 0)
+            {
+                ind = dataGridView1.Rows.Add();
+                dataGridView1.Rows[ind].HeaderCell.Value = rowName;
+            }
             return ind;
         }
 
-        private ColumnInfo getColinfoByTableData (TableData td1)
-        {
-            ColumnInfo colInfo = new ColumnInfo();
-            if (showRawHEXValuesToolStripMenuItem.Checked || radioSideBySide.Checked)
-            {
-                colInfo.columnType = ColType.Value;
-            }
-            else if (td1.Values != null && td1.Values.StartsWith("Enum: "))
-            {
-                colInfo.columnType = ColType.Combo;
-                string enumStr = td1.Values.Replace("Enum: ", "");
-                colInfo.enumVals = parseEnumHeaders(enumStr);
-                colInfo.enumIntVals = parseIntEnumHeaders(enumStr);
-                //colInfo.enumVals = parseEnumHeadersToList(enumStr);
-                colInfo.enumStr = enumStr;
-            }
-            else if (td1.OutputType == OutDataType.Flag)
-            {
-                colInfo.columnType = ColType.Flag;
-            }
-            else
-            {
-                colInfo.columnType = ColType.Value;
-            }
-            colInfo.outputType = td1.OutputType;
-            return colInfo;
-        }
 
+        private void addCellByType(TableData ft, int gridRow, int gridCol)
+        {
+            if (ft.OutputType == OutDataType.Flag || (ft.Units != null && ft.Units.ToLower().Contains("boolean")))
+            {
+                DataGridViewCheckBoxCell dgc = new DataGridViewCheckBoxCell();
+                dataGridView1.Rows[gridRow].Cells[gridCol] = dgc;
+            }
+            else if (ft.Values.StartsWith("Enum: "))
+            {
+                Dictionary<double, string> possibleVals = parseEnumHeaders(ft.Values.Replace("Enum: ", ""));
+                DataGridViewComboBoxCell dgc = new DataGridViewComboBoxCell();
+                dgc.DataSource = new BindingSource(possibleVals, null); 
+                dataGridView1.Rows[gridRow].Cells[gridCol] = dgc;
+            }
+
+        }
         public void loadMultiTable(string tableName)
         {
             try
             {
                 List<string> colHeaders = new List<string>();
                 List<string> rowHeaders = new List<string>();
-                List<ColumnInfo> coliInfos = new List<ColumnInfo>();
 
                 this.tableName = tableName;
 
@@ -727,24 +794,29 @@ namespace UniversalPatcher
                 if (td.Values != null && !td.Values.StartsWith("Enum:"))
                     labelUnits.Text += ", Values: " + td.Values;
 
-                if (tableIds.Count > 1)
+
+                if (multiSelect)
                 {
                     //Manually selected multiple tables
                     filteredTables = new List<TableData>();
                     tableIds.Sort();
+                    List<string> tableNameList = new List<string>();
+                    for (int i=0; i<tableIds.Count; i++)
+                    {
+                        TableData mTd = PCM.tableDatas[tableIds[i]];
+                        if (tableNameList.Contains(mTd.TableName))
+                        {
+                            duplicateTableName = true;
+                        }
+                        else
+                        {
+                            tableNameList.Add(mTd.TableName);
+                        }
+                    }
                     for (int i = 0; i < tableIds.Count; i++)
                     {
-                        ColumnInfo colInfo = getColinfoByTableData(PCM.tableDatas[tableIds[i]]);
-                        coliInfos.Add(colInfo);
-                        string colHdr = PCM.tableDatas[tableIds[i]].TableName;
-                        if (PCM.tableDatas[tableIds[i]].ColumnHeaders != "" && !PCM.tableDatas[tableIds[i]].ColumnHeaders.Contains(","))
-                            colHdr += " " + PCM.tableDatas[tableIds[i]].ColumnHeaders.Trim();
-                        colHeaders.Add(colHdr);
                         filteredTables.Add(PCM.tableDatas[tableIds[i]]);
                     }
-                    if (td.RowHeaders == null || td.RowHeaders.Length == 0)
-                        for (int r = 0; r < td.Rows; r++)
-                            rowHeaders.Add("");
                 }
                 else
                 {
@@ -754,50 +826,21 @@ namespace UniversalPatcher
                     filteredTables = new List<TableData>(results.ToList());
                     filteredTables = filteredTables.OrderBy(o => o.addrInt).ToList();
                 }
-                td = filteredTables[0];
 
                 if (bufSize == 0)
                 {
                     List<TableData> sizeList = new List<TableData>(filteredTables.OrderBy(o => o.addrInt).ToList());
-                    int elementSize = getElementSize(sizeList[sizeList.Count - 1].DataType); //Last table in list
-                    int singleTableSize = td.Rows * td.Columns * elementSize;
-                    bufSize = (uint)(sizeList[sizeList.Count - 1].addrInt - sizeList[0].addrInt + sizeList[sizeList.Count - 1].Offset + singleTableSize);
+                    TableData first = sizeList[0];
+                    td = first;
+                    TableData last = sizeList[sizeList.Count - 1];
+                    int elementSize = getElementSize(last.DataType); 
+                    int singleTableSize = last.Rows * last.Columns * elementSize;
+                    bufSize = (uint)(last.addrInt - first.addrInt + last.Offset + singleTableSize);
                     tableBuffer = new byte[bufSize];
-                    Array.Copy(PCM.buf, td.addrInt, tableBuffer, 0, bufSize);
+                    Array.Copy(PCM.buf, first.addrInt, tableBuffer, 0, bufSize);
                 }
 
 
-                if (tableIds.Count < 2)
-                {
-                    for (int t = 0; t < filteredTables.Count; t++)
-                    {
-                        //Collect all different row & column labels from table names
-
-                        ColumnInfo colInfo = new ColumnInfo();
-                        MultiTableName mtn = new MultiTableName(filteredTables[t].TableName, (int)numColumn.Value);
-                        if (!rowHeaders.Contains(mtn.RowName))
-                            rowHeaders.Add(mtn.RowName);
-                        string colHdr = mtn.columnName;
-                        if (filteredTables[t].ColumnHeaders != null && filteredTables[t].ColumnHeaders != "" && !filteredTables[t].ColumnHeaders.Contains(","))
-                            colHdr += " " + filteredTables[t].ColumnHeaders.Trim();
-                        if (!colHeaders.Contains(colHdr))
-                        {
-                            colHeaders.Add(colHdr);
-                            colInfo = getColinfoByTableData(filteredTables[t]);
-                            coliInfos.Add(colInfo);
-                        }
-                    }
-                }
-                if (rowHeaders.Count < 2 && td.Rows > 1)
-                {
-                    if (filteredTables[0].RowHeaders != null && filteredTables[0].RowHeaders.Contains(','))
-                    {
-                        rowHeaders.Clear();
-                        string[] rParts = filteredTables[0].RowHeaders.Split(',');
-                        for (int r = 0; r < rParts.Length; r++)
-                            rowHeaders.Add(rParts[r].Trim());
-                    }
-                }
                 if (rowHeaders.Count > 0 && rowHeaders[0].Contains("]["))
                 { //Tablename Have [][][]
                     numColumn.Enabled = true;
@@ -805,121 +848,18 @@ namespace UniversalPatcher
                     labelColumn.Visible = true;
                 }
 
-                if (td.ColumnHeaders.StartsWith("Table: "))
-                {
-                    colHeaders.Clear();
-                    string[] parts = td.ColumnHeaders.Split(' ');
-                    string[] colHeaderStr = loadHeaderFromTable(parts[1], td.Columns).Split(',');
-                    ColumnInfo colInfo = new ColumnInfo();
-                    colInfo = getColinfoByTableData(td);
-                    for (int p = 0; p < colHeaderStr.Length; p++)
-                    {
-                        coliInfos.Add(colInfo);
-                    }
-                }
-
-                if (td.RowHeaders.StartsWith("Table: "))
-                {
-                    rowHeaders.Clear();
-                    string[] parts = td.RowHeaders.Split(' ');
-                    string[] rowHeaderStr = loadHeaderFromTable(parts[1], td.Rows).Split(',');
-                    for (int p = 0; p < rowHeaderStr.Length; p++)
-                        rowHeaders.Add(rowHeaderStr[p]);
-                }
-
-                if (rowHeaders.Count == 0)
-                    rowHeaders.Add("");
 
                 dataGridView1.Rows.Clear();
                 dataGridView1.Columns.Clear();
 
                 bool xySwapped = chkSwapXY.Checked;
 
-                //If there is different kind of columns, X/Y can't be swapped
-                int boolCols = 0;
-                int combCols = 0;
-                int regCols = 0;
-                for (int c = 0; c < coliInfos.Count; c++)
-                {
-                    if (coliInfos[c].columnType == ColType.Combo)
-                    {
-                        if (c > 0 && coliInfos[c].enumStr != coliInfos[c - 1].enumStr)
-                        {   //Diffrent values in comboboxes, not possible to put in one column                       
-                            combCols = 10;
-                            break;
-                        }
-                        combCols = 1;
-                    }
-                    else if (coliInfos[c].columnType == ColType.Flag) boolCols = 1;
-                    else regCols = 1;
-                }
-                if ((boolCols + combCols + regCols) == 1)
-                {
-                    //Only regular, combo, or Flag columns used, can swap
-                    if (rowHeaders.Count == 1 && colHeaders.Count > 1)
-                        xySwapped = !chkSwapXY.Checked; //Invert checkbox meaning, swap by default
-                }
-                else
-                {
-                    chkSwapXY.Enabled = false;
-                    swapXyToolStripMenuItem.Enabled = false;
-                }
+                if (td.Rows < 2)
+                    xySwapped = !chkSwapXY.Checked;
 
                 if (xySwapped)
                 {
                     //Swapped, put ROWheaders to COLUMNS
-                    for (int r = 0; r < rowHeaders.Count; r++)
-                    {
-                        string hdrTxt = rowHeaders[r];
-                        if (rowHeaders.Count == 1)
-                        {
-                            if (td.Units.ToLower().Contains("bitmask"))
-                                hdrTxt = "Boolean";
-                            else
-                                hdrTxt = td.Units;
-                        }
-                        //Setup Checkbox & Combo -columns
-                        if (coliInfos[0].columnType == ColType.Flag)
-                        {
-                            DataGridViewCheckBoxColumn col_chkbox = new DataGridViewCheckBoxColumn();
-                            dataGridView1.Columns.Add(col_chkbox);
-                        }
-                        else if (coliInfos[0].columnType == ColType.Combo)
-                        {
-                            DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
-                            if (coliInfos[0].outputType == OutDataType.Float)
-                                comboCol.DataSource = new BindingSource(coliInfos[0].enumVals, null);
-                            else
-                                comboCol.DataSource = new BindingSource(coliInfos[0].enumIntVals, null);
-                            comboCol.DisplayMember = "Value";
-                            comboCol.ValueMember = "Key";
-                            dataGridView1.Columns.Add(comboCol);
-                        }
-                        else
-                        {
-                            dataGridView1.Columns.Add(hdrTxt, hdrTxt);
-                        }
-                        dataGridView1.Columns[r].HeaderText = hdrTxt;
-                    }
-
-                    //Put ColHeaders to ROWLables
-                    for (int c = 0; c < colHeaders.Count; c++)
-                    {
-                        dataGridView1.Rows.Add();
-                        if (colHeaders.Count == 1)
-                        {
-                            if (td.Units.ToLower().Contains("bitmask"))
-                                dataGridView1.Rows[c].HeaderCell.Value = "Boolean";
-                            else
-                                dataGridView1.Rows[c].HeaderCell.Value = td.Units;
-                        }
-                        else
-                        {
-                            dataGridView1.Rows[c].HeaderCell.Value = colHeaders[c];
-                        }
-                    }
-
-
                     int gridRow = 0;
                     for (int tbl = 0; tbl < filteredTables.Count; tbl++) ///Go thru all filtered tables
                     {
@@ -931,12 +871,11 @@ namespace UniversalPatcher
                         {
                             for (int r = 0; r < ft.Rows; r++) //All rows from table
                             {
-                                if (dataGridView1.Columns.Count > 1)
-                                    gridCol = getColumnByTableData_XySwap(ft, r);
+                                gridCol = getColumnByTableData_XySwap(ft, r);
                                 for (int c = 0; c < ft.Columns; c++) //All columns from table
                                 {
-                                    if (dataGridView1.Rows.Count > 1)
-                                        gridRow = getRowByTableData_XySwap(ft, c);
+                                    gridRow = getRowByTableData_XySwap(ft, c);
+                                    addCellByType(ft, gridRow, gridCol);
                                     setCellValue(addr, gridRow, gridCol, ft);
                                     addr += (uint)elementsize;
                                 }
@@ -946,12 +885,14 @@ namespace UniversalPatcher
                         {
                             for (int c = 0; c < ft.Columns; c++)
                             {
-                                if (dataGridView1.Rows.Count > 1)
+                                if (dataGridView1.ColumnCount > 0) // Can't add rows if no columns defined
                                     gridRow = getRowByTableData_XySwap(ft, c);
                                 for (int r = 0; r < ft.Rows; r++)
                                 {
-                                    if (dataGridView1.Columns.Count > 1)
-                                        gridCol = getColumnByTableData_XySwap(ft, r);
+                                    gridCol = getColumnByTableData_XySwap(ft, r);
+                                    if (dataGridView1.RowCount == 0)
+                                        gridRow = getRowByTableData_XySwap(ft, c); //Create first row
+                                    addCellByType(ft, gridRow, gridCol);
                                     setCellValue(addr, gridRow, gridCol, ft);
                                     addr += (uint)elementsize;
                                 }
@@ -965,55 +906,6 @@ namespace UniversalPatcher
                 }
                 else //Not xyswapped
                 {
-                    for (int c = 0; c < colHeaders.Count; c++)
-                    {
-                        string hdrTxt = colHeaders[c];
-                        if (colHeaders.Count == 1)
-                        {
-                            if (td.Units.ToLower().Contains("bitmask"))
-                                dataGridView1.Columns[c].HeaderText = "Boolean";
-                            else
-                                dataGridView1.Columns[c].HeaderText = td.Units;
-                        }
-                        //Setup comboboxes & checkboxes
-                        if (coliInfos[c].columnType == ColType.Flag)
-                        {
-                            DataGridViewCheckBoxColumn col_chkbox = new DataGridViewCheckBoxColumn();
-                            dataGridView1.Columns.Add(col_chkbox);
-                        }
-                        else if (coliInfos[c].columnType == ColType.Combo)
-                        {
-                            DataGridViewComboBoxColumn comboCol = new DataGridViewComboBoxColumn();
-                            if (coliInfos[c].outputType == OutDataType.Float)
-                                comboCol.DataSource = new BindingSource(coliInfos[c].enumVals, null);
-                            else
-                                comboCol.DataSource = new BindingSource(coliInfos[c].enumIntVals, null);
-                            comboCol.DisplayMember = "Value";
-                            comboCol.ValueMember = "Key";
-                            dataGridView1.Columns.Add(comboCol);
-                        }
-                        else
-                        {
-                            dataGridView1.Columns.Add(hdrTxt, hdrTxt);
-                        }
-                        dataGridView1.Columns[c].HeaderText = hdrTxt;
-
-                    }
-
-                    for (int r = 0; r < rowHeaders.Count; r++)
-                    {
-                        dataGridView1.Rows.Add();
-                        if (rowHeaders.Count == 1)
-                        {
-                            if (td.Units.ToLower().Contains("bitmask"))
-                                dataGridView1.Rows[r].HeaderCell.Value = "Boolean";
-                            else
-                                dataGridView1.Rows[r].HeaderCell.Value = td.Units;
-                        }
-                        else
-                            dataGridView1.Rows[r].HeaderCell.Value = rowHeaders[r];
-                    }
-
                     int gridRow = 0;
                     for (int tbl = 0; tbl < filteredTables.Count; tbl++)
                     {
@@ -1025,12 +917,14 @@ namespace UniversalPatcher
                         {
                             for (int r = 0; r < ft.Rows; r++)
                             {
-                                if (dataGridView1.Rows.Count > 1)
-                                    gridRow = getRowByTableData(ft, r);
+                                if (dataGridView1.ColumnCount > 0) // Can't add rows if no columns defined
+                                    gridRow = getRowByTableData(ft, r); 
                                 for (int c = 0; c < ft.Columns; c++)
                                 {
-                                    if (dataGridView1.Columns.Count > 1)
-                                        gridCol = getColumnByTableData(ft, c);
+                                    gridCol = getColumnByTableData(ft, c);
+                                    if (dataGridView1.RowCount == 0)
+                                        gridRow = getRowByTableData(ft, r); //Create first row
+                                    addCellByType(ft, gridRow, gridCol);
                                     setCellValue(addr, gridRow, gridCol, ft);
                                     addr += (uint)elementsize;
                                 }
@@ -1042,10 +936,9 @@ namespace UniversalPatcher
                             {
                                 for (int r = 0; r < ft.Rows; r++)
                                 {
-                                    if (dataGridView1.Columns.Count > 1)
-                                        gridCol = getColumnByTableData(ft, c);
-                                    if (dataGridView1.Rows.Count > 1)
-                                        gridRow = getRowByTableData(ft, r);
+                                    gridCol = getColumnByTableData(ft, c);
+                                    gridRow = getRowByTableData(ft, r);
+                                    addCellByType(ft, gridRow, gridCol);
                                     setCellValue(addr, gridRow, gridCol, ft);
                                     addr += (uint)elementsize;
                                 }
@@ -1172,6 +1065,7 @@ namespace UniversalPatcher
 
                 if (tableIds.Count > 1)
                 {
+                    multiSelect = true;
                     loadMultiTable(td.TableName);
                     return;
                 }

@@ -200,7 +200,7 @@ namespace UniversalPatcher
                     if (!tableIds.Contains(id))
                         tableIds.Add(id);
                 }
-                TableData tableData0 = PCM.tableDatas[tableIds[0]];
+/*                TableData tableData0 = PCM.tableDatas[tableIds[0]];
                 for (int i=1; i< tableIds.Count;i++)
                 {
                     TableData tableData = PCM.tableDatas[tableIds[i]];
@@ -209,7 +209,7 @@ namespace UniversalPatcher
                         LoggerBold("Can't load multible tables with different size");
                         return;
                     }
-                }
+                }*/
                 TableData td = PCM.tableDatas[tableIds[0]];
                 if (td.addrInt == uint.MaxValue)
                 {
@@ -221,64 +221,55 @@ namespace UniversalPatcher
                 {
                     LoggerBold("WARING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);
                 }
-/*                if (td.OutputType == OutDataType.Flag && td.BitMask != null && td.BitMask.Length > 0)
+                frmTableEditor frmT = new frmTableEditor();
+                frmT.PCM = PCM;
+                frmT.tableIds = tableIds;
+                frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
+                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                 {
-                    frmEditFlag ff = new frmEditFlag();
-                    ff.loadFlag(PCM, td);
-                    ff.Show();
-                }
-                else*/
-                {
-                    frmTableEditor frmT = new frmTableEditor();
-                    frmT.PCM = PCM;
-                    frmT.tableIds = tableIds;
-                    frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
-                    foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                    PcmFile comparePCM = (PcmFile)mi.Tag;
+                    if (PCM.FileName != comparePCM.FileName)
                     {
-                        PcmFile comparePCM = (PcmFile)mi.Tag;
-                        if (PCM.FileName != comparePCM.FileName)
+                        Logger("Adding file: " + Path.GetFileName(comparePCM.FileName) + " to compare menu... ", false);
+                        bool tblFound = false;
+                        string tbName = td.TableName;
+                        if (td.TableName.Contains("*"))
                         {
-                            Logger("Adding file: " + Path.GetFileName(comparePCM.FileName) + " to compare menu... ", false);
-                            bool tblFound = false;
-                            string tbName = td.TableName;
-                            if (td.TableName.Contains("*"))
+                            tbName = td.TableName.Substring(0, td.TableName.IndexOf('*') );
+                        }
+                        for (int x = 0; x < comparePCM.tableDatas.Count; x++)
+                        {
+                            if (comparePCM.tableDatas[x].Category == td.Category && comparePCM.tableDatas[x].TableName.StartsWith(tbName))
                             {
-                                tbName = td.TableName.Substring(0, td.TableName.IndexOf('*') );
-                            }
-                            for (int x = 0; x < comparePCM.tableDatas.Count; x++)
-                            {
-                                if (comparePCM.tableDatas[x].Category == td.Category && comparePCM.tableDatas[x].TableName.StartsWith(tbName))
+                                if (comparePCM.tableDatas[x].Rows != td.Rows || comparePCM.tableDatas[x].Columns != td.Columns || comparePCM.tableDatas[x].RowMajor != td.RowMajor)
                                 {
-                                    if (comparePCM.tableDatas[x].Rows != td.Rows || comparePCM.tableDatas[x].Columns != td.Columns || comparePCM.tableDatas[x].RowMajor != td.RowMajor)
+                                    Logger("Table size not match!");
+                                }
+                                else
+                                {
+                                    tblFound = true;
+                                    comparePCM.selectedTable = comparePCM.tableDatas[x];
+                                    frmT.addCompareFiletoMenu(comparePCM);
+                                    if (PCM.configFile != comparePCM.configFile)
                                     {
-                                        Logger("Table size not match!");
+                                        LoggerBold(Environment.NewLine + "Warning: file type different, results undefined!");
                                     }
                                     else
                                     {
-                                        tblFound = true;
-                                        comparePCM.selectedTable = comparePCM.tableDatas[x];
-                                        frmT.addCompareFiletoMenu(comparePCM);
-                                        if (PCM.configFile != comparePCM.configFile)
-                                        {
-                                            LoggerBold(Environment.NewLine + "Warning: file type different, results undefined!");
-                                        }
-                                        else
-                                        {
-                                            Logger("[OK]");
-                                        }
-                                        break;
+                                        Logger("[OK]");
                                     }
+                                    break;
                                 }
-                            }                            
-                            if (!tblFound)
-                            {
-                                LoggerBold("Table not found" );
                             }
+                        }                            
+                        if (!tblFound)
+                        {
+                            LoggerBold("Table not found" );
                         }
                     }
-                    frmT.Show();
-                    frmT.loadTable(td);
                 }
+                frmT.Show();
+                frmT.loadTable(td);
             }
             catch (Exception ex)
             {
@@ -2027,15 +2018,21 @@ namespace UniversalPatcher
 
         private void searchAndCompareAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmMassCompare fmc = new frmMassCompare();
-            fmc.PCM = PCM;
-            fmc.compareAll = true;
-            int id = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
-            fmc.td = PCM.tableDatas[id];
-            fmc.Text = "Search and Compare: " + fmc.td.TableName;
-            fmc.Show();
-            fmc.selectCmpFiles();
-
+            try
+            {
+                frmMassCompare fmc = new frmMassCompare();
+                fmc.PCM = PCM;
+                fmc.compareAll = true;
+                int id = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
+                fmc.td = PCM.tableDatas[id];
+                fmc.Text = "Search and Compare: " + fmc.td.TableName;
+                fmc.Show();
+                fmc.selectCmpFiles();
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void compareSelectedTablesToolStripMenuItem_Click(object sender, EventArgs e)
