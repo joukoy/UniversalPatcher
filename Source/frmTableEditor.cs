@@ -74,7 +74,8 @@ namespace UniversalPatcher
         private uint bufSize = 0;
         MathParser parser = new MathParser();
         Font dataFont;
-        
+        private object lastValue;
+
         public bool disableMultiTable = false;
         public bool multiSelect = false;
         private bool duplicateTableName = false;
@@ -489,6 +490,7 @@ namespace UniversalPatcher
             retVal.Add(double.MaxValue, "------------");
             return retVal;
         }
+
         public Dictionary<int, string> parseIntEnumHeaders(string eVals)
         {
             Dictionary<int, string> retVal = new Dictionary<int, string>();
@@ -606,7 +608,7 @@ namespace UniversalPatcher
             {
                 colName += cTd.RowHeaders;
             }
-            if (colName != "")
+            //if (colName != "")
             {
                 for (int c = 0; c < dataGridView1.Columns.Count; c++)
                 {
@@ -669,7 +671,7 @@ namespace UniversalPatcher
             {
                 rowName += cTd.RowHeaders;
             }
-            if (rowName != "")
+            //if (rowName != "")
             {
                 for (int c = 0; c < dataGridView1.Rows.Count; c++)
                 {
@@ -779,9 +781,19 @@ namespace UniversalPatcher
             }
             else if (ft.Values.StartsWith("Enum: "))
             {
-                Dictionary<double, string> possibleVals = parseEnumHeaders(ft.Values.Replace("Enum: ", ""));
                 DataGridViewComboBoxCell dgc = new DataGridViewComboBoxCell();
-                dgc.DataSource = new BindingSource(possibleVals, null); 
+                if (ft.OutputType == OutDataType.Float)
+                {
+                    Dictionary<double, string> possibleVals = parseEnumHeaders(ft.Values.Replace("Enum: ", ""));
+                    dgc.DataSource = new BindingSource(possibleVals, null);
+                }
+                else
+                {
+                    Dictionary<int, string> possibleVals = parseIntEnumHeaders(ft.Values.Replace("Enum: ", ""));
+                    dgc.DataSource = new BindingSource(possibleVals, null);
+                }
+                dgc.ValueMember = "key";
+                dgc.DisplayMember = "value";
                 dataGridView1.Rows[gridRow].Cells[gridCol] = dgc;
             }
 
@@ -1307,8 +1319,11 @@ namespace UniversalPatcher
             }
 
         }
+
         private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
+            lastValue = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+
             if (disableSaving)
             {
                 e.Cancel = true;
@@ -1321,6 +1336,12 @@ namespace UniversalPatcher
         {
             try
             {
+                if ( dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value == null || String.IsNullOrWhiteSpace(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString()))
+                {
+                    dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = lastValue;
+                    return;
+                }
+
                 if (e.RowIndex > -1)
                 {
                     Tagi t = (Tagi)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag;
@@ -1347,8 +1368,11 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        SaveValue(t.addr, e.RowIndex, e.ColumnIndex, PCM.tableDatas[t.id]);
+                        if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != lastValue)
+                            SaveValue(t.addr, e.RowIndex, e.ColumnIndex, PCM.tableDatas[t.id]);
                     }
+                    if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != lastValue)
+                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.Yellow;
                 }
             }
             catch (Exception ex)
@@ -1442,7 +1466,16 @@ namespace UniversalPatcher
                 return;
             }
 
-            double value = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
+            double value;
+            if (dataGridView1.Rows[r].Cells[c].GetType() == typeof(DataGridViewComboBoxCell))
+            {
+                DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dataGridView1.Rows[r].Cells[c];
+                value = Convert.ToDouble(cb.Value);
+            }
+            else
+            {
+                value = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
+            }
             if (value == double.MaxValue) return;
             if (!showRawHEXValuesToolStripMenuItem.Checked)
             {
