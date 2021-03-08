@@ -114,46 +114,9 @@ namespace UniversalPatcher
             dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
         }
 
-        private void enableValueSelector()
-        {
-            if (dataGridView1.SelectedCells.Count == 0)
-                return;
-            if (dataGridView1.SelectedCells[0].GetType() == typeof(DataGridViewComboBoxCell)
-                || dataGridView1.SelectedCells[0].GetType() == typeof(DataGridViewCheckBoxCell)
-                || dataGridView1.Columns[dataGridView1.SelectedCells[0].ColumnIndex].GetType() == typeof(DataGridViewComboBoxColumn)
-                || dataGridView1.Columns[dataGridView1.SelectedCells[0].ColumnIndex].GetType() == typeof(DataGridViewCheckBoxColumn))
-            {
-                numDataValue.Enabled = false;
-                return;
-            }
-            else
-            {
-                numDataValue.Enabled = true;
-            }
-            if (td.OutputType == OutDataType.Float)
-            {
-                if (numDecimals.Value > 0)
-                    numDataValue.DecimalPlaces = (int)numDecimals.Value;
-                numDataValue.Increment = 0.1M;
-            }
-            else
-            {
-                numDataValue.DecimalPlaces = 0;
-                numDataValue.Increment = 1;
-            }
-            decimal curVal = Convert.ToDecimal(dataGridView1.SelectedCells[0].Value);
-            numDataValue.Minimum = (decimal)td.Min;
-            numDataValue.Maximum = (decimal)td.Max;
-            if (curVal >= (decimal)td.Min && curVal <= (decimal)td.Max)
-                numDataValue.Value = curVal;
-            else
-                numDataValue.Enabled = false;
-
-        }
 
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            enableValueSelector();
         }
 
         public void addCompareFiletoMenu(PcmFile cmpPCM)
@@ -557,9 +520,10 @@ namespace UniversalPatcher
             string colName = "";
             if (multiSelect)
             {
-                colName = "[" + cTd.TableName + "] ";
+                colName = "[" + cTd.TableName + "]";
                 if (duplicateTableName)
-                    colName += " [" + cTd.Address + "] ";
+                    colName += " [" + cTd.Address + "]";
+                colName += Environment.NewLine;
             }
             //if (cTd.Columns == dataGridView1.Columns.Count)
             //  return col;
@@ -602,17 +566,20 @@ namespace UniversalPatcher
             else if (cTd.ColumnHeaders != "")
             {
                 colName += cTd.ColumnHeaders;
+                if (cTd.Columns > 1)
+                    colName += " (" + col.ToString() + ")";
+            }
+            else
+            {
+                colName += col.ToString();
             }
 
-            if (colName != "")
+            for (int c = 0; c < dataGridView1.Columns.Count; c++)
             {
-                for (int c = 0; c < dataGridView1.Columns.Count; c++)
-                {
-                    if (dataGridView1.Columns[c].HeaderText == colName)
-                    ind = c;
-                }
-                
+                if (dataGridView1.Columns[c].HeaderText == colName)
+                ind = c;
             }
+                
             if (ind < 0)
             {
                 ind = dataGridView1.Columns.Add(colName, colName);
@@ -650,16 +617,18 @@ namespace UniversalPatcher
             else if (cTd.RowHeaders != "")
             {
                 colName += cTd.RowHeaders;
+                if (cTd.Rows > 1)
+                    colName += " (" + col.ToString() + ")";
             }
-            //if (colName != "")
-            {
-                for (int c = 0; c < dataGridView1.Columns.Count; c++)
-                {
-                    if (dataGridView1.Columns[c].HeaderText == colName)
-                        ind = c;
-                }
+            if (colName == "")
+                colName = col.ToString();
 
+            for (int c = 0; c < dataGridView1.Columns.Count; c++)
+            {
+                if (dataGridView1.Columns[c].HeaderText == colName)
+                    ind = c;
             }
+
             if (ind<0)
             {
                 ind = dataGridView1.Columns.Add(colName, colName);
@@ -713,14 +682,16 @@ namespace UniversalPatcher
             else if (cTd.RowHeaders != "")
             {
                 rowName += cTd.RowHeaders;
+                if (cTd.Rows > 1)
+                    rowName += " (" + row.ToString() + ")";
             }
-            //if (rowName != "")
+            if (rowName == "")
+                rowName = row.ToString();
+
+            for (int c = 0; c < dataGridView1.Rows.Count; c++)
             {
-                for (int c = 0; c < dataGridView1.Rows.Count; c++)
-                {
-                    if (dataGridView1.Rows[c].HeaderCell.Value.ToString() == rowName)
-                        ind = c;
-                }
+                if (dataGridView1.Rows[c].HeaderCell.Value.ToString() == rowName)
+                    ind = c;
             }
             if (ind < 0)
             {
@@ -797,14 +768,17 @@ namespace UniversalPatcher
             else if (cTd.ColumnHeaders != "")
             {
                 rowName += cTd.ColumnHeaders;
+                if (cTd.Columns > 1)
+                    rowName += " (" + row.ToString() + ")";
             }
-            if (rowName != "")
+            else
             {
-                for (int c = 0; c < dataGridView1.Rows.Count; c++)
-                {
-                    if (dataGridView1.Rows[c].HeaderCell.Value.ToString() == rowName)
-                        ind = c;
-                }
+                rowName += row.ToString();
+            }
+            for (int c = 0; c < dataGridView1.Rows.Count; c++)
+            {
+                if (dataGridView1.Rows[c].HeaderCell.Value.ToString() == rowName)
+                    ind = c;
             }
             if (ind < 0)
             {
@@ -1027,7 +1001,6 @@ namespace UniversalPatcher
                     }
                 }
                 setDataGridLayout();
-                enableValueSelector();
             }
             catch (Exception ex)
             {
@@ -1302,7 +1275,6 @@ namespace UniversalPatcher
                     showDtdDescriptions();
                 }
                 setDataGridLayout();
-                enableValueSelector();
             }
             catch (Exception ex)
             {
@@ -2087,13 +2059,7 @@ namespace UniversalPatcher
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            enableValueSelector();
         }
 
-        private void numDataValue_ValueChanged(object sender, EventArgs e)
-        {
-            dataGridView1.BeginEdit(false);
-            dataGridView1.SelectedCells[0].Value = Convert.ToDecimal(numDataValue.Value);
-        }
     }
 }

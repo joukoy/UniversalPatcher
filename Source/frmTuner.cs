@@ -92,6 +92,8 @@ namespace UniversalPatcher
             dataGridView1.DataSource = bindingsource;
             filterTables();
         }
+
+
         private void frmTuner_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (Properties.Settings.Default.MainWindowPersistence)
@@ -1093,6 +1095,10 @@ namespace UniversalPatcher
         {
             Debug.WriteLine("Databindingcomplete");
             UseComboBoxForEnums(dataGridView1);
+            foreach (DataGridViewColumn c in dataGridView1.Columns)
+            {
+                c.DefaultCellStyle.DataSourceNullValue = string.Empty;
+            }
         }
 
         private void unitsToolStripMenuItem_Click(object sender, EventArgs e)

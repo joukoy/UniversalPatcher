@@ -66,15 +66,12 @@ namespace UniversalPatcher
             this.radioOriginal = new System.Windows.Forms.RadioButton();
             this.numDecimals = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
-            this.numDataValue = new System.Windows.Forms.NumericUpDown();
-            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numColumn)).BeginInit();
             this.groupSelectCompare.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numDataValue)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -417,31 +414,11 @@ namespace UniversalPatcher
             this.label1.TabIndex = 12;
             this.label1.Text = "Decimals:";
             // 
-            // numDataValue
-            // 
-            this.numDataValue.Enabled = false;
-            this.numDataValue.Location = new System.Drawing.Point(473, 5);
-            this.numDataValue.Name = "numDataValue";
-            this.numDataValue.Size = new System.Drawing.Size(63, 20);
-            this.numDataValue.TabIndex = 13;
-            this.numDataValue.ValueChanged += new System.EventHandler(this.numDataValue_ValueChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(430, 7);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(37, 13);
-            this.label2.TabIndex = 14;
-            this.label2.Text = "Value:";
-            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(599, 450);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.numDataValue);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.numDecimals);
             this.Controls.Add(this.groupSelectCompare);
@@ -466,7 +443,6 @@ namespace UniversalPatcher
             this.groupSelectCompare.ResumeLayout(false);
             this.groupSelectCompare.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numDataValue)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -509,7 +485,5 @@ namespace UniversalPatcher
         private ToolStripMenuItem dataFontToolStripMenuItem;
         private ToolStripMenuItem saveOBD2DescriptionsToolStripMenuItem;
         private ToolStripMenuItem searchCodeFromGoogleToolStripMenuItem;
-        private NumericUpDown numDataValue;
-        private Label label2;
     }
 }
