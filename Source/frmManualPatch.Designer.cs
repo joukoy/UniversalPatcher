@@ -113,11 +113,11 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(9, 256);
+            this.label6.Location = new System.Drawing.Point(9, 252);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(66, 13);
+            this.label6.Size = new System.Drawing.Size(81, 26);
             this.label6.TabIndex = 8;
-            this.label6.Text = "OS:Address:";
+            this.label6.Text = "OS:Address:  \r\nOr Search:Data";
             // 
             // label7
             // 

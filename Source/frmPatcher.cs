@@ -742,38 +742,70 @@ namespace UniversalPatcher
                 {
                     isCompatible = false;
                     uint Addr = 0;
-                    string[] OSlist = xpatch.CompatibleOS.Split(',');
-                    foreach (string OS in OSlist)
+                    if (xpatch.CompatibleOS.ToLower().StartsWith("search:"))
                     {
-                        Parts = OS.Split(':');
-                        if(Parts[0] == "ALL")
+                        Addr = uint.MaxValue;
+                        string searchStr = xpatch.CompatibleOS.Substring(7);
+                        for (int seg=0; seg<basefile.segmentinfos.Length; seg++)
                         {
+                            if (basefile.segmentinfos[seg].Name.ToLower() == xpatch.Segment.ToLower())
+                            {
+                                Debug.WriteLine("Searching only segment: " + basefile.segmentinfos[seg].Name);
+                                for (int b = 0; b < basefile.segmentAddressDatas[seg].SegmentBlocks.Count; b++)
+                                {
+                                    Addr = searchBytes(basefile, searchStr, basefile.segmentAddressDatas[seg].SegmentBlocks[b].Start, basefile.segmentAddressDatas[seg].SegmentBlocks[b].End);
+                                    if (Addr < uint.MaxValue)
+                                        break;
+                                }
+                            }
+                        }
+                        if (Addr == uint.MaxValue)
+                            Addr = searchBytes(basefile, searchStr, 0, basefile.fsize);
+                        if (Addr < uint.MaxValue)
+                        {
+                            Logger("Data found at address: " + Addr.ToString("X8"));
                             isCompatible = true;
-                            if (!HexToUint(Parts[1], out Addr))
-                                throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.CompatibleOS + ")");
-                            Debug.WriteLine("ALL, Addr: " + Parts[1]);
                         }
                         else
                         {
-                            if (BinPN == "")
-                            { 
-                                //Search OS once
-                                for (int s = 0; s < basefile.Segments.Count; s++)
-                                {
-                                    string PN = basefile.ReadInfo(basefile.segmentAddressDatas[s].PNaddr);
-                                    if (Parts[0] == PN)
-                                    {                                        
-                                        isCompatible = true;
-                                        BinPN = PN;
-                                    }
-                                }
-                            }
-                            if (Parts[0] == BinPN)
+                            Logger("Data not found. Already applied?");
+                        }
+                    }
+                    else
+                    {
+                        string[] OSlist = xpatch.CompatibleOS.Split(',');
+                        foreach (string OS in OSlist)
+                        {
+                            Parts = OS.Split(':');
+                            if (Parts[0] == "ALL")
                             {
                                 isCompatible = true;
                                 if (!HexToUint(Parts[1], out Addr))
                                     throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.CompatibleOS + ")");
-                                Debug.WriteLine("OS: " + BinPN + ", Addr: " + Parts[1]);
+                                Debug.WriteLine("ALL, Addr: " + Parts[1]);
+                            }
+                            else
+                            {
+                                if (BinPN == "")
+                                {
+                                    //Search OS once
+                                    for (int s = 0; s < basefile.Segments.Count; s++)
+                                    {
+                                        string PN = basefile.ReadInfo(basefile.segmentAddressDatas[s].PNaddr);
+                                        if (Parts[0] == PN)
+                                        {
+                                            isCompatible = true;
+                                            BinPN = PN;
+                                        }
+                                    }
+                                }
+                                if (Parts[0] == BinPN)
+                                {
+                                    isCompatible = true;
+                                    if (!HexToUint(Parts[1], out Addr))
+                                        throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.CompatibleOS + ")");
+                                    Debug.WriteLine("OS: " + BinPN + ", Addr: " + Parts[1]);
+                                }
                             }
                         }
                     }
@@ -861,7 +893,8 @@ namespace UniversalPatcher
                                 else 
                                 { 
                                     //Set byte
-                                    basefile.buf[Addr] = Byte.Parse(Part,System.Globalization.NumberStyles.HexNumber);
+                                    if (Part != "*") //Skip wildcards
+                                        basefile.buf[Addr] = Byte.Parse(Part,System.Globalization.NumberStyles.HexNumber);
                                 }
                                 Addr++;
                                 ByteCount++;
@@ -1197,7 +1230,7 @@ namespace UniversalPatcher
                 return;
             }
             ApplyXMLPatch();
-            btnCheckSums_Click(sender, e);
+            //btnCheckSums_Click(sender, e);
         }
 
         private void ExtractTable(uint Start, uint End, string[] OSlist, string MaskText)

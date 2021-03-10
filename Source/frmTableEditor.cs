@@ -1111,6 +1111,7 @@ namespace UniversalPatcher
                     if (td.TableName.Contains("[") || td.TableName.Contains("."))
                     {
                         if (td.TableName.ToLower().Contains(" vs.") || td.TableName.StartsWith("Header.") || td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".xVal") || td.TableName.EndsWith(".yVal") || td.TableName.EndsWith(".Size"))
+                        //if (td.TableName.ToLower().Contains(" vs.") || td.TableName.StartsWith("Header.")  || td.TableName.EndsWith(".Size"))
                         {
                             //Special case, "Normal" table, but header values from tables, WITH different table as multiplier
                             Debug.WriteLine("Special case, not real multitable");
