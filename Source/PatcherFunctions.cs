@@ -37,6 +37,7 @@ public class upatcher
         public string Data { get; set; }
         public string Rule { get; set; }
         public string HelpFile { get; set; }
+        public string PostMessage { get; set; }
     }
 
     public class CVN

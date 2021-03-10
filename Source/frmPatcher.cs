@@ -714,102 +714,110 @@ namespace UniversalPatcher
             else
                 tabBadChkFile.Text = "bad chk file (" + BadChkFileList.Count.ToString() + ")";
         }
+
+        private uint checkPatchCompatibility(XmlPatch xpatch)
+        {
+            uint retVal = uint.MaxValue;
+            bool isCompatible = false;
+            string[] Parts = PatchList[0].XmlFile.Split(',');
+            foreach (string Part in Parts)
+            {
+                if (Part == Path.GetFileName(basefile.configFileFullName))
+                    isCompatible = true;
+            }
+            if (!isCompatible)
+            {
+                Logger("Incompatible patch, current configfile: " + basefile.configFile + ", patch configile: " + PatchList[0].XmlFile.Replace(".xml","")) ;
+                return retVal;
+            }
+
+            if (xpatch.CompatibleOS.ToLower().StartsWith("search:"))
+            {
+                string searchStr = xpatch.CompatibleOS.Substring(7);
+                for (int seg = 0; seg < basefile.segmentinfos.Length; seg++)
+                {
+                    if (basefile.segmentinfos[seg].Name.ToLower() == xpatch.Segment.ToLower())
+                    {
+                        Debug.WriteLine("Searching only segment: " + basefile.segmentinfos[seg].Name);
+                        for (int b = 0; b < basefile.segmentAddressDatas[seg].SegmentBlocks.Count; b++)
+                        {
+                            retVal = searchBytes(basefile, searchStr, basefile.segmentAddressDatas[seg].SegmentBlocks[b].Start, basefile.segmentAddressDatas[seg].SegmentBlocks[b].End);
+                            if (retVal < uint.MaxValue)
+                                break;
+                        }
+                    }
+                }
+                if (retVal == uint.MaxValue) //Search whole bin
+                    retVal = searchBytes(basefile, searchStr, 0, basefile.fsize);
+                if (retVal < uint.MaxValue)
+                {
+                    Logger("Data found at address: " + retVal.ToString("X8"));
+                    isCompatible = true;
+                }
+                else
+                {
+                    uint tmpVal = searchBytes(basefile, xpatch.Data, 0, basefile.fsize);
+                    if (tmpVal < uint.MaxValue)
+                        Logger("Patch is already applied, data found at: " + tmpVal.ToString("X8"));
+                    else
+                        Logger("Data not found. Incompatible patch");
+                }
+            }
+            else
+            {
+                string[] OSlist = xpatch.CompatibleOS.Split(',');
+                string BinPN = "";
+                foreach (string OS in OSlist)
+                {
+                    Parts = OS.Split(':');
+                    if (Parts[0] == "ALL")
+                    {
+                        isCompatible = true;
+                        if (!HexToUint(Parts[1], out retVal))
+                            throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.CompatibleOS + ")");
+                        Debug.WriteLine("ALL, Addr: " + Parts[1]);
+                    }
+                    else
+                    {
+                        if (BinPN == "")
+                        {
+                            //Search OS once
+                            for (int s = 0; s < basefile.Segments.Count; s++)
+                            {
+                                string PN = basefile.ReadInfo(basefile.segmentAddressDatas[s].PNaddr);
+                                if (Parts[0] == PN)
+                                {
+                                    isCompatible = true;
+                                    BinPN = PN;
+                                }
+                            }
+                        }
+                        if (Parts[0] == BinPN)
+                        {
+                            isCompatible = true;
+                            if (!HexToUint(Parts[1], out retVal))
+                                throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.CompatibleOS + ")");
+                            Debug.WriteLine("OS: " + BinPN + ", Addr: " + Parts[1]);
+                        }
+                    }
+                }
+            }
+            return retVal;
+        }
+
         private bool ApplyXMLPatch()
         {
             try
             {
-                bool isCompatible = false;
-                string BinPN="";
                 string PrevSegment = "";
                 uint ByteCount = 0;
                 string[] Parts;
-                if (PatchList[0].XmlFile != null)
-                {
-                    Parts = PatchList[0].XmlFile.Split(',');
-                    foreach (string Part in Parts)
-                    {
-                        if (Part == Path.GetFileName(basefile.configFileFullName))
-                            isCompatible = true;
-                    }
-                    if (!isCompatible)
-                    { 
-                        Logger("Incompatible patch");
-                        return false;
-                    }
-                }
+
                 Logger("Applying patch:");
                 foreach (XmlPatch xpatch in PatchList)
                 {
-                    isCompatible = false;
-                    uint Addr = 0;
-                    if (xpatch.CompatibleOS.ToLower().StartsWith("search:"))
-                    {
-                        Addr = uint.MaxValue;
-                        string searchStr = xpatch.CompatibleOS.Substring(7);
-                        for (int seg=0; seg<basefile.segmentinfos.Length; seg++)
-                        {
-                            if (basefile.segmentinfos[seg].Name.ToLower() == xpatch.Segment.ToLower())
-                            {
-                                Debug.WriteLine("Searching only segment: " + basefile.segmentinfos[seg].Name);
-                                for (int b = 0; b < basefile.segmentAddressDatas[seg].SegmentBlocks.Count; b++)
-                                {
-                                    Addr = searchBytes(basefile, searchStr, basefile.segmentAddressDatas[seg].SegmentBlocks[b].Start, basefile.segmentAddressDatas[seg].SegmentBlocks[b].End);
-                                    if (Addr < uint.MaxValue)
-                                        break;
-                                }
-                            }
-                        }
-                        if (Addr == uint.MaxValue)
-                            Addr = searchBytes(basefile, searchStr, 0, basefile.fsize);
-                        if (Addr < uint.MaxValue)
-                        {
-                            Logger("Data found at address: " + Addr.ToString("X8"));
-                            isCompatible = true;
-                        }
-                        else
-                        {
-                            Logger("Data not found. Already applied?");
-                        }
-                    }
-                    else
-                    {
-                        string[] OSlist = xpatch.CompatibleOS.Split(',');
-                        foreach (string OS in OSlist)
-                        {
-                            Parts = OS.Split(':');
-                            if (Parts[0] == "ALL")
-                            {
-                                isCompatible = true;
-                                if (!HexToUint(Parts[1], out Addr))
-                                    throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.CompatibleOS + ")");
-                                Debug.WriteLine("ALL, Addr: " + Parts[1]);
-                            }
-                            else
-                            {
-                                if (BinPN == "")
-                                {
-                                    //Search OS once
-                                    for (int s = 0; s < basefile.Segments.Count; s++)
-                                    {
-                                        string PN = basefile.ReadInfo(basefile.segmentAddressDatas[s].PNaddr);
-                                        if (Parts[0] == PN)
-                                        {
-                                            isCompatible = true;
-                                            BinPN = PN;
-                                        }
-                                    }
-                                }
-                                if (Parts[0] == BinPN)
-                                {
-                                    isCompatible = true;
-                                    if (!HexToUint(Parts[1], out Addr))
-                                        throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.CompatibleOS + ")");
-                                    Debug.WriteLine("OS: " + BinPN + ", Addr: " + Parts[1]);
-                                }
-                            }
-                        }
-                    }
-                    if (isCompatible)
+                    uint Addr = checkPatchCompatibility(xpatch);
+                    if (Addr < uint.MaxValue)
                     {
                         if (xpatch.Description != null && xpatch.Description != "")
                             Logger(xpatch.Description);
@@ -900,6 +908,8 @@ namespace UniversalPatcher
                                 ByteCount++;
                             }
                         }
+                        if (xpatch.PostMessage != null && xpatch.PostMessage.Length > 1)
+                            LoggerBold(xpatch.PostMessage);
                     }
                     else
                     {
@@ -907,7 +917,8 @@ namespace UniversalPatcher
                         return false;
                     }
                 }
-                Logger("Applied: " + ByteCount.ToString() + " Bytes");
+                Logger("Applied: " + ByteCount.ToString() + " Bytes");                
+                Logger("You can save BIN file now");
             }
             catch (Exception ex)
             {
@@ -1598,9 +1609,18 @@ namespace UniversalPatcher
                         }
                         Logger("For OS: " + CompOS);
                     }
-                    btnApplypatch.Enabled = true;
+                    bool isCompatible = false;
+                    for (int x=0; x<PatchList.Count; x++)
+                    {
+                        if (checkPatchCompatibility(PatchList[x]) < uint.MaxValue)
+                            isCompatible = true;
+                    }
+                    if (isCompatible)
+                    {
+                        btnApplypatch.Enabled = true;
+                        Logger("Patch is compatible, you can apply it");
+                    }
                     RefreshDatagrid();
-                    Logger("[OK]");
                 }
             }
             catch (Exception ex)

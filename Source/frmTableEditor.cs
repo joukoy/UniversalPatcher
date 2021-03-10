@@ -1484,7 +1484,8 @@ namespace UniversalPatcher
             }
 
         }
-        private void SaveValue(uint addr,int r, int c, TableData mathTd)
+
+        public void SaveValue(uint addr,int r, int c, TableData mathTd, double value = double.MinValue)
         {
             MathParser parser = new MathParser();
             UInt32 bufAddr = addr - td.addrInt;
@@ -1496,15 +1497,17 @@ namespace UniversalPatcher
                 return;
             }
 
-            double value;
-            if (dataGridView1.Rows[r].Cells[c].GetType() == typeof(DataGridViewComboBoxCell))
+            if (value == double.MinValue)
             {
-                DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dataGridView1.Rows[r].Cells[c];
-                value = Convert.ToDouble(cb.Value);
-            }
-            else
-            {
-                value = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
+                if (dataGridView1.Rows[r].Cells[c].GetType() == typeof(DataGridViewComboBoxCell))
+                {
+                    DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dataGridView1.Rows[r].Cells[c];
+                    value = Convert.ToDouble(cb.Value);
+                }
+                else
+                {
+                    value = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
+                }
             }
             if (value == double.MaxValue) return;
             if (!showRawHEXValuesToolStripMenuItem.Checked)
@@ -1546,7 +1549,7 @@ namespace UniversalPatcher
                 SaveUint64(tableBuffer, bufAddr, (UInt64)value);
 
         }
-        private void saveTable()
+        public void saveTable()
         {
             try
             {
