@@ -1108,10 +1108,22 @@ namespace UniversalPatcher
                 }
                 if (!disableMultiTable)
                 {
+                    if (td.TableName.ToLower().EndsWith(".xval") || td.TableName.ToLower().EndsWith(".yval"))
+                    {
+                        for (int x = 0; x < PCM.tableDatas.Count; x++)
+                        {
+                            if (PCM.tableDatas[x].TableName.ToLower() == td.TableName.ToLower().Replace(".yval", ".data").Replace(".xval", ".data"))
+                            {
+                                td = PCM.tableDatas[x];
+                                loadTable(td);
+                                return;
+                            }
+                        }
+                    }
                     if (td.TableName.Contains("[") || td.TableName.Contains("."))
                     {
-                        if (td.TableName.ToLower().Contains(" vs.") || td.TableName.StartsWith("Header.") || td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".xVal") || td.TableName.EndsWith(".yVal") || td.TableName.EndsWith(".Size"))
-                        //if (td.TableName.ToLower().Contains(" vs.") || td.TableName.StartsWith("Header.")  || td.TableName.EndsWith(".Size"))
+                        //if (td.TableName.ToLower().Contains(" vs.") || td.TableName.StartsWith("Header.") || td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".xVal") || td.TableName.EndsWith(".yVal") || td.TableName.EndsWith(".Size"))
+                        if (td.TableName.ToLower().Contains(" vs.") || td.TableName.StartsWith("Header.") || td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".Size"))
                         {
                             //Special case, "Normal" table, but header values from tables, WITH different table as multiplier
                             Debug.WriteLine("Special case, not real multitable");
