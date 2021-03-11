@@ -59,7 +59,7 @@
             this.tabPatch = new System.Windows.Forms.TabPage();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnNew = new System.Windows.Forms.Button();
-            this.btnLoad = new System.Windows.Forms.Button();
+            this.btnLoadPatch = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnHelp = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
@@ -197,9 +197,9 @@
             this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTunerAutloadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -561,7 +561,7 @@
             // 
             this.tabPatch.Controls.Add(this.btnRefresh);
             this.tabPatch.Controls.Add(this.btnNew);
-            this.tabPatch.Controls.Add(this.btnLoad);
+            this.tabPatch.Controls.Add(this.btnLoadPatch);
             this.tabPatch.Controls.Add(this.btnSave);
             this.tabPatch.Controls.Add(this.btnHelp);
             this.tabPatch.Controls.Add(this.btnEdit);
@@ -601,16 +601,16 @@
             this.btnNew.UseVisualStyleBackColor = true;
             this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
             // 
-            // btnLoad
+            // btnLoadPatch
             // 
-            this.btnLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLoad.Location = new System.Drawing.Point(727, 0);
-            this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(49, 23);
-            this.btnLoad.TabIndex = 252;
-            this.btnLoad.Text = "Load";
-            this.btnLoad.UseVisualStyleBackColor = true;
-            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click_1);
+            this.btnLoadPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLoadPatch.Location = new System.Drawing.Point(727, 0);
+            this.btnLoadPatch.Name = "btnLoadPatch";
+            this.btnLoadPatch.Size = new System.Drawing.Size(49, 23);
+            this.btnLoadPatch.TabIndex = 252;
+            this.btnLoadPatch.Text = "Load";
+            this.btnLoadPatch.UseVisualStyleBackColor = true;
+            this.btnLoadPatch.Click += new System.EventHandler(this.btnLoadPatch_Click);
             // 
             // btnSave
             // 
@@ -2100,6 +2100,13 @@
             this.disableTunerAutloadConfigToolStripMenuItem.Text = "Disable tuner autoload config";
             this.disableTunerAutloadConfigToolStripMenuItem.Click += new System.EventHandler(this.disableTunerAutloadConfigToolStripMenuItem_Click);
             // 
+            // moreSettingsToolStripMenuItem
+            // 
+            this.moreSettingsToolStripMenuItem.Name = "moreSettingsToolStripMenuItem";
+            this.moreSettingsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.moreSettingsToolStripMenuItem.Text = "More settings...";
+            this.moreSettingsToolStripMenuItem.Click += new System.EventHandler(this.moreSettingsToolStripMenuItem_Click);
+            // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -2114,13 +2121,6 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // moreSettingsToolStripMenuItem
-            // 
-            this.moreSettingsToolStripMenuItem.Name = "moreSettingsToolStripMenuItem";
-            this.moreSettingsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.moreSettingsToolStripMenuItem.Text = "More settings...";
-            this.moreSettingsToolStripMenuItem.Click += new System.EventHandler(this.moreSettingsToolStripMenuItem_Click);
             // 
             // FrmPatcher
             // 
@@ -2258,7 +2258,7 @@
         private System.Windows.Forms.ToolStripMenuItem stockCVNToolStripMenuItem;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnNew;
-        private System.Windows.Forms.Button btnLoad;
+        private System.Windows.Forms.Button btnLoadPatch;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.TabPage tabCVN;
         private System.Windows.Forms.DataGridView dataCVN;

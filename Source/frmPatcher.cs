@@ -715,218 +715,6 @@ namespace UniversalPatcher
                 tabBadChkFile.Text = "bad chk file (" + BadChkFileList.Count.ToString() + ")";
         }
 
-        private uint checkPatchCompatibility(XmlPatch xpatch)
-        {
-            uint retVal = uint.MaxValue;
-            bool isCompatible = false;
-            string[] Parts = PatchList[0].XmlFile.Split(',');
-            foreach (string Part in Parts)
-            {
-                if (Part == Path.GetFileName(basefile.configFileFullName))
-                    isCompatible = true;
-            }
-            if (!isCompatible)
-            {
-                Logger("Incompatible patch, current configfile: " + basefile.configFile + ", patch configile: " + PatchList[0].XmlFile.Replace(".xml","")) ;
-                return retVal;
-            }
-
-            if (xpatch.CompatibleOS.ToLower().StartsWith("search:"))
-            {
-                string searchStr = xpatch.CompatibleOS.Substring(7);
-                for (int seg = 0; seg < basefile.segmentinfos.Length; seg++)
-                {
-                    if (basefile.segmentinfos[seg].Name.ToLower() == xpatch.Segment.ToLower())
-                    {
-                        Debug.WriteLine("Searching only segment: " + basefile.segmentinfos[seg].Name);
-                        for (int b = 0; b < basefile.segmentAddressDatas[seg].SegmentBlocks.Count; b++)
-                        {
-                            retVal = searchBytes(basefile, searchStr, basefile.segmentAddressDatas[seg].SegmentBlocks[b].Start, basefile.segmentAddressDatas[seg].SegmentBlocks[b].End);
-                            if (retVal < uint.MaxValue)
-                                break;
-                        }
-                    }
-                }
-                if (retVal == uint.MaxValue) //Search whole bin
-                    retVal = searchBytes(basefile, searchStr, 0, basefile.fsize);
-                if (retVal < uint.MaxValue)
-                {
-                    Logger("Data found at address: " + retVal.ToString("X8"));
-                    isCompatible = true;
-                }
-                else
-                {
-                    uint tmpVal = searchBytes(basefile, xpatch.Data, 0, basefile.fsize);
-                    if (tmpVal < uint.MaxValue)
-                        Logger("Patch is already applied, data found at: " + tmpVal.ToString("X8"));
-                    else
-                        Logger("Data not found. Incompatible patch");
-                }
-            }
-            else
-            {
-                string[] OSlist = xpatch.CompatibleOS.Split(',');
-                string BinPN = "";
-                foreach (string OS in OSlist)
-                {
-                    Parts = OS.Split(':');
-                    if (Parts[0] == "ALL")
-                    {
-                        isCompatible = true;
-                        if (!HexToUint(Parts[1], out retVal))
-                            throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.CompatibleOS + ")");
-                        Debug.WriteLine("ALL, Addr: " + Parts[1]);
-                    }
-                    else
-                    {
-                        if (BinPN == "")
-                        {
-                            //Search OS once
-                            for (int s = 0; s < basefile.Segments.Count; s++)
-                            {
-                                string PN = basefile.ReadInfo(basefile.segmentAddressDatas[s].PNaddr);
-                                if (Parts[0] == PN)
-                                {
-                                    isCompatible = true;
-                                    BinPN = PN;
-                                }
-                            }
-                        }
-                        if (Parts[0] == BinPN)
-                        {
-                            isCompatible = true;
-                            if (!HexToUint(Parts[1], out retVal))
-                                throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.CompatibleOS + ")");
-                            Debug.WriteLine("OS: " + BinPN + ", Addr: " + Parts[1]);
-                        }
-                    }
-                }
-            }
-            return retVal;
-        }
-
-        private bool ApplyXMLPatch()
-        {
-            try
-            {
-                string PrevSegment = "";
-                uint ByteCount = 0;
-                string[] Parts;
-
-                Logger("Applying patch:");
-                foreach (XmlPatch xpatch in PatchList)
-                {
-                    uint Addr = checkPatchCompatibility(xpatch);
-                    if (Addr < uint.MaxValue)
-                    {
-                        if (xpatch.Description != null && xpatch.Description != "")
-                            Logger(xpatch.Description);
-                        if (xpatch.Segment != null && xpatch.Segment.Length > 0 && PrevSegment != xpatch.Segment)
-                        {
-                            PrevSegment = xpatch.Segment;
-                            Logger("Segment: " + xpatch.Segment);
-                        }
-                        bool PatchRule = true; //If there is no rule, apply patch
-                        if (xpatch.Rule != null && (xpatch.Rule.Contains(':') || xpatch.Rule.Contains('[')))
-                        {
-                            Parts = xpatch.Rule.Split(new char[] { ']', '[', ':' }, StringSplitOptions.RemoveEmptyEntries);
-                            if (Parts.Length == 3)
-                            {
-                                uint RuleAddr;
-                                if (!HexToUint(Parts[0], out RuleAddr))
-                                    throw new Exception("Can't decode from HEX: " + Parts[0] + " (" + xpatch.Rule + ")");
-                                ushort RuleMask;
-                                if (!HexToUshort(Parts[1], out RuleMask))
-                                    throw new Exception("Can't decode from HEX: " + Parts[1] + " (" + xpatch.Rule + ")");
-                                ushort RuleValue;
-                                if (!HexToUshort(Parts[2].Replace("!",""), out RuleValue))
-                                    throw new Exception("Can't decode from HEX: " + Parts[2] + " (" + xpatch.Rule + ")");
-
-                                if (Parts[2].Contains("!"))
-                                {
-                                    if ((basefile.buf[RuleAddr] & RuleMask) != RuleValue)
-                                    {
-                                        PatchRule = true;
-                                        Logger("Rule match, applying patch");
-                                    }
-                                    else
-                                    {
-                                        PatchRule = false;
-                                        Logger("Rule doesn't match, skipping patch");
-                                    }
-                                }
-                                else
-                                {
-                                    if ((basefile.buf[RuleAddr] & RuleMask) == RuleValue)
-                                    {
-                                        PatchRule = true;
-                                        Logger("Rule match, applying patch");
-                                    }
-                                    else
-                                    {
-                                        PatchRule = false;
-                                        Logger("Rule doesn't match, skipping patch");
-                                    }
-                                }
-
-                            }
-                        }
-                        if (PatchRule) { 
-                            Debug.WriteLine(Addr.ToString("X") + ":" + xpatch.Data);
-                            Parts = xpatch.Data.Split(' ');                        
-                            foreach(string Part in Parts)
-                            {                            
-                                //Actually add patch data:
-                                if (Part.Contains("[") || Part.Contains(":"))
-                                {
-                                    //Set bits / use Mask
-                                    byte Origdata = basefile.buf[Addr];
-                                    Debug.WriteLine("Set address: " + Addr.ToString("X") + ", old data: " + Origdata.ToString("X"));
-                                    string[] dataparts;
-                                    dataparts = Part.Split(new char[] { ']', '[', ':' }, StringSplitOptions.RemoveEmptyEntries);
-                                    byte Setdata = byte.Parse(dataparts[0], System.Globalization.NumberStyles.HexNumber);
-                                    byte Mask = byte.Parse(dataparts[1].Replace("]",""), System.Globalization.NumberStyles.HexNumber);
-
-                                    // Set 1
-                                    byte tmpMask = (byte)(Mask & Setdata);
-                                    byte Newdata = (byte)(Origdata | tmpMask);
-
-                                    // Set 0
-                                    tmpMask = (byte)(Mask & ~Setdata);
-                                    Newdata = (byte)(Newdata & ~tmpMask);
-
-                                    Debug.WriteLine("New data: " + Newdata.ToString("X"));
-                                    basefile.buf[Addr] = Newdata;
-                                }
-                                else 
-                                { 
-                                    //Set byte
-                                    if (Part != "*") //Skip wildcards
-                                        basefile.buf[Addr] = Byte.Parse(Part,System.Globalization.NumberStyles.HexNumber);
-                                }
-                                Addr++;
-                                ByteCount++;
-                            }
-                        }
-                        if (xpatch.PostMessage != null && xpatch.PostMessage.Length > 1)
-                            LoggerBold(xpatch.PostMessage);
-                    }
-                    else
-                    {
-                        Logger("Patch is not compatible");
-                        return false;
-                    }
-                }
-                Logger("Applied: " + ByteCount.ToString() + " Bytes");                
-                Logger("You can save BIN file now");
-            }
-            catch (Exception ex)
-            {
-                Logger("Error: " + ex.Message);
-                return false;
-            }
-            return true;
-        }
 
         private void CompareBlock(byte[] OrgFile, byte[] ModFile, uint Start, uint End, string CurrentSegment, AddressData[] SkipList)
         {
@@ -1240,7 +1028,7 @@ namespace UniversalPatcher
                 Logger("Nothing to do");
                 return;
             }
-            ApplyXMLPatch();
+            ApplyXMLPatch(basefile);
             //btnCheckSums_Click(sender, e);
         }
 
@@ -1410,9 +1198,20 @@ namespace UniversalPatcher
             }
         }
 
+        public void openPatchSelector()
+        {
+            frmPatchSelector frmPS = new frmPatchSelector();
+            frmPS.basefile = basefile;
+            frmPS.Show();
+            Application.DoEvents();
+            frmPS.loadPatches();
+
+        }
+
         private void btnBinLoadPatch_Click(object sender, EventArgs e)
         {
-            LoadPatch();
+            //LoadPatch();
+            openPatchSelector();
         }
 
         private void chkDebug_CheckedChanged(object sender, EventArgs e)
@@ -1433,6 +1232,8 @@ namespace UniversalPatcher
 
         public void EditPatchRow()
         {
+            if (PatchList == null ||  PatchList.Count == 0)
+                return;
             if (dataPatch.SelectedRows.Count == 0 && dataPatch.SelectedCells.Count == 0)
                 return;
             if (dataPatch.SelectedRows.Count == 0)
@@ -1581,18 +1382,18 @@ namespace UniversalPatcher
 
         }
 
-        public void LoadPatch()
+        public void LoadPatch(string fileName)
         {
             try
             {
-                string FileName = SelectFile("Select patch file", "XML patch files (*.xmlpatch)|*.xmlpatch|PATCH files (*.patch)|*.patch|ALL files(*.*)|*.*");
-                if (FileName.Length > 1)
+                //fileName = SelectFile("Select patch file", "XML patch files (*.xmlpatch)|*.xmlpatch|PATCH files (*.patch)|*.patch|ALL files(*.*)|*.*");
+                if (fileName.Length > 1)
                 {
-                    labelPatchname.Text = FileName;
-                    Logger("Loading file: " + FileName);
+                    labelPatchname.Text = fileName;
+                    Logger("Loading file: " + fileName);
                     System.Xml.Serialization.XmlSerializer reader =
                         new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
-                    System.IO.StreamReader file = new System.IO.StreamReader(FileName);
+                    System.IO.StreamReader file = new System.IO.StreamReader(fileName);
                     PatchList = (List<XmlPatch>)reader.Deserialize(file);
                     file.Close();
                     if (PatchList.Count > 0)
@@ -1612,7 +1413,7 @@ namespace UniversalPatcher
                     bool isCompatible = false;
                     for (int x=0; x<PatchList.Count; x++)
                     {
-                        if (checkPatchCompatibility(PatchList[x]) < uint.MaxValue)
+                        if (checkPatchCompatibility(PatchList[x],basefile) < uint.MaxValue)
                             isCompatible = true;
                     }
                     if (isCompatible)
@@ -1628,10 +1429,6 @@ namespace UniversalPatcher
                 Logger("Error: " + ex.Message);
             }
 
-        }
-        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            LoadPatch();
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1711,10 +1508,6 @@ namespace UniversalPatcher
             frmE.Show();
         }
 
-        private void btnLoad_Click_1(object sender, EventArgs e)
-        {
-            LoadPatch();
-        }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
@@ -3319,6 +3112,11 @@ namespace UniversalPatcher
         {
             frmMoreSettings frmTS = new frmMoreSettings();
             frmTS.Show();
+        }
+
+        private void btnLoadPatch_Click(object sender, EventArgs e)
+        {
+            openPatchSelector();
         }
     }
 }
