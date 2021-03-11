@@ -83,9 +83,9 @@
             // btnSelect
             // 
             this.btnSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSelect.Location = new System.Drawing.Point(694, 2);
+            this.btnSelect.Location = new System.Drawing.Point(710, 2);
             this.btnSelect.Name = "btnSelect";
-            this.btnSelect.Size = new System.Drawing.Size(113, 23);
+            this.btnSelect.Size = new System.Drawing.Size(97, 23);
             this.btnSelect.TabIndex = 1;
             this.btnSelect.Text = "Load selected";
             this.btnSelect.UseVisualStyleBackColor = true;

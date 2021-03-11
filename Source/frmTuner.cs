@@ -2137,5 +2137,31 @@ namespace UniversalPatcher
             fls.startTableCopy();
 
         }
+
+        private void openPatchSelector()
+        {
+            frmPatchSelector frmPS = new frmPatchSelector();
+            frmPS.basefile = PCM;
+            frmPS.tunerForm = this;
+            frmPS.Show();
+            Application.DoEvents();
+            frmPS.loadPatches();
+        }
+
+        public void applyPatch(string fileName)
+        {
+            Logger("Loading file: " + fileName);
+            System.Xml.Serialization.XmlSerializer reader =
+                new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
+            System.IO.StreamReader file = new System.IO.StreamReader(fileName);
+            PatchList = (List<XmlPatch>)reader.Deserialize(file);
+            file.Close();
+            ApplyXMLPatch(PCM);
+        }
+
+        private void applyPatchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openPatchSelector();
+        }
     }
 }

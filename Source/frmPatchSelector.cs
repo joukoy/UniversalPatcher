@@ -28,6 +28,7 @@ namespace UniversalPatcher
 
         private List<PatchFile> patchFileList;
         public PcmFile basefile;
+        public frmTuner tunerForm;
         private BindingSource bindingSource;
 
         private void frmPatchSelector_Load(object sender, EventArgs e)
@@ -137,8 +138,13 @@ namespace UniversalPatcher
             int row = dataGridView1.SelectedCells[0].RowIndex;
             string fName = dataGridView1.Rows[0].Cells["FileName"].Value.ToString();
             this.Hide();
-            frmpatcher.LoadPatch(fName);
+            if (tunerForm == null)
+                frmpatcher.LoadPatch(fName);
+            else
+                tunerForm.applyPatch(fName);
             this.Close();
         }
+
+
     }
 }
