@@ -29,7 +29,7 @@ namespace UniversalPatcher
             selectPCM();
         }
 
-        private PcmFile PCM;
+        public PcmFile PCM;
         //private List<TableData> tableDataList;
         private string sortBy = "id";
         private int sortIndex = 0;
@@ -118,7 +118,7 @@ namespace UniversalPatcher
             Properties.Settings.Default.Save();
         }
 
-        private void selectPCM()
+        public void selectPCM()
         {
             this.Text = "Tuner " + PCM.FileName;
             PCM.selectTableDatas(0, PCM.FileName);
@@ -156,12 +156,11 @@ namespace UniversalPatcher
 
         }
 
-        private void loadConfigforPCM(ref PcmFile newPCM)
+        public void loadConfigforPCM(ref PcmFile newPCM)
         {
             if (!Properties.Settings.Default.disableTunerAutoloadSettings)
             {
                 string defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", newPCM.OS + ".xml");
-                //string defaultTxt = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".txt");
                 compXml = "";
                 if (File.Exists(defaultTunerFile))
                 {
@@ -190,6 +189,7 @@ namespace UniversalPatcher
             }
 
         }
+
         private void openTableEditor()
         {
             try
@@ -625,6 +625,7 @@ namespace UniversalPatcher
             refreshTablelist();
 
         }
+
         private void btnReadTinyTunerDB_Click(object sender, EventArgs e)
         {
             importTinyTunerDB();
@@ -675,21 +676,6 @@ namespace UniversalPatcher
                 Logger(" [OK]");
                 filterTables();
             }
-        }
-        private void importDTCToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void importTableSeekToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void importXDFToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void importTinyTunerDBV6OnlyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
         }
 
         private void clearTableToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1635,7 +1621,7 @@ namespace UniversalPatcher
             selectPCM();
         }
 
-        private void addtoCurrentFileMenu(PcmFile newPCM)
+        public void addtoCurrentFileMenu(PcmFile newPCM)
         {
             foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                 mi.Checked = false;
@@ -2133,124 +2119,22 @@ namespace UniversalPatcher
             filterTables();
         }
 
-        private void copyTableData(TableData srcTd, TableData dstTd,ref PcmFile dstPCM)
-        {
-            frmTableEditor srcTE = new frmTableEditor();
-            srcTE.PCM = PCM;
-            srcTE.loadTable(srcTd);
-            frmTableEditor dstTE = new frmTableEditor();
-            dstTE.PCM = dstPCM;
-            dstTE.loadTable(dstTd);
-
-            uint srcAddr = (uint)(srcTd.addrInt + srcTd.Offset);
-            int srcStep = getElementSize(srcTd.DataType);
-            uint dstAddr = (uint)(dstTd.addrInt + dstTd.Offset);
-            int dstStep = getElementSize(dstTd.DataType);
-            for (int r=0; r < srcTd.Rows; r++)
-            {
-                for (int c=0; c<srcTd.Columns; c++)
-                {
-                    double cellValue = srcTE.getValue(srcAddr, srcTd);
-                    dstTE.SaveValue(dstAddr, r, c, dstTd, cellValue);
-                    srcAddr += (uint)srcStep;
-                    dstAddr += (uint)dstStep;
-                }
-            }
-            dstTE.saveTable();
-            dstPCM = dstTE.PCM;
-            srcTE.Dispose();
-            dstTE.Dispose();
-        }
-
-        private string searchTargetTables(ref PcmFile dstPCM, List<int> tableIds, bool execNow)
-        {
-            string retVal = "";
-            for (int x = 0; x < tableIds.Count; x++)
-            {
-                TableData sourceTd = PCM.tableDatas[tableIds[x]];
-                int targetId = findTableDataId(sourceTd, dstPCM.tableDatas);
-                if (targetId < 0)
-                {
-                    retVal += "Table missing: " + sourceTd.TableName + Environment.NewLine;
-                }
-                else
-                {
-                    TableData dstTd = dstPCM.tableDatas[targetId];
-                    if (sourceTd.Rows != dstTd.Rows || sourceTd.Columns != dstTd.Columns || sourceTd.RowMajor != dstTd.RowMajor)
-                    {
-                        retVal += "Table size not match: " + sourceTd.TableName + Environment.NewLine;
-                    }
-                    else
-                    {
-                        if (execNow)
-                        {
-                            retVal += "Copying table: " + sourceTd.TableName +"...";
-                            copyTableData(sourceTd, dstTd, ref dstPCM);
-                            retVal += " [OK]" + Environment.NewLine;
-                        }
-                        else
-                        {
-                            retVal += "Table found: " + sourceTd.TableName + Environment.NewLine;
-                        }
-                    }
-                }
-            }
-            return retVal;
-        }
 
         private void copySelectedTablesToToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            try
+            List<int> tableIds = new List<int>();
+            for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
             {
-                List<int> tableIds = new List<int>();
-                for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
-                {
-                    int row = dataGridView1.SelectedCells[i].RowIndex;
-                    int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
-                    if (!tableIds.Contains(id))
-                        tableIds.Add(id);
-                }
-                frmFileSelection frmF = new frmFileSelection();
-                frmF.btnOK.Text = "Select files";
-                frmF.Text = "Select target for tables";
-                frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
-                if (frmF.ShowDialog(this) == DialogResult.OK)
-                {
-                    List<PcmFile> PCMlist = new List<PcmFile>();
-                    frmLogShow fls = new frmLogShow();
-                    for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
-                    {
-                        string fileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                        PcmFile newPCM = new PcmFile(fileName, true, "");
-                        fls.LoggerBold(fileName);
-                        loadConfigforPCM(ref newPCM);
-                        if (PCM.seekTablesImported && !newPCM.seekTablesImported)
-                            newPCM.importSeekTables();
-                        PCMlist.Add(newPCM);
-                        string logStr = searchTargetTables(ref newPCM, tableIds, false);
-                        fls.Logger(logStr);
-                    }
-                    fls.LoggerBold("Press Apply to copy tables and save target files");
-                    fls.LoggerBold("Selected files will be modified!");
-                    if (fls.ShowDialog(this) == DialogResult.OK)
-                    {
-                        for (int i = 0; i < PCMlist.Count; i++)
-                        {
-                            string fileName = PCMlist[i].FileName;
-                            PcmFile newPCM = PCMlist[i];
-                            fls.LoggerBold(fileName);
-                            string logStr = searchTargetTables(ref newPCM, tableIds, true);
-                            Logger(logStr);
-                            newPCM.saveBin(newPCM.FileName);
-                        }
-                        LoggerBold("Done!");
-                    }
-                }
+                int row = dataGridView1.SelectedCells[i].RowIndex;
+                int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
+                if (!tableIds.Contains(id))
+                    tableIds.Add(id);
             }
-            catch (Exception ex)
-            {
-                LoggerBold(ex.Message);
-            }
+            frmMassCopyTables fls = new frmMassCopyTables();
+            fls.PCM = PCM;
+            fls.tableIds = tableIds;
+            fls.Show();
+            fls.startTableCopy();
 
         }
     }

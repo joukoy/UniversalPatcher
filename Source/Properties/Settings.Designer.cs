@@ -12,7 +12,7 @@ namespace UniversalPatcher.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.8.1.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.7.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -643,6 +643,66 @@ namespace UniversalPatcher.Properties {
             }
             set {
                 this["TableEditorMinOtherEquivalency"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point MassCopyTableWindowLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["MassCopyTableWindowLocation"]));
+            }
+            set {
+                this["MassCopyTableWindowLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.Forms.FormWindowState MassCopyTableWindowState {
+            get {
+                return ((global::System.Windows.Forms.FormWindowState)(this["MassCopyTableWindowState"]));
+            }
+            set {
+                this["MassCopyTableWindowState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size MassCopyTableWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["MassCopyTableWindowSize"]));
+            }
+            set {
+                this["MassCopyTableWindowSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MassCopyTableSplitHeight {
+            get {
+                return ((int)(this["MassCopyTableSplitHeight"]));
+            }
+            set {
+                this["MassCopyTableSplitHeight"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-new")]
+        public string MassCopyTableFilenameExtra {
+            get {
+                return ((string)(this["MassCopyTableFilenameExtra"]));
+            }
+            set {
+                this["MassCopyTableFilenameExtra"] = value;
             }
         }
     }

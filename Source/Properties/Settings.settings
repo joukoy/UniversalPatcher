@@ -158,5 +158,20 @@
     <Setting Name="TableEditorMinOtherEquivalency" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">100</Value>
     </Setting>
+    <Setting Name="MassCopyTableWindowLocation" Type="System.Drawing.Point" Scope="User">
+      <Value Profile="(Default)">0, 0</Value>
+    </Setting>
+    <Setting Name="MassCopyTableWindowState" Type="System.Windows.Forms.FormWindowState" Scope="User">
+      <Value Profile="(Default)">Normal</Value>
+    </Setting>
+    <Setting Name="MassCopyTableWindowSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">0, 0</Value>
+    </Setting>
+    <Setting Name="MassCopyTableSplitHeight" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MassCopyTableFilenameExtra" Type="System.String" Scope="User">
+      <Value Profile="(Default)">-new</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
