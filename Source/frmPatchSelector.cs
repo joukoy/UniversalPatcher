@@ -35,6 +35,14 @@ namespace UniversalPatcher
         {
             bindingSource = new BindingSource();
             dataGridView1.DataSource = bindingSource;
+            dataGridView1.CellContentDoubleClick += DataGridView1_CellContentDoubleClick;
+            if (tunerForm != null)
+                btnSelect.Text = "Apply selected patch";
+        }
+
+        private void DataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            selectPatch();
         }
 
         private void refreshFileList()
@@ -131,18 +139,23 @@ namespace UniversalPatcher
             loadPatches();
         }
 
-        private void btnSelect_Click(object sender, EventArgs e)
+        private void selectPatch()
         {
             if (patchFileList == null || patchFileList.Count == 0)
                 return;
             int row = dataGridView1.SelectedCells[0].RowIndex;
-            string fName = dataGridView1.Rows[0].Cells["FileName"].Value.ToString();
+            string fName = dataGridView1.Rows[row].Cells["FileName"].Value.ToString();
             this.Hide();
             if (tunerForm == null)
                 frmpatcher.LoadPatch(fName);
             else
                 tunerForm.applyPatch(fName);
             this.Close();
+
+        }
+        private void btnSelect_Click(object sender, EventArgs e)
+        {
+            selectPatch();
         }
 
 

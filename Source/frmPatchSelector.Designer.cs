@@ -83,11 +83,11 @@
             // btnSelect
             // 
             this.btnSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSelect.Location = new System.Drawing.Point(710, 2);
+            this.btnSelect.Location = new System.Drawing.Point(675, 2);
             this.btnSelect.Name = "btnSelect";
-            this.btnSelect.Size = new System.Drawing.Size(97, 23);
+            this.btnSelect.Size = new System.Drawing.Size(132, 23);
             this.btnSelect.TabIndex = 1;
-            this.btnSelect.Text = "Load selected";
+            this.btnSelect.Text = "Load selected patch";
             this.btnSelect.UseVisualStyleBackColor = true;
             this.btnSelect.Click += new System.EventHandler(this.btnSelect_Click);
             // 
