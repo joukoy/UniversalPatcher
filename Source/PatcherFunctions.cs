@@ -476,7 +476,7 @@ public class upatcher
         string[] Parts = xpatch.XmlFile.Split(',');
         foreach (string Part in Parts)
         {
-            if (Part == Path.GetFileName(basefile.configFileFullName))
+            if (Part.ToLower().Replace(".xml","") == basefile.configFile)
                 isCompatible = true;
         }
         if (!isCompatible)
@@ -515,6 +515,47 @@ public class upatcher
                     Logger("Patch is already applied, data found at: " + tmpVal.ToString("X8"));
                 else
                     Logger("Data not found. Incompatible patch");
+            }
+        }
+        else if (xpatch.CompatibleOS.ToLower().StartsWith("table:"))
+        {
+            if (basefile.tableDatas.Count < 3)
+                basefile.loadTunerConfig();
+            basefile.importDTC();
+            basefile.importSeekTables();
+            string[] tableParts = xpatch.CompatibleOS.Split(',');
+            if (tableParts.Length < 3)
+            {
+                Logger("Incomplete table definition:" + xpatch.CompatibleOS);
+            }
+            else
+            {
+                string tbName = "";
+                int rows = 1;
+                int columns = 1;
+                for (int i = 0; i < tableParts.Length; i++)
+                {
+                    string[] xParts = tableParts[i].Split(':');
+                    if (xParts[0].ToLower() == "table")
+                        tbName = xParts[1];
+                    if (xParts[0].ToLower() == "columns")
+                        columns = Convert.ToInt32(xParts[1]);
+                    if (xParts[0].ToLower() == "rows")
+                        rows = Convert.ToInt32(xParts[1]);
+                }
+                TableData tmpTd = new TableData();
+                tmpTd.TableName = tbName;
+                Logger("Table: " + tbName);
+                int id = findTableDataId(tmpTd, basefile.tableDatas);
+                if (id > -1)
+                {
+                    tmpTd = basefile.tableDatas[id];
+                    if (tmpTd.Rows == rows && tmpTd.Columns == columns)
+                    {
+                        isCompatible = true;
+                        retVal = (uint)id;
+                    }
+                }
             }
         }
         else
@@ -559,6 +600,60 @@ public class upatcher
         return retVal;
     }
 
+    public static uint applyTablePatch(PcmFile basefile, XmlPatch xpatch, int tdId)
+    {
+        int i = 0;
+        frmTableEditor frmTE = new frmTableEditor();
+        frmTE.PCM = basefile;
+        TableData pTd = basefile.tableDatas[tdId];
+        frmTE.loadTable(pTd);
+        uint addr = (uint)(pTd.addrInt + pTd.Offset);
+        uint step = (uint)getElementSize(pTd.DataType);
+        try
+        {
+            string[] dataParts = xpatch.Data.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+            if (pTd.RowMajor)
+            {
+                for (int r = 0; r < pTd.Rows; r++)
+                {
+                    for (int c = 0; c < pTd.Columns; c++)
+                    {
+                        double val = Convert.ToDouble(dataParts[i].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                        frmTE.SaveValue(addr, r, c, pTd, val);
+                        addr += step;
+                        i++;
+                    }
+                }
+            }
+            else
+            {
+                for (int c = 0; c < pTd.Columns; c++)
+                {
+                    for (int r = 0; r < pTd.Rows; r++)
+                    {
+                        double val = Convert.ToDouble(dataParts[i].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                        frmTE.SaveValue(addr, r, c, pTd, val);
+                        addr += step;
+                        i++;
+                    }
+                }
+            }
+            frmTE.saveTable();
+            frmTE.Dispose();
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("Error, line " + line + ": " + ex.Message);
+
+        }
+        return (uint)(i * step);
+    }
+
     public static bool ApplyXMLPatch(PcmFile basefile)
     {
         try
@@ -566,15 +661,17 @@ public class upatcher
             string PrevSegment = "";
             uint ByteCount = 0;
             string[] Parts;
+            string prevDescr = "";
 
             Logger("Applying patch:");
             foreach (XmlPatch xpatch in PatchList)
             {
+                if (xpatch.Description != null && xpatch.Description != "" && xpatch.Description != prevDescr)
+                    Logger(xpatch.Description);
+                prevDescr = xpatch.Description;
                 uint Addr = checkPatchCompatibility(xpatch, basefile);
                 if (Addr < uint.MaxValue)
                 {
-                    if (xpatch.Description != null && xpatch.Description != "")
-                        Logger(xpatch.Description);
                     if (xpatch.Segment != null && xpatch.Segment.Length > 0 && PrevSegment != xpatch.Segment)
                     {
                         PrevSegment = xpatch.Segment;
@@ -627,40 +724,47 @@ public class upatcher
                     }
                     if (PatchRule)
                     {
-                        Debug.WriteLine(Addr.ToString("X") + ":" + xpatch.Data);
-                        Parts = xpatch.Data.Split(' ');
-                        foreach (string Part in Parts)
+                        if (xpatch.CompatibleOS.ToLower().StartsWith("table:"))
                         {
-                            //Actually add patch data:
-                            if (Part.Contains("[") || Part.Contains(":"))
+                            ByteCount += applyTablePatch(basefile, xpatch, (int)Addr);
+                        }
+                        else
+                        {
+                            Debug.WriteLine(Addr.ToString("X") + ":" + xpatch.Data);
+                            Parts = xpatch.Data.Split(' ');
+                            foreach (string Part in Parts)
                             {
-                                //Set bits / use Mask
-                                byte Origdata = basefile.buf[Addr];
-                                Debug.WriteLine("Set address: " + Addr.ToString("X") + ", old data: " + Origdata.ToString("X"));
-                                string[] dataparts;
-                                dataparts = Part.Split(new char[] { ']', '[', ':' }, StringSplitOptions.RemoveEmptyEntries);
-                                byte Setdata = byte.Parse(dataparts[0], System.Globalization.NumberStyles.HexNumber);
-                                byte Mask = byte.Parse(dataparts[1].Replace("]", ""), System.Globalization.NumberStyles.HexNumber);
+                                //Actually add patch data:
+                                if (Part.Contains("[") || Part.Contains(":"))
+                                {
+                                    //Set bits / use Mask
+                                    byte Origdata = basefile.buf[Addr];
+                                    Debug.WriteLine("Set address: " + Addr.ToString("X") + ", old data: " + Origdata.ToString("X"));
+                                    string[] dataparts;
+                                    dataparts = Part.Split(new char[] { ']', '[', ':' }, StringSplitOptions.RemoveEmptyEntries);
+                                    byte Setdata = byte.Parse(dataparts[0], System.Globalization.NumberStyles.HexNumber);
+                                    byte Mask = byte.Parse(dataparts[1].Replace("]", ""), System.Globalization.NumberStyles.HexNumber);
 
-                                // Set 1
-                                byte tmpMask = (byte)(Mask & Setdata);
-                                byte Newdata = (byte)(Origdata | tmpMask);
+                                    // Set 1
+                                    byte tmpMask = (byte)(Mask & Setdata);
+                                    byte Newdata = (byte)(Origdata | tmpMask);
 
-                                // Set 0
-                                tmpMask = (byte)(Mask & ~Setdata);
-                                Newdata = (byte)(Newdata & ~tmpMask);
+                                    // Set 0
+                                    tmpMask = (byte)(Mask & ~Setdata);
+                                    Newdata = (byte)(Newdata & ~tmpMask);
 
-                                Debug.WriteLine("New data: " + Newdata.ToString("X"));
-                                basefile.buf[Addr] = Newdata;
+                                    Debug.WriteLine("New data: " + Newdata.ToString("X"));
+                                    basefile.buf[Addr] = Newdata;
+                                }
+                                else
+                                {
+                                    //Set byte
+                                    if (Part != "*") //Skip wildcards
+                                        basefile.buf[Addr] = Byte.Parse(Part, System.Globalization.NumberStyles.HexNumber);
+                                }
+                                Addr++;
+                                ByteCount++;
                             }
-                            else
-                            {
-                                //Set byte
-                                if (Part != "*") //Skip wildcards
-                                    basefile.buf[Addr] = Byte.Parse(Part, System.Globalization.NumberStyles.HexNumber);
-                            }
-                            Addr++;
-                            ByteCount++;
                         }
                     }
                     if (xpatch.PostMessage != null && xpatch.PostMessage.Length > 1)

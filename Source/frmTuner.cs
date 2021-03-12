@@ -2163,5 +2163,81 @@ namespace UniversalPatcher
         {
             openPatchSelector();
         }
+
+        private void generateTablePatch()
+        {
+            string defName = Path.Combine(Application.StartupPath, "Patches", "newpatch.xmlpatch");
+            string patchFname = SelectSaveFile("PATCH files (*.xmlpatch)|*.xmlpatch|ALL files (*.*)|*.*", defName);
+            if (patchFname.Length == 0)
+                return;
+            string Description = "";
+            frmData frmD = new frmData();
+            frmD.Text = "Patch Description";
+            if (frmD.ShowDialog() == DialogResult.OK)
+                Description = frmD.txtData.Text;
+            frmD.Dispose();
+            List<int> tableIds = new List<int>();
+            List<XmlPatch> newPatch = new List<XmlPatch>();
+            for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
+            {
+                int row = dataGridView1.SelectedCells[i].RowIndex;
+                int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
+                if (!tableIds.Contains(id))
+                    tableIds.Add(id);
+            }
+            for (int i=0; i < tableIds.Count; i++)
+            {
+                int id = tableIds[i];
+                TableData pTd = PCM.tableDatas[id];
+                XmlPatch xpatch = new XmlPatch();
+                xpatch.CompatibleOS = "Table:" + pTd.TableName + ",columns:" + pTd.Columns.ToString() + ",rows:" + pTd.Rows.ToString();
+                xpatch.XmlFile = PCM.configFile;
+                xpatch.Segment = PCM.GetSegmentName(pTd.addrInt);
+                xpatch.Description = Description;
+                frmTableEditor frmTE = new frmTableEditor();
+                frmTE.PCM = PCM;
+                frmTE.loadTable(pTd);
+                uint step = (uint)getElementSize(pTd.DataType);
+                uint addr = (uint)(pTd.addrInt + pTd.Offset);
+                if (pTd.RowMajor)
+                {
+                    for (int r=0; r<pTd.Rows; r++)
+                    {
+                        for (int c=0; c<pTd.Columns; c++)
+                        {
+                            xpatch.Data += frmTE.getValue(addr, pTd).ToString().Replace(",", ".") + " ";
+                            addr += step;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int c = 0; c < pTd.Columns; c++)
+                    {
+                        for (int r = 0; r < pTd.Rows; r++)
+                        {
+                            xpatch.Data += frmTE.getValue(addr, pTd).ToString().Replace(",", ".") + " ";
+                            addr += step;
+                        }
+                    }
+                }
+                newPatch.Add(xpatch);
+            }
+            Logger("Saving to file: " + Path.GetFileName(patchFname), false);
+
+            using (FileStream stream = new FileStream(patchFname, FileMode.Create))
+            {
+                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
+                writer.Serialize(stream, newPatch);
+                stream.Close();
+            }
+            Logger(" [OK]");
+
+        }
+
+        private void createPatchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            generateTablePatch();
+        }
     }
 }

@@ -1399,16 +1399,19 @@ namespace UniversalPatcher
                     if (PatchList.Count > 0)
                     {
                         Logger("Description: " + PatchList[0].Description);
-                        string[] OsList = PatchList[0].CompatibleOS.Split(',');
-                        string CompOS = "";
-                        foreach (string OS in OsList)
+                        if (!PatchList[0].CompatibleOS.ToLower().StartsWith("table:") && !PatchList[0].CompatibleOS.ToLower().StartsWith("search:"))
                         {
-                            if (CompOS != "")
-                                CompOS += ",";
-                            string[] Parts = OS.Split(':');
-                            CompOS += Parts[0];
+                            string[] OsList = PatchList[0].CompatibleOS.Split(',');
+                            string CompOS = "";
+                            foreach (string OS in OsList)
+                            {
+                                if (CompOS != "")
+                                    CompOS += ",";
+                                string[] Parts = OS.Split(':');
+                                CompOS += Parts[0];
+                            }
+                            Logger("For OS: " + CompOS);
                         }
-                        Logger("For OS: " + CompOS);
                     }
                     bool isCompatible = false;
                     for (int x=0; x<PatchList.Count; x++)

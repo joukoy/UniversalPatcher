@@ -129,6 +129,8 @@ namespace UniversalPatcher
 
         public void importSeekTables()
         {
+            if (seekTablesImported)
+                return;
             if (foundTables.Count == 0)
             {
                 TableSeek TS = new TableSeek();
@@ -146,6 +148,66 @@ namespace UniversalPatcher
             for (int i = 0; i < tableDatas.Count; i++)
                 tableDatas[i].id = (uint)i;
             seekTablesImported = true;
+        }
+
+        public void importDTC()
+        {
+            bool haveDTC = false;
+            for (int t = 0; t < tableDatas.Count; t++)
+            {
+                if (tableDatas[t].TableName == "DTC" || tableDatas[t].TableName == "DTC.Codes")
+                {
+                    haveDTC = true;
+                    break;
+                }
+            }
+            if (!haveDTC)
+            {
+                Logger("Importing DTC codes... ", false);
+                TableData tdTmp = new TableData();
+                tdTmp.importDTC(this, ref tableDatas);
+                Logger(" [OK]");
+            }
+        }
+
+        public void importTinyTunerDB()
+        {
+            TinyTuner tt = new TinyTuner();
+            Logger("Reading TinyTuner DB...", false);
+            Logger(tt.readTinyDBtoTableData(this, tableDatas));
+        }
+
+        public void loadTunerConfig()
+        {
+            if (!Properties.Settings.Default.disableTunerAutoloadSettings)
+            {
+                string defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", OS + ".xml");
+                string compXml = "";
+                if (File.Exists(defaultTunerFile))
+                {
+                    long conFileSize = new FileInfo(defaultTunerFile).Length;
+                    if (conFileSize < 255)
+                    {
+                        compXml = ReadTextFile(defaultTunerFile);
+                        defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", compXml);
+                        Logger("Using compatible file: " + compXml);
+                    }
+                }
+                if (File.Exists(defaultTunerFile))
+                {
+                    Logger(LoadTableList(defaultTunerFile));
+                    importDTC();
+                }
+                else
+                {
+                    Logger("File not found: " + defaultTunerFile);
+                    importDTC();
+                    importSeekTables();
+                    if (Segments.Count > 0 && Segments[0].CS1Address.StartsWith("GM-V6"))
+                        importTinyTunerDB();
+                }
+            }
+
         }
 
         public string LoadTableList(string fName = "")

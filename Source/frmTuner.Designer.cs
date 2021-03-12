@@ -72,6 +72,7 @@ namespace UniversalPatcher
             this.findDifferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.massModifyTableListsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.massModifyTableListsSelectFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.applyPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadTablelistxmlTableseekImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,7 +102,7 @@ namespace UniversalPatcher
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.timerFilter = new System.Windows.Forms.Timer(this.components);
-            this.applyPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -451,6 +452,13 @@ namespace UniversalPatcher
             this.massModifyTableListsSelectFilesToolStripMenuItem.Text = "TableList editor (Select files)";
             this.massModifyTableListsSelectFilesToolStripMenuItem.Click += new System.EventHandler(this.massModifyTableListsSelectFilesToolStripMenuItem_Click);
             // 
+            // applyPatchToolStripMenuItem
+            // 
+            this.applyPatchToolStripMenuItem.Name = "applyPatchToolStripMenuItem";
+            this.applyPatchToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.applyPatchToolStripMenuItem.Text = "Apply patch...";
+            this.applyPatchToolStripMenuItem.Click += new System.EventHandler(this.applyPatchToolStripMenuItem_Click);
+            // 
             // xmlToolStripMenuItem
             // 
             this.xmlToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -521,9 +529,10 @@ namespace UniversalPatcher
             this.editRowToolStripMenuItem,
             this.insertRowToolStripMenuItem,
             this.deleteRowToolStripMenuItem,
-            this.duplicateTableConfigToolStripMenuItem});
+            this.duplicateTableConfigToolStripMenuItem,
+            this.createPatchToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(206, 274);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(206, 318);
             // 
             // cutToolStripMenuItem
             // 
@@ -703,12 +712,12 @@ namespace UniversalPatcher
             // 
             this.timerFilter.Tick += new System.EventHandler(this.timerFilter_Tick);
             // 
-            // applyPatchToolStripMenuItem
+            // createPatchToolStripMenuItem
             // 
-            this.applyPatchToolStripMenuItem.Name = "applyPatchToolStripMenuItem";
-            this.applyPatchToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.applyPatchToolStripMenuItem.Text = "Apply patch...";
-            this.applyPatchToolStripMenuItem.Click += new System.EventHandler(this.applyPatchToolStripMenuItem_Click);
+            this.createPatchToolStripMenuItem.Name = "createPatchToolStripMenuItem";
+            this.createPatchToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.createPatchToolStripMenuItem.Text = "Create patch...";
+            this.createPatchToolStripMenuItem.Click += new System.EventHandler(this.createPatchToolStripMenuItem_Click);
             // 
             // frmTuner
             // 
@@ -818,5 +827,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem caseSensitiveFilteringToolStripMenuItem;
         private ToolStripMenuItem copySelectedTablesToToolStripMenuItem;
         private ToolStripMenuItem applyPatchToolStripMenuItem;
+        private ToolStripMenuItem createPatchToolStripMenuItem;
     }
 }

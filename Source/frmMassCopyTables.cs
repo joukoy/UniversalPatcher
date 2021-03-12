@@ -161,66 +161,6 @@ namespace UniversalPatcher
             Application.DoEvents();
         }
 
-        private void importDTC()
-        {
-            Logger("Importing DTC codes... ", false);
-            bool haveDTC = false;
-            for (int t = 0; t < PCM.tableDatas.Count; t++)
-            {
-                if (PCM.tableDatas[t].TableName == "DTC" || PCM.tableDatas[t].TableName == "DTC.Codes")
-                {
-                    haveDTC = true;
-                    Logger(" DTC codes already defined");
-                    break;
-                }
-            }
-            if (!haveDTC)
-            {
-                TableData tdTmp = new TableData();
-                tdTmp.importDTC(PCM, ref PCM.tableDatas);
-                Logger(" [OK]");
-            }
-        }
-
-        private void importTinyTunerDB()
-        {
-            TinyTuner tt = new TinyTuner();
-            Logger("Reading TinyTuner DB...", false);
-            Logger(tt.readTinyDBtoTableData(PCM, PCM.tableDatas));
-        }
-
-        private void loadConfigforPCM(ref PcmFile newPCM)
-        {
-            if (!Properties.Settings.Default.disableTunerAutoloadSettings)
-            {
-                string defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", newPCM.OS + ".xml");
-                string compXml = "";
-                if (File.Exists(defaultTunerFile))
-                {
-                    long conFileSize = new FileInfo(defaultTunerFile).Length;
-                    if (conFileSize < 255)
-                    {
-                        compXml = ReadTextFile(defaultTunerFile);
-                        defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", compXml);
-                        Logger("Using compatible file: " + compXml);
-                    }
-                }
-                if (File.Exists(defaultTunerFile))
-                {
-                    Logger(newPCM.LoadTableList(defaultTunerFile));
-                    importDTC();
-                }
-                else
-                {
-                    Logger("File not found: " + defaultTunerFile);
-                    importDTC();
-                    PCM.importSeekTables();
-                    if (newPCM.Segments.Count > 0 && newPCM.Segments[0].CS1Address.StartsWith("GM-V6"))
-                        importTinyTunerDB();
-                }
-            }
-
-        }
 
 
         private void copyTableData(TableData srcTd, TableData dstTd, ref PcmFile dstPCM)
@@ -302,7 +242,7 @@ namespace UniversalPatcher
                         string fileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                         PcmFile newPCM = new PcmFile(fileName, true, "");
                         LoggerBold(fileName);
-                        loadConfigforPCM(ref newPCM);
+                        newPCM.loadTunerConfig();
                         if (PCM.seekTablesImported && !newPCM.seekTablesImported)
                             newPCM.importSeekTables();
                         SelectPCM sPCM = new SelectPCM();

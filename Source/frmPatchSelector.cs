@@ -92,7 +92,8 @@ namespace UniversalPatcher
                         string[] Parts = OS.Split(':');
                         CompOS += Parts[0];
                     }
-                    Logger("For OS: " + CompOS);
+                    if (!newPatchList[0].CompatibleOS.ToLower().StartsWith("table:") && !newPatchList[0].CompatibleOS.ToLower().StartsWith("search:"))
+                        Logger("For OS: " + CompOS);
                 }
                 bool isCompatible = false;
                 for (int x = 0; x < newPatchList.Count; x++)
