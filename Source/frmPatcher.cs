@@ -3121,6 +3121,13 @@ namespace UniversalPatcher
         {
             openPatchSelector();
         }
+
+        private void oBD2CodesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmEditXML frmEX = new frmEditXML();
+            frmEX.loadOBD2CodeList();
+            frmEX.Show();
+        }
     }
 }
 

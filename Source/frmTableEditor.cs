@@ -138,7 +138,14 @@ namespace UniversalPatcher
         {
             compareEditor = new frmTableEditor();
             compareEditor.PCM = cmpPCM;
-            compareEditor.tableIds = tableIds;
+            List<int> cmpTableIds = new List<int>();
+            for (int i=0; i< tableIds.Count; i++)
+            {
+                int ti = findTableDataId(PCM.tableDatas[tableIds[i]], cmpPCM.tableDatas);
+                if (ti > -1)
+                    cmpTableIds.Add(ti);
+            }
+            compareEditor.tableIds = cmpTableIds;
             compareEditor.disableMultiTable = disableMultiTable;
             compareEditor.loadTable(cmpPCM.selectedTable);
         }
@@ -233,7 +240,7 @@ namespace UniversalPatcher
                     uint cmpAddr = (uint)(currentSteps * getElementSize(compareEditor.td.DataType) + compareEditor.td.addrInt + compareEditor.td.Offset);
                     if (radioDifference.Checked)
                     {
-                        double cmpVal = compareEditor.getValue(cmpAddr, mathTd);
+                        double cmpVal = compareEditor.getValue(cmpAddr, compareEditor.td);
                         return retVal - cmpVal;
                     }
                     if (radioOriginal.Checked)
@@ -242,7 +249,7 @@ namespace UniversalPatcher
                     }
                     if (radioCompareFile.Checked || getCompare)
                     {
-                        return compareEditor.getValue(cmpAddr, mathTd);
+                        return compareEditor.getValue(cmpAddr, compareEditor.td);
                     }
 
                 }
@@ -281,7 +288,7 @@ namespace UniversalPatcher
                     uint cmpAddr = (uint)(currentSteps * getElementSize(compareEditor.td.DataType) + compareEditor.td.addrInt + compareEditor.td.Offset);
                     if (radioDifference.Checked)
                     {
-                        UInt64 cmpVal = compareEditor.getRawValue(cmpAddr, mathTd);
+                        UInt64 cmpVal = compareEditor.getRawValue(cmpAddr, compareEditor.td);
                         return retVal - cmpVal;
                     }
                     if (radioOriginal.Checked)
@@ -290,7 +297,7 @@ namespace UniversalPatcher
                     }
                     if (radioCompareFile.Checked || getCompare)
                     {
-                        return compareEditor.getRawValue(cmpAddr, mathTd);
+                        return compareEditor.getRawValue(cmpAddr, compareEditor.td);
                     }
 
                 }
@@ -1017,7 +1024,7 @@ namespace UniversalPatcher
         {
             DtcSearch ds = new DtcSearch();
             if (OBD2Codes == null || OBD2Codes.Count == 0)
-                ds.loadOBD2Codes();
+                loadOBD2Codes();
             if (OBD2Codes.Count == 0)
                 return;
             chkSwapXY.Enabled = false;

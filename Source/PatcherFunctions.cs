@@ -861,7 +861,6 @@ public class upatcher
         }
 
     }
-
     public static void saveOBD2Codes()
     {
         string OBD2CodeFile = Path.Combine(Application.StartupPath, "XML", "OBD2Codes.xml");
@@ -875,6 +874,24 @@ public class upatcher
         Logger(" [OK]");
 
     }
+    public static void loadOBD2Codes()
+    {
+        string OBD2CodeFile = Path.Combine(Application.StartupPath, "XML", "OBD2Codes.xml");
+        if (File.Exists(OBD2CodeFile))
+        {
+            Debug.WriteLine("Loading OBD2Codes.xml");
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<OBD2Code>));
+            System.IO.StreamReader file = new System.IO.StreamReader(OBD2CodeFile);
+            OBD2Codes = (List<OBD2Code>)reader.Deserialize(file);
+            file.Close();
+        }
+        else
+        {
+            OBD2Codes = new List<OBD2Code>();
+        }
+
+    }
+
     public static string autoDetect(PcmFile PCM)
     {
         AutoDetect autod = new AutoDetect();

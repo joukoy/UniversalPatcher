@@ -233,41 +233,32 @@ namespace UniversalPatcher
                     if (PCM.FileName != comparePCM.FileName)
                     {
                         Logger("Adding file: " + Path.GetFileName(comparePCM.FileName) + " to compare menu... ", false);
-                        bool tblFound = false;
-                        string tbName = td.TableName;
-                        if (td.TableName.Contains("*"))
+                        int x = findTableDataId(td, comparePCM.tableDatas);
+                        if (x < 0)
                         {
-                            tbName = td.TableName.Substring(0, td.TableName.IndexOf('*') );
+                            LoggerBold("Table not found");
                         }
-                        for (int x = 0; x < comparePCM.tableDatas.Count; x++)
-                        {
-                            if (comparePCM.tableDatas[x].Category == td.Category && comparePCM.tableDatas[x].TableName.StartsWith(tbName))
+                        else
+                        { 
+                            if (comparePCM.tableDatas[x].Rows != td.Rows || comparePCM.tableDatas[x].Columns != td.Columns || comparePCM.tableDatas[x].RowMajor != td.RowMajor)
                             {
-                                if (comparePCM.tableDatas[x].Rows != td.Rows || comparePCM.tableDatas[x].Columns != td.Columns || comparePCM.tableDatas[x].RowMajor != td.RowMajor)
+                               Logger("Table size not match!");
+                            }
+                            else
+                            {
+                                comparePCM.selectedTable = comparePCM.tableDatas[x];
+                                frmT.addCompareFiletoMenu(comparePCM);
+                                if (PCM.configFile != comparePCM.configFile)
                                 {
-                                    Logger("Table size not match!");
+                                    LoggerBold(Environment.NewLine + "Warning: file type different, results undefined!");
                                 }
                                 else
                                 {
-                                    tblFound = true;
-                                    comparePCM.selectedTable = comparePCM.tableDatas[x];
-                                    frmT.addCompareFiletoMenu(comparePCM);
-                                    if (PCM.configFile != comparePCM.configFile)
-                                    {
-                                        LoggerBold(Environment.NewLine + "Warning: file type different, results undefined!");
-                                    }
-                                    else
-                                    {
-                                        Logger("[OK]");
-                                    }
-                                    break;
+                                    Logger("[OK]");
                                 }
+                                break;
                             }
                         }                            
-                        if (!tblFound)
-                        {
-                            LoggerBold("Table not found" );
-                        }
                     }
                 }
                 frmT.Show();

@@ -92,6 +92,22 @@ namespace UniversalPatcher
             dataGridView1.DataSource = bindingSource;
         }
 
+        public void loadOBD2CodeList()
+        {
+            this.Text = "Edit OBD2 Codes";
+            loadOBD2Codes();
+            refreshOBD2Codes();
+        }
+
+        private void refreshOBD2Codes()
+        {
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = OBD2Codes;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+
+        }
+
         private void refreshTableSeek()
         {
             bindingSource.DataSource = null;
@@ -144,6 +160,10 @@ namespace UniversalPatcher
                         stream.Close();
                     }
                     Logger(" [OK]");
+                }
+                else if (this.Text.Contains("OBD2"))
+                {
+                    saveOBD2Codes();
                 }
                 else if (this.Text.Contains("Seek"))
                 {
@@ -372,9 +392,50 @@ namespace UniversalPatcher
             saveCSV();
         }
 
+        private void importOBD2()
+        {
+            string FileName = SelectFile("Select CSV file", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            if (FileName.Length == 0)
+                return;
+            StreamReader sr = new StreamReader(FileName);
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                int pos = line.IndexOf(' ');
+                if (pos > -1)
+                {
+                    OBD2Code oc = new OBD2Code();
+                    oc.Code = line.Substring(0,pos).Trim();
+                    oc.Description = line.Substring(pos).Trim();
+                    bool exist = false;
+                    for (int i = 0; i < OBD2Codes.Count; i++)
+                    {
+                        if (OBD2Codes[i].Code == oc.Code)
+                        {
+                            exist = true;
+                            OBD2Codes[i].Description = oc.Description;
+                            break;
+                        }
+                    }
+                    if (!exist)
+                    {
+                        OBD2Codes.Add(oc);
+                    }
+                }
+            }
+            sr.Close();
+            
+        }
         private void importCSVToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            importCSV();
+            if (this.Text.Contains("OBD2"))
+            {
+                importOBD2();
+            }
+            else
+            {
+                importCSV();
+            }
         }
 
         private void convertToDataTypeToolStripMenuItem_Click(object sender, EventArgs e)
