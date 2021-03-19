@@ -190,7 +190,7 @@ namespace UniversalPatcher
         }
 
 
-        public double getValue(uint addr, TableData mathTd, bool getCompare = false)
+        public double getValue(uint addr, TableData mathTd, bool getCompare = false, bool readOrigvalue = false)
         {
 
             double retVal = 0;
@@ -200,7 +200,7 @@ namespace UniversalPatcher
                 Byte[] myBuffer = tableBuffer;
                 UInt32 bufAddr = addr - td.addrInt;
 
-                if ((int)(addr - td.addrInt) < 0 || (int)(addr - td.addrInt) > bufSize)
+                if ((int)(addr - td.addrInt) < 0 || (int)(addr - td.addrInt) > bufSize || readOrigvalue)
                 {
                     //Read data from other table
                     myBuffer = PCM.buf;
@@ -267,20 +267,29 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        public UInt64 getRawValue(UInt32 addr, TableData mathTd, bool getCompare = false)
+        public UInt64 getRawValue(UInt32 addr, TableData mathTd, bool getCompare = false, bool readOrigvalue = false)
         {
             UInt32 bufAddr = addr - td.addrInt;
             UInt64 retVal = 0;
             try
             {
+                Byte[] myBuffer = tableBuffer;
+
+                if ((int)(addr - td.addrInt) < 0 || (int)(addr - td.addrInt) > bufSize || readOrigvalue)
+                {
+                    //Read data from other table
+                    myBuffer = PCM.buf;
+                    bufAddr = addr;
+                }
+
                 if (mathTd.DataType == InDataType.UWORD || mathTd.DataType == InDataType.SWORD)
-                    retVal = BEToUint16(tableBuffer, bufAddr);
+                    retVal = BEToUint16(myBuffer, bufAddr);
                 if (mathTd.DataType == InDataType.INT32 || mathTd.DataType == InDataType.UINT32 || mathTd.DataType == InDataType.FLOAT32)
-                    retVal = BEToUint32(tableBuffer, bufAddr);
+                    retVal = BEToUint32(myBuffer, bufAddr);
                 if (mathTd.DataType == InDataType.INT64 || mathTd.DataType == InDataType.UINT64 || mathTd.DataType == InDataType.FLOAT64)
-                    retVal = BEToUint64(tableBuffer, bufAddr);
+                    retVal = BEToUint64(myBuffer, bufAddr);
                 if (mathTd.DataType == InDataType.UBYTE || mathTd.DataType == InDataType.SBYTE)
-                    retVal = tableBuffer[bufAddr];
+                    retVal = myBuffer[bufAddr];
                 if (compareEditor != null)
                 {
                     int currentOffset = (int)(addr - (td.addrInt + td.Offset)); //Bytes from (table start + offset)
@@ -319,38 +328,38 @@ namespace UniversalPatcher
         {
             try
             {
-                double val = 0;
+                double curVal = 0;
+                double origVal = 0;
                 if (radioSideBySide.Checked)
                 {
-                    double orgVal;
                     double cmpVal;
-                    string orgTxt = "";
+                    string curTxt = "";
                     string cmpTxt = "";
                     string formatStr = "0";
                     if (showRawHEXValuesToolStripMenuItem.Checked)
                     {
-                        orgVal = getRawValue(addr, mathTd);
+                        curVal = getRawValue(addr, mathTd);
                         cmpVal = getRawValue(addr, mathTd, true);
                         formatStr = "X" + (getElementSize(mathTd.DataType) * 2).ToString();
-                        orgTxt = ((uint)orgVal).ToString(formatStr);
+                        curTxt = ((uint)curVal).ToString(formatStr);
                         cmpTxt = ((uint)cmpVal).ToString(formatStr);
                     }
                     else
                     {
-                        orgVal = getValue(addr, mathTd);
+                        curVal = getValue(addr, mathTd);
                         cmpVal = getValue(addr, mathTd, true);
                         if (td.OutputType == OutDataType.Text)
                         {
-                            orgTxt = Convert.ToChar((ushort)orgVal).ToString();
+                            curTxt = Convert.ToChar((ushort)curVal).ToString();
                             cmpTxt = Convert.ToChar((ushort)cmpVal).ToString();
                         }
                         else if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
                         {
                             UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
                             if ((getRawValue(addr, mathTd) & mask) == mask)
-                                orgTxt = "1";
+                                curTxt = "1";
                             else
-                                orgTxt = "0";
+                                curTxt = "0";
                             if ((getRawValue(addr, mathTd, true) & mask) == mask)
                                 cmpTxt = "1";
                             else
@@ -358,12 +367,12 @@ namespace UniversalPatcher
                         }
                         else if (mathTd.OutputType == OutDataType.Hex)
                         {
-                            val = getValue(addr, mathTd);
-                            dataGridView1.Rows[row].Cells[col].Value = (uint)val;
+                            curVal = getValue(addr, mathTd);
+                            dataGridView1.Rows[row].Cells[col].Value = (uint)curVal;
                         }
                         else if (mathTd.OutputType == OutDataType.Int)
                         {
-                            orgTxt = ((int)orgVal).ToString();
+                            curTxt = ((int)curVal).ToString();
                             cmpTxt = ((int)cmpVal).ToString();
                         }
                         else
@@ -375,25 +384,35 @@ namespace UniversalPatcher
                                 formatStr += "0";
                             }
                             //formatStr += "#";
-                            orgTxt = orgVal.ToString(formatStr);
+                            curTxt = curVal.ToString(formatStr);
                             cmpTxt = cmpVal.ToString(formatStr);
                         }
                     }
-                    dataGridView1.Rows[row].Cells[col].Value = orgTxt + " [" + cmpTxt + "]";
+                    dataGridView1.Rows[row].Cells[col].Value = curTxt + " [" + cmpTxt + "]";
                     Tagi ta = new Tagi();
                     ta.addr = addr;
                     ta.id = (int)mathTd.id;
                     dataGridView1.Rows[row].Cells[col].Tag = ta;
-                    if (orgVal == cmpVal)
+                    if (curVal == cmpVal)
                         dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightBlue;
                     else
                         dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
                     return;
                 }
+                //Not side by side, continue...
                 if (showRawHEXValuesToolStripMenuItem.Checked)
-                    dataGridView1.Rows[row].Cells[col].Value = getRawValue(addr, mathTd);
+                {
+                    curVal = getRawValue(addr, mathTd);
+                    dataGridView1.Rows[row].Cells[col].Value = (uint)curVal;
+                    origVal = getRawValue(addr, mathTd, false, true);
+                }
                 else if (td.OutputType == OutDataType.Text)
-                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToChar((ushort)getValue(addr, mathTd));
+                {
+                    curVal = getValue(addr, mathTd);
+                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToChar((ushort)curVal);
+                    origVal = getValue(addr, mathTd, false, true);
+
+                }
                 else if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
                 {
                     UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
@@ -410,31 +429,36 @@ namespace UniversalPatcher
                 }
                 else if (mathTd.OutputType == OutDataType.Hex)
                 {
-                    val = getValue(addr, mathTd);
-                    dataGridView1.Rows[row].Cells[col].Value = (uint)val;
+                    curVal = getValue(addr, mathTd);
+                    dataGridView1.Rows[row].Cells[col].Value = (uint)curVal;
+                    origVal = getValue(addr, mathTd, false, true);
                 }
                 else if (mathTd.OutputType == OutDataType.Int)
                 {
-                    val = getValue(addr, mathTd);
-                    dataGridView1.Rows[row].Cells[col].Value = (int)val;
+                    curVal = getValue(addr, mathTd);
+                    dataGridView1.Rows[row].Cells[col].Value = (int)curVal;
+                    origVal = getValue(addr, mathTd, false, true);
                 }
                 else
                 {
-                    val = getValue(addr, mathTd);
-                    dataGridView1.Rows[row].Cells[col].Value = val;
+                    curVal = getValue(addr, mathTd);
+                    dataGridView1.Rows[row].Cells[col].Value = curVal;
+                    origVal = getValue(addr, mathTd, false, true);
                 }
 
                 if (dataGridView1.Columns[col].GetType() != typeof(DataGridViewComboBoxColumn) && dataGridView1.Columns[col].GetType() != typeof(DataGridViewCheckBoxColumn))
                 {
-                    if (val < (mathTd.Max * 0.9) && val > (mathTd.Min * 1.1))
+                    if (origVal != curVal)
+                        dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Yellow;
+                    else if (curVal < (mathTd.Max * 0.9) && curVal > (mathTd.Min * 1.1))
                         dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.White;
-                    else if (val > mathTd.Max)
+                    else if (curVal > mathTd.Max)
                         dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Pink;
-                    else if (val > (0.9 * mathTd.Max))
+                    else if (curVal > (0.9 * mathTd.Max))
                         dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
-                    else if (val < mathTd.Min)
+                    else if (curVal < mathTd.Min)
                         dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.AliceBlue;
-                    else if (val < (1.1 * mathTd.Min))
+                    else if (curVal < (1.1 * mathTd.Min))
                         dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightBlue;
                 }
                 Tagi t = new Tagi();
