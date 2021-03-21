@@ -256,7 +256,6 @@ namespace UniversalPatcher
                                 {
                                     Logger("[OK]");
                                 }
-                                break;
                             }
                         }                            
                     }

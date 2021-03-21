@@ -553,7 +553,7 @@ namespace UniversalPatcher
             {
                 colName = "[" + cTd.TableName + "]";
                 if (duplicateTableName)
-                    colName += " [" + cTd.Address + "]";
+                    colName += " [" + cTd.id + "]";
                 colName += Environment.NewLine;
             }
             //if (cTd.Columns == dataGridView1.Columns.Count)
@@ -586,7 +586,7 @@ namespace UniversalPatcher
                 if (multiSelect)
                     colName = "[" + cTd.TableName + "] ";
                 if (duplicateTableName)
-                    colName += "(" + cTd.Address + ") ";
+                    colName += "(" + cTd.id + ") ";
 
                 string[] tParts = cTd.ColumnHeaders.Split(',');
                 if (tParts.Length >= (col -1))
@@ -740,7 +740,7 @@ namespace UniversalPatcher
             {
                 rowName = "[" + cTd.TableName + "] ";
                 if (duplicateTableName)
-                    rowName += " [" + cTd.Address + "] ";
+                    rowName += " [" + cTd.id + "] ";
             }
 
             if (cTd.Columns == dataGridView1.Rows.Count)
@@ -778,7 +778,7 @@ namespace UniversalPatcher
                 if (multiSelect)
                     rowName = "[" + cTd.TableName + "] ";
                 if (duplicateTableName)
-                    rowName += "(" + cTd.Address + ") ";
+                    rowName += "(" + cTd.id + ") ";
 
                 string[] tParts = cTd.ColumnHeaders.Split(',');
                 if (tParts.Length >= (row - 1))
