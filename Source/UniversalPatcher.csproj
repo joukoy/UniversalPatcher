@@ -230,6 +230,12 @@
     <Compile Include="frmTableEditor.Designer.cs">
       <DependentUpon>frmTableEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmTableTree.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmTableTree.Designer.cs">
+      <DependentUpon>frmTableTree.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmTdEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -396,6 +402,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmTableEditor.resx">
       <DependentUpon>frmTableEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmTableTree.resx">
+      <DependentUpon>frmTableTree.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmTdEditor.resx">
       <DependentUpon>frmTdEditor.cs</DependentUpon>

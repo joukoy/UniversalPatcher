@@ -94,6 +94,7 @@ namespace UniversalPatcher
             this.insertRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.duplicateTableConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.comboFilterBy = new System.Windows.Forms.ComboBox();
             this.txtResult = new System.Windows.Forms.RichTextBox();
@@ -102,7 +103,7 @@ namespace UniversalPatcher
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.timerFilter = new System.Windows.Forms.Timer(this.components);
-            this.createPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnTableSelector = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -139,7 +140,7 @@ namespace UniversalPatcher
             // 
             this.btnEditTable.Location = new System.Drawing.Point(539, 27);
             this.btnEditTable.Name = "btnEditTable";
-            this.btnEditTable.Size = new System.Drawing.Size(120, 23);
+            this.btnEditTable.Size = new System.Drawing.Size(76, 23);
             this.btnEditTable.TabIndex = 6;
             this.btnEditTable.Text = "Edit Table";
             this.btnEditTable.UseVisualStyleBackColor = true;
@@ -532,7 +533,7 @@ namespace UniversalPatcher
             this.duplicateTableConfigToolStripMenuItem,
             this.createPatchToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(206, 318);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(206, 296);
             // 
             // cutToolStripMenuItem
             // 
@@ -627,6 +628,13 @@ namespace UniversalPatcher
             this.duplicateTableConfigToolStripMenuItem.Text = "Duplicate table config";
             this.duplicateTableConfigToolStripMenuItem.Click += new System.EventHandler(this.duplicateTableConfigToolStripMenuItem_Click);
             // 
+            // createPatchToolStripMenuItem
+            // 
+            this.createPatchToolStripMenuItem.Name = "createPatchToolStripMenuItem";
+            this.createPatchToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.createPatchToolStripMenuItem.Text = "Create patch...";
+            this.createPatchToolStripMenuItem.Click += new System.EventHandler(this.createPatchToolStripMenuItem_Click);
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -712,18 +720,22 @@ namespace UniversalPatcher
             // 
             this.timerFilter.Tick += new System.EventHandler(this.timerFilter_Tick);
             // 
-            // createPatchToolStripMenuItem
+            // btnTableSelector
             // 
-            this.createPatchToolStripMenuItem.Name = "createPatchToolStripMenuItem";
-            this.createPatchToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.createPatchToolStripMenuItem.Text = "Create patch...";
-            this.createPatchToolStripMenuItem.Click += new System.EventHandler(this.createPatchToolStripMenuItem_Click);
+            this.btnTableSelector.Location = new System.Drawing.Point(621, 27);
+            this.btnTableSelector.Name = "btnTableSelector";
+            this.btnTableSelector.Size = new System.Drawing.Size(96, 23);
+            this.btnTableSelector.TabIndex = 23;
+            this.btnTableSelector.Text = "Table selector";
+            this.btnTableSelector.UseVisualStyleBackColor = true;
+            this.btnTableSelector.Click += new System.EventHandler(this.btnTableSelector_Click);
             // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(850, 559);
+            this.Controls.Add(this.btnTableSelector);
             this.Controls.Add(this.comboFilterBy);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtSearchTableSeek);
@@ -828,5 +840,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem copySelectedTablesToToolStripMenuItem;
         private ToolStripMenuItem applyPatchToolStripMenuItem;
         private ToolStripMenuItem createPatchToolStripMenuItem;
+        private Button btnTableSelector;
     }
 }

@@ -190,17 +190,24 @@ namespace UniversalPatcher
 
         }
 
-        private void openTableEditor()
+        public void openTableEditor(int selectedId = -1)
         {
             try
             {
                 List<int> tableIds = new List<int>();
-                for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
+                if (selectedId < 0)
                 {
-                    int row = dataGridView1.SelectedCells[i].RowIndex;
-                    int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
-                    if (!tableIds.Contains(id))
-                        tableIds.Add(id);
+                    for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
+                    {
+                        int row = dataGridView1.SelectedCells[i].RowIndex;
+                        int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
+                        if (!tableIds.Contains(id))
+                            tableIds.Add(id);
+                    }
+                }
+                else
+                {
+                    tableIds.Add(selectedId);
                 }
 /*                TableData tableData0 = PCM.tableDatas[tableIds[0]];
                 for (int i=1; i< tableIds.Count;i++)
@@ -2228,6 +2235,13 @@ namespace UniversalPatcher
         private void createPatchToolStripMenuItem_Click(object sender, EventArgs e)
         {
             generateTablePatch();
+        }
+
+        private void btnTableSelector_Click(object sender, EventArgs e)
+        {
+            frmTableTree frmTT = new frmTableTree();
+            frmTT.loadTree(PCM.tableDatas, this);
+            frmTT.Show();
         }
     }
 }
