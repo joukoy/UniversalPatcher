@@ -1259,14 +1259,15 @@ namespace UniversalPatcher
             }
         }
 
-        private void showTableDescription()
+        public void showTableDescription(int ind = -1)
         {
             txtDescription.Text = "";
             if (dataGridView1.SelectedCells.Count < 1 || PCM.tableDatas.Count == 0)
             {
                 return;
             }
-            int ind = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
+            if (ind < 0)
+                ind = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
             txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Bold);
             txtDescription.AppendText(PCM.tableDatas[ind].TableName + Environment.NewLine);
             txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
