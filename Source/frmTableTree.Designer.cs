@@ -35,7 +35,10 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label1 = new System.Windows.Forms.Label();
+            this.numIconSize = new System.Windows.Forms.NumericUpDown();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).BeginInit();
             this.SuspendLayout();
             // 
             // treeView1
@@ -90,11 +93,45 @@
             this.fontToolStripMenuItem.Text = "Font...";
             this.fontToolStripMenuItem.Click += new System.EventHandler(this.fontToolStripMenuItem_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(76, 8);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(52, 13);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "Icon size:";
+            // 
+            // numIconSize
+            // 
+            this.numIconSize.Location = new System.Drawing.Point(134, 4);
+            this.numIconSize.Maximum = new decimal(new int[] {
+            128,
+            0,
+            0,
+            0});
+            this.numIconSize.Minimum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.numIconSize.Name = "numIconSize";
+            this.numIconSize.Size = new System.Drawing.Size(40, 20);
+            this.numIconSize.TabIndex = 6;
+            this.numIconSize.Value = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+            this.numIconSize.ValueChanged += new System.EventHandler(this.numIconSize_ValueChanged);
+            // 
             // frmTableTree
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(380, 536);
+            this.Controls.Add(this.numIconSize);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.treeView1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -103,6 +140,7 @@
             this.Load += new System.EventHandler(this.frmTableTree_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -115,5 +153,7 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fontToolStripMenuItem;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.NumericUpDown numIconSize;
     }
 }

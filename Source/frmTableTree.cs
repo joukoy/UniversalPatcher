@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -27,6 +28,8 @@ namespace UniversalPatcher
 
             if (Properties.Settings.Default.TableExplorerFont != null)
                 treeView1.Font = Properties.Settings.Default.TableExplorerFont;
+
+            numIconSize.Value = Properties.Settings.Default.TableExplorerIconSize;
 
             if (Properties.Settings.Default.MainWindowPersistence)
             {
@@ -122,6 +125,8 @@ namespace UniversalPatcher
 
             TreeNode[] tnArray = new TreeNode[] { tn1, tn2, tn3 };
             TreeNode tn = new TreeNode("Dimensions", tnArray);
+            tn.ImageKey = "explorer.ico";
+            tn.SelectedImageKey = "explorer.ico";
             treeView1.Nodes.Add(tn);
 
             tn1 = new TreeNode("number");
@@ -177,6 +182,8 @@ namespace UniversalPatcher
 
             tnArray = new TreeNode[] { tn1, tn2, tn3, tn4 };
             tn = new TreeNode("Value type", tnArray);
+            tn.ImageKey = "explorer.ico";
+            tn.SelectedImageKey = "explorer.ico";
             treeView1.Nodes.Add(tn);
 
             List<string> catList = new List<string>();
@@ -216,6 +223,8 @@ namespace UniversalPatcher
                 tnCat.Nodes.Add(tnChild);
             }
             tn = new TreeNode("Category");
+            tn.ImageKey = "explorer.ico";
+            tn.SelectedImageKey = "explorer.ico";
             for (int c = 0; c < tnList.Count; c++)
                 tn.Nodes.Add(tnList[c]);
             treeView1.Nodes.Add(tn);
@@ -265,6 +274,35 @@ namespace UniversalPatcher
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
+        }
+
+        private void setIconSize()
+        {
+            int iconSize = (int)numIconSize.Value;
+            Properties.Settings.Default.TableExplorerIconSize = iconSize;
+            imageList1.ImageSize = new Size(iconSize,iconSize);
+            string iconFolder = Path.Combine(Application.StartupPath, "Icons");
+            string[] GalleryArray = System.IO.Directory.GetFiles(iconFolder);
+            for (int i=0; i< GalleryArray.Length;i++)
+            {
+                if (GalleryArray[i].ToLower().EndsWith(".ico"))
+                {
+                    var tempImage = Image.FromFile(GalleryArray[i]); //Load the image from directory location
+                    Bitmap pic = new Bitmap(iconSize, iconSize);
+                    using (Graphics g = Graphics.FromImage(pic))
+                    {
+                        g.DrawImage(tempImage, new Rectangle(0, 0, pic.Width, pic.Height)); //redraw smaller image
+                    }
+                    imageList1.Images.Add(pic);    //add new image to imageList
+                    tempImage.Dispose();    //after adding to the list, dispose image out of memory
+                }
+            }
+            treeView1.ItemHeight = iconSize;
+            treeView1.Indent = iconSize + 3;
+        }
+        private void numIconSize_ValueChanged(object sender, EventArgs e)
+        {
+            setIconSize();
         }
     }
 }
