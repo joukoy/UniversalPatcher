@@ -705,5 +705,64 @@ namespace UniversalPatcher.Properties {
                 this["MassCopyTableFilenameExtra"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Font TableExplorerFont {
+            get {
+                return ((global::System.Drawing.Font)(this["TableExplorerFont"]));
+            }
+            set {
+                this["TableExplorerFont"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("16")]
+        public int TableExplorerIconSize {
+            get {
+                return ((int)(this["TableExplorerIconSize"]));
+            }
+            set {
+                this["TableExplorerIconSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size TableExplorerWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["TableExplorerWindowSize"]));
+            }
+            set {
+                this["TableExplorerWindowSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.Forms.FormWindowState TableExplorerWindowState {
+            get {
+                return ((global::System.Windows.Forms.FormWindowState)(this["TableExplorerWindowState"]));
+            }
+            set {
+                this["TableExplorerWindowState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point TableExplorerWindowPosition {
+            get {
+                return ((global::System.Drawing.Point)(this["TableExplorerWindowPosition"]));
+            }
+            set {
+                this["TableExplorerWindowPosition"] = value;
+            }
+        }
     }
 }

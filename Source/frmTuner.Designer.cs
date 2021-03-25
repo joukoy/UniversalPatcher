@@ -726,7 +726,7 @@ namespace UniversalPatcher
             this.btnTableSelector.Name = "btnTableSelector";
             this.btnTableSelector.Size = new System.Drawing.Size(96, 23);
             this.btnTableSelector.TabIndex = 23;
-            this.btnTableSelector.Text = "Table selector";
+            this.btnTableSelector.Text = "Table explorer";
             this.btnTableSelector.UseVisualStyleBackColor = true;
             this.btnTableSelector.Click += new System.EventHandler(this.btnTableSelector_Click);
             // 

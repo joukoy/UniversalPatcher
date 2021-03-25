@@ -17,21 +17,67 @@ namespace UniversalPatcher
         }
 
         public int selectedId;
+        private List<TableData> tdList;
         private frmTuner tuner;
+
+        private void frmTableTree_Load(object sender, EventArgs e)
+        {
+            treeView1.NodeMouseDoubleClick += TreeView1_NodeMouseDoubleClick;
+            treeView1.AfterSelect += TreeView1_AfterSelect;
+
+            if (Properties.Settings.Default.TableExplorerFont != null)
+                treeView1.Font = Properties.Settings.Default.TableExplorerFont;
+
+            if (Properties.Settings.Default.MainWindowPersistence)
+            {
+                if (Properties.Settings.Default.TableExplorerWindowSize.Width > 0 || Properties.Settings.Default.TableExplorerWindowSize.Height > 0)
+                {
+                    this.WindowState = Properties.Settings.Default.TableExplorerWindowState;
+                    if (this.WindowState == FormWindowState.Minimized)
+                    {
+                        this.WindowState = FormWindowState.Normal;
+                    }
+                    this.Location = Properties.Settings.Default.TableExplorerWindowPosition;
+                    this.Size = Properties.Settings.Default.TableExplorerWindowSize;
+                }
+
+            }
+
+            this.FormClosing += FrmTableTree_FormClosing;
+        }
+
+        private void FrmTableTree_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (Properties.Settings.Default.MainWindowPersistence)
+            {
+                Properties.Settings.Default.TableExplorerWindowState = this.WindowState;
+                if (this.WindowState == FormWindowState.Normal)
+                {
+                    Properties.Settings.Default.TableExplorerWindowPosition = this.Location;
+                    Properties.Settings.Default.TableExplorerWindowSize = this.Size;
+                }
+                else
+                {
+                    Properties.Settings.Default.TableExplorerWindowPosition = this.RestoreBounds.Location;
+                    Properties.Settings.Default.TableExplorerWindowSize = this.RestoreBounds.Size;
+                }
+            }
+        }
 
         public void loadTree(List<TableData> tdList, frmTuner tuner)
         {
             this.tuner = tuner;
+            this.tdList = tdList;
             treeView1.ImageList = imageList1;
             TreeNode tn1 = new TreeNode("1D");
-            tn1.ImageKey = "1d.png";
-            tn1.SelectedImageKey = "1d.png";
+            tn1.ImageKey = "1d.ico";
+            tn1.SelectedImageKey = "1d.ico";
             TreeNode tn2 = new TreeNode("2D");
-            tn2.ImageKey = "2d.png";
-            tn1.SelectedImageKey = "2d.png";
+            tn2.ImageKey = "2d.ico";
+            tn1.SelectedImageKey = "2d.ico";
             TreeNode tn3 = new TreeNode("3D");
-            tn3.ImageKey = "3d.png";
-            tn1.SelectedImageKey = "3d.png";
+            tn3.ImageKey = "3d.ico";
+            tn1.SelectedImageKey = "3d.ico";
 
             for (int i = 0; i < tdList.Count; i++)
             {
@@ -40,23 +86,23 @@ namespace UniversalPatcher
 
                 if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
                 {
-                    tnChild.ImageKey = "mask.png";
-                    tnChild.SelectedImageKey = "mask.png";
+                    tnChild.ImageKey = "mask.ico";
+                    tnChild.SelectedImageKey = "mask.ico";
                 }
                 else if (tdList[i].OutputType == upatcher.OutDataType.Flag)
                 {
-                    tnChild.ImageKey = "flag.png";
-                    tnChild.SelectedImageKey = "flag.png";
+                    tnChild.ImageKey = "flag.ico";
+                    tnChild.SelectedImageKey = "flag.ico";
                 }
                 else if (tdList[i].Values.StartsWith("Enum:"))
                 {
-                    tnChild.ImageKey = "enum.png";
-                    tnChild.SelectedImageKey = "enum.png";
+                    tnChild.ImageKey = "enum.ico";
+                    tnChild.SelectedImageKey = "enum.ico";
                 }
                 else
                 {
-                    tnChild.ImageKey = "Num.png";
-                    tnChild.SelectedImageKey = "Num.png";
+                    tnChild.ImageKey = "Num.ico";
+                    tnChild.SelectedImageKey = "Num.ico";
                 }
 
 
@@ -79,17 +125,17 @@ namespace UniversalPatcher
             treeView1.Nodes.Add(tn);
 
             tn1 = new TreeNode("number");
-            tn1.ImageKey = "Num.png";
-            tn1.SelectedImageKey = "Num.png";
+            tn1.ImageKey = "Num.ico";
+            tn1.SelectedImageKey = "Num.ico";
             tn2 = new TreeNode("enum");
-            tn2.ImageKey = "enum.png";
-            tn2.SelectedImageKey = "enum.png";
+            tn2.ImageKey = "enum.ico";
+            tn2.SelectedImageKey = "enum.ico";
             tn3 = new TreeNode("bitmask");
-            tn3.ImageKey = "mask.png";
-            tn3.SelectedImageKey = "mask.png";
+            tn3.ImageKey = "mask.ico";
+            tn3.SelectedImageKey = "mask.ico";
             TreeNode tn4 = new TreeNode("boolean");
-            tn4.ImageKey = "flag.png";
-            tn4.SelectedImageKey = "flag.png";
+            tn4.ImageKey = "flag.ico";
+            tn4.SelectedImageKey = "flag.ico";
             for (int i = 0; i < tdList.Count; i++)
             {
                 TreeNode tnChild = new TreeNode(tdList[i].TableName);
@@ -97,18 +143,18 @@ namespace UniversalPatcher
 
                 if (tdList[i].Rows == 1 && tdList[i].Columns == 1)
                 {
-                    tnChild.ImageKey = "1d.png";
-                    tnChild.SelectedImageKey = "1d.png";
+                    tnChild.ImageKey = "1d.ico";
+                    tnChild.SelectedImageKey = "1d.ico";
                 }
                 else if (tdList[i].Rows > 1 && tdList[i].Columns == 1)
                 {
-                    tnChild.ImageKey = "2d.png";
-                    tnChild.SelectedImageKey = "2d.png";
+                    tnChild.ImageKey = "2d.ico";
+                    tnChild.SelectedImageKey = "2d.ico";
                 }
                 else
                 {
-                    tnChild.ImageKey = "3d.png";
-                    tnChild.SelectedImageKey = "3d.png";
+                    tnChild.ImageKey = "3d.ico";
+                    tnChild.SelectedImageKey = "3d.ico";
                 }
 
                 if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
@@ -154,18 +200,18 @@ namespace UniversalPatcher
                 tnChild.Tag = i;
                 if (tdList[i].Rows == 1 && tdList[i].Columns == 1)
                 {
-                    tnChild.ImageKey = "1d.png";
-                    tnChild.SelectedImageKey = "1d.png";
+                    tnChild.ImageKey = "1d.ico";
+                    tnChild.SelectedImageKey = "1d.ico";
                 }
                 else if (tdList[i].Rows > 1 && tdList[i].Columns == 1)
                 {
-                    tnChild.ImageKey = "2d.png";
-                    tnChild.SelectedImageKey = "2d.png";
+                    tnChild.ImageKey = "2d.ico";
+                    tnChild.SelectedImageKey = "2d.ico";
                 }
                 else
                 {
-                    tnChild.ImageKey = "3d.png";
-                    tnChild.SelectedImageKey = "3d.png";
+                    tnChild.ImageKey = "3d.ico";
+                    tnChild.SelectedImageKey = "3d.ico";
                 }
                 tnCat.Nodes.Add(tnChild);
             }
@@ -173,11 +219,6 @@ namespace UniversalPatcher
             for (int c = 0; c < tnList.Count; c++)
                 tn.Nodes.Add(tnList[c]);
             treeView1.Nodes.Add(tn);
-        }
-        private void frmTableTree_Load(object sender, EventArgs e)
-        {
-            treeView1.NodeMouseDoubleClick += TreeView1_NodeMouseDoubleClick;
-            treeView1.AfterSelect += TreeView1_AfterSelect;
         }
 
         private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -198,6 +239,30 @@ namespace UniversalPatcher
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+
+        }
+
+
+
+        private void fontToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FontDialog fontDlg = new FontDialog();
+            fontDlg.ShowColor = true;
+            fontDlg.ShowApply = true;
+            fontDlg.ShowEffects = true;
+            fontDlg.ShowHelp = true;
+            fontDlg.Font = treeView1.Font;
+            if (fontDlg.ShowDialog() != DialogResult.Cancel)
+            {
+                treeView1.Font = fontDlg.Font;
+                Properties.Settings.Default.TableExplorerFont = treeView1.Font;
+                Properties.Settings.Default.Save();
+            }
+
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
         }
