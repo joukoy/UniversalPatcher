@@ -236,7 +236,6 @@ namespace UniversalPatcher
                 tnChild.ImageKey = ico;
                 tnChild.SelectedImageKey = ico;
 
-
                 tnCat.Nodes.Add(tnChild);
             }
             tn = new TreeNode("Category");
@@ -298,6 +297,7 @@ namespace UniversalPatcher
             int iconSize = (int)numIconSize.Value;
             Properties.Settings.Default.TableExplorerIconSize = iconSize;
             imageList1.ImageSize = new Size(iconSize,iconSize);
+            imageList1.Images.Clear();
             string iconFolder = Path.Combine(Application.StartupPath, "Icons");
             string folderIcon = Path.Combine(Application.StartupPath, "Icons", "explorer.ico");
             imageList1.Images.Add(Image.FromFile(folderIcon));
@@ -306,7 +306,8 @@ namespace UniversalPatcher
             {
                 if (GalleryArray[i].ToLower().EndsWith(".ico"))
                 {
-                    imageList1.Images.Add(Image.FromFile(GalleryArray[i]));
+                    
+                    imageList1.Images.Add(Path.GetFileName(GalleryArray[i]), Icon.ExtractAssociatedIcon(GalleryArray[i]));
                 }
             }
             treeView1.ItemHeight = iconSize;
