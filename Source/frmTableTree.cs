@@ -71,6 +71,7 @@ namespace UniversalPatcher
         {
             this.tuner = tuner;
             this.tdList = tdList;
+            setIconSize();
             treeView1.ImageList = imageList1;
             TreeNode tn1 = new TreeNode("1D");
             tn1.ImageKey = "1d.ico";
@@ -205,21 +206,37 @@ namespace UniversalPatcher
                 }
                 TreeNode tnChild = new TreeNode(tdList[i].TableName);
                 tnChild.Tag = i;
+                string ico = "";
+                if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
+                {
+                    ico = "mask";
+                }
+                else if (tdList[i].OutputType == upatcher.OutDataType.Flag)
+                {
+                    ico = "flag";
+                }
+                else if (tdList[i].Values.StartsWith("Enum:"))
+                {
+                    ico = "enum";
+                }
+
                 if (tdList[i].Rows == 1 && tdList[i].Columns == 1)
                 {
-                    tnChild.ImageKey = "1d.ico";
-                    tnChild.SelectedImageKey = "1d.ico";
+                    ico += "1d.ico";
                 }
                 else if (tdList[i].Rows > 1 && tdList[i].Columns == 1)
                 {
-                    tnChild.ImageKey = "2d.ico";
-                    tnChild.SelectedImageKey = "2d.ico";
+                    ico += "2d.ico";
                 }
                 else
                 {
-                    tnChild.ImageKey = "3d.ico";
-                    tnChild.SelectedImageKey = "3d.ico";
+                    ico += "3d.ico";
                 }
+
+                tnChild.ImageKey = ico;
+                tnChild.SelectedImageKey = ico;
+
+
                 tnCat.Nodes.Add(tnChild);
             }
             tn = new TreeNode("Category");
@@ -282,19 +299,14 @@ namespace UniversalPatcher
             Properties.Settings.Default.TableExplorerIconSize = iconSize;
             imageList1.ImageSize = new Size(iconSize,iconSize);
             string iconFolder = Path.Combine(Application.StartupPath, "Icons");
+            string folderIcon = Path.Combine(Application.StartupPath, "Icons", "explorer.ico");
+            imageList1.Images.Add(Image.FromFile(folderIcon));
             string[] GalleryArray = System.IO.Directory.GetFiles(iconFolder);
             for (int i=0; i< GalleryArray.Length;i++)
             {
                 if (GalleryArray[i].ToLower().EndsWith(".ico"))
                 {
-                    var tempImage = Image.FromFile(GalleryArray[i]); //Load the image from directory location
-                    Bitmap pic = new Bitmap(iconSize, iconSize);
-                    using (Graphics g = Graphics.FromImage(pic))
-                    {
-                        g.DrawImage(tempImage, new Rectangle(0, 0, pic.Width, pic.Height)); //redraw smaller image
-                    }
-                    imageList1.Images.Add(pic);    //add new image to imageList
-                    tempImage.Dispose();    //after adding to the list, dispose image out of memory
+                    imageList1.Images.Add(Image.FromFile(GalleryArray[i]));
                 }
             }
             treeView1.ItemHeight = iconSize;

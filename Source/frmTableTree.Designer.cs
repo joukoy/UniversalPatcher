@@ -58,14 +58,23 @@
             // 
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "explorer_252.ico");
+            this.imageList1.Images.SetKeyName(0, "explorer.ico");
             this.imageList1.Images.SetKeyName(1, "1d.ico");
             this.imageList1.Images.SetKeyName(2, "2d.ico");
             this.imageList1.Images.SetKeyName(3, "3d.ico");
             this.imageList1.Images.SetKeyName(4, "enum.ico");
-            this.imageList1.Images.SetKeyName(5, "flag.ico");
-            this.imageList1.Images.SetKeyName(6, "mask.ico");
-            this.imageList1.Images.SetKeyName(7, "num.ico");
+            this.imageList1.Images.SetKeyName(5, "enum1d.ico");
+            this.imageList1.Images.SetKeyName(6, "enum2d.ico");
+            this.imageList1.Images.SetKeyName(7, "enum3d.ico");
+            this.imageList1.Images.SetKeyName(8, "flag.ico");
+            this.imageList1.Images.SetKeyName(9, "flag1d.ico");
+            this.imageList1.Images.SetKeyName(10, "flag2d.ico");
+            this.imageList1.Images.SetKeyName(11, "flag3d.ico");
+            this.imageList1.Images.SetKeyName(12, "mask.ico");
+            this.imageList1.Images.SetKeyName(13, "mask1d.ico");
+            this.imageList1.Images.SetKeyName(14, "mask2d.ico");
+            this.imageList1.Images.SetKeyName(15, "mask3d.ico");
+            this.imageList1.Images.SetKeyName(16, "num.ico");
             // 
             // menuStrip1
             // 
@@ -89,7 +98,7 @@
             // fontToolStripMenuItem
             // 
             this.fontToolStripMenuItem.Name = "fontToolStripMenuItem";
-            this.fontToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fontToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.fontToolStripMenuItem.Text = "Font...";
             this.fontToolStripMenuItem.Click += new System.EventHandler(this.fontToolStripMenuItem_Click);
             // 
