@@ -93,7 +93,7 @@ namespace UniversalPatcher
                     tnChild.ImageKey = "mask.ico";
                     tnChild.SelectedImageKey = "mask.ico";
                 }
-                else if (tdList[i].OutputType == upatcher.OutDataType.Flag)
+                else if (tdList[i].OutputType == upatcher.OutDataType.Flag || (tdList[i].Units != null && tdList[i].Units.ToLower().Contains("boolean")))
                 {
                     tnChild.ImageKey = "flag.ico";
                     tnChild.SelectedImageKey = "flag.ico";
@@ -167,7 +167,7 @@ namespace UniversalPatcher
                 {
                     tn3.Nodes.Add(tnChild);
                 }
-                else if (tdList[i].OutputType == upatcher.OutDataType.Flag)
+                else if (tdList[i].OutputType == upatcher.OutDataType.Flag || (tdList[i].Units != null && tdList[i].Units.ToLower().Contains("boolean")))
                 {
                     tn4.Nodes.Add(tnChild);
                 }
@@ -211,7 +211,7 @@ namespace UniversalPatcher
                 {
                     ico = "mask";
                 }
-                else if (tdList[i].OutputType == upatcher.OutDataType.Flag)
+                else if (tdList[i].OutputType == upatcher.OutDataType.Flag || (tdList[i].Units != null && tdList[i].Units.ToLower().Contains("boolean")))
                 {
                     ico = "flag";
                 }
