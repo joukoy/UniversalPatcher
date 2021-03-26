@@ -29,6 +29,7 @@ namespace UniversalPatcher
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSelectTableDataProperties));
             this.btnOK = new System.Windows.Forms.Button();
             this.chkSelectAll = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -152,6 +153,7 @@ namespace UniversalPatcher
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.chkSelectAll);
             this.Controls.Add(this.btnOK);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmSelectTableDataProperties";
             this.Text = "Select properties";
             this.groupBox1.ResumeLayout(false);

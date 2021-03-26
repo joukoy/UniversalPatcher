@@ -310,8 +310,8 @@ namespace UniversalPatcher
                     imageList1.Images.Add(Path.GetFileName(GalleryArray[i]), Icon.ExtractAssociatedIcon(GalleryArray[i]));
                 }
             }
-            treeView1.ItemHeight = iconSize;
-            treeView1.Indent = iconSize + 3;
+            treeView1.ItemHeight = iconSize + 2;
+            treeView1.Indent = iconSize + 4;
         }
         private void numIconSize_ValueChanged(object sender, EventArgs e)
         {

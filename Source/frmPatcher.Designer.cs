@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPatcher));
             this.btnOrgFile = new System.Windows.Forms.Button();
             this.btnModFile = new System.Windows.Forms.Button();
             this.txtBaseFile = new System.Windows.Forms.TextBox();
@@ -198,9 +199,9 @@
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTunerAutloadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.oBD2CodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.oBD2CodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -2109,6 +2110,13 @@
             this.moreSettingsToolStripMenuItem.Text = "More settings...";
             this.moreSettingsToolStripMenuItem.Click += new System.EventHandler(this.moreSettingsToolStripMenuItem_Click);
             // 
+            // oBD2CodesToolStripMenuItem
+            // 
+            this.oBD2CodesToolStripMenuItem.Name = "oBD2CodesToolStripMenuItem";
+            this.oBD2CodesToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.oBD2CodesToolStripMenuItem.Text = "OBD2 Codes";
+            this.oBD2CodesToolStripMenuItem.Click += new System.EventHandler(this.oBD2CodesToolStripMenuItem_Click);
+            // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -2124,13 +2132,6 @@
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // oBD2CodesToolStripMenuItem
-            // 
-            this.oBD2CodesToolStripMenuItem.Name = "oBD2CodesToolStripMenuItem";
-            this.oBD2CodesToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.oBD2CodesToolStripMenuItem.Text = "OBD2 Codes";
-            this.oBD2CodesToolStripMenuItem.Click += new System.EventHandler(this.oBD2CodesToolStripMenuItem_Click);
-            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2143,6 +2144,7 @@
             this.Controls.Add(this.txtBaseFile);
             this.Controls.Add(this.btnOrgFile);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FrmPatcher";
             this.Text = "Universal patcher";

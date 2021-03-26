@@ -28,9 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmEditAddress));
             this.label2 = new System.Windows.Forms.Label();
             this.txtAddress = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioEndSegment = new System.Windows.Forms.RadioButton();
+            this.radioEndFile = new System.Windows.Forms.RadioButton();
             this.radioRelative = new System.Windows.Forms.RadioButton();
             this.radioAbsolute = new System.Windows.Forms.RadioButton();
             this.numBytes = new System.Windows.Forms.NumericUpDown();
@@ -41,8 +44,6 @@
             this.radioHEX = new System.Windows.Forms.RadioButton();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.radioEndFile = new System.Windows.Forms.RadioButton();
-            this.radioEndSegment = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numBytes)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -75,6 +76,28 @@
             this.groupBox1.Size = new System.Drawing.Size(132, 122);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
+            // 
+            // radioEndSegment
+            // 
+            this.radioEndSegment.AutoSize = true;
+            this.radioEndSegment.Location = new System.Drawing.Point(3, 63);
+            this.radioEndSegment.Name = "radioEndSegment";
+            this.radioEndSegment.Size = new System.Drawing.Size(124, 17);
+            this.radioEndSegment.TabIndex = 4;
+            this.radioEndSegment.TabStop = true;
+            this.radioEndSegment.Text = "From end of segment";
+            this.radioEndSegment.UseVisualStyleBackColor = true;
+            // 
+            // radioEndFile
+            // 
+            this.radioEndFile.AutoSize = true;
+            this.radioEndFile.Location = new System.Drawing.Point(3, 86);
+            this.radioEndFile.Name = "radioEndFile";
+            this.radioEndFile.Size = new System.Drawing.Size(97, 17);
+            this.radioEndFile.TabIndex = 3;
+            this.radioEndFile.TabStop = true;
+            this.radioEndFile.Text = "From end of file";
+            this.radioEndFile.UseVisualStyleBackColor = true;
             // 
             // radioRelative
             // 
@@ -193,28 +216,6 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // radioEndFile
-            // 
-            this.radioEndFile.AutoSize = true;
-            this.radioEndFile.Location = new System.Drawing.Point(3, 86);
-            this.radioEndFile.Name = "radioEndFile";
-            this.radioEndFile.Size = new System.Drawing.Size(97, 17);
-            this.radioEndFile.TabIndex = 3;
-            this.radioEndFile.TabStop = true;
-            this.radioEndFile.Text = "From end of file";
-            this.radioEndFile.UseVisualStyleBackColor = true;
-            // 
-            // radioEndSegment
-            // 
-            this.radioEndSegment.AutoSize = true;
-            this.radioEndSegment.Location = new System.Drawing.Point(3, 63);
-            this.radioEndSegment.Name = "radioEndSegment";
-            this.radioEndSegment.Size = new System.Drawing.Size(124, 17);
-            this.radioEndSegment.TabIndex = 4;
-            this.radioEndSegment.TabStop = true;
-            this.radioEndSegment.Text = "From end of segment";
-            this.radioEndSegment.UseVisualStyleBackColor = true;
-            // 
             // frmEditAddress
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -228,6 +229,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.txtAddress);
             this.Controls.Add(this.label2);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmEditAddress";
             this.Text = "Edit Address";
             this.groupBox1.ResumeLayout(false);

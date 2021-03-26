@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMassCompare));
             this.btnSelectFiles = new System.Windows.Forms.Button();
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -121,6 +122,7 @@
             this.Controls.Add(this.btnSaveCsv);
             this.Controls.Add(this.btnSelectFiles);
             this.Controls.Add(this.txtResult);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmMassCompare";
             this.Text = "Search and Compare";
             this.Load += new System.EventHandler(this.frmMassCompare_Load);

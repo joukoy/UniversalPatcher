@@ -29,6 +29,7 @@ namespace UniversalPatcher
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMoreSettings));
             this.numTunerTableMinEquivalency = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.btnOK = new System.Windows.Forms.Button();
@@ -152,6 +153,7 @@ namespace UniversalPatcher
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnOK);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmMoreSettings";
             this.Text = "Settings";
             this.Load += new System.EventHandler(this.frmTunerSettings_Load);

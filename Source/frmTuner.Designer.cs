@@ -32,6 +32,7 @@ namespace UniversalPatcher
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTuner));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.btnEditTable = new System.Windows.Forms.Button();
             this.txtSearchTableSeek = new System.Windows.Forms.TextBox();
@@ -744,6 +745,7 @@ namespace UniversalPatcher
             this.Controls.Add(this.btnEditTable);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.splitContainer2);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "frmTuner";
             this.Text = "Tuner";

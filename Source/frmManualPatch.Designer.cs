@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmManualPatch));
             this.label1 = new System.Windows.Forms.Label();
             this.txtReadAddr = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -321,6 +322,7 @@
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmManualPatch";
             this.Text = "Manual patch";
             this.groupBox1.ResumeLayout(false);

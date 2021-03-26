@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSetDTC));
             this.comboDtcStatus = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.labelCode = new System.Windows.Forms.Label();
@@ -123,6 +124,7 @@
             this.Controls.Add(this.labelCode);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboDtcStatus);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmSetDTC";
             this.Text = "Set DTC";
             this.Load += new System.EventHandler(this.frmSetDTC_Load);

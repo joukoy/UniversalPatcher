@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSegmentSettings));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.radioCS1DwordSum = new System.Windows.Forms.RadioButton();
             this.radioCS1None = new System.Windows.Forms.RadioButton();
@@ -830,6 +831,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtSegmentName);
             this.Controls.Add(this.groupBox1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmSegmentSettings";
             this.Text = "Segment settings";
             this.groupBox1.ResumeLayout(false);

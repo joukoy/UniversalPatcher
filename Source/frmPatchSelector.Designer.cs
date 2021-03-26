@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmPatchSelector));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.txtResult = new System.Windows.Forms.RichTextBox();
@@ -110,6 +111,7 @@
             this.Controls.Add(this.chkShowAll);
             this.Controls.Add(this.btnSelect);
             this.Controls.Add(this.splitContainer1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmPatchSelector";
             this.Text = "Select patch";
             this.Load += new System.EventHandler(this.frmPatchSelector_Load);

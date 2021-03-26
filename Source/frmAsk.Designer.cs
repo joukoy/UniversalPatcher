@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmAsk));
             this.labelAsk = new System.Windows.Forms.Label();
             this.TextBox1 = new System.Windows.Forms.TextBox();
             this.btnOK = new System.Windows.Forms.Button();
@@ -79,6 +80,7 @@
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.TextBox1);
             this.Controls.Add(this.labelAsk);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmAsk";
             this.Text = "Group";
             this.ResumeLayout(false);

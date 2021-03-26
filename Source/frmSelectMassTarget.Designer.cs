@@ -29,6 +29,7 @@ namespace UniversalPatcher
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSelectMassTarget));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.btnOK = new System.Windows.Forms.Button();
             this.chkSelectAll = new System.Windows.Forms.CheckBox();
@@ -78,6 +79,7 @@ namespace UniversalPatcher
             this.Controls.Add(this.chkSelectAll);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.dataGridView1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmSelectMassTarget";
             this.Text = "Select target files";
             this.Load += new System.EventHandler(this.frmSelectMassTarget_Load);

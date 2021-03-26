@@ -32,6 +32,7 @@ namespace UniversalPatcher
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTableEditor));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.txtMath = new System.Windows.Forms.TextBox();
             this.btnExecute = new System.Windows.Forms.Button();
@@ -430,6 +431,7 @@ namespace UniversalPatcher
             this.Controls.Add(this.btnExecute);
             this.Controls.Add(this.txtMath);
             this.Controls.Add(this.dataGridView1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "frmTableEditor";
             this.Text = "Table Editor";

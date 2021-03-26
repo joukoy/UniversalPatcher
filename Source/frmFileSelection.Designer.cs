@@ -30,6 +30,7 @@ namespace UniversalPatcher
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmFileSelection));
             this.listFiles = new System.Windows.Forms.ListView();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnBrowse = new System.Windows.Forms.Button();
@@ -156,6 +157,7 @@ namespace UniversalPatcher
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.listFiles);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmFileSelection";
             this.Text = "Select files";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmFileSelection_FormClosing);

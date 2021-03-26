@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.btnSegments = new System.Windows.Forms.Button();
             this.btnPatcher = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -71,6 +72,7 @@
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.btnPatcher);
             this.Controls.Add(this.btnSegments);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmMain";
             this.Text = "Universal Patcher";
             this.Load += new System.EventHandler(this.FrmMain_Load);

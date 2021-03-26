@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSwapSegmentList));
             this.comboSegments = new System.Windows.Forms.ComboBox();
             this.listSegments = new System.Windows.Forms.ListView();
             this.label1 = new System.Windows.Forms.Label();
@@ -304,6 +305,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.listSegments);
             this.Controls.Add(this.comboSegments);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmSwapSegmentList";
             this.Text = "Swap segment(s):";
             this.groupBox1.ResumeLayout(false);
