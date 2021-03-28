@@ -1167,7 +1167,8 @@ namespace UniversalPatcher
                     string valTxt = curVal.ToString();
                     string unitTxt = " " + peekPCM.tableDatas[ind].Units;
                     string maskTxt = "";
-                    if (peekPCM.tableDatas[ind].OutputType == OutDataType.Flag || peekPCM.tableDatas[ind].Units.ToLower().StartsWith("boolean"))
+                    TableValueType vt = getValueType(peekPCM.tableDatas[ind]);
+                    if (vt == TableValueType.boolean)
                     {
                         if (peekPCM.tableDatas[ind].BitMask != null && peekPCM.tableDatas[ind].BitMask.Length > 0)
                         {
@@ -1203,7 +1204,7 @@ namespace UniversalPatcher
                                 valTxt = "Unset, " + valTxt;
                         }
                     }
-                    else if (peekPCM.tableDatas[ind].Values.StartsWith("Enum: "))
+                    else if (vt == TableValueType.selection)
                     {
                         Dictionary<double, string> possibleVals = frmT.parseEnumHeaders(peekPCM.tableDatas[ind].Values.Replace("Enum: ", ""));
                         if (possibleVals.ContainsKey(curVal))

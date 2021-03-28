@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using static upatcher;
 
 namespace UniversalPatcher
 {
@@ -88,17 +89,18 @@ namespace UniversalPatcher
                 TreeNode tnChild = new TreeNode(tdList[i].TableName);
                 tnChild.Tag = i;
 
+                TableValueType vt = getValueType(tdList[i]);
                 if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
                 {
                     tnChild.ImageKey = "mask.ico";
                     tnChild.SelectedImageKey = "mask.ico";
                 }
-                else if (tdList[i].OutputType == upatcher.OutDataType.Flag || (tdList[i].Units != null && tdList[i].Units.ToLower().Contains("boolean")))
+                else if (vt == TableValueType.boolean)
                 {
                     tnChild.ImageKey = "flag.ico";
                     tnChild.SelectedImageKey = "flag.ico";
                 }
-                else if (tdList[i].Values.StartsWith("Enum:"))
+                else if (vt == TableValueType.selection)
                 {
                     tnChild.ImageKey = "enum.ico";
                     tnChild.SelectedImageKey = "enum.ico";
@@ -163,15 +165,16 @@ namespace UniversalPatcher
                     tnChild.SelectedImageKey = "3d.ico";
                 }
 
+                TableValueType vt = getValueType(tdList[i]);
                 if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
                 {
                     tn3.Nodes.Add(tnChild);
                 }
-                else if (tdList[i].OutputType == upatcher.OutDataType.Flag || (tdList[i].Units != null && tdList[i].Units.ToLower().Contains("boolean")))
+                else if (vt == TableValueType.boolean)
                 {
                     tn4.Nodes.Add(tnChild);
                 }
-                else if (tdList[i].Values.StartsWith("Enum:"))
+                else if (vt == TableValueType.selection)
                 {
                     tn2.Nodes.Add(tnChild);
                 }
@@ -207,15 +210,16 @@ namespace UniversalPatcher
                 TreeNode tnChild = new TreeNode(tdList[i].TableName);
                 tnChild.Tag = i;
                 string ico = "";
+                TableValueType vt = getValueType(tdList[i]);
                 if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
                 {
                     ico = "mask";
                 }
-                else if (tdList[i].OutputType == upatcher.OutDataType.Flag || (tdList[i].Units != null && tdList[i].Units.ToLower().Contains("boolean")))
+                else if (vt == TableValueType.boolean)
                 {
                     ico = "flag";
                 }
-                else if (tdList[i].Values.StartsWith("Enum:"))
+                else if (vt == TableValueType.selection)
                 {
                     ico = "enum";
                 }

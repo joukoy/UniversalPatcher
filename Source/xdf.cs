@@ -294,7 +294,7 @@ namespace UniversalPatcher
             string templateTxt = "";
             int lastCategory = 0;
             int dtcCategory = 0;
-
+            int uniqId = 0x100;
             try
             {
 
@@ -312,7 +312,7 @@ namespace UniversalPatcher
                 tableText += "     <CATEGORY index = \"0x" + (dtcCategory - 1).ToString("X") + "\" name = \"DTC\" />" + Environment.NewLine;
                 lastCategory = dtcCategory + 1;
                 tableText += "     <CATEGORY index = \"0x" + (lastCategory - 1).ToString("X") + "\" name = \"Other\" />";
-                xdfText = xdfText.Replace("REPLACE-CATEGORYNAME", tableText);
+                xdfText = xdfText.Replace("REPLACE-CATEGORYNAME", tableText) + Environment.NewLine;
 
                 fName = Path.Combine(Application.StartupPath, "Templates", basefile.configFile + "-checksum.txt");
                 xdfText += ReadTextFile(fName);
@@ -321,7 +321,8 @@ namespace UniversalPatcher
                 //Add OS ID:
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
                 templateTxt = ReadTextFile(fName);
-                tableText = templateTxt.Replace("REPLACE-TABLEID", "32ED");
+                tableText = templateTxt.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
+                uniqId++;
                 tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "DON&apos;T MODIFY");
                 tableText = tableText.Replace("REPLACE-TABLETITLE", "OS ID - Don&apos;t modify, must match XDF!");
                 tableText = tableText.Replace("REPLACE-BITS", "32");
@@ -369,7 +370,8 @@ namespace UniversalPatcher
                             }
                         }*/
 
-                        tableText = tableText.Replace("REPLACE-TABLEID", tdList[t].Address);
+                        tableText = tableText.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
+                        uniqId++;
                         tableText = tableText.Replace("REPLACE-UNITS", tdList[t].Units);
                         tableText = tableText.Replace("REPLACE-ROWCOUNT", tdList[t].Rows.ToString());
                         tableText = tableText.Replace("REPLACE-COLCOUNT", tdList[t].Columns.ToString());
@@ -453,7 +455,8 @@ namespace UniversalPatcher
                         int s = basefile.GetSegmentNumber(tdList[t].addrInt);
                         if (s == -1) s = lastCategory;
                         tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
-                        tableText = tableText.Replace("REPLACE-TABLEID", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
+                        tableText = tableText.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
+                        uniqId++;
                         tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
                         tableText = tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
@@ -477,7 +480,8 @@ namespace UniversalPatcher
                         int s = basefile.GetSegmentNumber(tdList[t].addrInt);
                         if (s == -1) s = lastCategory;
                         tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
-                        tableText = tableText.Replace("REPLACE-TABLEID", tdList[t].Address);
+                        tableText = tableText.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
+                        uniqId++;
                         tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
                         tableText = tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());

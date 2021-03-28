@@ -375,6 +375,42 @@ public class upatcher
         UNKNOWN
     }
 
+    public enum TableValueType
+    {
+        boolean,
+        selection,
+        number
+    }
+
+    public static TableValueType getValueType(TableData td)
+    {
+        TableValueType retVal;
+
+        if (td.Units == null)
+            td.Units = "";
+        if (td.OutputType == OutDataType.Flag)
+        {
+            retVal = TableValueType.boolean;
+        }
+        else if (td.Units.ToLower().Contains("boolean") || td.Units.ToLower().Contains("t/f"))
+        {
+            retVal = TableValueType.boolean;
+        }
+        else if (td.Units.ToLower().Contains("true") && td.Units.ToLower().Contains("false"))
+        {
+            retVal = TableValueType.boolean;
+        }
+        else if (td.Values.StartsWith("Enum: "))
+        {
+            retVal = TableValueType.selection;
+        }
+        else
+        {
+            retVal = TableValueType.number;
+        }
+        return retVal;
+    }
+
     public static int getBits(InDataType dataType)
     {
         int bits = 8; // Assume one byte if not defined. OK?

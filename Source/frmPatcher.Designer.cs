@@ -177,11 +177,6 @@
             this.txtSegmentDescription = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.btnExtractSegments = new System.Windows.Forms.Button();
-            this.tabExportXDF = new System.Windows.Forms.TabPage();
-            this.chkXdfExportTableSeek = new System.Windows.Forms.CheckBox();
-            this.btnExportXDF2 = new System.Windows.Forms.Button();
-            this.chkExportXdfTables = new System.Windows.Forms.CheckBox();
-            this.chkExportXdfDTC = new System.Windows.Forms.CheckBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -233,7 +228,6 @@
             this.tabExtract.SuspendLayout();
             this.tabExtractSegments.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.tabExportXDF.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -1420,7 +1414,6 @@
             this.tabFunction.Controls.Add(this.tabCreate);
             this.tabFunction.Controls.Add(this.tabExtract);
             this.tabFunction.Controls.Add(this.tabExtractSegments);
-            this.tabFunction.Controls.Add(this.tabExportXDF);
             this.tabFunction.Location = new System.Drawing.Point(2, 60);
             this.tabFunction.Name = "tabFunction";
             this.tabFunction.SelectedIndex = 0;
@@ -1913,63 +1906,6 @@
             this.btnExtractSegments.UseVisualStyleBackColor = true;
             this.btnExtractSegments.Click += new System.EventHandler(this.btnExtractSegments_Click);
             // 
-            // tabExportXDF
-            // 
-            this.tabExportXDF.Controls.Add(this.chkXdfExportTableSeek);
-            this.tabExportXDF.Controls.Add(this.btnExportXDF2);
-            this.tabExportXDF.Controls.Add(this.chkExportXdfTables);
-            this.tabExportXDF.Controls.Add(this.chkExportXdfDTC);
-            this.tabExportXDF.Location = new System.Drawing.Point(4, 22);
-            this.tabExportXDF.Name = "tabExportXDF";
-            this.tabExportXDF.Size = new System.Drawing.Size(838, 103);
-            this.tabExportXDF.TabIndex = 5;
-            this.tabExportXDF.Text = "Export XDF";
-            this.tabExportXDF.UseVisualStyleBackColor = true;
-            // 
-            // chkXdfExportTableSeek
-            // 
-            this.chkXdfExportTableSeek.AutoSize = true;
-            this.chkXdfExportTableSeek.Checked = true;
-            this.chkXdfExportTableSeek.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkXdfExportTableSeek.Location = new System.Drawing.Point(6, 49);
-            this.chkXdfExportTableSeek.Name = "chkXdfExportTableSeek";
-            this.chkXdfExportTableSeek.Size = new System.Drawing.Size(114, 17);
-            this.chkXdfExportTableSeek.TabIndex = 3;
-            this.chkXdfExportTableSeek.Text = "Export Table Seek";
-            this.chkXdfExportTableSeek.UseVisualStyleBackColor = true;
-            // 
-            // btnExportXDF2
-            // 
-            this.btnExportXDF2.Location = new System.Drawing.Point(192, 20);
-            this.btnExportXDF2.Name = "btnExportXDF2";
-            this.btnExportXDF2.Size = new System.Drawing.Size(75, 23);
-            this.btnExportXDF2.TabIndex = 2;
-            this.btnExportXDF2.Text = "Export XDF";
-            this.btnExportXDF2.UseVisualStyleBackColor = true;
-            this.btnExportXDF2.Click += new System.EventHandler(this.btnExportXDF2_Click);
-            // 
-            // chkExportXdfTables
-            // 
-            this.chkExportXdfTables.AutoSize = true;
-            this.chkExportXdfTables.Location = new System.Drawing.Point(6, 3);
-            this.chkExportXdfTables.Name = "chkExportXdfTables";
-            this.chkExportXdfTables.Size = new System.Drawing.Size(140, 17);
-            this.chkExportXdfTables.TabIndex = 1;
-            this.chkExportXdfTables.Text = "Export Searched Tables";
-            this.chkExportXdfTables.UseVisualStyleBackColor = true;
-            // 
-            // chkExportXdfDTC
-            // 
-            this.chkExportXdfDTC.AutoSize = true;
-            this.chkExportXdfDTC.Checked = true;
-            this.chkExportXdfDTC.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkExportXdfDTC.Location = new System.Drawing.Point(6, 26);
-            this.chkExportXdfDTC.Name = "chkExportXdfDTC";
-            this.chkExportXdfDTC.Size = new System.Drawing.Size(114, 17);
-            this.chkExportXdfDTC.TabIndex = 0;
-            this.chkExportXdfDTC.Text = "Export DTC Codes";
-            this.chkExportXdfDTC.UseVisualStyleBackColor = true;
-            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -2196,8 +2132,6 @@
             this.tabExtractSegments.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.tabExportXDF.ResumeLayout(false);
-            this.tabExportXDF.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -2350,17 +2284,12 @@
         private System.Windows.Forms.Button btnSetDTC;
         private System.Windows.Forms.ToolStripMenuItem dTCSearchToolStripMenuItem;
         private System.Windows.Forms.Button btnShowTableData;
-        private System.Windows.Forms.TabPage tabExportXDF;
-        private System.Windows.Forms.CheckBox chkExportXdfTables;
-        private System.Windows.Forms.CheckBox chkExportXdfDTC;
-        private System.Windows.Forms.Button btnExportXDF2;
         private System.Windows.Forms.CheckBox chkSearchDTC;
         private System.Windows.Forms.ToolStripMenuItem tableSeekToolStripMenuItem;
         private System.Windows.Forms.TabPage tabTableSeek;
         private System.Windows.Forms.Button btnClearTableSeek;
         private System.Windows.Forms.DataGridView dataGridTableSeek;
         private System.Windows.Forms.CheckBox chkTableSeek;
-        private System.Windows.Forms.CheckBox chkXdfExportTableSeek;
         private System.Windows.Forms.CheckBox chkSearchPids;
         private System.Windows.Forms.Button btnEditTable;
         private System.Windows.Forms.ToolStripMenuItem rememberWindowSizeToolStripMenuItem;

@@ -822,12 +822,13 @@ namespace UniversalPatcher
 
         private void addCellByType(TableData ft, int gridRow, int gridCol)
         {
-            if (ft.OutputType == OutDataType.Flag || (ft.Units != null && ft.Units.ToLower().Contains("boolean")))
+            TableValueType vt = getValueType(ft);
+            if (vt == TableValueType.boolean)
             {
                 DataGridViewCheckBoxCell dgc = new DataGridViewCheckBoxCell();
                 dataGridView1.Rows[gridRow].Cells[gridCol] = dgc;
             }
-            else if (ft.Values.StartsWith("Enum: "))
+            else if (vt == TableValueType.selection)
             {
                 DataGridViewComboBoxCell dgc = new DataGridViewComboBoxCell();
                 if (ft.OutputType == OutDataType.Float)
@@ -859,7 +860,7 @@ namespace UniversalPatcher
                     labelUnits.Text = "Units: Boolean";
                 else
                     labelUnits.Text = "Units: " + getUnitFromTableData(td);
-                if (td.Values != null && !td.Values.StartsWith("Enum:"))
+                if (getValueType(td) == TableValueType.selection)
                     labelUnits.Text += ", Values: " + td.Values;
 
 
@@ -1128,7 +1129,8 @@ namespace UniversalPatcher
                 else commaDecimal = false;
 
                 td = td1;
-                if (td.OutputType == OutDataType.Flag || td.Units.ToLower().StartsWith("boolean") || td.Values.StartsWith("Enum: "))
+                TableValueType vt = getValueType(td);
+                if (vt == TableValueType.selection || vt == TableValueType.boolean)
                     radioDifference.Enabled = false;
 
                 if (tableIds.Count > 1)
@@ -1179,7 +1181,7 @@ namespace UniversalPatcher
                 setMyText();
                 
                 labelUnits.Text = "Units: " + getUnitFromTableData(td);
-                if (td.Values != null && !td.Values.StartsWith("Enum:"))
+                if (getValueType(td) == TableValueType.selection)
                     labelUnits.Text += ", Values: " +  td.Values;
 
                 if (bufSize == 0)
@@ -1230,7 +1232,7 @@ namespace UniversalPatcher
                 {
                     dataGridView1.ColumnCount = colCount;
                 }
-                else if (td.OutputType == OutDataType.Flag || (td.Units != null && td.Units.ToLower().Contains("boolean")))
+                else if (getValueType(td) == TableValueType.boolean)
                 {
                     for (int c = 0; c < colCount; c++)
                     {

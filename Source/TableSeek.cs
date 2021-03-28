@@ -265,7 +265,7 @@ namespace UniversalPatcher
                             string[] ssParts = tableSeeks[s].SearchStr.Split('+');     //At end of string can be +D4 +1W6 etc, for reading next address from found addr
                             Debug.WriteLine("TableSeek: Searching: " + tableSeeks[s].SearchStr + ", Start: " + startAddr.ToString("X") + ", end: " + endAddr.ToString("X"));                            
                             sAddr = getAddrbySearchString(PCM, ssParts[0], ref startAddr, endAddr, tableSeeks[s].ConditionalOffset, tableSeeks[s].ValidationSearchStr);
-                            for (int jump = 1; jump < ssParts.Length && sAddr.Addr < uint.MaxValue; jump++)
+                            for (int jump = 1; jump < ssParts.Length && sAddr.Addr < PCM.fsize; jump++)
                             {
                                 //Read table address from address we found by searchstring
                                 string numOnly = ssParts[jump].Replace("+", "").Replace("D", "").Replace("W", "");
