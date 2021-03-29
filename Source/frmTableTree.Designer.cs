@@ -38,6 +38,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.numIconSize = new System.Windows.Forms.NumericUpDown();
             this.useCategorySubfolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtFilter = new System.Windows.Forms.TextBox();
+            this.timerFilter = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).BeginInit();
             this.SuspendLayout();
@@ -100,7 +103,7 @@
             // fontToolStripMenuItem
             // 
             this.fontToolStripMenuItem.Name = "fontToolStripMenuItem";
-            this.fontToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.fontToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             this.fontToolStripMenuItem.Text = "Font...";
             this.fontToolStripMenuItem.Click += new System.EventHandler(this.fontToolStripMenuItem_Click);
             // 
@@ -143,11 +146,34 @@
             this.useCategorySubfolderToolStripMenuItem.Text = "Show Category subfolder";
             this.useCategorySubfolderToolStripMenuItem.Click += new System.EventHandler(this.useCategorySubfolderToolStripMenuItem_Click);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(180, 8);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(32, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Filter:";
+            // 
+            // txtFilter
+            // 
+            this.txtFilter.Location = new System.Drawing.Point(218, 4);
+            this.txtFilter.Name = "txtFilter";
+            this.txtFilter.Size = new System.Drawing.Size(100, 20);
+            this.txtFilter.TabIndex = 8;
+            this.txtFilter.TextChanged += new System.EventHandler(this.txtFilter_TextChanged);
+            // 
+            // timerFilter
+            // 
+            this.timerFilter.Tick += new System.EventHandler(this.timerFilter_Tick);
+            // 
             // frmTableTree
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(380, 536);
+            this.Controls.Add(this.txtFilter);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.numIconSize);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.treeView1);
@@ -175,5 +201,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown numIconSize;
         private System.Windows.Forms.ToolStripMenuItem useCategorySubfolderToolStripMenuItem;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox txtFilter;
+        private System.Windows.Forms.Timer timerFilter;
     }
 }

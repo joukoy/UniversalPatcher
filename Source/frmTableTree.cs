@@ -21,6 +21,7 @@ namespace UniversalPatcher
         public int selectedId;
         private List<TableData> tdList;
         private frmTuner tuner;
+        int keyDelayCounter = 0;
 
         private void frmTableTree_Load(object sender, EventArgs e)
         {
@@ -98,55 +99,58 @@ namespace UniversalPatcher
 
             for (int i = 0; i < tdList.Count; i++)
             {
-                TreeNode tnChild = new TreeNode(tdList[i].TableName);
-                tnChild.Tag = i;
+                if (tdList[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
+                {
+                    TreeNode tnChild = new TreeNode(tdList[i].TableName);
+                    tnChild.Tag = i;
 
-                TableValueType vt = getValueType(tdList[i]);
-                if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
-                {
-                    tnChild.ImageKey = "bitmask.ico";
-                    tnChild.SelectedImageKey = "mask.ico";
-                }
-                else if (vt == TableValueType.boolean)
-                {
-                    tnChild.ImageKey = "boolean.ico";
-                    tnChild.SelectedImageKey = "flag.ico";
-                }
-                else if (vt == TableValueType.selection)
-                {
-                    tnChild.ImageKey = "enum.ico";
-                    tnChild.SelectedImageKey = "enum.ico";
-                }
-                else
-                {
-                    tnChild.ImageKey = "Number.ico";
-                    tnChild.SelectedImageKey = "Num.ico";
-                }
-
-                string nodeKey = "";
-                if (tdList[i].Rows == 1 && tdList[i].Columns == 1)
-                    nodeKey = "1D";
-                else if (tdList[i].Rows > 1 && tdList[i].Columns == 1)
-                    nodeKey = "2D";
-                else
-                    nodeKey = "3D";
-
-                if (Properties.Settings.Default.TableExplorerUseCategorySubfolder)
-                {
-                    string cat = tdList[i].Category;
-                    if (cat == "")
-                        cat = "(Empty)";
-                    if (!treeView1.Nodes["Dimensions"].Nodes[nodeKey].Nodes.ContainsKey(cat))
+                    TableValueType vt = getValueType(tdList[i]);
+                    if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
                     {
-                        TreeNode dimCatTn = new TreeNode(cat);
-                        dimCatTn.Name = cat;
-                        treeView1.Nodes["Dimensions"].Nodes[nodeKey].Nodes.Add(dimCatTn);
+                        tnChild.ImageKey = "bitmask.ico";
+                        tnChild.SelectedImageKey = "mask.ico";
                     }
-                    tn.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
-                }
-                else
-                {
-                    tn.Nodes[nodeKey].Nodes.Add(tnChild);
+                    else if (vt == TableValueType.boolean)
+                    {
+                        tnChild.ImageKey = "boolean.ico";
+                        tnChild.SelectedImageKey = "flag.ico";
+                    }
+                    else if (vt == TableValueType.selection)
+                    {
+                        tnChild.ImageKey = "enum.ico";
+                        tnChild.SelectedImageKey = "enum.ico";
+                    }
+                    else
+                    {
+                        tnChild.ImageKey = "Number.ico";
+                        tnChild.SelectedImageKey = "Num.ico";
+                    }
+
+                    string nodeKey = "";
+                    if (tdList[i].Rows == 1 && tdList[i].Columns == 1)
+                        nodeKey = "1D";
+                    else if (tdList[i].Rows > 1 && tdList[i].Columns == 1)
+                        nodeKey = "2D";
+                    else
+                        nodeKey = "3D";
+
+                    if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
+                    {
+                        tn.Nodes[nodeKey].Nodes.Add(tnChild);
+                    }
+                    else
+                    {
+                        string cat = tdList[i].Category;
+                        if (cat == "")
+                            cat = "(Empty)";
+                        if (!tn.Nodes[nodeKey].Nodes.ContainsKey(cat))
+                        {
+                            TreeNode dimCatTn = new TreeNode(cat);
+                            dimCatTn.Name = cat;
+                            tn.Nodes[nodeKey].Nodes.Add(dimCatTn);
+                        }
+                        tn.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
+                    }
                 }
             }
 
@@ -163,52 +167,55 @@ namespace UniversalPatcher
 
             for (int i = 0; i < tdList.Count; i++)
             {
-                TreeNode tnChild = new TreeNode(tdList[i].TableName);
-                tnChild.Tag = i;
+                if (tdList[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
+                {
+                    TreeNode tnChild = new TreeNode(tdList[i].TableName);
+                    tnChild.Tag = i;
 
-                if (tdList[i].Rows == 1 && tdList[i].Columns == 1)
-                {
-                    tnChild.ImageKey = "1d.ico";
-                    tnChild.SelectedImageKey = "1d.ico";
-                }
-                else if (tdList[i].Rows > 1 && tdList[i].Columns == 1)
-                {
-                    tnChild.ImageKey = "2d.ico";
-                    tnChild.SelectedImageKey = "2d.ico";
-                }
-                else
-                {
-                    tnChild.ImageKey = "3d.ico";
-                    tnChild.SelectedImageKey = "3d.ico";
-                }
-
-                TableValueType vt = getValueType(tdList[i]);
-                string nodeKey = "";
-                if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
-                    nodeKey = "bitmask";
-                else if (vt == TableValueType.boolean)
-                    nodeKey = "boolean";
-                else if (vt == TableValueType.selection)
-                    nodeKey = "enum";
-                else
-                    nodeKey = "number";
-
-                if (Properties.Settings.Default.TableExplorerUseCategorySubfolder)
-                {
-                    string cat = tdList[i].Category;
-                    if (cat == "")
-                        cat = "(Empty)";
-                    if (!tn.Nodes[nodeKey].Nodes.ContainsKey(cat))
+                    if (tdList[i].Rows == 1 && tdList[i].Columns == 1)
                     {
-                        TreeNode vtCatTn = new TreeNode(cat);
-                        vtCatTn.Name = cat;
-                        tn.Nodes[nodeKey].Nodes.Add(vtCatTn);
+                        tnChild.ImageKey = "1d.ico";
+                        tnChild.SelectedImageKey = "1d.ico";
                     }
-                    tn.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
-                }
-                else
-                {
-                    tn.Nodes[nodeKey].Nodes.Add(tnChild);
+                    else if (tdList[i].Rows > 1 && tdList[i].Columns == 1)
+                    {
+                        tnChild.ImageKey = "2d.ico";
+                        tnChild.SelectedImageKey = "2d.ico";
+                    }
+                    else
+                    {
+                        tnChild.ImageKey = "3d.ico";
+                        tnChild.SelectedImageKey = "3d.ico";
+                    }
+
+                    TableValueType vt = getValueType(tdList[i]);
+                    string nodeKey = "";
+                    if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
+                        nodeKey = "bitmask";
+                    else if (vt == TableValueType.boolean)
+                        nodeKey = "boolean";
+                    else if (vt == TableValueType.selection)
+                        nodeKey = "enum";
+                    else
+                        nodeKey = "number";
+
+                    if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
+                    {
+                        tn.Nodes[nodeKey].Nodes.Add(tnChild);
+                    }
+                    else
+                    {
+                        string cat = tdList[i].Category;
+                        if (cat == "")
+                            cat = "(Empty)";
+                        if (!tn.Nodes[nodeKey].Nodes.ContainsKey(cat))
+                        {
+                            TreeNode vtCatTn = new TreeNode(cat);
+                            vtCatTn.Name = cat;
+                            tn.Nodes[nodeKey].Nodes.Add(vtCatTn);
+                        }
+                        tn.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
+                    }
                 }
             }
 
@@ -217,7 +224,7 @@ namespace UniversalPatcher
             cTn.ImageKey = "explorer.ico";
             cTn.SelectedImageKey = "explorer.ico";
             treeView1.Nodes.Add(cTn);
-            TreeNode cTnChild;
+            TreeNode cTnChild = new TreeNode();
             for (int i=0; i< tuner.PCM.tableCategories.Count; i++)
             {
                 string cate = tuner.PCM.tableCategories[i];
@@ -246,63 +253,68 @@ namespace UniversalPatcher
                 sTn.Nodes.Add(segTn);
             }
 
+
             for (int i=0; i< tdList.Count; i++)
             {
-                TreeNode tnChild = new TreeNode(tdList[i].TableName);
-                tnChild.Tag = i;
-                string ico = "";
-                TableValueType vt = getValueType(tdList[i]);
-                if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
+                if (tdList[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
                 {
-                    ico = "mask";
-                }
-                else if (vt == TableValueType.boolean)
-                {
-                    ico = "flag";
-                }
-                else if (vt == TableValueType.selection)
-                {
-                    ico = "enum";
-                }
 
-                if (tdList[i].Rows == 1 && tdList[i].Columns == 1)
-                {
-                    ico += "1d.ico";
-                }
-                else if (tdList[i].Rows > 1 && tdList[i].Columns == 1)
-                {
-                    ico += "2d.ico";
-                }
-                else
-                {
-                    ico += "3d.ico";
-                }
-
-                tnChild.ImageKey = ico;
-                tnChild.SelectedImageKey = ico;
-
-                string cat = tdList[i].Category;
-                if (cat == "")
-                    cat = "(Empty)";
-                cTn.Nodes[cat].Nodes.Add(tnChild);
-
-                int seg = tuner.PCM.GetSegmentNumber(tdList[i].addrInt);
-                if (seg > -1)
-                {
-                    TreeNode tnClone = (TreeNode)tnChild.Clone();
-                    if (Properties.Settings.Default.TableExplorerUseCategorySubfolder)
+                    TreeNode tnChild = new TreeNode(tdList[i].TableName);
+                    tnChild.Tag = i;
+                    string ico = "";
+                    TableValueType vt = getValueType(tdList[i]);
+                    if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
                     {
-                        if (!sTn.Nodes[seg].Nodes.ContainsKey(cat))
-                        {
-                            TreeNode tnNew = new TreeNode(cat);
-                            tnNew.Name = cat;
-                            sTn.Nodes[seg].Nodes.Add(tnNew);
-                        }
-                        sTn.Nodes[seg].Nodes[cat].Nodes.Add(tnClone);
+                        ico = "mask";
+                    }
+                    else if (vt == TableValueType.boolean)
+                    {
+                        ico = "flag";
+                    }
+                    else if (vt == TableValueType.selection)
+                    {
+                        ico = "enum";
+                    }
+
+                    if (tdList[i].Rows == 1 && tdList[i].Columns == 1)
+                    {
+                        ico += "1d.ico";
+                    }
+                    else if (tdList[i].Rows > 1 && tdList[i].Columns == 1)
+                    {
+                        ico += "2d.ico";
                     }
                     else
                     {
-                        sTn.Nodes[seg].Nodes.Add(tnClone);
+                        ico += "3d.ico";
+                    }
+
+                    tnChild.ImageKey = ico;
+                    tnChild.SelectedImageKey = ico;
+
+                    string cat = tdList[i].Category;
+                    if (cat == "")
+                        cat = "(Empty)";
+                    cTn.Nodes[cat].Nodes.Add(tnChild);
+
+                    int seg = tuner.PCM.GetSegmentNumber(tdList[i].addrInt);
+                    if (seg > -1)
+                    {
+                        TreeNode tnClone = (TreeNode)tnChild.Clone();
+                        if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
+                        {
+                            sTn.Nodes[seg].Nodes.Add(tnClone);
+                        }
+                        else
+                        {
+                            if (!sTn.Nodes[seg].Nodes.ContainsKey(cat))
+                            {
+                                TreeNode tnNew = new TreeNode(cat);
+                                tnNew.Name = cat;
+                                sTn.Nodes[seg].Nodes.Add(tnNew);
+                            }
+                            sTn.Nodes[seg].Nodes[cat].Nodes.Add(tnClone);
+                        }
                     }
                 }
             }
@@ -385,6 +397,25 @@ namespace UniversalPatcher
             useCategorySubfolderToolStripMenuItem.Checked = !useCategorySubfolderToolStripMenuItem.Checked;
             Properties.Settings.Default.TableExplorerUseCategorySubfolder = useCategorySubfolderToolStripMenuItem.Checked;
             loadTree(tdList, tuner);
+        }
+
+        private void txtFilter_TextChanged(object sender, EventArgs e)
+        {
+            keyDelayCounter = 0;
+            timerFilter.Enabled = true;
+        }
+
+
+
+        private void timerFilter_Tick(object sender, EventArgs e)
+        {
+            keyDelayCounter++;
+            if (keyDelayCounter > Properties.Settings.Default.keyPressWait100ms)
+            {
+                loadTree(tdList,tuner);
+                timerFilter.Enabled = false;
+            }
+
         }
     }
 }
