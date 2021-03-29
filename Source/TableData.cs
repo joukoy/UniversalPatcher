@@ -209,6 +209,9 @@ namespace UniversalPatcher
                 //td.Values = "Enum: 0:No MIL (Lamp always off),1:MIL (Lamp may be commanded on by PCM)";
                 tdList.Insert(1, dtcTd);
             }
+            if (!PCM.tableCategories.Contains("DTC"))
+                PCM.tableCategories.Add("DTC");
+
         }
 
     }

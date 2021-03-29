@@ -192,6 +192,12 @@ namespace UniversalPatcher
 
             List<string> catList = new List<string>();
             List<TreeNode> tnList = new List<TreeNode>();
+            List<TreeNode> segmentTnList = new List<TreeNode>();
+            for (int i = 0; i < tuner.PCM.Segments.Count;i++)
+            {
+                TreeNode segTn = new TreeNode(tuner.PCM.Segments[i].Name);
+                segmentTnList.Add(segTn);
+            }
             for (int i=0; i< tdList.Count; i++)
             {
                 string cat = tdList[i].Category;
@@ -241,13 +247,27 @@ namespace UniversalPatcher
                 tnChild.SelectedImageKey = ico;
 
                 tnCat.Nodes.Add(tnChild);
+
+                int seg = tuner.PCM.GetSegmentNumber(tdList[i].addrInt);
+                if (seg > -1)
+                {
+                    TreeNode tnClone = (TreeNode)tnChild.Clone();
+                    segmentTnList[seg].Nodes.Add(tnClone);
+                }
             }
-            tn = new TreeNode("Category");
-            tn.ImageKey = "explorer.ico";
-            tn.SelectedImageKey = "explorer.ico";
+            TreeNode cTn = new TreeNode("Category");
+            cTn.ImageKey = "explorer.ico";
+            cTn.SelectedImageKey = "explorer.ico";
             for (int c = 0; c < tnList.Count; c++)
-                tn.Nodes.Add(tnList[c]);
-            treeView1.Nodes.Add(tn);
+                cTn.Nodes.Add(tnList[c]);
+            treeView1.Nodes.Add(cTn);
+
+            TreeNode sTn = new TreeNode("Segments");
+            sTn.ImageKey = "explorer.ico";
+            sTn.SelectedImageKey = "explorer.ico";
+            for (int c = 0; c < segmentTnList.Count; c++)
+                sTn.Nodes.Add(segmentTnList[c]);
+            treeView1.Nodes.Add(sTn);
         }
 
         private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)

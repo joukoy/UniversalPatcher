@@ -144,6 +144,8 @@ namespace UniversalPatcher
                 tableData.importFoundTable(i, this);
                 tableDatas.Add(tableData);
             }
+            if (!tableCategories.Contains("DTC"))
+                tableCategories.Add("DTC");
             //Fix table id's
             for (int i = 0; i < tableDatas.Count; i++)
                 tableDatas[i].id = (uint)i;
@@ -248,6 +250,9 @@ namespace UniversalPatcher
                     if (!tableCategories.Contains(category))
                         tableCategories.Add(category);
                 }
+                if (!tableCategories.Contains("DTC"))
+                    tableCategories.Add("DTC");
+
                 retVal += " [OK]";
                 Application.DoEvents();
                 //dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
