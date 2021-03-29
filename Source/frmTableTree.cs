@@ -29,6 +29,7 @@ namespace UniversalPatcher
             treeView1.NodeMouseDoubleClick += TreeView1_NodeMouseDoubleClick;
             treeView1.AfterSelect += TreeView1_AfterSelect;
             treeView1.BeforeExpand += TreeView1_BeforeExpand;
+            treeView1.AfterExpand += TreeView1_AfterExpand;
             
             if (Properties.Settings.Default.TableExplorerFont != null)
                 treeView1.Font = Properties.Settings.Default.TableExplorerFont;
@@ -55,7 +56,10 @@ namespace UniversalPatcher
             this.FormClosing += FrmTableTree_FormClosing;
         }
 
-
+        private void TreeView1_AfterExpand(object sender, TreeViewEventArgs e)
+        {
+            filterTables();
+        }
 
         private void FrmTableTree_FormClosing(object sender, FormClosingEventArgs e)
         {
