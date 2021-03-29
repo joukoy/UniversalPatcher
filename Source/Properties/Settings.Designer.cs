@@ -764,5 +764,17 @@ namespace UniversalPatcher.Properties {
                 this["TableExplorerWindowPosition"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TableExplorerUseCategorySubfolder {
+            get {
+                return ((bool)(this["TableExplorerUseCategorySubfolder"]));
+            }
+            set {
+                this["TableExplorerUseCategorySubfolder"] = value;
+            }
+        }
     }
 }

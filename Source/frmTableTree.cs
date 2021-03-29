@@ -30,6 +30,8 @@ namespace UniversalPatcher
             if (Properties.Settings.Default.TableExplorerFont != null)
                 treeView1.Font = Properties.Settings.Default.TableExplorerFont;
 
+            useCategorySubfolderToolStripMenuItem.Checked = Properties.Settings.Default.TableExplorerUseCategorySubfolder;
+
             numIconSize.Value = Properties.Settings.Default.TableExplorerIconSize;
 
             if (Properties.Settings.Default.MainWindowPersistence)
@@ -83,8 +85,9 @@ namespace UniversalPatcher
             this.tdList = tdList;
             setIconSize();
             treeView1.ImageList = imageList1;
-
+            treeView1.Nodes.Clear();
             TreeNode tn = new TreeNode("Dimensions");
+            tn.Name = "Dimensions";
             tn.ImageKey = "explorer.ico";
             tn.SelectedImageKey = "explorer.ico";
             treeView1.Nodes.Add(tn);
@@ -101,12 +104,12 @@ namespace UniversalPatcher
                 TableValueType vt = getValueType(tdList[i]);
                 if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
                 {
-                    tnChild.ImageKey = "mask.ico";
+                    tnChild.ImageKey = "bitmask.ico";
                     tnChild.SelectedImageKey = "mask.ico";
                 }
                 else if (vt == TableValueType.boolean)
                 {
-                    tnChild.ImageKey = "flag.ico";
+                    tnChild.ImageKey = "boolean.ico";
                     tnChild.SelectedImageKey = "flag.ico";
                 }
                 else if (vt == TableValueType.selection)
@@ -116,26 +119,39 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    tnChild.ImageKey = "Num.ico";
+                    tnChild.ImageKey = "Number.ico";
                     tnChild.SelectedImageKey = "Num.ico";
                 }
 
-
+                string nodeKey = "";
                 if (tdList[i].Rows == 1 && tdList[i].Columns == 1)
-                {
-                    tn.Nodes["1D"].Nodes.Add(tnChild);
-                }
+                    nodeKey = "1D";
                 else if (tdList[i].Rows > 1 && tdList[i].Columns == 1)
+                    nodeKey = "2D";
+                else
+                    nodeKey = "3D";
+
+                if (Properties.Settings.Default.TableExplorerUseCategorySubfolder)
                 {
-                    tn.Nodes["2D"].Nodes.Add(tnChild);
+                    string cat = tdList[i].Category;
+                    if (cat == "")
+                        cat = "(Empty)";
+                    if (!treeView1.Nodes["Dimensions"].Nodes[nodeKey].Nodes.ContainsKey(cat))
+                    {
+                        TreeNode dimCatTn = new TreeNode(cat);
+                        dimCatTn.Name = cat;
+                        treeView1.Nodes["Dimensions"].Nodes[nodeKey].Nodes.Add(dimCatTn);
+                    }
+                    tn.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
                 }
                 else
                 {
-                    tn.Nodes["3D"].Nodes.Add(tnChild);
+                    tn.Nodes[nodeKey].Nodes.Add(tnChild);
                 }
             }
 
             tn = new TreeNode("Value type");
+            tn.Name = "Value type";
             tn.ImageKey = "explorer.ico";
             tn.SelectedImageKey = "explorer.ico";
             treeView1.Nodes.Add(tn);
@@ -167,21 +183,32 @@ namespace UniversalPatcher
                 }
 
                 TableValueType vt = getValueType(tdList[i]);
+                string nodeKey = "";
                 if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
-                {
-                    tn.Nodes["bitmask"].Nodes.Add(tnChild);
-                }
+                    nodeKey = "bitmask";
                 else if (vt == TableValueType.boolean)
-                {
-                    tn.Nodes["boolean"].Nodes.Add(tnChild);
-                }
+                    nodeKey = "boolean";
                 else if (vt == TableValueType.selection)
+                    nodeKey = "enum";
+                else
+                    nodeKey = "number";
+
+                if (Properties.Settings.Default.TableExplorerUseCategorySubfolder)
                 {
-                    tn.Nodes["enum"].Nodes.Add(tnChild);
+                    string cat = tdList[i].Category;
+                    if (cat == "")
+                        cat = "(Empty)";
+                    if (!tn.Nodes[nodeKey].Nodes.ContainsKey(cat))
+                    {
+                        TreeNode vtCatTn = new TreeNode(cat);
+                        vtCatTn.Name = cat;
+                        tn.Nodes[nodeKey].Nodes.Add(vtCatTn);
+                    }
+                    tn.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
                 }
                 else
                 {
-                    tn.Nodes["number"].Nodes.Add(tnChild);
+                    tn.Nodes[nodeKey].Nodes.Add(tnChild);
                 }
             }
 
@@ -263,13 +290,20 @@ namespace UniversalPatcher
                 if (seg > -1)
                 {
                     TreeNode tnClone = (TreeNode)tnChild.Clone();
-                    if (!sTn.Nodes[seg].Nodes.ContainsKey(cat))
+                    if (Properties.Settings.Default.TableExplorerUseCategorySubfolder)
                     {
-                        TreeNode tnNew = new TreeNode(cat);
-                        tnNew.Name = cat;
-                        sTn.Nodes[seg].Nodes.Add(tnNew);
+                        if (!sTn.Nodes[seg].Nodes.ContainsKey(cat))
+                        {
+                            TreeNode tnNew = new TreeNode(cat);
+                            tnNew.Name = cat;
+                            sTn.Nodes[seg].Nodes.Add(tnNew);
+                        }
+                        sTn.Nodes[seg].Nodes[cat].Nodes.Add(tnClone);
                     }
-                    sTn.Nodes[seg].Nodes[cat].Nodes.Add(tnClone);
+                    else
+                    {
+                        sTn.Nodes[seg].Nodes.Add(tnClone);
+                    }
                 }
             }
         }
@@ -344,6 +378,13 @@ namespace UniversalPatcher
         private void numIconSize_ValueChanged(object sender, EventArgs e)
         {
             setIconSize();
+        }
+
+        private void useCategorySubfolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            useCategorySubfolderToolStripMenuItem.Checked = !useCategorySubfolderToolStripMenuItem.Checked;
+            Properties.Settings.Default.TableExplorerUseCategorySubfolder = useCategorySubfolderToolStripMenuItem.Checked;
+            loadTree(tdList, tuner);
         }
     }
 }

@@ -37,6 +37,7 @@
             this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.numIconSize = new System.Windows.Forms.NumericUpDown();
+            this.useCategorySubfolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).BeginInit();
             this.SuspendLayout();
@@ -90,7 +91,8 @@
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fontToolStripMenuItem});
+            this.fontToolStripMenuItem,
+            this.useCategorySubfolderToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "Settings";
@@ -98,7 +100,7 @@
             // fontToolStripMenuItem
             // 
             this.fontToolStripMenuItem.Name = "fontToolStripMenuItem";
-            this.fontToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.fontToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.fontToolStripMenuItem.Text = "Font...";
             this.fontToolStripMenuItem.Click += new System.EventHandler(this.fontToolStripMenuItem_Click);
             // 
@@ -134,6 +136,13 @@
             0});
             this.numIconSize.ValueChanged += new System.EventHandler(this.numIconSize_ValueChanged);
             // 
+            // useCategorySubfolderToolStripMenuItem
+            // 
+            this.useCategorySubfolderToolStripMenuItem.Name = "useCategorySubfolderToolStripMenuItem";
+            this.useCategorySubfolderToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            this.useCategorySubfolderToolStripMenuItem.Text = "Show Category subfolder";
+            this.useCategorySubfolderToolStripMenuItem.Click += new System.EventHandler(this.useCategorySubfolderToolStripMenuItem_Click);
+            // 
             // frmTableTree
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -165,5 +174,6 @@
         private System.Windows.Forms.ToolStripMenuItem fontToolStripMenuItem;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown numIconSize;
+        private System.Windows.Forms.ToolStripMenuItem useCategorySubfolderToolStripMenuItem;
     }
 }
