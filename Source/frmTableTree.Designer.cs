@@ -41,6 +41,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.timerFilter = new System.Windows.Forms.Timer(this.components);
+            this.btnExpand = new System.Windows.Forms.Button();
+            this.btnCollapse = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).BeginInit();
             this.SuspendLayout();
@@ -54,7 +56,7 @@
             this.treeView1.ItemHeight = 16;
             this.treeView1.Location = new System.Drawing.Point(0, 27);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(378, 508);
+            this.treeView1.Size = new System.Drawing.Size(417, 508);
             this.treeView1.TabIndex = 0;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
@@ -86,7 +88,7 @@
             this.settingsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(380, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(419, 24);
             this.menuStrip1.TabIndex = 4;
             this.menuStrip1.Text = "menuStrip1";
             this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
@@ -110,7 +112,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(76, 8);
+            this.label1.Location = new System.Drawing.Point(76, 6);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(52, 13);
             this.label1.TabIndex = 5;
@@ -167,11 +169,35 @@
             // 
             this.timerFilter.Tick += new System.EventHandler(this.timerFilter_Tick);
             // 
+            // btnExpand
+            // 
+            this.btnExpand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnExpand.Location = new System.Drawing.Point(328, 0);
+            this.btnExpand.Name = "btnExpand";
+            this.btnExpand.Size = new System.Drawing.Size(24, 24);
+            this.btnExpand.TabIndex = 9;
+            this.btnExpand.Text = "+";
+            this.btnExpand.UseVisualStyleBackColor = true;
+            this.btnExpand.Click += new System.EventHandler(this.btnExpand_Click);
+            // 
+            // btnCollapse
+            // 
+            this.btnCollapse.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCollapse.Location = new System.Drawing.Point(358, 0);
+            this.btnCollapse.Name = "btnCollapse";
+            this.btnCollapse.Size = new System.Drawing.Size(24, 24);
+            this.btnCollapse.TabIndex = 10;
+            this.btnCollapse.Text = "-";
+            this.btnCollapse.UseVisualStyleBackColor = true;
+            this.btnCollapse.Click += new System.EventHandler(this.btnCollapse_Click);
+            // 
             // frmTableTree
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(380, 536);
+            this.ClientSize = new System.Drawing.Size(419, 536);
+            this.Controls.Add(this.btnCollapse);
+            this.Controls.Add(this.btnExpand);
             this.Controls.Add(this.txtFilter);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.numIconSize);
@@ -204,5 +230,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtFilter;
         private System.Windows.Forms.Timer timerFilter;
+        private System.Windows.Forms.Button btnExpand;
+        private System.Windows.Forms.Button btnCollapse;
     }
 }

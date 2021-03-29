@@ -58,7 +58,20 @@ namespace UniversalPatcher
 
         private void TreeView1_AfterExpand(object sender, TreeViewEventArgs e)
         {
-            filterTables();
+            if (e.Node.Parent != null)
+                return;
+            if (e.Node.Text == "Dimensions")
+                if (filterNode("Dimensions"))
+                    loadDimensions(treeView1.Nodes["Dimensions"]);
+            if (e.Node.Text == "Value type")
+                if (filterNode("Value type"))
+                    loadValueTypes(treeView1.Nodes["Value type"]);
+            if (e.Node.Text == "Category")
+                if (filterNode("Category"))
+                    loadCategories(treeView1.Nodes["Category"]);
+            if (e.Node.Text == "Segments")
+                if (filterNode("Segments"))
+                    loadSegments(treeView1.Nodes["Segments"]);
         }
 
         private void FrmTableTree_FormClosing(object sender, FormClosingEventArgs e)
@@ -320,8 +333,7 @@ namespace UniversalPatcher
                         }
                     }
                 }
-            }
-
+            }            
         }
 
         private void TreeView1_BeforeExpand(object sender, TreeViewCancelEventArgs e)
@@ -495,16 +507,13 @@ namespace UniversalPatcher
         private bool filterNode(string nodeKey)
         {
             bool isVisible = false;
-            if (treeView1.Nodes[nodeKey].Nodes.Count > 0)
+            if (treeView1.Nodes[nodeKey].IsExpanded)
             {
+                isVisible = true;
                 foreach (TreeNode tn in treeView1.Nodes[nodeKey].Nodes)
                 {
-                    if (tn.IsVisible)
-                    {
-                        isVisible = true;
-                        while (tn.Nodes.Count > 0)
-                            tn.Nodes[0].Remove();
-                    }
+                    while (tn.Nodes.Count > 0)
+                        tn.Nodes[0].Remove();
                 }
             }
             return isVisible;
@@ -520,7 +529,6 @@ namespace UniversalPatcher
                 loadCategories(treeView1.Nodes["Category"]);
             if (filterNode("Segments"))
                 loadSegments(treeView1.Nodes["Segments"]);
-            treeView1.Refresh();
         }
 
         private void timerFilter_Tick(object sender, EventArgs e)
@@ -533,6 +541,16 @@ namespace UniversalPatcher
                 timerFilter.Enabled = false;
             }
 
+        }
+
+        private void btnExpand_Click(object sender, EventArgs e)
+        {
+            treeView1.ExpandAll();
+        }
+
+        private void btnCollapse_Click(object sender, EventArgs e)
+        {
+            treeView1.CollapseAll();
         }
     }
 }
