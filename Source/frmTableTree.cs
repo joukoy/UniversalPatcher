@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -27,7 +28,8 @@ namespace UniversalPatcher
         {
             treeView1.NodeMouseDoubleClick += TreeView1_NodeMouseDoubleClick;
             treeView1.AfterSelect += TreeView1_AfterSelect;
-
+            treeView1.BeforeExpand += TreeView1_BeforeExpand;
+            
             if (Properties.Settings.Default.TableExplorerFont != null)
                 treeView1.Font = Properties.Settings.Default.TableExplorerFont;
 
@@ -52,6 +54,8 @@ namespace UniversalPatcher
 
             this.FormClosing += FrmTableTree_FormClosing;
         }
+
+
 
         private void FrmTableTree_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -80,23 +84,8 @@ namespace UniversalPatcher
             return tn;
         }
 
-        public void loadTree(List<TableData> tdList, frmTuner tuner)
+        private void loadDimensions(TreeNode parent)
         {
-            this.tuner = tuner;
-            this.tdList = tdList;
-            setIconSize();
-            treeView1.ImageList = imageList1;
-            treeView1.Nodes.Clear();
-            TreeNode tn = new TreeNode("Dimensions");
-            tn.Name = "Dimensions";
-            tn.ImageKey = "explorer.ico";
-            tn.SelectedImageKey = "explorer.ico";
-            treeView1.Nodes.Add(tn);
-
-            tn.Nodes.Add(createTreeNode("1D"));
-            tn.Nodes.Add(createTreeNode("2D"));
-            tn.Nodes.Add(createTreeNode("3D"));
-
             for (int i = 0; i < tdList.Count; i++)
             {
                 if (tdList[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
@@ -136,35 +125,28 @@ namespace UniversalPatcher
 
                     if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
                     {
-                        tn.Nodes[nodeKey].Nodes.Add(tnChild);
+                        parent.Nodes[nodeKey].Nodes.Add(tnChild);
                     }
                     else
                     {
                         string cat = tdList[i].Category;
                         if (cat == "")
                             cat = "(Empty)";
-                        if (!tn.Nodes[nodeKey].Nodes.ContainsKey(cat))
+                        if (!parent.Nodes[nodeKey].Nodes.ContainsKey(cat))
                         {
                             TreeNode dimCatTn = new TreeNode(cat);
                             dimCatTn.Name = cat;
-                            tn.Nodes[nodeKey].Nodes.Add(dimCatTn);
+                            parent.Nodes[nodeKey].Nodes.Add(dimCatTn);
                         }
-                        tn.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
+                        parent.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
                     }
                 }
             }
 
-            tn = new TreeNode("Value type");
-            tn.Name = "Value type";
-            tn.ImageKey = "explorer.ico";
-            tn.SelectedImageKey = "explorer.ico";
-            treeView1.Nodes.Add(tn);
+        }
 
-            tn.Nodes.Add(createTreeNode("number"));
-            tn.Nodes.Add(createTreeNode("enum"));
-            tn.Nodes.Add(createTreeNode("bitmask"));
-            tn.Nodes.Add(createTreeNode("boolean"));
-
+        private void loadValueTypes(TreeNode parent)
+        {
             for (int i = 0; i < tdList.Count; i++)
             {
                 if (tdList[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
@@ -201,60 +183,29 @@ namespace UniversalPatcher
 
                     if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
                     {
-                        tn.Nodes[nodeKey].Nodes.Add(tnChild);
+                        parent.Nodes[nodeKey].Nodes.Add(tnChild);
                     }
                     else
                     {
                         string cat = tdList[i].Category;
                         if (cat == "")
                             cat = "(Empty)";
-                        if (!tn.Nodes[nodeKey].Nodes.ContainsKey(cat))
+                        if (!parent.Nodes[nodeKey].Nodes.ContainsKey(cat))
                         {
                             TreeNode vtCatTn = new TreeNode(cat);
                             vtCatTn.Name = cat;
-                            tn.Nodes[nodeKey].Nodes.Add(vtCatTn);
+                            parent.Nodes[nodeKey].Nodes.Add(vtCatTn);
                         }
-                        tn.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
+                        parent.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
                     }
                 }
             }
 
+        }
 
-            TreeNode cTn = new TreeNode("Category");
-            cTn.ImageKey = "explorer.ico";
-            cTn.SelectedImageKey = "explorer.ico";
-            treeView1.Nodes.Add(cTn);
-            TreeNode cTnChild = new TreeNode();
-            for (int i=0; i< tuner.PCM.tableCategories.Count; i++)
-            {
-                string cate = tuner.PCM.tableCategories[i];
-                if (cate != "_All")
-                {
-                    if (cate == "")
-                        cate = "(Empty)";
-                    cTnChild = new TreeNode(cate);
-                    cTnChild.Name = cate;
-                    cTnChild.ImageKey = "explorer.ico";
-                    cTnChild.SelectedImageKey = "explorer.ico";
-                    cTn.Nodes.Add(cTnChild);
-                }
-            }
-
-            TreeNode sTn = new TreeNode("Segments");
-            sTn.ImageKey = "explorer.ico";
-            sTn.SelectedImageKey = "explorer.ico";
-            treeView1.Nodes.Add(sTn);
-
-            TreeNode segTn;
-            for (int i = 0; i < tuner.PCM.Segments.Count;i++)
-            {
-                segTn = new TreeNode(tuner.PCM.Segments[i].Name);
-                segTn.Name = tuner.PCM.Segments[i].Name;
-                sTn.Nodes.Add(segTn);
-            }
-
-
-            for (int i=0; i< tdList.Count; i++)
+        private void loadCategories(TreeNode parent)
+        {
+            for (int i = 0; i < tdList.Count; i++)
             {
                 if (tdList[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
                 {
@@ -295,29 +246,161 @@ namespace UniversalPatcher
                     string cat = tdList[i].Category;
                     if (cat == "")
                         cat = "(Empty)";
-                    cTn.Nodes[cat].Nodes.Add(tnChild);
+                    parent.Nodes[cat].Nodes.Add(tnChild);
+
+                }
+            }
+
+        }
+
+        private void loadSegments(TreeNode parent)
+        {
+            for (int i = 0; i < tdList.Count; i++)
+            {
+                if (tdList[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
+                {
+
+                    TreeNode tnChild = new TreeNode(tdList[i].TableName);
+                    tnChild.Tag = i;
+                    string ico = "";
+                    TableValueType vt = getValueType(tdList[i]);
+                    if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
+                    {
+                        ico = "mask";
+                    }
+                    else if (vt == TableValueType.boolean)
+                    {
+                        ico = "flag";
+                    }
+                    else if (vt == TableValueType.selection)
+                    {
+                        ico = "enum";
+                    }
+
+                    if (tdList[i].Rows == 1 && tdList[i].Columns == 1)
+                    {
+                        ico += "1d.ico";
+                    }
+                    else if (tdList[i].Rows > 1 && tdList[i].Columns == 1)
+                    {
+                        ico += "2d.ico";
+                    }
+                    else
+                    {
+                        ico += "3d.ico";
+                    }
+
+                    tnChild.ImageKey = ico;
+                    tnChild.SelectedImageKey = ico;
+
+                    string cat = tdList[i].Category;
+                    if (cat == "")
+                        cat = "(Empty)";
 
                     int seg = tuner.PCM.GetSegmentNumber(tdList[i].addrInt);
                     if (seg > -1)
                     {
-                        TreeNode tnClone = (TreeNode)tnChild.Clone();
                         if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
                         {
-                            sTn.Nodes[seg].Nodes.Add(tnClone);
+                            parent.Nodes[seg].Nodes.Add(tnChild);
                         }
                         else
                         {
-                            if (!sTn.Nodes[seg].Nodes.ContainsKey(cat))
+                            if (!parent.Nodes[seg].Nodes.ContainsKey(cat))
                             {
                                 TreeNode tnNew = new TreeNode(cat);
                                 tnNew.Name = cat;
-                                sTn.Nodes[seg].Nodes.Add(tnNew);
+                                parent.Nodes[seg].Nodes.Add(tnNew);
                             }
-                            sTn.Nodes[seg].Nodes[cat].Nodes.Add(tnClone);
+                            parent.Nodes[seg].Nodes[cat].Nodes.Add(tnChild);
                         }
                     }
                 }
             }
+
+        }
+
+        private void TreeView1_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+        {
+            if (e.Node.Nodes[0].Nodes.Count > 0)
+                return; //already loaded
+            if (e.Node.Parent != null)
+                return; //Not top-level node
+            if (e.Node.Text == "Dimensions")
+                loadDimensions(e.Node);
+            else if (e.Node.Text == "Value type")
+                loadValueTypes(e.Node);
+            else if (e.Node.Text == "Category")
+                loadCategories(e.Node);
+            else if (e.Node.Text == "Segments")
+                loadSegments(e.Node);
+        }
+
+        public void loadTree(List<TableData> tdList, frmTuner tuner)
+        {
+            this.tuner = tuner;
+            this.tdList = tdList;
+            setIconSize();
+            treeView1.ImageList = imageList1;
+            treeView1.Nodes.Clear();
+            TreeNode tn = new TreeNode("Dimensions");
+            tn.Name = "Dimensions";
+            tn.ImageKey = "explorer.ico";
+            tn.SelectedImageKey = "explorer.ico";
+            treeView1.Nodes.Add(tn);
+
+            tn.Nodes.Add(createTreeNode("1D"));
+            tn.Nodes.Add(createTreeNode("2D"));
+            tn.Nodes.Add(createTreeNode("3D"));
+
+
+            tn = new TreeNode("Value type");
+            tn.Name = "Value type";
+            tn.ImageKey = "explorer.ico";
+            tn.SelectedImageKey = "explorer.ico";
+            treeView1.Nodes.Add(tn);
+
+            tn.Nodes.Add(createTreeNode("number"));
+            tn.Nodes.Add(createTreeNode("enum"));
+            tn.Nodes.Add(createTreeNode("bitmask"));
+            tn.Nodes.Add(createTreeNode("boolean"));
+
+            TreeNode cTn = new TreeNode("Category");
+            cTn.Name = "Category";
+            cTn.ImageKey = "explorer.ico";
+            cTn.SelectedImageKey = "explorer.ico";
+            treeView1.Nodes.Add(cTn);
+            TreeNode cTnChild = new TreeNode();
+            for (int i=0; i< tuner.PCM.tableCategories.Count; i++)
+            {
+                string cate = tuner.PCM.tableCategories[i];
+                if (cate != "_All")
+                {
+                    if (cate == "")
+                        cate = "(Empty)";
+                    cTnChild = new TreeNode(cate);
+                    cTnChild.Name = cate;
+                    cTnChild.ImageKey = "explorer.ico";
+                    cTnChild.SelectedImageKey = "explorer.ico";
+                    cTn.Nodes.Add(cTnChild);
+                }
+            }
+
+            TreeNode sTn = new TreeNode("Segments");
+            sTn.Name = "Segments";
+            sTn.ImageKey = "explorer.ico";
+            sTn.SelectedImageKey = "explorer.ico";
+            treeView1.Nodes.Add(sTn);
+
+            TreeNode segTn;
+            for (int i = 0; i < tuner.PCM.Segments.Count;i++)
+            {
+                segTn = new TreeNode(tuner.PCM.Segments[i].Name);
+                segTn.Name = tuner.PCM.Segments[i].Name;
+                sTn.Nodes.Add(segTn);
+            }
+
+
         }
 
         private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -396,7 +479,7 @@ namespace UniversalPatcher
         {
             useCategorySubfolderToolStripMenuItem.Checked = !useCategorySubfolderToolStripMenuItem.Checked;
             Properties.Settings.Default.TableExplorerUseCategorySubfolder = useCategorySubfolderToolStripMenuItem.Checked;
-            loadTree(tdList, tuner);
+            filterTables();
         }
 
         private void txtFilter_TextChanged(object sender, EventArgs e)
@@ -405,14 +488,44 @@ namespace UniversalPatcher
             timerFilter.Enabled = true;
         }
 
+        private bool filterNode(string nodeKey)
+        {
+            bool isVisible = false;
+            if (treeView1.Nodes[nodeKey].Nodes.Count > 0)
+            {
+                foreach (TreeNode tn in treeView1.Nodes[nodeKey].Nodes)
+                {
+                    if (tn.IsVisible)
+                    {
+                        isVisible = true;
+                        while (tn.Nodes.Count > 0)
+                            tn.Nodes[0].Remove();
+                    }
+                }
+            }
+            return isVisible;
+        }
 
+        private void filterTables()
+        {
+            if(filterNode("Dimensions"))
+                loadDimensions(treeView1.Nodes["Dimensions"]);
+            if (filterNode("Value type"))
+                loadValueTypes(treeView1.Nodes["Value type"]);
+            if (filterNode("Category"))
+                loadCategories(treeView1.Nodes["Category"]);
+            if (filterNode("Segments"))
+                loadSegments(treeView1.Nodes["Segments"]);
+            treeView1.Refresh();
+        }
 
         private void timerFilter_Tick(object sender, EventArgs e)
         {
             keyDelayCounter++;
             if (keyDelayCounter > Properties.Settings.Default.keyPressWait100ms)
             {
-                loadTree(tdList,tuner);
+                //loadTree(tdList,tuner);
+                filterTables();
                 timerFilter.Enabled = false;
             }
 
