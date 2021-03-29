@@ -68,21 +68,30 @@ namespace UniversalPatcher
             }
         }
 
+        private TreeNode createTreeNode(string txt)
+        {
+            TreeNode tn = new TreeNode(txt);
+            tn.Name = txt;
+            tn.ImageKey = txt + ".ico";
+            tn.SelectedImageKey = txt + ".ico";
+            return tn;
+        }
+
         public void loadTree(List<TableData> tdList, frmTuner tuner)
         {
             this.tuner = tuner;
             this.tdList = tdList;
             setIconSize();
             treeView1.ImageList = imageList1;
-            TreeNode tn1 = new TreeNode("1D");
-            tn1.ImageKey = "1d.ico";
-            tn1.SelectedImageKey = "1d.ico";
-            TreeNode tn2 = new TreeNode("2D");
-            tn2.ImageKey = "2d.ico";
-            tn1.SelectedImageKey = "2d.ico";
-            TreeNode tn3 = new TreeNode("3D");
-            tn3.ImageKey = "3d.ico";
-            tn1.SelectedImageKey = "3d.ico";
+
+            TreeNode tn = new TreeNode("Dimensions");
+            tn.ImageKey = "explorer.ico";
+            tn.SelectedImageKey = "explorer.ico";
+            treeView1.Nodes.Add(tn);
+
+            tn.Nodes.Add(createTreeNode("1D"));
+            tn.Nodes.Add(createTreeNode("2D"));
+            tn.Nodes.Add(createTreeNode("3D"));
 
             for (int i = 0; i < tdList.Count; i++)
             {
@@ -114,36 +123,28 @@ namespace UniversalPatcher
 
                 if (tdList[i].Rows == 1 && tdList[i].Columns == 1)
                 {
-                    tn1.Nodes.Add(tnChild);
+                    tn.Nodes["1D"].Nodes.Add(tnChild);
                 }
                 else if (tdList[i].Rows > 1 && tdList[i].Columns == 1)
                 {
-                    tn2.Nodes.Add(tnChild);
+                    tn.Nodes["2D"].Nodes.Add(tnChild);
                 }
                 else
                 {
-                    tn3.Nodes.Add(tnChild);
+                    tn.Nodes["3D"].Nodes.Add(tnChild);
                 }
             }
 
-            TreeNode[] tnArray = new TreeNode[] { tn1, tn2, tn3 };
-            TreeNode tn = new TreeNode("Dimensions", tnArray);
+            tn = new TreeNode("Value type");
             tn.ImageKey = "explorer.ico";
             tn.SelectedImageKey = "explorer.ico";
             treeView1.Nodes.Add(tn);
 
-            tn1 = new TreeNode("number");
-            tn1.ImageKey = "Num.ico";
-            tn1.SelectedImageKey = "Num.ico";
-            tn2 = new TreeNode("enum");
-            tn2.ImageKey = "enum.ico";
-            tn2.SelectedImageKey = "enum.ico";
-            tn3 = new TreeNode("bitmask");
-            tn3.ImageKey = "mask.ico";
-            tn3.SelectedImageKey = "mask.ico";
-            TreeNode tn4 = new TreeNode("boolean");
-            tn4.ImageKey = "flag.ico";
-            tn4.SelectedImageKey = "flag.ico";
+            tn.Nodes.Add(createTreeNode("number"));
+            tn.Nodes.Add(createTreeNode("enum"));
+            tn.Nodes.Add(createTreeNode("bitmask"));
+            tn.Nodes.Add(createTreeNode("boolean"));
+
             for (int i = 0; i < tdList.Count; i++)
             {
                 TreeNode tnChild = new TreeNode(tdList[i].TableName);
@@ -168,51 +169,58 @@ namespace UniversalPatcher
                 TableValueType vt = getValueType(tdList[i]);
                 if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
                 {
-                    tn3.Nodes.Add(tnChild);
+                    tn.Nodes["bitmask"].Nodes.Add(tnChild);
                 }
                 else if (vt == TableValueType.boolean)
                 {
-                    tn4.Nodes.Add(tnChild);
+                    tn.Nodes["boolean"].Nodes.Add(tnChild);
                 }
                 else if (vt == TableValueType.selection)
                 {
-                    tn2.Nodes.Add(tnChild);
+                    tn.Nodes["enum"].Nodes.Add(tnChild);
                 }
                 else
                 {
-                    tn1.Nodes.Add(tnChild);
+                    tn.Nodes["number"].Nodes.Add(tnChild);
                 }
             }
 
-            tnArray = new TreeNode[] { tn1, tn2, tn3, tn4 };
-            tn = new TreeNode("Value type", tnArray);
-            tn.ImageKey = "explorer.ico";
-            tn.SelectedImageKey = "explorer.ico";
-            treeView1.Nodes.Add(tn);
 
-            List<string> catList = new List<string>();
-            List<TreeNode> tnList = new List<TreeNode>();
-            List<TreeNode> segmentTnList = new List<TreeNode>();
+            TreeNode cTn = new TreeNode("Category");
+            cTn.ImageKey = "explorer.ico";
+            cTn.SelectedImageKey = "explorer.ico";
+            treeView1.Nodes.Add(cTn);
+            TreeNode cTnChild;
+            for (int i=0; i< tuner.PCM.tableCategories.Count; i++)
+            {
+                string cate = tuner.PCM.tableCategories[i];
+                if (cate != "_All")
+                {
+                    if (cate == "")
+                        cate = "(Empty)";
+                    cTnChild = new TreeNode(cate);
+                    cTnChild.Name = cate;
+                    cTnChild.ImageKey = "explorer.ico";
+                    cTnChild.SelectedImageKey = "explorer.ico";
+                    cTn.Nodes.Add(cTnChild);
+                }
+            }
+
+            TreeNode sTn = new TreeNode("Segments");
+            sTn.ImageKey = "explorer.ico";
+            sTn.SelectedImageKey = "explorer.ico";
+            treeView1.Nodes.Add(sTn);
+
+            TreeNode segTn;
             for (int i = 0; i < tuner.PCM.Segments.Count;i++)
             {
-                TreeNode segTn = new TreeNode(tuner.PCM.Segments[i].Name);
-                segmentTnList.Add(segTn);
+                segTn = new TreeNode(tuner.PCM.Segments[i].Name);
+                segTn.Name = tuner.PCM.Segments[i].Name;
+                sTn.Nodes.Add(segTn);
             }
+
             for (int i=0; i< tdList.Count; i++)
             {
-                string cat = tdList[i].Category;
-                TreeNode tnCat;
-                int ind = catList.IndexOf(cat);
-                if (ind < 0)
-                {
-                    tnCat = new TreeNode(cat);
-                    tnList.Add(tnCat);
-                    catList.Add(cat);
-                }
-                else
-                {
-                    tnCat = tnList[ind];
-                }
                 TreeNode tnChild = new TreeNode(tdList[i].TableName);
                 tnChild.Tag = i;
                 string ico = "";
@@ -246,28 +254,24 @@ namespace UniversalPatcher
                 tnChild.ImageKey = ico;
                 tnChild.SelectedImageKey = ico;
 
-                tnCat.Nodes.Add(tnChild);
+                string cat = tdList[i].Category;
+                if (cat == "")
+                    cat = "(Empty)";
+                cTn.Nodes[cat].Nodes.Add(tnChild);
 
                 int seg = tuner.PCM.GetSegmentNumber(tdList[i].addrInt);
                 if (seg > -1)
                 {
                     TreeNode tnClone = (TreeNode)tnChild.Clone();
-                    segmentTnList[seg].Nodes.Add(tnClone);
+                    if (!sTn.Nodes[seg].Nodes.ContainsKey(cat))
+                    {
+                        TreeNode tnNew = new TreeNode(cat);
+                        tnNew.Name = cat;
+                        sTn.Nodes[seg].Nodes.Add(tnNew);
+                    }
+                    sTn.Nodes[seg].Nodes[cat].Nodes.Add(tnClone);
                 }
             }
-            TreeNode cTn = new TreeNode("Category");
-            cTn.ImageKey = "explorer.ico";
-            cTn.SelectedImageKey = "explorer.ico";
-            for (int c = 0; c < tnList.Count; c++)
-                cTn.Nodes.Add(tnList[c]);
-            treeView1.Nodes.Add(cTn);
-
-            TreeNode sTn = new TreeNode("Segments");
-            sTn.ImageKey = "explorer.ico";
-            sTn.SelectedImageKey = "explorer.ico";
-            for (int c = 0; c < segmentTnList.Count; c++)
-                sTn.Nodes.Add(segmentTnList[c]);
-            treeView1.Nodes.Add(sTn);
         }
 
         private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)
