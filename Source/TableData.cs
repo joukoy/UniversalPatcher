@@ -202,6 +202,7 @@ namespace UniversalPatcher
                 {
                     dtcTd.RowHeaders += PCM.dtcCodes[i].Code + ",";
                 }
+                dtcTd.RowHeaders = dtcTd.RowHeaders.Trim(',');
                 dtcTd.Rows = (ushort)PCM.dtcCodes.Count;
                 dtcTd.SavingMath = "X";
                 //td.Signed = false;
