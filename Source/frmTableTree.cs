@@ -114,12 +114,12 @@ namespace UniversalPatcher
                     if (tdList[i].BitMask != null && tdList[i].BitMask.Length > 0)
                     {
                         tnChild.ImageKey = "bitmask.ico";
-                        tnChild.SelectedImageKey = "mask.ico";
+                        tnChild.SelectedImageKey = "bitmask.ico";
                     }
                     else if (vt == TableValueType.boolean)
                     {
                         tnChild.ImageKey = "boolean.ico";
-                        tnChild.SelectedImageKey = "flag.ico";
+                        tnChild.SelectedImageKey = "boolean.ico";
                     }
                     else if (vt == TableValueType.selection)
                     {
@@ -128,8 +128,8 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        tnChild.ImageKey = "Number.ico";
-                        tnChild.SelectedImageKey = "Num.ico";
+                        tnChild.ImageKey = "number.ico";
+                        tnChild.SelectedImageKey = "number.ico";
                     }
 
                     string nodeKey = "";
@@ -421,7 +421,7 @@ namespace UniversalPatcher
 
         private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Tag == null)
+            if (e.Node == null || e.Node.Tag == null)
                 return;
             tuner.showTableDescription((int)e.Node.Tag);
         }
@@ -435,13 +435,6 @@ namespace UniversalPatcher
                 tuner.openTableEditor(selectedId);
             }
         }
-
-        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-
-        }
-
-
 
         private void fontToolStripMenuItem_Click(object sender, EventArgs e)
         {

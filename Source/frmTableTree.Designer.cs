@@ -35,9 +35,9 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.useCategorySubfolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.numIconSize = new System.Windows.Forms.NumericUpDown();
-            this.useCategorySubfolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label2 = new System.Windows.Forms.Label();
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.timerFilter = new System.Windows.Forms.Timer(this.components);
@@ -58,7 +58,6 @@
             this.treeView1.Name = "treeView1";
             this.treeView1.Size = new System.Drawing.Size(417, 508);
             this.treeView1.TabIndex = 0;
-            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
             // imageList1
             // 
@@ -81,6 +80,9 @@
             this.imageList1.Images.SetKeyName(14, "mask2d.ico");
             this.imageList1.Images.SetKeyName(15, "mask3d.ico");
             this.imageList1.Images.SetKeyName(16, "num.ico");
+            this.imageList1.Images.SetKeyName(17, "boolean.ico");
+            this.imageList1.Images.SetKeyName(18, "bitmask.ico");
+            this.imageList1.Images.SetKeyName(19, "number.ico");
             // 
             // menuStrip1
             // 
@@ -108,6 +110,13 @@
             this.fontToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             this.fontToolStripMenuItem.Text = "Font...";
             this.fontToolStripMenuItem.Click += new System.EventHandler(this.fontToolStripMenuItem_Click);
+            // 
+            // useCategorySubfolderToolStripMenuItem
+            // 
+            this.useCategorySubfolderToolStripMenuItem.Name = "useCategorySubfolderToolStripMenuItem";
+            this.useCategorySubfolderToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            this.useCategorySubfolderToolStripMenuItem.Text = "Show Category subfolder";
+            this.useCategorySubfolderToolStripMenuItem.Click += new System.EventHandler(this.useCategorySubfolderToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -140,13 +149,6 @@
             0,
             0});
             this.numIconSize.ValueChanged += new System.EventHandler(this.numIconSize_ValueChanged);
-            // 
-            // useCategorySubfolderToolStripMenuItem
-            // 
-            this.useCategorySubfolderToolStripMenuItem.Name = "useCategorySubfolderToolStripMenuItem";
-            this.useCategorySubfolderToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.useCategorySubfolderToolStripMenuItem.Text = "Show Category subfolder";
-            this.useCategorySubfolderToolStripMenuItem.Click += new System.EventHandler(this.useCategorySubfolderToolStripMenuItem_Click);
             // 
             // label2
             // 
