@@ -83,6 +83,10 @@
             this.imageList1.Images.SetKeyName(17, "boolean.ico");
             this.imageList1.Images.SetKeyName(18, "bitmask.ico");
             this.imageList1.Images.SetKeyName(19, "number.ico");
+            this.imageList1.Images.SetKeyName(20, "Dimensions.ico");
+            this.imageList1.Images.SetKeyName(21, "valuetype.ico");
+            this.imageList1.Images.SetKeyName(22, "segments.ico");
+            this.imageList1.Images.SetKeyName(23, "category.ico");
             // 
             // menuStrip1
             // 

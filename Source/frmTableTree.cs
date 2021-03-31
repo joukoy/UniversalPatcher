@@ -153,6 +153,8 @@ namespace UniversalPatcher
                         {
                             TreeNode dimCatTn = new TreeNode(cat);
                             dimCatTn.Name = cat;
+                            dimCatTn.ImageKey = "category.ico";
+                            dimCatTn.SelectedImageKey = "category.ico";
                             parent.Nodes[nodeKey].Nodes.Add(dimCatTn);
                         }
                         parent.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
@@ -211,6 +213,8 @@ namespace UniversalPatcher
                         {
                             TreeNode vtCatTn = new TreeNode(cat);
                             vtCatTn.Name = cat;
+                            vtCatTn.ImageKey = "category.ico";
+                            vtCatTn.SelectedImageKey = "category.ico";
                             parent.Nodes[nodeKey].Nodes.Add(vtCatTn);
                         }
                         parent.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
@@ -325,8 +329,10 @@ namespace UniversalPatcher
                         {
                             if (!parent.Nodes[seg].Nodes.ContainsKey(cat))
                             {
-                                TreeNode tnNew = new TreeNode(cat);
+                                TreeNode tnNew = new TreeNode(cat);                                
                                 tnNew.Name = cat;
+                                tnNew.ImageKey = "category.ico";
+                                tnNew.SelectedImageKey = "category.ico";
                                 parent.Nodes[seg].Nodes.Add(tnNew);
                             }
                             parent.Nodes[seg].Nodes[cat].Nodes.Add(tnChild);
@@ -361,8 +367,8 @@ namespace UniversalPatcher
             treeView1.Nodes.Clear();
             TreeNode tn = new TreeNode("Dimensions");
             tn.Name = "Dimensions";
-            tn.ImageKey = "explorer.ico";
-            tn.SelectedImageKey = "explorer.ico";
+            tn.ImageKey = "dimensions.ico";
+            tn.SelectedImageKey = "dimensions.ico";
             treeView1.Nodes.Add(tn);
 
             tn.Nodes.Add(createTreeNode("1D"));
@@ -372,8 +378,8 @@ namespace UniversalPatcher
 
             tn = new TreeNode("Value type");
             tn.Name = "Value type";
-            tn.ImageKey = "explorer.ico";
-            tn.SelectedImageKey = "explorer.ico";
+            tn.ImageKey = "valuetype.ico";
+            tn.SelectedImageKey = "valuetype.ico";
             treeView1.Nodes.Add(tn);
 
             tn.Nodes.Add(createTreeNode("number"));
@@ -383,8 +389,8 @@ namespace UniversalPatcher
 
             TreeNode cTn = new TreeNode("Category");
             cTn.Name = "Category";
-            cTn.ImageKey = "explorer.ico";
-            cTn.SelectedImageKey = "explorer.ico";
+            cTn.ImageKey = "category.ico";
+            cTn.SelectedImageKey = "category.ico";
             treeView1.Nodes.Add(cTn);
             TreeNode cTnChild = new TreeNode();
             for (int i=0; i< tuner.PCM.tableCategories.Count; i++)
@@ -396,16 +402,16 @@ namespace UniversalPatcher
                         cate = "(Empty)";
                     cTnChild = new TreeNode(cate);
                     cTnChild.Name = cate;
-                    cTnChild.ImageKey = "explorer.ico";
-                    cTnChild.SelectedImageKey = "explorer.ico";
+                    cTnChild.ImageKey = "category.ico";
+                    cTnChild.SelectedImageKey = "category.ico";
                     cTn.Nodes.Add(cTnChild);
                 }
             }
 
             TreeNode sTn = new TreeNode("Segments");
             sTn.Name = "Segments";
-            sTn.ImageKey = "explorer.ico";
-            sTn.SelectedImageKey = "explorer.ico";
+            sTn.ImageKey = "segments.ico";
+            sTn.SelectedImageKey = "segments.ico";
             treeView1.Nodes.Add(sTn);
 
             TreeNode segTn;
@@ -413,6 +419,8 @@ namespace UniversalPatcher
             {
                 segTn = new TreeNode(tuner.PCM.Segments[i].Name);
                 segTn.Name = tuner.PCM.Segments[i].Name;
+                segTn.ImageKey = "segments.ico";
+                segTn.SelectedImageKey = "segments.ico";
                 sTn.Nodes.Add(segTn);
             }
 
