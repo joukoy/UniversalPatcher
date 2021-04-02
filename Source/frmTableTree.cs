@@ -404,6 +404,12 @@ namespace UniversalPatcher
                     cTnChild.Name = cate;
                     cTnChild.ImageKey = "category.ico";
                     cTnChild.SelectedImageKey = "category.ico";
+                    string icofile = Path.Combine(Application.StartupPath, "icons", cate + ".ico");
+                    if (File.Exists(icofile))
+                    {
+                        cTnChild.ImageKey = cate + ".ico";
+                        cTnChild.SelectedImageKey = cate + ".ico";
+                    }
                     cTn.Nodes.Add(cTnChild);
                 }
             }
@@ -421,6 +427,35 @@ namespace UniversalPatcher
                 segTn.Name = tuner.PCM.Segments[i].Name;
                 segTn.ImageKey = "segments.ico";
                 segTn.SelectedImageKey = "segments.ico";
+
+                string iconFolder = Path.Combine(Application.StartupPath, "Icons");
+                string[] GalleryArray = System.IO.Directory.GetFiles(iconFolder);
+                bool found = false;
+                foreach (string icofile in GalleryArray)
+                {
+
+                    double percentage = ComputeSimilarity.CalculateSimilarity(Path.GetFileNameWithoutExtension(icofile).ToLower(), segTn.Name.ToLower());
+                    if ((int)(percentage * 100) >= 80)
+                    {
+                        segTn.ImageKey = Path.GetFileName(icofile);
+                        segTn.SelectedImageKey = Path.GetFileName(icofile);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    foreach (string icofile in GalleryArray)
+                    {
+                        if (segTn.Name.ToLower().Contains(Path.GetFileNameWithoutExtension(icofile)))
+                        {
+                            segTn.ImageKey = Path.GetFileName(icofile);
+                            segTn.SelectedImageKey = Path.GetFileName(icofile);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
                 sTn.Nodes.Add(segTn);
             }
 
@@ -469,7 +504,6 @@ namespace UniversalPatcher
         private void setIconSize()
         {
             int iconSize = (int)numIconSize.Value;
-            Properties.Settings.Default.TableExplorerIconSize = iconSize;
             imageList1.ImageSize = new Size(iconSize,iconSize);
             imageList1.Images.Clear();
             string iconFolder = Path.Combine(Application.StartupPath, "Icons");
@@ -490,6 +524,8 @@ namespace UniversalPatcher
         private void numIconSize_ValueChanged(object sender, EventArgs e)
         {
             setIconSize();
+            Properties.Settings.Default.TableExplorerIconSize = (int)numIconSize.Value;
+            Properties.Settings.Default.Save();
         }
 
         private void useCategorySubfolderToolStripMenuItem_Click(object sender, EventArgs e)
