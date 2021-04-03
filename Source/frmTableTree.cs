@@ -23,9 +23,11 @@ namespace UniversalPatcher
         private List<TableData> tdList;
         private frmTuner tuner;
         int keyDelayCounter = 0;
+        private string[] GalleryArray;
 
         private void frmTableTree_Load(object sender, EventArgs e)
         {
+
             treeView1.NodeMouseDoubleClick += TreeView1_NodeMouseDoubleClick;
             treeView1.AfterSelect += TreeView1_AfterSelect;
             treeView1.BeforeExpand += TreeView1_BeforeExpand;
@@ -404,12 +406,13 @@ namespace UniversalPatcher
                     cTnChild.Name = cate;
                     cTnChild.ImageKey = "category.ico";
                     cTnChild.SelectedImageKey = "category.ico";
-                    string icofile = Path.Combine(Application.StartupPath, "icons", cate + ".ico");
+/*                    string icofile = Path.Combine(Application.StartupPath, "icons", cate + ".ico");
                     if (File.Exists(icofile))
                     {
                         cTnChild.ImageKey = cate + ".ico";
                         cTnChild.SelectedImageKey = cate + ".ico";
                     }
+*/
                     cTn.Nodes.Add(cTnChild);
                 }
             }
@@ -428,8 +431,6 @@ namespace UniversalPatcher
                 segTn.ImageKey = "segments.ico";
                 segTn.SelectedImageKey = "segments.ico";
 
-                string iconFolder = Path.Combine(Application.StartupPath, "Icons");
-                string[] GalleryArray = System.IO.Directory.GetFiles(iconFolder);
                 bool found = false;
                 foreach (string icofile in GalleryArray)
                 {
@@ -506,10 +507,10 @@ namespace UniversalPatcher
             int iconSize = (int)numIconSize.Value;
             imageList1.ImageSize = new Size(iconSize,iconSize);
             imageList1.Images.Clear();
-            string iconFolder = Path.Combine(Application.StartupPath, "Icons");
             string folderIcon = Path.Combine(Application.StartupPath, "Icons", "explorer.ico");
             imageList1.Images.Add(Image.FromFile(folderIcon));
-            string[] GalleryArray = System.IO.Directory.GetFiles(iconFolder);
+            string iconFolder = Path.Combine(Application.StartupPath, "Icons");
+            GalleryArray = System.IO.Directory.GetFiles(iconFolder);
             for (int i=0; i< GalleryArray.Length;i++)
             {
                 if (GalleryArray[i].ToLower().EndsWith(".ico"))

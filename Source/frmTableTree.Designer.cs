@@ -89,12 +89,12 @@
             this.imageList1.Images.SetKeyName(23, "category.ico");
             this.imageList1.Images.SetKeyName(24, "eeprom.ico");
             this.imageList1.Images.SetKeyName(25, "engine.ico");
-            this.imageList1.Images.SetKeyName(26, "enginediag.ico");
-            this.imageList1.Images.SetKeyName(27, "fuel.ico");
-            this.imageList1.Images.SetKeyName(28, "os.ico");
-            this.imageList1.Images.SetKeyName(29, "speedo.ico");
-            this.imageList1.Images.SetKeyName(30, "system.ico");
-            this.imageList1.Images.SetKeyName(31, "trans.ico");
+            this.imageList1.Images.SetKeyName(26, "fuel.ico");
+            this.imageList1.Images.SetKeyName(27, "os.ico");
+            this.imageList1.Images.SetKeyName(28, "speedo.ico");
+            this.imageList1.Images.SetKeyName(29, "system.ico");
+            this.imageList1.Images.SetKeyName(30, "trans.ico");
+            this.imageList1.Images.SetKeyName(31, "enginediag.ico");
             this.imageList1.Images.SetKeyName(32, "transdiag.ico");
             // 
             // menuStrip1
