@@ -355,7 +355,10 @@ namespace UniversalPatcher
         public void selectCmpFiles()
         {
             if (!compareAll)
-                splitContainer1.SplitterDistance = 0;
+            {
+                splitContainer1.Panel1Collapsed = true;
+                splitContainer1.Panel1.Hide();
+            }
             frmFileSelection frmF = new frmFileSelection();
             frmF.btnOK.Text = "Compare files";
             frmF.Text = "Search and Compare: " + td.TableName;

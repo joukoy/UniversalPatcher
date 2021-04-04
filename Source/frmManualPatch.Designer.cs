@@ -344,7 +344,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnOK;
         public System.Windows.Forms.TextBox txtDescription;
         public System.Windows.Forms.TextBox txtXML;
         public System.Windows.Forms.TextBox txtCompOS;
@@ -362,5 +361,6 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.Label label12;
+        public System.Windows.Forms.Button btnOK;
     }
 }

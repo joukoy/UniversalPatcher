@@ -38,6 +38,7 @@ namespace UniversalPatcher
             dataGridView1.CellContentDoubleClick += DataGridView1_CellContentDoubleClick;
             if (tunerForm != null)
                 btnSelect.Text = "Apply selected patch";
+            LogReceivers.Add(txtResult);
         }
 
         private void DataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -53,7 +54,7 @@ namespace UniversalPatcher
             dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
         }
 
-        public void LoggerBold(string LogText, Boolean NewLine = true)
+/*        public void LoggerBold(string LogText, Boolean NewLine = true)
         {
             txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Bold);
             txtResult.AppendText(LogText);
@@ -69,7 +70,7 @@ namespace UniversalPatcher
                 txtResult.AppendText(Environment.NewLine);
             Application.DoEvents();
         }
-
+*/
         private void loadPatch(string fileName)
         {
             try
@@ -146,12 +147,16 @@ namespace UniversalPatcher
                 return;
             int row = dataGridView1.SelectedCells[0].RowIndex;
             string fName = dataGridView1.Rows[row].Cells["FileName"].Value.ToString();
-            this.Hide();
             if (tunerForm == null)
+            {
+                this.Hide();
                 frmpatcher.LoadPatch(fName);
+                this.Close();
+            }
             else
+            {
                 tunerForm.applyPatch(fName);
-            this.Close();
+            }
 
         }
         private void btnSelect_Click(object sender, EventArgs e)

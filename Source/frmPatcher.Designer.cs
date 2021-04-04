@@ -134,6 +134,7 @@
             this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tabFunction = new System.Windows.Forms.TabControl();
             this.tabApply = new System.Windows.Forms.TabPage();
+            this.btnTunerExplorer = new System.Windows.Forms.Button();
             this.btnTuner = new System.Windows.Forms.Button();
             this.btnFixFilesChecksum = new System.Windows.Forms.Button();
             this.btnSwapSegments = new System.Windows.Forms.Button();
@@ -1422,6 +1423,7 @@
             // 
             // tabApply
             // 
+            this.tabApply.Controls.Add(this.btnTunerExplorer);
             this.tabApply.Controls.Add(this.btnTuner);
             this.tabApply.Controls.Add(this.btnFixFilesChecksum);
             this.tabApply.Controls.Add(this.btnSwapSegments);
@@ -1436,6 +1438,16 @@
             this.tabApply.TabIndex = 1;
             this.tabApply.Text = "Modify bin";
             this.tabApply.UseVisualStyleBackColor = true;
+            // 
+            // btnTunerExplorer
+            // 
+            this.btnTunerExplorer.Location = new System.Drawing.Point(349, 37);
+            this.btnTunerExplorer.Name = "btnTunerExplorer";
+            this.btnTunerExplorer.Size = new System.Drawing.Size(107, 25);
+            this.btnTunerExplorer.TabIndex = 190;
+            this.btnTunerExplorer.Text = "Tuner (Explorer)";
+            this.btnTunerExplorer.UseVisualStyleBackColor = true;
+            this.btnTunerExplorer.Click += new System.EventHandler(this.btnTunerExplorer_Click);
             // 
             // btnTuner
             // 
@@ -2308,5 +2320,6 @@
         public System.Windows.Forms.Label labelXML;
         private System.Windows.Forms.ToolStripMenuItem moreSettingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem oBD2CodesToolStripMenuItem;
+        private System.Windows.Forms.Button btnTunerExplorer;
     }
 }

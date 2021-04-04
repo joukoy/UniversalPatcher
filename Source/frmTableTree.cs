@@ -22,6 +22,7 @@ namespace UniversalPatcher
         public int selectedId;
         private List<TableData> tdList;
         private frmTuner tuner;
+        public frmTunerExplorer tunerExplorer;
         int keyDelayCounter = 0;
         private string[] GalleryArray;
 
@@ -32,6 +33,8 @@ namespace UniversalPatcher
             treeView1.AfterSelect += TreeView1_AfterSelect;
             treeView1.BeforeExpand += TreeView1_BeforeExpand;
             treeView1.AfterExpand += TreeView1_AfterExpand;
+            if (tunerExplorer != null)
+                treeView1.NodeMouseClick += TreeView1_NodeMouseClick;
             
             if (Properties.Settings.Default.TableExplorerFont != null)
                 treeView1.Font = Properties.Settings.Default.TableExplorerFont;
@@ -40,7 +43,7 @@ namespace UniversalPatcher
 
             numIconSize.Value = Properties.Settings.Default.TableExplorerIconSize;
 
-            if (Properties.Settings.Default.MainWindowPersistence)
+            if (Properties.Settings.Default.MainWindowPersistence && tunerExplorer == null)
             {
                 if (Properties.Settings.Default.TableExplorerWindowSize.Width > 0 || Properties.Settings.Default.TableExplorerWindowSize.Height > 0)
                 {
@@ -56,6 +59,31 @@ namespace UniversalPatcher
             }
 
             this.FormClosing += FrmTableTree_FormClosing;
+        }
+
+        private void FrmTableTree_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (Properties.Settings.Default.MainWindowPersistence && tunerExplorer == null)
+            {
+                Properties.Settings.Default.TableExplorerWindowState = this.WindowState;
+                if (this.WindowState == FormWindowState.Normal)
+                {
+                    Properties.Settings.Default.TableExplorerWindowPosition = this.Location;
+                    Properties.Settings.Default.TableExplorerWindowSize = this.Size;
+                }
+                else
+                {
+                    Properties.Settings.Default.TableExplorerWindowPosition = this.RestoreBounds.Location;
+                    Properties.Settings.Default.TableExplorerWindowSize = this.RestoreBounds.Size;
+                }
+            }
+        }
+
+
+        private void TreeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+                contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
         }
 
         private void TreeView1_AfterExpand(object sender, TreeViewEventArgs e)
@@ -74,24 +102,6 @@ namespace UniversalPatcher
             if (e.Node.Text == "Segments")
                 if (filterNode("Segments"))
                     loadSegments(treeView1.Nodes["Segments"]);
-        }
-
-        private void FrmTableTree_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (Properties.Settings.Default.MainWindowPersistence)
-            {
-                Properties.Settings.Default.TableExplorerWindowState = this.WindowState;
-                if (this.WindowState == FormWindowState.Normal)
-                {
-                    Properties.Settings.Default.TableExplorerWindowPosition = this.Location;
-                    Properties.Settings.Default.TableExplorerWindowSize = this.Size;
-                }
-                else
-                {
-                    Properties.Settings.Default.TableExplorerWindowPosition = this.RestoreBounds.Location;
-                    Properties.Settings.Default.TableExplorerWindowSize = this.RestoreBounds.Size;
-                }
-            }
         }
 
         private TreeNode createTreeNode(string txt)
@@ -360,6 +370,7 @@ namespace UniversalPatcher
                 loadSegments(e.Node);
         }
 
+
         public void loadTree(List<TableData> tdList, frmTuner tuner)
         {
             this.tuner = tuner;
@@ -459,15 +470,42 @@ namespace UniversalPatcher
                 }
                 sTn.Nodes.Add(segTn);
             }
-
-
+            if (tunerExplorer != null)
+            {
+                TreeNode pTn = new TreeNode();
+                pTn.Text = "Patches";
+                pTn.Name = "Patches";
+                pTn.ImageKey = "patch.ico";
+                pTn.SelectedImageKey = "patch.ico";
+                treeView1.Nodes.Add(pTn);
+            }
         }
 
         private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (e.Node == null || e.Node.Tag == null)
+            if (e.Node == null)
                 return;
-            tuner.showTableDescription((int)e.Node.Tag);
+            if (e.Node.Name == "Patches")
+            {
+                if (tunerExplorer != null)
+                {
+                    showPatchSelector();
+                }
+            }
+            else 
+            {
+                if (e.Node.Tag == null)
+                    return;
+                if (tunerExplorer == null)
+                {
+                    //Open editor when selection changes, only if in docked state
+                    tuner.showTableDescription((int)e.Node.Tag);
+                }
+                else
+                {
+                    tuner.openTableEditor((int)e.Node.Tag, tunerExplorer);
+                }
+            }
         }
 
         private void TreeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -476,9 +514,31 @@ namespace UniversalPatcher
             if (e.Node.Tag != null)
             {
                 selectedId = (int)e.Node.Tag;
-                tuner.openTableEditor(selectedId);
+                tuner.openTableEditor(selectedId, tunerExplorer);
             }
         }
+
+        private void showPatchSelector()
+        {
+            foreach (var x in tunerExplorer.splitContainer1.Panel2.Controls.OfType<Form>())
+            {
+                x.Dispose();
+            }
+            frmPatchSelector frmP = new frmPatchSelector();
+            frmP.basefile = tuner.PCM;
+            frmP.tunerForm = tuner;
+            frmP.TopLevel = false;
+            frmP.Dock = DockStyle.Fill;
+            frmP.FormBorderStyle = FormBorderStyle.None;
+            //frmP.splitContainer1.SplitterWidth = frmP.splitContainer1.Height;
+            frmP.splitContainer1.Panel2Collapsed = true;
+            frmP.splitContainer1.Panel2.Hide();
+            tunerExplorer.splitContainer1.Panel2.Controls.Add(frmP);
+            frmP.Show();
+            Application.DoEvents();
+            frmP.loadPatches();
+        }
+
 
         private void fontToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -589,6 +649,20 @@ namespace UniversalPatcher
         private void btnCollapse_Click(object sender, EventArgs e)
         {
             treeView1.CollapseAll();
+        }
+
+        private void treeView1_AfterSelect_1(object sender, TreeViewEventArgs e)
+        {
+
+        }
+
+        private void openInNewWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeView1.SelectedNode.Tag != null)
+            {
+                selectedId = (int)treeView1.SelectedNode.Tag;
+                tuner.openTableEditor(selectedId, null);
+            }
         }
     }
 }

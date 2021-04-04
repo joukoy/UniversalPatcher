@@ -2778,6 +2778,13 @@ namespace UniversalPatcher
             frmEX.loadOBD2CodeList();
             frmEX.Show();
         }
+
+        private void btnTunerExplorer_Click(object sender, EventArgs e)
+        {
+            frmTunerExplorer frmTM = new frmTunerExplorer();
+            frmTM.PCM = basefile;
+            frmTM.Show();
+        }
     }
 }
 

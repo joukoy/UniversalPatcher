@@ -190,7 +190,7 @@ namespace UniversalPatcher
 
         }
 
-        public void openTableEditor(int selectedId = -1)
+        public void openTableEditor(int selectedId = -1, frmTunerExplorer tunerExplorer = null)
         {
             try
             {
@@ -231,6 +231,18 @@ namespace UniversalPatcher
                     LoggerBold("WARING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);
                 }
                 frmTableEditor frmT = new frmTableEditor();
+                if (tunerExplorer != null)
+                {
+                    foreach(var x in tunerExplorer.splitContainer1.Panel2.Controls.OfType<Form>())
+                    {
+                        x.Close();
+                    }
+
+                    frmT.Dock = DockStyle.Fill;
+                    frmT.FormBorderStyle = FormBorderStyle.None;
+                    frmT.TopLevel = false;
+                    tunerExplorer.splitContainer1.Panel2.Controls.Add(frmT);
+                }
                 frmT.PCM = PCM;
                 frmT.tableIds = tableIds;
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;

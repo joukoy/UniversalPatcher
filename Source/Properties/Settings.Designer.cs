@@ -776,5 +776,65 @@ namespace UniversalPatcher.Properties {
                 this["TableExplorerUseCategorySubfolder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point TunerExplorerWindowLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["TunerExplorerWindowLocation"]));
+            }
+            set {
+                this["TunerExplorerWindowLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.Forms.FormWindowState TunerExplorerWindowState {
+            get {
+                return ((global::System.Windows.Forms.FormWindowState)(this["TunerExplorerWindowState"]));
+            }
+            set {
+                this["TunerExplorerWindowState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size TunerExplorerWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["TunerExplorerWindowSize"]));
+            }
+            set {
+                this["TunerExplorerWindowSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int TunerExplorerWindowSplitterDistance {
+            get {
+                return ((int)(this["TunerExplorerWindowSplitterDistance"]));
+            }
+            set {
+                this["TunerExplorerWindowSplitterDistance"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int TunerExplorerWindowSplitter2Distance {
+            get {
+                return ((int)(this["TunerExplorerWindowSplitter2Distance"]));
+            }
+            set {
+                this["TunerExplorerWindowSplitter2Distance"] = value;
+            }
+        }
     }
 }

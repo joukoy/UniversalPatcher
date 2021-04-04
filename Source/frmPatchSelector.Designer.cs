@@ -58,7 +58,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.txtResult);
             this.splitContainer1.Size = new System.Drawing.Size(817, 428);
-            this.splitContainer1.SplitterDistance = 252;
+            this.splitContainer1.SplitterDistance = 250;
             this.splitContainer1.TabIndex = 0;
             // 
             // dataGridView1
@@ -68,7 +68,7 @@
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(817, 252);
+            this.dataGridView1.Size = new System.Drawing.Size(817, 250);
             this.dataGridView1.TabIndex = 0;
             // 
             // txtResult
@@ -77,7 +77,7 @@
             this.txtResult.HideSelection = false;
             this.txtResult.Location = new System.Drawing.Point(0, 0);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(817, 172);
+            this.txtResult.Size = new System.Drawing.Size(817, 174);
             this.txtResult.TabIndex = 0;
             this.txtResult.Text = "";
             // 
@@ -126,11 +126,10 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.RichTextBox txtResult;
         private System.Windows.Forms.Button btnSelect;
         private System.Windows.Forms.CheckBox chkShowAll;
+        public System.Windows.Forms.SplitContainer splitContainer1;
     }
 }
