@@ -503,7 +503,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    tuner.openTableEditor((int)e.Node.Tag, tunerExplorer);
+                    openTableEditor((int)e.Node.Tag);
                 }
             }
         }
@@ -514,8 +514,15 @@ namespace UniversalPatcher
             if (e.Node.Tag != null)
             {
                 selectedId = (int)e.Node.Tag;
-                tuner.openTableEditor(selectedId, tunerExplorer);
+                openTableEditor(selectedId);
             }
+        }
+
+        private void openTableEditor(int id)
+        {
+            List<int> tableIds = new List<int>();
+            tableIds.Add(id);
+            tuner.openTableEditor(tableIds, tunerExplorer);
         }
 
         private void showPatchSelector()
@@ -661,8 +668,13 @@ namespace UniversalPatcher
             if (treeView1.SelectedNode.Tag != null)
             {
                 selectedId = (int)treeView1.SelectedNode.Tag;
-                tuner.openTableEditor(selectedId, null);
+                openTableEditor(selectedId);
             }
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

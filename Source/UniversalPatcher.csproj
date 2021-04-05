@@ -458,6 +458,12 @@
   <ItemGroup>
     <None Include="Resources\UniversalPatcher.JPG" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Icons\expand.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Icons\collapse.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetPath) $(ProjectDir)..\</PostBuildEvent>

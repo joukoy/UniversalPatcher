@@ -66,7 +66,7 @@ namespace UniversalPatcher
         }
         private TableData td;
         public PcmFile PCM;
-        string tableName = "";
+        public string tableName = "";
         private frmTableEditor compareEditor;
         private bool disableSaving = false;
         private bool commaDecimal = true;

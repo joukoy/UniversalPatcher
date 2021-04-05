@@ -190,12 +190,14 @@ namespace UniversalPatcher
 
         }
 
-        public void openTableEditor(int selectedId = -1, frmTunerExplorer tunerExplorer = null)
+        public string openTableEditor(List<int> tableIds = null, frmTunerExplorer tunerExplorer = null)
         {
+            string retVal = "";
             try
             {
-                List<int> tableIds = new List<int>();
-                if (selectedId < 0)
+                if (tableIds == null)
+                    tableIds = new List<int>();
+                if (tableIds.Count == 0)
                 {
                     for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
                     {
@@ -205,25 +207,11 @@ namespace UniversalPatcher
                             tableIds.Add(id);
                     }
                 }
-                else
-                {
-                    tableIds.Add(selectedId);
-                }
-/*                TableData tableData0 = PCM.tableDatas[tableIds[0]];
-                for (int i=1; i< tableIds.Count;i++)
-                {
-                    TableData tableData = PCM.tableDatas[tableIds[i]];
-                    if (tableData.Rows != tableData0.Rows || tableData.Columns != tableData0.Columns)
-                    {
-                        LoggerBold("Can't load multible tables with different size");
-                        return;
-                    }
-                }*/
                 TableData td = PCM.tableDatas[tableIds[0]];
                 if (td.addrInt == uint.MaxValue)
                 {
                     Logger("No address defined!");
-                    return;
+                    return retVal;
                 }
 
                 if (td.OS != PCM.OS && !td.CompatibleOS.Contains("," + PCM.OS +","))
@@ -233,11 +221,6 @@ namespace UniversalPatcher
                 frmTableEditor frmT = new frmTableEditor();
                 if (tunerExplorer != null)
                 {
-                    foreach(var x in tunerExplorer.splitContainer1.Panel2.Controls.OfType<Form>())
-                    {
-                        x.Close();
-                    }
-
                     frmT.Dock = DockStyle.Fill;
                     frmT.FormBorderStyle = FormBorderStyle.None;
                     frmT.TopLevel = false;
@@ -281,12 +264,13 @@ namespace UniversalPatcher
                 }
                 frmT.Show();
                 frmT.loadTable(td);
+                retVal = frmT.tableName;
             }
             catch (Exception ex)
             {
                 LoggerBold(ex.Message);
             }
-
+            return retVal;
         }
 
         private void btnEditTable_Click(object sender, EventArgs e)
