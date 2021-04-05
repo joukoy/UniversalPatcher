@@ -26,6 +26,7 @@ namespace UniversalPatcher
         private string[] GalleryArray;
         private int keyDelayCounter = 0;
         string currentTab;
+        int iconSize;
 
         private void frmTunerExplorer_Load(object sender, EventArgs e)
         {
@@ -61,7 +62,6 @@ namespace UniversalPatcher
                 tuner = new frmTuner(PCM);
                 addtoCurrentFileMenu(PCM);
                 selectPCM();
-                loadConfigforPCM(ref PCM);
                 filterTables();
                 loadDimensions();
             }
@@ -98,19 +98,27 @@ namespace UniversalPatcher
         {
             Cursor.Current = Cursors.WaitCursor;
             Application.DoEvents();
+
             if (tabDimensions.Controls.Contains(treeDimensions))
-                treeDimensions.Dispose();
-            treeDimensions = new TreeView();
-            setIconSize();
-            treeDimensions.ImageList = imageList1;
-            treeDimensions.CheckBoxes = true;
-
-            treeDimensions.Nodes.Add(createTreeNode("1D"));
-            treeDimensions.Nodes.Add(createTreeNode("2D"));
-            treeDimensions.Nodes.Add(createTreeNode("3D"));
-
-            treeDimensions.Dock = DockStyle.Fill;
-            tabDimensions.Controls.Add(treeDimensions);
+            {
+                foreach (TreeNode tn in treeDimensions.Nodes)
+                    tn.Nodes.Clear();
+            }
+            else
+            {
+                treeDimensions = new TreeView();
+                setIconSize();
+                treeDimensions.ImageList = imageList1;
+                treeDimensions.CheckBoxes = true;
+                treeDimensions.Dock = DockStyle.Fill;
+                tabDimensions.Controls.Add(treeDimensions);
+                treeDimensions.AfterCheck += Tree_AfterCheck;
+                treeDimensions.AfterSelect += Tree_AfterSelect;
+                treeDimensions.NodeMouseClick += Tree_NodeMouseClick;
+                treeDimensions.Nodes.Add(createTreeNode("1D"));
+                treeDimensions.Nodes.Add(createTreeNode("2D"));
+                treeDimensions.Nodes.Add(createTreeNode("3D"));
+            }
 
             for (int i = 0; i < PCM.tableDatas.Count; i++)
             {
@@ -170,9 +178,13 @@ namespace UniversalPatcher
                     }
                 }
             }
-            treeDimensions.AfterCheck += Tree_AfterCheck;
-            treeDimensions.AfterSelect += Tree_AfterSelect;
             Cursor.Current = Cursors.Default;
+        }
+
+        private void Tree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+                contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
         }
 
         private void findCheckdNodes(TreeNode tn, ref List<int> tableIds)
@@ -220,6 +232,7 @@ namespace UniversalPatcher
             clearPanel2();
             loadSegments();
         }
+
 
         private void showPatchSelector()
         {
@@ -293,20 +306,23 @@ namespace UniversalPatcher
 
         private void setIconSize()
         {
-
-            int iconSize = (int)numIconSize.Value;
-            imageList1.ImageSize = new Size(iconSize, iconSize);
-            imageList1.Images.Clear();
-            string folderIcon = Path.Combine(Application.StartupPath, "Icons", "explorer.ico");
-            imageList1.Images.Add(Image.FromFile(folderIcon));
-            string iconFolder = Path.Combine(Application.StartupPath, "Icons");
-            GalleryArray = System.IO.Directory.GetFiles(iconFolder);
-            for (int i = 0; i < GalleryArray.Length; i++)
+            if (iconSize != (int)numIconSize.Value)
             {
-                if (GalleryArray[i].ToLower().EndsWith(".ico"))
+                //Size modified since last call
+                iconSize = (int)numIconSize.Value;
+                imageList1.ImageSize = new Size(iconSize, iconSize);
+                imageList1.Images.Clear();
+                string folderIcon = Path.Combine(Application.StartupPath, "Icons", "explorer.ico");
+                imageList1.Images.Add(Image.FromFile(folderIcon));
+                string iconFolder = Path.Combine(Application.StartupPath, "Icons");
+                GalleryArray = System.IO.Directory.GetFiles(iconFolder);
+                for (int i = 0; i < GalleryArray.Length; i++)
                 {
+                    if (GalleryArray[i].ToLower().EndsWith(".ico"))
+                    {
 
-                    imageList1.Images.Add(Path.GetFileName(GalleryArray[i]), Icon.ExtractAssociatedIcon(GalleryArray[i]));
+                        imageList1.Images.Add(Path.GetFileName(GalleryArray[i]), Icon.ExtractAssociatedIcon(GalleryArray[i]));
+                    }
                 }
             }
             if (treeDimensions != null)
@@ -370,36 +386,6 @@ namespace UniversalPatcher
             }
         }
 
-        public void loadConfigforPCM(ref PcmFile newPCM)
-        {
-            string defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", newPCM.OS + ".xml");
-            string compXml = "";
-            if (File.Exists(defaultTunerFile))
-            {
-                long conFileSize = new FileInfo(defaultTunerFile).Length;
-                if (conFileSize < 255)
-                {
-                    compXml = ReadTextFile(defaultTunerFile);
-                    defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", compXml);
-                    Logger("Using compatible file: " + compXml);
-                }
-            }
-            if (File.Exists(defaultTunerFile))
-            {
-                Logger(newPCM.LoadTableList(defaultTunerFile));
-                importDTC();
-            }
-            else
-            {
-                Logger("File not found: " + defaultTunerFile);
-                importDTC();
-                importTableSeek();
-                if (newPCM.Segments.Count > 0 && newPCM.Segments[0].CS1Address.StartsWith("GM-V6"))
-                    importTinyTunerDB();
-            }
-
-        }
-
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string newFile = SelectFile();
@@ -409,9 +395,8 @@ namespace UniversalPatcher
             Application.DoEvents();
             PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName);
             PCM = newPCM;
+            //loadConfigforPCM(ref PCM);
             addtoCurrentFileMenu(newPCM);
-            selectPCM();
-            loadConfigforPCM(ref PCM);
             tuner.PCM = PCM;
             filterTables();
         }
@@ -419,6 +404,8 @@ namespace UniversalPatcher
         {
             if (tuner == null)
                 tuner = new frmTuner(newPCM);
+            else
+                tuner.addtoCurrentFileMenu(newPCM);
             foreach (ToolStripMenuItem mi in bINFileToolStripMenuItem.DropDownItems)
                 mi.Checked = false;
             ToolStripMenuItem menuitem = new ToolStripMenuItem(newPCM.FileName);
@@ -427,8 +414,6 @@ namespace UniversalPatcher
             menuitem.Checked = true;
             bINFileToolStripMenuItem.DropDownItems.Add(menuitem);
             menuitem.Click += Menuitem_Click;
-
-            tuner.addtoCurrentFileMenu(newPCM);
 
         }
         private void Menuitem_Click(object sender, EventArgs e)
@@ -447,7 +432,6 @@ namespace UniversalPatcher
 
             ToolStripMenuItem mitem = (ToolStripMenuItem)bINFileToolStripMenuItem.DropDownItems[PCM.FileName];
             mitem.Checked = true;
-            filterTables();
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -526,22 +510,27 @@ namespace UniversalPatcher
         {
             Cursor.Current = Cursors.WaitCursor;
             Application.DoEvents();
-
             if (tabValueType.Controls.Contains(treeValueType))
-                treeValueType.Dispose();
-            treeValueType = new TreeView();
-            setIconSize();
-            treeValueType.ImageList = imageList1;
-            treeValueType.CheckBoxes = true;
-
-            treeValueType.Nodes.Add(createTreeNode("number"));
-            treeValueType.Nodes.Add(createTreeNode("enum"));
-            treeValueType.Nodes.Add(createTreeNode("bitmask"));
-            treeValueType.Nodes.Add(createTreeNode("boolean"));
-
-
-            treeValueType.Dock = DockStyle.Fill;
-            tabValueType.Controls.Add(treeValueType);
+            {
+                foreach (TreeNode tn in treeValueType.Nodes)
+                    tn.Nodes.Clear();
+            }
+            else
+            {
+                treeValueType = new TreeView();
+                setIconSize();
+                treeValueType.ImageList = imageList1;
+                treeValueType.CheckBoxes = true;
+                treeValueType.Dock = DockStyle.Fill;
+                tabValueType.Controls.Add(treeValueType);
+                treeValueType.AfterSelect += Tree_AfterSelect;
+                treeValueType.AfterCheck += Tree_AfterCheck;
+                treeValueType.NodeMouseClick += Tree_NodeMouseClick;
+                treeValueType.Nodes.Add(createTreeNode("number"));
+                treeValueType.Nodes.Add(createTreeNode("enum"));
+                treeValueType.Nodes.Add(createTreeNode("bitmask"));
+                treeValueType.Nodes.Add(createTreeNode("boolean"));
+            }
 
             for (int i = 0; i < PCM.tableDatas.Count; i++)
             {
@@ -598,9 +587,6 @@ namespace UniversalPatcher
                     }
                 }
             }
-            treeValueType.AfterSelect += Tree_AfterSelect;
-            treeValueType.AfterCheck += Tree_AfterCheck;
-
             Cursor.Current = Cursors.Default;
         }
 
@@ -608,17 +594,23 @@ namespace UniversalPatcher
         {
             Cursor.Current = Cursors.WaitCursor;
             Application.DoEvents();
-
             if (tabCategory.Controls.Contains(treeCategory))
-                treeCategory.Dispose();
-            treeCategory = new TreeView();
-            setIconSize();
-            treeCategory.ImageList = imageList1;
-            treeCategory.CheckBoxes = true;
+            {
+                treeCategory.Nodes.Clear();
+            }
+            else
+            {
+                treeCategory = new TreeView();
+                setIconSize();
+                treeCategory.ImageList = imageList1;
+                treeCategory.CheckBoxes = true;
 
-            treeCategory.Dock = DockStyle.Fill;
-            tabCategory.Controls.Add(treeCategory);
-
+                treeCategory.Dock = DockStyle.Fill;
+                tabCategory.Controls.Add(treeCategory);
+                treeCategory.AfterSelect += Tree_AfterSelect;
+                treeCategory.AfterCheck += Tree_AfterCheck;
+                treeCategory.NodeMouseClick += Tree_NodeMouseClick;
+            }
             for (int i = 0; i < PCM.tableDatas.Count; i++)
             {
                 if (PCM.tableDatas[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
@@ -671,8 +663,6 @@ namespace UniversalPatcher
                     treeCategory.Nodes[cat].Nodes.Add(tnChild);
                 }
             }
-            treeCategory.AfterSelect += Tree_AfterSelect;
-            treeCategory.AfterCheck += Tree_AfterCheck;
             Cursor.Current = Cursors.Default;
         }
 
@@ -680,17 +670,23 @@ namespace UniversalPatcher
         {
             Cursor.Current = Cursors.WaitCursor;
             Application.DoEvents();
-
             if (tabSegments.Controls.Contains(treeSegments))
-                treeSegments.Dispose();
-            treeSegments = new TreeView();
-            setIconSize();
-            treeSegments.ImageList = imageList1;
-            treeSegments.CheckBoxes = true;
+            {
+                treeSegments.Nodes.Clear();
+            }
+            else
+            {
+                treeSegments = new TreeView();
+                setIconSize();
+                treeSegments.ImageList = imageList1;
+                treeSegments.CheckBoxes = true;
 
-            treeSegments.Dock = DockStyle.Fill;
-            tabSegments.Controls.Add(treeSegments);
-
+                treeSegments.Dock = DockStyle.Fill;
+                tabSegments.Controls.Add(treeSegments);
+                treeSegments.AfterSelect += Tree_AfterSelect;
+                treeSegments.AfterCheck += Tree_AfterCheck;
+                treeSegments.NodeMouseClick += Tree_NodeMouseClick;
+            }
             TreeNode segTn;
             for (int i = 0; i < tuner.PCM.Segments.Count; i++)
             {
@@ -792,13 +788,12 @@ namespace UniversalPatcher
                     }
                 }
             }
-            treeSegments.AfterSelect += Tree_AfterSelect;
-            treeSegments.AfterCheck += Tree_AfterCheck;
             Cursor.Current = Cursors.Default;
         }
 
         private void filterTables()
         {
+            clearPanel2();            
             if (tabControl1.SelectedTab.Name == "tabDimensions")
                 loadDimensions();
             else if (tabControl1.SelectedTab.Name == "tabValueType")
@@ -878,9 +873,22 @@ namespace UniversalPatcher
                     PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName);
                     addtoCurrentFileMenu(newPCM);
                     PCM = newPCM;
-                    loadConfigforPCM(ref PCM);
                 }
                 selectPCM();
+            }
+
+        }
+
+        private void openInNewWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeView tv = (TreeView)tabControl1.SelectedTab.Controls[0];
+            if (tv.SelectedNode == null)
+                return;
+            if (tv.SelectedNode.Tag != null)
+            {
+                List<int> tableIds = new List<int>();
+                tableIds.Add((int)tv.SelectedNode.Tag);
+                tuner.openTableEditor(tableIds);
             }
 
         }
