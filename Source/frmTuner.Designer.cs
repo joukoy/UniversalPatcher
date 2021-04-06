@@ -90,6 +90,14 @@ namespace UniversalPatcher
             this.searchAndCompareAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compareSelectedTablesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copySelectedTablesToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.dToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.enumToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.booleanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bitmaskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.numberToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.editRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.insertRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -183,6 +191,7 @@ namespace UniversalPatcher
             // 
             // menuStrip1
             // 
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.settingsToolStripMenuItem,
@@ -535,6 +544,7 @@ namespace UniversalPatcher
             // 
             // contextMenuStrip1
             // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cutToolStripMenuItem,
             this.copyToolStripMenuItem,
@@ -544,6 +554,7 @@ namespace UniversalPatcher
             this.searchAndCompareAllToolStripMenuItem,
             this.compareSelectedTablesToolStripMenuItem,
             this.copySelectedTablesToToolStripMenuItem,
+            this.selectToolStripMenuItem,
             this.toolStripSeparator1,
             this.editRowToolStripMenuItem,
             this.insertRowToolStripMenuItem,
@@ -551,7 +562,7 @@ namespace UniversalPatcher
             this.duplicateTableConfigToolStripMenuItem,
             this.createPatchToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(206, 318);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(206, 340);
             // 
             // cutToolStripMenuItem
             // 
@@ -608,6 +619,69 @@ namespace UniversalPatcher
             this.copySelectedTablesToToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.copySelectedTablesToToolStripMenuItem.Text = "Copy selected tables to...";
             this.copySelectedTablesToToolStripMenuItem.Click += new System.EventHandler(this.copySelectedTablesToToolStripMenuItem_Click);
+            // 
+            // selectToolStripMenuItem
+            // 
+            this.selectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.dToolStripMenuItem,
+            this.dToolStripMenuItem1,
+            this.dToolStripMenuItem2,
+            this.enumToolStripMenuItem,
+            this.booleanToolStripMenuItem,
+            this.bitmaskToolStripMenuItem,
+            this.numberToolStripMenuItem});
+            this.selectToolStripMenuItem.Name = "selectToolStripMenuItem";
+            this.selectToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.selectToolStripMenuItem.Text = "Select all...";
+            // 
+            // dToolStripMenuItem
+            // 
+            this.dToolStripMenuItem.Name = "dToolStripMenuItem";
+            this.dToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dToolStripMenuItem.Text = "1d";
+            this.dToolStripMenuItem.Click += new System.EventHandler(this.dToolStripMenuItem_Click);
+            // 
+            // dToolStripMenuItem1
+            // 
+            this.dToolStripMenuItem1.Name = "dToolStripMenuItem1";
+            this.dToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.dToolStripMenuItem1.Text = "2d";
+            this.dToolStripMenuItem1.Click += new System.EventHandler(this.dToolStripMenuItem1_Click);
+            // 
+            // dToolStripMenuItem2
+            // 
+            this.dToolStripMenuItem2.Name = "dToolStripMenuItem2";
+            this.dToolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
+            this.dToolStripMenuItem2.Text = "3d";
+            this.dToolStripMenuItem2.Click += new System.EventHandler(this.dToolStripMenuItem2_Click);
+            // 
+            // enumToolStripMenuItem
+            // 
+            this.enumToolStripMenuItem.Name = "enumToolStripMenuItem";
+            this.enumToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.enumToolStripMenuItem.Text = "enum";
+            this.enumToolStripMenuItem.Click += new System.EventHandler(this.enumToolStripMenuItem_Click);
+            // 
+            // booleanToolStripMenuItem
+            // 
+            this.booleanToolStripMenuItem.Name = "booleanToolStripMenuItem";
+            this.booleanToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.booleanToolStripMenuItem.Text = "boolean";
+            this.booleanToolStripMenuItem.Click += new System.EventHandler(this.booleanToolStripMenuItem_Click);
+            // 
+            // bitmaskToolStripMenuItem
+            // 
+            this.bitmaskToolStripMenuItem.Name = "bitmaskToolStripMenuItem";
+            this.bitmaskToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.bitmaskToolStripMenuItem.Text = "bitmask";
+            this.bitmaskToolStripMenuItem.Click += new System.EventHandler(this.bitmaskToolStripMenuItem_Click);
+            // 
+            // numberToolStripMenuItem
+            // 
+            this.numberToolStripMenuItem.Name = "numberToolStripMenuItem";
+            this.numberToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.numberToolStripMenuItem.Text = "number";
+            this.numberToolStripMenuItem.Click += new System.EventHandler(this.numberToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
@@ -845,6 +919,7 @@ namespace UniversalPatcher
             // 
             // contextMenuStrip2
             // 
+            this.contextMenuStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip2.Name = "contextMenuStrip2";
             this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
             // 
@@ -1139,5 +1214,13 @@ namespace UniversalPatcher
         private RadioButton radioTreeMode;
         private ToolStripMenuItem showCategorySubfolderToolStripMenuItem;
         private ImageList imageList4;
+        private ToolStripMenuItem selectToolStripMenuItem;
+        private ToolStripMenuItem dToolStripMenuItem;
+        private ToolStripMenuItem dToolStripMenuItem1;
+        private ToolStripMenuItem dToolStripMenuItem2;
+        private ToolStripMenuItem enumToolStripMenuItem;
+        private ToolStripMenuItem booleanToolStripMenuItem;
+        private ToolStripMenuItem bitmaskToolStripMenuItem;
+        private ToolStripMenuItem numberToolStripMenuItem;
     }
 }
