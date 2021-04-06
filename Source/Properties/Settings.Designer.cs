@@ -836,5 +836,17 @@ namespace UniversalPatcher.Properties {
                 this["TunerExplorerWindowSplitter2Distance"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool TunerTreeMode {
+            get {
+                return ((bool)(this["TunerTreeMode"]));
+            }
+            set {
+                this["TunerTreeMode"] = value;
+            }
+        }
     }
 }

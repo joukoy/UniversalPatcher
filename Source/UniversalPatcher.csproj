@@ -230,12 +230,6 @@
     <Compile Include="frmTableEditor.Designer.cs">
       <DependentUpon>frmTableEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmTableTree.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmTableTree.Designer.cs">
-      <DependentUpon>frmTableTree.cs</DependentUpon>
-    </Compile>
     <Compile Include="frmTdEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -253,12 +247,6 @@
     </Compile>
     <Compile Include="frmMoreSettings.Designer.cs">
       <DependentUpon>frmMoreSettings.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmTunerExplorer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmTunerExplorer.Designer.cs">
-      <DependentUpon>frmTunerExplorer.cs</DependentUpon>
     </Compile>
     <Compile Include="GmEeprom.cs" />
     <Compile Include="frmSegmenList.cs">
@@ -409,9 +397,6 @@
     <EmbeddedResource Include="frmTableEditor.resx">
       <DependentUpon>frmTableEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmTableTree.resx">
-      <DependentUpon>frmTableTree.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="frmTdEditor.resx">
       <DependentUpon>frmTdEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -420,9 +405,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmMoreSettings.resx">
       <DependentUpon>frmMoreSettings.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmTunerExplorer.resx">
-      <DependentUpon>frmTunerExplorer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -1018,6 +1018,7 @@ namespace UniversalPatcher
             keyDelayCounter++;
             if (keyDelayCounter > Properties.Settings.Default.keyPressWait100ms)
             {
+                keyDelayCounter = 0;
                 filterData();
                 filterTableList();
                 timerFilter.Enabled = false;

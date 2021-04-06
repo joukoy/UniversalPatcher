@@ -34,7 +34,6 @@ namespace UniversalPatcher
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTuner));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.btnEditTable = new System.Windows.Forms.Button();
             this.txtSearchTableSeek = new System.Windows.Forms.TextBox();
             this.comboTableCategory = new System.Windows.Forms.ComboBox();
             this.label15 = new System.Windows.Forms.Label();
@@ -53,6 +52,7 @@ namespace UniversalPatcher
             this.resetTunerModeColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableConfigAutoloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.caseSensitiveFilteringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showCategorySubfolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.currentFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -102,9 +102,25 @@ namespace UniversalPatcher
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.txtDescription = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabDimensions = new System.Windows.Forms.TabPage();
+            this.tabValueType = new System.Windows.Forms.TabPage();
+            this.tabCategory = new System.Windows.Forms.TabPage();
+            this.tabSegments = new System.Windows.Forms.TabPage();
+            this.tabPatches = new System.Windows.Forms.TabPage();
+            this.imageList3 = new System.Windows.Forms.ImageList(this.components);
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.timerFilter = new System.Windows.Forms.Timer(this.components);
-            this.btnTableSelector = new System.Windows.Forms.Button();
+            this.imageList2 = new System.Windows.Forms.ImageList(this.components);
+            this.btnCollapse = new System.Windows.Forms.Button();
+            this.btnExpand = new System.Windows.Forms.Button();
+            this.numIconSize = new System.Windows.Forms.NumericUpDown();
+            this.labelIconSize = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioListMode = new System.Windows.Forms.RadioButton();
+            this.radioTreeMode = new System.Windows.Forms.RadioButton();
+            this.imageList4 = new System.Windows.Forms.ImageList(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -116,6 +132,9 @@ namespace UniversalPatcher
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -125,7 +144,7 @@ namespace UniversalPatcher
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(850, 409);
+            this.dataGridView1.Size = new System.Drawing.Size(1021, 409);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
@@ -136,16 +155,6 @@ namespace UniversalPatcher
             this.dataGridView1.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.DataGridView1_UserDeletingRow);
             this.dataGridView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DataGridView1_MouseDown);
             this.dataGridView1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DataGridView1_MouseUp);
-            // 
-            // btnEditTable
-            // 
-            this.btnEditTable.Location = new System.Drawing.Point(539, 27);
-            this.btnEditTable.Name = "btnEditTable";
-            this.btnEditTable.Size = new System.Drawing.Size(76, 23);
-            this.btnEditTable.TabIndex = 6;
-            this.btnEditTable.Text = "Edit Table";
-            this.btnEditTable.UseVisualStyleBackColor = true;
-            this.btnEditTable.Click += new System.EventHandler(this.btnEditTable_Click);
             // 
             // txtSearchTableSeek
             // 
@@ -183,7 +192,7 @@ namespace UniversalPatcher
             this.xmlToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(850, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1021, 24);
             this.menuStrip1.TabIndex = 16;
             this.menuStrip1.Text = "menuStrip1";
             this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
@@ -245,6 +254,7 @@ namespace UniversalPatcher
             this.resetTunerModeColumnsToolStripMenuItem,
             this.disableConfigAutoloadToolStripMenuItem,
             this.caseSensitiveFilteringToolStripMenuItem,
+            this.showCategorySubfolderToolStripMenuItem,
             this.moreSettingsToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
@@ -298,6 +308,13 @@ namespace UniversalPatcher
             this.caseSensitiveFilteringToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.caseSensitiveFilteringToolStripMenuItem.Text = "Case sensitive filtering";
             this.caseSensitiveFilteringToolStripMenuItem.Click += new System.EventHandler(this.caseSensitiveFilteringToolStripMenuItem_Click);
+            // 
+            // showCategorySubfolderToolStripMenuItem
+            // 
+            this.showCategorySubfolderToolStripMenuItem.Name = "showCategorySubfolderToolStripMenuItem";
+            this.showCategorySubfolderToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.showCategorySubfolderToolStripMenuItem.Text = "Show category subfolder";
+            this.showCategorySubfolderToolStripMenuItem.Click += new System.EventHandler(this.showCategorySubfolderToolStripMenuItem_Click);
             // 
             // moreSettingsToolStripMenuItem
             // 
@@ -534,7 +551,7 @@ namespace UniversalPatcher
             this.duplicateTableConfigToolStripMenuItem,
             this.createPatchToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(206, 296);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(206, 318);
             // 
             // cutToolStripMenuItem
             // 
@@ -561,7 +578,7 @@ namespace UniversalPatcher
             // 
             this.editTableToolStripMenuItem.Name = "editTableToolStripMenuItem";
             this.editTableToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.editTableToolStripMenuItem.Text = "Edit table";
+            this.editTableToolStripMenuItem.Text = "Edit table(s)";
             this.editTableToolStripMenuItem.Click += new System.EventHandler(this.editTableToolStripMenuItem_Click);
             // 
             // searchAndCompareToolStripMenuItem
@@ -661,7 +678,7 @@ namespace UniversalPatcher
             this.txtResult.HideSelection = false;
             this.txtResult.Location = new System.Drawing.Point(0, 0);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(424, 89);
+            this.txtResult.Size = new System.Drawing.Size(508, 89);
             this.txtResult.TabIndex = 19;
             this.txtResult.Text = "";
             // 
@@ -679,8 +696,8 @@ namespace UniversalPatcher
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.txtDescription);
-            this.splitContainer1.Size = new System.Drawing.Size(850, 89);
-            this.splitContainer1.SplitterDistance = 424;
+            this.splitContainer1.Size = new System.Drawing.Size(1021, 89);
+            this.splitContainer1.SplitterDistance = 508;
             this.splitContainer1.TabIndex = 21;
             // 
             // txtDescription
@@ -688,7 +705,7 @@ namespace UniversalPatcher
             this.txtDescription.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtDescription.Location = new System.Drawing.Point(0, 0);
             this.txtDescription.Name = "txtDescription";
-            this.txtDescription.Size = new System.Drawing.Size(422, 89);
+            this.txtDescription.Size = new System.Drawing.Size(509, 89);
             this.txtDescription.TabIndex = 0;
             this.txtDescription.Text = "";
             // 
@@ -703,14 +720,128 @@ namespace UniversalPatcher
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.tabControl1);
             this.splitContainer2.Panel1.Controls.Add(this.dataGridView1);
             // 
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer1);
-            this.splitContainer2.Size = new System.Drawing.Size(850, 502);
+            this.splitContainer2.Size = new System.Drawing.Size(1021, 502);
             this.splitContainer2.SplitterDistance = 409;
             this.splitContainer2.TabIndex = 22;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabDimensions);
+            this.tabControl1.Controls.Add(this.tabValueType);
+            this.tabControl1.Controls.Add(this.tabCategory);
+            this.tabControl1.Controls.Add(this.tabSegments);
+            this.tabControl1.Controls.Add(this.tabPatches);
+            this.tabControl1.ImageList = this.imageList3;
+            this.tabControl1.Location = new System.Drawing.Point(8, 8);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(449, 371);
+            this.tabControl1.TabIndex = 1;
+            this.tabControl1.Visible = false;
+            // 
+            // tabDimensions
+            // 
+            this.tabDimensions.ImageKey = "Dimensions.ico";
+            this.tabDimensions.Location = new System.Drawing.Point(4, 31);
+            this.tabDimensions.Name = "tabDimensions";
+            this.tabDimensions.Padding = new System.Windows.Forms.Padding(3);
+            this.tabDimensions.Size = new System.Drawing.Size(441, 336);
+            this.tabDimensions.TabIndex = 0;
+            this.tabDimensions.UseVisualStyleBackColor = true;
+            // 
+            // tabValueType
+            // 
+            this.tabValueType.ImageKey = "valuetype.ico";
+            this.tabValueType.Location = new System.Drawing.Point(4, 31);
+            this.tabValueType.Name = "tabValueType";
+            this.tabValueType.Padding = new System.Windows.Forms.Padding(3);
+            this.tabValueType.Size = new System.Drawing.Size(441, 336);
+            this.tabValueType.TabIndex = 1;
+            this.tabValueType.UseVisualStyleBackColor = true;
+            // 
+            // tabCategory
+            // 
+            this.tabCategory.ImageKey = "category.ico";
+            this.tabCategory.Location = new System.Drawing.Point(4, 31);
+            this.tabCategory.Name = "tabCategory";
+            this.tabCategory.Size = new System.Drawing.Size(441, 336);
+            this.tabCategory.TabIndex = 2;
+            this.tabCategory.UseVisualStyleBackColor = true;
+            // 
+            // tabSegments
+            // 
+            this.tabSegments.ImageKey = "segments.ico";
+            this.tabSegments.Location = new System.Drawing.Point(4, 31);
+            this.tabSegments.Name = "tabSegments";
+            this.tabSegments.Size = new System.Drawing.Size(441, 336);
+            this.tabSegments.TabIndex = 3;
+            this.tabSegments.UseVisualStyleBackColor = true;
+            // 
+            // tabPatches
+            // 
+            this.tabPatches.ImageKey = "patch.ico";
+            this.tabPatches.Location = new System.Drawing.Point(4, 31);
+            this.tabPatches.Name = "tabPatches";
+            this.tabPatches.Size = new System.Drawing.Size(441, 336);
+            this.tabPatches.TabIndex = 4;
+            this.tabPatches.UseVisualStyleBackColor = true;
+            // 
+            // imageList3
+            // 
+            this.imageList3.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList3.ImageStream")));
+            this.imageList3.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList3.Images.SetKeyName(0, "category.ico");
+            this.imageList3.Images.SetKeyName(1, "Dimensions.ico");
+            this.imageList3.Images.SetKeyName(2, "patch.ico");
+            this.imageList3.Images.SetKeyName(3, "segments.ico");
+            this.imageList3.Images.SetKeyName(4, "valuetype.ico");
+            this.imageList3.Images.SetKeyName(5, "category.ico");
+            this.imageList3.Images.SetKeyName(6, "listmode.ico");
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "explorer.ico");
+            this.imageList1.Images.SetKeyName(1, "1d.ico");
+            this.imageList1.Images.SetKeyName(2, "2d.ico");
+            this.imageList1.Images.SetKeyName(3, "3d.ico");
+            this.imageList1.Images.SetKeyName(4, "enum.ico");
+            this.imageList1.Images.SetKeyName(5, "enum1d.ico");
+            this.imageList1.Images.SetKeyName(6, "enum2d.ico");
+            this.imageList1.Images.SetKeyName(7, "enum3d.ico");
+            this.imageList1.Images.SetKeyName(8, "flag.ico");
+            this.imageList1.Images.SetKeyName(9, "flag1d.ico");
+            this.imageList1.Images.SetKeyName(10, "flag2d.ico");
+            this.imageList1.Images.SetKeyName(11, "flag3d.ico");
+            this.imageList1.Images.SetKeyName(12, "mask.ico");
+            this.imageList1.Images.SetKeyName(13, "mask1d.ico");
+            this.imageList1.Images.SetKeyName(14, "mask2d.ico");
+            this.imageList1.Images.SetKeyName(15, "mask3d.ico");
+            this.imageList1.Images.SetKeyName(16, "num.ico");
+            this.imageList1.Images.SetKeyName(17, "boolean.ico");
+            this.imageList1.Images.SetKeyName(18, "bitmask.ico");
+            this.imageList1.Images.SetKeyName(19, "number.ico");
+            this.imageList1.Images.SetKeyName(20, "Dimensions.ico");
+            this.imageList1.Images.SetKeyName(21, "valuetype.ico");
+            this.imageList1.Images.SetKeyName(22, "segments.ico");
+            this.imageList1.Images.SetKeyName(23, "category.ico");
+            this.imageList1.Images.SetKeyName(24, "eeprom.ico");
+            this.imageList1.Images.SetKeyName(25, "engine.ico");
+            this.imageList1.Images.SetKeyName(26, "fuel.ico");
+            this.imageList1.Images.SetKeyName(27, "os.ico");
+            this.imageList1.Images.SetKeyName(28, "speedo.ico");
+            this.imageList1.Images.SetKeyName(29, "system.ico");
+            this.imageList1.Images.SetKeyName(30, "trans.ico");
+            this.imageList1.Images.SetKeyName(31, "enginediag.ico");
+            this.imageList1.Images.SetKeyName(32, "transdiag.ico");
+            this.imageList1.Images.SetKeyName(33, "patch.ico");
             // 
             // contextMenuStrip2
             // 
@@ -721,30 +852,175 @@ namespace UniversalPatcher
             // 
             this.timerFilter.Tick += new System.EventHandler(this.timerFilter_Tick);
             // 
-            // btnTableSelector
+            // imageList2
             // 
-            this.btnTableSelector.Location = new System.Drawing.Point(621, 27);
-            this.btnTableSelector.Name = "btnTableSelector";
-            this.btnTableSelector.Size = new System.Drawing.Size(96, 23);
-            this.btnTableSelector.TabIndex = 23;
-            this.btnTableSelector.Text = "Table explorer";
-            this.btnTableSelector.UseVisualStyleBackColor = true;
-            this.btnTableSelector.Click += new System.EventHandler(this.btnTableSelector_Click);
+            this.imageList2.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList2.ImageStream")));
+            this.imageList2.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList2.Images.SetKeyName(0, "collapse.ico");
+            this.imageList2.Images.SetKeyName(1, "expand.ico");
+            this.imageList2.Images.SetKeyName(2, "category.ico");
+            this.imageList2.Images.SetKeyName(3, "Dimensions.ico");
+            this.imageList2.Images.SetKeyName(4, "segments.ico");
+            this.imageList2.Images.SetKeyName(5, "valuetype.ico");
+            this.imageList2.Images.SetKeyName(6, "patch.ico");
+            this.imageList2.Images.SetKeyName(7, "listmode.ico");
+            // 
+            // btnCollapse
+            // 
+            this.btnCollapse.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCollapse.ImageKey = "collapse.ico";
+            this.btnCollapse.ImageList = this.imageList2;
+            this.btnCollapse.Location = new System.Drawing.Point(680, 27);
+            this.btnCollapse.Name = "btnCollapse";
+            this.btnCollapse.Size = new System.Drawing.Size(24, 24);
+            this.btnCollapse.TabIndex = 25;
+            this.btnCollapse.UseVisualStyleBackColor = true;
+            this.btnCollapse.Click += new System.EventHandler(this.btnCollapse_Click);
+            // 
+            // btnExpand
+            // 
+            this.btnExpand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnExpand.ImageKey = "expand.ico";
+            this.btnExpand.ImageList = this.imageList2;
+            this.btnExpand.Location = new System.Drawing.Point(650, 27);
+            this.btnExpand.Name = "btnExpand";
+            this.btnExpand.Size = new System.Drawing.Size(24, 24);
+            this.btnExpand.TabIndex = 24;
+            this.btnExpand.UseVisualStyleBackColor = true;
+            this.btnExpand.Click += new System.EventHandler(this.btnExpand_Click);
+            // 
+            // numIconSize
+            // 
+            this.numIconSize.Location = new System.Drawing.Point(768, 29);
+            this.numIconSize.Maximum = new decimal(new int[] {
+            128,
+            0,
+            0,
+            0});
+            this.numIconSize.Minimum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.numIconSize.Name = "numIconSize";
+            this.numIconSize.Size = new System.Drawing.Size(40, 20);
+            this.numIconSize.TabIndex = 27;
+            this.numIconSize.Value = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+            // 
+            // labelIconSize
+            // 
+            this.labelIconSize.AutoSize = true;
+            this.labelIconSize.Location = new System.Drawing.Point(710, 33);
+            this.labelIconSize.Name = "labelIconSize";
+            this.labelIconSize.Size = new System.Drawing.Size(52, 13);
+            this.labelIconSize.TabIndex = 26;
+            this.labelIconSize.Text = "Icon size:";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.radioListMode);
+            this.groupBox1.Controls.Add(this.radioTreeMode);
+            this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.groupBox1.Location = new System.Drawing.Point(539, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(105, 49);
+            this.groupBox1.TabIndex = 28;
+            this.groupBox1.TabStop = false;
+            // 
+            // radioListMode
+            // 
+            this.radioListMode.AutoSize = true;
+            this.radioListMode.ImageKey = "listmode.ico";
+            this.radioListMode.ImageList = this.imageList2;
+            this.radioListMode.Location = new System.Drawing.Point(9, 17);
+            this.radioListMode.MaximumSize = new System.Drawing.Size(40, 40);
+            this.radioListMode.Name = "radioListMode";
+            this.radioListMode.Padding = new System.Windows.Forms.Padding(4);
+            this.radioListMode.Size = new System.Drawing.Size(38, 24);
+            this.radioListMode.TabIndex = 1;
+            this.radioListMode.UseVisualStyleBackColor = true;
+            this.radioListMode.CheckedChanged += new System.EventHandler(this.radioListMode_CheckedChanged);
+            // 
+            // radioTreeMode
+            // 
+            this.radioTreeMode.AutoSize = true;
+            this.radioTreeMode.Checked = true;
+            this.radioTreeMode.ImageKey = "category.ico";
+            this.radioTreeMode.ImageList = this.imageList3;
+            this.radioTreeMode.Location = new System.Drawing.Point(53, 12);
+            this.radioTreeMode.Name = "radioTreeMode";
+            this.radioTreeMode.Padding = new System.Windows.Forms.Padding(4);
+            this.radioTreeMode.Size = new System.Drawing.Size(46, 32);
+            this.radioTreeMode.TabIndex = 0;
+            this.radioTreeMode.TabStop = true;
+            this.radioTreeMode.UseVisualStyleBackColor = true;
+            this.radioTreeMode.CheckedChanged += new System.EventHandler(this.radioTreeMode_CheckedChanged);
+            // 
+            // imageList4
+            // 
+            this.imageList4.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList4.ImageStream")));
+            this.imageList4.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList4.Images.SetKeyName(0, "1d.ico");
+            this.imageList4.Images.SetKeyName(1, "2d.ico");
+            this.imageList4.Images.SetKeyName(2, "3d.ico");
+            this.imageList4.Images.SetKeyName(3, "bitmask.ico");
+            this.imageList4.Images.SetKeyName(4, "boolean.ico");
+            this.imageList4.Images.SetKeyName(5, "boot.ico");
+            this.imageList4.Images.SetKeyName(6, "category.ico");
+            this.imageList4.Images.SetKeyName(7, "Category_old.ico");
+            this.imageList4.Images.SetKeyName(8, "Category2.ico");
+            this.imageList4.Images.SetKeyName(9, "category3.ico");
+            this.imageList4.Images.SetKeyName(10, "collapse.ico");
+            this.imageList4.Images.SetKeyName(11, "Dimensions.ico");
+            this.imageList4.Images.SetKeyName(12, "DTC.ico");
+            this.imageList4.Images.SetKeyName(13, "eeprom.ico");
+            this.imageList4.Images.SetKeyName(14, "engine.ico");
+            this.imageList4.Images.SetKeyName(15, "enginediag.ico");
+            this.imageList4.Images.SetKeyName(16, "enum.ico");
+            this.imageList4.Images.SetKeyName(17, "enum1d.ico");
+            this.imageList4.Images.SetKeyName(18, "enum2d.ico");
+            this.imageList4.Images.SetKeyName(19, "enum3d.ico");
+            this.imageList4.Images.SetKeyName(20, "expand.ico");
+            this.imageList4.Images.SetKeyName(21, "explorer.ico");
+            this.imageList4.Images.SetKeyName(22, "flag1d.ico");
+            this.imageList4.Images.SetKeyName(23, "flag2d.ico");
+            this.imageList4.Images.SetKeyName(24, "flag3d.ico");
+            this.imageList4.Images.SetKeyName(25, "fuel.ico");
+            this.imageList4.Images.SetKeyName(26, "mask1d.ico");
+            this.imageList4.Images.SetKeyName(27, "mask2d.ico");
+            this.imageList4.Images.SetKeyName(28, "mask3d.ico");
+            this.imageList4.Images.SetKeyName(29, "number.ico");
+            this.imageList4.Images.SetKeyName(30, "os.ico");
+            this.imageList4.Images.SetKeyName(31, "patch.ico");
+            this.imageList4.Images.SetKeyName(32, "segments.ico");
+            this.imageList4.Images.SetKeyName(33, "speedo.ico");
+            this.imageList4.Images.SetKeyName(34, "system.ico");
+            this.imageList4.Images.SetKeyName(35, "trans.ico");
+            this.imageList4.Images.SetKeyName(36, "transdiag.ico");
+            this.imageList4.Images.SetKeyName(37, "valuetype.ico");
+            this.imageList4.Images.SetKeyName(38, "listmode.ico");
             // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(850, 559);
-            this.Controls.Add(this.btnTableSelector);
+            this.ClientSize = new System.Drawing.Size(1021, 559);
+            this.Controls.Add(this.numIconSize);
+            this.Controls.Add(this.labelIconSize);
+            this.Controls.Add(this.btnCollapse);
+            this.Controls.Add(this.btnExpand);
             this.Controls.Add(this.comboFilterBy);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtSearchTableSeek);
             this.Controls.Add(this.comboTableCategory);
             this.Controls.Add(this.label15);
-            this.Controls.Add(this.btnEditTable);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.splitContainer2);
+            this.Controls.Add(this.groupBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "frmTuner";
@@ -763,6 +1039,10 @@ namespace UniversalPatcher
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -772,7 +1052,6 @@ namespace UniversalPatcher
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.Button btnEditTable;
         private System.Windows.Forms.TextBox txtSearchTableSeek;
         private System.Windows.Forms.ComboBox comboTableCategory;
         private System.Windows.Forms.Label label15;
@@ -842,6 +1121,23 @@ namespace UniversalPatcher
         private ToolStripMenuItem copySelectedTablesToToolStripMenuItem;
         private ToolStripMenuItem applyPatchToolStripMenuItem;
         private ToolStripMenuItem createPatchToolStripMenuItem;
-        private Button btnTableSelector;
+        private TabControl tabControl1;
+        private TabPage tabDimensions;
+        private TabPage tabValueType;
+        private TabPage tabCategory;
+        private TabPage tabSegments;
+        private TabPage tabPatches;
+        private ImageList imageList2;
+        private ImageList imageList3;
+        private Button btnCollapse;
+        private Button btnExpand;
+        private ImageList imageList1;
+        private NumericUpDown numIconSize;
+        private Label labelIconSize;
+        private GroupBox groupBox1;
+        private RadioButton radioListMode;
+        private RadioButton radioTreeMode;
+        private ToolStripMenuItem showCategorySubfolderToolStripMenuItem;
+        private ImageList imageList4;
     }
 }

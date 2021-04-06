@@ -2779,12 +2779,6 @@ namespace UniversalPatcher
             frmEX.Show();
         }
 
-        private void btnTunerExplorer_Click(object sender, EventArgs e)
-        {
-            frmTunerExplorer frmTM = new frmTunerExplorer();
-            frmTM.PCM = basefile;
-            frmTM.Show();
-        }
     }
 }
 

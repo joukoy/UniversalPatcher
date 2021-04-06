@@ -41,6 +41,15 @@ namespace UniversalPatcher
         private int lastSelectedId;
         string compXml = "";
         int keyDelayCounter = 0;
+        private SplitContainer splitTree;
+        private TreeView treeDimensions;
+        private TreeView treeValueType;
+        private TreeView treeCategory;
+        private TreeView treeSegments;
+        private string[] GalleryArray;
+        string currentTab;
+        int iconSize;
+        bool treeMode;
 
         private void frmTuner_Load(object sender, EventArgs e)
         {
@@ -50,6 +59,11 @@ namespace UniversalPatcher
             editRowToolStripMenuItem.Enabled = Properties.Settings.Default.TunerConfigMode;
             duplicateTableConfigToolStripMenuItem.Enabled = Properties.Settings.Default.TunerConfigMode;
             disableConfigAutoloadToolStripMenuItem.Checked = Properties.Settings.Default.disableTunerAutoloadSettings;
+            showCategorySubfolderToolStripMenuItem.Checked = Properties.Settings.Default.TableExplorerUseCategorySubfolder;
+
+            radioTreeMode.Checked = Properties.Settings.Default.TunerTreeMode;
+            radioListMode.Checked = !Properties.Settings.Default.TunerTreeMode;
+            selectDispMode();
 
             LogReceivers.Add(txtResult);
 
@@ -190,7 +204,7 @@ namespace UniversalPatcher
 
         }
 
-        public string openTableEditor(List<int> tableIds = null, frmTunerExplorer tunerExplorer = null)
+        public string openTableEditor(List<int> tableIds = null, bool newWindow = false)
         {
             string retVal = "";
             try
@@ -199,13 +213,7 @@ namespace UniversalPatcher
                     tableIds = new List<int>();
                 if (tableIds.Count == 0)
                 {
-                    for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
-                    {
-                        int row = dataGridView1.SelectedCells[i].RowIndex;
-                        int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
-                        if (!tableIds.Contains(id))
-                            tableIds.Add(id);
-                    }
+                    tableIds = getSelectedTableIds();
                 }
                 TableData td = PCM.tableDatas[tableIds[0]];
                 if (td.addrInt == uint.MaxValue)
@@ -219,12 +227,12 @@ namespace UniversalPatcher
                     LoggerBold("WARING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);
                 }
                 frmTableEditor frmT = new frmTableEditor();
-                if (tunerExplorer != null)
+                if (treeMode && !newWindow)
                 {
                     frmT.Dock = DockStyle.Fill;
                     frmT.FormBorderStyle = FormBorderStyle.None;
                     frmT.TopLevel = false;
-                    tunerExplorer.splitContainer1.Panel2.Controls.Add(frmT);
+                    splitTree.Panel2.Controls.Add(frmT);
                 }
                 frmT.PCM = PCM;
                 frmT.tableIds = tableIds;
@@ -568,6 +576,7 @@ namespace UniversalPatcher
                 bindingsource.DataSource = filteredCategories;
                 reorderColumns();
                 txtDescription.Text = "";
+                filterTree();
                 this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
             }
             catch (Exception ex)
@@ -577,6 +586,18 @@ namespace UniversalPatcher
 
         }
 
+        private void filterTree()
+        {
+            clearPanel2();
+            if (tabControl1.SelectedTab.Name == "tabDimensions")
+                loadDimensions();
+            else if (tabControl1.SelectedTab.Name == "tabValueType")
+                loadValueTypes();
+            else if (tabControl1.SelectedTab.Name == "tabCategory")
+                loadCategories();
+            else if (tabControl1.SelectedTab.Name == "tabSegments")
+                loadSegments();
+        }
         private void comboTableCategory_SelectedIndexChanged(object sender, EventArgs e)
         {
             Debug.WriteLine("comboTableCategory_SelectedIndexChanged");
@@ -819,7 +840,8 @@ namespace UniversalPatcher
 
         private void editTableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openTableEditor();
+            List<int> tableIds = getSelectedTableIds();            
+            openTableEditor(tableIds,true);
         }
 
         private void exportCSV()
@@ -1911,8 +1933,8 @@ namespace UniversalPatcher
         {
             frmMassCompare fmc = new frmMassCompare();
             fmc.PCM = PCM;
-            int id = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
-            fmc.td = PCM.tableDatas[id];
+            //int id = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
+            fmc.td = PCM.tableDatas[lastSelectedId];
             fmc.Text = "Search and Compare: " + fmc.td.TableName;
             fmc.Show();
             fmc.selectCmpFiles();
@@ -1997,8 +2019,8 @@ namespace UniversalPatcher
                 frmMassCompare fmc = new frmMassCompare();
                 fmc.PCM = PCM;
                 fmc.compareAll = true;
-                int id = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
-                fmc.td = PCM.tableDatas[id];
+                //int id = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
+                fmc.td = PCM.tableDatas[lastSelectedId];
                 fmc.Text = "Search and Compare: " + fmc.td.TableName;
                 fmc.Show();
                 fmc.selectCmpFiles();
@@ -2013,22 +2035,15 @@ namespace UniversalPatcher
         {
             try
             {
-                if (dataGridView1.SelectedCells.Count != 2 && dataGridView1.SelectedRows.Count != 2)
+                List<int> ids = getSelectedTableIds();
+                if (ids.Count != 2)
                 {
                     Logger("Select 2 tables!");
                     return;
                 }
-                int row1 = dataGridView1.SelectedCells[0].RowIndex;
-                int row2 = dataGridView1.SelectedCells[1].RowIndex;
-                if (row1 == row2)
-                {
-                    row1 = dataGridView1.SelectedRows[0].Index;
-                    row2 = dataGridView1.SelectedRows[1].Index;
-                }
-                Logger("Comparing....");
+                int id1 = ids[0];
+                int id2 = ids[1];
 
-                int id1 = Convert.ToInt32(dataGridView1.Rows[row1].Cells["id"].Value);
-                int id2 = Convert.ToInt32(dataGridView1.Rows[row2].Cells["id"].Value);
                 TableData td1 = PCM.tableDatas[id1];
                 TableData td2 = PCM.tableDatas[id2];
                 if (td1.Rows != td2.Rows || td1.Columns != td2.Columns)
@@ -2036,6 +2051,7 @@ namespace UniversalPatcher
                     Logger("Select 2 tables with equal size!");
                     return;
                 }
+                Logger("Comparing....");
                 frmTableEditor frmT = new frmTableEditor();
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
                 frmT.PCM = PCM;
@@ -2103,6 +2119,7 @@ namespace UniversalPatcher
             keyDelayCounter++;
             if (keyDelayCounter > Properties.Settings.Default.keyPressWait100ms)
             {
+                keyDelayCounter = 0;
                 filterTables();
                 timerFilter.Enabled = false;
             }
@@ -2117,14 +2134,7 @@ namespace UniversalPatcher
 
         private void copySelectedTablesToToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<int> tableIds = new List<int>();
-            for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
-            {
-                int row = dataGridView1.SelectedCells[i].RowIndex;
-                int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
-                if (!tableIds.Contains(id))
-                    tableIds.Add(id);
-            }
+            List<int> tableIds = getSelectedTableIds();
             frmMassCopyTables fls = new frmMassCopyTables();
             fls.PCM = PCM;
             fls.tableIds = tableIds;
@@ -2159,8 +2169,38 @@ namespace UniversalPatcher
             openPatchSelector();
         }
 
+        private List<int> getSelectedTableIds()
+        {
+            List<int> tableIds = new List<int>();
+            if (treeMode)
+            {
+                TreeView tv = (TreeView)tabControl1.SelectedTab.Controls[0];
+                foreach (TreeNode tn in tv.Nodes)
+                    findCheckdNodes(tn, ref tableIds);
+                if (tableIds.Count == 0)
+                    tableIds.Add(lastSelectedId);
+            }
+            else
+            {
+                for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
+                {
+                    int row = dataGridView1.SelectedCells[i].RowIndex;
+                    int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
+                    if (!tableIds.Contains(id))
+                        tableIds.Add(id);
+                }
+            }
+            return tableIds;
+        }
+
         private void generateTablePatch()
         {
+            List<int> tableIds = getSelectedTableIds();
+            if (tableIds.Count == 0)
+            {
+                Logger("No tables selected");
+                return;
+            }
             string defName = Path.Combine(Application.StartupPath, "Patches", "newpatch.xmlpatch");
             string patchFname = SelectSaveFile("PATCH files (*.xmlpatch)|*.xmlpatch|ALL files (*.*)|*.*", defName);
             if (patchFname.Length == 0)
@@ -2171,15 +2211,7 @@ namespace UniversalPatcher
             if (frmD.ShowDialog() == DialogResult.OK)
                 Description = frmD.txtData.Text;
             frmD.Dispose();
-            List<int> tableIds = new List<int>();
             List<XmlPatch> newPatch = new List<XmlPatch>();
-            for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
-            {
-                int row = dataGridView1.SelectedCells[i].RowIndex;
-                int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
-                if (!tableIds.Contains(id))
-                    tableIds.Add(id);
-            }
             for (int i=0; i < tableIds.Count; i++)
             {
                 int id = tableIds[i];
@@ -2235,11 +2267,672 @@ namespace UniversalPatcher
             generateTablePatch();
         }
 
-        private void btnTableSelector_Click(object sender, EventArgs e)
+        private void selectTreemode()
         {
-            frmTableTree frmTT = new frmTableTree();
-            frmTT.loadTree(PCM.tableDatas, this);
-            frmTT.Show();
+            treeMode = true;
+            dataGridView1.Visible = false;
+            if (splitTree == null)
+            {
+                splitTree = new SplitContainer();
+                splitTree.Orientation = Orientation.Vertical;
+                splitTree.Panel1.Controls.Add(tabControl1);
+                splitContainer2.Panel1.Controls.Add(splitTree);
+                splitTree.Dock = DockStyle.Fill;
+                tabControl1.Dock = DockStyle.Fill;
+            }
+            splitTree.Visible = true;
+
+            tabControl1.Visible = true;
+            tabDimensions.Enter += TabDimensions_Enter;
+            tabValueType.Enter += TabValueType_Enter;
+            tabPatches.Enter += TabPatches_Enter;
+            tabCategory.Enter += TabCategory_Enter;
+            tabSegments.Enter += TabSegments_Enter;
+            currentTab = "Dimensions";
+            loadDimensions();
+            btnCollapse.Visible = true;
+            btnExpand.Visible = true;
+            numIconSize.Visible = true;
+            labelIconSize.Visible = true;
+            showCategorySubfolderToolStripMenuItem.Enabled = true;
+            cutToolStripMenuItem.Enabled = false;
+            copyToolStripMenuItem.Enabled = false;
+            pasteToolStripMenuItem.Enabled = false;
+        }
+
+        private void selectListMode()
+        {
+            treeMode = false;
+            if (splitTree != null)
+                splitTree.Visible = false;
+            dataGridView1.Visible = true;
+            btnCollapse.Visible = false;
+            btnExpand.Visible = false;
+            numIconSize.Visible = false;
+            labelIconSize.Visible = false;
+            showCategorySubfolderToolStripMenuItem.Enabled = false;
+            cutToolStripMenuItem.Enabled = true;
+            copyToolStripMenuItem.Enabled = true;
+            pasteToolStripMenuItem.Enabled = true;
+        }
+
+
+        private void Tree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                TreeView tv = (TreeView)tabControl1.SelectedTab.Controls[0];
+                if (tv.SelectedNode == null || tv.SelectedNode.Tag == null)
+                    return;
+                lastSelectedId = Convert.ToInt32(tv.SelectedNode.Tag);
+                contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
+            }
+        }
+
+        private void findCheckdNodes(TreeNode tn, ref List<int> tableIds)
+        {
+            if (tn.Nodes.Count > 0)
+            {
+                foreach (TreeNode tnChild in tn.Nodes)
+                    findCheckdNodes(tnChild, ref tableIds);
+            }
+            else
+            {
+                if (tn.Checked)
+                    tableIds.Add((int)tn.Tag);
+            }
+        }
+
+        private void Tree_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            if (e.Node.Nodes.Count > 0)
+            {
+                if (e.Node.Checked)
+                {
+                    if (e.Node.Nodes.Count > 10)
+                        Logger("Limiting to max 10 nodes");
+                    else
+                        foreach (TreeNode tn in e.Node.Nodes)
+                            tn.Checked = true;
+                }
+                else
+                {
+                    foreach (TreeNode tn in e.Node.Nodes)
+                        tn.Checked = false;
+                }
+            }
+            else
+            {
+                clearPanel2();
+                List<int> tableIds = new List<int>();
+                foreach (TreeNode tn in e.Node.TreeView.Nodes)
+                {
+                    findCheckdNodes(tn, ref tableIds);
+                }
+                if (tableIds.Count > 0)
+                    openTableEditor(tableIds);
+            }
+        }
+
+        private void Tree_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (e.Node.Tag == null)
+                return;
+            clearPanel2();
+            List<int> tableIds = new List<int>();
+            int tbId = Convert.ToInt32(e.Node.Tag);
+            tableIds.Add(tbId);
+            showTableDescription(tbId);
+            openTableEditor(tableIds);
+        }
+
+
+        private void TabSegments_Enter(object sender, EventArgs e)
+        {
+            if (currentTab == "Segments")
+                return;
+            currentTab = "Segments";
+            clearPanel2();
+            loadSegments();
+        }
+
+
+        private void showPatchSelector()
+        {
+            frmPatchSelector frmP = new frmPatchSelector();
+            frmP.tunerForm = this;
+            frmP.basefile = PCM;
+            frmP.TopLevel = false;
+            frmP.Dock = DockStyle.Fill;
+            frmP.FormBorderStyle = FormBorderStyle.None;
+            //frmP.splitContainer1.SplitterWidth = frmP.splitContainer1.Height;
+            frmP.splitContainer1.Panel2Collapsed = true;
+            frmP.splitContainer1.Panel2.Hide();
+            splitTree.Panel2.Controls.Add(frmP);
+            frmP.Show();
+            Application.DoEvents();
+            frmP.loadPatches();
+        }
+
+        private void TabPatches_Enter(object sender, EventArgs e)
+        {
+            if (currentTab == "Patches")
+                return;
+            if (PCM == null || PCM.configFileFullName == null || PCM.configFileFullName.Length == 0)
+                return;
+            currentTab = "Patches";
+            clearPanel2();
+            showPatchSelector();
+        }
+
+        private void TabValueType_Enter(object sender, EventArgs e)
+        {
+            if (currentTab == "ValueType")
+                return;
+            currentTab = "ValueType";
+            clearPanel2();
+            loadValueTypes();
+        }
+
+        private void TabDimensions_Enter(object sender, EventArgs e)
+        {
+            if (currentTab == "Dimensions")
+                return;
+            currentTab = "Dimensions";
+            clearPanel2();
+            loadDimensions();
+        }
+
+        private void TabCategory_Enter(object sender, EventArgs e)
+        {
+            if (currentTab == "Category")
+                return;
+            currentTab = "Category";
+            clearPanel2();
+            loadCategories();
+        }
+        private void setIconSize()
+        {
+            if (iconSize != (int)numIconSize.Value)
+            {
+                //Size modified since last call
+                iconSize = (int)numIconSize.Value;
+                imageList1.ImageSize = new Size(iconSize, iconSize);
+                imageList1.Images.Clear();
+                string folderIcon = Path.Combine(Application.StartupPath, "Icons", "explorer.ico");
+                imageList1.Images.Add(Image.FromFile(folderIcon));
+                string iconFolder = Path.Combine(Application.StartupPath, "Icons");
+                GalleryArray = System.IO.Directory.GetFiles(iconFolder);
+                for (int i = 0; i < GalleryArray.Length; i++)
+                {
+                    if (GalleryArray[i].ToLower().EndsWith(".ico"))
+                    {
+
+                        imageList1.Images.Add(Path.GetFileName(GalleryArray[i]), Icon.ExtractAssociatedIcon(GalleryArray[i]));
+                    }
+                }
+            }
+            if (treeDimensions != null)
+            {
+                treeDimensions.ItemHeight = iconSize + 2;
+                treeDimensions.Indent = iconSize + 4;
+                treeDimensions.Font = Properties.Settings.Default.TableExplorerFont;
+            }
+            if (treeCategory != null)
+            {
+                treeCategory.ItemHeight = iconSize + 2;
+                treeCategory.Indent = iconSize + 4;
+                treeCategory.Font = Properties.Settings.Default.TableExplorerFont;
+            }
+            if (treeSegments != null)
+            {
+                treeSegments.ItemHeight = iconSize + 2;
+                treeSegments.Indent = iconSize + 4;
+                treeSegments.Font = Properties.Settings.Default.TableExplorerFont;
+            }
+            if (treeValueType != null)
+            {
+                treeValueType.ItemHeight = iconSize + 2;
+                treeValueType.Indent = iconSize + 4;
+                treeValueType.Font = Properties.Settings.Default.TableExplorerFont;
+            }
+        }
+        private TreeNode createTreeNode(string txt)
+        {
+            TreeNode tn = new TreeNode(txt);
+            tn.Name = txt;
+            tn.ImageKey = txt + ".ico";
+            tn.SelectedImageKey = txt + ".ico";
+            return tn;
+        }
+
+        private void loadDimensions()
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            Application.DoEvents();
+
+            if (tabDimensions.Controls.Contains(treeDimensions))
+            {
+                foreach (TreeNode tn in treeDimensions.Nodes)
+                    tn.Nodes.Clear();
+            }
+            else
+            {
+                treeDimensions = new TreeView();
+                setIconSize();
+                treeDimensions.ImageList = imageList1;
+                treeDimensions.CheckBoxes = true;
+                treeDimensions.Dock = DockStyle.Fill;
+                tabDimensions.Controls.Add(treeDimensions);
+                treeDimensions.AfterCheck += Tree_AfterCheck;
+                treeDimensions.AfterSelect += Tree_AfterSelect;
+                treeDimensions.NodeMouseClick += Tree_NodeMouseClick;
+                treeDimensions.Nodes.Add(createTreeNode("1D"));
+                treeDimensions.Nodes.Add(createTreeNode("2D"));
+                treeDimensions.Nodes.Add(createTreeNode("3D"));
+            }
+
+            for (int i = 0; i < filteredCategories.Count; i++)
+            {
+                //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
+                {
+                    TreeNode tnChild = new TreeNode(filteredCategories[i].TableName);
+                    tnChild.Tag = (int)filteredCategories[i].id;
+
+                    TableValueType vt = getValueType(filteredCategories[i]);
+                    if (filteredCategories[i].BitMask != null && filteredCategories[i].BitMask.Length > 0)
+                    {
+                        tnChild.ImageKey = "bitmask.ico";
+                        tnChild.SelectedImageKey = "bitmask.ico";
+                    }
+                    else if (vt == TableValueType.boolean)
+                    {
+                        tnChild.ImageKey = "boolean.ico";
+                        tnChild.SelectedImageKey = "boolean.ico";
+                    }
+                    else if (vt == TableValueType.selection)
+                    {
+                        tnChild.ImageKey = "enum.ico";
+                        tnChild.SelectedImageKey = "enum.ico";
+                    }
+                    else
+                    {
+                        tnChild.ImageKey = "number.ico";
+                        tnChild.SelectedImageKey = "number.ico";
+                    }
+
+                    string nodeKey = "";
+                    if (filteredCategories[i].Rows == 1 && filteredCategories[i].Columns == 1)
+                        nodeKey = "1D";
+                    else if (filteredCategories[i].Rows > 1 && filteredCategories[i].Columns == 1)
+                        nodeKey = "2D";
+                    else
+                        nodeKey = "3D";
+
+                    if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
+                    {
+                        treeDimensions.Nodes[nodeKey].Nodes.Add(tnChild);
+                    }
+                    else
+                    {
+                        string cat = filteredCategories[i].Category;
+                        if (cat == "")
+                            cat = "(Empty)";
+                        if (!treeDimensions.Nodes[nodeKey].Nodes.ContainsKey(cat))
+                        {
+                            TreeNode dimCatTn = new TreeNode(cat);
+                            dimCatTn.Name = cat;
+                            dimCatTn.ImageKey = "category.ico";
+                            dimCatTn.SelectedImageKey = "category.ico";
+                            treeDimensions.Nodes[nodeKey].Nodes.Add(dimCatTn);
+                        }
+                        treeDimensions.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
+                    }
+                }
+            }
+            Cursor.Current = Cursors.Default;
+        }
+        private void loadValueTypes()
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            Application.DoEvents();
+            if (tabValueType.Controls.Contains(treeValueType))
+            {
+                foreach (TreeNode tn in treeValueType.Nodes)
+                    tn.Nodes.Clear();
+            }
+            else
+            {
+                treeValueType = new TreeView();
+                setIconSize();
+                treeValueType.ImageList = imageList1;
+                treeValueType.CheckBoxes = true;
+                treeValueType.Dock = DockStyle.Fill;
+                tabValueType.Controls.Add(treeValueType);
+                treeValueType.AfterSelect += Tree_AfterSelect;
+                treeValueType.AfterCheck += Tree_AfterCheck;
+                treeValueType.NodeMouseClick += Tree_NodeMouseClick;
+                treeValueType.Nodes.Add(createTreeNode("number"));
+                treeValueType.Nodes.Add(createTreeNode("enum"));
+                treeValueType.Nodes.Add(createTreeNode("bitmask"));
+                treeValueType.Nodes.Add(createTreeNode("boolean"));
+            }
+
+            for (int i = 0; i < filteredCategories.Count; i++)
+            {
+                //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
+                {
+                    TreeNode tnChild = new TreeNode(filteredCategories[i].TableName);
+                    tnChild.Tag = (int)filteredCategories[i].id;
+
+                    if (filteredCategories[i].Rows == 1 && filteredCategories[i].Columns == 1)
+                    {
+                        tnChild.ImageKey = "1d.ico";
+                        tnChild.SelectedImageKey = "1d.ico";
+                    }
+                    else if (filteredCategories[i].Rows > 1 && filteredCategories[i].Columns == 1)
+                    {
+                        tnChild.ImageKey = "2d.ico";
+                        tnChild.SelectedImageKey = "2d.ico";
+                    }
+                    else
+                    {
+                        tnChild.ImageKey = "3d.ico";
+                        tnChild.SelectedImageKey = "3d.ico";
+                    }
+
+                    TableValueType vt = getValueType(filteredCategories[i]);
+                    string nodeKey = "";
+                    if (filteredCategories[i].BitMask != null && filteredCategories[i].BitMask.Length > 0)
+                        nodeKey = "bitmask";
+                    else if (vt == TableValueType.boolean)
+                        nodeKey = "boolean";
+                    else if (vt == TableValueType.selection)
+                        nodeKey = "enum";
+                    else
+                        nodeKey = "number";
+
+                    if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
+                    {
+                        treeValueType.Nodes[nodeKey].Nodes.Add(tnChild);
+                    }
+                    else
+                    {
+                        string cat = filteredCategories[i].Category;
+                        if (cat == "")
+                            cat = "(Empty)";
+                        if (!treeValueType.Nodes[nodeKey].Nodes.ContainsKey(cat))
+                        {
+                            TreeNode vtCatTn = new TreeNode(cat);
+                            vtCatTn.Name = cat;
+                            vtCatTn.ImageKey = "category.ico";
+                            vtCatTn.SelectedImageKey = "category.ico";
+                            treeValueType.Nodes[nodeKey].Nodes.Add(vtCatTn);
+                        }
+                        treeValueType.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
+                    }
+                }
+            }
+            Cursor.Current = Cursors.Default;
+        }
+
+        private void loadCategories()
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            Application.DoEvents();
+            if (tabCategory.Controls.Contains(treeCategory))
+            {
+                treeCategory.Nodes.Clear();
+            }
+            else
+            {
+                treeCategory = new TreeView();
+                setIconSize();
+                treeCategory.ImageList = imageList1;
+                treeCategory.CheckBoxes = true;
+
+                treeCategory.Dock = DockStyle.Fill;
+                tabCategory.Controls.Add(treeCategory);
+                treeCategory.AfterSelect += Tree_AfterSelect;
+                treeCategory.AfterCheck += Tree_AfterCheck;
+                treeCategory.NodeMouseClick += Tree_NodeMouseClick;
+            }
+            for (int i = 0; i < filteredCategories.Count; i++)
+            {
+                //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
+                {
+
+                    TreeNode tnChild = new TreeNode(filteredCategories[i].TableName);
+                    tnChild.Tag = (int)filteredCategories[i].id;
+                    string ico = "";
+                    TableValueType vt = getValueType(filteredCategories[i]);
+                    if (filteredCategories[i].BitMask != null && filteredCategories[i].BitMask.Length > 0)
+                    {
+                        ico = "mask";
+                    }
+                    else if (vt == TableValueType.boolean)
+                    {
+                        ico = "flag";
+                    }
+                    else if (vt == TableValueType.selection)
+                    {
+                        ico = "enum";
+                    }
+
+                    if (filteredCategories[i].Rows == 1 && filteredCategories[i].Columns == 1)
+                    {
+                        ico += "1d.ico";
+                    }
+                    else if (filteredCategories[i].Rows > 1 && filteredCategories[i].Columns == 1)
+                    {
+                        ico += "2d.ico";
+                    }
+                    else
+                    {
+                        ico += "3d.ico";
+                    }
+
+                    tnChild.ImageKey = ico;
+                    tnChild.SelectedImageKey = ico;
+
+                    string cat = filteredCategories[i].Category;
+                    if (cat == "")
+                        cat = "(Empty)";
+                    if (!treeCategory.Nodes.ContainsKey(cat))
+                    {
+                        TreeNode cTnChild = new TreeNode(cat);
+                        cTnChild.Name = cat;
+                        cTnChild.ImageKey = "category.ico";
+                        cTnChild.SelectedImageKey = "category.ico";
+                        treeCategory.Nodes.Add(cTnChild);
+                    }
+                    treeCategory.Nodes[cat].Nodes.Add(tnChild);
+                }
+            }
+            Cursor.Current = Cursors.Default;
+        }
+
+        private void loadSegments()
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            Application.DoEvents();
+            if (tabSegments.Controls.Contains(treeSegments))
+            {
+                treeSegments.Nodes.Clear();
+            }
+            else
+            {
+                treeSegments = new TreeView();
+                setIconSize();
+                treeSegments.ImageList = imageList1;
+                treeSegments.CheckBoxes = true;
+
+                treeSegments.Dock = DockStyle.Fill;
+                tabSegments.Controls.Add(treeSegments);
+                treeSegments.AfterSelect += Tree_AfterSelect;
+                treeSegments.AfterCheck += Tree_AfterCheck;
+                treeSegments.NodeMouseClick += Tree_NodeMouseClick;
+            }
+            TreeNode segTn;
+            for (int i = 0; i < PCM.Segments.Count; i++)
+            {
+                segTn = new TreeNode(PCM.Segments[i].Name);
+                segTn.Name = PCM.Segments[i].Name;
+                segTn.ImageKey = "segments.ico";
+                segTn.SelectedImageKey = "segments.ico";
+
+                bool found = false;
+                foreach (string icofile in GalleryArray)
+                {
+
+                    double percentage = ComputeSimilarity.CalculateSimilarity(Path.GetFileNameWithoutExtension(icofile).ToLower(), segTn.Name.ToLower());
+                    if ((int)(percentage * 100) >= 80)
+                    {
+                        segTn.ImageKey = Path.GetFileName(icofile);
+                        segTn.SelectedImageKey = Path.GetFileName(icofile);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    foreach (string icofile in GalleryArray)
+                    {
+                        if (segTn.Name.ToLower().Contains(Path.GetFileNameWithoutExtension(icofile)))
+                        {
+                            segTn.ImageKey = Path.GetFileName(icofile);
+                            segTn.SelectedImageKey = Path.GetFileName(icofile);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                treeSegments.Nodes.Add(segTn);
+            }
+
+            for (int i = 0; i < filteredCategories.Count; i++)
+            {
+                //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
+                {
+
+                    TreeNode tnChild = new TreeNode(filteredCategories[i].TableName);
+                    tnChild.Tag = (int)filteredCategories[i].id;
+                    string ico = "";
+                    TableValueType vt = getValueType(filteredCategories[i]);
+                    if (filteredCategories[i].BitMask != null && filteredCategories[i].BitMask.Length > 0)
+                    {
+                        ico = "mask";
+                    }
+                    else if (vt == TableValueType.boolean)
+                    {
+                        ico = "flag";
+                    }
+                    else if (vt == TableValueType.selection)
+                    {
+                        ico = "enum";
+                    }
+
+                    if (filteredCategories[i].Rows == 1 && filteredCategories[i].Columns == 1)
+                    {
+                        ico += "1d.ico";
+                    }
+                    else if (filteredCategories[i].Rows > 1 && filteredCategories[i].Columns == 1)
+                    {
+                        ico += "2d.ico";
+                    }
+                    else
+                    {
+                        ico += "3d.ico";
+                    }
+
+                    tnChild.ImageKey = ico;
+                    tnChild.SelectedImageKey = ico;
+
+                    string cat = filteredCategories[i].Category;
+                    if (cat == "")
+                        cat = "(Empty)";
+
+                    int seg = PCM.GetSegmentNumber(filteredCategories[i].addrInt);
+                    if (seg > -1)
+                    {
+                        if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
+                        {
+                            treeSegments.Nodes[seg].Nodes.Add(tnChild);
+                        }
+                        else
+                        {
+                            if (!treeSegments.Nodes[seg].Nodes.ContainsKey(cat))
+                            {
+                                TreeNode tnNew = new TreeNode(cat);
+                                tnNew.Name = cat;
+                                tnNew.ImageKey = "category.ico";
+                                tnNew.SelectedImageKey = "category.ico";
+                                treeSegments.Nodes[seg].Nodes.Add(tnNew);
+                            }
+                            treeSegments.Nodes[seg].Nodes[cat].Nodes.Add(tnChild);
+                        }
+                    }
+                }
+            }
+            Cursor.Current = Cursors.Default;
+        }
+
+        private void btnExpand_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                TreeView tree = (TreeView)tabControl1.SelectedTab.Controls[0];
+                tree.ExpandAll();
+            }
+            catch { };
+        }
+
+        private void btnCollapse_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                TreeView tree = (TreeView)tabControl1.SelectedTab.Controls[0];
+                tree.CollapseAll();
+            }
+            catch { };
+        }
+
+        private void clearPanel2()
+        {
+            if (splitTree == null)
+                return;
+            foreach (var x in splitTree.Panel2.Controls.OfType<Form>())
+            {
+                x.Close();
+            }
+        }
+
+        private void selectDispMode()
+        {
+            if (radioTreeMode.Checked)
+                selectTreemode();
+            else
+                selectListMode();
+            Properties.Settings.Default.TunerTreeMode = radioTreeMode.Checked;
+            Properties.Settings.Default.Save();
+
+        }
+        private void radioTreeMode_CheckedChanged(object sender, EventArgs e)
+        {
+            selectDispMode();
+        }
+
+        private void radioListMode_CheckedChanged(object sender, EventArgs e)
+        {
+            selectDispMode();
+        }
+
+        private void showCategorySubfolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showCategorySubfolderToolStripMenuItem.Checked = !showCategorySubfolderToolStripMenuItem.Checked;
+            Properties.Settings.Default.TableExplorerUseCategorySubfolder = showCategorySubfolderToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
+            filterTree();
         }
     }
 }
