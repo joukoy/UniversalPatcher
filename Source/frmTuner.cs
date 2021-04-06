@@ -2322,9 +2322,10 @@ namespace UniversalPatcher
             if (e.Button == MouseButtons.Right)
             {
                 TreeView tv = (TreeView)tabControl1.SelectedTab.Controls[0];
-                if (tv.SelectedNode == null || tv.SelectedNode.Tag == null)
-                    return;
-                lastSelectedId = Convert.ToInt32(tv.SelectedNode.Tag);
+                if (tv.SelectedNode != null && tv.SelectedNode.Tag != null)
+                    lastSelectedId = Convert.ToInt32(tv.SelectedNode.Tag);
+                else
+                    lastSelectedId = -1;
                 contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
             }
         }
@@ -2349,28 +2350,14 @@ namespace UniversalPatcher
             {
                 if (e.Node.Checked)
                 {
-                    if (e.Node.Nodes.Count > 10)
-                        Logger("Limiting to max 10 nodes");
-                    else
-                        foreach (TreeNode tn in e.Node.Nodes)
-                            tn.Checked = true;
+                    foreach (TreeNode tn in e.Node.Nodes)
+                        tn.Checked = true;
                 }
                 else
                 {
                     foreach (TreeNode tn in e.Node.Nodes)
                         tn.Checked = false;
                 }
-            }
-            else
-            {
-                clearPanel2();
-                List<int> tableIds = new List<int>();
-                foreach (TreeNode tn in e.Node.TreeView.Nodes)
-                {
-                    findCheckdNodes(tn, ref tableIds);
-                }
-                if (tableIds.Count > 0)
-                    openTableEditor(tableIds);
             }
         }
 
