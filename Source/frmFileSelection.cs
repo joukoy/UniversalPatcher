@@ -81,6 +81,8 @@ namespace UniversalPatcher
         }
         private void btnOK_Click(object sender, EventArgs e)
         {
+            if (listFiles.CheckedIndices.Count == 0)
+                return;
             this.DialogResult = DialogResult.OK;
             this.Close();
         }

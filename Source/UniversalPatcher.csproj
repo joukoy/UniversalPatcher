@@ -297,6 +297,9 @@
     <Compile Include="TableSeek.cs" />
     <Compile Include="tableSearch.cs" />
     <Compile Include="TinyTuner.cs" />
+    <Compile Include="TreeViewMS.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Units.cs" />
     <Compile Include="win32.cs" />
     <Compile Include="TableData.cs" />

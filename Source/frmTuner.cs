@@ -42,10 +42,10 @@ namespace UniversalPatcher
         string compXml = "";
         int keyDelayCounter = 0;
         private SplitContainer splitTree;
-        private TreeView treeDimensions;
-        private TreeView treeValueType;
-        private TreeView treeCategory;
-        private TreeView treeSegments;
+        private TreeViewMS treeDimensions;
+        private TreeViewMS treeValueType;
+        private TreeViewMS treeCategory;
+        private TreeViewMS treeSegments;
         private string[] GalleryArray;
         string currentTab;
         int iconSize;
@@ -2174,9 +2174,12 @@ namespace UniversalPatcher
             List<int> tableIds = new List<int>();
             if (treeMode)
             {
-                TreeView tv = (TreeView)tabControl1.SelectedTab.Controls[0];
-                foreach (TreeNode tn in tv.Nodes)
-                    findCheckdNodes(tn, ref tableIds);
+                TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+                //foreach (TreeNode tn in tv.Nodes)
+                //  findCheckdNodes(tn, ref tableIds);
+                foreach (TreeNode tn in tv.SelectedNodes)
+                    if (tn.Tag != null)
+                        tableIds.Add((int)tn.Tag);
                 if (tableIds.Count == 0)
                     tableIds.Add(lastSelectedId);
             }
@@ -2323,7 +2326,7 @@ namespace UniversalPatcher
         {
             if (e.Button == MouseButtons.Right)
             {
-                TreeView tv = (TreeView)tabControl1.SelectedTab.Controls[0];
+                TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
                 if (tv.SelectedNode != null && tv.SelectedNode.Tag != null)
                     lastSelectedId = Convert.ToInt32(tv.SelectedNode.Tag);
                 else
@@ -2369,9 +2372,12 @@ namespace UniversalPatcher
                 return;
             clearPanel2();
             List<int> tableIds = new List<int>();
-            int tbId = Convert.ToInt32(e.Node.Tag);
-            tableIds.Add(tbId);
-            showTableDescription(tbId);
+            //int tbId = Convert.ToInt32(e.Node.Tag);
+            TreeViewMS tms = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+            foreach(TreeNode tn in tms.SelectedNodes)
+                if (tn.Tag != null)
+                    tableIds.Add((int)tn.Tag);
+            //showTableDescription(tbId);
             openTableEditor(tableIds);
         }
 
@@ -2502,18 +2508,19 @@ namespace UniversalPatcher
 
             if (tabDimensions.Controls.Contains(treeDimensions))
             {
+                treeDimensions.SelectedNodes.Clear();
                 foreach (TreeNode tn in treeDimensions.Nodes)
                     tn.Nodes.Clear();
             }
             else
             {
-                treeDimensions = new TreeView();
+                treeDimensions = new TreeViewMS();
                 setIconSize();
                 treeDimensions.ImageList = imageList1;
-                treeDimensions.CheckBoxes = true;
+                treeDimensions.CheckBoxes = false;
                 treeDimensions.Dock = DockStyle.Fill;
                 tabDimensions.Controls.Add(treeDimensions);
-                treeDimensions.AfterCheck += Tree_AfterCheck;
+                //treeDimensions.AfterCheck += Tree_AfterCheck;
                 treeDimensions.AfterSelect += Tree_AfterSelect;
                 treeDimensions.NodeMouseClick += Tree_NodeMouseClick;
                 treeDimensions.Nodes.Add(createTreeNode("1D"));
@@ -2587,15 +2594,16 @@ namespace UniversalPatcher
             Application.DoEvents();
             if (tabValueType.Controls.Contains(treeValueType))
             {
+                treeValueType.SelectedNodes.Clear();
                 foreach (TreeNode tn in treeValueType.Nodes)
                     tn.Nodes.Clear();
             }
             else
             {
-                treeValueType = new TreeView();
+                treeValueType = new TreeViewMS();
                 setIconSize();
                 treeValueType.ImageList = imageList1;
-                treeValueType.CheckBoxes = true;
+                treeValueType.CheckBoxes = false;
                 treeValueType.Dock = DockStyle.Fill;
                 tabValueType.Controls.Add(treeValueType);
                 treeValueType.AfterSelect += Tree_AfterSelect;
@@ -2671,14 +2679,15 @@ namespace UniversalPatcher
             Application.DoEvents();
             if (tabCategory.Controls.Contains(treeCategory))
             {
+                treeCategory.SelectedNodes.Clear();
                 treeCategory.Nodes.Clear();
             }
             else
             {
-                treeCategory = new TreeView();
+                treeCategory = new TreeViewMS();
                 setIconSize();
                 treeCategory.ImageList = imageList1;
-                treeCategory.CheckBoxes = true;
+                treeCategory.CheckBoxes = false;
 
                 treeCategory.Dock = DockStyle.Fill;
                 tabCategory.Controls.Add(treeCategory);
@@ -2747,14 +2756,15 @@ namespace UniversalPatcher
             Application.DoEvents();
             if (tabSegments.Controls.Contains(treeSegments))
             {
+                treeSegments.SelectedNodes.Clear();
                 treeSegments.Nodes.Clear();
             }
             else
             {
-                treeSegments = new TreeView();
+                treeSegments = new TreeViewMS();
                 setIconSize();
                 treeSegments.ImageList = imageList1;
-                treeSegments.CheckBoxes = true;
+                treeSegments.CheckBoxes = false;
 
                 treeSegments.Dock = DockStyle.Fill;
                 tabSegments.Controls.Add(treeSegments);
@@ -2870,7 +2880,7 @@ namespace UniversalPatcher
         {
             try
             {
-                TreeView tree = (TreeView)tabControl1.SelectedTab.Controls[0];
+                TreeViewMS tree = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
                 tree.ExpandAll();
             }
             catch { };
@@ -2880,7 +2890,7 @@ namespace UniversalPatcher
         {
             try
             {
-                TreeView tree = (TreeView)tabControl1.SelectedTab.Controls[0];
+                TreeViewMS tree = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
                 tree.CollapseAll();
             }
             catch { };
@@ -2923,10 +2933,10 @@ namespace UniversalPatcher
             Properties.Settings.Default.Save();
             filterTree();
         }
-
+/*
         private void dToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TreeView tv = (TreeView)tabControl1.SelectedTab.Controls[0];
+            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
             if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count >0)
             {
                 foreach (TreeNode tn in tv.SelectedNode.Nodes)
@@ -2953,7 +2963,7 @@ namespace UniversalPatcher
 
         private void dToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            TreeView tv = (TreeView)tabControl1.SelectedTab.Controls[0];
+            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
             if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
             {
                 foreach (TreeNode tn in tv.SelectedNode.Nodes)
@@ -2980,7 +2990,7 @@ namespace UniversalPatcher
 
         private void dToolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            TreeView tv = (TreeView)tabControl1.SelectedTab.Controls[0];
+            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
             if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
             {
                 foreach (TreeNode tn in tv.SelectedNode.Nodes)
@@ -3007,7 +3017,7 @@ namespace UniversalPatcher
 
         private void enumToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TreeView tv = (TreeView)tabControl1.SelectedTab.Controls[0];
+            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
             if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
             {
                 foreach (TreeNode tn in tv.SelectedNode.Nodes)
@@ -3036,7 +3046,7 @@ namespace UniversalPatcher
 
         private void booleanToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TreeView tv = (TreeView)tabControl1.SelectedTab.Controls[0];
+            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
             if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
             {
                 foreach (TreeNode tn in tv.SelectedNode.Nodes)
@@ -3065,7 +3075,7 @@ namespace UniversalPatcher
 
         private void numberToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TreeView tv = (TreeView)tabControl1.SelectedTab.Controls[0];
+            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
             if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
             {
                 foreach (TreeNode tn in tv.SelectedNode.Nodes)
@@ -3094,7 +3104,7 @@ namespace UniversalPatcher
 
         private void bitmaskToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TreeView tv = (TreeView)tabControl1.SelectedTab.Controls[0];
+            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
             if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
             {
                 foreach (TreeNode tn in tv.SelectedNode.Nodes)
@@ -3123,5 +3133,6 @@ namespace UniversalPatcher
             List<int> selectedIds = getSelectedTableIds();
             Logger("Currently selected: " + selectedIds.Count.ToString() + " tables");
         }
+*/
     }
 }

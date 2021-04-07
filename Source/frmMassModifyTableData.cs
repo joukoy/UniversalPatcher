@@ -197,58 +197,67 @@ namespace UniversalPatcher
 
         public void loadData(List<string> fileList)
         {
-            dataGridView2.Columns.Add("TableName", "TableName");
-            dataGridView2.Columns.Add("Property", "Property");
-            dataGridView2.Columns.Add("OldValue", "OldValue");
-            dataGridView2.Columns.Add("NewValue", "NewValue");
-            dataGridView2.Columns.Add("OS", "OS");
-
-            MassModProperties tmpMmp = new MassModProperties();
-            foreach (var prop in tmpMmp.GetType().GetProperties())
+            try
             {
-                //Add to filter by-combo
-                comboFilterBy.Items.Add(prop.Name);
-            }
-            comboFilterBy.Text = "TableName";
+                dataGridView2.Columns.Add("TableName", "TableName");
+                dataGridView2.Columns.Add("Property", "Property");
+                dataGridView2.Columns.Add("OldValue", "OldValue");
+                dataGridView2.Columns.Add("NewValue", "NewValue");
+                dataGridView2.Columns.Add("OS", "OS");
 
-            foreach (string fName in fileList)
+                MassModProperties tmpMmp = new MassModProperties();
+                foreach (var prop in tmpMmp.GetType().GetProperties())
+                {
+                    //Add to filter by-combo
+                    comboFilterBy.Items.Add(prop.Name);
+                }
+                comboFilterBy.Text = "TableName";
+
+                foreach (string fName in fileList)
+                {
+                    long conFileSize = new FileInfo(fName).Length;
+                    if (conFileSize < 255 || Path.GetFileName(fName).ToLower() == "units.xml")
+                        continue;
+                    TunerFile tf = new TunerFile();
+                    tf.tableDatas = loadTableDataFile(fName);
+                    tf.FileName = fName;
+                    tunerFiles.Add(tf);
+                    addTableListTodgrid(tf.tableDatas);
+                }
+                if (tunerFiles.Count == 0)
+                    return; //No files selected
+                for (int f = 0; f < tunerFiles.Count; f++)
+                    tunerFiles[f].id = f;
+                for (int i = 0; i < displayDatas.Count; i++)
+                    displayDatas[i].id = (uint)i;
+                dataGridView1.DataSource = bindingSource;
+                filterData();
+
+                dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
+                dataGridView1.CellValueChanged += DataGridView1_CellValueChanged;
+                dataGridView1.CellBeginEdit += DataGridView1_CellBeginEdit;
+                Application.DoEvents();
+
+                dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+                if (dataGridView1.Columns[0].Width > 500)
+                    dataGridView1.Columns[0].Width = 500;
+
+                dataGridFiles.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridFiles.DataSource = tunerFiles;
+                dataGridFiles.DataBindingComplete += DataGridFiles_DataBindingComplete;
+                dataGridFiles.CellMouseClick += DataGridFiles_CellMouseClick;
+
+                comboFiles.DataSource = tunerFiles;
+                comboFiles.DisplayMember = "FileName";
+                comboFiles.ValueMember = "id";
+                comboFiles.SelectedIndexChanged += ComboFiles_SelectedIndexChanged;
+                refreshTdList();
+                Logger("Files loaded");
+            }
+            catch (Exception ex)
             {
-                long conFileSize = new FileInfo(fName).Length;
-                if (conFileSize < 255 || Path.GetFileName(fName).ToLower() == "units.xml")
-                    continue;
-                TunerFile tf = new TunerFile();
-                tf.tableDatas = loadTableDataFile(fName);
-                tf.FileName = fName;
-                tunerFiles.Add(tf);
-                addTableListTodgrid(tf.tableDatas);
+                LoggerBold(ex.Message);
             }
-            for (int f = 0; f < tunerFiles.Count; f++)
-                tunerFiles[f].id = f;
-            for (int i = 0; i < displayDatas.Count; i++)
-                displayDatas[i].id = (uint)i;
-            dataGridView1.DataSource = bindingSource;
-            filterData();
-
-            dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
-            dataGridView1.CellValueChanged += DataGridView1_CellValueChanged;
-            dataGridView1.CellBeginEdit += DataGridView1_CellBeginEdit;
-            Application.DoEvents();
-
-            dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
-            if (dataGridView1.Columns[0].Width > 500)
-                dataGridView1.Columns[0].Width = 500;
-
-            dataGridFiles.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
-            dataGridFiles.DataSource = tunerFiles;
-            dataGridFiles.DataBindingComplete += DataGridFiles_DataBindingComplete;
-            dataGridFiles.CellMouseClick += DataGridFiles_CellMouseClick;
-
-            comboFiles.DataSource = tunerFiles;
-            comboFiles.DisplayMember = "FileName";
-            comboFiles.ValueMember = "id";
-            comboFiles.SelectedIndexChanged += ComboFiles_SelectedIndexChanged;
-            refreshTdList();
-            Logger("Files loaded");
         }
 
         private void DataGridFiles_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
@@ -266,8 +275,11 @@ namespace UniversalPatcher
         {
             dataGridTd.DataSource = null;
             dataGridTd.DataSource = tdBindingSource;
-            tdBindingSource.DataSource = tunerFiles[comboFiles.SelectedIndex].tableDatas;
-            dataGridTd.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+            if (comboFiles.SelectedIndex > -1 && tunerFiles[comboFiles.SelectedIndex].tableDatas.Count > 0)
+            {
+                tdBindingSource.DataSource = tunerFiles[comboFiles.SelectedIndex].tableDatas;
+                dataGridTd.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+            }
             dataGridTd.ColumnHeaderMouseClick += DataGridTd_ColumnHeaderMouseClick;
             dataGridTd.Columns[tdSortIndex].HeaderCell.SortGlyphDirection = tdSortOrder;
         }

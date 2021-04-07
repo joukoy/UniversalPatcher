@@ -562,7 +562,7 @@ namespace UniversalPatcher
             this.duplicateTableConfigToolStripMenuItem,
             this.createPatchToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(206, 340);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(206, 318);
             // 
             // cutToolStripMenuItem
             // 
@@ -630,58 +630,60 @@ namespace UniversalPatcher
             this.booleanToolStripMenuItem,
             this.bitmaskToolStripMenuItem,
             this.numberToolStripMenuItem});
+            this.selectToolStripMenuItem.Enabled = false;
             this.selectToolStripMenuItem.Name = "selectToolStripMenuItem";
             this.selectToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.selectToolStripMenuItem.Text = "Select all...";
+            this.selectToolStripMenuItem.Visible = false;
             // 
             // dToolStripMenuItem
             // 
             this.dToolStripMenuItem.Name = "dToolStripMenuItem";
             this.dToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.dToolStripMenuItem.Text = "1d";
-            this.dToolStripMenuItem.Click += new System.EventHandler(this.dToolStripMenuItem_Click);
+            //this.dToolStripMenuItem.Click += new System.EventHandler(this.dToolStripMenuItem_Click);
             // 
             // dToolStripMenuItem1
             // 
             this.dToolStripMenuItem1.Name = "dToolStripMenuItem1";
             this.dToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.dToolStripMenuItem1.Text = "2d";
-            this.dToolStripMenuItem1.Click += new System.EventHandler(this.dToolStripMenuItem1_Click);
+            //this.dToolStripMenuItem1.Click += new System.EventHandler(this.dToolStripMenuItem1_Click);
             // 
             // dToolStripMenuItem2
             // 
             this.dToolStripMenuItem2.Name = "dToolStripMenuItem2";
             this.dToolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
             this.dToolStripMenuItem2.Text = "3d";
-            this.dToolStripMenuItem2.Click += new System.EventHandler(this.dToolStripMenuItem2_Click);
+            //this.dToolStripMenuItem2.Click += new System.EventHandler(this.dToolStripMenuItem2_Click);
             // 
             // enumToolStripMenuItem
             // 
             this.enumToolStripMenuItem.Name = "enumToolStripMenuItem";
             this.enumToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.enumToolStripMenuItem.Text = "enum";
-            this.enumToolStripMenuItem.Click += new System.EventHandler(this.enumToolStripMenuItem_Click);
+            //this.enumToolStripMenuItem.Click += new System.EventHandler(this.enumToolStripMenuItem_Click);
             // 
             // booleanToolStripMenuItem
             // 
             this.booleanToolStripMenuItem.Name = "booleanToolStripMenuItem";
             this.booleanToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.booleanToolStripMenuItem.Text = "boolean";
-            this.booleanToolStripMenuItem.Click += new System.EventHandler(this.booleanToolStripMenuItem_Click);
+            //this.booleanToolStripMenuItem.Click += new System.EventHandler(this.booleanToolStripMenuItem_Click);
             // 
             // bitmaskToolStripMenuItem
             // 
             this.bitmaskToolStripMenuItem.Name = "bitmaskToolStripMenuItem";
             this.bitmaskToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.bitmaskToolStripMenuItem.Text = "bitmask";
-            this.bitmaskToolStripMenuItem.Click += new System.EventHandler(this.bitmaskToolStripMenuItem_Click);
+            //this.bitmaskToolStripMenuItem.Click += new System.EventHandler(this.bitmaskToolStripMenuItem_Click);
             // 
             // numberToolStripMenuItem
             // 
             this.numberToolStripMenuItem.Name = "numberToolStripMenuItem";
             this.numberToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.numberToolStripMenuItem.Text = "number";
-            this.numberToolStripMenuItem.Click += new System.EventHandler(this.numberToolStripMenuItem_Click);
+            //this.numberToolStripMenuItem.Click += new System.EventHandler(this.numberToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
