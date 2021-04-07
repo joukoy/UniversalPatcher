@@ -102,6 +102,7 @@ namespace UniversalPatcher
                 }
             }
             comboFilterBy.Text = "TableName";
+            labelTableName.Text = "";
             lastSelectedId = -1;
             dataGridView1.DataSource = bindingsource;
             filterTables();
@@ -204,9 +205,8 @@ namespace UniversalPatcher
 
         }
 
-        public string openTableEditor(List<int> tableIds = null, bool newWindow = false)
+        public void openTableEditor(List<int> tableIds = null, bool newWindow = false)
         {
-            string retVal = "";
             try
             {
                 if (tableIds == null)
@@ -219,7 +219,7 @@ namespace UniversalPatcher
                 if (td.addrInt == uint.MaxValue)
                 {
                     Logger("No address defined!");
-                    return retVal;
+                    return;
                 }
 
                 if (td.OS != PCM.OS && !td.CompatibleOS.Contains("," + PCM.OS +","))
@@ -271,14 +271,12 @@ namespace UniversalPatcher
                     }
                 }
                 frmT.Show();
-                frmT.loadTable(td);
-                retVal = frmT.tableName;
+                frmT.loadTable(td);                
             }
             catch (Exception ex)
             {
                 LoggerBold(ex.Message);
             }
-            return retVal;
         }
 
         private void btnEditTable_Click(object sender, EventArgs e)
@@ -1296,7 +1294,7 @@ namespace UniversalPatcher
                 txtDescription.AppendText(PCM.tableDatas[ind].ExtraDescription + Environment.NewLine);
 
             peekTableValuesWithCompare(ind);
-
+            labelTableName.Text = PCM.tableDatas[ind].TableName;
         }
 
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
@@ -2302,6 +2300,13 @@ namespace UniversalPatcher
             copyToolStripMenuItem.Enabled = false;
             pasteToolStripMenuItem.Enabled = false;
             selectToolStripMenuItem.Enabled = true;
+            labelBy.Visible = false;
+            comboFilterBy.Visible = false;
+            comboFilterBy.Text = "TableName";
+            labelCategory.Visible = false;
+            comboTableCategory.Visible = false;
+            comboTableCategory.Text = "_All";
+            btnMultitable.Visible = false;
         }
 
         private void selectListMode()
@@ -2319,6 +2324,13 @@ namespace UniversalPatcher
             copyToolStripMenuItem.Enabled = true;
             pasteToolStripMenuItem.Enabled = true;
             selectToolStripMenuItem.Enabled = false;
+
+            labelBy.Visible = true;
+            comboFilterBy.Visible = true;
+            labelCategory.Visible = true;
+            comboTableCategory.Visible = true;
+            btnMultitable.Visible = false;
+
         }
 
 
@@ -2368,16 +2380,23 @@ namespace UniversalPatcher
 
         private void Tree_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            TreeViewMS tms = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
             if (e.Node.Tag == null)
+            {
+                if (tms.SelectedNodes.Count == 1)
+                    btnMultitable.Visible = true;
+                else
+                    btnMultitable.Visible = false;
                 return;
+            }
+            btnMultitable.Visible = false;
             clearPanel2();
             List<int> tableIds = new List<int>();
             //int tbId = Convert.ToInt32(e.Node.Tag);
-            TreeViewMS tms = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
             foreach(TreeNode tn in tms.SelectedNodes)
                 if (tn.Tag != null)
                     tableIds.Add((int)tn.Tag);
-            //showTableDescription(tbId);
+            showTableDescription(tableIds[0]);
             openTableEditor(tableIds);
         }
 
@@ -2918,11 +2937,13 @@ namespace UniversalPatcher
         }
         private void radioTreeMode_CheckedChanged(object sender, EventArgs e)
         {
+            radioListMode.Checked = !radioTreeMode.Checked;
             selectDispMode();
         }
 
         private void radioListMode_CheckedChanged(object sender, EventArgs e)
         {
+            radioTreeMode.Checked = !radioListMode.Checked;
             selectDispMode();
         }
 
@@ -2933,206 +2954,227 @@ namespace UniversalPatcher
             Properties.Settings.Default.Save();
             filterTree();
         }
-/*
-        private void dToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-            if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count >0)
-            {
-                foreach (TreeNode tn in tv.SelectedNode.Nodes)
-                {
-                    if (tn.Tag != null)
-                    {
-                        int id = (int)tn.Tag;
-                        if (PCM.tableDatas[id].Rows == 1 && PCM.tableDatas[id].Columns == 1)
-                            tn.Checked = true;
-                    }
-                    else
-                    {
-                        foreach (TreeNode childTn in tn.Nodes)
-                        {
-                            int id = (int)childTn.Tag;
-                            if (PCM.tableDatas[id].Rows == 1 && PCM.tableDatas[id].Columns == 1)
-                                childTn.Checked = true;
-                        }
-                    }
-                }
-            }
-            calculateSelections();
-        }
 
-        private void dToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void btnMultitable_Click(object sender, EventArgs e)
         {
             TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-            if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
+            if (tv.SelectedNode == null)
+                return;
+            if (tv.SelectedNode.Tag != null)
+                return;
+            List<int> tableIds = new List<int>();
+            foreach (TreeNode tn in tv.SelectedNode.Nodes)
             {
-                foreach (TreeNode tn in tv.SelectedNode.Nodes)
-                {
-                    if (tn.Tag != null)
-                    {
-                        int id = (int)tn.Tag;
-                        if (PCM.tableDatas[id].Rows > 1 && PCM.tableDatas[id].Columns == 1)
-                            tn.Checked = true;
-                    }
-                    else
-                    {
-                        foreach (TreeNode childTn in tn.Nodes)
-                        {
-                            int id = (int)childTn.Tag;
-                            if (PCM.tableDatas[id].Rows > 1 && PCM.tableDatas[id].Columns == 1)
-                                childTn.Checked = true;
-                        }
-                    }
-                }
+                int id = (int)tn.Tag;
+                if (PCM.tableDatas[id].Rows == 1 && PCM.tableDatas[id].Columns == 1 && !PCM.tableDatas[id].TableName.Contains("[") && !PCM.tableDatas[id].TableName.Contains("."))
+                    tableIds.Add(id);                    
             }
-            calculateSelections();
+            if (tableIds.Count > 0)
+            {
+                clearPanel2();
+                openTableEditor(tableIds);
+            }
         }
+        /*
+       private void dToolStripMenuItem_Click(object sender, EventArgs e)
+       {
+           TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+           if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count >0)
+           {
+               foreach (TreeNode tn in tv.SelectedNode.Nodes)
+               {
+                   if (tn.Tag != null)
+                   {
+                       int id = (int)tn.Tag;
+                       if (PCM.tableDatas[id].Rows == 1 && PCM.tableDatas[id].Columns == 1)
+                           tn.Checked = true;
+                   }
+                   else
+                   {
+                       foreach (TreeNode childTn in tn.Nodes)
+                       {
+                           int id = (int)childTn.Tag;
+                           if (PCM.tableDatas[id].Rows == 1 && PCM.tableDatas[id].Columns == 1)
+                               childTn.Checked = true;
+                       }
+                   }
+               }
+           }
+           calculateSelections();
+       }
 
-        private void dToolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-            if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
-            {
-                foreach (TreeNode tn in tv.SelectedNode.Nodes)
-                {
-                    if (tn.Tag != null)
-                    {
-                        int id = (int)tn.Tag;
-                        if (PCM.tableDatas[id].Rows > 1 && PCM.tableDatas[id].Columns > 1)
-                            tn.Checked = true;
-                    }
-                    else
-                    {
-                        foreach (TreeNode childTn in tn.Nodes)
-                        {
-                            int id = (int)childTn.Tag;
-                            if (PCM.tableDatas[id].Rows > 1 && PCM.tableDatas[id].Columns > 1)
-                                childTn.Checked = true;
-                        }
-                    }
-                }
-            }
-            calculateSelections();
-        }
+       private void dToolStripMenuItem1_Click(object sender, EventArgs e)
+       {
+           TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+           if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
+           {
+               foreach (TreeNode tn in tv.SelectedNode.Nodes)
+               {
+                   if (tn.Tag != null)
+                   {
+                       int id = (int)tn.Tag;
+                       if (PCM.tableDatas[id].Rows > 1 && PCM.tableDatas[id].Columns == 1)
+                           tn.Checked = true;
+                   }
+                   else
+                   {
+                       foreach (TreeNode childTn in tn.Nodes)
+                       {
+                           int id = (int)childTn.Tag;
+                           if (PCM.tableDatas[id].Rows > 1 && PCM.tableDatas[id].Columns == 1)
+                               childTn.Checked = true;
+                       }
+                   }
+               }
+           }
+           calculateSelections();
+       }
 
-        private void enumToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-            if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
-            {
-                foreach (TreeNode tn in tv.SelectedNode.Nodes)
-                {
-                    if (tn.Tag != null)
-                    {
-                        int id = (int)tn.Tag;
-                        TableValueType vt = getValueType(PCM.tableDatas[id]);
-                        if (vt == TableValueType.selection)
-                            tn.Checked = true;
-                    }
-                    else
-                    {
-                        foreach (TreeNode childTn in tn.Nodes)
-                        {
-                            int id = (int)childTn.Tag;
-                            TableValueType vt = getValueType(PCM.tableDatas[id]);
-                            if (vt == TableValueType.selection)
-                                tn.Checked = true;
-                        }
-                    }
-                }
-            }
-            calculateSelections();
-        }
+       private void dToolStripMenuItem2_Click(object sender, EventArgs e)
+       {
+           TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+           if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
+           {
+               foreach (TreeNode tn in tv.SelectedNode.Nodes)
+               {
+                   if (tn.Tag != null)
+                   {
+                       int id = (int)tn.Tag;
+                       if (PCM.tableDatas[id].Rows > 1 && PCM.tableDatas[id].Columns > 1)
+                           tn.Checked = true;
+                   }
+                   else
+                   {
+                       foreach (TreeNode childTn in tn.Nodes)
+                       {
+                           int id = (int)childTn.Tag;
+                           if (PCM.tableDatas[id].Rows > 1 && PCM.tableDatas[id].Columns > 1)
+                               childTn.Checked = true;
+                       }
+                   }
+               }
+           }
+           calculateSelections();
+       }
 
-        private void booleanToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-            if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
-            {
-                foreach (TreeNode tn in tv.SelectedNode.Nodes)
-                {
-                    if (tn.Tag != null)
-                    {
-                        int id = (int)tn.Tag;
-                        TableValueType vt = getValueType(PCM.tableDatas[id]);
-                        if (vt == TableValueType.boolean)
-                            tn.Checked = true;
-                    }
-                    else
-                    {
-                        foreach (TreeNode childTn in tn.Nodes)
-                        {
-                            int id = (int)childTn.Tag;
-                            TableValueType vt = getValueType(PCM.tableDatas[id]);
-                            if (vt == TableValueType.boolean)
-                                tn.Checked = true;
-                        }
-                    }
-                }
-            }
-            calculateSelections();
-        }
+       private void enumToolStripMenuItem_Click(object sender, EventArgs e)
+       {
+           TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+           if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
+           {
+               foreach (TreeNode tn in tv.SelectedNode.Nodes)
+               {
+                   if (tn.Tag != null)
+                   {
+                       int id = (int)tn.Tag;
+                       TableValueType vt = getValueType(PCM.tableDatas[id]);
+                       if (vt == TableValueType.selection)
+                           tn.Checked = true;
+                   }
+                   else
+                   {
+                       foreach (TreeNode childTn in tn.Nodes)
+                       {
+                           int id = (int)childTn.Tag;
+                           TableValueType vt = getValueType(PCM.tableDatas[id]);
+                           if (vt == TableValueType.selection)
+                               tn.Checked = true;
+                       }
+                   }
+               }
+           }
+           calculateSelections();
+       }
 
-        private void numberToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-            if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
-            {
-                foreach (TreeNode tn in tv.SelectedNode.Nodes)
-                {
-                    if (tn.Tag != null)
-                    {
-                        int id = (int)tn.Tag;
-                        TableValueType vt = getValueType(PCM.tableDatas[id]);
-                        if (vt == TableValueType.number)
-                            tn.Checked = true;
-                    }
-                    else
-                    {
-                        foreach (TreeNode childTn in tn.Nodes)
-                        {
-                            int id = (int)childTn.Tag;
-                            TableValueType vt = getValueType(PCM.tableDatas[id]);
-                            if (vt == TableValueType.number)
-                                tn.Checked = true;
-                        }
-                    }
-                }
-            }
-            calculateSelections();
-        }
+       private void booleanToolStripMenuItem_Click(object sender, EventArgs e)
+       {
+           TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+           if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
+           {
+               foreach (TreeNode tn in tv.SelectedNode.Nodes)
+               {
+                   if (tn.Tag != null)
+                   {
+                       int id = (int)tn.Tag;
+                       TableValueType vt = getValueType(PCM.tableDatas[id]);
+                       if (vt == TableValueType.boolean)
+                           tn.Checked = true;
+                   }
+                   else
+                   {
+                       foreach (TreeNode childTn in tn.Nodes)
+                       {
+                           int id = (int)childTn.Tag;
+                           TableValueType vt = getValueType(PCM.tableDatas[id]);
+                           if (vt == TableValueType.boolean)
+                               tn.Checked = true;
+                       }
+                   }
+               }
+           }
+           calculateSelections();
+       }
 
-        private void bitmaskToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-            if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
-            {
-                foreach (TreeNode tn in tv.SelectedNode.Nodes)
-                {
-                    if (tn.Tag != null)
-                    {
-                        int id = (int)tn.Tag;
-                        if (PCM.tableDatas[id].BitMask != null && PCM.tableDatas[id].BitMask.Length > 0)
-                            tn.Checked = true;
-                    }
-                    else
-                    {
-                        foreach (TreeNode childTn in tn.Nodes)
-                        {
-                            int id = (int)childTn.Tag;
-                            if (PCM.tableDatas[id].BitMask != null && PCM.tableDatas[id].BitMask.Length > 0)
-                                tn.Checked = true;
-                        }
-                    }
-                }
-            }
-            calculateSelections();
-        }
-        private void calculateSelections()
-        {
-            List<int> selectedIds = getSelectedTableIds();
-            Logger("Currently selected: " + selectedIds.Count.ToString() + " tables");
-        }
+       private void numberToolStripMenuItem_Click(object sender, EventArgs e)
+       {
+           TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+           if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
+           {
+               foreach (TreeNode tn in tv.SelectedNode.Nodes)
+               {
+                   if (tn.Tag != null)
+                   {
+                       int id = (int)tn.Tag;
+                       TableValueType vt = getValueType(PCM.tableDatas[id]);
+                       if (vt == TableValueType.number)
+                           tn.Checked = true;
+                   }
+                   else
+                   {
+                       foreach (TreeNode childTn in tn.Nodes)
+                       {
+                           int id = (int)childTn.Tag;
+                           TableValueType vt = getValueType(PCM.tableDatas[id]);
+                           if (vt == TableValueType.number)
+                               tn.Checked = true;
+                       }
+                   }
+               }
+           }
+           calculateSelections();
+       }
+
+       private void bitmaskToolStripMenuItem_Click(object sender, EventArgs e)
+       {
+           TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+           if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
+           {
+               foreach (TreeNode tn in tv.SelectedNode.Nodes)
+               {
+                   if (tn.Tag != null)
+                   {
+                       int id = (int)tn.Tag;
+                       if (PCM.tableDatas[id].BitMask != null && PCM.tableDatas[id].BitMask.Length > 0)
+                           tn.Checked = true;
+                   }
+                   else
+                   {
+                       foreach (TreeNode childTn in tn.Nodes)
+                       {
+                           int id = (int)childTn.Tag;
+                           if (PCM.tableDatas[id].BitMask != null && PCM.tableDatas[id].BitMask.Length > 0)
+                               tn.Checked = true;
+                       }
+                   }
+               }
+           }
+           calculateSelections();
+       }
+       private void calculateSelections()
+       {
+           List<int> selectedIds = getSelectedTableIds();
+           Logger("Currently selected: " + selectedIds.Count.ToString() + " tables");
+       }
 */
     }
 }
