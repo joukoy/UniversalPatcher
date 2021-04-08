@@ -59,7 +59,8 @@ namespace UniversalPatcher
             editRowToolStripMenuItem.Enabled = Properties.Settings.Default.TunerConfigMode;
             duplicateTableConfigToolStripMenuItem.Enabled = Properties.Settings.Default.TunerConfigMode;
             disableConfigAutoloadToolStripMenuItem.Checked = Properties.Settings.Default.disableTunerAutoloadSettings;
-            showCategorySubfolderToolStripMenuItem.Checked = Properties.Settings.Default.TableExplorerUseCategorySubfolder;
+            chkShowCategorySubfolder.Checked = Properties.Settings.Default.TableExplorerUseCategorySubfolder;
+            chkAutoMulti1d.Checked = Properties.Settings.Default.TunerAutomulti1d;
 
             radioTreeMode.Checked = Properties.Settings.Default.TunerTreeMode;
             radioListMode.Checked = !Properties.Settings.Default.TunerTreeMode;
@@ -190,16 +191,16 @@ namespace UniversalPatcher
                 if (File.Exists(defaultTunerFile))
                 {
                     Logger(newPCM.LoadTableList(defaultTunerFile));
-                    importDTC();
+                    importDTC(ref newPCM);
                     refreshTablelist();
                 }
                 else
                 {
                     Logger("File not found: " + defaultTunerFile);
-                    importDTC();
-                    importTableSeek();
+                    importDTC(ref newPCM);
+                    importTableSeek(ref newPCM);
                     if (newPCM.Segments.Count > 0 && newPCM.Segments[0].CS1Address.StartsWith("GM-V6"))
-                        importTinyTunerDB();
+                        importTinyTunerDB(ref newPCM);
                 }
             }
 
@@ -351,9 +352,9 @@ namespace UniversalPatcher
             filterTables();
         }
 
-        private void importTableSeek()
+        private void importTableSeek(ref PcmFile _PCM)
         {
-            PCM.importSeekTables();
+            _PCM.importSeekTables();
             refreshTablelist();
             Logger("OK");
         }
@@ -399,7 +400,7 @@ namespace UniversalPatcher
 
         private void btnImportDTC_Click(object sender, EventArgs e)
         {
-            importDTC();
+            importDTC(ref PCM);
         }
 
 
@@ -629,18 +630,18 @@ namespace UniversalPatcher
             }
         }
 
-        private void importTinyTunerDB()
+        private void importTinyTunerDB(ref PcmFile _PCM)
         {
             TinyTuner tt = new TinyTuner();
             Logger("Reading TinyTuner DB...", false);
-            Logger(tt.readTinyDBtoTableData(PCM, PCM.tableDatas));
+            Logger(tt.readTinyDBtoTableData(_PCM, _PCM.tableDatas));
             refreshTablelist();
 
         }
 
         private void btnReadTinyTunerDB_Click(object sender, EventArgs e)
         {
-            importTinyTunerDB();
+            importTinyTunerDB(ref PCM);
         }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -668,13 +669,13 @@ namespace UniversalPatcher
 
         }
 
-        private void importDTC()
+        private void importDTC(ref PcmFile _PCM)
         {
             Logger("Importing DTC codes... ", false);
             bool haveDTC = false;
-            for (int t = 0; t < PCM.tableDatas.Count; t++)
+            for (int t = 0; t < _PCM.tableDatas.Count; t++)
             {
-                if (PCM.tableDatas[t].TableName == "DTC" || PCM.tableDatas[t].TableName == "DTC.Codes")
+                if (_PCM.tableDatas[t].TableName == "DTC" || _PCM.tableDatas[t].TableName == "DTC.Codes")
                 {
                     haveDTC = true;
                     Logger(" DTC codes already defined");
@@ -684,7 +685,7 @@ namespace UniversalPatcher
             if (!haveDTC)
             {
                 TableData tdTmp = new TableData();
-                tdTmp.importDTC(PCM, ref PCM.tableDatas);
+                tdTmp.importDTC(_PCM, ref _PCM.tableDatas);
                 Logger(" [OK]");
                 filterTables();
             }
@@ -1625,7 +1626,7 @@ namespace UniversalPatcher
             filterTables();
         }
 
-        private void loadBINToolStripMenuItem_Click(object sender, EventArgs e)
+        private void openNewBinFile()
         {
             string newFile = SelectFile();
             if (newFile.Length == 0) return;
@@ -1635,15 +1636,21 @@ namespace UniversalPatcher
             loadConfigforPCM(ref PCM);
             selectPCM();
         }
-
-        public void addtoCurrentFileMenu(PcmFile newPCM)
+        private void loadBINToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
-                mi.Checked = false;
+            openNewBinFile();
+        }
+
+        public void addtoCurrentFileMenu(PcmFile newPCM, bool setdefault = true)
+        {
+            if (setdefault)
+                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                    mi.Checked = false;
             ToolStripMenuItem menuitem = new ToolStripMenuItem(newPCM.FileName);
             menuitem.Name = newPCM.FileName;
             menuitem.Tag = newPCM;
-            menuitem.Checked = true;
+            if (setdefault)
+                menuitem.Checked = true;
             currentFileToolStripMenuItem.DropDownItems.Add(menuitem);
             menuitem.Click += Menuitem_Click;
 
@@ -1695,7 +1702,7 @@ namespace UniversalPatcher
                 {
                     //Logger("Table not found: " + td1.TableName + "[" + pcm2.FileName + "]");
                     diffMissingTables++;
-                    return false;
+                    return true;    //Don't add to list if not in both files
                 }
                 td2 = pcm2.tableDatas[t];
                 int tb2size = td2.Rows * td2.Columns * getElementSize(td2.DataType);
@@ -1823,12 +1830,12 @@ namespace UniversalPatcher
 
         private void dTCToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            importDTC();
+            importDTC(ref PCM);
         }
 
         private void tableSeekToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            importTableSeek();
+            importTableSeek(ref PCM);
         }
 
         private void xDFToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -1842,7 +1849,7 @@ namespace UniversalPatcher
 
         private void tinyTunerDBV6OnlyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            importTinyTunerDB();
+            importTinyTunerDB(ref PCM);
         }
 
 
@@ -1952,8 +1959,8 @@ namespace UniversalPatcher
         private void loadTablelistxmlTableseekImportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PCM.LoadTableList();
-            importDTC();
-            importTableSeek();
+            importDTC(ref PCM);
+            importTableSeek(ref PCM);
             filterTables();
         }
 
@@ -2005,10 +2012,6 @@ namespace UniversalPatcher
             Logger("OK");
         }
 
-        private void findDifferencesToolStripMenuItem_Click_1(object sender, EventArgs e)
-        {
-
-        }
 
         private void searchAndCompareAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -2280,22 +2283,23 @@ namespace UniversalPatcher
                 splitContainer2.Panel1.Controls.Add(splitTree);
                 splitTree.Dock = DockStyle.Fill;
                 tabControl1.Dock = DockStyle.Fill;
+                tabDimensions.Enter += TabDimensions_Enter;
+                tabValueType.Enter += TabValueType_Enter;
+                tabPatches.Enter += TabPatches_Enter;
+                tabCategory.Enter += TabCategory_Enter;
+                tabSegments.Enter += TabSegments_Enter;
+                tabSettings.Enter += TabSettings_Enter;
+                tabSettings.Leave += TabSettings_Leave;
             }
             splitTree.Visible = true;
 
             tabControl1.Visible = true;
-            tabDimensions.Enter += TabDimensions_Enter;
-            tabValueType.Enter += TabValueType_Enter;
-            tabPatches.Enter += TabPatches_Enter;
-            tabCategory.Enter += TabCategory_Enter;
-            tabSegments.Enter += TabSegments_Enter;
             currentTab = "Dimensions";
             loadDimensions();
             btnCollapse.Visible = true;
             btnExpand.Visible = true;
-            numIconSize.Visible = true;
-            labelIconSize.Visible = true;
-            showCategorySubfolderToolStripMenuItem.Enabled = true;
+            //numIconSize.Visible = true;
+            //labelIconSize.Visible = true;
             cutToolStripMenuItem.Enabled = false;
             copyToolStripMenuItem.Enabled = false;
             pasteToolStripMenuItem.Enabled = false;
@@ -2306,8 +2310,14 @@ namespace UniversalPatcher
             labelCategory.Visible = false;
             comboTableCategory.Visible = false;
             comboTableCategory.Text = "_All";
-            btnMultitable.Visible = false;
+            settingsToolStripMenuItem.Visible = false;
+            utilitiesToolStripMenuItem.Visible = false;
+            showTablesWithEmptyAddressToolStripMenuItem.Visible = false;
+            unitsToolStripMenuItem.Visible = false;
+            enableConfigModeToolStripMenuItem.Visible = false;
+            resetTunerModeColumnsToolStripMenuItem.Visible = false;
         }
+
 
         private void selectListMode()
         {
@@ -2317,9 +2327,8 @@ namespace UniversalPatcher
             dataGridView1.Visible = true;
             btnCollapse.Visible = false;
             btnExpand.Visible = false;
-            numIconSize.Visible = false;
-            labelIconSize.Visible = false;
-            showCategorySubfolderToolStripMenuItem.Enabled = false;
+            //numIconSize.Visible = false;
+            //labelIconSize.Visible = false;
             cutToolStripMenuItem.Enabled = true;
             copyToolStripMenuItem.Enabled = true;
             pasteToolStripMenuItem.Enabled = true;
@@ -2329,8 +2338,14 @@ namespace UniversalPatcher
             comboFilterBy.Visible = true;
             labelCategory.Visible = true;
             comboTableCategory.Visible = true;
-            btnMultitable.Visible = false;
+            settingsToolStripMenuItem.Visible = true;
+            utilitiesToolStripMenuItem.Visible = true;
 
+            showTablesWithEmptyAddressToolStripMenuItem.Visible = true;
+            unitsToolStripMenuItem.Visible = true;
+            enableConfigModeToolStripMenuItem.Visible = true;
+            resetTunerModeColumnsToolStripMenuItem.Visible = false;
+            
         }
 
 
@@ -2343,7 +2358,7 @@ namespace UniversalPatcher
                     lastSelectedId = Convert.ToInt32(tv.SelectedNode.Tag);
                 else
                     lastSelectedId = -1;
-                contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
+                contextMenuStripTree.Show(Cursor.Position.X, Cursor.Position.Y);
             }
         }
 
@@ -2378,18 +2393,40 @@ namespace UniversalPatcher
             }
         }
 
+        private void autoMultiTable()
+        {
+            if (!chkAutoMulti1d.Checked)
+                return;
+            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+            if (tv.SelectedNode == null)
+                return;
+            if (tv.SelectedNode.Tag != null)
+                return;
+            List<int> tableIds = new List<int>();
+            foreach (TreeNode tn in tv.SelectedNode.Nodes)
+            {
+                int id = (int)tn.Tag;
+                if (PCM.tableDatas[id].Rows == 1 && PCM.tableDatas[id].Columns == 1 && !PCM.tableDatas[id].TableName.Contains("[") && !PCM.tableDatas[id].TableName.Contains("."))
+                    tableIds.Add(id);
+            }
+            if (tableIds.Count > 0)
+            {
+                clearPanel2();
+                openTableEditor(tableIds);
+            }
+
+        }
+
         private void Tree_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            if (tabControl1.SelectedTab.Name == "tabSettings" || tabControl1.SelectedTab.Name == "tabPatches")
+                return;
             TreeViewMS tms = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
             if (e.Node.Tag == null)
             {
-                if (tms.SelectedNodes.Count == 1)
-                    btnMultitable.Visible = true;
-                else
-                    btnMultitable.Visible = false;
+                autoMultiTable();
                 return;
             }
-            btnMultitable.Visible = false;
             clearPanel2();
             List<int> tableIds = new List<int>();
             //int tbId = Convert.ToInt32(e.Node.Tag);
@@ -2465,6 +2502,20 @@ namespace UniversalPatcher
             clearPanel2();
             loadCategories();
         }
+
+        private void TabSettings_Leave(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Save();
+            setIconSize();
+        }
+
+        private void TabSettings_Enter(object sender, EventArgs e)
+        {
+            if (currentTab == "Settings")
+                return;
+            currentTab = "Settings";
+        }
+
         private void setIconSize()
         {
             if (iconSize != (int)numIconSize.Value)
@@ -2923,6 +2974,8 @@ namespace UniversalPatcher
             {
                 x.Close();
             }
+            labelTableName.Text = "";
+            txtDescription.Text = "";
         }
 
         private void selectDispMode()
@@ -2949,10 +3002,6 @@ namespace UniversalPatcher
 
         private void showCategorySubfolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            showCategorySubfolderToolStripMenuItem.Checked = !showCategorySubfolderToolStripMenuItem.Checked;
-            Properties.Settings.Default.TableExplorerUseCategorySubfolder = showCategorySubfolderToolStripMenuItem.Checked;
-            Properties.Settings.Default.Save();
-            filterTree();
         }
 
         private void btnMultitable_Click(object sender, EventArgs e)
@@ -2975,206 +3024,39 @@ namespace UniversalPatcher
                 openTableEditor(tableIds);
             }
         }
-        /*
-       private void dToolStripMenuItem_Click(object sender, EventArgs e)
-       {
-           TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-           if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count >0)
-           {
-               foreach (TreeNode tn in tv.SelectedNode.Nodes)
-               {
-                   if (tn.Tag != null)
-                   {
-                       int id = (int)tn.Tag;
-                       if (PCM.tableDatas[id].Rows == 1 && PCM.tableDatas[id].Columns == 1)
-                           tn.Checked = true;
-                   }
-                   else
-                   {
-                       foreach (TreeNode childTn in tn.Nodes)
-                       {
-                           int id = (int)childTn.Tag;
-                           if (PCM.tableDatas[id].Rows == 1 && PCM.tableDatas[id].Columns == 1)
-                               childTn.Checked = true;
-                       }
-                   }
-               }
-           }
-           calculateSelections();
-       }
 
-       private void dToolStripMenuItem1_Click(object sender, EventArgs e)
-       {
-           TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-           if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
-           {
-               foreach (TreeNode tn in tv.SelectedNode.Nodes)
-               {
-                   if (tn.Tag != null)
-                   {
-                       int id = (int)tn.Tag;
-                       if (PCM.tableDatas[id].Rows > 1 && PCM.tableDatas[id].Columns == 1)
-                           tn.Checked = true;
-                   }
-                   else
-                   {
-                       foreach (TreeNode childTn in tn.Nodes)
-                       {
-                           int id = (int)childTn.Tag;
-                           if (PCM.tableDatas[id].Rows > 1 && PCM.tableDatas[id].Columns == 1)
-                               childTn.Checked = true;
-                       }
-                   }
-               }
-           }
-           calculateSelections();
-       }
+        private void chkShowCategorySubfolder_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.TableExplorerUseCategorySubfolder = chkShowCategorySubfolder.Checked;
+            Properties.Settings.Default.Save();
+            filterTree();
+        }
 
-       private void dToolStripMenuItem2_Click(object sender, EventArgs e)
-       {
-           TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-           if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
-           {
-               foreach (TreeNode tn in tv.SelectedNode.Nodes)
-               {
-                   if (tn.Tag != null)
-                   {
-                       int id = (int)tn.Tag;
-                       if (PCM.tableDatas[id].Rows > 1 && PCM.tableDatas[id].Columns > 1)
-                           tn.Checked = true;
-                   }
-                   else
-                   {
-                       foreach (TreeNode childTn in tn.Nodes)
-                       {
-                           int id = (int)childTn.Tag;
-                           if (PCM.tableDatas[id].Rows > 1 && PCM.tableDatas[id].Columns > 1)
-                               childTn.Checked = true;
-                       }
-                   }
-               }
-           }
-           calculateSelections();
-       }
+        private void numIconSize_ValueChanged(object sender, EventArgs e)
+        {
 
-       private void enumToolStripMenuItem_Click(object sender, EventArgs e)
-       {
-           TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-           if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
-           {
-               foreach (TreeNode tn in tv.SelectedNode.Nodes)
-               {
-                   if (tn.Tag != null)
-                   {
-                       int id = (int)tn.Tag;
-                       TableValueType vt = getValueType(PCM.tableDatas[id]);
-                       if (vt == TableValueType.selection)
-                           tn.Checked = true;
-                   }
-                   else
-                   {
-                       foreach (TreeNode childTn in tn.Nodes)
-                       {
-                           int id = (int)childTn.Tag;
-                           TableValueType vt = getValueType(PCM.tableDatas[id]);
-                           if (vt == TableValueType.selection)
-                               tn.Checked = true;
-                       }
-                   }
-               }
-           }
-           calculateSelections();
-       }
+        }
 
-       private void booleanToolStripMenuItem_Click(object sender, EventArgs e)
-       {
-           TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-           if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
-           {
-               foreach (TreeNode tn in tv.SelectedNode.Nodes)
-               {
-                   if (tn.Tag != null)
-                   {
-                       int id = (int)tn.Tag;
-                       TableValueType vt = getValueType(PCM.tableDatas[id]);
-                       if (vt == TableValueType.boolean)
-                           tn.Checked = true;
-                   }
-                   else
-                   {
-                       foreach (TreeNode childTn in tn.Nodes)
-                       {
-                           int id = (int)childTn.Tag;
-                           TableValueType vt = getValueType(PCM.tableDatas[id]);
-                           if (vt == TableValueType.boolean)
-                               tn.Checked = true;
-                       }
-                   }
-               }
-           }
-           calculateSelections();
-       }
+        private void openInNewWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            List<int> tableIds = getSelectedTableIds();
+            openTableEditor(tableIds, true);
+        }
 
-       private void numberToolStripMenuItem_Click(object sender, EventArgs e)
-       {
-           TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-           if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
-           {
-               foreach (TreeNode tn in tv.SelectedNode.Nodes)
-               {
-                   if (tn.Tag != null)
-                   {
-                       int id = (int)tn.Tag;
-                       TableValueType vt = getValueType(PCM.tableDatas[id]);
-                       if (vt == TableValueType.number)
-                           tn.Checked = true;
-                   }
-                   else
-                   {
-                       foreach (TreeNode childTn in tn.Nodes)
-                       {
-                           int id = (int)childTn.Tag;
-                           TableValueType vt = getValueType(PCM.tableDatas[id]);
-                           if (vt == TableValueType.number)
-                               tn.Checked = true;
-                       }
-                   }
-               }
-           }
-           calculateSelections();
-       }
+        private void chkAutoMulti1d_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.TunerAutomulti1d = chkAutoMulti1d.Checked;
+        }
 
-       private void bitmaskToolStripMenuItem_Click(object sender, EventArgs e)
-       {
-           TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-           if (tv.SelectedNode != null && tv.SelectedNode.Nodes.Count > 0)
-           {
-               foreach (TreeNode tn in tv.SelectedNode.Nodes)
-               {
-                   if (tn.Tag != null)
-                   {
-                       int id = (int)tn.Tag;
-                       if (PCM.tableDatas[id].BitMask != null && PCM.tableDatas[id].BitMask.Length > 0)
-                           tn.Checked = true;
-                   }
-                   else
-                   {
-                       foreach (TreeNode childTn in tn.Nodes)
-                       {
-                           int id = (int)childTn.Tag;
-                           if (PCM.tableDatas[id].BitMask != null && PCM.tableDatas[id].BitMask.Length > 0)
-                               tn.Checked = true;
-                       }
-                   }
-               }
-           }
-           calculateSelections();
-       }
-       private void calculateSelections()
-       {
-           List<int> selectedIds = getSelectedTableIds();
-           Logger("Currently selected: " + selectedIds.Count.ToString() + " tables");
-       }
-*/
+        private void selectFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string newFile = SelectFile();
+            if (newFile.Length == 0) return;
+            PcmFile cmpWithPcm = new PcmFile(newFile, true, PCM.configFileFullName);
+            loadConfigforPCM(ref cmpWithPcm);
+            addtoCurrentFileMenu(cmpWithPcm, false);
+            findTableDifferences(cmpWithPcm);
+        }
+
     }
 }

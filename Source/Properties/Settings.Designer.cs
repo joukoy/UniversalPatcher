@@ -848,5 +848,17 @@ namespace UniversalPatcher.Properties {
                 this["TunerTreeMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TunerAutomulti1d {
+            get {
+                return ((bool)(this["TunerAutomulti1d"]));
+            }
+            set {
+                this["TunerAutomulti1d"] = value;
+            }
+        }
     }
 }
