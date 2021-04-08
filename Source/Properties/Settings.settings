@@ -210,7 +210,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="TunerAutomulti1d" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

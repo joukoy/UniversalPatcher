@@ -642,7 +642,7 @@ public class upatcher
         frmTableEditor frmTE = new frmTableEditor();
         frmTE.PCM = basefile;
         TableData pTd = basefile.tableDatas[tdId];
-        frmTE.loadTable(pTd);
+        frmTE.loadTable(pTd,true);
         uint addr = (uint)(pTd.addrInt + pTd.Offset);
         uint step = (uint)getElementSize(pTd.DataType);
         try

@@ -147,7 +147,7 @@ namespace UniversalPatcher
             }
             compareEditor.tableIds = cmpTableIds;
             compareEditor.disableMultiTable = disableMultiTable;
-            compareEditor.loadTable(cmpPCM.selectedTable);
+            compareEditor.loadTable(cmpPCM.selectedTable,true);
         }
 
         private void compareSelection_Click(object sender, EventArgs e)
@@ -158,7 +158,7 @@ namespace UniversalPatcher
             menuitem.Checked = true;
             PcmFile cmpPCM = (PcmFile)menuitem.Tag;
             loadCompareTable(cmpPCM);
-            loadTable(td);
+            loadTable(td,false);
         }
 
         public void loadSeekTable(int tId, PcmFile PCM1)
@@ -183,7 +183,7 @@ namespace UniversalPatcher
                     td = PCM.tableDatas[f];
                     tableIds = new List<int>();
                     tableIds.Add(f);
-                    loadTable(td);
+                    loadTable(td,true);
                     break;
                 }
             }
@@ -1119,7 +1119,7 @@ namespace UniversalPatcher
             
             return retVal;
         }
-        public void loadTable(TableData td1)
+        public void loadTable(TableData td1, bool resetBuffer)
         {
             try
             {
@@ -1148,7 +1148,7 @@ namespace UniversalPatcher
                             if (PCM.tableDatas[x].TableName.ToLower() == td.TableName.ToLower().Replace(".yval", ".data").Replace(".xval", ".data"))
                             {
                                 td = PCM.tableDatas[x];
-                                loadTable(td);
+                                loadTable(td, resetBuffer);
                                 return;
                             }
                         }
@@ -1184,7 +1184,7 @@ namespace UniversalPatcher
                 if (getValueType(td) == TableValueType.selection)
                     labelUnits.Text += ", Values: " +  td.Values;
 
-                if (bufSize == 0)
+                if (resetBuffer)
                 {
                     int elementSize = getBits(td.DataType) / 8;
                     bufSize = (uint)(td.Rows * td.Columns * elementSize + td.Offset);
@@ -1709,7 +1709,7 @@ namespace UniversalPatcher
 
         private void chkTranspose_CheckedChanged(object sender, EventArgs e)
         {
-            loadTable(td);
+            loadTable(td,false);
             dataGridView1.AutoResizeColumns();
             dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
             if (autoResizeToolStripMenuItem.Checked) AutoResize();
@@ -1913,14 +1913,14 @@ namespace UniversalPatcher
             else
                 swapXyToolStripMenuItem.Checked = true;
             chkSwapXY.Checked = swapXyToolStripMenuItem.Checked;
-            loadTable(td);
+            loadTable(td,false);
 
         }
 
         private void chkSwapXY_CheckedChanged(object sender, EventArgs e)
         {
             swapXyToolStripMenuItem.Checked = chkSwapXY.Checked;
-            loadTable(td);
+            loadTable(td,false);
         }
 
         private void showRawHEXValuesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1929,7 +1929,7 @@ namespace UniversalPatcher
                 showRawHEXValuesToolStripMenuItem.Checked = false;
             else
                 showRawHEXValuesToolStripMenuItem.Checked = true;
-            loadTable(td);
+            loadTable(td,false);
         }
 
         private void disableTooltipsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2017,7 +2017,7 @@ namespace UniversalPatcher
                 disableSaving = true;
                 setMyText();
             }
-            loadTable(td);
+            loadTable(td,false);
         }
 
         private void radioDifference_CheckedChanged(object sender, EventArgs e)
@@ -2028,7 +2028,7 @@ namespace UniversalPatcher
                 disableSaving = true;
                 setMyText();
             }
-            loadTable(td);
+            loadTable(td,false);
         }
         private void radioSideBySide_CheckedChanged(object sender, EventArgs e)
         {
@@ -2040,7 +2040,7 @@ namespace UniversalPatcher
             }
             graphToolStripMenuItem.Enabled = !radioSideBySide.Checked;            
 
-            loadTable(td);
+            loadTable(td,false);
         }
 
         private void radioOriginal_CheckedChanged(object sender, EventArgs e)
@@ -2051,7 +2051,7 @@ namespace UniversalPatcher
                 disableSaving = false;
                 setMyText();
             }
-            loadTable(td);
+            loadTable(td,false);
         }
 
         private void setMyText()
@@ -2067,7 +2067,7 @@ namespace UniversalPatcher
 
         private void numDecimals_ValueChanged(object sender, EventArgs e)
         {
-            loadTable(td);
+            loadTable(td,false);
         }
 
         private void dataFontToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2085,7 +2085,7 @@ namespace UniversalPatcher
                 Properties.Settings.Default.Save();
             }
             fontDlg.Dispose();
-            loadTable(td);
+            loadTable(td,false);
         }
 
         private void saveOBD2DescriptionsToolStripMenuItem_Click(object sender, EventArgs e)

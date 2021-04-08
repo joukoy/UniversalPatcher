@@ -167,10 +167,10 @@ namespace UniversalPatcher
         {
             frmTableEditor srcTE = new frmTableEditor();
             srcTE.PCM = PCM;
-            srcTE.loadTable(srcTd);
+            srcTE.loadTable(srcTd,true);
             frmTableEditor dstTE = new frmTableEditor();
             dstTE.PCM = dstPCM;
-            dstTE.loadTable(dstTd);
+            dstTE.loadTable(dstTd,true);
 
             uint srcAddr = (uint)(srcTd.addrInt + srcTd.Offset);
             int srcStep = getElementSize(srcTd.DataType);

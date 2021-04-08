@@ -136,6 +136,8 @@ namespace UniversalPatcher
             this.labelBy = new System.Windows.Forms.Label();
             this.contextMenuStripTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findDifferencesHEXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectFileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -359,6 +361,7 @@ namespace UniversalPatcher
             this.importToolStripMenuItem1,
             this.exportToolStripMenuItem1,
             this.findDifferencesToolStripMenuItem,
+            this.findDifferencesHEXToolStripMenuItem,
             this.massModifyTableListsToolStripMenuItem,
             this.massModifyTableListsSelectFilesToolStripMenuItem,
             this.applyPatchToolStripMenuItem});
@@ -1155,6 +1158,21 @@ namespace UniversalPatcher
             this.openInNewWindowToolStripMenuItem.Text = "Open in new window";
             this.openInNewWindowToolStripMenuItem.Click += new System.EventHandler(this.openInNewWindowToolStripMenuItem_Click);
             // 
+            // findDifferencesHEXToolStripMenuItem
+            // 
+            this.findDifferencesHEXToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectFileToolStripMenuItem1});
+            this.findDifferencesHEXToolStripMenuItem.Name = "findDifferencesHEXToolStripMenuItem";
+            this.findDifferencesHEXToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.findDifferencesHEXToolStripMenuItem.Text = "Find differences (HEX)";
+            // 
+            // selectFileToolStripMenuItem1
+            // 
+            this.selectFileToolStripMenuItem1.Name = "selectFileToolStripMenuItem1";
+            this.selectFileToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.selectFileToolStripMenuItem1.Text = "Select file...";
+            this.selectFileToolStripMenuItem1.Click += new System.EventHandler(this.selectFileToolStripMenuItem1_Click);
+            // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1308,5 +1326,7 @@ namespace UniversalPatcher
         private ToolStripMenuItem openInNewWindowToolStripMenuItem;
         private CheckBox chkAutoMulti1d;
         private ToolStripMenuItem selectFileToolStripMenuItem;
+        private ToolStripMenuItem findDifferencesHEXToolStripMenuItem;
+        private ToolStripMenuItem selectFileToolStripMenuItem1;
     }
 }

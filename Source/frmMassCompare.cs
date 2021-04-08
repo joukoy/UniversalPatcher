@@ -78,7 +78,7 @@ namespace UniversalPatcher
                 frmTableEditor frmT = new frmTableEditor();
                 frmT.PCM = peekPCM;
                 frmT.disableMultiTable = true;
-                frmT.loadTable(peekPCM.tableDatas[ind]);
+                frmT.loadTable(peekPCM.tableDatas[ind],true);
                 //txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
                 //txtResult.SelectionColor = Color.Blue;
                 if (peekPCM.tableDatas[ind].Rows == 1 && peekPCM.tableDatas[ind].Columns == 1)

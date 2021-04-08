@@ -164,8 +164,11 @@ namespace UniversalPatcher
                 mi.Checked = false;
             foreach (ToolStripMenuItem mi in findDifferencesToolStripMenuItem.DropDownItems)
                 mi.Enabled = true;
-                
+            foreach (ToolStripMenuItem mi in findDifferencesHEXToolStripMenuItem.DropDownItems)
+                mi.Enabled = true;
+
             findDifferencesToolStripMenuItem.DropDownItems[PCM.FileName].Enabled = false;
+            findDifferencesHEXToolStripMenuItem.DropDownItems[PCM.FileName].Enabled = false;
 
             ToolStripMenuItem mitem = (ToolStripMenuItem)currentFileToolStripMenuItem.DropDownItems[PCM.FileName];
             mitem.Checked = true;
@@ -272,7 +275,7 @@ namespace UniversalPatcher
                     }
                 }
                 frmT.Show();
-                frmT.loadTable(td);                
+                frmT.loadTable(td,true);                
             }
             catch (Exception ex)
             {
@@ -1174,7 +1177,7 @@ namespace UniversalPatcher
                 frmTableEditor frmT = new frmTableEditor();
                 frmT.PCM = peekPCM;
                 frmT.disableMultiTable = true;
-                frmT.loadTable(peekPCM.tableDatas[ind]);
+                frmT.loadTable(peekPCM.tableDatas[ind],true);
                 txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
                 txtDescription.SelectionColor = Color.Blue;
                 if (peekPCM.tableDatas[ind].Rows == 1 && peekPCM.tableDatas[ind].Columns == 1)
@@ -1660,12 +1663,27 @@ namespace UniversalPatcher
             findDifferencesToolStripMenuItem.DropDownItems.Add(cmpMenuitem);
             cmpMenuitem.Click += compareMenuitem_Click;
 
+            ToolStripMenuItem cmpHexMenuitem = new ToolStripMenuItem(menuitem.Name);
+            cmpHexMenuitem.Name = menuitem.Name;
+            cmpHexMenuitem.Tag = newPCM;
+            findDifferencesHEXToolStripMenuItem.DropDownItems.Add(cmpHexMenuitem);
+            cmpHexMenuitem.Click += CmpHexMenuitem_Click;
+
+
             ToolStripMenuItem tdMenuItem = new ToolStripMenuItem(newPCM.FileName);
             tdMenuItem.Name = newPCM.FileName;
             tdMenuItem.Tag = newPCM.tableDataIndex;
             tableListToolStripMenuItem.DropDownItems.Add(tdMenuItem);
             tdMenuItem.Click += tablelistSelect_Click;
         }
+
+        private void CmpHexMenuitem_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
+            PcmFile cmpWithPcm = (PcmFile)menuitem.Tag;
+            findTableDifferencesHEX(cmpWithPcm);
+        }
+
         private void Menuitem_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
@@ -1793,6 +1811,42 @@ namespace UniversalPatcher
             filterTables();
             Logger(" [OK]");
 
+        }
+
+        private bool compareTableHEX(int tInd, PcmFile pcm1, PcmFile pcm2)
+        {
+            TableData td1 = pcm1.tableDatas[tInd];
+            int tbSize = td1.Rows * td1.Columns * getElementSize(td1.DataType);
+            byte[] buff1 = new byte[tbSize];
+            byte[] buff2 = new byte[tbSize];
+            Array.Copy(pcm1.buf, td1.addrInt + td1.Offset, buff1, 0, tbSize);
+            Array.Copy(pcm2.buf, td1.addrInt + td1.Offset, buff2, 0, tbSize);
+            if (buff1.SequenceEqual(buff2))
+                return true;
+            else
+                return false;
+        }
+
+        private void findTableDifferencesHEX(PcmFile cmpWithPcm)
+        {
+            Logger("Finding tables with different data");
+            if (PCM.configFile != cmpWithPcm.configFile)
+                LoggerBold("WARING! OS mismatch!");
+            cmpWithPcm.selectTableDatas(0, "");
+            List<int> diffTableDatas = new List<int>();
+            for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
+            {
+                if (PCM.tableDatas[t1].addrInt < PCM.fsize)
+                {
+                    if (!compareTableHEX(t1, PCM, cmpWithPcm))
+                    {
+                        diffTableDatas.Add(t1);
+                    }
+                }
+            }
+            Logger(" [OK]");
+            frmHexDiff fhd = new frmHexDiff(PCM, cmpWithPcm, diffTableDatas);
+            fhd.Show();
         }
 
         private void tablelistSelect_Click(object sender, EventArgs e)
@@ -2064,7 +2118,7 @@ namespace UniversalPatcher
                 comparePCM.selectedTable = td2;
                 frmT.addCompareFiletoMenu(comparePCM);
                 frmT.Show();
-                frmT.loadTable(td1);
+                frmT.loadTable(td1,true);
 
             }
             catch (Exception ex)
@@ -2227,7 +2281,7 @@ namespace UniversalPatcher
                 xpatch.Description = Description;
                 frmTableEditor frmTE = new frmTableEditor();
                 frmTE.PCM = PCM;
-                frmTE.loadTable(pTd);
+                frmTE.loadTable(pTd,true);
                 uint step = (uint)getElementSize(pTd.DataType);
                 uint addr = (uint)(pTd.addrInt + pTd.Offset);
                 if (pTd.RowMajor)
@@ -3058,5 +3112,14 @@ namespace UniversalPatcher
             findTableDifferences(cmpWithPcm);
         }
 
+        private void selectFileToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            string newFile = SelectFile();
+            if (newFile.Length == 0) return;
+            PcmFile cmpWithPcm = new PcmFile(newFile, true, PCM.configFileFullName);
+            loadConfigforPCM(ref cmpWithPcm);
+            addtoCurrentFileMenu(cmpWithPcm, false);
+            findTableDifferencesHEX(cmpWithPcm);
+        }
     }
 }
