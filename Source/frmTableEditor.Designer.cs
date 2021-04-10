@@ -356,6 +356,7 @@ namespace UniversalPatcher
             // radioDifference
             // 
             this.radioDifference.AutoSize = true;
+            this.radioDifference.Enabled = false;
             this.radioDifference.Location = new System.Drawing.Point(207, 0);
             this.radioDifference.Name = "radioDifference";
             this.radioDifference.Size = new System.Drawing.Size(74, 17);

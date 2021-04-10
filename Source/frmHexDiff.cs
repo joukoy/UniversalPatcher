@@ -42,12 +42,6 @@ namespace UniversalPatcher
         private void findDifferences()
         {
             tdiffList = new List<TableDiff>();
-            frmTableEditor fTE1 = new frmTableEditor();
-            fTE1.PCM = pcm1;
-            fTE1.disableMultiTable = true;
-            frmTableEditor fTE2 = new frmTableEditor();
-            fTE2.PCM = pcm2;
-            fTE2.disableMultiTable = true;
 
             for (int t = 0; t < tdList.Count; t++)
             {
@@ -57,17 +51,13 @@ namespace UniversalPatcher
                 uint addr = (uint)(td.addrInt + td.Offset);
                 List<int> tableIds = new List<int>();
                 tableIds.Add((int)td.id);
-                fTE1.tableIds = tableIds;
-                fTE2.tableIds = tableIds;
-                fTE1.loadTable(td,true);
-                fTE2.loadTable(td,true);
                 string data1 = "";
                 string data2 = "";
                 string formatStr = "X" + (step * 2).ToString();
                 for (int a = 0; a < count; a++)
                 {
-                    data1 += fTE1.getRawValue(addr, td).ToString(formatStr) + " ";
-                    data2 += fTE2.getRawValue(addr, td).ToString(formatStr) + " ";
+                    data1 += getRawValue(pcm1.buf,addr, td,0).ToString(formatStr) + " ";
+                    data2 += getRawValue(pcm2.buf,addr, td,0).ToString(formatStr) + " ";
                     addr += step; 
                 }
                 TableDiff tDiff = new TableDiff();
@@ -91,15 +81,12 @@ namespace UniversalPatcher
         {
             int id = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value);
             TableData td = pcm1.tableDatas[id];
-            frmTableEditor frmT = new frmTableEditor();
+            frmTableEditor frmT = new frmTableEditor(pcm1,pcm2);
             List<int> tableIds = new List<int>();
             tableIds.Add(id);
-            frmT.tableIds = tableIds;
-            frmT.PCM = pcm1;
-            pcm2.selectedTable = td;
-            frmT.addCompareFiletoMenu(pcm2);
+            frmT.prepareTable(td, tableIds);
             frmT.Show();
-            frmT.loadTable(td,true);
+            frmT.loadTable(true);
         }
 
 

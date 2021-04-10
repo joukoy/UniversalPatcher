@@ -230,7 +230,7 @@ namespace UniversalPatcher
                 {
                     LoggerBold("WARING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);
                 }
-                frmTableEditor frmT = new frmTableEditor();
+                frmTableEditor frmT = new frmTableEditor(PCM,null);
                 if (treeMode && !newWindow)
                 {
                     frmT.Dock = DockStyle.Fill;
@@ -238,8 +238,7 @@ namespace UniversalPatcher
                     frmT.TopLevel = false;
                     splitTree.Panel2.Controls.Add(frmT);
                 }
-                frmT.PCM = PCM;
-                frmT.tableIds = tableIds;
+                frmT.prepareTable(td, tableIds);
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
                 foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                 {
@@ -247,21 +246,27 @@ namespace UniversalPatcher
                     if (PCM.FileName != comparePCM.FileName)
                     {
                         Logger("Adding file: " + Path.GetFileName(comparePCM.FileName) + " to compare menu... ", false);
-                        int x = findTableDataId(td, comparePCM.tableDatas);
+                        int x = -1;
+                        for (int y = 0; y < tableIds.Count; y++)
+                        {
+                            TableData tmpTd = PCM.tableDatas[tableIds[y]];
+                            x = findTableDataId(tmpTd, comparePCM.tableDatas);
+                            if (x > -1)
+                                break;
+                        }
                         if (x < 0)
                         {
                             LoggerBold("Table not found");
                         }
                         else
                         { 
-                            if (comparePCM.tableDatas[x].Rows != td.Rows || comparePCM.tableDatas[x].Columns != td.Columns || comparePCM.tableDatas[x].RowMajor != td.RowMajor)
+                            /*if (comparePCM.tableDatas[x].Rows != td.Rows || comparePCM.tableDatas[x].Columns != td.Columns || comparePCM.tableDatas[x].RowMajor != td.RowMajor)
                             {
                                Logger("Table size not match!");
                             }
-                            else
+                            else*/
                             {
-                                comparePCM.selectedTable = comparePCM.tableDatas[x];
-                                frmT.addCompareFiletoMenu(comparePCM);
+                                frmT.addCompareFiletoMenu(comparePCM, comparePCM.tableDatas[x]);
                                 if (PCM.configFile != comparePCM.configFile)
                                 {
                                     LoggerBold(Environment.NewLine + "Warning: file type different, results undefined!");
@@ -275,7 +280,7 @@ namespace UniversalPatcher
                     }
                 }
                 frmT.Show();
-                frmT.loadTable(td,true);                
+                frmT.loadTable(true);                
             }
             catch (Exception ex)
             {
@@ -1174,16 +1179,12 @@ namespace UniversalPatcher
                     Debug.WriteLine("No address defined");
                     return;
                 }
-                frmTableEditor frmT = new frmTableEditor();
-                frmT.PCM = peekPCM;
-                frmT.disableMultiTable = true;
-                frmT.loadTable(peekPCM.tableDatas[ind],true);
                 txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
                 txtDescription.SelectionColor = Color.Blue;
                 if (peekPCM.tableDatas[ind].Rows == 1 && peekPCM.tableDatas[ind].Columns == 1)
                 {
-                    double curVal = frmT.getValue((uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind]);
-                    UInt64 rawVal = frmT.getRawValue((uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind]);
+                    double curVal = getValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0);
+                    UInt64 rawVal = getRawValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0);
                     string valTxt = curVal.ToString();
                     string unitTxt = " " + peekPCM.tableDatas[ind].Units;
                     string maskTxt = "";
@@ -1226,7 +1227,7 @@ namespace UniversalPatcher
                     }
                     else if (vt == TableValueType.selection)
                     {
-                        Dictionary<double, string> possibleVals = frmT.parseEnumHeaders(peekPCM.tableDatas[ind].Values.Replace("Enum: ", ""));
+                        Dictionary<double, string> possibleVals = parseEnumHeaders(peekPCM.tableDatas[ind].Values.Replace("Enum: ", ""));
                         if (possibleVals.ContainsKey(curVal))
                             unitTxt = " (" + possibleVals[curVal] + ")";
                         else
@@ -1246,7 +1247,7 @@ namespace UniversalPatcher
                         {
                             for (int c = 0; c < peekPCM.tableDatas[ind].Columns; c++)
                             {
-                                double curVal = frmT.getValue(addr, peekPCM.tableDatas[ind]);
+                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0);
                                 addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
                                 tblData += "[" + curVal.ToString("#0.0") + "]";
                             }
@@ -1263,7 +1264,7 @@ namespace UniversalPatcher
 
                             for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
                             {
-                                double curVal = frmT.getValue(addr, peekPCM.tableDatas[ind]);
+                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0);
                                 addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
                                 tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
                             }
@@ -2107,18 +2108,15 @@ namespace UniversalPatcher
                     return;
                 }
                 Logger("Comparing....");
-                frmTableEditor frmT = new frmTableEditor();
+                frmTableEditor frmT = new frmTableEditor(PCM,null);
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
-                frmT.PCM = PCM;
-                List<int> tableIds = new List<int>();
-                tableIds.Add(id1);
-                frmT.tableIds = tableIds;
                 PcmFile comparePCM = PCM.ShallowCopy();
                 comparePCM.FileName = td2.TableName;
-                comparePCM.selectedTable = td2;
-                frmT.addCompareFiletoMenu(comparePCM);
+                frmT.addCompareFiletoMenu(comparePCM,td2);
+                frmT.compareTd = td2;
                 frmT.Show();
-                frmT.loadTable(td1,true);
+                frmT.prepareTable(td1, null);
+                frmT.loadTable(true);
 
             }
             catch (Exception ex)
@@ -2279,9 +2277,9 @@ namespace UniversalPatcher
                 xpatch.XmlFile = PCM.configFile;
                 xpatch.Segment = PCM.GetSegmentName(pTd.addrInt);
                 xpatch.Description = Description;
-                frmTableEditor frmTE = new frmTableEditor();
-                frmTE.PCM = PCM;
-                frmTE.loadTable(pTd,true);
+                frmTableEditor frmTE = new frmTableEditor(PCM, null);
+                frmTE.prepareTable(pTd, null);
+                frmTE.loadTable(true);
                 uint step = (uint)getElementSize(pTd.DataType);
                 uint addr = (uint)(pTd.addrInt + pTd.Offset);
                 if (pTd.RowMajor)
@@ -2290,7 +2288,7 @@ namespace UniversalPatcher
                     {
                         for (int c=0; c<pTd.Columns; c++)
                         {
-                            xpatch.Data += frmTE.getValue(addr, pTd).ToString().Replace(",", ".") + " ";
+                            xpatch.Data += getValue(PCM.buf, addr, pTd,0).ToString().Replace(",", ".") + " ";
                             addr += step;
                         }
                     }
@@ -2301,7 +2299,7 @@ namespace UniversalPatcher
                     {
                         for (int r = 0; r < pTd.Rows; r++)
                         {
-                            xpatch.Data += frmTE.getValue(addr, pTd).ToString().Replace(",", ".") + " ";
+                            xpatch.Data += getValue(PCM.buf, addr, pTd,0).ToString().Replace(",", ".") + " ";
                             addr += step;
                         }
                     }
@@ -2375,6 +2373,7 @@ namespace UniversalPatcher
 
         private void selectListMode()
         {
+            clearPanel2();
             treeMode = false;
             if (splitTree != null)
                 splitTree.Visible = false;

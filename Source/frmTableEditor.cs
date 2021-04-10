@@ -17,9 +17,14 @@ namespace UniversalPatcher
 {
     public partial class frmTableEditor : Form
     {
-        public frmTableEditor()
+        public frmTableEditor(PcmFile _PCM, PcmFile _comparePCM)
         {
             InitializeComponent();
+            PCM = _PCM;
+            origPCM = _PCM;
+            comparePCM = _comparePCM;
+            if (comparePCM != null)
+                prepareCompareTable(comparePCM);
         }
 
         private class Tagi
@@ -64,23 +69,36 @@ namespace UniversalPatcher
             public string columnName { get; set; }
             public string RowName { get; set; }
         }
+
+        private struct TableId
+        {
+            public int id;
+            public int cmpId;
+        }
+
+        private List<TableId> tableIdList;
         private TableData td;
         public PcmFile PCM;
-        public string tableName = "";
-        private frmTableEditor compareEditor;
-        private bool disableSaving = false;
-        private bool commaDecimal = true;
+        private PcmFile origPCM;
+        private TableData origTd;
+        public List<int> tableIds;
+        public List<int> origTableIds;
+        private PcmFile comparePCM;
+        public TableData compareTd;
+        //public List<int> compareTableIds;
         private byte[] tableBuffer;
+        private byte[] origTableBuffer;
+        private uint tableBufferOffset;
+        private uint origBufferOffset;
+        public string tableName = "";
+        private bool disableSaving = false;
         private uint bufSize = 0;
-        MathParser parser = new MathParser();
         Font dataFont;
         private object lastValue;
 
         public bool disableMultiTable = false;
         public bool multiSelect = false;
         private bool duplicateTableName = false;
-        public List<int> tableIds = new List<int>();
-
         List<TableData> filteredTables;
 
         private void frmTableEditor_Load(object sender, EventArgs e)
@@ -111,16 +129,83 @@ namespace UniversalPatcher
                 }
             }
             disableTooltipsToolStripMenuItem.Checked = false;
-            dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
         }
 
-
-        private void DataGridView1_SelectionChanged(object sender, EventArgs e)
+        private void frmTableEditor_FormClosing(object sender, EventArgs e)
         {
+            try
+            {
+                if (Properties.Settings.Default.MainWindowPersistence)
+                {
+                    Properties.Settings.Default.TableEditorWindowState = this.WindowState;
+                    if (this.WindowState == FormWindowState.Normal)
+                    {
+                        Properties.Settings.Default.TableEditorWindowLocation = this.Location;
+                        Properties.Settings.Default.TableEditorWindowSize = this.Size;
+                    }
+                    else
+                    {
+                        Properties.Settings.Default.TableEditorWindowLocation = this.RestoreBounds.Location;
+                        Properties.Settings.Default.TableEditorWindowSize = this.RestoreBounds.Size;
+                    }
+                    Properties.Settings.Default.Save();
+                }
+
+                bool tableModified = false;
+                uint addr = tableBufferOffset;
+                for (int a = 0; a < bufSize; a++)
+                {
+                    if (PCM.buf[addr + a] != tableBuffer[a])
+                    {
+                        tableModified = true;
+                        break;
+                    }
+                }
+
+                if (tableModified)
+                {
+                    DialogResult dialogResult = MessageBox.Show("Apply modifications?", "Apply modifications?", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        saveTable();
+                        this.DialogResult = DialogResult.OK;
+                    }
+                    else
+                    {
+                        this.DialogResult = DialogResult.Cancel;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+            }
         }
 
-        public void addCompareFiletoMenu(PcmFile cmpPCM)
+        public void prepareTable(TableData _td,List<int> _tableIds )
         {
+            td = _td;
+            origTd = _td;
+            if (_tableIds != null)
+            {
+                tableIds = _tableIds;
+            }
+            else
+            {
+                tableIds = new List<int>();
+                tableIds.Add((int)td.id);
+            }
+            origTableIds = tableIds;
+
+        }
+        public void addCompareFiletoMenu(PcmFile cmpPCM, TableData _compareTd)
+        {
+            compareTd = _compareTd;
             ToolStripMenuItem menuitem = new ToolStripMenuItem(cmpPCM.FileName);
             menuitem.Tag = cmpPCM;
             menuitem.Name = Path.GetFileName(cmpPCM.FileName);
@@ -129,25 +214,30 @@ namespace UniversalPatcher
             {
                 //First file selected by default
                 menuitem.Checked = true;
-                loadCompareTable(cmpPCM);
+                prepareCompareTable(cmpPCM);
                 groupSelectCompare.Enabled = true;
             }
             compareToolStripMenuItem.DropDownItems.Add(menuitem);
         }
-        public void loadCompareTable(PcmFile cmpPCM)
+
+        public void prepareCompareTable(PcmFile cmpPCM)
         {
-            compareEditor = new frmTableEditor();
-            compareEditor.PCM = cmpPCM;
-            List<int> cmpTableIds = new List<int>();
-            for (int i=0; i< tableIds.Count; i++)
+            comparePCM = cmpPCM;
+            if (comparePCM.OS == PCM.OS)
             {
-                int ti = findTableDataId(PCM.tableDatas[tableIds[i]], cmpPCM.tableDatas);
-                if (ti > -1)
-                    cmpTableIds.Add(ti);
+                compareTd = td;
             }
-            compareEditor.tableIds = cmpTableIds;
-            compareEditor.disableMultiTable = disableMultiTable;
-            compareEditor.loadTable(cmpPCM.selectedTable,true);
+            tableIdList = new List<TableId>();
+            for (int i = 0; i < tableIds.Count; i++)
+            {
+                TableId ti = new TableId();
+                ti.id = tableIds[i];
+                if (comparePCM.OS == PCM.OS)
+                    ti.cmpId = ti.id;
+                else
+                    ti.cmpId = findTableDataId(PCM.tableDatas[tableIds[i]], cmpPCM.tableDatas);
+                tableIdList.Add(ti);
+            }
         }
 
         private void compareSelection_Click(object sender, EventArgs e)
@@ -157,11 +247,11 @@ namespace UniversalPatcher
             ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
             menuitem.Checked = true;
             PcmFile cmpPCM = (PcmFile)menuitem.Tag;
-            loadCompareTable(cmpPCM);
-            loadTable(td,false);
+            prepareCompareTable(cmpPCM);
+            loadTable(false);
         }
 
-        public void loadSeekTable(int tId, PcmFile PCM1)
+        public void loadSeekTable(int tId)
         {
 
             var currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
@@ -169,7 +259,6 @@ namespace UniversalPatcher
             if (nfi.NumberDecimalSeparator == ",") commaDecimal = true;
             else commaDecimal = false;
 
-            PCM = PCM1;
             if (!PCM.seekTablesImported)
                 PCM.importSeekTables();
             TableSeek tSeek = tableSeeks[PCM.foundTables[tId].configId];
@@ -183,197 +272,78 @@ namespace UniversalPatcher
                     td = PCM.tableDatas[f];
                     tableIds = new List<int>();
                     tableIds.Add(f);
-                    loadTable(td,true);
+                    loadTable(true);
                     break;
                 }
             }
         }
 
 
-        public double getValue(uint addr, TableData mathTd, bool getCompare = false, bool readOrigvalue = false)
-        {
-
-            double retVal = 0;
-            try
-            {
-
-                Byte[] myBuffer = tableBuffer;
-                UInt32 bufAddr = addr - td.addrInt;
-
-                if ((int)(addr - td.addrInt) < 0 || (int)(addr - td.addrInt) > bufSize || readOrigvalue)
-                {
-                    //Read data from other table
-                    myBuffer = PCM.buf;
-                    bufAddr = addr;
-                }
-
-                if (mathTd.DataType == InDataType.SBYTE)
-                    retVal = (sbyte)myBuffer[bufAddr];
-                if (mathTd.DataType == InDataType.UBYTE)
-                    retVal = myBuffer[bufAddr];
-                if (mathTd.DataType == InDataType.SWORD)
-                    retVal = BEToInt16(myBuffer, bufAddr);
-                if (mathTd.DataType == InDataType.UWORD)
-                    retVal = BEToUint16(myBuffer, bufAddr);
-                if (mathTd.DataType == InDataType.INT32)
-                    retVal = BEToInt32(myBuffer, bufAddr);
-                if (mathTd.DataType == InDataType.UINT32)
-                    retVal = BEToUint32(myBuffer, bufAddr);
-                if (mathTd.DataType == InDataType.INT64)
-                    retVal = BEToInt64(myBuffer, bufAddr);
-                if (mathTd.DataType == InDataType.UINT64)
-                    retVal = BEToUint64(myBuffer, bufAddr);
-                if (mathTd.DataType == InDataType.FLOAT32)
-                    retVal = BEToFloat32(myBuffer, bufAddr);
-                if (mathTd.DataType == InDataType.FLOAT64)
-                    retVal = BEToFloat64(myBuffer, bufAddr);
-
-                if (td.Math == null || td.Math.Length == 0)
-                    td.Math = "X";
-                string mathStr = mathTd.Math.ToLower().Replace("x", retVal.ToString());
-                if (commaDecimal) mathStr = mathStr.Replace(".", ",");
-                retVal = parser.Parse(mathStr, false);
-                if (compareEditor != null)
-                {
-                    int currentOffset = (int)(addr - (td.addrInt + td.Offset)); //Bytes from (table start + offset)
-                    int currentSteps = (int)currentOffset / getElementSize(td.DataType);
-                    uint cmpAddr = (uint)(currentSteps * getElementSize(compareEditor.td.DataType) + compareEditor.td.addrInt + compareEditor.td.Offset);
-                    if (radioDifference.Checked)
-                    {
-                        double cmpVal = compareEditor.getValue(cmpAddr, compareEditor.td);
-                        return retVal - cmpVal;
-                    }
-                    if (radioOriginal.Checked)
-                    {
-                        return retVal;
-                    }
-                    if (radioCompareFile.Checked || getCompare)
-                    {
-                        return compareEditor.getValue(cmpAddr, compareEditor.td);
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("frmTableEditor error, line " + line + ": " + ex.Message);
-            }
-
-            return retVal;
-        }
-
-        public UInt64 getRawValue(UInt32 addr, TableData mathTd, bool getCompare = false, bool readOrigvalue = false)
-        {
-            UInt32 bufAddr = addr - td.addrInt;
-            UInt64 retVal = 0;
-            try
-            {
-                Byte[] myBuffer = tableBuffer;
-
-                if ((int)(addr - td.addrInt) < 0 || (int)(addr - td.addrInt) > bufSize || readOrigvalue)
-                {
-                    //Read data from other table
-                    myBuffer = PCM.buf;
-                    bufAddr = addr;
-                }
-
-                if (mathTd.DataType == InDataType.UWORD || mathTd.DataType == InDataType.SWORD)
-                    retVal = BEToUint16(myBuffer, bufAddr);
-                if (mathTd.DataType == InDataType.INT32 || mathTd.DataType == InDataType.UINT32 || mathTd.DataType == InDataType.FLOAT32)
-                    retVal = BEToUint32(myBuffer, bufAddr);
-                if (mathTd.DataType == InDataType.INT64 || mathTd.DataType == InDataType.UINT64 || mathTd.DataType == InDataType.FLOAT64)
-                    retVal = BEToUint64(myBuffer, bufAddr);
-                if (mathTd.DataType == InDataType.UBYTE || mathTd.DataType == InDataType.SBYTE)
-                    retVal = myBuffer[bufAddr];
-                if (compareEditor != null)
-                {
-                    int currentOffset = (int)(addr - (td.addrInt + td.Offset)); //Bytes from (table start + offset)
-                    int currentSteps = (int)currentOffset / getElementSize(td.DataType);
-                    uint cmpAddr = (uint)(currentSteps * getElementSize(compareEditor.td.DataType) + compareEditor.td.addrInt + compareEditor.td.Offset);
-                    if (radioDifference.Checked)
-                    {
-                        UInt64 cmpVal = compareEditor.getRawValue(cmpAddr, compareEditor.td);
-                        return retVal - cmpVal;
-                    }
-                    if (radioOriginal.Checked)
-                    {
-                        return retVal;
-                    }
-                    if (radioCompareFile.Checked || getCompare)
-                    {
-                        return compareEditor.getRawValue(cmpAddr, compareEditor.td);
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("frmTableEditor error, line " + line + ": " + ex.Message);
-            }
-
-            return retVal;
-        }
 
         public void setCellValue(uint addr, int row, int col, TableData mathTd)
         {
             try
             {
-                double curVal = 0;
-                double origVal = 0;
+                double curVal = getValue(tableBuffer, addr,mathTd,tableBufferOffset);
+                double origVal = getValue(PCM.buf, addr, mathTd,0);
+                UInt64 curRawValue = getRawValue(tableBuffer, addr, mathTd,tableBufferOffset);
+                UInt64 cmpRawValue = UInt64.MaxValue;
+                double cmpVal = double.MinValue;
+                if (comparePCM != null && compareTd != null && !radioOriginal.Checked && !radioCompareFile.Checked)
+                {
+                    int currentOffset = (int)(addr - (mathTd.addrInt + mathTd.Offset)); //Bytes from (table start + offset)
+                    int currentSteps = (int)currentOffset / getElementSize(mathTd.DataType);
+                    uint cmpAddr = (uint)(currentSteps * getElementSize(compareTd.DataType) + compareTd.addrInt + compareTd.Offset);
+                    cmpVal = getValue(comparePCM.buf, cmpAddr, compareTd, 0);
+                    cmpRawValue = getRawValue(comparePCM.buf, cmpAddr, compareTd,0);
+                }
                 if (radioSideBySide.Checked)
                 {
-                    double cmpVal;
                     string curTxt = "";
                     string cmpTxt = "";
                     string formatStr = "0";
                     if (showRawHEXValuesToolStripMenuItem.Checked)
                     {
-                        curVal = getRawValue(addr, mathTd);
-                        cmpVal = getRawValue(addr, mathTd, true);
                         formatStr = "X" + (getElementSize(mathTd.DataType) * 2).ToString();
-                        curTxt = ((uint)curVal).ToString(formatStr);
-                        cmpTxt = ((uint)cmpVal).ToString(formatStr);
+                        curTxt = curRawValue.ToString(formatStr);
+                        if (cmpRawValue < UInt64.MaxValue)
+                            cmpTxt = ((uint)cmpRawValue).ToString(formatStr);
                     }
                     else
                     {
-                        curVal = getValue(addr, mathTd);
-                        cmpVal = getValue(addr, mathTd, true);
-                        if (td.OutputType == OutDataType.Text)
+                        if (mathTd.OutputType == OutDataType.Text)
                         {
                             curTxt = Convert.ToChar((ushort)curVal).ToString();
-                            cmpTxt = Convert.ToChar((ushort)cmpVal).ToString();
+                            if (cmpVal > double.MinValue)
+                                cmpTxt = Convert.ToChar((ushort)cmpVal).ToString();
                         }
                         else if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
                         {
                             UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
-                            if ((getRawValue(addr, mathTd) & mask) == mask)
+                            if ((curRawValue & mask) == mask)
                                 curTxt = "1";
                             else
                                 curTxt = "0";
-                            if ((getRawValue(addr, mathTd, true) & mask) == mask)
-                                cmpTxt = "1";
-                            else
-                                cmpTxt = "0";
+                            if (cmpRawValue < UInt64.MaxValue)
+                            {
+                                if ((cmpRawValue & mask) == mask)
+                                    cmpTxt = "1";
+                                else
+                                    cmpTxt = "0";
+                            }
                         }
                         else if (mathTd.OutputType == OutDataType.Hex)
                         {
-                            curVal = getValue(addr, mathTd);
-                            dataGridView1.Rows[row].Cells[col].Value = (uint)curVal;
+                            formatStr = "X" + (getElementSize(mathTd.DataType) * 2).ToString();
+                            curTxt = curRawValue.ToString(formatStr);
+                            if (cmpRawValue < UInt64.MaxValue)
+                                cmpTxt = cmpRawValue.ToString(formatStr);
                         }
                         else if (mathTd.OutputType == OutDataType.Int)
                         {
                             curTxt = ((int)curVal).ToString();
-                            cmpTxt = ((int)cmpVal).ToString();
+                            if (cmpVal > double.MinValue)
+                                cmpTxt = ((int)cmpVal).ToString();
                         }
                         else
                         {
@@ -385,9 +355,12 @@ namespace UniversalPatcher
                             }
                             //formatStr += "#";
                             curTxt = curVal.ToString(formatStr);
-                            cmpTxt = cmpVal.ToString(formatStr);
+                            if (cmpVal > double.MinValue)
+                                cmpTxt = cmpVal.ToString(formatStr);
                         }
                     }
+                    if (compareTd == null)
+                        cmpTxt = "";
                     dataGridView1.Rows[row].Cells[col].Value = curTxt + " [" + cmpTxt + "]";
                     Tagi ta = new Tagi();
                     ta.addr = addr;
@@ -400,51 +373,50 @@ namespace UniversalPatcher
                     return;
                 }
                 //Not side by side, continue...
+
+                double showVal = curVal;
+                UInt64 showRawVal = curRawValue;
+                if (radioDifference.Checked)
+                {
+                    showVal = curVal - cmpVal;
+                    showRawVal = curRawValue - cmpRawValue;
+                }    
+
                 if (showRawHEXValuesToolStripMenuItem.Checked)
                 {
-                    curVal = getRawValue(addr, mathTd);
-                    dataGridView1.Rows[row].Cells[col].Value = (uint)curVal;
-                    origVal = getRawValue(addr, mathTd, false, true);
+                    dataGridView1.Rows[row].Cells[col].Value = (uint)showRawVal;
                 }
-                else if (td.OutputType == OutDataType.Text)
+                else if (mathTd.OutputType == OutDataType.Text)
                 {
-                    curVal = getValue(addr, mathTd);
-                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToChar((ushort)curVal);
-                    origVal = getValue(addr, mathTd, false, true);
-
+                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToChar((ushort)showRawVal);
                 }
                 else if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
                 {
                     UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
-                    if ((getRawValue(addr, mathTd) & mask) == mask)
+                    if ((showRawVal & mask) == mask)
                     {
-                        Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + ", mask: " + mask.ToString("X") + ", Data: " + getRawValue(addr, mathTd).ToString("X") + " Row: " + row + ", Col: " + col + ", true");
+                        Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + ", mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", true");
                         dataGridView1.Rows[row].Cells[col].Value = 1;
                     }
                     else
                     {
-                        Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + " mask: " + mask.ToString("X") + ", Data: " + getRawValue(addr, mathTd).ToString("X") + " Row: " + row + ", Col: " + col + ", false");
+                        Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + " mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", false");
                         dataGridView1.Rows[row].Cells[col].Value = 0;
                     }
                 }
                 else if (mathTd.OutputType == OutDataType.Hex)
                 {
-                    curVal = getValue(addr, mathTd);
-                    dataGridView1.Rows[row].Cells[col].Value = (uint)curVal;
-                    origVal = getValue(addr, mathTd, false, true);
+                    dataGridView1.Rows[row].Cells[col].Value = (uint)showVal;
                 }
                 else if (mathTd.OutputType == OutDataType.Int)
                 {
-                    curVal = getValue(addr, mathTd);
-                    dataGridView1.Rows[row].Cells[col].Value = (int)curVal;
-                    origVal = getValue(addr, mathTd, false, true);
+                    dataGridView1.Rows[row].Cells[col].Value = (int)showVal;
                 }
                 else
                 {
-                    curVal = getValue(addr, mathTd);
-                    dataGridView1.Rows[row].Cells[col].Value = curVal;
-                    origVal = getValue(addr, mathTd, false, true);
+                    dataGridView1.Rows[row].Cells[col].Value = showVal;
                 }
+
 
                 if (dataGridView1.Columns[col].GetType() != typeof(DataGridViewComboBoxColumn) && dataGridView1.Columns[col].GetType() != typeof(DataGridViewCheckBoxColumn))
                 {
@@ -491,17 +463,17 @@ namespace UniversalPatcher
             string headers = "" ;
             for (int i=0; i < PCM.tableDatas.Count; i++)
             {
-                TableData t = PCM.tableDatas[i];
-                if (t.TableName == tableName)
+                TableData headerTd = PCM.tableDatas[i];
+                if (headerTd.TableName == tableName)
                 {
-                    uint step = (uint)(getBits(t.DataType) / 8);
-                    uint addr = (uint)(t.addrInt + t.Offset);
+                    uint step = (uint)(getBits(headerTd.DataType) / 8);
+                    uint addr = (uint)(headerTd.addrInt + headerTd.Offset);
                     for (int a = 0; a < count; a++ )
                     {
                         string formatStr = "0.####";
-                        if (t.Units.Contains("%"))
+                        if (headerTd.Units.Contains("%"))
                             formatStr = "0";
-                        headers += t.Units.Trim() + " " + getValue(addr, t).ToString(formatStr).Replace(",", ".") + ",";
+                        headers += headerTd.Units.Trim() + " " + getValue(PCM.buf, addr, headerTd, 0).ToString(formatStr).Replace(",", ".") + ",";
                         addr += step;
                     }
                     headers = headers.Trim(',');
@@ -511,39 +483,6 @@ namespace UniversalPatcher
             return headers;
         }
 
-        public Dictionary<double, string> parseEnumHeaders(string  eVals)
-        {
-            Dictionary<double, string> retVal = new Dictionary<double, string>();
-            string[] posVals = eVals.Split(',');
-            for (int r = 0; r < posVals.Length; r++)
-            {
-                string[] parts = posVals[r].Split(':');
-                double val = 0;
-                double.TryParse(parts[0], out val);
-                string txt = posVals[r];
-                if (!retVal.ContainsKey(val))
-                    retVal.Add(val, txt);
-            }
-            retVal.Add(double.MaxValue, "------------");
-            return retVal;
-        }
-
-        public Dictionary<int, string> parseIntEnumHeaders(string eVals)
-        {
-            Dictionary<int, string> retVal = new Dictionary<int, string>();
-            string[] posVals = eVals.Split(',');
-            for (int r = 0; r < posVals.Length; r++)
-            {
-                string[] parts = posVals[r].Split(':');
-                int val = 0;
-                int.TryParse(parts[0], out val);
-                string txt = posVals[r];
-                if (!retVal.ContainsKey(val))
-                    retVal.Add(val, txt);
-            }
-            retVal.Add(int.MaxValue, "------------");
-            return retVal;
-        }
 
         private int getColumnByTableData(TableData cTd,int col)
         {
@@ -775,15 +714,13 @@ namespace UniversalPatcher
             }
             else if (cTd.ColumnHeaders.Contains(','))
             {
-                if (multiSelect)
-                    rowName = "[" + cTd.TableName + "] ";
                 if (duplicateTableName)
                     rowName += "(" + cTd.id + ") ";
 
                 string[] tParts = cTd.ColumnHeaders.Split(',');
                 if (tParts.Length >= (row - 1))
                 {
-                    rowName = tParts[row].Trim();
+                    rowName += tParts[row].Trim();
                     Debug.WriteLine("getRowByTableData_XySwap: By current TD " + rowName);
                 }
             }
@@ -792,7 +729,7 @@ namespace UniversalPatcher
                 string[] tParts = td.ColumnHeaders.Split(',');
                 if (tParts.Length >= (row - 1))
                 {
-                    rowName = tParts[row].Trim();
+                    rowName += tParts[row].Trim();
                     Debug.WriteLine("getRowByTableData_XySwap: By main TD " + rowName);
                 }
             }
@@ -822,32 +759,39 @@ namespace UniversalPatcher
 
         private void addCellByType(TableData ft, int gridRow, int gridCol)
         {
-            TableValueType vt = getValueType(ft);
-            if (vt == TableValueType.boolean)
+            if (!radioSideBySide.Checked)
             {
-                DataGridViewCheckBoxCell dgc = new DataGridViewCheckBoxCell();
-                dataGridView1.Rows[gridRow].Cells[gridCol] = dgc;
-            }
-            else if (vt == TableValueType.selection)
-            {
-                DataGridViewComboBoxCell dgc = new DataGridViewComboBoxCell();
-                if (ft.OutputType == OutDataType.Float)
+                TableValueType vt = getValueType(ft);
+                if (vt == TableValueType.boolean)
                 {
-                    Dictionary<double, string> possibleVals = parseEnumHeaders(ft.Values.Replace("Enum: ", ""));
-                    dgc.DataSource = new BindingSource(possibleVals, null);
+                    DataGridViewCheckBoxCell dgc = new DataGridViewCheckBoxCell();
+                    dataGridView1.Rows[gridRow].Cells[gridCol] = dgc;
+                }
+                else if (vt == TableValueType.selection)
+                {
+                    DataGridViewComboBoxCell dgc = new DataGridViewComboBoxCell();
+                    if (ft.OutputType == OutDataType.Float)
+                    {
+                        Dictionary<double, string> possibleVals = parseEnumHeaders(ft.Values.Replace("Enum: ", ""));
+                        dgc.DataSource = new BindingSource(possibleVals, null);
+                    }
+                    else
+                    {
+                        Dictionary<int, string> possibleVals = parseIntEnumHeaders(ft.Values.Replace("Enum: ", ""));
+                        dgc.DataSource = new BindingSource(possibleVals, null);
+                    }
+                    dgc.ValueMember = "key";
+                    dgc.DisplayMember = "value";
+                    dataGridView1.Rows[gridRow].Cells[gridCol] = dgc;
                 }
                 else
                 {
-                    Dictionary<int, string> possibleVals = parseIntEnumHeaders(ft.Values.Replace("Enum: ", ""));
-                    dgc.DataSource = new BindingSource(possibleVals, null);
+                    //at least one table which difference can be shown
+                    radioDifference.Enabled = true;
                 }
-                dgc.ValueMember = "key";
-                dgc.DisplayMember = "value";
-                dataGridView1.Rows[gridRow].Cells[gridCol] = dgc;
             }
-
         }
-        public void loadMultiTable(string tableName)
+        public void loadMultiTable(string tableName, bool resetBuffer)
         {
             try
             {
@@ -896,7 +840,7 @@ namespace UniversalPatcher
                     filteredTables = filteredTables.OrderBy(o => o.addrInt).ToList();
                 }
 
-                if (bufSize == 0)
+                if (resetBuffer || tableBuffer == null || tableBuffer.Length == 0)
                 {
                     List<TableData> sizeList = new List<TableData>(filteredTables.OrderBy(o => o.addrInt).ToList());
                     TableData first = sizeList[0];
@@ -907,6 +851,7 @@ namespace UniversalPatcher
                     bufSize = (uint)(last.addrInt - first.addrInt + last.Offset + singleTableSize);
                     tableBuffer = new byte[bufSize];
                     Array.Copy(PCM.buf, first.addrInt, tableBuffer, 0, bufSize);
+                    tableBufferOffset = first.addrInt;
                 }
 
 
@@ -934,6 +879,35 @@ namespace UniversalPatcher
                     {
                         int gridCol = 0;
                         TableData ft = filteredTables[tbl];
+                        if (comparePCM != null && tableIds.Count > 1)
+                        {
+                            if (radioCompareFile.Checked)
+                            {
+                                _ = compareTd = null;
+                            }
+                            else
+                            {
+                                int cmpId = tableIdList[tbl].cmpId;
+                                if (cmpId > -1)
+                                {
+                                    compareTd = comparePCM.tableDatas[cmpId];
+                                }
+                                else
+                                {
+                                    _ = compareTd = null;
+                                    if (radioCompareFile.Checked || radioDifference.Checked)
+                                        continue; //Skip, table not found
+                                }
+                                TableValueType vt = getValueType(compareTd);
+                                if (vt == TableValueType.boolean || vt == TableValueType.selection)
+                                {
+                                    if (radioDifference.Checked)
+                                    {
+                                        continue; //Skip, can't show difference for boolean & enum
+                                    }
+                                }
+                            }
+                        }
                         int elementsize = getElementSize(ft.DataType);
                         uint addr = (uint)(ft.addrInt + ft.Offset);
                         if (!ft.RowMajor)
@@ -970,8 +944,6 @@ namespace UniversalPatcher
                         }
 
                     }
-
-
                 }
                 else //Not xyswapped
                 {
@@ -982,6 +954,35 @@ namespace UniversalPatcher
                         int elementsize = getElementSize(ft.DataType);
                         int gridCol = 0;
                         uint addr = (uint)(ft.addrInt + ft.Offset);
+                        if (comparePCM != null && tableIds.Count > 1)
+                        {
+                            if (radioCompareFile.Checked)
+                            {
+                                _ = compareTd = null;
+                            }
+                            else
+                            {
+                                int cmpId = tableIdList[tbl].cmpId;
+                                if (cmpId > -1)
+                                {
+                                    compareTd = PCM.tableDatas[cmpId];
+                                }
+                                else
+                                {
+                                    _ = compareTd = null;
+                                    if (radioCompareFile.Checked || radioDifference.Checked)
+                                        continue; //Skip, table not found
+                                }
+                                TableValueType vt = getValueType(compareTd);
+                                if (vt == TableValueType.boolean || vt == TableValueType.selection)
+                                {
+                                    if (radioDifference.Checked)
+                                    {
+                                        continue; //Skip, can't show difference for boolean & enum
+                                    }
+                                }
+                            }
+                        }
                         if (ft.RowMajor)
                         {
                             for (int r = 0; r < ft.Rows; r++)
@@ -1081,7 +1082,7 @@ namespace UniversalPatcher
                 {
                     TableData ytb = PCM.tableDatas[y];
                     uint xaddr = (uint)(ytb.addrInt + ytb.Offset);
-                    cols = (int)getValue(xaddr, ytb);
+                    cols = (int)getValue(PCM.buf, xaddr, ytb,0);
                     break;
                 }
             }
@@ -1098,7 +1099,7 @@ namespace UniversalPatcher
                 if (PCM.tableDatas[x].TableName == td.TableName.Replace(".Data", ".Size") || PCM.tableDatas[x].TableName == td.TableName.Replace(".Data", ".yVal"))
                 {
                     uint addr = (uint)(PCM.tableDatas[x].addrInt + PCM.tableDatas[x].Offset);
-                    rows = (int)getValue(addr, PCM.tableDatas[x]);
+                    rows = (int)getValue(PCM.buf, addr, PCM.tableDatas[x],0);
                     break;
                 }
             }
@@ -1119,24 +1120,16 @@ namespace UniversalPatcher
             
             return retVal;
         }
-        public void loadTable(TableData td1, bool resetBuffer)
+        public void loadTable(bool resetBuffer)
         {
             try
             {
-                var currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
-                NumberFormatInfo nfi = new CultureInfo(currentCulture, false).NumberFormat;
-                if (nfi.NumberDecimalSeparator == ",") commaDecimal = true;
-                else commaDecimal = false;
 
-                td = td1;
-                TableValueType vt = getValueType(td);
-                if (vt == TableValueType.selection || vt == TableValueType.boolean)
-                    radioDifference.Enabled = false;
 
                 if (tableIds.Count > 1)
                 {
                     multiSelect = true;
-                    loadMultiTable(td.TableName);
+                    loadMultiTable(td.TableName, resetBuffer);
                     return;
                 }
                 if (!disableMultiTable)
@@ -1148,7 +1141,7 @@ namespace UniversalPatcher
                             if (PCM.tableDatas[x].TableName.ToLower() == td.TableName.ToLower().Replace(".yval", ".data").Replace(".xval", ".data"))
                             {
                                 td = PCM.tableDatas[x];
-                                loadTable(td, resetBuffer);
+                                loadTable(resetBuffer);
                                 return;
                             }
                         }
@@ -1169,13 +1162,19 @@ namespace UniversalPatcher
                                 if (PCM.tableDatas[t].Category == td.Category && PCM.tableDatas[t].TableName.StartsWith(mtn.TableName) && PCM.tableDatas[t].TableName != td.TableName)
                                 {
                                     //It is multitable
-                                    loadMultiTable(mtn.TableName);
+                                    loadMultiTable(mtn.TableName, resetBuffer);
                                     return;
                                 }
                             }
                         }
                     }
                 }
+
+                TableValueType vt = getValueType(td);
+                if (vt == TableValueType.selection || vt == TableValueType.boolean)
+                    radioDifference.Enabled = false;
+                else
+                    radioDifference.Enabled = true;
 
                 tableName = td.TableName;
                 setMyText();
@@ -1184,12 +1183,13 @@ namespace UniversalPatcher
                 if (getValueType(td) == TableValueType.selection)
                     labelUnits.Text += ", Values: " +  td.Values;
 
-                if (resetBuffer)
+                if (resetBuffer || tableBuffer == null || tableBuffer.Length == 0)
                 {
                     int elementSize = getBits(td.DataType) / 8;
                     bufSize = (uint)(td.Rows * td.Columns * elementSize + td.Offset);
                     tableBuffer = new byte[bufSize];
                     Array.Copy(PCM.buf, td.addrInt, tableBuffer, 0, bufSize);
+                    tableBufferOffset = td.addrInt;
                 }
 
                 int rowCount = td.Rows;
@@ -1338,7 +1338,11 @@ namespace UniversalPatcher
             try
             {
                 if (numDecimals.Value < 0 && td != null)
+                {
+                    this.numDecimals.ValueChanged -= new System.EventHandler(this.numDecimals_ValueChanged);
                     numDecimals.Value = td.Decimals;
+                    this.numDecimals.ValueChanged += new System.EventHandler(this.numDecimals_ValueChanged);
+                }
                 string formatStr = "0";
                 if (showRawHEXValuesToolStripMenuItem.Checked || td.OutputType == OutDataType.Hex)
                 {
@@ -1369,7 +1373,7 @@ namespace UniversalPatcher
                 dataGridView1.AutoResizeColumns();
                 dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
                 if (autoResizeToolStripMenuItem.Checked) AutoResize();
-                dataGridView1.RefreshEdit();
+                //dataGridView1.RefreshEdit();
             }
             catch (Exception ex)
             {
@@ -1520,8 +1524,7 @@ namespace UniversalPatcher
 
         public void SaveValue(uint addr,int r, int c, TableData mathTd, double value = double.MinValue)
         {
-            MathParser parser = new MathParser();
-            UInt32 bufAddr = addr - td.addrInt;
+            UInt32 bufAddr = addr - tableBufferOffset;
 
             if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != "")
             {
@@ -1562,23 +1565,23 @@ namespace UniversalPatcher
                 if (commaDecimal) mathStr = mathStr.Replace(".", ",");
                 value = parser.Parse(mathStr, true);
             }
-            if (td.DataType == InDataType.UBYTE || td.DataType == InDataType.SBYTE)
+            if (mathTd.DataType == InDataType.UBYTE || mathTd.DataType == InDataType.SBYTE)
                 tableBuffer[bufAddr] = (byte)value;
-            if (td.DataType == InDataType.SWORD)
+            if (mathTd.DataType == InDataType.SWORD)
                 SaveShort(tableBuffer, bufAddr, (short)value);
-            if (td.DataType == InDataType.UWORD)
+            if (mathTd.DataType == InDataType.UWORD)
                 SaveUshort(tableBuffer, bufAddr, (ushort)value);
-            if (td.DataType == InDataType.FLOAT32)
+            if (mathTd.DataType == InDataType.FLOAT32)
                 SaveFloat32(tableBuffer, bufAddr, (Single)value);
-            if (td.DataType == InDataType.INT32)
+            if (mathTd.DataType == InDataType.INT32)
                 SaveInt32(tableBuffer, bufAddr, (Int32)value);
-            if (td.DataType == InDataType.UINT32)
+            if (mathTd.DataType == InDataType.UINT32)
                 SaveUint32(tableBuffer, bufAddr, (UInt32)value);
-            if (td.DataType == InDataType.FLOAT64)
+            if (mathTd.DataType == InDataType.FLOAT64)
                 SaveFloat64(tableBuffer, bufAddr, value);
-            if (td.DataType == InDataType.INT64)
+            if (mathTd.DataType == InDataType.INT64)
                 SaveInt64(tableBuffer, bufAddr, (Int64)value);
-            if (td.DataType == InDataType.UINT64)
+            if (mathTd.DataType == InDataType.UINT64)
                 SaveUint64(tableBuffer, bufAddr, (UInt64)value);
 
         }
@@ -1587,7 +1590,7 @@ namespace UniversalPatcher
             try
             {
                 dataGridView1.EndEdit();
-                Array.Copy(tableBuffer, 0, PCM.buf, td.addrInt, bufSize);
+                Array.Copy(tableBuffer, 0, PCM.buf, tableBufferOffset, bufSize);
             }
             catch (Exception ex)
             {
@@ -1604,7 +1607,6 @@ namespace UniversalPatcher
         {
             try
             {
-                MathParser parser = new MathParser();
 
                 foreach (DataGridViewCell cell in dataGridView1.SelectedCells)
                 {
@@ -1641,61 +1643,6 @@ namespace UniversalPatcher
                 this.Height = dgv_height + 150; //175
 
         }
-        private void frmTableEditor_FormClosing(object sender, EventArgs e)
-        {
-            try
-            {
-                if (Properties.Settings.Default.MainWindowPersistence)
-                {
-                    Properties.Settings.Default.TableEditorWindowState = this.WindowState;
-                    if (this.WindowState == FormWindowState.Normal)
-                    {
-                        Properties.Settings.Default.TableEditorWindowLocation = this.Location;
-                        Properties.Settings.Default.TableEditorWindowSize = this.Size;
-                    }
-                    else
-                    {
-                        Properties.Settings.Default.TableEditorWindowLocation = this.RestoreBounds.Location;
-                        Properties.Settings.Default.TableEditorWindowSize = this.RestoreBounds.Size;
-                    }
-                    Properties.Settings.Default.Save();
-                }
-
-                bool tableModified = false;
-                uint addr = td.addrInt;
-                for (int a=0;a<bufSize; a++)
-                {
-                    if (PCM.buf[addr + a] != tableBuffer[a])
-                    {
-                        tableModified = true;
-                        break;
-                    }
-                }
-
-                if (tableModified)
-                {
-                    DialogResult dialogResult = MessageBox.Show("Apply modifications?", "Apply modifications?", MessageBoxButtons.YesNo);
-                    if (dialogResult == DialogResult.Yes)
-                    {
-                        saveTable();
-                        this.DialogResult = DialogResult.OK;
-                    }
-                    else
-                    {
-                        this.DialogResult = DialogResult.Cancel;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
-            }
-        }
 
         private void chkAutoResize_CheckedChanged(object sender, EventArgs e)
         {
@@ -1709,7 +1656,7 @@ namespace UniversalPatcher
 
         private void chkTranspose_CheckedChanged(object sender, EventArgs e)
         {
-            loadTable(td,false);
+            loadTable(false);
             dataGridView1.AutoResizeColumns();
             dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
             if (autoResizeToolStripMenuItem.Checked) AutoResize();
@@ -1913,14 +1860,14 @@ namespace UniversalPatcher
             else
                 swapXyToolStripMenuItem.Checked = true;
             chkSwapXY.Checked = swapXyToolStripMenuItem.Checked;
-            loadTable(td,false);
+            loadTable(false);
 
         }
 
         private void chkSwapXY_CheckedChanged(object sender, EventArgs e)
         {
             swapXyToolStripMenuItem.Checked = chkSwapXY.Checked;
-            loadTable(td,false);
+            loadTable(false);
         }
 
         private void showRawHEXValuesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1929,7 +1876,7 @@ namespace UniversalPatcher
                 showRawHEXValuesToolStripMenuItem.Checked = false;
             else
                 showRawHEXValuesToolStripMenuItem.Checked = true;
-            loadTable(td,false);
+            loadTable(false);
         }
 
         private void disableTooltipsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2006,7 +1953,7 @@ namespace UniversalPatcher
         private void numColumn_ValueChanged(object sender, EventArgs e)
         {
             MultiTableName mtn = new MultiTableName(td.TableName, (int)numColumn.Value);
-            loadMultiTable(mtn.TableName);
+            loadMultiTable(mtn.TableName,false);
         }
 
         private void radioCompareFile_CheckedChanged(object sender, EventArgs e)
@@ -2015,9 +1962,35 @@ namespace UniversalPatcher
             {
                 dataGridView1.BackgroundColor = Color.Red;
                 disableSaving = true;
+                PCM = comparePCM;
+                origTableIds = tableIds;
+                tableIds = new List<int>();
+                td = compareTd;
+                for (int i=0; i< tableIdList.Count; i++)
+                {
+                    if (tableIdList[i].cmpId > -1)
+                    {
+                        tableIds.Add(tableIdList[i].cmpId);
+                    }
+                }
+                if (td == null)
+                    td = PCM.tableDatas[tableIds[0]];
                 setMyText();
+                origTableBuffer = new byte[tableBuffer.Length];
+                Array.Copy(tableBuffer, origTableBuffer, tableBuffer.Length);
+                origBufferOffset = tableBufferOffset;
+                tableBuffer = null; 
             }
-            loadTable(td,false);
+            else
+            {
+                PCM = origPCM;
+                td = origTd;
+                tableIds = origTableIds;
+                tableBuffer = origTableBuffer;
+                tableBufferOffset = origBufferOffset;
+            }
+            
+            loadTable(false);
         }
 
         private void radioDifference_CheckedChanged(object sender, EventArgs e)
@@ -2028,7 +2001,7 @@ namespace UniversalPatcher
                 disableSaving = true;
                 setMyText();
             }
-            loadTable(td,false);
+            loadTable(false);
         }
         private void radioSideBySide_CheckedChanged(object sender, EventArgs e)
         {
@@ -2040,7 +2013,7 @@ namespace UniversalPatcher
             }
             graphToolStripMenuItem.Enabled = !radioSideBySide.Checked;            
 
-            loadTable(td,false);
+            loadTable(false);
         }
 
         private void radioOriginal_CheckedChanged(object sender, EventArgs e)
@@ -2051,7 +2024,7 @@ namespace UniversalPatcher
                 disableSaving = false;
                 setMyText();
             }
-            loadTable(td,false);
+            loadTable(false);
         }
 
         private void setMyText()
@@ -2060,14 +2033,14 @@ namespace UniversalPatcher
             if (radioOriginal.Checked)
                 this.Text += PCM.FileName + "]";
             if (radioDifference.Checked || radioSideBySide.Checked)
-                this.Text += PCM.FileName + " <> " + compareEditor.PCM.FileName + "]";
+                this.Text += PCM.FileName + " <> " + comparePCM.FileName + "]";
             if (radioCompareFile.Checked)
-                this.Text += compareEditor.PCM.FileName + "]";
+                this.Text += comparePCM.FileName + "]";
         }
 
         private void numDecimals_ValueChanged(object sender, EventArgs e)
         {
-            loadTable(td,false);
+            loadTable(false);
         }
 
         private void dataFontToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2085,7 +2058,7 @@ namespace UniversalPatcher
                 Properties.Settings.Default.Save();
             }
             fontDlg.Dispose();
-            loadTable(td,false);
+            loadTable(false);
         }
 
         private void saveOBD2DescriptionsToolStripMenuItem_Click(object sender, EventArgs e)

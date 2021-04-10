@@ -7,10 +7,12 @@ using System.Diagnostics;
 using UniversalPatcher;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Globalization;
 using UniversalPatcher.Properties;
 using System.Linq;
 using System.Drawing;
 using System.Xml.Serialization;
+using MathParserTK;
 
 public class upatcher
 {
@@ -337,6 +339,8 @@ public class upatcher
 
     public static string tableSearchFile;
     public static string tableSeekFile = "";
+    public static MathParser parser = new MathParser();
+    public static bool commaDecimal = true;
 
     public static FrmPatcher frmpatcher;
 
@@ -505,6 +509,116 @@ public class upatcher
         return DataType;
     }
 
+    public static double getValue(byte[] myBuffer, uint addr, TableData mathTd, uint offset)
+    {
+        double retVal = 0;
+        try
+        {
+            UInt32 bufAddr = addr - offset;
+
+            if (mathTd.DataType == InDataType.SBYTE)
+                retVal = (sbyte)myBuffer[bufAddr];
+            if (mathTd.DataType == InDataType.UBYTE)
+                retVal = myBuffer[bufAddr];
+            if (mathTd.DataType == InDataType.SWORD)
+                retVal = BEToInt16(myBuffer, bufAddr);
+            if (mathTd.DataType == InDataType.UWORD)
+                retVal = BEToUint16(myBuffer, bufAddr);
+            if (mathTd.DataType == InDataType.INT32)
+                retVal = BEToInt32(myBuffer, bufAddr);
+            if (mathTd.DataType == InDataType.UINT32)
+                retVal = BEToUint32(myBuffer, bufAddr);
+            if (mathTd.DataType == InDataType.INT64)
+                retVal = BEToInt64(myBuffer, bufAddr);
+            if (mathTd.DataType == InDataType.UINT64)
+                retVal = BEToUint64(myBuffer, bufAddr);
+            if (mathTd.DataType == InDataType.FLOAT32)
+                retVal = BEToFloat32(myBuffer, bufAddr);
+            if (mathTd.DataType == InDataType.FLOAT64)
+                retVal = BEToFloat64(myBuffer, bufAddr);
+
+            if (mathTd.Math == null || mathTd.Math.Length == 0)
+                mathTd.Math = "X";
+            string mathStr = mathTd.Math.ToLower().Replace("x", retVal.ToString());
+            if (commaDecimal) mathStr = mathStr.Replace(".", ",");
+            retVal = parser.Parse(mathStr, false);
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("frmTableEditor error, line " + line + ": " + ex.Message);
+        }
+
+        return retVal;
+    }
+
+    public static  UInt64 getRawValue(byte[] myBuffer, UInt32 addr, TableData mathTd, uint offset)
+    {
+        UInt32 bufAddr = addr - offset;
+        UInt64 retVal = 0;
+        try
+        {
+            if (mathTd.DataType == InDataType.UWORD || mathTd.DataType == InDataType.SWORD)
+                retVal = BEToUint16(myBuffer, bufAddr);
+            if (mathTd.DataType == InDataType.INT32 || mathTd.DataType == InDataType.UINT32 || mathTd.DataType == InDataType.FLOAT32)
+                retVal = BEToUint32(myBuffer, bufAddr);
+            if (mathTd.DataType == InDataType.INT64 || mathTd.DataType == InDataType.UINT64 || mathTd.DataType == InDataType.FLOAT64)
+                retVal = BEToUint64(myBuffer, bufAddr);
+            if (mathTd.DataType == InDataType.UBYTE || mathTd.DataType == InDataType.SBYTE)
+                retVal = myBuffer[bufAddr];
+
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("frmTableEditor error, line " + line + ": " + ex.Message);
+        }
+
+        return retVal;
+    }
+
+    public static  Dictionary<double, string> parseEnumHeaders(string eVals)
+    {
+        Dictionary<double, string> retVal = new Dictionary<double, string>();
+        string[] posVals = eVals.Split(',');
+        for (int r = 0; r < posVals.Length; r++)
+        {
+            string[] parts = posVals[r].Split(':');
+            double val = 0;
+            double.TryParse(parts[0], out val);
+            string txt = posVals[r];
+            if (!retVal.ContainsKey(val))
+                retVal.Add(val, txt);
+        }
+        retVal.Add(double.MaxValue, "------------");
+        return retVal;
+    }
+
+    public static Dictionary<int, string> parseIntEnumHeaders(string eVals)
+    {
+        Dictionary<int, string> retVal = new Dictionary<int, string>();
+        string[] posVals = eVals.Split(',');
+        for (int r = 0; r < posVals.Length; r++)
+        {
+            string[] parts = posVals[r].Split(':');
+            int val = 0;
+            int.TryParse(parts[0], out val);
+            string txt = posVals[r];
+            if (!retVal.ContainsKey(val))
+                retVal.Add(val, txt);
+        }
+        retVal.Add(int.MaxValue, "------------");
+        return retVal;
+    }
+
     public static uint checkPatchCompatibility(XmlPatch xpatch, PcmFile basefile)
     {
         uint retVal = uint.MaxValue;
@@ -639,10 +753,10 @@ public class upatcher
     public static uint applyTablePatch(PcmFile basefile, XmlPatch xpatch, int tdId)
     {
         int i = 0;
-        frmTableEditor frmTE = new frmTableEditor();
-        frmTE.PCM = basefile;
+        frmTableEditor frmTE = new frmTableEditor(basefile,null);
         TableData pTd = basefile.tableDatas[tdId];
-        frmTE.loadTable(pTd,true);
+        frmTE.prepareTable(pTd, null);
+        frmTE.loadTable(true);
         uint addr = (uint)(pTd.addrInt + pTd.Offset);
         uint step = (uint)getElementSize(pTd.DataType);
         try

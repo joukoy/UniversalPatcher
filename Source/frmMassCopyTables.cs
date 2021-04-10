@@ -165,12 +165,12 @@ namespace UniversalPatcher
 
         private void copyTableData(TableData srcTd, TableData dstTd, ref PcmFile dstPCM)
         {
-            frmTableEditor srcTE = new frmTableEditor();
-            srcTE.PCM = PCM;
-            srcTE.loadTable(srcTd,true);
-            frmTableEditor dstTE = new frmTableEditor();
-            dstTE.PCM = dstPCM;
-            dstTE.loadTable(dstTd,true);
+            frmTableEditor srcTE = new frmTableEditor(PCM,null);
+            srcTE.prepareTable(srcTd, null);
+            srcTE.loadTable(true);
+            frmTableEditor dstTE = new frmTableEditor(dstPCM,null);
+            dstTE.prepareTable(dstTd, null);
+            dstTE.loadTable(true);
 
             uint srcAddr = (uint)(srcTd.addrInt + srcTd.Offset);
             int srcStep = getElementSize(srcTd.DataType);
@@ -180,7 +180,7 @@ namespace UniversalPatcher
             {
                 for (int c = 0; c < srcTd.Columns; c++)
                 {
-                    double cellValue = srcTE.getValue(srcAddr, srcTd);
+                    double cellValue = getValue(PCM.buf, srcAddr, srcTd,0);
                     dstTE.SaveValue(dstAddr, r, c, dstTd, cellValue);
                     srcAddr += (uint)srcStep;
                     dstAddr += (uint)dstStep;

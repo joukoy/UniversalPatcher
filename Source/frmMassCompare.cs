@@ -75,16 +75,10 @@ namespace UniversalPatcher
             string retVal = "";
             try
             {
-                frmTableEditor frmT = new frmTableEditor();
-                frmT.PCM = peekPCM;
-                frmT.disableMultiTable = true;
-                frmT.loadTable(peekPCM.tableDatas[ind],true);
-                //txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
-                //txtResult.SelectionColor = Color.Blue;
                 if (peekPCM.tableDatas[ind].Rows == 1 && peekPCM.tableDatas[ind].Columns == 1)
                 {
-                    double curVal = frmT.getValue((uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind]);
-                    UInt64 rawVal = frmT.getRawValue((uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind]);
+                    double curVal = getValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0);
+                    UInt64 rawVal = getRawValue(peekPCM.buf,(uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0);
                     string valTxt = curVal.ToString();
                     string unitTxt = " " + peekPCM.tableDatas[ind].Units;
                     string maskTxt = "";
@@ -127,7 +121,7 @@ namespace UniversalPatcher
                     }
                     else if (vt == TableValueType.selection)
                     {
-                        Dictionary<double, string> possibleVals = frmT.parseEnumHeaders(peekPCM.tableDatas[ind].Values.Replace("Enum: ", ""));
+                        Dictionary<double, string> possibleVals = parseEnumHeaders(peekPCM.tableDatas[ind].Values.Replace("Enum: ", ""));
                         if (possibleVals.ContainsKey(curVal))
                             unitTxt = " (" + possibleVals[curVal] + ")";
                         else
@@ -147,7 +141,7 @@ namespace UniversalPatcher
                         {
                             for (int c = 0; c < peekPCM.tableDatas[ind].Columns; c++)
                             {
-                                double curVal = frmT.getValue(addr, peekPCM.tableDatas[ind]);
+                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0);
                                 addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
                                 tblData += "[" + curVal.ToString("#0.0") + "]";
                             }
@@ -164,7 +158,7 @@ namespace UniversalPatcher
 
                             for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
                             {
-                                double curVal = frmT.getValue(addr, peekPCM.tableDatas[ind]);
+                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0);
                                 addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
                                 tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
                             }

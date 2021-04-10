@@ -94,7 +94,7 @@ namespace UniversalPatcher
         public List<string> tableCategories;
         public List<TableData> tableDatas;
         public bool dtcCombined = false;
-        public TableData selectedTable; //Required for Tuner/Compare
+        //public TableData selectedTable; //Required for Tuner/Compare
         public int tableDataIndex; //Tuner tabledatalist id
         public List<AltTableData> altTableDatas;
         private int currentTableDatasList;

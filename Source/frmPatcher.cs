@@ -69,6 +69,12 @@ namespace UniversalPatcher
                 frmSegmenList frmSL = new frmSegmenList();
                 frmSL.LoadFile(args[1]);
             }*/
+
+            var currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+            NumberFormatInfo nfi = new CultureInfo(currentCulture, false).NumberFormat;
+            if (nfi.NumberDecimalSeparator == ",") commaDecimal = true;
+            else commaDecimal = false;
+
             LogReceivers = new List<RichTextBox>();
             basefile = new PcmFile();
             tableSeeks = new List<TableSeek>();
@@ -2621,8 +2627,8 @@ namespace UniversalPatcher
                     return;
                 }
 
-                frmTableEditor frmT = new frmTableEditor();
-                frmT.loadSeekTable(codeIndex, basefile);
+                frmTableEditor frmT = new frmTableEditor(basefile,null);
+                frmT.loadSeekTable(codeIndex);
                 frmT.Show();
             }
             catch (Exception ex)
