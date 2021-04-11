@@ -87,9 +87,9 @@ namespace UniversalPatcher
         public TableData compareTd;
         //public List<int> compareTableIds;
         private byte[] tableBuffer;
-        private byte[] origTableBuffer;
         private uint tableBufferOffset;
-        private uint origBufferOffset;
+        private byte[] origTableBuffer;
+        private uint origTableBufferOffset;
         public string tableName = "";
         private bool disableSaving = false;
         private uint bufSize = 0;
@@ -99,6 +99,8 @@ namespace UniversalPatcher
         public bool disableMultiTable = false;
         public bool multiSelect = false;
         private bool duplicateTableName = false;
+        private bool compare1d = false;
+        private bool comparePcmInUse = false;
         List<TableData> filteredTables;
 
         private void frmTableEditor_Load(object sender, EventArgs e)
@@ -284,20 +286,33 @@ namespace UniversalPatcher
         {
             try
             {
-                double curVal = getValue(tableBuffer, addr,mathTd,tableBufferOffset);
-                double origVal = getValue(PCM.buf, addr, mathTd,0);
-                UInt64 curRawValue = getRawValue(tableBuffer, addr, mathTd,tableBufferOffset);
+                double curVal;
+                double origVal = getValue(PCM.buf, addr, mathTd, 0);
+                if (comparePcmInUse)
+                    curVal = getValue(comparePCM.buf, addr, mathTd, 0);
+                else
+                    curVal = getValue(tableBuffer, addr, mathTd, tableBufferOffset);
+                UInt64 curRawValue;
                 UInt64 cmpRawValue = UInt64.MaxValue;
+                if (comparePcmInUse)
+                    curRawValue = getRawValue(comparePCM.buf, addr, mathTd, 0);
+                else
+                    curRawValue = getRawValue(tableBuffer, addr, mathTd, tableBufferOffset);
                 double cmpVal = double.MinValue;
-                if (comparePCM != null && compareTd != null && !radioOriginal.Checked && !radioCompareFile.Checked)
+                uint cmpAddr = uint.MaxValue;
+                bool showSidebySide = radioSideBySide.Checked;
+                if (compareTd == null)
+                    showSidebySide = false;
+                if (comparePCM != null && compareTd != null && !radioOriginal.Checked && !comparePcmInUse)
                 {
                     int currentOffset = (int)(addr - (mathTd.addrInt + mathTd.Offset)); //Bytes from (table start + offset)
                     int currentSteps = (int)currentOffset / getElementSize(mathTd.DataType);
-                    uint cmpAddr = (uint)(currentSteps * getElementSize(compareTd.DataType) + compareTd.addrInt + compareTd.Offset);
+                    cmpAddr = (uint)(currentSteps * getElementSize(compareTd.DataType) + compareTd.addrInt + compareTd.Offset);
                     cmpVal = getValue(comparePCM.buf, cmpAddr, compareTd, 0);
                     cmpRawValue = getRawValue(comparePCM.buf, cmpAddr, compareTd,0);
                 }
-                if (radioSideBySide.Checked)
+                //if (radioSideBySide.Checked && !disableSideBySide)
+                if (false)
                 {
                     string curTxt = "";
                     string cmpTxt = "";
@@ -385,59 +400,138 @@ namespace UniversalPatcher
                 if (showRawHEXValuesToolStripMenuItem.Checked)
                 {
                     dataGridView1.Rows[row].Cells[col].Value = (uint)showRawVal;
+                    if (showSidebySide)
+                        dataGridView1.Rows[row].Cells[col + 1].Value = (uint)cmpRawValue;
                 }
                 else if (mathTd.OutputType == OutDataType.Text)
                 {
                     dataGridView1.Rows[row].Cells[col].Value = Convert.ToChar((ushort)showRawVal);
+                    if (showSidebySide)
+                        dataGridView1.Rows[row].Cells[col + 1].Value = Convert.ToChar((ushort)showRawVal);
                 }
                 else if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
                 {
                     UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
-                    if ((showRawVal & mask) == mask)
+                    if (showSidebySide)
                     {
-                        Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + ", mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", true");
-                        dataGridView1.Rows[row].Cells[col].Value = 1;
+                        if ((showRawVal & mask) == mask)
+                        {
+                            Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + ", mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", true");
+                            dataGridView1.Rows[row].Cells[col].Value = 1;
+                        }
+                        else
+                        {
+                            Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + " mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", false");
+                            dataGridView1.Rows[row].Cells[col].Value = 0;
+                        }
+                        UInt64 maskCmp = Convert.ToUInt64(compareTd.BitMask.Replace("0x", ""), 16);
+                        if ((cmpRawValue & maskCmp) == maskCmp)
+                        {
+                            Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + ", mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", true");
+                            dataGridView1.Rows[row].Cells[col + 1].Value = 1;
+                        }
+                        else
+                        {
+                            Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + " mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", false");
+                            dataGridView1.Rows[row].Cells[col + 1].Value = 0;
+                        }
                     }
                     else
                     {
-                        Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + " mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", false");
-                        dataGridView1.Rows[row].Cells[col].Value = 0;
+                        if ((showRawVal & mask) == mask)
+                        {
+                            Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + ", mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", true");
+                            dataGridView1.Rows[row].Cells[col].Value = 1;
+                        }
+                        else
+                        {
+                            Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + " mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", false");
+                            dataGridView1.Rows[row].Cells[col].Value = 0;
+                        }
                     }
                 }
                 else if (mathTd.OutputType == OutDataType.Hex)
                 {
                     dataGridView1.Rows[row].Cells[col].Value = (uint)showVal;
+                    if (showSidebySide)
+                        dataGridView1.Rows[row].Cells[col + 1].Value = (uint)cmpVal;
                 }
                 else if (mathTd.OutputType == OutDataType.Int)
                 {
                     dataGridView1.Rows[row].Cells[col].Value = (int)showVal;
+                    if (showSidebySide)
+                        dataGridView1.Rows[row].Cells[col + 1].Value = (int)cmpVal;
                 }
                 else
                 {
                     dataGridView1.Rows[row].Cells[col].Value = showVal;
+                    if (showSidebySide)
+                        dataGridView1.Rows[row].Cells[col + 1].Value = cmpVal;
                 }
 
 
-                if (dataGridView1.Columns[col].GetType() != typeof(DataGridViewComboBoxColumn) && dataGridView1.Columns[col].GetType() != typeof(DataGridViewCheckBoxColumn))
+                if (dataGridView1.Columns[col].GetType() != typeof(DataGridViewComboBoxColumn) &&
+                    dataGridView1.Columns[col].GetType() != typeof(DataGridViewCheckBoxColumn) &&
+                    dataGridView1.Rows[row].Cells[col].GetType() != typeof(DataGridViewCheckBoxCell) &&
+                    dataGridView1.Rows[row].Cells[col].GetType() != typeof(DataGridViewComboBoxCell))
                 {
                     if (origVal != curVal)
+                    {
                         dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Yellow;
-                    else if (curVal < (mathTd.Max * 0.9) && curVal > (mathTd.Min * 1.1))
-                        dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.White;
-                    else if (curVal > mathTd.Max)
-                        dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Pink;
-                    else if (curVal > (0.9 * mathTd.Max))
-                        dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
-                    else if (curVal < mathTd.Min)
-                        dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.AliceBlue;
-                    else if (curVal < (1.1 * mathTd.Min))
-                        dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightBlue;
+                    }
+                    if (showSidebySide)
+                    {
+                        if (curVal != cmpVal)
+                        {
+                            //dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
+                            dataGridView1.Rows[row].Cells[col + 1].Style.BackColor = Color.Pink;
+                        }
+                        else
+                        {
+                            //dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.AliceBlue;
+                            dataGridView1.Rows[row].Cells[col + 1].Style.BackColor = Color.LightBlue;
+                        }
+                    }
+                    else
+                    {
+                        if (curVal < (mathTd.Max * 0.9) && curVal > (mathTd.Min * 1.1))
+                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.White;
+                        else if (curVal > mathTd.Max)
+                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Pink;
+                        else if (curVal > (0.9 * mathTd.Max))
+                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
+                        else if (curVal < mathTd.Min)
+                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.AliceBlue;
+                        else if (curVal < (1.1 * mathTd.Min))
+                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightBlue;
+                    }
+                }
+                else if (dataGridView1.Columns[col].GetType() == typeof(DataGridViewComboBoxColumn) || dataGridView1.Rows[row].Cells[col].GetType() == typeof(DataGridViewComboBoxCell))
+                {
+                    if (origVal != curVal)
+                    {
+                        DataGridViewComboBoxCell cell = (DataGridViewComboBoxCell)dataGridView1.Rows[row].Cells[col];
+                        cell.Style.Font = new Font(dataGridView1.Font, FontStyle.Italic);
+                    }
+                }
+                else
+                {
+                    if (origVal != curVal)
+                    {
+                        dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Yellow;
+                    }
                 }
                 Tagi t = new Tagi();
                 t.addr = addr;
                 t.id = (int)mathTd.id;
                 dataGridView1.Rows[row].Cells[col].Tag = t;
-
+                /*if (showSidebySide)
+                {
+                    t = new Tagi();
+                    t.addr = cmpAddr;
+                    t.id = (int)compareTd.id;
+                    dataGridView1.Rows[row].Cells[col + 1].Tag = t;
+                }*/
                 if (!disableTooltipsToolStripMenuItem.Checked && mathTd.TableDescription != null)
                 {
                     if (mathTd.TableDescription.Length > 200)
@@ -488,6 +582,7 @@ namespace UniversalPatcher
         {
             int ind = int.MinValue;
             string colName = "";
+
             if (multiSelect)
             {
                 colName = "[" + cTd.TableName + "]";
@@ -547,12 +642,19 @@ namespace UniversalPatcher
             for (int c = 0; c < dataGridView1.Columns.Count; c++)
             {
                 if (dataGridView1.Columns[c].HeaderText == colName)
-                ind = c;
+                    ind = c;
             }
                 
             if (ind < 0)
             {
                 ind = dataGridView1.Columns.Add(colName, colName);
+                if (radioSideBySide.Checked)
+                {
+                    colName = "(" + colName + ")";
+                    int cmpCol = dataGridView1.Columns.Add(colName, colName);
+                    dataGridView1.Columns[cmpCol].HeaderCell.Style.Font = new Font(dataGridView1.Font, FontStyle.Bold);
+                }
+
             }
             return ind;
         }
@@ -602,6 +704,12 @@ namespace UniversalPatcher
             if (ind<0)
             {
                 ind = dataGridView1.Columns.Add(colName, colName);
+                if (radioSideBySide.Checked)
+                {
+                    colName = "(" + colName + ")";
+                    int cmpCol = dataGridView1.Columns.Add(colName, colName);
+                    dataGridView1.Columns[cmpCol].HeaderCell.Style.Font = new Font(dataGridView1.Font, FontStyle.Bold);
+                }
             }
             return ind;
         }
@@ -675,6 +783,7 @@ namespace UniversalPatcher
         {
             int ind = int.MinValue;
             string rowName = "";
+
             if (multiSelect)
             {
                 rowName = "[" + cTd.TableName + "] ";
@@ -759,7 +868,7 @@ namespace UniversalPatcher
 
         private void addCellByType(TableData ft, int gridRow, int gridCol)
         {
-            if (!radioSideBySide.Checked)
+            try
             {
                 TableValueType vt = getValueType(ft);
                 if (vt == TableValueType.boolean)
@@ -789,6 +898,43 @@ namespace UniversalPatcher
                     //at least one table which difference can be shown
                     radioDifference.Enabled = true;
                 }
+                if (radioSideBySide.Checked && compareTd != null) 
+                {
+                    vt = getValueType(compareTd);
+                    if (vt == TableValueType.boolean)
+                    {
+                        DataGridViewCheckBoxCell dgc = new DataGridViewCheckBoxCell();
+                        dataGridView1.Rows[gridRow].Cells[gridCol + 1] = dgc;
+                    }
+                    else if (vt == TableValueType.selection)
+                    {
+                        DataGridViewComboBoxCell dgc = new DataGridViewComboBoxCell();
+                        if (compareTd.OutputType == OutDataType.Float)
+                        {
+                            Dictionary<double, string> possibleVals = parseEnumHeaders(compareTd.Values.Replace("Enum: ", ""));
+                            dgc.DataSource = new BindingSource(possibleVals, null);
+                        }
+                        else
+                        {
+                            Dictionary<int, string> possibleVals = parseIntEnumHeaders(compareTd.Values.Replace("Enum: ", ""));
+                            dgc.DataSource = new BindingSource(possibleVals, null);
+                        }
+                        dgc.ValueMember = "key";
+                        dgc.DisplayMember = "value";
+                        dataGridView1.Rows[gridRow].Cells[gridCol + 1] = dgc;
+                    }
+
+                }
+            }
+            catch(Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, line " + line + ": " + ex.Message);
+
             }
         }
         public void loadMultiTable(string tableName, bool resetBuffer)
@@ -797,6 +943,9 @@ namespace UniversalPatcher
             {
                 List<string> colHeaders = new List<string>();
                 List<string> rowHeaders = new List<string>();
+                int maxCols = 0;
+                int rows = 0;
+                int cols = 0;
 
                 this.tableName = tableName;
 
@@ -825,11 +974,15 @@ namespace UniversalPatcher
                         {
                             tableNameList.Add(mTd.TableName);
                         }
+                        if (mTd.Columns > maxCols)
+                            maxCols = mTd.Columns;
                     }
                     for (int i = 0; i < tableIds.Count; i++)
                     {
                         filteredTables.Add(PCM.tableDatas[tableIds[i]]);
                     }
+                    rows = tableIds.Count;
+                    cols = maxCols;
                 }
                 else
                 {
@@ -838,6 +991,8 @@ namespace UniversalPatcher
                     var results = PCM.tableDatas.Where(t => t.TableName.StartsWith(filterName));
                     filteredTables = new List<TableData>(results.ToList());
                     filteredTables = filteredTables.OrderBy(o => o.addrInt).ToList();
+                    cols = filteredTables.Count;
+                    rows = filteredTables[0].Rows;
                 }
 
                 if (resetBuffer || tableBuffer == null || tableBuffer.Length == 0)
@@ -854,7 +1009,6 @@ namespace UniversalPatcher
                     tableBufferOffset = first.addrInt;
                 }
 
-
                 if (rowHeaders.Count > 0 && rowHeaders[0].Contains("]["))
                 { //Tablename Have [][][]
                     numColumn.Enabled = true;
@@ -866,9 +1020,10 @@ namespace UniversalPatcher
                 dataGridView1.Rows.Clear();
                 dataGridView1.Columns.Clear();
 
+
                 bool xySwapped = chkSwapXY.Checked;
 
-                if (td.Rows < 2)
+                if ((multiSelect && maxCols < 3) || cols > rows)
                     xySwapped = !chkSwapXY.Checked;
 
                 if (xySwapped)
@@ -891,20 +1046,20 @@ namespace UniversalPatcher
                                 if (cmpId > -1)
                                 {
                                     compareTd = comparePCM.tableDatas[cmpId];
+                                    TableValueType vt = getValueType(compareTd);
+                                    if (vt == TableValueType.boolean || vt == TableValueType.selection)
+                                    {
+                                        if (radioDifference.Checked)
+                                        {
+                                            continue; //Skip, can't show difference for boolean & enum
+                                        }
+                                    }
                                 }
                                 else
                                 {
                                     _ = compareTd = null;
                                     if (radioCompareFile.Checked || radioDifference.Checked)
                                         continue; //Skip, table not found
-                                }
-                                TableValueType vt = getValueType(compareTd);
-                                if (vt == TableValueType.boolean || vt == TableValueType.selection)
-                                {
-                                    if (radioDifference.Checked)
-                                    {
-                                        continue; //Skip, can't show difference for boolean & enum
-                                    }
                                 }
                             }
                         }
@@ -965,21 +1120,21 @@ namespace UniversalPatcher
                                 int cmpId = tableIdList[tbl].cmpId;
                                 if (cmpId > -1)
                                 {
-                                    compareTd = PCM.tableDatas[cmpId];
+                                    compareTd = comparePCM.tableDatas[cmpId];
+                                    TableValueType vt = getValueType(compareTd);
+                                    if (vt == TableValueType.boolean || vt == TableValueType.selection)
+                                    {
+                                        if (radioDifference.Checked)
+                                        {
+                                            continue; //Skip, can't show difference for boolean & enum
+                                        }
+                                    }
                                 }
                                 else
                                 {
                                     _ = compareTd = null;
                                     if (radioCompareFile.Checked || radioDifference.Checked)
                                         continue; //Skip, table not found
-                                }
-                                TableValueType vt = getValueType(compareTd);
-                                if (vt == TableValueType.boolean || vt == TableValueType.selection)
-                                {
-                                    if (radioDifference.Checked)
-                                    {
-                                        continue; //Skip, can't show difference for boolean & enum
-                                    }
                                 }
                             }
                         }
@@ -1016,12 +1171,110 @@ namespace UniversalPatcher
 
                         }
                     }
+
                     if (td.TableName.StartsWith("DTC"))
                     {
                         showDtdDescriptions();
                     }
 
                 }
+
+                if (false)
+                {
+                    useComparePcm();
+                    if (xySwapped)
+                    {
+                        //Swapped, put ROWheaders to COLUMNS
+                        int gridRow = 0;
+                        for (int tbl = 0; tbl < tableIds.Count; tbl++) ///Go thru all filtered tables
+                        {
+                            int gridCol = 0;
+                            TableData ft = comparePCM.tableDatas[tableIds[tbl]];
+                            int elementsize = getElementSize(ft.DataType);
+                            uint addr = (uint)(ft.addrInt + ft.Offset);
+                            if (!ft.RowMajor)
+                            {
+                                for (int r = 0; r < ft.Rows; r++) //All rows from table
+                                {
+                                    gridCol = getColumnByTableData_XySwap(ft, r);
+                                    for (int c = 0; c < ft.Columns; c++) //All columns from table (Only 1 in this case?)
+                                    {
+                                        gridRow = getRowByTableData_XySwap(ft, c);
+                                        addCellByType(ft, gridRow, gridCol);
+                                        setCellValue(addr, gridRow, gridCol, ft);
+                                        addr += (uint)elementsize;
+                                    }
+                                }
+                            }
+                            else //Rowmajor
+                            {
+                                for (int c = 0; c < ft.Columns; c++)
+                                {
+                                    if (dataGridView1.ColumnCount > 0) // Can't add rows if no columns defined
+                                        gridRow = getRowByTableData_XySwap(ft, c);
+                                    for (int r = 0; r < ft.Rows; r++)
+                                    {
+                                        gridCol = getColumnByTableData_XySwap(ft, r);
+                                        if (dataGridView1.RowCount == 0)
+                                            gridRow = getRowByTableData_XySwap(ft, c); //Create first row
+                                        addCellByType(ft, gridRow, gridCol);
+                                        setCellValue(addr, gridRow, gridCol, ft);
+                                        addr += (uint)elementsize;
+                                    }
+                                }
+
+                            }
+
+                        }
+                    }
+                    else //Not xyswapped
+                    {
+                        int gridRow = 0;
+                        for (int tbl = 0; tbl < tableIds.Count; tbl++)
+                        {
+                            TableData ft = comparePCM.tableDatas[tableIds[tbl]];
+                            int elementsize = getElementSize(ft.DataType);
+                            int gridCol = 0;
+                            uint addr = (uint)(ft.addrInt + ft.Offset);
+                            if (ft.RowMajor)
+                            {
+                                for (int r = 0; r < ft.Rows; r++)
+                                {
+                                    if (dataGridView1.ColumnCount > 0) // Can't add rows if no columns defined
+                                        gridRow = getRowByTableData(ft, r);
+                                    for (int c = 0; c < ft.Columns; c++)
+                                    {
+                                        gridCol = getColumnByTableData(ft, c);
+                                        if (dataGridView1.RowCount == 0)
+                                            gridRow = getRowByTableData(ft, r); //Create first row
+                                        addCellByType(ft, gridRow, gridCol);
+                                        setCellValue(addr, gridRow, gridCol, ft);
+                                        addr += (uint)elementsize;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                for (int c = 0; c < ft.Columns; c++)
+                                {
+                                    for (int r = 0; r < ft.Rows; r++)
+                                    {
+                                        gridCol = getColumnByTableData(ft, c);
+                                        gridRow = getRowByTableData(ft, r);
+                                        addCellByType(ft, gridRow, gridCol);
+                                        setCellValue(addr, gridRow, gridCol, ft);
+                                        addr += (uint)elementsize;
+                                    }
+                                }
+
+                            }
+                        }
+
+                    }
+                    useOrigPcm();
+                }
+
+
                 for (int r = 0; r < dataGridView1.Rows.Count; r++)
                 {
                     for (int c = 0; c < dataGridView1.Columns.Count; c++)
@@ -1042,7 +1295,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+                LoggerBold("Error, line " + line + ": " + ex.Message);
             }
         }
 
@@ -1124,7 +1377,10 @@ namespace UniversalPatcher
         {
             try
             {
-
+                if (comparePCM == null)
+                    copyFromCompareToolStripMenuItem.Visible = false;
+                else
+                    copyFromCompareToolStripMenuItem.Visible = true;
 
                 if (tableIds.Count > 1)
                 {
@@ -1215,7 +1471,6 @@ namespace UniversalPatcher
                     rowHeaders = loadHeaderFromTable(parts[1], td.Rows).Split(',');
                 }
 
-
                 if (swapXyToolStripMenuItem.Checked)
                 {
                     //Swap col/row
@@ -1226,15 +1481,30 @@ namespace UniversalPatcher
                     colHeaders = tmp;
                 }
 
-                dataGridView1.Rows.Clear();
-                dataGridView1.Columns.Clear();
+                int colMultiplier = 1;
                 if (radioSideBySide.Checked)
                 {
-                    dataGridView1.ColumnCount = colCount;
+                    string[] tmpHdr = new string[colHeaders.Length * 2];
+                    for (int i = 0; i < colHeaders.Length; i++)
+                    {
+                        tmpHdr[i * 2] = colHeaders[i];
+                        tmpHdr[i * 2 + 1] = "(" + colHeaders[i] + ")";
+                    }
+                    colHeaders = tmpHdr;
+                    colMultiplier = 2;
                 }
-                else if (getValueType(td) == TableValueType.boolean)
+
+                dataGridView1.Rows.Clear();
+                dataGridView1.Columns.Clear();
+
+
+                int gridColCount = colCount;
+                if (radioSideBySide.Checked)
+                    gridColCount = colCount * 2;
+
+                if (getValueType(td) == TableValueType.boolean)
                 {
-                    for (int c = 0; c < colCount; c++)
+                    for (int c = 0; c < gridColCount; c++)
                     {
                         DataGridViewCheckBoxColumn col_chkbox = new DataGridViewCheckBoxColumn();
                         dataGridView1.Columns.Add(col_chkbox);
@@ -1249,6 +1519,13 @@ namespace UniversalPatcher
 
                     Dictionary<double, string> possibleVals = parseEnumHeaders(td.Values.Replace("Enum: ",""));
                     Dictionary<int, string> possibleIntVals = parseIntEnumHeaders(td.Values.Replace("Enum: ", ""));
+                    Dictionary<double, string> compareVals = possibleVals;
+                    Dictionary<int, string> compareIntVals = possibleIntVals;
+                    if (radioSideBySide.Checked)
+                    {
+                        compareVals = parseEnumHeaders(compareTd.Values.Replace("Enum: ", ""));
+                        compareIntVals = parseIntEnumHeaders(compareTd.Values.Replace("Enum: ", ""));
+                    }
                     //List <comboValues> possibleVals = parseEnumHeadersToList(td.Values.Replace("Enum: ", ""));
                     for (int c = 0; c < colCount; c++)
                     {
@@ -1262,15 +1539,34 @@ namespace UniversalPatcher
                         comboCol.DisplayMember = "Value";
                         comboCol.ValueMember = "Key";
                         dataGridView1.Columns.Add(comboCol);
+                        if (radioSideBySide.Checked)
+                        {
+                            comboCol = new DataGridViewComboBoxColumn();
+                            if (compareTd.OutputType == OutDataType.Float)
+                                comboCol.DataSource = new BindingSource(compareVals, null);
+                            else
+                                comboCol.DataSource = new BindingSource(compareIntVals, null);
+                            //comboCol.DataSource = possibleVals;
+                            //comboCol.DataPropertyName = "value";
+                            comboCol.DisplayMember = "Value";
+                            comboCol.ValueMember = "Key";
+                            int cmpCol = dataGridView1.Columns.Add(comboCol);
+                        }
                     }
                     //Array.Clear(rowHeaders, 0, rowHeaders.Length);
 
                 }
                 else
                 {
-                    dataGridView1.ColumnCount = colCount;
+                    dataGridView1.ColumnCount = gridColCount;
                 }
 
+                if (radioSideBySide.Checked)
+                {
+                    for (int i = 1; i < dataGridView1.Columns.Count; i += 2)
+                        dataGridView1.Columns[i].HeaderCell.Style.Font = new Font(dataGridView1.Font, FontStyle.Bold);
+
+                }
                 //dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader; // .AutoResizeColumns(DataGridViewAutoSizeColumnsMode.Fill);
                 int step = getBits(td.DataType) / 8;
 
@@ -1283,7 +1579,7 @@ namespace UniversalPatcher
                     {
                         for (int r = 0; r < rowCount; r++)
                         {
-                            setCellValue(addr, r, c, td);
+                            setCellValue(addr, r, c * colMultiplier, td);
                             addr += (uint)step;
                         }
                     }
@@ -1296,12 +1592,12 @@ namespace UniversalPatcher
                         var index = dataGridView1.Rows.Add();
                         for (int c = 0; c < colCount; c++)
                         {
-                            setCellValue(addr, r, c, td);
+                            setCellValue(addr, r, c * colMultiplier, td);
                             addr += (uint)step;
                         }
                     }
                 }
-                for (int c = 0; c < colCount; c++)
+                for (int c = 0; c < gridColCount; c++)
                 {
                     string headerTxt = "";
                     if (c > colHeaders.Length - 1 || colHeaders[0].Length == 0)
@@ -1310,6 +1606,7 @@ namespace UniversalPatcher
                         headerTxt = colHeaders[c];
                     dataGridView1.Columns[c].HeaderText = headerTxt;
                 }
+
 
                 for (int r = 0; r < rowHeaders.Length; r++)
                 {
@@ -1348,7 +1645,7 @@ namespace UniversalPatcher
                 {
                     formatStr = "X" + ((int)numDecimals.Value).ToString() ;
                 }
-                else if (td.OutputType == OutDataType.Text || td.OutputType == OutDataType.Flag || radioSideBySide.Checked)
+                else if (td.OutputType == OutDataType.Text || td.OutputType == OutDataType.Flag )
                 {
                     formatStr = "";
                 }
@@ -1439,7 +1736,17 @@ namespace UniversalPatcher
                             SaveValue(t.addr, e.RowIndex, e.ColumnIndex, PCM.tableDatas[t.id]);
                     }
                     if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != lastValue)
-                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.Yellow;
+                    {
+                        if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].GetType() == typeof(DataGridViewComboBoxCell)|| dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].GetType() == typeof(DataGridViewComboBoxColumn))
+                        {
+                            DataGridViewComboBoxCell cell = (DataGridViewComboBoxCell)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                            cell.Style.Font = new Font(dataGridView1.Font, FontStyle.Italic);
+                        }
+                        else
+                        {
+                            dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.Yellow;
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -1777,6 +2084,11 @@ namespace UniversalPatcher
         {
             if (dataGridView1.SelectedCells.Count > 0)
                 dataGridView1.ContextMenuStrip = contextMenuStrip1;
+            if (radioSideBySide.Checked && e.ColumnIndex % 2 == 0)
+                copyFromCompareToolStripMenuItem.Visible = true;
+            else
+                copyFromCompareToolStripMenuItem.Visible = false;
+
         }
 
         private void exportCsv()
@@ -1956,38 +2268,48 @@ namespace UniversalPatcher
             loadMultiTable(mtn.TableName,false);
         }
 
+        private void useComparePcm()
+        {
+            origTableIds = tableIds;
+            tableIds = new List<int>();
+            for (int i = 0; i < tableIdList.Count; i++)
+            {
+                if (tableIdList[i].cmpId > -1)
+                {
+                    tableIds.Add(tableIdList[i].cmpId);
+                }
+            }
+            td = comparePCM.tableDatas[tableIds[0]];
+            PCM = comparePCM;
+            origTableBuffer = tableBuffer;
+            origTableBufferOffset = tableBufferOffset;
+            tableBuffer = null;
+            disableSaving = true;
+            comparePcmInUse = true;
+        }
+
+        private void useOrigPcm()
+        {
+            td = origTd;
+            tableIds = origTableIds;
+            disableSaving = false;
+            comparePcmInUse = false;
+            tableBuffer = origTableBuffer;
+            tableBufferOffset = origTableBufferOffset;
+            PCM = origPCM;
+        }
+
         private void radioCompareFile_CheckedChanged(object sender, EventArgs e)
         {
             if (radioCompareFile.Checked)
             {
                 dataGridView1.BackgroundColor = Color.Red;
-                disableSaving = true;
-                PCM = comparePCM;
-                origTableIds = tableIds;
-                tableIds = new List<int>();
-                td = compareTd;
-                for (int i=0; i< tableIdList.Count; i++)
-                {
-                    if (tableIdList[i].cmpId > -1)
-                    {
-                        tableIds.Add(tableIdList[i].cmpId);
-                    }
-                }
-                if (td == null)
-                    td = PCM.tableDatas[tableIds[0]];
+                useComparePcm();
                 setMyText();
-                origTableBuffer = new byte[tableBuffer.Length];
-                Array.Copy(tableBuffer, origTableBuffer, tableBuffer.Length);
-                origBufferOffset = tableBufferOffset;
-                tableBuffer = null; 
             }
             else
             {
-                PCM = origPCM;
-                td = origTd;
-                tableIds = origTableIds;
-                tableBuffer = origTableBuffer;
-                tableBufferOffset = origBufferOffset;
+                useOrigPcm();
             }
             
             loadTable(false);
@@ -2008,7 +2330,7 @@ namespace UniversalPatcher
             if (radioSideBySide.Checked)
             {
                 dataGridView1.BackgroundColor = Color.Red;
-                disableSaving = true;
+                //disableSaving = true;
                 setMyText();
             }
             graphToolStripMenuItem.Enabled = !radioSideBySide.Checked;            
@@ -2083,5 +2405,29 @@ namespace UniversalPatcher
         {
         }
 
+        private void copyFromCompareToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            List<int> rows = new List<int>();
+            List<int> cols = new List<int>();
+            for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
+            {
+                rows.Add(dataGridView1.SelectedCells[i].RowIndex);
+                cols.Add(dataGridView1.SelectedCells[i].ColumnIndex);
+
+            }
+            for (int i=0; i< rows.Count; i++)
+            { 
+                int row = rows[i];
+                int col = cols[i];
+                if (col == 0 || col % 2 > 0)   //Original values in columns 0, 2, 4 ...
+                {
+                    dataGridView1.CurrentCell = dataGridView1.Rows[row].Cells[col];
+                    dataGridView1.BeginEdit(true);
+                    var val = dataGridView1.Rows[row].Cells[col + 1].Value;
+                    dataGridView1.Rows[row].Cells[col].Value = val;
+                    dataGridView1.EndEdit();
+                }
+            }
+        }
     }
 }

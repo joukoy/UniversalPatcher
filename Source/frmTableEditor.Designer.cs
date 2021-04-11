@@ -67,6 +67,7 @@ namespace UniversalPatcher
             this.radioOriginal = new System.Windows.Forms.RadioButton();
             this.numDecimals = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
+            this.copyFromCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -129,9 +130,10 @@ namespace UniversalPatcher
             this.copyToolStripMenuItem,
             this.pasteToolStripMenuItem,
             this.exportCsvToolStripMenuItem,
-            this.searchCodeFromGoogleToolStripMenuItem});
+            this.searchCodeFromGoogleToolStripMenuItem,
+            this.copyFromCompareToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(196, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(196, 158);
             // 
             // cutToolStripMenuItem
             // 
@@ -416,6 +418,14 @@ namespace UniversalPatcher
             this.label1.TabIndex = 12;
             this.label1.Text = "Decimals:";
             // 
+            // copyFromCompareToolStripMenuItem
+            // 
+            this.copyFromCompareToolStripMenuItem.Name = "copyFromCompareToolStripMenuItem";
+            this.copyFromCompareToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.copyFromCompareToolStripMenuItem.Text = "Copy from compare";
+            this.copyFromCompareToolStripMenuItem.Visible = false;
+            this.copyFromCompareToolStripMenuItem.Click += new System.EventHandler(this.copyFromCompareToolStripMenuItem_Click);
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -488,5 +498,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem dataFontToolStripMenuItem;
         private ToolStripMenuItem saveOBD2DescriptionsToolStripMenuItem;
         private ToolStripMenuItem searchCodeFromGoogleToolStripMenuItem;
+        private ToolStripMenuItem copyFromCompareToolStripMenuItem;
     }
 }
