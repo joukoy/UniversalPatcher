@@ -31,6 +31,8 @@ namespace UniversalPatcher
         {
             public uint addr { get; set;}
             public int id { get; set; }
+            public object lastValue { get; set; }
+            public object origValue { get; set; }
         }
 
         private enum ColType
@@ -94,12 +96,10 @@ namespace UniversalPatcher
         private bool disableSaving = false;
         private uint bufSize = 0;
         Font dataFont;
-        private object lastValue;
 
         public bool disableMultiTable = false;
         public bool multiSelect = false;
         private bool duplicateTableName = false;
-        private bool compare1d = false;
         private bool comparePcmInUse = false;
         List<TableData> filteredTables;
 
@@ -131,7 +131,10 @@ namespace UniversalPatcher
                 }
             }
             disableTooltipsToolStripMenuItem.Checked = false;
+            dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
+            dataGridView1.RowHeaderMouseClick += DataGridView1_RowHeaderMouseClick;
         }
+
 
         private void frmTableEditor_FormClosing(object sender, EventArgs e)
         {
@@ -187,6 +190,17 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
             }
+        }
+        private void DataGridView1_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            for (int c = 0; c < dataGridView1.Columns.Count; c++)
+                dataGridView1.Rows[e.RowIndex].Cells[c].Selected = true;
+        }
+
+        private void DataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            for (int r = 0; r < dataGridView1.Rows.Count; r++)
+                dataGridView1.Rows[r].Cells[e.ColumnIndex].Selected = true;
         }
 
         public void prepareTable(TableData _td,List<int> _tableIds )
@@ -475,10 +489,6 @@ namespace UniversalPatcher
                     dataGridView1.Rows[row].Cells[col].GetType() != typeof(DataGridViewCheckBoxCell) &&
                     dataGridView1.Rows[row].Cells[col].GetType() != typeof(DataGridViewComboBoxCell))
                 {
-                    if (origVal != curVal)
-                    {
-                        dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Yellow;
-                    }
                     if (showSidebySide)
                     {
                         if (curVal != cmpVal)
@@ -494,7 +504,9 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        if (curVal < (mathTd.Max * 0.9) && curVal > (mathTd.Min * 1.1))
+                        if (origVal != curVal)
+                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Yellow;
+                        else if (curVal < (mathTd.Max * 0.9) && curVal > (mathTd.Min * 1.1))
                             dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.White;
                         else if (curVal > mathTd.Max)
                             dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Pink;
@@ -524,6 +536,8 @@ namespace UniversalPatcher
                 Tagi t = new Tagi();
                 t.addr = addr;
                 t.id = (int)mathTd.id;
+                t.lastValue = showVal;
+                t.origValue = origVal;
                 dataGridView1.Rows[row].Cells[col].Tag = t;
                 /*if (showSidebySide)
                 {
@@ -1686,8 +1700,6 @@ namespace UniversalPatcher
 
         private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            lastValue = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
-
             if (disableSaving)
             {
                 e.Cancel = true;
@@ -1700,16 +1712,36 @@ namespace UniversalPatcher
         {
             try
             {
+                Tagi tg = new Tagi();
+                if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag != null)
+                {
+                    tg = (Tagi)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag;
+                }
                 if ( dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value == null || String.IsNullOrWhiteSpace(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString()))
                 {
-                    dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = lastValue;
-                    return;
+                    if (tg.lastValue != null)
+                    {
+                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = tg.lastValue;
+                        return;
+                    }
                 }
 
                 if (e.RowIndex > -1)
                 {
-                    Tagi t = (Tagi)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Tag;
-                    if (td.TableName.StartsWith("DTC") && t.addr == (uint.MaxValue - 1))
+                    if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != tg.lastValue)
+                    {
+                        if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].GetType() == typeof(DataGridViewComboBoxCell) || dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].GetType() == typeof(DataGridViewComboBoxColumn))
+                        {
+                            DataGridViewComboBoxCell cell = (DataGridViewComboBoxCell)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                            cell.Style.Font = new Font(dataGridView1.Font, FontStyle.Italic);
+                        }
+                        else
+                        {
+                            dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.Yellow;
+                        }
+                    }
+
+                    if (td.TableName.StartsWith("DTC") && tg.addr == (uint.MaxValue - 1))
                     {
                         //OBD2 Description
                         OBD2Code oc = new OBD2Code();
@@ -1732,20 +1764,8 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != lastValue)
-                            SaveValue(t.addr, e.RowIndex, e.ColumnIndex, PCM.tableDatas[t.id]);
-                    }
-                    if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != lastValue)
-                    {
-                        if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].GetType() == typeof(DataGridViewComboBoxCell)|| dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].GetType() == typeof(DataGridViewComboBoxColumn))
-                        {
-                            DataGridViewComboBoxCell cell = (DataGridViewComboBoxCell)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                            cell.Style.Font = new Font(dataGridView1.Font, FontStyle.Italic);
-                        }
-                        else
-                        {
-                            dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor = Color.Yellow;
-                        }
+                        if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != tg.lastValue)
+                            SaveValue(tg.addr, e.RowIndex, e.ColumnIndex, PCM.tableDatas[tg.id]);
                     }
                 }
             }
@@ -1833,6 +1853,12 @@ namespace UniversalPatcher
         {
             UInt32 bufAddr = addr - tableBufferOffset;
 
+            Tagi tg = new Tagi();
+            if (dataGridView1.Rows[r].Cells[c].Tag != null)
+            {
+                tg = (Tagi)dataGridView1.Rows[r].Cells[c].Tag;
+                tg.lastValue = dataGridView1.Rows[r].Cells[c].Value;
+            }
             if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != "")
             {
                 bool flag = Convert.ToBoolean(dataGridView1.Rows[r].Cells[c].Value);
