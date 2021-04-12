@@ -134,7 +134,7 @@ namespace UniversalPatcher
             this.searchCodeFromGoogleToolStripMenuItem,
             this.copyFromCompareToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(196, 136);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(196, 158);
             // 
             // cutToolStripMenuItem
             // 

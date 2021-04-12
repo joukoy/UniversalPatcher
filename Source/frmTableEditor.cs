@@ -194,12 +194,16 @@ namespace UniversalPatcher
         }
         private void DataGridView1_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
+            if (Form.ModifierKeys != Keys.Control )
+                dataGridView1.ClearSelection();
             for (int c = 0; c < dataGridView1.Columns.Count; c++)
                 dataGridView1.Rows[e.RowIndex].Cells[c].Selected = true;
         }
 
         private void DataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
+            if (Form.ModifierKeys != Keys.Control)
+                dataGridView1.ClearSelection();
             for (int r = 0; r < dataGridView1.Rows.Count; r++)
                 dataGridView1.Rows[r].Cells[e.ColumnIndex].Selected = true;
         }
@@ -617,78 +621,140 @@ namespace UniversalPatcher
             return headers;
         }
 
-
-        private int getColumnByTableData(TableData cTd,int col)
+        private string generateHeaderA(TableData cTd, int idX)
         {
-            int ind = int.MinValue;
-            string colName = "";
+            string hdrTxt = "";
 
-            //if (cTd.Columns == dataGridView1.Columns.Count)
-            //  return col;
+            if (only1d)
+                return "-";
 
             if (cTd.Columns == 1 && multiSelect == false)
             {
                 if (multiSelect)
                 {
-                    colName = cTd.TableName;
+                    hdrTxt = cTd.TableName;
                     if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
-                        colName += " " + cTd.ColumnHeaders.Trim();
+                        hdrTxt += " " + cTd.ColumnHeaders.Trim();
                 }
                 else
                 {
                     MultiTableName mtn = new MultiTableName(cTd.TableName, (int)numColumn.Value);
-                    colName = mtn.columnName;
+                    hdrTxt = mtn.columnName;
                     if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
-                        colName += " " + cTd.ColumnHeaders.Trim();
+                        hdrTxt += " " + cTd.ColumnHeaders.Trim();
                 }
             }
             else if (cTd.ColumnHeaders.StartsWith("Table: "))
             {
                 string[] parts = cTd.ColumnHeaders.Split(' ');
                 string[] colHeaders = loadHeaderFromTable(parts[1], cTd.Columns).Split(',');
-                colName += colHeaders[col];
+                hdrTxt += colHeaders[idX];
             }
             else if (cTd.ColumnHeaders.Contains(','))
             {
                 if (duplicateTableName)
-                    colName += "(" + cTd.id + ") ";
+                    hdrTxt += "(" + cTd.id + ") ";
 
                 string[] tParts = cTd.ColumnHeaders.Split(',');
-                if (tParts.Length >= (col -1))
-                    colName += tParts[col].Trim();
+                if (tParts.Length >= (idX - 1))
+                    hdrTxt += tParts[idX].Trim();
                 if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
-                    colName += " " + cTd.ColumnHeaders.Trim();
+                    hdrTxt += " " + cTd.ColumnHeaders.Trim();
             }
             else if (cTd.ColumnHeaders != "")
             {
-                colName += cTd.ColumnHeaders;
+                hdrTxt += cTd.ColumnHeaders;
                 if (cTd.Columns > 1)
-                    colName += " (" + col.ToString() + ")";
+                    hdrTxt += " (" + idX.ToString() + ")";
             }
             else
             {
-                colName += "(" + col.ToString() +")";
+                hdrTxt += "(" + idX.ToString() + ")";
             }
             if (multiSelect && !only1d)
             {
-                colName += Environment.NewLine + "[" + cTd.TableName + "]" + colName;
+                hdrTxt += "[" + cTd.TableName + "]" + hdrTxt;
                 if (duplicateTableName)
-                    colName += " [" + cTd.id + "]";
+                    hdrTxt += " [" + cTd.id + "]";
             }
+
+            return hdrTxt;
+        }
+
+        private string generateHeaderB(TableData cTd, int idX)
+        {
+            string hdrTxt = "";
+
+            if (cTd.Rows == 1 && multiSelect == false)
+            {
+                MultiTableName mtn = new MultiTableName(cTd.TableName, (int)numColumn.Value);
+                hdrTxt = mtn.RowName;
+                if (hdrTxt == "")
+                    hdrTxt = mtn.TableName;
+                Debug.WriteLine("getRowByTableData: By tablename: " + hdrTxt);
+            }
+            else if (cTd.RowHeaders.StartsWith("Table: "))
+            {
+                string[] parts = cTd.RowHeaders.Split(' ');
+                string[] rowHeaders = loadHeaderFromTable(parts[1], cTd.Rows).Split(',');
+                hdrTxt += rowHeaders[idX];
+            }
+            else if (cTd.RowHeaders.Contains(','))
+            {
+                string[] tParts = cTd.RowHeaders.Split(',');
+                if (tParts.Length >= (idX - 1))
+                {
+                    hdrTxt += tParts[idX].Trim();
+                    Debug.WriteLine("getRowByTableData: By current TD " + hdrTxt);
+                }
+            }
+            else if (td.RowHeaders.Contains(',') && multiSelect == false)
+            {
+                string[] tParts = td.RowHeaders.Split(',');
+                if (tParts.Length >= (idX - 1))
+                {
+                    hdrTxt += tParts[idX].Trim();
+                    Debug.WriteLine("getRowByTableData: By main TD " + hdrTxt);
+                }
+            }
+            else if (cTd.RowHeaders != "")
+            {
+                hdrTxt += cTd.RowHeaders;
+                if (cTd.Rows > 1)
+                    hdrTxt += " (" + idX.ToString() + ")";
+            }
+
+            if (only1d)
+            {
+                hdrTxt = "[" + cTd.TableName + "] " + hdrTxt;
+                if (duplicateTableName)
+                    hdrTxt += " [" + cTd.id + "] ";
+            }
+            else if (hdrTxt == "")
+                hdrTxt = "(" + idX.ToString() + ")";
+
+            return hdrTxt;
+        }
+
+        private int getColumnByTableData(TableData cTd,int col)
+        {
+            int ind = int.MinValue;
+
+            string hdrTxt = generateHeaderA(cTd, col);
 
             for (int c = 0; c < dataGridView1.Columns.Count; c++)
             {
-                if (dataGridView1.Columns[c].HeaderText == colName)
+                if (dataGridView1.Columns[c].HeaderText == hdrTxt)
                     ind = c;
             }
                 
             if (ind < 0)
             {
-                ind = dataGridView1.Columns.Add(colName, colName);
+                ind = dataGridView1.Columns.Add(hdrTxt, hdrTxt);
                 if (radioSideBySide.Checked)
                 {
-                    colName = "(" + colName + ")";
-                    int cmpCol = dataGridView1.Columns.Add(colName, colName);
+                    hdrTxt = "(" + hdrTxt + ")";
+                    int cmpCol = dataGridView1.Columns.Add(hdrTxt, hdrTxt);
                     dataGridView1.Columns[cmpCol].HeaderCell.Style.Font = new Font(dataGridView1.Font, FontStyle.Bold);
                 }
 
@@ -699,57 +765,22 @@ namespace UniversalPatcher
         private int getColumnByTableData_XySwap(TableData cTd, int col)
         {
             int ind = int.MinValue;
-            string colName = "";
-
-            if (cTd.Rows == 1 && multiSelect == false)
-            {
-                MultiTableName mtn = new MultiTableName(cTd.TableName, (int)numColumn.Value);
-                colName = mtn.RowName;
-                if (colName == "")
-                    colName = mtn.TableName;
-            }
-            else if (cTd.RowHeaders.StartsWith("Table: "))
-            {
-                string[] parts = cTd.RowHeaders.Split(' ');
-                string[] colHeaders = loadHeaderFromTable(parts[1], cTd.Rows).Split(',');
-                colName += colHeaders[col];
-            }
-            else if (cTd.RowHeaders.Contains(','))
-            {
-                string[] tParts = cTd.RowHeaders.Split(',');
-                if (tParts.Length >= (col - 1))
-                    colName += tParts[col].Trim();
-            }
-            else if (cTd.RowHeaders != "")
-            {
-                colName += cTd.RowHeaders;
-                if (cTd.Rows > 1)
-                    colName += " (" + col.ToString() + ")";
-            }
-
-            if (only1d)
-            {
-                colName += Environment.NewLine + "[" + cTd.TableName + "]" + colName;
-                if (duplicateTableName)
-                    colName += " [" + cTd.id + "]";
-            }
-            else if (colName == "")
-                colName = "(" + col.ToString() +")";
-
+            
+            string hdrTxt = generateHeaderB(cTd, col);
 
             for (int c = 0; c < dataGridView1.Columns.Count; c++)
             {
-                if (dataGridView1.Columns[c].HeaderText == colName)
+                if (dataGridView1.Columns[c].HeaderText == hdrTxt)
                     ind = c;
             }
 
             if (ind<0)
             {
-                ind = dataGridView1.Columns.Add(colName, colName);
+                ind = dataGridView1.Columns.Add(hdrTxt, hdrTxt);
                 if (radioSideBySide.Checked)
                 {
-                    colName = "(" + colName + ")";
-                    int cmpCol = dataGridView1.Columns.Add(colName, colName);
+                    hdrTxt = "(" + hdrTxt + ")";
+                    int cmpCol = dataGridView1.Columns.Add(hdrTxt, hdrTxt);
                     dataGridView1.Columns[cmpCol].HeaderCell.Style.Font = new Font(dataGridView1.Font, FontStyle.Bold);
                 }
             }
@@ -759,71 +790,18 @@ namespace UniversalPatcher
         private int getRowByTableData(TableData cTd, int row)
         {
             int ind = int.MinValue;
-            string rowName = "";
 
-            if (cTd.Rows == dataGridView1.Rows.Count)
-            {
-                Debug.WriteLine("getRowByTableData: cTd.Rows == dataGridView1.Rows.Count");
-                //return row;
-            }
-           
-            if (cTd.Rows == 1 && multiSelect == false)
-            {
-                MultiTableName mtn = new MultiTableName(cTd.TableName, (int)numColumn.Value);
-                rowName = mtn.RowName;
-                if (rowName == "")
-                    rowName = mtn.TableName;
-                Debug.WriteLine("getRowByTableData: By tablename: " + rowName);
-            }
-            else if (cTd.RowHeaders.StartsWith("Table: "))
-            {
-                string[] parts = cTd.RowHeaders.Split(' ');
-                string[] rowHeaders = loadHeaderFromTable(parts[1], cTd.Rows).Split(',');
-                rowName += rowHeaders[row];
-            }
-            else if (cTd.RowHeaders.Contains(','))
-            {
-                string[] tParts = cTd.RowHeaders.Split(',');
-                if (tParts.Length >= (row - 1))
-                {
-                    rowName += tParts[row].Trim();
-                    Debug.WriteLine("getRowByTableData: By current TD " + rowName);
-                }
-            }
-            else if (td.RowHeaders.Contains(',') && multiSelect == false)
-            {
-                string[] tParts = td.RowHeaders.Split(',');
-                if (tParts.Length >= (row - 1))
-                {
-                    rowName += tParts[row].Trim();
-                    Debug.WriteLine("getRowByTableData: By main TD " + rowName);
-                }
-            }
-            else if (cTd.RowHeaders != "")
-            {
-                rowName += cTd.RowHeaders;
-                if (cTd.Rows > 1)
-                    rowName += " (" + row.ToString() + ")";
-            }
-
-            if (only1d)
-            {
-                rowName = "[" + cTd.TableName + "] " + rowName;
-                if (duplicateTableName)
-                    rowName += " [" + cTd.id + "] ";
-            }
-            else if (rowName == "")
-                rowName = "(" +row.ToString() +")";
+            string hdrTxt = generateHeaderB(cTd, row);
 
             for (int c = 0; c < dataGridView1.Rows.Count; c++)
             {
-                if (dataGridView1.Rows[c].HeaderCell.Value.ToString() == rowName)
+                if (dataGridView1.Rows[c].HeaderCell.Value.ToString() == hdrTxt)
                     ind = c;
             }
             if (ind < 0)
             {
                 ind = dataGridView1.Rows.Add();
-                dataGridView1.Rows[ind].HeaderCell.Value = rowName;
+                dataGridView1.Rows[ind].HeaderCell.Value = hdrTxt;
             }
             return ind;
         }
@@ -831,88 +809,18 @@ namespace UniversalPatcher
         private int getRowByTableData_XySwap(TableData cTd, int row)
         {
             int ind = int.MinValue;
-            string rowName = "";
 
-
-            if (cTd.Columns == dataGridView1.Rows.Count)
-            {
-                Debug.WriteLine("getRowByTableData_XySwap: cTd.Columns == dataGridView1.Rows.Count");
-                //return row;
-            }
-
-            if (cTd.Columns == 1 && multiSelect == false)
-            {
-                if (tableIds.Count > 1)
-                {
-                    rowName = cTd.TableName;
-                    if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
-                        rowName += " " + cTd.ColumnHeaders.Trim();
-                    Debug.WriteLine("getRowByTableData_XySwap: By tablename: " + rowName);
-                }
-                else
-                {
-                    MultiTableName mtn = new MultiTableName(cTd.TableName, (int)numColumn.Value);
-                    rowName = mtn.columnName;
-                    if (cTd.ColumnHeaders != null && cTd.ColumnHeaders != "" && !cTd.ColumnHeaders.Contains(","))
-                        rowName += " " + cTd.ColumnHeaders.Trim();
-                    Debug.WriteLine("getRowByTableData_XySwap: By tablename: " + rowName);
-                }
-            }
-            else if (cTd.ColumnHeaders.StartsWith("Table: "))
-            {
-                string[] parts = cTd.ColumnHeaders.Split(' ');
-                string[] rowHeaders = loadHeaderFromTable(parts[1], cTd.Columns).Split(',');
-                rowName += rowHeaders[row];
-            }
-            else if (cTd.ColumnHeaders.Contains(','))
-            {
-                if (duplicateTableName)
-                    rowName += "(" + cTd.id + ") ";
-
-                string[] tParts = cTd.ColumnHeaders.Split(',');
-                if (tParts.Length >= (row - 1))
-                {
-                    rowName += tParts[row].Trim();
-                    Debug.WriteLine("getRowByTableData_XySwap: By current TD " + rowName);
-                }
-            }
-            else if (td.ColumnHeaders.Contains(',') && multiSelect == false)
-            {
-                string[] tParts = td.ColumnHeaders.Split(',');
-                if (tParts.Length >= (row - 1))
-                {
-                    rowName += tParts[row].Trim();
-                    Debug.WriteLine("getRowByTableData_XySwap: By main TD " + rowName);
-                }
-            }
-            else if (cTd.ColumnHeaders != "")
-            {
-                rowName += cTd.ColumnHeaders;
-                if (cTd.Columns > 1)
-                    rowName += " (" + row.ToString() + ")";
-            }
-            else
-            {
-                rowName += "("+ row.ToString()+ ")";
-            }
-
-            if (multiSelect && !only1d)
-            {
-                rowName = "[" + cTd.TableName + "] " + rowName;
-                if (duplicateTableName)
-                    rowName += " [" + cTd.id + "] ";
-            }
-
+            string hdrTxt= generateHeaderA(cTd, row);
 
             for (int c = 0; c < dataGridView1.Rows.Count; c++)
             {
-                if (dataGridView1.Rows[c].HeaderCell.Value.ToString() == rowName)
+                if (dataGridView1.Rows[c].HeaderCell.Value.ToString() == hdrTxt)
                     ind = c;
             }
             if (ind < 0)
             {
                 ind = dataGridView1.Rows.Add();
-                dataGridView1.Rows[ind].HeaderCell.Value = rowName;
+                dataGridView1.Rows[ind].HeaderCell.Value = hdrTxt;
             }
             return ind;
         }
@@ -1147,14 +1055,7 @@ namespace UniversalPatcher
                                 gridCol = getColumnByTableData_XySwap(ft, r);
                                 for (int c = 0; c < ft.Columns; c++) //All columns from table
                                 {
-                                    if (only1d)
-                                    {
-                                        gridRow = 0;
-                                        if (dataGridView1.Rows.Count == 0)
-                                            dataGridView1.Rows.Add();
-                                    }
-                                    else
-                                        gridRow = getRowByTableData_XySwap(ft, c);
+                                    gridRow = getRowByTableData_XySwap(ft, c);
                                     addCellByType(ft, gridRow, gridCol);
                                     setCellValue(addr, gridRow, gridCol, ft);
                                     addr += (uint)elementsize;
@@ -1166,18 +1067,7 @@ namespace UniversalPatcher
                             for (int c = 0; c < ft.Columns; c++)
                             {
                                 if (dataGridView1.ColumnCount > 0) // Can't add rows if no columns defined
-                                {
-                                    if (only1d)
-                                    {
-                                        gridRow = 0;
-                                        if (dataGridView1.Rows.Count == 0)
-                                            dataGridView1.Rows.Add();
-                                    }
-                                    else
-                                    {
                                         gridRow = getRowByTableData_XySwap(ft, c);
-                                    }
-                                }
                                 for (int r = 0; r < ft.Rows; r++)
                                 {                                    
                                     gridCol = getColumnByTableData_XySwap(ft, r);
@@ -1196,8 +1086,6 @@ namespace UniversalPatcher
                 else //Not xyswapped
                 {
                     int gridRow = 0;
-                    if (only1d)
-                        dataGridView1.Columns.Add("-", "-");
                     for (int tbl = 0; tbl < filteredTables.Count; tbl++)
                     {
                         TableData ft = filteredTables[tbl];
@@ -1241,10 +1129,7 @@ namespace UniversalPatcher
                                     gridRow = getRowByTableData(ft, r);
                                 for (int c = 0; c < ft.Columns; c++)
                                 {
-                                    if (only1d)
-                                        gridCol = 0;
-                                    else
-                                        gridCol = getColumnByTableData(ft, c);
+                                    gridCol = getColumnByTableData(ft, c);
                                     if (dataGridView1.RowCount == 0)
                                         gridRow = getRowByTableData(ft, r); //Create first row
                                     addCellByType(ft, gridRow, gridCol);
@@ -1255,16 +1140,11 @@ namespace UniversalPatcher
                         }
                         else
                         {
-                            if (maxCols < 2 && multiSelect)
-                                dataGridView1.Columns.Add("-", "-");
                             for (int c = 0; c < ft.Columns; c++)
                             {
                                 for (int r = 0; r < ft.Rows; r++)
                                 {
-                                    if (only1d)
-                                        gridCol = 0;
-                                    else
-                                        gridCol = getColumnByTableData(ft, c);
+                                    gridCol = getColumnByTableData(ft, c);
                                     gridRow = getRowByTableData(ft, r);
                                     addCellByType(ft, gridRow, gridCol);
                                     setCellValue(addr, gridRow, gridCol, ft);
@@ -1386,11 +1266,6 @@ namespace UniversalPatcher
         {
             try
             {
-                if (comparePCM == null)
-                    copyFromCompareToolStripMenuItem.Visible = false;
-                else
-                    copyFromCompareToolStripMenuItem.Visible = true;
-
                 if (tableIds.Count > 1)
                 {
                     multiSelect = true;
@@ -2344,8 +2219,8 @@ namespace UniversalPatcher
                 setMyText();
                 loadTable(false);
             }
-            graphToolStripMenuItem.Enabled = !radioSideBySide.Checked;            
-
+            graphToolStripMenuItem.Enabled = !radioSideBySide.Checked;
+            copyFromCompareToolStripMenuItem.Enabled = radioSideBySide.Checked;
         }
 
         private void radioOriginal_CheckedChanged(object sender, EventArgs e)
