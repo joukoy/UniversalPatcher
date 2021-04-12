@@ -2172,9 +2172,9 @@ namespace UniversalPatcher
             keyDelayCounter++;
             if (keyDelayCounter > Properties.Settings.Default.keyPressWait100ms)
             {
+                timerFilter.Enabled = false;
                 keyDelayCounter = 0;
                 filterTables();
-                timerFilter.Enabled = false;
             }
         }
 

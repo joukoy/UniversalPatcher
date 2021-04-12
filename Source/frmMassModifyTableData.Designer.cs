@@ -274,6 +274,7 @@ namespace UniversalPatcher
             this.comboFilterBy.Name = "comboFilterBy";
             this.comboFilterBy.Size = new System.Drawing.Size(152, 21);
             this.comboFilterBy.TabIndex = 1;
+            this.comboFilterBy.SelectedIndexChanged += new System.EventHandler(this.comboFilterBy_SelectedIndexChanged);
             // 
             // btnExecute
             // 

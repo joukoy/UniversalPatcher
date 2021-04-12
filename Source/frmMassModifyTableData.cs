@@ -1030,10 +1030,10 @@ namespace UniversalPatcher
             keyDelayCounter++;
             if (keyDelayCounter > Properties.Settings.Default.keyPressWait100ms)
             {
+                timerFilter.Enabled = false;
                 keyDelayCounter = 0;
                 filterData();
                 filterTableList();
-                timerFilter.Enabled = false;
             }
         }
 
@@ -1057,6 +1057,11 @@ namespace UniversalPatcher
         {
             filterData();
             filterTableList();
+        }
+
+        private void comboFilterBy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

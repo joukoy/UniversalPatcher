@@ -43,6 +43,7 @@ namespace UniversalPatcher
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportCsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchCodeFromGoogleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyFromCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,13 +62,13 @@ namespace UniversalPatcher
             this.numColumn = new System.Windows.Forms.NumericUpDown();
             this.labelColumn = new System.Windows.Forms.Label();
             this.groupSelectCompare = new System.Windows.Forms.GroupBox();
+            this.radioSideBySideText = new System.Windows.Forms.RadioButton();
             this.radioSideBySide = new System.Windows.Forms.RadioButton();
             this.radioDifference = new System.Windows.Forms.RadioButton();
             this.radioCompareFile = new System.Windows.Forms.RadioButton();
             this.radioOriginal = new System.Windows.Forms.RadioButton();
             this.numDecimals = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
-            this.copyFromCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -133,7 +134,7 @@ namespace UniversalPatcher
             this.searchCodeFromGoogleToolStripMenuItem,
             this.copyFromCompareToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(196, 158);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(196, 136);
             // 
             // cutToolStripMenuItem
             // 
@@ -170,6 +171,13 @@ namespace UniversalPatcher
             this.searchCodeFromGoogleToolStripMenuItem.Text = "Search code by Google";
             this.searchCodeFromGoogleToolStripMenuItem.Visible = false;
             this.searchCodeFromGoogleToolStripMenuItem.Click += new System.EventHandler(this.searchCodeFromGoogleToolStripMenuItem_Click);
+            // 
+            // copyFromCompareToolStripMenuItem
+            // 
+            this.copyFromCompareToolStripMenuItem.Name = "copyFromCompareToolStripMenuItem";
+            this.copyFromCompareToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.copyFromCompareToolStripMenuItem.Text = "Copy from compare";
+            this.copyFromCompareToolStripMenuItem.Click += new System.EventHandler(this.copyFromCompareToolStripMenuItem_Click);
             // 
             // menuStrip1
             // 
@@ -297,7 +305,7 @@ namespace UniversalPatcher
             // numColumn
             // 
             this.numColumn.Enabled = false;
-            this.numColumn.Location = new System.Drawing.Point(441, 25);
+            this.numColumn.Location = new System.Drawing.Point(386, 27);
             this.numColumn.Maximum = new decimal(new int[] {
             3,
             0,
@@ -309,7 +317,7 @@ namespace UniversalPatcher
             0,
             0});
             this.numColumn.Name = "numColumn";
-            this.numColumn.Size = new System.Drawing.Size(34, 20);
+            this.numColumn.Size = new System.Drawing.Size(38, 20);
             this.numColumn.TabIndex = 8;
             this.numColumn.Value = new decimal(new int[] {
             1,
@@ -322,7 +330,7 @@ namespace UniversalPatcher
             // labelColumn
             // 
             this.labelColumn.AutoSize = true;
-            this.labelColumn.Location = new System.Drawing.Point(390, 29);
+            this.labelColumn.Location = new System.Drawing.Point(327, 31);
             this.labelColumn.Name = "labelColumn";
             this.labelColumn.Size = new System.Drawing.Size(45, 13);
             this.labelColumn.TabIndex = 9;
@@ -331,6 +339,7 @@ namespace UniversalPatcher
             // 
             // groupSelectCompare
             // 
+            this.groupSelectCompare.Controls.Add(this.radioSideBySideText);
             this.groupSelectCompare.Controls.Add(this.radioSideBySide);
             this.groupSelectCompare.Controls.Add(this.radioDifference);
             this.groupSelectCompare.Controls.Add(this.radioCompareFile);
@@ -338,20 +347,32 @@ namespace UniversalPatcher
             this.groupSelectCompare.Enabled = false;
             this.groupSelectCompare.Location = new System.Drawing.Point(9, 27);
             this.groupSelectCompare.Name = "groupSelectCompare";
-            this.groupSelectCompare.Size = new System.Drawing.Size(375, 20);
+            this.groupSelectCompare.Size = new System.Drawing.Size(284, 20);
             this.groupSelectCompare.TabIndex = 10;
             this.groupSelectCompare.TabStop = false;
             this.groupSelectCompare.Text = "Show";
             // 
+            // radioSideBySideText
+            // 
+            this.radioSideBySideText.AutoSize = true;
+            this.radioSideBySideText.Location = new System.Drawing.Point(236, 0);
+            this.radioSideBySideText.Name = "radioSideBySideText";
+            this.radioSideBySideText.Size = new System.Drawing.Size(48, 17);
+            this.radioSideBySideText.TabIndex = 4;
+            this.radioSideBySideText.TabStop = true;
+            this.radioSideBySideText.Text = "A [B]";
+            this.radioSideBySideText.UseVisualStyleBackColor = true;
+            this.radioSideBySideText.CheckedChanged += new System.EventHandler(this.radioSideBySideText_CheckedChanged);
+            // 
             // radioSideBySide
             // 
             this.radioSideBySide.AutoSize = true;
-            this.radioSideBySide.Location = new System.Drawing.Point(287, 0);
+            this.radioSideBySide.Location = new System.Drawing.Point(183, 0);
             this.radioSideBySide.Name = "radioSideBySide";
-            this.radioSideBySide.Size = new System.Drawing.Size(84, 17);
+            this.radioSideBySide.Size = new System.Drawing.Size(47, 17);
             this.radioSideBySide.TabIndex = 3;
             this.radioSideBySide.TabStop = true;
-            this.radioSideBySide.Text = "Side by Side";
+            this.radioSideBySide.Text = "A | B";
             this.radioSideBySide.UseVisualStyleBackColor = true;
             this.radioSideBySide.CheckedChanged += new System.EventHandler(this.radioSideBySide_CheckedChanged);
             // 
@@ -359,22 +380,22 @@ namespace UniversalPatcher
             // 
             this.radioDifference.AutoSize = true;
             this.radioDifference.Enabled = false;
-            this.radioDifference.Location = new System.Drawing.Point(207, 0);
+            this.radioDifference.Location = new System.Drawing.Point(126, 0);
             this.radioDifference.Name = "radioDifference";
-            this.radioDifference.Size = new System.Drawing.Size(74, 17);
+            this.radioDifference.Size = new System.Drawing.Size(51, 17);
             this.radioDifference.TabIndex = 2;
-            this.radioDifference.Text = "Difference";
+            this.radioDifference.Text = "A > B";
             this.radioDifference.UseVisualStyleBackColor = true;
             this.radioDifference.CheckedChanged += new System.EventHandler(this.radioDifference_CheckedChanged);
             // 
             // radioCompareFile
             // 
             this.radioCompareFile.AutoSize = true;
-            this.radioCompareFile.Location = new System.Drawing.Point(118, 0);
+            this.radioCompareFile.Location = new System.Drawing.Point(88, 0);
             this.radioCompareFile.Name = "radioCompareFile";
-            this.radioCompareFile.Size = new System.Drawing.Size(83, 17);
+            this.radioCompareFile.Size = new System.Drawing.Size(32, 17);
             this.radioCompareFile.TabIndex = 1;
-            this.radioCompareFile.Text = "Compare file";
+            this.radioCompareFile.Text = "B";
             this.radioCompareFile.UseVisualStyleBackColor = true;
             this.radioCompareFile.CheckedChanged += new System.EventHandler(this.radioCompareFile_CheckedChanged);
             // 
@@ -384,10 +405,10 @@ namespace UniversalPatcher
             this.radioOriginal.Checked = true;
             this.radioOriginal.Location = new System.Drawing.Point(52, 0);
             this.radioOriginal.Name = "radioOriginal";
-            this.radioOriginal.Size = new System.Drawing.Size(60, 17);
+            this.radioOriginal.Size = new System.Drawing.Size(32, 17);
             this.radioOriginal.TabIndex = 0;
             this.radioOriginal.TabStop = true;
-            this.radioOriginal.Text = "Original";
+            this.radioOriginal.Text = "A";
             this.radioOriginal.UseVisualStyleBackColor = true;
             this.radioOriginal.CheckedChanged += new System.EventHandler(this.radioOriginal_CheckedChanged);
             // 
@@ -417,14 +438,6 @@ namespace UniversalPatcher
             this.label1.Size = new System.Drawing.Size(53, 13);
             this.label1.TabIndex = 12;
             this.label1.Text = "Decimals:";
-            // 
-            // copyFromCompareToolStripMenuItem
-            // 
-            this.copyFromCompareToolStripMenuItem.Name = "copyFromCompareToolStripMenuItem";
-            this.copyFromCompareToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
-            this.copyFromCompareToolStripMenuItem.Text = "Copy from compare";
-            this.copyFromCompareToolStripMenuItem.Visible = false;
-            this.copyFromCompareToolStripMenuItem.Click += new System.EventHandler(this.copyFromCompareToolStripMenuItem_Click);
             // 
             // frmTableEditor
             // 
@@ -499,5 +512,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem saveOBD2DescriptionsToolStripMenuItem;
         private ToolStripMenuItem searchCodeFromGoogleToolStripMenuItem;
         private ToolStripMenuItem copyFromCompareToolStripMenuItem;
+        private RadioButton radioSideBySideText;
     }
 }
