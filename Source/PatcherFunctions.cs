@@ -514,6 +514,17 @@ public class upatcher
         double retVal = 0;
         try
         {
+
+            if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
+            {
+                UInt64 rawVal = getRawValue(myBuffer, addr, mathTd, offset);
+                UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
+                if ((rawVal & mask) == mask)
+                    return 1;
+                else
+                    return 0;
+            }
+
             UInt32 bufAddr = addr - offset;
 
             if (mathTd.DataType == InDataType.SBYTE)
@@ -542,6 +553,7 @@ public class upatcher
             string mathStr = mathTd.Math.ToLower().Replace("x", retVal.ToString());
             if (commaDecimal) mathStr = mathStr.Replace(".", ",");
             retVal = parser.Parse(mathStr, false);
+
         }
         catch (Exception ex)
         {

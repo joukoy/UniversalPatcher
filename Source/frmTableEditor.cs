@@ -351,17 +351,10 @@ namespace UniversalPatcher
                         }
                         else if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
                         {
-                            UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
-                            if ((curRawValue & mask) == mask)
-                                curTxt = "1";
-                            else
-                                curTxt = "0";
+                            curTxt = curVal.ToString();
                             if (cmpRawValue < UInt64.MaxValue)
                             {
-                                if ((cmpRawValue & mask) == mask)
-                                    cmpTxt = "1";
-                                else
-                                    cmpTxt = "0";
+                                cmpTxt = cmpVal.ToString();
                             }
                         }
                         else if (mathTd.OutputType == OutDataType.Hex)
@@ -428,44 +421,9 @@ namespace UniversalPatcher
                 }
                 else if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
                 {
-                    UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
+                    dataGridView1.Rows[row].Cells[col].Value = (int)showVal;
                     if (showSidebySide)
-                    {
-                        if ((showRawVal & mask) == mask)
-                        {
-                            Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + ", mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", true");
-                            dataGridView1.Rows[row].Cells[col].Value = 1;
-                        }
-                        else
-                        {
-                            Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + " mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", false");
-                            dataGridView1.Rows[row].Cells[col].Value = 0;
-                        }
-                        UInt64 maskCmp = Convert.ToUInt64(compareTd.BitMask.Replace("0x", ""), 16);
-                        if ((cmpRawValue & maskCmp) == maskCmp)
-                        {
-                            Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + ", mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", true");
-                            dataGridView1.Rows[row].Cells[col + 1].Value = 1;
-                        }
-                        else
-                        {
-                            Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + " mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", false");
-                            dataGridView1.Rows[row].Cells[col + 1].Value = 0;
-                        }
-                    }
-                    else
-                    {
-                        if ((showRawVal & mask) == mask)
-                        {
-                            Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + ", mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", true");
-                            dataGridView1.Rows[row].Cells[col].Value = 1;
-                        }
-                        else
-                        {
-                            Debug.WriteLine(mathTd.TableName + ": " + mathTd.BitMask + " mask: " + mask.ToString("X") + ", Data: " + showRawVal.ToString("X") + " Row: " + row + ", Col: " + col + ", false");
-                            dataGridView1.Rows[row].Cells[col].Value = 0;
-                        }
-                    }
+                        dataGridView1.Rows[row].Cells[col + 1].Value = (int)cmpVal;
                 }
                 else if (mathTd.OutputType == OutDataType.Hex)
                 {
