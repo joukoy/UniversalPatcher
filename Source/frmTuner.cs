@@ -230,7 +230,7 @@ namespace UniversalPatcher
                 {
                     LoggerBold("WARING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);
                 }
-                frmTableEditor frmT = new frmTableEditor(PCM,null);
+                frmTableEditor frmT = new frmTableEditor(PCM);
                 if (treeMode && !newWindow)
                 {
                     frmT.Dock = DockStyle.Fill;
@@ -1708,30 +1708,31 @@ namespace UniversalPatcher
         }
 
         int diffMissingTables;
-        private bool compareTable(int tInd,PcmFile pcm1, PcmFile pcm2)
+        private int compareTableHEX(int tInd,PcmFile pcm1, PcmFile pcm2)
         {
             TableData td1 = pcm1.tableDatas[tInd];
             TableData td2 = td1.ShallowCopy();
             int tbSize = td1.Rows * td1.Columns * getElementSize(td1.DataType);
+            int cmpId = tInd;
             if (pcm1.OS != pcm2.OS && !td1.CompatibleOS.Contains("," + pcm2.OS + ","))
             {
                 //Not 100% compatible file, find table by name & category
-                int t = findTableDataId(td1, pcm2.tableDatas);
-                if (t < 0)
+                cmpId = findTableDataId(td1, pcm2.tableDatas);
+                if (cmpId < 0)
                 {
                     //Logger("Table not found: " + td1.TableName + "[" + pcm2.FileName + "]");
                     diffMissingTables++;
-                    return true;    //Don't add to list if not in both files
+                    return -1;    //Don't add to list if not in both files
                 }
-                td2 = pcm2.tableDatas[t];
+                td2 = pcm2.tableDatas[cmpId];
                 int tb2size = td2.Rows * td2.Columns * getElementSize(td2.DataType);
                 if (tbSize != tb2size)
-                    return false;
+                    return -1;
             }
             if ((td1.addrInt + tbSize) > pcm1.fsize || (td2.addrInt + tbSize) > pcm2.fsize)
             {
                 LoggerBold("Table address out of range: " + td1.TableName);
-                return false;
+                return -1;
             }
 
             if (td1.BitMask != null && td1.BitMask.Length > 0)
@@ -1741,21 +1742,49 @@ namespace UniversalPatcher
                 UInt64 orgVal = (readTableData(pcm1.buf, td1) & mask);
                 UInt64 compVal = (readTableData(pcm2.buf, td2) & mask);
                 if (orgVal == compVal)
-                    return true;
+                    return -1;
                 else
-                    return false;
+                    return cmpId;
             }
             byte[] buff1 = new byte[tbSize];
             byte[] buff2 = new byte[tbSize];
             Array.Copy(pcm1.buf, td1.addrInt + td1.Offset, buff1, 0, tbSize);
             Array.Copy(pcm2.buf, td2.addrInt + td2.Offset, buff2, 0, tbSize);
             if (buff1.SequenceEqual(buff2))
-                return true;
+                return -1;
             else
-                return false;
+                return cmpId;   //Found table with different data
 
         }
+
         private void findTableDifferences(PcmFile cmpWithPcm)
+        {
+            Logger("Finding tables with different data");
+            cmpWithPcm.selectTableDatas(0, "");
+            List<int> diffTableDatas = new List<int>();
+            List<int> cmpTableDatas = new List<int>();
+            for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
+            {
+                if (PCM.tableDatas[t1].addrInt < PCM.fsize)
+                {
+                    int cmpId = findTableDataId(PCM.tableDatas[t1], cmpWithPcm.tableDatas);
+                    if (cmpId > -1)
+                    {
+                        if (!compareTables(t1, cmpId, PCM, cmpWithPcm))
+                        {
+                            diffTableDatas.Add(t1);
+                            cmpTableDatas.Add(cmpId);
+                        }
+                    }
+                }
+            }
+            Logger(" [OK]");
+            frmHexDiff fhd = new frmHexDiff(PCM, cmpWithPcm, diffTableDatas, cmpTableDatas);
+            fhd.Show();
+            fhd.findDifferences(false);
+        }
+
+        private void findTableDifferences_old(PcmFile cmpWithPcm)
         {
             Logger("Finding tables with different data");
             string newMenuTxt = PCM.FileName + " <> " + cmpWithPcm.FileName;
@@ -1791,19 +1820,10 @@ namespace UniversalPatcher
             List<TableData> diffTableDatas = new List<TableData>();
             for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
             {
-                if (!compareTable(t1, PCM, cmpWithPcm))
-                {
-                    bool found = false;
-                    for (int t2 = 0; t2 < PCM.altTableDatas[cmpTdList].tableDatas.Count; t2++)
-                    {
-                        if (PCM.altTableDatas[cmpTdList].tableDatas[t2].TableName == PCM.tableDatas[t1].TableName && PCM.altTableDatas[cmpTdList].tableDatas[t2].Category == PCM.tableDatas[t1].Category)
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) //Not previously added
-                        PCM.altTableDatas[cmpTdList].tableDatas.Add(PCM.tableDatas[t1]);
+                int cmpId = compareTableHEX(t1, PCM, cmpWithPcm);
+                if (cmpId > -1)
+                { 
+                    PCM.altTableDatas[cmpTdList].tableDatas.Add(PCM.tableDatas[t1]);
                 }
             }
             PCM.selectTableDatas(cmpTdList,newMenuTxt);
@@ -1814,20 +1834,6 @@ namespace UniversalPatcher
 
         }
 
-        private bool compareTableHEX(int tInd, PcmFile pcm1, PcmFile pcm2)
-        {
-            TableData td1 = pcm1.tableDatas[tInd];
-            int tbSize = td1.Rows * td1.Columns * getElementSize(td1.DataType);
-            byte[] buff1 = new byte[tbSize];
-            byte[] buff2 = new byte[tbSize];
-            Array.Copy(pcm1.buf, td1.addrInt + td1.Offset, buff1, 0, tbSize);
-            Array.Copy(pcm2.buf, td1.addrInt + td1.Offset, buff2, 0, tbSize);
-            if (buff1.SequenceEqual(buff2))
-                return true;
-            else
-                return false;
-        }
-
         private void findTableDifferencesHEX(PcmFile cmpWithPcm)
         {
             Logger("Finding tables with different data");
@@ -1835,19 +1841,23 @@ namespace UniversalPatcher
                 LoggerBold("WARING! OS mismatch!");
             cmpWithPcm.selectTableDatas(0, "");
             List<int> diffTableDatas = new List<int>();
+            List<int> cmpTableDatas = new List<int>();
             for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
             {
                 if (PCM.tableDatas[t1].addrInt < PCM.fsize)
                 {
-                    if (!compareTableHEX(t1, PCM, cmpWithPcm))
+                    int cmpId = compareTableHEX(t1, PCM, cmpWithPcm);
+                    if (cmpId > -1)
                     {
                         diffTableDatas.Add(t1);
+                        cmpTableDatas.Add(cmpId);
                     }
                 }
             }
             Logger(" [OK]");
-            frmHexDiff fhd = new frmHexDiff(PCM, cmpWithPcm, diffTableDatas);
+            frmHexDiff fhd = new frmHexDiff(PCM, cmpWithPcm, diffTableDatas,cmpTableDatas);
             fhd.Show();
+            fhd.findDifferences(true);
         }
 
         private void tablelistSelect_Click(object sender, EventArgs e)
@@ -2108,7 +2118,7 @@ namespace UniversalPatcher
                     return;
                 }
                 Logger("Comparing....");
-                frmTableEditor frmT = new frmTableEditor(PCM,null);
+                frmTableEditor frmT = new frmTableEditor(PCM);
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
                 PcmFile comparePCM = PCM.ShallowCopy();
                 comparePCM.FileName = td2.TableName;
@@ -2277,7 +2287,7 @@ namespace UniversalPatcher
                 xpatch.XmlFile = PCM.configFile;
                 xpatch.Segment = PCM.GetSegmentName(pTd.addrInt);
                 xpatch.Description = Description;
-                frmTableEditor frmTE = new frmTableEditor(PCM, null);
+                frmTableEditor frmTE = new frmTableEditor(PCM);
                 frmTE.prepareTable(pTd, null);
                 frmTE.loadTable(true);
                 uint step = (uint)getElementSize(pTd.DataType);

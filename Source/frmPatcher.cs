@@ -2627,7 +2627,7 @@ namespace UniversalPatcher
                     return;
                 }
 
-                frmTableEditor frmT = new frmTableEditor(basefile,null);
+                frmTableEditor frmT = new frmTableEditor(basefile);
                 frmT.loadSeekTable(codeIndex);
                 frmT.Show();
             }

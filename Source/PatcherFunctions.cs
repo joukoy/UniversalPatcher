@@ -753,7 +753,7 @@ public class upatcher
     public static uint applyTablePatch(PcmFile basefile, XmlPatch xpatch, int tdId)
     {
         int i = 0;
-        frmTableEditor frmTE = new frmTableEditor(basefile,null);
+        frmTableEditor frmTE = new frmTableEditor(basefile);
         TableData pTd = basefile.tableDatas[tdId];
         frmTE.prepareTable(pTd, null);
         frmTE.loadTable(true);
@@ -935,6 +935,85 @@ public class upatcher
             return false;
         }
         return true;
+    }
+
+    public static bool compareTables(int id1, int id2, PcmFile pcm1, PcmFile pcm2)
+    {
+        bool match = true;
+
+        TableData td1 = pcm1.tableDatas[id1];
+        TableData td2 = pcm2.tableDatas[id2];
+
+        if ((td1.Rows * td1.Columns) != (td2.Rows * td2.Columns))
+            return false;
+        List<double> tableValues = new List<double>();
+        uint addr = (uint)(td1.addrInt + td1.Offset);
+        uint step = (uint)getElementSize(td1.DataType);
+        if (td1.RowMajor)
+        {
+            for (int r = 0; r < td1.Rows; r++)
+            {
+                for (int c = 0; c < td1.Columns; c++)
+                {
+                    double val = getValue(pcm1.buf,addr,td1,0);
+                    tableValues.Add(val);
+                    addr += step;
+                }
+            }
+        }
+        else
+        {
+            for (int c = 0; c < td1.Columns; c++)
+            {
+                for (int r = 0; r < td1.Rows; r++)
+                {
+                    double val = getValue(pcm1.buf, addr, td1, 0);
+                    tableValues.Add(val);
+                    addr += step;
+                }
+            }
+        }
+
+
+        addr = (uint)(td2.addrInt + td2.Offset);
+        step = (uint)getElementSize(td2.DataType);
+        int i = 0;
+        if (td2.RowMajor)
+        {
+            for (int r = 0; r < td2.Rows; r++)
+            {
+                for (int c = 0; c < td2.Columns; c++)
+                {
+                    double val = getValue(pcm2.buf, addr, td2, 0);
+                    if (val != tableValues[i])
+                    {
+                        match = false;
+                        break;
+                    }
+                    addr += step;
+                    i++;
+                }
+            }
+        }
+        else
+        {
+            for (int c = 0; c < td2.Columns; c++)
+            {
+                for (int r = 0; r < td2.Rows; r++)
+                {
+                    double val = getValue(pcm2.buf, addr, td2, 0);
+                    if (val != tableValues[i])
+                    {
+                        match = false;
+                        break;
+                    }
+                    addr += step;
+                    i++;
+                }
+            }
+        }
+
+        return match;
     }
 
     public static byte[] ReadBin(string FileName, uint FileOffset, uint Length)

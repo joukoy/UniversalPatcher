@@ -17,14 +17,11 @@ namespace UniversalPatcher
 {
     public partial class frmTableEditor : Form
     {
-        public frmTableEditor(PcmFile _PCM, PcmFile _comparePCM)
+        public frmTableEditor(PcmFile _PCM)
         {
             InitializeComponent();
             PCM = _PCM;
             origPCM = _PCM;
-            comparePCM = _comparePCM;
-            if (comparePCM != null)
-                prepareCompareTable(comparePCM);
         }
 
         private class Tagi
@@ -671,7 +668,7 @@ namespace UniversalPatcher
             {
                 hdrTxt += "(" + idX.ToString() + ")";
             }
-            if (multiSelect && !only1d)
+            if (multiSelect)
             {
                 hdrTxt += "[" + cTd.TableName + "]" + hdrTxt;
                 if (duplicateTableName)
@@ -1157,7 +1154,7 @@ namespace UniversalPatcher
 
                     if (td.TableName.StartsWith("DTC"))
                     {
-                        showDtdDescriptions();
+                        showDtcDescriptions();
                     }
 
                 }
@@ -1188,7 +1185,7 @@ namespace UniversalPatcher
             }
         }
 
-        private void showDtdDescriptions()
+        private void showDtcDescriptions()
         {
             DtcSearch ds = new DtcSearch();
             if (OBD2Codes == null || OBD2Codes.Count == 0)
@@ -1262,6 +1259,7 @@ namespace UniversalPatcher
             
             return retVal;
         }
+
         public void loadTable(bool resetBuffer)
         {
             try
@@ -1503,7 +1501,7 @@ namespace UniversalPatcher
                 }
                 if (td.TableName == "DTC" && this.Visible)
                 {
-                    showDtdDescriptions();
+                    showDtcDescriptions();
                 }
                 setDataGridLayout();
             }

@@ -14,13 +14,13 @@ namespace UniversalPatcher
 {
     public partial class frmHexDiff : Form
     {
-        public frmHexDiff(PcmFile _pcm1, PcmFile _pcm2, List<int> _tdList)
+        public frmHexDiff(PcmFile _pcm1, PcmFile _pcm2, List<int> _tdList, List<int> _tdList2)
         {
             InitializeComponent();
             pcm1 = _pcm1;
             pcm2 = _pcm2;
             tdList = _tdList;
-            findDifferences();
+            tdList2 = _tdList2;
         }
         private void frmHexDiff_Load(object sender, EventArgs e)
         {
@@ -29,6 +29,9 @@ namespace UniversalPatcher
         private class TableDiff
         {
             public int id { get; set; }
+            public int id2 { get; set; }
+            public string addr1 { get; set; }
+            public string addr2 { get; set; }
             public string TableName { get; set; }
             public string Data1 { get; set; }
             public string Data2 { get; set; }
@@ -38,39 +41,59 @@ namespace UniversalPatcher
         private PcmFile pcm1;
         private PcmFile pcm2;
         private List<int> tdList;
+        private List<int> tdList2;
+
         SortOrder strSortOrder = SortOrder.Ascending;
         private int sortIndex = 0;
         private string sortBy = "id";
         BindingSource bindingSource = new BindingSource();
 
-        private void findDifferences()
+        public void findDifferences(bool showAsHex)
         {
+            if (!showAsHex)
+                this.Text = "File differences";
             tdiffList = new List<TableDiff>();
             labelFileNames.Text = pcm1.FileName + " <> " + pcm2.FileName;
 
             for (int t = 0; t < tdList.Count; t++)
             {
                 TableData td = pcm1.tableDatas[tdList[t]];
+                TableData td2 = pcm2.tableDatas[tdList2[t]];
                 uint step = (uint)getElementSize(td.DataType);
+                uint step2 = (uint)getElementSize(td2.DataType);
                 int count = td.Rows * td.Columns;
                 uint addr = (uint)(td.addrInt + td.Offset);
-                List<int> tableIds = new List<int>();
-                tableIds.Add((int)td.id);
+                uint addr2 = (uint)(td2.addrInt + td2.Offset);
                 string data1 = "";
                 string data2 = "";
-                string formatStr = "X" + (step * 2).ToString();
+                string formatStr = "";
+                if (showAsHex)
+                    formatStr = "X" + (step * 2).ToString();
                 for (int a = 0; a < count; a++)
                 {
-                    data1 += getRawValue(pcm1.buf,addr, td,0).ToString(formatStr) + " ";
-                    data2 += getRawValue(pcm2.buf,addr, td,0).ToString(formatStr) + " ";
-                    addr += step; 
+                    if (showAsHex)
+                    {
+                        data1 += getRawValue(pcm1.buf, addr, td, 0).ToString(formatStr) + " ";
+                        data2 += getRawValue(pcm2.buf, addr2, td2, 0).ToString(formatStr) + " ";
+                    }
+                    else
+                    {
+                        data1 += getValue(pcm1.buf, addr, td, 0).ToString(formatStr) + " ";
+                        data2 += getValue(pcm2.buf, addr2, td2, 0).ToString(formatStr) + " ";
+                    }
+                    addr += step;
+                    addr2 += step2;
                 }
+
                 TableDiff tDiff = new TableDiff();
                 tDiff.Data1 = data1.Trim();
                 tDiff.Data2 = data2.Trim();
                 tDiff.id = tdList[t];
                 tDiff.TableName = td.TableName;
                 tDiff.td = td;
+                tDiff.id2 = tdList2[t];
+                tDiff.addr1 = td.Address;
+                tDiff.addr2 = td2.Address;
                 tdiffList.Add(tDiff);
             }
             dataGridView1.DataSource = bindingSource;
@@ -133,11 +156,13 @@ namespace UniversalPatcher
             if (e.RowIndex > -1)
             {
                 int id = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value);
+                int id2 = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id2"].Value);
                 TableData td = pcm1.tableDatas[id];
-                frmTableEditor frmT = new frmTableEditor(pcm1, pcm2);
+                frmTableEditor frmT = new frmTableEditor(pcm1);
                 List<int> tableIds = new List<int>();
                 tableIds.Add(id);
                 frmT.prepareTable(td, tableIds);
+                frmT.addCompareFiletoMenu(pcm2, pcm2.tableDatas[id2]);
                 frmT.Show();
                 frmT.loadTable(true);
             }

@@ -165,10 +165,10 @@ namespace UniversalPatcher
 
         private void copyTableData(TableData srcTd, TableData dstTd, ref PcmFile dstPCM)
         {
-            frmTableEditor srcTE = new frmTableEditor(PCM,null);
+            frmTableEditor srcTE = new frmTableEditor(PCM);
             srcTE.prepareTable(srcTd, null);
             srcTE.loadTable(true);
-            frmTableEditor dstTE = new frmTableEditor(dstPCM,null);
+            frmTableEditor dstTE = new frmTableEditor(dstPCM);
             dstTE.prepareTable(dstTd, null);
             dstTE.loadTable(true);
 
