@@ -77,7 +77,7 @@ namespace UniversalPatcher
             {
                 if (peekPCM.tableDatas[ind].Rows == 1 && peekPCM.tableDatas[ind].Columns == 1)
                 {
-                    double curVal = getValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0);
+                    double curVal = getValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0,peekPCM);
                     UInt64 rawVal = getRawValue(peekPCM.buf,(uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0);
                     string valTxt = curVal.ToString();
                     string unitTxt = " " + peekPCM.tableDatas[ind].Units;
@@ -141,7 +141,7 @@ namespace UniversalPatcher
                         {
                             for (int c = 0; c < peekPCM.tableDatas[ind].Columns; c++)
                             {
-                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0);
+                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0, peekPCM);
                                 addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
                                 tblData += "[" + curVal.ToString("#0.0") + "]";
                             }
@@ -158,7 +158,7 @@ namespace UniversalPatcher
 
                             for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
                             {
-                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0);
+                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0, peekPCM);
                                 addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
                                 tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
                             }

@@ -221,12 +221,31 @@ namespace UniversalPatcher
             origTableIds = tableIds;
 
         }
-        public void addCompareFiletoMenu(PcmFile cmpPCM, TableData _compareTd)
+        private void modifyRadioText(string menuTxt)
+        {
+            string selectedBin = menuTxt.Substring(0, 1);
+            radioCompareFile.Text = selectedBin;
+            radioDifference.Text = radioOriginal.Text + " > " + selectedBin;
+            radioSideBySide.Text = radioOriginal.Text + " | " + selectedBin;
+            radioSideBySideText.Text = radioOriginal.Text + " [" + selectedBin + "]";
+        }
+        public void addCompareFiletoMenu(PcmFile cmpPCM, TableData _compareTd, string menuTxt)
         {
             compareTd = _compareTd;
             ToolStripMenuItem menuitem = new ToolStripMenuItem(cmpPCM.FileName);
             menuitem.Tag = cmpPCM;
             menuitem.Name = Path.GetFileName(cmpPCM.FileName);
+            if (menuTxt.Length > 0)
+            {
+                menuitem.Text = menuTxt;
+            }
+            else
+            {
+                char lastFile = 'A';
+                foreach (ToolStripMenuItem mi in compareToolStripMenuItem.DropDownItems)
+                    lastFile++;
+                menuTxt = lastFile.ToString() +": "+ cmpPCM.FileName;
+            }
             menuitem.Click += compareSelection_Click;
             if (compareToolStripMenuItem.DropDownItems.Count == 0)
             {
@@ -234,6 +253,7 @@ namespace UniversalPatcher
                 menuitem.Checked = true;
                 prepareCompareTable(cmpPCM);
                 groupSelectCompare.Enabled = true;
+                modifyRadioText(menuTxt);
             }
             compareToolStripMenuItem.DropDownItems.Add(menuitem);
         }
@@ -268,6 +288,7 @@ namespace UniversalPatcher
             PcmFile cmpPCM = (PcmFile)menuitem.Tag;
             prepareCompareTable(cmpPCM);
             loadTable(false);
+            modifyRadioText(menuitem.Text);
         }
 
         public void loadSeekTable(int tId)
@@ -297,18 +318,29 @@ namespace UniversalPatcher
             }
         }
 
+        private int findCurrentRow(TableData mathTd,TableData cmpTd, int currentRow)
+        {
+            string[] headersA = mathTd.RowHeaders.Split(',');
+            string[] headersB = cmpTd.RowHeaders.Split(',');
 
+            for (int i=0; i< headersB.Length; i++)
+            {
+                if (headersB[i] == headersA[currentRow])
+                    return i;
+            }
+            return -1;
+        }
 
         public void setCellValue(uint addr, int row, int col, TableData mathTd)
         {
             try
             {
                 double curVal;
-                double origVal = getValue(PCM.buf, addr, mathTd, 0);
+                double origVal = getValue(PCM.buf, addr, mathTd, 0,PCM);
                 if (comparePcmInUse)
-                    curVal = getValue(comparePCM.buf, addr, mathTd, 0);
+                    curVal = getValue(comparePCM.buf, addr, mathTd, 0,PCM);
                 else
-                    curVal = getValue(tableBuffer, addr, mathTd, tableBufferOffset);
+                    curVal = getValue(tableBuffer, addr, mathTd, tableBufferOffset,PCM);
                 UInt64 curRawValue;
                 UInt64 cmpRawValue = UInt64.MaxValue;
                 if (comparePcmInUse)
@@ -324,9 +356,20 @@ namespace UniversalPatcher
                 {
                     int currentOffset = (int)(addr - (mathTd.addrInt + mathTd.Offset)); //Bytes from (table start + offset)
                     int currentSteps = (int)currentOffset / getElementSize(mathTd.DataType);
-                    cmpAddr = (uint)(currentSteps * getElementSize(compareTd.DataType) + compareTd.addrInt + compareTd.Offset);
-                    cmpVal = getValue(comparePCM.buf, cmpAddr, compareTd, 0);
-                    cmpRawValue = getRawValue(comparePCM.buf, cmpAddr, compareTd,0);
+                    if (mathTd.RowHeaders != null && mathTd.RowHeaders.Length > 0 && mathTd.Columns == 1)
+                    {
+                        currentSteps = findCurrentRow(mathTd,compareTd,currentSteps);
+                    }
+                    if (currentSteps < 0)
+                    {
+                        showSidebySide = false;
+                    }
+                    else
+                    { 
+                        cmpAddr = (uint)(currentSteps * getElementSize(compareTd.DataType) + compareTd.addrInt + compareTd.Offset);
+                        cmpVal = getValue(comparePCM.buf, cmpAddr, compareTd, 0, comparePCM);
+                        cmpRawValue = getRawValue(comparePCM.buf, cmpAddr, compareTd, 0);
+                    }
                 }
                 //if (radioSideBySide.Checked && !disableSideBySide)
                 if (radioSideBySideText.Checked)
@@ -397,7 +440,7 @@ namespace UniversalPatcher
                         dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
                     return;
                 }
-                //Not side by side, continue...
+                //Not side by side text mode, continue...
 
                 double showVal = curVal;
                 UInt64 showRawVal = curRawValue;
@@ -566,7 +609,7 @@ namespace UniversalPatcher
                         string formatStr = "0.####";
                         if (headerTd.Units.Contains("%"))
                             formatStr = "0";
-                        headers += headerTd.Units.Trim() + " " + getValue(PCM.buf, addr, headerTd, 0).ToString(formatStr).Replace(",", ".") + ",";
+                        headers += headerTd.Units.Trim() + " " + getValue(PCM.buf, addr, headerTd, 0, PCM).ToString(formatStr).Replace(",", ".") + ",";
                         addr += step;
                     }
                     headers = headers.Trim(',');
@@ -628,7 +671,7 @@ namespace UniversalPatcher
             }
             if (multiSelect)
             {
-                hdrTxt += "[" + cTd.TableName + "]" + hdrTxt;
+                hdrTxt = "[" + cTd.TableName + "]" + hdrTxt;
                 if (duplicateTableName)
                     hdrTxt += " [" + cTd.id + "]";
             }
@@ -818,6 +861,12 @@ namespace UniversalPatcher
 
                 if (radioSideBySide.Checked && compareTd != null) 
                 {
+                    if (ft.RowHeaders!= null && ft.RowHeaders.Length > 0)
+                    {
+                        int cmpRow = findCurrentRow(ft, compareTd, gridRow);
+                        if (cmpRow < 0)
+                            return;
+                    }
                     vt = getValueType(compareTd);
                     if (vt == TableValueType.boolean)
                     {
@@ -1125,8 +1174,15 @@ namespace UniversalPatcher
                         if (dataGridView1.Rows[r].Cells[c].Tag == null)
                         {
                             dataGridView1.Rows[r].Cells[c].ReadOnly = true;
-                            if (!radioSideBySide.Checked)
+                            if (radioSideBySide.Checked)
+                            {
+                                if (dataGridView1.Rows[r].Cells[c].Value == null)
+                                    dataGridView1.Rows[r].Cells[c].Style.BackColor = Color.DarkGray;
+                            }
+                            else
+                            {
                                 dataGridView1.Rows[r].Cells[c].Style.BackColor = Color.DarkGray;
+                            }
                         }
                     }
                 }
@@ -1179,7 +1235,7 @@ namespace UniversalPatcher
                 {
                     TableData ytb = PCM.tableDatas[y];
                     uint xaddr = (uint)(ytb.addrInt + ytb.Offset);
-                    cols = (int)getValue(PCM.buf, xaddr, ytb,0);
+                    cols = (int)getValue(PCM.buf, xaddr, ytb,0, PCM);
                     break;
                 }
             }
@@ -1196,7 +1252,7 @@ namespace UniversalPatcher
                 if (PCM.tableDatas[x].TableName == td.TableName.Replace(".Data", ".Size") || PCM.tableDatas[x].TableName == td.TableName.Replace(".Data", ".yVal"))
                 {
                     uint addr = (uint)(PCM.tableDatas[x].addrInt + PCM.tableDatas[x].Offset);
-                    rows = (int)getValue(PCM.buf, addr, PCM.tableDatas[x],0);
+                    rows = (int)getValue(PCM.buf, addr, PCM.tableDatas[x],0, PCM);
                     break;
                 }
             }

@@ -71,6 +71,8 @@ namespace UniversalPatcher
             this.xMLGeneratorExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findDifferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findDifferencesHEXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectFileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.massModifyTableListsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.massModifyTableListsSelectFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.applyPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -136,8 +138,9 @@ namespace UniversalPatcher
             this.labelBy = new System.Windows.Forms.Label();
             this.contextMenuStripTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.findDifferencesHEXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectFileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabFileInfo = new System.Windows.Forms.TabPage();
+            this.tabControlFileInfo = new System.Windows.Forms.TabControl();
+            this.tabA = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -153,6 +156,8 @@ namespace UniversalPatcher
             this.tabSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).BeginInit();
             this.contextMenuStripTree.SuspendLayout();
+            this.tabFileInfo.SuspendLayout();
+            this.tabControlFileInfo.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -474,9 +479,24 @@ namespace UniversalPatcher
             // selectFileToolStripMenuItem
             // 
             this.selectFileToolStripMenuItem.Name = "selectFileToolStripMenuItem";
-            this.selectFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.selectFileToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.selectFileToolStripMenuItem.Text = "Select file...";
             this.selectFileToolStripMenuItem.Click += new System.EventHandler(this.selectFileToolStripMenuItem_Click);
+            // 
+            // findDifferencesHEXToolStripMenuItem
+            // 
+            this.findDifferencesHEXToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectFileToolStripMenuItem1});
+            this.findDifferencesHEXToolStripMenuItem.Name = "findDifferencesHEXToolStripMenuItem";
+            this.findDifferencesHEXToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.findDifferencesHEXToolStripMenuItem.Text = "Find differences (HEX)";
+            // 
+            // selectFileToolStripMenuItem1
+            // 
+            this.selectFileToolStripMenuItem1.Name = "selectFileToolStripMenuItem1";
+            this.selectFileToolStripMenuItem1.Size = new System.Drawing.Size(133, 22);
+            this.selectFileToolStripMenuItem1.Text = "Select file...";
+            this.selectFileToolStripMenuItem1.Click += new System.EventHandler(this.selectFileToolStripMenuItem1_Click);
             // 
             // massModifyTableListsToolStripMenuItem
             // 
@@ -819,6 +839,7 @@ namespace UniversalPatcher
             this.tabControl1.Controls.Add(this.tabSegments);
             this.tabControl1.Controls.Add(this.tabSettings);
             this.tabControl1.Controls.Add(this.tabPatches);
+            this.tabControl1.Controls.Add(this.tabFileInfo);
             this.tabControl1.ImageList = this.imageList3;
             this.tabControl1.Location = new System.Drawing.Point(8, 8);
             this.tabControl1.Name = "tabControl1";
@@ -952,6 +973,7 @@ namespace UniversalPatcher
             this.imageList3.Images.SetKeyName(4, "listmode.ico");
             this.imageList3.Images.SetKeyName(5, "category.ico");
             this.imageList3.Images.SetKeyName(6, "modify.ico");
+            this.imageList3.Images.SetKeyName(7, "info.ico");
             // 
             // imageList1
             // 
@@ -1158,20 +1180,34 @@ namespace UniversalPatcher
             this.openInNewWindowToolStripMenuItem.Text = "Open in new window";
             this.openInNewWindowToolStripMenuItem.Click += new System.EventHandler(this.openInNewWindowToolStripMenuItem_Click);
             // 
-            // findDifferencesHEXToolStripMenuItem
+            // tabFileInfo
             // 
-            this.findDifferencesHEXToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.selectFileToolStripMenuItem1});
-            this.findDifferencesHEXToolStripMenuItem.Name = "findDifferencesHEXToolStripMenuItem";
-            this.findDifferencesHEXToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.findDifferencesHEXToolStripMenuItem.Text = "Find differences (HEX)";
+            this.tabFileInfo.Controls.Add(this.tabControlFileInfo);
+            this.tabFileInfo.ImageKey = "info.ico";
+            this.tabFileInfo.Location = new System.Drawing.Point(4, 31);
+            this.tabFileInfo.Name = "tabFileInfo";
+            this.tabFileInfo.Size = new System.Drawing.Size(441, 336);
+            this.tabFileInfo.TabIndex = 6;
+            this.tabFileInfo.UseVisualStyleBackColor = true;
             // 
-            // selectFileToolStripMenuItem1
+            // tabControlFileInfo
             // 
-            this.selectFileToolStripMenuItem1.Name = "selectFileToolStripMenuItem1";
-            this.selectFileToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-            this.selectFileToolStripMenuItem1.Text = "Select file...";
-            this.selectFileToolStripMenuItem1.Click += new System.EventHandler(this.selectFileToolStripMenuItem1_Click);
+            this.tabControlFileInfo.Controls.Add(this.tabA);
+            this.tabControlFileInfo.Location = new System.Drawing.Point(93, 89);
+            this.tabControlFileInfo.Name = "tabControlFileInfo";
+            this.tabControlFileInfo.SelectedIndex = 0;
+            this.tabControlFileInfo.Size = new System.Drawing.Size(184, 138);
+            this.tabControlFileInfo.TabIndex = 0;
+            // 
+            // tabA
+            // 
+            this.tabA.Location = new System.Drawing.Point(4, 22);
+            this.tabA.Name = "tabA";
+            this.tabA.Padding = new System.Windows.Forms.Padding(3);
+            this.tabA.Size = new System.Drawing.Size(176, 112);
+            this.tabA.TabIndex = 0;
+            this.tabA.Text = "A";
+            this.tabA.UseVisualStyleBackColor = true;
             // 
             // frmTuner
             // 
@@ -1215,6 +1251,8 @@ namespace UniversalPatcher
             this.tabSettings.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).EndInit();
             this.contextMenuStripTree.ResumeLayout(false);
+            this.tabFileInfo.ResumeLayout(false);
+            this.tabControlFileInfo.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1328,5 +1366,8 @@ namespace UniversalPatcher
         private ToolStripMenuItem selectFileToolStripMenuItem;
         private ToolStripMenuItem findDifferencesHEXToolStripMenuItem;
         private ToolStripMenuItem selectFileToolStripMenuItem1;
+        private TabPage tabFileInfo;
+        private TabControl tabControlFileInfo;
+        private TabPage tabA;
     }
 }

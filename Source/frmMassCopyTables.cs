@@ -180,7 +180,7 @@ namespace UniversalPatcher
             {
                 for (int c = 0; c < srcTd.Columns; c++)
                 {
-                    double cellValue = getValue(PCM.buf, srcAddr, srcTd,0);
+                    double cellValue = getValue(PCM.buf, srcAddr, srcTd,0,PCM);
                     dstTE.SaveValue(dstAddr, r, c, dstTd, cellValue);
                     srcAddr += (uint)srcStep;
                     dstAddr += (uint)dstStep;

@@ -50,6 +50,7 @@ namespace UniversalPatcher
         string currentTab;
         int iconSize;
         bool treeMode;
+        string currentBin = "A";
 
         private void frmTuner_Load(object sender, EventArgs e)
         {
@@ -172,7 +173,7 @@ namespace UniversalPatcher
 
             ToolStripMenuItem mitem = (ToolStripMenuItem)currentFileToolStripMenuItem.DropDownItems[PCM.FileName];
             mitem.Checked = true;
-
+            currentBin = mitem.Text.Substring(0, 1);
         }
 
         public void loadConfigforPCM(ref PcmFile newPCM)
@@ -238,6 +239,7 @@ namespace UniversalPatcher
                     frmT.TopLevel = false;
                     splitTree.Panel2.Controls.Add(frmT);
                 }
+                frmT.radioOriginal.Text = currentBin;
                 frmT.prepareTable(td, tableIds);
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
                 foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
@@ -259,14 +261,14 @@ namespace UniversalPatcher
                             LoggerBold("Table not found");
                         }
                         else
-                        { 
+                        {
                             /*if (comparePCM.tableDatas[x].Rows != td.Rows || comparePCM.tableDatas[x].Columns != td.Columns || comparePCM.tableDatas[x].RowMajor != td.RowMajor)
                             {
                                Logger("Table size not match!");
                             }
                             else*/
                             {
-                                frmT.addCompareFiletoMenu(comparePCM, comparePCM.tableDatas[x]);
+                                frmT.addCompareFiletoMenu(comparePCM, comparePCM.tableDatas[x], mi.Text);
                                 if (PCM.configFile != comparePCM.configFile)
                                 {
                                     LoggerBold(Environment.NewLine + "Warning: file type different, results undefined!");
@@ -979,6 +981,36 @@ namespace UniversalPatcher
             filterTables();
         }
 
+        private void showFileInfo(PcmFile pcm, RichTextBox txtBox)
+        {
+            txtBox.SelectionFont = new Font(txtBox.Font, FontStyle.Bold);
+            txtBox.AppendText(pcm.FileName + Environment.NewLine);
+            txtBox.SelectionFont = new Font(txtBox.Font, FontStyle.Regular);
+            for (int i = 0; i < pcm.Segments.Count; i++)
+            {
+                SegmentConfig S = pcm.Segments[i];
+                txtBox.AppendText( " " + pcm.segmentinfos[i].Name.PadRight(11));
+                if (pcm.segmentinfos[i].PN.Length > 1)
+                {
+                    if (pcm.segmentinfos[i].Stock == "[stock]")
+                        txtBox.AppendText(" PN: " + pcm.segmentinfos[i].PN.PadRight(9));
+                    else
+                        txtBox.AppendText(" PN: " + pcm.segmentinfos[i].PN.PadRight(9));
+                }
+                if (pcm.segmentinfos[i].Ver.Length > 1)
+                    txtBox.AppendText(", Ver: " + pcm.segmentinfos[i].Ver);
+
+                if (pcm.segmentinfos[i].SegNr.Length > 0)
+                    txtBox.AppendText(", Nr: " + pcm.segmentinfos[i].SegNr.PadRight(3));
+                    txtBox.AppendText("[" + pcm.segmentinfos[i].Address + "]");
+                    txtBox.AppendText(", Size: " + pcm.segmentinfos[i].Size.ToString());
+                if (pcm.segmentinfos[i].ExtraInfo != null && pcm.segmentinfos[i].ExtraInfo.Length > 0)
+                    txtBox.AppendText(Environment.NewLine + pcm.segmentinfos[i].ExtraInfo);
+                txtBox.AppendText(Environment.NewLine);
+            }
+
+        }
+
         private void importXperimentalCsv2()
         {
             string FileName = SelectFile("Select CSV File", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
@@ -1183,7 +1215,7 @@ namespace UniversalPatcher
                 txtDescription.SelectionColor = Color.Blue;
                 if (peekPCM.tableDatas[ind].Rows == 1 && peekPCM.tableDatas[ind].Columns == 1)
                 {
-                    double curVal = getValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0);
+                    double curVal = getValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0, peekPCM);
                     UInt64 rawVal = getRawValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0);
                     string valTxt = curVal.ToString();
                     string unitTxt = " " + peekPCM.tableDatas[ind].Units;
@@ -1247,7 +1279,7 @@ namespace UniversalPatcher
                         {
                             for (int c = 0; c < peekPCM.tableDatas[ind].Columns; c++)
                             {
-                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0);
+                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0, peekPCM);
                                 addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
                                 tblData += "[" + curVal.ToString("#0.0") + "]";
                             }
@@ -1264,7 +1296,7 @@ namespace UniversalPatcher
 
                             for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
                             {
-                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0);
+                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0, peekPCM);
                                 addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
                                 tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
                             }
@@ -1650,7 +1682,13 @@ namespace UniversalPatcher
             if (setdefault)
                 foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                     mi.Checked = false;
+
+            char lastFile = 'A';
+            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                lastFile++;
+
             ToolStripMenuItem menuitem = new ToolStripMenuItem(newPCM.FileName);
+            menuitem.Text = lastFile.ToString() + ": " + newPCM.FileName;
             menuitem.Name = newPCM.FileName;
             menuitem.Tag = newPCM;
             if (setdefault)
@@ -1738,9 +1776,8 @@ namespace UniversalPatcher
             if (td1.BitMask != null && td1.BitMask.Length > 0)
             {
                 //Check only bit
-                UInt64 mask = Convert.ToUInt64(td1.BitMask.Replace("0x", ""), 16);
-                UInt64 orgVal = (readTableData(pcm1.buf, td1) & mask);
-                UInt64 compVal = (readTableData(pcm2.buf, td2) & mask);
+                double orgVal = getValue(pcm1.buf,td1.addrInt,td1 ,(uint)td1.Offset,pcm1);
+                double compVal = getValue(pcm2.buf, td2.addrInt,td2,(uint)td2.Offset, pcm2);
                 if (orgVal == compVal)
                     return -1;
                 else
@@ -2122,7 +2159,7 @@ namespace UniversalPatcher
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
                 PcmFile comparePCM = PCM.ShallowCopy();
                 comparePCM.FileName = td2.TableName;
-                frmT.addCompareFiletoMenu(comparePCM,td2);
+                frmT.addCompareFiletoMenu(comparePCM,td2, "");
                 frmT.compareTd = td2;
                 frmT.Show();
                 frmT.prepareTable(td1, null);
@@ -2298,7 +2335,7 @@ namespace UniversalPatcher
                     {
                         for (int c=0; c<pTd.Columns; c++)
                         {
-                            xpatch.Data += getValue(PCM.buf, addr, pTd,0).ToString().Replace(",", ".") + " ";
+                            xpatch.Data += getValue(PCM.buf, addr, pTd,0, PCM).ToString().Replace(",", ".") + " ";
                             addr += step;
                         }
                     }
@@ -2309,7 +2346,7 @@ namespace UniversalPatcher
                     {
                         for (int r = 0; r < pTd.Rows; r++)
                         {
-                            xpatch.Data += getValue(PCM.buf, addr, pTd,0).ToString().Replace(",", ".") + " ";
+                            xpatch.Data += getValue(PCM.buf, addr, pTd,0, PCM).ToString().Replace(",", ".") + " ";
                             addr += step;
                         }
                     }
@@ -2352,6 +2389,7 @@ namespace UniversalPatcher
                 tabSegments.Enter += TabSegments_Enter;
                 tabSettings.Enter += TabSettings_Enter;
                 tabSettings.Leave += TabSettings_Leave;
+                tabFileInfo.Enter += TabFileInfo_Enter;
             }
             splitTree.Visible = true;
 
@@ -2380,6 +2418,33 @@ namespace UniversalPatcher
             resetTunerModeColumnsToolStripMenuItem.Visible = false;
         }
 
+        private void TabFileInfo_Enter(object sender, EventArgs e)
+        {
+            if (currentTab == "FileInfo")
+                return;
+            currentTab = "FileInfo";
+            tabControlFileInfo.Dock = DockStyle.Fill;
+            tabControlFileInfo.TabPages[0].Select();
+            RichTextBox rBox = new RichTextBox();
+            tabControlFileInfo.TabPages[0].Controls.Add(rBox);
+            rBox.Dock = DockStyle.Fill;
+            showFileInfo(PCM, rBox);
+            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+            {
+                string tabName = "tab" + mi.Text.Substring(0,1);
+                if (tabControlFileInfo.TabPages[tabName] == null)
+                {
+                    TabPage newTab = new TabPage(mi.Text.Substring(0, 1));
+                    newTab.Name = tabName;
+                    tabControlFileInfo.TabPages.Add(newTab);
+                    PcmFile infoPcm = (PcmFile)mi.Tag;
+                    rBox = new RichTextBox();
+                    tabControlFileInfo.TabPages[tabName].Controls.Add(rBox);
+                    rBox.Dock = DockStyle.Fill;
+                    showFileInfo(infoPcm, rBox);
+                }
+            }
+        }
 
         private void selectListMode()
         {

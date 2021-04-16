@@ -32,17 +32,28 @@ namespace UniversalPatcher
                 retVal = retVal.Replace("x*", "x/");
             else if (retVal.StartsWith("x/"))
                 retVal = retVal.Replace("x/", "x*");
-            else
-                retVal = "X";
+            else if (retVal.Contains("*"))
+                retVal = math.Replace("*","/");
 
             return retVal;
         }
+
+
+        private struct TableLink
+        {
+            public string xdfId;
+            public string variable;
+            public int tdId;
+        }
+
         private string ConvertXdf(XDocument doc)
         {
             string retVal = "";
             try
             {
                 List<string> categories = new List<string>();
+                List<TableLink> tableLinks = new List<TableLink>();
+                List<TableLink> tableTargets = new List<TableLink>();
 
                 foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFHEADER"))
                 {
@@ -102,7 +113,7 @@ namespace UniversalPatcher
                             size = (Convert.ToInt32(tmp) / 8).ToString();
                             elementSize = (byte)(Convert.ToInt32(tmp) / 8);
                             math = axle.Element("MATH").Attribute("equation").Value.Trim().Replace("*.", "*0.");
-                            xdf.Math = math.Replace("/.", "/0.");
+                            xdf.Math = math.Replace("/.", "/0.").ToLower();
                             xdf.SavingMath = convertMath(xdf.Math);
                             xdf.Decimals = Convert.ToUInt16(axle.Element("decimalpl").Value);
                             if (axle.Element("outputtype") != null)
@@ -116,6 +127,53 @@ namespace UniversalPatcher
                                     Debug.WriteLine(rowMath.Attribute("equation").Value);
                                     multiAddr.Add(rowMath.Element("VAR").Attribute("address").Value);
                                     multiMath.Add(rowMath.Attribute("equation").Value);
+                                }
+                                foreach (XElement mathVar in rowMath.Elements("VAR"))
+                                {
+                                    if (mathVar.Attribute("id") != null)
+                                    {
+                                        string mId = mathVar.Attribute("id").Value.ToLower();
+                                        if (mId != "x")
+                                        {
+                                            if (mathVar.Attribute("type") != null && mathVar.Attribute("type").Value == "link")
+                                            {
+                                                //Get math values from other table
+                                                string linktable = mathVar.Attribute("linkid").Value;
+                                                TableLink tl = new TableLink();
+                                                tl.tdId = tdList.Count;
+                                                tl.variable = mId;
+                                                tl.xdfId = linktable;
+                                                tableLinks.Add(tl);
+                                            }
+                                            if (mathVar.Attribute("type") != null && mathVar.Attribute("type").Value == "address")
+                                            {
+                                                string addrStr = mathVar.Attribute("address").Value.ToLower().Replace("0x","");                                                 
+                                                string bits = "8";
+                                                bool lsb = false;
+                                                bool isSigned = false;
+                                                if (mathVar.Attribute("sizeinbits") != null)
+                                                     bits = mathVar.Attribute("sizeinbits").Value;
+                                                if (mathVar.Attribute("flags") != null)
+                                                {
+                                                    byte flags = Convert.ToByte(mathVar.Attribute("flags").Value, 16);
+                                                    isSigned = Convert.ToBoolean(flags & 1);
+                                                    if ((flags & 4) == 4)
+                                                        lsb = true;
+                                                    else
+                                                        lsb = false;
+                                                }
+                                                InDataType idt = convertToDataType(bits, isSigned, false);
+                                                string replaceStr = "raw:" + addrStr + ":" + idt.ToString();
+                                                if (lsb)
+                                                    replaceStr += ":lsb ";
+                                                else
+                                                    replaceStr += ":msb ";
+                                                xdf.Math = xdf.Math.Replace(mId, replaceStr);
+                                                xdf.SavingMath = xdf.SavingMath.Replace(mId, replaceStr);
+                                            }
+                                        }
+
+                                    }
                                 }
                             }
                         }
@@ -177,6 +235,13 @@ namespace UniversalPatcher
                     int elementSize = 0;
                     bool Signed = false;
                     bool Floating = false;
+                    if (element.Attribute("uniqueid") != null)
+                    {
+                        TableLink tl = new TableLink();
+                        tl.xdfId = element.Attribute("uniqueid").Value;
+                        tl.tdId = tdList.Count;
+                        tableTargets.Add(tl);
+                    }
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                     {
                         xdf.TableName = element.Element("title").Value;
@@ -240,7 +305,24 @@ namespace UniversalPatcher
                         tdList.Add(xdf);
 
                     }
+
                 }
+                for (int i = 0; i< tableLinks.Count; i++)
+                {
+                    TableLink tl = tableLinks[i];
+                    TableData linkTd = tdList[tl.tdId];
+                    for (int t = 0; t < tableTargets.Count; t++)
+                    {
+                        if (tableTargets[t].xdfId == tl.xdfId)
+                        {
+                            TableData targetTd = tdList[tableTargets[t].tdId];
+                            linkTd.Math = linkTd.Math.Replace(tl.variable, "TABLE:'" + targetTd.TableName + "'");
+                            linkTd.SavingMath = linkTd.SavingMath.Replace(tl.variable, "TABLE:'" + targetTd.TableName + "'");
+                            break;
+                        }
+                    }
+                }
+
             }
             catch (Exception ex)
             {

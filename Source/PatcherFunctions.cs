@@ -442,10 +442,19 @@ public class upatcher
             signed = true;
         return signed;
     }
-    public static InDataType convertToDataType(int ElementSize, bool Signed, bool Floating)
+
+    public static InDataType convertToDataType(string bitStr, bool signed, bool floating)
+    {
+        InDataType retVal = InDataType.UNKNOWN;
+        int bits = Convert.ToInt32(bitStr);
+        retVal = convertToDataType(bits / 8, signed, floating);
+        return retVal;
+    }
+
+    public static InDataType convertToDataType(int elementSize, bool Signed, bool floating)
     {
         InDataType DataType = InDataType.UNKNOWN; 
-        if (ElementSize == 1)
+        if (elementSize == 1)
         {
             if (Signed == true)
             {
@@ -457,7 +466,7 @@ public class upatcher
             }
 
         }
-        else if (ElementSize == 2)
+        else if (elementSize == 2)
         {
             if (Signed == true)
             {
@@ -469,9 +478,9 @@ public class upatcher
             }
 
         }
-        else if (ElementSize == 4)
+        else if (elementSize == 4)
         {
-            if (Floating)
+            if (floating)
             {
                 DataType = InDataType.FLOAT32;
             }
@@ -487,9 +496,9 @@ public class upatcher
                 }
             }
         }
-        else if (ElementSize == 8)
+        else if (elementSize == 8)
         {
-            if (Floating)
+            if (floating)
             {
                 DataType = InDataType.FLOAT64;
             }
@@ -509,7 +518,63 @@ public class upatcher
         return DataType;
     }
 
-    public static double getValue(byte[] myBuffer, uint addr, TableData mathTd, uint offset)
+    private static string readConversionTable(string mathStr, PcmFile PCM)
+    {
+        //Example: TABLE:'MAF Scalar #1'
+        string retVal = mathStr;
+        int start = mathStr.IndexOf("table:") + 6;
+        int mid = mathStr.IndexOf("'", start + 7);
+        string conversionTable = mathStr.Substring(start, mid - start + 1);
+        TableData tmpTd = new TableData();
+        tmpTd.TableName = conversionTable.Replace("'", "");
+        int targetId = findTableDataId(tmpTd, PCM.tableDatas);
+        if (targetId > -1)
+        {
+            TableData conversionTd = PCM.tableDatas[targetId];
+            double conversionVal = getValue(PCM.buf, (uint)(conversionTd.addrInt + conversionTd.Offset), conversionTd, 0, PCM);
+            retVal = mathStr.Replace("table:" + conversionTable, conversionVal.ToString());
+            Debug.WriteLine("Using conversion table: " + conversionTd.TableName);
+        }
+
+        return retVal;
+    }
+
+    private static string readConversionRaw(string mathStr, PcmFile PCM)
+    {
+        // Example: RAW:0x321:SWORD:MSB
+        string retVal = mathStr;
+        int start = mathStr.IndexOf("raw:");
+        int mid = mathStr.IndexOf(" ", start + 3);
+        string rawStr = mathStr.Substring(start, mid - start + 1);
+        string[] rawParts = rawStr.Split(':');
+        if (rawParts.Length < 3)
+        {
+            throw new Exception("Unknown RAW definition in Math: " + mathStr);
+        }
+        InDataType idt =(InDataType) Enum.Parse(typeof(InDataType), rawParts[2].ToUpper());
+        TableData tmpTd = new TableData();
+        tmpTd.Address = rawParts[1];
+        tmpTd.Offset = 0;
+        tmpTd.DataType = idt;
+        UInt64 rawVal = getRawValue(PCM.buf, tmpTd.addrInt, tmpTd, 0);
+        if (rawParts.Length > 3 && rawParts[3].StartsWith("lsb"))
+        {
+            int eSize = getElementSize(idt);
+            if (eSize == 2)
+                rawVal = SwapBytes((ushort)rawVal);
+            else if (eSize == 4)
+                rawVal = SwapBytes((UInt32)rawVal);
+            else if (eSize == 8)
+                rawVal = SwapBytes((UInt64)rawVal);
+        }
+        retVal = mathStr.Replace(rawStr, rawVal.ToString());
+        return retVal;
+    }
+
+    //
+    //Get value from defined table, using defined math functions.
+    //
+    public static double getValue(byte[] myBuffer, uint addr, TableData mathTd, uint offset, PcmFile PCM)
     {
         double retVal = 0;
         try
@@ -551,9 +616,18 @@ public class upatcher
             if (mathTd.Math == null || mathTd.Math.Length == 0)
                 mathTd.Math = "X";
             string mathStr = mathTd.Math.ToLower().Replace("x", retVal.ToString());
-            if (commaDecimal) mathStr = mathStr.Replace(".", ",");
+            if (mathStr.Contains("table:"))
+            {
+                mathStr = readConversionTable(mathStr, PCM);
+            }
+            if (mathStr.Contains("raw:"))
+            {
+                mathStr = readConversionRaw(mathStr, PCM);
+            }
+            if (commaDecimal) 
+                mathStr = mathStr.Replace(".", ",");
             retVal = parser.Parse(mathStr, false);
-
+            Debug.WriteLine(mathStr);
         }
         catch (Exception ex)
         {
@@ -596,6 +670,7 @@ public class upatcher
 
         return retVal;
     }
+
 
     public static  Dictionary<double, string> parseEnumHeaders(string eVals)
     {
@@ -967,7 +1042,7 @@ public class upatcher
             {
                 for (int c = 0; c < td1.Columns; c++)
                 {
-                    double val = getValue(pcm1.buf,addr,td1,0);
+                    double val = getValue(pcm1.buf,addr,td1,0,pcm1);
                     tableValues.Add(val);
                     addr += step;
                 }
@@ -979,7 +1054,7 @@ public class upatcher
             {
                 for (int r = 0; r < td1.Rows; r++)
                 {
-                    double val = getValue(pcm1.buf, addr, td1, 0);
+                    double val = getValue(pcm1.buf, addr, td1, 0, pcm1);
                     tableValues.Add(val);
                     addr += step;
                 }
@@ -996,7 +1071,7 @@ public class upatcher
             {
                 for (int c = 0; c < td2.Columns; c++)
                 {
-                    double val = getValue(pcm2.buf, addr, td2, 0);
+                    double val = getValue(pcm2.buf, addr, td2, 0,pcm2);
                     if (val != tableValues[i])
                     {
                         match = false;
@@ -1013,7 +1088,7 @@ public class upatcher
             {
                 for (int r = 0; r < td2.Rows; r++)
                 {
-                    double val = getValue(pcm2.buf, addr, td2, 0);
+                    double val = getValue(pcm2.buf, addr, td2, 0, pcm2);
                     if (val != tableValues[i])
                     {
                         match = false;
@@ -1903,6 +1978,7 @@ public class upatcher
         return retVal;
     }
 
+
     public static uint searchWord(PcmFile PCM, ushort sWord, uint Start, uint End, ushort stopVal = 0)
     {
         for (uint addr = Start; addr < End; addr++)
@@ -2087,6 +2163,14 @@ public class upatcher
                ((x & 0xff000000) >> 24);
     }
 
+    public static UInt64 SwapBytes(UInt64 data)
+    {
+        byte[] tmp = new byte[8];
+        tmp = BitConverter.GetBytes(data);
+        Array.Reverse(tmp);
+        return BitConverter.ToUInt64(tmp, 0);
+    }
+
     public static void UseComboBoxForEnums(DataGridView g)
     {
         try
@@ -2121,6 +2205,7 @@ public class upatcher
             Debug.WriteLine(ex.Message);
         }
     }
+
 
     public static int findTableDataId(TableData refTd, List<TableData> tdList)
     {
@@ -2207,17 +2292,5 @@ public class upatcher
         }
     }
 
-    public static UInt64 readTableData(byte[] buf, TableData td)
-    {
-        //Get raw hex data from table, for bitmask etc
-        UInt32 bufAddr = (uint)(td.addrInt + td.Offset);
-        if (td.DataType == InDataType.UWORD || td.DataType == InDataType.SWORD)
-            return BEToUint16(buf, bufAddr);
-        if (td.DataType == InDataType.INT32 || td.DataType == InDataType.UINT32 || td.DataType == InDataType.FLOAT32)
-            return BEToUint32(buf, bufAddr);
-        if (td.DataType == InDataType.INT64 || td.DataType == InDataType.UINT64 || td.DataType == InDataType.FLOAT64)
-            return BEToUint64(buf, bufAddr);
-        return buf[bufAddr];
-    }
 
 }

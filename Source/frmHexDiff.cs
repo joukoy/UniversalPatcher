@@ -78,8 +78,8 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        data1 += getValue(pcm1.buf, addr, td, 0).ToString(formatStr) + " ";
-                        data2 += getValue(pcm2.buf, addr2, td2, 0).ToString(formatStr) + " ";
+                        data1 += getValue(pcm1.buf, addr, td, 0,pcm1).ToString(formatStr) + " ";
+                        data2 += getValue(pcm2.buf, addr2, td2, 0,pcm2).ToString(formatStr) + " ";
                     }
                     addr += step;
                     addr2 += step2;
@@ -162,7 +162,7 @@ namespace UniversalPatcher
                 List<int> tableIds = new List<int>();
                 tableIds.Add(id);
                 frmT.prepareTable(td, tableIds);
-                frmT.addCompareFiletoMenu(pcm2, pcm2.tableDatas[id2]);
+                frmT.addCompareFiletoMenu(pcm2, pcm2.tableDatas[id2],"");
                 frmT.Show();
                 frmT.loadTable(true);
             }

@@ -134,7 +134,7 @@ namespace UniversalPatcher
             this.searchCodeFromGoogleToolStripMenuItem,
             this.copyFromCompareToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(196, 158);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(196, 136);
             // 
             // cutToolStripMenuItem
             // 
@@ -504,7 +504,6 @@ namespace UniversalPatcher
         private GroupBox groupSelectCompare;
         private RadioButton radioDifference;
         private RadioButton radioCompareFile;
-        private RadioButton radioOriginal;
         private RadioButton radioSideBySide;
         private NumericUpDown numDecimals;
         private Label label1;
@@ -513,5 +512,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem searchCodeFromGoogleToolStripMenuItem;
         private ToolStripMenuItem copyFromCompareToolStripMenuItem;
         private RadioButton radioSideBySideText;
+        public RadioButton radioOriginal;
     }
 }
