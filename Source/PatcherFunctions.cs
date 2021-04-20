@@ -13,6 +13,7 @@ using System.Linq;
 using System.Drawing;
 using System.Xml.Serialization;
 using MathParserTK;
+using InverseParserTK;
 
 public class upatcher
 {
@@ -340,6 +341,7 @@ public class upatcher
     public static string tableSearchFile;
     public static string tableSeekFile = "";
     public static MathParser parser = new MathParser();
+    public static InverseParser inverseParser = new InverseParser();
     public static bool commaDecimal = true;
 
     public static FrmPatcher frmpatcher;
@@ -518,7 +520,61 @@ public class upatcher
         return DataType;
     }
 
-    private static string readConversionTable(string mathStr, PcmFile PCM)
+    public static double getMaxValue (InDataType dType)
+    {
+        if (dType == InDataType.FLOAT32)
+            return float.MaxValue;
+        else if (dType == InDataType.FLOAT64)
+            return double.MaxValue;
+        else if (dType == InDataType.INT32)
+            return Int32.MaxValue;
+        else if (dType == InDataType.INT64)
+            return Int64.MaxValue;
+        else if (dType == InDataType.SBYTE)
+            return sbyte.MaxValue;
+        else if (dType == InDataType.SWORD)
+            return Int16.MaxValue;
+        else if (dType == InDataType.UBYTE)
+            return byte.MaxValue;
+        else if (dType == InDataType.UINT32)
+            return UInt32.MaxValue;
+        else if (dType == InDataType.UINT64)
+            return UInt64.MaxValue;
+        else if (dType == InDataType.UWORD)
+            return UInt16.MaxValue;
+        else 
+            return byte.MaxValue;
+
+    }
+
+    public static double getMinValue(InDataType dType)
+    {
+        if (dType == InDataType.FLOAT32)
+            return float.MinValue;
+        else if (dType == InDataType.FLOAT64)
+            return double.MinValue;
+        else if (dType == InDataType.INT32)
+            return Int32.MinValue;
+        else if (dType == InDataType.INT64)
+            return Int64.MinValue;
+        else if (dType == InDataType.SBYTE)
+            return sbyte.MinValue;
+        else if (dType == InDataType.SWORD)
+            return Int16.MinValue;
+        else if (dType == InDataType.UBYTE)
+            return byte.MinValue;
+        else if (dType == InDataType.UINT32)
+            return UInt32.MinValue;
+        else if (dType == InDataType.UINT64)
+            return UInt64.MinValue;
+        else if (dType == InDataType.UWORD)
+            return UInt16.MinValue;
+        else
+            return byte.MinValue;
+
+    }
+
+    public static string readConversionTable(string mathStr, PcmFile PCM)
     {
         //Example: TABLE:'MAF Scalar #1'
         string retVal = mathStr;
@@ -539,7 +595,7 @@ public class upatcher
         return retVal;
     }
 
-    private static string readConversionRaw(string mathStr, PcmFile PCM)
+    public static string readConversionRaw(string mathStr, PcmFile PCM)
     {
         // Example: RAW:0x321:SWORD:MSB
         string retVal = mathStr;
@@ -627,7 +683,7 @@ public class upatcher
             if (commaDecimal) 
                 mathStr = mathStr.Replace(".", ",");
             retVal = parser.Parse(mathStr, false);
-            Debug.WriteLine(mathStr);
+            //Debug.WriteLine(mathStr);
         }
         catch (Exception ex)
         {
@@ -840,10 +896,10 @@ public class upatcher
     public static uint applyTablePatch(PcmFile basefile, XmlPatch xpatch, int tdId)
     {
         int i = 0;
-        frmTableEditor frmTE = new frmTableEditor(basefile);
+        frmTableEditor frmTE = new frmTableEditor();
         TableData pTd = basefile.tableDatas[tdId];
-        frmTE.prepareTable(pTd, null);
-        frmTE.loadTable(true);
+        frmTE.prepareTable(basefile, pTd, null, "A");
+        frmTE.loadTable();
         uint addr = (uint)(pTd.addrInt + pTd.Offset);
         uint step = (uint)getElementSize(pTd.DataType);
         try
@@ -856,7 +912,10 @@ public class upatcher
                     for (int c = 0; c < pTd.Columns; c++)
                     {
                         double val = Convert.ToDouble(dataParts[i].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                        frmTE.SaveValue(addr, r, c, pTd, val);
+                        frmTableEditor.TableCell tCell = new frmTableEditor.TableCell();
+                        tCell.addr = addr;
+                        tCell.td = pTd;
+                        frmTE.SaveValue(r, c, tCell, val);
                         addr += step;
                         i++;
                     }
@@ -869,7 +928,10 @@ public class upatcher
                     for (int r = 0; r < pTd.Rows; r++)
                     {
                         double val = Convert.ToDouble(dataParts[i].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                        frmTE.SaveValue(addr, r, c, pTd, val);
+                        frmTableEditor.TableCell tCell = new frmTableEditor.TableCell();
+                        tCell.addr = addr;
+                        tCell.td = pTd;
+                        frmTE.SaveValue(r, c, tCell, val);
                         addr += step;
                         i++;
                     }

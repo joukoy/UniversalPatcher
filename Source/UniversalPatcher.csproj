@@ -279,6 +279,7 @@
     <Compile Include="frmPatcher.Designer.cs">
       <DependentUpon>frmPatcher.cs</DependentUpon>
     </Compile>
+    <Compile Include="InverseParser.cs" />
     <Compile Include="ListViewSorter.cs" />
     <Compile Include="MathParser.cs" />
     <Compile Include="PatcherFunctions.cs" />

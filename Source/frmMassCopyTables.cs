@@ -165,12 +165,12 @@ namespace UniversalPatcher
 
         private void copyTableData(TableData srcTd, TableData dstTd, ref PcmFile dstPCM)
         {
-            frmTableEditor srcTE = new frmTableEditor(PCM);
-            srcTE.prepareTable(srcTd, null);
-            srcTE.loadTable(true);
-            frmTableEditor dstTE = new frmTableEditor(dstPCM);
-            dstTE.prepareTable(dstTd, null);
-            dstTE.loadTable(true);
+            frmTableEditor srcTE = new frmTableEditor();
+            srcTE.prepareTable(PCM, srcTd, null,"A");
+            srcTE.loadTable();
+            frmTableEditor dstTE = new frmTableEditor();
+            dstTE.prepareTable(dstPCM, dstTd, null,"A");
+            dstTE.loadTable();
 
             uint srcAddr = (uint)(srcTd.addrInt + srcTd.Offset);
             int srcStep = getElementSize(srcTd.DataType);
@@ -180,14 +180,18 @@ namespace UniversalPatcher
             {
                 for (int c = 0; c < srcTd.Columns; c++)
                 {
-                    double cellValue = getValue(PCM.buf, srcAddr, srcTd,0,PCM);
-                    dstTE.SaveValue(dstAddr, r, c, dstTd, cellValue);
+                    double cellValue = getValue(PCM.buf, srcAddr, srcTd, 0, PCM);
+
+                    frmTableEditor.TableCell tCell = new frmTableEditor.TableCell();
+                    tCell.addr = dstAddr;                    
+                    tCell.lastValue = cellValue;
+                    tCell.td = dstTd;
+                    dstTE.SaveValue(r, c, tCell, cellValue);
                     srcAddr += (uint)srcStep;
                     dstAddr += (uint)dstStep;
                 }
             }
             dstTE.saveTable();
-            dstPCM = dstTE.PCM;
             srcTE.Dispose();
             dstTE.Dispose();
         }

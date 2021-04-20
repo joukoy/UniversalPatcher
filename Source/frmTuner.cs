@@ -231,7 +231,7 @@ namespace UniversalPatcher
                 {
                     LoggerBold("WARING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);
                 }
-                frmTableEditor frmT = new frmTableEditor(PCM);
+                frmTableEditor frmT = new frmTableEditor();
                 if (treeMode && !newWindow)
                 {
                     frmT.Dock = DockStyle.Fill;
@@ -239,8 +239,7 @@ namespace UniversalPatcher
                     frmT.TopLevel = false;
                     splitTree.Panel2.Controls.Add(frmT);
                 }
-                frmT.radioOriginal.Text = currentBin;
-                frmT.prepareTable(td, tableIds);
+                frmT.prepareTable(PCM, td, tableIds, currentBin);
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
                 foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                 {
@@ -248,25 +247,25 @@ namespace UniversalPatcher
                     if (PCM.FileName != comparePCM.FileName)
                     {
                         Logger("Adding file: " + Path.GetFileName(comparePCM.FileName) + " to compare menu... ", false);
-                        int x = -1;
-                        for (int y = 0; y < tableIds.Count; y++)
+                        if (PCM.OS == comparePCM.OS)
                         {
-                            TableData tmpTd = PCM.tableDatas[tableIds[y]];
-                            x = findTableDataId(tmpTd, comparePCM.tableDatas);
-                            if (x > -1)
-                                break;
-                        }
-                        if (x < 0)
-                        {
-                            LoggerBold("Table not found");
+                            frmT.addCompareFiletoMenu(comparePCM, td, mi.Text);
                         }
                         else
                         {
-                            /*if (comparePCM.tableDatas[x].Rows != td.Rows || comparePCM.tableDatas[x].Columns != td.Columns || comparePCM.tableDatas[x].RowMajor != td.RowMajor)
+                            int x = -1;
+                            for (int y = 0; y < tableIds.Count; y++)
                             {
-                               Logger("Table size not match!");
+                                TableData tmpTd = PCM.tableDatas[tableIds[y]];
+                                x = findTableDataId(tmpTd, comparePCM.tableDatas);
+                                if (x > -1)
+                                    break;
                             }
-                            else*/
+                            if (x < 0)
+                            {
+                                LoggerBold("Table not found");
+                            }
+                            else
                             {
                                 frmT.addCompareFiletoMenu(comparePCM, comparePCM.tableDatas[x], mi.Text);
                                 if (PCM.configFile != comparePCM.configFile)
@@ -278,11 +277,11 @@ namespace UniversalPatcher
                                     Logger("[OK]");
                                 }
                             }
-                        }                            
+                        }
                     }
                 }
                 frmT.Show();
-                frmT.loadTable(true);                
+                frmT.loadTable();                
             }
             catch (Exception ex)
             {
@@ -2155,15 +2154,14 @@ namespace UniversalPatcher
                     return;
                 }
                 Logger("Comparing....");
-                frmTableEditor frmT = new frmTableEditor(PCM);
+                frmTableEditor frmT = new frmTableEditor();
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
                 PcmFile comparePCM = PCM.ShallowCopy();
                 comparePCM.FileName = td2.TableName;
                 frmT.addCompareFiletoMenu(comparePCM,td2, "");
-                frmT.compareTd = td2;
                 frmT.Show();
-                frmT.prepareTable(td1, null);
-                frmT.loadTable(true);
+                frmT.prepareTable(PCM,td1, null, "A");
+                frmT.loadTable();
 
             }
             catch (Exception ex)
@@ -2324,9 +2322,9 @@ namespace UniversalPatcher
                 xpatch.XmlFile = PCM.configFile;
                 xpatch.Segment = PCM.GetSegmentName(pTd.addrInt);
                 xpatch.Description = Description;
-                frmTableEditor frmTE = new frmTableEditor(PCM);
-                frmTE.prepareTable(pTd, null);
-                frmTE.loadTable(true);
+                frmTableEditor frmTE = new frmTableEditor();
+                frmTE.prepareTable(PCM, pTd, null, "A");
+                frmTE.loadTable();
                 uint step = (uint)getElementSize(pTd.DataType);
                 uint addr = (uint)(pTd.addrInt + pTd.Offset);
                 if (pTd.RowMajor)

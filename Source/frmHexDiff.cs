@@ -158,13 +158,13 @@ namespace UniversalPatcher
                 int id = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value);
                 int id2 = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id2"].Value);
                 TableData td = pcm1.tableDatas[id];
-                frmTableEditor frmT = new frmTableEditor(pcm1);
+                frmTableEditor frmT = new frmTableEditor();
                 List<int> tableIds = new List<int>();
                 tableIds.Add(id);
-                frmT.prepareTable(td, tableIds);
+                frmT.prepareTable(pcm1, td, tableIds,"A");
                 frmT.addCompareFiletoMenu(pcm2, pcm2.tableDatas[id2],"");
                 frmT.Show();
-                frmT.loadTable(true);
+                frmT.loadTable();
             }
         }
 

@@ -69,6 +69,7 @@ namespace UniversalPatcher
             this.radioOriginal = new System.Windows.Forms.RadioButton();
             this.numDecimals = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
+            this.radioCompareAll = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -305,7 +306,7 @@ namespace UniversalPatcher
             // numColumn
             // 
             this.numColumn.Enabled = false;
-            this.numColumn.Location = new System.Drawing.Point(386, 27);
+            this.numColumn.Location = new System.Drawing.Point(415, 27);
             this.numColumn.Maximum = new decimal(new int[] {
             3,
             0,
@@ -330,7 +331,7 @@ namespace UniversalPatcher
             // labelColumn
             // 
             this.labelColumn.AutoSize = true;
-            this.labelColumn.Location = new System.Drawing.Point(327, 31);
+            this.labelColumn.Location = new System.Drawing.Point(356, 31);
             this.labelColumn.Name = "labelColumn";
             this.labelColumn.Size = new System.Drawing.Size(45, 13);
             this.labelColumn.TabIndex = 9;
@@ -339,6 +340,7 @@ namespace UniversalPatcher
             // 
             // groupSelectCompare
             // 
+            this.groupSelectCompare.Controls.Add(this.radioCompareAll);
             this.groupSelectCompare.Controls.Add(this.radioSideBySideText);
             this.groupSelectCompare.Controls.Add(this.radioSideBySide);
             this.groupSelectCompare.Controls.Add(this.radioDifference);
@@ -347,7 +349,7 @@ namespace UniversalPatcher
             this.groupSelectCompare.Enabled = false;
             this.groupSelectCompare.Location = new System.Drawing.Point(9, 27);
             this.groupSelectCompare.Name = "groupSelectCompare";
-            this.groupSelectCompare.Size = new System.Drawing.Size(284, 20);
+            this.groupSelectCompare.Size = new System.Drawing.Size(341, 20);
             this.groupSelectCompare.TabIndex = 10;
             this.groupSelectCompare.TabStop = false;
             this.groupSelectCompare.Text = "Show";
@@ -414,7 +416,7 @@ namespace UniversalPatcher
             // 
             // numDecimals
             // 
-            this.numDecimals.Location = new System.Drawing.Point(386, 5);
+            this.numDecimals.Location = new System.Drawing.Point(415, 5);
             this.numDecimals.Minimum = new decimal(new int[] {
             1,
             0,
@@ -433,11 +435,23 @@ namespace UniversalPatcher
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(327, 7);
+            this.label1.Location = new System.Drawing.Point(356, 7);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(53, 13);
             this.label1.TabIndex = 12;
             this.label1.Text = "Decimals:";
+            // 
+            // radioCompareAll
+            // 
+            this.radioCompareAll.AutoSize = true;
+            this.radioCompareAll.Location = new System.Drawing.Point(294, 1);
+            this.radioCompareAll.Name = "radioCompareAll";
+            this.radioCompareAll.Size = new System.Drawing.Size(44, 17);
+            this.radioCompareAll.TabIndex = 5;
+            this.radioCompareAll.TabStop = true;
+            this.radioCompareAll.Text = "A | *";
+            this.radioCompareAll.UseVisualStyleBackColor = true;
+            this.radioCompareAll.CheckedChanged += new System.EventHandler(this.radioCompareAll_CheckedChanged);
             // 
             // frmTableEditor
             // 
@@ -512,6 +526,7 @@ namespace UniversalPatcher
         private ToolStripMenuItem searchCodeFromGoogleToolStripMenuItem;
         private ToolStripMenuItem copyFromCompareToolStripMenuItem;
         private RadioButton radioSideBySideText;
-        public RadioButton radioOriginal;
+        private RadioButton radioOriginal;
+        private RadioButton radioCompareAll;
     }
 }
