@@ -2127,7 +2127,8 @@ namespace UniversalPatcher
                 dataGridView1.SelectedCells[i].Value = val;   
                 tCell.lastValue = val;
                 tCell.lastRawValue = rawVal;
-                SaveValue(dataGridView1.SelectedCells[i].RowIndex, dataGridView1.SelectedCells[i].ColumnIndex, tCell, val);
+                //SaveValue(dataGridView1.SelectedCells[i].RowIndex, dataGridView1.SelectedCells[i].ColumnIndex, tCell, val);
+                setCellColor(dataGridView1.SelectedCells[i].RowIndex, dataGridView1.SelectedCells[i].ColumnIndex, tCell);
             }
             dataGridView1.EndEdit();
         }
