@@ -62,6 +62,7 @@ namespace UniversalPatcher
             this.numColumn = new System.Windows.Forms.NumericUpDown();
             this.labelColumn = new System.Windows.Forms.Label();
             this.groupSelectCompare = new System.Windows.Forms.GroupBox();
+            this.radioCompareAll = new System.Windows.Forms.RadioButton();
             this.radioSideBySideText = new System.Windows.Forms.RadioButton();
             this.radioSideBySide = new System.Windows.Forms.RadioButton();
             this.radioDifference = new System.Windows.Forms.RadioButton();
@@ -69,7 +70,8 @@ namespace UniversalPatcher
             this.radioOriginal = new System.Windows.Forms.RadioButton();
             this.numDecimals = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
-            this.radioCompareAll = new System.Windows.Forms.RadioButton();
+            this.btnIncrease = new System.Windows.Forms.Button();
+            this.btnDecrease = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -100,7 +102,7 @@ namespace UniversalPatcher
             // 
             // txtMath
             // 
-            this.txtMath.Location = new System.Drawing.Point(9, 47);
+            this.txtMath.Location = new System.Drawing.Point(35, 50);
             this.txtMath.Name = "txtMath";
             this.txtMath.Size = new System.Drawing.Size(82, 20);
             this.txtMath.TabIndex = 1;
@@ -108,7 +110,7 @@ namespace UniversalPatcher
             // 
             // btnExecute
             // 
-            this.btnExecute.Location = new System.Drawing.Point(97, 47);
+            this.btnExecute.Location = new System.Drawing.Point(123, 50);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(54, 21);
             this.btnExecute.TabIndex = 2;
@@ -119,7 +121,7 @@ namespace UniversalPatcher
             // labelUnits
             // 
             this.labelUnits.AutoSize = true;
-            this.labelUnits.Location = new System.Drawing.Point(157, 50);
+            this.labelUnits.Location = new System.Drawing.Point(183, 53);
             this.labelUnits.Name = "labelUnits";
             this.labelUnits.Size = new System.Drawing.Size(10, 13);
             this.labelUnits.TabIndex = 5;
@@ -354,6 +356,18 @@ namespace UniversalPatcher
             this.groupSelectCompare.TabStop = false;
             this.groupSelectCompare.Text = "Show";
             // 
+            // radioCompareAll
+            // 
+            this.radioCompareAll.AutoSize = true;
+            this.radioCompareAll.Location = new System.Drawing.Point(294, 1);
+            this.radioCompareAll.Name = "radioCompareAll";
+            this.radioCompareAll.Size = new System.Drawing.Size(44, 17);
+            this.radioCompareAll.TabIndex = 5;
+            this.radioCompareAll.TabStop = true;
+            this.radioCompareAll.Text = "A | *";
+            this.radioCompareAll.UseVisualStyleBackColor = true;
+            this.radioCompareAll.CheckedChanged += new System.EventHandler(this.radioCompareAll_CheckedChanged);
+            // 
             // radioSideBySideText
             // 
             this.radioSideBySideText.AutoSize = true;
@@ -441,23 +455,35 @@ namespace UniversalPatcher
             this.label1.TabIndex = 12;
             this.label1.Text = "Decimals:";
             // 
-            // radioCompareAll
+            // btnIncrease
             // 
-            this.radioCompareAll.AutoSize = true;
-            this.radioCompareAll.Location = new System.Drawing.Point(294, 1);
-            this.radioCompareAll.Name = "radioCompareAll";
-            this.radioCompareAll.Size = new System.Drawing.Size(44, 17);
-            this.radioCompareAll.TabIndex = 5;
-            this.radioCompareAll.TabStop = true;
-            this.radioCompareAll.Text = "A | *";
-            this.radioCompareAll.UseVisualStyleBackColor = true;
-            this.radioCompareAll.CheckedChanged += new System.EventHandler(this.radioCompareAll_CheckedChanged);
+            this.btnIncrease.Location = new System.Drawing.Point(9, 48);
+            this.btnIncrease.Name = "btnIncrease";
+            this.btnIncrease.Size = new System.Drawing.Size(20, 12);
+            this.btnIncrease.TabIndex = 13;
+            this.btnIncrease.Text = "+";
+            this.btnIncrease.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btnIncrease.UseVisualStyleBackColor = true;
+            this.btnIncrease.Click += new System.EventHandler(this.btnIncrease_Click);
+            // 
+            // btnDecrease
+            // 
+            this.btnDecrease.Location = new System.Drawing.Point(9, 60);
+            this.btnDecrease.Name = "btnDecrease";
+            this.btnDecrease.Size = new System.Drawing.Size(20, 12);
+            this.btnDecrease.TabIndex = 14;
+            this.btnDecrease.Text = "-";
+            this.btnDecrease.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btnDecrease.UseVisualStyleBackColor = true;
+            this.btnDecrease.Click += new System.EventHandler(this.btnDecrease_Click);
             // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(599, 450);
+            this.Controls.Add(this.btnDecrease);
+            this.Controls.Add(this.btnIncrease);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.numDecimals);
             this.Controls.Add(this.groupSelectCompare);
@@ -528,5 +554,7 @@ namespace UniversalPatcher
         private RadioButton radioSideBySideText;
         private RadioButton radioOriginal;
         private RadioButton radioCompareAll;
+        private Button btnIncrease;
+        private Button btnDecrease;
     }
 }

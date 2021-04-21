@@ -1393,7 +1393,7 @@ namespace UniversalPatcher
                     X = (UInt64)X;
                 else if (mathTd.DataType == InDataType.UWORD)
                     X = (UInt16)X;
-                string newMathStr = mathStr.Replace("x", X.ToString());
+                string newMathStr = mathStr.ToLower().Replace("x", X.ToString());
                 retVal = parser.Parse(newMathStr, false);
 
                 if (mathTd.OutputType == OutDataType.Hex || mathTd.OutputType == OutDataType.Int)
@@ -1477,6 +1477,8 @@ namespace UniversalPatcher
                     }
 
                     newRawValue = savingMath.getSavingValue(mathStr, newValue);
+                    if (mathTd.DataType != InDataType.FLOAT32 && mathTd.DataType != InDataType.FLOAT64)
+                        newRawValue = Math.Round(newRawValue);
                     Debug.WriteLine("Calculated raw value: " + newRawValue);
 
                     if (newRawValue < minRawVal)
@@ -2074,32 +2076,96 @@ namespace UniversalPatcher
                 loadTable();
             }
         }
-/*        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+
+        private void tuneCellValues(int step)
         {
-            if (dataGridView1.IsCurrentCellInEditMode && dataGridView1.SelectedCells[0].GetType() != typeof(DataGridViewComboBoxCell))
+            dataGridView1.BeginEdit(true);
+            for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
             {
-                TableCell tc = (TableCell)dataGridView1.SelectedCells[0].Tag;
-                double newValue = tc.lastRawValue;
+                TableCell tCell = (TableCell)dataGridView1.SelectedCells[i].Tag;
+                TableData mathTd = tCell.td;
+                double rawVal = tCell.lastRawValue;
+                double minRawVal = getMinValue(mathTd.DataType);
+                double maxRawVal = getMaxValue(mathTd.DataType);
+                if (step > 0 && rawVal == maxRawVal)
+                    return;
+                if (step < 0 && rawVal == minRawVal)
+                    return;
+                string mathStr = tCell.td.Math;
+                if (mathStr.Contains("table:"))
+                {
+                    mathStr = readConversionTable(mathStr, tCell.tableInfo.pcm);
+                }
+                if (mathStr.Contains("raw:"))
+                {
+                    mathStr = readConversionRaw(mathStr, tCell.tableInfo.pcm);
+                }
+                rawVal += step;
+                double val = safeCalc(mathStr, rawVal, tCell.td);
 
-                if (keyData == Keys.Up)
-                    newValue++;
-                else if (keyData == Keys.Down)
-                    newValue--;
-                else if (keyData == Keys.PageUp)
-                    newValue += 10;
-                else if (keyData == Keys.PageDown)
-                    newValue -= 10;
-                else
-                    return base.ProcessCmdKey(ref msg, keyData);
+                uint bufAddr = tCell.addr - tCell.tableInfo.compareFile.tableBufferOffset;
+                byte[] tableBuffer = tCell.tableInfo.compareFile.buf;
+                if (mathTd.DataType == InDataType.UBYTE || mathTd.DataType == InDataType.SBYTE)
+                    tableBuffer[bufAddr] = (byte)rawVal;
+                if (mathTd.DataType == InDataType.SWORD)
+                    SaveShort(tableBuffer, bufAddr, (short)rawVal);
+                if (mathTd.DataType == InDataType.UWORD)
+                    SaveUshort(tableBuffer, bufAddr, (ushort)rawVal);
+                if (mathTd.DataType == InDataType.FLOAT32)
+                    SaveFloat32(tableBuffer, bufAddr, (Single)rawVal);
+                if (mathTd.DataType == InDataType.INT32)
+                    SaveInt32(tableBuffer, bufAddr, (Int32)rawVal);
+                if (mathTd.DataType == InDataType.UINT32)
+                    SaveUint32(tableBuffer, bufAddr, (UInt32)rawVal);
+                if (mathTd.DataType == InDataType.FLOAT64)
+                    SaveFloat64(tableBuffer, bufAddr, rawVal);
+                if (mathTd.DataType == InDataType.INT64)
+                    SaveInt64(tableBuffer, bufAddr, (Int64)rawVal);
+                if (mathTd.DataType == InDataType.UINT64)
+                    SaveUint64(tableBuffer, bufAddr, (UInt64)rawVal);
 
-                string mathStr = tc.td.Math.ToLower();
-                double newVal = safeCalc(mathStr, newValue, tc.td);
-                dataGridView1.SelectedCells[0].Value = newVal;
-                Debug.WriteLine(newVal);
-                return true;
+                dataGridView1.SelectedCells[i].Value = val;   
+                tCell.lastValue = val;
+                tCell.lastRawValue = rawVal;
+                SaveValue(dataGridView1.SelectedCells[i].RowIndex, dataGridView1.SelectedCells[i].ColumnIndex, tCell, val);
             }
-            return base.ProcessCmdKey(ref msg, keyData);
+            dataGridView1.EndEdit();
         }
+        private void btnIncrease_Click(object sender, EventArgs e)
+        {
+            tuneCellValues(1);
+        }
+
+        private void btnDecrease_Click(object sender, EventArgs e)
+        {
+            tuneCellValues(-1);
+        }
+        /*        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+{
+  if (dataGridView1.IsCurrentCellInEditMode && dataGridView1.SelectedCells[0].GetType() != typeof(DataGridViewComboBoxCell))
+  {
+      TableCell tc = (TableCell)dataGridView1.SelectedCells[0].Tag;
+      double newValue = tc.lastRawValue;
+
+      if (keyData == Keys.Up)
+          newValue++;
+      else if (keyData == Keys.Down)
+          newValue--;
+      else if (keyData == Keys.PageUp)
+          newValue += 10;
+      else if (keyData == Keys.PageDown)
+          newValue -= 10;
+      else
+          return base.ProcessCmdKey(ref msg, keyData);
+
+      string mathStr = tc.td.Math.ToLower();
+      double newVal = safeCalc(mathStr, newValue, tc.td);
+      dataGridView1.SelectedCells[0].Value = newVal;
+      Debug.WriteLine(newVal);
+      return true;
+  }
+  return base.ProcessCmdKey(ref msg, keyData);
+}
 */
     }
 }

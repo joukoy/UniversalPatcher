@@ -35,6 +35,7 @@ namespace UniversalPatcher
             // 14.7/ ( 0.156 + (((128+x)/2)/128) ) -12.9
 
             string newMath = "(" + mathStr.ToLower() + ") - " + val.ToString();
+            newMath = newMath.Replace(",", ".");
             var x = Expression.Symbol("x");
             Expression mathExpr = Infix.ParseOrThrow(newMath);
             Expression ax = SolveSimpleRoot(x, mathExpr);
