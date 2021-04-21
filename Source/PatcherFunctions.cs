@@ -13,7 +13,6 @@ using System.Linq;
 using System.Drawing;
 using System.Xml.Serialization;
 using MathParserTK;
-using InverseParserTK;
 
 public class upatcher
 {
@@ -341,8 +340,7 @@ public class upatcher
     public static string tableSearchFile;
     public static string tableSeekFile = "";
     public static MathParser parser = new MathParser();
-    public static InverseParser inverseParser = new InverseParser();
-    public static bool commaDecimal = true;
+    public static SavingMath savingMath = new SavingMath();
 
     public static FrmPatcher frmpatcher;
 
@@ -680,8 +678,6 @@ public class upatcher
             {
                 mathStr = readConversionRaw(mathStr, PCM);
             }
-            if (commaDecimal) 
-                mathStr = mathStr.Replace(".", ",");
             retVal = parser.Parse(mathStr, false);
             //Debug.WriteLine(mathStr);
         }

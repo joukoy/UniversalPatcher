@@ -70,10 +70,6 @@ namespace UniversalPatcher
                 frmSL.LoadFile(args[1]);
             }*/
 
-            var currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
-            NumberFormatInfo nfi = new CultureInfo(currentCulture, false).NumberFormat;
-            if (nfi.NumberDecimalSeparator == ",") commaDecimal = true;
-            else commaDecimal = false;
 
             LogReceivers = new List<RichTextBox>();
             basefile = new PcmFile();

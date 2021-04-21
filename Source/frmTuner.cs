@@ -239,8 +239,8 @@ namespace UniversalPatcher
                     frmT.TopLevel = false;
                     splitTree.Panel2.Controls.Add(frmT);
                 }
-                frmT.prepareTable(PCM, td, tableIds, currentBin);
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
+                frmT.prepareTable(PCM, td, tableIds, currentBin);
                 foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                 {
                     PcmFile comparePCM = (PcmFile)mi.Tag;

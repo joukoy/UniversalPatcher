@@ -8,7 +8,6 @@ using System.Text;
 using System.Windows.Forms;
 using static upatcher;
 using MathParserTK;
-using InverseParserTK;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -134,6 +133,7 @@ namespace UniversalPatcher
         private bool duplicateTableName = false;
         List<TableData> filteredTables;
         public int currentFile = 0;
+        public int currentCmpFile = 1;
 
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
@@ -311,7 +311,7 @@ namespace UniversalPatcher
                     if (rHeaders.Length >= r + 1 && rHeaders[r].Length > 0)
                         rHdr = rHeaders[r];
                     else
-                        rHdr = r.ToString();
+                        rHdr = "(" + r.ToString() + ")";
                     rowHeaders.Add(RowPrefix + rHdr);
                 }
 
@@ -331,6 +331,7 @@ namespace UniversalPatcher
                             tc.ColHeader = colHeaders[c];
                             tc.RowhHeader = rowHeaders[r];
                             tc.lastValue = getValue(pcm.buf, addr, tData, 0, pcm);
+                            tc.lastRawValue = getRawValue(pcm.buf, addr, tData, 0);
                             tc.origValue = tc.lastValue;
                             tc.addr = addr;
                             addr += (uint)step;
@@ -354,6 +355,7 @@ namespace UniversalPatcher
                             tc.ColHeader = colHeaders[c];
                             tc.RowhHeader = rowHeaders[r];
                             tc.lastValue = getValue(pcm.buf, addr, tData, 0, pcm);
+                            tc.lastRawValue = getRawValue(pcm.buf, addr, tData, 0);
                             tc.origValue = tc.lastValue;
                             tc.addr = addr;
                             addr += (uint)step;
@@ -400,7 +402,7 @@ namespace UniversalPatcher
             if (tableIds.Count > 1)
             {
                 multiSelect = true;
-                prepareMultiTable(pcm,td,tableIds);
+                prepareMultiTable(orgFile,td,tableIds);
                 return;
             }
             if (!disableMultiTable)
@@ -412,7 +414,7 @@ namespace UniversalPatcher
                         if (pcm.tableDatas[x].TableName.ToLower() == td.TableName.ToLower().Replace(".yval", ".data").Replace(".xval", ".data"))
                         {
                             td = pcm.tableDatas[x];
-                            prepareMultiTable(pcm, td, null);
+                            prepareMultiTable(orgFile, td, null);
                             return;
                         }
                     }
@@ -428,12 +430,13 @@ namespace UniversalPatcher
                     else
                     {
                         MultiTableName mtn = new MultiTableName(td.TableName, (int)numColumn.Value);
+                        tableName = mtn.TableName;
                         for (int t = 0; t < pcm.tableDatas.Count; t++)
                         {
                             if (pcm.tableDatas[t].Category == td.Category && pcm.tableDatas[t].TableName.StartsWith(mtn.TableName) && pcm.tableDatas[t].TableName != td.TableName)
                             {
                                 //It is multitable
-                                prepareMultiTable(pcm,pcm.tableDatas[t],null);
+                                prepareMultiTable(orgFile,pcm.tableDatas[t],null);
                                 return;
                             }
                         }
@@ -445,7 +448,7 @@ namespace UniversalPatcher
         }
 
 
-        private void prepareMultiTable(PcmFile pcm, TableData tData, List<int> tableIds)
+        private void prepareMultiTable(CompareFile cmpFile, TableData tData, List<int> tableIds)
         {
             int maxCols = 0;
             int maxRows = 0;
@@ -461,7 +464,7 @@ namespace UniversalPatcher
                 List<string> tableNameList = new List<string>();
                 for (int i = 0; i < tableIds.Count; i++)
                 {
-                    TableData mTd = pcm.tableDatas[tableIds[i]];
+                    TableData mTd =cmpFile.pcm.tableDatas[tableIds[i]];
                     if (tableNameList.Contains(mTd.TableName))
                     {
                         duplicateTableName = true;
@@ -477,7 +480,7 @@ namespace UniversalPatcher
                 }
                 for (int i = 0; i < tableIds.Count; i++)
                 {
-                    filteredTables.Add(pcm.tableDatas[tableIds[i]]);
+                    filteredTables.Add(cmpFile.pcm.tableDatas[tableIds[i]]);
                 }
                 rows = tableIds.Count;
                 cols = maxCols;
@@ -488,7 +491,7 @@ namespace UniversalPatcher
             {
                 //Multible tables which are meant to be linked together
                 string filterName = tData.TableName.Substring(0, tableName.Length + 1);
-                var results = pcm.tableDatas.Where(t => t.TableName.StartsWith(filterName));
+                var results = cmpFile.pcm.tableDatas.Where(t => t.TableName.StartsWith(filterName));
                 filteredTables = new List<TableData>(results.ToList());
                 filteredTables = filteredTables.OrderBy(o => o.addrInt).ToList();
                 cols = filteredTables.Count;
@@ -498,7 +501,6 @@ namespace UniversalPatcher
                     tableIds.Add((int)filteredTables[i].id);
             }
 
-            CompareFile cmpFile = new CompareFile(pcm);
             cmpFile.tableIds = tableIds;
             cmpFile.Rows = rows;
             cmpFile.Cols = cols;
@@ -541,6 +543,7 @@ namespace UniversalPatcher
                 menuitem.Checked = true;
                 groupSelectCompare.Enabled = true;
                 modifyRadioText(menuTxt);
+                currentCmpFile = 1;
             }
             compareToolStripMenuItem.DropDownItems.Add(menuitem);
         }
@@ -574,6 +577,7 @@ namespace UniversalPatcher
             modifyRadioText(menuitem.Text);
             menuitem.Checked = true;
             CompareFile cmpFile = (CompareFile)menuitem.Tag;
+            currentCmpFile = findFile(cmpFile.fileLetter);
             //prepareCompareTable(cmpFile); //Not again
             loadTable();
             setMyText();
@@ -582,10 +586,6 @@ namespace UniversalPatcher
         public void loadSeekTable(int tId, PcmFile pcm)
         {
 
-            var currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
-            NumberFormatInfo nfi = new CultureInfo(currentCulture, false).NumberFormat;
-            if (nfi.NumberDecimalSeparator == ",") commaDecimal = true;
-            else commaDecimal = false;
 
             CompareFile cmpFile = new CompareFile(pcm);
 
@@ -950,6 +950,7 @@ namespace UniversalPatcher
                     xySwapped = !chkSwapXY.Checked;
 
                 string prefix = "";
+                string tblNamePrefix = "";
                 string cmpPrefix = "";
                 string rowPrefix = "";
 
@@ -957,21 +958,15 @@ namespace UniversalPatcher
                 CompareFile diffFile = null;
                 if (radioDifference.Checked)
                 {
-                    string diffLetter = radioCompareFile.Text;
-                    int f = findFile(diffLetter);
-                    diffFile = compareFiles[f];
+                    diffFile = compareFiles[currentCmpFile];
                 }
                 if (radioSideBySideText.Checked)
                 {
-                    string diffLetter = radioCompareFile.Text;
-                    int f = findFile(diffLetter);
-                    diffFile = compareFiles[f];
+                    diffFile = compareFiles[currentCmpFile];
                 }
                 if (radioSideBySide.Checked)
                 {
-                    string diffLetter = radioCompareFile.Text;
-                    int f = findFile(diffLetter);
-                    diffFile = compareFiles[f];
+                    diffFile = compareFiles[currentCmpFile];
                     prefix = "[" +selectedFile.fileLetter + "] ";
                     cmpFiles.Add(diffFile);
                 }
@@ -1002,6 +997,10 @@ namespace UniversalPatcher
                     {
                         TableCell tcell = sFile.tableInfos[tbl].tableCells[cell];
                         TableCell cmpCell = null;
+                        if (multiSelect)
+                        {
+                            tblNamePrefix = "[" + tcell.td.TableName + "] ";
+                        }
                         if (diffFile != null)   //RadioDifference checked
                         {
                             int cmpId = -1;
@@ -1017,12 +1016,12 @@ namespace UniversalPatcher
                         }
                         if (!xySwapped)
                         {
-                            gridCol = getColumnByHeader(prefix +  tcell.ColHeader);
+                            gridCol = getColumnByHeader(prefix + tblNamePrefix +  tcell.ColHeader);
                             gridRow = getRowByHeader(rowPrefix + tcell.RowhHeader);
                         }
                         else
                         {
-                            gridCol = getColumnByHeader(rowPrefix + prefix + tcell.RowhHeader);
+                            gridCol = getColumnByHeader(rowPrefix + prefix + tblNamePrefix + tcell.RowhHeader);
                             gridRow = getRowByHeader(tcell.ColHeader);
                         }
                         addCellByType(ft, gridRow, gridCol);
@@ -1040,15 +1039,16 @@ namespace UniversalPatcher
                                 TableData cmpTd = cmpFiles[d].pcm.tableDatas[cmpId];
                                 cmpCell = cmpTinfo.tableCells[cell];
                                 cmpPrefix = "[" + cmpFiles[d].fileLetter + "] ";
+                                tblNamePrefix = "[" + cmpTd.TableName + "] ";
 
                                 if (!xySwapped)
                                 {
-                                    gridCol = getColumnByHeader(cmpPrefix + cmpCell.ColHeader);
+                                    gridCol = getColumnByHeader(cmpPrefix + tblNamePrefix + cmpCell.ColHeader);
                                     gridRow = getRowByHeader(cmpCell.RowhHeader);
                                 }
                                 else
                                 {
-                                    gridCol = getColumnByHeader(cmpPrefix + cmpCell.RowhHeader);
+                                    gridCol = getColumnByHeader(cmpPrefix + tblNamePrefix + cmpCell.RowhHeader);
                                     gridRow = getRowByHeader(cmpCell.ColHeader);
                                 }
                                 addCellByType(cmpCell.td, gridRow, gridCol);
@@ -1464,7 +1464,7 @@ namespace UniversalPatcher
                     double lastRawValue = tCell.lastRawValue;
                     double minRawVal = getMinValue(mathTd.DataType);
                     double maxRawVal = getMaxValue(mathTd.DataType);
-                    Debug.WriteLine("Last raw value: " + lastRawValue + ", Last value: " + (double)tCell.lastValue);
+                    Debug.WriteLine("Last raw value: " + lastRawValue + ", Last value: " + (double)tCell.lastRawValue);
 
                     if (mathStr.Contains("table:"))
                     {
@@ -1474,13 +1474,9 @@ namespace UniversalPatcher
                     {
                         mathStr = readConversionRaw(mathStr, tCell.tableInfo.pcm);
                     }
-                    if (commaDecimal)
-                        mathStr = mathStr.Replace(".", ",");
 
-
-                    newRawValue = inverseParser.InverseParse(mathStr, newValue);
-                    double calcValue = safeCalc(mathStr, newRawValue, mathTd);
-                    Debug.WriteLine("Calculated raw value: " + newRawValue + ", Calculated value: " + calcValue);
+                    newRawValue = savingMath.getSavingValue(mathStr, newValue);
+                    Debug.WriteLine("Calculated raw value: " + newRawValue);
 
                     if (newRawValue < minRawVal)
                     {
@@ -1492,6 +1488,7 @@ namespace UniversalPatcher
                         newRawValue = maxRawVal;
                         Debug.WriteLine("Too big value entered");
                     }
+                    double calcValue = safeCalc(mathStr, newRawValue, mathTd);
                     dataGridView1.Rows[r].Cells[c].Value = calcValue;
                     Debug.WriteLine("Final raw value: " + newRawValue + ", final calculated value: " + calcValue);
                 }
@@ -1526,7 +1523,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+                LoggerBold("Error, line " + line + ": " + ex.Message);
             }
         }
 
@@ -1557,7 +1554,6 @@ namespace UniversalPatcher
                 foreach (DataGridViewCell cell in dataGridView1.SelectedCells)
                 {
                     string mathStr = txtMath.Text.ToLower().Replace("x", cell.Value.ToString());
-                    if (commaDecimal) mathStr = mathStr.Replace(".", ",");
                     double newvalue = parser.Parse(mathStr);
                     cell.Value = newvalue;
                     TableCell tc = (TableCell)dataGridView1.Rows[cell.RowIndex].Cells[cell.ColumnIndex].Tag;
@@ -2077,43 +2073,31 @@ namespace UniversalPatcher
                 loadTable();
             }
         }
-        /*
-private void button1_Click(object sender, EventArgs e)
-{
-   parseTableInfo(PCM, tableIds);
-   foreach (ToolStripMenuItem mi in compareToolStripMenuItem.DropDownItems)
-   {
-       PcmFile xPcm = (PcmFile)mi.Tag;
-       parseTableInfo(xPcm, tableIds);
-   }
-   dataGridView1.Rows.Clear();
-   dataGridView1.Columns.Clear();
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (dataGridView1.IsCurrentCellInEditMode && dataGridView1.SelectedCells[0].GetType() != typeof(DataGridViewComboBoxCell))
+            {
+                TableCell tc = (TableCell)dataGridView1.SelectedCells[0].Tag;
+                double newValue = tc.lastRawValue;
 
-   for (int i = 0; i < tableInfos.Count; i++)
-   {
-       for (int x = 0; x < tableInfos[i].tableCells.Count; x++)
-       {
-           TableCell tc = tableInfos[i].tableCells[x];
-           if (dataGridView1.Columns[tc.ColHeader] == null)
-               dataGridView1.Columns.Add(tc.ColHeader, tc.ColHeader);
-           bool exist = false;
-           for (int r=0; r < dataGridView1.Rows.Count; r++)
-           {
-               if (dataGridView1.Rows[r].HeaderCell.Value.ToString() == tc.RowhHeader)
-               {
-                   exist = true;
-                   break;
-               }
-           }
-           if (!exist)
-           {
-               int rowId = dataGridView1.Rows.Add();
-               dataGridView1.Rows[rowId].HeaderCell.Value = tc.RowhHeader;
-           }
-       }
-   }
+                if (keyData == Keys.Up)
+                    newValue++;
+                else if (keyData == Keys.Down)
+                    newValue--;
+                else if (keyData == Keys.PageUp)
+                    newValue += 10;
+                else if (keyData == Keys.PageDown)
+                    newValue -= 10;
+                else
+                    return base.ProcessCmdKey(ref msg, keyData);
 
-}
-*/
+                string mathStr = tc.td.Math.ToLower();
+                double newVal = safeCalc(mathStr, newValue, tc.td);
+                dataGridView1.SelectedCells[0].Value = newVal;
+                Debug.WriteLine(newVal);
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
     }
 }

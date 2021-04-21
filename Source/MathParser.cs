@@ -367,7 +367,7 @@ namespace MathParserTK
                 }
 
             }
-            else if (Char.IsDigit(token[0]) || token[0] == decimalSeparator)
+            else if (Char.IsDigit(token[0]) || token[0] == ',' || token[0] == '.')
             {
                 // Read number
 
@@ -389,7 +389,7 @@ namespace MathParserTK
 
                 // Read the fractional part of number
                 if (pos < expression.Length
-                    && expression[pos] == decimalSeparator)
+                    && (expression[pos] == ',' || expression[pos] == '.'))
                 {
                     // Add current system specific decimal separator
                     token.Append(CultureInfo.CurrentCulture
@@ -422,7 +422,7 @@ namespace MathParserTK
                     }
 
                     // Convert number from scientific notation to decimal notation
-                    return NumberMaker + Convert.ToDouble(token.ToString());
+                    return NumberMaker + Convert.ToDouble(token.Replace(",","."), System.Globalization.CultureInfo.InvariantCulture).ToString();
                 }
 
                 return NumberMaker + token.ToString();
@@ -613,7 +613,8 @@ namespace MathParserTK
             // if it's operand then just push it to stack
             if (token[0] == NumberMaker[0])
             {
-                stack.Push(double.Parse(token.Remove(0, 1)));
+                //stack.Push(double.Parse(token.Remove(0, 1)));
+                stack.Push(Convert.ToDouble(token.Remove(0, 1).Replace(",", "."), System.Globalization.CultureInfo.InvariantCulture));
             }
             // Otherwise apply operator or function to elements in stack
             else if (NumberOfArguments(token) == 1)

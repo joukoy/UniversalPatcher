@@ -32,7 +32,7 @@ REPLACE-TABLEROWS
       <min>REPLACE-MINVALUE.000000</min>
       <max>REPLACE-MAXVALUE.000000</max>
       <outputtype>2</outputtype>
-      <MATH equation="X">
+      <MATH equation="REPLACE-MATH">
         <VAR id="X" />
       </MATH>
     </XDFAXIS>

@@ -9,7 +9,7 @@
     <datatype>2</datatype>
     <unittype>2</unittype>
     <DALINK index="0" />
-    <MATH equation="X">
+    <MATH equation="REPLACE-MATH">
       <VAR id="X" />
     </MATH>
   </XDFCONSTANT>

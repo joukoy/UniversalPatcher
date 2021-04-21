@@ -48,9 +48,28 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FParsec, Version=1.0.0.0, Culture=neutral, PublicKeyToken=40ccfc0a09edbb5d, processorArchitecture=MSIL">
+      <HintPath>packages\FParsec.1.0.1\lib\net40-client\FParsec.dll</HintPath>
+    </Reference>
+    <Reference Include="FParsecCS, Version=1.0.0.0, Culture=neutral, PublicKeyToken=40ccfc0a09edbb5d, processorArchitecture=MSIL">
+      <HintPath>packages\FParsec.1.0.1\lib\net40-client\FParsecCS.dll</HintPath>
+    </Reference>
+    <Reference Include="FSharp.Core, Version=4.3.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\FSharp.Core.3.1.2.5\lib\net40\FSharp.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MathNet.Numerics, Version=3.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MathNet.Numerics.3.8.0\lib\net40\MathNet.Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="MathNet.Numerics.FSharp, Version=3.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MathNet.Numerics.FSharp.3.8.0\lib\net40\MathNet.Numerics.FSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="MathNet.Symbolics, Version=0.18.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MathNet.Symbolics.0.18.1\lib\net40\MathNet.Symbolics.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
@@ -279,8 +298,8 @@
     <Compile Include="frmPatcher.Designer.cs">
       <DependentUpon>frmPatcher.cs</DependentUpon>
     </Compile>
-    <Compile Include="InverseParser.cs" />
     <Compile Include="ListViewSorter.cs" />
+    <Compile Include="SavingMath.cs" />
     <Compile Include="MathParser.cs" />
     <Compile Include="PatcherFunctions.cs" />
     <Compile Include="PcmFile.cs" />
@@ -433,6 +452,7 @@
       <DependentUpon>frmSearchTables.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
