@@ -1039,7 +1039,8 @@ namespace UniversalPatcher
                                 TableData cmpTd = cmpFiles[d].pcm.tableDatas[cmpId];
                                 cmpCell = cmpTinfo.tableCells[cell];
                                 cmpPrefix = "[" + cmpFiles[d].fileLetter + "] ";
-                                tblNamePrefix = "[" + cmpTd.TableName + "] ";
+                                if (multiSelect)
+                                    tblNamePrefix = "[" + cmpTd.TableName + "] ";
 
                                 if (!xySwapped)
                                 {
@@ -2073,7 +2074,7 @@ namespace UniversalPatcher
                 loadTable();
             }
         }
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+/*        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (dataGridView1.IsCurrentCellInEditMode && dataGridView1.SelectedCells[0].GetType() != typeof(DataGridViewComboBoxCell))
             {
@@ -2099,5 +2100,6 @@ namespace UniversalPatcher
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
+*/
     }
 }
