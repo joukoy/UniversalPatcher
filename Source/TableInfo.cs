@@ -26,6 +26,27 @@ namespace UniversalPatcher
         public double lastRawValue { get; set; }
         public TableInfo tableInfo { get; set; }
 
+        public double readValue()
+        {
+            double retVal = uint.MaxValue;
+            try {
+                retVal = getValue(tableInfo.compareFile.buf, addr, td, tableInfo.compareFile.tableBufferOffset,tableInfo.compareFile.pcm);
+
+                if (td.OutputType == OutDataType.Hex || td.OutputType == OutDataType.Int)
+                    retVal = (Int64)Math.Round(retVal);
+                else if (td.Decimals > 0)
+                {
+                    retVal = Math.Round(retVal, td.Decimals);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+
+            return retVal;
+        }
+
         public void saveValue(double val,bool isRawValue = false)
         {
             string mathStr = td.Math.ToLower();

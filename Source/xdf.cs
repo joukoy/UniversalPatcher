@@ -372,6 +372,55 @@ namespace UniversalPatcher
             return retVal;
         }
 
+        private string linkConversionTable(string mathStr, List<int> linkIds, List<string> tableNames, out string linkTxt)
+        {
+            //Example: TABLE:'MAF Scalar #1'
+            string retVal = mathStr;
+            linkTxt = "";
+            int start = mathStr.IndexOf("table:") + 6;
+            int mid = mathStr.IndexOf("'", start + 7);
+            string conversionTable = mathStr.Substring(start, mid - start + 1);            
+            string table = conversionTable.Replace("'", "");
+            int linkIndex = tableNames.IndexOf(table);
+            if (linkIndex > -1)
+            {
+                int linkId = linkIds[linkIndex];
+                retVal = mathStr.Replace("table:" + conversionTable, "s");
+                linkTxt = Environment.NewLine + "      <VAR id=\"s\" type=\"link\" linkid=\"0x" + linkId.ToString("X") +  "\" />";
+            }
+
+            return retVal;
+        }
+
+        private string linkConversionRaw(string mathStr, out string linkTxt)
+        {
+            // Example: RAW:0x321:SWORD:MSB
+            linkTxt = "";
+            string retVal = mathStr;
+            int start = mathStr.IndexOf("raw:");
+            int mid = mathStr.IndexOf(" ", start + 3);
+            string rawStr = mathStr.Substring(start, mid - start + 1);
+            string[] rawParts = rawStr.Split(':');
+            if (rawParts.Length < 3)
+            {
+                throw new Exception("Unknown RAW definition in Math: " + mathStr);
+            }
+            InDataType idt = (InDataType)Enum.Parse(typeof(InDataType), rawParts[2].ToUpper());
+            int bits = getBits(idt);
+            string Address = rawParts[1];
+            byte flags = 00;
+            if (rawParts[2].Substring(0, 1) != "u")  //uint,ushort,ubyte
+                flags = 1;
+            if (rawParts[3] == "msb")
+                flags =(byte)(flags | 4);
+
+            linkTxt = Environment.NewLine + "        <VAR id=\"r\" type=\"address\" address=\"" + rawParts[1] 
+                + "\" sizeinbits=\"" + bits.ToString() + "\" flags=\"0x" + flags.ToString("X") + "\" />";
+
+            retVal = mathStr.Replace(rawStr, "r");
+            return retVal;
+        }
+
         public string exportXdf(PcmFile basefile, List<TableData> tdList1)
         {
             PCM = basefile;
@@ -383,6 +432,8 @@ namespace UniversalPatcher
             int lastCategory = 0;
             int dtcCategory = 0;
             int uniqId = 0x100;
+            List<int> uniqIds = new List<int>();
+            List<string> tableNames = new List<string>();   //Store constant id/name for later use
             try
             {
 
@@ -411,6 +462,9 @@ namespace UniversalPatcher
                 templateTxt = ReadTextFile(fName);
                 tableText = templateTxt.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
                 uniqId++;
+                tableText = tableText.Replace("REPLACE-LINKMATH", "");
+                tableText = tableText.Replace("REPLACE-MATH", "x");
+
                 tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "DON&apos;T MODIFY");
                 tableText = tableText.Replace("REPLACE-TABLETITLE", "OS ID - Don&apos;t modify, must match XDF!");
                 tableText = tableText.Replace("REPLACE-BITS", "32");
@@ -420,7 +474,45 @@ namespace UniversalPatcher
                 tableText = tableText.Replace("REPLACE-CATEGORY", (basefile.OSSegment + 1).ToString("X"));
                 xdfText += tableText;
 
-                fName = Path.Combine(Application.StartupPath, "Templates", "xdftableseek.txt");
+                fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
+                templateTxt = ReadTextFile(fName);
+                for (int t = 0; t < tdList.Count; t++)
+                {
+                    //Add all constants
+                    if (tdList[t].Rows < 2 && tdList[t].OutputType != OutDataType.Flag)
+                    {
+                        if (tdList[t].TableName != null && tdList[t].TableName.Length > 1)
+                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].TableName);
+                        else
+                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].Address);
+                        int s = basefile.GetSegmentNumber(tdList[t].addrInt);
+                        if (s == -1) s = lastCategory;
+                        tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
+                        tableText = tableText.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
+                        uniqIds.Add(uniqId);
+                        tableNames.Add(tdList[t].TableName.ToLower());
+                        uniqId++;
+
+                        string linkTxt = "";
+                        string mathTxt = tdList[t].Math.ToLower();
+                        if (mathTxt.Contains("raw:"))
+                        {
+                            mathTxt = linkConversionRaw(mathTxt, out linkTxt);
+                        }
+                        tableText = tableText.Replace("REPLACE-LINKMATH", linkTxt);
+                        tableText = tableText.Replace("REPLACE-MATH", mathTxt);
+
+                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
+                        tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
+                        tableText = tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
+                        tableText = tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
+                        tableText = tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
+                        xdfText += tableText;       //Add generated table to end of xdfText
+                    }
+                }
+
+
+                fName = Path.Combine(Application.StartupPath, "Templates", "xdftable.txt");
                 templateTxt = ReadTextFile(fName);
                 for (int t = 0; t < tdList.Count; t++)
                 {
@@ -458,12 +550,24 @@ namespace UniversalPatcher
                             }
                         }*/
 
+                        string linkTxt = "";
+                        string mathTxt = tdList[t].Math.ToLower();
+                        if (mathTxt.Contains("table:"))
+                            mathTxt = linkConversionTable(mathTxt, uniqIds, tableNames, out linkTxt);
+                        if (mathTxt.Contains("raw:"))
+                        {
+                            string tmpTxt = "";
+                            mathTxt = linkConversionRaw(mathTxt, out tmpTxt);
+                            linkTxt += tmpTxt;
+                        }
+                        tableText = tableText.Replace("REPLACE-LINKMATH", linkTxt);
+                        tableText = tableText.Replace("REPLACE-MATH", mathTxt);
+
                         tableText = tableText.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
                         uniqId++;
                         tableText = tableText.Replace("REPLACE-UNITS", tdList[t].Units);
                         tableText = tableText.Replace("REPLACE-ROWCOUNT", tdList[t].Rows.ToString());
                         tableText = tableText.Replace("REPLACE-COLCOUNT", tdList[t].Columns.ToString());
-                        tableText = tableText.Replace("REPLACE-MATH", tdList[t].Math);
                         tableText = tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
                         tableText = tableText.Replace("REPLACE-DECIMALS", tdList[t].Decimals.ToString());
                         tableText = tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)tdList[t].OutputType).ToString());
@@ -529,30 +633,6 @@ namespace UniversalPatcher
                     }
                 }
 
-                fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
-                templateTxt = ReadTextFile(fName);
-                for (int t = 0; t < tdList.Count; t++)
-                {
-                    //Add all constants
-                    if (tdList[t].Rows < 2 && tdList[t].OutputType != OutDataType.Flag)
-                    {
-                        if (tdList[t].TableName != null && tdList[t].TableName.Length > 1)
-                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].TableName);
-                        else
-                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].Address);
-                        int s = basefile.GetSegmentNumber(tdList[t].addrInt);
-                        if (s == -1) s = lastCategory;
-                        tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
-                        tableText = tableText.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
-                        uniqId++;
-                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
-                        tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
-                        tableText = tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
-                        tableText = tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
-                        tableText = tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
-                        xdfText += tableText;       //Add generated table to end of xdfText
-                    }
-                }
 
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdfFlag.txt");
                 templateTxt = ReadTextFile(fName);

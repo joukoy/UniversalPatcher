@@ -70,14 +70,14 @@ namespace UniversalPatcher
             this.radioOriginal = new System.Windows.Forms.RadioButton();
             this.numDecimals = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnIncrease = new System.Windows.Forms.Button();
-            this.btnDecrease = new System.Windows.Forms.Button();
+            this.numTuneValue = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numColumn)).BeginInit();
             this.groupSelectCompare.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numTuneValue)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -455,35 +455,35 @@ namespace UniversalPatcher
             this.label1.TabIndex = 12;
             this.label1.Text = "Decimals:";
             // 
-            // btnIncrease
+            // numTuneValue
             // 
-            this.btnIncrease.Location = new System.Drawing.Point(9, 48);
-            this.btnIncrease.Name = "btnIncrease";
-            this.btnIncrease.Size = new System.Drawing.Size(20, 12);
-            this.btnIncrease.TabIndex = 13;
-            this.btnIncrease.Text = "+";
-            this.btnIncrease.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnIncrease.UseVisualStyleBackColor = true;
-            this.btnIncrease.Click += new System.EventHandler(this.btnIncrease_Click);
-            // 
-            // btnDecrease
-            // 
-            this.btnDecrease.Location = new System.Drawing.Point(9, 60);
-            this.btnDecrease.Name = "btnDecrease";
-            this.btnDecrease.Size = new System.Drawing.Size(20, 12);
-            this.btnDecrease.TabIndex = 14;
-            this.btnDecrease.Text = "-";
-            this.btnDecrease.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnDecrease.UseVisualStyleBackColor = true;
-            this.btnDecrease.Click += new System.EventHandler(this.btnDecrease_Click);
+            this.numTuneValue.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            262144});
+            this.numTuneValue.Location = new System.Drawing.Point(9, 49);
+            this.numTuneValue.Maximum = new decimal(new int[] {
+            -727379969,
+            232,
+            0,
+            0});
+            this.numTuneValue.Minimum = new decimal(new int[] {
+            -727379969,
+            232,
+            0,
+            -2147483648});
+            this.numTuneValue.Name = "numTuneValue";
+            this.numTuneValue.Size = new System.Drawing.Size(17, 20);
+            this.numTuneValue.TabIndex = 15;
+            this.numTuneValue.ValueChanged += new System.EventHandler(this.numTuneValue_ValueChanged);
             // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(599, 450);
-            this.Controls.Add(this.btnDecrease);
-            this.Controls.Add(this.btnIncrease);
+            this.Controls.Add(this.numTuneValue);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.numDecimals);
             this.Controls.Add(this.groupSelectCompare);
@@ -509,6 +509,7 @@ namespace UniversalPatcher
             this.groupSelectCompare.ResumeLayout(false);
             this.groupSelectCompare.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numTuneValue)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -554,7 +555,6 @@ namespace UniversalPatcher
         private RadioButton radioSideBySideText;
         private RadioButton radioOriginal;
         private RadioButton radioCompareAll;
-        private Button btnIncrease;
-        private Button btnDecrease;
+        private NumericUpDown numTuneValue;
     }
 }
