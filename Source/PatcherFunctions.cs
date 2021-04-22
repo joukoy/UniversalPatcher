@@ -908,10 +908,10 @@ public class upatcher
                     for (int c = 0; c < pTd.Columns; c++)
                     {
                         double val = Convert.ToDouble(dataParts[i].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                        frmTableEditor.TableCell tCell = new frmTableEditor.TableCell();
+                        TableCell tCell = new TableCell();
                         tCell.addr = addr;
                         tCell.td = pTd;
-                        frmTE.SaveValue(r, c, tCell, val);
+                        tCell.saveValue(val);
                         addr += step;
                         i++;
                     }
@@ -924,10 +924,10 @@ public class upatcher
                     for (int r = 0; r < pTd.Rows; r++)
                     {
                         double val = Convert.ToDouble(dataParts[i].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                        frmTableEditor.TableCell tCell = new frmTableEditor.TableCell();
+                        TableCell tCell = new TableCell();
                         tCell.addr = addr;
                         tCell.td = pTd;
-                        frmTE.SaveValue(r, c, tCell, val);
+                        tCell.saveValue(val);
                         addr += step;
                         i++;
                     }
@@ -2052,6 +2052,7 @@ public class upatcher
         }
         return uint.MaxValue;
     }
+
 
     public static bool HexToUint64(string Hex, out UInt64 x)
     {

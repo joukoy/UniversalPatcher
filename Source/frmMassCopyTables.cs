@@ -182,11 +182,11 @@ namespace UniversalPatcher
                 {
                     double cellValue = getValue(PCM.buf, srcAddr, srcTd, 0, PCM);
 
-                    frmTableEditor.TableCell tCell = new frmTableEditor.TableCell();
+                    TableCell tCell = new TableCell();
                     tCell.addr = dstAddr;                    
                     tCell.lastValue = cellValue;
                     tCell.td = dstTd;
-                    dstTE.SaveValue(r, c, tCell, cellValue);
+                    tCell.saveValue(cellValue);
                     srcAddr += (uint)srcStep;
                     dstAddr += (uint)dstStep;
                 }

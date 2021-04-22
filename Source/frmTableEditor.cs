@@ -67,58 +67,6 @@ namespace UniversalPatcher
             public int cmpId;
         }*/
 
-        public class TableCell
-        {
-            public int Column { get; set; }
-            public int Row { get; set; }
-            public string RowhHeader { get; set; }
-            public string ColHeader { get; set; }
-            public uint addr { get; set; }
-            //public uint tableId { get; set; }
-            public TableData td { get; set; }
-            public object lastValue { get; set; }
-            public object origValue { get; set; }
-            public double origRawValue { get; set; }
-            public double lastRawValue { get; set; }
-            public TableInfo tableInfo { get; set; }
-            public DataGridCell dgc { get; set; }
-        }
-
-        public class TableInfo
-        {
-            public TableInfo(PcmFile _pcm, TableData _td)
-            {
-                pcm = _pcm;
-                td = _td;
-                tableCells = new List<TableCell>();
-            }
-            public PcmFile pcm { get; set; }
-            //public uint tdId { get; set; }
-            public TableData td { get; set; }
-            public List<TableCell> tableCells { get; set; }
-            public CompareFile compareFile { get; set; }
-        }
-
-        public class CompareFile
-        {
-            public CompareFile(PcmFile _pcm)
-            {
-                pcm = _pcm;
-                tableInfos = new List<TableInfo>();
-                tableIds = new List<int>();
-                refTableIds = new Dictionary<int, int>();
-            }
-            public byte[] buf;
-            public uint tableBufferOffset;
-            public PcmFile pcm { get; set; }
-            public List<TableInfo> tableInfos { get; set; }
-            public List<int> tableIds { get; set; }
-            //public List<TableId> refTableIds { get; set; }
-            public Dictionary<int,int> refTableIds { get; set; }
-            public string fileLetter { get; set; }
-            public int Rows { get; set; }   //How many rows (in multitable)
-            public int Cols { get; set; }   
-        }
 
         //List of loaded files (for compare) File 0 is always "master" or A
         private List<CompareFile> compareFiles = new List<CompareFile>();
@@ -1301,76 +1249,6 @@ namespace UniversalPatcher
             }
         }
 
-        private void saveFlag(uint bufAddr, bool flag, TableCell tCell)
-        {
-            TableData mathTd = tCell.td;
-            byte[] tableBuffer = tCell.tableInfo.compareFile.buf;
-            string maskStr = "FF";
-            if (mathTd.BitMask != null)
-                maskStr = mathTd.BitMask.Replace("0x", "");
-            if (mathTd.DataType == InDataType.UBYTE || mathTd.DataType == InDataType.SBYTE)
-            {
-                byte mask = Convert.ToByte(maskStr, 16);
-                if (flag)
-                {
-                    tableBuffer[bufAddr] = (byte)(tableBuffer[bufAddr] | mask);
-                }
-                else
-                {
-                    mask = (byte)~mask;
-                    tableBuffer[bufAddr] = (byte)(tableBuffer[bufAddr] & mask);
-                }
-            }
-            else if (mathTd.DataType == InDataType.SWORD || mathTd.DataType == InDataType.UWORD)
-            {
-                ushort mask = Convert.ToUInt16(maskStr, 16);
-                ushort curVal = BEToUint16(tableBuffer, bufAddr);
-                ushort newVal;
-                if (flag)
-                {
-                    newVal = (ushort)(curVal | mask);
-                }
-                else
-                {
-                    mask = (byte)~mask;
-                    newVal = (ushort)(curVal & mask);
-                }
-                SaveUshort(tableBuffer,bufAddr, newVal);
-            }
-            else if (mathTd.DataType == InDataType.INT32 || mathTd.DataType == InDataType.UINT32)
-            {
-                UInt32 mask = Convert.ToUInt32(maskStr, 16);
-                UInt32 curVal = BEToUint32(tableBuffer,bufAddr);
-                UInt32 newVal;
-                if (flag)
-                {
-                    newVal = (UInt32)(curVal | mask);
-                }
-                else
-                {
-                    mask = ~mask;
-                    newVal = (UInt32)(curVal & mask);
-                }
-                SaveUint32(tableBuffer, bufAddr, newVal);
-            }
-            else if (mathTd.DataType == InDataType.INT64 || mathTd.DataType == InDataType.UINT64)
-            {
-                UInt64 mask = Convert.ToUInt64(maskStr, 16);
-                UInt64 curVal = BEToUint64(tableBuffer,bufAddr);
-                UInt64 newVal;
-                if (flag)
-                {
-                    newVal = (UInt64)(curVal | mask);
-                }
-                else
-                {
-                    mask = ~mask;
-                    newVal = (UInt64)(curVal & mask);
-                }
-                SaveUint64(tableBuffer,bufAddr, newVal);
-            }
-
-        }
 
         public double safeCalc(string mathStr, double X, TableData mathTd)
         {
@@ -1413,10 +1291,8 @@ namespace UniversalPatcher
 
 
         public void SaveValue(int r, int c, TableCell tCell, double value = double.MinValue)
-        {
-            UInt32 bufAddr = tCell.addr - tCell.tableInfo.compareFile.tableBufferOffset;
+        {            
             double newValue = value;
-            double newRawValue = double.MaxValue;
             TableData mathTd = tCell.td;
             try
             {
@@ -1434,90 +1310,24 @@ namespace UniversalPatcher
                 }
                 if (newValue == double.MaxValue) return;
 
-                if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != "")
-                {
-                    bool flag = Convert.ToBoolean(newValue);
-                    saveFlag(bufAddr, flag, tCell);
-                    return;
-                }
-
-
                 if (!showRawHEXValuesToolStripMenuItem.Checked)
                 {
                     if (dataGridView1.Columns[c].GetType() != typeof(DataGridViewComboBoxColumn)
                         && dataGridView1.Rows[r].Cells[c].GetType() != typeof(DataGridViewComboBoxCell))
                     {
                         if (newValue > mathTd.Max)
-                        {
                             newValue = mathTd.Max;
-                            dataGridView1.Rows[r].Cells[c].Value = newValue;
-                        }
                         if (newValue < mathTd.Min)
-                        {
                             newValue = mathTd.Min;
-                            dataGridView1.Rows[r].Cells[c].Value = newValue;
-                        }
                     }
                     //string mathStr = mathTd.SavingMath.ToLower();
                     //newValue = parser.Parse(mathStr, true);
-
+                    tCell.saveValue(newValue);
                     string mathStr = mathTd.Math.ToLower();
-                    double lastRawValue = tCell.lastRawValue;
-                    double minRawVal = getMinValue(mathTd.DataType);
-                    double maxRawVal = getMaxValue(mathTd.DataType);
-                    Debug.WriteLine("Last raw value: " + lastRawValue + ", Last value: " + (double)tCell.lastRawValue);
-
-                    if (mathStr.Contains("table:"))
-                    {
-                        mathStr = readConversionTable(mathStr, tCell.tableInfo.pcm);
-                    }
-                    if (mathStr.Contains("raw:"))
-                    {
-                        mathStr = readConversionRaw(mathStr, tCell.tableInfo.pcm);
-                    }
-
-                    newRawValue = savingMath.getSavingValue(mathStr, newValue);
-                    if (mathTd.DataType != InDataType.FLOAT32 && mathTd.DataType != InDataType.FLOAT64)
-                        newRawValue = Math.Round(newRawValue);
-                    Debug.WriteLine("Calculated raw value: " + newRawValue);
-
-                    if (newRawValue < minRawVal)
-                    {
-                        newRawValue = minRawVal;
-                        Debug.WriteLine("Too small value entered");
-                    }
-                    else if (newRawValue > maxRawVal)
-                    {
-                        newRawValue = maxRawVal;
-                        Debug.WriteLine("Too big value entered");
-                    }
-                    double calcValue = safeCalc(mathStr, newRawValue, mathTd);
+                    double calcValue = safeCalc(mathStr, tCell.lastRawValue, mathTd);
                     dataGridView1.Rows[r].Cells[c].Value = calcValue;
-                    Debug.WriteLine("Final raw value: " + newRawValue + ", final calculated value: " + calcValue);
                 }
 
-                byte[] tableBuffer = tCell.tableInfo.compareFile.buf;
-                if (mathTd.DataType == InDataType.UBYTE || mathTd.DataType == InDataType.SBYTE)
-                    tableBuffer[bufAddr] = (byte)newRawValue;
-                if (mathTd.DataType == InDataType.SWORD)
-                    SaveShort(tableBuffer, bufAddr, (short)newRawValue);
-                if (mathTd.DataType == InDataType.UWORD)
-                    SaveUshort(tableBuffer, bufAddr, (ushort)newRawValue);
-                if (mathTd.DataType == InDataType.FLOAT32)
-                    SaveFloat32(tableBuffer, bufAddr, (Single)newRawValue);
-                if (mathTd.DataType == InDataType.INT32)
-                    SaveInt32(tableBuffer, bufAddr, (Int32)newRawValue);
-                if (mathTd.DataType == InDataType.UINT32)
-                    SaveUint32(tableBuffer, bufAddr, (UInt32)newRawValue);
-                if (mathTd.DataType == InDataType.FLOAT64)
-                    SaveFloat64(tableBuffer, bufAddr, newRawValue);
-                if (mathTd.DataType == InDataType.INT64)
-                    SaveInt64(tableBuffer, bufAddr, (Int64)newRawValue);
-                if (mathTd.DataType == InDataType.UINT64)
-                    SaveUint64(tableBuffer, bufAddr, (UInt64)newRawValue);
-
-                tCell.lastValue = newValue;
-                tCell.lastRawValue = newRawValue;
             }
             catch (Exception ex)
             {
@@ -2101,33 +1911,10 @@ namespace UniversalPatcher
                     mathStr = readConversionRaw(mathStr, tCell.tableInfo.pcm);
                 }
                 rawVal += step;
-                double val = safeCalc(mathStr, rawVal, tCell.td);
-
-                uint bufAddr = tCell.addr - tCell.tableInfo.compareFile.tableBufferOffset;
-                byte[] tableBuffer = tCell.tableInfo.compareFile.buf;
-                if (mathTd.DataType == InDataType.UBYTE || mathTd.DataType == InDataType.SBYTE)
-                    tableBuffer[bufAddr] = (byte)rawVal;
-                if (mathTd.DataType == InDataType.SWORD)
-                    SaveShort(tableBuffer, bufAddr, (short)rawVal);
-                if (mathTd.DataType == InDataType.UWORD)
-                    SaveUshort(tableBuffer, bufAddr, (ushort)rawVal);
-                if (mathTd.DataType == InDataType.FLOAT32)
-                    SaveFloat32(tableBuffer, bufAddr, (Single)rawVal);
-                if (mathTd.DataType == InDataType.INT32)
-                    SaveInt32(tableBuffer, bufAddr, (Int32)rawVal);
-                if (mathTd.DataType == InDataType.UINT32)
-                    SaveUint32(tableBuffer, bufAddr, (UInt32)rawVal);
-                if (mathTd.DataType == InDataType.FLOAT64)
-                    SaveFloat64(tableBuffer, bufAddr, rawVal);
-                if (mathTd.DataType == InDataType.INT64)
-                    SaveInt64(tableBuffer, bufAddr, (Int64)rawVal);
-                if (mathTd.DataType == InDataType.UINT64)
-                    SaveUint64(tableBuffer, bufAddr, (UInt64)rawVal);
+                tCell.saveValue(rawVal, true);
+                double val = safeCalc(mathStr, tCell.lastRawValue, tCell.td);
 
                 dataGridView1.SelectedCells[i].Value = val;   
-                tCell.lastValue = val;
-                tCell.lastRawValue = rawVal;
-                //SaveValue(dataGridView1.SelectedCells[i].RowIndex, dataGridView1.SelectedCells[i].ColumnIndex, tCell, val);
                 setCellColor(dataGridView1.SelectedCells[i].RowIndex, dataGridView1.SelectedCells[i].ColumnIndex, tCell);
             }
             dataGridView1.EndEdit();
