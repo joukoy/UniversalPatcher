@@ -481,10 +481,10 @@ namespace UniversalPatcher
                     //Add all constants
                     if (tdList[t].Rows < 2 && tdList[t].OutputType != OutDataType.Flag)
                     {
-                        if (tdList[t].TableName != null && tdList[t].TableName.Length > 1)
-                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].TableName);
-                        else
-                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].Address);
+                        string tableName = tdList[t].TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;"); ;
+                        if (tdList[t].TableName == null || tdList[t].TableName.Length == 0)
+                            tableName = tdList[t].Address;
+                        tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableName);
                         int s = basefile.GetSegmentNumber(tdList[t].addrInt);
                         if (s == -1) s = lastCategory;
                         tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
@@ -503,7 +503,8 @@ namespace UniversalPatcher
                         tableText = tableText.Replace("REPLACE-MATH", mathTxt);
 
                         tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
-                        tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
+                        string descr = tdList[t].TableDescription.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
+                        tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
                         tableText = tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
                         tableText = tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
                         tableText = tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
@@ -519,10 +520,10 @@ namespace UniversalPatcher
                     //Add all tables
                     if (tdList[t].Rows > 1)
                     {
-                        if (tdList[t].TableName != null && tdList[t].TableName.Length > 1)
-                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].TableName);
-                        else
-                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].Address);
+                        string tableName = tdList[t].TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;"); 
+                        if (tdList[t].TableName == null || tdList[t].TableName.Length == 0)
+                            tableName = tdList[t].Address;
+                        tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableName);
                         int s = basefile.GetSegmentNumber(tdList[t].addrInt);
                         if (s == -1) s = lastCategory;
                         if (tdList[t].Category != null && tdList[t].Category != "")
@@ -540,7 +541,6 @@ namespace UniversalPatcher
                         {
                             tableText = tableText.Replace("REPLACE-CATEGORY", s.ToString());
                         }
-                        string descr = tdList[t].TableDescription;
                         /*if (tdList[t].Values.StartsWith("Enum: ") && !descr.ToLower().Contains("enum"))
                         {
                             string[] hParts = tdList[t].Values.Substring(6).Split(',');
@@ -572,6 +572,7 @@ namespace UniversalPatcher
                         tableText = tableText.Replace("REPLACE-DECIMALS", tdList[t].Decimals.ToString());
                         tableText = tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)tdList[t].OutputType).ToString());
                         tableText = tableText.Replace("REPLACE-TABLEADDRESS",((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
+                        string descr = tdList[t].TableDescription.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
                         tableText = tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
                         tableText = tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
@@ -641,10 +642,10 @@ namespace UniversalPatcher
                     //Add all constants
                     if (tdList[t].OutputType == OutDataType.Flag)
                     {
-                        if (tdList[t].TableName != null && tdList[t].TableName.Length > 1)
-                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].TableName);
-                        else
-                            tableText = templateTxt.Replace("REPLACE-TABLETITLE", tdList[t].Address);
+                        string tableName = tdList[t].TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;"); 
+                        if (tdList[t].TableName == null || tdList[t].TableName.Length == 0)
+                            tableName = tdList[t].Address;
+                        tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableName);
                         int s = basefile.GetSegmentNumber(tdList[t].addrInt);
                         if (s == -1) s = lastCategory;
                         tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));

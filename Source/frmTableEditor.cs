@@ -1327,8 +1327,12 @@ namespace UniversalPatcher
                 }
                 if (newValue == double.MaxValue) return;
 
-                if (!showRawHEXValuesToolStripMenuItem.Checked)
+                if (showRawHEXValuesToolStripMenuItem.Checked)
                 {
+                    tCell.saveValue(newValue, true);
+                }
+                else
+                { 
                     if (dataGridView1.Columns[c].GetType() != typeof(DataGridViewComboBoxColumn)
                         && dataGridView1.Rows[r].Cells[c].GetType() != typeof(DataGridViewComboBoxCell))
                     {
