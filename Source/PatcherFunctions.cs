@@ -610,7 +610,7 @@ public class upatcher
         tmpTd.Address = rawParts[1];
         tmpTd.Offset = 0;
         tmpTd.DataType = idt;
-        UInt64 rawVal = getRawValue(PCM.buf, tmpTd.addrInt, tmpTd, 0);
+        double rawVal = getRawValue(PCM.buf, tmpTd.addrInt, tmpTd, 0);
         if (rawParts.Length > 3 && rawParts[3].StartsWith("lsb"))
         {
             int eSize = getElementSize(idt);
@@ -636,9 +636,9 @@ public class upatcher
 
             if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
             {
-                UInt64 rawVal = getRawValue(myBuffer, addr, mathTd, offset);
+                double rawVal = getRawValue(myBuffer, addr, mathTd, offset);
                 UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
-                if ((rawVal & mask) == mask)
+                if (((UInt64) rawVal & mask) == mask)
                     return 1;
                 else
                     return 0;
@@ -694,20 +694,35 @@ public class upatcher
         return retVal;
     }
 
-    public static  UInt64 getRawValue(byte[] myBuffer, UInt32 addr, TableData mathTd, uint offset)
+    public static double getRawValue(byte[] myBuffer, UInt32 addr, TableData mathTd, uint offset)
     {
         UInt32 bufAddr = addr - offset;
-        UInt64 retVal = 0;
+        double retVal = 0;
         try
         {
-            if (mathTd.DataType == InDataType.UWORD || mathTd.DataType == InDataType.SWORD)
-                retVal = BEToUint16(myBuffer, bufAddr);
-            if (mathTd.DataType == InDataType.INT32 || mathTd.DataType == InDataType.UINT32 || mathTd.DataType == InDataType.FLOAT32)
-                retVal = BEToUint32(myBuffer, bufAddr);
-            if (mathTd.DataType == InDataType.INT64 || mathTd.DataType == InDataType.UINT64 || mathTd.DataType == InDataType.FLOAT64)
-                retVal = BEToUint64(myBuffer, bufAddr);
-            if (mathTd.DataType == InDataType.UBYTE || mathTd.DataType == InDataType.SBYTE)
-                retVal = myBuffer[bufAddr];
+            switch (mathTd.DataType)
+            {
+                case InDataType.SBYTE:
+                    return (sbyte)myBuffer[bufAddr];
+                case InDataType.UBYTE:
+                    return (byte)myBuffer[bufAddr];
+                case InDataType.SWORD:
+                    return (Int16)BEToInt16(myBuffer, bufAddr);
+                case InDataType.UWORD:
+                    return (UInt16)BEToUint16(myBuffer, bufAddr);
+                case InDataType.INT32:
+                    return (Int32)BEToInt32(myBuffer, bufAddr);
+                case InDataType.UINT32:
+                    return (UInt32)BEToUint32(myBuffer, bufAddr);
+                case InDataType.INT64:
+                    return (Int64)BEToInt64(myBuffer, bufAddr);
+                case InDataType.UINT64:
+                    return (UInt64)BEToInt64(myBuffer, bufAddr);
+                case InDataType.FLOAT32:
+                    return (float)BEToFloat32(myBuffer, bufAddr);
+                case InDataType.FLOAT64:
+                    return BEToFloat64(myBuffer, bufAddr);
+            }
 
         }
         catch (Exception ex)
@@ -891,47 +906,23 @@ public class upatcher
 
     public static uint applyTablePatch(PcmFile basefile, XmlPatch xpatch, int tdId)
     {
-        int i = 0;
+        int diffCount = 0;
         frmTableEditor frmTE = new frmTableEditor();
         TableData pTd = basefile.tableDatas[tdId];
         frmTE.prepareTable(basefile, pTd, null, "A");
-        frmTE.loadTable();
+        //frmTE.loadTable();
         uint addr = (uint)(pTd.addrInt + pTd.Offset);
         uint step = (uint)getElementSize(pTd.DataType);
         try
         {
             string[] dataParts = xpatch.Data.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-            if (pTd.RowMajor)
+            for (int cell = 0; cell < frmTE.compareFiles[0].tableInfos[0].tableCells.Count; cell++)
             {
-                for (int r = 0; r < pTd.Rows; r++)
-                {
-                    for (int c = 0; c < pTd.Columns; c++)
-                    {
-                        double val = Convert.ToDouble(dataParts[i].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                        TableCell tCell = new TableCell();
-                        tCell.addr = addr;
-                        tCell.td = pTd;
-                        tCell.saveValue(val);
-                        addr += step;
-                        i++;
-                    }
-                }
-            }
-            else
-            {
-                for (int c = 0; c < pTd.Columns; c++)
-                {
-                    for (int r = 0; r < pTd.Rows; r++)
-                    {
-                        double val = Convert.ToDouble(dataParts[i].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                        TableCell tCell = new TableCell();
-                        tCell.addr = addr;
-                        tCell.td = pTd;
-                        tCell.saveValue(val);
-                        addr += step;
-                        i++;
-                    }
-                }
+                TableCell tCell = frmTE.compareFiles[0].tableInfos[0].tableCells[cell];
+                double val = Convert.ToDouble(dataParts[diffCount].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                if (val != (double)tCell.origValue)
+                    diffCount++;
+                tCell.saveValue(val);
             }
             frmTE.saveTable();
             frmTE.Dispose();
@@ -946,7 +937,7 @@ public class upatcher
             LoggerBold("Error, line " + line + ": " + ex.Message);
 
         }
-        return (uint)(i * step);
+        return (uint)(diffCount * step);
     }
 
     public static bool ApplyXMLPatch(PcmFile basefile)

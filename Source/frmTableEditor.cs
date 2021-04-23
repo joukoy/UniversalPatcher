@@ -69,7 +69,7 @@ namespace UniversalPatcher
 
 
         //List of loaded files (for compare) File 0 is always "master" or A
-        private List<CompareFile> compareFiles = new List<CompareFile>();
+        public List<CompareFile> compareFiles = new List<CompareFile>();
 
         public string tableName = "";
         private bool disableSaving = false;
@@ -279,10 +279,9 @@ namespace UniversalPatcher
                             tc.Row = r;
                             tc.ColHeader = colHeaders[c];
                             tc.RowhHeader = rowHeaders[r];
+                            tc.addr = addr;
                             tc.lastValue = getValue(pcm.buf, addr, tData, 0, pcm);
                             tc.lastRawValue = getRawValue(pcm.buf, addr, tData, 0);
-                            tc.origValue = tc.lastValue;
-                            tc.addr = addr;
                             addr += (uint)step;
                             tInfo.tableCells.Add(tc);
                         }
@@ -303,10 +302,9 @@ namespace UniversalPatcher
                             tc.Row = r;
                             tc.ColHeader = colHeaders[c];
                             tc.RowhHeader = rowHeaders[r];
+                            tc.addr = addr;
                             tc.lastValue = getValue(pcm.buf, addr, tData, 0, pcm);
                             tc.lastRawValue = getRawValue(pcm.buf, addr, tData, 0);
-                            tc.origValue = tc.lastValue;
-                            tc.addr = addr;
                             addr += (uint)step;
                             tInfo.tableCells.Add(tc);
                         }
@@ -341,6 +339,7 @@ namespace UniversalPatcher
             CompareFile orgFile = new CompareFile(pcm);
             orgFile.fileLetter = fileLetter;
             radioOriginal.Text = fileLetter;
+            tableName = td.TableName;
 
             if (tableIds == null)
             {
@@ -394,6 +393,8 @@ namespace UniversalPatcher
             }
             orgFile.tableIds = tableIds;
             parseTableInfo(orgFile);
+            setMyText();
+
         }
 
 
@@ -454,10 +455,13 @@ namespace UniversalPatcher
             cmpFile.Rows = rows;
             cmpFile.Cols = cols;
             parseTableInfo(cmpFile);
+            setMyText();
         }
 
         private void modifyRadioText(string menuTxt)
         {
+            if (menuTxt == null || menuTxt.Length == 0)
+                return;
             string selectedBin = menuTxt.Substring(0, 1);
             radioCompareFile.Text = selectedBin;
             radioDifference.Text = radioOriginal.Text + " > " + selectedBin;
@@ -575,7 +579,7 @@ namespace UniversalPatcher
                 TableData mathTd = tCell.td;
                 double curVal = (double)tCell.lastValue;
                 double origVal = (double)tCell.origValue;
-                double curRawValue = (UInt64)tCell.lastRawValue;
+                double curRawValue = tCell.lastRawValue;
                 double cmpRawValue = UInt64.MaxValue;
                 double cmpVal = double.MinValue;
                 bool showSidebySide = radioSideBySide.Checked;
@@ -712,8 +716,8 @@ namespace UniversalPatcher
         private void setCellColor(int row, int col, TableCell tCell)
         {
             TableData mathTd = tCell.td;
-            double curVal = Convert.ToDouble(tCell.lastValue);
-            double origVal = Convert.ToDouble(tCell.origValue);
+            double curVal = (double) tCell.lastValue;
+            double origVal = (double)tCell.origValue;
             if (dataGridView1.Columns[col].GetType() != typeof(DataGridViewComboBoxColumn) &&
                 dataGridView1.Rows[row].Cells[col].GetType() != typeof(DataGridViewComboBoxCell))
             {
@@ -1049,7 +1053,8 @@ namespace UniversalPatcher
                                         }
                                         else
                                         {
-                                            cmpRowHdr = "[" + cmpFiles[d].fileLetter + "] " + cmpCell.ColHeader;
+                                            cmpRowHdr = cmpCell.ColHeader;
+                                            cmpColHdr = "[" + cmpFiles[d].fileLetter + "] " + cmpCell.RowhHeader;
                                         }
                                     }
                                 }
@@ -1345,7 +1350,7 @@ namespace UniversalPatcher
                     //newValue = parser.Parse(mathStr, true);
                     tCell.saveValue(newValue);
                     string mathStr = mathTd.Math.ToLower();
-                    double calcValue = tCell.readValue();
+                    double calcValue = (double)tCell.lastValue;
                     dataGridView1.Rows[r].Cells[c].Value = calcValue;
                 }
 
@@ -1805,16 +1810,15 @@ namespace UniversalPatcher
 
         private void setMyText()
         {
-            this.Text = "Tuner: " + tableName + " [";
+            this.Text = "Tuner: " + compareFiles[currentFile].tableInfos[0].td.TableName + " [";
             if (radioOriginal.Checked)
                 this.Text += compareFiles[currentFile].pcm.FileName + "]";
-            if (radioDifference.Checked || radioSideBySide.Checked)
-                this.Text += compareFiles[currentFile].pcm.FileName;
+            if (radioDifference.Checked || radioSideBySide.Checked || radioSideBySideText.Checked)
+                this.Text += compareFiles[currentFile].pcm.FileName + " - " + compareFiles[currentCmpFile].pcm.FileName + "]";
             if (radioCompareFile.Checked)
-            {
-                int id = findFile(radioCompareFile.Text);
-                this.Text += compareFiles[id].pcm.FileName + "]";
-            }
+                this.Text += compareFiles[currentCmpFile].pcm.FileName + "]";
+            if (radioCompareAll.Checked)
+                this.Text += compareFiles[currentFile].pcm.FileName + " - * ]";
         }
 
         private void numDecimals_ValueChanged(object sender, EventArgs e)
@@ -1894,6 +1898,7 @@ namespace UniversalPatcher
             {
                 dataGridView1.BackgroundColor = Color.Red;
                 loadTable();
+                setMyText();
             }
 
 
@@ -1905,10 +1910,11 @@ namespace UniversalPatcher
             {
                 dataGridView1.BackgroundColor = Color.Red;
                 loadTable();
+                setMyText();
             }
         }
 
-        private void tuneCellValues(int step)
+        private void tuneCellValues(double step)
         {
             dataGridView1.BeginEdit(true);
             for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
@@ -1916,24 +1922,10 @@ namespace UniversalPatcher
                 TableCell tCell = (TableCell)dataGridView1.SelectedCells[i].Tag;
                 TableData mathTd = tCell.td;
                 double rawVal = tCell.lastRawValue;
-                double minRawVal = getMinValue(mathTd.DataType);
-                double maxRawVal = getMaxValue(mathTd.DataType);
-                if (step > 0 && rawVal == maxRawVal)
-                    return;
-                if (step < 0 && rawVal == minRawVal)
-                    return;
-                string mathStr = tCell.td.Math;
-                if (mathStr.Contains("table:"))
-                {
-                    mathStr = readConversionTable(mathStr, tCell.tableInfo.pcm);
-                }
-                if (mathStr.Contains("raw:"))
-                {
-                    mathStr = readConversionRaw(mathStr, tCell.tableInfo.pcm);
-                }
-                rawVal += step;
-                tCell.saveValue(rawVal, true);
-                double val = tCell.readValue();
+                double newRawVal = rawVal + step;
+                Debug.WriteLine("Row: " + dataGridView1.SelectedCells[i].RowIndex + ", col: " + dataGridView1.SelectedCells[i].ColumnIndex +  ", Old raw: " + tCell.lastRawValue + ", new raw: " + newRawVal);
+                tCell.saveValue(newRawVal, true);
+                double val = (double)tCell.lastValue;
 
                 dataGridView1.SelectedCells[i].Value = val;   
                 setCellColor(dataGridView1.SelectedCells[i].RowIndex, dataGridView1.SelectedCells[i].ColumnIndex, tCell);
@@ -1945,6 +1937,7 @@ namespace UniversalPatcher
         {
             decimal oldVal = (decimal)numTuneValue.Tag;
             decimal newVal = numTuneValue.Value;
+            Debug.WriteLine("Old:" + oldVal + ", new: " + newVal);
             if (newVal > oldVal) 
                 tuneCellValues(1);
             else

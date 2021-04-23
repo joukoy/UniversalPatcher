@@ -167,30 +167,18 @@ namespace UniversalPatcher
         {
             frmTableEditor srcTE = new frmTableEditor();
             srcTE.prepareTable(PCM, srcTd, null,"A");
-            srcTE.loadTable();
+            //srcTE.loadTable();
             frmTableEditor dstTE = new frmTableEditor();
             dstTE.prepareTable(dstPCM, dstTd, null,"A");
-            dstTE.loadTable();
+            //dstTE.loadTable();
 
-            uint srcAddr = (uint)(srcTd.addrInt + srcTd.Offset);
-            int srcStep = getElementSize(srcTd.DataType);
-            uint dstAddr = (uint)(dstTd.addrInt + dstTd.Offset);
-            int dstStep = getElementSize(dstTd.DataType);
-            for (int r = 0; r < srcTd.Rows; r++)
+            for (int cell = 0; cell < srcTE.compareFiles[0].tableInfos[0].tableCells.Count;cell++)
             {
-                for (int c = 0; c < srcTd.Columns; c++)
-                {
-                    double cellValue = getValue(PCM.buf, srcAddr, srcTd, 0, PCM);
-
-                    TableCell tCell = new TableCell();
-                    tCell.addr = dstAddr;                    
-                    tCell.lastValue = cellValue;
-                    tCell.td = dstTd;
-                    tCell.saveValue(cellValue);
-                    srcAddr += (uint)srcStep;
-                    dstAddr += (uint)dstStep;
-                }
+                TableCell srcTc = srcTE.compareFiles[0].tableInfos[0].tableCells[cell];
+                TableCell dstTc = dstTE.compareFiles[0].tableInfos[0].tableCells[cell];
+                dstTc.saveValue((double)srcTc.lastValue);
             }
+
             dstTE.saveTable();
             srcTE.Dispose();
             dstTE.Dispose();

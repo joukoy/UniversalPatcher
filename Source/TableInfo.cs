@@ -21,31 +21,10 @@ namespace UniversalPatcher
         //public uint tableId { get; set; }
         public TableData td { get; set; }
         public object lastValue { get; set; }
-        public object origValue { get; set; }
-        public double origRawValue { get; set; }
-        public double lastRawValue { get; set; }
+        public object origValue { get { return getValue(tableInfo.compareFile.pcm.buf,addr, td, 0, tableInfo.compareFile.pcm); }}
+        public double origRawValue {get {return getRawValue(tableInfo.compareFile.pcm.buf, addr, td, 0); }}
+        public double lastRawValue  { get; set; }
         public TableInfo tableInfo { get; set; }
-
-        public double readValue()
-        {
-            double retVal = uint.MaxValue;
-            try {
-                retVal = getValue(tableInfo.compareFile.buf, addr, td, tableInfo.compareFile.tableBufferOffset,tableInfo.compareFile.pcm);
-
-                if (td.OutputType == OutDataType.Hex || td.OutputType == OutDataType.Int)
-                    retVal = (Int64)Math.Round(retVal);
-                else if (td.Decimals > 0)
-                {
-                    retVal = Math.Round(retVal, td.Decimals);
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger(ex.Message);
-            }
-
-            return retVal;
-        }
 
         public void saveValue(double val,bool isRawValue = false)
         {

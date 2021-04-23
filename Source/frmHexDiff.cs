@@ -162,7 +162,7 @@ namespace UniversalPatcher
                 List<int> tableIds = new List<int>();
                 tableIds.Add(id);
                 frmT.prepareTable(pcm1, td, tableIds,"A");
-                frmT.addCompareFiletoMenu(pcm2, pcm2.tableDatas[id2],"");
+                frmT.addCompareFiletoMenu(pcm2, pcm2.tableDatas[id2],"B:" + pcm2.FileName);
                 frmT.Show();
                 frmT.loadTable();
             }
