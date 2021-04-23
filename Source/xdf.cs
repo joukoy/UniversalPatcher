@@ -108,9 +108,9 @@ namespace UniversalPatcher
                         }
                         if (axle.Attribute("id").Value == "z")
                         {
-                            addr = axle.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
-                            xdf.addrInt = Convert.ToUInt32(addr, 16);
-                            //xdf.Address = addr;
+                            if (axle.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
+                                xdf.Address = axle.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
+                            //xdf.addrInt = Convert.ToUInt32(addr, 16);
                             string tmp = axle.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim();
                             size = (Convert.ToInt32(tmp) / 8).ToString();
                             elementSize = (byte)(Convert.ToInt32(tmp) / 8);
@@ -245,6 +245,8 @@ namespace UniversalPatcher
                         tl.xdfId = element.Attribute("uniqueid").Value;
                         tl.tdId = tdList.Count;
                         tableTargets.Add(tl);
+                        if (tl.xdfId == "0x386")
+                            Debug.WriteLine("0x386");
                     }
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                     {

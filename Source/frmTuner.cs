@@ -1944,8 +1944,9 @@ namespace UniversalPatcher
             XDF xdf = new XDF();
             Logger(xdf.importXdf(PCM, PCM.tableDatas));
             Debug.WriteLine("Categories: " + PCM.tableCategories.Count);
-            LoggerBold("Note: Only basic XDF conversions are supported, check Math and SavingMath values");
+            //LoggerBold("Note: Only basic XDF conversions are supported, check Math and SavingMath values");
             refreshTablelist();
+            comboTableCategory.Text = "_All";
         }
 
         private void tinyTunerDBV6OnlyToolStripMenuItem_Click(object sender, EventArgs e)
