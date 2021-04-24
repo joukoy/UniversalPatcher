@@ -123,6 +123,8 @@ namespace UniversalPatcher
             this.labelIconSize = new System.Windows.Forms.Label();
             this.numIconSize = new System.Windows.Forms.NumericUpDown();
             this.tabPatches = new System.Windows.Forms.TabPage();
+            this.tabFileInfo = new System.Windows.Forms.TabPage();
+            this.tabControlFileInfo = new System.Windows.Forms.TabControl();
             this.imageList3 = new System.Windows.Forms.ImageList(this.components);
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -138,9 +140,8 @@ namespace UniversalPatcher
             this.labelBy = new System.Windows.Forms.Label();
             this.contextMenuStripTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabFileInfo = new System.Windows.Forms.TabPage();
-            this.tabControlFileInfo = new System.Windows.Forms.TabControl();
-            this.tabA = new System.Windows.Forms.TabPage();
+            this.compareSelectedTablesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.importXDFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -155,9 +156,8 @@ namespace UniversalPatcher
             this.tabControl1.SuspendLayout();
             this.tabSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).BeginInit();
-            this.contextMenuStripTree.SuspendLayout();
             this.tabFileInfo.SuspendLayout();
-            this.tabControlFileInfo.SuspendLayout();
+            this.contextMenuStripTree.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -527,7 +527,8 @@ namespace UniversalPatcher
             this.loadTablelistnewToolStripMenuItem,
             this.saveXMLToolStripMenuItem,
             this.saveXMLAsToolStripMenuItem,
-            this.clearTableToolStripMenuItem});
+            this.clearTableToolStripMenuItem,
+            this.importXDFToolStripMenuItem});
             this.xmlToolStripMenuItem.Name = "xmlToolStripMenuItem";
             this.xmlToolStripMenuItem.Size = new System.Drawing.Size(40, 20);
             this.xmlToolStripMenuItem.Text = "Xml";
@@ -962,6 +963,24 @@ namespace UniversalPatcher
             this.tabPatches.TabIndex = 4;
             this.tabPatches.UseVisualStyleBackColor = true;
             // 
+            // tabFileInfo
+            // 
+            this.tabFileInfo.Controls.Add(this.tabControlFileInfo);
+            this.tabFileInfo.ImageKey = "info.ico";
+            this.tabFileInfo.Location = new System.Drawing.Point(4, 31);
+            this.tabFileInfo.Name = "tabFileInfo";
+            this.tabFileInfo.Size = new System.Drawing.Size(441, 336);
+            this.tabFileInfo.TabIndex = 6;
+            this.tabFileInfo.UseVisualStyleBackColor = true;
+            // 
+            // tabControlFileInfo
+            // 
+            this.tabControlFileInfo.Location = new System.Drawing.Point(93, 89);
+            this.tabControlFileInfo.Name = "tabControlFileInfo";
+            this.tabControlFileInfo.SelectedIndex = 0;
+            this.tabControlFileInfo.Size = new System.Drawing.Size(184, 138);
+            this.tabControlFileInfo.TabIndex = 0;
+            // 
             // imageList3
             // 
             this.imageList3.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList3.ImageStream")));
@@ -1169,45 +1188,31 @@ namespace UniversalPatcher
             // contextMenuStripTree
             // 
             this.contextMenuStripTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openInNewWindowToolStripMenuItem});
+            this.openInNewWindowToolStripMenuItem,
+            this.compareSelectedTablesToolStripMenuItem1});
             this.contextMenuStripTree.Name = "contextMenuStripTree";
-            this.contextMenuStripTree.Size = new System.Drawing.Size(187, 26);
+            this.contextMenuStripTree.Size = new System.Drawing.Size(204, 48);
             // 
             // openInNewWindowToolStripMenuItem
             // 
             this.openInNewWindowToolStripMenuItem.Name = "openInNewWindowToolStripMenuItem";
-            this.openInNewWindowToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.openInNewWindowToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.openInNewWindowToolStripMenuItem.Text = "Open in new window";
             this.openInNewWindowToolStripMenuItem.Click += new System.EventHandler(this.openInNewWindowToolStripMenuItem_Click);
             // 
-            // tabFileInfo
+            // compareSelectedTablesToolStripMenuItem1
             // 
-            this.tabFileInfo.Controls.Add(this.tabControlFileInfo);
-            this.tabFileInfo.ImageKey = "info.ico";
-            this.tabFileInfo.Location = new System.Drawing.Point(4, 31);
-            this.tabFileInfo.Name = "tabFileInfo";
-            this.tabFileInfo.Size = new System.Drawing.Size(441, 336);
-            this.tabFileInfo.TabIndex = 6;
-            this.tabFileInfo.UseVisualStyleBackColor = true;
+            this.compareSelectedTablesToolStripMenuItem1.Name = "compareSelectedTablesToolStripMenuItem1";
+            this.compareSelectedTablesToolStripMenuItem1.Size = new System.Drawing.Size(203, 22);
+            this.compareSelectedTablesToolStripMenuItem1.Text = "Compare selected tables";
+            this.compareSelectedTablesToolStripMenuItem1.Click += new System.EventHandler(this.compareSelectedTablesToolStripMenuItem1_Click);
             // 
-            // tabControlFileInfo
+            // importXDFToolStripMenuItem
             // 
-            this.tabControlFileInfo.Controls.Add(this.tabA);
-            this.tabControlFileInfo.Location = new System.Drawing.Point(93, 89);
-            this.tabControlFileInfo.Name = "tabControlFileInfo";
-            this.tabControlFileInfo.SelectedIndex = 0;
-            this.tabControlFileInfo.Size = new System.Drawing.Size(184, 138);
-            this.tabControlFileInfo.TabIndex = 0;
-            // 
-            // tabA
-            // 
-            this.tabA.Location = new System.Drawing.Point(4, 22);
-            this.tabA.Name = "tabA";
-            this.tabA.Padding = new System.Windows.Forms.Padding(3);
-            this.tabA.Size = new System.Drawing.Size(176, 112);
-            this.tabA.TabIndex = 0;
-            this.tabA.Text = "A";
-            this.tabA.UseVisualStyleBackColor = true;
+            this.importXDFToolStripMenuItem.Name = "importXDFToolStripMenuItem";
+            this.importXDFToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
+            this.importXDFToolStripMenuItem.Text = "Import XDF";
+            this.importXDFToolStripMenuItem.Click += new System.EventHandler(this.importXDFToolStripMenuItem_Click);
             // 
             // frmTuner
             // 
@@ -1250,9 +1255,8 @@ namespace UniversalPatcher
             this.tabSettings.ResumeLayout(false);
             this.tabSettings.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).EndInit();
-            this.contextMenuStripTree.ResumeLayout(false);
             this.tabFileInfo.ResumeLayout(false);
-            this.tabControlFileInfo.ResumeLayout(false);
+            this.contextMenuStripTree.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1368,6 +1372,7 @@ namespace UniversalPatcher
         private ToolStripMenuItem selectFileToolStripMenuItem1;
         private TabPage tabFileInfo;
         private TabControl tabControlFileInfo;
-        private TabPage tabA;
+        private ToolStripMenuItem compareSelectedTablesToolStripMenuItem1;
+        private ToolStripMenuItem importXDFToolStripMenuItem;
     }
 }

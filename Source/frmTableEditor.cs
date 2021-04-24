@@ -177,6 +177,16 @@ namespace UniversalPatcher
         private void parseTableInfo(CompareFile cmpFile)
         {
             PcmFile pcm = cmpFile.pcm;
+            List<TableData> sizeList = new List<TableData>(filteredTables.OrderBy(o => o.addrInt).ToList());
+            TableData first = sizeList[0];
+            TableData last = sizeList[sizeList.Count - 1];
+            int elementSize = getElementSize(last.DataType);
+            int singleTableSize = last.Rows * last.Columns * elementSize;
+            uint bufSize = (uint)(last.addrInt - first.addrInt + last.Offset + singleTableSize);
+            cmpFile.buf = new byte[bufSize];
+            Array.Copy(pcm.buf, first.addrInt, cmpFile.buf, 0, bufSize);
+            cmpFile.tableBufferOffset = first.addrInt;
+
             for (int tId =0; tId < cmpFile.tableIds.Count; tId++)
             {
                 TableData tData = pcm.tableDatas[cmpFile.tableIds[tId]];
@@ -186,12 +196,12 @@ namespace UniversalPatcher
                 int rowCount = tData.Rows;
                 int colCount = tData.Columns;
 
-                int elementSize = getBits(tData.DataType) / 8;
+/*                int elementSize = getBits(tData.DataType) / 8;
                 int bufSize = (int)(tData.Rows * tData.Columns * elementSize + tData.Offset);
                 cmpFile.buf = new byte[bufSize];
                 Array.Copy(pcm.buf, tData.addrInt, cmpFile.buf, 0, bufSize);
                 cmpFile.tableBufferOffset = tData.addrInt;
-
+*/
                 if (tData.TableName.ToLower().EndsWith(".data"))
                 {
                     rowCount = getRowCountFromTable(tData, pcm);
@@ -201,14 +211,12 @@ namespace UniversalPatcher
                 string[] cHeaders = tData.ColumnHeaders.Split(',');
                 if (tData.ColumnHeaders.StartsWith("Table: "))
                 {
-                    //string[] parts = tData.ColumnHeaders.Split(' ');
                     cHeaders = loadHeaderFromTable(tData.ColumnHeaders.Substring(7), tData.Columns, pcm).Split(',');
                 }
 
                 string[] rHeaders = tData.RowHeaders.Split(',');
                 if (tData.RowHeaders.StartsWith("Table: "))
                 {
-                    //string[] parts = tData.RowHeaders.Split(' ');
                     rHeaders = loadHeaderFromTable(tData.RowHeaders.Substring(7), tData.Rows, pcm).Split(',');
                 }
 
@@ -252,7 +260,10 @@ namespace UniversalPatcher
                         cHdr = tData.Units + " " + c.ToString();
                     if (duplicateTableName)
                         cHdr += " [" + tData.id + "]";
-                    colHeaders.Add(colPrefix + cHdr);
+                    if (colHeaders.Contains(colPrefix + cHdr))
+                        colHeaders.Add(colPrefix + cHdr + c.ToString());
+                    else
+                        colHeaders.Add(colPrefix + cHdr);
                 }
                 for (int r = 0; r < tData.Rows; r++)
                 {
@@ -261,7 +272,10 @@ namespace UniversalPatcher
                         rHdr = rHeaders[r];
                     else
                         rHdr = "(" + r.ToString() + ")";
-                    rowHeaders.Add(RowPrefix + rHdr);
+                    if (rowHeaders.Contains(RowPrefix + rHdr))
+                        rowHeaders.Add(RowPrefix + rHdr + r.ToString());
+                    else
+                        rowHeaders.Add(RowPrefix + rHdr);
                 }
 
                 uint addr = (uint)(tData.addrInt + tData.Offset);
@@ -392,6 +406,8 @@ namespace UniversalPatcher
                 }
             }
             orgFile.tableIds = tableIds;
+            filteredTables = new List<TableData>();
+            filteredTables.Add(pcm.tableDatas[tableIds[0]]);
             parseTableInfo(orgFile);
             setMyText();
 
@@ -588,7 +604,7 @@ namespace UniversalPatcher
                 if (cmpTCell != null && !radioOriginal.Checked)
                 {
                     cmpVal = (double) cmpTCell.lastValue;
-                    cmpRawValue = cmpTCell.lastRawValue;
+                    cmpRawValue = (double)cmpTCell.lastRawValue;
                 }
                 //if (radioSideBySide.Checked && !disableSideBySide)
                 if (radioSideBySideText.Checked)
@@ -607,9 +623,13 @@ namespace UniversalPatcher
                     {
                         if (mathTd.OutputType == OutDataType.Text)
                         {
+                            //curTxt = ReadTextBlock(tCell.tableInfo.compareFile.buf, (int)(tCell.addr - tCell.tableInfo.compareFile.tableBufferOffset), tCell.td.Columns);
                             curTxt = Convert.ToChar((ushort)curVal).ToString();
                             if (cmpVal > double.MinValue)
+                            {
                                 cmpTxt = Convert.ToChar((ushort)cmpVal).ToString();
+                                //cmpTxt = ReadTextBlock(cmpTCell.tableInfo.compareFile.buf, (int)(cmpTCell.addr - cmpTCell.tableInfo.compareFile.tableBufferOffset), cmpTCell.td.Columns);
+                            }
                         }
                         else if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
                         {
@@ -673,6 +693,7 @@ namespace UniversalPatcher
                 else if (mathTd.OutputType == OutDataType.Text)
                 {
                     dataGridView1.Rows[row].Cells[col].Value = Convert.ToChar((ushort)showRawVal);
+                    //dataGridView1.Rows[row].Cells[col].Value = ReadTextBlock(tCell.tableInfo.compareFile.buf, (int)(tCell.addr - tCell.tableInfo.compareFile.tableBufferOffset), tCell.td.Columns);
                 }
                 else if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
                 {
@@ -790,7 +811,7 @@ namespace UniversalPatcher
         private int getColumnByHeader(string hdrTxt)
         {
             int ind = int.MinValue;
-
+            hdrTxt = hdrTxt.Trim();
             for (int c = 0; c < dataGridView1.Columns.Count; c++)
             {
                 if (dataGridView1.Columns[c].HeaderText == hdrTxt)
@@ -814,7 +835,7 @@ namespace UniversalPatcher
         private int getRowByHeader(string hdrTxt)
         {
             int ind = int.MinValue;
-
+            hdrTxt = hdrTxt.Trim();
             for (int c = 0; c < dataGridView1.Rows.Count; c++)
             {
                 if (dataGridView1.Rows[c].HeaderCell.Value.ToString() == hdrTxt)
@@ -1921,7 +1942,7 @@ namespace UniversalPatcher
             {
                 TableCell tCell = (TableCell)dataGridView1.SelectedCells[i].Tag;
                 TableData mathTd = tCell.td;
-                double rawVal = tCell.lastRawValue;
+                double rawVal = (double)tCell.lastRawValue;
                 double newRawVal = rawVal + step;
                 Debug.WriteLine("Row: " + dataGridView1.SelectedCells[i].RowIndex + ", col: " + dataGridView1.SelectedCells[i].ColumnIndex +  ", Old raw: " + tCell.lastRawValue + ", new raw: " + newRawVal);
                 tCell.saveValue(newRawVal, true);

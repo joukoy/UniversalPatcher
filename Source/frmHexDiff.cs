@@ -73,8 +73,8 @@ namespace UniversalPatcher
                 {
                     if (showAsHex)
                     {
-                        data1 += getRawValue(pcm1.buf, addr, td, 0).ToString(formatStr) + " ";
-                        data2 += getRawValue(pcm2.buf, addr2, td2, 0).ToString(formatStr) + " ";
+                        data1 += ((double)getRawValue(pcm1.buf, addr, td, 0)).ToString(formatStr) + " ";
+                        data2 += ((double)getRawValue(pcm2.buf, addr2, td2, 0)).ToString(formatStr) + " ";
                     }
                     else
                     {

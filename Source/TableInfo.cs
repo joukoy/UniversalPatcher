@@ -94,7 +94,14 @@ namespace UniversalPatcher
             if (td.DataType == InDataType.UINT64)
                 SaveUint64(tableBuffer, bufAddr, (UInt64)newRawValue);
 
-            lastValue = val;
+            if (isRawValue)
+            {
+                lastValue = parser.Parse(mathStr.Replace("x", newRawValue.ToString()));
+            }
+            else 
+            {
+                lastValue = val;
+            }
             lastRawValue = newRawValue;
         }
 

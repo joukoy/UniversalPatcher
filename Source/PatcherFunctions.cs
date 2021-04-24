@@ -610,7 +610,7 @@ public class upatcher
         tmpTd.Address = rawParts[1];
         tmpTd.Offset = 0;
         tmpTd.DataType = idt;
-        double rawVal = getRawValue(PCM.buf, tmpTd.addrInt, tmpTd, 0);
+        double rawVal = (double)getRawValue(PCM.buf, tmpTd.addrInt, tmpTd, 0);
         if (rawParts.Length > 3 && rawParts[3].StartsWith("lsb"))
         {
             int eSize = getElementSize(idt);
@@ -636,7 +636,7 @@ public class upatcher
 
             if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
             {
-                double rawVal = getRawValue(myBuffer, addr, mathTd, offset);
+                UInt64 rawVal = (UInt64)getRawValue(myBuffer, addr, mathTd, offset);
                 UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
                 if (((UInt64) rawVal & mask) == mask)
                     return 1;

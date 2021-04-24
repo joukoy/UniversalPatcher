@@ -363,6 +363,8 @@ namespace UniversalPatcher
 
         private void importTableSeek(ref PcmFile _PCM)
         {
+            Logger("Importing tableseek...");
+            Application.DoEvents();
             _PCM.importSeekTables();
             refreshTablelist();
             Logger("OK");
@@ -661,6 +663,7 @@ namespace UniversalPatcher
         private void loadXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Logger(PCM.LoadTableList());
+            comboTableCategory.Text = "_All";
             refreshTablelist();
             //currentXmlFile = PCM.configFileFullName;
         }
@@ -1713,6 +1716,8 @@ namespace UniversalPatcher
             tdMenuItem.Tag = newPCM.tableDataIndex;
             tableListToolStripMenuItem.DropDownItems.Add(tdMenuItem);
             tdMenuItem.Click += tablelistSelect_Click;
+
+            updateFileInfoTab();
         }
 
         private void CmpHexMenuitem_Click(object sender, EventArgs e)
@@ -1939,7 +1944,7 @@ namespace UniversalPatcher
             importTableSeek(ref PCM);
         }
 
-        private void xDFToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void importXDF()
         {
             XDF xdf = new XDF();
             Logger(xdf.importXdf(PCM, PCM.tableDatas));
@@ -1947,6 +1952,11 @@ namespace UniversalPatcher
             //LoggerBold("Note: Only basic XDF conversions are supported, check Math and SavingMath values");
             refreshTablelist();
             comboTableCategory.Text = "_All";
+
+        }
+        private void xDFToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            importXDF();
         }
 
         private void tinyTunerDBV6OnlyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2061,8 +2071,9 @@ namespace UniversalPatcher
         private void loadTablelistxmlTableseekImportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PCM.LoadTableList();
-            importDTC(ref PCM);
+            importDTC(ref PCM);            
             importTableSeek(ref PCM);
+            comboTableCategory.Text = "_All";
             filterTables();
         }
 
@@ -2070,6 +2081,7 @@ namespace UniversalPatcher
         {
             addNewTableList();
             PCM.LoadTableList();
+            comboTableCategory.Text = "_All";
             filterTables();
         }
 
@@ -2134,7 +2146,7 @@ namespace UniversalPatcher
             }
         }
 
-        private void compareSelectedTablesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void compareSelectedTables()
         {
             try
             {
@@ -2159,9 +2171,9 @@ namespace UniversalPatcher
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
                 PcmFile comparePCM = PCM.ShallowCopy();
                 comparePCM.FileName = td2.TableName;
-                frmT.addCompareFiletoMenu(comparePCM,td2, "");
+                frmT.addCompareFiletoMenu(comparePCM, td2, "");
                 frmT.Show();
-                frmT.prepareTable(PCM,td1, null, "A");
+                frmT.prepareTable(PCM, td1, null, "A");
                 frmT.loadTable();
 
             }
@@ -2169,6 +2181,11 @@ namespace UniversalPatcher
             {
                 Logger(ex.Message);
             }
+
+        }
+        private void compareSelectedTablesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            compareSelectedTables();
         }
 
         private void massModifyTableListsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2415,6 +2432,30 @@ namespace UniversalPatcher
             unitsToolStripMenuItem.Visible = false;
             enableConfigModeToolStripMenuItem.Visible = false;
             resetTunerModeColumnsToolStripMenuItem.Visible = false;
+            importXDFToolStripMenuItem.Visible = true;
+        }
+
+        private void updateFileInfoTab()
+        {
+            if (currentTab != "FileInfo")
+                return;
+            tabControlFileInfo.Dock = DockStyle.Fill;
+            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+            {
+                string tabName = "tab" + mi.Text.Substring(0, 1);
+                if (tabControlFileInfo.TabPages[tabName] == null)
+                {
+                    TabPage newTab = new TabPage(mi.Text.Substring(0, 1));
+                    newTab.Name = tabName;
+                    tabControlFileInfo.TabPages.Add(newTab);
+                    PcmFile infoPcm = (PcmFile)mi.Tag;
+                    RichTextBox rBox = new RichTextBox();
+                    tabControlFileInfo.TabPages[tabName].Controls.Add(rBox);
+                    rBox.Dock = DockStyle.Fill;
+                    showFileInfo(infoPcm, rBox);
+                }
+            }
+
         }
 
         private void TabFileInfo_Enter(object sender, EventArgs e)
@@ -2422,27 +2463,7 @@ namespace UniversalPatcher
             if (currentTab == "FileInfo")
                 return;
             currentTab = "FileInfo";
-            tabControlFileInfo.Dock = DockStyle.Fill;
-            tabControlFileInfo.TabPages[0].Select();
-            RichTextBox rBox = new RichTextBox();
-            tabControlFileInfo.TabPages[0].Controls.Add(rBox);
-            rBox.Dock = DockStyle.Fill;
-            showFileInfo(PCM, rBox);
-            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
-            {
-                string tabName = "tab" + mi.Text.Substring(0,1);
-                if (tabControlFileInfo.TabPages[tabName] == null)
-                {
-                    TabPage newTab = new TabPage(mi.Text.Substring(0, 1));
-                    newTab.Name = tabName;
-                    tabControlFileInfo.TabPages.Add(newTab);
-                    PcmFile infoPcm = (PcmFile)mi.Tag;
-                    rBox = new RichTextBox();
-                    tabControlFileInfo.TabPages[tabName].Controls.Add(rBox);
-                    rBox.Dock = DockStyle.Fill;
-                    showFileInfo(infoPcm, rBox);
-                }
-            }
+            updateFileInfoTab();
         }
 
         private void selectListMode()
@@ -2472,7 +2493,7 @@ namespace UniversalPatcher
             unitsToolStripMenuItem.Visible = true;
             enableConfigModeToolStripMenuItem.Visible = true;
             resetTunerModeColumnsToolStripMenuItem.Visible = false;
-            
+            importXDFToolStripMenuItem.Visible = false;
         }
 
 
@@ -3193,6 +3214,16 @@ namespace UniversalPatcher
             loadConfigforPCM(ref cmpWithPcm);
             addtoCurrentFileMenu(cmpWithPcm, false);
             findTableDifferencesHEX(cmpWithPcm);
+        }
+
+        private void compareSelectedTablesToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            compareSelectedTables();
+        }
+
+        private void importXDFToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            importXDF();
         }
     }
 }
