@@ -51,7 +51,8 @@ namespace UniversalPatcher
             string retVal = "";
             try
             {
-                List<string> categories = new List<string>();
+                //List<string> categories = new List<string>();
+                Dictionary<int, string> categories = new Dictionary<int, string>();
                 List<TableLink> tableLinks = new List<TableLink>();
                 List<TableLink> tableTargets = new List<TableLink>();
 
@@ -59,10 +60,9 @@ namespace UniversalPatcher
                 {
                     foreach (XElement cat in element.Elements("CATEGORY"))
                     {
-                        string category = cat.Attribute("name").Value;
-                        categories.Add(category);
-                        if (!PCM.tableCategories.Contains(category))
-                            PCM.tableCategories.Add(category);
+                        string catTxt = cat.Attribute("name").Value;
+                        int catId = Convert.ToInt32(cat.Attribute("index").Value.Replace("0x",""),16);
+                        categories.Add(catId,catTxt);
                     }
                 }
                 foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFTABLE"))
@@ -74,7 +74,6 @@ namespace UniversalPatcher
                     xdf.Max = double.MaxValue;
                     string RowHeaders = "";
                     string ColHeaders = "";
-                    string addr = "";
                     string size = "";
                     string math = "";
                     int elementSize = 0;
@@ -204,9 +203,14 @@ namespace UniversalPatcher
                     if (element.Element("CATEGORYMEM") != null && element.Element("CATEGORYMEM").Attribute("category") != null)
                     {
                         int catid= 0;
-                        foreach (XElement catEle in  element.Elements("CATEGORYMEM")) 
-                            catid = Convert.ToInt16(element.Element("CATEGORYMEM").Attribute("category").Value);
-                        xdf.Category = categories[catid - 1];
+                        foreach (XElement catEle in element.Elements("CATEGORYMEM"))
+                        {
+                            catid = Convert.ToInt16(catEle.Attribute("category").Value);
+                            Debug.WriteLine(catid);
+                            if (xdf.Category.Length > 0)
+                                xdf.Category += " - ";
+                            xdf.Category += categories[catid - 1] ;
+                        }
                     }
                     if (element.Element("description") != null)
                         xdf.TableDescription = element.Element("description").Value;
@@ -250,8 +254,6 @@ namespace UniversalPatcher
                         tl.xdfId = element.Attribute("uniqueid").Value;
                         tl.tdId = tdList.Count;
                         tableTargets.Add(tl);
-                        if (tl.xdfId == "0x386")
-                            Debug.WriteLine("0x386");
                     }
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                     {
@@ -260,6 +262,7 @@ namespace UniversalPatcher
                         xdf.Address = element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
                         elementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
                         xdf.Math = element.Element("MATH").Attribute("equation").Value.Trim().Replace("*.", "*0.").Replace("/.", "/0.");
+                        xdf.Math = xdf.Math.Replace("+ -", "-").Replace("+-", "-").Replace("++", "+").Replace("+ + ", "+");
                         //xdf.SavingMath = convertMath(xdf.Math);
                         if (element.Element("units") != null)
                             xdf.Units = element.Element("units").Value;
@@ -279,8 +282,12 @@ namespace UniversalPatcher
                         {
                             int catid = 0;
                             foreach (XElement catEle in element.Elements("CATEGORYMEM"))
-                                catid = Convert.ToInt16(element.Element("CATEGORYMEM").Attribute("category").Value);
-                            xdf.Category = categories[catid - 1];
+                            {
+                                catid = Convert.ToInt16(catEle.Attribute("category").Value);
+                                if (xdf.Category.Length > 0)
+                                    xdf.Category += " - ";
+                                xdf.Category += categories[catid - 1];
+                            }
                         }
                         if (element.Element("description") != null)
                             xdf.TableDescription = element.Element("description").Value;
@@ -313,8 +320,12 @@ namespace UniversalPatcher
                         {
                             int catid = 0;
                             foreach (XElement catEle in element.Elements("CATEGORYMEM"))
-                                catid = Convert.ToInt16(element.Element("CATEGORYMEM").Attribute("category").Value);
-                            xdf.Category = categories[catid - 1];
+                            {
+                                catid = Convert.ToInt16(catEle.Attribute("category").Value);
+                                if (xdf.Category.Length > 0)
+                                    xdf.Category += " - ";
+                                xdf.Category += categories[catid - 1];
+                            }
                         }
                         if (element.Element("description") != null)
                             xdf.TableDescription = element.Element("description").Value;
@@ -338,6 +349,12 @@ namespace UniversalPatcher
                             break;
                         }
                     }
+                }
+
+                for (int i=0; i< PCM.tableDatas.Count; i++)
+                {
+                    if (!PCM.tableCategories.Contains(PCM.tableDatas[i].Category))
+                        PCM.tableCategories.Add(PCM.tableDatas[i].Category);
                 }
 
             }

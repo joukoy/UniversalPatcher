@@ -83,6 +83,7 @@ namespace UniversalPatcher
             this.saveXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveXMLAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importXDFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -141,7 +142,6 @@ namespace UniversalPatcher
             this.contextMenuStripTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compareSelectedTablesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.importXDFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -189,10 +189,11 @@ namespace UniversalPatcher
             // 
             // comboTableCategory
             // 
+            this.comboTableCategory.DropDownWidth = 300;
             this.comboTableCategory.FormattingEnabled = true;
             this.comboTableCategory.Location = new System.Drawing.Point(375, 30);
             this.comboTableCategory.Name = "comboTableCategory";
-            this.comboTableCategory.Size = new System.Drawing.Size(142, 21);
+            this.comboTableCategory.Size = new System.Drawing.Size(190, 21);
             this.comboTableCategory.TabIndex = 13;
             // 
             // labelCategory
@@ -574,6 +575,13 @@ namespace UniversalPatcher
             this.clearTableToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
             this.clearTableToolStripMenuItem.Text = "&Clear Tablelist";
             this.clearTableToolStripMenuItem.Click += new System.EventHandler(this.clearTableToolStripMenuItem_Click);
+            // 
+            // importXDFToolStripMenuItem
+            // 
+            this.importXDFToolStripMenuItem.Name = "importXDFToolStripMenuItem";
+            this.importXDFToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
+            this.importXDFToolStripMenuItem.Text = "Import XDF";
+            this.importXDFToolStripMenuItem.Click += new System.EventHandler(this.importXDFToolStripMenuItem_Click);
             // 
             // contextMenuStrip1
             // 
@@ -1206,13 +1214,6 @@ namespace UniversalPatcher
             this.compareSelectedTablesToolStripMenuItem1.Size = new System.Drawing.Size(203, 22);
             this.compareSelectedTablesToolStripMenuItem1.Text = "Compare selected tables";
             this.compareSelectedTablesToolStripMenuItem1.Click += new System.EventHandler(this.compareSelectedTablesToolStripMenuItem1_Click);
-            // 
-            // importXDFToolStripMenuItem
-            // 
-            this.importXDFToolStripMenuItem.Name = "importXDFToolStripMenuItem";
-            this.importXDFToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
-            this.importXDFToolStripMenuItem.Text = "Import XDF";
-            this.importXDFToolStripMenuItem.Click += new System.EventHandler(this.importXDFToolStripMenuItem_Click);
             // 
             // frmTuner
             // 

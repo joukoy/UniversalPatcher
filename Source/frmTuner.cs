@@ -706,6 +706,7 @@ namespace UniversalPatcher
         private void clearTableToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PCM.tableDatas = new List<TableData>();
+            PCM.tableCategories = new List<string>();
             refreshTablelist();
         }
 
@@ -1221,6 +1222,11 @@ namespace UniversalPatcher
                     UInt64 rawVal = (UInt64) getRawValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0);
                     string valTxt = curVal.ToString();
                     string unitTxt = " " + peekPCM.tableDatas[ind].Units;
+                    string minMax = "";
+                    if (peekPCM.tableDatas[ind].Min > double.MinValue)
+                        minMax = "Min: " + peekPCM.tableDatas[ind].Min.ToString();
+                    if (peekPCM.tableDatas[ind].Max < double.MaxValue)
+                        minMax += " Max: " + peekPCM.tableDatas[ind].Max.ToString();
                     string maskTxt = "";
                     TableValueType vt = getValueType(peekPCM.tableDatas[ind]);
                     if (vt == TableValueType.boolean)
