@@ -181,6 +181,8 @@ namespace UniversalPatcher
             if (!Properties.Settings.Default.disableTunerAutoloadSettings)
             {
                 string defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", newPCM.OS + ".xml");
+                if (newPCM.OS.Length == 0)
+                    defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", newPCM.configFile + "-def.xml");
                 compXml = "";
                 if (File.Exists(defaultTunerFile))
                 {

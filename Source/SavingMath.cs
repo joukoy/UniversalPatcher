@@ -9,7 +9,8 @@ namespace UniversalPatcher
 {
     public class SavingMath
     {
-        public double getSavingValue(string mathStr, TableData mathTd, double val)
+        string mathString;
+        public double getSavingValue(string mathStr, TableData mathTd, double val, double oldRawVal)
         {
 
             //We need formula which result is zero
@@ -22,26 +23,45 @@ namespace UniversalPatcher
             if (val < 0)
                 newMath = mathStr.ToLower() + " + " + Math.Abs(val).ToString(); //x*0.33 - -20 => x*0.33 + 20
             double minVal = getMinValue(mathTd.DataType);
-            //double  maxVal = getMaxValue(mathTd.DataType);
+            double  maxVal = getMaxValue(mathTd.DataType);
+            double gues1 = oldRawVal;
+            double gues2;
+            if (oldRawVal > ((maxVal - minVal) / 2))
+                gues2 = 0.8 * gues1;
+            else
+                gues2 = 1.1 * gues1;
 
-            //Secant method:
-            double gues1 = 10;
-            double gues2 = 100;
-            if (minVal < 0 && val < 0)
-                gues1 = -100;
+            mathString = newMath;
+            double retVal = secant(gues1, gues2, val, newMath, minVal,maxVal);
+            if (double.IsNaN(retVal) || Math.Abs(Func(retVal) - val) > 1)
+            {
+                mathString = mathStr.ToLower();
+                retVal = RootFinding.Brent(Func, minVal, maxVal,0.99, val);
+                Debug.WriteLine("Brent: " + retVal);
+            }
+            if ( double.IsNaN(retVal) || Math.Abs(Func(retVal) - val) > 1)
+            {
+                mathString = mathStr.ToLower();
+                retVal = RootFinding.Bisect(Func, minVal, maxVal, 0.99, val);
+                Debug.WriteLine("Bisect: " + retVal);
+            }
+            return retVal;
+        }
 
+        double secant(double gues1, double gues2, double val, string newMath, double min, double max)
+        {
             double p2, p1, p0;
             int round;
             int stepsCutoff = 100;
-            p0= Func(newMath, gues1);
-            p1 = Func(newMath, gues2);         
-            p2 = p1 - Func(newMath, p1) * (p1 - p0) / (Func(newMath, p1) - Func(newMath, p0));
+            p0 = Func( gues1);
+            p1 = Func(gues2);
+            p2 = p1 - Func(p1) * (p1 - p0) / (Func(p1) - Func(p0));
             if (double.IsInfinity(p2)) p2 = double.MaxValue;
             for (round = 0; System.Math.Abs(p2 - p1) > 0.9999 && round < stepsCutoff; round++)
             {
                 p0 = p1;
                 p1 = p2;
-                p2 = p1 - Func(newMath, p1) * (p1 - p0) / (Func(newMath, p1) - Func(newMath, p0));
+                p2 = p1 - Func(p1) * (p1 - p0) / (Func(p1) - Func( p0));
                 Debug.WriteLine("Secant method round " + round + ", value: " + p2);
             }
             if (round < stepsCutoff)
@@ -53,12 +73,12 @@ namespace UniversalPatcher
             }
         }
 
-        private double Func(string mathStr, double val)
+        private double Func(double val)
         {
             double outVal = double.MaxValue;    //Target is zero, return maxval on error
             try
             {
-                string calcStr = mathStr.Replace("x", val.ToString());
+                string calcStr = mathString.Replace("x", val.ToString());
                 double x = parser.Parse(calcStr, false);
                 outVal = x;
             }

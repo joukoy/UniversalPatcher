@@ -188,7 +188,6 @@ namespace MathParserTK
         public double Parse(string expression, bool isRadians = true)
         {
             this.isRadians = isRadians;
-            expression = expression.ToUpper().Replace(",", ".");
             try
             {
                 return Calculate(ConvertToRPN(FormatString(expression)));

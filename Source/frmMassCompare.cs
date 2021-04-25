@@ -241,6 +241,8 @@ namespace UniversalPatcher
             if (!Properties.Settings.Default.disableTunerAutoloadSettings)
             {
                 string defaultXml = Path.Combine(Application.StartupPath, "Tuner", cmpPCM.OS + ".xml");
+                if (cmpPCM.OS.Length == 0)
+                    defaultXml = Path.Combine(Application.StartupPath, "Tuner", cmpPCM.configFile + "-def.xml");
                 if (File.Exists(defaultXml))
                 {
                     cmpPCM.LoadTableList(defaultXml);

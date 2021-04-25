@@ -306,6 +306,7 @@
       <DependentUpon>frmPatcher.cs</DependentUpon>
     </Compile>
     <Compile Include="ListViewSorter.cs" />
+    <Compile Include="RootFinding.cs" />
     <Compile Include="SavingMath.cs" />
     <Compile Include="MathParser.cs" />
     <Compile Include="PatcherFunctions.cs" />

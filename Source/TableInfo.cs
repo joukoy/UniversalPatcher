@@ -58,7 +58,7 @@ namespace UniversalPatcher
             }
             else
             {
-                newRawValue = savingMath.getSavingValue(mathStr,td, val);
+                newRawValue = savingMath.getSavingValue(mathStr,td, val, origRawValue);
                 Debug.WriteLine("Calculated raw value: " + newRawValue);
             }
             if (td.DataType != InDataType.FLOAT32 && td.DataType != InDataType.FLOAT64)
