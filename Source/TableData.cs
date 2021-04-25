@@ -67,7 +67,7 @@ namespace UniversalPatcher
         public InDataType DataType { get; set; }
         //public byte ElementSize;
         public string Math { get; set; }
-        public string SavingMath { get; set; }
+        //public string SavingMath { get; set; }
         public string Units { get; set; }
         public OutDataType OutputType { get; set; }
         public double Min { get; set; }
