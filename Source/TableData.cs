@@ -19,7 +19,7 @@ namespace UniversalPatcher
             //Address = "";
             addrInt = uint.MaxValue;
             Math = "X";
-            SavingMath = "X";
+            //SavingMath = "X";
             Units = "";
             Category = "";
             ColumnHeaders = "";
@@ -121,7 +121,7 @@ namespace UniversalPatcher
             //ElementSize = (byte)(tSeek.Bits / 8);
             DataType = tSeek.DataType;
             Math = tSeek.Math;
-            SavingMath = tSeek.SavingMath;
+            //SavingMath = tSeek.SavingMath;
             OS = PCM.OS;
             RowMajor = tSeek.RowMajor;
             Rows = ft.Rows;
@@ -168,7 +168,7 @@ namespace UniversalPatcher
             }
             dtcTd.RowHeaders = dtcTd.RowHeaders.Trim(',');
             dtcTd.Rows = (ushort)PCM.dtcCodes.Count;
-            dtcTd.SavingMath = "X";
+            //dtcTd.SavingMath = "X";
             if (PCM.dtcCombined)
             {
                 //td.TableDescription = "00 MIL and reporting off, 01 type A/no mil, 02 type B/no mil, 03 type C/no mil, 04 not reported/mil, 05 type A/mil, 06 type B/mil, 07 type c/mil";
@@ -204,7 +204,7 @@ namespace UniversalPatcher
                 }
                 dtcTd.RowHeaders = dtcTd.RowHeaders.Trim(',');
                 dtcTd.Rows = (ushort)PCM.dtcCodes.Count;
-                dtcTd.SavingMath = "X";
+                //dtcTd.SavingMath = "X";
                 //td.Signed = false;
                 dtcTd.TableDescription = "0 = No MIL (Lamp always off) 1 = MIL (Lamp may be commanded on by PCM)";
                 //td.Values = "Enum: 0:No MIL (Lamp always off),1:MIL (Lamp may be commanded on by PCM)";

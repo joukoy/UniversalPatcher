@@ -188,7 +188,7 @@ namespace MathParserTK
         public double Parse(string expression, bool isRadians = true)
         {
             this.isRadians = isRadians;
-
+            expression = expression.ToUpper().Replace(",", ".");
             try
             {
                 return Calculate(ConvertToRPN(FormatString(expression)));
@@ -422,7 +422,7 @@ namespace MathParserTK
                     }
 
                     // Convert number from scientific notation to decimal notation
-                    return NumberMaker + Convert.ToDouble(token.Replace(",","."), System.Globalization.CultureInfo.InvariantCulture).ToString();
+                    return NumberMaker + Convert.ToDouble(token.ToString().Replace(",","."), System.Globalization.CultureInfo.InvariantCulture).ToString();
                 }
 
                 return NumberMaker + token.ToString();

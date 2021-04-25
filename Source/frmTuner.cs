@@ -200,11 +200,21 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    Logger("File not found: " + defaultTunerFile);
-                    importDTC(ref newPCM);
-                    importTableSeek(ref newPCM);
-                    if (newPCM.Segments.Count > 0 && newPCM.Segments[0].CS1Address.StartsWith("GM-V6"))
-                        importTinyTunerDB(ref newPCM);
+                    defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", newPCM.configFile + "-def.xml");
+                    if (File.Exists(defaultTunerFile))
+                    {
+                        Logger(newPCM.LoadTableList(defaultTunerFile));
+                        importDTC(ref newPCM);
+                        refreshTablelist();
+                    }
+                    else
+                    {
+                        Logger("File not found: " + defaultTunerFile);
+                        importDTC(ref newPCM);
+                        importTableSeek(ref newPCM);
+                        if (newPCM.Segments.Count > 0 && newPCM.Segments[0].CS1Address.StartsWith("GM-V6"))
+                            importTinyTunerDB(ref newPCM);
+                    }
                 }
             }
 

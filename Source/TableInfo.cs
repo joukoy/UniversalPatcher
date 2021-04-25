@@ -58,7 +58,7 @@ namespace UniversalPatcher
             }
             else
             {
-                newRawValue = savingMath.getSavingValue(mathStr, val);
+                newRawValue = savingMath.getSavingValue(mathStr,td, val);
                 Debug.WriteLine("Calculated raw value: " + newRawValue);
             }
             if (td.DataType != InDataType.FLOAT32 && td.DataType != InDataType.FLOAT64)
@@ -94,14 +94,15 @@ namespace UniversalPatcher
             if (td.DataType == InDataType.UINT64)
                 SaveUint64(tableBuffer, bufAddr, (UInt64)newRawValue);
 
-            if (isRawValue)
+            lastValue = parser.Parse(mathStr.Replace("x", newRawValue.ToString()));
+/*            if (isRawValue)
             {
                 lastValue = parser.Parse(mathStr.Replace("x", newRawValue.ToString()));
             }
             else 
             {
                 lastValue = val;
-            }
+            }*/
             lastRawValue = newRawValue;
         }
 

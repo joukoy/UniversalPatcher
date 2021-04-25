@@ -2,31 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MathNet.Symbolics;
 using static upatcher;
+using System.Diagnostics;
 
 namespace UniversalPatcher
 {
     public class SavingMath
     {
-        public Expression SolveSimpleRoot(Expression variable, Expression expr)
+        public double getSavingValue(string mathStr, TableData mathTd, double val)
         {
-            // try to bring expression into polynomial form
-            Expression simple = Algebraic.Expand(Rational.Numerator(Rational.Simplify(variable, expr)));
-
-            // extract coefficients, solve known forms of order up to 1
-            Expression[] coeff = Polynomial.Coefficients(variable, simple);
-            switch (coeff.Length)
-            {
-                case 1: return Expression.Zero.Equals(coeff[0]) ? variable : Expression.Undefined;
-                case 2: return Rational.Simplify(variable, Algebraic.Expand(-coeff[0] / coeff[1]));
-                default: return Expression.Undefined;
-            }
-
-        }
-        public double getSavingValue(string mathStr, double val)
-        {
-            double retVal = double.MinValue;
 
             //We need formula which result is zero
             //For example: 
@@ -34,14 +18,57 @@ namespace UniversalPatcher
             // ==>>
             // 14.7/ ( 0.156 + (((128+x)/2)/128) ) -12.9
 
-            string newMath = "(" + mathStr.ToLower() + ") - " + val.ToString();
-            newMath = newMath.Replace(",", ".");
-            var x = Expression.Symbol("x");
-            Expression mathExpr = Infix.ParseOrThrow(newMath);
-            Expression ax = SolveSimpleRoot(x, mathExpr);
-            retVal = Convert.ToDouble(Infix.Format(ax),System.Globalization.CultureInfo.InvariantCulture);
+            string newMath =  mathStr.ToLower() + " - " + val.ToString();
+            if (val < 0)
+                newMath = mathStr.ToLower() + " + " + Math.Abs(val).ToString(); //x*0.33 - -20 => x*0.33 + 20
+            double minVal = getMinValue(mathTd.DataType);
+            //double  maxVal = getMaxValue(mathTd.DataType);
 
-            return retVal;
+            //Secant method:
+            double gues1 = 10;
+            double gues2 = 100;
+            if (minVal < 0 && val < 0)
+                gues1 = -100;
+
+            double p2, p1, p0;
+            int round;
+            int stepsCutoff = 100;
+            p0= Func(newMath, gues1);
+            p1 = Func(newMath, gues2);         
+            p2 = p1 - Func(newMath, p1) * (p1 - p0) / (Func(newMath, p1) - Func(newMath, p0));
+            if (double.IsInfinity(p2)) p2 = double.MaxValue;
+            for (round = 0; System.Math.Abs(p2 - p1) > 0.9999 && round < stepsCutoff; round++)
+            {
+                p0 = p1;
+                p1 = p2;
+                p2 = p1 - Func(newMath, p1) * (p1 - p0) / (Func(newMath, p1) - Func(newMath, p0));
+                Debug.WriteLine("Secant method round " + round + ", value: " + p2);
+            }
+            if (round < stepsCutoff)
+                return p2;
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("{0}.The Secant method did not converge", p2);
+                return double.NaN;
+            }
         }
+
+        private double Func(string mathStr, double val)
+        {
+            double outVal = double.MaxValue;    //Target is zero, return maxval on error
+            try
+            {
+                string calcStr = mathStr.Replace("x", val.ToString());
+                double x = parser.Parse(calcStr, false);
+                outVal = x;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            
+            return outVal;
+        }
+
     }
 }
