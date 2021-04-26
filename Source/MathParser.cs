@@ -224,7 +224,7 @@ namespace MathParserTK
         /// </summary>
         /// <param name="expression">Unformatted math expression</param>
         /// <returns>Formatted math expression</returns>
-        private string FormatString(string expression)
+        public string FormatString(string expression)
         {
             if (string.IsNullOrEmpty(expression))
             {

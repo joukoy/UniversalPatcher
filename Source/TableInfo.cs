@@ -215,6 +215,7 @@ namespace UniversalPatcher
         public uint tableBufferOffset;
         public PcmFile pcm { get; set; }
         public List<TableInfo> tableInfos { get; set; }
+        public List<TableData> filteredTables { get; set; }
         public List<int> tableIds { get; set; }
         //public List<TableId> refTableIds { get; set; }
         public Dictionary<int, int> refTableIds { get; set; }

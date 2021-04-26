@@ -13,43 +13,37 @@ namespace UniversalPatcher
         public double getSavingValue(string mathStr, TableData mathTd, double val, double oldRawVal)
         {
 
-            //We need formula which result is zero
-            //For example: 
-            // 14.7/ ( 0.156 + (((128+x)/2)/128) ) = 12.9
-            // ==>>
-            // 14.7/ ( 0.156 + (((128+x)/2)/128) ) -12.9
-
-            string newMath =  mathStr.ToLower() + " - " + val.ToString();
-            if (val < 0)
-                newMath = mathStr.ToLower() + " + " + Math.Abs(val).ToString(); //x*0.33 - -20 => x*0.33 + 20
             double minVal = getMinValue(mathTd.DataType);
             double  maxVal = getMaxValue(mathTd.DataType);
-            double gues1 = oldRawVal;
-            double gues2;
-            if (oldRawVal > ((maxVal - minVal) / 2))
-                gues2 = 0.8 * gues1;
-            else
-                gues2 = 1.1 * gues1;
+            mathString = parser.FormatString(mathStr);
+            if (minVal == 0)
+                if (mathString.Contains("/x"))
+                    minVal++;   //Avoid divide by zero error
 
-            mathString = newMath;
-            double retVal = secant(gues1, gues2, val, newMath, minVal,maxVal);
-            if (double.IsNaN(retVal) || Math.Abs(Func(retVal) - val) > 1)
+            double retVal;
+            double calcVal;
+
+            double tolerance = 0.01;//Math.Abs(0.01 * val);
+
+            if (mathString.Contains("/x"))
             {
-                mathString = mathStr.ToLower();
-                retVal = RootFinding.Brent(Func, minVal, maxVal,0.99, val);
-                Debug.WriteLine("Brent: " + retVal);
+                //Bisect works better when didive by X
+                retVal = RootFinding.Bisect(Func, minVal, maxVal, tolerance, val); 
+                calcVal = Func(retVal);
+                Debug.WriteLine("Bisect: " + retVal + ", calculated: " + calcVal);
             }
-            if ( double.IsNaN(retVal) || Math.Abs(Func(retVal) - val) > 1)
+            else
             {
-                mathString = mathStr.ToLower();
-                retVal = RootFinding.Bisect(Func, minVal, maxVal, 0.99, val);
-                Debug.WriteLine("Bisect: " + retVal);
+                retVal = RootFinding.Brent(Func, minVal, maxVal, tolerance, val);
+                calcVal = Func(retVal);
+                Debug.WriteLine("Brent: " + retVal + ", calculated: " + calcVal);
             }
             return retVal;
         }
 
         double secant(double gues1, double gues2, double val, string newMath, double min, double max)
         {
+            //Not used for now
             double p2, p1, p0;
             int round;
             int stepsCutoff = 100;
@@ -75,7 +69,7 @@ namespace UniversalPatcher
 
         private double Func(double val)
         {
-            double outVal = double.MaxValue;    //Target is zero, return maxval on error
+            double outVal = double.MaxValue;    
             try
             {
                 string calcStr = mathString.Replace("x", val.ToString());

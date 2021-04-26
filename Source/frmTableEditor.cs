@@ -79,7 +79,7 @@ namespace UniversalPatcher
         public bool disableMultiTable = false;
         public bool multiSelect = false;
         private bool duplicateTableName = false;
-        List<TableData> filteredTables;
+        //List<TableData> filteredTables;
         public int currentFile = 0;
         public int currentCmpFile = 1;
 
@@ -177,7 +177,7 @@ namespace UniversalPatcher
         private void parseTableInfo(CompareFile cmpFile)
         {
             PcmFile pcm = cmpFile.pcm;
-            List<TableData> sizeList = new List<TableData>(filteredTables.OrderBy(o => o.addrInt).ToList());
+            List<TableData> sizeList = new List<TableData>(cmpFile.filteredTables.OrderBy(o => o.addrInt).ToList());
             TableData first = sizeList[0];
             TableData last = sizeList[sizeList.Count - 1];
             int elementSize = getElementSize(last.DataType);
@@ -406,8 +406,8 @@ namespace UniversalPatcher
                 }
             }
             orgFile.tableIds = tableIds;
-            filteredTables = new List<TableData>();
-            filteredTables.Add(pcm.tableDatas[tableIds[0]]);
+            orgFile.filteredTables = new List<TableData>();
+            orgFile.filteredTables.Add(pcm.tableDatas[tableIds[0]]);
             parseTableInfo(orgFile);
             setMyText();
 
@@ -424,7 +424,7 @@ namespace UniversalPatcher
             if (tableIds != null && tableIds.Count > 1)
             {
                 //Manually selected multiple tables
-                filteredTables = new List<TableData>();
+                cmpFile.filteredTables = new List<TableData>();
                 tableIds.Sort();
 
                 List<string> tableNameList = new List<string>();
@@ -446,7 +446,7 @@ namespace UniversalPatcher
                 }
                 for (int i = 0; i < tableIds.Count; i++)
                 {
-                    filteredTables.Add(cmpFile.pcm.tableDatas[tableIds[i]]);
+                    cmpFile.filteredTables.Add(cmpFile.pcm.tableDatas[tableIds[i]]);
                 }
                 rows = tableIds.Count;
                 cols = maxCols;
@@ -458,13 +458,13 @@ namespace UniversalPatcher
                 //Multible tables which are meant to be linked together
                 string filterName = tData.TableName.Substring(0, tableName.Length + 1);
                 var results = cmpFile.pcm.tableDatas.Where(t => t.TableName.StartsWith(filterName));
-                filteredTables = new List<TableData>(results.ToList());
-                filteredTables = filteredTables.OrderBy(o => o.addrInt).ToList();
-                cols = filteredTables.Count;
-                rows = filteredTables[0].Rows;
+                cmpFile.filteredTables = new List<TableData>(results.ToList());
+                cmpFile.filteredTables = cmpFile.filteredTables.OrderBy(o => o.addrInt).ToList();
+                cols = cmpFile.filteredTables.Count;
+                rows = cmpFile.filteredTables[0].Rows;
                 tableIds = new List<int>();
-                for (int i = 0; i < filteredTables.Count; i++)
-                    tableIds.Add((int)filteredTables[i].id);
+                for (int i = 0; i < cmpFile.filteredTables.Count; i++)
+                    tableIds.Add((int)cmpFile.filteredTables[i].id);
             }
 
             cmpFile.tableIds = tableIds;
@@ -688,7 +688,7 @@ namespace UniversalPatcher
 
                 if (showRawHEXValuesToolStripMenuItem.Checked)
                 {
-                    dataGridView1.Rows[row].Cells[col].Value = (uint)showRawVal;
+                    dataGridView1.Rows[row].Cells[col].Value = (Int64)showRawVal;
                 }
                 else if (mathTd.OutputType == OutDataType.Text)
                 {
@@ -1951,7 +1951,10 @@ namespace UniversalPatcher
                 dataGridView1.SelectedCells[i].Value = val;   
                 setCellColor(dataGridView1.SelectedCells[i].RowIndex, dataGridView1.SelectedCells[i].ColumnIndex, tCell);
             }
+            this.dataGridView1.CellEndEdit -= new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
             dataGridView1.EndEdit();
+            this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
+
         }
 
         private void numTuneValue_ValueChanged(object sender, EventArgs e)
