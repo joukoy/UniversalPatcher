@@ -75,11 +75,10 @@ namespace UniversalPatcher
         private bool disableSaving = false;
         Font dataFont;
 
-        private bool only1d = false;
+        private bool only1d = false;    //Show multiple 1D tables as one multirow table
         public bool disableMultiTable = false;
-        public bool multiSelect = false;
-        private bool duplicateTableName = false;
-        //List<TableData> filteredTables;
+        public bool multiSelect = false;    //Manually selected multiple files
+        private bool duplicateTableName = false;    // Multiple tables wit equal name, but some other setting may differ
         public int currentFile = 0;
         public int currentCmpFile = 1;
 
@@ -1384,6 +1383,7 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, line " + line + ": " + ex.Message);
+                dataGridView1.Rows[r].Cells[c].Value = tCell.lastValue;
             }
         }
 

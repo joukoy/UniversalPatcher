@@ -28,82 +28,82 @@ namespace UniversalPatcher
 
         public void saveValue(double val,bool isRawValue = false)
         {
-            string mathStr = td.Math.ToLower();
-            UInt32 bufAddr = addr - tableInfo.compareFile.tableBufferOffset;
+            try
+            {
+                string mathStr = td.Math.ToLower();
+                UInt32 bufAddr = addr - tableInfo.compareFile.tableBufferOffset;
 
-            if (td.OutputType == OutDataType.Flag && td.BitMask != "")
-            {
-                bool flag = Convert.ToBoolean(val);
-                saveFlag(bufAddr, flag);
-                return;
-            }
+                if (td.OutputType == OutDataType.Flag && td.BitMask != "")
+                {
+                    bool flag = Convert.ToBoolean(val);
+                    saveFlag(bufAddr, flag);
+                    return;
+                }
 
-            double minRawVal = getMinValue(td.DataType);
-            double maxRawVal = getMaxValue(td.DataType);
-            Debug.WriteLine("Last raw value: " + lastRawValue + ", Last value: " + (double)lastRawValue);
+                double minRawVal = getMinValue(td.DataType);
+                double maxRawVal = getMaxValue(td.DataType);
+                Debug.WriteLine("Last raw value: " + lastRawValue + ", Last value: " + (double)lastRawValue);
 
-            if (mathStr.Contains("table:"))
-            {
-                mathStr = readConversionTable(mathStr, tableInfo.pcm);
-            }
-            if (mathStr.Contains("raw:"))
-            {
-                mathStr = readConversionRaw(mathStr, tableInfo.pcm);
-            }
+                if (mathStr.Contains("table:"))
+                {
+                    mathStr = readConversionTable(mathStr, tableInfo.pcm);
+                }
+                if (mathStr.Contains("raw:"))
+                {
+                    mathStr = readConversionRaw(mathStr, tableInfo.pcm);
+                }
 
-            double newRawValue;
-            if (isRawValue)
-            {
-                newRawValue = val;
-            }
-            else
-            {
-                newRawValue = savingMath.getSavingValue(mathStr,td, val, origRawValue);
-                Debug.WriteLine("Calculated raw value: " + newRawValue);
-            }
-            if (td.DataType != InDataType.FLOAT32 && td.DataType != InDataType.FLOAT64)
-                newRawValue = Math.Round(newRawValue);
+                double newRawValue;
+                if (isRawValue)
+                {
+                    newRawValue = val;
+                }
+                else
+                {
+                    newRawValue = savingMath.getSavingValue(mathStr, td, val);
+                    Debug.WriteLine("Calculated raw value: " + newRawValue);
+                }
+                if (td.DataType != InDataType.FLOAT32 && td.DataType != InDataType.FLOAT64)
+                    newRawValue = Math.Round(newRawValue);
 
-            if (newRawValue < minRawVal)
-            {
-                newRawValue = minRawVal;
-                Debug.WriteLine("Too small value entered");
-            }
-            else if (newRawValue > maxRawVal)
-            {
-                newRawValue = maxRawVal;
-                Debug.WriteLine("Too big value entered");
-            }
-            byte[] tableBuffer = tableInfo.compareFile.buf;
-            if (td.DataType == InDataType.UBYTE || td.DataType == InDataType.SBYTE)
-                tableBuffer[bufAddr] = (byte)newRawValue;
-            if (td.DataType == InDataType.SWORD)
-                SaveShort(tableBuffer, bufAddr, (short)newRawValue);
-            if (td.DataType == InDataType.UWORD)
-                SaveUshort(tableBuffer, bufAddr, (ushort)newRawValue);
-            if (td.DataType == InDataType.FLOAT32)
-                SaveFloat32(tableBuffer, bufAddr, (Single)newRawValue);
-            if (td.DataType == InDataType.INT32)
-                SaveInt32(tableBuffer, bufAddr, (Int32)newRawValue);
-            if (td.DataType == InDataType.UINT32)
-                SaveUint32(tableBuffer, bufAddr, (UInt32)newRawValue);
-            if (td.DataType == InDataType.FLOAT64)
-                SaveFloat64(tableBuffer, bufAddr, newRawValue);
-            if (td.DataType == InDataType.INT64)
-                SaveInt64(tableBuffer, bufAddr, (Int64)newRawValue);
-            if (td.DataType == InDataType.UINT64)
-                SaveUint64(tableBuffer, bufAddr, (UInt64)newRawValue);
+                if (newRawValue < minRawVal)
+                {
+                    newRawValue = minRawVal;
+                    Debug.WriteLine("Too small value entered");
+                }
+                else if (newRawValue > maxRawVal)
+                {
+                    newRawValue = maxRawVal;
+                    Debug.WriteLine("Too big value entered");
+                }
+                byte[] tableBuffer = tableInfo.compareFile.buf;
+                if (td.DataType == InDataType.UBYTE || td.DataType == InDataType.SBYTE)
+                    tableBuffer[bufAddr] = (byte)newRawValue;
+                if (td.DataType == InDataType.SWORD)
+                    SaveShort(tableBuffer, bufAddr, (short)newRawValue);
+                if (td.DataType == InDataType.UWORD)
+                    SaveUshort(tableBuffer, bufAddr, (ushort)newRawValue);
+                if (td.DataType == InDataType.FLOAT32)
+                    SaveFloat32(tableBuffer, bufAddr, (Single)newRawValue);
+                if (td.DataType == InDataType.INT32)
+                    SaveInt32(tableBuffer, bufAddr, (Int32)newRawValue);
+                if (td.DataType == InDataType.UINT32)
+                    SaveUint32(tableBuffer, bufAddr, (UInt32)newRawValue);
+                if (td.DataType == InDataType.FLOAT64)
+                    SaveFloat64(tableBuffer, bufAddr, newRawValue);
+                if (td.DataType == InDataType.INT64)
+                    SaveInt64(tableBuffer, bufAddr, (Int64)newRawValue);
+                if (td.DataType == InDataType.UINT64)
+                    SaveUint64(tableBuffer, bufAddr, (UInt64)newRawValue);
 
-            lastValue = parser.Parse(mathStr.Replace("x", newRawValue.ToString()));
-/*            if (isRawValue)
-            {
                 lastValue = parser.Parse(mathStr.Replace("x", newRawValue.ToString()));
+                lastRawValue = newRawValue;
             }
-            else 
+            catch(Exception ex)
             {
-                lastValue = val;
-            }*/
-            lastRawValue = newRawValue;
+                Debug.WriteLine(ex.Message);
+                Logger("Invalid value");
+            }
         }
 
         private void saveFlag(uint bufAddr, bool flag)

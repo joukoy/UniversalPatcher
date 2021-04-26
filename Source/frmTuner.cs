@@ -137,7 +137,7 @@ namespace UniversalPatcher
 
         public void selectPCM()
         {
-            this.Text = "Tuner " + PCM.FileName;
+            this.Text = "Tuner " + PCM.FileName + " [" + PCM.tunerFile + "]";
             PCM.selectTableDatas(0, PCM.FileName);
             //tableDataList = PCM.tableDatas;
             for (int m= tableListToolStripMenuItem.DropDownItems.Count - 1; m >=0; m-- )
@@ -218,6 +218,8 @@ namespace UniversalPatcher
                             importTinyTunerDB(ref newPCM);
                     }
                 }
+                this.Text = "Tuner: " + newPCM.FileName + " [" + newPCM.tunerFile + "]";
+
             }
 
         }
@@ -338,7 +340,7 @@ namespace UniversalPatcher
 
                 Logger("Saving to file: " + fileName);
                 PCM.saveBin(fileName);
-                this.Text = "Tuner " + Path.GetFileName(fileName);
+                this.Text = "Tuner " + Path.GetFileName(fileName) + " [" + PCM.tunerFile +"]";
                 Logger("Done.");
             }
             catch (Exception ex)
@@ -393,6 +395,8 @@ namespace UniversalPatcher
             try
             {
                 string defName = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
+                if (PCM.OS.Length == 0)
+                    defName = Path.Combine(Application.StartupPath, "Tuner", PCM.configFile + "-def.xml");
                 if (compXml.Length > 0)
                     defName = Path.Combine(Application.StartupPath, "Tuner", compXml);
                 if (fName.Length == 0)
