@@ -128,7 +128,45 @@ namespace UniversalPatcher
                             unitTxt = " (Out of range)";
                     }
                     string formatStr = "X" + (getElementSize(peekPCM.tableDatas[ind].DataType) * 2).ToString();
-                    retVal = valTxt + unitTxt + " [" + rawVal.ToString(formatStr) + "]" + maskTxt;
+                    string rawTxt = "";
+                    switch (peekPCM.tableDatas[ind].DataType)
+                    {
+                        case InDataType.FLOAT32:
+                            rawTxt = ((Single)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.FLOAT64:
+                            rawTxt = ((double)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.INT64:
+                            rawTxt = ((Int64)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.INT32:
+                            rawTxt = ((Int32)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.UINT64:
+                            rawTxt = ((UInt64)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.UINT32:
+                            rawTxt = ((UInt32)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.SWORD:
+                            rawTxt = ((Int16)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.UWORD:
+                            rawTxt = ((UInt16)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.SBYTE:
+                            rawTxt = ((sbyte)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.UBYTE:
+                            rawTxt = ((byte)rawVal).ToString(formatStr);
+                            break;
+                        default:
+                            rawTxt = ((Int32)rawVal).ToString(formatStr);
+                            break;
+                    }
+
+                    retVal = valTxt + unitTxt + " [" + rawTxt + "]" + maskTxt;
                     //txtResult.AppendText(Environment.NewLine);
                 }
                 else

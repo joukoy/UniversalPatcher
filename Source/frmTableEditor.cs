@@ -82,6 +82,9 @@ namespace UniversalPatcher
         public int currentFile = 0;
         public int currentCmpFile = 1;
 
+        public frmTuner tuner;
+        private string lastTable = "";
+
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
             dataGridView1.AutoResizeColumns();
@@ -113,9 +116,8 @@ namespace UniversalPatcher
             disableTooltipsToolStripMenuItem.Checked = false;
             dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
             dataGridView1.RowHeaderMouseClick += DataGridView1_RowHeaderMouseClick;
-            
+            dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
         }
-
 
         private void frmTableEditor_FormClosing(object sender, EventArgs e)
         {
@@ -169,8 +171,19 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
+        }
+        private void DataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedCells.Count == 0 || dataGridView1.SelectedCells[0].Tag == null)
+                return;
+            TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
+            string thisTable =  tCell.td.TableName;
+            if (thisTable == lastTable)
+                return;
+            lastTable = thisTable;
+            tuner.showTableDescription(tCell.tableInfo.compareFile.pcm, (int)tCell.td.id);
         }
 
         private void parseTableInfo(CompareFile cmpFile)
@@ -525,12 +538,16 @@ namespace UniversalPatcher
                 if (cmpFile.pcm.OS == compareFiles[0].pcm.OS)
                 {
                     cmpFile.tableIds.Add(id);
+                    cmpFile.filteredTables.Add(cmpFile.pcm.tableDatas[id]);
                 }
                 else
                 {
                     cmpId = findTableDataId(compareFiles[0].pcm.tableDatas[compareFiles[0].tableIds[i]], cmpFile.pcm.tableDatas);
                     if (cmpId > -1)
+                    {
                         cmpFile.tableIds.Add(cmpId);
+                        cmpFile.filteredTables.Add(cmpFile.pcm.tableDatas[cmpId]);
+                    }
                 }
                 cmpFile.refTableIds.Add(id,cmpId);
             }
@@ -687,7 +704,43 @@ namespace UniversalPatcher
 
                 if (showRawHEXValuesToolStripMenuItem.Checked)
                 {
-                    dataGridView1.Rows[row].Cells[col].Value = (Int64)showRawVal;
+                    switch (mathTd.DataType)
+                    {
+                        case InDataType.FLOAT32:
+                            dataGridView1.Rows[row].Cells[col].Value = (Single)showRawVal;
+                            break;
+                        case InDataType.FLOAT64:
+                            dataGridView1.Rows[row].Cells[col].Value = (double)showRawVal;
+                            break;
+                        case InDataType.INT64:
+                            dataGridView1.Rows[row].Cells[col].Value = (Int64)showRawVal;
+                            break;
+                        case InDataType.INT32:
+                            dataGridView1.Rows[row].Cells[col].Value = (Int32)showRawVal;
+                            break;
+                        case InDataType.UINT64:
+                            dataGridView1.Rows[row].Cells[col].Value = (UInt64)showRawVal;
+                            break;
+                        case InDataType.UINT32:
+                            dataGridView1.Rows[row].Cells[col].Value = (UInt32)showRawVal;
+                            break;
+                        case InDataType.SWORD:
+                            dataGridView1.Rows[row].Cells[col].Value = (Int16)showRawVal;
+                            break;
+                        case InDataType.UWORD:
+                            dataGridView1.Rows[row].Cells[col].Value = (UInt16)showRawVal;
+                            break;
+                        case InDataType.SBYTE:
+                            dataGridView1.Rows[row].Cells[col].Value = (sbyte)showRawVal;
+                            break;
+                        case InDataType.UBYTE:
+                            dataGridView1.Rows[row].Cells[col].Value = (byte)showRawVal;
+                            break;
+                        default:
+                            dataGridView1.Rows[row].Cells[col].Value = (Int32)showRawVal;
+                            break;
+                    }
+                    //dataGridView1.Rows[row].Cells[col].Value = Convert.ToInt64(showRawVal);
                 }
                 else if (mathTd.OutputType == OutDataType.Text)
                 {
@@ -728,7 +781,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("frmTableEditor error, line " + line + ": " + ex.Message);
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
 
         }
@@ -891,7 +944,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, line " + line + ": " + ex.Message);
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
 
             }
         }
@@ -953,78 +1006,98 @@ namespace UniversalPatcher
                     int gridCol = 0;
                     int gridRow = 0;
 
-                    for (int cell = 0; cell < sFile.tableInfos[tbl].tableCells.Count; cell++)
+                    //Find maximum cell count from all comparefiles:
+                    int cellCount = sFile.tableInfos[tbl].tableCells.Count;
+                    for (int d = 0; d < cmpFiles.Count; d++)
                     {
-                        TableCell tcell = sFile.tableInfos[tbl].tableCells[cell];
+                        int cmpId = -1;
+                        if (cmpFiles[d].refTableIds.ContainsKey(sFile.tableIds[tbl]))
+                            cmpId = cmpFiles[d].refTableIds[sFile.tableIds[tbl]];
+                        if (cmpId > -1)
+                        {
+                            int pos = cmpFiles[d].tableIds.IndexOf(cmpId);
+                            cmpTinfo = cmpFiles[d].tableInfos[pos];
+                            if (cmpTinfo.tableCells.Count > cellCount)
+                                cellCount = cmpTinfo.tableCells.Count;
+                        }
+                    }
+
+                    for (int cell = 0; cell < cellCount; cell++)
+                    {
                         TableCell cmpCell = null;
-                        if (diffFile != null)   //RadioDifference checked
+                        if (sFile.tableInfos[tbl].tableCells.Count > cell)
                         {
-                            int cmpId = -1;
-                            if (diffFile.refTableIds.ContainsKey(sFile.tableIds[tbl]))
-                                cmpId = diffFile.refTableIds[sFile.tableIds[tbl]];
-                            if (cmpId > -1)
+                            //Original file may have less cells than some of compare files?
+                            TableCell tcell = sFile.tableInfos[tbl].tableCells[cell];
+                            if (diffFile != null)   //RadioDifference checked
                             {
-                                int pos = diffFile.tableIds.IndexOf(cmpId);
-                                cmpTinfo = diffFile.tableInfos[pos];
-                                TableData cmpTd = diffFile.pcm.tableDatas[cmpId];
-                                cmpCell = cmpTinfo.tableCells[cell];
+                                int cmpId = -1;
+                                if (diffFile.refTableIds.ContainsKey(sFile.tableIds[tbl]))
+                                    cmpId = diffFile.refTableIds[sFile.tableIds[tbl]];
+                                if (cmpId > -1)
+                                {
+                                    int pos = diffFile.tableIds.IndexOf(cmpId);
+                                    cmpTinfo = diffFile.tableInfos[pos];
+                                    TableData cmpTd = diffFile.pcm.tableDatas[cmpId];
+                                    if (cmpTinfo.tableCells.Count > cell)
+                                        cmpCell = cmpTinfo.tableCells[cell];
+                                }
                             }
-                        }
-                        string colHdr;
-                        string rowHdr;
-                        if (!xySwapped)
-                        {
-                            colHdr = tcell.ColHeader;
-                            rowHdr = tcell.RowhHeader;
-                            if (only1d)
+                            string colHdr;
+                            string rowHdr;
+                            if (!xySwapped)
                             {
-                                colHdr = "[" + selectedFile.fileLetter + "] "; //Show only [A]
-                                rowHdr = "[" + tcell.td.TableName + "] " + tcell.ColHeader;
+                                colHdr = tcell.ColHeader;
+                                rowHdr = tcell.RowhHeader;
+                                if (only1d)
+                                {
+                                    colHdr = "[" + selectedFile.fileLetter + "] "; //Show only [A]
+                                    rowHdr = "[" + tcell.td.TableName + "] " + tcell.ColHeader;
+                                }
+                                else if (radioSideBySide.Checked || radioCompareAll.Checked)
+                                {
+                                    if (multiSelect)
+                                        colHdr = "[" + selectedFile.fileLetter + "] " + "[" + tcell.td.TableName + "] " + tcell.ColHeader;
+                                    else
+                                        colHdr = "[" + selectedFile.fileLetter + "] " + tcell.ColHeader;
+                                }
+                                else if (multiSelect)
+                                {
+                                    colHdr = "[" + tcell.td.TableName + "] " + tcell.ColHeader;
+                                }
                             }
-                            else if (radioSideBySide.Checked || radioCompareAll.Checked)
+                            else
                             {
-                                if (multiSelect)
-                                    colHdr = "[" + selectedFile.fileLetter + "] " + "[" + tcell.td.TableName + "] " + tcell.ColHeader;
-                                else
-                                    colHdr = "[" + selectedFile.fileLetter + "] " + tcell.ColHeader;
-                            }
-                            else if (multiSelect)
-                            {
-                                colHdr = "[" + tcell.td.TableName + "] " + tcell.ColHeader;
-                            }
-                        }
-                        else
-                        {
-                            colHdr = tcell.RowhHeader;
-                            rowHdr = tcell.ColHeader;
-                            if (only1d)
-                            {
-                                rowHdr = "[" + selectedFile.fileLetter + "] "; //Show only [A]
-                                colHdr = "[" + tcell.td.TableName + "] " + tcell.ColHeader;
-                            }
-                            else if (radioSideBySide.Checked || radioCompareAll.Checked)
-                            {
-                                if (multiSelect)
+                                colHdr = tcell.RowhHeader;
+                                rowHdr = tcell.ColHeader;
+                                if (only1d)
+                                {
+                                    rowHdr = "[" + selectedFile.fileLetter + "] "; //Show only [A]
+                                    colHdr = "[" + tcell.td.TableName + "] " + tcell.ColHeader;
+                                }
+                                else if (radioSideBySide.Checked || radioCompareAll.Checked)
+                                {
+                                    if (multiSelect)
+                                    {
+                                        rowHdr = "[" + tcell.td.TableName + "] " + tcell.ColHeader;
+                                        colHdr = "[" + selectedFile.fileLetter + "] " + tcell.RowhHeader;
+                                    }
+                                    else
+                                    {
+                                        rowHdr = tcell.ColHeader;
+                                        colHdr = "[" + selectedFile.fileLetter + "] " + tcell.RowhHeader;
+                                    }
+                                }
+                                else if (multiSelect)
                                 {
                                     rowHdr = "[" + tcell.td.TableName + "] " + tcell.ColHeader;
-                                    colHdr = "[" + selectedFile.fileLetter + "] " + tcell.RowhHeader;
-                                }
-                                else
-                                {
-                                    rowHdr =  tcell.ColHeader;
-                                    colHdr = "[" + selectedFile.fileLetter + "] " + tcell.RowhHeader;
                                 }
                             }
-                            else if (multiSelect)
-                            {
-                                rowHdr = "[" + tcell.td.TableName + "] " + tcell.ColHeader;
-                            }
+                            gridCol = getColumnByHeader(colHdr);
+                            gridRow = getRowByHeader(rowHdr);
+                            addCellByType(ft, gridRow, gridCol);
+                            setCellValue(gridRow, gridCol, tcell, cmpCell);
                         }
-                        gridCol = getColumnByHeader(colHdr);
-                        gridRow = getRowByHeader(rowHdr);
-                        addCellByType(ft, gridRow, gridCol);
-                        setCellValue(gridRow, gridCol, tcell, cmpCell);
-
                         for (int d=0; d < cmpFiles.Count; d++)
                         {
                             int cmpId = -1;
@@ -1035,53 +1108,56 @@ namespace UniversalPatcher
                                 int pos = cmpFiles[d].tableIds.IndexOf(cmpId);
                                 cmpTinfo = cmpFiles[d].tableInfos[pos];
                                 TableData cmpTd = cmpFiles[d].pcm.tableDatas[cmpId];
-                                cmpCell = cmpTinfo.tableCells[cell];
-                                string cmpColHdr = "";
-                                string cmpRowHdr = "";
-                                if (!xySwapped)
+                                if (cmpTinfo.tableCells.Count > cell)
                                 {
-                                    cmpColHdr = cmpCell.ColHeader;
-                                    cmpRowHdr = cmpCell.RowhHeader;
-                                    if (only1d)
+                                    cmpCell = cmpTinfo.tableCells[cell];
+                                    string cmpColHdr = "";
+                                    string cmpRowHdr = "";
+                                    if (!xySwapped)
                                     {
-                                        cmpColHdr = "[" + cmpFiles[d].fileLetter + "] ";
-                                        cmpRowHdr = "[" + cmpTd.TableName + "] " + cmpCell.ColHeader;
-                                    }
-                                    else
-                                    {
-                                        if (multiSelect)
-                                            cmpColHdr = "[" + cmpFiles[d].fileLetter + "] " + "[" + cmpTd.TableName + "] " + cmpCell.ColHeader;
-                                        else
-                                            cmpColHdr = "[" + cmpFiles[d].fileLetter + "] " + cmpCell.ColHeader;
-                                    }
-                                }
-                                else
-                                {
-                                    cmpRowHdr = cmpCell.ColHeader;
-                                    cmpColHdr = cmpCell.RowhHeader;
-                                    if (only1d)
-                                    {
-                                        cmpRowHdr = "[" + cmpFiles[d].fileLetter + "] ";
-                                        cmpColHdr = "[" + cmpTd.TableName + "] " + cmpCell.ColHeader;
-                                    }
-                                    else
-                                    {
-                                        if (multiSelect)
+                                        cmpColHdr = cmpCell.ColHeader;
+                                        cmpRowHdr = cmpCell.RowhHeader;
+                                        if (only1d)
                                         {
+                                            cmpColHdr = "[" + cmpFiles[d].fileLetter + "] ";
                                             cmpRowHdr = "[" + cmpTd.TableName + "] " + cmpCell.ColHeader;
-                                            cmpColHdr = "[" + cmpFiles[d].fileLetter + "] " + cmpCell.RowhHeader;
                                         }
                                         else
                                         {
-                                            cmpRowHdr = cmpCell.ColHeader;
-                                            cmpColHdr = "[" + cmpFiles[d].fileLetter + "] " + cmpCell.RowhHeader;
+                                            if (multiSelect)
+                                                cmpColHdr = "[" + cmpFiles[d].fileLetter + "] " + "[" + cmpTd.TableName + "] " + cmpCell.ColHeader;
+                                            else
+                                                cmpColHdr = "[" + cmpFiles[d].fileLetter + "] " + cmpCell.ColHeader;
                                         }
                                     }
+                                    else
+                                    {
+                                        cmpRowHdr = cmpCell.ColHeader;
+                                        cmpColHdr = cmpCell.RowhHeader;
+                                        if (only1d)
+                                        {
+                                            cmpRowHdr = "[" + cmpFiles[d].fileLetter + "] ";
+                                            cmpColHdr = "[" + cmpTd.TableName + "] " + cmpCell.ColHeader;
+                                        }
+                                        else
+                                        {
+                                            if (multiSelect)
+                                            {
+                                                cmpRowHdr = "[" + cmpTd.TableName + "] " + cmpCell.ColHeader;
+                                                cmpColHdr = "[" + cmpFiles[d].fileLetter + "] " + cmpCell.RowhHeader;
+                                            }
+                                            else
+                                            {
+                                                cmpRowHdr = cmpCell.ColHeader;
+                                                cmpColHdr = "[" + cmpFiles[d].fileLetter + "] " + cmpCell.RowhHeader;
+                                            }
+                                        }
+                                    }
+                                    gridCol = getColumnByHeader(cmpColHdr);
+                                    gridRow = getRowByHeader(cmpRowHdr);
+                                    addCellByType(cmpCell.td, gridRow, gridCol);
+                                    setCellValue(gridRow, gridCol, cmpCell, null);
                                 }
-                                gridCol = getColumnByHeader(cmpColHdr);
-                                gridRow = getRowByHeader(cmpRowHdr);
-                                addCellByType(cmpCell.td, gridRow, gridCol);
-                                setCellValue(gridRow, gridCol, cmpCell, null);
                             }
 
                         }
@@ -1124,7 +1200,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, line " + line + ": " + ex.Message);
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
         }
 
@@ -1147,9 +1223,13 @@ namespace UniversalPatcher
             {
                 string descr = ds.getDtcDescription(dataGridView1.Rows[r].HeaderCell.Value.ToString());
                 dataGridView1.Rows[r].Cells["Description"].Value = descr;
-                TableCell tc = (TableCell)dataGridView1.Rows[r].Cells[1].Tag ;
-                tc.addr = uint.MaxValue - 1;
-                dataGridView1.Rows[r].Cells["Description"].Tag = tc;
+                if (dataGridView1.Rows[r].Cells[1].Tag != null)
+                {
+                    TableCell tc = (TableCell)dataGridView1.Rows[r].Cells[1].Tag;
+                    TableCell tcDescr = tc.ShallowCopy();
+                    tcDescr.addr = uint.MaxValue - 1;
+                    dataGridView1.Rows[r].Cells["Description"].Tag = tcDescr;
+                }
             }
         }
 
@@ -1253,7 +1333,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+                MessageBox.Show("Error, frmTableEditor line " + line + ": " + ex.Message, "Error");
             }
 
         }
@@ -1325,7 +1405,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+                MessageBox.Show("Error, frmTableEditor line " + line + ": " + ex.Message, "Error");
             }
         }
 
@@ -1382,7 +1462,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, line " + line + ": " + ex.Message);
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
                 dataGridView1.Rows[r].Cells[c].Value = tCell.lastValue;
             }
         }
@@ -1402,7 +1482,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+                MessageBox.Show("Error, frmTableEditor line " + line + ": " + ex.Message, "Error");
             }
 
         }
@@ -1621,7 +1701,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
 
         }

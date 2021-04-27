@@ -246,6 +246,7 @@ namespace UniversalPatcher
                     LoggerBold("WARING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);
                 }
                 frmTableEditor frmT = new frmTableEditor();
+                frmT.tuner = this;
                 if (treeMode && !newWindow)
                 {
                     frmT.Dock = DockStyle.Fill;
@@ -415,7 +416,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, line " + line + ": " + ex.Message);
+                LoggerBold("Error, frmTuner line " + line + ": " + ex.Message);
             }
 
         }
@@ -496,7 +497,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                Debug.WriteLine("reorderColumns, line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
             }
 
         }
@@ -653,7 +654,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, line " + line + ": " + ex.Message);
+                LoggerBold("Error, frmTuner line " + line + ": " + ex.Message);
             }
         }
 
@@ -1232,17 +1233,21 @@ namespace UniversalPatcher
                 }
                 txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
                 txtDescription.SelectionColor = Color.Blue;
+                string minMax = " [";
+                if (peekPCM.tableDatas[ind].Min > double.MinValue)
+                    minMax += " Min: " + peekPCM.tableDatas[ind].Min.ToString();
+                if (peekPCM.tableDatas[ind].Max < double.MaxValue)
+                    minMax += " Max: " + peekPCM.tableDatas[ind].Max.ToString();
+                if (minMax == " [")
+                    minMax = "";
+                else
+                    minMax += "] ";
                 if (peekPCM.tableDatas[ind].Rows == 1 && peekPCM.tableDatas[ind].Columns == 1)
                 {
                     double curVal = getValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0, peekPCM);
                     UInt64 rawVal = (UInt64) getRawValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0);
                     string valTxt = curVal.ToString();
                     string unitTxt = " " + peekPCM.tableDatas[ind].Units;
-                    string minMax = "";
-                    if (peekPCM.tableDatas[ind].Min > double.MinValue)
-                        minMax = "Min: " + peekPCM.tableDatas[ind].Min.ToString();
-                    if (peekPCM.tableDatas[ind].Max < double.MaxValue)
-                        minMax += " Max: " + peekPCM.tableDatas[ind].Max.ToString();
                     string maskTxt = "";
                     TableValueType vt = getValueType(peekPCM.tableDatas[ind]);
                     if (vt == TableValueType.boolean)
@@ -1290,12 +1295,50 @@ namespace UniversalPatcher
                             unitTxt = " (Out of range)";
                     }
                     string formatStr = "X" + (getElementSize(peekPCM.tableDatas[ind].DataType) * 2).ToString();
-                    txtDescription.AppendText("Current value: " + valTxt + unitTxt + " [" + rawVal.ToString(formatStr) + "]" + maskTxt);
+                    string rawTxt = "";
+                    switch (peekPCM.tableDatas[ind].DataType)
+                    {
+                        case InDataType.FLOAT32:
+                            rawTxt = ((Single)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.FLOAT64:
+                            rawTxt = ((double)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.INT64:
+                            rawTxt = ((Int64)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.INT32:
+                            rawTxt = ((Int32)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.UINT64:
+                            rawTxt = ((UInt64)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.UINT32:
+                            rawTxt = ((UInt32)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.SWORD:
+                            rawTxt = ((Int16)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.UWORD:
+                            rawTxt = ((UInt16)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.SBYTE:
+                            rawTxt = ((sbyte)rawVal).ToString(formatStr);
+                            break;
+                        case InDataType.UBYTE:
+                            rawTxt = ((byte)rawVal).ToString(formatStr);
+                            break;
+                        default:
+                            rawTxt = ((Int32)rawVal).ToString(formatStr);
+                            break;
+                    }
+
+                    txtDescription.AppendText("Current value: " + valTxt + unitTxt + minMax + " [" + rawTxt + "]" + maskTxt);
                     txtDescription.AppendText(Environment.NewLine);
                 }
                 else
                 {
-                    string tblData = "Current values: " + Environment.NewLine;
+                    string tblData = "Current values: " + minMax + Environment.NewLine;
                     uint addr = (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset);
                     if (peekPCM.tableDatas[ind].RowMajor)
                     {
@@ -1337,10 +1380,10 @@ namespace UniversalPatcher
             }
         }
 
-        public void showTableDescription(int ind = -1)
+        public void showTableDescription(PcmFile PCM, int ind = -1)
         {
             txtDescription.Text = "";
-            if (dataGridView1.SelectedCells.Count < 1 || PCM.tableDatas.Count == 0)
+            if ((ind == -1 && dataGridView1.SelectedCells.Count < 1) || PCM.tableDatas.Count == 0)
             {
                 return;
             }
@@ -1360,7 +1403,7 @@ namespace UniversalPatcher
 
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            showTableDescription();
+            showTableDescription(PCM);
         }
 
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
@@ -2603,7 +2646,7 @@ namespace UniversalPatcher
             foreach(TreeNode tn in tms.SelectedNodes)
                 if (tn.Tag != null)
                     tableIds.Add((int)tn.Tag);
-            showTableDescription(tableIds[0]);
+            showTableDescription(PCM, tableIds[0]);
             openTableEditor(tableIds);
         }
 

@@ -688,7 +688,7 @@ public class upatcher
             var frame = st.GetFrame(st.FrameCount - 1);
             // Get the line number from the stack frame
             var line = frame.GetFileLineNumber();
-            LoggerBold("frmTableEditor error, line " + line + ": " + ex.Message);
+            LoggerBold("Patcherfunctions error, line " + line + ": " + ex.Message);
         }
 
         return retVal;
@@ -732,7 +732,7 @@ public class upatcher
             var frame = st.GetFrame(st.FrameCount - 1);
             // Get the line number from the stack frame
             var line = frame.GetFileLineNumber();
-            LoggerBold("frmTableEditor error, line " + line + ": " + ex.Message);
+            LoggerBold("Patcherfunctions error, line " + line + ": " + ex.Message);
         }
 
         return retVal;
@@ -934,7 +934,7 @@ public class upatcher
             var frame = st.GetFrame(st.FrameCount - 1);
             // Get the line number from the stack frame
             var line = frame.GetFileLineNumber();
-            LoggerBold("Error, line " + line + ": " + ex.Message);
+            LoggerBold("Error, patcherfunctions line " + line + ": " + ex.Message);
 
         }
         return (uint)(diffCount * step);
@@ -1871,7 +1871,7 @@ public class upatcher
             var frame = st.GetFrame(st.FrameCount - 1);
             // Get the line number from the stack frame
             var line = frame.GetFileLineNumber();
-            Debug.WriteLine("searchBytes, line " + line + ": " + ex.Message);
+            Debug.WriteLine("Error searchBytes, line " + line + ": " + ex.Message);
         }
         return uint.MaxValue;
     }

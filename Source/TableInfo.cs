@@ -26,6 +26,12 @@ namespace UniversalPatcher
         public double lastRawValue  { get; set; }
         public TableInfo tableInfo { get; set; }
 
+        public TableCell ShallowCopy()
+        {
+            return (TableCell)this.MemberwiseClone();
+        }
+
+
         public void saveValue(double val,bool isRawValue = false)
         {
             try
@@ -210,6 +216,7 @@ namespace UniversalPatcher
             tableInfos = new List<TableInfo>();
             tableIds = new List<int>();
             refTableIds = new Dictionary<int, int>();
+            filteredTables = new List<TableData>();
         }
         public byte[] buf;
         public uint tableBufferOffset;

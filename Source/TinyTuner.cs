@@ -155,7 +155,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                MessageBox.Show("Error, line " + line + ": " + ex.Message, "Error");
+                MessageBox.Show("Error, TinyTuner line " + line + ": " + ex.Message, "Error");
             }
             return "OK";
         }
@@ -264,7 +264,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, line " + line + ": " + ex.Message);
+                LoggerBold("Error, TinyTuner line " + line + ": " + ex.Message);
             }
             return "OK";
         }

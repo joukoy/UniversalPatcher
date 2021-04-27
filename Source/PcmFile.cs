@@ -264,8 +264,8 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, line " + line + ": " + ex.Message);
-                retVal += "Error, line " + line + ": " + ex.Message;
+                LoggerBold("Error, pcmfile pcmfile line " + line + ": " + ex.Message);
+                retVal += "Error, pcmfile line " + line + ": " + ex.Message;
             }
             return retVal;
         }
@@ -289,7 +289,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, line " + line + ": " + ex.Message);
+                LoggerBold("Error, pcmfile line " + line + ": " + ex.Message);
             }
 
         }
