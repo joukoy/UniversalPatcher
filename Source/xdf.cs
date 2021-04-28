@@ -546,7 +546,7 @@ namespace UniversalPatcher
                 for (int t = 0; t < tdList.Count; t++)
                 {
                     //Add all tables
-                    if (tdList[t].Rows > 1)
+                    if (tdList[t].Dimensions() > 1)
                     {
                         string tableName = tdList[t].TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;"); 
                         if (tdList[t].TableName == null || tdList[t].TableName.Length == 0)

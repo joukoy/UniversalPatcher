@@ -1242,7 +1242,7 @@ namespace UniversalPatcher
                     minMax = "";
                 else
                     minMax += "] ";
-                if (peekPCM.tableDatas[ind].Rows == 1 && peekPCM.tableDatas[ind].Columns == 1)
+                if (peekPCM.tableDatas[ind].Dimensions() == 1)
                 {
                     double curVal = getValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0, peekPCM);
                     UInt64 rawVal = (UInt64) getRawValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0);
@@ -1333,10 +1333,10 @@ namespace UniversalPatcher
                             break;
                     }
 
-                    txtDescription.AppendText("Current value: " + valTxt + unitTxt + minMax + " [" + rawTxt + "]" + maskTxt);
+                    txtDescription.AppendText("Current value: " + valTxt + unitTxt + " [" + rawTxt + "]" + minMax + maskTxt);
                     txtDescription.AppendText(Environment.NewLine);
                 }
-                else
+                else //Not 1D
                 {
                     string tblData = "Current values: " + minMax + Environment.NewLine;
                     uint addr = (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset);
@@ -2619,7 +2619,7 @@ namespace UniversalPatcher
             foreach (TreeNode tn in tv.SelectedNode.Nodes)
             {
                 int id = (int)tn.Tag;
-                if (PCM.tableDatas[id].Rows == 1 && PCM.tableDatas[id].Columns == 1 && !PCM.tableDatas[id].TableName.Contains("[") && !PCM.tableDatas[id].TableName.Contains("."))
+                if (PCM.tableDatas[id].Dimensions() == 1 && !PCM.tableDatas[id].TableName.Contains("[") && !PCM.tableDatas[id].TableName.Contains("."))
                     tableIds.Add(id);
             }
             if (tableIds.Count > 0)
@@ -2841,12 +2841,18 @@ namespace UniversalPatcher
                     }
 
                     string nodeKey = "";
-                    if (filteredCategories[i].Rows == 1 && filteredCategories[i].Columns == 1)
-                        nodeKey = "1D";
-                    else if (filteredCategories[i].Rows > 1 && filteredCategories[i].Columns == 1)
-                        nodeKey = "2D";
-                    else
-                        nodeKey = "3D";
+                    switch (filteredCategories[i].Dimensions())
+                    {
+                        case 1:
+                            nodeKey = "1D";
+                            break;
+                        case 2:
+                            nodeKey = "2D";
+                            break;
+                        case 3:
+                            nodeKey = "3D";
+                            break;
+                    }
 
                     if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
                     {
@@ -2905,20 +2911,20 @@ namespace UniversalPatcher
                     TreeNode tnChild = new TreeNode(filteredCategories[i].TableName);
                     tnChild.Tag = (int)filteredCategories[i].id;
 
-                    if (filteredCategories[i].Rows == 1 && filteredCategories[i].Columns == 1)
+                    switch(filteredCategories[i].Dimensions())
                     {
-                        tnChild.ImageKey = "1d.ico";
-                        tnChild.SelectedImageKey = "1d.ico";
-                    }
-                    else if (filteredCategories[i].Rows > 1 && filteredCategories[i].Columns == 1)
-                    {
-                        tnChild.ImageKey = "2d.ico";
-                        tnChild.SelectedImageKey = "2d.ico";
-                    }
-                    else
-                    {
-                        tnChild.ImageKey = "3d.ico";
-                        tnChild.SelectedImageKey = "3d.ico";
+                        case 1:
+                            tnChild.ImageKey = "1d.ico";
+                            tnChild.SelectedImageKey = "1d.ico";
+                            break;
+                        case 2:
+                            tnChild.ImageKey = "2d.ico";
+                            tnChild.SelectedImageKey = "2d.ico";
+                            break;
+                        case 3:
+                            tnChild.ImageKey = "3d.ico";
+                            tnChild.SelectedImageKey = "3d.ico";
+                            break;
                     }
 
                     TableValueType vt = getValueType(filteredCategories[i]);
@@ -3000,19 +3006,18 @@ namespace UniversalPatcher
                         ico = "enum";
                     }
 
-                    if (filteredCategories[i].Rows == 1 && filteredCategories[i].Columns == 1)
+                    switch (filteredCategories[i].Dimensions())
                     {
-                        ico += "1d.ico";
+                        case 1:
+                            ico += "1d.ico";
+                            break;
+                        case 2:
+                            ico += "2d.ico";
+                            break;
+                        case 3:
+                            ico += "3d.ico";
+                            break;
                     }
-                    else if (filteredCategories[i].Rows > 1 && filteredCategories[i].Columns == 1)
-                    {
-                        ico += "2d.ico";
-                    }
-                    else
-                    {
-                        ico += "3d.ico";
-                    }
-
                     tnChild.ImageKey = ico;
                     tnChild.SelectedImageKey = ico;
 
@@ -3114,17 +3119,17 @@ namespace UniversalPatcher
                         ico = "enum";
                     }
 
-                    if (filteredCategories[i].Rows == 1 && filteredCategories[i].Columns == 1)
+                    switch (filteredCategories[i].Dimensions())
                     {
-                        ico += "1d.ico";
-                    }
-                    else if (filteredCategories[i].Rows > 1 && filteredCategories[i].Columns == 1)
-                    {
-                        ico += "2d.ico";
-                    }
-                    else
-                    {
-                        ico += "3d.ico";
+                        case 1:
+                            ico += "1d.ico";
+                            break;
+                        case 2:
+                            ico += "2d.ico";
+                            break;
+                        case 3:
+                            ico += "3d.ico";
+                            break;
                     }
 
                     tnChild.ImageKey = ico;
@@ -3228,7 +3233,7 @@ namespace UniversalPatcher
             foreach (TreeNode tn in tv.SelectedNode.Nodes)
             {
                 int id = (int)tn.Tag;
-                if (PCM.tableDatas[id].Rows == 1 && PCM.tableDatas[id].Columns == 1 && !PCM.tableDatas[id].TableName.Contains("[") && !PCM.tableDatas[id].TableName.Contains("."))
+                if (PCM.tableDatas[id].Dimensions() == 1 && !PCM.tableDatas[id].TableName.Contains("[") && !PCM.tableDatas[id].TableName.Contains("."))
                     tableIds.Add(id);                    
             }
             if (tableIds.Count > 0)

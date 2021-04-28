@@ -75,7 +75,7 @@ namespace UniversalPatcher
             string retVal = "";
             try
             {
-                if (peekPCM.tableDatas[ind].Rows == 1 && peekPCM.tableDatas[ind].Columns == 1)
+                if (peekPCM.tableDatas[ind].Dimensions() == 1)
                 {
                     double curVal = getValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0,peekPCM);
                     UInt64 rawVal = (UInt64) getRawValue(peekPCM.buf,(uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0);

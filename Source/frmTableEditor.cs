@@ -789,8 +789,9 @@ namespace UniversalPatcher
         private void setCellColor(int row, int col, TableCell tCell)
         {
             TableData mathTd = tCell.td;
-            double curVal = (double) tCell.lastValue;
-            double origVal = (double)tCell.origValue;
+            double curVal = Convert.ToDouble(tCell.lastValue);
+            double origVal = Convert.ToDouble(tCell.origValue);
+
             if (dataGridView1.Columns[col].GetType() != typeof(DataGridViewComboBoxColumn) &&
                 dataGridView1.Rows[row].Cells[col].GetType() != typeof(DataGridViewComboBoxCell))
             {
@@ -1449,9 +1450,9 @@ namespace UniversalPatcher
                     //string mathStr = mathTd.SavingMath.ToLower();
                     //newValue = parser.Parse(mathStr, true);
                     tCell.saveValue(newValue);
-                    string mathStr = mathTd.Math.ToLower();
-                    double calcValue = (double)tCell.lastValue;
-                    dataGridView1.Rows[r].Cells[c].Value = calcValue;
+                    //string mathStr = mathTd.Math.ToLower();
+                    //double calcValue = (double)tCell.lastValue;
+                    dataGridView1.Rows[r].Cells[c].Value = tCell.lastValue;
                 }
 
             }

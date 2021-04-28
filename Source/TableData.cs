@@ -101,7 +101,16 @@ namespace UniversalPatcher
                 }
             }
         }
-
+        public int Dimensions ()
+        {
+            if (Rows < 2 && Columns < 2)
+                return 1;
+            else if (Rows > 1 && Columns > 1)
+                return 3;
+            else
+                return 2;
+        } 
+        
         public TableData ShallowCopy()
         {
             return (TableData)this.MemberwiseClone();
