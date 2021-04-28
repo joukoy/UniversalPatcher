@@ -73,8 +73,8 @@ namespace UniversalPatcher
                 {
                     if (showAsHex)
                     {
-                        data1 += ((double)getRawValue(pcm1.buf, addr, td, 0)).ToString(formatStr) + " ";
-                        data2 += ((double)getRawValue(pcm2.buf, addr2, td2, 0)).ToString(formatStr) + " ";
+                        data1 += ((UInt64)getRawValue(pcm1.buf, addr, td, 0)).ToString(formatStr) + " ";
+                        data2 += ((UInt64)getRawValue(pcm2.buf, addr2, td2, 0)).ToString(formatStr) + " ";
                     }
                     else
                     {
@@ -83,6 +83,12 @@ namespace UniversalPatcher
                     }
                     addr += step;
                     addr2 += step2;
+/*                    if (a > 100)
+                    {
+                        data1 += "...";
+                        data2 += "...";
+                        break;
+                    }*/
                 }
 
                 TableDiff tDiff = new TableDiff();

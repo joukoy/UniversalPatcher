@@ -1945,6 +1945,64 @@ namespace UniversalPatcher
             Logger("Finding tables with different data");
             if (PCM.configFile != cmpWithPcm.configFile)
                 LoggerBold("WARING! OS mismatch!");
+            else
+            {
+                //Check undefined areas, too
+                int udCount = 0;
+                byte[] buf = new byte[PCM.buf.Length];
+                for (int b = 0; b < buf.Length; b++)
+                    buf[b] = 0;
+                for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
+                {
+                    TableData tData = PCM.tableDatas[t1];
+                    uint start = tData.addrInt;
+                    uint end = (uint)(start + getElementSize(tData.DataType) * tData.Rows * tData.Columns + tData.Offset);
+                    for (uint b = start; b < end; b++)
+                        buf[b] = 1;
+                }
+                for (int s = 0; s < PCM.Segments.Count; s++)
+                {
+                    for (int sb = 0; sb < PCM.segmentAddressDatas[s].SegmentBlocks.Count; sb++)
+                    {
+                        uint b = PCM.segmentAddressDatas[s].SegmentBlocks[sb].Start;
+                        for (; b < PCM.segmentAddressDatas[s].SegmentBlocks[sb].End; b++)
+                        {
+                            if (buf[b] == 0)    //undefined area
+                            {
+                                TableData undefTd = new TableData();
+                                undefTd.addrInt = b;
+                                undefTd.Columns = 1;
+                                undefTd.id = (uint)PCM.tableDatas.Count;
+                                undefTd.DataType = InDataType.UBYTE;
+                                undefTd.OS = PCM.OS;
+                                undefTd.OutputType = OutDataType.Hex;
+                                undefTd.TableName = "Undefined " + udCount.ToString();
+                                for (; b < PCM.segmentAddressDatas[s].SegmentBlocks[sb].End; b++)
+                                {
+                                    if (buf[b] == 1)
+                                    {
+                                        if (b - undefTd.addrInt > 1)
+                                        {
+                                            undefTd.Rows = (ushort)(b - undefTd.addrInt - 1);
+                                            PCM.tableDatas.Add(undefTd);
+                                            cmpWithPcm.tableDatas.Add(undefTd);
+                                            udCount++;
+                                        }
+                                        break;
+                                    }
+                                }
+                                if (b == PCM.segmentAddressDatas[s].SegmentBlocks[sb].End && undefTd.Rows > 0)
+                                {
+                                    PCM.tableDatas.Add(undefTd);
+                                    cmpWithPcm.tableDatas.Add(undefTd);
+                                    udCount++;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
             cmpWithPcm.selectTableDatas(0, "");
             List<int> diffTableDatas = new List<int>();
             List<int> cmpTableDatas = new List<int>();
