@@ -545,7 +545,6 @@ namespace UniversalPatcher
         private GroupBox groupSelectCompare;
         private RadioButton radioDifference;
         private RadioButton radioCompareFile;
-        private RadioButton radioSideBySide;
         private NumericUpDown numDecimals;
         private Label label1;
         private ToolStripMenuItem dataFontToolStripMenuItem;
@@ -556,5 +555,6 @@ namespace UniversalPatcher
         private RadioButton radioOriginal;
         private RadioButton radioCompareAll;
         private NumericUpDown numTuneValue;
+        public RadioButton radioSideBySide;
     }
 }

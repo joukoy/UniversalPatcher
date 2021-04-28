@@ -165,6 +165,7 @@ namespace UniversalPatcher
                 frmT.addCompareFiletoMenu(pcm2, pcm2.tableDatas[id2],"B:" + pcm2.FileName);
                 frmT.Show();
                 frmT.loadTable();
+                frmT.radioSideBySide.Checked = true;
             }
         }
 

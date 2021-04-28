@@ -792,6 +792,23 @@ namespace UniversalPatcher
             double curVal = Convert.ToDouble(tCell.lastValue);
             double origVal = Convert.ToDouble(tCell.origValue);
 
+            if (radioSideBySide.Checked || radioCompareAll.Checked)
+            {
+                if (tCell.tableInfo.compareFile.pcm.FileName != compareFiles[0].pcm.FileName)
+                {
+                    string colTxt = "["+ compareFiles[0].fileLetter +"]" + dataGridView1.Columns[col].HeaderText.Substring(3);
+                    string rowTxt = dataGridView1.Rows[row].HeaderCell.Value.ToString();
+                    int orgCol = getColumnByHeader(colTxt);
+                    int orgRow = getRowByHeader(rowTxt);
+                    if (dataGridView1.Rows[orgRow].Cells[orgCol].Tag != null)
+                    {
+                        TableCell tOrigCell = (TableCell)dataGridView1.Rows[orgRow].Cells[orgCol].Tag;
+                        if (Convert.ToDouble(tOrigCell.lastValue) != Convert.ToDouble(tCell.lastValue))
+                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
+                    }
+                }
+                return;
+            }
             if (dataGridView1.Columns[col].GetType() != typeof(DataGridViewComboBoxColumn) &&
                 dataGridView1.Rows[row].Cells[col].GetType() != typeof(DataGridViewComboBoxCell))
             {
