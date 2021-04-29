@@ -117,6 +117,7 @@ namespace UniversalPatcher
             dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
             dataGridView1.RowHeaderMouseClick += DataGridView1_RowHeaderMouseClick;
             dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
+            dataGridView1.CellClick += DataGridView1_SelectionChanged;
         }
 
         private void frmTableEditor_FormClosing(object sender, EventArgs e)
@@ -174,16 +175,62 @@ namespace UniversalPatcher
                 LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
         }
-        private void DataGridView1_SelectionChanged(object sender, EventArgs e)
+
+        private void showCellInfo()
         {
             if (dataGridView1.SelectedCells.Count == 0 || dataGridView1.SelectedCells[0].Tag == null)
                 return;
             TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
-            string thisTable =  tCell.td.TableName;
-            if (thisTable == lastTable)
-                return;
-            lastTable = thisTable;
-            tuner.showTableDescription(tCell.tableInfo.compareFile.pcm, (int)tCell.td.id);
+            string thisTable = tCell.td.TableName;
+            if (thisTable != lastTable)
+            {
+                lastTable = thisTable;
+                tuner.showTableDescription(tCell.tableInfo.compareFile.pcm, (int)tCell.td.id);
+            }
+            string minMaxTxt = "";
+            TableData tData = tCell.td;
+            double minRaw = getMinValue(tData.DataType);
+            double maxRaw = getMaxValue(tData.DataType);
+            double min = tCell.calculatedValue(minRaw);
+            if (minRaw == 0 && double.IsNaN(min))
+            {
+                minRaw = 1;
+                min = tCell.calculatedValue(minRaw);
+            }
+            double max = tCell.calculatedValue(maxRaw);
+
+            string formatStr = "0";
+            for (int f = 1; f <= (int)numDecimals.Value; f++)
+            {
+                if (f == 1) formatStr += ".";
+                formatStr += "0";
+            }
+
+            if (min > max)
+            {
+                //swap
+                double tmp = max;
+                max = min;
+                min = tmp;
+            }
+
+            if (min < tData.Min || max > tData.Max)
+            {
+                minMaxTxt = "Soft limits: Min " + tData.Min.ToString(formatStr) + " Max " + tData.Max.ToString(formatStr) +
+                    " Hard limits: Min " + min.ToString(formatStr) + " Max " + max.ToString(formatStr);
+
+            }
+            else
+            {
+                minMaxTxt = "Min " + min.ToString(formatStr) + " Max " + max.ToString(formatStr);
+            }
+            string valTxt = " Last value " + Convert.ToDouble(tCell.lastValue).ToString(formatStr) + " Saved value " + Convert.ToDouble(tCell.origValue).ToString(formatStr);
+            labelInfo.Text = minMaxTxt + valTxt;
+
+        }
+        private void DataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            showCellInfo();
         }
 
         private void parseTableInfo(CompareFile cmpFile)
@@ -1210,6 +1257,7 @@ namespace UniversalPatcher
                     }
                 }
                 setDataGridLayout(td);
+                showCellInfo();
             }
             catch (Exception ex)
             {

@@ -71,6 +71,7 @@ namespace UniversalPatcher
             this.numDecimals = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.numTuneValue = new System.Windows.Forms.NumericUpDown();
+            this.labelInfo = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -92,7 +93,7 @@ namespace UniversalPatcher
             this.dataGridView1.Location = new System.Drawing.Point(2, 72);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(595, 376);
+            this.dataGridView1.Size = new System.Drawing.Size(595, 359);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
@@ -478,11 +479,23 @@ namespace UniversalPatcher
             this.numTuneValue.TabIndex = 15;
             this.numTuneValue.ValueChanged += new System.EventHandler(this.numTuneValue_ValueChanged);
             // 
+            // labelInfo
+            // 
+            this.labelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelInfo.AutoSize = true;
+            this.labelInfo.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.labelInfo.Location = new System.Drawing.Point(2, 434);
+            this.labelInfo.Name = "labelInfo";
+            this.labelInfo.Size = new System.Drawing.Size(30, 15);
+            this.labelInfo.TabIndex = 16;
+            this.labelInfo.Text = "Info:";
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(599, 450);
+            this.Controls.Add(this.labelInfo);
             this.Controls.Add(this.numTuneValue);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.numDecimals);
@@ -556,5 +569,6 @@ namespace UniversalPatcher
         private RadioButton radioCompareAll;
         private NumericUpDown numTuneValue;
         public RadioButton radioSideBySide;
+        private Label labelInfo;
     }
 }

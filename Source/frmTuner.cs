@@ -1995,7 +1995,7 @@ namespace UniversalPatcher
                                 {
                                     PCM.tableDatas.Add(undefTd);
                                     cmpWithPcm.tableDatas.Add(undefTd);
-                                    udCount++;
+                                udCount++;
                                 }
                             }
                         }
