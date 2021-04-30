@@ -222,5 +222,24 @@ namespace UniversalPatcher
         {
             saveCSV();
         }
+
+        private void btnSaveTableList_Click(object sender, EventArgs e)
+        {
+            string defaultFileName = Path.Combine(Application.StartupPath, "Tuner", Path.GetFileName(pcm1.FileName) + "-" + Path.GetFileName(pcm2.FileName) + ".XML");
+            string fName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*", defaultFileName);
+            if (fName.Length == 0)
+                return;
+
+            List<TableData> tableDatas = new List<TableData>();
+            for (int i = 0; i < tdList.Count; i++)
+                tableDatas.Add(pcm1.tableDatas[tdList[i]]);
+            using (FileStream stream = new FileStream(fName, FileMode.Create))
+            {
+                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
+                writer.Serialize(stream, tableDatas);
+                stream.Close();
+            }
+
+        }
     }
 }

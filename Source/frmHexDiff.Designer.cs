@@ -32,6 +32,7 @@
             this.labelFileNames = new System.Windows.Forms.Label();
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.btnSaveCsv = new System.Windows.Forms.Button();
+            this.btnSaveTableList = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -51,7 +52,7 @@
             // 
             this.labelFileNames.AutoSize = true;
             this.labelFileNames.BackColor = System.Drawing.Color.White;
-            this.labelFileNames.Location = new System.Drawing.Point(187, 5);
+            this.labelFileNames.Location = new System.Drawing.Point(284, 5);
             this.labelFileNames.Name = "labelFileNames";
             this.labelFileNames.Size = new System.Drawing.Size(11, 13);
             this.labelFileNames.TabIndex = 1;
@@ -59,7 +60,7 @@
             // 
             // txtFilter
             // 
-            this.txtFilter.Location = new System.Drawing.Point(93, 2);
+            this.txtFilter.Location = new System.Drawing.Point(190, 2);
             this.txtFilter.Name = "txtFilter";
             this.txtFilter.Size = new System.Drawing.Size(88, 20);
             this.txtFilter.TabIndex = 2;
@@ -75,11 +76,22 @@
             this.btnSaveCsv.UseVisualStyleBackColor = true;
             this.btnSaveCsv.Click += new System.EventHandler(this.btnSaveCsv_Click);
             // 
+            // btnSaveTableList
+            // 
+            this.btnSaveTableList.Location = new System.Drawing.Point(90, 1);
+            this.btnSaveTableList.Name = "btnSaveTableList";
+            this.btnSaveTableList.Size = new System.Drawing.Size(94, 23);
+            this.btnSaveTableList.TabIndex = 4;
+            this.btnSaveTableList.Text = "Save Tablelist";
+            this.btnSaveTableList.UseVisualStyleBackColor = true;
+            this.btnSaveTableList.Click += new System.EventHandler(this.btnSaveTableList_Click);
+            // 
             // frmHexDiff
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnSaveTableList);
             this.Controls.Add(this.btnSaveCsv);
             this.Controls.Add(this.txtFilter);
             this.Controls.Add(this.labelFileNames);
@@ -99,5 +111,6 @@
         private System.Windows.Forms.Label labelFileNames;
         private System.Windows.Forms.TextBox txtFilter;
         private System.Windows.Forms.Button btnSaveCsv;
+        private System.Windows.Forms.Button btnSaveTableList;
     }
 }

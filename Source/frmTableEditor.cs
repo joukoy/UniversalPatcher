@@ -846,6 +846,56 @@ namespace UniversalPatcher
             TableData mathTd = tCell.td;
             double curVal = Convert.ToDouble(tCell.lastValue);
             double origVal = Convert.ToDouble(tCell.origValue);
+            Color[] colors =
+                 {
+                        //Color.FromArgb(255, 255, 192, 192), //Pink?
+                        Color.FromArgb(255, 255, 224, 192),
+                        Color.FromArgb(255, 255, 255, 192),
+                        Color.FromArgb(255, 192, 255, 192),
+                        Color.FromArgb(255, 192, 255, 255),
+                        Color.FromArgb(255, 192, 192, 255),
+                        Color.FromArgb(255, 255, 192, 255),
+                        Color.FromArgb(255, 224, 224, 224),
+                        Color.FromArgb(255, 255, 128, 128),
+                        Color.FromArgb(255, 255, 192, 128),
+                        Color.FromArgb(255, 255, 255, 128),
+                        Color.FromArgb(255, 128, 255, 128),
+                        Color.FromArgb(255, 128, 255, 255),
+                        Color.FromArgb(255, 128, 128, 255),
+                        Color.FromArgb(255, 255, 128, 255),
+                        Color.Silver,
+                        Color.Red,
+                        Color.FromArgb(255, 255, 128, 0),
+                        Color.Yellow,
+                        Color.Lime,
+                        Color.Cyan,
+                        Color.Blue,
+                        Color.Fuchsia,
+                        Color.Gray,
+                        Color.FromArgb(255, 192, 0, 0),
+                        Color.FromArgb(255, 192, 64, 0),
+                        Color.FromArgb(255, 192, 192, 0),
+                        Color.FromArgb(255, 0, 192, 0),
+                        Color.FromArgb(255, 0, 192, 192),
+                        Color.FromArgb(255, 0, 0, 192),
+                        Color.FromArgb(255, 192, 0, 192),
+                        Color.FromArgb(255, 64, 64, 64),
+                        Color.Maroon,
+                        Color.FromArgb(255, 128, 64, 0),
+                        Color.Olive,
+                        Color.Green,
+                        Color.Teal,
+                        Color.Navy,
+                        Color.Purple,
+                        Color.Black,
+                        Color.FromArgb(255, 64, 0, 0),
+                        Color.FromArgb(255, 128, 64, 64),
+                        Color.FromArgb(255, 64, 64, 0),
+                        Color.FromArgb(255, 0, 64, 0),
+                        Color.FromArgb(255, 0, 64, 64),
+                        Color.FromArgb(255, 0, 0, 64),
+                        Color.FromArgb(255, 64, 0, 64),
+                    };
 
             if (radioSideBySide.Checked || radioCompareAll.Checked)
             {
@@ -859,7 +909,18 @@ namespace UniversalPatcher
                     {
                         TableCell tOrigCell = (TableCell)dataGridView1.Rows[orgRow].Cells[orgCol].Tag;
                         if (Convert.ToDouble(tOrigCell.lastValue) != Convert.ToDouble(tCell.lastValue))
+                        {
                             dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
+                        }
+                        else
+                        {
+                            string fLetter = dataGridView1.Columns[col].HeaderText.Substring(1, 1);
+                            char fl = fLetter[0];
+                            int nr = fl - 'A';
+                            if (nr > colors.Length - 1)
+                                nr = colors.Length - 1;
+                            dataGridView1.Rows[row].Cells[col].Style.BackColor = colors[nr];
+                        }
                     }
                 }
                 return;
