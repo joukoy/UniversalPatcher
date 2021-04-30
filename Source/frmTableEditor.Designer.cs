@@ -72,6 +72,7 @@ namespace UniversalPatcher
             this.label1 = new System.Windows.Forms.Label();
             this.numTuneValue = new System.Windows.Forms.NumericUpDown();
             this.labelInfo = new System.Windows.Forms.Label();
+            this.showDifferenceAsMultiplierToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -234,7 +235,8 @@ namespace UniversalPatcher
             this.swapXyToolStripMenuItem,
             this.showRawHEXValuesToolStripMenuItem,
             this.disableTooltipsToolStripMenuItem,
-            this.dataFontToolStripMenuItem});
+            this.dataFontToolStripMenuItem,
+            this.showDifferenceAsMultiplierToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "Settings";
@@ -242,35 +244,35 @@ namespace UniversalPatcher
             // autoResizeToolStripMenuItem
             // 
             this.autoResizeToolStripMenuItem.Name = "autoResizeToolStripMenuItem";
-            this.autoResizeToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.autoResizeToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.autoResizeToolStripMenuItem.Text = "Auto Resize";
             this.autoResizeToolStripMenuItem.Click += new System.EventHandler(this.autoResizeToolStripMenuItem_Click);
             // 
             // swapXyToolStripMenuItem
             // 
             this.swapXyToolStripMenuItem.Name = "swapXyToolStripMenuItem";
-            this.swapXyToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.swapXyToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.swapXyToolStripMenuItem.Text = "Swap x/y";
             this.swapXyToolStripMenuItem.Click += new System.EventHandler(this.swapXyToolStripMenuItem_Click);
             // 
             // showRawHEXValuesToolStripMenuItem
             // 
             this.showRawHEXValuesToolStripMenuItem.Name = "showRawHEXValuesToolStripMenuItem";
-            this.showRawHEXValuesToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.showRawHEXValuesToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.showRawHEXValuesToolStripMenuItem.Text = "Show Raw HEX values";
             this.showRawHEXValuesToolStripMenuItem.Click += new System.EventHandler(this.showRawHEXValuesToolStripMenuItem_Click);
             // 
             // disableTooltipsToolStripMenuItem
             // 
             this.disableTooltipsToolStripMenuItem.Name = "disableTooltipsToolStripMenuItem";
-            this.disableTooltipsToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.disableTooltipsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.disableTooltipsToolStripMenuItem.Text = "Disable Tooltips";
             this.disableTooltipsToolStripMenuItem.Click += new System.EventHandler(this.disableTooltipsToolStripMenuItem_Click);
             // 
             // dataFontToolStripMenuItem
             // 
             this.dataFontToolStripMenuItem.Name = "dataFontToolStripMenuItem";
-            this.dataFontToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.dataFontToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.dataFontToolStripMenuItem.Text = "Data font...";
             this.dataFontToolStripMenuItem.Click += new System.EventHandler(this.dataFontToolStripMenuItem_Click);
             // 
@@ -490,6 +492,13 @@ namespace UniversalPatcher
             this.labelInfo.TabIndex = 16;
             this.labelInfo.Text = "Info:";
             // 
+            // showDifferenceAsMultiplierToolStripMenuItem
+            // 
+            this.showDifferenceAsMultiplierToolStripMenuItem.Name = "showDifferenceAsMultiplierToolStripMenuItem";
+            this.showDifferenceAsMultiplierToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.showDifferenceAsMultiplierToolStripMenuItem.Text = "Show difference as Multiplier";
+            this.showDifferenceAsMultiplierToolStripMenuItem.Click += new System.EventHandler(this.showDifferenceAsMultiplierToolStripMenuItem_Click);
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -570,5 +579,6 @@ namespace UniversalPatcher
         private NumericUpDown numTuneValue;
         public RadioButton radioSideBySide;
         private Label labelInfo;
+        private ToolStripMenuItem showDifferenceAsMultiplierToolStripMenuItem;
     }
 }

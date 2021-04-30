@@ -750,7 +750,10 @@ namespace UniversalPatcher
                 double showRawVal = curRawValue;
                 if (radioDifference.Checked)
                 {
-                    showVal = curVal - cmpVal;
+                    if (showDifferenceAsMultiplierToolStripMenuItem.Checked)
+                        showVal = cmpVal / curVal;
+                    else
+                        showVal = curVal - cmpVal;
                     showRawVal = curRawValue - cmpRawValue;
                 }    
 
@@ -2123,6 +2126,13 @@ namespace UniversalPatcher
             else
                 tuneCellValues(-1);
             numTuneValue.Tag = newVal;
+        }
+
+        private void showDifferenceAsMultiplierToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showDifferenceAsMultiplierToolStripMenuItem.Checked = !showDifferenceAsMultiplierToolStripMenuItem.Checked;
+            if (radioDifference.Checked)
+                loadTable();
         }
 
 
