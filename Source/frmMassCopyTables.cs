@@ -176,7 +176,7 @@ namespace UniversalPatcher
             {
                 TableCell srcTc = srcTE.compareFiles[0].tableInfos[0].tableCells[cell];
                 TableCell dstTc = dstTE.compareFiles[0].tableInfos[0].tableCells[cell];
-                dstTc.saveValue((double)srcTc.lastValue);
+                dstTc.saveValue(Convert.ToDouble(srcTc.lastValue));
             }
 
             dstTE.saveTable();

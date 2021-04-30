@@ -920,7 +920,7 @@ public class upatcher
             {
                 TableCell tCell = frmTE.compareFiles[0].tableInfos[0].tableCells[cell];
                 double val = Convert.ToDouble(dataParts[diffCount].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                if (val != (double)tCell.origValue)
+                if (val != Convert.ToDouble(tCell.origValue))
                     diffCount++;
                 tCell.saveValue(val);
             }

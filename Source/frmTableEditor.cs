@@ -181,8 +181,13 @@ namespace UniversalPatcher
             if (dataGridView1.SelectedCells.Count == 0 || dataGridView1.SelectedCells[0].Tag == null)
                 return;
             TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
+            if (tCell.addr == (uint.MaxValue - 1))
+            {
+                labelInfo.Text = "";
+                return; //OBD2 Description
+            }
             string thisTable = tCell.td.TableName;
-            if (thisTable != lastTable)
+            if (thisTable != lastTable && tuner != null)
             {
                 lastTable = thisTable;
                 tuner.showTableDescription(tCell.tableInfo.compareFile.pcm, (int)tCell.td.id);
@@ -656,8 +661,8 @@ namespace UniversalPatcher
             try
             {
                 TableData mathTd = tCell.td;
-                double curVal = (double)tCell.lastValue;
-                double origVal = (double)tCell.origValue;
+                double curVal = Convert.ToDouble(tCell.lastValue);
+                double origVal = Convert.ToDouble(tCell.origValue);
                 double curRawValue = tCell.lastRawValue;
                 double cmpRawValue = UInt64.MaxValue;
                 double cmpVal = double.MinValue;
@@ -666,7 +671,7 @@ namespace UniversalPatcher
                     showSidebySide = false;
                 if (cmpTCell != null && !radioOriginal.Checked)
                 {
-                    cmpVal = (double) cmpTCell.lastValue;
+                    cmpVal = Convert.ToDouble(cmpTCell.lastValue);
                     cmpRawValue = (double)cmpTCell.lastRawValue;
                 }
                 //if (radioSideBySide.Checked && !disableSideBySide)
@@ -976,6 +981,7 @@ namespace UniversalPatcher
                 if (vt == TableValueType.boolean)
                 {
                     DataGridViewCheckBoxCell dgc = new DataGridViewCheckBoxCell();
+                    dgc.Style.NullValue = false;
                     dataGridView1.Rows[gridRow].Cells[gridCol] = dgc;
                 }
                 else if (vt == TableValueType.selection)
@@ -1018,6 +1024,7 @@ namespace UniversalPatcher
         {
             try
             {
+                this.dataGridView1.CellEndEdit -= new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
 
                 CompareFile selectedFile = compareFiles[currentFile];
                 PcmFile PCM = selectedFile.pcm;
@@ -1257,7 +1264,10 @@ namespace UniversalPatcher
                     }
                 }
                 setDataGridLayout(td);
+                dataGridView1.EndEdit();
+                this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
                 showCellInfo();
+
             }
             catch (Exception ex)
             {
@@ -1441,17 +1451,17 @@ namespace UniversalPatcher
                         OBD2Code oc = new OBD2Code();
                         oc.Code = dataGridView1.Rows[e.RowIndex].HeaderCell.Value.ToString();
                         oc.Description = dataGridView1.Rows[e.RowIndex].Cells["Description"].Value.ToString();
-                        bool codeFoumd = false;
+                        bool codeFound = false;
                         for (int o = 0; o < OBD2Codes.Count; o++)
                         {
                             if (OBD2Codes[o].Code == oc.Code)
                             {
                                 OBD2Codes[o].Description = oc.Description;
-                                codeFoumd = true;
+                                codeFound = true;
                                 break;
                             }
                         }
-                        if (!codeFoumd)
+                        if (!codeFound)
                         {
                             OBD2Codes.Add(oc);
                         }
@@ -1460,8 +1470,8 @@ namespace UniversalPatcher
                     {
                         if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != tc.lastValue)
                             SaveValue(e.RowIndex, e.ColumnIndex, tc);
+                        setCellColor(e.RowIndex, e.ColumnIndex, tc);
                     }
-                    setCellColor(e.RowIndex, e.ColumnIndex, tc);
                 }
             }
             catch (Exception ex)
@@ -2092,7 +2102,7 @@ namespace UniversalPatcher
                 double newRawVal = rawVal + step;
                 Debug.WriteLine("Row: " + dataGridView1.SelectedCells[i].RowIndex + ", col: " + dataGridView1.SelectedCells[i].ColumnIndex +  ", Old raw: " + tCell.lastRawValue + ", new raw: " + newRawVal);
                 tCell.saveValue(newRawVal, true);
-                double val = (double)tCell.lastValue;
+                double val = Convert.ToDouble(tCell.lastValue);
 
                 dataGridView1.SelectedCells[i].Value = val;   
                 setCellColor(dataGridView1.SelectedCells[i].RowIndex, dataGridView1.SelectedCells[i].ColumnIndex, tCell);
