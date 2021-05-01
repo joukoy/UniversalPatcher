@@ -33,6 +33,7 @@
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.btnSaveCsv = new System.Windows.Forms.Button();
             this.btnSaveTableList = new System.Windows.Forms.Button();
+            this.btnShowInTuner = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -52,7 +53,7 @@
             // 
             this.labelFileNames.AutoSize = true;
             this.labelFileNames.BackColor = System.Drawing.Color.White;
-            this.labelFileNames.Location = new System.Drawing.Point(284, 5);
+            this.labelFileNames.Location = new System.Drawing.Point(384, 5);
             this.labelFileNames.Name = "labelFileNames";
             this.labelFileNames.Size = new System.Drawing.Size(11, 13);
             this.labelFileNames.TabIndex = 1;
@@ -60,7 +61,7 @@
             // 
             // txtFilter
             // 
-            this.txtFilter.Location = new System.Drawing.Point(190, 2);
+            this.txtFilter.Location = new System.Drawing.Point(290, 3);
             this.txtFilter.Name = "txtFilter";
             this.txtFilter.Size = new System.Drawing.Size(88, 20);
             this.txtFilter.TabIndex = 2;
@@ -86,11 +87,22 @@
             this.btnSaveTableList.UseVisualStyleBackColor = true;
             this.btnSaveTableList.Click += new System.EventHandler(this.btnSaveTableList_Click);
             // 
+            // btnShowInTuner
+            // 
+            this.btnShowInTuner.Location = new System.Drawing.Point(190, 0);
+            this.btnShowInTuner.Name = "btnShowInTuner";
+            this.btnShowInTuner.Size = new System.Drawing.Size(94, 23);
+            this.btnShowInTuner.TabIndex = 5;
+            this.btnShowInTuner.Text = "Show in Tuner";
+            this.btnShowInTuner.UseVisualStyleBackColor = true;
+            this.btnShowInTuner.Click += new System.EventHandler(this.btnShowInTuner_Click);
+            // 
             // frmHexDiff
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnShowInTuner);
             this.Controls.Add(this.btnSaveTableList);
             this.Controls.Add(this.btnSaveCsv);
             this.Controls.Add(this.txtFilter);
@@ -112,5 +124,6 @@
         private System.Windows.Forms.TextBox txtFilter;
         private System.Windows.Forms.Button btnSaveCsv;
         private System.Windows.Forms.Button btnSaveTableList;
+        private System.Windows.Forms.Button btnShowInTuner;
     }
 }

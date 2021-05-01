@@ -241,5 +241,22 @@ namespace UniversalPatcher
             }
 
         }
+
+        private void btnShowInTuner_Click(object sender, EventArgs e)
+        {
+            PcmFile pcmNew = pcm1.ShallowCopy();
+            pcmNew.tableDatas = new List<TableData>();
+            for (int i = 0; i < tdList.Count; i++)
+                pcmNew.tableDatas.Add(pcm1.tableDatas[tdList[i]]);
+
+            PcmFile pcmNew2 = pcm2.ShallowCopy();
+            pcmNew2.tableDatas = new List<TableData>();
+            for (int i = 0; i < tdList2.Count; i++)
+                pcmNew2.tableDatas.Add(pcm2.tableDatas[tdList2[i]]);
+
+            frmTuner frmT = new frmTuner(pcmNew,false);
+            frmT.addtoCurrentFileMenu(pcmNew2,false);
+            frmT.Show();
+        }
     }
 }

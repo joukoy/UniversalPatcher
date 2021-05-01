@@ -13,7 +13,7 @@ namespace UniversalPatcher
 {
     public partial class frmTuner : Form
     {
-        public frmTuner(PcmFile PCM1)
+        public frmTuner(PcmFile PCM1, bool loadTableList = true)
         {
             InitializeComponent();
 
@@ -25,7 +25,8 @@ namespace UniversalPatcher
             //tableDataList = PCM.tableDatas;
             if (PCM == null || PCM1.fsize == 0) return; //No file selected
             addtoCurrentFileMenu(PCM);
-            loadConfigforPCM(ref PCM);
+            if (loadTableList)
+                loadConfigforPCM(ref PCM);
             selectPCM();
         }
 
@@ -1873,7 +1874,11 @@ namespace UniversalPatcher
             {
                 if (PCM.tableDatas[t1].addrInt < PCM.fsize)
                 {
-                    int cmpId = findTableDataId(PCM.tableDatas[t1], cmpWithPcm.tableDatas);
+                    int cmpId;
+                    if (PCM.OS == cmpWithPcm.OS)
+                        cmpId = t1;
+                    else
+                        cmpId = findTableDataId(PCM.tableDatas[t1], cmpWithPcm.tableDatas);
                     if (cmpId > -1)
                     {
                         if (!compareTables(t1, cmpId, PCM, cmpWithPcm))

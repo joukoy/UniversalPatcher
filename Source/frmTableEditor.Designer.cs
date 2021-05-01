@@ -72,7 +72,10 @@ namespace UniversalPatcher
             this.label1 = new System.Windows.Forms.Label();
             this.numTuneValue = new System.Windows.Forms.NumericUpDown();
             this.labelInfo = new System.Windows.Forms.Label();
-            this.showDifferenceAsMultiplierToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.groupDifference = new System.Windows.Forms.GroupBox();
+            this.radioPercent = new System.Windows.Forms.RadioButton();
+            this.radioMultiplier = new System.Windows.Forms.RadioButton();
+            this.radioAbsolute = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -80,6 +83,7 @@ namespace UniversalPatcher
             this.groupSelectCompare.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTuneValue)).BeginInit();
+            this.groupDifference.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -235,8 +239,7 @@ namespace UniversalPatcher
             this.swapXyToolStripMenuItem,
             this.showRawHEXValuesToolStripMenuItem,
             this.disableTooltipsToolStripMenuItem,
-            this.dataFontToolStripMenuItem,
-            this.showDifferenceAsMultiplierToolStripMenuItem});
+            this.dataFontToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "Settings";
@@ -244,35 +247,35 @@ namespace UniversalPatcher
             // autoResizeToolStripMenuItem
             // 
             this.autoResizeToolStripMenuItem.Name = "autoResizeToolStripMenuItem";
-            this.autoResizeToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.autoResizeToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.autoResizeToolStripMenuItem.Text = "Auto Resize";
             this.autoResizeToolStripMenuItem.Click += new System.EventHandler(this.autoResizeToolStripMenuItem_Click);
             // 
             // swapXyToolStripMenuItem
             // 
             this.swapXyToolStripMenuItem.Name = "swapXyToolStripMenuItem";
-            this.swapXyToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.swapXyToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.swapXyToolStripMenuItem.Text = "Swap x/y";
             this.swapXyToolStripMenuItem.Click += new System.EventHandler(this.swapXyToolStripMenuItem_Click);
             // 
             // showRawHEXValuesToolStripMenuItem
             // 
             this.showRawHEXValuesToolStripMenuItem.Name = "showRawHEXValuesToolStripMenuItem";
-            this.showRawHEXValuesToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.showRawHEXValuesToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.showRawHEXValuesToolStripMenuItem.Text = "Show Raw HEX values";
             this.showRawHEXValuesToolStripMenuItem.Click += new System.EventHandler(this.showRawHEXValuesToolStripMenuItem_Click);
             // 
             // disableTooltipsToolStripMenuItem
             // 
             this.disableTooltipsToolStripMenuItem.Name = "disableTooltipsToolStripMenuItem";
-            this.disableTooltipsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.disableTooltipsToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.disableTooltipsToolStripMenuItem.Text = "Disable Tooltips";
             this.disableTooltipsToolStripMenuItem.Click += new System.EventHandler(this.disableTooltipsToolStripMenuItem_Click);
             // 
             // dataFontToolStripMenuItem
             // 
             this.dataFontToolStripMenuItem.Name = "dataFontToolStripMenuItem";
-            this.dataFontToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.dataFontToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.dataFontToolStripMenuItem.Text = "Data font...";
             this.dataFontToolStripMenuItem.Click += new System.EventHandler(this.dataFontToolStripMenuItem_Click);
             // 
@@ -311,7 +314,7 @@ namespace UniversalPatcher
             // numColumn
             // 
             this.numColumn.Enabled = false;
-            this.numColumn.Location = new System.Drawing.Point(415, 27);
+            this.numColumn.Location = new System.Drawing.Point(514, 5);
             this.numColumn.Maximum = new decimal(new int[] {
             3,
             0,
@@ -336,7 +339,7 @@ namespace UniversalPatcher
             // labelColumn
             // 
             this.labelColumn.AutoSize = true;
-            this.labelColumn.Location = new System.Drawing.Point(356, 31);
+            this.labelColumn.Location = new System.Drawing.Point(459, 7);
             this.labelColumn.Name = "labelColumn";
             this.labelColumn.Size = new System.Drawing.Size(45, 13);
             this.labelColumn.TabIndex = 9;
@@ -354,7 +357,7 @@ namespace UniversalPatcher
             this.groupSelectCompare.Enabled = false;
             this.groupSelectCompare.Location = new System.Drawing.Point(9, 27);
             this.groupSelectCompare.Name = "groupSelectCompare";
-            this.groupSelectCompare.Size = new System.Drawing.Size(341, 20);
+            this.groupSelectCompare.Size = new System.Drawing.Size(337, 20);
             this.groupSelectCompare.TabIndex = 10;
             this.groupSelectCompare.TabStop = false;
             this.groupSelectCompare.Text = "Show";
@@ -362,7 +365,7 @@ namespace UniversalPatcher
             // radioCompareAll
             // 
             this.radioCompareAll.AutoSize = true;
-            this.radioCompareAll.Location = new System.Drawing.Point(294, 1);
+            this.radioCompareAll.Location = new System.Drawing.Point(231, 0);
             this.radioCompareAll.Name = "radioCompareAll";
             this.radioCompareAll.Size = new System.Drawing.Size(44, 17);
             this.radioCompareAll.TabIndex = 5;
@@ -374,7 +377,7 @@ namespace UniversalPatcher
             // radioSideBySideText
             // 
             this.radioSideBySideText.AutoSize = true;
-            this.radioSideBySideText.Location = new System.Drawing.Point(236, 0);
+            this.radioSideBySideText.Location = new System.Drawing.Point(177, 0);
             this.radioSideBySideText.Name = "radioSideBySideText";
             this.radioSideBySideText.Size = new System.Drawing.Size(48, 17);
             this.radioSideBySideText.TabIndex = 4;
@@ -386,7 +389,7 @@ namespace UniversalPatcher
             // radioSideBySide
             // 
             this.radioSideBySide.AutoSize = true;
-            this.radioSideBySide.Location = new System.Drawing.Point(183, 0);
+            this.radioSideBySide.Location = new System.Drawing.Point(121, 0);
             this.radioSideBySide.Name = "radioSideBySide";
             this.radioSideBySide.Size = new System.Drawing.Size(47, 17);
             this.radioSideBySide.TabIndex = 3;
@@ -399,7 +402,7 @@ namespace UniversalPatcher
             // 
             this.radioDifference.AutoSize = true;
             this.radioDifference.Enabled = false;
-            this.radioDifference.Location = new System.Drawing.Point(126, 0);
+            this.radioDifference.Location = new System.Drawing.Point(281, 0);
             this.radioDifference.Name = "radioDifference";
             this.radioDifference.Size = new System.Drawing.Size(51, 17);
             this.radioDifference.TabIndex = 2;
@@ -492,18 +495,59 @@ namespace UniversalPatcher
             this.labelInfo.TabIndex = 16;
             this.labelInfo.Text = "Info:";
             // 
-            // showDifferenceAsMultiplierToolStripMenuItem
+            // groupDifference
             // 
-            this.showDifferenceAsMultiplierToolStripMenuItem.Name = "showDifferenceAsMultiplierToolStripMenuItem";
-            this.showDifferenceAsMultiplierToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-            this.showDifferenceAsMultiplierToolStripMenuItem.Text = "Show difference as Multiplier";
-            this.showDifferenceAsMultiplierToolStripMenuItem.Click += new System.EventHandler(this.showDifferenceAsMultiplierToolStripMenuItem_Click);
+            this.groupDifference.Controls.Add(this.radioPercent);
+            this.groupDifference.Controls.Add(this.radioMultiplier);
+            this.groupDifference.Controls.Add(this.radioAbsolute);
+            this.groupDifference.Location = new System.Drawing.Point(347, 27);
+            this.groupDifference.Name = "groupDifference";
+            this.groupDifference.Size = new System.Drawing.Size(127, 20);
+            this.groupDifference.TabIndex = 17;
+            this.groupDifference.TabStop = false;
+            this.groupDifference.Visible = false;
+            // 
+            // radioPercent
+            // 
+            this.radioPercent.AutoSize = true;
+            this.radioPercent.Location = new System.Drawing.Point(91, 0);
+            this.radioPercent.Name = "radioPercent";
+            this.radioPercent.Size = new System.Drawing.Size(33, 17);
+            this.radioPercent.TabIndex = 2;
+            this.radioPercent.Text = "%";
+            this.radioPercent.UseVisualStyleBackColor = true;
+            this.radioPercent.CheckedChanged += new System.EventHandler(this.radioPercent_CheckedChanged);
+            // 
+            // radioMultiplier
+            // 
+            this.radioMultiplier.AutoSize = true;
+            this.radioMultiplier.Location = new System.Drawing.Point(52, 0);
+            this.radioMultiplier.Name = "radioMultiplier";
+            this.radioMultiplier.Size = new System.Drawing.Size(30, 17);
+            this.radioMultiplier.TabIndex = 1;
+            this.radioMultiplier.Text = "x";
+            this.radioMultiplier.UseVisualStyleBackColor = true;
+            this.radioMultiplier.CheckedChanged += new System.EventHandler(this.radioMultiplier_CheckedChanged);
+            // 
+            // radioAbsolute
+            // 
+            this.radioAbsolute.AutoSize = true;
+            this.radioAbsolute.Checked = true;
+            this.radioAbsolute.Location = new System.Drawing.Point(7, 0);
+            this.radioAbsolute.Name = "radioAbsolute";
+            this.radioAbsolute.Size = new System.Drawing.Size(39, 17);
+            this.radioAbsolute.TabIndex = 0;
+            this.radioAbsolute.TabStop = true;
+            this.radioAbsolute.Text = "+/-";
+            this.radioAbsolute.UseVisualStyleBackColor = true;
+            this.radioAbsolute.CheckedChanged += new System.EventHandler(this.radioAbsolute_CheckedChanged);
             // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(599, 450);
+            this.Controls.Add(this.groupDifference);
             this.Controls.Add(this.labelInfo);
             this.Controls.Add(this.numTuneValue);
             this.Controls.Add(this.label1);
@@ -532,6 +576,8 @@ namespace UniversalPatcher
             this.groupSelectCompare.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTuneValue)).EndInit();
+            this.groupDifference.ResumeLayout(false);
+            this.groupDifference.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -579,6 +625,9 @@ namespace UniversalPatcher
         private NumericUpDown numTuneValue;
         public RadioButton radioSideBySide;
         private Label labelInfo;
-        private ToolStripMenuItem showDifferenceAsMultiplierToolStripMenuItem;
+        private GroupBox groupDifference;
+        private RadioButton radioPercent;
+        private RadioButton radioMultiplier;
+        private RadioButton radioAbsolute;
     }
 }

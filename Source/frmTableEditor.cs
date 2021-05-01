@@ -750,8 +750,10 @@ namespace UniversalPatcher
                 double showRawVal = curRawValue;
                 if (radioDifference.Checked)
                 {
-                    if (showDifferenceAsMultiplierToolStripMenuItem.Checked)
+                    if (radioMultiplier.Checked)
                         showVal = cmpVal / curVal;
+                    else if (radioPercent.Checked)
+                        showVal = cmpVal / curVal * 100 - 100;
                     else
                         showVal = curVal - cmpVal;
                     showRawVal = curRawValue - cmpRawValue;
@@ -2021,6 +2023,11 @@ namespace UniversalPatcher
                 disableSaving = true;
                 setMyText();
                 loadTable();
+                groupDifference.Visible = true;
+            }
+            else
+            {
+                groupDifference.Visible = false;
             }
         }
         private void radioSideBySide_CheckedChanged(object sender, EventArgs e)
@@ -2179,6 +2186,8 @@ namespace UniversalPatcher
 
         private void numTuneValue_ValueChanged(object sender, EventArgs e)
         {
+            if (radioDifference.Checked)
+                return;
             decimal oldVal = (decimal)numTuneValue.Tag;
             decimal newVal = numTuneValue.Value;
             Debug.WriteLine("Old:" + oldVal + ", new: " + newVal);
@@ -2189,11 +2198,28 @@ namespace UniversalPatcher
             numTuneValue.Tag = newVal;
         }
 
-        private void showDifferenceAsMultiplierToolStripMenuItem_Click(object sender, EventArgs e)
+        private void radioAbsolute_CheckedChanged(object sender, EventArgs e)
         {
-            showDifferenceAsMultiplierToolStripMenuItem.Checked = !showDifferenceAsMultiplierToolStripMenuItem.Checked;
-            if (radioDifference.Checked)
+            if (radioAbsolute.Checked)
+            {
                 loadTable();
+            }
+        }
+
+        private void radioMultiplier_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioMultiplier.Checked)
+            {
+                loadTable();
+            }
+        }
+
+        private void radioPercent_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioPercent.Checked)
+            {
+                loadTable();
+            }
         }
 
 
