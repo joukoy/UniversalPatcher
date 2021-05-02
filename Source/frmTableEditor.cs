@@ -1642,7 +1642,6 @@ namespace UniversalPatcher
                     SaveValue(cell.RowIndex, cell.ColumnIndex,tc);
 
                 }
-                //tableModified = true;
             }
             catch (Exception ex)
             {
@@ -1723,6 +1722,7 @@ namespace UniversalPatcher
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+            dataGridView1.BeginEdit(true);
 
             //Get the starting Cell
             DataGridViewCell startCell = GetStartCell(dataGridView1);
@@ -1750,6 +1750,7 @@ namespace UniversalPatcher
                 }
                 iRowIndex++;
             }
+            dataGridView1.EndEdit();
         }
 
         private DataGridViewCell GetStartCell(DataGridView dgView)

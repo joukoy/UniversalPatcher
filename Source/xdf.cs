@@ -55,6 +55,7 @@ namespace UniversalPatcher
                 Dictionary<int, string> categories = new Dictionary<int, string>();
                 List<TableLink> tableLinks = new List<TableLink>();
                 List<TableLink> tableTargets = new List<TableLink>();
+                bool havePatches = false;
 
                 foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFHEADER"))
                 {
@@ -82,6 +83,8 @@ namespace UniversalPatcher
 
                     List<string> multiMath = new List<string>();
                     List<string> multiAddr = new List<string>();
+                    if (PatchList == null)
+                        PatchList = new List<XmlPatch>();
 
                     foreach (XElement axle in element.Elements("XDFAXIS"))
                     {
@@ -335,6 +338,27 @@ namespace UniversalPatcher
                     }
 
                 }
+
+                foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFPATCH"))
+                {
+                    XmlPatch xmlPatch = new XmlPatch();
+                    xmlPatch.Description = element.Element("title").Value;
+                    if (element.Element("XDFPATCHENTRY").Attribute("address") != null)
+                    {
+                        xmlPatch.CompatibleOS = "ALL:" + element.Element("XDFPATCHENTRY").Attribute("address").Value;
+                    }
+                    if (element.Element("XDFPATCHENTRY").Attribute("patchdata") != null)
+                    {
+                        string origData = element.Element("XDFPATCHENTRY").Attribute("patchdata").Value;
+                        string newData = "";
+                        for (int c = 0; c < origData.Length; c += 2)
+                            newData += origData.Substring(c, 2) + " ";
+                        xmlPatch.Data = newData.Trim();
+                    }
+                    PatchList.Add(xmlPatch);
+                    havePatches = true;
+                }
+                
                 for (int i = 0; i< tableLinks.Count; i++)
                 {
                     TableLink tl = tableLinks[i];
@@ -356,7 +380,11 @@ namespace UniversalPatcher
                     if (!PCM.tableCategories.Contains(PCM.tableDatas[i].Category))
                         PCM.tableCategories.Add(PCM.tableDatas[i].Category);
                 }
-
+                if (havePatches)
+                {
+                    frmpatcher.RefreshPatchList();
+                    LoggerBold("Patches imported, see pachlist in main window");
+                }
             }
             catch (Exception ex)
             {

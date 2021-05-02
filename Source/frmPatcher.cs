@@ -866,7 +866,7 @@ namespace UniversalPatcher
             txtResult.Text = "";
 
             CompareBins();
-            RefreshDatagrid();
+            RefreshPatchList();
         }
 
         private void SavePatch(string Description)
@@ -1066,7 +1066,7 @@ namespace UniversalPatcher
                     PatchList = new List<XmlPatch>();
                 Logger("[OK]");
                 PatchList.Add(xpatch);
-                RefreshDatagrid();
+                RefreshPatchList();
 
             }
             catch (Exception ex)
@@ -1139,7 +1139,7 @@ namespace UniversalPatcher
 
         }
 
-        private void RefreshDatagrid()
+        public void RefreshPatchList()
         {
             bindingSource.DataSource = null;
             bindingSource.DataSource = PatchList;
@@ -1199,7 +1199,7 @@ namespace UniversalPatcher
                     XP.Rule += frmM.txtValue.Text;
                 }
                 PatchList.Add(XP);
-                RefreshDatagrid();
+                RefreshPatchList();
             }
         }
 
@@ -1309,7 +1309,7 @@ namespace UniversalPatcher
             XmlPatch CurrentP = PatchList[row];
             PatchList.RemoveAt(row);
             PatchList.Insert(row - 1, CurrentP);
-            RefreshDatagrid();
+            RefreshPatchList();
             dataPatch.CurrentCell = dataPatch.Rows[row - 1].Cells[0];
             dataPatch.Rows[row - 1].Selected = true;
         }
@@ -1322,7 +1322,7 @@ namespace UniversalPatcher
             XmlPatch CurrentP = PatchList[row];
             PatchList.RemoveAt(row);
             PatchList.Insert(row + 1, CurrentP);
-            RefreshDatagrid();
+            RefreshPatchList();
             dataPatch.CurrentCell = dataPatch.Rows[row + 1].Cells[0];
             dataPatch.Rows[row + 1].Selected = true;
         }
@@ -1377,13 +1377,13 @@ namespace UniversalPatcher
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            RefreshDatagrid();
+            RefreshPatchList();
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PatchList = new List<XmlPatch>();
-            RefreshDatagrid();
+            RefreshPatchList();
 
         }
 
@@ -1429,7 +1429,7 @@ namespace UniversalPatcher
                         btnApplypatch.Enabled = true;
                         Logger("Patch is compatible, you can apply it");
                     }
-                    RefreshDatagrid();
+                    RefreshPatchList();
                 }
             }
             catch (Exception ex)
@@ -1526,13 +1526,13 @@ namespace UniversalPatcher
         private void btnNew_Click(object sender, EventArgs e)
         {
             PatchList = new List<XmlPatch>();
-            RefreshDatagrid();
+            RefreshPatchList();
 
         }
 
         private void btnRefresh_Click_1(object sender, EventArgs e)
         {
-            RefreshDatagrid();
+            RefreshPatchList();
 
         }
         private void RefreshBadCVNlist()
