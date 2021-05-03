@@ -28,24 +28,29 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmHexDiff));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.labelFileNames = new System.Windows.Forms.Label();
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.btnSaveCsv = new System.Windows.Forms.Button();
             this.btnSaveTableList = new System.Windows.Forms.Button();
             this.btnShowInTuner = new System.Windows.Forms.Button();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
             // 
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(2, 25);
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(799, 428);
+            this.dataGridView1.Size = new System.Drawing.Size(681, 423);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
@@ -97,21 +102,78 @@
             this.btnShowInTuner.UseVisualStyleBackColor = true;
             this.btnShowInTuner.Click += new System.EventHandler(this.btnShowInTuner_Click);
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(1, 29);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.dataGridView1);
+            this.splitContainer1.Size = new System.Drawing.Size(804, 423);
+            this.splitContainer1.SplitterDistance = 119;
+            this.splitContainer1.TabIndex = 6;
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "explorer.ico");
+            this.imageList1.Images.SetKeyName(1, "1d.ico");
+            this.imageList1.Images.SetKeyName(2, "2d.ico");
+            this.imageList1.Images.SetKeyName(3, "3d.ico");
+            this.imageList1.Images.SetKeyName(4, "enum.ico");
+            this.imageList1.Images.SetKeyName(5, "enum1d.ico");
+            this.imageList1.Images.SetKeyName(6, "enum2d.ico");
+            this.imageList1.Images.SetKeyName(7, "enum3d.ico");
+            this.imageList1.Images.SetKeyName(8, "flag.ico");
+            this.imageList1.Images.SetKeyName(9, "flag1d.ico");
+            this.imageList1.Images.SetKeyName(10, "flag2d.ico");
+            this.imageList1.Images.SetKeyName(11, "flag3d.ico");
+            this.imageList1.Images.SetKeyName(12, "mask.ico");
+            this.imageList1.Images.SetKeyName(13, "mask1d.ico");
+            this.imageList1.Images.SetKeyName(14, "mask2d.ico");
+            this.imageList1.Images.SetKeyName(15, "mask3d.ico");
+            this.imageList1.Images.SetKeyName(16, "num.ico");
+            this.imageList1.Images.SetKeyName(17, "boolean.ico");
+            this.imageList1.Images.SetKeyName(18, "bitmask.ico");
+            this.imageList1.Images.SetKeyName(19, "number.ico");
+            this.imageList1.Images.SetKeyName(20, "Dimensions.ico");
+            this.imageList1.Images.SetKeyName(21, "valuetype.ico");
+            this.imageList1.Images.SetKeyName(22, "segments.ico");
+            this.imageList1.Images.SetKeyName(23, "category.ico");
+            this.imageList1.Images.SetKeyName(24, "eeprom.ico");
+            this.imageList1.Images.SetKeyName(25, "engine.ico");
+            this.imageList1.Images.SetKeyName(26, "fuel.ico");
+            this.imageList1.Images.SetKeyName(27, "os.ico");
+            this.imageList1.Images.SetKeyName(28, "speedo.ico");
+            this.imageList1.Images.SetKeyName(29, "system.ico");
+            this.imageList1.Images.SetKeyName(30, "trans.ico");
+            this.imageList1.Images.SetKeyName(31, "enginediag.ico");
+            this.imageList1.Images.SetKeyName(32, "transdiag.ico");
+            this.imageList1.Images.SetKeyName(33, "patch.ico");
+            // 
             // frmHexDiff
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.btnShowInTuner);
             this.Controls.Add(this.btnSaveTableList);
             this.Controls.Add(this.btnSaveCsv);
             this.Controls.Add(this.txtFilter);
             this.Controls.Add(this.labelFileNames);
-            this.Controls.Add(this.dataGridView1);
             this.Name = "frmHexDiff";
             this.Text = "File differences (HEX)";
             this.Load += new System.EventHandler(this.frmHexDiff_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -125,5 +187,7 @@
         private System.Windows.Forms.Button btnSaveCsv;
         private System.Windows.Forms.Button btnSaveTableList;
         private System.Windows.Forms.Button btnShowInTuner;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.ImageList imageList1;
     }
 }

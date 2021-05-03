@@ -113,6 +113,8 @@ namespace UniversalPatcher
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.txtDescription = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabDimensions = new System.Windows.Forms.TabPage();
             this.tabValueType = new System.Windows.Forms.TabPage();
@@ -127,7 +129,6 @@ namespace UniversalPatcher
             this.tabFileInfo = new System.Windows.Forms.TabPage();
             this.tabControlFileInfo = new System.Windows.Forms.TabControl();
             this.imageList3 = new System.Windows.Forms.ImageList(this.components);
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.timerFilter = new System.Windows.Forms.Timer(this.components);
             this.imageList2 = new System.Windows.Forms.ImageList(this.components);
@@ -163,11 +164,13 @@ namespace UniversalPatcher
             // dataGridView1
             // 
             this.dataGridView1.AllowUserToOrderColumns = true;
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView1.Location = new System.Drawing.Point(107, 3);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(1021, 409);
+            this.dataGridView1.Size = new System.Drawing.Size(911, 404);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
@@ -830,6 +833,7 @@ namespace UniversalPatcher
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.treeView1);
             this.splitContainer2.Panel1.Controls.Add(this.tabControl1);
             this.splitContainer2.Panel1.Controls.Add(this.dataGridView1);
             // 
@@ -839,6 +843,59 @@ namespace UniversalPatcher
             this.splitContainer2.Size = new System.Drawing.Size(1021, 502);
             this.splitContainer2.SplitterDistance = 409;
             this.splitContainer2.TabIndex = 22;
+            // 
+            // treeView1
+            // 
+            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.treeView1.ImageIndex = 0;
+            this.treeView1.ImageList = this.imageList1;
+            this.treeView1.Indent = 20;
+            this.treeView1.ItemHeight = 18;
+            this.treeView1.Location = new System.Drawing.Point(1, 3);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.SelectedImageIndex = 0;
+            this.treeView1.Size = new System.Drawing.Size(100, 403);
+            this.treeView1.TabIndex = 2;
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "explorer.ico");
+            this.imageList1.Images.SetKeyName(1, "1d.ico");
+            this.imageList1.Images.SetKeyName(2, "2d.ico");
+            this.imageList1.Images.SetKeyName(3, "3d.ico");
+            this.imageList1.Images.SetKeyName(4, "enum.ico");
+            this.imageList1.Images.SetKeyName(5, "enum1d.ico");
+            this.imageList1.Images.SetKeyName(6, "enum2d.ico");
+            this.imageList1.Images.SetKeyName(7, "enum3d.ico");
+            this.imageList1.Images.SetKeyName(8, "flag.ico");
+            this.imageList1.Images.SetKeyName(9, "flag1d.ico");
+            this.imageList1.Images.SetKeyName(10, "flag2d.ico");
+            this.imageList1.Images.SetKeyName(11, "flag3d.ico");
+            this.imageList1.Images.SetKeyName(12, "mask.ico");
+            this.imageList1.Images.SetKeyName(13, "mask1d.ico");
+            this.imageList1.Images.SetKeyName(14, "mask2d.ico");
+            this.imageList1.Images.SetKeyName(15, "mask3d.ico");
+            this.imageList1.Images.SetKeyName(16, "num.ico");
+            this.imageList1.Images.SetKeyName(17, "boolean.ico");
+            this.imageList1.Images.SetKeyName(18, "bitmask.ico");
+            this.imageList1.Images.SetKeyName(19, "number.ico");
+            this.imageList1.Images.SetKeyName(20, "Dimensions.ico");
+            this.imageList1.Images.SetKeyName(21, "valuetype.ico");
+            this.imageList1.Images.SetKeyName(22, "segments.ico");
+            this.imageList1.Images.SetKeyName(23, "category.ico");
+            this.imageList1.Images.SetKeyName(24, "eeprom.ico");
+            this.imageList1.Images.SetKeyName(25, "engine.ico");
+            this.imageList1.Images.SetKeyName(26, "fuel.ico");
+            this.imageList1.Images.SetKeyName(27, "os.ico");
+            this.imageList1.Images.SetKeyName(28, "speedo.ico");
+            this.imageList1.Images.SetKeyName(29, "system.ico");
+            this.imageList1.Images.SetKeyName(30, "trans.ico");
+            this.imageList1.Images.SetKeyName(31, "enginediag.ico");
+            this.imageList1.Images.SetKeyName(32, "transdiag.ico");
+            this.imageList1.Images.SetKeyName(33, "patch.ico");
             // 
             // tabControl1
             // 
@@ -850,7 +907,7 @@ namespace UniversalPatcher
             this.tabControl1.Controls.Add(this.tabPatches);
             this.tabControl1.Controls.Add(this.tabFileInfo);
             this.tabControl1.ImageList = this.imageList3;
-            this.tabControl1.Location = new System.Drawing.Point(8, 8);
+            this.tabControl1.Location = new System.Drawing.Point(176, 15);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(449, 371);
@@ -1001,45 +1058,6 @@ namespace UniversalPatcher
             this.imageList3.Images.SetKeyName(5, "category.ico");
             this.imageList3.Images.SetKeyName(6, "modify.ico");
             this.imageList3.Images.SetKeyName(7, "info.ico");
-            // 
-            // imageList1
-            // 
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "explorer.ico");
-            this.imageList1.Images.SetKeyName(1, "1d.ico");
-            this.imageList1.Images.SetKeyName(2, "2d.ico");
-            this.imageList1.Images.SetKeyName(3, "3d.ico");
-            this.imageList1.Images.SetKeyName(4, "enum.ico");
-            this.imageList1.Images.SetKeyName(5, "enum1d.ico");
-            this.imageList1.Images.SetKeyName(6, "enum2d.ico");
-            this.imageList1.Images.SetKeyName(7, "enum3d.ico");
-            this.imageList1.Images.SetKeyName(8, "flag.ico");
-            this.imageList1.Images.SetKeyName(9, "flag1d.ico");
-            this.imageList1.Images.SetKeyName(10, "flag2d.ico");
-            this.imageList1.Images.SetKeyName(11, "flag3d.ico");
-            this.imageList1.Images.SetKeyName(12, "mask.ico");
-            this.imageList1.Images.SetKeyName(13, "mask1d.ico");
-            this.imageList1.Images.SetKeyName(14, "mask2d.ico");
-            this.imageList1.Images.SetKeyName(15, "mask3d.ico");
-            this.imageList1.Images.SetKeyName(16, "num.ico");
-            this.imageList1.Images.SetKeyName(17, "boolean.ico");
-            this.imageList1.Images.SetKeyName(18, "bitmask.ico");
-            this.imageList1.Images.SetKeyName(19, "number.ico");
-            this.imageList1.Images.SetKeyName(20, "Dimensions.ico");
-            this.imageList1.Images.SetKeyName(21, "valuetype.ico");
-            this.imageList1.Images.SetKeyName(22, "segments.ico");
-            this.imageList1.Images.SetKeyName(23, "category.ico");
-            this.imageList1.Images.SetKeyName(24, "eeprom.ico");
-            this.imageList1.Images.SetKeyName(25, "engine.ico");
-            this.imageList1.Images.SetKeyName(26, "fuel.ico");
-            this.imageList1.Images.SetKeyName(27, "os.ico");
-            this.imageList1.Images.SetKeyName(28, "speedo.ico");
-            this.imageList1.Images.SetKeyName(29, "system.ico");
-            this.imageList1.Images.SetKeyName(30, "trans.ico");
-            this.imageList1.Images.SetKeyName(31, "enginediag.ico");
-            this.imageList1.Images.SetKeyName(32, "transdiag.ico");
-            this.imageList1.Images.SetKeyName(33, "patch.ico");
             // 
             // contextMenuStrip2
             // 
@@ -1375,5 +1393,6 @@ namespace UniversalPatcher
         private TabControl tabControlFileInfo;
         private ToolStripMenuItem compareSelectedTablesToolStripMenuItem1;
         private ToolStripMenuItem importXDFToolStripMenuItem;
+        private TreeView treeView1;
     }
 }

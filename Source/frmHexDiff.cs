@@ -22,8 +22,65 @@ namespace UniversalPatcher
             tdList = _tdList;
             tdList2 = _tdList2;
         }
+
+        TreeViewMS tree1;
+
         private void frmHexDiff_Load(object sender, EventArgs e)
         {
+            tree1 = new TreeViewMS();
+            splitContainer1.Panel1.Controls.Add(tree1);
+            tree1.Dock = DockStyle.Fill;
+            tree1.ItemHeight = 18;
+            tree1.Indent = 20;
+            tree1.ImageList = imageList1;
+
+            TreeNode tn = new TreeNode("All");
+            tn.Name = "All";
+            tn.ImageKey = "explorer.ico";
+            tn.SelectedImageKey = "explorer.ico";
+            tree1.Nodes.Add(tn);
+
+            TreeNode tn1 = new TreeNode("1D");
+            tn1.Name = "1D";
+            tn1.ImageKey = "1d.ico";
+            tn1.SelectedImageKey = "1d.ico";            
+            tree1.Nodes.Add(tn1);
+
+            TreeNode tn2 = new TreeNode("2D");
+            tn2.Name = "2D";
+            tn2.ImageKey = "2d.ico";
+            tn2.SelectedImageKey = "2d.ico";
+            tree1.Nodes.Add(tn2);
+
+            TreeNode tn3 = new TreeNode("3D");
+            tn3.Name = "3D";
+            tn3.ImageKey = "3d.ico";
+            tn3.SelectedImageKey = "3d.ico";
+            tree1.Nodes.Add(tn3);
+
+            TreeNode tnB = new TreeNode("Boolean");
+            tnB.Name = "Boolean";
+            tnB.ImageKey = "flag.ico";
+            tnB.SelectedImageKey = "flag.ico";
+            tree1.Nodes.Add(tnB);
+
+            TreeNode tnM = new TreeNode("Mask");
+            tnM.Name = "Mask";
+            tnM.ImageKey = "mask.ico";
+            tnM.SelectedImageKey = "mask.ico";
+            tree1.Nodes.Add(tnM);
+
+            TreeNode tnE = new TreeNode("Enum");
+            tnE.Name = "Enum";
+            tnE.ImageKey = "enum.ico";
+            tnE.SelectedImageKey = "enum.ico";
+            tree1.Nodes.Add(tnE);
+
+            TreeNode tnN = new TreeNode("Number");
+            tnN.Name = "Number";
+            tnN.ImageKey = "number.ico";
+            tnN.SelectedImageKey = "number.ico";
+            tree1.Nodes.Add(tnN);
 
         }
         private class TableDiff
@@ -83,12 +140,6 @@ namespace UniversalPatcher
                     }
                     addr += step;
                     addr2 += step2;
-/*                    if (a > 100)
-                    {
-                        data1 += "...";
-                        data2 += "...";
-                        break;
-                    }*/
                 }
 
                 TableDiff tDiff = new TableDiff();
@@ -106,9 +157,15 @@ namespace UniversalPatcher
             bindingSource.DataSource = tdiffList;
             dataGridView1.CellMouseDoubleClick += DataGridView1_CellMouseDoubleClick;
             dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
+            tree1.AfterSelect += Tree1_AfterSelect;
         }
 
-        private void filterTables()
+        private void Tree1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            filterTables(e.Node.Name);
+        }
+
+        private void filterTables(string filter = "")
         {
             List<TableDiff> compareList = new List<TableDiff>();
             if (strSortOrder == SortOrder.Ascending)
@@ -116,6 +173,36 @@ namespace UniversalPatcher
             else
                 compareList = tdiffList.OrderByDescending(x => typeof(TableDiff).GetProperty(sortBy).GetValue(x, null)).ToList();
             var results = compareList.Where(t=> t.TableName.ToString().ToLower().Contains(txtFilter.Text.Trim()));
+
+            if (filter.Length > 0)
+            {
+                switch (filter)
+                {
+                    case "All":
+                        break;
+                    case "1D":
+                        results = results.Where(t => t.td.Dimensions() == 1);
+                            break;
+                    case "2D":
+                        results = results.Where(t => t.td.Dimensions() == 2);
+                        break;
+                    case "3D":
+                        results = results.Where(t => t.td.Dimensions() == 3);
+                        break;
+                    case "Boolean":
+                        results = results.Where(t => getValueType(t.td) == TableValueType.boolean);
+                        break;
+                    case "Mask":
+                        results = results.Where(t => t.td.BitMask != null && t.td.BitMask.Length  > 0);
+                        break;
+                    case "Enum":
+                        results = results.Where(t => getValueType(t.td) == TableValueType.selection);
+                        break;
+                    case "Number":
+                        results = results.Where(t => getValueType(t.td) == TableValueType.number);
+                        break;
+                }
+            }
             bindingSource.DataSource = results;
             Application.DoEvents();
             if (dataGridView1.Columns.Count > sortIndex)

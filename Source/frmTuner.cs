@@ -502,7 +502,7 @@ namespace UniversalPatcher
             }
 
         }
-        private void filterTables()
+        private void filterTables(string filter = "")
         {
             try
             {
@@ -600,6 +600,36 @@ namespace UniversalPatcher
                         results = results.Where(t => t.Category.ToLower().Contains(comboTableCategory.Text.ToLower()));
                     }
                 }
+                if (filter.Length > 0)
+                {
+                    switch (filter)
+                    {
+                        case "All":
+                            break;
+                        case "1D":
+                            results = results.Where(t => t.Dimensions() == 1);
+                            break;
+                        case "2D":
+                            results = results.Where(t => t.Dimensions() == 2);
+                            break;
+                        case "3D":
+                            results = results.Where(t => t.Dimensions() == 3);
+                            break;
+                        case "Boolean":
+                            results = results.Where(t => getValueType(t) == TableValueType.boolean);
+                            break;
+                        case "Mask":
+                            results = results.Where(t => t.BitMask != null && t.BitMask.Length > 0);
+                            break;
+                        case "Enum":
+                            results = results.Where(t => getValueType(t) == TableValueType.selection);
+                            break;
+                        case "Number":
+                            results = results.Where(t => getValueType(t) == TableValueType.number);
+                            break;
+                    }
+                }
+
                 filteredCategories = new BindingList<TableData>(results.ToList());
                 bindingsource.DataSource = filteredCategories;
                 reorderColumns();
@@ -2518,6 +2548,7 @@ namespace UniversalPatcher
         {
             treeMode = true;
             dataGridView1.Visible = false;
+            treeView1.Visible = false;
             if (splitTree == null)
             {
                 splitTree = new SplitContainer();
@@ -2601,6 +2632,58 @@ namespace UniversalPatcher
             if (splitTree != null)
                 splitTree.Visible = false;
             dataGridView1.Visible = true;
+            treeView1.Visible = true;
+            if (treeView1.Nodes.Count == 0)
+            {
+                TreeNode tn = new TreeNode("All");
+                tn.Name = "All";
+                tn.ImageKey = "explorer.ico";
+                tn.SelectedImageKey = "explorer.ico";
+                treeView1.Nodes.Add(tn);
+
+                TreeNode tn1 = new TreeNode("1D");
+                tn1.Name = "1D";
+                tn1.ImageKey = "1d.ico";
+                tn1.SelectedImageKey = "1d.ico";
+                treeView1.Nodes.Add(tn1);
+
+                TreeNode tn2 = new TreeNode("2D");
+                tn2.Name = "2D";
+                tn2.ImageKey = "2d.ico";
+                tn2.SelectedImageKey = "2d.ico";
+                treeView1.Nodes.Add(tn2);
+
+                TreeNode tn3 = new TreeNode("3D");
+                tn3.Name = "3D";
+                tn3.ImageKey = "3d.ico";
+                tn3.SelectedImageKey = "3d.ico";
+                treeView1.Nodes.Add(tn3);
+
+                TreeNode tnB = new TreeNode("Boolean");
+                tnB.Name = "Boolean";
+                tnB.ImageKey = "flag.ico";
+                tnB.SelectedImageKey = "flag.ico";
+                treeView1.Nodes.Add(tnB);
+
+                TreeNode tnM = new TreeNode("Mask");
+                tnM.Name = "Mask";
+                tnM.ImageKey = "mask.ico";
+                tnM.SelectedImageKey = "mask.ico";
+                treeView1.Nodes.Add(tnM);
+
+                TreeNode tnE = new TreeNode("Enum");
+                tnE.Name = "Enum";
+                tnE.ImageKey = "enum.ico";
+                tnE.SelectedImageKey = "enum.ico";
+                treeView1.Nodes.Add(tnE);
+
+                TreeNode tnN = new TreeNode("Number");
+                tnN.Name = "Number";
+                tnN.ImageKey = "number.ico";
+                tnN.SelectedImageKey = "number.ico";
+                treeView1.Nodes.Add(tnN);
+                treeView1.AfterSelect += TreeView1_AfterSelect;
+            }
             btnCollapse.Visible = false;
             btnExpand.Visible = false;
             //numIconSize.Visible = false;
@@ -2624,6 +2707,10 @@ namespace UniversalPatcher
             importXDFToolStripMenuItem.Visible = false;
         }
 
+        private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            filterTables(e.Node.Name);
+        }
 
         private void Tree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
