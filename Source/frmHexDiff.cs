@@ -23,11 +23,23 @@ namespace UniversalPatcher
             tdList2 = _tdList2;
         }
 
-        TreeView tree1;
+        TreeViewMS tree1;
 
         private void frmHexDiff_Load(object sender, EventArgs e)
         {
-            tree1 = new TreeView();
+
+            imageList1.Images.Clear();
+            string folderIcon = Path.Combine(Application.StartupPath, "Icons", "explorer.ico");
+            imageList1.Images.Add(Image.FromFile(folderIcon));
+            string iconFolder = Path.Combine(Application.StartupPath, "Icons");
+            string[] GalleryArray = System.IO.Directory.GetFiles(iconFolder);
+            for (int i = 0; i < GalleryArray.Length; i++)
+            {
+                if (GalleryArray[i].ToLower().EndsWith(".ico"))
+                    imageList1.Images.Add(Path.GetFileName(GalleryArray[i]), Icon.ExtractAssociatedIcon(GalleryArray[i]));
+            }
+
+            tree1 = new TreeViewMS();
             splitContainer1.Panel1.Controls.Add(tree1);
             tree1.Dock = DockStyle.Fill;
             tree1.ItemHeight = 18;
@@ -35,54 +47,8 @@ namespace UniversalPatcher
             tree1.HideSelection = false;
             tree1.ImageList = imageList1;
 
-            TreeNode tn = new TreeNode("All");
-            tn.Name = "All";
-            tn.ImageKey = "explorer.ico";
-            tn.SelectedImageKey = "explorer.ico";
-            tree1.Nodes.Add(tn);
-
-            TreeNode tn1 = new TreeNode("1D");
-            tn1.Name = "1D";
-            tn1.ImageKey = "1d.ico";
-            tn1.SelectedImageKey = "1d.ico";            
-            tree1.Nodes.Add(tn1);
-
-            TreeNode tn2 = new TreeNode("2D");
-            tn2.Name = "2D";
-            tn2.ImageKey = "2d.ico";
-            tn2.SelectedImageKey = "2d.ico";
-            tree1.Nodes.Add(tn2);
-
-            TreeNode tn3 = new TreeNode("3D");
-            tn3.Name = "3D";
-            tn3.ImageKey = "3d.ico";
-            tn3.SelectedImageKey = "3d.ico";
-            tree1.Nodes.Add(tn3);
-
-            TreeNode tnB = new TreeNode("Boolean");
-            tnB.Name = "Boolean";
-            tnB.ImageKey = "flag.ico";
-            tnB.SelectedImageKey = "flag.ico";
-            tree1.Nodes.Add(tnB);
-
-            TreeNode tnM = new TreeNode("Mask");
-            tnM.Name = "Mask";
-            tnM.ImageKey = "mask.ico";
-            tnM.SelectedImageKey = "mask.ico";
-            tree1.Nodes.Add(tnM);
-
-            TreeNode tnE = new TreeNode("Enum");
-            tnE.Name = "Enum";
-            tnE.ImageKey = "enum.ico";
-            tnE.SelectedImageKey = "enum.ico";
-            tree1.Nodes.Add(tnE);
-
-            TreeNode tnN = new TreeNode("Number");
-            tnN.Name = "Number";
-            tnN.ImageKey = "number.ico";
-            tnN.SelectedImageKey = "number.ico";
-            tree1.Nodes.Add(tnN);
-
+            tree1.SelectedNodes.Clear();
+            TreeParts.addNodes(tree1.Nodes,pcm1);
         }
         private class TableDiff
         {
@@ -175,33 +141,96 @@ namespace UniversalPatcher
                 compareList = tdiffList.OrderByDescending(x => typeof(TableDiff).GetProperty(sortBy).GetValue(x, null)).ToList();
             var results = compareList.Where(t=> t.TableName.ToString().ToLower().Contains(txtFilter.Text.Trim()));
 
-            if (tree1.SelectedNode != null)
+            if (!tree1.Nodes["All"].IsSelected && tree1.SelectedNodes.Count > 0)
             {
-                switch (tree1.SelectedNode.Name)
+                List<string> selectedSegs = new List<string>();
+                List<string> selectedCats = new List<string>();
+                List<string> selectedValTypes = new List<string>();
+                List<string> selectedDimensions = new List<string>();
+                foreach (TreeNode tn in tree1.SelectedNodes)
                 {
-                    case "All":
-                        break;
-                    case "1D":
-                        results = results.Where(t => t.td.Dimensions() == 1);
+                    switch (tn.Parent.Name)
+                    {
+                        case "Segments":
+                            selectedSegs.Add(tn.Name);
                             break;
-                    case "2D":
-                        results = results.Where(t => t.td.Dimensions() == 2);
-                        break;
-                    case "3D":
-                        results = results.Where(t => t.td.Dimensions() == 3);
-                        break;
-                    case "Boolean":
-                        results = results.Where(t => getValueType(t.td) == TableValueType.boolean);
-                        break;
-                    case "Mask":
-                        results = results.Where(t => t.td.BitMask != null && t.td.BitMask.Length  > 0);
-                        break;
-                    case "Enum":
-                        results = results.Where(t => getValueType(t.td) == TableValueType.selection);
-                        break;
-                    case "Number":
-                        results = results.Where(t => getValueType(t.td) == TableValueType.number);
-                        break;
+                        case "Categories":
+                            selectedCats.Add(tn.Name);
+                            break;
+                        case "Dimensions":
+                            selectedDimensions.Add(tn.Name);
+                            break;
+                        case "ValueTypes":
+                            selectedValTypes.Add(tn.Name);
+                            break;
+                    }
+                }
+
+                if (selectedSegs.Count > 0)
+                {
+                    List<TableDiff> newTDList = new List<TableDiff>();
+                    foreach (string seg in selectedSegs)
+                    {
+                        int segNr = 0;
+                        for (int s = 0; s < pcm1.segmentinfos.Length; s++)
+                            if (pcm1.segmentinfos[s].Name == seg)
+                                segNr = s;
+                        uint addrStart = pcm1.segmentAddressDatas[segNr].SegmentBlocks[0].Start;
+                        uint addrEnd = pcm1.segmentAddressDatas[segNr].SegmentBlocks[pcm1.segmentAddressDatas[segNr].SegmentBlocks.Count - 1].End;
+                        var newResults = results.Where(t => t.td.addrInt >= addrStart && t.td.addrInt <= addrEnd);
+                        foreach (TableDiff nTd in newResults)
+                            newTDList.Add(nTd);
+                    }
+                    results = newTDList;
+                }
+
+                if (selectedCats.Count > 0)
+                {
+                    List<TableDiff> newTDList = new List<TableDiff>();
+                    foreach (TableDiff tDif in results)
+                    {
+                        if (selectedCats.Contains(tDif.td.Category))
+                            newTDList.Add(tDif);
+                    }
+                    results = newTDList;
+                }
+
+                if (selectedValTypes.Count > 0)
+                {
+                    List<TableDiff> newTDList = new List<TableDiff>();
+                    foreach (string valT in selectedValTypes)
+                    {
+                        if (valT == "mask")
+                        {
+                            foreach (TableDiff tDif in results)
+                            {
+                                if (tDif.td.BitMask != null && tDif.td.BitMask.Length > 0)
+                                    newTDList.Add(tDif);
+                            }
+
+                        }
+                        else
+                        {
+                            foreach (TableDiff tDif in results)
+                            {
+                                string tdValT = getValueType(tDif.td).ToString();
+                                if (tdValT == valT)
+                                    newTDList.Add(tDif);
+                            }
+                        }
+                    }
+                    results = newTDList;
+                }
+
+                if (selectedDimensions.Count > 0)
+                {
+                    List<TableDiff> newTDList = new List<TableDiff>();
+                    foreach (TableDiff tDif in results)
+                    {
+                        if (selectedDimensions.Contains(tDif.td.Dimensions().ToString() + "D"))
+                            newTDList.Add(tDif);
+                    }
+                    results = newTDList;
                 }
             }
             bindingSource.DataSource = results;

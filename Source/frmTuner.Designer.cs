@@ -113,7 +113,6 @@ namespace UniversalPatcher
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.txtDescription = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.treeView1 = new System.Windows.Forms.TreeView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabDimensions = new System.Windows.Forms.TabPage();
@@ -143,6 +142,8 @@ namespace UniversalPatcher
             this.contextMenuStripTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compareSelectedTablesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.treeView1 = new UniversalPatcher.TreeViewMS();
+            this.splitContainerListMode = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -159,18 +160,20 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).BeginInit();
             this.tabFileInfo.SuspendLayout();
             this.contextMenuStripTree.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerListMode)).BeginInit();
+            this.splitContainerListMode.Panel1.SuspendLayout();
+            this.splitContainerListMode.Panel2.SuspendLayout();
+            this.splitContainerListMode.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
             // 
             this.dataGridView1.AllowUserToOrderColumns = true;
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(107, 3);
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(911, 404);
+            this.dataGridView1.Size = new System.Drawing.Size(677, 409);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
@@ -833,9 +836,8 @@ namespace UniversalPatcher
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.treeView1);
             this.splitContainer2.Panel1.Controls.Add(this.tabControl1);
-            this.splitContainer2.Panel1.Controls.Add(this.dataGridView1);
+            this.splitContainer2.Panel1.Controls.Add(this.splitContainerListMode);
             // 
             // splitContainer2.Panel2
             // 
@@ -843,21 +845,6 @@ namespace UniversalPatcher
             this.splitContainer2.Size = new System.Drawing.Size(1021, 502);
             this.splitContainer2.SplitterDistance = 409;
             this.splitContainer2.TabIndex = 22;
-            // 
-            // treeView1
-            // 
-            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.treeView1.HideSelection = false;
-            this.treeView1.ImageIndex = 0;
-            this.treeView1.ImageList = this.imageList1;
-            this.treeView1.Indent = 20;
-            this.treeView1.ItemHeight = 18;
-            this.treeView1.Location = new System.Drawing.Point(1, 3);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.SelectedImageIndex = 0;
-            this.treeView1.Size = new System.Drawing.Size(100, 403);
-            this.treeView1.TabIndex = 2;
             // 
             // imageList1
             // 
@@ -1233,6 +1220,38 @@ namespace UniversalPatcher
             this.compareSelectedTablesToolStripMenuItem1.Text = "Compare selected tables";
             this.compareSelectedTablesToolStripMenuItem1.Click += new System.EventHandler(this.compareSelectedTablesToolStripMenuItem1_Click);
             // 
+            // treeView1
+            // 
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.HideSelection = false;
+            this.treeView1.ImageIndex = 0;
+            this.treeView1.ImageList = this.imageList1;
+            this.treeView1.Indent = 20;
+            this.treeView1.ItemHeight = 18;
+            this.treeView1.Location = new System.Drawing.Point(0, 0);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.SelectedImageIndex = 0;
+            this.treeView1.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("treeView1.SelectedNodes")));
+            this.treeView1.Size = new System.Drawing.Size(340, 409);
+            this.treeView1.TabIndex = 2;
+            // 
+            // splitContainerListMode
+            // 
+            this.splitContainerListMode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerListMode.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerListMode.Name = "splitContainerListMode";
+            // 
+            // splitContainerListMode.Panel1
+            // 
+            this.splitContainerListMode.Panel1.Controls.Add(this.treeView1);
+            // 
+            // splitContainerListMode.Panel2
+            // 
+            this.splitContainerListMode.Panel2.Controls.Add(this.dataGridView1);
+            this.splitContainerListMode.Size = new System.Drawing.Size(1021, 409);
+            this.splitContainerListMode.SplitterDistance = 340;
+            this.splitContainerListMode.TabIndex = 3;
+            // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1276,6 +1295,10 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.numIconSize)).EndInit();
             this.tabFileInfo.ResumeLayout(false);
             this.contextMenuStripTree.ResumeLayout(false);
+            this.splitContainerListMode.Panel1.ResumeLayout(false);
+            this.splitContainerListMode.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerListMode)).EndInit();
+            this.splitContainerListMode.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1393,6 +1416,7 @@ namespace UniversalPatcher
         private TabControl tabControlFileInfo;
         private ToolStripMenuItem compareSelectedTablesToolStripMenuItem1;
         private ToolStripMenuItem importXDFToolStripMenuItem;
-        private TreeView treeView1;
+        private TreeViewMS treeView1;
+        private SplitContainer splitContainerListMode;
     }
 }

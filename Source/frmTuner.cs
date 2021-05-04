@@ -87,6 +87,8 @@ namespace UniversalPatcher
                     this.splitContainer2.SplitterDistance = Properties.Settings.Default.TunerLogWindowSize.Width;
                     this.splitContainer1.SplitterDistance = Properties.Settings.Default.TunerLogWindowSize.Height;
                 }
+                if (Properties.Settings.Default.TunerListModeTreeWidth > 0)
+                    splitContainerListMode.SplitterDistance = Properties.Settings.Default.TunerListModeTreeWidth;
 
             }
 
@@ -127,11 +129,12 @@ namespace UniversalPatcher
                     Properties.Settings.Default.TunerWindowLocation = this.RestoreBounds.Location;
                     Properties.Settings.Default.TunerWindowSize = this.RestoreBounds.Size;
                 }
+                Size logSize = new Size();
+                logSize.Width = this.splitContainer2.SplitterDistance;
+                logSize.Height = this.splitContainer1.SplitterDistance;
+                Properties.Settings.Default.TunerLogWindowSize = logSize;
+                Properties.Settings.Default.TunerListModeTreeWidth = splitContainerListMode.SplitterDistance;
             }
-            Size logSize = new Size();
-            logSize.Width = this.splitContainer2.SplitterDistance;
-            logSize.Height = this.splitContainer1.SplitterDistance;
-            Properties.Settings.Default.TunerLogWindowSize = logSize;
             Properties.Settings.Default.TunerConfigMode = enableConfigModeToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
         }
@@ -175,6 +178,10 @@ namespace UniversalPatcher
             ToolStripMenuItem mitem = (ToolStripMenuItem)currentFileToolStripMenuItem.DropDownItems[PCM.FileName];
             mitem.Checked = true;
             currentBin = mitem.Text.Substring(0, 1);
+
+            treeView1.SelectedNodes.Clear();
+            TreeParts.addNodes(treeView1.Nodes, PCM);
+
         }
 
         public void loadConfigforPCM(ref PcmFile newPCM)
@@ -600,33 +607,97 @@ namespace UniversalPatcher
                         results = results.Where(t => t.Category.ToLower().Contains(comboTableCategory.Text.ToLower()));
                     }
                 }
-                if (treeView1.SelectedNode != null)
+
+                if (treeView1.Visible && !treeView1.Nodes["All"].IsSelected && treeView1.SelectedNodes.Count > 0)
                 {
-                    switch (treeView1.SelectedNode.Name)
+                    List<string> selectedSegs = new List<string>();
+                    List<string> selectedCats = new List<string>();
+                    List<string> selectedValTypes = new List<string>();
+                    List<string> selectedDimensions = new List<string>();
+                    foreach (TreeNode tn in treeView1.SelectedNodes)
                     {
-                        case "All":
-                            break;
-                        case "1D":
-                            results = results.Where(t => t.Dimensions() == 1);
-                            break;
-                        case "2D":
-                            results = results.Where(t => t.Dimensions() == 2);
-                            break;
-                        case "3D":
-                            results = results.Where(t => t.Dimensions() == 3);
-                            break;
-                        case "Boolean":
-                            results = results.Where(t => getValueType(t) == TableValueType.boolean);
-                            break;
-                        case "Mask":
-                            results = results.Where(t => t.BitMask != null && t.BitMask.Length > 0);
-                            break;
-                        case "Enum":
-                            results = results.Where(t => getValueType(t) == TableValueType.selection);
-                            break;
-                        case "Number":
-                            results = results.Where(t => getValueType(t) == TableValueType.number);
-                            break;
+                        switch (tn.Parent.Name)
+                        {
+                            case "Segments":
+                                selectedSegs.Add(tn.Name);
+                                break;
+                            case "Categories":
+                                selectedCats.Add(tn.Name);
+                                break;
+                            case "Dimensions":
+                                selectedDimensions.Add(tn.Name);
+                                break;
+                            case "ValueTypes":
+                                selectedValTypes.Add(tn.Name);
+                                break;
+                        }
+                    }
+
+                    if (selectedSegs.Count > 0)
+                    {
+                        List<TableData> newTDList = new List<TableData>();
+                        foreach (string seg in selectedSegs)
+                        {
+                            int segNr = 0;
+                            for (int s = 0; s < PCM.segmentinfos.Length; s++)
+                                if (PCM.segmentinfos[s].Name == seg)
+                                    segNr = s;
+                            uint addrStart = PCM.segmentAddressDatas[segNr].SegmentBlocks[0].Start;
+                            uint addrEnd = PCM.segmentAddressDatas[segNr].SegmentBlocks[PCM.segmentAddressDatas[segNr].SegmentBlocks.Count - 1].End;
+                            var newResults = results.Where(t => t.addrInt >= addrStart && t.addrInt <= addrEnd);
+                            foreach (TableData nTd in newResults)
+                                newTDList.Add(nTd);
+                        }
+                        results = newTDList;
+                    }
+
+                    if (selectedCats.Count > 0)
+                    {
+                        List<TableData> newTDList = new List<TableData>();
+                        foreach (TableData td in results)
+                        {
+                            if (selectedCats.Contains(td.Category))
+                                newTDList.Add(td);
+                        }
+                        results = newTDList;
+                    }
+
+                    if (selectedValTypes.Count > 0)
+                    {
+                        List<TableData> newTDList = new List<TableData>();
+                        foreach (string valT in selectedValTypes)
+                        {
+                            if (valT == "mask")
+                            {
+                                foreach (TableData td in results)
+                                {
+                                    if (td.BitMask != null && td.BitMask.Length > 0)
+                                        newTDList.Add(td);
+                                }
+
+                            }
+                            else
+                            {
+                                foreach (TableData td in results)
+                                {
+                                    string tdValT = getValueType(td).ToString();
+                                    if (tdValT == valT)
+                                        newTDList.Add(td);
+                                }
+                            }
+                        }
+                        results = newTDList;
+                    }
+
+                    if (selectedDimensions.Count > 0)
+                    {
+                        List<TableData> newTDList = new List<TableData>();
+                        foreach (TableData td in results)
+                        {
+                            if (selectedDimensions.Contains(td.Dimensions().ToString() + "D"))
+                                newTDList.Add(td);
+                        }
+                        results = newTDList;
                     }
                 }
 
@@ -2549,6 +2620,7 @@ namespace UniversalPatcher
             treeMode = true;
             dataGridView1.Visible = false;
             treeView1.Visible = false;
+            dataGridView1.DataSource = null;
             if (splitTree == null)
             {
                 splitTree = new SplitContainer();
@@ -2567,7 +2639,7 @@ namespace UniversalPatcher
                 tabFileInfo.Enter += TabFileInfo_Enter;
             }
             splitTree.Visible = true;
-
+            splitContainerListMode.Visible = false;
             tabControl1.Visible = true;
             currentTab = "Dimensions";
             loadDimensions();
@@ -2631,57 +2703,13 @@ namespace UniversalPatcher
             treeMode = false;
             if (splitTree != null)
                 splitTree.Visible = false;
+            splitContainerListMode.Visible = true;
             dataGridView1.Visible = true;
+            dataGridView1.DataSource = bindingsource;
             treeView1.Visible = true;
             if (treeView1.Nodes.Count == 0)
             {
-                TreeNode tn = new TreeNode("All");
-                tn.Name = "All";
-                tn.ImageKey = "explorer.ico";
-                tn.SelectedImageKey = "explorer.ico";
-                treeView1.Nodes.Add(tn);
-
-                TreeNode tn1 = new TreeNode("1D");
-                tn1.Name = "1D";
-                tn1.ImageKey = "1d.ico";
-                tn1.SelectedImageKey = "1d.ico";
-                treeView1.Nodes.Add(tn1);
-
-                TreeNode tn2 = new TreeNode("2D");
-                tn2.Name = "2D";
-                tn2.ImageKey = "2d.ico";
-                tn2.SelectedImageKey = "2d.ico";
-                treeView1.Nodes.Add(tn2);
-
-                TreeNode tn3 = new TreeNode("3D");
-                tn3.Name = "3D";
-                tn3.ImageKey = "3d.ico";
-                tn3.SelectedImageKey = "3d.ico";
-                treeView1.Nodes.Add(tn3);
-
-                TreeNode tnB = new TreeNode("Boolean");
-                tnB.Name = "Boolean";
-                tnB.ImageKey = "boolean.ico";
-                tnB.SelectedImageKey = "boolean.ico";
-                treeView1.Nodes.Add(tnB);
-
-                TreeNode tnM = new TreeNode("Mask");
-                tnM.Name = "Mask";
-                tnM.ImageKey = "bitmask.ico";
-                tnM.SelectedImageKey = "bitmask.ico";
-                treeView1.Nodes.Add(tnM);
-
-                TreeNode tnE = new TreeNode("Enum");
-                tnE.Name = "Enum";
-                tnE.ImageKey = "enum.ico";
-                tnE.SelectedImageKey = "enum.ico";
-                treeView1.Nodes.Add(tnE);
-
-                TreeNode tnN = new TreeNode("Number");
-                tnN.Name = "Number";
-                tnN.ImageKey = "number.ico";
-                tnN.SelectedImageKey = "number.ico";
-                treeView1.Nodes.Add(tnN);
+                TreeParts.addNodes(treeView1.Nodes, PCM);
                 treeView1.AfterSelect += TreeView1_AfterSelect;
             }
             btnCollapse.Visible = false;

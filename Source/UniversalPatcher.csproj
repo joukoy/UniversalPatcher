@@ -332,6 +332,7 @@
     <Compile Include="TableSeek.cs" />
     <Compile Include="tableSearch.cs" />
     <Compile Include="TinyTuner.cs" />
+    <Compile Include="TreeParts.cs" />
     <Compile Include="TreeViewMS.cs">
       <SubType>Component</SubType>
     </Compile>
