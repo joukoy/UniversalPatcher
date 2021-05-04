@@ -502,7 +502,7 @@ namespace UniversalPatcher
             }
 
         }
-        private void filterTables(string filter = "")
+        private void filterTables()
         {
             try
             {
@@ -600,9 +600,9 @@ namespace UniversalPatcher
                         results = results.Where(t => t.Category.ToLower().Contains(comboTableCategory.Text.ToLower()));
                     }
                 }
-                if (filter.Length > 0)
+                if (treeView1.SelectedNode != null)
                 {
-                    switch (filter)
+                    switch (treeView1.SelectedNode.Name)
                     {
                         case "All":
                             break;
@@ -2661,14 +2661,14 @@ namespace UniversalPatcher
 
                 TreeNode tnB = new TreeNode("Boolean");
                 tnB.Name = "Boolean";
-                tnB.ImageKey = "flag.ico";
-                tnB.SelectedImageKey = "flag.ico";
+                tnB.ImageKey = "boolean.ico";
+                tnB.SelectedImageKey = "boolean.ico";
                 treeView1.Nodes.Add(tnB);
 
                 TreeNode tnM = new TreeNode("Mask");
                 tnM.Name = "Mask";
-                tnM.ImageKey = "mask.ico";
-                tnM.SelectedImageKey = "mask.ico";
+                tnM.ImageKey = "bitmask.ico";
+                tnM.SelectedImageKey = "bitmask.ico";
                 treeView1.Nodes.Add(tnM);
 
                 TreeNode tnE = new TreeNode("Enum");
@@ -2709,7 +2709,7 @@ namespace UniversalPatcher
 
         private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            filterTables(e.Node.Name);
+            filterTables();
         }
 
         private void Tree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -2924,6 +2924,9 @@ namespace UniversalPatcher
                 treeValueType.Indent = iconSize + 4;
                 treeValueType.Font = Properties.Settings.Default.TableExplorerFont;
             }
+            treeView1.ItemHeight = iconSize + 2;
+            treeView1.Indent = iconSize + 4;
+            treeView1.Font = Properties.Settings.Default.TableExplorerFont;
         }
         private TreeNode createTreeNode(string txt)
         {
@@ -2952,6 +2955,7 @@ namespace UniversalPatcher
                 treeDimensions.ImageList = imageList1;
                 treeDimensions.CheckBoxes = false;
                 treeDimensions.Dock = DockStyle.Fill;
+                treeDimensions.HideSelection = false;
                 tabDimensions.Controls.Add(treeDimensions);
                 //treeDimensions.AfterCheck += Tree_AfterCheck;
                 treeDimensions.AfterSelect += Tree_AfterSelect;
@@ -3044,6 +3048,7 @@ namespace UniversalPatcher
                 treeValueType.ImageList = imageList1;
                 treeValueType.CheckBoxes = false;
                 treeValueType.Dock = DockStyle.Fill;
+                treeValueType.HideSelection = false;
                 tabValueType.Controls.Add(treeValueType);
                 treeValueType.AfterSelect += Tree_AfterSelect;
                 treeValueType.AfterCheck += Tree_AfterCheck;
@@ -3127,7 +3132,7 @@ namespace UniversalPatcher
                 setIconSize();
                 treeCategory.ImageList = imageList1;
                 treeCategory.CheckBoxes = false;
-
+                treeCategory.HideSelection = false;
                 treeCategory.Dock = DockStyle.Fill;
                 tabCategory.Controls.Add(treeCategory);
                 treeCategory.AfterSelect += Tree_AfterSelect;
@@ -3203,7 +3208,7 @@ namespace UniversalPatcher
                 setIconSize();
                 treeSegments.ImageList = imageList1;
                 treeSegments.CheckBoxes = false;
-
+                treeSegments.HideSelection = false;
                 treeSegments.Dock = DockStyle.Fill;
                 tabSegments.Controls.Add(treeSegments);
                 treeSegments.AfterSelect += Tree_AfterSelect;

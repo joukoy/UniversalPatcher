@@ -848,6 +848,7 @@ namespace UniversalPatcher
             // 
             this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.treeView1.HideSelection = false;
             this.treeView1.ImageIndex = 0;
             this.treeView1.ImageList = this.imageList1;
             this.treeView1.Indent = 20;
@@ -874,28 +875,27 @@ namespace UniversalPatcher
             this.imageList1.Images.SetKeyName(9, "flag1d.ico");
             this.imageList1.Images.SetKeyName(10, "flag2d.ico");
             this.imageList1.Images.SetKeyName(11, "flag3d.ico");
-            this.imageList1.Images.SetKeyName(12, "mask.ico");
-            this.imageList1.Images.SetKeyName(13, "mask1d.ico");
-            this.imageList1.Images.SetKeyName(14, "mask2d.ico");
-            this.imageList1.Images.SetKeyName(15, "mask3d.ico");
-            this.imageList1.Images.SetKeyName(16, "num.ico");
-            this.imageList1.Images.SetKeyName(17, "boolean.ico");
-            this.imageList1.Images.SetKeyName(18, "bitmask.ico");
-            this.imageList1.Images.SetKeyName(19, "number.ico");
-            this.imageList1.Images.SetKeyName(20, "Dimensions.ico");
-            this.imageList1.Images.SetKeyName(21, "valuetype.ico");
-            this.imageList1.Images.SetKeyName(22, "segments.ico");
-            this.imageList1.Images.SetKeyName(23, "category.ico");
-            this.imageList1.Images.SetKeyName(24, "eeprom.ico");
-            this.imageList1.Images.SetKeyName(25, "engine.ico");
-            this.imageList1.Images.SetKeyName(26, "fuel.ico");
-            this.imageList1.Images.SetKeyName(27, "os.ico");
-            this.imageList1.Images.SetKeyName(28, "speedo.ico");
-            this.imageList1.Images.SetKeyName(29, "system.ico");
-            this.imageList1.Images.SetKeyName(30, "trans.ico");
-            this.imageList1.Images.SetKeyName(31, "enginediag.ico");
-            this.imageList1.Images.SetKeyName(32, "transdiag.ico");
-            this.imageList1.Images.SetKeyName(33, "patch.ico");
+            this.imageList1.Images.SetKeyName(12, "mask1d.ico");
+            this.imageList1.Images.SetKeyName(13, "mask2d.ico");
+            this.imageList1.Images.SetKeyName(14, "mask3d.ico");
+            this.imageList1.Images.SetKeyName(15, "num.ico");
+            this.imageList1.Images.SetKeyName(16, "number.ico");
+            this.imageList1.Images.SetKeyName(17, "Dimensions.ico");
+            this.imageList1.Images.SetKeyName(18, "valuetype.ico");
+            this.imageList1.Images.SetKeyName(19, "segments.ico");
+            this.imageList1.Images.SetKeyName(20, "category.ico");
+            this.imageList1.Images.SetKeyName(21, "eeprom.ico");
+            this.imageList1.Images.SetKeyName(22, "engine.ico");
+            this.imageList1.Images.SetKeyName(23, "fuel.ico");
+            this.imageList1.Images.SetKeyName(24, "os.ico");
+            this.imageList1.Images.SetKeyName(25, "speedo.ico");
+            this.imageList1.Images.SetKeyName(26, "system.ico");
+            this.imageList1.Images.SetKeyName(27, "trans.ico");
+            this.imageList1.Images.SetKeyName(28, "enginediag.ico");
+            this.imageList1.Images.SetKeyName(29, "transdiag.ico");
+            this.imageList1.Images.SetKeyName(30, "patch.ico");
+            this.imageList1.Images.SetKeyName(31, "boolean.ico");
+            this.imageList1.Images.SetKeyName(32, "bitmask.ico");
             // 
             // tabControl1
             // 

@@ -23,15 +23,16 @@ namespace UniversalPatcher
             tdList2 = _tdList2;
         }
 
-        TreeViewMS tree1;
+        TreeView tree1;
 
         private void frmHexDiff_Load(object sender, EventArgs e)
         {
-            tree1 = new TreeViewMS();
+            tree1 = new TreeView();
             splitContainer1.Panel1.Controls.Add(tree1);
             tree1.Dock = DockStyle.Fill;
             tree1.ItemHeight = 18;
             tree1.Indent = 20;
+            tree1.HideSelection = false;
             tree1.ImageList = imageList1;
 
             TreeNode tn = new TreeNode("All");
@@ -162,10 +163,10 @@ namespace UniversalPatcher
 
         private void Tree1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            filterTables(e.Node.Name);
+            filterTables();
         }
 
-        private void filterTables(string filter = "")
+        private void filterTables()
         {
             List<TableDiff> compareList = new List<TableDiff>();
             if (strSortOrder == SortOrder.Ascending)
@@ -174,9 +175,9 @@ namespace UniversalPatcher
                 compareList = tdiffList.OrderByDescending(x => typeof(TableDiff).GetProperty(sortBy).GetValue(x, null)).ToList();
             var results = compareList.Where(t=> t.TableName.ToString().ToLower().Contains(txtFilter.Text.Trim()));
 
-            if (filter.Length > 0)
+            if (tree1.SelectedNode != null)
             {
-                switch (filter)
+                switch (tree1.SelectedNode.Name)
                 {
                     case "All":
                         break;
