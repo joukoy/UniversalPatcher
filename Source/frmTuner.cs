@@ -631,6 +631,26 @@ namespace UniversalPatcher
                                 selectedValTypes.Add(tn.Name);
                                 break;
                         }
+                        TreeNode tnParent = tn.Parent;
+                        while (tnParent.Parent != null)
+                        {
+                            switch (tnParent.Parent.Name)
+                            {
+                                case "Segments":
+                                    selectedSegs.Add(tnParent.Name);
+                                    break;
+                                case "Categories":
+                                    selectedCats.Add(tnParent.Name);
+                                    break;
+                                case "Dimensions":
+                                    selectedDimensions.Add(tnParent.Name);
+                                    break;
+                                case "ValueTypes":
+                                    selectedValTypes.Add(tnParent.Name);
+                                    break;
+                            }
+                            tnParent = tnParent.Parent;
+                        }
                     }
 
                     if (selectedSegs.Count > 0)
@@ -2710,8 +2730,8 @@ namespace UniversalPatcher
             if (treeView1.Nodes.Count == 0)
             {
                 TreeParts.addNodes(treeView1.Nodes, PCM);
-                treeView1.AfterSelect += TreeView1_AfterSelect;
             }
+            treeView1.AfterSelect += TreeView1_AfterSelect;
             btnCollapse.Visible = false;
             btnExpand.Visible = false;
             //numIconSize.Visible = false;
@@ -2735,8 +2755,11 @@ namespace UniversalPatcher
             importXDFToolStripMenuItem.Visible = false;
         }
 
+
         private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            if (e.Node.Nodes.Count == 0)
+                TreeParts.addChildNodes(e.Node,PCM);
             filterTables();
         }
 
@@ -2958,7 +2981,7 @@ namespace UniversalPatcher
         }
         private TreeNode createTreeNode(string txt)
         {
-            TreeNode tn = new TreeNode(txt);
+            TreeNode tn = new TreeNode();
             tn.Name = txt;
             tn.ImageKey = txt + ".ico";
             tn.SelectedImageKey = txt + ".ico";

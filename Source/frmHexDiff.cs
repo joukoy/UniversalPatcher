@@ -129,6 +129,8 @@ namespace UniversalPatcher
 
         private void Tree1_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            if (e.Node.Nodes.Count == 0)
+                TreeParts.addChildNodes(e.Node, pcm1);
             filterTables();
         }
 
@@ -164,6 +166,27 @@ namespace UniversalPatcher
                             selectedValTypes.Add(tn.Name);
                             break;
                     }
+                    TreeNode tnParent = tn.Parent;
+                    while (tnParent.Parent != null)
+                    {
+                        switch (tnParent.Parent.Name)
+                        {
+                            case "Segments":
+                                selectedSegs.Add(tnParent.Name);
+                                break;
+                            case "Categories":
+                                selectedCats.Add(tnParent.Name);
+                                break;
+                            case "Dimensions":
+                                selectedDimensions.Add(tnParent.Name);
+                                break;
+                            case "ValueTypes":
+                                selectedValTypes.Add(tnParent.Name);
+                                break;
+                        }
+                        tnParent = tnParent.Parent;
+                    }
+
                 }
 
                 if (selectedSegs.Count > 0)
