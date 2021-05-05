@@ -183,7 +183,7 @@ namespace UniversalPatcher
             if (treeView1.Visible)
             {
                 treeView1.SelectedNodes.Clear();
-                TreeParts.addNodes(treeView1.Nodes, PCM, filteredTableDatas.ToList());
+                TreeParts.addNodes(treeView1.Nodes, PCM);
             }
         }
 
@@ -2730,7 +2730,7 @@ namespace UniversalPatcher
             if (treeView1.Nodes.Count == 0)
             {
                 treeView1.SelectedNodes.Clear();
-                TreeParts.addNodes(treeView1.Nodes, PCM, filteredTableDatas.ToList());
+                TreeParts.addNodes(treeView1.Nodes, PCM);
             }
             treeView1.AfterSelect += TreeView1_AfterSelect;
             treeView1.NodeMouseClick += TreeView1_NodeMouseClick;

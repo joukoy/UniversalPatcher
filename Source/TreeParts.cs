@@ -34,19 +34,16 @@ namespace UniversalPatcher
             List<TableData> filteredTableDatas = filterTD(node, pcm);
             if (!includesCollection(node, "Dimensions"))
                 TreeParts.addDimensions(node.Nodes,filteredTableDatas);
-            filteredTableDatas = filterTD(node, pcm);
             if (!includesCollection(node, "ValueTypes"))
                 TreeParts.addValueTypes(node.Nodes,filteredTableDatas);
-            filteredTableDatas = filterTD(node, pcm);
             if (!includesCollection(node, "Categories"))
                 TreeParts.addCategories(node.Nodes, pcm, filteredTableDatas);
-            filteredTableDatas = filterTD(node, pcm);
             if (!includesCollection(node, "Segments"))
                 TreeParts.addSegments(node.Nodes, pcm, filteredTableDatas);
 
         }
 
-        public static void addNodes(TreeNodeCollection parent, PcmFile pcm1, List<TableData> filteredTableDatas)
+        public static void addNodes(TreeNodeCollection parent, PcmFile pcm1)
         {
             parent.Clear();
 
@@ -56,10 +53,10 @@ namespace UniversalPatcher
             tn.SelectedImageKey = "explorer.ico";
             parent.Add(tn);
 
-            addDimensions(parent,filteredTableDatas);
-            addValueTypes(parent,filteredTableDatas);
-            addCategories(parent, pcm1, filteredTableDatas);
-            addSegments(parent, pcm1, filteredTableDatas);
+            addDimensions(parent,pcm1.tableDatas);
+            addValueTypes(parent, pcm1.tableDatas);
+            addCategories(parent, pcm1, pcm1.tableDatas);
+            addSegments(parent, pcm1, pcm1.tableDatas);
 
         }
 

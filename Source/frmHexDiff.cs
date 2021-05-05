@@ -126,7 +126,7 @@ namespace UniversalPatcher
             dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
             filterTables();
             tree1.SelectedNodes.Clear();
-            TreeParts.addNodes(tree1.Nodes, pcm1, filteredTableDatas);
+            TreeParts.addNodes(tree1.Nodes, pcm1);
             tree1.AfterSelect += Tree1_AfterSelect;
             tree1.ContextMenuStrip = contextMenuStrip1;
         }
