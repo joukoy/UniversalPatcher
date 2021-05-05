@@ -400,6 +400,8 @@ namespace UniversalPatcher
         private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode tn = tree1.SelectedNode;
+            foreach (TreeNode childTn in tn.Nodes)
+                TreeParts.addChildNodes(childTn, pcm1, filteredTableDatas.ToList());
             tn.ExpandAll();
         }
 

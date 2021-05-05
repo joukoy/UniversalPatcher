@@ -13,7 +13,9 @@ namespace UniversalPatcher
     {
         private static bool includesCollection(TreeNode node, string nodeName)
         {
-            if (node.Parent == null )
+            if (node.Name == nodeName)
+                return true;
+            if (node.Parent == null)
                 return false;   //Root-node
             if (node.Parent.Name == nodeName)
                 return true;
