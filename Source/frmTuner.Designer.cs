@@ -147,6 +147,8 @@ namespace UniversalPatcher
             this.contextMenuStripTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compareSelectedTablesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.expand2LevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.expand3LevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -247,35 +249,35 @@ namespace UniversalPatcher
             // loadBINToolStripMenuItem
             // 
             this.loadBINToolStripMenuItem.Name = "loadBINToolStripMenuItem";
-            this.loadBINToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadBINToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.loadBINToolStripMenuItem.Text = "Open BIN";
             this.loadBINToolStripMenuItem.Click += new System.EventHandler(this.loadBINToolStripMenuItem_Click);
             // 
             // saveBINToolStripMenuItem
             // 
             this.saveBINToolStripMenuItem.Name = "saveBINToolStripMenuItem";
-            this.saveBINToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveBINToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.saveBINToolStripMenuItem.Text = "&Save BIN";
             this.saveBINToolStripMenuItem.Click += new System.EventHandler(this.saveBINToolStripMenuItem_Click);
             // 
             // saveBinAsToolStripMenuItem
             // 
             this.saveBinAsToolStripMenuItem.Name = "saveBinAsToolStripMenuItem";
-            this.saveBinAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveBinAsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.saveBinAsToolStripMenuItem.Text = "Save BIN &As...";
             this.saveBinAsToolStripMenuItem.Click += new System.EventHandler(this.saveBinAsToolStripMenuItem_Click);
             // 
             // openMultipleBINToolStripMenuItem
             // 
             this.openMultipleBINToolStripMenuItem.Name = "openMultipleBINToolStripMenuItem";
-            this.openMultipleBINToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openMultipleBINToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.openMultipleBINToolStripMenuItem.Text = "Open multiple BIN";
             this.openMultipleBINToolStripMenuItem.Click += new System.EventHandler(this.openMultipleBINToolStripMenuItem_Click);
             // 
             // saveAllBINFilesToolStripMenuItem
             // 
             this.saveAllBINFilesToolStripMenuItem.Name = "saveAllBINFilesToolStripMenuItem";
-            this.saveAllBINFilesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAllBINFilesToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.saveAllBINFilesToolStripMenuItem.Text = "Save All BIN files";
             this.saveAllBINFilesToolStripMenuItem.Click += new System.EventHandler(this.saveAllBINFilesToolStripMenuItem_Click);
             // 
@@ -1049,16 +1051,18 @@ namespace UniversalPatcher
             // 
             this.contextMenuStripListTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.expandAllToolStripMenuItem,
+            this.expand2LevelsToolStripMenuItem,
+            this.expand3LevelsToolStripMenuItem,
             this.collapseToolStripMenuItem});
             this.contextMenuStripListTree.Name = "contextMenuStripListTree";
-            this.contextMenuStripListTree.Size = new System.Drawing.Size(181, 70);
+            this.contextMenuStripListTree.Size = new System.Drawing.Size(181, 114);
             this.contextMenuStripListTree.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStripListTree_Opening);
             // 
             // expandAllToolStripMenuItem
             // 
             this.expandAllToolStripMenuItem.Name = "expandAllToolStripMenuItem";
             this.expandAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.expandAllToolStripMenuItem.Text = "Expand";
+            this.expandAllToolStripMenuItem.Text = "Expand 1 level";
             this.expandAllToolStripMenuItem.Click += new System.EventHandler(this.expandAllToolStripMenuItem_Click);
             // 
             // collapseToolStripMenuItem
@@ -1280,6 +1284,20 @@ namespace UniversalPatcher
             this.compareSelectedTablesToolStripMenuItem1.Text = "Compare selected tables";
             this.compareSelectedTablesToolStripMenuItem1.Click += new System.EventHandler(this.compareSelectedTablesToolStripMenuItem1_Click);
             // 
+            // expand2LevelsToolStripMenuItem
+            // 
+            this.expand2LevelsToolStripMenuItem.Name = "expand2LevelsToolStripMenuItem";
+            this.expand2LevelsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.expand2LevelsToolStripMenuItem.Text = "Expand 2 levels";
+            this.expand2LevelsToolStripMenuItem.Click += new System.EventHandler(this.expand2LevelsToolStripMenuItem_Click);
+            // 
+            // expand3LevelsToolStripMenuItem
+            // 
+            this.expand3LevelsToolStripMenuItem.Name = "expand3LevelsToolStripMenuItem";
+            this.expand3LevelsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.expand3LevelsToolStripMenuItem.Text = "Expand 3 levels";
+            this.expand3LevelsToolStripMenuItem.Click += new System.EventHandler(this.expand3LevelsToolStripMenuItem_Click);
+            // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1450,5 +1468,7 @@ namespace UniversalPatcher
         private ContextMenuStrip contextMenuStripListTree;
         private ToolStripMenuItem expandAllToolStripMenuItem;
         private ToolStripMenuItem collapseToolStripMenuItem;
+        private ToolStripMenuItem expand2LevelsToolStripMenuItem;
+        private ToolStripMenuItem expand3LevelsToolStripMenuItem;
     }
 }

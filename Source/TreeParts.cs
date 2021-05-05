@@ -22,14 +22,25 @@ namespace UniversalPatcher
             return includesCollection(node.Parent, nodeName);
         }
 
-        public static void addChildNodes(TreeNode node, PcmFile pcm, List<TableData> filteredTableDatas)
+        public static void addChildNodes(TreeNode node, PcmFile pcm)
         {
+            if (node.Name == "Dimensions" || node.Name == "ValueTypes" || node.Name == "Categories" || node.Name == "Segments")
+            {
+                foreach (TreeNode childTn in node.Nodes)
+                    addChildNodes(childTn, pcm);
+                return;
+            }
+
+            List<TableData> filteredTableDatas = filterTD(node, pcm);
             if (!includesCollection(node, "Dimensions"))
                 TreeParts.addDimensions(node.Nodes,filteredTableDatas);
+            filteredTableDatas = filterTD(node, pcm);
             if (!includesCollection(node, "ValueTypes"))
                 TreeParts.addValueTypes(node.Nodes,filteredTableDatas);
+            filteredTableDatas = filterTD(node, pcm);
             if (!includesCollection(node, "Categories"))
                 TreeParts.addCategories(node.Nodes, pcm, filteredTableDatas);
+            filteredTableDatas = filterTD(node, pcm);
             if (!includesCollection(node, "Segments"))
                 TreeParts.addSegments(node.Nodes, pcm, filteredTableDatas);
 
@@ -59,7 +70,6 @@ namespace UniversalPatcher
             tnD.Name = "Dimensions";
             tnD.ImageKey = "dimensions.ico";
             tnD.SelectedImageKey = "dimensions.ico";
-            parent.Add(tnD);
 
             List<int> usedDimension = new List<int>();
 
@@ -99,6 +109,9 @@ namespace UniversalPatcher
                 tnD.Nodes.Add(tn3);
             }
 
+            if (tnD.Nodes.Count > 0)
+                parent.Add(tnD);
+
         }
         public static void addValueTypes(TreeNodeCollection parent, List<TableData> filteredTableDatas)
         {
@@ -107,7 +120,6 @@ namespace UniversalPatcher
             tnT.Name = "ValueTypes";
             tnT.ImageKey = "valuetype.ico";
             tnT.SelectedImageKey = "valuetype.ico";
-            parent.Add(tnT);
 
             List<string> usedValueTypes = new List<string>();
             for (int i = 0; i < filteredTableDatas.Count; i++)
@@ -154,6 +166,10 @@ namespace UniversalPatcher
                 tnN.SelectedImageKey = "number.ico";
                 tnT.Nodes.Add(tnN);
             }
+
+            if (tnT.Nodes.Count > 0)
+                parent.Add(tnT);
+
         }
         public static void addSegments(TreeNodeCollection parent, PcmFile PCM, List<TableData> filteredTableDatas)
         {
@@ -164,13 +180,12 @@ namespace UniversalPatcher
             tnS.Name = "Segments";
             tnS.ImageKey = "segments.ico";
             tnS.SelectedImageKey = "segments.ico";
-            parent.Add(tnS);
 
             List<string> usedSegments = new List<string>();
             for (int i=0; i< filteredTableDatas.Count; i++)
             {
-                string seg = filteredTableDatas[i].Segment(PCM);
-                if (!usedSegments.Contains(seg))
+                string seg = PCM.GetSegmentName(filteredTableDatas[i].addrInt);
+                if (seg.Length > 0 && !usedSegments.Contains(seg))
                         usedSegments.Add(seg);
             }
 
@@ -209,6 +224,8 @@ namespace UniversalPatcher
                 }
                 tnS.Nodes.Add(segTn);
             }
+            if (tnS.Nodes.Count > 0)
+                parent.Add(tnS);
 
         }
         public static void addCategories(TreeNodeCollection parent, PcmFile PCM, List<TableData> filteredTableDatas)
@@ -217,7 +234,6 @@ namespace UniversalPatcher
             tnC.Name = "Categories";
             tnC.ImageKey = "category.ico";
             tnC.SelectedImageKey = "category.ico";
-            parent.Add(tnC);
 
             List<string> usedCategories = new List<string>();
             for (int i=0; i< filteredTableDatas.Count; i++)
@@ -237,8 +253,123 @@ namespace UniversalPatcher
                     tnC.Nodes.Add(cTnChild);
                 }
             }
+            if (tnC.Nodes.Count > 0)
+                parent.Add(tnC);
 
         }
 
+        private static List<TableData> filterTD(TreeNode tn, PcmFile PCM)
+        {
+            List<string> selectedSegs = new List<string>();
+            List<string> selectedCats = new List<string>();
+            List<string> selectedValTypes = new List<string>();
+            List<string> selectedDimensions = new List<string>();
+
+            switch (tn.Parent.Name)
+            {
+                case "Segments":
+                    selectedSegs.Add(tn.Name);
+                    break;
+                case "Categories":
+                    selectedCats.Add(tn.Name);
+                    break;
+                case "Dimensions":
+                    selectedDimensions.Add(tn.Name);
+                    break;
+                case "ValueTypes":
+                    selectedValTypes.Add(tn.Name);
+                    break;
+            }
+            TreeNode tnParent = tn.Parent;
+            while (tnParent.Parent != null)
+            {
+                switch (tnParent.Parent.Name)
+                {
+                    case "Segments":
+                        selectedSegs.Add(tnParent.Name);
+                        break;
+                    case "Categories":
+                        selectedCats.Add(tnParent.Name);
+                        break;
+                    case "Dimensions":
+                        selectedDimensions.Add(tnParent.Name);
+                        break;
+                    case "ValueTypes":
+                        selectedValTypes.Add(tnParent.Name);
+                        break;
+                }
+                tnParent = tnParent.Parent;
+            }
+
+            List<TableData> results = PCM.tableDatas;
+            if (selectedSegs.Count > 0)
+            {
+                List<TableData> newTDList = new List<TableData>();
+                foreach (string seg in selectedSegs)
+                {
+                    int segNr = 0;
+                    for (int s = 0; s < PCM.segmentinfos.Length; s++)
+                        if (PCM.segmentinfos[s].Name == seg)
+                            segNr = s;
+                    uint addrStart = PCM.segmentAddressDatas[segNr].SegmentBlocks[0].Start;
+                    uint addrEnd = PCM.segmentAddressDatas[segNr].SegmentBlocks[PCM.segmentAddressDatas[segNr].SegmentBlocks.Count - 1].End;
+                    var newResults = results.Where(t => t.addrInt >= addrStart && t.addrInt <= addrEnd);
+                    foreach (TableData nTd in newResults)
+                        newTDList.Add(nTd);
+                }
+                results = newTDList;
+            }
+
+            if (selectedCats.Count > 0)
+            {
+                List<TableData> newTDList = new List<TableData>();
+                foreach (TableData td in results)
+                {
+                    if (selectedCats.Contains(td.Category))
+                        newTDList.Add(td);
+                }
+                results = newTDList;
+            }
+
+            if (selectedValTypes.Count > 0)
+            {
+                List<TableData> newTDList = new List<TableData>();
+                foreach (string valT in selectedValTypes)
+                {
+                    if (valT == "mask")
+                    {
+                        foreach (TableData td in results)
+                        {
+                            if (td.BitMask != null && td.BitMask.Length > 0)
+                                newTDList.Add(td);
+                        }
+
+                    }
+                    else
+                    {
+                        foreach (TableData td in results)
+                        {
+                            string tdValT = getValueType(td).ToString();
+                            if (tdValT == valT)
+                                newTDList.Add(td);
+                        }
+                    }
+                }
+                results = newTDList;
+            }
+
+            if (selectedDimensions.Count > 0)
+            {
+                List<TableData> newTDList = new List<TableData>();
+                foreach (TableData td in results)
+                {
+                    if (selectedDimensions.Contains(td.Dimensions().ToString() + "D"))
+                        newTDList.Add(td);
+                }
+                results = newTDList;
+            }
+            return results;
+
+        }
     }
 }

@@ -2768,7 +2768,7 @@ namespace UniversalPatcher
         {
             filterTables();
             if (e.Node.Nodes.Count == 0 && e.Node.Name != "All" && e.Node.Parent != null)
-                TreeParts.addChildNodes(e.Node, PCM, filteredTableDatas.ToList());
+                TreeParts.addChildNodes(e.Node, PCM);
         }
 
         private void Tree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -3518,8 +3518,6 @@ namespace UniversalPatcher
         private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode tn = treeView1.SelectedNode;
-            foreach (TreeNode childTn in tn.Nodes)
-                TreeParts.addChildNodes(childTn, PCM, filteredTableDatas.ToList());
             tn.ExpandAll();
         }
 
@@ -3527,6 +3525,28 @@ namespace UniversalPatcher
         {
             TreeNode tn = treeView1.SelectedNode;
             tn.Collapse();
+        }
+
+        private void expand2LevelsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode tn = treeView1.SelectedNode;
+            foreach (TreeNode childTn in tn.Nodes)
+                TreeParts.addChildNodes(childTn, PCM);
+            tn.ExpandAll();
+
+        }
+
+        private void expand3LevelsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode tn = treeView1.SelectedNode;
+            foreach (TreeNode childTn in tn.Nodes)
+            {
+                TreeParts.addChildNodes(childTn, PCM);
+                foreach(TreeNode grandChild in childTn.Nodes)
+                    TreeParts.addChildNodes(grandChild, PCM);
+            }
+            tn.ExpandAll();
+
         }
     }
 }

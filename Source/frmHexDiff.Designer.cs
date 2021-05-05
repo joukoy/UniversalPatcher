@@ -41,6 +41,8 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collapseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.expand2LevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.expand3LevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -164,15 +166,17 @@
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.expandAllToolStripMenuItem,
+            this.expand2LevelsToolStripMenuItem,
+            this.expand3LevelsToolStripMenuItem,
             this.collapseToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 114);
             // 
             // expandAllToolStripMenuItem
             // 
             this.expandAllToolStripMenuItem.Name = "expandAllToolStripMenuItem";
             this.expandAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.expandAllToolStripMenuItem.Text = "Expand";
+            this.expandAllToolStripMenuItem.Text = "Expand 1 level";
             this.expandAllToolStripMenuItem.Click += new System.EventHandler(this.expandAllToolStripMenuItem_Click);
             // 
             // collapseToolStripMenuItem
@@ -181,6 +185,20 @@
             this.collapseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.collapseToolStripMenuItem.Text = "Collapse";
             this.collapseToolStripMenuItem.Click += new System.EventHandler(this.collapseToolStripMenuItem_Click);
+            // 
+            // expand2LevelsToolStripMenuItem
+            // 
+            this.expand2LevelsToolStripMenuItem.Name = "expand2LevelsToolStripMenuItem";
+            this.expand2LevelsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.expand2LevelsToolStripMenuItem.Text = "Expand 2 Levels";
+            this.expand2LevelsToolStripMenuItem.Click += new System.EventHandler(this.expand2LevelsToolStripMenuItem_Click);
+            // 
+            // expand3LevelsToolStripMenuItem
+            // 
+            this.expand3LevelsToolStripMenuItem.Name = "expand3LevelsToolStripMenuItem";
+            this.expand3LevelsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.expand3LevelsToolStripMenuItem.Text = "Expand 3 Levels";
+            this.expand3LevelsToolStripMenuItem.Click += new System.EventHandler(this.expand3LevelsToolStripMenuItem_Click);
             // 
             // frmHexDiff
             // 
@@ -219,5 +237,7 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem expandAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem collapseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem expand2LevelsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem expand3LevelsToolStripMenuItem;
     }
 }

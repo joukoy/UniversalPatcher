@@ -135,7 +135,7 @@ namespace UniversalPatcher
         {
             filterTables();
             if (e.Node.Nodes.Count == 0 && e.Node.Name != "All" && e.Node.Parent != null)
-                TreeParts.addChildNodes(e.Node, pcm1, filteredTableDatas);
+                TreeParts.addChildNodes(e.Node, pcm1);
         }
 
         private void filterTables()
@@ -400,8 +400,6 @@ namespace UniversalPatcher
         private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode tn = tree1.SelectedNode;
-            foreach (TreeNode childTn in tn.Nodes)
-                TreeParts.addChildNodes(childTn, pcm1, filteredTableDatas.ToList());
             tn.ExpandAll();
         }
 
@@ -409,6 +407,27 @@ namespace UniversalPatcher
         {
             TreeNode tn = tree1.SelectedNode;
             tn.Collapse();
+        }
+
+        private void expand2LevelsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode tn = tree1.SelectedNode;
+            foreach (TreeNode childTn in tn.Nodes)
+                TreeParts.addChildNodes(childTn, pcm1);
+            tn.ExpandAll();
+
+        }
+
+        private void expand3LevelsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode tn = tree1.SelectedNode;
+            foreach (TreeNode childTn in tn.Nodes)
+            {
+                TreeParts.addChildNodes(childTn, pcm1);
+                foreach (TreeNode grandChild in childTn.Nodes)
+                    TreeParts.addChildNodes(grandChild,pcm1);
+            }
+            tn.ExpandAll();
         }
     }
 }
