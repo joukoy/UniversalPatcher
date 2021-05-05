@@ -101,6 +101,24 @@ namespace UniversalPatcher
                 }
             }
         }
+
+        public string Segment(PcmFile pcm)
+        {
+            string retVal = "";
+            for (int s = 0; s < pcm.segmentinfos.Length; s++)
+            {
+                for (int b = 0; b < pcm.segmentAddressDatas[s].SegmentBlocks.Count; b++)
+                {
+                    uint addrStart = pcm.segmentAddressDatas[s].SegmentBlocks[b].Start;
+                    uint addrEnd = pcm.segmentAddressDatas[s].SegmentBlocks[b].End;
+                    if (addrInt >= addrStart && addrInt < addrEnd)
+                        return pcm.segmentinfos[s].Name;
+                }
+            }
+
+            return retVal;
+        }
+
         public int Dimensions ()
         {
             if (Rows < 2 && Columns < 2)
@@ -110,6 +128,7 @@ namespace UniversalPatcher
             else
                 return 2;
         } 
+        
         
         public TableData ShallowCopy()
         {

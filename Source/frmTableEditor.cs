@@ -1044,7 +1044,7 @@ namespace UniversalPatcher
             try
             {
                 TableValueType vt = getValueType(ft);
-                if (vt == TableValueType.boolean)
+                if (vt == TableValueType.boolean || vt == TableValueType.bitmask)
                 {
                     DataGridViewCheckBoxCell dgc = new DataGridViewCheckBoxCell();
                     dgc.Style.NullValue = false;

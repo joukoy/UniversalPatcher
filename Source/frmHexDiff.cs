@@ -24,6 +24,8 @@ namespace UniversalPatcher
         }
 
         TreeViewMS tree1;
+        List<TableData> filteredTableDatas = new List<TableData>();
+
 
         private void frmHexDiff_Load(object sender, EventArgs e)
         {
@@ -47,8 +49,6 @@ namespace UniversalPatcher
             tree1.HideSelection = false;
             tree1.ImageList = imageList1;
 
-            tree1.SelectedNodes.Clear();
-            TreeParts.addNodes(tree1.Nodes,pcm1);
         }
         private class TableDiff
         {
@@ -124,14 +124,18 @@ namespace UniversalPatcher
             bindingSource.DataSource = tdiffList;
             dataGridView1.CellMouseDoubleClick += DataGridView1_CellMouseDoubleClick;
             dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
+            filterTables();
+            tree1.SelectedNodes.Clear();
+            TreeParts.addNodes(tree1.Nodes, pcm1, filteredTableDatas);
             tree1.AfterSelect += Tree1_AfterSelect;
+            tree1.ContextMenuStrip = contextMenuStrip1;
         }
 
         private void Tree1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Nodes.Count == 0)
-                TreeParts.addChildNodes(e.Node, pcm1);
             filterTables();
+            if (e.Node.Nodes.Count == 0 && e.Node.Name != "All" && e.Node.Parent != null)
+                TreeParts.addChildNodes(e.Node, pcm1, filteredTableDatas);
         }
 
         private void filterTables()
@@ -143,7 +147,7 @@ namespace UniversalPatcher
                 compareList = tdiffList.OrderByDescending(x => typeof(TableDiff).GetProperty(sortBy).GetValue(x, null)).ToList();
             var results = compareList.Where(t=> t.TableName.ToString().ToLower().Contains(txtFilter.Text.Trim()));
 
-            if (!tree1.Nodes["All"].IsSelected && tree1.SelectedNodes.Count > 0)
+            if (tree1.Nodes.Count > 0 && !tree1.Nodes["All"].IsSelected && tree1.SelectedNodes.Count > 0)
             {
                 List<string> selectedSegs = new List<string>();
                 List<string> selectedCats = new List<string>();
@@ -151,6 +155,8 @@ namespace UniversalPatcher
                 List<string> selectedDimensions = new List<string>();
                 foreach (TreeNode tn in tree1.SelectedNodes)
                 {
+                    if (tn.Parent == null)
+                        continue;
                     switch (tn.Parent.Name)
                     {
                         case "Segments":
@@ -223,23 +229,11 @@ namespace UniversalPatcher
                     List<TableDiff> newTDList = new List<TableDiff>();
                     foreach (string valT in selectedValTypes)
                     {
-                        if (valT == "mask")
+                        foreach (TableDiff tDif in results)
                         {
-                            foreach (TableDiff tDif in results)
-                            {
-                                if (tDif.td.BitMask != null && tDif.td.BitMask.Length > 0)
-                                    newTDList.Add(tDif);
-                            }
-
-                        }
-                        else
-                        {
-                            foreach (TableDiff tDif in results)
-                            {
-                                string tdValT = getValueType(tDif.td).ToString();
-                                if (tdValT == valT)
-                                    newTDList.Add(tDif);
-                            }
+                            string tdValT = getValueType(tDif.td).ToString();
+                            if (tdValT == valT)
+                                newTDList.Add(tDif);
                         }
                     }
                     results = newTDList;
@@ -260,6 +254,10 @@ namespace UniversalPatcher
             Application.DoEvents();
             if (dataGridView1.Columns.Count > sortIndex)
                 dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
+
+            filteredTableDatas = new List<TableData>();
+            foreach (TableDiff tDif in results)
+                filteredTableDatas.Add(tDif.td);
         }
 
         private void DataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -397,6 +395,18 @@ namespace UniversalPatcher
             frmTuner frmT = new frmTuner(pcmNew,false);
             frmT.addtoCurrentFileMenu(pcmNew2,false);
             frmT.Show();
+        }
+
+        private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode tn = tree1.SelectedNode;
+            tn.ExpandAll();
+        }
+
+        private void collapseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode tn = tree1.SelectedNode;
+            tn.Collapse();
         }
     }
 }

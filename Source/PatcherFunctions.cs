@@ -383,6 +383,7 @@ public class upatcher
     {
         boolean,
         selection,
+        bitmask,
         number
     }
 
@@ -392,9 +393,9 @@ public class upatcher
 
         if (td.Units == null)
             td.Units = "";
-        if (td.OutputType == OutDataType.Flag)
+        if (td.BitMask != null && td.BitMask.Length > 0)
         {
-            retVal = TableValueType.boolean;
+            retVal = TableValueType.bitmask;
         }
         else if (td.Units.ToLower().Contains("boolean") || td.Units.ToLower().Contains("t/f"))
         {

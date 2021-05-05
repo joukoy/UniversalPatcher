@@ -83,41 +83,38 @@ namespace UniversalPatcher
                     string unitTxt = " " + peekPCM.tableDatas[ind].Units;
                     string maskTxt = "";
                     TableValueType vt = getValueType(peekPCM.tableDatas[ind]);
-                    if (vt == TableValueType.boolean)
+                    if (vt == TableValueType.bitmask)
                     {
-                        if (peekPCM.tableDatas[ind].BitMask != null && peekPCM.tableDatas[ind].BitMask.Length > 0)
-                        {
-                            unitTxt = "";
-                            UInt64 maskVal = Convert.ToUInt64(peekPCM.tableDatas[ind].BitMask.Replace("0x", ""), 16);
-                            if ((rawVal & maskVal) == maskVal)
-                                valTxt = "Set";
-                            else
-                                valTxt = "Unset";
-                            string maskBits = Convert.ToString((Int64)maskVal, 2);
-                            int bit = -1;
-                            for (int i = 0; 1 <= maskBits.Length; i++)
-                            {
-                                if (((maskVal & (UInt64)(1 << i)) != 0))
-                                {
-                                    bit = i + 1;
-                                    break;
-                                }
-                            }
-                            if (bit > -1)
-                            {
-                                string rawBinVal = Convert.ToString((Int64)rawVal, 2);
-                                rawBinVal = rawBinVal.PadLeft(getBits(peekPCM.tableDatas[ind].DataType), '0');
-                                maskTxt = " [" + rawBinVal + "], bit $" + bit.ToString();
-                            }
-                        }
+                        unitTxt = "";
+                        UInt64 maskVal = Convert.ToUInt64(peekPCM.tableDatas[ind].BitMask.Replace("0x", ""), 16);
+                        if ((rawVal & maskVal) == maskVal)
+                            valTxt = "Set";
                         else
+                            valTxt = "Unset";
+                        string maskBits = Convert.ToString((Int64)maskVal, 2);
+                        int bit = -1;
+                        for (int i = 0; 1 <= maskBits.Length; i++)
                         {
-                            unitTxt = ", Unset/Set";
-                            if (curVal > 0)
-                                valTxt = "Set, " + valTxt;
-                            else
-                                valTxt = "Unset, " + valTxt;
+                            if (((maskVal & (UInt64)(1 << i)) != 0))
+                            {
+                                bit = i + 1;
+                                break;
+                            }
                         }
+                        if (bit > -1)
+                        {
+                            string rawBinVal = Convert.ToString((Int64)rawVal, 2);
+                            rawBinVal = rawBinVal.PadLeft(getBits(peekPCM.tableDatas[ind].DataType), '0');
+                            maskTxt = " [" + rawBinVal + "], bit $" + bit.ToString();
+                        }
+                    }
+                    else if (vt == TableValueType.boolean)
+                    {
+                        unitTxt = ", Unset/Set";
+                        if (curVal > 0)
+                            valTxt = "Set, " + valTxt;
+                        else
+                            valTxt = "Unset, " + valTxt;
                     }
                     else if (vt == TableValueType.selection)
                     {

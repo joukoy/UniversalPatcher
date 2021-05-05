@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using static upatcher;
 
 namespace UniversalPatcher
 {
@@ -11,27 +13,27 @@ namespace UniversalPatcher
     {
         private static bool includesCollection(TreeNode node, string nodeName)
         {
+            if (node.Parent == null )
+                return false;   //Root-node
             if (node.Parent.Name == nodeName)
                 return true;
-            if (node.Parent.Parent == null)
-                return false;   //Root-node
             return includesCollection(node.Parent, nodeName);
         }
 
-        public static void addChildNodes(TreeNode node, PcmFile PCM)
+        public static void addChildNodes(TreeNode node, PcmFile pcm, List<TableData> filteredTableDatas)
         {
             if (!includesCollection(node, "Dimensions"))
-                TreeParts.addDimensions(node.Nodes);
+                TreeParts.addDimensions(node.Nodes,filteredTableDatas);
             if (!includesCollection(node, "ValueTypes"))
-                TreeParts.addValueTypes(node.Nodes);
+                TreeParts.addValueTypes(node.Nodes,filteredTableDatas);
             if (!includesCollection(node, "Categories"))
-                TreeParts.addCategories(node.Nodes, PCM);
+                TreeParts.addCategories(node.Nodes, pcm, filteredTableDatas);
             if (!includesCollection(node, "Segments"))
-                TreeParts.addSegments(node.Nodes, PCM);
+                TreeParts.addSegments(node.Nodes, pcm, filteredTableDatas);
 
         }
 
-        public static void addNodes(TreeNodeCollection parent, PcmFile pcm1)
+        public static void addNodes(TreeNodeCollection parent, PcmFile pcm1, List<TableData> filteredTableDatas)
         {
             parent.Clear();
 
@@ -41,14 +43,14 @@ namespace UniversalPatcher
             tn.SelectedImageKey = "explorer.ico";
             parent.Add(tn);
 
-            addDimensions(parent);
-            addValueTypes(parent);
-            addCategories(parent, pcm1);
-            addSegments(parent, pcm1);
+            addDimensions(parent,filteredTableDatas);
+            addValueTypes(parent,filteredTableDatas);
+            addCategories(parent, pcm1, filteredTableDatas);
+            addSegments(parent, pcm1, filteredTableDatas);
 
         }
 
-        public static void addDimensions(TreeNodeCollection parent)
+        public static void addDimensions(TreeNodeCollection parent, List<TableData> filteredTableDatas)
         {
 
             TreeNode tnD = new TreeNode();
@@ -57,26 +59,46 @@ namespace UniversalPatcher
             tnD.SelectedImageKey = "dimensions.ico";
             parent.Add(tnD);
 
-            TreeNode tn1 = new TreeNode();
-            tn1.Name = "1D";
-            tn1.ImageKey = "1d.ico";
-            tn1.SelectedImageKey = "1d.ico";
-            tnD.Nodes.Add(tn1);
+            List<int> usedDimension = new List<int>();
 
-            TreeNode tn2 = new TreeNode();
-            tn2.Name = "2D";
-            tn2.ImageKey = "2d.ico";
-            tn2.SelectedImageKey = "2d.ico";
-            tnD.Nodes.Add(tn2);
+            for (int i=0; i< filteredTableDatas.Count; i++)
+            {
+                int d = filteredTableDatas[i].Dimensions();
+                if (!usedDimension.Contains(d))
+                    usedDimension.Add(d);
+                if (usedDimension.Count == 3)
+                    break;
+            }
 
-            TreeNode tn3 = new TreeNode();
-            tn3.Name = "3D";
-            tn3.ImageKey = "3d.ico";
-            tn3.SelectedImageKey = "3d.ico";
-            tnD.Nodes.Add(tn3);
+            if (usedDimension.Contains(1))
+            {
+                TreeNode tn1 = new TreeNode();
+                tn1.Name = "1D";
+                tn1.ImageKey = "1d.ico";
+                tn1.SelectedImageKey = "1d.ico";
+                tnD.Nodes.Add(tn1);
+            }
+
+            if (usedDimension.Contains(2))
+            {
+                TreeNode tn2 = new TreeNode();
+                tn2.Name = "2D";
+                tn2.ImageKey = "2d.ico";
+                tn2.SelectedImageKey = "2d.ico";
+                tnD.Nodes.Add(tn2);
+            }
+
+            if (usedDimension.Contains(3))
+            {
+                TreeNode tn3 = new TreeNode();
+                tn3.Name = "3D";
+                tn3.ImageKey = "3d.ico";
+                tn3.SelectedImageKey = "3d.ico";
+                tnD.Nodes.Add(tn3);
+            }
 
         }
-        public static void addValueTypes(TreeNodeCollection parent)
+        public static void addValueTypes(TreeNodeCollection parent, List<TableData> filteredTableDatas)
         {
 
             TreeNode tnT = new TreeNode();
@@ -85,32 +107,53 @@ namespace UniversalPatcher
             tnT.SelectedImageKey = "valuetype.ico";
             parent.Add(tnT);
 
-            TreeNode tnB = new TreeNode();
-            tnB.Name = "boolean";
-            tnB.ImageKey = "boolean.ico";
-            tnB.SelectedImageKey = "boolean.ico";
-            tnT.Nodes.Add(tnB);
+            List<string> usedValueTypes = new List<string>();
+            for (int i = 0; i < filteredTableDatas.Count; i++)
+            {
+                string vt = getValueType(filteredTableDatas[i]).ToString();
+                if (!usedValueTypes.Contains(vt))
+                    usedValueTypes.Add(vt);
+                if (usedValueTypes.Count == 4)
+                    break;  //all types collected
+            }
 
-            TreeNode tnM = new TreeNode();
-            tnM.Name = "mask";
-            tnM.ImageKey = "bitmask.ico";
-            tnM.SelectedImageKey = "bitmask.ico";
-            tnT.Nodes.Add(tnM);
+            if (usedValueTypes.Contains("boolean"))
+            {
+                TreeNode tnB = new TreeNode();
+                tnB.Name = "boolean";
+                tnB.ImageKey = "boolean.ico";
+                tnB.SelectedImageKey = "boolean.ico";
+                tnT.Nodes.Add(tnB);
+            }
 
-            TreeNode tnE = new TreeNode();
-            tnE.Name = "selection";
-            tnE.ImageKey = "enum.ico";
-            tnE.SelectedImageKey = "enum.ico";
-            tnT.Nodes.Add(tnE);
+            if (usedValueTypes.Contains("bitmask"))
+            { 
+                TreeNode tnM = new TreeNode();
+                tnM.Name = "bitmask";
+                tnM.ImageKey = "bitmask.ico";
+                tnM.SelectedImageKey = "bitmask.ico";
+                tnT.Nodes.Add(tnM);
+            }
 
-            TreeNode tnN = new TreeNode();
-            tnN.Name = "number";
-            tnN.ImageKey = "number.ico";
-            tnN.SelectedImageKey = "number.ico";
-            tnT.Nodes.Add(tnN);
+            if (usedValueTypes.Contains("selection"))
+            {
+                TreeNode tnE = new TreeNode();
+                tnE.Name = "selection";
+                tnE.ImageKey = "enum.ico";
+                tnE.SelectedImageKey = "enum.ico";
+                tnT.Nodes.Add(tnE);
+            }
 
+            if (usedValueTypes.Contains("number"))
+            {
+                TreeNode tnN = new TreeNode();
+                tnN.Name = "number";
+                tnN.ImageKey = "number.ico";
+                tnN.SelectedImageKey = "number.ico";
+                tnT.Nodes.Add(tnN);
+            }
         }
-        public static void addSegments(TreeNodeCollection parent, PcmFile PCM)
+        public static void addSegments(TreeNodeCollection parent, PcmFile PCM, List<TableData> filteredTableDatas)
         {
             string iconFolder = Path.Combine(Application.StartupPath, "Icons");
             string[] GalleryArray = System.IO.Directory.GetFiles(iconFolder);
@@ -121,11 +164,19 @@ namespace UniversalPatcher
             tnS.SelectedImageKey = "segments.ico";
             parent.Add(tnS);
 
-            TreeNode segTn;
-            for (int i = 0; i < PCM.Segments.Count; i++)
+            List<string> usedSegments = new List<string>();
+            for (int i=0; i< filteredTableDatas.Count; i++)
             {
-                segTn = new TreeNode(PCM.Segments[i].Name);
-                segTn.Name = PCM.Segments[i].Name;
+                string seg = filteredTableDatas[i].Segment(PCM);
+                if (!usedSegments.Contains(seg))
+                        usedSegments.Add(seg);
+            }
+
+            TreeNode segTn;
+            for (int i = 0; i < usedSegments.Count; i++)
+            {
+                segTn = new TreeNode(usedSegments[i]);
+                segTn.Name = usedSegments[i];
                 segTn.ImageKey = "segments.ico";
                 segTn.SelectedImageKey = "segments.ico";
 
@@ -158,7 +209,7 @@ namespace UniversalPatcher
             }
 
         }
-        public static void addCategories(TreeNodeCollection parent, PcmFile PCM)
+        public static void addCategories(TreeNodeCollection parent, PcmFile PCM, List<TableData> filteredTableDatas)
         {
             TreeNode tnC = new TreeNode();
             tnC.Name = "Categories";
@@ -166,9 +217,15 @@ namespace UniversalPatcher
             tnC.SelectedImageKey = "category.ico";
             parent.Add(tnC);
 
-            for (int c = 0; c < PCM.tableCategories.Count; c++)
+            List<string> usedCategories = new List<string>();
+            for (int i=0; i< filteredTableDatas.Count; i++)
             {
-                string cat = PCM.tableCategories[c];
+                if (!usedCategories.Contains(filteredTableDatas[i].Category))
+                    usedCategories.Add(filteredTableDatas[i].Category);
+            }
+            for (int c = 0; c < usedCategories.Count; c++)
+            {
+                string cat = usedCategories[c];
                 if (cat != "_All")
                 {
                     TreeNode cTnChild = new TreeNode(cat);

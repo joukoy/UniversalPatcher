@@ -37,7 +37,7 @@ namespace UniversalPatcher
         private bool columnsModified = false;
         BindingSource bindingsource = new BindingSource();
         BindingSource categoryBindingSource = new BindingSource();
-        private BindingList<TableData> filteredCategories = new BindingList<TableData>();
+        private BindingList<TableData> filteredTableDatas = new BindingList<TableData>();
         SortOrder strSortOrder = SortOrder.Ascending;
         private int lastSelectedId;
         string compXml = "";
@@ -179,9 +179,12 @@ namespace UniversalPatcher
             mitem.Checked = true;
             currentBin = mitem.Text.Substring(0, 1);
 
-            treeView1.SelectedNodes.Clear();
-            TreeParts.addNodes(treeView1.Nodes, PCM);
-
+            filterTables();
+            if (treeView1.Visible)
+            {
+                treeView1.SelectedNodes.Clear();
+                TreeParts.addNodes(treeView1.Nodes, PCM, filteredTableDatas.ToList());
+            }
         }
 
         public void loadConfigforPCM(ref PcmFile newPCM)
@@ -721,8 +724,8 @@ namespace UniversalPatcher
                     }
                 }
 
-                filteredCategories = new BindingList<TableData>(results.ToList());
-                bindingsource.DataSource = filteredCategories;
+                filteredTableDatas = new BindingList<TableData>(results.ToList());
+                bindingsource.DataSource = filteredTableDatas;
                 reorderColumns();
                 txtDescription.Text = "";
                 filterTree();
@@ -1372,41 +1375,38 @@ namespace UniversalPatcher
                     string unitTxt = " " + peekPCM.tableDatas[ind].Units;
                     string maskTxt = "";
                     TableValueType vt = getValueType(peekPCM.tableDatas[ind]);
-                    if (vt == TableValueType.boolean)
+                    if (vt == TableValueType.bitmask)
                     {
-                        if (peekPCM.tableDatas[ind].BitMask != null && peekPCM.tableDatas[ind].BitMask.Length > 0)
-                        {
-                            unitTxt = "";
-                            UInt64 maskVal = Convert.ToUInt64(peekPCM.tableDatas[ind].BitMask.Replace("0x", ""), 16);
-                            if ((rawVal & maskVal) == maskVal)
-                                valTxt = "Set";
-                            else
-                                valTxt = "Unset";
-                            string maskBits = Convert.ToString((Int64)maskVal, 2);
-                            int bit = -1;
-                            for (int i = 0; 1 <= maskBits.Length; i++)
-                            {
-                                if (((maskVal & (UInt64)(1 << i)) != 0))
-                                {
-                                    bit = i + 1;
-                                    break;
-                                }
-                            }
-                            if (bit > -1)
-                            {
-                                string rawBinVal = Convert.ToString((Int64)rawVal, 2);
-                                rawBinVal = rawBinVal.PadLeft(getBits(peekPCM.tableDatas[ind].DataType), '0');
-                                maskTxt = " [" + rawBinVal + "], bit $" + bit.ToString();
-                            }
-                        }
+                        unitTxt = "";
+                        UInt64 maskVal = Convert.ToUInt64(peekPCM.tableDatas[ind].BitMask.Replace("0x", ""), 16);
+                        if ((rawVal & maskVal) == maskVal)
+                            valTxt = "Set";
                         else
+                            valTxt = "Unset";
+                        string maskBits = Convert.ToString((Int64)maskVal, 2);
+                        int bit = -1;
+                        for (int i = 0; 1 <= maskBits.Length; i++)
                         {
-                            unitTxt = ", Unset/Set";
-                            if (curVal > 0)
-                                valTxt = "Set, " + valTxt;
-                            else
-                                valTxt = "Unset, " + valTxt;
+                            if (((maskVal & (UInt64)(1 << i)) != 0))
+                            {
+                                bit = i + 1;
+                                break;
+                            }
                         }
+                        if (bit > -1)
+                        {
+                            string rawBinVal = Convert.ToString((Int64)rawVal, 2);
+                            rawBinVal = rawBinVal.PadLeft(getBits(peekPCM.tableDatas[ind].DataType), '0');
+                            maskTxt = " [" + rawBinVal + "], bit $" + bit.ToString();
+                        }
+                    }
+                    else if(vt == TableValueType.boolean)
+                    {
+                        unitTxt = ", Unset/Set";
+                        if (curVal > 0)
+                            valTxt = "Set, " + valTxt;
+                        else
+                            valTxt = "Unset, " + valTxt;
                     }
                     else if (vt == TableValueType.selection)
                     {
@@ -2729,9 +2729,11 @@ namespace UniversalPatcher
             treeView1.Visible = true;
             if (treeView1.Nodes.Count == 0)
             {
-                TreeParts.addNodes(treeView1.Nodes, PCM);
+                treeView1.SelectedNodes.Clear();
+                TreeParts.addNodes(treeView1.Nodes, PCM, filteredTableDatas.ToList());
             }
             treeView1.AfterSelect += TreeView1_AfterSelect;
+            treeView1.NodeMouseClick += TreeView1_NodeMouseClick;
             btnCollapse.Visible = false;
             btnExpand.Visible = false;
             //numIconSize.Visible = false;
@@ -2755,12 +2757,18 @@ namespace UniversalPatcher
             importXDFToolStripMenuItem.Visible = false;
         }
 
+        private void TreeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            ContextMenuStrip cxMenu = new ContextMenuStrip();
+            MenuItem mi = new MenuItem("Expand all");
+        }
+
 
         private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Nodes.Count == 0)
-                TreeParts.addChildNodes(e.Node,PCM);
             filterTables();
+            if (e.Node.Nodes.Count == 0 && e.Node.Name != "All" && e.Node.Parent != null)
+                TreeParts.addChildNodes(e.Node, PCM, filteredTableDatas.ToList());
         }
 
         private void Tree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -3016,15 +3024,15 @@ namespace UniversalPatcher
                 treeDimensions.Nodes.Add(createTreeNode("3D"));
             }
 
-            for (int i = 0; i < filteredCategories.Count; i++)
+            for (int i = 0; i < filteredTableDatas.Count; i++)
             {
                 //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
                 {
-                    TreeNode tnChild = new TreeNode(filteredCategories[i].TableName);
-                    tnChild.Tag = (int)filteredCategories[i].id;
+                    TreeNode tnChild = new TreeNode(filteredTableDatas[i].TableName);
+                    tnChild.Tag = (int)filteredTableDatas[i].id;
 
-                    TableValueType vt = getValueType(filteredCategories[i]);
-                    if (filteredCategories[i].BitMask != null && filteredCategories[i].BitMask.Length > 0)
+                    TableValueType vt = getValueType(filteredTableDatas[i]);
+                    if (vt == TableValueType.bitmask)
                     {
                         tnChild.ImageKey = "bitmask.ico";
                         tnChild.SelectedImageKey = "bitmask.ico";
@@ -3046,7 +3054,7 @@ namespace UniversalPatcher
                     }
 
                     string nodeKey = "";
-                    switch (filteredCategories[i].Dimensions())
+                    switch (filteredTableDatas[i].Dimensions())
                     {
                         case 1:
                             nodeKey = "1D";
@@ -3065,7 +3073,7 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        string cat = filteredCategories[i].Category;
+                        string cat = filteredTableDatas[i].Category;
                         if (cat == "")
                             cat = "(Empty)";
                         if (!treeDimensions.Nodes[nodeKey].Nodes.ContainsKey(cat))
@@ -3110,14 +3118,14 @@ namespace UniversalPatcher
                 treeValueType.Nodes.Add(createTreeNode("boolean"));
             }
 
-            for (int i = 0; i < filteredCategories.Count; i++)
+            for (int i = 0; i < filteredTableDatas.Count; i++)
             {
                 //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
                 {
-                    TreeNode tnChild = new TreeNode(filteredCategories[i].TableName);
-                    tnChild.Tag = (int)filteredCategories[i].id;
+                    TreeNode tnChild = new TreeNode(filteredTableDatas[i].TableName);
+                    tnChild.Tag = (int)filteredTableDatas[i].id;
 
-                    switch(filteredCategories[i].Dimensions())
+                    switch(filteredTableDatas[i].Dimensions())
                     {
                         case 1:
                             tnChild.ImageKey = "1d.ico";
@@ -3133,9 +3141,9 @@ namespace UniversalPatcher
                             break;
                     }
 
-                    TableValueType vt = getValueType(filteredCategories[i]);
+                    TableValueType vt = getValueType(filteredTableDatas[i]);
                     string nodeKey = "";
-                    if (filteredCategories[i].BitMask != null && filteredCategories[i].BitMask.Length > 0)
+                    if (vt == TableValueType.bitmask)
                         nodeKey = "bitmask";
                     else if (vt == TableValueType.boolean)
                         nodeKey = "boolean";
@@ -3150,7 +3158,7 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        string cat = filteredCategories[i].Category;
+                        string cat = filteredTableDatas[i].Category;
                         if (cat == "")
                             cat = "(Empty)";
                         if (!treeValueType.Nodes[nodeKey].Nodes.ContainsKey(cat))
@@ -3190,16 +3198,16 @@ namespace UniversalPatcher
                 treeCategory.AfterCheck += Tree_AfterCheck;
                 treeCategory.NodeMouseClick += Tree_NodeMouseClick;
             }
-            for (int i = 0; i < filteredCategories.Count; i++)
+            for (int i = 0; i < filteredTableDatas.Count; i++)
             {
                 //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
                 {
 
-                    TreeNode tnChild = new TreeNode(filteredCategories[i].TableName);
-                    tnChild.Tag = (int)filteredCategories[i].id;
+                    TreeNode tnChild = new TreeNode(filteredTableDatas[i].TableName);
+                    tnChild.Tag = (int)filteredTableDatas[i].id;
                     string ico = "";
-                    TableValueType vt = getValueType(filteredCategories[i]);
-                    if (filteredCategories[i].BitMask != null && filteredCategories[i].BitMask.Length > 0)
+                    TableValueType vt = getValueType(filteredTableDatas[i]);
+                    if (vt == TableValueType.bitmask)
                     {
                         ico = "mask";
                     }
@@ -3212,7 +3220,7 @@ namespace UniversalPatcher
                         ico = "enum";
                     }
 
-                    switch (filteredCategories[i].Dimensions())
+                    switch (filteredTableDatas[i].Dimensions())
                     {
                         case 1:
                             ico += "1d.ico";
@@ -3227,7 +3235,7 @@ namespace UniversalPatcher
                     tnChild.ImageKey = ico;
                     tnChild.SelectedImageKey = ico;
 
-                    string cat = filteredCategories[i].Category;
+                    string cat = filteredTableDatas[i].Category;
                     if (cat == "")
                         cat = "(Empty)";
                     if (!treeCategory.Nodes.ContainsKey(cat))
@@ -3303,16 +3311,16 @@ namespace UniversalPatcher
                 treeSegments.Nodes.Add(segTn);
             }
 
-            for (int i = 0; i < filteredCategories.Count; i++)
+            for (int i = 0; i < filteredTableDatas.Count; i++)
             {
                 //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
                 {
 
-                    TreeNode tnChild = new TreeNode(filteredCategories[i].TableName);
-                    tnChild.Tag = (int)filteredCategories[i].id;
+                    TreeNode tnChild = new TreeNode(filteredTableDatas[i].TableName);
+                    tnChild.Tag = (int)filteredTableDatas[i].id;
                     string ico = "";
-                    TableValueType vt = getValueType(filteredCategories[i]);
-                    if (filteredCategories[i].BitMask != null && filteredCategories[i].BitMask.Length > 0)
+                    TableValueType vt = getValueType(filteredTableDatas[i]);
+                    if (vt == TableValueType.bitmask)
                     {
                         ico = "mask";
                     }
@@ -3325,7 +3333,7 @@ namespace UniversalPatcher
                         ico = "enum";
                     }
 
-                    switch (filteredCategories[i].Dimensions())
+                    switch (filteredTableDatas[i].Dimensions())
                     {
                         case 1:
                             ico += "1d.ico";
@@ -3341,11 +3349,11 @@ namespace UniversalPatcher
                     tnChild.ImageKey = ico;
                     tnChild.SelectedImageKey = ico;
 
-                    string cat = filteredCategories[i].Category;
+                    string cat = filteredTableDatas[i].Category;
                     if (cat == "")
                         cat = "(Empty)";
 
-                    int seg = PCM.GetSegmentNumber(filteredCategories[i].addrInt);
+                    int seg = PCM.GetSegmentNumber(filteredTableDatas[i].addrInt);
                     if (seg > -1)
                     {
                         if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
@@ -3500,6 +3508,23 @@ namespace UniversalPatcher
         private void importXDFToolStripMenuItem_Click(object sender, EventArgs e)
         {
             importXDF();
+        }
+
+        private void contextMenuStripListTree_Opening(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode tn = treeView1.SelectedNode;
+            tn.ExpandAll();
+        }
+
+        private void collapseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode tn = treeView1.SelectedNode;
+            tn.Collapse();
         }
     }
 }
