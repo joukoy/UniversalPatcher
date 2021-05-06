@@ -286,32 +286,34 @@ namespace UniversalPatcher
 
                 string RowPrefix = "";
                 string colPrefix = "";
-                string[] nParts = tData.TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
-                if (nParts.Length > 1)
+                if (!disableMultiTable)
                 {
-                    //"Real" multitable
-                    string TableName = nParts[0];
-                    if (nParts.Length == 2)
+                    string[] nParts = tData.TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (nParts.Length > 1)
                     {
-                        colPrefix = nParts[1].Trim();
+                        //"Real" multitable
+                        string TableName = nParts[0];
+                        if (nParts.Length == 2)
+                        {
+                            colPrefix = nParts[1].Trim();
+                        }
+                        if (nParts.Length == 3)
+                        {
+                            colPrefix = nParts[1].Trim();
+                            RowPrefix = nParts[2].Trim();
+                        }
+                        if (nParts.Length > 3)
+                        {
+                            int columnPos = (int)numColumn.Value;
+                            colPrefix = nParts[columnPos].Trim();
+                            for (int i = 1; i < 4; i++)
+                                if (i != columnPos)
+                                    RowPrefix += "[" + nParts[i].Trim() + "]";
+                        }
+                        colPrefix += " ";
+                        RowPrefix += " ";
                     }
-                    if (nParts.Length == 3)
-                    {
-                        colPrefix = nParts[1].Trim();
-                        RowPrefix = nParts[2].Trim();
-                    }
-                    if (nParts.Length > 3)
-                    {
-                        int columnPos = (int)numColumn.Value;
-                        colPrefix = nParts[columnPos].Trim();
-                        for (int i = 1; i < 4; i++)
-                            if (i != columnPos)
-                                RowPrefix += "[" + nParts[i].Trim() + "]";
-                    }
-                    colPrefix += " ";
-                    RowPrefix += " ";
                 }
-
 
                 List<string> colHeaders = new List<string>();
                 List<string> rowHeaders = new List<string>();
@@ -764,10 +766,10 @@ namespace UniversalPatcher
                     switch (mathTd.DataType)
                     {
                         case InDataType.FLOAT32:
-                            dataGridView1.Rows[row].Cells[col].Value = (Single)showRawVal;
+                            dataGridView1.Rows[row].Cells[col].Value = (Int32)showRawVal;
                             break;
                         case InDataType.FLOAT64:
-                            dataGridView1.Rows[row].Cells[col].Value = (double)showRawVal;
+                            dataGridView1.Rows[row].Cells[col].Value = (Int64)showRawVal;
                             break;
                         case InDataType.INT64:
                             dataGridView1.Rows[row].Cells[col].Value = (Int64)showRawVal;
@@ -1566,6 +1568,10 @@ namespace UniversalPatcher
                     {
                         DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)dataGridView1.Rows[r].Cells[c];
                         newValue = Convert.ToDouble(cb.Value);
+                    }
+                    else if (showRawHEXValuesToolStripMenuItem.Checked)
+                    {
+                        newValue = (double)Convert.ToInt64(dataGridView1.Rows[r].Cells[c].Value.ToString(), 16);
                     }
                     else
                     {

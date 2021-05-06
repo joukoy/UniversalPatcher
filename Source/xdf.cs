@@ -198,7 +198,7 @@ namespace UniversalPatcher
                             }
                         }
                     }
-                    xdf.TableName = element.Element("title").Value;
+                    xdf.TableName = element.Element("title").Value.Replace("."," ");
                     if (element.Element("units") != null)
                         xdf.Units = element.Element("units").Value;
                     /*if (element.Element("datatype") != null)
@@ -260,7 +260,7 @@ namespace UniversalPatcher
                     }
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                     {
-                        xdf.TableName = element.Element("title").Value;
+                        xdf.TableName = element.Element("title").Value.Replace("."," ");
                         //xdf.AddrInt = Convert.ToUInt32(element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim(), 16);
                         xdf.Address = element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
                         elementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
@@ -309,7 +309,7 @@ namespace UniversalPatcher
                     xdf.Max = double.MaxValue;
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                     {
-                        xdf.TableName = element.Element("title").Value;
+                        xdf.TableName = element.Element("title").Value.Replace(".", " ");
                         //xdf.AddrInt = Convert.ToUInt32(element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim(), 16);
                         xdf.Address = element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
                         int elementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
