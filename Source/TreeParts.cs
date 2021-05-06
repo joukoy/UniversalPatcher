@@ -11,15 +11,21 @@ namespace UniversalPatcher
 {
     public static class TreeParts
     {
-        private static bool includesCollection(TreeNode node, string nodeName)
+        private static bool includesCollection(TreeNode node, string nodeName, bool parentCheck)
         {
+            if (!parentCheck)
+            {
+                foreach (TreeNode childTn in node.Nodes)
+                    if (childTn.Name == nodeName)
+                        return true;
+            }
             if (node.Name == nodeName)
                 return true;
             if (node.Parent == null)
                 return false;   //Root-node
             if (node.Parent.Name == nodeName)
                 return true;
-            return includesCollection(node.Parent, nodeName);
+            return includesCollection(node.Parent, nodeName, true);
         }
 
         public static void addChildNodes(TreeNode node, PcmFile pcm)
@@ -32,13 +38,13 @@ namespace UniversalPatcher
             }
 
             List<TableData> filteredTableDatas = filterTD(node, pcm);
-            if (!includesCollection(node, "Dimensions"))
+            if (!includesCollection(node, "Dimensions",false))
                 TreeParts.addDimensions(node.Nodes,filteredTableDatas);
-            if (!includesCollection(node, "ValueTypes"))
+            if (!includesCollection(node, "ValueTypes", false))
                 TreeParts.addValueTypes(node.Nodes,filteredTableDatas);
-            if (!includesCollection(node, "Categories"))
+            if (!includesCollection(node, "Categories", false))
                 TreeParts.addCategories(node.Nodes, pcm, filteredTableDatas);
-            if (!includesCollection(node, "Segments"))
+            if (!includesCollection(node, "Segments", false))
                 TreeParts.addSegments(node.Nodes, pcm, filteredTableDatas);
 
         }
