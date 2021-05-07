@@ -222,7 +222,7 @@ namespace UniversalPatcher
                     //td.Address = td.AddrInt.ToString("X8");
                     td.Columns = Convert.ToUInt16(row["ColumnCount"]);
                     td.TableDescription = row["TableDescription"].ToString();
-                    td.TableName = row["TableName"].ToString();
+                    td.TableName = row["TableName"].ToString().Replace("."," ");
                     td.Rows = Convert.ToUInt16(row["RowCount"]);
                     td.Category = row["MainCategory"].ToString();
 

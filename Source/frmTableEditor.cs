@@ -553,34 +553,47 @@ namespace UniversalPatcher
 
         public void addCompareFiletoMenu(PcmFile cmpPCM, TableData _compareTd, string menuTxt)
         {
-            CompareFile cmpFile = new CompareFile(cmpPCM);
-            ToolStripMenuItem menuitem = new ToolStripMenuItem(cmpPCM.FileName);
-            menuitem.Tag = cmpFile;
-            menuitem.Name = Path.GetFileName(cmpPCM.FileName);
-            if (menuTxt.Length > 0)
+            try
             {
-                menuitem.Text = menuTxt;
-                cmpFile.fileLetter = menuitem.Text.Substring(0, 1);
+                CompareFile cmpFile = new CompareFile(cmpPCM);
+                ToolStripMenuItem menuitem = new ToolStripMenuItem(cmpPCM.FileName);
+                menuitem.Tag = cmpFile;
+                menuitem.Name = Path.GetFileName(cmpPCM.FileName);
+                if (menuTxt.Length > 0)
+                {
+                    menuitem.Text = menuTxt;
+                    cmpFile.fileLetter = menuitem.Text.Substring(0, 1);
+                }
+                else
+                {
+                    char lastFile = 'A';
+                    foreach (ToolStripMenuItem mi in compareToolStripMenuItem.DropDownItems)
+                        lastFile++;
+                    menuitem.Text = lastFile.ToString() + ": " + cmpPCM.FileName;
+                    cmpFile.fileLetter = lastFile.ToString();
+                }
+                prepareCompareTable(cmpFile);
+                menuitem.Click += compareSelection_Click;
+                if (compareToolStripMenuItem.DropDownItems.Count == 0)
+                {
+                    //First file selected by default
+                    menuitem.Checked = true;
+                    groupSelectCompare.Enabled = true;
+                    modifyRadioText(menuTxt);
+                    currentCmpFile = 1;
+                }
+                compareToolStripMenuItem.DropDownItems.Add(menuitem);
             }
-            else
+            catch (Exception ex)
             {
-                char lastFile = 'A';
-                foreach (ToolStripMenuItem mi in compareToolStripMenuItem.DropDownItems)
-                    lastFile++;
-                menuitem.Text = lastFile.ToString() +": "+ cmpPCM.FileName;
-                cmpFile.fileLetter = lastFile.ToString();
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
-            prepareCompareTable(cmpFile);
-            menuitem.Click += compareSelection_Click;
-            if (compareToolStripMenuItem.DropDownItems.Count == 0)
-            {
-                //First file selected by default
-                menuitem.Checked = true;
-                groupSelectCompare.Enabled = true;
-                modifyRadioText(menuTxt);
-                currentCmpFile = 1;
-            }
-            compareToolStripMenuItem.DropDownItems.Add(menuitem);
+
         }
 
         public void prepareCompareTable(CompareFile cmpFile)

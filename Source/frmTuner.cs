@@ -276,6 +276,7 @@ namespace UniversalPatcher
                         if (PCM.OS == comparePCM.OS)
                         {
                             frmT.addCompareFiletoMenu(comparePCM, td, mi.Text);
+                            Logger("[OK]");
                         }
                         else
                         {
@@ -611,7 +612,7 @@ namespace UniversalPatcher
                     }
                 }
 
-                if (treeView1.Visible && !treeView1.Nodes["All"].IsSelected && treeView1.SelectedNodes.Count > 0)
+                if (!treeMode && !treeView1.Nodes["All"].IsSelected && treeView1.SelectedNodes.Count > 0)
                 {
                     List<string> selectedSegs = new List<string>();
                     List<string> selectedCats = new List<string>();
@@ -2640,6 +2641,7 @@ namespace UniversalPatcher
             treeMode = true;
             dataGridView1.Visible = false;
             treeView1.Visible = false;
+            treeView1.SelectedNodes.Clear();
             dataGridView1.DataSource = null;
             if (splitTree == null)
             {
@@ -2754,7 +2756,7 @@ namespace UniversalPatcher
             unitsToolStripMenuItem.Visible = true;
             enableConfigModeToolStripMenuItem.Visible = true;
             resetTunerModeColumnsToolStripMenuItem.Visible = false;
-            importXDFToolStripMenuItem.Visible = false;
+            importXDFToolStripMenuItem.Visible = false;            
         }
 
         private void TreeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -3418,7 +3420,7 @@ namespace UniversalPatcher
                 selectListMode();
             Properties.Settings.Default.TunerTreeMode = radioTreeMode.Checked;
             Properties.Settings.Default.Save();
-
+            filterTables();
         }
         private void radioTreeMode_CheckedChanged(object sender, EventArgs e)
         {
@@ -3436,27 +3438,7 @@ namespace UniversalPatcher
         {
         }
 
-        private void btnMultitable_Click(object sender, EventArgs e)
-        {
-            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-            if (tv.SelectedNode == null)
-                return;
-            if (tv.SelectedNode.Tag != null)
-                return;
-            List<int> tableIds = new List<int>();
-            foreach (TreeNode tn in tv.SelectedNode.Nodes)
-            {
-                int id = (int)tn.Tag;
-                if (PCM.tableDatas[id].Dimensions() == 1 && !PCM.tableDatas[id].TableName.Contains("[") && !PCM.tableDatas[id].TableName.Contains("."))
-                    tableIds.Add(id);                    
-            }
-            if (tableIds.Count > 0)
-            {
-                clearPanel2();
-                openTableEditor(tableIds);
-            }
-        }
-
+ 
         private void chkShowCategorySubfolder_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.TableExplorerUseCategorySubfolder = chkShowCategorySubfolder.Checked;
