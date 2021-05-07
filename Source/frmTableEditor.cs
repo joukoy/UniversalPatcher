@@ -1589,6 +1589,15 @@ namespace UniversalPatcher
                     else
                     {
                         newValue = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
+                        if (radioDifference.Checked)
+                        {
+                            if (radioAbsolute.Checked)
+                                newValue = (double)tCell.lastValue - newValue;
+                            else if (radioMultiplier.Checked)
+                                newValue = (double)tCell.lastValue * newValue;
+                            else
+                                newValue =  (1 + newValue / 100) * (double)tCell.lastValue;
+                        }
                     }
                 }
                 if (newValue == double.MaxValue) return;
@@ -1612,7 +1621,10 @@ namespace UniversalPatcher
                     tCell.saveValue(newValue);
                     //string mathStr = mathTd.Math.ToLower();
                     //double calcValue = (double)tCell.lastValue;
-                    dataGridView1.Rows[r].Cells[c].Value = tCell.lastValue;
+                    if (radioDifference.Checked)
+                        loadTable();
+                    else
+                        dataGridView1.Rows[r].Cells[c].Value = tCell.lastValue;
                 }
 
             }
@@ -2040,7 +2052,7 @@ namespace UniversalPatcher
             {
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
-                disableSaving = true;
+                disableSaving = false;
                 setMyText();
                 loadTable();
                 groupDifference.Visible = true;
