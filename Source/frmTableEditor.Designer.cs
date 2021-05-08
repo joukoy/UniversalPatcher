@@ -62,6 +62,7 @@ namespace UniversalPatcher
             this.numColumn = new System.Windows.Forms.NumericUpDown();
             this.labelColumn = new System.Windows.Forms.Label();
             this.groupSelectCompare = new System.Windows.Forms.GroupBox();
+            this.radioDifference2 = new System.Windows.Forms.RadioButton();
             this.radioCompareAll = new System.Windows.Forms.RadioButton();
             this.radioSideBySideText = new System.Windows.Forms.RadioButton();
             this.radioSideBySide = new System.Windows.Forms.RadioButton();
@@ -348,6 +349,7 @@ namespace UniversalPatcher
             // 
             // groupSelectCompare
             // 
+            this.groupSelectCompare.Controls.Add(this.radioDifference2);
             this.groupSelectCompare.Controls.Add(this.radioCompareAll);
             this.groupSelectCompare.Controls.Add(this.radioSideBySideText);
             this.groupSelectCompare.Controls.Add(this.radioSideBySide);
@@ -357,10 +359,23 @@ namespace UniversalPatcher
             this.groupSelectCompare.Enabled = false;
             this.groupSelectCompare.Location = new System.Drawing.Point(9, 27);
             this.groupSelectCompare.Name = "groupSelectCompare";
-            this.groupSelectCompare.Size = new System.Drawing.Size(337, 20);
+            this.groupSelectCompare.Size = new System.Drawing.Size(384, 20);
             this.groupSelectCompare.TabIndex = 10;
             this.groupSelectCompare.TabStop = false;
             this.groupSelectCompare.Text = "Show";
+            // 
+            // radioDifference2
+            // 
+            this.radioDifference2.AutoSize = true;
+            this.radioDifference2.Enabled = false;
+            this.radioDifference2.Location = new System.Drawing.Point(338, 0);
+            this.radioDifference2.Name = "radioDifference2";
+            this.radioDifference2.Size = new System.Drawing.Size(51, 17);
+            this.radioDifference2.TabIndex = 6;
+            this.radioDifference2.TabStop = true;
+            this.radioDifference2.Text = "A < B";
+            this.radioDifference2.UseVisualStyleBackColor = true;
+            this.radioDifference2.CheckedChanged += new System.EventHandler(this.radioDifference2_CheckedChanged);
             // 
             // radioCompareAll
             // 
@@ -500,7 +515,7 @@ namespace UniversalPatcher
             this.groupDifference.Controls.Add(this.radioPercent);
             this.groupDifference.Controls.Add(this.radioMultiplier);
             this.groupDifference.Controls.Add(this.radioAbsolute);
-            this.groupDifference.Location = new System.Drawing.Point(347, 27);
+            this.groupDifference.Location = new System.Drawing.Point(399, 27);
             this.groupDifference.Name = "groupDifference";
             this.groupDifference.Size = new System.Drawing.Size(127, 20);
             this.groupDifference.TabIndex = 17;
@@ -629,5 +644,6 @@ namespace UniversalPatcher
         private RadioButton radioPercent;
         private RadioButton radioMultiplier;
         private RadioButton radioAbsolute;
+        private RadioButton radioDifference2;
     }
 }

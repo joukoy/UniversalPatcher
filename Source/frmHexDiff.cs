@@ -25,6 +25,16 @@ namespace UniversalPatcher
 
         TreeViewMS tree1;
         List<TableData> filteredTableDatas = new List<TableData>();
+        private List<TableDiff> tdiffList;
+        private PcmFile pcm1;
+        private PcmFile pcm2;
+        private List<int> tdList;
+        private List<int> tdList2;
+
+        SortOrder strSortOrder = SortOrder.Ascending;
+        private int sortIndex = 0;
+        private string sortBy = "id";
+        BindingSource bindingSource = new BindingSource();
 
 
         private void frmHexDiff_Load(object sender, EventArgs e)
@@ -61,16 +71,6 @@ namespace UniversalPatcher
             public string Data2 { get; set; }
             public TableData td;
         }
-        private List<TableDiff> tdiffList;
-        private PcmFile pcm1;
-        private PcmFile pcm2;
-        private List<int> tdList;
-        private List<int> tdList2;
-
-        SortOrder strSortOrder = SortOrder.Ascending;
-        private int sortIndex = 0;
-        private string sortBy = "id";
-        BindingSource bindingSource = new BindingSource();
 
         public void findDifferences(bool showAsHex)
         {
@@ -429,5 +429,74 @@ namespace UniversalPatcher
             }
             tn.ExpandAll();
         }
+
+        private void btnCreatePatch_Click(object sender, EventArgs e)
+        {
+            generateTablePatch();
+        }
+
+        private void generateTablePatch()
+        {
+            string defName = Path.Combine(Application.StartupPath, "Patches", "newpatch.xmlpatch");
+            string patchFname = SelectSaveFile("PATCH files (*.xmlpatch)|*.xmlpatch|ALL files (*.*)|*.*", defName);
+            if (patchFname.Length == 0)
+                return;
+            string Description = "";
+            frmData frmD = new frmData();
+            frmD.Text = "Patch Description";
+            if (frmD.ShowDialog() == DialogResult.OK)
+                Description = frmD.txtData.Text;
+            frmD.Dispose();
+            List<XmlPatch> newPatch = new List<XmlPatch>();
+            for (int i = 0; i < tdiffList.Count; i++)
+            {
+                int id = tdiffList[i].id;
+                TableData pTd = pcm1.tableDatas[id];
+                XmlPatch xpatch = new XmlPatch();
+                xpatch.CompatibleOS = "Table:" + pTd.TableName + ",columns:" + pTd.Columns.ToString() + ",rows:" + pTd.Rows.ToString();
+                xpatch.XmlFile = pcm1.configFile;
+                xpatch.Segment = pcm1.GetSegmentName(pTd.addrInt);
+                xpatch.Description = Description;
+                frmTableEditor frmTE = new frmTableEditor();
+                frmTE.prepareTable(pcm1, pTd, null, "A");
+                frmTE.loadTable();
+                uint step = (uint)getElementSize(pTd.DataType);
+                uint addr = (uint)(pTd.addrInt + pTd.Offset);
+                if (pTd.RowMajor)
+                {
+                    for (int r = 0; r < pTd.Rows; r++)
+                    {
+                        for (int c = 0; c < pTd.Columns; c++)
+                        {
+                            xpatch.Data += getValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
+                            addr += step;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int c = 0; c < pTd.Columns; c++)
+                    {
+                        for (int r = 0; r < pTd.Rows; r++)
+                        {
+                            xpatch.Data += getValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
+                            addr += step;
+                        }
+                    }
+                }
+                newPatch.Add(xpatch);
+            }
+            Logger("Saving to file: " + Path.GetFileName(patchFname), false);
+
+            using (FileStream stream = new FileStream(patchFname, FileMode.Create))
+            {
+                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
+                writer.Serialize(stream, newPatch);
+                stream.Close();
+            }
+            Logger(" [OK]");
+
+        }
+
     }
 }

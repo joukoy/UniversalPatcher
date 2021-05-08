@@ -872,5 +872,17 @@ namespace UniversalPatcher.Properties {
                 this["TunerListModeTreeWidth"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(". [ ]")]
+        public string MulitableChars {
+            get {
+                return ((string)(this["MulitableChars"]));
+            }
+            set {
+                this["MulitableChars"] = value;
+            }
+        }
     }
 }

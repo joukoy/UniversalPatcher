@@ -21,6 +21,7 @@ namespace UniversalPatcher
             Properties.Settings.Default.TunerMinTableEquivalency = (int)numTunerTableMinEquivalency.Value;
             Properties.Settings.Default.keyPressWait100ms = (int)numKeypressWait.Value;
             Properties.Settings.Default.TableEditorMinOtherEquivalency = (int)numTunerMinEqOther.Value;
+            Properties.Settings.Default.MulitableChars = txtMultitableChars.Text;
             this.Close();
         }
 
@@ -29,6 +30,7 @@ namespace UniversalPatcher
             numTunerTableMinEquivalency.Value = Properties.Settings.Default.TunerMinTableEquivalency;
             numKeypressWait.Value = Properties.Settings.Default.keyPressWait100ms;
             numTunerMinEqOther.Value = Properties.Settings.Default.TableEditorMinOtherEquivalency;
+            txtMultitableChars.Text = Properties.Settings.Default.MulitableChars;
         }
 
         private void numKeypressWait_ValueChanged(object sender, EventArgs e)

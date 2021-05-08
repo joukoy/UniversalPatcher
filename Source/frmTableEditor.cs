@@ -36,7 +36,9 @@ namespace UniversalPatcher
             public MultiTableName(string fullName, int columnPos)
             {
                 RowName = "";
-                string[] nParts = fullName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] separators = Properties.Settings.Default.MulitableChars.Split(' ');
+                string[] nParts = fullName.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+                //string[] nParts = fullName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
                 TableName = nParts[0];
                 if (nParts.Length == 2)
                 {
@@ -447,7 +449,9 @@ namespace UniversalPatcher
                         }
                     }
                 }
-                if (td.TableName.Contains("[") || td.TableName.Contains("."))
+                string[] separators =  Properties.Settings.Default.MulitableChars.Split(' ');
+                //if (td.TableName.Contains("[") || td.TableName.Contains("."))
+                if (separators.Any(td.TableName.Contains))
                 {
                     //if (td.TableName.ToLower().Contains(" vs.") || td.TableName.StartsWith("Header.") || td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".xVal") || td.TableName.EndsWith(".yVal") || td.TableName.EndsWith(".Size"))
                     if (td.TableName.ToLower().Contains(" vs.") || td.TableName.StartsWith("Header.") || td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".Size"))
@@ -496,7 +500,7 @@ namespace UniversalPatcher
                 List<string> tableNameList = new List<string>();
                 for (int i = 0; i < tableIds.Count; i++)
                 {
-                    TableData mTd =cmpFile.pcm.tableDatas[tableIds[i]];
+                    TableData mTd = cmpFile.pcm.tableDatas[tableIds[i]];
                     if (tableNameList.Contains(mTd.TableName))
                     {
                         duplicateTableName = true;
@@ -547,6 +551,7 @@ namespace UniversalPatcher
             string selectedBin = menuTxt.Substring(0, 1);
             radioCompareFile.Text = selectedBin;
             radioDifference.Text = radioOriginal.Text + " > " + selectedBin;
+            radioDifference2.Text = radioOriginal.Text + " < " + selectedBin;
             radioSideBySide.Text = radioOriginal.Text + " | " + selectedBin;
             radioSideBySideText.Text = radioOriginal.Text + " [" + selectedBin + "]";
         }
@@ -773,6 +778,17 @@ namespace UniversalPatcher
                         showVal = curVal - cmpVal;
                     showRawVal = curRawValue - cmpRawValue;
                 }    
+                else if (radioDifference2.Checked)
+                {
+                    if (radioMultiplier.Checked)
+                        showVal =  curVal / cmpVal;
+                    else if (radioPercent.Checked)
+                        showVal = curVal / cmpVal * 100 - 100;
+                    else
+                        showVal = cmpVal - curVal;
+                    showRawVal = cmpRawValue - curRawValue;
+
+                }
 
                 if (showRawHEXValuesToolStripMenuItem.Checked)
                 {
@@ -1054,7 +1070,7 @@ namespace UniversalPatcher
 
         private void addCellByType(TableData ft, int gridRow, int gridCol)
         {
-            if (radioSideBySideText.Checked)
+            if (radioSideBySideText.Checked || showRawHEXValuesToolStripMenuItem.Checked)
                 return;
             try
             {
@@ -1086,6 +1102,7 @@ namespace UniversalPatcher
                 {
                     //at least one table which difference can be shown
                     radioDifference.Enabled = true;
+                    radioDifference2.Enabled = true;
                 }
 
             }
@@ -1128,7 +1145,7 @@ namespace UniversalPatcher
 
                 List<CompareFile> cmpFiles = new List<CompareFile>();
                 CompareFile diffFile = null;
-                if (radioDifference.Checked)
+                if (radioDifference.Checked || radioDifference2.Checked)
                 {
                     diffFile = compareFiles[currentCmpFile];
                 }
@@ -1598,6 +1615,15 @@ namespace UniversalPatcher
                             else
                                 newValue =  (1 + newValue / 100) * (double)tCell.lastValue;
                         }
+                        else if (radioDifference2.Checked)
+                        {
+                            if (radioAbsolute.Checked)
+                                newValue =  newValue + (double)tCell.lastValue;
+                            else if (radioMultiplier.Checked)
+                                newValue = (double)tCell.lastValue / newValue;
+                            else
+                                newValue = (double)tCell.lastValue - (newValue * (double)tCell.lastValue)/100 + 100;
+                        }
                     }
                 }
                 if (newValue == double.MaxValue) return;
@@ -1621,7 +1647,7 @@ namespace UniversalPatcher
                     tCell.saveValue(newValue);
                     //string mathStr = mathTd.Math.ToLower();
                     //double calcValue = (double)tCell.lastValue;
-                    if (radioDifference.Checked)
+                    if (radioDifference.Checked || radioDifference2.Checked)
                         loadTable();
                     else
                         dataGridView1.Rows[r].Cells[c].Value = tCell.lastValue;
@@ -2048,7 +2074,7 @@ namespace UniversalPatcher
 
         private void radioDifference_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioDifference.Checked)
+            if (radioDifference.Checked || radioDifference2.Checked)
             {
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
@@ -2218,7 +2244,7 @@ namespace UniversalPatcher
 
         private void numTuneValue_ValueChanged(object sender, EventArgs e)
         {
-            if (radioDifference.Checked)
+            if (radioDifference.Checked || radioDifference2.Checked)
                 return;
             decimal oldVal = (decimal)numTuneValue.Tag;
             decimal newVal = numTuneValue.Value;
@@ -2252,6 +2278,24 @@ namespace UniversalPatcher
             {
                 loadTable();
             }
+        }
+
+        private void radioDifference2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioDifference.Checked || radioDifference2.Checked)
+            {
+                currentFile = 0;
+                dataGridView1.BackgroundColor = Color.Red;
+                disableSaving = false;
+                setMyText();
+                loadTable();
+                groupDifference.Visible = true;
+            }
+            else
+            {
+                groupDifference.Visible = false;
+            }
+
         }
 
 

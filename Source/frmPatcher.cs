@@ -1210,7 +1210,7 @@ namespace UniversalPatcher
             frmPS.Show();
             Application.DoEvents();
             frmPS.loadPatches();
-
+            RefreshPatchList();
         }
 
         private void btnBinLoadPatch_Click(object sender, EventArgs e)

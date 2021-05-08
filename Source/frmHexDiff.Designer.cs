@@ -40,9 +40,10 @@
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.collapseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expand2LevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expand3LevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.collapseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnCreatePatch = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -64,7 +65,7 @@
             // 
             this.labelFileNames.AutoSize = true;
             this.labelFileNames.BackColor = System.Drawing.Color.White;
-            this.labelFileNames.Location = new System.Drawing.Point(384, 5);
+            this.labelFileNames.Location = new System.Drawing.Point(476, 5);
             this.labelFileNames.Name = "labelFileNames";
             this.labelFileNames.Size = new System.Drawing.Size(11, 13);
             this.labelFileNames.TabIndex = 1;
@@ -72,7 +73,7 @@
             // 
             // txtFilter
             // 
-            this.txtFilter.Location = new System.Drawing.Point(290, 3);
+            this.txtFilter.Location = new System.Drawing.Point(382, 3);
             this.txtFilter.Name = "txtFilter";
             this.txtFilter.Size = new System.Drawing.Size(88, 20);
             this.txtFilter.TabIndex = 2;
@@ -170,41 +171,52 @@
             this.expand3LevelsToolStripMenuItem,
             this.collapseToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(158, 92);
             // 
             // expandAllToolStripMenuItem
             // 
             this.expandAllToolStripMenuItem.Name = "expandAllToolStripMenuItem";
-            this.expandAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.expandAllToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.expandAllToolStripMenuItem.Text = "Expand 1 level";
             this.expandAllToolStripMenuItem.Click += new System.EventHandler(this.expandAllToolStripMenuItem_Click);
-            // 
-            // collapseToolStripMenuItem
-            // 
-            this.collapseToolStripMenuItem.Name = "collapseToolStripMenuItem";
-            this.collapseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.collapseToolStripMenuItem.Text = "Collapse";
-            this.collapseToolStripMenuItem.Click += new System.EventHandler(this.collapseToolStripMenuItem_Click);
             // 
             // expand2LevelsToolStripMenuItem
             // 
             this.expand2LevelsToolStripMenuItem.Name = "expand2LevelsToolStripMenuItem";
-            this.expand2LevelsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.expand2LevelsToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.expand2LevelsToolStripMenuItem.Text = "Expand 2 Levels";
             this.expand2LevelsToolStripMenuItem.Click += new System.EventHandler(this.expand2LevelsToolStripMenuItem_Click);
             // 
             // expand3LevelsToolStripMenuItem
             // 
             this.expand3LevelsToolStripMenuItem.Name = "expand3LevelsToolStripMenuItem";
-            this.expand3LevelsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.expand3LevelsToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.expand3LevelsToolStripMenuItem.Text = "Expand 3 Levels";
             this.expand3LevelsToolStripMenuItem.Click += new System.EventHandler(this.expand3LevelsToolStripMenuItem_Click);
+            // 
+            // collapseToolStripMenuItem
+            // 
+            this.collapseToolStripMenuItem.Name = "collapseToolStripMenuItem";
+            this.collapseToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.collapseToolStripMenuItem.Text = "Collapse";
+            this.collapseToolStripMenuItem.Click += new System.EventHandler(this.collapseToolStripMenuItem_Click);
+            // 
+            // btnCreatePatch
+            // 
+            this.btnCreatePatch.Location = new System.Drawing.Point(290, 0);
+            this.btnCreatePatch.Name = "btnCreatePatch";
+            this.btnCreatePatch.Size = new System.Drawing.Size(86, 23);
+            this.btnCreatePatch.TabIndex = 7;
+            this.btnCreatePatch.Text = "Create patch";
+            this.btnCreatePatch.UseVisualStyleBackColor = true;
+            this.btnCreatePatch.Click += new System.EventHandler(this.btnCreatePatch_Click);
             // 
             // frmHexDiff
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnCreatePatch);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.btnShowInTuner);
             this.Controls.Add(this.btnSaveTableList);
@@ -239,5 +251,6 @@
         private System.Windows.Forms.ToolStripMenuItem collapseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem expand2LevelsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem expand3LevelsToolStripMenuItem;
+        private System.Windows.Forms.Button btnCreatePatch;
     }
 }

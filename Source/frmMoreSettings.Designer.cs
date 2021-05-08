@@ -39,6 +39,8 @@ namespace UniversalPatcher
             this.numTunerMinEqOther = new System.Windows.Forms.NumericUpDown();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtMultitableChars = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerTableMinEquivalency)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numKeypressWait)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerMinEqOther)).BeginInit();
@@ -70,7 +72,7 @@ namespace UniversalPatcher
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(240, 163);
+            this.btnOK.Location = new System.Drawing.Point(240, 185);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 2;
@@ -145,11 +147,30 @@ namespace UniversalPatcher
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "List filtering";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(13, 156);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(169, 13);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Multitable chars (space separated)";
+            // 
+            // txtMultitableChars
+            // 
+            this.txtMultitableChars.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtMultitableChars.Location = new System.Drawing.Point(188, 151);
+            this.txtMultitableChars.Name = "txtMultitableChars";
+            this.txtMultitableChars.Size = new System.Drawing.Size(113, 23);
+            this.txtMultitableChars.TabIndex = 11;
+            // 
             // frmMoreSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(322, 198);
+            this.ClientSize = new System.Drawing.Size(322, 220);
+            this.Controls.Add(this.txtMultitableChars);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnOK);
@@ -165,6 +186,7 @@ namespace UniversalPatcher
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -179,5 +201,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.NumericUpDown numTunerMinEqOther;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox txtMultitableChars;
     }
 }
