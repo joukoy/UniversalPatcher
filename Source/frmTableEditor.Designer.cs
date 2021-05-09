@@ -77,6 +77,7 @@ namespace UniversalPatcher
             this.radioPercent = new System.Windows.Forms.RadioButton();
             this.radioMultiplier = new System.Windows.Forms.RadioButton();
             this.radioAbsolute = new System.Windows.Forms.RadioButton();
+            this.copyTableFromCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -142,42 +143,43 @@ namespace UniversalPatcher
             this.pasteToolStripMenuItem,
             this.exportCsvToolStripMenuItem,
             this.searchCodeFromGoogleToolStripMenuItem,
-            this.copyFromCompareToolStripMenuItem});
+            this.copyFromCompareToolStripMenuItem,
+            this.copyTableFromCompareToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(196, 136);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 180);
             // 
             // cutToolStripMenuItem
             // 
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.cutToolStripMenuItem.Text = "Cut";
             this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // exportCsvToolStripMenuItem
             // 
             this.exportCsvToolStripMenuItem.Name = "exportCsvToolStripMenuItem";
-            this.exportCsvToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.exportCsvToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.exportCsvToolStripMenuItem.Text = "Export csv";
             this.exportCsvToolStripMenuItem.Click += new System.EventHandler(this.exportCsvToolStripMenuItem_Click);
             // 
             // searchCodeFromGoogleToolStripMenuItem
             // 
             this.searchCodeFromGoogleToolStripMenuItem.Name = "searchCodeFromGoogleToolStripMenuItem";
-            this.searchCodeFromGoogleToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.searchCodeFromGoogleToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.searchCodeFromGoogleToolStripMenuItem.Text = "Search code by Google";
             this.searchCodeFromGoogleToolStripMenuItem.Visible = false;
             this.searchCodeFromGoogleToolStripMenuItem.Click += new System.EventHandler(this.searchCodeFromGoogleToolStripMenuItem_Click);
@@ -185,7 +187,7 @@ namespace UniversalPatcher
             // copyFromCompareToolStripMenuItem
             // 
             this.copyFromCompareToolStripMenuItem.Name = "copyFromCompareToolStripMenuItem";
-            this.copyFromCompareToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.copyFromCompareToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.copyFromCompareToolStripMenuItem.Text = "Copy from compare";
             this.copyFromCompareToolStripMenuItem.Click += new System.EventHandler(this.copyFromCompareToolStripMenuItem_Click);
             // 
@@ -557,6 +559,13 @@ namespace UniversalPatcher
             this.radioAbsolute.UseVisualStyleBackColor = true;
             this.radioAbsolute.CheckedChanged += new System.EventHandler(this.radioAbsolute_CheckedChanged);
             // 
+            // copyTableFromCompareToolStripMenuItem
+            // 
+            this.copyTableFromCompareToolStripMenuItem.Name = "copyTableFromCompareToolStripMenuItem";
+            this.copyTableFromCompareToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.copyTableFromCompareToolStripMenuItem.Text = "Copy table from compare";
+            this.copyTableFromCompareToolStripMenuItem.Click += new System.EventHandler(this.copyTableFromCompareToolStripMenuItem_Click);
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -645,5 +654,6 @@ namespace UniversalPatcher
         private RadioButton radioMultiplier;
         private RadioButton radioAbsolute;
         private RadioButton radioDifference2;
+        private ToolStripMenuItem copyTableFromCompareToolStripMenuItem;
     }
 }

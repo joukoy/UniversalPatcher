@@ -2078,7 +2078,7 @@ namespace UniversalPatcher
             {
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
-                disableSaving = false;
+                disableSaving = true;
                 setMyText();
                 loadTable();
                 groupDifference.Visible = true;
@@ -2286,7 +2286,7 @@ namespace UniversalPatcher
             {
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
-                disableSaving = false;
+                disableSaving = true;
                 setMyText();
                 loadTable();
                 groupDifference.Visible = true;
@@ -2296,6 +2296,27 @@ namespace UniversalPatcher
                 groupDifference.Visible = false;
             }
 
+        }
+
+        private void copyTableFromCompareToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int id = 0; id < compareFiles[0].tableInfos.Count; id++)
+            {
+                TableInfo ti = compareFiles[0].tableInfos[id];
+                TableInfo cmpTi;
+                int cmpId = compareFiles[currentCmpFile].refTableIds[(int)ti.td.id];
+                if (cmpId > -1)
+                {
+                    int pos = compareFiles[currentCmpFile].tableIds.IndexOf(cmpId);
+                    cmpTi = compareFiles[currentCmpFile].tableInfos[pos];
+                    for (int cell = 0; cell < ti.tableCells.Count; cell++)
+                    {
+
+                        ti.tableCells[cell].saveValue(Convert.ToDouble(cmpTi.tableCells[cell].lastValue));
+                    }
+                }
+            }
+            loadTable();
         }
 
 

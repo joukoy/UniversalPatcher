@@ -721,27 +721,27 @@ namespace UniversalPatcher
         }
 
 
-        private void CompareBlock(byte[] OrgFile, byte[] ModFile, uint Start, uint End, string CurrentSegment, AddressData[] SkipList)
+        private void CompareBlock(byte[] OrgFile, byte[] ModFile, uint Start, uint End, string CurrentSegment, List<AddressData> SkipList)
         {
             Logger(" [" + Start.ToString("X") + " - " + End.ToString("X") + "] ");
             uint ModCount = 0;
             XmlPatch xpatch = new XmlPatch();
             bool BlockStarted = false;
-            for (uint i = Start; i < End; i++)
+            for (uint addr = Start; addr < End; addr++)
             {
-                if (OrgFile[i] != ModFile[i])
+                if (OrgFile[addr] != ModFile[addr])
                 {
                     bool SkipAddr = false;
-                    for (int s=0; s<SkipList.Length; s++)
+                    for (int s=0; s<SkipList.Count; s++)
                     {
-                        if (SkipList[s].Bytes > 0 && i >= SkipList[s].Address && i <= (uint)(SkipList[s].Address + SkipList[s].Bytes - 1))
+                        if (SkipList[s].Bytes > 0 && addr >= SkipList[s].Address && addr <= (uint)(SkipList[s].Address + SkipList[s].Bytes - 1))
                         {
                             SkipAddr = true;
                         }
                     }
                     if (SkipAddr)
                     {
-                        Debug.WriteLine("Skipping: " + i.ToString("X") + "(" + CurrentSegment +")");
+                        Debug.WriteLine("Skipping: " + addr.ToString("X") + "(" + CurrentSegment +")");
                     }
                     else
                     { 
@@ -754,16 +754,16 @@ namespace UniversalPatcher
                             xpatch.Description = "";
                             xpatch.Segment = CurrentSegment;
                             xpatch.Data = "";
-                            xpatch.CompatibleOS = txtOS.Text + ":" + i.ToString("X");
+                            xpatch.CompatibleOS = txtOS.Text + ":" + addr.ToString("X");
                             BlockStarted = true;
                         }
                         else
                             xpatch.Data += " ";
 
-                        xpatch.Data += ModFile[i].ToString("X2");
+                        xpatch.Data += ModFile[addr].ToString("X2");
                         ModCount++;
                         if (ModCount <= numSuppress.Value)
-                            Logger(i.ToString("X6") + ": " + OrgFile[i].ToString("X2") + " => " + ModFile[i].ToString("X2"));
+                            Logger(addr.ToString("X6") + ": " + OrgFile[addr].ToString("X2") + " => " + ModFile[addr].ToString("X2"));
                     }
 
                 }
@@ -804,21 +804,33 @@ namespace UniversalPatcher
                 GetFileInfo(txtBaseFile.Text, ref basefile, false, false);
                 GetFileInfo(txtModifierFile.Text, ref modfile, false, false);
 
+                List<AddressData> SkipList = new List<AddressData>();
+
                 labelBinSize.Text = fsize.ToString();
                 if (basefile.Segments.Count == 0)
                 {
                     Logger("No segments defined, comparing complete file");
-                    AddressData[] SkipList = new AddressData[0];
                     CompareBlock(basefile.buf, modfile.buf, 0, (uint)fsize, "", SkipList);
                 }
                 else if (chkCompareAll.Checked)
                 {
                     Logger("Comparing complete file");
-                    AddressData[] SkipList = new AddressData[0];
                     CompareBlock(basefile.buf, modfile.buf, 0, (uint)fsize, "", SkipList);
                 }
                 else
                 {
+
+                    for (int Snr = 0; Snr < basefile.Segments.Count; Snr++)
+                    {
+                            for (int p = 0; p < basefile.segmentAddressDatas[Snr].SegmentBlocks.Count; p++)
+                            {
+                                if (basefile.Segments[Snr].CS1Address != null && basefile.Segments[Snr].CS1Address != "")
+                                    SkipList.Add( basefile.segmentAddressDatas[Snr].CS1Address);
+                                if (basefile.Segments[Snr].CS2Address != null && basefile.Segments[Snr].CS2Address != "")
+                                    SkipList.Add(basefile.segmentAddressDatas[Snr].CS2Address);
+                            }
+                    }
+
                     for (int Snr = 0; Snr < basefile.Segments.Count; Snr++)
                     {
                         if (chkSegments[Snr].Enabled && chkSegments[Snr].Checked)
@@ -828,11 +840,6 @@ namespace UniversalPatcher
                             {
                                 uint Start = basefile.segmentAddressDatas[Snr].SegmentBlocks[p].Start;
                                 uint End = basefile.segmentAddressDatas[Snr].SegmentBlocks[p].End;
-                                AddressData[] SkipList = new AddressData[2];
-                                if (basefile.Segments[Snr].CS1Address != null && basefile.Segments[Snr].CS1Address != "")
-                                    SkipList[0] = basefile.segmentAddressDatas[Snr].CS1Address;
-                                if (basefile.Segments[Snr].CS2Address != null && basefile.Segments[Snr].CS2Address != "")
-                                    SkipList[1] = basefile.segmentAddressDatas[Snr].CS2Address;
                                 CompareBlock(basefile.buf, modfile.buf, Start, End, basefile.Segments[Snr].Name, SkipList);
                             }
                             Logger("");
