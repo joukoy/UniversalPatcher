@@ -86,6 +86,7 @@ namespace UniversalPatcher
 
         public frmTuner tuner;
         private string lastTable = "";
+        List<CheckBox> fileCheckBoxes;
 
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
@@ -1160,7 +1161,7 @@ namespace UniversalPatcher
                 }
                 if (radioCompareAll.Checked)
                 {
-                    for (int i=1; i< compareFiles.Count; i++)
+                    for (int i = 1; i < compareFiles.Count; i++)
                     {
                         cmpFiles.Add(compareFiles[i]);
                     }
@@ -1268,8 +1269,18 @@ namespace UniversalPatcher
                             addCellByType(ft, gridRow, gridCol);
                             setCellValue(gridRow, gridCol, tcell, cmpCell);
                         }
-                        for (int d=0; d < cmpFiles.Count; d++)
+                        for (int d = 0; d < cmpFiles.Count; d++)
                         {
+
+                            if (radioCompareAll.Checked)
+                            {
+                                bool selected = false;
+                                for (int x = 0; x < fileCheckBoxes.Count; x++)
+                                    if (fileCheckBoxes[x].Text == cmpFiles[d].fileLetter && fileCheckBoxes[x].Checked)
+                                        selected = true;
+                                if (!selected)
+                                    continue;   
+                            }
                             int cmpId = -1;
                             if (cmpFiles[d].refTableIds.ContainsKey(sFile.tableIds[tbl]))
                                 cmpId = cmpFiles[d].refTableIds[sFile.tableIds[tbl]];
@@ -2210,13 +2221,48 @@ namespace UniversalPatcher
 
         }
 
+        private void addFileCheckBoxes()
+        {
+            if (fileCheckBoxes != null && fileCheckBoxes.Count == compareFiles.Count - 1)
+            {
+                for (int i = 0; i < fileCheckBoxes.Count; i++)
+                    fileCheckBoxes[i].Visible = true;
+                return;
+            }
+            int left = 186;
+            fileCheckBoxes = new List<CheckBox>();
+            for (int i=1; i < compareFiles.Count; i++)
+            {
+                CheckBox cBox = new CheckBox();
+                cBox.Text = compareFiles[i].fileLetter;
+                cBox.Checked = true;
+                this.Controls.Add(cBox);
+                fileCheckBoxes.Add(cBox);
+                cBox.Location = new Point(left, 50);
+                cBox.BringToFront();
+                cBox.CheckedChanged += CBox_CheckedChanged;
+                left += 30;
+            }
+        }
+
+        private void CBox_CheckedChanged(object sender, EventArgs e)
+        {
+            loadTable();
+        }
+
         private void radioCompareAll_CheckedChanged(object sender, EventArgs e)
         {
             if (radioCompareAll.Checked)
             {
                 dataGridView1.BackgroundColor = Color.Red;
+                addFileCheckBoxes();
                 loadTable();
                 setMyText();
+            }
+            else
+            {
+                for (int i = 0; i < fileCheckBoxes.Count; i++)
+                    fileCheckBoxes[i].Visible = false;
             }
         }
 

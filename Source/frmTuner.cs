@@ -352,8 +352,11 @@ namespace UniversalPatcher
                     return;
 
                 Logger("Saving to file: " + fileName);
-                PCM.saveBin(fileName);
-                this.Text = "Tuner " + Path.GetFileName(fileName) + " [" + PCM.tunerFile +"]";
+                PcmFile newPCM = PCM.ShallowCopy();
+                newPCM.saveBin(fileName);
+                addtoCurrentFileMenu(newPCM);
+                PCM = newPCM;
+                selectPCM();
                 Logger("Done.");
             }
             catch (Exception ex)
