@@ -181,61 +181,73 @@ namespace UniversalPatcher
 
         private void showCellInfo()
         {
-            if (dataGridView1.SelectedCells.Count == 0 || dataGridView1.SelectedCells[0].Tag == null)
-                return;
-            TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
-            if (tCell.addr == (uint.MaxValue - 1))
+            try
             {
-                labelInfo.Text = "";
-                return; //OBD2 Description
-            }
-            string thisTable = tCell.td.TableName;
-            if (thisTable != lastTable && tuner != null)
-            {
-                lastTable = thisTable;
-                tuner.showTableDescription(tCell.tableInfo.compareFile.pcm, (int)tCell.td.id);
-            }
-            string minMaxTxt = "";
-            TableData tData = tCell.td;
-            double minRaw = getMinValue(tData.DataType);
-            double maxRaw = getMaxValue(tData.DataType);
-            double min = tCell.calculatedValue(minRaw);
-            if (minRaw == 0 && double.IsNaN(min))
-            {
-                minRaw = 1;
-                min = tCell.calculatedValue(minRaw);
-            }
-            double max = tCell.calculatedValue(maxRaw);
+                if (dataGridView1.SelectedCells.Count == 0 || dataGridView1.SelectedCells[0].Tag == null)
+                    return;
+                TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
+                if (tCell.addr == (uint.MaxValue - 1))
+                {
+                    labelInfo.Text = "";
+                    return; //OBD2 Description
+                }
+                string thisTable = tCell.td.TableName;
+                if (thisTable != lastTable && tuner != null)
+                {
+                    lastTable = thisTable;
+                    tuner.showTableDescription(tCell.tableInfo.compareFile.pcm, (int)tCell.td.id);
+                }
+                string minMaxTxt = "";
+                TableData tData = tCell.td;
+                double minRaw = getMinValue(tData.DataType);
+                double maxRaw = getMaxValue(tData.DataType);
+                double min = tCell.calculatedValue(minRaw);
+                if (minRaw == 0 && double.IsNaN(min))
+                {
+                    minRaw = 1;
+                    min = tCell.calculatedValue(minRaw);
+                }
+                double max = tCell.calculatedValue(maxRaw);
 
-            string formatStr = "0";
-            for (int f = 1; f <= (int)numDecimals.Value; f++)
-            {
-                if (f == 1) formatStr += ".";
-                formatStr += "0";
-            }
+                string formatStr = "0";
+                for (int f = 1; f <= (int)numDecimals.Value; f++)
+                {
+                    if (f == 1) formatStr += ".";
+                    formatStr += "0";
+                }
 
-            if (min > max)
-            {
-                //swap
-                double tmp = max;
-                max = min;
-                min = tmp;
-            }
+                if (min > max)
+                {
+                    //swap
+                    double tmp = max;
+                    max = min;
+                    min = tmp;
+                }
 
-            if (min < tData.Min || max > tData.Max)
-            {
-                minMaxTxt = "Soft limits: Min " + tData.Min.ToString(formatStr) + " Max " + tData.Max.ToString(formatStr) +
-                    " Hard limits: Min " + min.ToString(formatStr) + " Max " + max.ToString(formatStr);
+                if (min < tData.Min || max > tData.Max)
+                {
+                    minMaxTxt = "Soft limits: Min " + tData.Min.ToString(formatStr) + " Max " + tData.Max.ToString(formatStr) +
+                        " Hard limits: Min " + min.ToString(formatStr) + " Max " + max.ToString(formatStr);
 
+                }
+                else
+                {
+                    minMaxTxt = "Min " + min.ToString(formatStr) + " Max " + max.ToString(formatStr);
+                }
+                string valTxt = " Last value " + Convert.ToDouble(tCell.lastValue).ToString(formatStr) + " Saved value " + Convert.ToDouble(tCell.origValue).ToString(formatStr);
+                labelInfo.Text = minMaxTxt + valTxt;
             }
-            else
+            catch (Exception ex)
             {
-                minMaxTxt = "Min " + min.ToString(formatStr) + " Max " + max.ToString(formatStr);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
-            string valTxt = " Last value " + Convert.ToDouble(tCell.lastValue).ToString(formatStr) + " Saved value " + Convert.ToDouble(tCell.origValue).ToString(formatStr);
-            labelInfo.Text = minMaxTxt + valTxt;
-
         }
+
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             showCellInfo();
@@ -243,161 +255,173 @@ namespace UniversalPatcher
 
         private void parseTableInfo(CompareFile cmpFile)
         {
-            PcmFile pcm = cmpFile.pcm;
-            List<TableData> sizeList = new List<TableData>(cmpFile.filteredTables.OrderBy(o => o.addrInt).ToList());
-            TableData first = sizeList[0];
-            TableData last = sizeList[sizeList.Count - 1];
-            int elementSize = getElementSize(last.DataType);
-            int singleTableSize = last.Rows * last.Columns * elementSize;
-            uint bufSize = (uint)(last.addrInt - first.addrInt + last.Offset + singleTableSize);
-            cmpFile.buf = new byte[bufSize];
-            Array.Copy(pcm.buf, first.addrInt, cmpFile.buf, 0, bufSize);
-            cmpFile.tableBufferOffset = first.addrInt;
-
-            for (int tId =0; tId < cmpFile.tableIds.Count; tId++)
+            try
             {
-                TableData tData = pcm.tableDatas[cmpFile.tableIds[tId]];
-                TableInfo tInfo = new TableInfo(pcm, tData);
-                tInfo.compareFile = cmpFile;
-
-                int rowCount = tData.Rows;
-                int colCount = tData.Columns;
-
-/*                int elementSize = getBits(tData.DataType) / 8;
-                int bufSize = (int)(tData.Rows * tData.Columns * elementSize + tData.Offset);
+                PcmFile pcm = cmpFile.pcm;
+                List<TableData> sizeList = new List<TableData>(cmpFile.filteredTables.OrderBy(o => o.addrInt).ToList());
+                TableData first = sizeList[0];
+                TableData last = sizeList[sizeList.Count - 1];
+                int elementSize = getElementSize(last.DataType);
+                int singleTableSize = last.Rows * last.Columns * elementSize;
+                uint bufSize = (uint)(last.addrInt - first.addrInt + last.Offset + singleTableSize);
                 cmpFile.buf = new byte[bufSize];
-                Array.Copy(pcm.buf, tData.addrInt, cmpFile.buf, 0, bufSize);
-                cmpFile.tableBufferOffset = tData.addrInt;
-*/
-                if (tData.TableName.ToLower().EndsWith(".data"))
-                {
-                    rowCount = getRowCountFromTable(tData, pcm);
-                    colCount = getColumnsFromTable(tData, pcm);
-                }
+                Array.Copy(pcm.buf, first.addrInt, cmpFile.buf, 0, bufSize);
+                cmpFile.tableBufferOffset = first.addrInt;
 
-                string[] cHeaders = tData.ColumnHeaders.Split(',');
-                if (tData.ColumnHeaders.StartsWith("Table: "))
+                for (int tId = 0; tId < cmpFile.tableIds.Count; tId++)
                 {
-                    cHeaders = loadHeaderFromTable(tData.ColumnHeaders.Substring(7), tData.Columns, pcm).Split(',');
-                }
+                    TableData tData = pcm.tableDatas[cmpFile.tableIds[tId]];
+                    TableInfo tInfo = new TableInfo(pcm, tData);
+                    tInfo.compareFile = cmpFile;
 
-                string[] rHeaders = tData.RowHeaders.Split(',');
-                if (tData.RowHeaders.StartsWith("Table: "))
-                {
-                    rHeaders = loadHeaderFromTable(tData.RowHeaders.Substring(7), tData.Rows, pcm).Split(',');
-                }
+                    int rowCount = tData.Rows;
+                    int colCount = tData.Columns;
 
-                string RowPrefix = "";
-                string colPrefix = "";
-                if (!disableMultiTable)
-                {
-                    string[] nParts = tData.TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (nParts.Length > 1)
+                    /*                int elementSize = getBits(tData.DataType) / 8;
+                                    int bufSize = (int)(tData.Rows * tData.Columns * elementSize + tData.Offset);
+                                    cmpFile.buf = new byte[bufSize];
+                                    Array.Copy(pcm.buf, tData.addrInt, cmpFile.buf, 0, bufSize);
+                                    cmpFile.tableBufferOffset = tData.addrInt;
+                    */
+                    if (tData.TableName.ToLower().EndsWith(".data"))
                     {
-                        //"Real" multitable
-                        string TableName = nParts[0];
-                        if (nParts.Length == 2)
-                        {
-                            colPrefix = nParts[1].Trim();
-                        }
-                        if (nParts.Length == 3)
-                        {
-                            colPrefix = nParts[1].Trim();
-                            RowPrefix = nParts[2].Trim();
-                        }
-                        if (nParts.Length > 3)
-                        {
-                            int columnPos = (int)numColumn.Value;
-                            colPrefix = nParts[columnPos].Trim();
-                            for (int i = 1; i < 4; i++)
-                                if (i != columnPos)
-                                    RowPrefix += "[" + nParts[i].Trim() + "]";
-                        }
-                        colPrefix += " ";
-                        RowPrefix += " ";
+                        rowCount = getRowCountFromTable(tData, pcm);
+                        colCount = getColumnsFromTable(tData, pcm);
                     }
-                }
 
-                List<string> colHeaders = new List<string>();
-                List<string> rowHeaders = new List<string>();
-                for (int c=0; c<tData.Columns; c++)
-                {
-                    string cHdr = "";
-                    if (cHeaders.Length >= c + 1 && cHeaders[c].Length > 0)
-                        cHdr = cHeaders[c];
-                    else
-                        cHdr = tData.Units + " " + c.ToString();
-                    if (duplicateTableName)
-                        cHdr += " [" + tData.id + "]";
-                    if (colHeaders.Contains(colPrefix + cHdr))
-                        colHeaders.Add(colPrefix + cHdr + c.ToString());
-                    else
-                        colHeaders.Add(colPrefix + cHdr);
-                }
-                for (int r = 0; r < tData.Rows; r++)
-                {
-                    string rHdr = "";
-                    if (rHeaders.Length >= r + 1 && rHeaders[r].Length > 0)
-                        rHdr = rHeaders[r];
-                    else
-                        rHdr = "(" + r.ToString() + ")";
-                    if (rowHeaders.Contains(RowPrefix + rHdr))
-                        rowHeaders.Add(RowPrefix + rHdr + r.ToString());
-                    else
-                        rowHeaders.Add(RowPrefix + rHdr);
-                }
+                    string[] cHeaders = tData.ColumnHeaders.Split(',');
+                    if (tData.ColumnHeaders.StartsWith("Table: "))
+                    {
+                        cHeaders = loadHeaderFromTable(tData.ColumnHeaders.Substring(7), tData.Columns, pcm).Split(',');
+                    }
 
-                uint addr = (uint)(tData.addrInt + tData.Offset);
-                int step = getElementSize(tData.DataType);
-                if (tData.RowMajor)
-                {
+                    string[] rHeaders = tData.RowHeaders.Split(',');
+                    if (tData.RowHeaders.StartsWith("Table: "))
+                    {
+                        rHeaders = loadHeaderFromTable(tData.RowHeaders.Substring(7), tData.Rows, pcm).Split(',');
+                    }
+
+                    string RowPrefix = "";
+                    string colPrefix = "";
+                    if (!disableMultiTable)
+                    {
+                        string[] nParts = tData.TableName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (nParts.Length > 1)
+                        {
+                            //"Real" multitable
+                            string TableName = nParts[0];
+                            if (nParts.Length == 2)
+                            {
+                                colPrefix = nParts[1].Trim();
+                            }
+                            if (nParts.Length == 3)
+                            {
+                                colPrefix = nParts[1].Trim();
+                                RowPrefix = nParts[2].Trim();
+                            }
+                            if (nParts.Length > 3)
+                            {
+                                int columnPos = (int)numColumn.Value;
+                                colPrefix = nParts[columnPos].Trim();
+                                for (int i = 1; i < 4; i++)
+                                    if (i != columnPos)
+                                        RowPrefix += "[" + nParts[i].Trim() + "]";
+                            }
+                            colPrefix += " ";
+                            RowPrefix += " ";
+                        }
+                    }
+
+                    List<string> colHeaders = new List<string>();
+                    List<string> rowHeaders = new List<string>();
+                    for (int c = 0; c < tData.Columns; c++)
+                    {
+                        string cHdr = "";
+                        if (cHeaders.Length >= c + 1 && cHeaders[c].Length > 0)
+                            cHdr = cHeaders[c];
+                        else
+                            cHdr = tData.Units + " " + c.ToString();
+                        if (duplicateTableName)
+                            cHdr += " [" + tData.id + "]";
+                        if (colHeaders.Contains(colPrefix + cHdr))
+                            colHeaders.Add(colPrefix + cHdr + c.ToString());
+                        else
+                            colHeaders.Add(colPrefix + cHdr);
+                    }
                     for (int r = 0; r < tData.Rows; r++)
                     {
-                        for (int c = 0; c < tData.Columns; c++)
-                        {
-                            TableCell tc = new TableCell();
-                            tc.tableInfo = tInfo;
-                            tc.td = tData;
-                            tc.Column = c;
-                            tc.Row = r;
-                            tc.ColHeader = colHeaders[c];
-                            tc.RowhHeader = rowHeaders[r];
-                            tc.addr = addr;
-                            tc.lastValue = getValue(pcm.buf, addr, tData, 0, pcm);
-                            tc.lastRawValue = getRawValue(pcm.buf, addr, tData, 0);
-                            addr += (uint)step;
-                            tInfo.tableCells.Add(tc);
-                        }
-
+                        string rHdr = "";
+                        if (rHeaders.Length >= r + 1 && rHeaders[r].Length > 0)
+                            rHdr = rHeaders[r];
+                        else
+                            rHdr = "(" + r.ToString() + ")";
+                        if (rowHeaders.Contains(RowPrefix + rHdr))
+                            rowHeaders.Add(RowPrefix + rHdr + r.ToString());
+                        else
+                            rowHeaders.Add(RowPrefix + rHdr);
                     }
-                }
-                else
-                {
-                    // not rowmajor
-                    for (int c = 0; c < tData.Columns; c++)
+
+                    uint addr = (uint)(tData.addrInt + tData.Offset);
+                    int step = getElementSize(tData.DataType);
+                    if (tData.RowMajor)
                     {
                         for (int r = 0; r < tData.Rows; r++)
                         {
-                            TableCell tc = new TableCell();
-                            tc.tableInfo = tInfo;
-                            tc.td = tData;
-                            tc.Column = c;
-                            tc.Row = r;
-                            tc.ColHeader = colHeaders[c];
-                            tc.RowhHeader = rowHeaders[r];
-                            tc.addr = addr;
-                            tc.lastValue = getValue(pcm.buf, addr, tData, 0, pcm);
-                            tc.lastRawValue = getRawValue(pcm.buf, addr, tData, 0);
-                            addr += (uint)step;
-                            tInfo.tableCells.Add(tc);
+                            for (int c = 0; c < tData.Columns; c++)
+                            {
+                                TableCell tc = new TableCell();
+                                tc.tableInfo = tInfo;
+                                tc.td = tData;
+                                tc.Column = c;
+                                tc.Row = r;
+                                tc.ColHeader = colHeaders[c];
+                                tc.RowhHeader = rowHeaders[r];
+                                tc.addr = addr;
+                                tc.lastValue = getValue(pcm.buf, addr, tData, 0, pcm);
+                                tc.lastRawValue = getRawValue(pcm.buf, addr, tData, 0);
+                                addr += (uint)step;
+                                tInfo.tableCells.Add(tc);
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        // not rowmajor
+                        for (int c = 0; c < tData.Columns; c++)
+                        {
+                            for (int r = 0; r < tData.Rows; r++)
+                            {
+                                TableCell tc = new TableCell();
+                                tc.tableInfo = tInfo;
+                                tc.td = tData;
+                                tc.Column = c;
+                                tc.Row = r;
+                                tc.ColHeader = colHeaders[c];
+                                tc.RowhHeader = rowHeaders[r];
+                                tc.addr = addr;
+                                tc.lastValue = getValue(pcm.buf, addr, tData, 0, pcm);
+                                tc.lastRawValue = getRawValue(pcm.buf, addr, tData, 0);
+                                addr += (uint)step;
+                                tInfo.tableCells.Add(tc);
+                            }
+
                         }
 
                     }
-
-                }                
-                cmpFile.tableInfos.Add(tInfo);
+                    cmpFile.tableInfos.Add(tInfo);
+                }
+                compareFiles.Add(cmpFile);
             }
-            compareFiles.Add(cmpFile);
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
         }
 
         private void DataGridView1_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -418,131 +442,154 @@ namespace UniversalPatcher
 
         public void prepareTable(PcmFile pcm, TableData td,List<int> tableIds, string fileLetter)
         {
-            TableInfo tInfo = new TableInfo(pcm, td);
-            CompareFile orgFile = new CompareFile(pcm);
-            orgFile.fileLetter = fileLetter;
-            radioOriginal.Text = fileLetter;
-            tableName = td.TableName;
+            try
+            {
+                TableInfo tInfo = new TableInfo(pcm, td);
+                CompareFile orgFile = new CompareFile(pcm);
+                orgFile.fileLetter = fileLetter;
+                radioOriginal.Text = fileLetter;
+                tableName = td.TableName;
 
-            if (tableIds == null)
-            {
-                tableIds = new List<int>();
-                tableIds.Add((int)td.id);
-            }
-
-            if (tableIds.Count > 1)
-            {
-                multiSelect = true;
-                prepareMultiTable(orgFile,td,tableIds);
-                return;
-            }
-            if (!disableMultiTable)
-            {
-                if (td.TableName.ToLower().EndsWith(".xval") || td.TableName.ToLower().EndsWith(".yval"))
+                if (tableIds == null)
                 {
-                    for (int x = 0; x < pcm.tableDatas.Count; x++)
-                    {
-                        if (pcm.tableDatas[x].TableName.ToLower() == td.TableName.ToLower().Replace(".yval", ".data").Replace(".xval", ".data"))
-                        {
-                            td = pcm.tableDatas[x];
-                            prepareMultiTable(orgFile, td, null);
-                            return;
-                        }
-                    }
+                    tableIds = new List<int>();
+                    tableIds.Add((int)td.id);
                 }
-                string[] separators =  Properties.Settings.Default.MulitableChars.Split(' ');
-                //if (td.TableName.Contains("[") || td.TableName.Contains("."))
-                if (separators.Any(td.TableName.Contains))
+
+                if (tableIds.Count > 1)
                 {
-                    //if (td.TableName.ToLower().Contains(" vs.") || td.TableName.StartsWith("Header.") || td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".xVal") || td.TableName.EndsWith(".yVal") || td.TableName.EndsWith(".Size"))
-                    if (td.TableName.ToLower().Contains(" vs.") || td.TableName.StartsWith("Header.") || td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".Size"))
+                    multiSelect = true;
+                    prepareMultiTable(orgFile, td, tableIds);
+                    return;
+                }
+                if (!disableMultiTable)
+                {
+                    if (td.TableName.ToLower().EndsWith(".xval") || td.TableName.ToLower().EndsWith(".yval"))
                     {
-                        //Special case, "Normal" table, but header values from tables, WITH different table as multiplier
-                        Debug.WriteLine("Special case, not real multitable");
-                    }
-                    else
-                    {
-                        MultiTableName mtn = new MultiTableName(td.TableName, (int)numColumn.Value);
-                        tableName = mtn.TableName;
-                        for (int t = 0; t < pcm.tableDatas.Count; t++)
+                        for (int x = 0; x < pcm.tableDatas.Count; x++)
                         {
-                            if (pcm.tableDatas[t].Category == td.Category && pcm.tableDatas[t].TableName.StartsWith(mtn.TableName) && pcm.tableDatas[t].TableName != td.TableName)
+                            if (pcm.tableDatas[x].TableName.ToLower() == td.TableName.ToLower().Replace(".yval", ".data").Replace(".xval", ".data"))
                             {
-                                //It is multitable
-                                prepareMultiTable(orgFile,pcm.tableDatas[t],null);
+                                td = pcm.tableDatas[x];
+                                prepareMultiTable(orgFile, td, null);
                                 return;
                             }
                         }
                     }
+                    string[] separators = Properties.Settings.Default.MulitableChars.Split(' ');
+                    //if (td.TableName.Contains("[") || td.TableName.Contains("."))
+                    if (separators.Any(td.TableName.Contains))
+                    {
+                        //if (td.TableName.ToLower().Contains(" vs.") || td.TableName.StartsWith("Header.") || td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".xVal") || td.TableName.EndsWith(".yVal") || td.TableName.EndsWith(".Size"))
+                        if (td.TableName.ToLower().Contains(" vs.") || td.TableName.StartsWith("Header.") || td.TableName.EndsWith(".Data") || td.TableName.EndsWith(".Size"))
+                        {
+                            //Special case, "Normal" table, but header values from tables, WITH different table as multiplier
+                            Debug.WriteLine("Special case, not real multitable");
+                        }
+                        else
+                        {
+                            MultiTableName mtn = new MultiTableName(td.TableName, (int)numColumn.Value);
+                            tableName = mtn.TableName;
+                            for (int t = 0; t < pcm.tableDatas.Count; t++)
+                            {
+                                if (pcm.tableDatas[t].Category == td.Category && pcm.tableDatas[t].TableName.StartsWith(mtn.TableName) && pcm.tableDatas[t].TableName != td.TableName)
+                                {
+                                    //It is multitable
+                                    prepareMultiTable(orgFile, pcm.tableDatas[t], null);
+                                    return;
+                                }
+                            }
+                        }
+                    }
                 }
+                orgFile.tableIds = tableIds;
+                orgFile.filteredTables = new List<TableData>();
+                orgFile.filteredTables.Add(pcm.tableDatas[tableIds[0]]);
+                parseTableInfo(orgFile);
+                setMyText();
             }
-            orgFile.tableIds = tableIds;
-            orgFile.filteredTables = new List<TableData>();
-            orgFile.filteredTables.Add(pcm.tableDatas[tableIds[0]]);
-            parseTableInfo(orgFile);
-            setMyText();
-
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
         }
 
 
         private void prepareMultiTable(CompareFile cmpFile, TableData tData, List<int> tableIds)
         {
-            int maxCols = 0;
-            int maxRows = 0;
-            int cols = 0;
-            int rows = 0;
-
-            if (tableIds != null && tableIds.Count > 1)
+            try
             {
-                //Manually selected multiple tables
-                cmpFile.filteredTables = new List<TableData>();
-                tableIds.Sort();
+                int maxCols = 0;
+                int maxRows = 0;
+                int cols = 0;
+                int rows = 0;
 
-                List<string> tableNameList = new List<string>();
-                for (int i = 0; i < tableIds.Count; i++)
+                if (tableIds != null && tableIds.Count > 1)
                 {
-                    TableData mTd = cmpFile.pcm.tableDatas[tableIds[i]];
-                    if (tableNameList.Contains(mTd.TableName))
+                    //Manually selected multiple tables
+                    cmpFile.filteredTables = new List<TableData>();
+                    tableIds.Sort();
+
+                    List<string> tableNameList = new List<string>();
+                    for (int i = 0; i < tableIds.Count; i++)
                     {
-                        duplicateTableName = true;
+                        TableData mTd = cmpFile.pcm.tableDatas[tableIds[i]];
+                        if (tableNameList.Contains(mTd.TableName))
+                        {
+                            duplicateTableName = true;
+                        }
+                        else
+                        {
+                            tableNameList.Add(mTd.TableName);
+                        }
+                        if (mTd.Columns > maxCols)
+                            maxCols = mTd.Columns;
+                        if (mTd.Rows > maxRows)
+                            maxRows = mTd.Rows;
                     }
-                    else
+                    for (int i = 0; i < tableIds.Count; i++)
                     {
-                        tableNameList.Add(mTd.TableName);
+                        cmpFile.filteredTables.Add(cmpFile.pcm.tableDatas[tableIds[i]]);
                     }
-                    if (mTd.Columns > maxCols)
-                        maxCols = mTd.Columns;
-                    if (mTd.Rows > maxRows)
-                        maxRows = mTd.Rows;
+                    rows = tableIds.Count;
+                    cols = maxCols;
+                    if (maxCols < 2 && maxRows < 2)
+                        only1d = true;
                 }
-                for (int i = 0; i < tableIds.Count; i++)
+                else
                 {
-                    cmpFile.filteredTables.Add(cmpFile.pcm.tableDatas[tableIds[i]]);
+                    //Multible tables which are meant to be linked together
+                    string filterName = tData.TableName.Substring(0, tableName.Length + 1);
+                    var results = cmpFile.pcm.tableDatas.Where(t => t.TableName.StartsWith(filterName));
+                    cmpFile.filteredTables = new List<TableData>(results.ToList());
+                    cmpFile.filteredTables = cmpFile.filteredTables.OrderBy(o => o.addrInt).ToList();
+                    cols = cmpFile.filteredTables.Count;
+                    rows = cmpFile.filteredTables[0].Rows;
+                    tableIds = new List<int>();
+                    for (int i = 0; i < cmpFile.filteredTables.Count; i++)
+                        tableIds.Add((int)cmpFile.filteredTables[i].id);
                 }
-                rows = tableIds.Count;
-                cols = maxCols;
-                if (maxCols < 2 && maxRows < 2)
-                    only1d = true;
+
+                cmpFile.tableIds = tableIds;
+                cmpFile.Rows = rows;
+                cmpFile.Cols = cols;
+                parseTableInfo(cmpFile);
+                setMyText();
             }
-            else
+            catch (Exception ex)
             {
-                //Multible tables which are meant to be linked together
-                string filterName = tData.TableName.Substring(0, tableName.Length + 1);
-                var results = cmpFile.pcm.tableDatas.Where(t => t.TableName.StartsWith(filterName));
-                cmpFile.filteredTables = new List<TableData>(results.ToList());
-                cmpFile.filteredTables = cmpFile.filteredTables.OrderBy(o => o.addrInt).ToList();
-                cols = cmpFile.filteredTables.Count;
-                rows = cmpFile.filteredTables[0].Rows;
-                tableIds = new List<int>();
-                for (int i = 0; i < cmpFile.filteredTables.Count; i++)
-                    tableIds.Add((int)cmpFile.filteredTables[i].id);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
-
-            cmpFile.tableIds = tableIds;
-            cmpFile.Rows = rows;
-            cmpFile.Cols = cols;
-            parseTableInfo(cmpFile);
-            setMyText();
         }
 
         private void modifyRadioText(string menuTxt)
@@ -604,27 +651,39 @@ namespace UniversalPatcher
 
         public void prepareCompareTable(CompareFile cmpFile)
         {
-            for (int i = 0; i < compareFiles[0].tableIds.Count; i++)
+            try
             {
-                int id = compareFiles[0].tableIds[i];
-                int cmpId = id;
-                if (cmpFile.pcm.OS == compareFiles[0].pcm.OS)
+                for (int i = 0; i < compareFiles[0].tableIds.Count; i++)
                 {
-                    cmpFile.tableIds.Add(id);
-                    cmpFile.filteredTables.Add(cmpFile.pcm.tableDatas[id]);
-                }
-                else
-                {
-                    cmpId = findTableDataId(compareFiles[0].pcm.tableDatas[compareFiles[0].tableIds[i]], cmpFile.pcm.tableDatas);
-                    if (cmpId > -1)
+                    int id = compareFiles[0].tableIds[i];
+                    int cmpId = id;
+                    if (cmpFile.pcm.OS == compareFiles[0].pcm.OS)
                     {
-                        cmpFile.tableIds.Add(cmpId);
-                        cmpFile.filteredTables.Add(cmpFile.pcm.tableDatas[cmpId]);
+                        cmpFile.tableIds.Add(id);
+                        cmpFile.filteredTables.Add(cmpFile.pcm.tableDatas[id]);
                     }
+                    else
+                    {
+                        cmpId = findTableDataId(compareFiles[0].pcm.tableDatas[compareFiles[0].tableIds[i]], cmpFile.pcm.tableDatas);
+                        if (cmpId > -1)
+                        {
+                            cmpFile.tableIds.Add(cmpId);
+                            cmpFile.filteredTables.Add(cmpFile.pcm.tableDatas[cmpId]);
+                        }
+                    }
+                    cmpFile.refTableIds.Add(id, cmpId);
                 }
-                cmpFile.refTableIds.Add(id,cmpId);
+                parseTableInfo(cmpFile);
             }
-            parseTableInfo(cmpFile);
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
         }
 
         private void compareSelection_Click(object sender, EventArgs e)
@@ -643,24 +702,34 @@ namespace UniversalPatcher
 
         public void loadSeekTable(int tId, PcmFile pcm)
         {
-
-
-            CompareFile cmpFile = new CompareFile(pcm);
-
-            if (!compareFiles[0].pcm.seekTablesImported)
-                compareFiles[0].pcm.importSeekTables();
-            TableSeek tSeek = tableSeeks[compareFiles[0].pcm.foundTables[tId].configId];
-            this.Text = "Table Editor: " + compareFiles[0].pcm.foundTables[tId].Name;
-
-            FoundTable ft = compareFiles[0].pcm.foundTables[tId];
-            for (int f=0; f< compareFiles[0].pcm.tableDatas.Count; f++)
+            try
             {
-                if (pcm.tableDatas[f].TableName == tSeek.Name && pcm.tableDatas[f].addrInt == ft.addrInt)
+                CompareFile cmpFile = new CompareFile(pcm);
+
+                if (!compareFiles[0].pcm.seekTablesImported)
+                    compareFiles[0].pcm.importSeekTables();
+                TableSeek tSeek = tableSeeks[compareFiles[0].pcm.foundTables[tId].configId];
+                this.Text = "Table Editor: " + compareFiles[0].pcm.foundTables[tId].Name;
+
+                FoundTable ft = compareFiles[0].pcm.foundTables[tId];
+                for (int f = 0; f < compareFiles[0].pcm.tableDatas.Count; f++)
                 {
-                    prepareTable(pcm, pcm.tableDatas[f], null,"A");
-                    loadTable();
-                    break;
+                    if (pcm.tableDatas[f].TableName == tSeek.Name && pcm.tableDatas[f].addrInt == ft.addrInt)
+                    {
+                        prepareTable(pcm, pcm.tableDatas[f], null, "A");
+                        loadTable();
+                        break;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
         }
 
@@ -772,9 +841,9 @@ namespace UniversalPatcher
                 if (radioDifference.Checked)
                 {
                     if (radioMultiplier.Checked)
-                        showVal = cmpVal / curVal;
+                        showVal = curVal / cmpVal;
                     else if (radioPercent.Checked)
-                        showVal = cmpVal / curVal * 100 - 100;
+                        showVal = curVal / cmpVal * 100 - 100;
                     else
                         showVal = curVal - cmpVal;
                     showRawVal = curRawValue - cmpRawValue;
@@ -782,9 +851,9 @@ namespace UniversalPatcher
                 else if (radioDifference2.Checked)
                 {
                     if (radioMultiplier.Checked)
-                        showVal =  curVal / cmpVal;
+                        showVal = cmpVal / curVal;
                     else if (radioPercent.Checked)
-                        showVal = curVal / cmpVal * 100 - 100;
+                        showVal = cmpVal / curVal * 100 - 100;
                     else
                         showVal = cmpVal - curVal;
                     showRawVal = cmpRawValue - curRawValue;
@@ -877,11 +946,13 @@ namespace UniversalPatcher
 
         private void setCellColor(int row, int col, TableCell tCell)
         {
-            TableData mathTd = tCell.td;
-            double curVal = Convert.ToDouble(tCell.lastValue);
-            double origVal = Convert.ToDouble(tCell.origValue);
-            Color[] colors =
-                 {
+            try
+            {
+                TableData mathTd = tCell.td;
+                double curVal = Convert.ToDouble(tCell.lastValue);
+                double origVal = Convert.ToDouble(tCell.origValue);
+                Color[] colors =
+                     {
                         //Color.FromArgb(255, 255, 192, 192), //Pink?
                         Color.FromArgb(255, 255, 224, 192),
                         Color.FromArgb(255, 255, 255, 192),
@@ -931,76 +1002,85 @@ namespace UniversalPatcher
                         Color.FromArgb(255, 64, 0, 64),
                     };
 
-            if (radioSideBySide.Checked || radioCompareAll.Checked)
-            {
-                if (tCell.tableInfo.compareFile.pcm.FileName != compareFiles[0].pcm.FileName)
+                if (radioSideBySide.Checked || radioCompareAll.Checked)
                 {
-                    string colTxt = "["+ compareFiles[0].fileLetter +"]" + dataGridView1.Columns[col].HeaderText.Substring(3);
-                    string rowTxt = dataGridView1.Rows[row].HeaderCell.Value.ToString();
-                    int orgCol = getColumnByHeader(colTxt);
-                    int orgRow = getRowByHeader(rowTxt);
-                    if (dataGridView1.Rows[orgRow].Cells[orgCol].Tag != null)
+                    if (tCell.tableInfo.compareFile.pcm.FileName != compareFiles[0].pcm.FileName)
                     {
-                        TableCell tOrigCell = (TableCell)dataGridView1.Rows[orgRow].Cells[orgCol].Tag;
-                        if (Convert.ToDouble(tOrigCell.lastValue) != Convert.ToDouble(tCell.lastValue))
+                        string colTxt = "[" + compareFiles[0].fileLetter + "]" + dataGridView1.Columns[col].HeaderText.Substring(3);
+                        string rowTxt = dataGridView1.Rows[row].HeaderCell.Value.ToString();
+                        int orgCol = getColumnByHeader(colTxt);
+                        int orgRow = getRowByHeader(rowTxt);
+                        if (dataGridView1.Rows[orgRow].Cells[orgCol].Tag != null)
                         {
-                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
-                        }
-                        else
-                        {
-                            string fLetter = dataGridView1.Columns[col].HeaderText.Substring(1, 1);
-                            char fl = fLetter[0];
-                            int nr = fl - 'A';
-                            if (nr > colors.Length - 1)
-                                nr = colors.Length - 1;
-                            dataGridView1.Rows[row].Cells[col].Style.BackColor = colors[nr];
+                            TableCell tOrigCell = (TableCell)dataGridView1.Rows[orgRow].Cells[orgCol].Tag;
+                            if (Convert.ToDouble(tOrigCell.lastValue) != Convert.ToDouble(tCell.lastValue))
+                            {
+                                dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
+                            }
+                            else
+                            {
+                                string fLetter = dataGridView1.Columns[col].HeaderText.Substring(1, 1);
+                                char fl = fLetter[0];
+                                int nr = fl - 'A';
+                                if (nr > colors.Length - 1)
+                                    nr = colors.Length - 1;
+                                dataGridView1.Rows[row].Cells[col].Style.BackColor = colors[nr];
+                            }
                         }
                     }
+                    return;
                 }
-                return;
+                if (dataGridView1.Columns[col].GetType() != typeof(DataGridViewComboBoxColumn) &&
+                    dataGridView1.Rows[row].Cells[col].GetType() != typeof(DataGridViewComboBoxCell))
+                {
+                    if (curVal != origVal)
+                    {
+                        dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Yellow;
+                        if (!disableTooltipsToolStripMenuItem.Checked)
+                            dataGridView1.Rows[row].Cells[col].ToolTipText = "Original value: " + origVal.ToString();
+                    }
+                    else
+                    {
+                        if (curVal < (mathTd.Max * 0.9) && curVal > (mathTd.Min * 1.1))
+                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.White;
+                        else if (curVal > mathTd.Max)
+                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Pink;
+                        else if (curVal > (0.9 * mathTd.Max))
+                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
+                        else if (curVal < mathTd.Min)
+                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.AliceBlue;
+                        else if (curVal < (1.1 * mathTd.Min))
+                            dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightBlue;
+                        if (!disableTooltipsToolStripMenuItem.Checked)
+                            dataGridView1.Rows[row].Cells[col].ToolTipText = mathTd.TableDescription;
+                    }
+                }
+                else if (dataGridView1.Columns[col].GetType() == typeof(DataGridViewComboBoxColumn) || dataGridView1.Rows[row].Cells[col].GetType() == typeof(DataGridViewComboBoxCell))
+                {
+                    DataGridViewComboBoxCell cell = (DataGridViewComboBoxCell)dataGridView1.Rows[row].Cells[col];
+                    if (curVal != origVal)
+                    {
+                        cell.Style.Font = new Font(dataGridView1.Font, FontStyle.Italic);
+                        if (!disableTooltipsToolStripMenuItem.Checked)
+                            cell.ToolTipText = "Original value: " + origVal.ToString();
+                    }
+                    else
+                    {
+                        cell.Style.Font = new Font(dataGridView1.Font, FontStyle.Regular);
+                        if (!disableTooltipsToolStripMenuItem.Checked)
+                            cell.ToolTipText = mathTd.TableDescription;
+                    }
+                }
             }
-            if (dataGridView1.Columns[col].GetType() != typeof(DataGridViewComboBoxColumn) &&
-                dataGridView1.Rows[row].Cells[col].GetType() != typeof(DataGridViewComboBoxCell))
+            catch (Exception ex)
             {
-                if (curVal != origVal)
-                {
-                    dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Yellow;
-                    if (!disableTooltipsToolStripMenuItem.Checked)
-                        dataGridView1.Rows[row].Cells[col].ToolTipText = "Original value: " + origVal.ToString();
-                }
-                else
-                {
-                    if (curVal < (mathTd.Max * 0.9) && curVal > (mathTd.Min * 1.1))
-                        dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.White;
-                    else if (curVal > mathTd.Max)
-                        dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Pink;
-                    else if (curVal > (0.9 * mathTd.Max))
-                        dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
-                    else if (curVal < mathTd.Min)
-                        dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.AliceBlue;
-                    else if (curVal < (1.1 * mathTd.Min))
-                        dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightBlue;
-                    if (!disableTooltipsToolStripMenuItem.Checked)
-                        dataGridView1.Rows[row].Cells[col].ToolTipText = mathTd.TableDescription;
-                }
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
-            else if (dataGridView1.Columns[col].GetType() == typeof(DataGridViewComboBoxColumn) || dataGridView1.Rows[row].Cells[col].GetType() == typeof(DataGridViewComboBoxCell))
-            {
-                DataGridViewComboBoxCell cell = (DataGridViewComboBoxCell)dataGridView1.Rows[row].Cells[col];
-                if (curVal != origVal)
-                {
-                    cell.Style.Font = new Font(dataGridView1.Font, FontStyle.Italic);
-                    if (!disableTooltipsToolStripMenuItem.Checked)
-                        cell.ToolTipText = "Original value: " + origVal.ToString();
-                }
-                else
-                {
-                    cell.Style.Font = new Font(dataGridView1.Font, FontStyle.Regular);
-                    if (!disableTooltipsToolStripMenuItem.Checked)
-                        cell.ToolTipText = mathTd.TableDescription;
-                }
-            }
-
         }
 
         private string loadHeaderFromTable(string tableName, int count, PcmFile pcm)
@@ -1041,13 +1121,6 @@ namespace UniversalPatcher
             if (ind < 0)
             {
                 ind = dataGridView1.Columns.Add(hdrTxt, hdrTxt);
-/*                if (radioSideBySide.Checked)
-                {
-                    hdrTxt = "(" + hdrTxt + ")";
-                    int cmpCol = dataGridView1.Columns.Add(hdrTxt, hdrTxt);
-                    dataGridView1.Columns[cmpCol].HeaderCell.Style.Font = new Font(dataGridView1.Font, FontStyle.Bold);
-                }
-*/
             }
             return ind;
         }
@@ -1391,66 +1464,100 @@ namespace UniversalPatcher
 
         private void showDtcDescriptions()
         {
-            DtcSearch ds = new DtcSearch();
-            if (OBD2Codes == null || OBD2Codes.Count == 0)
-                loadOBD2Codes();
-            if (OBD2Codes.Count == 0)
-                return;
-            chkSwapXY.Enabled = false;
-            swapXyToolStripMenuItem.Enabled = false;
-            searchCodeFromGoogleToolStripMenuItem.Visible = true;
-            DataGridViewColumn dgc = new DataGridViewColumn();
-            dgc.Name = "Description";
-            dgc.HeaderText = "Description";
-            dgc.CellTemplate = new DataGridViewTextBoxCell();
-            dataGridView1.Columns.Insert(0,dgc);
-            for (int r = 0; r < dataGridView1.Rows.Count; r++)
+            try
             {
-                string descr = ds.getDtcDescription(dataGridView1.Rows[r].HeaderCell.Value.ToString());
-                dataGridView1.Rows[r].Cells["Description"].Value = descr;
-                if (dataGridView1.Rows[r].Cells[1].Tag != null)
+                DtcSearch ds = new DtcSearch();
+                if (OBD2Codes == null || OBD2Codes.Count == 0)
+                    loadOBD2Codes();
+                if (OBD2Codes.Count == 0)
+                    return;
+                chkSwapXY.Enabled = false;
+                swapXyToolStripMenuItem.Enabled = false;
+                searchCodeFromGoogleToolStripMenuItem.Visible = true;
+                DataGridViewColumn dgc = new DataGridViewColumn();
+                dgc.Name = "Description";
+                dgc.HeaderText = "Description";
+                dgc.CellTemplate = new DataGridViewTextBoxCell();
+                dataGridView1.Columns.Insert(0, dgc);
+                for (int r = 0; r < dataGridView1.Rows.Count; r++)
                 {
-                    TableCell tc = (TableCell)dataGridView1.Rows[r].Cells[1].Tag;
-                    TableCell tcDescr = tc.ShallowCopy();
-                    tcDescr.addr = uint.MaxValue - 1;
-                    dataGridView1.Rows[r].Cells["Description"].Tag = tcDescr;
+                    string descr = ds.getDtcDescription(dataGridView1.Rows[r].HeaderCell.Value.ToString());
+                    dataGridView1.Rows[r].Cells["Description"].Value = descr;
+                    if (dataGridView1.Rows[r].Cells[1].Tag != null)
+                    {
+                        TableCell tc = (TableCell)dataGridView1.Rows[r].Cells[1].Tag;
+                        TableCell tcDescr = tc.ShallowCopy();
+                        tcDescr.addr = uint.MaxValue - 1;
+                        dataGridView1.Rows[r].Cells["Description"].Tag = tcDescr;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
         }
 
         public int getColumnsFromTable(TableData tData, PcmFile pcm)
         {
             int cols = tData.Columns;
-
-            string yTbName = tData.TableName.Replace(".Data", ".xVal");
-            for (int y = 0; y < pcm.tableDatas.Count; y++)
+            try
             {
-                if (pcm.tableDatas[y].TableName == yTbName)
+
+                string yTbName = tData.TableName.Replace(".Data", ".xVal");
+                for (int y = 0; y < pcm.tableDatas.Count; y++)
                 {
-                    TableData ytb = pcm.tableDatas[y];
-                    uint xaddr = (uint)(ytb.addrInt + ytb.Offset);
-                    cols = (int)getValue(pcm.buf, xaddr, ytb,0, pcm);
-                    break;
+                    if (pcm.tableDatas[y].TableName == yTbName)
+                    {
+                        TableData ytb = pcm.tableDatas[y];
+                        uint xaddr = (uint)(ytb.addrInt + ytb.Offset);
+                        cols = (int)getValue(pcm.buf, xaddr, ytb, 0, pcm);
+                        break;
+                    }
                 }
             }
-
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
             return cols;
-
         }
+
         public int getRowCountFromTable(TableData tData, PcmFile pcm)
         {
             int rows = tData.Rows;
-
-            for (int x=0; x< pcm.tableDatas.Count; x++)
+            try
             {
-                if (pcm.tableDatas[x].TableName == tData.TableName.Replace(".Data", ".Size") || pcm.tableDatas[x].TableName == tData.TableName.Replace(".Data", ".yVal"))
+
+                for (int x = 0; x < pcm.tableDatas.Count; x++)
                 {
-                    uint addr = (uint)(pcm.tableDatas[x].addrInt + pcm.tableDatas[x].Offset);
-                    rows = (int)getValue(pcm.buf, addr, pcm.tableDatas[x],0, pcm);
-                    break;
+                    if (pcm.tableDatas[x].TableName == tData.TableName.Replace(".Data", ".Size") || pcm.tableDatas[x].TableName == tData.TableName.Replace(".Data", ".yVal"))
+                    {
+                        uint addr = (uint)(pcm.tableDatas[x].addrInt + pcm.tableDatas[x].Offset);
+                        rows = (int)getValue(pcm.buf, addr, pcm.tableDatas[x], 0, pcm);
+                        break;
+                    }
                 }
             }
-
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
             return rows;
         }
 
@@ -1719,20 +1826,31 @@ namespace UniversalPatcher
 
         private void AutoResize()
         {
-            int dgv_width = dataGridView1.Columns.GetColumnsWidth(DataGridViewElementStates.Visible) + dataGridView1.RowHeadersWidth;
-            if (dgv_width < 500) dgv_width = 500;
-            int dgv_height = dataGridView1.Rows.GetRowsHeight(DataGridViewElementStates.Visible) + dataGridView1.ColumnHeadersHeight;
-            Screen myScreen = Screen.FromPoint(MousePosition);
-            System.Drawing.Rectangle area = myScreen.WorkingArea;
-            if ((dgv_width + 150) > area.Width)
-                this.Width = area.Width - 50;
-            else
-                this.Width = dgv_width + 50; //150
-            if ((dgv_height + 100) > area.Height)
-                this.Height = area.Height - 50;
-            else
-                this.Height = dgv_height + 150; //175
-
+            try
+            {
+                int dgv_width = dataGridView1.Columns.GetColumnsWidth(DataGridViewElementStates.Visible) + dataGridView1.RowHeadersWidth;
+                if (dgv_width < 500) dgv_width = 500;
+                int dgv_height = dataGridView1.Rows.GetRowsHeight(DataGridViewElementStates.Visible) + dataGridView1.ColumnHeadersHeight;
+                Screen myScreen = Screen.FromPoint(MousePosition);
+                System.Drawing.Rectangle area = myScreen.WorkingArea;
+                if ((dgv_width + 150) > area.Width)
+                    this.Width = area.Width - 50;
+                else
+                    this.Width = dgv_width + 50; //150
+                if ((dgv_height + 100) > area.Height)
+                    this.Height = area.Height - 50;
+                else
+                    this.Height = dgv_height + 150; //175
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
         }
 
         private void chkAutoResize_CheckedChanged(object sender, EventArgs e)
@@ -1783,42 +1901,54 @@ namespace UniversalPatcher
 
         private void PasteClipboardValue()
         {
-            //Show Error if no cell is selected
-            if (dataGridView1.SelectedCells.Count == 0)
+            try
             {
-                MessageBox.Show("Please select a cell", "Paste",
-                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            dataGridView1.BeginEdit(true);
-
-            //Get the starting Cell
-            DataGridViewCell startCell = GetStartCell(dataGridView1);
-            //Get the clipboard value in a dictionary
-            Dictionary<int, Dictionary<int, string>> cbValue =
-                    ClipBoardValues(Clipboard.GetText());
-
-            int iRowIndex = startCell.RowIndex;
-            foreach (int rowKey in cbValue.Keys)
-            {
-                int iColIndex = startCell.ColumnIndex;
-                foreach (int cellKey in cbValue[rowKey].Keys)
+                //Show Error if no cell is selected
+                if (dataGridView1.SelectedCells.Count == 0)
                 {
-                    //Check if the index is within the limit
-                    if (iColIndex <= dataGridView1.Columns.Count - 1
-                    && iRowIndex <= dataGridView1.Rows.Count - 1)
-                    {
-                        DataGridViewCell cell = dataGridView1[iColIndex, iRowIndex];
-
-                        //Copy to selected cells if 'chkPasteToSelectedCells' is checked
-                        //if ((chkPasteToSelectedCells.Checked && cell.Selected) || (!chkPasteToSelectedCells.Checked))
-                            cell.Value = cbValue[rowKey][cellKey];
-                    }
-                    iColIndex++;
+                    MessageBox.Show("Please select a cell", "Paste",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
-                iRowIndex++;
+                dataGridView1.BeginEdit(true);
+
+                //Get the starting Cell
+                DataGridViewCell startCell = GetStartCell(dataGridView1);
+                //Get the clipboard value in a dictionary
+                Dictionary<int, Dictionary<int, string>> cbValue =
+                        ClipBoardValues(Clipboard.GetText());
+
+                int iRowIndex = startCell.RowIndex;
+                foreach (int rowKey in cbValue.Keys)
+                {
+                    int iColIndex = startCell.ColumnIndex;
+                    foreach (int cellKey in cbValue[rowKey].Keys)
+                    {
+                        //Check if the index is within the limit
+                        if (iColIndex <= dataGridView1.Columns.Count - 1
+                        && iRowIndex <= dataGridView1.Rows.Count - 1)
+                        {
+                            DataGridViewCell cell = dataGridView1[iColIndex, iRowIndex];
+
+                            //Copy to selected cells if 'chkPasteToSelectedCells' is checked
+                            //if ((chkPasteToSelectedCells.Checked && cell.Selected) || (!chkPasteToSelectedCells.Checked))
+                            cell.Value = cbValue[rowKey][cellKey];
+                        }
+                        iColIndex++;
+                    }
+                    iRowIndex++;
+                }
+                dataGridView1.EndEdit();
             }
-            dataGridView1.EndEdit();
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
         }
 
         private DataGridViewCell GetStartCell(DataGridView dgView)
@@ -2003,35 +2133,48 @@ namespace UniversalPatcher
 
         private void showGraphicToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TableData td = compareFiles[currentFile].tableInfos[0].td;
-            frmGraphics fg = new frmGraphics();
-            fg.Text = td.TableName;
-            fg.Show();
-            fg.chart1.Series.Clear();
-            double minVal = double.MaxValue;
-            double maxVal = double.MinValue;
-
-            for (int r=0; r<dataGridView1.Rows.Count; r++)
+            try
             {
-                fg.chart1.Series.Add(new Series());
-                fg.chart1.Series[r].ChartType = SeriesChartType.Line;                
-                if (dataGridView1.Rows[r].HeaderCell.Value != null)
-                    fg.chart1.Series[r].Name = dataGridView1.Rows[r].HeaderCell.Value.ToString();
-                fg.chart1.Series[r].ToolTip = "[#SERIESNAME][#VALX]: #VAL";
-                int point = 0;
-                for (int c=0; c< dataGridView1.Columns.Count; c++)
+                TableData td = compareFiles[currentFile].tableInfos[0].td;
+                frmGraphics fg = new frmGraphics();
+                fg.Text = td.TableName;
+                fg.Show();
+                fg.chart1.Series.Clear();
+                double minVal = double.MaxValue;
+                double maxVal = double.MinValue;
+
+                for (int r = 0; r < dataGridView1.Rows.Count; r++)
                 {
-                    double val = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
-                    if (val > maxVal) maxVal = val;
-                    if (val < minVal) minVal = val;
-                    fg.chart1.Series[r].Points.AddXY(dataGridView1.Columns[c].HeaderCell.Value, val);
-                    fg.chart1.Series[r].Points[point].MarkerStyle = MarkerStyle.Circle;
-                    fg.chart1.Series[r].Points[point].MarkerSize = 5;
-                    point++;
+                    fg.chart1.Series.Add(new Series());
+                    fg.chart1.Series[r].ChartType = SeriesChartType.Line;
+                    if (dataGridView1.Rows[r].HeaderCell.Value != null)
+                        fg.chart1.Series[r].Name = dataGridView1.Rows[r].HeaderCell.Value.ToString();
+                    fg.chart1.Series[r].ToolTip = "[#SERIESNAME][#VALX]: #VAL";
+                    int point = 0;
+                    for (int c = 0; c < dataGridView1.Columns.Count; c++)
+                    {
+                        double val = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
+                        if (val > maxVal) maxVal = val;
+                        if (val < minVal) minVal = val;
+                        fg.chart1.Series[r].Points.AddXY(dataGridView1.Columns[c].HeaderCell.Value, val);
+                        fg.chart1.Series[r].Points[point].MarkerStyle = MarkerStyle.Circle;
+                        fg.chart1.Series[r].Points[point].MarkerSize = 5;
+                        point++;
+                    }
                 }
+                //fg.chart1.ChartAreas[0].AxisY.Interval = 10;
             }
-            //fg.chart1.ChartAreas[0].AxisY.Interval = 10;
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
         }
+
         private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             if (!e.Exception.Message.Contains("DataGridViewComboBoxCell"))
@@ -2186,27 +2329,40 @@ namespace UniversalPatcher
 
         private void copyFromCompareToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<int> rows = new List<int>();
-            List<int> cols = new List<int>();
-            for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
+            try
             {
-                rows.Add(dataGridView1.SelectedCells[i].RowIndex);
-                cols.Add(dataGridView1.SelectedCells[i].ColumnIndex);
-
-            }
-            for (int i=0; i< rows.Count; i++)
-            { 
-                int row = rows[i];
-                int col = cols[i];
-                if (dataGridView1.Rows[row].Cells[col].Tag != null)  
+                List<int> rows = new List<int>();
+                List<int> cols = new List<int>();
+                for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
                 {
-                    dataGridView1.CurrentCell = dataGridView1.Rows[row].Cells[col];
-                    dataGridView1.BeginEdit(true);
-                    var val = dataGridView1.Rows[row].Cells[col + 1].Value;
-                    dataGridView1.Rows[row].Cells[col].Value = val;
-                    dataGridView1.EndEdit();
+                    rows.Add(dataGridView1.SelectedCells[i].RowIndex);
+                    cols.Add(dataGridView1.SelectedCells[i].ColumnIndex);
+
+                }
+                for (int i = 0; i < rows.Count; i++)
+                {
+                    int row = rows[i];
+                    int col = cols[i];
+                    if (dataGridView1.Rows[row].Cells[col].Tag != null)
+                    {
+                        dataGridView1.CurrentCell = dataGridView1.Rows[row].Cells[col];
+                        dataGridView1.BeginEdit(true);
+                        var val = dataGridView1.Rows[row].Cells[col + 1].Value;
+                        dataGridView1.Rows[row].Cells[col].Value = val;
+                        dataGridView1.EndEdit();
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+
         }
 
         private void radioSideBySideText_CheckedChanged(object sender, EventArgs e)
@@ -2268,24 +2424,35 @@ namespace UniversalPatcher
 
         private void tuneCellValues(double step)
         {
-            dataGridView1.BeginEdit(true);
-            for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
+            try
             {
-                TableCell tCell = (TableCell)dataGridView1.SelectedCells[i].Tag;
-                TableData mathTd = tCell.td;
-                double rawVal = (double)tCell.lastRawValue;
-                double newRawVal = rawVal + step;
-                Debug.WriteLine("Row: " + dataGridView1.SelectedCells[i].RowIndex + ", col: " + dataGridView1.SelectedCells[i].ColumnIndex +  ", Old raw: " + tCell.lastRawValue + ", new raw: " + newRawVal);
-                tCell.saveValue(newRawVal, true);
-                double val = Convert.ToDouble(tCell.lastValue);
+                dataGridView1.BeginEdit(true);
+                for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
+                {
+                    TableCell tCell = (TableCell)dataGridView1.SelectedCells[i].Tag;
+                    TableData mathTd = tCell.td;
+                    double rawVal = (double)tCell.lastRawValue;
+                    double newRawVal = rawVal + step;
+                    Debug.WriteLine("Row: " + dataGridView1.SelectedCells[i].RowIndex + ", col: " + dataGridView1.SelectedCells[i].ColumnIndex + ", Old raw: " + tCell.lastRawValue + ", new raw: " + newRawVal);
+                    tCell.saveValue(newRawVal, true);
+                    double val = Convert.ToDouble(tCell.lastValue);
 
-                dataGridView1.SelectedCells[i].Value = val;   
-                setCellColor(dataGridView1.SelectedCells[i].RowIndex, dataGridView1.SelectedCells[i].ColumnIndex, tCell);
+                    dataGridView1.SelectedCells[i].Value = val;
+                    setCellColor(dataGridView1.SelectedCells[i].RowIndex, dataGridView1.SelectedCells[i].ColumnIndex, tCell);
+                }
+                this.dataGridView1.CellEndEdit -= new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
+                dataGridView1.EndEdit();
+                this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
             }
-            this.dataGridView1.CellEndEdit -= new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
-            dataGridView1.EndEdit();
-            this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
-
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
         }
 
         private void numTuneValue_ValueChanged(object sender, EventArgs e)
@@ -2346,23 +2513,34 @@ namespace UniversalPatcher
 
         private void copyTableFromCompareToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            for (int id = 0; id < compareFiles[0].tableInfos.Count; id++)
+            try
             {
-                TableInfo ti = compareFiles[0].tableInfos[id];
-                TableInfo cmpTi;
-                int cmpId = compareFiles[currentCmpFile].refTableIds[(int)ti.td.id];
-                if (cmpId > -1)
+                for (int id = 0; id < compareFiles[0].tableInfos.Count; id++)
                 {
-                    int pos = compareFiles[currentCmpFile].tableIds.IndexOf(cmpId);
-                    cmpTi = compareFiles[currentCmpFile].tableInfos[pos];
-                    for (int cell = 0; cell < ti.tableCells.Count; cell++)
+                    TableInfo ti = compareFiles[0].tableInfos[id];
+                    TableInfo cmpTi;
+                    int cmpId = compareFiles[currentCmpFile].refTableIds[(int)ti.td.id];
+                    if (cmpId > -1)
                     {
-
-                        ti.tableCells[cell].saveValue(Convert.ToDouble(cmpTi.tableCells[cell].lastValue));
+                        int pos = compareFiles[currentCmpFile].tableIds.IndexOf(cmpId);
+                        cmpTi = compareFiles[currentCmpFile].tableInfos[pos];
+                        for (int cell = 0; cell < ti.tableCells.Count; cell++)
+                        {
+                            ti.tableCells[cell].saveValue(Convert.ToDouble(cmpTi.tableCells[cell].lastValue));
+                        }
                     }
                 }
+                loadTable();
             }
-            loadTable();
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
         }
 
 

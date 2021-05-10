@@ -129,27 +129,34 @@ namespace UniversalPatcher
 
         public void importSeekTables()
         {
-            if (seekTablesImported)
-                return;
-            if (foundTables.Count == 0)
+            try
             {
-                TableSeek TS = new TableSeek();
-                Logger("Seeking tables...", false);
-                Logger(TS.seekTables(this));
+                if (seekTablesImported)
+                    return;
+                if (foundTables.Count == 0)
+                {
+                    TableSeek TS = new TableSeek();
+                    Logger("Seeking tables...", false);
+                    Logger(TS.seekTables(this));
+                }
+                Logger("Importing TableSeek tables... ", false);
+                for (int i = 0; i < foundTables.Count; i++)
+                {
+                    TableData tableData = new TableData();
+                    tableData.importFoundTable(i, this);
+                    tableDatas.Add(tableData);
+                }
+                if (!tableCategories.Contains("DTC"))
+                    tableCategories.Add("DTC");
+                //Fix table id's
+                for (int i = 0; i < tableDatas.Count; i++)
+                    tableDatas[i].id = (uint)i;
+                seekTablesImported = true;
             }
-            Logger("Importing TableSeek tables... ", false);
-            for (int i = 0; i < foundTables.Count; i++)
+            catch (Exception ex)
             {
-                TableData tableData = new TableData();
-                tableData.importFoundTable(i, this);
-                tableDatas.Add(tableData);
+                LoggerBold(ex.Message);
             }
-            if (!tableCategories.Contains("DTC"))
-                tableCategories.Add("DTC");
-            //Fix table id's
-            for (int i = 0; i < tableDatas.Count; i++)
-                tableDatas[i].id = (uint)i;
-            seekTablesImported = true;
         }
 
         public void importDTC()

@@ -74,61 +74,73 @@ namespace UniversalPatcher
 
         public void findDifferences(bool showAsHex)
         {
-            if (!showAsHex)
-                this.Text = "File differences";
-            tdiffList = new List<TableDiff>();
-            labelFileNames.Text = pcm1.FileName + " <> " + pcm2.FileName;
-
-            for (int t = 0; t < tdList.Count; t++)
+            try
             {
-                TableData td = pcm1.tableDatas[tdList[t]];
-                TableData td2 = pcm2.tableDatas[tdList2[t]];
-                uint step = (uint)getElementSize(td.DataType);
-                uint step2 = (uint)getElementSize(td2.DataType);
-                int count = td.Rows * td.Columns;
-                uint addr = (uint)(td.addrInt + td.Offset);
-                uint addr2 = (uint)(td2.addrInt + td2.Offset);
-                string data1 = "";
-                string data2 = "";
-                string formatStr = "";
-                if (showAsHex)
-                    formatStr = "X" + (step * 2).ToString();
-                for (int a = 0; a < count; a++)
-                {
-                    if (showAsHex)
-                    {
-                        data1 += ((UInt64)getRawValue(pcm1.buf, addr, td, 0)).ToString(formatStr) + " ";
-                        data2 += ((UInt64)getRawValue(pcm2.buf, addr2, td2, 0)).ToString(formatStr) + " ";
-                    }
-                    else
-                    {
-                        data1 += getValue(pcm1.buf, addr, td, 0,pcm1).ToString(formatStr) + " ";
-                        data2 += getValue(pcm2.buf, addr2, td2, 0,pcm2).ToString(formatStr) + " ";
-                    }
-                    addr += step;
-                    addr2 += step2;
-                }
+                if (!showAsHex)
+                    this.Text = "File differences";
+                tdiffList = new List<TableDiff>();
+                labelFileNames.Text = pcm1.FileName + " <> " + pcm2.FileName;
 
-                TableDiff tDiff = new TableDiff();
-                tDiff.Data1 = data1.Trim();
-                tDiff.Data2 = data2.Trim();
-                tDiff.id = tdList[t];
-                tDiff.TableName = td.TableName;
-                tDiff.td = td;
-                tDiff.id2 = tdList2[t];
-                tDiff.addr1 = td.Address;
-                tDiff.addr2 = td2.Address;
-                tdiffList.Add(tDiff);
+                for (int t = 0; t < tdList.Count; t++)
+                {
+                    TableData td = pcm1.tableDatas[tdList[t]];
+                    TableData td2 = pcm2.tableDatas[tdList2[t]];
+                    uint step = (uint)getElementSize(td.DataType);
+                    uint step2 = (uint)getElementSize(td2.DataType);
+                    int count = td.Rows * td.Columns;
+                    uint addr = (uint)(td.addrInt + td.Offset);
+                    uint addr2 = (uint)(td2.addrInt + td2.Offset);
+                    string data1 = "";
+                    string data2 = "";
+                    string formatStr = "";
+                    if (showAsHex)
+                        formatStr = "X" + (step * 2).ToString();
+                    for (int a = 0; a < count; a++)
+                    {
+                        if (showAsHex)
+                        {
+                            data1 += ((UInt64)getRawValue(pcm1.buf, addr, td, 0)).ToString(formatStr) + " ";
+                            data2 += ((UInt64)getRawValue(pcm2.buf, addr2, td2, 0)).ToString(formatStr) + " ";
+                        }
+                        else
+                        {
+                            data1 += getValue(pcm1.buf, addr, td, 0, pcm1).ToString(formatStr) + " ";
+                            data2 += getValue(pcm2.buf, addr2, td2, 0, pcm2).ToString(formatStr) + " ";
+                        }
+                        addr += step;
+                        addr2 += step2;
+                    }
+
+                    TableDiff tDiff = new TableDiff();
+                    tDiff.Data1 = data1.Trim();
+                    tDiff.Data2 = data2.Trim();
+                    tDiff.id = tdList[t];
+                    tDiff.TableName = td.TableName;
+                    tDiff.td = td;
+                    tDiff.id2 = tdList2[t];
+                    tDiff.addr1 = td.Address;
+                    tDiff.addr2 = td2.Address;
+                    tdiffList.Add(tDiff);
+                }
+                dataGridView1.DataSource = bindingSource;
+                bindingSource.DataSource = tdiffList;
+                dataGridView1.CellMouseDoubleClick += DataGridView1_CellMouseDoubleClick;
+                dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
+                filterTables();
+                tree1.SelectedNodes.Clear();
+                TreeParts.addNodes(tree1.Nodes, pcm1);
+                tree1.AfterSelect += Tree1_AfterSelect;
+                tree1.ContextMenuStrip = contextMenuStrip1;
             }
-            dataGridView1.DataSource = bindingSource;
-            bindingSource.DataSource = tdiffList;
-            dataGridView1.CellMouseDoubleClick += DataGridView1_CellMouseDoubleClick;
-            dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
-            filterTables();
-            tree1.SelectedNodes.Clear();
-            TreeParts.addNodes(tree1.Nodes, pcm1);
-            tree1.AfterSelect += Tree1_AfterSelect;
-            tree1.ContextMenuStrip = contextMenuStrip1;
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmHexDiff line " + line + ": " + ex.Message);
+            }
         }
 
         private void Tree1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -140,124 +152,137 @@ namespace UniversalPatcher
 
         private void filterTables()
         {
-            List<TableDiff> compareList = new List<TableDiff>();
-            if (strSortOrder == SortOrder.Ascending)
-                compareList = tdiffList.OrderBy(x => typeof(TableDiff).GetProperty(sortBy).GetValue(x, null)).ToList();
-            else
-                compareList = tdiffList.OrderByDescending(x => typeof(TableDiff).GetProperty(sortBy).GetValue(x, null)).ToList();
-            var results = compareList.Where(t=> t.TableName.ToString().ToLower().Contains(txtFilter.Text.Trim()));
-
-            if (tree1.Nodes.Count > 0 && !tree1.Nodes["All"].IsSelected && tree1.SelectedNodes.Count > 0)
+            try
             {
-                List<string> selectedSegs = new List<string>();
-                List<string> selectedCats = new List<string>();
-                List<string> selectedValTypes = new List<string>();
-                List<string> selectedDimensions = new List<string>();
-                foreach (TreeNode tn in tree1.SelectedNodes)
+                List<TableDiff> compareList = new List<TableDiff>();
+                if (strSortOrder == SortOrder.Ascending)
+                    compareList = tdiffList.OrderBy(x => typeof(TableDiff).GetProperty(sortBy).GetValue(x, null)).ToList();
+                else
+                    compareList = tdiffList.OrderByDescending(x => typeof(TableDiff).GetProperty(sortBy).GetValue(x, null)).ToList();
+                var results = compareList.Where(t => t.TableName.ToString().ToLower().Contains(txtFilter.Text.Trim()));
+
+                if (tree1.Nodes.Count > 0 && !tree1.Nodes["All"].IsSelected && tree1.SelectedNodes.Count > 0)
                 {
-                    if (tn.Parent == null)
-                        continue;
-                    switch (tn.Parent.Name)
+                    List<string> selectedSegs = new List<string>();
+                    List<string> selectedCats = new List<string>();
+                    List<string> selectedValTypes = new List<string>();
+                    List<string> selectedDimensions = new List<string>();
+                    foreach (TreeNode tn in tree1.SelectedNodes)
                     {
-                        case "Segments":
-                            selectedSegs.Add(tn.Name);
-                            break;
-                        case "Categories":
-                            selectedCats.Add(tn.Name);
-                            break;
-                        case "Dimensions":
-                            selectedDimensions.Add(tn.Name);
-                            break;
-                        case "ValueTypes":
-                            selectedValTypes.Add(tn.Name);
-                            break;
-                    }
-                    TreeNode tnParent = tn.Parent;
-                    while (tnParent.Parent != null)
-                    {
-                        switch (tnParent.Parent.Name)
+                        if (tn.Parent == null)
+                            continue;
+                        switch (tn.Parent.Name)
                         {
                             case "Segments":
-                                selectedSegs.Add(tnParent.Name);
+                                selectedSegs.Add(tn.Name);
                                 break;
                             case "Categories":
-                                selectedCats.Add(tnParent.Name);
+                                selectedCats.Add(tn.Name);
                                 break;
                             case "Dimensions":
-                                selectedDimensions.Add(tnParent.Name);
+                                selectedDimensions.Add(tn.Name);
                                 break;
                             case "ValueTypes":
-                                selectedValTypes.Add(tnParent.Name);
+                                selectedValTypes.Add(tn.Name);
                                 break;
                         }
-                        tnParent = tnParent.Parent;
+                        TreeNode tnParent = tn.Parent;
+                        while (tnParent.Parent != null)
+                        {
+                            switch (tnParent.Parent.Name)
+                            {
+                                case "Segments":
+                                    selectedSegs.Add(tnParent.Name);
+                                    break;
+                                case "Categories":
+                                    selectedCats.Add(tnParent.Name);
+                                    break;
+                                case "Dimensions":
+                                    selectedDimensions.Add(tnParent.Name);
+                                    break;
+                                case "ValueTypes":
+                                    selectedValTypes.Add(tnParent.Name);
+                                    break;
+                            }
+                            tnParent = tnParent.Parent;
+                        }
+
                     }
 
-                }
-
-                if (selectedSegs.Count > 0)
-                {
-                    List<TableDiff> newTDList = new List<TableDiff>();
-                    foreach (string seg in selectedSegs)
+                    if (selectedSegs.Count > 0)
                     {
-                        int segNr = 0;
-                        for (int s = 0; s < pcm1.segmentinfos.Length; s++)
-                            if (pcm1.segmentinfos[s].Name == seg)
-                                segNr = s;
-                        uint addrStart = pcm1.segmentAddressDatas[segNr].SegmentBlocks[0].Start;
-                        uint addrEnd = pcm1.segmentAddressDatas[segNr].SegmentBlocks[pcm1.segmentAddressDatas[segNr].SegmentBlocks.Count - 1].End;
-                        var newResults = results.Where(t => t.td.addrInt >= addrStart && t.td.addrInt <= addrEnd);
-                        foreach (TableDiff nTd in newResults)
-                            newTDList.Add(nTd);
+                        List<TableDiff> newTDList = new List<TableDiff>();
+                        foreach (string seg in selectedSegs)
+                        {
+                            int segNr = 0;
+                            for (int s = 0; s < pcm1.segmentinfos.Length; s++)
+                                if (pcm1.segmentinfos[s].Name == seg)
+                                    segNr = s;
+                            uint addrStart = pcm1.segmentAddressDatas[segNr].SegmentBlocks[0].Start;
+                            uint addrEnd = pcm1.segmentAddressDatas[segNr].SegmentBlocks[pcm1.segmentAddressDatas[segNr].SegmentBlocks.Count - 1].End;
+                            var newResults = results.Where(t => t.td.addrInt >= addrStart && t.td.addrInt <= addrEnd);
+                            foreach (TableDiff nTd in newResults)
+                                newTDList.Add(nTd);
+                        }
+                        results = newTDList;
                     }
-                    results = newTDList;
-                }
 
-                if (selectedCats.Count > 0)
-                {
-                    List<TableDiff> newTDList = new List<TableDiff>();
-                    foreach (TableDiff tDif in results)
+                    if (selectedCats.Count > 0)
                     {
-                        if (selectedCats.Contains(tDif.td.Category))
-                            newTDList.Add(tDif);
-                    }
-                    results = newTDList;
-                }
-
-                if (selectedValTypes.Count > 0)
-                {
-                    List<TableDiff> newTDList = new List<TableDiff>();
-                    foreach (string valT in selectedValTypes)
-                    {
+                        List<TableDiff> newTDList = new List<TableDiff>();
                         foreach (TableDiff tDif in results)
                         {
-                            string tdValT = getValueType(tDif.td).ToString();
-                            if (tdValT == valT)
+                            if (selectedCats.Contains(tDif.td.Category))
                                 newTDList.Add(tDif);
                         }
+                        results = newTDList;
                     }
-                    results = newTDList;
-                }
 
-                if (selectedDimensions.Count > 0)
-                {
-                    List<TableDiff> newTDList = new List<TableDiff>();
-                    foreach (TableDiff tDif in results)
+                    if (selectedValTypes.Count > 0)
                     {
-                        if (selectedDimensions.Contains(tDif.td.Dimensions().ToString() + "D"))
-                            newTDList.Add(tDif);
+                        List<TableDiff> newTDList = new List<TableDiff>();
+                        foreach (string valT in selectedValTypes)
+                        {
+                            foreach (TableDiff tDif in results)
+                            {
+                                string tdValT = getValueType(tDif.td).ToString();
+                                if (tdValT == valT)
+                                    newTDList.Add(tDif);
+                            }
+                        }
+                        results = newTDList;
                     }
-                    results = newTDList;
-                }
-            }
-            bindingSource.DataSource = results;
-            Application.DoEvents();
-            if (dataGridView1.Columns.Count > sortIndex)
-                dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
 
-            filteredTableDatas = new List<TableData>();
-            foreach (TableDiff tDif in results)
-                filteredTableDatas.Add(tDif.td);
+                    if (selectedDimensions.Count > 0)
+                    {
+                        List<TableDiff> newTDList = new List<TableDiff>();
+                        foreach (TableDiff tDif in results)
+                        {
+                            if (selectedDimensions.Contains(tDif.td.Dimensions().ToString() + "D"))
+                                newTDList.Add(tDif);
+                        }
+                        results = newTDList;
+                    }
+                }
+                bindingSource.DataSource = results;
+                Application.DoEvents();
+                if (dataGridView1.Columns.Count > sortIndex)
+                    dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
+
+                filteredTableDatas = new List<TableData>();
+                foreach (TableDiff tDif in results)
+                    filteredTableDatas.Add(tDif.td);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmHexDiff line " + line + ": " + ex.Message);
+            }
+
         }
 
         private void DataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -297,19 +322,31 @@ namespace UniversalPatcher
 
         private void DataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (e.RowIndex > -1)
+            try
             {
-                int id = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value);
-                int id2 = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id2"].Value);
-                TableData td = pcm1.tableDatas[id];
-                frmTableEditor frmT = new frmTableEditor();
-                List<int> tableIds = new List<int>();
-                tableIds.Add(id);
-                frmT.prepareTable(pcm1, td, tableIds,"A");
-                frmT.addCompareFiletoMenu(pcm2, pcm2.tableDatas[id2],"B:" + pcm2.FileName);
-                frmT.Show();
-                frmT.loadTable();
-                frmT.radioSideBySide.Checked = true;
+                if (e.RowIndex > -1)
+                {
+                    int id = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value);
+                    int id2 = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id2"].Value);
+                    TableData td = pcm1.tableDatas[id];
+                    frmTableEditor frmT = new frmTableEditor();
+                    List<int> tableIds = new List<int>();
+                    tableIds.Add(id);
+                    frmT.prepareTable(pcm1, td, tableIds, "A");
+                    frmT.addCompareFiletoMenu(pcm2, pcm2.tableDatas[id2], "B:" + pcm2.FileName);
+                    frmT.Show();
+                    frmT.loadTable();
+                    frmT.radioSideBySide.Checked = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmHexDiff line " + line + ": " + ex.Message);
             }
         }
 
@@ -319,35 +356,46 @@ namespace UniversalPatcher
         }
         private void saveCSV()
         {
-            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
-            if (FileName.Length == 0)
-                return;
-            Logger("Writing to file: " + Path.GetFileName(FileName), false);
-            using (StreamWriter writetext = new StreamWriter(FileName))
+            try
             {
-                string row = "";
-                for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                if (FileName.Length == 0)
+                    return;
+                Logger("Writing to file: " + Path.GetFileName(FileName), false);
+                using (StreamWriter writetext = new StreamWriter(FileName))
                 {
-                    if (i > 0)
-                        row += ";";
-                    row += dataGridView1.Columns[i].HeaderText;
-                }
-                writetext.WriteLine(row);
-                for (int r = 0; r < (dataGridView1.Rows.Count - 1); r++)
-                {
-                    row = "";
+                    string row = "";
                     for (int i = 0; i < dataGridView1.Columns.Count; i++)
                     {
                         if (i > 0)
                             row += ";";
-                        if (dataGridView1.Rows[r].Cells[i].Value != null)
-                            row += dataGridView1.Rows[r].Cells[i].Value.ToString();
+                        row += dataGridView1.Columns[i].HeaderText;
                     }
                     writetext.WriteLine(row);
+                    for (int r = 0; r < (dataGridView1.Rows.Count - 1); r++)
+                    {
+                        row = "";
+                        for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                        {
+                            if (i > 0)
+                                row += ";";
+                            if (dataGridView1.Rows[r].Cells[i].Value != null)
+                                row += dataGridView1.Rows[r].Cells[i].Value.ToString();
+                        }
+                        writetext.WriteLine(row);
+                    }
                 }
+                Logger(" [OK]");
             }
-            Logger(" [OK]");
-
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmHexDiff line " + line + ": " + ex.Message);
+            }
         }
 
 
@@ -363,19 +411,31 @@ namespace UniversalPatcher
 
         private void btnSaveTableList_Click(object sender, EventArgs e)
         {
-            string defaultFileName = Path.Combine(Application.StartupPath, "Tuner", Path.GetFileName(pcm1.FileName) + "-" + Path.GetFileName(pcm2.FileName) + ".XML");
-            string fName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*", defaultFileName);
-            if (fName.Length == 0)
-                return;
-
-            List<TableData> tableDatas = new List<TableData>();
-            for (int i = 0; i < tdList.Count; i++)
-                tableDatas.Add(pcm1.tableDatas[tdList[i]]);
-            using (FileStream stream = new FileStream(fName, FileMode.Create))
+            try
             {
-                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
-                writer.Serialize(stream, tableDatas);
-                stream.Close();
+                string defaultFileName = Path.Combine(Application.StartupPath, "Tuner", Path.GetFileName(pcm1.FileName) + "-" + Path.GetFileName(pcm2.FileName) + ".XML");
+                string fName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*", defaultFileName);
+                if (fName.Length == 0)
+                    return;
+
+                List<TableData> tableDatas = new List<TableData>();
+                for (int i = 0; i < tdList.Count; i++)
+                    tableDatas.Add(pcm1.tableDatas[tdList[i]]);
+                using (FileStream stream = new FileStream(fName, FileMode.Create))
+                {
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
+                    writer.Serialize(stream, tableDatas);
+                    stream.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmHexDiff line " + line + ": " + ex.Message);
             }
 
         }
@@ -437,66 +497,77 @@ namespace UniversalPatcher
 
         private void generateTablePatch()
         {
-            string defName = Path.Combine(Application.StartupPath, "Patches", "newpatch.xmlpatch");
-            string patchFname = SelectSaveFile("PATCH files (*.xmlpatch)|*.xmlpatch|ALL files (*.*)|*.*", defName);
-            if (patchFname.Length == 0)
-                return;
-            string Description = "";
-            frmData frmD = new frmData();
-            frmD.Text = "Patch Description";
-            if (frmD.ShowDialog() == DialogResult.OK)
-                Description = frmD.txtData.Text;
-            frmD.Dispose();
-            List<XmlPatch> newPatch = new List<XmlPatch>();
-            for (int i = 0; i < tdiffList.Count; i++)
+            try
             {
-                int id = tdiffList[i].id;
-                TableData pTd = pcm1.tableDatas[id];
-                XmlPatch xpatch = new XmlPatch();
-                xpatch.CompatibleOS = "Table:" + pTd.TableName + ",columns:" + pTd.Columns.ToString() + ",rows:" + pTd.Rows.ToString();
-                xpatch.XmlFile = pcm1.configFile;
-                xpatch.Segment = pcm1.GetSegmentName(pTd.addrInt);
-                xpatch.Description = Description;
-                frmTableEditor frmTE = new frmTableEditor();
-                frmTE.prepareTable(pcm1, pTd, null, "A");
-                frmTE.loadTable();
-                uint step = (uint)getElementSize(pTd.DataType);
-                uint addr = (uint)(pTd.addrInt + pTd.Offset);
-                if (pTd.RowMajor)
+                string defName = Path.Combine(Application.StartupPath, "Patches", "newpatch.xmlpatch");
+                string patchFname = SelectSaveFile("PATCH files (*.xmlpatch)|*.xmlpatch|ALL files (*.*)|*.*", defName);
+                if (patchFname.Length == 0)
+                    return;
+                string Description = "";
+                frmData frmD = new frmData();
+                frmD.Text = "Patch Description";
+                if (frmD.ShowDialog() == DialogResult.OK)
+                    Description = frmD.txtData.Text;
+                frmD.Dispose();
+                List<XmlPatch> newPatch = new List<XmlPatch>();
+                for (int i = 0; i < tdiffList.Count; i++)
                 {
-                    for (int r = 0; r < pTd.Rows; r++)
-                    {
-                        for (int c = 0; c < pTd.Columns; c++)
-                        {
-                            xpatch.Data += getValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
-                            addr += step;
-                        }
-                    }
-                }
-                else
-                {
-                    for (int c = 0; c < pTd.Columns; c++)
+                    int id = tdiffList[i].id;
+                    TableData pTd = pcm1.tableDatas[id];
+                    XmlPatch xpatch = new XmlPatch();
+                    xpatch.CompatibleOS = "Table:" + pTd.TableName + ",columns:" + pTd.Columns.ToString() + ",rows:" + pTd.Rows.ToString();
+                    xpatch.XmlFile = pcm1.configFile;
+                    xpatch.Segment = pcm1.GetSegmentName(pTd.addrInt);
+                    xpatch.Description = Description;
+                    frmTableEditor frmTE = new frmTableEditor();
+                    frmTE.prepareTable(pcm1, pTd, null, "A");
+                    frmTE.loadTable();
+                    uint step = (uint)getElementSize(pTd.DataType);
+                    uint addr = (uint)(pTd.addrInt + pTd.Offset);
+                    if (pTd.RowMajor)
                     {
                         for (int r = 0; r < pTd.Rows; r++)
                         {
-                            xpatch.Data += getValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
-                            addr += step;
+                            for (int c = 0; c < pTd.Columns; c++)
+                            {
+                                xpatch.Data += getValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
+                                addr += step;
+                            }
                         }
                     }
+                    else
+                    {
+                        for (int c = 0; c < pTd.Columns; c++)
+                        {
+                            for (int r = 0; r < pTd.Rows; r++)
+                            {
+                                xpatch.Data += getValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
+                                addr += step;
+                            }
+                        }
+                    }
+                    newPatch.Add(xpatch);
                 }
-                newPatch.Add(xpatch);
-            }
-            Logger("Saving to file: " + Path.GetFileName(patchFname), false);
+                Logger("Saving to file: " + Path.GetFileName(patchFname), false);
 
-            using (FileStream stream = new FileStream(patchFname, FileMode.Create))
+                using (FileStream stream = new FileStream(patchFname, FileMode.Create))
+                {
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
+                    writer.Serialize(stream, newPatch);
+                    stream.Close();
+                }
+                Logger(" [OK]");
+
+            }
+            catch (Exception ex)
             {
-                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
-                writer.Serialize(stream, newPatch);
-                stream.Close();
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmHexDiff line " + line + ": " + ex.Message);
             }
-            Logger(" [OK]");
-
         }
-
     }
 }

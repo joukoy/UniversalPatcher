@@ -667,16 +667,23 @@ namespace UniversalPatcher
 
         private void openBaseFile()
         {
-            string fileName = SelectFile();
-            if (fileName.Length > 1)
+            try
             {
-                basefile.tableCategories = new List<string>(); //Clear list
-                txtBaseFile.Text = fileName;
-                basefile = new PcmFile(fileName, chkAutodetect.Checked, basefile.configFileFullName);
-                labelBinSize.Text = basefile.fsize.ToString();
-                GetFileInfo(txtBaseFile.Text, ref basefile, false);
-                this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
-                txtOS.Text = basefile.OS;
+                string fileName = SelectFile();
+                if (fileName.Length > 1)
+                {
+                    basefile.tableCategories = new List<string>(); //Clear list
+                    txtBaseFile.Text = fileName;
+                    basefile = new PcmFile(fileName, chkAutodetect.Checked, basefile.configFileFullName);
+                    labelBinSize.Text = basefile.fsize.ToString();
+                    GetFileInfo(txtBaseFile.Text, ref basefile, false);
+                    this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
+                    txtOS.Text = basefile.OS;
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
             }
 
         }
@@ -992,26 +999,32 @@ namespace UniversalPatcher
 
         private void btnLoadFolder_Click(object sender, EventArgs e)
         {
-            frmFileSelection frmF = new frmFileSelection();
-            frmF.btnOK.Text = "OK";
-            frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
-            if (frmF.ShowDialog(this) == DialogResult.OK)
+            try
             {
-                if (!chkLogtodisplay.Checked)
-                    txtResult.AppendText("Writing file info to logfile");
-                string dstFolder = frmF.labelCustomdst.Text;
-                for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                frmFileSelection frmF = new frmFileSelection();
+                frmF.btnOK.Text = "OK";
+                frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+                if (frmF.ShowDialog(this) == DialogResult.OK)
                 {
-                    string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                    PcmFile PCM = new PcmFile(FileName, chkAutodetect.Checked, basefile.configFileFullName);
-                    GetFileInfo(FileName, ref PCM, true);
+                    if (!chkLogtodisplay.Checked)
+                        txtResult.AppendText("Writing file info to logfile");
+                    string dstFolder = frmF.labelCustomdst.Text;
+                    for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                    {
+                        string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
+                        PcmFile PCM = new PcmFile(FileName, chkAutodetect.Checked, basefile.configFileFullName);
+                        GetFileInfo(FileName, ref PCM, true);
+                    }
+                    if (!chkLogtodisplay.Checked)
+                        txtResult.AppendText(Environment.NewLine + "[Done]" + Environment.NewLine);
+                    else
+                        Logger("[Done]");
                 }
-                if (!chkLogtodisplay.Checked)
-                    txtResult.AppendText(Environment.NewLine + "[Done]" + Environment.NewLine);
-                else
-                    Logger("[Done]");
             }
-
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void btnSaveFileInfo_Click(object sender, EventArgs e)
@@ -1035,13 +1048,19 @@ namespace UniversalPatcher
 
         private void btnApplypatch_Click(object sender, EventArgs e)
         {
-            if (basefile == null || PatchList == null)
+            try
             {
-                Logger("Nothing to do");
-                return;
+                if (basefile == null || PatchList == null)
+                {
+                    Logger("Nothing to do");
+                    return;
+                }
+                ApplyXMLPatch(basefile);
             }
-            ApplyXMLPatch(basefile);
-            //btnCheckSums_Click(sender, e);
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void ExtractTable(uint Start, uint End, string[] OSlist, string MaskText)
@@ -1084,66 +1103,72 @@ namespace UniversalPatcher
         }
         private void btnExtract_Click(object sender, EventArgs e)
         {
-            uint Start;
-            uint End;
-            string MaskText = "";
-            if (txtBaseFile.Text.Length == 0)
-                return;
-            basefile = new PcmFile(txtBaseFile.Text,chkAutodetect.Checked, basefile.configFileFullName);
-            GetFileInfo(txtBaseFile.Text, ref basefile, true, false);
-            if (txtCompatibleOS.Text.Length == 0)
-                txtCompatibleOS.Text = basefile.OS;
-            if (txtCompatibleOS.Text.Length == 0)
-                txtCompatibleOS.Text = "ALL";
-            string[] OSlist = txtCompatibleOS.Text.Split(',');
-            string[] blocks = txtExtractRange.Text.Split(',');
-            for (int b=0; b< blocks.Length; b++) 
+            try
             {
-                MaskText = "";
-                string block = blocks[b];
-                if (block.Contains("["))
+                uint Start;
+                uint End;
+                string MaskText = "";
+                if (txtBaseFile.Text.Length == 0)
+                    return;
+                basefile = new PcmFile(txtBaseFile.Text, chkAutodetect.Checked, basefile.configFileFullName);
+                GetFileInfo(txtBaseFile.Text, ref basefile, true, false);
+                if (txtCompatibleOS.Text.Length == 0)
+                    txtCompatibleOS.Text = basefile.OS;
+                if (txtCompatibleOS.Text.Length == 0)
+                    txtCompatibleOS.Text = "ALL";
+                string[] OSlist = txtCompatibleOS.Text.Split(',');
+                string[] blocks = txtExtractRange.Text.Split(',');
+                for (int b = 0; b < blocks.Length; b++)
                 {
-                    string[] AddrMask = block.Split('[');
-                    block = AddrMask[0];
-                    MaskText = AddrMask[1].Replace("]", "");
+                    MaskText = "";
+                    string block = blocks[b];
+                    if (block.Contains("["))
+                    {
+                        string[] AddrMask = block.Split('[');
+                        block = AddrMask[0];
+                        MaskText = AddrMask[1].Replace("]", "");
+                    }
+                    if (block.Contains(":"))
+                    {
+                        string[] StartEnd = block.Split(':');
+                        if (!HexToUint(StartEnd[0], out Start))
+                        {
+                            Logger("Can't decode HEX value: " + StartEnd[0]);
+                            return;
+                        }
+                        if (!HexToUint(StartEnd[1], out End))
+                        {
+                            Logger("Can't decode HEX value: " + StartEnd[1]);
+                            return;
+                        }
+                        End += Start - 1;
+                    }
+                    else
+                    {
+                        if (!block.Contains("-"))
+                        {
+                            Logger("Supply address range, for example 200-220 or 200:4");
+                            return;
+                        }
+                        string[] StartEnd = block.Split('-');
+                        if (!HexToUint(StartEnd[0], out Start))
+                        {
+                            Logger("Can't decode HEX value: " + StartEnd[0]);
+                            return;
+                        }
+                        if (!HexToUint(StartEnd[1], out End))
+                        {
+                            Logger("Can't decode HEX value: " + StartEnd[1]);
+                            return;
+                        }
+                    }
+                    ExtractTable(Start, End, OSlist, MaskText);
                 }
-                if (block.Contains(":"))
-                {
-                    string[] StartEnd = block.Split(':');
-                    if (!HexToUint(StartEnd[0], out Start))
-                    {
-                        Logger("Can't decode HEX value: " + StartEnd[0]);
-                        return;
-                    }
-                    if (!HexToUint(StartEnd[1], out End))
-                    {
-                        Logger("Can't decode HEX value: " + StartEnd[1]);
-                        return;
-                    }
-                    End += Start - 1;
-                }
-                else
-                {
-                    if (!block.Contains("-"))
-                    {
-                        Logger("Supply address range, for example 200-220 or 200:4");
-                        return;
-                    }
-                    string[] StartEnd = block.Split('-');
-                    if (!HexToUint(StartEnd[0], out Start))
-                    {
-                        Logger("Can't decode HEX value: " + StartEnd[0]);
-                        return;
-                    }
-                    if (!HexToUint(StartEnd[1], out End))
-                    {
-                        Logger("Can't decode HEX value: " + StartEnd[1]);
-                        return;
-                    }
-                }
-                ExtractTable(Start, End, OSlist, MaskText);
             }
-
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         public void RefreshPatchList()
@@ -1212,12 +1237,19 @@ namespace UniversalPatcher
 
         public void openPatchSelector()
         {
-            frmPatchSelector frmPS = new frmPatchSelector();
-            frmPS.basefile = basefile;
-            frmPS.Show();
-            Application.DoEvents();
-            frmPS.loadPatches();
-            RefreshPatchList();
+            try
+            {
+                frmPatchSelector frmPS = new frmPatchSelector();
+                frmPS.basefile = basefile;
+                frmPS.Show();
+                Application.DoEvents();
+                frmPS.loadPatches();
+                RefreshPatchList();
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void btnBinLoadPatch_Click(object sender, EventArgs e)
@@ -1244,50 +1276,57 @@ namespace UniversalPatcher
 
         public void EditPatchRow()
         {
-            if (PatchList == null ||  PatchList.Count == 0)
-                return;
-            if (dataPatch.SelectedRows.Count == 0 && dataPatch.SelectedCells.Count == 0)
-                return;
-            if (dataPatch.SelectedRows.Count == 0)
-                dataPatch.Rows[dataPatch.SelectedCells[0].RowIndex].Selected = true;
-            frmManualPatch frmM = new frmManualPatch();
-            if (dataPatch.CurrentRow.Cells[0].Value != null)
-                frmM.txtDescription.Text = dataPatch.CurrentRow.Cells[0].Value.ToString();
-            if (dataPatch.CurrentRow.Cells[1].Value != null)
-                frmM.txtXML.Text = dataPatch.CurrentRow.Cells[1].Value.ToString();
-            if (dataPatch.CurrentRow.Cells[2].Value != null)
-                frmM.txtSegment.Text = dataPatch.CurrentRow.Cells[2].Value.ToString();
-            if (dataPatch.CurrentRow.Cells[3].Value != null)
-                frmM.txtCompOS.Text = dataPatch.CurrentRow.Cells[3].Value.ToString();
-            if (dataPatch.CurrentRow.Cells[4].Value != null)
-                frmM.txtData.Text = dataPatch.CurrentRow.Cells[4].Value.ToString();
-            if (dataPatch.CurrentRow.Cells[5].Value != null && dataPatch.CurrentRow.Cells[5].Value.ToString().Contains(":"))
+            try
             {
-                string[] Parts = dataPatch.CurrentRow.Cells[5].Value.ToString().Split(':');
-                if (Parts.Length == 3)
+                if (PatchList == null ||  PatchList.Count == 0)
+                    return;
+                if (dataPatch.SelectedRows.Count == 0 && dataPatch.SelectedCells.Count == 0)
+                    return;
+                if (dataPatch.SelectedRows.Count == 0)
+                    dataPatch.Rows[dataPatch.SelectedCells[0].RowIndex].Selected = true;
+                frmManualPatch frmM = new frmManualPatch();
+                if (dataPatch.CurrentRow.Cells[0].Value != null)
+                    frmM.txtDescription.Text = dataPatch.CurrentRow.Cells[0].Value.ToString();
+                if (dataPatch.CurrentRow.Cells[1].Value != null)
+                    frmM.txtXML.Text = dataPatch.CurrentRow.Cells[1].Value.ToString();
+                if (dataPatch.CurrentRow.Cells[2].Value != null)
+                    frmM.txtSegment.Text = dataPatch.CurrentRow.Cells[2].Value.ToString();
+                if (dataPatch.CurrentRow.Cells[3].Value != null)
+                    frmM.txtCompOS.Text = dataPatch.CurrentRow.Cells[3].Value.ToString();
+                if (dataPatch.CurrentRow.Cells[4].Value != null)
+                    frmM.txtData.Text = dataPatch.CurrentRow.Cells[4].Value.ToString();
+                if (dataPatch.CurrentRow.Cells[5].Value != null && dataPatch.CurrentRow.Cells[5].Value.ToString().Contains(":"))
                 {
-                    frmM.txtReadAddr.Text = Parts[0];
-                    frmM.txtMask.Text = Parts[1];
-                    frmM.txtValue.Text = Parts[2];
+                    string[] Parts = dataPatch.CurrentRow.Cells[5].Value.ToString().Split(':');
+                    if (Parts.Length == 3)
+                    {
+                        frmM.txtReadAddr.Text = Parts[0];
+                        frmM.txtMask.Text = Parts[1];
+                        frmM.txtValue.Text = Parts[2];
+                    }
                 }
-            }
-            if (dataPatch.CurrentRow.Cells[6].Value != null)
-                frmM.txtHelpFile.Text = dataPatch.CurrentRow.Cells[6].Value.ToString();
+                if (dataPatch.CurrentRow.Cells[6].Value != null)
+                    frmM.txtHelpFile.Text = dataPatch.CurrentRow.Cells[6].Value.ToString();
 
-            if (frmM.ShowDialog(this) == DialogResult.OK)
-            {
-                dataPatch.CurrentRow.Cells[0].Value = frmM.txtDescription.Text;
-                dataPatch.CurrentRow.Cells[1].Value = frmM.txtXML.Text;
-                dataPatch.CurrentRow.Cells[2].Value = frmM.txtSegment.Text;
-                dataPatch.CurrentRow.Cells[3].Value = frmM.txtCompOS.Text;
-                dataPatch.CurrentRow.Cells[4].Value = frmM.txtData.Text;
-                if (frmM.txtReadAddr.Text.Length > 0)
+                if (frmM.ShowDialog(this) == DialogResult.OK)
                 {
-                    dataPatch.CurrentRow.Cells[5].Value = frmM.txtReadAddr.Text + ":" + frmM.txtMask.Text + ":" + frmM.txtValue.Text;
+                    dataPatch.CurrentRow.Cells[0].Value = frmM.txtDescription.Text;
+                    dataPatch.CurrentRow.Cells[1].Value = frmM.txtXML.Text;
+                    dataPatch.CurrentRow.Cells[2].Value = frmM.txtSegment.Text;
+                    dataPatch.CurrentRow.Cells[3].Value = frmM.txtCompOS.Text;
+                    dataPatch.CurrentRow.Cells[4].Value = frmM.txtData.Text;
+                    if (frmM.txtReadAddr.Text.Length > 0)
+                    {
+                        dataPatch.CurrentRow.Cells[5].Value = frmM.txtReadAddr.Text + ":" + frmM.txtMask.Text + ":" + frmM.txtValue.Text;
+                    }
+                    dataPatch.CurrentRow.Cells[6].Value = frmM.txtHelpFile.Text;
                 }
-                dataPatch.CurrentRow.Cells[6].Value = frmM.txtHelpFile.Text;
+                frmM.Dispose();
             }
-            frmM.Dispose();
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
 
         }
 
@@ -1336,13 +1375,19 @@ namespace UniversalPatcher
 
         private void loadXMLfile()
         {
-            string fileName = SelectFile("Select XML file", "XML files (*.xml)|*.xml|All files (*.*)|*.*");
-            if (fileName.Length < 1)
-                return;
-            basefile.loadConfigFile(fileName);
-            labelXML.Text = Path.GetFileName(fileName) + " (v " + basefile.Segments[0].Version + ")";
-            addCheckBoxes();
-
+            try
+            {
+                string fileName = SelectFile("Select XML file", "XML files (*.xml)|*.xml|All files (*.*)|*.*");
+                if (fileName.Length < 1)
+                    return;
+                basefile.loadConfigFile(fileName);
+                labelXML.Text = Path.GetFileName(fileName) + " (v " + basefile.Segments[0].Version + ")";
+                addCheckBoxes();
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
         private void loadConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1351,29 +1396,42 @@ namespace UniversalPatcher
 
         private void setupSegmentsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (frmSL != null && frmSL.Visible)
+            try
             {
-                frmSL.BringToFront();
-                return;
+                if (frmSL != null && frmSL.Visible)
+                {
+                    frmSL.BringToFront();
+                    return;
+                }
+                frmSL = new frmSegmenList();
+                frmSL.PCM = basefile;
+                frmSL.InitMe();
+                if (basefile.configFileFullName.Length > 0)
+                    frmSL.LoadFile(basefile.configFileFullName);
+                if (frmSL.ShowDialog() == DialogResult.OK)
+                {
+                    //addCheckBoxes();
+                }
             }
-            frmSL = new frmSegmenList();
-            frmSL.PCM = basefile;
-            frmSL.InitMe();
-            if (basefile.configFileFullName.Length > 0)
-                frmSL.LoadFile(basefile.configFileFullName);
-            if (frmSL.ShowDialog() == DialogResult.OK)
-            {               
-                //addCheckBoxes();
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
             }
 
         }
 
         private void autodetectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmAutodetect frmAD = new frmAutodetect();
-            frmAD.Show();
-            frmAD.InitMe();
-
+            try
+            {
+                frmAutodetect frmAD = new frmAutodetect();
+                frmAD.Show();
+                frmAD.InitMe();
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1518,9 +1576,16 @@ namespace UniversalPatcher
 
         private void stockCVNToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmEditXML frmE = new frmEditXML();
-            frmE.LoadStockCVN();
-            frmE.Show();
+            try
+            {
+                frmEditXML frmE = new frmEditXML();
+                frmE.LoadStockCVN();
+                frmE.Show();
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
 
@@ -1591,37 +1656,43 @@ namespace UniversalPatcher
 
         private void btnSaveCSV_Click(object sender, EventArgs e)
         {
-            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
-            if (FileName.Length == 0)
-                return;
-            Logger("Writing to file: " + Path.GetFileName(FileName), false);
-            using (StreamWriter writetext = new StreamWriter(FileName))
-            {
-                string row = "";
-                for (int i = 0; i < dataFileInfo.Columns.Count; i++)
+            try
+            { 
+                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                if (FileName.Length == 0)
+                    return;
+                Logger("Writing to file: " + Path.GetFileName(FileName), false);
+                using (StreamWriter writetext = new StreamWriter(FileName))
                 {
-                    if (i > 0)
-                        row += ";";
-                    row += dataFileInfo.Columns[i].HeaderText;
-                }
-                writetext.WriteLine(row);
-                for (int r = 0; r < (dataFileInfo.Rows.Count - 1); r++)
-                {
-                    row = "";
+                    string row = "";
                     for (int i = 0; i < dataFileInfo.Columns.Count; i++)
                     {
                         if (i > 0)
                             row += ";";
-                        if (dataFileInfo.Rows[r].Cells[i].Value != null)
-                            row += dataFileInfo.Rows[r].Cells[i].Value.ToString();
+                        row += dataFileInfo.Columns[i].HeaderText;
                     }
-                    row = row.Replace(Environment.NewLine, ":");
-                    row = row.Replace(",", " ");
                     writetext.WriteLine(row);
+                    for (int r = 0; r < (dataFileInfo.Rows.Count - 1); r++)
+                    {
+                        row = "";
+                        for (int i = 0; i < dataFileInfo.Columns.Count; i++)
+                        {
+                            if (i > 0)
+                                row += ";";
+                            if (dataFileInfo.Rows[r].Cells[i].Value != null)
+                                row += dataFileInfo.Rows[r].Cells[i].Value.ToString();
+                        }
+                        row = row.Replace(Environment.NewLine, ":");
+                        row = row.Replace(",", " ");
+                        writetext.WriteLine(row);
+                    }
                 }
+                Logger(" [OK]");
             }
-            Logger(" [OK]");
-
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void SaveSegmentList()
@@ -1774,79 +1845,96 @@ namespace UniversalPatcher
         }
         private void btnExtractSegments_Click(object sender, EventArgs e)
         {
-            if (txtBaseFile.Text.Length == 0)
+            try
             {
-                Logger("No file loaded");
-                return;
+                if (txtBaseFile.Text.Length == 0)
+                {
+                    Logger("No file loaded");
+                    return;
+                }
+                if (txtSegmentDescription.Text.Length == 0)
+                    txtSegmentDescription.Text = Path.GetFileName(basefile.FileName).Replace(".bin", "");
+                ExtractSegments(basefile, txtExtractDescription.Text, false, "");
+                SaveSegmentList();
             }
-            if (txtSegmentDescription.Text.Length == 0)
-                txtSegmentDescription.Text = Path.GetFileName(basefile.FileName).Replace(".bin", "");
-            ExtractSegments(basefile, txtExtractDescription.Text, false,"");
-            SaveSegmentList();
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void btnExtractSegmentsFolder_Click(object sender, EventArgs e)
         {
-            frmFileSelection frmF = new frmFileSelection();
-            frmF.labelCustomdst.Visible = true;
-            frmF.btnCustomdst.Visible = true;
-            frmF.btnOK.Text = "Extract!";
-            frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
-            if (frmF.ShowDialog(this) == DialogResult.OK)
+            try
             {
-                if (!chkLogtodisplay.Checked)
-                    txtResult.AppendText("Extracting...");
-                string dstFolder = frmF.labelCustomdst.Text;
-                for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                frmFileSelection frmF = new frmFileSelection();
+                frmF.labelCustomdst.Visible = true;
+                frmF.btnCustomdst.Visible = true;
+                frmF.btnOK.Text = "Extract!";
+                frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+                if (frmF.ShowDialog(this) == DialogResult.OK)
                 {
-                    string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                    PcmFile PCM = new PcmFile(FileName,chkAutodetect.Checked, basefile.configFileFullName);
-                    GetFileInfo(FileName, ref PCM, true,checkExtractShowinfo.Checked);
-                    ExtractSegments(PCM, Path.GetFileName(FileName).Replace(".bin", ""), true, dstFolder);
+                    if (!chkLogtodisplay.Checked)
+                        txtResult.AppendText("Extracting...");
+                    string dstFolder = frmF.labelCustomdst.Text;
+                    for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                    {
+                        string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
+                        PcmFile PCM = new PcmFile(FileName, chkAutodetect.Checked, basefile.configFileFullName);
+                        GetFileInfo(FileName, ref PCM, true, checkExtractShowinfo.Checked);
+                        ExtractSegments(PCM, Path.GetFileName(FileName).Replace(".bin", ""), true, dstFolder);
+                    }
+                    if (!chkLogtodisplay.Checked)
+                        txtResult.AppendText(Environment.NewLine + "Segments extracted" + Environment.NewLine);
+                    else
+                        Logger("Segments extracted");
+                    SaveSegmentList();
                 }
-                if (!chkLogtodisplay.Checked)
-                    txtResult.AppendText(Environment.NewLine + "Segments extracted" + Environment.NewLine);
-                else
-                    Logger("Segments extracted");
-                SaveSegmentList();
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
             }
         }
 
         private void btnSwapSegments_Click(object sender, EventArgs e)
-        {
-            if (basefile == null)
+        {try
             {
-                Logger("No file loaded");
-                return;
-            }
-            if (basefile.OS == null || basefile.OS == "")
-            {
-                Logger("No OS segment defined");
-                return;
-            }
-            List <string> currentSegements = new List<string>();
-            for (int s = 0; s < basefile.Segments.Count; s++)
-            {
-                string seg = basefile.segmentinfos[s].Name.PadRight(15) + basefile.segmentinfos[s].PN + basefile.segmentinfos[s].Ver;
-                currentSegements.Add(seg);
-            }
-            frmSwapSegmentList frmSw = new frmSwapSegmentList();
-            frmSw.LoadSegmentList(ref basefile);
-            if (frmSw.ShowDialog(this) == DialogResult.OK)
-            {
-                basefile = frmSw.PCM;
-                basefile.GetInfo();
-                basefile.FixCheckSums();
-                LoggerBold(Environment.NewLine + "Swapped segments:");
+                if (basefile == null)
+                {
+                    Logger("No file loaded");
+                    return;
+                }
+                if (basefile.OS == null || basefile.OS == "")
+                {
+                    Logger("No OS segment defined");
+                    return;
+                }
+                List<string> currentSegements = new List<string>();
                 for (int s = 0; s < basefile.Segments.Count; s++)
                 {
-                    string newPN = basefile.segmentinfos[s].PN + basefile.segmentinfos[s].Ver;
-                    if (!currentSegements[s].EndsWith(newPN))
-                        Logger(currentSegements[s] + " => " + basefile.segmentinfos[s].PN + basefile.segmentinfos[s].Ver);
+                    string seg = basefile.segmentinfos[s].Name.PadRight(15) + basefile.segmentinfos[s].PN + basefile.segmentinfos[s].Ver;
+                    currentSegements.Add(seg);
                 }
-                Logger("Segment(s) swapped and checksums fixed (you can save BIN now)");
+                frmSwapSegmentList frmSw = new frmSwapSegmentList();
+                frmSw.LoadSegmentList(ref basefile);
+                if (frmSw.ShowDialog(this) == DialogResult.OK)
+                {
+                    basefile = frmSw.PCM;
+                    basefile.GetInfo();
+                    basefile.FixCheckSums();
+                    LoggerBold(Environment.NewLine + "Swapped segments:");
+                    for (int s = 0; s < basefile.Segments.Count; s++)
+                    {
+                        string newPN = basefile.segmentinfos[s].PN + basefile.segmentinfos[s].Ver;
+                        if (!currentSegements[s].EndsWith(newPN))
+                            Logger(currentSegements[s] + " => " + basefile.segmentinfos[s].PN + basefile.segmentinfos[s].Ver);
+                    }
+                    Logger("Segment(s) swapped and checksums fixed (you can save BIN now)");
+                }
+                frmSw.Dispose();
             }
-            frmSw.Dispose();
+            catch (Exception ex) { LoggerBold(ex.Message); }
         }
 
         private void FixFileChecksum(string fileName)
@@ -2005,34 +2093,41 @@ namespace UniversalPatcher
 
         private void btnSaveCsvBadChkFile_Click(object sender, EventArgs e)
         {
-            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
-            if (FileName.Length == 0)
-                return;
-            Logger("Writing to file: " + Path.GetFileName(FileName), false);
-            using (StreamWriter writetext = new StreamWriter(FileName))
-            {
-                string row = "";
-                for (int i = 0; i < dataBadChkFile.Columns.Count; i++)
+            try
+            { 
+                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                if (FileName.Length == 0)
+                    return;
+                Logger("Writing to file: " + Path.GetFileName(FileName), false);
+                using (StreamWriter writetext = new StreamWriter(FileName))
                 {
-                    if (i > 0)
-                        row += ";";
-                    row += dataBadChkFile.Columns[i].HeaderText;
-                }
-                writetext.WriteLine(row);
-                for (int r = 0; r < (dataBadChkFile.Rows.Count - 1); r++)
-                {
-                    row = "";
+                    string row = "";
                     for (int i = 0; i < dataBadChkFile.Columns.Count; i++)
                     {
                         if (i > 0)
                             row += ";";
-                        if (dataBadChkFile.Rows[r].Cells[i].Value != null)
-                            row += dataBadChkFile.Rows[r].Cells[i].Value.ToString();
+                        row += dataBadChkFile.Columns[i].HeaderText;
                     }
                     writetext.WriteLine(row);
+                    for (int r = 0; r < (dataBadChkFile.Rows.Count - 1); r++)
+                    {
+                        row = "";
+                        for (int i = 0; i < dataBadChkFile.Columns.Count; i++)
+                        {
+                            if (i > 0)
+                                row += ";";
+                            if (dataBadChkFile.Rows[r].Cells[i].Value != null)
+                                row += dataBadChkFile.Rows[r].Cells[i].Value.ToString();
+                        }
+                        writetext.WriteLine(row);
+                    }
                 }
+                Logger(" [OK]");
             }
-            Logger(" [OK]");
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
 
         }
 
@@ -2060,9 +2155,15 @@ namespace UniversalPatcher
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            frmSearchText frmS = new frmSearchText();
-            frmS.Show();
-            frmS.initMe(txtResult);
+            try { 
+                frmSearchText frmS = new frmSearchText();
+                frmS.Show();
+                frmS.initMe(txtResult);
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -2103,46 +2204,59 @@ namespace UniversalPatcher
 
         private void editTableSearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            try
+            {
             frmSearchTables frmST = new frmSearchTables();
             frmST.Show(this);
             if (tableSearchFile != null && tableSearchFile.Length > 0)
                 frmST.LoadFile(tableSearchFile);
             else
                 frmST.LoadConfig();
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
 
         }
 
         private void btnSaveSearchedTables_Click(object sender, EventArgs e)
         {
-            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
-            if (FileName.Length == 0)
-                return;
-            Logger("Writing to file: " + Path.GetFileName(FileName), false);
-            using (StreamWriter writetext = new StreamWriter(FileName))
+            try
             {
-                string row = "";
-                for (int i = 0; i < dataGridSearchedTables.Columns.Count; i++)
+                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                if (FileName.Length == 0)
+                    return;
+                Logger("Writing to file: " + Path.GetFileName(FileName), false);
+                using (StreamWriter writetext = new StreamWriter(FileName))
                 {
-                    if (i > 0)
-                        row += ";";
-                    row += dataGridSearchedTables.Columns[i].HeaderText;
-                }
-                writetext.WriteLine(row);
-                for (int r = 0; r < (dataGridSearchedTables.Rows.Count - 1); r++)
-                {
-                    row = "";
+                    string row = "";
                     for (int i = 0; i < dataGridSearchedTables.Columns.Count; i++)
                     {
                         if (i > 0)
                             row += ";";
-                        if (dataGridSearchedTables.Rows[r].Cells[i].Value != null)
-                            row += dataGridSearchedTables.Rows[r].Cells[i].Value.ToString();
+                        row += dataGridSearchedTables.Columns[i].HeaderText;
                     }
                     writetext.WriteLine(row);
+                    for (int r = 0; r < (dataGridSearchedTables.Rows.Count - 1); r++)
+                    {
+                        row = "";
+                        for (int i = 0; i < dataGridSearchedTables.Columns.Count; i++)
+                        {
+                            if (i > 0)
+                                row += ";";
+                            if (dataGridSearchedTables.Rows[r].Cells[i].Value != null)
+                                row += dataGridSearchedTables.Rows[r].Cells[i].Value.ToString();
+                        }
+                        writetext.WriteLine(row);
+                    }
                 }
+                Logger(" [OK]");
             }
-            Logger(" [OK]");
-
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void btnClearSearchedTables_Click(object sender, EventArgs e)
@@ -2181,34 +2295,41 @@ namespace UniversalPatcher
 
         private void btnSavePidList_Click(object sender, EventArgs e)
         {
-            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
-            if (FileName.Length == 0)
-                return;
-            Logger("Writing to file: " + Path.GetFileName(FileName), false);
-            using (StreamWriter writetext = new StreamWriter(FileName))
-            {
-                string row = "";
-                for (int i = 0; i < dataGridPIDlist.Columns.Count; i++)
+            try
+            { 
+                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                if (FileName.Length == 0)
+                    return;
+                Logger("Writing to file: " + Path.GetFileName(FileName), false);
+                using (StreamWriter writetext = new StreamWriter(FileName))
                 {
-                    if (i > 0)
-                        row += ";";
-                    row += dataGridPIDlist.Columns[i].HeaderText;
-                }
-                writetext.WriteLine(row);
-                for (int r = 0; r < (dataGridPIDlist.Rows.Count - 1); r++)
-                {
-                    row = "";
+                    string row = "";
                     for (int i = 0; i < dataGridPIDlist.Columns.Count; i++)
                     {
                         if (i > 0)
                             row += ";";
-                        if (dataGridPIDlist.Rows[r].Cells[i].Value != null)
-                            row += dataGridPIDlist.Rows[r].Cells[i].Value.ToString();
+                        row += dataGridPIDlist.Columns[i].HeaderText;
                     }
                     writetext.WriteLine(row);
+                    for (int r = 0; r < (dataGridPIDlist.Rows.Count - 1); r++)
+                    {
+                        row = "";
+                        for (int i = 0; i < dataGridPIDlist.Columns.Count; i++)
+                        {
+                            if (i > 0)
+                                row += ";";
+                            if (dataGridPIDlist.Rows[r].Cells[i].Value != null)
+                                row += dataGridPIDlist.Rows[r].Cells[i].Value.ToString();
+                        }
+                        writetext.WriteLine(row);
+                    }
                 }
+                Logger(" [OK]");
             }
-            Logger(" [OK]");
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
 
         }
 
@@ -2381,72 +2502,79 @@ namespace UniversalPatcher
 
         private void btnSaveDecCsv_Click(object sender, EventArgs e)
         {
-            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
-            if (FileName.Length == 0)
-                return;
-            Logger("Writing to file: " + Path.GetFileName(FileName), false);
-            using (StreamWriter writetext = new StreamWriter(FileName))
+            try
             {
-                string row = "";
-                for (int i = 0; i < dataFileInfo.Columns.Count; i++)
+                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                if (FileName.Length == 0)
+                    return;
+                Logger("Writing to file: " + Path.GetFileName(FileName), false);
+                using (StreamWriter writetext = new StreamWriter(FileName))
                 {
-                    if (i > 0)
-                        row += ";";
-                    row += dataFileInfo.Columns[i].HeaderText;
-                }
-                writetext.WriteLine(row);
-                for (int r = 0; r < (dataFileInfo.Rows.Count - 1); r++)
-                {
-                    string val = "";
-                    uint valDec = 0;
-                    row = "";
+                    string row = "";
                     for (int i = 0; i < dataFileInfo.Columns.Count; i++)
                     {
-                        if (dataFileInfo.Rows[r].Cells[i].Value != null)
-                            val = dataFileInfo.Rows[r].Cells[i].Value.ToString();
                         if (i > 0)
                             row += ";";
-                        if (i == 3 || i == 4)  //Address (block)
-                        {
-                            string[] aparts = val.Split(',');
-                            val = "";
-                            for (int a= 0; a<aparts.Length; a++)
-                            {
-                                if (a > 0)
-                                    val += ":";
-                                string[] addresses = aparts[a].Split('-');
-                                if (addresses.Length > 1)
-                                {
-                                    if (!HexToUint(addresses[0],out valDec))
-                                    {
-                                        Debug.WriteLine("Can't convert from hex: " + addresses[0]);
-                                        break;
-                                    }
-                                    val += valDec.ToString() + " - ";
-                                    if (!HexToUint(addresses[1], out valDec))
-                                    {
-                                        Debug.WriteLine("Can't convert from hex: " + addresses[1]);
-                                        break;
-                                    }
-                                    val += valDec.ToString();
-                                }
-                            }
-
-                        }
-                        else if (i> 4 && i < 12)
-                        {
-                            if (HexToUint(val, out valDec))
-                                val = valDec.ToString();
-                        }
-                        row += val;
+                        row += dataFileInfo.Columns[i].HeaderText;
                     }
-                    row = row.Replace(",", " ");
-                    row = row.Replace(Environment.NewLine, ":");
-
                     writetext.WriteLine(row);
+                    for (int r = 0; r < (dataFileInfo.Rows.Count - 1); r++)
+                    {
+                        string val = "";
+                        uint valDec = 0;
+                        row = "";
+                        for (int i = 0; i < dataFileInfo.Columns.Count; i++)
+                        {
+                            if (dataFileInfo.Rows[r].Cells[i].Value != null)
+                                val = dataFileInfo.Rows[r].Cells[i].Value.ToString();
+                            if (i > 0)
+                                row += ";";
+                            if (i == 3 || i == 4)  //Address (block)
+                            {
+                                string[] aparts = val.Split(',');
+                                val = "";
+                                for (int a= 0; a<aparts.Length; a++)
+                                {
+                                    if (a > 0)
+                                        val += ":";
+                                    string[] addresses = aparts[a].Split('-');
+                                    if (addresses.Length > 1)
+                                    {
+                                        if (!HexToUint(addresses[0],out valDec))
+                                        {
+                                            Debug.WriteLine("Can't convert from hex: " + addresses[0]);
+                                            break;
+                                        }
+                                        val += valDec.ToString() + " - ";
+                                        if (!HexToUint(addresses[1], out valDec))
+                                        {
+                                            Debug.WriteLine("Can't convert from hex: " + addresses[1]);
+                                            break;
+                                        }
+                                        val += valDec.ToString();
+                                    }
+                                }
+
+                            }
+                            else if (i> 4 && i < 12)
+                            {
+                                if (HexToUint(val, out valDec))
+                                    val = valDec.ToString();
+                            }
+                            row += val;
+                        }
+                        row = row.Replace(",", " ");
+                        row = row.Replace(Environment.NewLine, ":");
+
+                        writetext.WriteLine(row);
+                    }
                 }
+                Logger(" [OK]");
             }
-            Logger(" [OK]");
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
 
         }
 
@@ -2457,71 +2585,84 @@ namespace UniversalPatcher
 
         private void btnSaveCsvDTC_Click(object sender, EventArgs e)
         {
-            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
-            if (FileName.Length == 0)
-                return;
-            Logger("Writing to file: " + Path.GetFileName(FileName), false);
-            using (StreamWriter writetext = new StreamWriter(FileName))
-            {
-                string row = "";
-                for (int i = 0; i < dataGridDTC.Columns.Count; i++)
+            try
+            { 
+                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                if (FileName.Length == 0)
+                    return;
+                Logger("Writing to file: " + Path.GetFileName(FileName), false);
+                using (StreamWriter writetext = new StreamWriter(FileName))
                 {
-                    if (i > 0)
-                        row += ";";
-                    row += dataGridDTC.Columns[i].HeaderText;
-                }
-                writetext.WriteLine(row);
-                for (int r = 0; r < (dataGridDTC.Rows.Count - 1); r++)
-                {
-                    row = "";
+                    string row = "";
                     for (int i = 0; i < dataGridDTC.Columns.Count; i++)
                     {
                         if (i > 0)
                             row += ";";
-                        if (dataGridDTC.Rows[r].Cells[i].Value != null)
-                            row += dataGridDTC.Rows[r].Cells[i].Value.ToString();
+                        row += dataGridDTC.Columns[i].HeaderText;
                     }
                     writetext.WriteLine(row);
+                    for (int r = 0; r < (dataGridDTC.Rows.Count - 1); r++)
+                    {
+                        row = "";
+                        for (int i = 0; i < dataGridDTC.Columns.Count; i++)
+                        {
+                            if (i > 0)
+                                row += ";";
+                            if (dataGridDTC.Rows[r].Cells[i].Value != null)
+                                row += dataGridDTC.Rows[r].Cells[i].Value.ToString();
+                        }
+                        writetext.WriteLine(row);
+                    }
                 }
+                Logger(" [OK]");
             }
-            Logger(" [OK]");
-
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void modifyDtc()
         {
-            int codeIndex = dataGridDTC.SelectedCells[0].RowIndex;
-            frmSetDTC frmS = new frmSetDTC();
-            frmS.startMe(codeIndex, basefile);
-            if (frmS.ShowDialog() == DialogResult.OK)
-            {
-                basefile.dtcCodes[codeIndex].Status = (byte)frmS.comboDtcStatus.SelectedIndex;
-
-                basefile.buf[basefile.dtcCodes[codeIndex].statusAddrInt] = basefile.dtcCodes[codeIndex].Status;
-                if (basefile.dtcCombined)
+            try
+            { 
+                int codeIndex = dataGridDTC.SelectedCells[0].RowIndex;
+                frmSetDTC frmS = new frmSetDTC();
+                frmS.startMe(codeIndex, basefile);
+                if (frmS.ShowDialog() == DialogResult.OK)
                 {
-                    basefile.dtcCodes[codeIndex].StatusTxt = dtcStatusCombined[basefile.dtcCodes[codeIndex].Status];
-                    dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = basefile.dtcCodes[codeIndex].StatusTxt;
+                    basefile.dtcCodes[codeIndex].Status = (byte)frmS.comboDtcStatus.SelectedIndex;
 
-                    if (basefile.dtcCodes[codeIndex].Status > 3)
-                        basefile.dtcCodes[codeIndex].MilStatus = 1;
+                    basefile.buf[basefile.dtcCodes[codeIndex].statusAddrInt] = basefile.dtcCodes[codeIndex].Status;
+                    if (basefile.dtcCombined)
+                    {
+                        basefile.dtcCodes[codeIndex].StatusTxt = dtcStatusCombined[basefile.dtcCodes[codeIndex].Status];
+                        dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = basefile.dtcCodes[codeIndex].StatusTxt;
+
+                        if (basefile.dtcCodes[codeIndex].Status > 3)
+                            basefile.dtcCodes[codeIndex].MilStatus = 1;
+                        else
+                            basefile.dtcCodes[codeIndex].MilStatus = 0;
+                    }
                     else
-                        basefile.dtcCodes[codeIndex].MilStatus = 0;
-                }
-                else
-                {
-                    basefile.dtcCodes[codeIndex].MilStatus = (byte)frmS.comboMIL.SelectedIndex;
-                    basefile.dtcCodes[codeIndex].StatusTxt = dtcStatus[basefile.dtcCodes[codeIndex].Status];
-                    basefile.buf[basefile.dtcCodes[codeIndex].milAddrInt] = basefile.dtcCodes[codeIndex].MilStatus;
-                    dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = basefile.dtcCodes[codeIndex].StatusTxt;
-                }
-                dataGridDTC.Rows[codeIndex].Cells["Status"].Value = basefile.dtcCodes[codeIndex].Status;
+                    {
+                        basefile.dtcCodes[codeIndex].MilStatus = (byte)frmS.comboMIL.SelectedIndex;
+                        basefile.dtcCodes[codeIndex].StatusTxt = dtcStatus[basefile.dtcCodes[codeIndex].Status];
+                        basefile.buf[basefile.dtcCodes[codeIndex].milAddrInt] = basefile.dtcCodes[codeIndex].MilStatus;
+                        dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = basefile.dtcCodes[codeIndex].StatusTxt;
+                    }
+                    dataGridDTC.Rows[codeIndex].Cells["Status"].Value = basefile.dtcCodes[codeIndex].Status;
                 
 
-                tabFunction.SelectedTab = tabApply;
-                Logger("DTC modified, you can now save bin");
+                    tabFunction.SelectedTab = tabApply;
+                    Logger("DTC modified, you can now save bin");
+                }
+                frmS.Dispose();
             }
-            frmS.Dispose();
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
         private void dataGridDTC_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -2540,73 +2681,91 @@ namespace UniversalPatcher
 
         private void dTCSearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmEditXML frmE = new frmEditXML();
-            frmE.LoadDTCSearchConfig();
-            frmE.Show();
-
+            try 
+            { 
+                frmEditXML frmE = new frmEditXML();
+                frmE.LoadDTCSearchConfig();
+                frmE.Show();
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void btnShowTableData_Click(object sender, EventArgs e)
         {
-            tableViews = new List<TableView>();
-            int dataIndex = dataIndex = dataGridSearchedTables.SelectedCells[0].RowIndex;
-            uint StartAddr;
-            uint rows;
-            if (chkTableSearchNoFilters.Checked)
-            {
-                StartAddr = tableSearchResultNoFilters[dataIndex].AddressInt;
-                rows = tableSearchResultNoFilters[dataIndex].Rows;
-            }
-            else
-            {
-                StartAddr = tableSearchResult[dataIndex].AddressInt;
-                rows = tableSearchResult[dataIndex].Rows;
-            }
+            try 
+            { 
+                tableViews = new List<TableView>();
+                int dataIndex = dataIndex = dataGridSearchedTables.SelectedCells[0].RowIndex;
+                uint StartAddr;
+                uint rows;
+                if (chkTableSearchNoFilters.Checked)
+                {
+                    StartAddr = tableSearchResultNoFilters[dataIndex].AddressInt;
+                    rows = tableSearchResultNoFilters[dataIndex].Rows;
+                }
+                else
+                {
+                    StartAddr = tableSearchResult[dataIndex].AddressInt;
+                    rows = tableSearchResult[dataIndex].Rows;
+                }
 
-            if (rows == 0)
-            {
-                TableView dt = new TableView();
-                dt.Row = 0;
-                dt.Address = StartAddr.ToString("X8");
-                dt.addrInt = StartAddr;
-                dt.dataInt = basefile.buf[StartAddr];
-                dt.Data = dt.dataInt.ToString("X2");
-                tableViews.Add(dt);
-            }
-            else
-            {
-                uint row = 0;
-                for (uint addr = StartAddr; addr < StartAddr + rows; addr++)
+                if (rows == 0)
                 {
                     TableView dt = new TableView();
-                    dt.Row = row;
-                    dt.addrInt = addr;
-                    dt.Address = addr.ToString("X8");
-                    dt.dataInt = basefile.buf[addr];
+                    dt.Row = 0;
+                    dt.Address = StartAddr.ToString("X8");
+                    dt.addrInt = StartAddr;
+                    dt.dataInt = basefile.buf[StartAddr];
                     dt.Data = dt.dataInt.ToString("X2");
                     tableViews.Add(dt);
-                    row++;
                 }
+                else
+                {
+                    uint row = 0;
+                    for (uint addr = StartAddr; addr < StartAddr + rows; addr++)
+                    {
+                        TableView dt = new TableView();
+                        dt.Row = row;
+                        dt.addrInt = addr;
+                        dt.Address = addr.ToString("X8");
+                        dt.dataInt = basefile.buf[addr];
+                        dt.Data = dt.dataInt.ToString("X2");
+                        tableViews.Add(dt);
+                        row++;
+                    }
+                }
+                frmEditXML frmEX = new frmEditXML();
+                frmEX.LoadTableData();
+                frmEX.Show();
             }
-            frmEditXML frmEX = new frmEditXML();
-            frmEX.LoadTableData();
-            frmEX.Show();
-            //dataGridSearchedTables.Columns[""]
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
 
         private void tableSeekToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (basefile.configFileFullName == null)
-            {
-                Logger("No file/XML selected");
-                return;
-            }
-            frmEditXML frmE = new frmEditXML();
+            try 
+            { 
+                if (basefile.configFileFullName == null)
+                {
+                    Logger("No file/XML selected");
+                    return;
+                }
+                frmEditXML frmE = new frmEditXML();
             
-            frmE.LoadTableSeek(Path.Combine(Application.StartupPath, "XML", "TableSeek-" + basefile.configFile + ".xml") );
-            frmE.Show();
-
+                frmE.LoadTableSeek(Path.Combine(Application.StartupPath, "XML", "TableSeek-" + basefile.configFile + ".xml") );
+                frmE.Show();
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void btnClearTableSeek_Click(object sender, EventArgs e)
@@ -2709,14 +2868,21 @@ namespace UniversalPatcher
 
         private void btnTuner_Click(object sender, EventArgs e)
         {
-            if (basefile == null)
+            try
             {
-                LoggerBold("No file loaded");
-                //return;
+                if (basefile == null)
+                {
+                    LoggerBold("No file loaded");
+                    //return;
+                }
+                //basefile.tableDatas = new List<TableData>();
+                frmTuner ft = new frmTuner(basefile);
+                ft.Show();
             }
-            //basefile.tableDatas = new List<TableData>();
-            frmTuner ft = new frmTuner(basefile);
-            ft.Show();
+            catch(Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void filterTableSeek()
@@ -2772,8 +2938,15 @@ namespace UniversalPatcher
 
         private void moreSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmMoreSettings frmTS = new frmMoreSettings();
-            frmTS.Show();
+            try { 
+                frmMoreSettings frmTS = new frmMoreSettings();
+                frmTS.Show();
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+
         }
 
         private void btnLoadPatch_Click(object sender, EventArgs e)

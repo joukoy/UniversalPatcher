@@ -141,79 +141,84 @@ namespace UniversalPatcher
 
         public void selectPCM()
         {
-            this.Text = "Tuner " + PCM.FileName + " [" + PCM.tunerFile + "]";
-            PCM.selectTableDatas(0, PCM.FileName);
-            //tableDataList = PCM.tableDatas;
-            for (int m= tableListToolStripMenuItem.DropDownItems.Count - 1; m >=0; m-- )
-            { 
-
-                if (tableListToolStripMenuItem.DropDownItems[m].Tag != null)
-                    tableListToolStripMenuItem.DropDownItems.RemoveAt(m);
-            }
-            for (int i=0; i< PCM.altTableDatas.Count; i++)
+            try
             {
-                ToolStripMenuItem miNew = new ToolStripMenuItem(PCM.altTableDatas[i].Name);
-                miNew.Name = PCM.altTableDatas[i].Name;
-                miNew.Tag = i;
-                if (i == 0)
-                    miNew.Checked = true;
-                tableListToolStripMenuItem.DropDownItems.Add(miNew);
-                miNew.Click += tablelistSelect_Click;
+                this.Text = "Tuner " + PCM.FileName + " [" + PCM.tunerFile + "]";
+                PCM.selectTableDatas(0, PCM.FileName);
+                //tableDataList = PCM.tableDatas;
+                for (int m = tableListToolStripMenuItem.DropDownItems.Count - 1; m >= 0; m--)
+                {
+
+                    if (tableListToolStripMenuItem.DropDownItems[m].Tag != null)
+                        tableListToolStripMenuItem.DropDownItems.RemoveAt(m);
+                }
+                for (int i = 0; i < PCM.altTableDatas.Count; i++)
+                {
+                    ToolStripMenuItem miNew = new ToolStripMenuItem(PCM.altTableDatas[i].Name);
+                    miNew.Name = PCM.altTableDatas[i].Name;
+                    miNew.Tag = i;
+                    if (i == 0)
+                        miNew.Checked = true;
+                    tableListToolStripMenuItem.DropDownItems.Add(miNew);
+                    miNew.Click += tablelistSelect_Click;
+                }
+                if (PCM.Segments.Count > 0 && PCM.Segments[0].CS1Address.StartsWith("GM-V6"))
+                    tinyTunerDBV6OnlyToolStripMenuItem.Enabled = true;
+                else
+                    tinyTunerDBV6OnlyToolStripMenuItem.Enabled = false;
+                filterTables();
+                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                    mi.Checked = false;
+                foreach (ToolStripMenuItem mi in findDifferencesToolStripMenuItem.DropDownItems)
+                    mi.Enabled = true;
+                foreach (ToolStripMenuItem mi in findDifferencesHEXToolStripMenuItem.DropDownItems)
+                    mi.Enabled = true;
+
+                findDifferencesToolStripMenuItem.DropDownItems[PCM.FileName].Enabled = false;
+                findDifferencesHEXToolStripMenuItem.DropDownItems[PCM.FileName].Enabled = false;
+
+                ToolStripMenuItem mitem = (ToolStripMenuItem)currentFileToolStripMenuItem.DropDownItems[PCM.FileName];
+                mitem.Checked = true;
+                currentBin = mitem.Text.Substring(0, 1);
+
+                filterTables();
+                if (treeView1.Visible)
+                {
+                    treeView1.SelectedNodes.Clear();
+                    TreeParts.addNodes(treeView1.Nodes, PCM);
+                }
             }
-            if (PCM.Segments.Count > 0 &&  PCM.Segments[0].CS1Address.StartsWith("GM-V6"))
-                tinyTunerDBV6OnlyToolStripMenuItem.Enabled = true;
-            else
-                tinyTunerDBV6OnlyToolStripMenuItem.Enabled = false;
-            filterTables();
-            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
-                mi.Checked = false;
-            foreach (ToolStripMenuItem mi in findDifferencesToolStripMenuItem.DropDownItems)
-                mi.Enabled = true;
-            foreach (ToolStripMenuItem mi in findDifferencesHEXToolStripMenuItem.DropDownItems)
-                mi.Enabled = true;
-
-            findDifferencesToolStripMenuItem.DropDownItems[PCM.FileName].Enabled = false;
-            findDifferencesHEXToolStripMenuItem.DropDownItems[PCM.FileName].Enabled = false;
-
-            ToolStripMenuItem mitem = (ToolStripMenuItem)currentFileToolStripMenuItem.DropDownItems[PCM.FileName];
-            mitem.Checked = true;
-            currentBin = mitem.Text.Substring(0, 1);
-
-            filterTables();
-            if (treeView1.Visible)
+            catch (Exception ex)
             {
-                treeView1.SelectedNodes.Clear();
-                TreeParts.addNodes(treeView1.Nodes, PCM);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner line " + line + ": " + ex.Message);
             }
         }
 
         public void loadConfigforPCM(ref PcmFile newPCM)
         {
-            if (!Properties.Settings.Default.disableTunerAutoloadSettings)
+            try
             {
-                string defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", newPCM.OS + ".xml");
-                if (newPCM.OS.Length == 0)
-                    defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", newPCM.configFile + "-def.xml");
-                compXml = "";
-                if (File.Exists(defaultTunerFile))
+                if (!Properties.Settings.Default.disableTunerAutoloadSettings)
                 {
-                    long conFileSize = new FileInfo(defaultTunerFile).Length;
-                    if (conFileSize < 255)
+                    string defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", newPCM.OS + ".xml");
+                    if (newPCM.OS.Length == 0)
+                        defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", newPCM.configFile + "-def.xml");
+                    compXml = "";
+                    if (File.Exists(defaultTunerFile))
                     {
-                        compXml = ReadTextFile(defaultTunerFile);
-                        defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", compXml);
-                        Logger("Using compatible file: " + compXml);
+                        long conFileSize = new FileInfo(defaultTunerFile).Length;
+                        if (conFileSize < 255)
+                        {
+                            compXml = ReadTextFile(defaultTunerFile);
+                            defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", compXml);
+                            Logger("Using compatible file: " + compXml);
+                        }
                     }
-                }
-                if (File.Exists(defaultTunerFile))
-                {
-                    Logger(newPCM.LoadTableList(defaultTunerFile));
-                    importDTC(ref newPCM);
-                    refreshTablelist();
-                }
-                else
-                {
-                    defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", newPCM.configFile + "-def.xml");
                     if (File.Exists(defaultTunerFile))
                     {
                         Logger(newPCM.LoadTableList(defaultTunerFile));
@@ -222,17 +227,35 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        Logger("File not found: " + defaultTunerFile);
-                        importDTC(ref newPCM);
-                        importTableSeek(ref newPCM);
-                        if (newPCM.Segments.Count > 0 && newPCM.Segments[0].CS1Address.StartsWith("GM-V6"))
-                            importTinyTunerDB(ref newPCM);
+                        defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", newPCM.configFile + "-def.xml");
+                        if (File.Exists(defaultTunerFile))
+                        {
+                            Logger(newPCM.LoadTableList(defaultTunerFile));
+                            importDTC(ref newPCM);
+                            refreshTablelist();
+                        }
+                        else
+                        {
+                            Logger("File not found: " + defaultTunerFile);
+                            importDTC(ref newPCM);
+                            importTableSeek(ref newPCM);
+                            if (newPCM.Segments.Count > 0 && newPCM.Segments[0].CS1Address.StartsWith("GM-V6"))
+                                importTinyTunerDB(ref newPCM);
+                        }
                     }
+                    this.Text = "Tuner: " + newPCM.FileName + " [" + newPCM.tunerFile + "]";
+
                 }
-                this.Text = "Tuner: " + newPCM.FileName + " [" + newPCM.tunerFile + "]";
-
             }
-
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner line " + line + ": " + ex.Message);
+            }
         }
 
         public void openTableEditor(List<int> tableIds = null, bool newWindow = false)
@@ -321,7 +344,7 @@ namespace UniversalPatcher
             openTableEditor();
         }
 
-      public void LoggerBold(string LogText, Boolean NewLine = true)
+        public void LoggerBold(string LogText, Boolean NewLine = true)
         {
             txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Bold);
             txtResult.AppendText(LogText);
@@ -371,25 +394,38 @@ namespace UniversalPatcher
         }
         public void refreshTablelist()
         {
-            this.dataGridView1.SelectionChanged -= new System.EventHandler(this.DataGridView1_SelectionChanged);
+            try
+            {
+                this.dataGridView1.SelectionChanged -= new System.EventHandler(this.DataGridView1_SelectionChanged);
 
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
 
-            //Don't fire events when adding data to combobox!
-            this.comboTableCategory.SelectedIndexChanged -= new System.EventHandler(this.comboTableCategory_SelectedIndexChanged);
-            comboTableCategory.DataSource = null;
-            categoryBindingSource.DataSource = null;
-            if (!PCM.tableCategories.Contains("_All"))
-                PCM.tableCategories.Add("_All");
-            PCM.tableCategories.Sort();
-            categoryBindingSource.DataSource = PCM.tableCategories;
-            comboTableCategory.DataSource = categoryBindingSource;
-            comboTableCategory.Refresh();
-            this.comboTableCategory.SelectedIndexChanged += new System.EventHandler(this.comboTableCategory_SelectedIndexChanged);
+                //Don't fire events when adding data to combobox!
+                this.comboTableCategory.SelectedIndexChanged -= new System.EventHandler(this.comboTableCategory_SelectedIndexChanged);
+                comboTableCategory.DataSource = null;
+                categoryBindingSource.DataSource = null;
+                if (!PCM.tableCategories.Contains("_All"))
+                    PCM.tableCategories.Add("_All");
+                PCM.tableCategories.Sort();
+                categoryBindingSource.DataSource = PCM.tableCategories;
+                comboTableCategory.DataSource = categoryBindingSource;
+                comboTableCategory.Refresh();
+                this.comboTableCategory.SelectedIndexChanged += new System.EventHandler(this.comboTableCategory_SelectedIndexChanged);
 
-            Application.DoEvents();
-            filterTables();
+                Application.DoEvents();
+                filterTables();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner line " + line + ": " + ex.Message);
+            }
         }
+
 
         private void importTableSeek(ref PcmFile _PCM)
         {
@@ -829,23 +865,35 @@ namespace UniversalPatcher
 
         private void importDTC(ref PcmFile _PCM)
         {
-            Logger("Importing DTC codes... ", false);
-            bool haveDTC = false;
-            for (int t = 0; t < _PCM.tableDatas.Count; t++)
+            try
             {
-                if (_PCM.tableDatas[t].TableName == "DTC" || _PCM.tableDatas[t].TableName == "DTC.Codes")
+                Logger("Importing DTC codes... ", false);
+                bool haveDTC = false;
+                for (int t = 0; t < _PCM.tableDatas.Count; t++)
                 {
-                    haveDTC = true;
-                    Logger(" DTC codes already defined");
-                    break;
+                    if (_PCM.tableDatas[t].TableName == "DTC" || _PCM.tableDatas[t].TableName == "DTC.Codes")
+                    {
+                        haveDTC = true;
+                        Logger(" DTC codes already defined");
+                        break;
+                    }
+                }
+                if (!haveDTC)
+                {
+                    TableData tdTmp = new TableData();
+                    tdTmp.importDTC(_PCM, ref _PCM.tableDatas);
+                    Logger(" [OK]");
+                    filterTables();
                 }
             }
-            if (!haveDTC)
+            catch (Exception ex)
             {
-                TableData tdTmp = new TableData();
-                tdTmp.importDTC(_PCM, ref _PCM.tableDatas);
-                Logger(" [OK]");
-                filterTables();
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
             }
         }
 
@@ -885,12 +933,25 @@ namespace UniversalPatcher
 
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //Copy to clipboard
-            CopyToClipboard();
+            try
+            {
+                //Copy to clipboard
+                CopyToClipboard();
 
-            //Clear selected cells
-            foreach (DataGridViewCell dgvCell in dataGridView1.SelectedCells)
-                dgvCell.Value = string.Empty;
+                //Clear selected cells
+                foreach (DataGridViewCell dgvCell in dataGridView1.SelectedCells)
+                    dgvCell.Value = string.Empty;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -914,41 +975,54 @@ namespace UniversalPatcher
 
         private void PasteClipboardValue()
         {
-            //Show Error if no cell is selected
-            if (dataGridView1.SelectedCells.Count == 0)
+            try
             {
-                MessageBox.Show("Please select a cell", "Paste",
-                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            //Get the starting Cell
-            DataGridViewCell startCell = GetStartCell(dataGridView1);
-            //Get the clipboard value in a dictionary
-            Dictionary<int, Dictionary<int, string>> cbValue =
-                    ClipBoardValues(Clipboard.GetText());
-
-            int iRowIndex = startCell.RowIndex;
-            foreach (int rowKey in cbValue.Keys)
-            {
-                int iColIndex = startCell.ColumnIndex;
-                foreach (int cellKey in cbValue[rowKey].Keys)
+                //Show Error if no cell is selected
+                if (dataGridView1.SelectedCells.Count == 0)
                 {
-                    //Check if the index is within the limit
-                    if (iColIndex <= dataGridView1.Columns.Count - 1
-                    && iRowIndex <= dataGridView1.Rows.Count - 1)
-                    {
-                        DataGridViewCell cell = dataGridView1[iColIndex, iRowIndex];
-
-                        //Copy to selected cells if 'chkPasteToSelectedCells' is checked
-                        /*if ((chkPasteToSelectedCells.Checked && cell.Selected) ||
-                            (!chkPasteToSelectedCells.Checked))*/
-                            cell.Value = cbValue[rowKey][cellKey];
-                    }
-                    iColIndex++;
+                    MessageBox.Show("Please select a cell", "Paste",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
-                iRowIndex++;
+
+                //Get the starting Cell
+                DataGridViewCell startCell = GetStartCell(dataGridView1);
+                //Get the clipboard value in a dictionary
+                Dictionary<int, Dictionary<int, string>> cbValue =
+                        ClipBoardValues(Clipboard.GetText());
+
+                int iRowIndex = startCell.RowIndex;
+                foreach (int rowKey in cbValue.Keys)
+                {
+                    int iColIndex = startCell.ColumnIndex;
+                    foreach (int cellKey in cbValue[rowKey].Keys)
+                    {
+                        //Check if the index is within the limit
+                        if (iColIndex <= dataGridView1.Columns.Count - 1
+                        && iRowIndex <= dataGridView1.Rows.Count - 1)
+                        {
+                            DataGridViewCell cell = dataGridView1[iColIndex, iRowIndex];
+
+                            //Copy to selected cells if 'chkPasteToSelectedCells' is checked
+                            /*if ((chkPasteToSelectedCells.Checked && cell.Selected) ||
+                                (!chkPasteToSelectedCells.Checked))*/
+                            cell.Value = cbValue[rowKey][cellKey];
+                        }
+                        iColIndex++;
+                    }
+                    iRowIndex++;
+                }
             }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+
         }
 
         private DataGridViewCell GetStartCell(DataGridView dgView)
@@ -1004,34 +1078,46 @@ namespace UniversalPatcher
 
         private void exportCSV()
         {
-            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
-            if (FileName.Length == 0)
-                return;
-            Logger("Writing to file: " + Path.GetFileName(FileName), false);
-            using (StreamWriter writetext = new StreamWriter(FileName))
+            try
             {
-                string row = "";
-                for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                if (FileName.Length == 0)
+                    return;
+                Logger("Writing to file: " + Path.GetFileName(FileName), false);
+                using (StreamWriter writetext = new StreamWriter(FileName))
                 {
-                    if (i > 0)
-                        row += ";";
-                    row += dataGridView1.Columns[i].HeaderText;
-                }
-                writetext.WriteLine(row);
-                for (int r = 0; r < (dataGridView1.Rows.Count - 1); r++)
-                {
-                    row = "";
+                    string row = "";
                     for (int i = 0; i < dataGridView1.Columns.Count; i++)
                     {
                         if (i > 0)
                             row += ";";
-                        if (dataGridView1.Rows[r].Cells[i].Value != null)
-                            row += dataGridView1.Rows[r].Cells[i].Value.ToString();
+                        row += dataGridView1.Columns[i].HeaderText;
                     }
                     writetext.WriteLine(row);
+                    for (int r = 0; r < (dataGridView1.Rows.Count - 1); r++)
+                    {
+                        row = "";
+                        for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                        {
+                            if (i > 0)
+                                row += ";";
+                            if (dataGridView1.Rows[r].Cells[i].Value != null)
+                                row += dataGridView1.Rows[r].Cells[i].Value.ToString();
+                        }
+                        writetext.WriteLine(row);
+                    }
                 }
+                Logger(" [OK]");
             }
-            Logger(" [OK]");
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
 
         }
         private void exportCsvToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1041,69 +1127,81 @@ namespace UniversalPatcher
 
         private void importxperimentalCSV()
         {
-            for (int i = 0; i < PCM.tableDatas.Count; i++)
-                PCM.tableDatas[i].addrInt = uint.MaxValue;
-            string fileName = SelectFile("Select CSV File", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
-            if (fileName.Length == 0)
-                return;
-            Logger("Loading file: " + fileName, false);
-            //string osNew = Path.GetFileName(FileName).Replace("Addresses-", "").Replace(".csv","");
-            string osNew = "12587603";
-            StreamReader sr = new StreamReader(fileName);
-            string csvLine;
-            while ((csvLine = sr.ReadLine()) != null)
+            try
             {
-                string[] cParts = csvLine.Split(',');
-                if (cParts.Length > 2)
+                for (int i = 0; i < PCM.tableDatas.Count; i++)
+                    PCM.tableDatas[i].addrInt = uint.MaxValue;
+                string fileName = SelectFile("Select CSV File", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                if (fileName.Length == 0)
+                    return;
+                Logger("Loading file: " + fileName, false);
+                //string osNew = Path.GetFileName(FileName).Replace("Addresses-", "").Replace(".csv","");
+                string osNew = "12587603";
+                StreamReader sr = new StreamReader(fileName);
+                string csvLine;
+                while ((csvLine = sr.ReadLine()) != null)
                 {
-                    string cat = cParts[0];
-                    string name = cParts[1];
-                    string addr = cParts[2];
-                    bool found = false;
-                    for (int i = 0; i < PCM.tableDatas.Count; i++)
+                    string[] cParts = csvLine.Split(',');
+                    if (cParts.Length > 2)
                     {
-                        if (PCM.tableDatas[i].Category.ToLower() == cat.ToLower() && PCM.tableDatas[i].TableName.ToLower() == name.ToLower())
-                        {
-                            PCM.tableDatas[i].Address = addr;
-                            PCM.tableDatas[i].OS = osNew;
-                            Debug.WriteLine(PCM.tableDatas[i].TableName);
-                            //PCM.tableDatas[i].AddrInt = Convert.ToUInt32(addr, 16);
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found)
-                    {
-                        Debug.WriteLine(name + ": not found");
+                        string cat = cParts[0];
+                        string name = cParts[1];
+                        string addr = cParts[2];
+                        bool found = false;
                         for (int i = 0; i < PCM.tableDatas.Count; i++)
                         {
-                            if (cat.ToLower() == "protected" && PCM.tableDatas[i].TableName.ToLower() == name.ToLower())
+                            if (PCM.tableDatas[i].Category.ToLower() == cat.ToLower() && PCM.tableDatas[i].TableName.ToLower() == name.ToLower())
                             {
                                 PCM.tableDatas[i].Address = addr;
                                 PCM.tableDatas[i].OS = osNew;
+                                Debug.WriteLine(PCM.tableDatas[i].TableName);
                                 //PCM.tableDatas[i].AddrInt = Convert.ToUInt32(addr, 16);
                                 found = true;
-                                Debug.WriteLine(name + ": PROTECTED");
                                 break;
+                            }
+                        }
+                        if (!found)
+                        {
+                            Debug.WriteLine(name + ": not found");
+                            for (int i = 0; i < PCM.tableDatas.Count; i++)
+                            {
+                                if (cat.ToLower() == "protected" && PCM.tableDatas[i].TableName.ToLower() == name.ToLower())
+                                {
+                                    PCM.tableDatas[i].Address = addr;
+                                    PCM.tableDatas[i].OS = osNew;
+                                    //PCM.tableDatas[i].AddrInt = Convert.ToUInt32(addr, 16);
+                                    found = true;
+                                    Debug.WriteLine(name + ": PROTECTED");
+                                    break;
+                                }
                             }
                         }
                     }
                 }
+                /*            for (int i = PCM.tableDatas.Count -1; i >= 0; i--)
+                            {
+                                if (PCM.tableDatas[i].addrInt == uint.MaxValue)
+                                    PCM.tableDatas.RemoveAt(i);
+                            }*/
+                //Fix table names:
+                for (int i = 0; i < PCM.tableDatas.Count; i++)
+                {
+                    PCM.tableDatas[i].OS = osNew;
+                    if (PCM.tableDatas[i].TableName.ToLower().StartsWith("ka_") || PCM.tableDatas[i].TableName.ToLower().StartsWith("ke_") || PCM.tableDatas[i].TableName.ToLower().StartsWith("kv_"))
+                        PCM.tableDatas[i].TableName = PCM.tableDatas[i].TableName.Substring(3);
+                }
+                Logger(" [OK]");
+                refreshTablelist();
             }
-            /*            for (int i = PCM.tableDatas.Count -1; i >= 0; i--)
-                        {
-                            if (PCM.tableDatas[i].addrInt == uint.MaxValue)
-                                PCM.tableDatas.RemoveAt(i);
-                        }*/
-            //Fix table names:
-            for (int i = 0; i < PCM.tableDatas.Count; i++)
+            catch (Exception ex)
             {
-                PCM.tableDatas[i].OS = osNew;
-                if (PCM.tableDatas[i].TableName.ToLower().StartsWith("ka_") || PCM.tableDatas[i].TableName.ToLower().StartsWith("ke_") || PCM.tableDatas[i].TableName.ToLower().StartsWith("kv_"))
-                    PCM.tableDatas[i].TableName = PCM.tableDatas[i].TableName.Substring(3);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
             }
-            Logger(" [OK]");
-            refreshTablelist();
 
         }
         private void importCSVexperimentalToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1162,58 +1260,69 @@ namespace UniversalPatcher
 
         private void importXperimentalCsv2()
         {
-            string FileName = SelectFile("Select CSV File", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
-            if (FileName.Length == 0)
-                return;
-
-            Logger("Loading file: " + FileName, false);
-            StreamReader sr = new StreamReader(FileName);
-            string csvLine;
-            while ((csvLine = sr.ReadLine()) != null)
+            try
             {
-                string[] cParts = csvLine.Split(';');
-                if (cParts.Length > 2)
-                {
-                    string cat = cParts[0];
-                    string name = cParts[1];
-                    string addr = cParts[2];
-                    if (name.ToLower().StartsWith("ka_") || name.ToLower().StartsWith("ke_") || name.ToLower().StartsWith("kv_"))
-                        name = name.Substring(3);
+                string FileName = SelectFile("Select CSV File", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                if (FileName.Length == 0)
+                    return;
 
-                    uint lastmask = uint.MaxValue;
-                    uint addrInt = Convert.ToUInt32(addr, 16);
-                    for (int i = 0; i < PCM.tableDatas.Count; i++)
+                Logger("Loading file: " + FileName, false);
+                StreamReader sr = new StreamReader(FileName);
+                string csvLine;
+                while ((csvLine = sr.ReadLine()) != null)
+                {
+                    string[] cParts = csvLine.Split(';');
+                    if (cParts.Length > 2)
                     {
-                        if (PCM.tableDatas[i].Category.ToLower() == cat.ToLower() && PCM.tableDatas[i].TableName.ToLower().StartsWith(name.ToLower()))
+                        string cat = cParts[0];
+                        string name = cParts[1];
+                        string addr = cParts[2];
+                        if (name.ToLower().StartsWith("ka_") || name.ToLower().StartsWith("ke_") || name.ToLower().StartsWith("kv_"))
+                            name = name.Substring(3);
+
+                        uint lastmask = uint.MaxValue;
+                        uint addrInt = Convert.ToUInt32(addr, 16);
+                        for (int i = 0; i < PCM.tableDatas.Count; i++)
                         {
-                            if (name == "K_DYNA_AIR_COEFFICIENT")
+                            if (PCM.tableDatas[i].Category.ToLower() == cat.ToLower() && PCM.tableDatas[i].TableName.ToLower().StartsWith(name.ToLower()))
                             {
-                                //PCM.tableDatas[i].Address = addrInt.ToString("X8");
-                                PCM.tableDatas[i].addrInt = addrInt;
-                                Debug.WriteLine(PCM.tableDatas[i].TableName + ": " + addrInt.ToString("X"));
-                                addrInt += 2;
-                            }
-                            else
-                            {
-                                uint mask = Convert.ToUInt32(PCM.tableDatas[i].BitMask, 16);
-                                if (lastmask == uint.MaxValue)
-                                    lastmask = mask;
-                                if (mask > lastmask)
+                                if (name == "K_DYNA_AIR_COEFFICIENT")
                                 {
-                                    addrInt++;
+                                    //PCM.tableDatas[i].Address = addrInt.ToString("X8");
+                                    PCM.tableDatas[i].addrInt = addrInt;
+                                    Debug.WriteLine(PCM.tableDatas[i].TableName + ": " + addrInt.ToString("X"));
+                                    addrInt += 2;
                                 }
-                                lastmask = mask;
-                                //PCM.tableDatas[i].Address = addrInt.ToString("X8");
-                                PCM.tableDatas[i].addrInt = addrInt;
-                                Debug.WriteLine(PCM.tableDatas[i].TableName + ": " + addrInt.ToString("X") + " mask: " + mask.ToString("X"));
+                                else
+                                {
+                                    uint mask = Convert.ToUInt32(PCM.tableDatas[i].BitMask, 16);
+                                    if (lastmask == uint.MaxValue)
+                                        lastmask = mask;
+                                    if (mask > lastmask)
+                                    {
+                                        addrInt++;
+                                    }
+                                    lastmask = mask;
+                                    //PCM.tableDatas[i].Address = addrInt.ToString("X8");
+                                    PCM.tableDatas[i].addrInt = addrInt;
+                                    Debug.WriteLine(PCM.tableDatas[i].TableName + ": " + addrInt.ToString("X") + " mask: " + mask.ToString("X"));
+                                }
                             }
                         }
                     }
                 }
+                Logger(" [OK]");
+                refreshTablelist();
             }
-            Logger(" [OK]");
-            refreshTablelist();
-
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
         }
         private void importCSV2ExperimentalToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1246,7 +1355,6 @@ namespace UniversalPatcher
         {
             if (e.Button == MouseButtons.Left)
             {
-                //saveGridLayout(); //Save before reorder!
                 sortBy = dataGridView1.Columns[e.ColumnIndex].Name;
                 sortIndex = e.ColumnIndex;
                 strSortOrder = getSortOrder(sortIndex);
@@ -1309,18 +1417,31 @@ namespace UniversalPatcher
 
         private void DataGridView1_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            if (!enableConfigModeToolStripMenuItem.Checked)
+            try
             {
-                e.Cancel = true;
-                return;
+                if (!enableConfigModeToolStripMenuItem.Checked)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                for (int r = 0; r < dataGridView1.SelectedRows.Count; r++)
+                {
+                    int row = dataGridView1.SelectedRows[r].Index;
+                    int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
+                    PCM.tableDatas.RemoveAt(id);
+                    filterTables();
+                }
             }
-            for (int r=0; r< dataGridView1.SelectedRows.Count; r++)
+            catch (Exception ex)
             {
-                int row = dataGridView1.SelectedRows[r].Index;
-                int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
-                PCM.tableDatas.RemoveAt(id);
-                filterTables();
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
             }
+
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -1700,20 +1821,7 @@ namespace UniversalPatcher
             SaveTableList();
         }
 
-        private void configModeColumnOrderToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmData frmd = new frmData();
-            frmd.Text = "Column order in config mode:";
-            frmd.txtData.Text = Properties.Settings.Default.ConfigModeColumnOrder;
-            if (frmd.ShowDialog() == DialogResult.OK)
-            {
-                Properties.Settings.Default.ConfigModeColumnOrder = frmd.txtData.Text;
-            }
-            Properties.Settings.Default.Save();
-            frmd.Dispose();
-            filterTables();
-        }
-        
+      
         private struct DisplayOrder
         {
             public int index;
@@ -1765,58 +1873,70 @@ namespace UniversalPatcher
 
         private void saveGridLayout()
         {
-            if (!columnsModified) return;
-
-            if (dataGridView1.Columns.Count < 2) return;
-            string columnWidth = "";
-            int maxDispIndex = 0;
-            List<DisplayOrder> displayOrder = new List<DisplayOrder>();
-            for (int c = 0; c < dataGridView1.Columns.Count; c++)
+            try
             {
-                columnWidth += dataGridView1.Columns[c].Width.ToString() + ","; 
-                if (dataGridView1.Columns[c].Visible && dataGridView1.Columns[c].Name != "id")
-                {
-                    DisplayOrder dispO = new DisplayOrder();
-                    dispO.columnName = dataGridView1.Columns[c].Name;
-                    dispO.index = dataGridView1.Columns[c].DisplayIndex;
-                    displayOrder.Add(dispO);
-                    if (dispO.index > maxDispIndex)
-                        maxDispIndex = dispO.index;
-                }
-            }
+                if (!columnsModified) return;
 
-
-            string order = "id,";
-            for (int i = 0; i <= maxDispIndex; i++)
-            {
-                for (int j = 0; j < displayOrder.Count; j++)
+                if (dataGridView1.Columns.Count < 2) return;
+                string columnWidth = "";
+                int maxDispIndex = 0;
+                List<DisplayOrder> displayOrder = new List<DisplayOrder>();
+                for (int c = 0; c < dataGridView1.Columns.Count; c++)
                 {
-                    if (displayOrder[j].index == i)
+                    columnWidth += dataGridView1.Columns[c].Width.ToString() + ",";
+                    if (dataGridView1.Columns[c].Visible && dataGridView1.Columns[c].Name != "id")
                     {
-                        order += displayOrder[j].columnName + ",";
-                        break;
+                        DisplayOrder dispO = new DisplayOrder();
+                        dispO.columnName = dataGridView1.Columns[c].Name;
+                        dispO.index = dataGridView1.Columns[c].DisplayIndex;
+                        displayOrder.Add(dispO);
+                        if (dispO.index > maxDispIndex)
+                            maxDispIndex = dispO.index;
                     }
                 }
+
+
+                string order = "id,";
+                for (int i = 0; i <= maxDispIndex; i++)
+                {
+                    for (int j = 0; j < displayOrder.Count; j++)
+                    {
+                        if (displayOrder[j].index == i)
+                        {
+                            order += displayOrder[j].columnName + ",";
+                            break;
+                        }
+                    }
+                }
+                Debug.WriteLine("Display order: " + order);
+                Debug.WriteLine("Column width: " + columnWidth);
+                if (enableConfigModeToolStripMenuItem.Checked)
+                {
+                    //Config mode
+                    Properties.Settings.Default.ConfigModeColumnOrder = order.Trim(',');
+                    Properties.Settings.Default.ConfigModeColumnWidth = columnWidth.Trim(',');
+                }
+                else
+                {
+                    //Tuner mode
+                    Properties.Settings.Default.TunerModeColumns = order.Trim(',');
+                    Properties.Settings.Default.TunerModeColumnWidth = columnWidth.Trim(',');
+                }
+                Properties.Settings.Default.Save();
+                columnsModified = false;
             }
-            Debug.WriteLine("Display order: " + order);
-            Debug.WriteLine("Column width: " + columnWidth);
-            if (enableConfigModeToolStripMenuItem.Checked)
+            catch (Exception ex)
             {
-                //Config mode
-                Properties.Settings.Default.ConfigModeColumnOrder = order.Trim(',');
-                Properties.Settings.Default.ConfigModeColumnWidth = columnWidth.Trim(',');
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
             }
-            else
-            {
-                //Tuner mode
-                Properties.Settings.Default.TunerModeColumns = order.Trim(',');
-                Properties.Settings.Default.TunerModeColumnWidth = columnWidth.Trim(',');
-            }
-            Properties.Settings.Default.Save();
-            columnsModified = false;
         }
 
-       
+
         void cms_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             string[] tunerModCols = Properties.Settings.Default.TunerModeColumns.Split(',');
@@ -1857,13 +1977,26 @@ namespace UniversalPatcher
 
         private void openNewBinFile()
         {
-            string newFile = SelectFile();
-            if (newFile.Length == 0) return;
-            PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName);
-            addtoCurrentFileMenu(newPCM);
-            PCM = newPCM;
-            loadConfigforPCM(ref PCM);
-            selectPCM();
+            try
+            {
+                string newFile = SelectFile();
+                if (newFile.Length == 0) return;
+                PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName);
+                addtoCurrentFileMenu(newPCM);
+                PCM = newPCM;
+                loadConfigforPCM(ref PCM);
+                selectPCM();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+
         }
         private void loadBINToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1872,43 +2005,56 @@ namespace UniversalPatcher
 
         public void addtoCurrentFileMenu(PcmFile newPCM, bool setdefault = true)
         {
-            if (setdefault)
+            try
+            {
+                if (setdefault)
+                    foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                        mi.Checked = false;
+
+                char lastFile = 'A';
                 foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
-                    mi.Checked = false;
+                    lastFile++;
 
-            char lastFile = 'A';
-            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
-                lastFile++;
+                ToolStripMenuItem menuitem = new ToolStripMenuItem(newPCM.FileName);
+                menuitem.Text = lastFile.ToString() + ": " + newPCM.FileName;
+                menuitem.Name = newPCM.FileName;
+                menuitem.Tag = newPCM;
+                if (setdefault)
+                    menuitem.Checked = true;
+                currentFileToolStripMenuItem.DropDownItems.Add(menuitem);
+                menuitem.Click += Menuitem_Click;
 
-            ToolStripMenuItem menuitem = new ToolStripMenuItem(newPCM.FileName);
-            menuitem.Text = lastFile.ToString() + ": " + newPCM.FileName;
-            menuitem.Name = newPCM.FileName;
-            menuitem.Tag = newPCM;
-            if (setdefault)
-                menuitem.Checked = true;
-            currentFileToolStripMenuItem.DropDownItems.Add(menuitem);
-            menuitem.Click += Menuitem_Click;
+                ToolStripMenuItem cmpMenuitem = new ToolStripMenuItem(menuitem.Name);
+                cmpMenuitem.Name = menuitem.Name;
+                cmpMenuitem.Tag = newPCM;
+                findDifferencesToolStripMenuItem.DropDownItems.Add(cmpMenuitem);
+                cmpMenuitem.Click += compareMenuitem_Click;
 
-            ToolStripMenuItem cmpMenuitem = new ToolStripMenuItem(menuitem.Name);
-            cmpMenuitem.Name = menuitem.Name;
-            cmpMenuitem.Tag = newPCM;
-            findDifferencesToolStripMenuItem.DropDownItems.Add(cmpMenuitem);
-            cmpMenuitem.Click += compareMenuitem_Click;
-
-            ToolStripMenuItem cmpHexMenuitem = new ToolStripMenuItem(menuitem.Name);
-            cmpHexMenuitem.Name = menuitem.Name;
-            cmpHexMenuitem.Tag = newPCM;
-            findDifferencesHEXToolStripMenuItem.DropDownItems.Add(cmpHexMenuitem);
-            cmpHexMenuitem.Click += CmpHexMenuitem_Click;
+                ToolStripMenuItem cmpHexMenuitem = new ToolStripMenuItem(menuitem.Name);
+                cmpHexMenuitem.Name = menuitem.Name;
+                cmpHexMenuitem.Tag = newPCM;
+                findDifferencesHEXToolStripMenuItem.DropDownItems.Add(cmpHexMenuitem);
+                cmpHexMenuitem.Click += CmpHexMenuitem_Click;
 
 
-            ToolStripMenuItem tdMenuItem = new ToolStripMenuItem(newPCM.FileName);
-            tdMenuItem.Name = newPCM.FileName;
-            tdMenuItem.Tag = newPCM.tableDataIndex;
-            tableListToolStripMenuItem.DropDownItems.Add(tdMenuItem);
-            tdMenuItem.Click += tablelistSelect_Click;
+                ToolStripMenuItem tdMenuItem = new ToolStripMenuItem(newPCM.FileName);
+                tdMenuItem.Name = newPCM.FileName;
+                tdMenuItem.Tag = newPCM.tableDataIndex;
+                tableListToolStripMenuItem.DropDownItems.Add(tdMenuItem);
+                tdMenuItem.Click += tablelistSelect_Click;
 
-            updateFileInfoTab();
+                updateFileInfoTab();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+
         }
 
         private void CmpHexMenuitem_Click(object sender, EventArgs e)
@@ -1943,215 +2089,203 @@ namespace UniversalPatcher
         int diffMissingTables;
         private int compareTableHEX(int tInd,PcmFile pcm1, PcmFile pcm2)
         {
-            TableData td1 = pcm1.tableDatas[tInd];
-            TableData td2 = td1.ShallowCopy();
-            int tbSize = td1.Rows * td1.Columns * getElementSize(td1.DataType);
-            int cmpId = tInd;
-            if (pcm1.OS != pcm2.OS && !td1.CompatibleOS.Contains("," + pcm2.OS + ","))
+            try
             {
-                //Not 100% compatible file, find table by name & category
-                cmpId = findTableDataId(td1, pcm2.tableDatas);
-                if (cmpId < 0)
+                TableData td1 = pcm1.tableDatas[tInd];
+                TableData td2 = td1.ShallowCopy();
+                int tbSize = td1.Rows * td1.Columns * getElementSize(td1.DataType);
+                int cmpId = tInd;
+                if (pcm1.OS != pcm2.OS && !td1.CompatibleOS.Contains("," + pcm2.OS + ","))
                 {
-                    //Logger("Table not found: " + td1.TableName + "[" + pcm2.FileName + "]");
-                    diffMissingTables++;
-                    return -1;    //Don't add to list if not in both files
+                    //Not 100% compatible file, find table by name & category
+                    cmpId = findTableDataId(td1, pcm2.tableDatas);
+                    if (cmpId < 0)
+                    {
+                        //Logger("Table not found: " + td1.TableName + "[" + pcm2.FileName + "]");
+                        diffMissingTables++;
+                        return -1;    //Don't add to list if not in both files
+                    }
+                    td2 = pcm2.tableDatas[cmpId];
+                    int tb2size = td2.Rows * td2.Columns * getElementSize(td2.DataType);
+                    if (tbSize != tb2size)
+                        return -1;
                 }
-                td2 = pcm2.tableDatas[cmpId];
-                int tb2size = td2.Rows * td2.Columns * getElementSize(td2.DataType);
-                if (tbSize != tb2size)
+                if ((td1.addrInt + tbSize) > pcm1.fsize || (td2.addrInt + tbSize) > pcm2.fsize)
+                {
+                    LoggerBold("Table address out of range: " + td1.TableName);
                     return -1;
-            }
-            if ((td1.addrInt + tbSize) > pcm1.fsize || (td2.addrInt + tbSize) > pcm2.fsize)
-            {
-                LoggerBold("Table address out of range: " + td1.TableName);
-                return -1;
-            }
+                }
 
-            if (td1.BitMask != null && td1.BitMask.Length > 0)
-            {
-                //Check only bit
-                double orgVal = getValue(pcm1.buf,td1.addrInt,td1 ,(uint)td1.Offset,pcm1);
-                double compVal = getValue(pcm2.buf, td2.addrInt,td2,(uint)td2.Offset, pcm2);
-                if (orgVal == compVal)
+                if (td1.BitMask != null && td1.BitMask.Length > 0)
+                {
+                    //Check only bit
+                    double orgVal = getValue(pcm1.buf, td1.addrInt, td1, (uint)td1.Offset, pcm1);
+                    double compVal = getValue(pcm2.buf, td2.addrInt, td2, (uint)td2.Offset, pcm2);
+                    if (orgVal == compVal)
+                        return -1;
+                    else
+                        return cmpId;
+                }
+                byte[] buff1 = new byte[tbSize];
+                byte[] buff2 = new byte[tbSize];
+                Array.Copy(pcm1.buf, td1.addrInt + td1.Offset, buff1, 0, tbSize);
+                Array.Copy(pcm2.buf, td2.addrInt + td2.Offset, buff2, 0, tbSize);
+                if (buff1.SequenceEqual(buff2))
                     return -1;
                 else
-                    return cmpId;
+                    return cmpId;   //Found table with different data
             }
-            byte[] buff1 = new byte[tbSize];
-            byte[] buff2 = new byte[tbSize];
-            Array.Copy(pcm1.buf, td1.addrInt + td1.Offset, buff1, 0, tbSize);
-            Array.Copy(pcm2.buf, td2.addrInt + td2.Offset, buff2, 0, tbSize);
-            if (buff1.SequenceEqual(buff2))
-                return -1;
-            else
-                return cmpId;   //Found table with different data
-
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+            return -1;
         }
 
         private void findTableDifferences(PcmFile cmpWithPcm)
         {
-            Logger("Finding tables with different data");
-            cmpWithPcm.selectTableDatas(0, "");
-            List<int> diffTableDatas = new List<int>();
-            List<int> cmpTableDatas = new List<int>();
-            for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
+            try
             {
-                if (PCM.tableDatas[t1].addrInt < PCM.fsize)
+                Logger("Finding tables with different data");
+                cmpWithPcm.selectTableDatas(0, "");
+                List<int> diffTableDatas = new List<int>();
+                List<int> cmpTableDatas = new List<int>();
+                for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
                 {
-                    int cmpId;
-                    if (PCM.OS == cmpWithPcm.OS)
-                        cmpId = t1;
-                    else
-                        cmpId = findTableDataId(PCM.tableDatas[t1], cmpWithPcm.tableDatas);
-                    if (cmpId > -1)
+                    if (PCM.tableDatas[t1].addrInt < PCM.fsize)
                     {
-                        if (!compareTables(t1, cmpId, PCM, cmpWithPcm))
+                        int cmpId;
+                        if (PCM.OS == cmpWithPcm.OS)
+                            cmpId = t1;
+                        else
+                            cmpId = findTableDataId(PCM.tableDatas[t1], cmpWithPcm.tableDatas);
+                        if (cmpId > -1)
+                        {
+                            if (!compareTables(t1, cmpId, PCM, cmpWithPcm))
+                            {
+                                diffTableDatas.Add(t1);
+                                cmpTableDatas.Add(cmpId);
+                            }
+                        }
+                    }
+                }
+                Logger(" [OK]");
+                frmHexDiff fhd = new frmHexDiff(PCM, cmpWithPcm, diffTableDatas, cmpTableDatas);
+                fhd.Show();
+                fhd.findDifferences(false);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+
+        }
+
+
+        private void findTableDifferencesHEX(PcmFile cmpWithPcm)
+        {
+            try
+            {
+                Logger("Finding tables with different data");
+                if (PCM.configFile != cmpWithPcm.configFile)
+                    LoggerBold("WARING! OS mismatch!");
+                else
+                {
+                    //Check undefined areas, too
+                    int udCount = 0;
+                    byte[] buf = new byte[PCM.buf.Length];
+                    for (int b = 0; b < buf.Length; b++)
+                        buf[b] = 0;
+                    for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
+                    {
+                        TableData tData = PCM.tableDatas[t1];
+                        uint start = tData.addrInt;
+                        uint end = (uint)(start + getElementSize(tData.DataType) * tData.Rows * tData.Columns + tData.Offset);
+                        for (uint b = start; b < end; b++)
+                            buf[b] = 1;
+                    }
+                    for (int s = 0; s < PCM.Segments.Count; s++)
+                    {
+                        for (int sb = 0; sb < PCM.segmentAddressDatas[s].SegmentBlocks.Count; sb++)
+                        {
+                            uint b = PCM.segmentAddressDatas[s].SegmentBlocks[sb].Start;
+                            for (; b < PCM.segmentAddressDatas[s].SegmentBlocks[sb].End; b++)
+                            {
+                                if (buf[b] == 0)    //undefined area
+                                {
+                                    TableData undefTd = new TableData();
+                                    undefTd.addrInt = b;
+                                    undefTd.Columns = 1;
+                                    undefTd.id = (uint)PCM.tableDatas.Count;
+                                    undefTd.DataType = InDataType.UBYTE;
+                                    undefTd.OS = PCM.OS;
+                                    undefTd.OutputType = OutDataType.Hex;
+                                    undefTd.TableName = "Undefined " + udCount.ToString();
+                                    for (; b < PCM.segmentAddressDatas[s].SegmentBlocks[sb].End; b++)
+                                    {
+                                        if (buf[b] == 1)
+                                        {
+                                            if (b - undefTd.addrInt > 1)
+                                            {
+                                                undefTd.Rows = (ushort)(b - undefTd.addrInt - 1);
+                                                PCM.tableDatas.Add(undefTd);
+                                                cmpWithPcm.tableDatas.Add(undefTd);
+                                                udCount++;
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    if (b == PCM.segmentAddressDatas[s].SegmentBlocks[sb].End && undefTd.Rows > 0)
+                                    {
+                                        PCM.tableDatas.Add(undefTd);
+                                        cmpWithPcm.tableDatas.Add(undefTd);
+                                        udCount++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+                cmpWithPcm.selectTableDatas(0, "");
+                List<int> diffTableDatas = new List<int>();
+                List<int> cmpTableDatas = new List<int>();
+                for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
+                {
+                    if (PCM.tableDatas[t1].addrInt < PCM.fsize)
+                    {
+                        int cmpId = compareTableHEX(t1, PCM, cmpWithPcm);
+                        if (cmpId > -1)
                         {
                             diffTableDatas.Add(t1);
                             cmpTableDatas.Add(cmpId);
                         }
                     }
                 }
+                Logger(" [OK]");
+                frmHexDiff fhd = new frmHexDiff(PCM, cmpWithPcm, diffTableDatas, cmpTableDatas);
+                fhd.Show();
+                fhd.findDifferences(true);
             }
-            Logger(" [OK]");
-            frmHexDiff fhd = new frmHexDiff(PCM, cmpWithPcm, diffTableDatas, cmpTableDatas);
-            fhd.Show();
-            fhd.findDifferences(false);
-        }
-
-        private void findTableDifferences_old(PcmFile cmpWithPcm)
-        {
-            Logger("Finding tables with different data");
-            string newMenuTxt = PCM.FileName + " <> " + cmpWithPcm.FileName;
-            Logger(newMenuTxt);
-            bool menuExist = false;
-            int cmpTdList = 0;
-            foreach (ToolStripMenuItem mi in tableListToolStripMenuItem.DropDownItems)
+            catch (Exception ex)
             {
-                if (mi.Name == newMenuTxt)
-                {
-                    menuExist = true;
-                    mi.Checked = true;
-                    cmpTdList = (int)mi.Tag;
-                }
-                else
-                {
-                    mi.Checked = false;
-                }
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
             }
-            if (!menuExist)
-            {
-                PCM.addTableDatas(newMenuTxt); 
-                ToolStripMenuItem miNew = new ToolStripMenuItem(newMenuTxt);
-                miNew.Name = newMenuTxt;
-                miNew.Checked = true;
-                miNew.Tag = PCM.altTableDatas.Count - 1;
-                cmpTdList = PCM.altTableDatas.Count - 1;
-                tableListToolStripMenuItem.DropDownItems.Add(miNew);
-                miNew.Click += tablelistSelect_Click; 
-            }
-
-            cmpWithPcm.selectTableDatas(0, "");
-            List<TableData> diffTableDatas = new List<TableData>();
-            for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
-            {
-                int cmpId = compareTableHEX(t1, PCM, cmpWithPcm);
-                if (cmpId > -1)
-                { 
-                    PCM.altTableDatas[cmpTdList].tableDatas.Add(PCM.tableDatas[t1]);
-                }
-            }
-            PCM.selectTableDatas(cmpTdList,newMenuTxt);
-            if (diffMissingTables > 0)
-                Logger(diffMissingTables.ToString() + " Tables not found");
-            filterTables();
-            Logger(" [OK]");
-
-        }
-
-        private void findTableDifferencesHEX(PcmFile cmpWithPcm)
-        {
-            Logger("Finding tables with different data");
-            if (PCM.configFile != cmpWithPcm.configFile)
-                LoggerBold("WARING! OS mismatch!");
-            else
-            {
-                //Check undefined areas, too
-                int udCount = 0;
-                byte[] buf = new byte[PCM.buf.Length];
-                for (int b = 0; b < buf.Length; b++)
-                    buf[b] = 0;
-                for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
-                {
-                    TableData tData = PCM.tableDatas[t1];
-                    uint start = tData.addrInt;
-                    uint end = (uint)(start + getElementSize(tData.DataType) * tData.Rows * tData.Columns + tData.Offset);
-                    for (uint b = start; b < end; b++)
-                        buf[b] = 1;
-                }
-                for (int s = 0; s < PCM.Segments.Count; s++)
-                {
-                    for (int sb = 0; sb < PCM.segmentAddressDatas[s].SegmentBlocks.Count; sb++)
-                    {
-                        uint b = PCM.segmentAddressDatas[s].SegmentBlocks[sb].Start;
-                        for (; b < PCM.segmentAddressDatas[s].SegmentBlocks[sb].End; b++)
-                        {
-                            if (buf[b] == 0)    //undefined area
-                            {
-                                TableData undefTd = new TableData();
-                                undefTd.addrInt = b;
-                                undefTd.Columns = 1;
-                                undefTd.id = (uint)PCM.tableDatas.Count;
-                                undefTd.DataType = InDataType.UBYTE;
-                                undefTd.OS = PCM.OS;
-                                undefTd.OutputType = OutDataType.Hex;
-                                undefTd.TableName = "Undefined " + udCount.ToString();
-                                for (; b < PCM.segmentAddressDatas[s].SegmentBlocks[sb].End; b++)
-                                {
-                                    if (buf[b] == 1)
-                                    {
-                                        if (b - undefTd.addrInt > 1)
-                                        {
-                                            undefTd.Rows = (ushort)(b - undefTd.addrInt - 1);
-                                            PCM.tableDatas.Add(undefTd);
-                                            cmpWithPcm.tableDatas.Add(undefTd);
-                                            udCount++;
-                                        }
-                                        break;
-                                    }
-                                }
-                                if (b == PCM.segmentAddressDatas[s].SegmentBlocks[sb].End && undefTd.Rows > 0)
-                                {
-                                    PCM.tableDatas.Add(undefTd);
-                                    cmpWithPcm.tableDatas.Add(undefTd);
-                                udCount++;
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }
-            cmpWithPcm.selectTableDatas(0, "");
-            List<int> diffTableDatas = new List<int>();
-            List<int> cmpTableDatas = new List<int>();
-            for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
-            {
-                if (PCM.tableDatas[t1].addrInt < PCM.fsize)
-                {
-                    int cmpId = compareTableHEX(t1, PCM, cmpWithPcm);
-                    if (cmpId > -1)
-                    {
-                        diffTableDatas.Add(t1);
-                        cmpTableDatas.Add(cmpId);
-                    }
-                }
-            }
-            Logger(" [OK]");
-            frmHexDiff fhd = new frmHexDiff(PCM, cmpWithPcm, diffTableDatas,cmpTableDatas);
-            fhd.Show();
-            fhd.findDifferences(true);
         }
 
         private void tablelistSelect_Click(object sender, EventArgs e)
@@ -2258,32 +2392,57 @@ namespace UniversalPatcher
 
         private void insertRowToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TableData newTd = new TableData();
-            newTd.id = (uint)lastSelectedId;
-            newTd.OS = PCM.OS;
-            frmTdEditor fte = new frmTdEditor();
-            fte.td = newTd;
-            fte.loadTd();
-            if (fte.ShowDialog() == DialogResult.OK)
+            try
             {
-                PCM.tableDatas.Insert(lastSelectedId, fte.td);
-                filterTables();
+                TableData newTd = new TableData();
+                newTd.id = (uint)lastSelectedId;
+                newTd.OS = PCM.OS;
+                frmTdEditor fte = new frmTdEditor();
+                fte.td = newTd;
+                fte.loadTd();
+                if (fte.ShowDialog() == DialogResult.OK)
+                {
+                    PCM.tableDatas.Insert(lastSelectedId, fte.td);
+                    filterTables();
+                }
+                fte.Dispose();
             }
-            fte.Dispose();
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
         }
 
         private void editRowToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TableData newTd = PCM.tableDatas[lastSelectedId].ShallowCopy();
-            frmTdEditor fte = new frmTdEditor();
-            fte.td = newTd;
-            fte.loadTd();
-            if (fte.ShowDialog() == DialogResult.OK)
+            try
             {
-                PCM.tableDatas[lastSelectedId] = fte.td.ShallowCopy();
-                filterTables();
+                TableData newTd = PCM.tableDatas[lastSelectedId].ShallowCopy();
+                frmTdEditor fte = new frmTdEditor();
+                fte.td = newTd;
+                fte.loadTd();
+                if (fte.ShowDialog() == DialogResult.OK)
+                {
+                    PCM.tableDatas[lastSelectedId] = fte.td.ShallowCopy();
+                    filterTables();
+                }
+                fte.Dispose();
             }
-            fte.Dispose();
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+
         }
 
         private void deleteRowToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2301,13 +2460,26 @@ namespace UniversalPatcher
 
         private void searchAndCompareToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmMassCompare fmc = new frmMassCompare();
-            fmc.PCM = PCM;
-            //int id = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
-            fmc.td = PCM.tableDatas[lastSelectedId];
-            fmc.Text = "Search and Compare: " + fmc.td.TableName;
-            fmc.Show();
-            fmc.selectCmpFiles();
+            try
+            {
+                frmMassCompare fmc = new frmMassCompare();
+                fmc.PCM = PCM;
+                //int id = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
+                fmc.td = PCM.tableDatas[lastSelectedId];
+                fmc.Text = "Search and Compare: " + fmc.td.TableName;
+                fmc.Show();
+                fmc.selectCmpFiles();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+
         }
 
 
@@ -2340,21 +2512,33 @@ namespace UniversalPatcher
 
         private void openMultipleBINToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmFileSelection frmF = new frmFileSelection();
-            frmF.btnOK.Text = "Open files";
-            frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
-            if (frmF.ShowDialog(this) == DialogResult.OK)
+            try
             {
-                for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                frmFileSelection frmF = new frmFileSelection();
+                frmF.btnOK.Text = "Open files";
+                frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+                if (frmF.ShowDialog(this) == DialogResult.OK)
                 {
-                    string newFile = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                    Logger("Opening file: " + newFile);
-                    PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName);
-                    addtoCurrentFileMenu(newPCM);
-                    PCM = newPCM;
-                    loadConfigforPCM(ref PCM);
+                    for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                    {
+                        string newFile = frmF.listFiles.CheckedItems[i].Tag.ToString();
+                        Logger("Opening file: " + newFile);
+                        PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName);
+                        addtoCurrentFileMenu(newPCM);
+                        PCM = newPCM;
+                        loadConfigforPCM(ref PCM);
+                    }
+                    selectPCM();
                 }
-                selectPCM();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
             }
 
         }
@@ -2443,38 +2627,64 @@ namespace UniversalPatcher
 
         private void massModifyTableListsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string folder = Path.Combine(Application.StartupPath, "Tuner"); ;
-            DirectoryInfo d = new DirectoryInfo(folder);
-            FileInfo[] Files = d.GetFiles("*.xml", SearchOption.AllDirectories);
-            List<string> tunerFiles = new List<string>();
-            foreach (FileInfo file in Files)
+            try
             {
-                tunerFiles.Add(file.FullName);
+                string folder = Path.Combine(Application.StartupPath, "Tuner"); ;
+                DirectoryInfo d = new DirectoryInfo(folder);
+                FileInfo[] Files = d.GetFiles("*.xml", SearchOption.AllDirectories);
+                List<string> tunerFiles = new List<string>();
+                foreach (FileInfo file in Files)
+                {
+                    tunerFiles.Add(file.FullName);
+                }
+                frmMassModifyTableData fmm = new frmMassModifyTableData();
+                fmm.Show();
+                fmm.loadData(tunerFiles);
             }
-            frmMassModifyTableData fmm = new frmMassModifyTableData();
-            fmm.Show();
-            fmm.loadData(tunerFiles);
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+
         }
 
         private void massModifyTableListsSelectFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmFileSelection frmF = new frmFileSelection();
-            frmF.btnOK.Text = "Open files";
-            frmF.filter = ".xml";
-            frmF.LoadFiles(Path.Combine(Application.StartupPath, "Tuner"));
-            List<string> tunerFiles = new List<string>();
-            if (frmF.ShowDialog(this) == DialogResult.OK)
+            try
             {
-                for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                frmFileSelection frmF = new frmFileSelection();
+                frmF.btnOK.Text = "Open files";
+                frmF.filter = ".xml";
+                frmF.LoadFiles(Path.Combine(Application.StartupPath, "Tuner"));
+                List<string> tunerFiles = new List<string>();
+                if (frmF.ShowDialog(this) == DialogResult.OK)
                 {
-                    string newFile = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                    tunerFiles.Add(newFile);
+                    for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                    {
+                        string newFile = frmF.listFiles.CheckedItems[i].Tag.ToString();
+                        tunerFiles.Add(newFile);
+                    }
                 }
+                frmF.Dispose();
+                frmMassModifyTableData fmm = new frmMassModifyTableData();
+                fmm.Show();
+                fmm.loadData(tunerFiles);
             }
-            frmF.Dispose();
-            frmMassModifyTableData fmm = new frmMassModifyTableData();            
-            fmm.Show();
-            fmm.loadData(tunerFiles);
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+
         }
 
         private void moreSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2509,7 +2719,6 @@ namespace UniversalPatcher
             fls.tableIds = tableIds;
             fls.Show();
             fls.startTableCopy();
-
         }
 
         private void openPatchSelector()
@@ -2524,13 +2733,25 @@ namespace UniversalPatcher
 
         public void applyPatch(string fileName)
         {
-            Logger("Loading file: " + fileName);
-            System.Xml.Serialization.XmlSerializer reader =
-                new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
-            System.IO.StreamReader file = new System.IO.StreamReader(fileName);
-            PatchList = (List<XmlPatch>)reader.Deserialize(file);
-            file.Close();
-            ApplyXMLPatch(PCM);
+            try
+            {
+                Logger("Loading file: " + fileName);
+                System.Xml.Serialization.XmlSerializer reader =
+                    new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
+                System.IO.StreamReader file = new System.IO.StreamReader(fileName);
+                PatchList = (List<XmlPatch>)reader.Deserialize(file);
+                file.Close();
+                ApplyXMLPatch(PCM);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
         }
 
         private void applyPatchToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2541,96 +2762,120 @@ namespace UniversalPatcher
         private List<int> getSelectedTableIds()
         {
             List<int> tableIds = new List<int>();
-            if (treeMode)
+            try
             {
-                TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-                //foreach (TreeNode tn in tv.Nodes)
-                //  findCheckdNodes(tn, ref tableIds);
-                foreach (TreeNode tn in tv.SelectedNodes)
-                    if (tn.Tag != null)
-                        tableIds.Add((int)tn.Tag);
-                if (tableIds.Count == 0)
-                    tableIds.Add(lastSelectedId);
-            }
-            else
-            {
-                for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
+                if (treeMode)
                 {
-                    int row = dataGridView1.SelectedCells[i].RowIndex;
-                    int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
-                    if (!tableIds.Contains(id))
-                        tableIds.Add(id);
+                    TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+                    //foreach (TreeNode tn in tv.Nodes)
+                    //  findCheckdNodes(tn, ref tableIds);
+                    foreach (TreeNode tn in tv.SelectedNodes)
+                        if (tn.Tag != null)
+                            tableIds.Add((int)tn.Tag);
+                    if (tableIds.Count == 0)
+                        tableIds.Add(lastSelectedId);
                 }
+                else
+                {
+                    for (int i = 0; i < dataGridView1.SelectedCells.Count; i++)
+                    {
+                        int row = dataGridView1.SelectedCells[i].RowIndex;
+                        int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
+                        if (!tableIds.Contains(id))
+                            tableIds.Add(id);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
             }
             return tableIds;
         }
 
         private void generateTablePatch()
         {
-            List<int> tableIds = getSelectedTableIds();
-            if (tableIds.Count == 0)
+            try
             {
-                Logger("No tables selected");
-                return;
-            }
-            string defName = Path.Combine(Application.StartupPath, "Patches", "newpatch.xmlpatch");
-            string patchFname = SelectSaveFile("PATCH files (*.xmlpatch)|*.xmlpatch|ALL files (*.*)|*.*", defName);
-            if (patchFname.Length == 0)
-                return;
-            string Description = "";
-            frmData frmD = new frmData();
-            frmD.Text = "Patch Description";
-            if (frmD.ShowDialog() == DialogResult.OK)
-                Description = frmD.txtData.Text;
-            frmD.Dispose();
-            List<XmlPatch> newPatch = new List<XmlPatch>();
-            for (int i=0; i < tableIds.Count; i++)
-            {
-                int id = tableIds[i];
-                TableData pTd = PCM.tableDatas[id];
-                XmlPatch xpatch = new XmlPatch();
-                xpatch.CompatibleOS = "Table:" + pTd.TableName + ",columns:" + pTd.Columns.ToString() + ",rows:" + pTd.Rows.ToString();
-                xpatch.XmlFile = PCM.configFile;
-                xpatch.Segment = PCM.GetSegmentName(pTd.addrInt);
-                xpatch.Description = Description;
-                frmTableEditor frmTE = new frmTableEditor();
-                frmTE.prepareTable(PCM, pTd, null, "A");
-                frmTE.loadTable();
-                uint step = (uint)getElementSize(pTd.DataType);
-                uint addr = (uint)(pTd.addrInt + pTd.Offset);
-                if (pTd.RowMajor)
+                List<int> tableIds = getSelectedTableIds();
+                if (tableIds.Count == 0)
                 {
-                    for (int r=0; r<pTd.Rows; r++)
-                    {
-                        for (int c=0; c<pTd.Columns; c++)
-                        {
-                            xpatch.Data += getValue(PCM.buf, addr, pTd,0, PCM).ToString().Replace(",", ".") + " ";
-                            addr += step;
-                        }
-                    }
+                    Logger("No tables selected");
+                    return;
                 }
-                else
+                string defName = Path.Combine(Application.StartupPath, "Patches", "newpatch.xmlpatch");
+                string patchFname = SelectSaveFile("PATCH files (*.xmlpatch)|*.xmlpatch|ALL files (*.*)|*.*", defName);
+                if (patchFname.Length == 0)
+                    return;
+                string Description = "";
+                frmData frmD = new frmData();
+                frmD.Text = "Patch Description";
+                if (frmD.ShowDialog() == DialogResult.OK)
+                    Description = frmD.txtData.Text;
+                frmD.Dispose();
+                List<XmlPatch> newPatch = new List<XmlPatch>();
+                for (int i = 0; i < tableIds.Count; i++)
                 {
-                    for (int c = 0; c < pTd.Columns; c++)
+                    int id = tableIds[i];
+                    TableData pTd = PCM.tableDatas[id];
+                    XmlPatch xpatch = new XmlPatch();
+                    xpatch.CompatibleOS = "Table:" + pTd.TableName + ",columns:" + pTd.Columns.ToString() + ",rows:" + pTd.Rows.ToString();
+                    xpatch.XmlFile = PCM.configFile;
+                    xpatch.Segment = PCM.GetSegmentName(pTd.addrInt);
+                    xpatch.Description = Description;
+                    frmTableEditor frmTE = new frmTableEditor();
+                    frmTE.prepareTable(PCM, pTd, null, "A");
+                    frmTE.loadTable();
+                    uint step = (uint)getElementSize(pTd.DataType);
+                    uint addr = (uint)(pTd.addrInt + pTd.Offset);
+                    if (pTd.RowMajor)
                     {
                         for (int r = 0; r < pTd.Rows; r++)
                         {
-                            xpatch.Data += getValue(PCM.buf, addr, pTd,0, PCM).ToString().Replace(",", ".") + " ";
-                            addr += step;
+                            for (int c = 0; c < pTd.Columns; c++)
+                            {
+                                xpatch.Data += getValue(PCM.buf, addr, pTd, 0, PCM).ToString().Replace(",", ".") + " ";
+                                addr += step;
+                            }
                         }
                     }
+                    else
+                    {
+                        for (int c = 0; c < pTd.Columns; c++)
+                        {
+                            for (int r = 0; r < pTd.Rows; r++)
+                            {
+                                xpatch.Data += getValue(PCM.buf, addr, pTd, 0, PCM).ToString().Replace(",", ".") + " ";
+                                addr += step;
+                            }
+                        }
+                    }
+                    newPatch.Add(xpatch);
                 }
-                newPatch.Add(xpatch);
-            }
-            Logger("Saving to file: " + Path.GetFileName(patchFname), false);
+                Logger("Saving to file: " + Path.GetFileName(patchFname), false);
 
-            using (FileStream stream = new FileStream(patchFname, FileMode.Create))
-            {
-                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
-                writer.Serialize(stream, newPatch);
-                stream.Close();
+                using (FileStream stream = new FileStream(patchFname, FileMode.Create))
+                {
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
+                    writer.Serialize(stream, newPatch);
+                    stream.Close();
+                }
+                Logger(" [OK]");
             }
-            Logger(" [OK]");
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
 
         }
 
@@ -2693,25 +2938,36 @@ namespace UniversalPatcher
 
         private void updateFileInfoTab()
         {
-            if (currentTab != "FileInfo")
-                return;
-            tabControlFileInfo.Dock = DockStyle.Fill;
-            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+            try
             {
-                string tabName = "tab" + mi.Text.Substring(0, 1);
-                if (tabControlFileInfo.TabPages[tabName] == null)
+                if (currentTab != "FileInfo")
+                    return;
+                tabControlFileInfo.Dock = DockStyle.Fill;
+                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                 {
-                    TabPage newTab = new TabPage(mi.Text.Substring(0, 1));
-                    newTab.Name = tabName;
-                    tabControlFileInfo.TabPages.Add(newTab);
-                    PcmFile infoPcm = (PcmFile)mi.Tag;
-                    RichTextBox rBox = new RichTextBox();
-                    tabControlFileInfo.TabPages[tabName].Controls.Add(rBox);
-                    rBox.Dock = DockStyle.Fill;
-                    showFileInfo(infoPcm, rBox);
+                    string tabName = "tab" + mi.Text.Substring(0, 1);
+                    if (tabControlFileInfo.TabPages[tabName] == null)
+                    {
+                        TabPage newTab = new TabPage(mi.Text.Substring(0, 1));
+                        newTab.Name = tabName;
+                        tabControlFileInfo.TabPages.Add(newTab);
+                        PcmFile infoPcm = (PcmFile)mi.Tag;
+                        RichTextBox rBox = new RichTextBox();
+                        tabControlFileInfo.TabPages[tabName].Controls.Add(rBox);
+                        rBox.Dock = DockStyle.Fill;
+                        showFileInfo(infoPcm, rBox);
+                    }
                 }
             }
-
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
         }
 
         private void TabFileInfo_Enter(object sender, EventArgs e)
@@ -2778,15 +3034,28 @@ namespace UniversalPatcher
 
         private void Tree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
+            try
             {
-                TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-                if (tv.SelectedNode != null && tv.SelectedNode.Tag != null)
-                    lastSelectedId = Convert.ToInt32(tv.SelectedNode.Tag);
-                else
-                    lastSelectedId = -1;
-                contextMenuStripTree.Show(Cursor.Position.X, Cursor.Position.Y);
+                if (e.Button == MouseButtons.Right)
+                {
+                    TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+                    if (tv.SelectedNode != null && tv.SelectedNode.Tag != null)
+                        lastSelectedId = Convert.ToInt32(tv.SelectedNode.Tag);
+                    else
+                        lastSelectedId = -1;
+                    contextMenuStripTree.Show(Cursor.Position.X, Cursor.Position.Y);
+                }
             }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+
         }
 
         private void findCheckdNodes(TreeNode tn, ref List<int> tableIds)
@@ -2822,24 +3091,36 @@ namespace UniversalPatcher
 
         private void autoMultiTable()
         {
-            if (!chkAutoMulti1d.Checked)
-                return;
-            TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
-            if (tv.SelectedNode == null)
-                return;
-            if (tv.SelectedNode.Tag != null)
-                return;
-            List<int> tableIds = new List<int>();
-            foreach (TreeNode tn in tv.SelectedNode.Nodes)
+            try
             {
-                int id = (int)tn.Tag;
-                if (PCM.tableDatas[id].Dimensions() == 1 && !PCM.tableDatas[id].TableName.Contains("[") && !PCM.tableDatas[id].TableName.Contains("."))
-                    tableIds.Add(id);
+                if (!chkAutoMulti1d.Checked)
+                    return;
+                TreeViewMS tv = (TreeViewMS)tabControl1.SelectedTab.Controls[0];
+                if (tv.SelectedNode == null)
+                    return;
+                if (tv.SelectedNode.Tag != null)
+                    return;
+                List<int> tableIds = new List<int>();
+                foreach (TreeNode tn in tv.SelectedNode.Nodes)
+                {
+                    int id = (int)tn.Tag;
+                    if (PCM.tableDatas[id].Dimensions() == 1 && !PCM.tableDatas[id].TableName.Contains("[") && !PCM.tableDatas[id].TableName.Contains("."))
+                        tableIds.Add(id);
+                }
+                if (tableIds.Count > 0)
+                {
+                    clearPanel2();
+                    openTableEditor(tableIds);
+                }
             }
-            if (tableIds.Count > 0)
+            catch (Exception ex)
             {
-                clearPanel2();
-                openTableEditor(tableIds);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
             }
 
         }
@@ -2945,53 +3226,66 @@ namespace UniversalPatcher
 
         private void setIconSize()
         {
-            if (iconSize != (int)numIconSize.Value)
+            try
             {
-                //Size modified since last call
-                iconSize = (int)numIconSize.Value;
-                imageList1.ImageSize = new Size(iconSize, iconSize);
-                imageList1.Images.Clear();
-                string folderIcon = Path.Combine(Application.StartupPath, "Icons", "explorer.ico");
-                imageList1.Images.Add(Image.FromFile(folderIcon));
-                string iconFolder = Path.Combine(Application.StartupPath, "Icons");
-                GalleryArray = System.IO.Directory.GetFiles(iconFolder);
-                for (int i = 0; i < GalleryArray.Length; i++)
+                if (iconSize != (int)numIconSize.Value)
                 {
-                    if (GalleryArray[i].ToLower().EndsWith(".ico"))
+                    //Size modified since last call
+                    iconSize = (int)numIconSize.Value;
+                    imageList1.ImageSize = new Size(iconSize, iconSize);
+                    imageList1.Images.Clear();
+                    string folderIcon = Path.Combine(Application.StartupPath, "Icons", "explorer.ico");
+                    imageList1.Images.Add(Image.FromFile(folderIcon));
+                    string iconFolder = Path.Combine(Application.StartupPath, "Icons");
+                    GalleryArray = System.IO.Directory.GetFiles(iconFolder);
+                    for (int i = 0; i < GalleryArray.Length; i++)
                     {
+                        if (GalleryArray[i].ToLower().EndsWith(".ico"))
+                        {
 
-                        imageList1.Images.Add(Path.GetFileName(GalleryArray[i]), Icon.ExtractAssociatedIcon(GalleryArray[i]));
+                            imageList1.Images.Add(Path.GetFileName(GalleryArray[i]), Icon.ExtractAssociatedIcon(GalleryArray[i]));
+                        }
                     }
                 }
+                if (treeDimensions != null)
+                {
+                    treeDimensions.ItemHeight = iconSize + 2;
+                    treeDimensions.Indent = iconSize + 4;
+                    treeDimensions.Font = Properties.Settings.Default.TableExplorerFont;
+                }
+                if (treeCategory != null)
+                {
+                    treeCategory.ItemHeight = iconSize + 2;
+                    treeCategory.Indent = iconSize + 4;
+                    treeCategory.Font = Properties.Settings.Default.TableExplorerFont;
+                }
+                if (treeSegments != null)
+                {
+                    treeSegments.ItemHeight = iconSize + 2;
+                    treeSegments.Indent = iconSize + 4;
+                    treeSegments.Font = Properties.Settings.Default.TableExplorerFont;
+                }
+                if (treeValueType != null)
+                {
+                    treeValueType.ItemHeight = iconSize + 2;
+                    treeValueType.Indent = iconSize + 4;
+                    treeValueType.Font = Properties.Settings.Default.TableExplorerFont;
+                }
+                treeView1.ItemHeight = iconSize + 2;
+                treeView1.Indent = iconSize + 4;
+                treeView1.Font = Properties.Settings.Default.TableExplorerFont;
             }
-            if (treeDimensions != null)
+            catch (Exception ex)
             {
-                treeDimensions.ItemHeight = iconSize + 2;
-                treeDimensions.Indent = iconSize + 4;
-                treeDimensions.Font = Properties.Settings.Default.TableExplorerFont;
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
             }
-            if (treeCategory != null)
-            {
-                treeCategory.ItemHeight = iconSize + 2;
-                treeCategory.Indent = iconSize + 4;
-                treeCategory.Font = Properties.Settings.Default.TableExplorerFont;
-            }
-            if (treeSegments != null)
-            {
-                treeSegments.ItemHeight = iconSize + 2;
-                treeSegments.Indent = iconSize + 4;
-                treeSegments.Font = Properties.Settings.Default.TableExplorerFont;
-            }
-            if (treeValueType != null)
-            {
-                treeValueType.ItemHeight = iconSize + 2;
-                treeValueType.Indent = iconSize + 4;
-                treeValueType.Font = Properties.Settings.Default.TableExplorerFont;
-            }
-            treeView1.ItemHeight = iconSize + 2;
-            treeView1.Indent = iconSize + 4;
-            treeView1.Font = Properties.Settings.Default.TableExplorerFont;
         }
+
         private TreeNode createTreeNode(string txt)
         {
             TreeNode tn = new TreeNode();
@@ -3003,308 +3297,336 @@ namespace UniversalPatcher
 
         private void loadDimensions()
         {
-            Cursor.Current = Cursors.WaitCursor;
-            Application.DoEvents();
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                Application.DoEvents();
 
-            if (tabDimensions.Controls.Contains(treeDimensions))
-            {
-                treeDimensions.SelectedNodes.Clear();
-                foreach (TreeNode tn in treeDimensions.Nodes)
-                    tn.Nodes.Clear();
-            }
-            else
-            {
-                treeDimensions = new TreeViewMS();
-                setIconSize();
-                treeDimensions.ImageList = imageList1;
-                treeDimensions.CheckBoxes = false;
-                treeDimensions.Dock = DockStyle.Fill;
-                treeDimensions.HideSelection = false;
-                tabDimensions.Controls.Add(treeDimensions);
-                //treeDimensions.AfterCheck += Tree_AfterCheck;
-                treeDimensions.AfterSelect += Tree_AfterSelect;
-                treeDimensions.NodeMouseClick += Tree_NodeMouseClick;
-                treeDimensions.Nodes.Add(createTreeNode("1D"));
-                treeDimensions.Nodes.Add(createTreeNode("2D"));
-                treeDimensions.Nodes.Add(createTreeNode("3D"));
-            }
-
-            for (int i = 0; i < filteredTableDatas.Count; i++)
-            {
-                //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
+                if (tabDimensions.Controls.Contains(treeDimensions))
                 {
-                    TreeNode tnChild = new TreeNode(filteredTableDatas[i].TableName);
-                    tnChild.Tag = (int)filteredTableDatas[i].id;
+                    treeDimensions.SelectedNodes.Clear();
+                    foreach (TreeNode tn in treeDimensions.Nodes)
+                        tn.Nodes.Clear();
+                }
+                else
+                {
+                    treeDimensions = new TreeViewMS();
+                    setIconSize();
+                    treeDimensions.ImageList = imageList1;
+                    treeDimensions.CheckBoxes = false;
+                    treeDimensions.Dock = DockStyle.Fill;
+                    treeDimensions.HideSelection = false;
+                    tabDimensions.Controls.Add(treeDimensions);
+                    //treeDimensions.AfterCheck += Tree_AfterCheck;
+                    treeDimensions.AfterSelect += Tree_AfterSelect;
+                    treeDimensions.NodeMouseClick += Tree_NodeMouseClick;
+                    treeDimensions.Nodes.Add(createTreeNode("1D"));
+                    treeDimensions.Nodes.Add(createTreeNode("2D"));
+                    treeDimensions.Nodes.Add(createTreeNode("3D"));
+                }
 
-                    TableValueType vt = getValueType(filteredTableDatas[i]);
-                    if (vt == TableValueType.bitmask)
+                for (int i = 0; i < filteredTableDatas.Count; i++)
+                {
+                    //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
                     {
-                        tnChild.ImageKey = "bitmask.ico";
-                        tnChild.SelectedImageKey = "bitmask.ico";
-                    }
-                    else if (vt == TableValueType.boolean)
-                    {
-                        tnChild.ImageKey = "boolean.ico";
-                        tnChild.SelectedImageKey = "boolean.ico";
-                    }
-                    else if (vt == TableValueType.selection)
-                    {
-                        tnChild.ImageKey = "enum.ico";
-                        tnChild.SelectedImageKey = "enum.ico";
-                    }
-                    else
-                    {
-                        tnChild.ImageKey = "number.ico";
-                        tnChild.SelectedImageKey = "number.ico";
-                    }
+                        TreeNode tnChild = new TreeNode(filteredTableDatas[i].TableName);
+                        tnChild.Tag = (int)filteredTableDatas[i].id;
 
-                    string nodeKey = "";
-                    switch (filteredTableDatas[i].Dimensions())
-                    {
-                        case 1:
-                            nodeKey = "1D";
-                            break;
-                        case 2:
-                            nodeKey = "2D";
-                            break;
-                        case 3:
-                            nodeKey = "3D";
-                            break;
-                    }
-
-                    if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
-                    {
-                        treeDimensions.Nodes[nodeKey].Nodes.Add(tnChild);
-                    }
-                    else
-                    {
-                        string cat = filteredTableDatas[i].Category;
-                        if (cat == "")
-                            cat = "(Empty)";
-                        if (!treeDimensions.Nodes[nodeKey].Nodes.ContainsKey(cat))
+                        TableValueType vt = getValueType(filteredTableDatas[i]);
+                        if (vt == TableValueType.bitmask)
                         {
-                            TreeNode dimCatTn = new TreeNode(cat);
-                            dimCatTn.Name = cat;
-                            dimCatTn.ImageKey = "category.ico";
-                            dimCatTn.SelectedImageKey = "category.ico";
-                            treeDimensions.Nodes[nodeKey].Nodes.Add(dimCatTn);
+                            tnChild.ImageKey = "bitmask.ico";
+                            tnChild.SelectedImageKey = "bitmask.ico";
                         }
-                        treeDimensions.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
+                        else if (vt == TableValueType.boolean)
+                        {
+                            tnChild.ImageKey = "boolean.ico";
+                            tnChild.SelectedImageKey = "boolean.ico";
+                        }
+                        else if (vt == TableValueType.selection)
+                        {
+                            tnChild.ImageKey = "enum.ico";
+                            tnChild.SelectedImageKey = "enum.ico";
+                        }
+                        else
+                        {
+                            tnChild.ImageKey = "number.ico";
+                            tnChild.SelectedImageKey = "number.ico";
+                        }
+
+                        string nodeKey = "";
+                        switch (filteredTableDatas[i].Dimensions())
+                        {
+                            case 1:
+                                nodeKey = "1D";
+                                break;
+                            case 2:
+                                nodeKey = "2D";
+                                break;
+                            case 3:
+                                nodeKey = "3D";
+                                break;
+                        }
+
+                        if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
+                        {
+                            treeDimensions.Nodes[nodeKey].Nodes.Add(tnChild);
+                        }
+                        else
+                        {
+                            string cat = filteredTableDatas[i].Category;
+                            if (cat == "")
+                                cat = "(Empty)";
+                            if (!treeDimensions.Nodes[nodeKey].Nodes.ContainsKey(cat))
+                            {
+                                TreeNode dimCatTn = new TreeNode(cat);
+                                dimCatTn.Name = cat;
+                                dimCatTn.ImageKey = "category.ico";
+                                dimCatTn.SelectedImageKey = "category.ico";
+                                treeDimensions.Nodes[nodeKey].Nodes.Add(dimCatTn);
+                            }
+                            treeDimensions.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
+                        }
                     }
                 }
+                Cursor.Current = Cursors.Default;
             }
-            Cursor.Current = Cursors.Default;
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+
         }
+
         private void loadValueTypes()
         {
-            Cursor.Current = Cursors.WaitCursor;
-            Application.DoEvents();
-            if (tabValueType.Controls.Contains(treeValueType))
+            try
             {
-                treeValueType.SelectedNodes.Clear();
-                foreach (TreeNode tn in treeValueType.Nodes)
-                    tn.Nodes.Clear();
-            }
-            else
-            {
-                treeValueType = new TreeViewMS();
-                setIconSize();
-                treeValueType.ImageList = imageList1;
-                treeValueType.CheckBoxes = false;
-                treeValueType.Dock = DockStyle.Fill;
-                treeValueType.HideSelection = false;
-                tabValueType.Controls.Add(treeValueType);
-                treeValueType.AfterSelect += Tree_AfterSelect;
-                treeValueType.AfterCheck += Tree_AfterCheck;
-                treeValueType.NodeMouseClick += Tree_NodeMouseClick;
-                treeValueType.Nodes.Add(createTreeNode("number"));
-                treeValueType.Nodes.Add(createTreeNode("enum"));
-                treeValueType.Nodes.Add(createTreeNode("bitmask"));
-                treeValueType.Nodes.Add(createTreeNode("boolean"));
-            }
-
-            for (int i = 0; i < filteredTableDatas.Count; i++)
-            {
-                //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
+                Cursor.Current = Cursors.WaitCursor;
+                Application.DoEvents();
+                if (tabValueType.Controls.Contains(treeValueType))
                 {
-                    TreeNode tnChild = new TreeNode(filteredTableDatas[i].TableName);
-                    tnChild.Tag = (int)filteredTableDatas[i].id;
+                    treeValueType.SelectedNodes.Clear();
+                    foreach (TreeNode tn in treeValueType.Nodes)
+                        tn.Nodes.Clear();
+                }
+                else
+                {
+                    treeValueType = new TreeViewMS();
+                    setIconSize();
+                    treeValueType.ImageList = imageList1;
+                    treeValueType.CheckBoxes = false;
+                    treeValueType.Dock = DockStyle.Fill;
+                    treeValueType.HideSelection = false;
+                    tabValueType.Controls.Add(treeValueType);
+                    treeValueType.AfterSelect += Tree_AfterSelect;
+                    treeValueType.AfterCheck += Tree_AfterCheck;
+                    treeValueType.NodeMouseClick += Tree_NodeMouseClick;
+                    treeValueType.Nodes.Add(createTreeNode("number"));
+                    treeValueType.Nodes.Add(createTreeNode("enum"));
+                    treeValueType.Nodes.Add(createTreeNode("bitmask"));
+                    treeValueType.Nodes.Add(createTreeNode("boolean"));
+                }
 
-                    switch(filteredTableDatas[i].Dimensions())
+                for (int i = 0; i < filteredTableDatas.Count; i++)
+                {
+                    //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
                     {
-                        case 1:
-                            tnChild.ImageKey = "1d.ico";
-                            tnChild.SelectedImageKey = "1d.ico";
-                            break;
-                        case 2:
-                            tnChild.ImageKey = "2d.ico";
-                            tnChild.SelectedImageKey = "2d.ico";
-                            break;
-                        case 3:
-                            tnChild.ImageKey = "3d.ico";
-                            tnChild.SelectedImageKey = "3d.ico";
-                            break;
-                    }
+                        TreeNode tnChild = new TreeNode(filteredTableDatas[i].TableName);
+                        tnChild.Tag = (int)filteredTableDatas[i].id;
 
-                    TableValueType vt = getValueType(filteredTableDatas[i]);
-                    string nodeKey = "";
-                    if (vt == TableValueType.bitmask)
-                        nodeKey = "bitmask";
-                    else if (vt == TableValueType.boolean)
-                        nodeKey = "boolean";
-                    else if (vt == TableValueType.selection)
-                        nodeKey = "enum";
-                    else
-                        nodeKey = "number";
-
-                    if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
-                    {
-                        treeValueType.Nodes[nodeKey].Nodes.Add(tnChild);
-                    }
-                    else
-                    {
-                        string cat = filteredTableDatas[i].Category;
-                        if (cat == "")
-                            cat = "(Empty)";
-                        if (!treeValueType.Nodes[nodeKey].Nodes.ContainsKey(cat))
+                        switch (filteredTableDatas[i].Dimensions())
                         {
-                            TreeNode vtCatTn = new TreeNode(cat);
-                            vtCatTn.Name = cat;
-                            vtCatTn.ImageKey = "category.ico";
-                            vtCatTn.SelectedImageKey = "category.ico";
-                            treeValueType.Nodes[nodeKey].Nodes.Add(vtCatTn);
+                            case 1:
+                                tnChild.ImageKey = "1d.ico";
+                                tnChild.SelectedImageKey = "1d.ico";
+                                break;
+                            case 2:
+                                tnChild.ImageKey = "2d.ico";
+                                tnChild.SelectedImageKey = "2d.ico";
+                                break;
+                            case 3:
+                                tnChild.ImageKey = "3d.ico";
+                                tnChild.SelectedImageKey = "3d.ico";
+                                break;
                         }
-                        treeValueType.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
+
+                        TableValueType vt = getValueType(filteredTableDatas[i]);
+                        string nodeKey = "";
+                        if (vt == TableValueType.bitmask)
+                            nodeKey = "bitmask";
+                        else if (vt == TableValueType.boolean)
+                            nodeKey = "boolean";
+                        else if (vt == TableValueType.selection)
+                            nodeKey = "enum";
+                        else
+                            nodeKey = "number";
+
+                        if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
+                        {
+                            treeValueType.Nodes[nodeKey].Nodes.Add(tnChild);
+                        }
+                        else
+                        {
+                            string cat = filteredTableDatas[i].Category;
+                            if (cat == "")
+                                cat = "(Empty)";
+                            if (!treeValueType.Nodes[nodeKey].Nodes.ContainsKey(cat))
+                            {
+                                TreeNode vtCatTn = new TreeNode(cat);
+                                vtCatTn.Name = cat;
+                                vtCatTn.ImageKey = "category.ico";
+                                vtCatTn.SelectedImageKey = "category.ico";
+                                treeValueType.Nodes[nodeKey].Nodes.Add(vtCatTn);
+                            }
+                            treeValueType.Nodes[nodeKey].Nodes[cat].Nodes.Add(tnChild);
+                        }
                     }
                 }
+                Cursor.Current = Cursors.Default;
             }
-            Cursor.Current = Cursors.Default;
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
         }
 
         private void loadCategories()
         {
-            Cursor.Current = Cursors.WaitCursor;
-            Application.DoEvents();
-            if (tabCategory.Controls.Contains(treeCategory))
+            try
             {
-                treeCategory.SelectedNodes.Clear();
-                treeCategory.Nodes.Clear();
-            }
-            else
-            {
-                treeCategory = new TreeViewMS();
-                setIconSize();
-                treeCategory.ImageList = imageList1;
-                treeCategory.CheckBoxes = false;
-                treeCategory.HideSelection = false;
-                treeCategory.Dock = DockStyle.Fill;
-                tabCategory.Controls.Add(treeCategory);
-                treeCategory.AfterSelect += Tree_AfterSelect;
-                treeCategory.AfterCheck += Tree_AfterCheck;
-                treeCategory.NodeMouseClick += Tree_NodeMouseClick;
-            }
-            for (int i = 0; i < filteredTableDatas.Count; i++)
-            {
-                //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
+                Cursor.Current = Cursors.WaitCursor;
+                Application.DoEvents();
+                if (tabCategory.Controls.Contains(treeCategory))
                 {
-
-                    TreeNode tnChild = new TreeNode(filteredTableDatas[i].TableName);
-                    tnChild.Tag = (int)filteredTableDatas[i].id;
-                    string ico = "";
-                    TableValueType vt = getValueType(filteredTableDatas[i]);
-                    if (vt == TableValueType.bitmask)
-                    {
-                        ico = "mask";
-                    }
-                    else if (vt == TableValueType.boolean)
-                    {
-                        ico = "flag";
-                    }
-                    else if (vt == TableValueType.selection)
-                    {
-                        ico = "enum";
-                    }
-
-                    switch (filteredTableDatas[i].Dimensions())
-                    {
-                        case 1:
-                            ico += "1d.ico";
-                            break;
-                        case 2:
-                            ico += "2d.ico";
-                            break;
-                        case 3:
-                            ico += "3d.ico";
-                            break;
-                    }
-                    tnChild.ImageKey = ico;
-                    tnChild.SelectedImageKey = ico;
-
-                    string cat = filteredTableDatas[i].Category;
-                    if (cat == "")
-                        cat = "(Empty)";
-                    if (!treeCategory.Nodes.ContainsKey(cat))
-                    {
-                        TreeNode cTnChild = new TreeNode(cat);
-                        cTnChild.Name = cat;
-                        cTnChild.ImageKey = "category.ico";
-                        cTnChild.SelectedImageKey = "category.ico";
-                        treeCategory.Nodes.Add(cTnChild);
-                    }
-                    treeCategory.Nodes[cat].Nodes.Add(tnChild);
+                    treeCategory.SelectedNodes.Clear();
+                    treeCategory.Nodes.Clear();
                 }
+                else
+                {
+                    treeCategory = new TreeViewMS();
+                    setIconSize();
+                    treeCategory.ImageList = imageList1;
+                    treeCategory.CheckBoxes = false;
+                    treeCategory.HideSelection = false;
+                    treeCategory.Dock = DockStyle.Fill;
+                    tabCategory.Controls.Add(treeCategory);
+                    treeCategory.AfterSelect += Tree_AfterSelect;
+                    treeCategory.AfterCheck += Tree_AfterCheck;
+                    treeCategory.NodeMouseClick += Tree_NodeMouseClick;
+                }
+                for (int i = 0; i < filteredTableDatas.Count; i++)
+                {
+                    //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
+                    {
+
+                        TreeNode tnChild = new TreeNode(filteredTableDatas[i].TableName);
+                        tnChild.Tag = (int)filteredTableDatas[i].id;
+                        string ico = "";
+                        TableValueType vt = getValueType(filteredTableDatas[i]);
+                        if (vt == TableValueType.bitmask)
+                        {
+                            ico = "mask";
+                        }
+                        else if (vt == TableValueType.boolean)
+                        {
+                            ico = "flag";
+                        }
+                        else if (vt == TableValueType.selection)
+                        {
+                            ico = "enum";
+                        }
+
+                        switch (filteredTableDatas[i].Dimensions())
+                        {
+                            case 1:
+                                ico += "1d.ico";
+                                break;
+                            case 2:
+                                ico += "2d.ico";
+                                break;
+                            case 3:
+                                ico += "3d.ico";
+                                break;
+                        }
+                        tnChild.ImageKey = ico;
+                        tnChild.SelectedImageKey = ico;
+
+                        string cat = filteredTableDatas[i].Category;
+                        if (cat == "")
+                            cat = "(Empty)";
+                        if (!treeCategory.Nodes.ContainsKey(cat))
+                        {
+                            TreeNode cTnChild = new TreeNode(cat);
+                            cTnChild.Name = cat;
+                            cTnChild.ImageKey = "category.ico";
+                            cTnChild.SelectedImageKey = "category.ico";
+                            treeCategory.Nodes.Add(cTnChild);
+                        }
+                        treeCategory.Nodes[cat].Nodes.Add(tnChild);
+                    }
+                }
+                Cursor.Current = Cursors.Default;
             }
-            Cursor.Current = Cursors.Default;
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
         }
 
         private void loadSegments()
         {
-            Cursor.Current = Cursors.WaitCursor;
-            Application.DoEvents();
-            if (tabSegments.Controls.Contains(treeSegments))
+            try
             {
-                treeSegments.SelectedNodes.Clear();
-                treeSegments.Nodes.Clear();
-            }
-            else
-            {
-                treeSegments = new TreeViewMS();
-                setIconSize();
-                treeSegments.ImageList = imageList1;
-                treeSegments.CheckBoxes = false;
-                treeSegments.HideSelection = false;
-                treeSegments.Dock = DockStyle.Fill;
-                tabSegments.Controls.Add(treeSegments);
-                treeSegments.AfterSelect += Tree_AfterSelect;
-                treeSegments.AfterCheck += Tree_AfterCheck;
-                treeSegments.NodeMouseClick += Tree_NodeMouseClick;
-            }
-            TreeNode segTn;
-            for (int i = 0; i < PCM.Segments.Count; i++)
-            {
-                segTn = new TreeNode(PCM.Segments[i].Name);
-                segTn.Name = PCM.Segments[i].Name;
-                segTn.ImageKey = "segments.ico";
-                segTn.SelectedImageKey = "segments.ico";
-
-                bool found = false;
-                foreach (string icofile in GalleryArray)
+                Cursor.Current = Cursors.WaitCursor;
+                Application.DoEvents();
+                if (tabSegments.Controls.Contains(treeSegments))
                 {
-
-                    double percentage = ComputeSimilarity.CalculateSimilarity(Path.GetFileNameWithoutExtension(icofile).ToLower(), segTn.Name.ToLower());
-                    if ((int)(percentage * 100) >= 80)
-                    {
-                        segTn.ImageKey = Path.GetFileName(icofile);
-                        segTn.SelectedImageKey = Path.GetFileName(icofile);
-                        found = true;
-                        break;
-                    }
+                    treeSegments.SelectedNodes.Clear();
+                    treeSegments.Nodes.Clear();
                 }
-                if (!found)
+                else
                 {
+                    treeSegments = new TreeViewMS();
+                    setIconSize();
+                    treeSegments.ImageList = imageList1;
+                    treeSegments.CheckBoxes = false;
+                    treeSegments.HideSelection = false;
+                    treeSegments.Dock = DockStyle.Fill;
+                    tabSegments.Controls.Add(treeSegments);
+                    treeSegments.AfterSelect += Tree_AfterSelect;
+                    treeSegments.AfterCheck += Tree_AfterCheck;
+                    treeSegments.NodeMouseClick += Tree_NodeMouseClick;
+                }
+                TreeNode segTn;
+                for (int i = 0; i < PCM.Segments.Count; i++)
+                {
+                    segTn = new TreeNode(PCM.Segments[i].Name);
+                    segTn.Name = PCM.Segments[i].Name;
+                    segTn.ImageKey = "segments.ico";
+                    segTn.SelectedImageKey = "segments.ico";
+
+                    bool found = false;
                     foreach (string icofile in GalleryArray)
                     {
-                        if (segTn.Name.ToLower().Contains(Path.GetFileNameWithoutExtension(icofile)))
+
+                        double percentage = ComputeSimilarity.CalculateSimilarity(Path.GetFileNameWithoutExtension(icofile).ToLower(), segTn.Name.ToLower());
+                        if ((int)(percentage * 100) >= 80)
                         {
                             segTn.ImageKey = Path.GetFileName(icofile);
                             segTn.SelectedImageKey = Path.GetFileName(icofile);
@@ -3312,75 +3634,97 @@ namespace UniversalPatcher
                             break;
                         }
                     }
-                }
-                treeSegments.Nodes.Add(segTn);
-            }
-
-            for (int i = 0; i < filteredTableDatas.Count; i++)
-            {
-                //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
-                {
-
-                    TreeNode tnChild = new TreeNode(filteredTableDatas[i].TableName);
-                    tnChild.Tag = (int)filteredTableDatas[i].id;
-                    string ico = "";
-                    TableValueType vt = getValueType(filteredTableDatas[i]);
-                    if (vt == TableValueType.bitmask)
+                    if (!found)
                     {
-                        ico = "mask";
-                    }
-                    else if (vt == TableValueType.boolean)
-                    {
-                        ico = "flag";
-                    }
-                    else if (vt == TableValueType.selection)
-                    {
-                        ico = "enum";
-                    }
-
-                    switch (filteredTableDatas[i].Dimensions())
-                    {
-                        case 1:
-                            ico += "1d.ico";
-                            break;
-                        case 2:
-                            ico += "2d.ico";
-                            break;
-                        case 3:
-                            ico += "3d.ico";
-                            break;
-                    }
-
-                    tnChild.ImageKey = ico;
-                    tnChild.SelectedImageKey = ico;
-
-                    string cat = filteredTableDatas[i].Category;
-                    if (cat == "")
-                        cat = "(Empty)";
-
-                    int seg = PCM.GetSegmentNumber(filteredTableDatas[i].addrInt);
-                    if (seg > -1)
-                    {
-                        if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
+                        foreach (string icofile in GalleryArray)
                         {
-                            treeSegments.Nodes[seg].Nodes.Add(tnChild);
-                        }
-                        else
-                        {
-                            if (!treeSegments.Nodes[seg].Nodes.ContainsKey(cat))
+                            if (segTn.Name.ToLower().Contains(Path.GetFileNameWithoutExtension(icofile)))
                             {
-                                TreeNode tnNew = new TreeNode(cat);
-                                tnNew.Name = cat;
-                                tnNew.ImageKey = "category.ico";
-                                tnNew.SelectedImageKey = "category.ico";
-                                treeSegments.Nodes[seg].Nodes.Add(tnNew);
+                                segTn.ImageKey = Path.GetFileName(icofile);
+                                segTn.SelectedImageKey = Path.GetFileName(icofile);
+                                found = true;
+                                break;
                             }
-                            treeSegments.Nodes[seg].Nodes[cat].Nodes.Add(tnChild);
+                        }
+                    }
+                    treeSegments.Nodes.Add(segTn);
+                }
+
+                for (int i = 0; i < filteredTableDatas.Count; i++)
+                {
+                    //if (filteredCategories[i].TableName.ToLower().Contains(txtFilter.Text.ToLower()))
+                    {
+
+                        TreeNode tnChild = new TreeNode(filteredTableDatas[i].TableName);
+                        tnChild.Tag = (int)filteredTableDatas[i].id;
+                        string ico = "";
+                        TableValueType vt = getValueType(filteredTableDatas[i]);
+                        if (vt == TableValueType.bitmask)
+                        {
+                            ico = "mask";
+                        }
+                        else if (vt == TableValueType.boolean)
+                        {
+                            ico = "flag";
+                        }
+                        else if (vt == TableValueType.selection)
+                        {
+                            ico = "enum";
+                        }
+
+                        switch (filteredTableDatas[i].Dimensions())
+                        {
+                            case 1:
+                                ico += "1d.ico";
+                                break;
+                            case 2:
+                                ico += "2d.ico";
+                                break;
+                            case 3:
+                                ico += "3d.ico";
+                                break;
+                        }
+
+                        tnChild.ImageKey = ico;
+                        tnChild.SelectedImageKey = ico;
+
+                        string cat = filteredTableDatas[i].Category;
+                        if (cat == "")
+                            cat = "(Empty)";
+
+                        int seg = PCM.GetSegmentNumber(filteredTableDatas[i].addrInt);
+                        if (seg > -1)
+                        {
+                            if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
+                            {
+                                treeSegments.Nodes[seg].Nodes.Add(tnChild);
+                            }
+                            else
+                            {
+                                if (!treeSegments.Nodes[seg].Nodes.ContainsKey(cat))
+                                {
+                                    TreeNode tnNew = new TreeNode(cat);
+                                    tnNew.Name = cat;
+                                    tnNew.ImageKey = "category.ico";
+                                    tnNew.SelectedImageKey = "category.ico";
+                                    treeSegments.Nodes[seg].Nodes.Add(tnNew);
+                                }
+                                treeSegments.Nodes[seg].Nodes[cat].Nodes.Add(tnChild);
+                            }
                         }
                     }
                 }
+                Cursor.Current = Cursors.Default;
             }
-            Cursor.Current = Cursors.Default;
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
         }
 
         private void btnExpand_Click(object sender, EventArgs e)

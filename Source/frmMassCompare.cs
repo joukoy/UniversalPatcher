@@ -330,49 +330,61 @@ namespace UniversalPatcher
 
         private void compareAllTables(List<string> files)
         {
-            dataGridViewTableList.SelectionChanged -= DataGridViewTableList_SelectionChanged;
-            List<PcmFile> pcmfiles = new List<PcmFile>();
-            //Load all files:
-            for (int i=0; i < files.Count; i++)
+            try
             {
-                string fName = files[i];
-                LoggerBold(fName);
-                PcmFile cmpPCM = new PcmFile(fName, true, "");
-                loadConfigforPCM(cmpPCM);
-                pcmfiles.Add(cmpPCM);
-            }
-            Logger("Reading tables ", false);
-            for (int i = 0; i < PCM.tableDatas.Count; i++)
-            {
-                td = PCM.tableDatas[i];
-                int row = dataGridViewTableList.Rows.Add();
-                dataGridViewTableList.Rows[row].Cells[0].Value = td.TableName;
-                dataGridViewTableList.Rows[row].Cells[1].Value = td.Category;
-                dataGridView1.Rows.Clear();
-                for (int p = 0; p < pcmfiles.Count; p++)
+                dataGridViewTableList.SelectionChanged -= DataGridViewTableList_SelectionChanged;
+                List<PcmFile> pcmfiles = new List<PcmFile>();
+                //Load all files:
+                for (int i = 0; i < files.Count; i++)
                 {
-                    PcmFile cmpPCM = pcmfiles[p];
-                    int id = findTableDataId(td, cmpPCM.tableDatas);
-                    if (id < 0)
+                    string fName = files[i];
+                    LoggerBold(fName);
+                    PcmFile cmpPCM = new PcmFile(fName, true, "");
+                    loadConfigforPCM(cmpPCM);
+                    pcmfiles.Add(cmpPCM);
+                }
+                Logger("Reading tables ", false);
+                for (int i = 0; i < PCM.tableDatas.Count; i++)
+                {
+                    td = PCM.tableDatas[i];
+                    int row = dataGridViewTableList.Rows.Add();
+                    dataGridViewTableList.Rows[row].Cells[0].Value = td.TableName;
+                    dataGridViewTableList.Rows[row].Cells[1].Value = td.Category;
+                    dataGridView1.Rows.Clear();
+                    for (int p = 0; p < pcmfiles.Count; p++)
                     {
-                        continue;
+                        PcmFile cmpPCM = pcmfiles[p];
+                        int id = findTableDataId(td, cmpPCM.tableDatas);
+                        if (id < 0)
+                        {
+                            continue;
+                        }
+                        compareTable(cmpPCM);
+                        dataGridViewTableList.Rows[row].Cells[2].Value = Convert.ToInt32(dataGridViewTableList.Rows[row].Cells[2].Value) + 1;
                     }
-                    compareTable(cmpPCM);
-                    dataGridViewTableList.Rows[row].Cells[2].Value = Convert.ToInt32(dataGridViewTableList.Rows[row].Cells[2].Value) + 1;
-                }
 
-                DgvRow dgvRow = new DgvRow();
-                for (int r=0; r < dataGridView1.Rows.Count; r++)
-                {
-                    dgvRow.id = r;
-                    dgvRow.gdvrows.Add(dataGridView1.Rows[r]);
+                    DgvRow dgvRow = new DgvRow();
+                    for (int r = 0; r < dataGridView1.Rows.Count; r++)
+                    {
+                        dgvRow.id = r;
+                        dgvRow.gdvrows.Add(dataGridView1.Rows[r]);
+                    }
+                    tableDgvRows.Add(dgvRow);
+                    dataGridViewTableList.Rows[row].Tag = tableDgvRows.Count - 1;
+                    if ((i % 10) == 0)
+                        Logger(".", false);
                 }
-                tableDgvRows.Add(dgvRow);
-                dataGridViewTableList.Rows[row].Tag = tableDgvRows.Count - 1;
-                if ((i % 10) == 0)
-                    Logger(".", false);
+                dataGridViewTableList.SelectionChanged += DataGridViewTableList_SelectionChanged;
             }
-            dataGridViewTableList.SelectionChanged += DataGridViewTableList_SelectionChanged;
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmMassCompare line " + line + ": " + ex.Message);
+            }
         }
 
         private void initCompareAll()
@@ -385,45 +397,58 @@ namespace UniversalPatcher
         }
         public void selectCmpFiles()
         {
-            if (!compareAll)
+            try
             {
-                splitContainer1.Panel1Collapsed = true;
-                splitContainer1.Panel1.Hide();
-            }
-            frmFileSelection frmF = new frmFileSelection();
-            frmF.btnOK.Text = "Compare files";
-            frmF.Text = "Search and Compare: " + td.TableName;
-            frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
-            if (frmF.ShowDialog(this) == DialogResult.OK)
-            {
-                if (compareAll)
+                if (!compareAll)
                 {
-                    List<string> files = new List<string>();
-                    for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
-                    {
-                        string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                        files.Add(FileName);
-                    }
-                    initCompareAll();
-                    compareAllTables(files);
+                    splitContainer1.Panel1Collapsed = true;
+                    splitContainer1.Panel1.Hide();
                 }
-                else
+                frmFileSelection frmF = new frmFileSelection();
+                frmF.btnOK.Text = "Compare files";
+                frmF.Text = "Search and Compare: " + td.TableName;
+                frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+                if (frmF.ShowDialog(this) == DialogResult.OK)
                 {
-                    for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                    if (compareAll)
                     {
-                        string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                        PcmFile cmpPcm = new PcmFile(FileName,true,"");
-                        LoggerBold(FileName);
-                        loadConfigforPCM(cmpPcm);
-                        compareTable(cmpPcm);
+                        List<string> files = new List<string>();
+                        for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                        {
+                            string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
+                            files.Add(FileName);
+                        }
+                        initCompareAll();
+                        compareAllTables(files);
                     }
-                }
+                    else
+                    {
+                        for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                        {
+                            string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
+                            PcmFile cmpPcm = new PcmFile(FileName, true, "");
+                            LoggerBold(FileName);
+                            loadConfigforPCM(cmpPcm);
+                            compareTable(cmpPcm);
+                        }
+                    }
 
+                }
+                dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+                dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+                Logger("Done");
             }
-            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
-            Logger("Done");
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmMassCompare line " + line + ": " + ex.Message);
+            }
         }
+
         private void btnSelectFiles_Click(object sender, EventArgs e)
         {
             selectCmpFiles();
@@ -447,32 +472,43 @@ namespace UniversalPatcher
         }
         private void saveCSV()
         {
-            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
-            if (FileName.Length == 0)
-                return;
-            Logger("Writing to file: " + Path.GetFileName(FileName), false);
-            using (StreamWriter writetext = new StreamWriter(FileName))
+            try
             {
-                string row = "File;";
-                for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                if (FileName.Length == 0)
+                    return;
+                Logger("Writing to file: " + Path.GetFileName(FileName), false);
+                using (StreamWriter writetext = new StreamWriter(FileName))
                 {
-                    row += dataGridView1.Columns[i].HeaderText + ";";
-                }
-                writetext.WriteLine(row);
-                for (int r = 0; r < (dataGridView1.Rows.Count - 1); r++)
-                {
-                    row = dataGridView1.Rows[r].HeaderCell.Value.ToString();
+                    string row = "File;";
                     for (int i = 0; i < dataGridView1.Columns.Count; i++)
                     {
-                        if (dataGridView1.Rows[r].Cells[i].Value != null)
-                            row += dataGridView1.Rows[r].Cells[i].Value.ToString();
-                        row += ";";
+                        row += dataGridView1.Columns[i].HeaderText + ";";
                     }
                     writetext.WriteLine(row);
+                    for (int r = 0; r < (dataGridView1.Rows.Count - 1); r++)
+                    {
+                        row = dataGridView1.Rows[r].HeaderCell.Value.ToString();
+                        for (int i = 0; i < dataGridView1.Columns.Count; i++)
+                        {
+                            if (dataGridView1.Rows[r].Cells[i].Value != null)
+                                row += dataGridView1.Rows[r].Cells[i].Value.ToString();
+                            row += ";";
+                        }
+                        writetext.WriteLine(row);
+                    }
                 }
+                Logger(" [OK]");
             }
-            Logger(" [OK]");
-
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmMassCompare line " + line + ": " + ex.Message);
+            }
         }
 
         private void btnSaveCsv_Click(object sender, EventArgs e)
