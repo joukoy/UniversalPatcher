@@ -88,6 +88,9 @@ namespace UniversalPatcher
         private string lastTable = "";
         List<CheckBox> fileCheckBoxes;
 
+        int multiplierDecimals = 3;
+        int decimals = 0;
+
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
             dataGridView1.AutoResizeColumns();
@@ -1584,6 +1587,7 @@ namespace UniversalPatcher
                 {
                     this.numDecimals.ValueChanged -= new System.EventHandler(this.numDecimals_ValueChanged);
                     numDecimals.Value = td.Decimals;
+                    decimals = td.Decimals;
                     this.numDecimals.ValueChanged += new System.EventHandler(this.numDecimals_ValueChanged);
                 }
                 string formatStr = "0";
@@ -2234,14 +2238,24 @@ namespace UniversalPatcher
                 dataGridView1.BackgroundColor = Color.Red;
                 disableSaving = true;
                 setMyText();
-                loadTable();
                 groupDifference.Visible = true;
+                if (radioMultiplier.Checked)
+                {
+                    numDecimals.Value = multiplierDecimals;
+                }
+                loadTable();
             }
             else
             {
+                if (radioMultiplier.Checked)
+                {
+                    numDecimals.Value = decimals;
+                }
+
                 groupDifference.Visible = false;
             }
         }
+
         private void radioSideBySide_CheckedChanged(object sender, EventArgs e)
         {
             if (radioSideBySide.Checked)
@@ -2283,6 +2297,10 @@ namespace UniversalPatcher
 
         private void numDecimals_ValueChanged(object sender, EventArgs e)
         {
+            if ((radioDifference.Checked || radioDifference2.Checked) && radioMultiplier.Checked)
+                multiplierDecimals = (int)numDecimals.Value;
+            else
+                decimals = (int)numDecimals.Value;
             loadTable();
         }
 
@@ -2481,7 +2499,12 @@ namespace UniversalPatcher
         {
             if (radioMultiplier.Checked)
             {
+                numDecimals.Value = multiplierDecimals;
                 loadTable();
+            }
+            else
+            {
+                numDecimals.Value = decimals;
             }
         }
 
@@ -2501,11 +2524,20 @@ namespace UniversalPatcher
                 dataGridView1.BackgroundColor = Color.Red;
                 disableSaving = true;
                 setMyText();
-                loadTable();
                 groupDifference.Visible = true;
+                if (radioMultiplier.Checked)
+                {
+                    numDecimals.Value = multiplierDecimals;
+                }
+                loadTable();
             }
             else
             {
+                if (radioMultiplier.Checked)
+                {
+                    numDecimals.Value = decimals;
+                }
+
                 groupDifference.Visible = false;
             }
 
