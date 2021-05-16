@@ -238,7 +238,7 @@ namespace UniversalPatcher
                     minMaxTxt = "Min " + min.ToString(formatStr) + " Max " + max.ToString(formatStr);
                 }
                 string valTxt = " Last value " + Convert.ToDouble(tCell.lastValue).ToString(formatStr) + " Saved value " + Convert.ToDouble(tCell.origValue).ToString(formatStr);
-                labelInfo.Text = minMaxTxt + valTxt;
+                labelInfo.Text = minMaxTxt + valTxt + " Address: " + tCell.addr.ToString("X");
             }
             catch (Exception ex)
             {
