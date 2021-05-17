@@ -2928,12 +2928,23 @@ namespace UniversalPatcher
             comboTableCategory.Visible = false;
             comboTableCategory.Text = "_All";
             settingsToolStripMenuItem.Visible = false;
-            utilitiesToolStripMenuItem.Visible = false;
+            //utilitiesToolStripMenuItem.Visible = false;
+            dTCToolStripMenuItem.Visible = false;
+            tableSeekToolStripMenuItem.Visible = false;
+            tinyTunerDBV6OnlyToolStripMenuItem.Visible = false;
+            xMLGeneratorExportToolStripMenuItem.Visible = false;
+            xMlgeneratorImportCSVToolStripMenuItem.Visible = false;
+            cSVexperimentalToolStripMenuItem.Visible = false;
+            cSV2ExperimentalToolStripMenuItem.Visible = false;
+            massModifyTableListsToolStripMenuItem.Visible = false;
+            massModifyTableListsSelectFilesToolStripMenuItem.Visible = false;
+
+
+
             showTablesWithEmptyAddressToolStripMenuItem.Visible = false;
             unitsToolStripMenuItem.Visible = false;
             enableConfigModeToolStripMenuItem.Visible = false;
             resetTunerModeColumnsToolStripMenuItem.Visible = false;
-            importXDFToolStripMenuItem.Visible = true;
         }
 
         private void updateFileInfoTab()
@@ -3009,13 +3020,21 @@ namespace UniversalPatcher
             labelCategory.Visible = true;
             comboTableCategory.Visible = true;
             settingsToolStripMenuItem.Visible = true;
-            utilitiesToolStripMenuItem.Visible = true;
+            //utilitiesToolStripMenuItem.Visible = true;
+            dTCToolStripMenuItem.Visible = true;
+            tableSeekToolStripMenuItem.Visible = true;
+            tinyTunerDBV6OnlyToolStripMenuItem.Visible = true;
+            xMLGeneratorExportToolStripMenuItem.Visible = true;
+            xMlgeneratorImportCSVToolStripMenuItem.Visible = true;
+            cSVexperimentalToolStripMenuItem.Visible = true;
+            cSV2ExperimentalToolStripMenuItem.Visible = true;
+            massModifyTableListsToolStripMenuItem.Visible = true;
+            massModifyTableListsSelectFilesToolStripMenuItem.Visible = true;
 
             showTablesWithEmptyAddressToolStripMenuItem.Visible = true;
             unitsToolStripMenuItem.Visible = true;
             enableConfigModeToolStripMenuItem.Visible = true;
             resetTunerModeColumnsToolStripMenuItem.Visible = false;
-            importXDFToolStripMenuItem.Visible = false;            
         }
 
         private void TreeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -3747,13 +3766,16 @@ namespace UniversalPatcher
             catch { };
         }
 
-        private void clearPanel2()
+        private void clearPanel2(bool force = false)
         {
             if (splitTree == null)
                 return;
             foreach (var x in splitTree.Panel2.Controls.OfType<Form>())
             {
-                x.Close();
+                if (force)
+                    x.Dispose();
+                else
+                    x.Close();
             }
             labelTableName.Text = "";
             txtDescription.Text = "";
@@ -3809,24 +3831,27 @@ namespace UniversalPatcher
             Properties.Settings.Default.TunerAutomulti1d = chkAutoMulti1d.Checked;
         }
 
-        private void selectFileToolStripMenuItem_Click(object sender, EventArgs e)
+        private void selectDiffFile(bool hexMode)
         {
             string newFile = SelectFile();
             if (newFile.Length == 0) return;
             PcmFile cmpWithPcm = new PcmFile(newFile, true, PCM.configFileFullName);
             loadConfigforPCM(ref cmpWithPcm);
             addtoCurrentFileMenu(cmpWithPcm, false);
-            findTableDifferences(cmpWithPcm);
+            if (hexMode)
+                findTableDifferencesHEX(cmpWithPcm);
+            else
+                findTableDifferences(cmpWithPcm);
+
+        }
+        private void selectFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            selectDiffFile(false);
         }
 
         private void selectFileToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            string newFile = SelectFile();
-            if (newFile.Length == 0) return;
-            PcmFile cmpWithPcm = new PcmFile(newFile, true, PCM.configFileFullName);
-            loadConfigforPCM(ref cmpWithPcm);
-            addtoCurrentFileMenu(cmpWithPcm, false);
-            findTableDifferencesHEX(cmpWithPcm);
+            selectDiffFile(true);
         }
 
         private void compareSelectedTablesToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -3876,6 +3901,27 @@ namespace UniversalPatcher
             }
             tn.ExpandAll();
 
+        }
+
+        private void reloadFileFromDiskToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PCM.reloadBinFile();
+            clearPanel2(true);
+        }
+
+        private void findDifferencesToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void selectFileToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            selectDiffFile(false);
+        }
+
+        private void selectFileToolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            selectDiffFile(true);
         }
     }
 }

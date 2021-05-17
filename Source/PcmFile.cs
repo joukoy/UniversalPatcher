@@ -127,6 +127,11 @@ namespace UniversalPatcher
             return (PcmFile)this.MemberwiseClone();
         }
 
+        public void reloadBinFile()
+        {
+            buf = ReadBin(FileName, 0, fsize);
+        }
+
         public void importSeekTables()
         {
             try
