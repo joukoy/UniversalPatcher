@@ -24,6 +24,7 @@ namespace UniversalPatcher
         public object origValue { get { return getValue(tableInfo.compareFile.pcm.buf,addr, td, 0, tableInfo.compareFile.pcm); }}
         public double origRawValue {get {return getRawValue(tableInfo.compareFile.pcm.buf, addr, td, 0); }}
         public double lastRawValue  { get; set; }
+        public double cmpValue { get; set; }
         public TableInfo tableInfo { get; set; }
 
         public TableCell ShallowCopy()

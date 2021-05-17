@@ -766,6 +766,7 @@ namespace UniversalPatcher
                 {
                     cmpVal = Convert.ToDouble(cmpTCell.lastValue);
                     cmpRawValue = (double)cmpTCell.lastRawValue;
+                    tCell.cmpValue = cmpVal;
                 }
                 //if (radioSideBySide.Checked && !disableSideBySide)
                 if (radioSideBySideText.Checked)
@@ -1733,7 +1734,7 @@ namespace UniversalPatcher
                             if (radioAbsolute.Checked)
                                 newValue = (double)tCell.lastValue - newValue;
                             else if (radioMultiplier.Checked)
-                                newValue = (double)tCell.lastValue * newValue;
+                                newValue = (double)tCell.cmpValue * newValue;
                             else
                                 newValue =  (1 + newValue / 100) * (double)tCell.lastValue;
                         }
@@ -1742,7 +1743,7 @@ namespace UniversalPatcher
                             if (radioAbsolute.Checked)
                                 newValue =  newValue + (double)tCell.lastValue;
                             else if (radioMultiplier.Checked)
-                                newValue = (double)tCell.lastValue / newValue;
+                                newValue = (double)tCell.cmpValue / newValue;
                             else
                                 newValue = (double)tCell.lastValue - (newValue * (double)tCell.lastValue)/100 + 100;
                         }
@@ -2236,7 +2237,7 @@ namespace UniversalPatcher
             {
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
-                disableSaving = true;
+                disableSaving = false;
                 setMyText();
                 groupDifference.Visible = true;
                 if (radioMultiplier.Checked)
@@ -2491,6 +2492,7 @@ namespace UniversalPatcher
         {
             if (radioAbsolute.Checked)
             {
+                disableSaving = false;
                 loadTable();
             }
         }
@@ -2500,6 +2502,7 @@ namespace UniversalPatcher
             if (radioMultiplier.Checked)
             {
                 numDecimals.Value = multiplierDecimals;
+                disableSaving = false;
                 loadTable();
             }
             else
@@ -2512,6 +2515,7 @@ namespace UniversalPatcher
         {
             if (radioPercent.Checked)
             {
+                disableSaving = true;
                 loadTable();
             }
         }
@@ -2522,7 +2526,7 @@ namespace UniversalPatcher
             {
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
-                disableSaving = true;
+                disableSaving = false;
                 setMyText();
                 groupDifference.Visible = true;
                 if (radioMultiplier.Checked)
