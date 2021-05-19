@@ -298,7 +298,9 @@ namespace UniversalPatcher
                         Logger("Adding file: " + Path.GetFileName(comparePCM.FileName) + " to compare menu... ", false);
                         if (PCM.OS == comparePCM.OS)
                         {
-                            frmT.addCompareFiletoMenu(comparePCM, td, mi.Text);
+                            PcmFile tmpPcm = comparePCM.ShallowCopy(); //Don't mess with original
+                            tmpPcm.tableDatas = PCM.tableDatas;
+                            frmT.addCompareFiletoMenu(tmpPcm, td, mi.Text);
                             Logger("[OK]");
                         }
                         else

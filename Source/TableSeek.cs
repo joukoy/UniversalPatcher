@@ -187,6 +187,8 @@ namespace UniversalPatcher
                 }
                 for (int s = 0; s < tableSeeks.Count; s++)
                 {
+                    Logger(".", false);
+                    Application.DoEvents();
                     if (tableSeeks[s].SearchStr.Length == 0)
                         continue;   //Can't search if string is empty!
                     if (tableSeeks[s].Category != null && !PCM.tableCategories.Contains(tableSeeks[s].Category)) PCM.tableCategories.Add(tableSeeks[s].Category);
