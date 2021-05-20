@@ -669,6 +669,9 @@ namespace UniversalPatcher
         {
             try
             {
+                Stopwatch timer = new Stopwatch();
+                timer.Start();
+
                 string fileName = SelectFile();
                 if (fileName.Length > 1)
                 {
@@ -680,6 +683,9 @@ namespace UniversalPatcher
                     this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
                     txtOS.Text = basefile.OS;
                 }
+                timer.Stop();
+                Debug.WriteLine("Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
+
             }
             catch (Exception ex)
             {

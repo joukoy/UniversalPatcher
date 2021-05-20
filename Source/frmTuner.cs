@@ -380,6 +380,7 @@ namespace UniversalPatcher
                 PcmFile newPCM = PCM.ShallowCopy();
                 newPCM.saveBin(fileName);
                 addtoCurrentFileMenu(newPCM);
+                PCM.reloadBinFile();
                 PCM = newPCM;
                 selectPCM();
                 Logger("Done.");
@@ -2006,7 +2007,11 @@ namespace UniversalPatcher
         }
         private void loadBINToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
             openNewBinFile();
+            timer.Stop();
+            Debug.WriteLine("Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
         }
 
         public void addtoCurrentFileMenu(PcmFile newPCM, bool setdefault = true)

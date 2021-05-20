@@ -6,6 +6,7 @@ using static upatcher;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace UniversalPatcher
 {
@@ -67,12 +68,243 @@ namespace UniversalPatcher
         public string BitMask { get; set; }
         public bool RowMajor { get; set; }
         public string Description { get; set; }
+
+        private PcmFile PCM;
+
+        public struct Starter
+        {
+            public byte StartByte;
+            public List<uint> addresses;
+        }
+        private List<Starter> starters;
+        private List<byte> startBytes;
+
         public TableSeek ShallowCopy()
         {
             return (TableSeek)this.MemberwiseClone();
         }
 
-        private PcmFile PCM;
+        private uint searchBytes(PcmFile PCM, string searchString, uint Start, uint End)
+        {
+            uint addr;
+            try
+            {
+                string[] searchParts = searchString.Trim().Split(' ');
+                byte[] bytes = new byte[searchParts.Length];
+
+                int startByteInd = int.MaxValue;
+
+                for (int b = 0; b < searchParts.Length; b++)
+                {
+                    byte searchval = 0;
+                    if (searchParts[b] != "*")
+                    {
+                        HexToByte(searchParts[b], out searchval);
+                        if (startByteInd == int.MaxValue)
+                            startByteInd = b;
+                    }
+                    bytes[b] = searchval;
+                }
+
+                int ind = startBytes.IndexOf(bytes[startByteInd]);
+                if (ind < 0)
+                {
+                    //This byte is not in list, use slower method:
+                    return upatcher.searchBytes(PCM, searchString, Start, End);
+                }
+
+                foreach (uint a in starters[ind].addresses)
+                {
+                    if ((a - startByteInd) >= Start && (a - startByteInd) < End)
+                    {
+                        addr = (uint)(a - startByteInd);
+                        bool match = true;
+                        if ((addr + searchParts.Length) > PCM.fsize)
+                            return uint.MaxValue;
+                        for (uint part = 0; part < searchParts.Length; part++)
+                        {
+                            if (searchParts[part] != "*")
+                            {
+                                if (PCM.buf[addr + part] != bytes[part])
+                                {
+                                    match = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (match)
+                        {
+                            return addr;
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error searchBytes, line " + line + ": " + ex.Message);
+            }
+            return uint.MaxValue;
+        }
+
+        private  string generateValidationSearchString(uint addr, string origStr)
+        {
+            string retVal = "";
+            string validationAddr = (addr).ToString("X8");
+            string[] vParts = origStr.Split(' ');
+            int vpartNr = 0;
+            for (int v = 0; v < vParts.Length; v++)
+            {
+                if (vParts[v] == "@")
+                {
+                    retVal += validationAddr.Substring(vpartNr * 2, 2) + " ";
+                    vpartNr++;
+                }
+                else
+                {
+                    retVal += vParts[v] + " ";
+                }
+            }
+
+            return retVal.Trim();
+        }
+
+        private SearchedAddress getAddrbySearchString(PcmFile PCM, string searchStr, ref uint startAddr, uint endAddr, bool conditionalOffset = false, string validationSearchStr = "")
+        {
+            SearchedAddress retVal;
+            retVal.Addr = uint.MaxValue;
+            retVal.Columns = 0;
+            retVal.Rows = 0;
+            try
+            {
+                string modStr = searchStr.Replace("r", "");
+                modStr = modStr.Replace("k", "");
+                modStr = modStr.Replace("x", "");
+                modStr = modStr.Replace("y", "");
+                modStr = modStr.Replace("@", "*");
+                modStr = modStr.Replace("# ", "* "); //# alone at beginning or middle
+                if (modStr.EndsWith("#"))
+                    modStr = modStr.Replace(" #", " *"); //# alone at end
+                modStr = modStr.Replace("#", ""); //For example: #21 00 21
+                uint addr = searchBytes(PCM, modStr, startAddr, endAddr);
+                if (addr == uint.MaxValue)
+                {
+                    //Not found
+                    startAddr = uint.MaxValue;
+                    return retVal;
+                }
+
+                string[] sParts = searchStr.Trim().Split(' ');
+                startAddr = addr + (uint)sParts.Length;
+
+                if (validationSearchStr != null && validationSearchStr != "")
+                {
+                    bool validated = false;
+                    string[] validationList = validationSearchStr.Split(',');
+                    for (int v = 0; v < validationList.Length; v++)
+                    {
+                        string vStr = validationList[v];
+                        Debug.WriteLine("Validation string: " + vStr + ", Address: " + addr.ToString("X8"));
+                        int vLen = vStr.Split('@').Length - 1;
+                        if (vLen != 4) throw new Exception("Validation search needs four '@'");
+                        string newStr = generateValidationSearchString(addr, vStr);
+                        Debug.WriteLine("Searching validationstring: " + newStr);
+                        if (searchBytes(PCM, newStr, 0, PCM.fsize) < uint.MaxValue)
+                        {
+                            validated = true;
+                            break;
+                        }
+                        //Try with 0x10k offset:
+                        newStr = generateValidationSearchString(addr + 0x10000, vStr);
+                        Debug.WriteLine("Not found, using 10k offset and searching validationstring: " + newStr);
+                        if (searchBytes(PCM, newStr, 0, PCM.fsize) < uint.MaxValue)
+                        {
+                            validated = true;
+                            break;
+                        }
+                    }
+                    if (validated)
+                    {
+                        Debug.WriteLine("Found, validated");
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Not found");
+                        retVal.Addr = uint.MaxValue;
+                        return retVal;
+                    }
+                }
+
+
+                int[] locations = new int[4];
+                int l = 0;
+                string addrStr = "*";
+                if (searchStr.Contains("@")) addrStr = "@";
+                else if (searchStr.Contains("*") || searchStr.Contains("#")) addrStr = "*";
+                else
+                {
+                    //Address is AFTER searchstring
+                    retVal.Addr = BEToUint32(PCM.buf, addr + (uint)sParts.Length);
+                }
+                for (int p = 0; p < sParts.Length; p++)
+                {
+                    if (sParts[p].Contains(addrStr) && l < 4)
+                    {
+                        locations[l] = p;
+                        l++;
+                    }
+                    if (sParts[p].Contains("r") || sParts[p].Contains("x"))
+                    {
+                        retVal.Rows = (ushort)PCM.buf[(uint)(addr + p)];
+                    }
+                    if (sParts[p].Contains("k") || sParts[p].Contains("y"))
+                    {
+                        retVal.Columns = (ushort)PCM.buf[(uint)(addr + p)];
+                    }
+                    if (sParts[p].Contains("#"))
+                    {
+                        retVal.Addr = (uint)(addr + p);
+                    }
+
+                }
+                if (retVal.Addr < uint.MaxValue)
+                {
+                    return retVal;
+                }
+
+                //We are here, so we must have @ @ @ @  in searchsting
+                if (l < 4)
+                {
+                    Logger("Less than 4 @ in searchstring, address need 4 bytes! (" + searchStr + ")");
+                    retVal.Addr = uint.MaxValue;
+                }
+
+                retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 24 | PCM.buf[addr + locations[1]] << 16 | PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
+                if (conditionalOffset)
+                {
+                    ushort addrWord = (ushort)(PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
+                    if (addrWord > 0x5000)
+                        retVal.Addr -= 0x10000;
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("getAddrbySearchString, line " + line + ": " + ex.Message);
+            }
+            return retVal;
+        }
+
         public string seekTables(PcmFile PCM1)
         {
             PCM = PCM1;
@@ -185,13 +417,74 @@ namespace UniversalPatcher
                         }
                     }
                 }
+
+                //Optimization?
+                startBytes = new List<byte>();
+                starters = new List<Starter>();
+                for (int s = 0; s < tableSeeks.Count; s++)
+                {
+                    if (tableSeeks[s].SearchStr != null && tableSeeks[s].SearchStr.Length > 0)
+                    {
+                        byte b = 0;
+                        string modStr = Regex.Replace(tableSeeks[s].SearchStr, @"[kxy@#*]", "");
+                        modStr = modStr.Trim();
+
+                        string[] bytelist = modStr.Split(' ');
+                        if (HexToByte(bytelist[0], out b))
+                        {
+                            if (!startBytes.Contains(b))
+                            {
+                                startBytes.Add(b);
+                                Starter st = new Starter();
+                                st.addresses = new List<uint>();
+                                st.StartByte = b;
+                                starters.Add(st);
+                            }
+                        }
+                    }
+                    if (tableSeeks[s].ValidationSearchStr != null && tableSeeks[s].ValidationSearchStr.Length > 0)
+                    {
+                        string[] valStrings = tableSeeks[s].ValidationSearchStr.Split(',');
+                        foreach (string valStr in valStrings)
+                        {
+                            byte b = 0;
+                            string modStr = Regex.Replace(valStr, @"[kxy@#*]", "");
+                            modStr = modStr.Trim();
+
+                            string[] bytelist = modStr.Split(' ');
+                            if (HexToByte(bytelist[0], out b))
+                            {
+                                if (!startBytes.Contains(b))
+                                {
+                                    startBytes.Add(b);
+                                    Starter st = new Starter();
+                                    st.addresses = new List<uint>();
+                                    st.StartByte = b;
+                                    starters.Add(st);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                for (uint addr=0; addr< PCM.buf.Length; addr++)
+                {
+                    byte b = PCM.buf[addr];
+                    int ind = startBytes.IndexOf(b);
+                    if (ind > -1)
+                        starters[ind].addresses.Add(addr);
+                }
+
+
                 for (int s = 0; s < tableSeeks.Count; s++)
                 {
                     Logger(".", false);
                     Application.DoEvents();
+                    Debug.WriteLine(tableSeeks[s].Name + " Usehit: " + tableSeeks[s].UseHit);
                     if (tableSeeks[s].SearchStr.Length == 0)
                         continue;   //Can't search if string is empty!
-                    if (tableSeeks[s].Category != null && !PCM.tableCategories.Contains(tableSeeks[s].Category)) PCM.tableCategories.Add(tableSeeks[s].Category);
+                    if (tableSeeks[s].Category != null && !PCM.tableCategories.Contains(tableSeeks[s].Category)) 
+                        PCM.tableCategories.Add(tableSeeks[s].Category);
                     uint startAddr = 0;
                     uint endAddr = PCM.fsize;
                     List<Block> addrList = new List<Block>();
