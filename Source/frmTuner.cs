@@ -1981,13 +1981,17 @@ namespace UniversalPatcher
         {
             try
             {
-                string newFile = SelectFile();
-                if (newFile.Length == 0) return;
-                PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName);
-                addtoCurrentFileMenu(newPCM);
-                PCM = newPCM;
-                loadConfigforPCM(ref PCM);
-                selectPCM();
+                //string newFile = SelectFile();
+                List<string> fileList = SelectMultipleFiles();
+                foreach (string newFile in fileList)
+                {
+                    if (newFile.Length == 0) return;
+                    PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName);
+                    addtoCurrentFileMenu(newPCM);
+                    PCM = newPCM;
+                    loadConfigforPCM(ref PCM);
+                    selectPCM();
+                }
             }
             catch (Exception ex)
             {

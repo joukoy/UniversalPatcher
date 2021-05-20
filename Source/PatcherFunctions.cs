@@ -1489,6 +1489,62 @@ public class upatcher
     }
 
 
+    public static List<string> SelectMultipleFiles(string Title = "Select files", string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*", string defaultFile = "")
+    {
+        List<string> fileList = new List<string>();
+
+        OpenFileDialog fdlg = new OpenFileDialog();
+        if (Filter.Contains("BIN"))
+        {
+            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
+            Filter = "BIN files (*.bin)|*.bin";
+            for (int f = 0; f < fileTypeList.Count; f++)
+            {
+                string newFilter = "|" + fileTypeList[f].Description + "|" + "*." + fileTypeList[f].Extension;
+                Filter += newFilter;
+            }
+            Filter += "|All files (*.*)|*.*";
+        }
+        else if (Filter.ToLower().Contains("xdf"))
+        {
+            fdlg.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
+        }
+        else if (defaultFile.Length > 0)
+        {
+
+            fdlg.FileName = Path.GetFileName(defaultFile);
+            fdlg.InitialDirectory = Path.GetDirectoryName(defaultFile);
+        }
+        else
+        {
+            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
+                fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
+            if (Filter.Contains("PATCH") || Filter.Contains("TXT"))
+                fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
+        }
+
+        fdlg.Title = Title;
+        fdlg.Filter = Filter;
+        fdlg.FilterIndex = 1;
+        fdlg.RestoreDirectory = true;
+        fdlg.Multiselect = true;
+        if (fdlg.ShowDialog() == DialogResult.OK)
+        {
+            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
+                UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
+            else if (Filter.Contains("BIN"))
+                UniversalPatcher.Properties.Settings.Default.LastBINfolder = Path.GetDirectoryName(fdlg.FileName);
+            else if (Filter.Contains("PATCH"))
+                UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.GetDirectoryName(fdlg.FileName);
+            UniversalPatcher.Properties.Settings.Default.Save();
+            foreach (string fName in fdlg.FileNames)
+                fileList.Add(fName);
+        }
+        return fileList;
+
+    }
+
+
     public static string SelectFile(string Title = "Select file", string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*", string defaultFile = "")
     {
         OpenFileDialog fdlg = new OpenFileDialog();
