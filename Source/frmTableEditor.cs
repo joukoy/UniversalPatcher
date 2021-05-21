@@ -1010,6 +1010,7 @@ namespace UniversalPatcher
                 {
                     if (tCell.tableInfo.compareFile.pcm.FileName != compareFiles[0].pcm.FileName)
                     {
+                        //Compare Cell
                         string colTxt = "[" + compareFiles[0].fileLetter + "]" + dataGridView1.Columns[col].HeaderText.Substring(3);
                         string rowTxt = dataGridView1.Rows[row].HeaderCell.Value.ToString();
                         int orgCol = getColumnByHeader(colTxt);
@@ -1031,8 +1032,8 @@ namespace UniversalPatcher
                                 dataGridView1.Rows[row].Cells[col].Style.BackColor = colors[nr];
                             }
                         }
+                        return;
                     }
-                    return;
                 }
                 if (dataGridView1.Columns[col].GetType() != typeof(DataGridViewComboBoxColumn) &&
                     dataGridView1.Rows[row].Cells[col].GetType() != typeof(DataGridViewComboBoxCell))
@@ -1200,7 +1201,7 @@ namespace UniversalPatcher
         {
             try
             {
-                this.dataGridView1.CellEndEdit -= new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
+                this.dataGridView1.CellValueChanged -= new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
 
                 CompareFile selectedFile = compareFiles[currentFile];
                 PcmFile PCM = selectedFile.pcm;
@@ -1451,7 +1452,7 @@ namespace UniversalPatcher
                 }
                 setDataGridLayout(td);
                 dataGridView1.EndEdit();
-                this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
+                this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
                 showCellInfo();
 
             }
@@ -1465,6 +1466,7 @@ namespace UniversalPatcher
                 LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
         }
+
 
         private void showDtcDescriptions()
         {
@@ -1645,7 +1647,7 @@ namespace UniversalPatcher
         }
 
 
-        private void DataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void DataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             try
             {
@@ -2358,6 +2360,7 @@ namespace UniversalPatcher
                     cols.Add(dataGridView1.SelectedCells[i].ColumnIndex);
 
                 }
+                dataGridView1.BeginEdit(true);
                 for (int i = 0; i < rows.Count; i++)
                 {
                     int row = rows[i];
@@ -2365,12 +2368,11 @@ namespace UniversalPatcher
                     if (dataGridView1.Rows[row].Cells[col].Tag != null)
                     {
                         dataGridView1.CurrentCell = dataGridView1.Rows[row].Cells[col];
-                        dataGridView1.BeginEdit(true);
                         var val = dataGridView1.Rows[row].Cells[col + 1].Value;
                         dataGridView1.Rows[row].Cells[col].Value = val;
-                        dataGridView1.EndEdit();
                     }
                 }
+                dataGridView1.EndEdit();
             }
             catch (Exception ex)
             {
@@ -2459,9 +2461,9 @@ namespace UniversalPatcher
                     dataGridView1.SelectedCells[i].Value = val;
                     setCellColor(dataGridView1.SelectedCells[i].RowIndex, dataGridView1.SelectedCells[i].ColumnIndex, tCell);
                 }
-                this.dataGridView1.CellEndEdit -= new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
+                this.dataGridView1.CellValueChanged -= new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
                 dataGridView1.EndEdit();
-                this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellEndEdit);
+                this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
             }
             catch (Exception ex)
             {

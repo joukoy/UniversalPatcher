@@ -84,7 +84,7 @@ namespace UniversalPatcher
             return (TableSeek)this.MemberwiseClone();
         }
 
-        private uint searchBytes(PcmFile PCM, string searchString, uint Start, uint End)
+        private uint searchByteSequence(PcmFile PCM, string searchString, uint Start, uint End)
         {
             uint addr;
             try
@@ -175,7 +175,7 @@ namespace UniversalPatcher
             return retVal.Trim();
         }
 
-        private SearchedAddress getAddrbySearchString(PcmFile PCM, string searchStr, ref uint startAddr, uint endAddr, bool conditionalOffset = false, string validationSearchStr = "")
+        private SearchedAddress searchAddrBySearchString(PcmFile PCM, string searchStr, ref uint startAddr, uint endAddr, bool conditionalOffset = false, string validationSearchStr = "")
         {
             SearchedAddress retVal;
             retVal.Addr = uint.MaxValue;
@@ -192,7 +192,7 @@ namespace UniversalPatcher
                 if (modStr.EndsWith("#"))
                     modStr = modStr.Replace(" #", " *"); //# alone at end
                 modStr = modStr.Replace("#", ""); //For example: #21 00 21
-                uint addr = searchBytes(PCM, modStr, startAddr, endAddr);
+                uint addr = searchByteSequence(PCM, modStr, startAddr, endAddr);
                 if (addr == uint.MaxValue)
                 {
                     //Not found
@@ -215,7 +215,7 @@ namespace UniversalPatcher
                         if (vLen != 4) throw new Exception("Validation search needs four '@'");
                         string newStr = generateValidationSearchString(addr, vStr);
                         Debug.WriteLine("Searching validationstring: " + newStr);
-                        if (searchBytes(PCM, newStr, 0, PCM.fsize) < uint.MaxValue)
+                        if (searchByteSequence(PCM, newStr, 0, PCM.fsize) < uint.MaxValue)
                         {
                             validated = true;
                             break;
@@ -223,7 +223,7 @@ namespace UniversalPatcher
                         //Try with 0x10k offset:
                         newStr = generateValidationSearchString(addr + 0x10000, vStr);
                         Debug.WriteLine("Not found, using 10k offset and searching validationstring: " + newStr);
-                        if (searchBytes(PCM, newStr, 0, PCM.fsize) < uint.MaxValue)
+                        if (searchByteSequence(PCM, newStr, 0, PCM.fsize) < uint.MaxValue)
                         {
                             validated = true;
                             break;
@@ -559,7 +559,7 @@ namespace UniversalPatcher
                             wantedHit = wantedHitList[wHit];
                             string[] ssParts = tableSeeks[s].SearchStr.Split('+');     //At end of string can be +D4 +1W6 etc, for reading next address from found addr
                             Debug.WriteLine("TableSeek: Searching: " + tableSeeks[s].SearchStr + ", Start: " + startAddr.ToString("X") + ", end: " + endAddr.ToString("X"));                            
-                            sAddr = getAddrbySearchString(PCM, ssParts[0], ref startAddr, endAddr, tableSeeks[s].ConditionalOffset, tableSeeks[s].ValidationSearchStr);
+                            sAddr = searchAddrBySearchString(PCM, ssParts[0], ref startAddr, endAddr, tableSeeks[s].ConditionalOffset, tableSeeks[s].ValidationSearchStr);
                             for (int jump = 1; jump < ssParts.Length && sAddr.Addr < PCM.fsize; jump++)
                             {
                                 //Read table address from address we found by searchstring

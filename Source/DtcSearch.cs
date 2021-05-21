@@ -137,8 +137,24 @@ namespace UniversalPatcher
                             Debug.WriteLine("Code search string: " + searchStr);
                             Debug.WriteLine("DTC code table address: " + codeAddr.ToString("X"));
                             codeAddr = (uint)(codeAddr + dtcSearchConfigs[configIndex].CodeOffset);
-                            if (PCM.buf[codeAddr] > 0x10 && dtcSearchConfigs[configIndex].ConditionalOffset.Contains("code"))
-                                codeAddr += 0x10000; //HACK: Don't know when should use -0x10000 offset, check if first PID is < 0x10
+                            if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("code"))
+                            {
+                                uint a = codeAddr;
+                                int prevCode = BEToUint16(PCM.buf, a); 
+                                for (int x=0; x < 30; x++)
+                                {
+                                    //Check if codes (30 first) are increasing
+                                    a += (uint)dtcSearchConfigs[configIndex].CodeSteps;
+                                    int nextCode = BEToUint16(PCM.buf, a);
+                                    if (nextCode <= prevCode)
+                                    {
+                                        //Not increasing, use offset
+                                        codeAddr += 0x10000;
+                                        break;
+                                    }
+                                    prevCode = BEToUint16(PCM.buf, a);
+                                }
+                            }
                             statusAddr = (uint)(statusAddr + dtcSearchConfigs[configIndex].StatusOffset);
                             Debug.WriteLine("DTC status table address: " + statusAddr.ToString("X"));
                             break;

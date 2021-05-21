@@ -63,6 +63,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmData";
             this.Text = "Edit Data";
+            this.Load += new System.EventHandler(this.frmData_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

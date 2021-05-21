@@ -21,5 +21,19 @@ namespace UniversalPatcher
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
+
+        private void frmData_Load(object sender, EventArgs e)
+        {
+            txtData.KeyDown += TxtData_KeyDown; ;
+        }
+
+        private void TxtData_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+        }
     }
 }
