@@ -1596,7 +1596,8 @@ namespace UniversalPatcher
                 string formatStr = "0";
                 if (showRawHEXValuesToolStripMenuItem.Checked || td.OutputType == OutDataType.Hex)
                 {
-                    formatStr = "X" + ((int)numDecimals.Value).ToString() ;
+                    //formatStr = "X" + ((int)numDecimals.Value).ToString();
+                    formatStr = "X" + (getElementSize(td.DataType) *2).ToString();
                 }
                 else if (td.OutputType == OutDataType.Text || td.OutputType == OutDataType.Flag )
                 {
@@ -2102,10 +2103,8 @@ namespace UniversalPatcher
 
         private void showRawHEXValuesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (showRawHEXValuesToolStripMenuItem.Checked)
-                showRawHEXValuesToolStripMenuItem.Checked = false;
-            else
-                showRawHEXValuesToolStripMenuItem.Checked = true;
+            showRawHEXValuesToolStripMenuItem.Checked = !showRawHEXValuesToolStripMenuItem.Checked;
+            chkRawHex.Checked = showRawHEXValuesToolStripMenuItem.Checked;
             loadTable();
         }
 
@@ -2579,6 +2578,12 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
+        }
+
+        private void chkRawHex_CheckedChanged(object sender, EventArgs e)
+        {
+            showRawHEXValuesToolStripMenuItem.Checked = chkRawHex.Checked;
+            loadTable();
         }
 
 

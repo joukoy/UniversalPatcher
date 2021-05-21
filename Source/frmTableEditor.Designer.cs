@@ -78,6 +78,7 @@ namespace UniversalPatcher
             this.radioPercent = new System.Windows.Forms.RadioButton();
             this.radioMultiplier = new System.Windows.Forms.RadioButton();
             this.radioAbsolute = new System.Windows.Forms.RadioButton();
+            this.chkRawHex = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -100,12 +101,12 @@ namespace UniversalPatcher
             this.dataGridView1.Location = new System.Drawing.Point(2, 72);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(595, 359);
+            this.dataGridView1.Size = new System.Drawing.Size(629, 359);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
-            this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
             this.dataGridView1.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseClick);
+            this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
             // 
             // txtMath
@@ -207,7 +208,7 @@ namespace UniversalPatcher
             this.compareToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(599, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(633, 24);
             this.menuStrip1.TabIndex = 6;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -324,7 +325,7 @@ namespace UniversalPatcher
             // numColumn
             // 
             this.numColumn.Enabled = false;
-            this.numColumn.Location = new System.Drawing.Point(514, 5);
+            this.numColumn.Location = new System.Drawing.Point(537, 3);
             this.numColumn.Maximum = new decimal(new int[] {
             3,
             0,
@@ -349,7 +350,7 @@ namespace UniversalPatcher
             // labelColumn
             // 
             this.labelColumn.AutoSize = true;
-            this.labelColumn.Location = new System.Drawing.Point(459, 7);
+            this.labelColumn.Location = new System.Drawing.Point(486, 6);
             this.labelColumn.Name = "labelColumn";
             this.labelColumn.Size = new System.Drawing.Size(45, 13);
             this.labelColumn.TabIndex = 9;
@@ -460,7 +461,7 @@ namespace UniversalPatcher
             // 
             // numDecimals
             // 
-            this.numDecimals.Location = new System.Drawing.Point(415, 5);
+            this.numDecimals.Location = new System.Drawing.Point(442, 4);
             this.numDecimals.Minimum = new decimal(new int[] {
             1,
             0,
@@ -479,7 +480,7 @@ namespace UniversalPatcher
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(356, 7);
+            this.label1.Location = new System.Drawing.Point(383, 6);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(53, 13);
             this.label1.TabIndex = 12;
@@ -566,11 +567,23 @@ namespace UniversalPatcher
             this.radioAbsolute.UseVisualStyleBackColor = true;
             this.radioAbsolute.CheckedChanged += new System.EventHandler(this.radioAbsolute_CheckedChanged);
             // 
+            // chkRawHex
+            // 
+            this.chkRawHex.AutoSize = true;
+            this.chkRawHex.Location = new System.Drawing.Point(328, 6);
+            this.chkRawHex.Name = "chkRawHex";
+            this.chkRawHex.Size = new System.Drawing.Size(48, 17);
+            this.chkRawHex.TabIndex = 18;
+            this.chkRawHex.Text = "HEX";
+            this.chkRawHex.UseVisualStyleBackColor = true;
+            this.chkRawHex.CheckedChanged += new System.EventHandler(this.chkRawHex_CheckedChanged);
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(599, 450);
+            this.ClientSize = new System.Drawing.Size(633, 450);
+            this.Controls.Add(this.chkRawHex);
             this.Controls.Add(this.groupDifference);
             this.Controls.Add(this.labelInfo);
             this.Controls.Add(this.numTuneValue);
@@ -655,5 +668,6 @@ namespace UniversalPatcher
         private RadioButton radioAbsolute;
         private RadioButton radioDifference2;
         private ToolStripMenuItem copyTableFromCompareToolStripMenuItem;
+        private CheckBox chkRawHex;
     }
 }
