@@ -79,6 +79,7 @@ namespace UniversalPatcher
             this.radioMultiplier = new System.Windows.Forms.RadioButton();
             this.radioAbsolute = new System.Windows.Forms.RadioButton();
             this.chkRawHex = new System.Windows.Forms.CheckBox();
+            this.pasteSpecialToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -142,12 +143,13 @@ namespace UniversalPatcher
             this.cutToolStripMenuItem,
             this.copyToolStripMenuItem,
             this.pasteToolStripMenuItem,
+            this.pasteSpecialToolStripMenuItem,
             this.exportCsvToolStripMenuItem,
             this.searchCodeFromGoogleToolStripMenuItem,
             this.copyFromCompareToolStripMenuItem,
             this.copyTableFromCompareToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 158);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 202);
             // 
             // cutToolStripMenuItem
             // 
@@ -578,6 +580,13 @@ namespace UniversalPatcher
             this.chkRawHex.UseVisualStyleBackColor = true;
             this.chkRawHex.CheckedChanged += new System.EventHandler(this.chkRawHex_CheckedChanged);
             // 
+            // pasteSpecialToolStripMenuItem
+            // 
+            this.pasteSpecialToolStripMenuItem.Name = "pasteSpecialToolStripMenuItem";
+            this.pasteSpecialToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.pasteSpecialToolStripMenuItem.Text = "Paste Special...";
+            this.pasteSpecialToolStripMenuItem.Click += new System.EventHandler(this.pasteSpecialToolStripMenuItem_Click);
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -669,5 +678,6 @@ namespace UniversalPatcher
         private RadioButton radioDifference2;
         private ToolStripMenuItem copyTableFromCompareToolStripMenuItem;
         private CheckBox chkRawHex;
+        private ToolStripMenuItem pasteSpecialToolStripMenuItem;
     }
 }

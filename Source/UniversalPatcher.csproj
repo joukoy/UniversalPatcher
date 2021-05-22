@@ -160,6 +160,12 @@
     <Compile Include="frmMassModifyTableData.Designer.cs">
       <DependentUpon>frmMassModifyTableData.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmPasteSpecial.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmPasteSpecial.Designer.cs">
+      <DependentUpon>frmPasteSpecial.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmPatchSelector.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -390,6 +396,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmMassModifyTableData.resx">
       <DependentUpon>frmMassModifyTableData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmPasteSpecial.resx">
+      <DependentUpon>frmPasteSpecial.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmPatchSelector.resx">
       <DependentUpon>frmPatchSelector.cs</DependentUpon>

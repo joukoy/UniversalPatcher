@@ -1738,8 +1738,8 @@ namespace UniversalPatcher
                                 newValue = (double)tCell.lastValue - newValue;
                             else if (radioMultiplier.Checked)
                                 newValue = (double)tCell.cmpValue * newValue;
-                            else
-                                newValue =  (1 + newValue / 100) * (double)tCell.lastValue;
+                            else if (radioPercent.Checked)
+                                newValue =  (100 + newValue) / 100 * (double)tCell.cmpValue;
                         }
                         else if (radioDifference2.Checked)
                         {
@@ -1747,8 +1747,8 @@ namespace UniversalPatcher
                                 newValue =  newValue + (double)tCell.lastValue;
                             else if (radioMultiplier.Checked)
                                 newValue = (double)tCell.cmpValue / newValue;
-                            else
-                                newValue = (double)tCell.lastValue - (newValue * (double)tCell.lastValue)/100 + 100;
+                            else if(radioPercent.Checked)
+                                newValue = (100 - newValue) / 100 * (double)tCell.cmpValue;
                         }
                     }
                 }
@@ -2516,7 +2516,7 @@ namespace UniversalPatcher
         {
             if (radioPercent.Checked)
             {
-                disableSaving = true;
+                //disableSaving = true;
                 loadTable();
             }
         }
@@ -2584,6 +2584,105 @@ namespace UniversalPatcher
         {
             showRawHEXValuesToolStripMenuItem.Checked = chkRawHex.Checked;
             loadTable();
+        }
+
+        private void pasteSpecialToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PasteSpecial();
+        }
+
+        private void PasteSpecial()
+        {
+            try
+            {
+                //Show Error if no cell is selected
+                if (dataGridView1.SelectedCells.Count == 0)
+                {
+                    MessageBox.Show("Please select a cell", "Paste",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                frmPasteSpecial fps = new frmPasteSpecial();
+                if (fps.ShowDialog() != DialogResult.OK)
+                    return;
+
+                string cellPosMath = "X";
+                string cellNegMath = "X";
+                if (fps.radioAdd.Checked)
+                {
+                    cellPosMath = "X+C";
+                    cellNegMath = "X+C";
+                }
+                else if (fps.radioMultiply.Checked)
+                {
+                    cellPosMath = "C*X";
+                    cellNegMath = "C*X";
+                }
+                else if (fps.radioPercent.Checked)
+                {
+                    cellPosMath = "(100+C)/100*X";
+                    cellNegMath = "(100+C)/100*X";
+                }
+                else if (fps.radioTarget.Checked)
+                {
+                    double target = Convert.ToDouble(fps.txtTarget.Text, System.Globalization.CultureInfo.InvariantCulture);
+                    cellPosMath = "C/" + target.ToString()+"*X";
+                    cellNegMath = "C/" + target.ToString() + "*X"; 
+                }
+                else if (fps.radioCustom.Checked)
+                {
+                    cellPosMath = fps.txtCustomPositive.Text;
+                    cellNegMath = fps.txtCustomNegative.Text;
+                }
+
+                dataGridView1.BeginEdit(true);
+
+                //Get the starting Cell
+                DataGridViewCell startCell = GetStartCell(dataGridView1);
+                //Get the clipboard value in a dictionary
+                Dictionary<int, Dictionary<int, string>> cbValue =
+                        ClipBoardValues(Clipboard.GetText());
+
+                int iRowIndex = startCell.RowIndex;
+                foreach (int rowKey in cbValue.Keys)
+                {
+                    int iColIndex = startCell.ColumnIndex;
+                    foreach (int cellKey in cbValue[rowKey].Keys)
+                    {
+                        //Check if the index is within the limit
+                        if (iColIndex <= dataGridView1.Columns.Count - 1
+                        && iRowIndex <= dataGridView1.Rows.Count - 1)
+                        {
+                            DataGridViewCell cell = dataGridView1[iColIndex, iRowIndex];
+
+                            //Copy to selected cells if 'chkPasteToSelectedCells' is checked
+                            //if ((chkPasteToSelectedCells.Checked && cell.Selected) || (!chkPasteToSelectedCells.Checked))
+                            double cbVal = Convert.ToDouble(cbValue[rowKey][cellKey]);
+                            string mathTxt = "X";
+                            if (cbVal >= 0)
+                                mathTxt = cellPosMath.Replace("X", cell.Value.ToString());
+                            else
+                                mathTxt = cellNegMath.Replace("X", cell.Value.ToString());
+                            mathTxt = mathTxt.Replace("C", cbVal.ToString());
+                            Debug.WriteLine(mathTxt);
+                            cell.Value = parser.Parse(mathTxt);
+                        }
+                        iColIndex++;
+                    }
+                    iRowIndex++;
+                }
+                dataGridView1.EndEdit();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
         }
 
 

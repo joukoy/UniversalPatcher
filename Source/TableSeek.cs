@@ -478,7 +478,7 @@ namespace UniversalPatcher
 
                 for (int s = 0; s < tableSeeks.Count; s++)
                 {
-                    Logger(".", false);
+                    //Logger(".", false);
                     Application.DoEvents();
                     Debug.WriteLine(tableSeeks[s].Name + " Usehit: " + tableSeeks[s].UseHit);
                     if (tableSeeks[s].SearchStr.Length == 0)
