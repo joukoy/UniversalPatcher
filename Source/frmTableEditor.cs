@@ -2658,15 +2658,19 @@ namespace UniversalPatcher
 
                             //Copy to selected cells if 'chkPasteToSelectedCells' is checked
                             //if ((chkPasteToSelectedCells.Checked && cell.Selected) || (!chkPasteToSelectedCells.Checked))
-                            double cbVal = Convert.ToDouble(cbValue[rowKey][cellKey]);
-                            string mathTxt = "X";
-                            if (cbVal >= 0)
-                                mathTxt = cellPosMath.Replace("X", cell.Value.ToString());
-                            else
-                                mathTxt = cellNegMath.Replace("X", cell.Value.ToString());
-                            mathTxt = mathTxt.Replace("C", cbVal.ToString());
-                            Debug.WriteLine(mathTxt);
-                            cell.Value = parser.Parse(mathTxt);
+                            double cbVal;
+                            if (Double.TryParse(cbValue[rowKey][cellKey].ToString(), out cbVal))
+                            {
+                                //double cbVal = Convert.ToDouble(cbValue[rowKey][cellKey], System.Globalization.CultureInfo.InvariantCulture, out cbVal);
+                                string mathTxt = "X";
+                                if (cbVal >= 0)
+                                    mathTxt = cellPosMath.Replace("X", cell.Value.ToString());
+                                else
+                                    mathTxt = cellNegMath.Replace("X", cell.Value.ToString());
+                                mathTxt = mathTxt.Replace("C", cbVal.ToString());
+                                Debug.WriteLine(mathTxt);
+                                cell.Value = parser.Parse(mathTxt);
+                            }
                         }
                         iColIndex++;
                     }
