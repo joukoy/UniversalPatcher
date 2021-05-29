@@ -576,46 +576,26 @@ namespace UniversalPatcher
                 else
                     compareList = PCM.tableDatas.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
 
-                var results = compareList.Where(t => t.id < uint.MaxValue); //How should I define empty variable??
+                IEnumerable<TableData> results = compareList;
 
                 if (txtSearchTableSeek.Text.Length > 0)
                 {
                     string newStr = txtSearchTableSeek.Text.Replace("OR", "|");
                     if (newStr.Contains("|"))
                     {
-                        if (caseSensitiveFilteringToolStripMenuItem.Checked)
+                        string[] orStr = newStr.Split('|');
+                        List<TableData> newTDList = new List<TableData>();
+                        foreach (string orS in orStr)
                         {
-                            string[] orStr = newStr.Split('|');
-                            if (orStr.Length == 2)
-                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[0].Trim()) ||
-                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[1].Trim()));
-                            if (orStr.Length == 3)
-                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[0].Trim()) ||
-                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[1].Trim()) ||
-                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[2].Trim()));
-                            if (orStr.Length == 4)
-                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[0].Trim()) ||
-                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[1].Trim()) ||
-                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[2].Trim()) ||
-                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[3].Trim()));
+                            IEnumerable<TableData> tmpRes = new List<TableData>();
+                            if (caseSensitiveFilteringToolStripMenuItem.Checked)
+                                tmpRes = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orS.Trim()));
+                            else
+                                tmpRes = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orS.Trim().ToLower()));
+                            foreach (TableData td in tmpRes)
+                                newTDList.Add(td);
                         }
-                        else
-                        {
-                            string[] orStr = newStr.ToLower().Split('|');
-                            if (orStr.Length == 2)
-                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
-                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()));
-                            if (orStr.Length == 3)
-                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
-                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()) ||
-                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2].Trim()));
-                            if (orStr.Length == 4)
-                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
-                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()) ||
-                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2].Trim()) ||
-                                typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[3].Trim()));
-
-                        }
+                        results = newTDList;
                     }
                     else
                     {

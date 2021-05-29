@@ -391,45 +391,27 @@ namespace UniversalPatcher
             else
                 compareList = displayDatas.OrderByDescending(x => typeof(MassModProperties).GetProperty(sortBy).GetValue(x, null)).ToList();
 
-            var results = compareList.Where(t => t.TableName != ""); //How should I define empty variable??
+            IEnumerable<MassModProperties> results = compareList;
 
             if (txtSearch.Text.Length > 0)
             {
                 string newStr = txtSearch.Text.Replace("OR", "|");
                 if (newStr.Contains("|"))
                 {
-                    if (chkCaseSensitive.Checked)
+                    string[] orStr = newStr.Split('|');
+                    List<MassModProperties> newMMList = new List<MassModProperties>();
+                    foreach (string orS in orStr)
                     {
-                        string[] orStr = newStr.Split('|');
-                        if (orStr.Length == 2)
-                            results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[0].Trim()) ||
-                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[1].Trim()));
-                        if (orStr.Length == 3)
-                            results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[0].Trim()) ||
-                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[1].Trim()) ||
-                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[2].Trim()));
-                        if (orStr.Length == 4)
-                            results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[0].Trim()) ||
-                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[1].Trim()) ||
-                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[2].Trim()) ||
-                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orStr[3].Trim()));
+                        IEnumerable<MassModProperties> tmpRes = new List<MassModProperties>();
+                        if (chkCaseSensitive.Checked)
+                            tmpRes = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orS.Trim()));
+                        else
+                            tmpRes = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orS.Trim().ToLower()));
+                        foreach (MassModProperties mmp in tmpRes)
+                            newMMList.Add(mmp);
                     }
-                    else
-                    {
-                        string[] orStr = newStr.ToLower().Split('|');
-                        if (orStr.Length == 2)
-                            results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
-                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()));
-                        if (orStr.Length == 3)
-                            results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
-                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()) ||
-                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2].Trim()));
-                        if (orStr.Length == 4)
-                            results = results.Where(t => typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[0].Trim()) ||
-                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[1].Trim()) ||
-                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[2].Trim()) ||
-                            typeof(MassModProperties).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orStr[3].Trim()));
-                    }
+                    results = newMMList;
+
                 }
                 else
                 {
