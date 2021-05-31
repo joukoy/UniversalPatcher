@@ -29,10 +29,10 @@ namespace UniversalPatcher
         public string StatusSearch { get; set; }
         public string MilSearch { get; set; }
         public string MilTable { get; set; }
-        public int CodeOffset { get; set; }
+        public Int64 CodeOffset { get; set; }
         public int CodeSteps { get; set; }
-        public int StatusOffset { get; set; }
-        public int MilOffset { get; set; }
+        public Int64 StatusOffset { get; set; }
+        public Int64 MilOffset { get; set; }
         public int StatusSteps { get; set; }
         public int MilSteps { get; set; }
         public string ConditionalOffset { get; set; }

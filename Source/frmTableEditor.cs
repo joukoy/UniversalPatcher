@@ -599,12 +599,23 @@ namespace UniversalPatcher
         {
             if (menuTxt == null || menuTxt.Length == 0)
                 return;
-            string selectedBin = menuTxt.Substring(0, 1);
+            string selectedBin = getFileLetter(menuTxt);
             radioCompareFile.Text = selectedBin;
             radioDifference.Text = radioOriginal.Text + " > " + selectedBin;
             radioDifference2.Text = radioOriginal.Text + " < " + selectedBin;
             radioSideBySide.Text = radioOriginal.Text + " | " + selectedBin;
             radioSideBySideText.Text = radioOriginal.Text + " [" + selectedBin + "]";
+            radioCompareAll.Text = radioOriginal.Text + " | *";
+        }
+
+        private string getFileLetter(string menuTxt)
+        {
+            string retVal = "";
+
+            int pos = menuTxt.IndexOf(':');
+            if (pos > -1)
+                retVal = menuTxt.Substring(0, pos);
+            return retVal;
         }
 
         public void addCompareFiletoMenu(PcmFile cmpPCM, TableData _compareTd, string menuTxt)
@@ -618,15 +629,16 @@ namespace UniversalPatcher
                 if (menuTxt.Length > 0)
                 {
                     menuitem.Text = menuTxt;
-                    cmpFile.fileLetter = menuitem.Text.Substring(0, 1);
+                    cmpFile.fileLetter = getFileLetter(menuTxt);
                 }
                 else
                 {
-                    char lastFile = 'A';
+                    int lastFile = 0;
                     foreach (ToolStripMenuItem mi in compareToolStripMenuItem.DropDownItems)
                         lastFile++;
-                    menuitem.Text = lastFile.ToString() + ": " + cmpPCM.FileName;
-                    cmpFile.fileLetter = lastFile.ToString();
+                    string fLetter = Base26Encode(lastFile);
+                    menuitem.Text = fLetter + ": " + cmpPCM.FileName;
+                    cmpFile.fileLetter = fLetter;
                 }
                 prepareCompareTable(cmpFile);
                 menuitem.Click += compareSelection_Click;
@@ -708,14 +720,13 @@ namespace UniversalPatcher
             try
             {
                 CompareFile cmpFile = new CompareFile(pcm);
+                if (!pcm.seekTablesImported)
+                    pcm.importSeekTables();
+                TableSeek tSeek = tableSeeks[pcm.foundTables[tId].configId];
+                this.Text = "Table Editor: " + pcm.foundTables[tId].Name;
 
-                if (!compareFiles[0].pcm.seekTablesImported)
-                    compareFiles[0].pcm.importSeekTables();
-                TableSeek tSeek = tableSeeks[compareFiles[0].pcm.foundTables[tId].configId];
-                this.Text = "Table Editor: " + compareFiles[0].pcm.foundTables[tId].Name;
-
-                FoundTable ft = compareFiles[0].pcm.foundTables[tId];
-                for (int f = 0; f < compareFiles[0].pcm.tableDatas.Count; f++)
+                FoundTable ft = pcm.foundTables[tId];
+                for (int f = 0; f < pcm.tableDatas.Count; f++)
                 {
                     if (pcm.tableDatas[f].TableName == tSeek.Name && pcm.tableDatas[f].addrInt == ft.addrInt)
                     {
@@ -1837,7 +1848,7 @@ namespace UniversalPatcher
             try
             {
                 int dgv_width = dataGridView1.Columns.GetColumnsWidth(DataGridViewElementStates.Visible) + dataGridView1.RowHeadersWidth;
-                if (dgv_width < 500) dgv_width = 500;
+                if (dgv_width < 550) dgv_width = 550;
                 int dgv_height = dataGridView1.Rows.GetRowsHeight(DataGridViewElementStates.Visible) + dataGridView1.ColumnHeadersHeight;
                 Screen myScreen = Screen.FromPoint(MousePosition);
                 System.Drawing.Rectangle area = myScreen.WorkingArea;
@@ -2417,7 +2428,10 @@ namespace UniversalPatcher
                 cBox.Location = new Point(left, 50);
                 cBox.BringToFront();
                 cBox.CheckedChanged += CBox_CheckedChanged;
-                left += 30;
+                if (cBox.Text.Length == 1)
+                    left += 30;
+                else
+                    left += 40;
             }
         }
 

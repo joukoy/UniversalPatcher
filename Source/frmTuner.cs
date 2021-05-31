@@ -179,7 +179,7 @@ namespace UniversalPatcher
 
                 ToolStripMenuItem mitem = (ToolStripMenuItem)currentFileToolStripMenuItem.DropDownItems[PCM.FileName];
                 mitem.Checked = true;
-                currentBin = mitem.Text.Substring(0, 1);
+                currentBin = getFileLetter(mitem.Text);
 
                 filterTables();
                 if (treeView1.Visible)
@@ -1994,6 +1994,16 @@ namespace UniversalPatcher
             Debug.WriteLine("Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
         }
 
+        private string getFileLetter(string menuTxt)
+        {
+            string retVal = "";
+
+            int pos = menuTxt.IndexOf(':');
+            if (pos > -1)
+                retVal = menuTxt.Substring(0, pos);
+            return retVal;
+        }
+
         public void addtoCurrentFileMenu(PcmFile newPCM, bool setdefault = true)
         {
             try
@@ -2002,12 +2012,13 @@ namespace UniversalPatcher
                     foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                         mi.Checked = false;
 
-                char lastFile = 'A';
+                int lastFile = 0;
                 foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                     lastFile++;
+                string fLetter = Base26Encode(lastFile);
 
                 ToolStripMenuItem menuitem = new ToolStripMenuItem(newPCM.FileName);
-                menuitem.Text = lastFile.ToString() + ": " + newPCM.FileName;
+                menuitem.Text = fLetter + ": " + newPCM.FileName;
                 menuitem.Name = newPCM.FileName;
                 menuitem.Tag = newPCM;
                 if (setdefault)

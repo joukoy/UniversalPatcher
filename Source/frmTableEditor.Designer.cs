@@ -41,6 +41,7 @@ namespace UniversalPatcher
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pasteSpecialToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportCsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchCodeFromGoogleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyFromCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,7 +80,6 @@ namespace UniversalPatcher
             this.radioMultiplier = new System.Windows.Forms.RadioButton();
             this.radioAbsolute = new System.Windows.Forms.RadioButton();
             this.chkRawHex = new System.Windows.Forms.CheckBox();
-            this.pasteSpecialToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -102,7 +102,7 @@ namespace UniversalPatcher
             this.dataGridView1.Location = new System.Drawing.Point(2, 72);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(629, 359);
+            this.dataGridView1.Size = new System.Drawing.Size(583, 359);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
@@ -149,7 +149,7 @@ namespace UniversalPatcher
             this.copyFromCompareToolStripMenuItem,
             this.copyTableFromCompareToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 202);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 180);
             // 
             // cutToolStripMenuItem
             // 
@@ -171,6 +171,13 @@ namespace UniversalPatcher
             this.pasteToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
+            // 
+            // pasteSpecialToolStripMenuItem
+            // 
+            this.pasteSpecialToolStripMenuItem.Name = "pasteSpecialToolStripMenuItem";
+            this.pasteSpecialToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.pasteSpecialToolStripMenuItem.Text = "Paste Special...";
+            this.pasteSpecialToolStripMenuItem.Click += new System.EventHandler(this.pasteSpecialToolStripMenuItem_Click);
             // 
             // exportCsvToolStripMenuItem
             // 
@@ -210,7 +217,7 @@ namespace UniversalPatcher
             this.compareToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(633, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(587, 24);
             this.menuStrip1.TabIndex = 6;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -371,7 +378,7 @@ namespace UniversalPatcher
             this.groupSelectCompare.Enabled = false;
             this.groupSelectCompare.Location = new System.Drawing.Point(9, 27);
             this.groupSelectCompare.Name = "groupSelectCompare";
-            this.groupSelectCompare.Size = new System.Drawing.Size(384, 20);
+            this.groupSelectCompare.Size = new System.Drawing.Size(434, 20);
             this.groupSelectCompare.TabIndex = 10;
             this.groupSelectCompare.TabStop = false;
             this.groupSelectCompare.Text = "Show";
@@ -380,7 +387,7 @@ namespace UniversalPatcher
             // 
             this.radioDifference2.AutoSize = true;
             this.radioDifference2.Enabled = false;
-            this.radioDifference2.Location = new System.Drawing.Point(338, 0);
+            this.radioDifference2.Location = new System.Drawing.Point(362, 0);
             this.radioDifference2.Name = "radioDifference2";
             this.radioDifference2.Size = new System.Drawing.Size(51, 17);
             this.radioDifference2.TabIndex = 6;
@@ -392,7 +399,7 @@ namespace UniversalPatcher
             // radioCompareAll
             // 
             this.radioCompareAll.AutoSize = true;
-            this.radioCompareAll.Location = new System.Drawing.Point(231, 0);
+            this.radioCompareAll.Location = new System.Drawing.Point(246, 0);
             this.radioCompareAll.Name = "radioCompareAll";
             this.radioCompareAll.Size = new System.Drawing.Size(44, 17);
             this.radioCompareAll.TabIndex = 5;
@@ -404,7 +411,7 @@ namespace UniversalPatcher
             // radioSideBySideText
             // 
             this.radioSideBySideText.AutoSize = true;
-            this.radioSideBySideText.Location = new System.Drawing.Point(177, 0);
+            this.radioSideBySideText.Location = new System.Drawing.Point(186, 0);
             this.radioSideBySideText.Name = "radioSideBySideText";
             this.radioSideBySideText.Size = new System.Drawing.Size(48, 17);
             this.radioSideBySideText.TabIndex = 4;
@@ -416,7 +423,7 @@ namespace UniversalPatcher
             // radioSideBySide
             // 
             this.radioSideBySide.AutoSize = true;
-            this.radioSideBySide.Location = new System.Drawing.Point(121, 0);
+            this.radioSideBySide.Location = new System.Drawing.Point(126, 0);
             this.radioSideBySide.Name = "radioSideBySide";
             this.radioSideBySide.Size = new System.Drawing.Size(47, 17);
             this.radioSideBySide.TabIndex = 3;
@@ -429,7 +436,7 @@ namespace UniversalPatcher
             // 
             this.radioDifference.AutoSize = true;
             this.radioDifference.Enabled = false;
-            this.radioDifference.Location = new System.Drawing.Point(281, 0);
+            this.radioDifference.Location = new System.Drawing.Point(299, 0);
             this.radioDifference.Name = "radioDifference";
             this.radioDifference.Size = new System.Drawing.Size(51, 17);
             this.radioDifference.TabIndex = 2;
@@ -527,7 +534,7 @@ namespace UniversalPatcher
             this.groupDifference.Controls.Add(this.radioPercent);
             this.groupDifference.Controls.Add(this.radioMultiplier);
             this.groupDifference.Controls.Add(this.radioAbsolute);
-            this.groupDifference.Location = new System.Drawing.Point(399, 27);
+            this.groupDifference.Location = new System.Drawing.Point(442, 27);
             this.groupDifference.Name = "groupDifference";
             this.groupDifference.Size = new System.Drawing.Size(127, 20);
             this.groupDifference.TabIndex = 17;
@@ -580,18 +587,11 @@ namespace UniversalPatcher
             this.chkRawHex.UseVisualStyleBackColor = true;
             this.chkRawHex.CheckedChanged += new System.EventHandler(this.chkRawHex_CheckedChanged);
             // 
-            // pasteSpecialToolStripMenuItem
-            // 
-            this.pasteSpecialToolStripMenuItem.Name = "pasteSpecialToolStripMenuItem";
-            this.pasteSpecialToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-            this.pasteSpecialToolStripMenuItem.Text = "Paste Special...";
-            this.pasteSpecialToolStripMenuItem.Click += new System.EventHandler(this.pasteSpecialToolStripMenuItem_Click);
-            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(633, 450);
+            this.ClientSize = new System.Drawing.Size(587, 450);
             this.Controls.Add(this.chkRawHex);
             this.Controls.Add(this.groupDifference);
             this.Controls.Add(this.labelInfo);
