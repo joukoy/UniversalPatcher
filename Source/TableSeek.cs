@@ -320,10 +320,10 @@ namespace UniversalPatcher
                     return "";
                 for (int c = 0; c < PCM.segmentinfos.Length; c++)
                     PCM.tableCategories.Add("Seg-" + PCM.segmentinfos[c].Name);
-                string fileName = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + PCM.configFile + ".xml");
-                if (fileName != tableSeekFile)
+                string fileName = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + PCM.configFile + ".xml").Replace("_nbb.",".");
+                //if (fileName != tableSeekFile)
                 {
-                    tableSeekFile = fileName;
+                    //tableSeekFile = fileName;
                     if (File.Exists(fileName))
                     {                        
                         Debug.WriteLine("Loading " + fileName);
@@ -418,7 +418,6 @@ namespace UniversalPatcher
                     }
                 }
 
-                //Optimization?
                 startBytes = new List<byte>();
                 starters = new List<Starter>();
                 for (int s = 0; s < tableSeeks.Count; s++)

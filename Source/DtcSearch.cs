@@ -125,19 +125,19 @@ namespace UniversalPatcher
                         searchStr = dtcSearchConfigs[configIndex].CodeSearch;
                         startAddr = 0;
                         condOffset = false;
-                        if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("code")) condOffset = true;                        
+                        if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("code")) 
+                            condOffset = true;                        
                         codeAddr = getAddrbySearchString(PCM, searchStr,ref startAddr,PCM.fsize, condOffset).Addr;
                         //Check if we found status table, too:
                         startAddr = 0;
-                        condOffset = false;
-                        if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("status")) condOffset = true;
                         statusAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].StatusSearch, ref startAddr,PCM.fsize, condOffset).Addr;
+                        codeAddr = (uint)(codeAddr + dtcSearchConfigs[configIndex].CodeOffset);
+                        statusAddr = (uint)(statusAddr + dtcSearchConfigs[configIndex].StatusOffset);
                         if (codeAddr < PCM.fsize && statusAddr < PCM.fsize)
                         {
                             Debug.WriteLine("Code search string: " + searchStr);
                             Debug.WriteLine("DTC code table address: " + codeAddr.ToString("X"));
-                            codeAddr = (uint)(codeAddr + dtcSearchConfigs[configIndex].CodeOffset);
-                            if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("code"))
+                            if (condOffset)
                             {
                                 uint a = codeAddr;
                                 int prevCode = BEToUint16(PCM.buf, a); 
@@ -155,7 +155,6 @@ namespace UniversalPatcher
                                     prevCode = BEToUint16(PCM.buf, a);
                                 }
                             }
-                            statusAddr = (uint)(statusAddr + dtcSearchConfigs[configIndex].StatusOffset);
                             Debug.WriteLine("DTC status table address: " + statusAddr.ToString("X"));
                             break;
                         }

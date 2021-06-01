@@ -338,7 +338,7 @@ public class upatcher
     public static List<RichTextBox> LogReceivers;
 
     public static string tableSearchFile;
-    public static string tableSeekFile = "";
+    //public static string tableSeekFile = "";
     public static MathParser parser = new MathParser();
     public static SavingMath savingMath = new SavingMath();
 
