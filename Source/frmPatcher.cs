@@ -2764,8 +2764,8 @@ namespace UniversalPatcher
                     return;
                 }
                 frmEditXML frmE = new frmEditXML();
-            
-                frmE.LoadTableSeek(Path.Combine(Application.StartupPath, "XML", "TableSeek-" + basefile.configFile + ".xml") );
+                string seekFile = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + basefile.configFile + ".xml").Replace("_nbb.", ".");
+                frmE.LoadTableSeek(seekFile);
                 frmE.Show();
             }
             catch (Exception ex)

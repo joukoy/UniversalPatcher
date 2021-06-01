@@ -326,7 +326,7 @@ namespace UniversalPatcher
                     //tableSeekFile = fileName;
                     if (File.Exists(fileName))
                     {                        
-                        Debug.WriteLine("Loading " + fileName);
+                        Logger(" (" + Path.GetFileName(fileName) + ") ",false);
                         System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSeek>));
                         System.IO.StreamReader file = new System.IO.StreamReader(fileName);
                         tableSeeks = (List<TableSeek>)reader.Deserialize(file);
