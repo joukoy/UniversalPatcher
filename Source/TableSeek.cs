@@ -510,7 +510,9 @@ namespace UniversalPatcher
                         for (int y=0; y< segStrings.Length; y++)
                         {
                             int segNr = 0;
-                            if (int.TryParse( segStrings[y], out segNr) == false) throw new Exception("Unknown segment: " + segStrings[y]);
+                            if (int.TryParse( segStrings[y], out segNr) == false) 
+                                throw new Exception("Unknown segment: " + segStrings[y]);
+                            segNr = PCM.getSegmentByNumer(segNr);
                             for (int b=0; b< PCM.segmentAddressDatas[segNr].SegmentBlocks.Count; b++)
                                 addrList.Add(PCM.segmentAddressDatas[segNr].SegmentBlocks[b]);
                         }

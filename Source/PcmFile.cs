@@ -532,6 +532,7 @@ namespace UniversalPatcher
             osAddressList = (List<osAddresses>)reader.Deserialize(file);
             file.Close();
         }
+
         private void GetSegmentAddresses()
         {
             segmentAddressDatas = new SegmentAddressData[Segments.Count];
@@ -1656,5 +1657,19 @@ namespace UniversalPatcher
             return retVal;
         }
 
+        // If segment number can be read from bin, use that number
+        // Othwerwise use ordernumber
+        public int getSegmentByNumer(int nr)
+        {
+            int retVal = nr;
+            for (int i=0; i< segmentinfos.Length; i++)
+            {
+                if (segmentinfos[i].SegNr == nr.ToString())
+                    return i;
+            }
+            
+            return retVal;
+
+        }
     }
 }
