@@ -25,6 +25,7 @@ namespace UniversalPatcher
             SavingMath = "X";
             Offset = 0;
             ConditionalOffset = false;
+            SignedOffset = false;
             Decimals = 2;
             Min = 0;
             Max = 255;
@@ -47,6 +48,7 @@ namespace UniversalPatcher
         public string SavingMath { get; set; }
         public int Offset { get; set; }
         public bool ConditionalOffset { get; set; }
+        public bool SignedOffset { get; set; }
         public InDataType DataType { get; set; }
         public ushort Decimals { get; set; }
         public OutDataType OutputType { get; set; }
@@ -169,7 +171,7 @@ namespace UniversalPatcher
             return retVal.Trim();
         }
 
-        private SearchedAddress searchAddrBySearchString(PcmFile PCM, string searchStr, ref uint startAddr, uint endAddr, bool conditionalOffset = false, string validationSearchStr = "")
+        private SearchedAddress searchAddrBySearchString(PcmFile PCM, string searchStr, ref uint startAddr, uint endAddr, TableSeek tSeek)
         {
             SearchedAddress retVal;
             retVal.Addr = uint.MaxValue;
@@ -197,10 +199,10 @@ namespace UniversalPatcher
                 string[] sParts = searchStr.Trim().Split(' ');
                 startAddr = addr + (uint)sParts.Length;
 
-                if (validationSearchStr != null && validationSearchStr != "")
+                if (tSeek.ValidationSearchStr != null && tSeek.ValidationSearchStr != "")
                 {
                     bool validated = false;
-                    string[] validationList = validationSearchStr.Split(',');
+                    string[] validationList = tSeek.ValidationSearchStr.Split(',');
                     for (int v = 0; v < validationList.Length; v++)
                     {
                         string vStr = validationList[v];
@@ -280,10 +282,16 @@ namespace UniversalPatcher
                 }
 
                 retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 24 | PCM.buf[addr + locations[1]] << 16 | PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
-                if (conditionalOffset)
+                if (tSeek.ConditionalOffset)
                 {
                     ushort addrWord = (ushort)(PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
                     if (addrWord > 0x5000)
+                        retVal.Addr -= 0x10000;
+                }
+                if (tSeek.SignedOffset)
+                {
+                    ushort addrWord = (ushort)(PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
+                    if (addrWord > 0x8000)
                         retVal.Addr -= 0x10000;
                 }
             }
@@ -553,7 +561,7 @@ namespace UniversalPatcher
                             wantedHit = wantedHitList[wHit];
                             string[] ssParts = tableSeeks[s].SearchStr.Split('+');     //At end of string can be +D4 +1W6 etc, for reading next address from found addr
                             Debug.WriteLine("TableSeek: Searching: " + tableSeeks[s].SearchStr + ", Start: " + startAddr.ToString("X") + ", end: " + endAddr.ToString("X"));                            
-                            sAddr = searchAddrBySearchString(PCM, ssParts[0], ref startAddr, endAddr, tableSeeks[s].ConditionalOffset, tableSeeks[s].ValidationSearchStr);
+                            sAddr = searchAddrBySearchString(PCM, ssParts[0], ref startAddr, endAddr, tableSeeks[s]);
                             for (int jump = 1; jump < ssParts.Length && sAddr.Addr < PCM.fsize; jump++)
                             {
                                 //Read table address from address we found by searchstring
