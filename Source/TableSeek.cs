@@ -25,12 +25,10 @@ namespace UniversalPatcher
             SavingMath = "X";
             Offset = 0;
             ConditionalOffset = false;
-            Bits = 16;
             Decimals = 2;
             Min = 0;
             Max = 255;
             OutputType = OutDataType.Float;
-            Floating = false;
             UseHit = "1";
             Range = "";
             Segments = "";
@@ -50,14 +48,10 @@ namespace UniversalPatcher
         public int Offset { get; set; }
         public bool ConditionalOffset { get; set; }
         public InDataType DataType { get; set; }
-        public ushort Bits;
-        public bool Signed;
         public ushort Decimals { get; set; }
-        public bool Floating;
         public OutDataType OutputType { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }
-
         public string UseHit { get; set; }
         public string Range { get; set; }
         public string Segments { get; set; }
@@ -320,7 +314,8 @@ namespace UniversalPatcher
                     return "";
                 for (int c = 0; c < PCM.segmentinfos.Length; c++)
                     PCM.tableCategories.Add("Seg-" + PCM.segmentinfos[c].Name);
-                string fileName = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + PCM.configFile + ".xml").Replace("_nbb.",".");
+
+                string fileName = PCM.tableSeekFile;
                 //if (fileName != tableSeekFile)
                 {
                     //tableSeekFile = fileName;
@@ -510,9 +505,7 @@ namespace UniversalPatcher
                         for (int y=0; y< segStrings.Length; y++)
                         {
                             int segNr = 0;
-                            if (int.TryParse( segStrings[y], out segNr) == false) 
-                                throw new Exception("Unknown segment: " + segStrings[y]);
-                            segNr = PCM.getSegmentByNumer(segNr);
+                            segNr = PCM.getSegmentByNr(segStrings[y]);
                             for (int b=0; b< PCM.segmentAddressDatas[segNr].SegmentBlocks.Count; b++)
                                 addrList.Add(PCM.segmentAddressDatas[segNr].SegmentBlocks[b]);
                         }

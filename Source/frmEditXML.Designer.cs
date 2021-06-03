@@ -121,7 +121,6 @@ namespace UniversalPatcher
             this.convertToDataTypeToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.convertToDataTypeToolStripMenuItem.Text = "Convert to DataType";
             this.convertToDataTypeToolStripMenuItem.Visible = false;
-            this.convertToDataTypeToolStripMenuItem.Click += new System.EventHandler(this.convertToDataTypeToolStripMenuItem_Click);
             // 
             // importToolStripMenuItem
             // 

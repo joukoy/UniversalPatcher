@@ -105,6 +105,22 @@ namespace UniversalPatcher
         public List<string> tunerFileList { get; set; }
         public bool seekTablesImported;
 
+        public string tableSeekFile
+        {
+            get
+            {
+                string cnfFile = configFile;
+                if (configFile.Contains("."))
+                {
+                    int pos = configFile.IndexOf(".");
+                    cnfFile = cnfFile.Substring(0, pos);
+                }
+
+                return Path.Combine(Application.StartupPath, "XML", "TableSeek-" + cnfFile + ".xml");
+
+            }
+        }
+
         public void setDefaultValues()
         {
             OS = "";
@@ -1659,17 +1675,19 @@ namespace UniversalPatcher
 
         // If segment number can be read from bin, use that number
         // Othwerwise use ordernumber
-        public int getSegmentByNumer(int nr)
+        public int getSegmentByNr(string nr)
         {
-            int retVal = nr;
             for (int i=0; i< segmentinfos.Length; i++)
             {
-                if (segmentinfos[i].SegNr == nr.ToString())
+                if (segmentinfos[i].SegNr == nr.Trim())
                     return i;
             }
-            
-            return retVal;
 
+            int retVal;
+            if (int.TryParse(nr, out retVal) == false)
+                throw new Exception("Unknown segment: " + nr);
+
+            return retVal;
         }
     }
 }

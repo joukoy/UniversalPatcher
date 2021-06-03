@@ -438,16 +438,6 @@ namespace UniversalPatcher
             }
         }
 
-        private void convertToDataTypeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            for (int i = 0; i < tableSeeks.Count; i++)
-            {
-                TableSeek t = tableSeeks[i];
-                t.DataType = convertToDataType(t.Bits / 8, t.Signed, t.Floating);
-            }
-
-            refreshTableSeek();
-        }
         private void dataGridView1_Dataerror(object sender, DataGridViewDataErrorEventArgs e)
         {
             Debug.WriteLine(e.Exception);
