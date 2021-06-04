@@ -197,6 +197,7 @@
             this.oBD2CodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.segmentSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1961,6 +1962,7 @@
             this.fileTypesToolStripMenuItem,
             this.dTCSearchToolStripMenuItem,
             this.tableSeekToolStripMenuItem,
+            this.segmentSeekToolStripMenuItem,
             this.rememberWindowSizeToolStripMenuItem,
             this.disableTunerAutloadConfigToolStripMenuItem,
             this.moreSettingsToolStripMenuItem,
@@ -2067,6 +2069,13 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // segmentSeekToolStripMenuItem
+            // 
+            this.segmentSeekToolStripMenuItem.Name = "segmentSeekToolStripMenuItem";
+            this.segmentSeekToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.segmentSeekToolStripMenuItem.Text = "SegmentSeek";
+            this.segmentSeekToolStripMenuItem.Click += new System.EventHandler(this.segmentSeekToolStripMenuItem_Click);
             // 
             // FrmPatcher
             // 
@@ -2308,5 +2317,6 @@
         public System.Windows.Forms.Label labelXML;
         private System.Windows.Forms.ToolStripMenuItem moreSettingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem oBD2CodesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem segmentSeekToolStripMenuItem;
     }
 }

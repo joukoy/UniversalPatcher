@@ -74,6 +74,7 @@ namespace UniversalPatcher
             LogReceivers = new List<RichTextBox>();
             basefile = new PcmFile();
             tableSeeks = new List<TableSeek>();
+            segmentSeeks = new List<SegmentSeek>();
 
             if (Properties.Settings.Default.MainWindowPersistence)
             {
@@ -2966,6 +2967,25 @@ namespace UniversalPatcher
             frmEX.Show();
         }
 
+        private void segmentSeekToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (basefile.configFileFullName == null)
+                {
+                    Logger("No file/XML selected");
+                    return;
+                }
+                frmEditXML frmE = new frmEditXML();
+                frmE.Show();
+                frmE.LoadSegmentSeek(basefile.segmentSeekFile);
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+
+        }
     }
 }
 

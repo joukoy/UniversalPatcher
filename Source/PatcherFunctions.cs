@@ -333,6 +333,7 @@ public class upatcher
     public static List<OBD2Code> OBD2Codes;
     public static List<DtcSearchConfig> dtcSearchConfigs;
     public static List<TableSeek> tableSeeks;
+    public static List<SegmentSeek> segmentSeeks;
     public static List<UniversalPatcher.TableData> XdfElements;
     public static List<Units> unitList;
     public static List<RichTextBox> LogReceivers;
@@ -1934,7 +1935,7 @@ public class upatcher
     }
 
 
-    public static SearchedAddress getAddrbySearchString(PcmFile PCM, string searchStr, ref uint startAddr, uint endAddr, bool conditionalOffset = false)
+    public static SearchedAddress getAddrbySearchString(PcmFile PCM, string searchStr, ref uint startAddr, uint endAddr, bool conditionalOffset = false, bool signedOffset = false)
     {
         SearchedAddress retVal;
         retVal.Addr = uint.MaxValue;
@@ -2012,6 +2013,13 @@ public class upatcher
                 if (addrWord > 0x5000)
                     retVal.Addr -= 0x10000;
             }
+            if (signedOffset)
+            {
+                ushort addrWord = (ushort)(PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
+                if (addrWord > 0x8000)
+                    retVal.Addr -= 0x10000;
+            }
+
         }
         catch (Exception ex)
         {

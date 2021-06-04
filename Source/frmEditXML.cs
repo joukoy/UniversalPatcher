@@ -59,8 +59,18 @@ namespace UniversalPatcher
         {
             fileName = fname;
             this.Text = "Edit Table Seek config";
-            if (tableSeeks == null) tableSeeks = new List<TableSeek>();
+            if (tableSeeks == null) 
+                tableSeeks = new List<TableSeek>();
             refreshTableSeek();
+        }
+
+        public void LoadSegmentSeek(string fname)
+        {
+            fileName = fname;
+            this.Text = "Edit Segment Seek config";
+            if (segmentSeeks == null) 
+                segmentSeeks = new List<SegmentSeek>();
+            refreshSegmentSeek();
         }
 
         public void LoadTableData()
@@ -120,6 +130,20 @@ namespace UniversalPatcher
             //dataGridView1.Columns["DataType"].ToolTipText = "UBYTE,SBYTE,UWORD,SWORD,UINT32,INT32,UINT64,INT64,FLOAT32,FLOAT64";
             UseComboBoxForEnums(dataGridView1);
         }
+
+        private void refreshSegmentSeek()
+        {
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = segmentSeeks;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+
+            //dataGridView1.Columns["DataType"].ToolTipText = "1=Floating, 2=Integer, 3=Hex, 4=Ascii";
+            //dataGridView1.Columns["ConditionalOffset"].ToolTipText = "If set, and Opcode Address last 2 bytes > 0x5000, Offset = -10000";
+            //dataGridView1.Columns["DataType"].ToolTipText = "UBYTE,SBYTE,UWORD,SWORD,UINT32,INT32,UINT64,INT64,FLOAT32,FLOAT64";
+            UseComboBoxForEnums(dataGridView1);
+        }
+
         private void saveThis()
         {
             try
@@ -165,13 +189,24 @@ namespace UniversalPatcher
                 {
                     saveOBD2Codes();
                 }
-                else if (this.Text.Contains("Seek"))
+                else if (this.Text.ToLower().Contains("table seek"))
                 {
                     Logger("Saving file " + fileName, false);
                     using (FileStream stream = new FileStream(fileName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSeek>));
                         writer.Serialize(stream, tableSeeks);
+                        stream.Close();
+                    }
+                    Logger(" [OK]");
+                }
+                else if (this.Text.ToLower().Contains("segment seek"))
+                {
+                    Logger("Saving file " + fileName, false);
+                    using (FileStream stream = new FileStream(fileName, FileMode.Create))
+                    {
+                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentSeek>));
+                        writer.Serialize(stream, segmentSeeks);
                         stream.Close();
                     }
                     Logger(" [OK]");
@@ -367,7 +402,7 @@ namespace UniversalPatcher
 
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-            if (this.Text.Contains("Seek") && starting)
+            if (this.Text.Contains("Table Seek") && starting)
             {
                 dataGridView1.AutoResizeColumns();
                 dataGridView1.Columns["SearchStr"].Width = 100;

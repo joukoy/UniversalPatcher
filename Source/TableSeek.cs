@@ -67,7 +67,7 @@ namespace UniversalPatcher
 
         private PcmFile PCM;
 
-        public struct Starter
+        private struct Starter
         {
             public byte StartByte;
             public List<uint> addresses;

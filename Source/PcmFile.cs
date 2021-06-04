@@ -90,6 +90,7 @@ namespace UniversalPatcher
         public List<osAddresses> osAddressList;
         public List<SegmentConfig> Segments;
         public List<FoundTable> foundTables;
+        public List<FoundSegment> foundSegments;
         public List<dtcCode> dtcCodes;
         public List<string> tableCategories;
         public List<TableData> tableDatas;
@@ -120,6 +121,21 @@ namespace UniversalPatcher
 
             }
         }
+        public string segmentSeekFile
+        {
+            get
+            {
+                string cnfFile = configFile;
+                if (configFile.Contains("."))
+                {
+                    int pos = configFile.IndexOf(".");
+                    cnfFile = cnfFile.Substring(0, pos);
+                }
+
+                return Path.Combine(Application.StartupPath, "XML", "SegmentSeek-" + cnfFile + ".xml");
+
+            }
+        }
 
         public void setDefaultValues()
         {
@@ -131,6 +147,7 @@ namespace UniversalPatcher
             dtcCodes = new List<dtcCode>();
             tableDatas = new List<TableData>();
             foundTables = new List<FoundTable>();
+            foundSegments = new List<FoundSegment>();
             tableCategories = new List<string>();
             altTableDatas = new List<AltTableData>();
             tunerFileList = new List<string>();
@@ -1288,136 +1305,203 @@ namespace UniversalPatcher
 
         }
 
+        private uint seekAddress(string line)
+        {
+            uint retVal = uint.MaxValue;
+            try
+            {
+                if (foundSegments.Count == 0)
+                {
+                    SegmentSeek sSeek = new SegmentSeek();
+                    sSeek.seekSegments(this);
+                }
+
+                string[] parts = line.Split(':');
+                if (parts.Length < 2)
+                    throw new Exception("Name missing: " + line);
+
+                foreach (FoundSegment fs in foundSegments)
+                {
+                    if (fs.Name == parts[1])
+                    {
+                        Debug.WriteLine("SegmentSeek: " + fs.Name + ", Address: " + fs.Address);
+                        return fs.addrInt;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var errline = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, PcmFile line " + errline + ": " + ex.Message);
+            }
+            return retVal;
+
+        }
+
         public AddressData ParseAddress(string Line, int SegNr)
         {
-
-            Debug.WriteLine("Addressline: " + Line);
             AddressData AD = new AddressData();
-            //Set defaults:
             AD.Address = uint.MaxValue;
             AD.Bytes = 2;
             AD.Type = TypeInt;
-
-            if (Line.Length == 0)
+            try
             {
-                return AD;
-            }
+                Debug.WriteLine("Addressline: " + Line);
+                //Set defaults:
 
-            if (Line.StartsWith("GM-V6"))
-            {
-                //Custom handling: read OS:Segmentaddress pairs from file
-                Debug.WriteLine("V6");
-                return GMV6(Line, SegNr);
-            }
-
-
-            //Special handling, get info from filename:
-            if (Line.StartsWith("filename"))
-            {
-                if (!Line.Contains(":"))
-                    throw new Exception("usage: filename:digits, or filename:digitsmax-digitsmin");
-                string[] parts = Line.Split(':');
-                ushort digitsmax;
-                ushort digitsmin;
-                if (parts[1].Contains("-"))
+                if (Line.Length == 0)
                 {
-                    string[] digitparts = parts[1].Split('-');
-                    if (!ushort.TryParse(digitparts[0], out digitsmax))
-                        throw new Exception("usage: filename:digits or filename:digitsmax-digitsmin");
-                    if (!ushort.TryParse(digitparts[1], out digitsmin))
-                        throw new Exception("usage: filename:digits or filename:digitsmax-digitsmin");
+                    return AD;
                 }
-                else 
+
+                if (Line.StartsWith("GM-V6"))
                 {
-                    ushort x;
-                    if (!ushort.TryParse(parts[1], out x))
-                        throw new Exception("usage: filename:digits or filename:digitsmax-digitsmin");
-                    digitsmin = x;
-                    digitsmax = x;
+                    //Custom handling: read OS:Segmentaddress pairs from file
+                    Debug.WriteLine("V6");
+                    return GMV6(Line, SegNr);
                 }
-                for (ushort digits = digitsmax; digits >= digitsmin; digits --)
-                { 
-                    string[] numbers = Regex.Split(FileName, @"\D+");
-                    for  (int v=numbers.Length-1; v >= 0; v-- )
+
+                //Special handling, seek address
+                if (Line.ToLower().StartsWith("seek:"))
+                {
+                    AD.Address = seekAddress(Line);
+                    //Address handled, handle bytes & type:
+                    string[] lParts = Line.Split(':');
+                    if (lParts.Length > 2)
+                        UInt16.TryParse(lParts[2], out AD.Bytes);
+                    if (lParts.Length > 3)
                     {
-                        string value = numbers[v];
-                        if (!string.IsNullOrEmpty(value) && value.Length == digits)
-                        {
-                            AD.Address = uint.Parse(value);
-                            Debug.WriteLine("PN from filename: {0}", AD.Address);
-                            AD.Bytes = digits;
-                            AD.Type = TypeFilename;
-                            return AD;
-                        }
+                        if (lParts[3].ToLower() == "hex")
+                            AD.Type = TypeHex;
+                        else if (lParts[2].ToLower() == "text")
+                            AD.Type = TypeText;
                     }
-                }
-                //Not found?
-                return AD;
-            }
 
-            string[] Lineparts = Line.Split(':');
-            CheckWord CWAddr;
-            CWAddr.Address = 0;
-            CWAddr.Key = "";
-            bool Negative = false;
-            if (Lineparts[0].Contains("CW"))
-            {
-                CWAddr = GetCheckwordAddress(Lineparts[0], SegNr);
-                if (CWAddr.Key != "")
-                    Lineparts[0] = Lineparts[0].Replace(CWAddr.Key, "");
-            }
-
-            if (Lineparts[0].Replace("#", "") == "")
-            {
-                //If address is not defined: (For checksum, display-only)
-                AD.Address = uint.MaxValue;
-            }
-            else
-            {
-                bool relativetoend = false;
-                if (Lineparts[0].EndsWith("@"))
-                {
-                    Lineparts[0] = Lineparts[0].Replace("@", "");
-                    relativetoend = true;
+                    return AD;
                 }
 
-                if (!HexToUint(Lineparts[0].Replace("#", ""), out AD.Address))
-                    throw new Exception("Can't convert from HEX: " + Lineparts[0].Replace("#", "") + " (" + Line + ")");
-
-                if (relativetoend)
+                //Special handling, get info from filename:
+                if (Line.StartsWith("filename"))
                 {
-                    if (Line.StartsWith("#"))
+                    if (!Line.Contains(":"))
+                        throw new Exception("usage: filename:digits, or filename:digitsmax-digitsmin");
+                    string[] parts = Line.Split(':');
+                    ushort digitsmax;
+                    ushort digitsmin;
+                    if (parts[1].Contains("-"))
                     {
-                        AD.Address = segmentAddressDatas[SegNr].SegmentBlocks[(segmentAddressDatas[SegNr].SegmentBlocks.Count - 1)].End - AD.Address;
+                        string[] digitparts = parts[1].Split('-');
+                        if (!ushort.TryParse(digitparts[0], out digitsmax))
+                            throw new Exception("usage: filename:digits or filename:digitsmax-digitsmin");
+                        if (!ushort.TryParse(digitparts[1], out digitsmin))
+                            throw new Exception("usage: filename:digits or filename:digitsmax-digitsmin");
                     }
                     else
                     {
-                        AD.Address = fsize - AD.Address;
+                        ushort x;
+                        if (!ushort.TryParse(parts[1], out x))
+                            throw new Exception("usage: filename:digits or filename:digitsmax-digitsmin");
+                        digitsmin = x;
+                        digitsmax = x;
                     }
+                    for (ushort digits = digitsmax; digits >= digitsmin; digits--)
+                    {
+                        string[] numbers = Regex.Split(FileName, @"\D+");
+                        for (int v = numbers.Length - 1; v >= 0; v--)
+                        {
+                            string value = numbers[v];
+                            if (!string.IsNullOrEmpty(value) && value.Length == digits)
+                            {
+                                AD.Address = uint.Parse(value);
+                                Debug.WriteLine("PN from filename: {0}", AD.Address);
+                                AD.Bytes = digits;
+                                AD.Type = TypeFilename;
+                                return AD;
+                            }
+                        }
+                    }
+                    //Not found?
+                    return AD;
+                }
+
+                string[] Lineparts = Line.Split(':');
+                CheckWord CWAddr;
+                CWAddr.Address = 0;
+                CWAddr.Key = "";
+                bool Negative = false;
+                if (Lineparts[0].Contains("CW"))
+                {
+                    CWAddr = GetCheckwordAddress(Lineparts[0], SegNr);
+                    if (CWAddr.Key != "")
+                        Lineparts[0] = Lineparts[0].Replace(CWAddr.Key, "");
+                }
+
+                if (Lineparts[0].Replace("#", "") == "")
+                {
+                    //If address is not defined: (For checksum, display-only)
+                    AD.Address = uint.MaxValue;
                 }
                 else
                 {
-                    if (Line.StartsWith("#"))
+                    bool relativetoend = false;
+                    if (Lineparts[0].EndsWith("@"))
                     {
-                        AD.Address += segmentAddressDatas[SegNr].SegmentBlocks[0].Start;
+                        Lineparts[0] = Lineparts[0].Replace("@", "");
+                        relativetoend = true;
                     }
-                    if (Negative)
-                        AD.Address = CWAddr.Address - AD.Address;
+
+                    if (!HexToUint(Lineparts[0].Replace("#", ""), out AD.Address))
+                        throw new Exception("Can't convert from HEX: " + Lineparts[0].Replace("#", "") + " (" + Line + ")");
+
+                    if (relativetoend)
+                    {
+                        if (Line.StartsWith("#"))
+                        {
+                            AD.Address = segmentAddressDatas[SegNr].SegmentBlocks[(segmentAddressDatas[SegNr].SegmentBlocks.Count - 1)].End - AD.Address;
+                        }
+                        else
+                        {
+                            AD.Address = fsize - AD.Address;
+                        }
+                    }
                     else
-                        AD.Address += CWAddr.Address;
+                    {
+                        if (Line.StartsWith("#"))
+                        {
+                            AD.Address += segmentAddressDatas[SegNr].SegmentBlocks[0].Start;
+                        }
+                        if (Negative)
+                            AD.Address = CWAddr.Address - AD.Address;
+                        else
+                            AD.Address += CWAddr.Address;
+                    }
                 }
+                //Address handled, handle bytes & type:
+                if (Lineparts.Length > 1)
+                    UInt16.TryParse(Lineparts[1], out AD.Bytes);
+                if (Lineparts.Length > 2)
+                {
+                    if (Lineparts[2].ToLower() == "hex")
+                        AD.Type = TypeHex;
+                    else if (Lineparts[2].ToLower() == "text")
+                        AD.Type = TypeText;
+                }
+                Debug.WriteLine("Name: " + AD.Name + ", Address: " + AD.Address.ToString("X") + ", Bytes: " + AD.Bytes.ToString() + ", Type: " + AD.Type.ToString());
             }
-            //Address handled, handle bytes & type:
-            if (Lineparts.Length > 1)
-                UInt16.TryParse(Lineparts[1], out AD.Bytes);
-            if (Lineparts.Length > 2)
+            catch (Exception ex)
             {
-                if (Lineparts[2].ToLower() == "hex")
-                    AD.Type = TypeHex;
-                else if (Lineparts[2].ToLower() == "text")
-                    AD.Type = TypeText;
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var errline = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, PcmFile line " + errline + ": " + ex.Message);
             }
-            Debug.WriteLine("Name: " + AD.Name + ", Address: " + AD.Address.ToString("X") + ", Bytes: " + AD.Bytes.ToString() + ", Type: " + AD.Type.ToString());
             return AD;
         }
 
@@ -1449,193 +1533,231 @@ namespace UniversalPatcher
 
         public bool ParseSegmentAddresses(string Line, SegmentConfig S, out List<Block> Blocks)
         {
-            Debug.WriteLine("Segment address line: " + Line);
             Blocks = new List<Block>();
-
-            if (Line == null || Line == "")
+            try
             {
-                //It is ok to have empty address (for CS, not for segment)
-                Block B = new Block();
-                B.End = 0;
-                B.Start = 0;
-                Blocks.Add(B);
-                return true;
-            }
-            string[] Parts = Line.Split(',');
-            int i = 0;
+                Debug.WriteLine("Segment address line: " + Line);
 
-            foreach (string Part in Parts)
-            {
-                string[] StartEnd = Part.Split('-');
-                Block B = new Block();
-                int Offset = 0;
-                bool isWord = false;
-                ushort Multiple = 1;
-
-                if (StartEnd[0].Contains(">"))
+                if (Line == null || Line == "")
                 {
-                    string[] SO = StartEnd[0].Split('>');
-                    StartEnd[0] = SO[0];
-                    uint x;
-                    if (!HexToUint(SO[1], out x))
-                        throw new Exception("Can't decode from HEX: " + SO[1] + " (" + Line + ")");
-                    Offset = (int)x;
-                }
-                if (StartEnd[0].Contains("<"))
-                {
-                    string[] SO = StartEnd[0].Split('<');
-                    StartEnd[0] = SO[0];
-                    uint x;
-                    if (!HexToUint(SO[1], out x))
-                        throw new Exception("Can't decode from HEX: " + SO[1] + " (" + Line + ")");
-                    Offset = ~(int)x;
-                }
-
-
-                if (StartEnd[0].Contains("*"))
-                {
-                    string[] SM = StartEnd[0].Split('*');
-                    StartEnd[0] = SM[0];
-                    UInt16.TryParse(SM[1], out Multiple);
-                }
-
-                if (StartEnd[0].Contains(":2"))
-                {
-                    string[] SW = StartEnd[0].Split(':');
-                    StartEnd[0] = SW[0];
-                    isWord = true;
-                }
-
-                if (StartEnd.Length > 1 && StartEnd[1].Contains(":2"))
-                {
-                    string[] EW = StartEnd[1].Split(':');
-                    StartEnd[1] = EW[0];
-                    isWord = true;
-                }
-
-
-                if (!HexToUint(StartEnd[0].Replace("@", ""), out B.Start))
-                {
-                    throw new Exception("Can't decode from HEX: " + StartEnd[0].Replace("@", "") + " (" + Line + ")");
-                }
-                if (StartEnd[0].StartsWith("@"))
-                {
-                    uint tmpStart = B.Start;
-                    for (int m = 1; m <= Multiple; m++)
-                    {
-                        //Read address from bin at this address
-
-                        if (isWord)
-                        {
-                            B.Start = BEToUint16(buf, tmpStart);
-                            B.End = BEToUint16(buf, tmpStart + 2);
-                            tmpStart += 4;
-                        }
-                        else
-                        {
-                            B.Start = BEToUint32(buf, tmpStart);
-                            B.End = BEToUint32(buf, tmpStart + 4);
-                            tmpStart += 8;
-                        }
-                        if (Multiple > 1)
-                        {
-                            // Have multiple start-end pairs
-                            B.Start += (uint)Offset;
-                            B.End += (uint)Offset;
-                            Blocks.Add(B);
-                        }
-                    }
-                }
-                else
-                {
-                    if (!HexToUint(StartEnd[1].Replace("@", ""), out B.End))
-                        throw new Exception("Can't decode from HEX: " + StartEnd[1].Replace("@", "") + " (" + Line + ")");
-                    if (B.End >= buf.Length)    //Make 1MB config work with 512kB bin
-                        B.End = (uint)buf.Length - 1;
-                }
-                if (Multiple < 2)
-                {
-                    if (StartEnd.Length > 1 && StartEnd[1].StartsWith("@"))
-                    {
-                        //Read End address from bin at this address
-                        B.End = BEToUint32(buf, B.End);
-                    }
-                    if (StartEnd.Length > 1 && StartEnd[1].EndsWith("@"))
-                    {
-                        //Address is relative to end of bin
-                        uint end;
-                        if (HexToUint(StartEnd[1].Replace("@", ""), out end))
-                            B.End = (uint)buf.Length - end - 1;
-                    }
-                    B.Start += (uint)Offset;
-                    B.End += (uint)Offset;
+                    //It is ok to have empty address (for CS, not for segment)
+                    Block B = new Block();
+                    B.End = 0;
+                    B.Start = 0;
                     Blocks.Add(B);
+                    return true;
                 }
-                i++;
+                string[] Parts = Line.Split(',');
+                int i = 0;
+
+                foreach (string Part in Parts)
+                {
+                    string[] StartEnd = Part.Split('-');
+                    Block B = new Block();
+                    int Offset = 0;
+                    bool isWord = false;
+                    ushort Multiple = 1;
+
+                    if (StartEnd[0].ToLower().StartsWith("seek:"))
+                    {
+                        B.Start = seekAddress(StartEnd[0]);
+                    }
+                    if (StartEnd.Length > 1 && StartEnd[1].ToLower().StartsWith("seek:"))
+                    {
+                        B.End = seekAddress(StartEnd[1]);
+                    }
+                    if (Part.Contains("seek:"))
+                    {
+                        Blocks.Add(B);
+                        return true;
+                    }
+
+                    if (StartEnd[0].Contains(">"))
+                    {
+                        string[] SO = StartEnd[0].Split('>');
+                        StartEnd[0] = SO[0];
+                        uint x;
+                        if (!HexToUint(SO[1], out x))
+                            throw new Exception("Can't decode from HEX: " + SO[1] + " (" + Line + ")");
+                        Offset = (int)x;
+                    }
+                    if (StartEnd[0].Contains("<"))
+                    {
+                        string[] SO = StartEnd[0].Split('<');
+                        StartEnd[0] = SO[0];
+                        uint x;
+                        if (!HexToUint(SO[1], out x))
+                            throw new Exception("Can't decode from HEX: " + SO[1] + " (" + Line + ")");
+                        Offset = ~(int)x;
+                    }
+
+
+                    if (StartEnd[0].Contains("*"))
+                    {
+                        string[] SM = StartEnd[0].Split('*');
+                        StartEnd[0] = SM[0];
+                        UInt16.TryParse(SM[1], out Multiple);
+                    }
+
+                    if (StartEnd[0].Contains(":2"))
+                    {
+                        string[] SW = StartEnd[0].Split(':');
+                        StartEnd[0] = SW[0];
+                        isWord = true;
+                    }
+
+                    if (StartEnd.Length > 1 && StartEnd[1].Contains(":2"))
+                    {
+                        string[] EW = StartEnd[1].Split(':');
+                        StartEnd[1] = EW[0];
+                        isWord = true;
+                    }
+
+
+                    if (!HexToUint(StartEnd[0].Replace("@", ""), out B.Start))
+                    {
+                        throw new Exception("Can't decode from HEX: " + StartEnd[0].Replace("@", "") + " (" + Line + ")");
+                    }
+                    if (StartEnd[0].StartsWith("@"))
+                    {
+                        uint tmpStart = B.Start;
+                        for (int m = 1; m <= Multiple; m++)
+                        {
+                            //Read address from bin at this address
+
+                            if (isWord)
+                            {
+                                B.Start = BEToUint16(buf, tmpStart);
+                                B.End = BEToUint16(buf, tmpStart + 2);
+                                tmpStart += 4;
+                            }
+                            else
+                            {
+                                B.Start = BEToUint32(buf, tmpStart);
+                                B.End = BEToUint32(buf, tmpStart + 4);
+                                tmpStart += 8;
+                            }
+                            if (Multiple > 1)
+                            {
+                                // Have multiple start-end pairs
+                                B.Start += (uint)Offset;
+                                B.End += (uint)Offset;
+                                Blocks.Add(B);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!HexToUint(StartEnd[1].Replace("@", ""), out B.End))
+                            throw new Exception("Can't decode from HEX: " + StartEnd[1].Replace("@", "") + " (" + Line + ")");
+                        if (B.End >= buf.Length)    //Make 1MB config work with 512kB bin
+                            B.End = (uint)buf.Length - 1;
+                    }
+                    if (Multiple < 2)
+                    {
+                        if (StartEnd.Length > 1 && StartEnd[1].StartsWith("@"))
+                        {
+                            //Read End address from bin at this address
+                            B.End = BEToUint32(buf, B.End);
+                        }
+                        if (StartEnd.Length > 1 && StartEnd[1].EndsWith("@"))
+                        {
+                            //Address is relative to end of bin
+                            uint end;
+                            if (HexToUint(StartEnd[1].Replace("@", ""), out end))
+                                B.End = (uint)buf.Length - end - 1;
+                        }
+                        B.Start += (uint)Offset;
+                        B.End += (uint)Offset;
+                        Blocks.Add(B);
+                    }
+                    i++;
+                }
+                foreach (Block B in Blocks)
+                    Debug.WriteLine("Address block: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
             }
-            foreach (Block B in Blocks)
-                Debug.WriteLine("Address block: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var errline = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, PcmFile line " + errline + ": " + ex.Message);
+            }
             return true;
         }
 
         public List<AddressData> ParseExtraInfo(string Line, int SegNr)
         {
-            Debug.WriteLine("Extrainfo: " + Line);
             List<AddressData> LEX = new List<AddressData>();
-            if (Line == null || Line.Length == 0 || !Line.Contains(":"))
-                return LEX;
-
-            string[] LineParts = Line.Split(',');
-            foreach (string LinePart in LineParts)
+            try
             {
-                AddressData E = new AddressData();
-                string[] AddrParts = LinePart.Split(':');
-                if (AddrParts.Length < 3)
+                Debug.WriteLine("Extrainfo: " + Line);
+                if (Line == null || Line.Length == 0 || !Line.Contains(":"))
                     return LEX;
 
-                E.Name = AddrParts[0];
-
-                CheckWord CWAddr;
-                CWAddr.Key = "";
-                CWAddr.Address = 0;
-                bool Negative = false;
-                if (AddrParts[1].Contains("CW"))
+                string[] LineParts = Line.Split(',');
+                foreach (string LinePart in LineParts)
                 {
-                    CWAddr = GetCheckwordAddress(AddrParts[1], SegNr);
-                    if (CWAddr.Key != "")
-                        AddrParts[1] = AddrParts[1].Replace(CWAddr.Key, "");
-                }
-                if (AddrParts[1].Contains("-"))
-                    Negative = true;
-                AddrParts[1] = AddrParts[1].Replace("-", "");
-                AddrParts[1] = AddrParts[1].Replace("+", "");
-                if (!HexToUint(AddrParts[1].Replace("#", ""), out E.Address))
-                    return LEX;
+                    AddressData E = new AddressData();
+                    string[] AddrParts = LinePart.Split(':');
+                    if (AddrParts.Length < 3)
+                        return LEX;
 
-                if (Negative)
-                    E.Address = CWAddr.Address - E.Address;
-                else
-                    E.Address += CWAddr.Address;
+                    E.Name = AddrParts[0];
 
-                if (AddrParts[1].StartsWith("#"))
-                {
-                    E.Address += segmentAddressDatas[SegNr].SegmentBlocks[0].Start;
-                }
+                    CheckWord CWAddr;
+                    CWAddr.Key = "";
+                    CWAddr.Address = 0;
+                    bool Negative = false;
+                    if (AddrParts[1].Contains("CW"))
+                    {
+                        CWAddr = GetCheckwordAddress(AddrParts[1], SegNr);
+                        if (CWAddr.Key != "")
+                            AddrParts[1] = AddrParts[1].Replace(CWAddr.Key, "");
+                    }
+                    if (AddrParts[1].Contains("-"))
+                        Negative = true;
+                    AddrParts[1] = AddrParts[1].Replace("-", "");
+                    AddrParts[1] = AddrParts[1].Replace("+", "");
+                    if (!HexToUint(AddrParts[1].Replace("#", ""), out E.Address))
+                        return LEX;
 
-                if (AddrParts.Length > 2)
-                    UInt16.TryParse(AddrParts[2], out E.Bytes);
-                E.Type = TypeInt;
-                if (AddrParts.Length > 3)
-                {
-                    if (AddrParts[3].ToLower() == "hex")
-                        E.Type = TypeHex;
-                    else if (AddrParts[3].ToLower() == "text")
-                        E.Type = TypeText;
+                    if (Negative)
+                        E.Address = CWAddr.Address - E.Address;
+                    else
+                        E.Address += CWAddr.Address;
+
+                    if (AddrParts[1].StartsWith("#"))
+                    {
+                        E.Address += segmentAddressDatas[SegNr].SegmentBlocks[0].Start;
+                    }
+
+                    if (AddrParts.Length > 2)
+                        UInt16.TryParse(AddrParts[2], out E.Bytes);
+                    E.Type = TypeInt;
+                    if (AddrParts.Length > 3)
+                    {
+                        if (AddrParts[3].ToLower() == "hex")
+                            E.Type = TypeHex;
+                        else if (AddrParts[3].ToLower() == "text")
+                            E.Type = TypeText;
+                    }
+                    LEX.Add(E);
                 }
-                LEX.Add(E);
+                for (int l = 0; l < LEX.Count; l++)
+                    Debug.WriteLine("Extrainfo name: " + LEX[l].Name + ", Address: " + LEX[l].Address.ToString("X") + ", Bytes: " + LEX[l].Bytes + ", Type: " + LEX[l].Type);
             }
-            for (int l = 0; l < LEX.Count; l++)
-                Debug.WriteLine("Extrainfo name: " + LEX[l].Name + ", Address: " + LEX[l].Address.ToString("X") + ", Bytes: " + LEX[l].Bytes + ", Type: " + LEX[l].Type);
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var errline = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, PcmFile line " + errline + ": " + ex.Message);
+            }
             return LEX;
         }
 

@@ -333,6 +333,7 @@
       <DependentUpon>frmSearchTables.cs</DependentUpon>
     </Compile>
     <Compile Include="PidSearch.cs" />
+    <Compile Include="SegmentSeek.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="TableInfo.cs" />
     <Compile Include="TableSeek.cs" />
