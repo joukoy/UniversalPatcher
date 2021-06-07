@@ -89,6 +89,8 @@ namespace UniversalPatcher
             if (comboCVN.Text == "Checksum 2")
                 S.CVN = 2;
 
+            S.Hidden = chkHide.Checked;
+
             PCM.Segments[CurrentSegment] = S;
 
         }
@@ -113,6 +115,7 @@ namespace UniversalPatcher
             chkEeprom.Checked = S.Eeprom;
             txtComment.Text = S.Comment;
             txtCheckWords.Text = S.CheckWords;
+            chkHide.Checked = S.Hidden;
 
             checkSwapBytes1.Checked = S.CS1SwapBytes;
             checkSwapBytes2.Checked = S.CS2SwapBytes;

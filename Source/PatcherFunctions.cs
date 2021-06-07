@@ -253,6 +253,7 @@ public class upatcher
         public string CheckWords;
         public string SearchAddresses;  //Possible start addresses for searched segment
         public string Searchfor;  //search if this found/not found in segment
+        public bool Hidden;
         //public string Searchfrom; //Search above in these addresses OBSOLETE
         //public bool SearchNot;     //Search where NOT found OBSOLETE
     }
@@ -1266,143 +1267,150 @@ public class upatcher
     }
     public static uint CalculateChecksum(byte[] Data, AddressData CSAddress, List<Block> CSBlocks,List<Block> ExcludeBlocks, short Method, short Complement, ushort Bytes, Boolean SwapB)
     {
-        Debug.WriteLine("Calculating checksum, method: " + Method);
         uint sum = 0;
-        uint BufSize = 0;
-        List<Block> Blocks = new List<Block>();
-        
-        for (int p = 0; p < CSBlocks.Count; p++)
+        try
         {
-            Block B = new Block();
-            B.Start = CSBlocks[p].Start;
-            B.End = CSBlocks[p].End;
-            if (CSAddress.Address >= B.Start && CSAddress.Address <= B.End)
+            Debug.WriteLine("Calculating checksum, method: " + Method);
+            uint BufSize = 0;
+            List<Block> Blocks = new List<Block>();
+
+            for (int p = 0; p < CSBlocks.Count; p++)
             {
-                //Checksum  is located in this block
-                if (CSAddress.Address == B.Start)    //At beginning of segment
+                Block B = new Block();
+                B.Start = CSBlocks[p].Start;
+                B.End = CSBlocks[p].End;
+                if (CSAddress.Address >= B.Start && CSAddress.Address <= B.End)
                 {
-                    //At beginning of segment
-                    Debug.WriteLine("Checksum is at start of block, skipping");
-                    B.Start += CSAddress.Bytes;
-                }
-                else
-                {
-                    //Located at middle of block, create new block C, ending before checksum
-                    Debug.WriteLine("Checksum is at middle of block, skipping");
-                    Block C = new Block();
-                    C.Start = B.Start;
-                    C.End = CSAddress.Address - 1;
-                    Blocks.Add(C);
-                    BufSize += C.End - C.Start + 1;
-                    B.Start = CSAddress.Address + CSAddress.Bytes; //Move block B to start after Checksum
-                }
-            }
-            foreach (Block ExcBlock in ExcludeBlocks)
-            {
-                if (ExcBlock.Start >= B.Start && ExcBlock.End <= B.End)
-                {
-                    //Excluded block in this block
-                    if (ExcBlock.Start == B.Start)    //At beginning of segment, move start of block
+                    //Checksum  is located in this block
+                    if (CSAddress.Address == B.Start)    //At beginning of segment
                     {
-                        B.Start = ExcBlock.End + 1;
+                        //At beginning of segment
+                        Debug.WriteLine("Checksum is at start of block, skipping");
+                        B.Start += CSAddress.Bytes;
                     }
                     else
                     {
-                        if (ExcBlock.End < B.End -1)
+                        //Located at middle of block, create new block C, ending before checksum
+                        Debug.WriteLine("Checksum is at middle of block, skipping");
+                        Block C = new Block();
+                        C.Start = B.Start;
+                        C.End = CSAddress.Address - 1;
+                        Blocks.Add(C);
+                        BufSize += C.End - C.Start + 1;
+                        B.Start = CSAddress.Address + CSAddress.Bytes; //Move block B to start after Checksum
+                    }
+                }
+                foreach (Block ExcBlock in ExcludeBlocks)
+                {
+                    if (ExcBlock.Start >= B.Start && ExcBlock.End <= B.End)
+                    {
+                        //Excluded block in this block
+                        if (ExcBlock.Start == B.Start)    //At beginning of segment, move start of block
                         {
-                            //Located at middle of block, create new block C, ending before excluded block
-                            Block C = new Block();
-                            C.Start = B.Start;
-                            C.End = ExcBlock.Start - 1;
-                            Blocks.Add(C);
-                            BufSize += C.End - C.Start + 1;
-                            B.Start = ExcBlock.End + 1; //Move block B to start after excluded block
+                            B.Start = ExcBlock.End + 1;
                         }
                         else
                         {
-                            //Exclude block at end of block, move end of block backwards
-                            B.End = ExcBlock.Start - 1;
+                            if (ExcBlock.End < B.End - 1)
+                            {
+                                //Located at middle of block, create new block C, ending before excluded block
+                                Block C = new Block();
+                                C.Start = B.Start;
+                                C.End = ExcBlock.Start - 1;
+                                Blocks.Add(C);
+                                BufSize += C.End - C.Start + 1;
+                                B.Start = ExcBlock.End + 1; //Move block B to start after excluded block
+                            }
+                            else
+                            {
+                                //Exclude block at end of block, move end of block backwards
+                                B.End = ExcBlock.Start - 1;
+                            }
                         }
                     }
                 }
+                Blocks.Add(B);
+                BufSize += B.End - B.Start + 1;
             }
-            Blocks.Add(B);
-            BufSize += B.End - B.Start + 1;
-        }
 
-        byte[] tmp = new byte[BufSize];
-        uint Offset = 0;
-        foreach (Block B in Blocks)
-        {
-            //Copy blocks to tmp array for calculation
-            Debug.WriteLine("Block: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
-            uint BlockSize = B.End - B.Start + 1;
-            Array.Copy(Data, B.Start, tmp, Offset, BlockSize);
-            Offset += BlockSize;
-        }
-
-        if (Method == CSMethod_Bytesum)
-        {
-            for (uint i = 0; i < tmp.Length; i++)
+            byte[] tmp = new byte[BufSize];
+            uint Offset = 0;
+            foreach (Block B in Blocks)
             {
-                sum += tmp[i];
+                //Copy blocks to tmp array for calculation
+                Debug.WriteLine("Block: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
+                uint BlockSize = B.End - B.Start + 1;
+                Array.Copy(Data, B.Start, tmp, Offset, BlockSize);
+                Offset += BlockSize;
             }
-        }
 
-        if (Method == CSMethod_Wordsum)
-        {
-            for (uint i = 0; i < tmp.Length - 1; i += 2)
+            if (Method == CSMethod_Bytesum)
             {
-                sum += BEToUint16(tmp, i);
+                for (uint i = 0; i < tmp.Length; i++)
+                {
+                    sum += tmp[i];
+                }
             }
-        }
 
-        if (Method == CSMethod_Dwordsum)
-        { 
-            for (uint i = 0; i < tmp.Length - 3; i += 4)
+            if (Method == CSMethod_Wordsum)
             {
-                sum += BEToUint32(tmp, i);
+                for (uint i = 0; i < tmp.Length - 1; i += 2)
+                {
+                    sum += BEToUint16(tmp, i);
+                }
             }
+
+            if (Method == CSMethod_Dwordsum)
+            {
+                for (uint i = 0; i < tmp.Length - 3; i += 4)
+                {
+                    sum += BEToUint32(tmp, i);
+                }
+            }
+
+            if (Method == CSMethod_crc16)
+            {
+                Crc16 C16 = new Crc16();
+                sum = C16.ComputeChecksum(tmp);
+            }
+
+            if (Method == CSMethod_crc32)
+            {
+                Crc32 C32 = new Crc32();
+                sum = C32.ComputeChecksum(tmp);
+            }
+
+
+            if (Complement == 1)
+            {
+                sum = ~sum;
+            }
+            if (Complement == 2)
+            {
+                sum = ~sum + 1;
+            }
+
+            if (Bytes == 1)
+                sum = (sum & 0xFF);
+            //if (Bytes == 2 || Bytes == 0) //Bytes = 0 if not saving
+            if (Bytes == 2) //Bytes = 0 if not saving
+            {
+                sum = (sum & 0xFFFF);
+            }
+            if (SwapB)
+            {
+                if (Method == CSMethod_Wordsum || Method == CSMethod_crc16)
+                    sum = (ushort)SwapBytes((ushort)sum);
+                else
+                    sum = SwapBytes(sum);
+
+            }
+            Debug.WriteLine("Result: " + sum.ToString("X"));
         }
-
-        if (Method == CSMethod_crc16)
-        { 
-            Crc16 C16 = new Crc16();
-            sum = C16.ComputeChecksum(tmp);            
-        }
-
-        if (Method == CSMethod_crc32)
-        { 
-            Crc32 C32 = new Crc32();
-            sum = C32.ComputeChecksum(tmp);
-        }
-
-
-        if (Complement == 1)
+        catch (Exception ex)
         {
-            sum = ~sum;
+            LoggerBold("Checksum calc: " + ex.Message);
         }
-        if (Complement == 2)
-        {
-            sum = ~sum + 1;
-        }
-
-        if (Bytes == 1)
-            sum = (sum & 0xFF);
-        //if (Bytes == 2 || Bytes == 0) //Bytes = 0 if not saving
-        if (Bytes == 2) //Bytes = 0 if not saving
-        {
-            sum = (sum & 0xFFFF);
-        }
-        if (SwapB)
-        {
-            if (Method == CSMethod_Wordsum || Method == CSMethod_crc16)
-                sum = (ushort)SwapBytes((ushort)sum);
-            else
-                sum = SwapBytes(sum);
-
-        }
-        Debug.WriteLine("Result: " + sum.ToString("X"));
         return sum;
     }
 

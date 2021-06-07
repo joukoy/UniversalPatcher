@@ -600,22 +600,23 @@ namespace UniversalPatcher
                         return;
                     segmentAddressDatas[i].SwapBlocks = B;
                 }
-                if (!ParseSegmentAddresses(S.CS1Blocks, S, out B))
-                    return;
-                segmentAddressDatas[i].CS1Blocks = B;
-                if (!ParseSegmentAddresses(S.CS2Blocks, S, out B))
-                    return;
-                segmentAddressDatas[i].CS2Blocks = B;
-                segmentAddressDatas[i].CS1Address = ParseAddress(S.CS1Address, i);
-                segmentAddressDatas[i].CS2Address = ParseAddress(S.CS2Address,i);
-                if (S.CheckWords != null && S.CheckWords != "")
-                    FindCheckwordData(buf, S, ref segmentAddressDatas[i]);
+                if (ParseSegmentAddresses(S.CS1Blocks, S, out B))
+                {
+                    segmentAddressDatas[i].CS1Blocks = B;
+                    if (!ParseSegmentAddresses(S.CS2Blocks, S, out B))
+                        return;
+                    segmentAddressDatas[i].CS2Blocks = B;
+                    segmentAddressDatas[i].CS1Address = ParseAddress(S.CS1Address, i);
+                    segmentAddressDatas[i].CS2Address = ParseAddress(S.CS2Address, i);
+                    if (S.CheckWords != null && S.CheckWords != "")
+                        FindCheckwordData(buf, S, ref segmentAddressDatas[i]);
 
-                if (segmentAddressDatas[i].PNaddr.Bytes == 0)  //if not searched
-                    segmentAddressDatas[i].PNaddr = ParseAddress(S.PNAddr, i);
-                segmentAddressDatas[i].VerAddr = ParseAddress(S.VerAddr,i);
-                segmentAddressDatas[i].SegNrAddr = ParseAddress(S.SegNrAddr, i);
-                segmentAddressDatas[i].ExtraInfo = ParseExtraInfo(S.ExtraInfo, i);
+                    if (segmentAddressDatas[i].PNaddr.Bytes == 0)  //if not searched
+                        segmentAddressDatas[i].PNaddr = ParseAddress(S.PNAddr, i);
+                    segmentAddressDatas[i].VerAddr = ParseAddress(S.VerAddr, i);
+                    segmentAddressDatas[i].SegNrAddr = ParseAddress(S.SegNrAddr, i);
+                    segmentAddressDatas[i].ExtraInfo = ParseExtraInfo(S.ExtraInfo, i);
+                }
             }
         }
 
@@ -1314,6 +1315,12 @@ namespace UniversalPatcher
                 {
                     SegmentSeek sSeek = new SegmentSeek();
                     sSeek.seekSegments(this);
+                    if (foundSegments.Count == 0)
+                    {
+                        //Stop seeking again if nothing is found
+                        FoundSegment fs = new FoundSegment(this);
+                        foundSegments.Add(fs);
+                    }
                 }
 
                 string[] parts = line.Split(':');
@@ -1568,8 +1575,15 @@ namespace UniversalPatcher
                     }
                     if (Part.Contains("seek:"))
                     {
-                        Blocks.Add(B);
-                        return true;
+                        if (B.Start < uint.MaxValue && B.End < uint.MaxValue)
+                        {
+                            Blocks.Add(B);
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
 
                     if (StartEnd[0].Contains(">"))

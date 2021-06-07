@@ -1219,6 +1219,8 @@ namespace UniversalPatcher
             for (int i = 0; i < pcm.Segments.Count; i++)
             {
                 SegmentConfig S = pcm.Segments[i];
+                if (S.Hidden)
+                    continue;
                 txtBox.AppendText( " " + pcm.segmentinfos[i].Name.PadRight(11));
                 if (pcm.segmentinfos[i].PN.Length > 1)
                 {

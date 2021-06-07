@@ -98,6 +98,7 @@
             this.label13 = new System.Windows.Forms.Label();
             this.txtSwapAddr = new System.Windows.Forms.TextBox();
             this.btnEditSwapddr = new System.Windows.Forms.Button();
+            this.chkHide = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -775,11 +776,22 @@
             this.btnEditSwapddr.UseVisualStyleBackColor = true;
             this.btnEditSwapddr.Click += new System.EventHandler(this.btnEditSwapddr_Click);
             // 
+            // chkHide
+            // 
+            this.chkHide.AutoSize = true;
+            this.chkHide.Location = new System.Drawing.Point(301, 421);
+            this.chkHide.Name = "chkHide";
+            this.chkHide.Size = new System.Drawing.Size(129, 17);
+            this.chkHide.TabIndex = 226;
+            this.chkHide.Text = "Hide from segment list";
+            this.chkHide.UseVisualStyleBackColor = true;
+            // 
             // frmSegmentSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(533, 499);
+            this.Controls.Add(this.chkHide);
             this.Controls.Add(this.btnEditSwapddr);
             this.Controls.Add(this.txtSwapAddr);
             this.Controls.Add(this.label13);
@@ -918,5 +930,6 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.TextBox txtSwapAddr;
         private System.Windows.Forms.Button btnEditSwapddr;
+        private System.Windows.Forms.CheckBox chkHide;
     }
 }

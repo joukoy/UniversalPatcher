@@ -512,6 +512,8 @@ namespace UniversalPatcher
                 for (int i = 0; i < PCM.Segments.Count; i++)
                 {
                     SegmentConfig S = PCM.Segments[i];
+                    if (S.Hidden)
+                        continue;
                     Logger(" " + PCM.segmentinfos[i].Name.PadRight(11), false);
                     if (PCM.segmentinfos[i].PN.Length > 1)
                     {
