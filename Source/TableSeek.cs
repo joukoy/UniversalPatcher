@@ -561,7 +561,7 @@ namespace UniversalPatcher
                             string[] ssParts = tableSeeks[s].SearchStr.Split('+');     //At end of string can be +D4 +1W6 etc, for reading next address from found addr
                             Debug.WriteLine("TableSeek: Searching: " + tableSeeks[s].SearchStr + ", Start: " + startAddr.ToString("X") + ", end: " + endAddr.ToString("X"));                            
                             sAddr = searchAddrBySearchString(PCM, ssParts[0], ref startAddr, endAddr, tableSeeks[s]);
-                            for (int jump = 1; jump < ssParts.Length && sAddr.Addr < PCM.fsize; jump++)
+                            for (int jump = 1; jump < ssParts.Length && (sAddr.Addr + tableSeeks[s].Offset) < PCM.fsize; jump++)
                             {
                                 //Read table address from address we found by searchstring
                                 string numOnly = ssParts[jump].Replace("+", "").Replace("D", "").Replace("W", "");
@@ -575,12 +575,12 @@ namespace UniversalPatcher
                                 Debug.WriteLine("seekTables: New address:" + sAddr.Addr.ToString("X"));
                             }
 
-                            if (sAddr.Addr < PCM.fsize)
+                            if ((sAddr.Addr + tableSeeks[s].Offset) < PCM.fsize)
                             {
                                 hit++;
                                 Debug.WriteLine("Found: " + sAddr.Addr.ToString("X") + ", Hit: " + hit.ToString() + " of " + wantedHit);
                             }
-                            if (hit == wantedHit && sAddr.Addr < PCM.fsize)
+                            if (hit == wantedHit && (sAddr.Addr + tableSeeks[s].Offset) < PCM.fsize)
                             {
                                 FoundTable ft = new FoundTable(PCM);
                                 ft.configId = s;

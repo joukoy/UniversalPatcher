@@ -349,7 +349,7 @@ namespace UniversalPatcher
                             if (lineparts.Length >= i + 1)
                                 ts.UseHit = lineparts[i + 1];
                             if (lineparts.Length >= i + 2 && lineparts[i + 2].Length > 0)
-                                ts.Offset = Convert.ToInt32(lineparts[i + 2]);
+                                ts.Offset = Convert.ToInt64(lineparts[i + 2]);
                             if (lineparts.Length >= i + 3 && lineparts[i + 3].Length > 0)
                                 xtension = lineparts[i + 3];
                             // ts.Name += "*" + lineparts[i + 3];
