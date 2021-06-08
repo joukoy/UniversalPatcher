@@ -433,6 +433,8 @@ namespace UniversalPatcher
                 Logger("Fixing Checksums:");
                 for (int i = 0; i < Segments.Count; i++)
                 {
+                    if (Segments[i].CS1Blocks.Length == 0)
+                        continue;
                     SegmentConfig S = Segments[i];
                     Logger(S.Name);
                     if (S.Eeprom)
@@ -572,6 +574,7 @@ namespace UniversalPatcher
             for (int i = 0; i < Segments.Count; i++)
             {
                 SegmentConfig S = Segments[i];
+                S.Missing = false;
                 List<Block> B = new List<Block>();
                 segmentAddressDatas[i].ExcludeBlocks = B;
                 if (S.Eeprom)
@@ -591,7 +594,10 @@ namespace UniversalPatcher
                 else
                 {
                     if (!ParseSegmentAddresses(S.Addresses, S, out B))
+                    {
+                        S.Missing = true;
                         return;
+                    }
                     segmentAddressDatas[i].SegmentBlocks = B;
                 }
                 if (S.SwapAddress != null && S.SwapAddress.Length > 1)
@@ -617,6 +623,12 @@ namespace UniversalPatcher
                     segmentAddressDatas[i].SegNrAddr = ParseAddress(S.SegNrAddr, i);
                     segmentAddressDatas[i].ExtraInfo = ParseExtraInfo(S.ExtraInfo, i);
                 }
+                else if (S.CS1Address.Contains("seek:"))
+                {
+                    S.Missing = true;
+                    Segments.RemoveAt(i);
+                    Segments.Insert(i, S);
+                }
             }
         }
 
@@ -629,6 +641,8 @@ namespace UniversalPatcher
             for (int i = 0; i < Segments.Count; i++)
             {
                 SegmentConfig S = Segments[i];
+                if (S.Missing)
+                    continue;
                 segmentinfos[i] = new SegmentInfo();
                 segmentinfos[i].Name = S.Name;
                 segmentinfos[i].FileName = FileName;
@@ -780,6 +794,7 @@ namespace UniversalPatcher
             {
                 for (int i = 0; i< Segments.Count; i++)
                 {
+                    if (!Segments[i].Missing)
                     BadChkFileList.Add(segmentinfos[i]);
                 }
             }
@@ -1815,7 +1830,7 @@ namespace UniversalPatcher
         {
             for (int i=0; i< segmentinfos.Length; i++)
             {
-                if (segmentinfos[i].SegNr == nr.Trim())
+                if (!Segments[i].Missing && segmentinfos[i].SegNr == nr.Trim())
                     return i;
             }
 

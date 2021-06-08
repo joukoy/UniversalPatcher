@@ -487,10 +487,13 @@ namespace UniversalPatcher
                             }
                             for (int seg = 0; seg < PCM.Segments.Count; seg++)
                             {
-                                for (int b = 0; b < PCM.segmentAddressDatas[seg].SegmentBlocks.Count; b++)
+                                if (!PCM.Segments[seg].Missing)
                                 {
-                                    if (tsr.AddressInt >= PCM.segmentAddressDatas[seg].SegmentBlocks[b].Start && tsr.AddressInt <= PCM.segmentAddressDatas[seg].SegmentBlocks[b].End)
-                                        tsr.Segment = PCM.segmentinfos[seg].Name;
+                                    for (int b = 0; b < PCM.segmentAddressDatas[seg].SegmentBlocks.Count; b++)
+                                    {
+                                        if (tsr.AddressInt >= PCM.segmentAddressDatas[seg].SegmentBlocks[b].Start && tsr.AddressInt <= PCM.segmentAddressDatas[seg].SegmentBlocks[b].End)
+                                            tsr.Segment = PCM.segmentinfos[seg].Name;
+                                    }
                                 }
                             }
                             k += int.Parse(varParts[1]) - 1;

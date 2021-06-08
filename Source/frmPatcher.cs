@@ -391,6 +391,8 @@ namespace UniversalPatcher
             chkExtractSegments = new CheckBox[basefile.Segments.Count];
             for (int s = 0; s < basefile.Segments.Count; s++)
             {
+                if (basefile.Segments[s].Missing)
+                    continue;
                 CheckBox chk = new CheckBox();
                 tabCreate.Controls.Add(chk);
                 chk.Location = new Point(Left, 80);
@@ -425,6 +427,8 @@ namespace UniversalPatcher
             labelXML.Text = Path.GetFileName(basefile.configFileFullName) + " (v " + basefile.Segments[0].Version + ")";
             for (int s = 0; s < basefile.Segments.Count; s++)
             {
+                if (basefile.Segments[s].Missing)
+                    continue;
                 string BasePN = basefile.ReadInfo(basefile.segmentAddressDatas[s].PNaddr);
                 string ModPN = modfile.ReadInfo(modfile.segmentAddressDatas[s].PNaddr);
                 string BaseVer = basefile.ReadInfo(basefile.segmentAddressDatas[s].VerAddr);
@@ -512,7 +516,7 @@ namespace UniversalPatcher
                 for (int i = 0; i < PCM.Segments.Count; i++)
                 {
                     SegmentConfig S = PCM.Segments[i];
-                    if (S.Hidden)
+                    if (S.Hidden || S.Missing)
                         continue;
                     Logger(" " + PCM.segmentinfos[i].Name.PadRight(11), false);
                     if (PCM.segmentinfos[i].PN.Length > 1)
@@ -543,6 +547,8 @@ namespace UniversalPatcher
                     for (int i = 0; i < PCM.Segments.Count; i++)
                     {
                         SegmentConfig S = PCM.Segments[i];
+                        if (S.Missing)
+                            continue;
                         Logger(" " + PCM.segmentinfos[i].Name.PadRight(11), false);
                         if (S.CS1Method != CSMethod_None && chkCS1.Checked)
                         {
@@ -838,13 +844,16 @@ namespace UniversalPatcher
 
                     for (int Snr = 0; Snr < basefile.Segments.Count; Snr++)
                     {
+                        if (!basefile.Segments[Snr].Missing)
+                        {
                             for (int p = 0; p < basefile.segmentAddressDatas[Snr].SegmentBlocks.Count; p++)
                             {
                                 if (basefile.Segments[Snr].CS1Address != null && basefile.Segments[Snr].CS1Address != "")
-                                    SkipList.Add( basefile.segmentAddressDatas[Snr].CS1Address);
+                                    SkipList.Add(basefile.segmentAddressDatas[Snr].CS1Address);
                                 if (basefile.Segments[Snr].CS2Address != null && basefile.Segments[Snr].CS2Address != "")
                                     SkipList.Add(basefile.segmentAddressDatas[Snr].CS2Address);
                             }
+                        }
                     }
 
                     for (int Snr = 0; Snr < basefile.Segments.Count; Snr++)
@@ -1922,8 +1931,11 @@ namespace UniversalPatcher
                 List<string> currentSegements = new List<string>();
                 for (int s = 0; s < basefile.Segments.Count; s++)
                 {
-                    string seg = basefile.segmentinfos[s].Name.PadRight(15) + basefile.segmentinfos[s].PN + basefile.segmentinfos[s].Ver;
-                    currentSegements.Add(seg);
+                    if (!basefile.Segments[s].Missing)
+                    {
+                        string seg = basefile.segmentinfos[s].Name.PadRight(15) + basefile.segmentinfos[s].PN + basefile.segmentinfos[s].Ver;
+                        currentSegements.Add(seg);
+                    }
                 }
                 frmSwapSegmentList frmSw = new frmSwapSegmentList();
                 frmSw.LoadSegmentList(ref basefile);
@@ -1935,9 +1947,12 @@ namespace UniversalPatcher
                     LoggerBold(Environment.NewLine + "Swapped segments:");
                     for (int s = 0; s < basefile.Segments.Count; s++)
                     {
-                        string newPN = basefile.segmentinfos[s].PN + basefile.segmentinfos[s].Ver;
-                        if (!currentSegements[s].EndsWith(newPN))
-                            Logger(currentSegements[s] + " => " + basefile.segmentinfos[s].PN + basefile.segmentinfos[s].Ver);
+                        if (!basefile.Segments[s].Missing)
+                        {
+                            string newPN = basefile.segmentinfos[s].PN + basefile.segmentinfos[s].Ver;
+                            if (!currentSegements[s].EndsWith(newPN))
+                                Logger(currentSegements[s] + " => " + basefile.segmentinfos[s].PN + basefile.segmentinfos[s].Ver);
+                        }
                     }
                     Logger("Segment(s) swapped and checksums fixed (you can save BIN now)");
                 }

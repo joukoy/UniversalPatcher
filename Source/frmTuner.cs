@@ -2220,6 +2220,8 @@ namespace UniversalPatcher
                     }
                     for (int s = 0; s < PCM.Segments.Count; s++)
                     {
+                        if (PCM.Segments[s].Missing)
+                            continue;
                         for (int sb = 0; sb < PCM.segmentAddressDatas[s].SegmentBlocks.Count; sb++)
                         {
                             uint b = PCM.segmentAddressDatas[s].SegmentBlocks[sb].Start;
@@ -3639,6 +3641,8 @@ namespace UniversalPatcher
                 TreeNode segTn;
                 for (int i = 0; i < PCM.Segments.Count; i++)
                 {
+                    if (PCM.Segments[i].Missing)
+                        continue;
                     segTn = new TreeNode(PCM.Segments[i].Name);
                     segTn.Name = PCM.Segments[i].Name;
                     segTn.ImageKey = "segments.ico";

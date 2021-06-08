@@ -254,6 +254,7 @@ public class upatcher
         public string SearchAddresses;  //Possible start addresses for searched segment
         public string Searchfor;  //search if this found/not found in segment
         public bool Hidden;
+        public bool Missing;
         //public string Searchfrom; //Search above in these addresses OBSOLETE
         //public bool SearchNot;     //Search where NOT found OBSOLETE
     }
@@ -886,11 +887,14 @@ public class upatcher
                         //Search OS once
                         for (int s = 0; s < basefile.Segments.Count; s++)
                         {
-                            string PN = basefile.ReadInfo(basefile.segmentAddressDatas[s].PNaddr);
-                            if (Parts[0] == PN)
+                            if (!basefile.Segments[s].Missing)
                             {
-                                isCompatible = true;
-                                BinPN = PN;
+                                string PN = basefile.ReadInfo(basefile.segmentAddressDatas[s].PNaddr);
+                                if (Parts[0] == PN)
+                                {
+                                    isCompatible = true;
+                                    BinPN = PN;
+                                }
                             }
                         }
                     }

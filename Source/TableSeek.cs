@@ -321,7 +321,10 @@ namespace UniversalPatcher
                 if (PCM.segmentinfos == null)
                     return "";
                 for (int c = 0; c < PCM.segmentinfos.Length; c++)
-                    PCM.tableCategories.Add("Seg-" + PCM.segmentinfos[c].Name);
+                {
+                    if (!PCM.Segments[c].Missing)
+                        PCM.tableCategories.Add("Seg-" + PCM.segmentinfos[c].Name);
+                }
 
                 string fileName = PCM.tableSeekFile;
                 if (File.Exists(fileName))

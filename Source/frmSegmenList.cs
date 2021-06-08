@@ -37,10 +37,13 @@ namespace UniversalPatcher
                 return;
             for (int s = 0; s < PCM.Segments.Count; s++)
             {
-                var item = new ListViewItem(PCM.Segments[s].Name);
-                item.SubItems.Add(PCM.Segments[s].Addresses);
-                item.Tag = s;
-                listSegments.Items.Add(item);
+                if (!PCM.Segments[s].Missing)
+                {
+                    var item = new ListViewItem(PCM.Segments[s].Name);
+                    item.SubItems.Add(PCM.Segments[s].Addresses);
+                    item.Tag = s;
+                    listSegments.Items.Add(item);
+                }
             }
             if (PCM.Segments.Count > 0)
                 txtVersion.Text = PCM.Segments[0].Version;
@@ -53,13 +56,16 @@ namespace UniversalPatcher
                 listSegments.Items.Clear();
                 for (int s = 0; s < PCM.Segments.Count; s++)
                 {
-                    var item = new ListViewItem(PCM.Segments[s].Name);
-                    if (PCM.Segments[s].Addresses != null)
-                        item.SubItems.Add(PCM.Segments[s].Addresses);
-                    else
-                        item.SubItems.Add("");
-                    item.Tag = s;
-                    listSegments.Items.Add(item);
+                    if (!PCM.Segments[s].Missing)
+                    {
+                        var item = new ListViewItem(PCM.Segments[s].Name);
+                        if (PCM.Segments[s].Addresses != null)
+                            item.SubItems.Add(PCM.Segments[s].Addresses);
+                        else
+                            item.SubItems.Add("");
+                        item.Tag = s;
+                        listSegments.Items.Add(item);
+                    }
                 }
                 Logger(" [OK]");
                 labelXML.Text = PCM.configFile;
