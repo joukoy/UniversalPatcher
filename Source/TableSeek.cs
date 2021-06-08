@@ -46,7 +46,7 @@ namespace UniversalPatcher
         public string ColHeaders { get; set; }
         public string Math { get; set; }
         public string SavingMath { get; set; }
-        public int Offset { get; set; }
+        public Int64 Offset { get; set; }
         public bool ConditionalOffset { get; set; }
         public bool SignedOffset { get; set; }
         public InDataType DataType { get; set; }
