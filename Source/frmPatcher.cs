@@ -391,8 +391,6 @@ namespace UniversalPatcher
             chkExtractSegments = new CheckBox[basefile.Segments.Count];
             for (int s = 0; s < basefile.Segments.Count; s++)
             {
-                if (basefile.Segments[s].Missing)
-                    continue;
                 CheckBox chk = new CheckBox();
                 tabCreate.Controls.Add(chk);
                 chk.Location = new Point(Left, 80);
@@ -427,8 +425,6 @@ namespace UniversalPatcher
             labelXML.Text = Path.GetFileName(basefile.configFileFullName) + " (v " + basefile.Segments[0].Version + ")";
             for (int s = 0; s < basefile.Segments.Count; s++)
             {
-                if (basefile.Segments[s].Missing)
-                    continue;
                 string BasePN = basefile.ReadInfo(basefile.segmentAddressDatas[s].PNaddr);
                 string ModPN = modfile.ReadInfo(modfile.segmentAddressDatas[s].PNaddr);
                 string BaseVer = basefile.ReadInfo(basefile.segmentAddressDatas[s].VerAddr);
@@ -443,7 +439,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    if (BasePN != ModPN || BaseVer != ModVer)
+                    if (basefile.Segments[s].Missing || BasePN != ModPN || BaseVer != ModVer)
                     {
                         Logger(basefile.Segments[s].Name.PadLeft(11) + " differ: " + BasePN.ToString().PadRight(8) + " " + BaseVer + " <> " + ModPN.ToString().PadRight(8) + " " + ModVer);
                         chkSegments[s].Enabled = false;
@@ -878,7 +874,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Logger("Error: " + ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold( "frmPatcher, line " + line + ": " + ex.Message);
             }
         }
         private void btnCompare_Click(object sender, EventArgs e)
