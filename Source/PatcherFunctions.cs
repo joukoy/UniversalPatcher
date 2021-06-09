@@ -13,6 +13,7 @@ using System.Linq;
 using System.Drawing;
 using System.Xml.Serialization;
 using MathParserTK;
+using System.Text;
 
 public class upatcher
 {
@@ -2382,6 +2383,30 @@ public class upatcher
             value /= 26;
         } while (value-- != 0);
         return returnValue;
+    }
+
+    public static string GetShortcutTarget(string shortcutFilename)
+    {
+        try
+        {
+            string pathOnly = System.IO.Path.GetDirectoryName(shortcutFilename);
+            string filenameOnly = System.IO.Path.GetFileName(shortcutFilename);
+
+            Shell32.Shell shell = new Shell32.Shell();
+            Shell32.Folder folder = shell.NameSpace(pathOnly);
+            Shell32.FolderItem folderItem = folder.ParseName(filenameOnly);
+            if (folderItem != null)
+            {
+                Shell32.ShellLinkObject link =
+            (Shell32.ShellLinkObject)folderItem.GetLink;
+                return link.Path;
+            }
+            return ""; // not found
+        }
+        catch
+        {
+            return "";
+        }
     }
 
 }

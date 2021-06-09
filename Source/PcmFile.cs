@@ -117,10 +117,14 @@ namespace UniversalPatcher
                     cnfFile = cnfFile.Substring(0, pos);
                 }
 
-                return Path.Combine(Application.StartupPath, "XML", "TableSeek-" + cnfFile + ".xml");
-
+                string tSeekFile = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + cnfFile + ".xml");
+                if (!File.Exists(tSeekFile))
+                    if (File.Exists(tSeekFile + ".lnk"))
+                        tSeekFile = GetShortcutTarget(tSeekFile + ".lnk");
+                return tSeekFile;
             }
         }
+
         public string segmentSeekFile
         {
             get
@@ -132,7 +136,11 @@ namespace UniversalPatcher
                     cnfFile = cnfFile.Substring(0, pos);
                 }
 
-                return Path.Combine(Application.StartupPath, "XML", "SegmentSeek-" + cnfFile + ".xml");
+                string ssFile = Path.Combine(Application.StartupPath, "XML", "SegmentSeek-" + cnfFile + ".xml");
+                if (!File.Exists(ssFile))
+                    if (File.Exists(ssFile + ".lnk"))
+                        ssFile = GetShortcutTarget(ssFile + ".lnk");
+                return ssFile;
 
             }
         }
