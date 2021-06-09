@@ -131,8 +131,10 @@ namespace UniversalPatcher
                         //Check if we found status table, too:
                         startAddr = 0;
                         statusAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].StatusSearch, ref startAddr,PCM.fsize, condOffset).Addr;
-                        codeAddr = (uint)(codeAddr + dtcSearchConfigs[configIndex].CodeOffset);
-                        statusAddr = (uint)(statusAddr + dtcSearchConfigs[configIndex].StatusOffset);
+                        if (codeAddr < uint.MaxValue) //If found
+                            codeAddr = (uint)(codeAddr + dtcSearchConfigs[configIndex].CodeOffset);
+                        if (statusAddr < uint.MaxValue)
+                            statusAddr = (uint)(statusAddr + dtcSearchConfigs[configIndex].StatusOffset);
                         if (codeAddr < PCM.fsize && statusAddr < PCM.fsize)
                         {
                             Debug.WriteLine("Code search string: " + searchStr);
