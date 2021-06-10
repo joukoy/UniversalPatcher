@@ -1,0 +1,190 @@
+<?xml version="1.0"?>
+<ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SegmentConfig>
+    <Name>BootBlock</Name>
+    <Version>3</Version>
+    <Addresses>@3FDA5</Addresses>
+    <SwapAddress />
+    <CS1Address>#1FDA0:2:hex</CS1Address>
+    <CS2Address>#1FD80:2:hex</CS2Address>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+    <CS1Blocks>@3FDAD*3</CS1Blocks>
+    <CS2Blocks>@3FDC5*2</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#1FD85:4:int</PNAddr>
+    <VerAddr>#1FD89:2:text</VerAddr>
+    <SegNrAddr>#1FD83:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>OS</Name>
+    <Addresses>@100126&lt;7FFFFF</Addresses>
+    <SwapAddress />
+    <CS1Address>#120:2:hex</CS1Address>
+    <CS2Address>#100:2:hex</CS2Address>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+    <CS1Blocks>@100136*3&lt;7FFFFF</CS1Blocks>
+    <CS2Blocks>@10014E*2&lt;7FFFFF</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#105:4:int</PNAddr>
+    <VerAddr>#109:2:text</VerAddr>
+    <SegNrAddr>#103:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>System</Name>
+    <Addresses>@100162&lt;7FFFFF</Addresses>
+    <SwapAddress />
+    <CS1Address>#20:2:hex</CS1Address>
+    <CS2Address>#0:2:hex</CS2Address>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+    <CS1Blocks>@10016A*2&lt;7FFFFF</CS1Blocks>
+    <CS2Blocks>@10017A&lt;7FFFFF</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#5:4:int</PNAddr>
+    <VerAddr>#9:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Fuel</Name>
+    <Addresses>@100186&lt;7FFFFF</Addresses>
+    <SwapAddress />
+    <CS1Address>#20:2:hex</CS1Address>
+    <CS2Address>#0:2:hex</CS2Address>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+    <CS1Blocks>@10018E*2&lt;7FFFFF</CS1Blocks>
+    <CS2Blocks>@10019E&lt;7FFFFF</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#5:4:int</PNAddr>
+    <VerAddr>#9:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Speedo</Name>
+    <Addresses>@1001AA&lt;7FFFFF</Addresses>
+    <SwapAddress />
+    <CS1Address>#20:2:hex</CS1Address>
+    <CS2Address>#0:2:hex</CS2Address>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+    <CS1Blocks>@1001B2*2&lt;7FFFFF</CS1Blocks>
+    <CS2Blocks>@1001C2&lt;7FFFFF</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#5:4:int</PNAddr>
+    <VerAddr>#9:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>EngineDiag</Name>
+    <Addresses>@1001CE&lt;7FFFFF</Addresses>
+    <SwapAddress />
+    <CS1Address>#20:2:hex</CS1Address>
+    <CS2Address>#0:2:hex</CS2Address>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+    <CS1Blocks>@1001D6*2&lt;7FFFFF</CS1Blocks>
+    <CS2Blocks>@1001E6&lt;7FFFFF</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#5:4:int</PNAddr>
+    <VerAddr>#9:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Engine</Name>
+    <Addresses>@1001F2&lt;7FFFFF</Addresses>
+    <SwapAddress />
+    <CS1Address>#20:2:hex</CS1Address>
+    <CS2Address>#0:2:hex</CS2Address>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+    <CS1Blocks>@1001FA*2&lt;7FFFFF</CS1Blocks>
+    <CS2Blocks>@10020A&lt;7FFFFF</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#5:4:int</PNAddr>
+    <VerAddr>#9:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>EEPROM_DATA</Name>
+    <Addresses>Search</Addresses>
+    <SwapAddress>0-1FFFF</SwapAddress>
+    <CS1Address />
+    <CS2Address />
+    <CS1Method>0</CS1Method>
+    <CS2Method>0</CS2Method>
+    <CS1Blocks />
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#418:4:int</PNAddr>
+    <VerAddr>#49c:2:text</VerAddr>
+    <SegNrAddr />
+    <ExtraInfo>Eeprom:#7:3:text,PCM:#414:4:text,PCM2:#41c:4:int,Tool:#3ec:10:text,VIN:#184:17:text,trace code:#404:16:text,ProgramDate:#3F8:4:hex</ExtraInfo>
+    <Comment />
+    <CheckWords />
+    <SearchAddresses>0000-Ffff,10000-1Ffff</SearchAddresses>
+    <Searchfor>a5a5:3D4:y</Searchfor>
+  </SegmentConfig>
+</ArrayOfSegmentConfig>

@@ -248,13 +248,52 @@
     <ConditionalOffset>code</ConditionalOffset>
   </DtcSearchConfig>
   <DtcSearchConfig>
-    <XMLFile>e92a</XMLFile>
+    <XMLFile>e92</XMLFile>
     <CodeSearch>3D 80 * * 39 8C * * 57 EB 08 3C 7C 8C 5A 2E</CodeSearch>
     <StatusSearch>3C A0 * * 38 A5 * * 89 65 01</StatusSearch>
     <MilTable>combined</MilTable>
     <CodeOffset>0</CodeOffset>
     <CodeSteps>2</CodeSteps>
     <StatusOffset>-65536</StatusOffset>
+    <MilOffset>0</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
+    <ConditionalOffset />
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <XMLFile>e92_nbb</XMLFile>
+    <CodeSearch>3D 80 * * 39 8C * * 57 EB 08 3C 7C 8C 5A 2E</CodeSearch>
+    <StatusSearch>3C A0 * * 38 A5 * * 89 65 01</StatusSearch>
+    <MilTable>combined</MilTable>
+    <CodeOffset>0</CodeOffset>
+    <CodeSteps>2</CodeSteps>
+    <StatusOffset>-65536</StatusOffset>
+    <MilOffset>0</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
+    <ConditionalOffset />
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <XMLFile>e92.a</XMLFile>
+    <CodeSearch>3F 70 E0 * * 1C E7 * * 77 C6 08 3D 7C 87</CodeSearch>
+    <StatusSearch>14 DD 01 73 60 * * 1F 7B * * 30 DB 00 CC 74</StatusSearch>
+    <MilTable>combined</MilTable>
+    <CodeOffset>-3758096384</CodeOffset>
+    <CodeSteps>2</CodeSteps>
+    <StatusOffset>-3758161920</StatusOffset>
+    <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
+    <ConditionalOffset />
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <XMLFile>e92a_nbb</XMLFile>
+    <CodeSearch>3F 70 E0 * * 1C E7 * * 77 C6 08 3D 7C 87</CodeSearch>
+    <StatusSearch>14 DD 01 73 60 * * 1F 7B * * 30 DB 00 CC 74</StatusSearch>
+    <MilTable>combined</MilTable>
+    <CodeOffset>-3758096384</CodeOffset>
+    <CodeSteps>2</CodeSteps>
+    <StatusOffset>-3758161920</StatusOffset>
     <MilOffset>0</MilOffset>
     <StatusSteps>1</StatusSteps>
     <MilSteps>1</MilSteps>

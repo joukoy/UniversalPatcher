@@ -1,0 +1,190 @@
+<?xml version="1.0"?>
+<ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SegmentConfig>
+    <Name>BootBlock</Name>
+    <Version>4</Version>
+    <Addresses>@fdc5</Addresses>
+    <SwapAddress>@fdc5</SwapAddress>
+    <CS1Address>#BDC0:2:hex</CS1Address>
+    <CS2Address>#BDA0:2:hex</CS2Address>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+    <CS1Blocks>@fdcd*3</CS1Blocks>
+    <CS2Blocks>@fde5*2</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#BDA5:4:int</PNAddr>
+    <VerAddr>#BDA9:2:text</VerAddr>
+    <SegNrAddr>#BDA3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>OS</Name>
+    <Addresses>@10026*2</Addresses>
+    <SwapAddress>@10026*2</SwapAddress>
+    <CS1Address>#20:2:hex</CS1Address>
+    <CS2Address>#0:2:hex</CS2Address>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+    <CS1Blocks>@10036*3</CS1Blocks>
+    <CS2Blocks>@1004E*2</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#5:4:int</PNAddr>
+    <VerAddr>#9:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>System</Name>
+    <Addresses>@10062</Addresses>
+    <SwapAddress>@10062</SwapAddress>
+    <CS1Address>#20:2:hex</CS1Address>
+    <CS2Address>#0:2:hex</CS2Address>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+    <CS1Blocks>@1006A*2</CS1Blocks>
+    <CS2Blocks>@1007A</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#5:4:int</PNAddr>
+    <VerAddr>#9:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Fuel</Name>
+    <Addresses>@10086</Addresses>
+    <SwapAddress>@10086</SwapAddress>
+    <CS1Address>#20:2:hex</CS1Address>
+    <CS2Address>#0:2:hex</CS2Address>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+    <CS1Blocks>@1008E*2</CS1Blocks>
+    <CS2Blocks>@1009E</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#5:4:int</PNAddr>
+    <VerAddr>#9:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Speedo</Name>
+    <Addresses>@100AA</Addresses>
+    <SwapAddress>@100AA</SwapAddress>
+    <CS1Address>#20:2:hex</CS1Address>
+    <CS2Address>#0:2:hex</CS2Address>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+    <CS1Blocks>@100B2*2</CS1Blocks>
+    <CS2Blocks>@100C2</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#5:4:int</PNAddr>
+    <VerAddr>#9:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>EngineDiag</Name>
+    <Addresses>@100CE</Addresses>
+    <SwapAddress>@100CE</SwapAddress>
+    <CS1Address>#20:2:hex</CS1Address>
+    <CS2Address>#0:2:hex</CS2Address>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+    <CS1Blocks>@100D6*2</CS1Blocks>
+    <CS2Blocks>@100E6</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#5:4:int</PNAddr>
+    <VerAddr>#9:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Engine</Name>
+    <Addresses>@100F2</Addresses>
+    <SwapAddress>@100F2</SwapAddress>
+    <CS1Address>#20:2:hex</CS1Address>
+    <CS2Address>#0:2:hex</CS2Address>
+    <CS1Method>1</CS1Method>
+    <CS2Method>4</CS2Method>
+    <CS1Blocks>@100FA*2</CS1Blocks>
+    <CS2Blocks>@1010A</CS2Blocks>
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>2</CS2Complement>
+    <CS1SwapBytes>true</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>1</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#5:4:int</PNAddr>
+    <VerAddr>#9:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>EEPROM_DATA</Name>
+    <Addresses>Search</Addresses>
+    <SwapAddress>0-3fff</SwapAddress>
+    <CS1Address />
+    <CS2Address />
+    <CS1Method>0</CS1Method>
+    <CS2Method>0</CS2Method>
+    <CS1Blocks />
+    <CS2Blocks />
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#3cc:4:int</PNAddr>
+    <VerAddr>#ac:8:text</VerAddr>
+    <SegNrAddr />
+    <ExtraInfo>Eeprom:#7:3:text,PCM:#3cc:4:int,PCM2:#3d0:4:int,PCMid2:#20:4:int,VIN:#B4:17:text,trace code:#3b8:16:text,ProgramDate:#3ac:4:hex</ExtraInfo>
+    <Comment />
+    <CheckWords />
+    <SearchAddresses>0000-1fff,2000-3fff</SearchAddresses>
+    <Searchfor>a5a5:388:y</Searchfor>
+  </SegmentConfig>
+</ArrayOfSegmentConfig>

@@ -118,9 +118,18 @@ namespace UniversalPatcher
                 }
 
                 string tSeekFile = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + cnfFile + ".xml");
-                if (!File.Exists(tSeekFile))
-                    if (File.Exists(tSeekFile + ".lnk"))
-                        tSeekFile = GetShortcutTarget(tSeekFile + ".lnk");
+
+                if (File.Exists(tSeekFile))
+                {
+                    long conFileSize = new FileInfo(tSeekFile).Length;
+                    if (conFileSize < 255)
+                    {
+                        string compXml = ReadTextFile(tSeekFile).Split(new[] { '\r', '\n' }).FirstOrDefault();
+                        tSeekFile = Path.Combine(Application.StartupPath, "XML", compXml);
+                        Logger("Using compatible file: " + compXml);
+                    }
+                }
+
                 return tSeekFile;
             }
         }
@@ -137,9 +146,16 @@ namespace UniversalPatcher
                 }
 
                 string ssFile = Path.Combine(Application.StartupPath, "XML", "SegmentSeek-" + cnfFile + ".xml");
-                if (!File.Exists(ssFile))
-                    if (File.Exists(ssFile + ".lnk"))
-                        ssFile = GetShortcutTarget(ssFile + ".lnk");
+                if (File.Exists(ssFile))
+                {
+                    long conFileSize = new FileInfo(ssFile).Length;
+                    if (conFileSize < 255)
+                    {
+                        string compXml = ReadTextFile(ssFile).Split(new[] { '\r', '\n' }).FirstOrDefault();
+                        ssFile = Path.Combine(Application.StartupPath, "XML", compXml);
+                        Logger("Using compatible file: " + compXml);
+                    }
+                }
                 return ssFile;
 
             }
@@ -243,7 +259,7 @@ namespace UniversalPatcher
                     long conFileSize = new FileInfo(defaultTunerFile).Length;
                     if (conFileSize < 255)
                     {
-                        compXml = ReadTextFile(defaultTunerFile);
+                        compXml = ReadTextFile(defaultTunerFile).Split(new[] { '\r', '\n' }).FirstOrDefault();
                         defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", compXml);
                         Logger("Using compatible file: " + compXml);
                     }

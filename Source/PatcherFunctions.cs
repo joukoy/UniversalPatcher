@@ -1414,7 +1414,7 @@ public class upatcher
         }
         catch (Exception ex)
         {
-            LoggerBold("Checksum calc: " + ex.Message);
+            Debug.WriteLine("Checksum calc: " + ex.Message);
         }
         return sum;
     }

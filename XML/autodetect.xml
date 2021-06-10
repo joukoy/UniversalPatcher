@@ -273,7 +273,7 @@
     <compare>==</compare>
   </DetectRule>
   <DetectRule>
-    <xml>E92A.xml</xml>
+    <xml>e92.A.xml</xml>
     <group>1</group>
     <grouplogic>And</grouplogic>
     <address>filesize</address>
@@ -281,7 +281,7 @@
     <compare>==</compare>
   </DetectRule>
   <DetectRule>
-    <xml>E92A.xml</xml>
+    <xml>e92.A.xml</xml>
     <group>1</group>
     <grouplogic>And</grouplogic>
     <address>8@:8</address>
@@ -289,52 +289,12 @@
     <compare>==</compare>
   </DetectRule>
   <DetectRule>
-    <xml>E92A.xml</xml>
+    <xml>e92.A.xml</xml>
     <group>1</group>
     <grouplogic>And</grouplogic>
     <address>c0102:2</address>
     <data>1</data>
     <compare>==</compare>
-  </DetectRule>
-  <DetectRule>
-    <xml>E92A.xml</xml>
-    <group>1</group>
-    <grouplogic>And</grouplogic>
-    <address>fd82:2</address>
-    <data>99</data>
-    <compare>==</compare>
-  </DetectRule>
-  <DetectRule>
-    <xml>E92A_nbb.xml</xml>
-    <group>1</group>
-    <grouplogic>And</grouplogic>
-    <address>filesize</address>
-    <data>4194304</data>
-    <compare>==</compare>
-  </DetectRule>
-  <DetectRule>
-    <xml>E92A_nbb.xml</xml>
-    <group>1</group>
-    <grouplogic>And</grouplogic>
-    <address>8@:8</address>
-    <data>6173027714241396735</data>
-    <compare>==</compare>
-  </DetectRule>
-  <DetectRule>
-    <xml>E92A_nbb.xml</xml>
-    <group>1</group>
-    <grouplogic>And</grouplogic>
-    <address>c0102:2</address>
-    <data>1</data>
-    <compare>==</compare>
-  </DetectRule>
-  <DetectRule>
-    <xml>E92A_nbb.xml</xml>
-    <group>1</group>
-    <grouplogic>And</grouplogic>
-    <address>fd82:2</address>
-    <data>99</data>
-    <compare>!=</compare>
   </DetectRule>
   <DetectRule>
     <xml>E38.xml</xml>
@@ -342,14 +302,6 @@
     <grouplogic>And</grouplogic>
     <address>filesize</address>
     <data>2097152</data>
-    <compare>==</compare>
-  </DetectRule>
-  <DetectRule>
-    <xml>E38.xml</xml>
-    <group>1</group>
-    <grouplogic>And</grouplogic>
-    <address>8@:8</address>
-    <data>12273828952035819519</data>
     <compare>==</compare>
   </DetectRule>
   <DetectRule>
@@ -4313,14 +4265,6 @@
     <compare>==</compare>
   </DetectRule>
   <DetectRule>
-    <xml>e82.xml</xml>
-    <group>2</group>
-    <grouplogic>And</grouplogic>
-    <address>filesize</address>
-    <data>6291456</data>
-    <compare>==</compare>
-  </DetectRule>
-  <DetectRule>
     <xml>ngc3.xml</xml>
     <group>1</group>
     <grouplogic>And</grouplogic>
@@ -4334,6 +4278,134 @@
     <grouplogic>And</grouplogic>
     <address>2@</address>
     <data>65535</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e98.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>8@:8</address>
+    <data>6173027714241396735</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e98.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>filesize</address>
+    <data>4194304</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e98.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>20000:4</address>
+    <data>2857762815</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e98.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>20013:1</address>
+    <data>1</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e82.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>filesize</address>
+    <data>6291456</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e92.A.xml</xml>
+    <group>1</group>
+    <grouplogic>And</grouplogic>
+    <address>12@:2</address>
+    <data>17476</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e92.xml</xml>
+    <group>1</group>
+    <grouplogic>And</grouplogic>
+    <address>filesize</address>
+    <data>4194304</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e92.xml</xml>
+    <group>1</group>
+    <grouplogic>And</grouplogic>
+    <address>8@:8</address>
+    <data>6173027714241396735</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e92.xml</xml>
+    <group>1</group>
+    <grouplogic>And</grouplogic>
+    <address>c0102:2</address>
+    <data>1</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e92.xml</xml>
+    <group>2</group>
+    <grouplogic>Or</grouplogic>
+    <address>12@:2</address>
+    <data>0</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e92.xml</xml>
+    <group>2</group>
+    <grouplogic>Or</grouplogic>
+    <address>12@:2</address>
+    <data>65535</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e92.xml</xml>
+    <group>3</group>
+    <grouplogic>Or</grouplogic>
+    <address>fd82:2</address>
+    <data>99</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e92.xml</xml>
+    <group>3</group>
+    <grouplogic>Or</grouplogic>
+    <address>fd82:2</address>
+    <data>65535</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e92.a.xml</xml>
+    <group>2</group>
+    <grouplogic>Or</grouplogic>
+    <address>fd82:2</address>
+    <data>99</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e92.a.xml</xml>
+    <group>2</group>
+    <grouplogic>Or</grouplogic>
+    <address>fd82:2</address>
+    <data>65535</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>e38.xml</xml>
+    <group>1</group>
+    <grouplogic>And</grouplogic>
+    <address>8@:8</address>
+    <data>12273828952035819519</data>
     <compare>==</compare>
   </DetectRule>
   <DetectRule>
