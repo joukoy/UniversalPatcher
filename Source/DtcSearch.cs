@@ -130,6 +130,8 @@ namespace UniversalPatcher
                         codeAddr = getAddrbySearchString(PCM, searchStr,ref startAddr,PCM.fsize, condOffset).Addr;
                         //Check if we found status table, too:
                         startAddr = 0;
+                        condOffset = false;
+                        if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("status")) condOffset = true;
                         statusAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].StatusSearch, ref startAddr,PCM.fsize, condOffset).Addr;
                         if (codeAddr < uint.MaxValue) //If found
                             codeAddr = (uint)(codeAddr + dtcSearchConfigs[configIndex].CodeOffset);
@@ -142,8 +144,8 @@ namespace UniversalPatcher
                             if (condOffset)
                             {
                                 uint a = codeAddr;
-                                int prevCode = BEToUint16(PCM.buf, a); 
-                                for (int x=0; x < 30; x++)
+                                int prevCode = BEToUint16(PCM.buf, a);
+                                for (int x = 0; x < 30; x++)
                                 {
                                     //Check if codes (30 first) are increasing
                                     a += (uint)dtcSearchConfigs[configIndex].CodeSteps;
@@ -160,7 +162,10 @@ namespace UniversalPatcher
                             Debug.WriteLine("DTC status table address: " + statusAddr.ToString("X"));
                             break;
                         }
-                        else codeAddr = 0;
+                        else
+                        {
+                            codeAddr = 0;
+                        }
 
                     }
                 }
