@@ -191,13 +191,18 @@ namespace UniversalPatcher
                     dtc.codeInt = BEToUint16(PCM.buf, addr);
 
                     string codeTmp = dtc.codeInt.ToString("X");
-                    if (dCodes && !codeTmp.StartsWith("D") || (dtc.codeInt < 10 && PCM.dtcCodes.Count > 10))
+                    if (dtc.codeInt < 10 && PCM.dtcCodes.Count > 10)
+                            break;
+                    if (dCodes)
                     {
-                        break;
+                        //There should be only D or E (U) codes after first D code
+                        if (!codeTmp.StartsWith("D") && !codeTmp.StartsWith("E"))
+                            break;
                     }
                     codeTmp = dtc.codeInt.ToString("X4");
                     dtc.Code = decodeDTC(codeTmp);
-                    if (codeTmp.StartsWith("D")) dCodes = true;
+                    if (codeTmp.StartsWith("D")) 
+                        dCodes = true;
                     //Find description for code:
                     dtc.Description = getDtcDescription(dtc.Code);
                     PCM.dtcCodes.Add(dtc);
