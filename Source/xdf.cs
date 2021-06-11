@@ -508,9 +508,12 @@ namespace UniversalPatcher
                 lastCategory = dtcCategory + 1;
                 tableText += "     <CATEGORY index = \"0x" + (lastCategory - 1).ToString("X") + "\" name = \"Other\" />";
                 xdfText = xdfText.Replace("REPLACE-CATEGORYNAME", tableText) + Environment.NewLine;
-
+                
                 fName = Path.Combine(Application.StartupPath, "Templates", basefile.configFile + "-checksum.txt");
-                xdfText += ReadTextFile(fName);
+                if (File.Exists(fName))
+                    xdfText += ReadTextFile(fName);
+                else
+                    LoggerBold("File not found: " + fName + " - add checksum calculation manually, if necessary.");
 
 
                 //Add OS ID:
