@@ -114,7 +114,12 @@ namespace UniversalPatcher
                 int configIndex = 0;
                 uint startAddr = 0;
                 PCM.dtcCombined = false;
-                bool condOffset = false;
+                bool condOffsetCode = false;
+                bool condOffsetStatus = false;
+                bool condOffsetMil = false;
+                bool signedOffsetCode = false;
+                bool signedOffsetStatus = false;
+                bool signedOffsetMil = false;
                 uint statusAddr = uint.MaxValue;
                 uint milAddr = uint.MaxValue;
 
@@ -124,15 +129,37 @@ namespace UniversalPatcher
                     {
                         searchStr = dtcSearchConfigs[configIndex].CodeSearch;
                         startAddr = 0;
-                        condOffset = false;
-                        if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("code")) 
-                            condOffset = true;                        
-                        codeAddr = getAddrbySearchString(PCM, searchStr,ref startAddr,PCM.fsize, condOffset).Addr;
+                        condOffsetCode = false;
+                        string[] condParts = dtcSearchConfigs[configIndex].ConditionalOffset.Trim().Split(',');
+                        foreach (string conPart in condParts)
+                        {
+                            switch(conPart.Trim())
+                            {
+                                case "code":
+                                    condOffsetCode = true;
+                                    break;
+                                case "status":
+                                    condOffsetStatus = true;
+                                    break;
+                                case "mil":
+                                    condOffsetMil = true;
+                                    break;
+                                case "signed:code":
+                                    signedOffsetCode = true;
+                                    break;
+                                case "signed:status":
+                                    signedOffsetStatus = true;
+                                    break;
+                                case "signed:mil":
+                                    signedOffsetMil = true;
+                                    break;
+                            }
+                        }
+
+                        codeAddr = getAddrbySearchString(PCM, searchStr,ref startAddr,PCM.fsize, condOffsetCode, signedOffsetCode).Addr;
                         //Check if we found status table, too:
                         startAddr = 0;
-                        condOffset = false;
-                        if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("status")) condOffset = true;
-                        statusAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].StatusSearch, ref startAddr,PCM.fsize, condOffset).Addr;
+                        statusAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].StatusSearch, ref startAddr,PCM.fsize, condOffsetStatus, signedOffsetStatus).Addr;
                         if (codeAddr < uint.MaxValue) //If found
                             codeAddr = (uint)(codeAddr + dtcSearchConfigs[configIndex].CodeOffset);
                         if (statusAddr < uint.MaxValue)
@@ -141,7 +168,7 @@ namespace UniversalPatcher
                         {
                             Debug.WriteLine("Code search string: " + searchStr);
                             Debug.WriteLine("DTC code table address: " + codeAddr.ToString("X"));
-                            if (condOffset)
+                            if (condOffsetStatus)
                             {
                                 uint a = codeAddr;
                                 int prevCode = BEToUint16(PCM.buf, a);
@@ -229,9 +256,7 @@ namespace UniversalPatcher
                     startAddr = 0;
                     for (int i = 0; i < 30; i++)
                     {
-                        condOffset = false;
-                        if (dtcSearchConfigs[configIndex].ConditionalOffset.Contains("mil")) condOffset = true;
-                        milAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].MilSearch, ref startAddr, PCM.fsize, condOffset).Addr;
+                        milAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].MilSearch, ref startAddr, PCM.fsize, condOffsetMil, signedOffsetMil).Addr;
                         if (milAddr < uint.MaxValue)
                         {
 
