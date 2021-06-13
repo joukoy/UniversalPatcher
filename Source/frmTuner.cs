@@ -377,6 +377,7 @@ namespace UniversalPatcher
                     return;
 
                 Logger("Saving to file: " + fileName);
+                clearPanel2();
                 PcmFile newPCM = PCM.ShallowCopy();
                 newPCM.saveBin(fileName);
                 addtoCurrentFileMenu(newPCM);
@@ -841,6 +842,7 @@ namespace UniversalPatcher
         private void saveBINToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Logger("Saving to file: " + PCM.FileName);
+            clearPanel2();
             PCM.saveBin(PCM.FileName);
             Logger("Done.");
 
