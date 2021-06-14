@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<ArrayOfPidSearchConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <PidSearchConfig>
+    <XMLFile>diesel01</XMLFile>
+    <SearchString>00 00 04 * * * * * * * 00 01 04 * * * * * * * 00 02 02</SearchString>
+    <Step>10</Step>
+  </PidSearchConfig>
+  <PidSearchConfig>
+    <XMLFile>p01-p59</XMLFile>
+    <SearchString>00 01 02 00 * * * * 00 03 01 00 * * * * 00 04 00 00 * * * * 00 05 00 00</SearchString>
+    <Step>8</Step>
+  </PidSearchConfig>
+  <PidSearchConfig>
+    <XMLFile>v6-1mb</XMLFile>
+    <SearchString>00 00 02 00 * * * * * * 00 01 02 00</SearchString>
+    <Step>10</Step>
+  </PidSearchConfig>
+  <PidSearchConfig>
+    <XMLFile>v6-96-97</XMLFile>
+    <SearchString>00 00 02 00 * * * * * * 00 01 02 00</SearchString>
+    <Step>10</Step>
+  </PidSearchConfig>
+  <PidSearchConfig>
+    <XMLFile>v6-98-05</XMLFile>
+    <SearchString>00 00 02 00 * * * * * * 00 01 02 00</SearchString>
+    <Step>10</Step>
+  </PidSearchConfig>
+</ArrayOfPidSearchConfig>

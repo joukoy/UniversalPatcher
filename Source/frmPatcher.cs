@@ -182,6 +182,7 @@ namespace UniversalPatcher
             StockCVN = new List<CVN>();
             fileTypeList = new List<FileType>();
             dtcSearchConfigs = new List<DtcSearchConfig>();
+            pidSearchConfigs = new List<PidSearchConfig>();
             SwapSegments = new List<SwapSegment>();
             unitList = new List<Units>();
             //Dirty fix to make system work without stockcvn.xml
@@ -209,7 +210,6 @@ namespace UniversalPatcher
             Logger(",dtcsearch", false);
             ShowSplash("dtcsearch");
             Application.DoEvents();
-
             string CtsSearchFile = Path.Combine(Application.StartupPath, "XML", "DtcSearch.xml");
             if (File.Exists(CtsSearchFile))
             {
@@ -220,6 +220,22 @@ namespace UniversalPatcher
                 file.Close();
 
             }
+
+            Logger(",pidsearch", false);
+            ShowSplash("pidsearch");
+            Application.DoEvents();
+
+            string pidSearchFile = Path.Combine(Application.StartupPath, "XML", "PidSearch.xml");
+            if (File.Exists(pidSearchFile))
+            {
+                Debug.WriteLine("Loading PidSearch.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<PidSearchConfig>));
+                System.IO.StreamReader file = new System.IO.StreamReader(pidSearchFile);
+                pidSearchConfigs = (List<PidSearchConfig>)reader.Deserialize(file);
+                file.Close();
+
+            }
+
             Logger(",autodetect", false);
             ShowSplash("autodetect");
             Application.DoEvents();
@@ -2997,6 +3013,21 @@ namespace UniversalPatcher
                 frmEditXML frmE = new frmEditXML();
                 frmE.Show();
                 frmE.LoadSegmentSeek(basefile.segmentSeekFile);
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+
+        }
+
+        private void pIDSearchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                frmEditXML frmE = new frmEditXML();
+                frmE.LoadPIDSearchConfig();
+                frmE.Show();
             }
             catch (Exception ex)
             {

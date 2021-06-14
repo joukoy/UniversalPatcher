@@ -2402,6 +2402,7 @@ namespace UniversalPatcher
         {
             if (radioSideBySideText.Checked)
             {
+                currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
                 loadTable();
                 setMyText();
@@ -2446,6 +2447,7 @@ namespace UniversalPatcher
         {
             if (radioCompareAll.Checked)
             {
+                currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
                 addFileCheckBoxes();
                 loadTable();

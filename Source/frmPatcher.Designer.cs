@@ -191,13 +191,14 @@
             this.fileTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dTCSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.segmentSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTunerAutloadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.oBD2CodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.segmentSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pIDSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1961,6 +1962,7 @@
             this.editTableSearchToolStripMenuItem,
             this.fileTypesToolStripMenuItem,
             this.dTCSearchToolStripMenuItem,
+            this.pIDSearchToolStripMenuItem,
             this.tableSeekToolStripMenuItem,
             this.segmentSeekToolStripMenuItem,
             this.rememberWindowSizeToolStripMenuItem,
@@ -2027,6 +2029,13 @@
             this.tableSeekToolStripMenuItem.Text = "TableSeek";
             this.tableSeekToolStripMenuItem.Click += new System.EventHandler(this.tableSeekToolStripMenuItem_Click);
             // 
+            // segmentSeekToolStripMenuItem
+            // 
+            this.segmentSeekToolStripMenuItem.Name = "segmentSeekToolStripMenuItem";
+            this.segmentSeekToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.segmentSeekToolStripMenuItem.Text = "SegmentSeek";
+            this.segmentSeekToolStripMenuItem.Click += new System.EventHandler(this.segmentSeekToolStripMenuItem_Click);
+            // 
             // rememberWindowSizeToolStripMenuItem
             // 
             this.rememberWindowSizeToolStripMenuItem.Name = "rememberWindowSizeToolStripMenuItem";
@@ -2070,12 +2079,12 @@
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // segmentSeekToolStripMenuItem
+            // pIDSearchToolStripMenuItem
             // 
-            this.segmentSeekToolStripMenuItem.Name = "segmentSeekToolStripMenuItem";
-            this.segmentSeekToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.segmentSeekToolStripMenuItem.Text = "SegmentSeek";
-            this.segmentSeekToolStripMenuItem.Click += new System.EventHandler(this.segmentSeekToolStripMenuItem_Click);
+            this.pIDSearchToolStripMenuItem.Name = "pIDSearchToolStripMenuItem";
+            this.pIDSearchToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.pIDSearchToolStripMenuItem.Text = "PID Search";
+            this.pIDSearchToolStripMenuItem.Click += new System.EventHandler(this.pIDSearchToolStripMenuItem_Click);
             // 
             // FrmPatcher
             // 
@@ -2318,5 +2327,6 @@
         private System.Windows.Forms.ToolStripMenuItem moreSettingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem oBD2CodesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem segmentSeekToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pIDSearchToolStripMenuItem;
     }
 }

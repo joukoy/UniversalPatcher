@@ -55,6 +55,15 @@ namespace UniversalPatcher
             dataGridView1.Columns["ConditionalOffset"].ToolTipText = "Possible values:code,status,mil (Multiple values allowed)";
             UseComboBoxForEnums(dataGridView1);
         }
+        public void LoadPIDSearchConfig()
+        {
+            this.Text = "Edit PID Search config";
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = pidSearchConfigs;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+            UseComboBoxForEnums(dataGridView1);
+        }
         public void LoadTableSeek(string fname)
         {
             fileName = fname;
@@ -181,6 +190,18 @@ namespace UniversalPatcher
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<DtcSearchConfig>));
                         writer.Serialize(stream, dtcSearchConfigs);
+                        stream.Close();
+                    }
+                    Logger(" [OK]");
+                }
+                else if (this.Text.Contains("PID"))
+                {
+                    Logger("Saving file PidSearch.xml", false);
+                    string FileName = Path.Combine(Application.StartupPath, "XML", "PidSearch.xml");
+                    using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                    {
+                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<PidSearchConfig>));
+                        writer.Serialize(stream, pidSearchConfigs);
                         stream.Close();
                     }
                     Logger(" [OK]");

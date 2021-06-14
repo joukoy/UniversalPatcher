@@ -335,6 +335,7 @@ public class upatcher
     public static List<FileType> fileTypeList;
     public static List<OBD2Code> OBD2Codes;
     public static List<DtcSearchConfig> dtcSearchConfigs;
+    public static List<PidSearchConfig> pidSearchConfigs;
     public static List<TableSeek> tableSeeks;
     public static List<SegmentSeek> segmentSeeks;
     public static List<UniversalPatcher.TableData> XdfElements;

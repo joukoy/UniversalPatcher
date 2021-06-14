@@ -25,22 +25,26 @@ namespace UniversalPatcher.Properties
                     searchPids(step,true);
                 return;
             }
+            else
+            {
+                string cnfFile = PCM.configFile;
+                if (PCM.configFile.Contains("."))
+                {
+                    int pos = PCM.configFile.IndexOf(".");
+                    cnfFile = cnfFile.Substring(0, pos);
+                }
 
-            if (PCM.configFile.StartsWith("p01"))
-            {
-                step = 8;
-                startAddress = searchBytes(PCM, "00 01 02 00 * * * * 00 03 01 00 * * * * 00 04 00 00 * * * * 00 05 00 00", 0, PCM.fsize - 28);
-                if (startAddress < uint.MaxValue)
-                    searchPids(step,false);
-                return;
-            }
-            if (PCM.configFile.StartsWith("v6"))
-            {
-                startAddress = searchBytes(PCM, "00 00 02 00 * * * * * * 00 01 02 00", 0, PCM.fsize - 14);
-                step = 10;
-                if (startAddress < uint.MaxValue)
-                    searchPids(step,false);
-                return;
+                foreach (PidSearchConfig psc in pidSearchConfigs)
+                {
+                    if (psc.XMLFile.ToLower() == cnfFile)
+                    {
+                        startAddress = searchBytes(PCM, psc.SearchString, 0, (uint)(PCM.fsize - psc.SearchString.Length));
+                        if (startAddress < uint.MaxValue)
+                            searchPids(step, false);
+                        return;
+
+                    }
+                }
             }
             throw new Exception("PID search not implemented for this file type");
         }
@@ -199,5 +203,12 @@ namespace UniversalPatcher.Properties
             file.Close();
         }
 
+    }
+
+    public class PidSearchConfig
+    {
+        public string XMLFile { get; set; }
+        public string SearchString { get; set; }
+        public int Step { get; set; }
     }
 }

@@ -125,7 +125,14 @@ namespace UniversalPatcher
 
                 for (configIndex = 0; configIndex < dtcSearchConfigs.Count; configIndex++)
                 {
-                    if (PCM.configFile == dtcSearchConfigs[configIndex].XMLFile.ToLower())
+                    string cnfFile = PCM.configFile;
+                    if (PCM.configFile.Contains("."))
+                    {
+                        int pos = PCM.configFile.IndexOf(".");
+                        cnfFile = cnfFile.Substring(0, pos);
+                    }
+
+                    if (cnfFile == dtcSearchConfigs[configIndex].XMLFile.ToLower())
                     {
                         searchStr = dtcSearchConfigs[configIndex].CodeSearch;
                         startAddr = 0;
