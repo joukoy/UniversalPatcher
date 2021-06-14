@@ -28,12 +28,12 @@ namespace UniversalPatcher.Properties
             else
             {
                 string cnfFile = PCM.configFile;
-                if (PCM.configFile.Contains("."))
+/*                if (PCM.configFile.Contains("."))
                 {
                     int pos = PCM.configFile.IndexOf(".");
                     cnfFile = cnfFile.Substring(0, pos);
                 }
-
+*/
                 foreach (PidSearchConfig psc in pidSearchConfigs)
                 {
                     if (psc.XMLFile.ToLower() == cnfFile)

@@ -126,11 +126,12 @@ namespace UniversalPatcher
                 for (configIndex = 0; configIndex < dtcSearchConfigs.Count; configIndex++)
                 {
                     string cnfFile = PCM.configFile;
-                    if (PCM.configFile.Contains("."))
+/*                    if (PCM.configFile.Contains("."))
                     {
                         int pos = PCM.configFile.IndexOf(".");
                         cnfFile = cnfFile.Substring(0, pos);
                     }
+*/
 
                     if (cnfFile == dtcSearchConfigs[configIndex].XMLFile.ToLower())
                     {
