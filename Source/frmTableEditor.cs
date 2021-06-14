@@ -710,6 +710,8 @@ namespace UniversalPatcher
             menuitem.Checked = true;
             CompareFile cmpFile = (CompareFile)menuitem.Tag;
             currentCmpFile = findFile(cmpFile.fileLetter);
+            if (radioCompareFile.Checked)
+                selectFile(cmpFile.fileLetter);
             //prepareCompareTable(cmpFile); //Not again
             loadTable();
             setMyText();
