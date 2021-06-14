@@ -177,6 +177,27 @@
             this.txtSegmentDescription = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.btnExtractSegments = new System.Windows.Forms.Button();
+            this.tabChecksumUtil = new System.Windows.Forms.TabPage();
+            this.numCSBytes = new System.Windows.Forms.NumericUpDown();
+            this.label20 = new System.Windows.Forms.Label();
+            this.txtExclude = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.txtCSAddr = new System.Windows.Forms.TextBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.txtChecksumRange = new System.Windows.Forms.TextBox();
+            this.btnTestChecksum = new System.Windows.Forms.Button();
+            this.chkCSUtilTryAll = new System.Windows.Forms.CheckBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.radioCSUtilComplement2 = new System.Windows.Forms.RadioButton();
+            this.radioCSUtilComplement1 = new System.Windows.Forms.RadioButton();
+            this.radioCSUtilComplement0 = new System.Windows.Forms.RadioButton();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioCSUtilDwordSum = new System.Windows.Forms.RadioButton();
+            this.radioCSUtilWordSum = new System.Windows.Forms.RadioButton();
+            this.radioCSUtilSUM = new System.Windows.Forms.RadioButton();
+            this.radioCSUtilCrc32 = new System.Windows.Forms.RadioButton();
+            this.radioCSUtilCrc16 = new System.Windows.Forms.RadioButton();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -190,6 +211,7 @@
             this.editTableSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dTCSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pIDSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.segmentSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -198,7 +220,6 @@
             this.oBD2CodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pIDSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -230,6 +251,10 @@
             this.tabExtract.SuspendLayout();
             this.tabExtractSegments.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.tabChecksumUtil.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numCSBytes)).BeginInit();
+            this.groupBox5.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -1416,6 +1441,7 @@
             this.tabFunction.Controls.Add(this.tabCreate);
             this.tabFunction.Controls.Add(this.tabExtract);
             this.tabFunction.Controls.Add(this.tabExtractSegments);
+            this.tabFunction.Controls.Add(this.tabChecksumUtil);
             this.tabFunction.Location = new System.Drawing.Point(2, 60);
             this.tabFunction.Name = "tabFunction";
             this.tabFunction.SelectedIndex = 0;
@@ -1908,6 +1934,235 @@
             this.btnExtractSegments.UseVisualStyleBackColor = true;
             this.btnExtractSegments.Click += new System.EventHandler(this.btnExtractSegments_Click);
             // 
+            // tabChecksumUtil
+            // 
+            this.tabChecksumUtil.Controls.Add(this.numCSBytes);
+            this.tabChecksumUtil.Controls.Add(this.label20);
+            this.tabChecksumUtil.Controls.Add(this.txtExclude);
+            this.tabChecksumUtil.Controls.Add(this.label19);
+            this.tabChecksumUtil.Controls.Add(this.txtCSAddr);
+            this.tabChecksumUtil.Controls.Add(this.label18);
+            this.tabChecksumUtil.Controls.Add(this.label17);
+            this.tabChecksumUtil.Controls.Add(this.txtChecksumRange);
+            this.tabChecksumUtil.Controls.Add(this.btnTestChecksum);
+            this.tabChecksumUtil.Controls.Add(this.chkCSUtilTryAll);
+            this.tabChecksumUtil.Controls.Add(this.groupBox5);
+            this.tabChecksumUtil.Controls.Add(this.groupBox1);
+            this.tabChecksumUtil.Location = new System.Drawing.Point(4, 22);
+            this.tabChecksumUtil.Name = "tabChecksumUtil";
+            this.tabChecksumUtil.Size = new System.Drawing.Size(838, 103);
+            this.tabChecksumUtil.TabIndex = 5;
+            this.tabChecksumUtil.Text = "Checksum research";
+            this.tabChecksumUtil.UseVisualStyleBackColor = true;
+            // 
+            // numCSBytes
+            // 
+            this.numCSBytes.Location = new System.Drawing.Point(369, 80);
+            this.numCSBytes.Maximum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.numCSBytes.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numCSBytes.Name = "numCSBytes";
+            this.numCSBytes.Size = new System.Drawing.Size(137, 20);
+            this.numCSBytes.TabIndex = 152;
+            this.numCSBytes.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(298, 81);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(36, 13);
+            this.label20.TabIndex = 151;
+            this.label20.Text = "Bytes:";
+            // 
+            // txtExclude
+            // 
+            this.txtExclude.Location = new System.Drawing.Point(369, 34);
+            this.txtExclude.Name = "txtExclude";
+            this.txtExclude.Size = new System.Drawing.Size(137, 20);
+            this.txtExclude.TabIndex = 150;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(298, 39);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(48, 13);
+            this.label19.TabIndex = 149;
+            this.label19.Text = "Exclude:";
+            // 
+            // txtCSAddr
+            // 
+            this.txtCSAddr.Location = new System.Drawing.Point(369, 57);
+            this.txtCSAddr.Name = "txtCSAddr";
+            this.txtCSAddr.Size = new System.Drawing.Size(138, 20);
+            this.txtCSAddr.TabIndex = 148;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(298, 60);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(64, 13);
+            this.label18.TabIndex = 147;
+            this.label18.Text = "CS address:";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(297, 13);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(42, 13);
+            this.label17.TabIndex = 146;
+            this.label17.Text = "Range:";
+            // 
+            // txtChecksumRange
+            // 
+            this.txtChecksumRange.Location = new System.Drawing.Point(369, 10);
+            this.txtChecksumRange.Name = "txtChecksumRange";
+            this.txtChecksumRange.Size = new System.Drawing.Size(138, 20);
+            this.txtChecksumRange.TabIndex = 145;
+            // 
+            // btnTestChecksum
+            // 
+            this.btnTestChecksum.Location = new System.Drawing.Point(513, 55);
+            this.btnTestChecksum.Name = "btnTestChecksum";
+            this.btnTestChecksum.Size = new System.Drawing.Size(75, 23);
+            this.btnTestChecksum.TabIndex = 144;
+            this.btnTestChecksum.Text = "Try";
+            this.btnTestChecksum.UseVisualStyleBackColor = true;
+            this.btnTestChecksum.Click += new System.EventHandler(this.btnTestChecksum_Click);
+            // 
+            // chkCSUtilTryAll
+            // 
+            this.chkCSUtilTryAll.AutoSize = true;
+            this.chkCSUtilTryAll.Location = new System.Drawing.Point(513, 35);
+            this.chkCSUtilTryAll.Name = "chkCSUtilTryAll";
+            this.chkCSUtilTryAll.Size = new System.Drawing.Size(54, 17);
+            this.chkCSUtilTryAll.TabIndex = 143;
+            this.chkCSUtilTryAll.Text = "Try all";
+            this.chkCSUtilTryAll.UseVisualStyleBackColor = true;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.radioCSUtilComplement2);
+            this.groupBox5.Controls.Add(this.radioCSUtilComplement1);
+            this.groupBox5.Controls.Add(this.radioCSUtilComplement0);
+            this.groupBox5.Location = new System.Drawing.Point(178, 3);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(114, 81);
+            this.groupBox5.TabIndex = 142;
+            this.groupBox5.TabStop = false;
+            // 
+            // radioCSUtilComplement2
+            // 
+            this.radioCSUtilComplement2.AutoSize = true;
+            this.radioCSUtilComplement2.Location = new System.Drawing.Point(6, 54);
+            this.radioCSUtilComplement2.Name = "radioCSUtilComplement2";
+            this.radioCSUtilComplement2.Size = new System.Drawing.Size(99, 17);
+            this.radioCSUtilComplement2.TabIndex = 132;
+            this.radioCSUtilComplement2.Text = "2\'s Complement";
+            this.radioCSUtilComplement2.UseVisualStyleBackColor = true;
+            // 
+            // radioCSUtilComplement1
+            // 
+            this.radioCSUtilComplement1.AutoSize = true;
+            this.radioCSUtilComplement1.Location = new System.Drawing.Point(6, 34);
+            this.radioCSUtilComplement1.Name = "radioCSUtilComplement1";
+            this.radioCSUtilComplement1.Size = new System.Drawing.Size(99, 17);
+            this.radioCSUtilComplement1.TabIndex = 131;
+            this.radioCSUtilComplement1.Text = "1\'s Complement";
+            this.radioCSUtilComplement1.UseVisualStyleBackColor = true;
+            // 
+            // radioCSUtilComplement0
+            // 
+            this.radioCSUtilComplement0.AutoSize = true;
+            this.radioCSUtilComplement0.Checked = true;
+            this.radioCSUtilComplement0.Location = new System.Drawing.Point(6, 16);
+            this.radioCSUtilComplement0.Name = "radioCSUtilComplement0";
+            this.radioCSUtilComplement0.Size = new System.Drawing.Size(28, 17);
+            this.radioCSUtilComplement0.TabIndex = 130;
+            this.radioCSUtilComplement0.TabStop = true;
+            this.radioCSUtilComplement0.Text = "-";
+            this.radioCSUtilComplement0.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.radioCSUtilDwordSum);
+            this.groupBox1.Controls.Add(this.radioCSUtilWordSum);
+            this.groupBox1.Controls.Add(this.radioCSUtilSUM);
+            this.groupBox1.Controls.Add(this.radioCSUtilCrc32);
+            this.groupBox1.Controls.Add(this.radioCSUtilCrc16);
+            this.groupBox1.Location = new System.Drawing.Point(3, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(169, 81);
+            this.groupBox1.TabIndex = 141;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Checksum method";
+            // 
+            // radioCSUtilDwordSum
+            // 
+            this.radioCSUtilDwordSum.AutoSize = true;
+            this.radioCSUtilDwordSum.Location = new System.Drawing.Point(78, 54);
+            this.radioCSUtilDwordSum.Name = "radioCSUtilDwordSum";
+            this.radioCSUtilDwordSum.Size = new System.Drawing.Size(80, 17);
+            this.radioCSUtilDwordSum.TabIndex = 125;
+            this.radioCSUtilDwordSum.Text = "Dword Sum";
+            this.radioCSUtilDwordSum.UseVisualStyleBackColor = true;
+            // 
+            // radioCSUtilWordSum
+            // 
+            this.radioCSUtilWordSum.AutoSize = true;
+            this.radioCSUtilWordSum.Location = new System.Drawing.Point(78, 19);
+            this.radioCSUtilWordSum.Name = "radioCSUtilWordSum";
+            this.radioCSUtilWordSum.Size = new System.Drawing.Size(75, 17);
+            this.radioCSUtilWordSum.TabIndex = 124;
+            this.radioCSUtilWordSum.Text = "Word Sum";
+            this.radioCSUtilWordSum.UseVisualStyleBackColor = true;
+            // 
+            // radioCSUtilSUM
+            // 
+            this.radioCSUtilSUM.AutoSize = true;
+            this.radioCSUtilSUM.Location = new System.Drawing.Point(78, 36);
+            this.radioCSUtilSUM.Name = "radioCSUtilSUM";
+            this.radioCSUtilSUM.Size = new System.Drawing.Size(73, 17);
+            this.radioCSUtilSUM.TabIndex = 123;
+            this.radioCSUtilSUM.Text = "Byte SUM";
+            this.radioCSUtilSUM.UseVisualStyleBackColor = true;
+            // 
+            // radioCSUtilCrc32
+            // 
+            this.radioCSUtilCrc32.AutoSize = true;
+            this.radioCSUtilCrc32.Location = new System.Drawing.Point(6, 36);
+            this.radioCSUtilCrc32.Name = "radioCSUtilCrc32";
+            this.radioCSUtilCrc32.Size = new System.Drawing.Size(59, 17);
+            this.radioCSUtilCrc32.TabIndex = 122;
+            this.radioCSUtilCrc32.Text = "CRC32";
+            this.radioCSUtilCrc32.UseVisualStyleBackColor = true;
+            // 
+            // radioCSUtilCrc16
+            // 
+            this.radioCSUtilCrc16.AutoSize = true;
+            this.radioCSUtilCrc16.Checked = true;
+            this.radioCSUtilCrc16.Location = new System.Drawing.Point(6, 19);
+            this.radioCSUtilCrc16.Name = "radioCSUtilCrc16";
+            this.radioCSUtilCrc16.Size = new System.Drawing.Size(59, 17);
+            this.radioCSUtilCrc16.TabIndex = 121;
+            this.radioCSUtilCrc16.TabStop = true;
+            this.radioCSUtilCrc16.Text = "CRC16";
+            this.radioCSUtilCrc16.UseVisualStyleBackColor = true;
+            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -2022,6 +2277,13 @@
             this.dTCSearchToolStripMenuItem.Text = "DTC Search";
             this.dTCSearchToolStripMenuItem.Click += new System.EventHandler(this.dTCSearchToolStripMenuItem_Click);
             // 
+            // pIDSearchToolStripMenuItem
+            // 
+            this.pIDSearchToolStripMenuItem.Name = "pIDSearchToolStripMenuItem";
+            this.pIDSearchToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.pIDSearchToolStripMenuItem.Text = "PID Search";
+            this.pIDSearchToolStripMenuItem.Click += new System.EventHandler(this.pIDSearchToolStripMenuItem_Click);
+            // 
             // tableSeekToolStripMenuItem
             // 
             this.tableSeekToolStripMenuItem.Name = "tableSeekToolStripMenuItem";
@@ -2078,13 +2340,6 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // pIDSearchToolStripMenuItem
-            // 
-            this.pIDSearchToolStripMenuItem.Name = "pIDSearchToolStripMenuItem";
-            this.pIDSearchToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.pIDSearchToolStripMenuItem.Text = "PID Search";
-            this.pIDSearchToolStripMenuItem.Click += new System.EventHandler(this.pIDSearchToolStripMenuItem_Click);
             // 
             // FrmPatcher
             // 
@@ -2150,6 +2405,13 @@
             this.tabExtractSegments.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.tabChecksumUtil.ResumeLayout(false);
+            this.tabChecksumUtil.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numCSBytes)).EndInit();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -2328,5 +2590,26 @@
         private System.Windows.Forms.ToolStripMenuItem oBD2CodesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem segmentSeekToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pIDSearchToolStripMenuItem;
+        private System.Windows.Forms.TabPage tabChecksumUtil;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.TextBox txtChecksumRange;
+        private System.Windows.Forms.Button btnTestChecksum;
+        private System.Windows.Forms.CheckBox chkCSUtilTryAll;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.RadioButton radioCSUtilComplement2;
+        private System.Windows.Forms.RadioButton radioCSUtilComplement1;
+        private System.Windows.Forms.RadioButton radioCSUtilComplement0;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton radioCSUtilDwordSum;
+        private System.Windows.Forms.RadioButton radioCSUtilWordSum;
+        private System.Windows.Forms.RadioButton radioCSUtilSUM;
+        private System.Windows.Forms.RadioButton radioCSUtilCrc32;
+        private System.Windows.Forms.RadioButton radioCSUtilCrc16;
+        private System.Windows.Forms.TextBox txtCSAddr;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox txtExclude;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.NumericUpDown numCSBytes;
+        private System.Windows.Forms.Label label20;
     }
 }

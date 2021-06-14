@@ -3035,6 +3035,58 @@ namespace UniversalPatcher
             }
 
         }
+
+        private void btnTestChecksum_Click(object sender, EventArgs e)
+        {
+            List<Block> blocks;
+            ParseAddress(txtChecksumRange.Text, basefile, out blocks);
+            List<Block> excludes;
+            ParseAddress(txtExclude.Text, basefile, out excludes);
+            AddressData csAddr;
+            csAddr.Address = 0;
+            HexToUint(txtCSAddr.Text, out csAddr.Address);
+            csAddr.Bytes = (ushort)numCSBytes.Value;
+            csAddr.Name = "CS";
+            csAddr.Type = 0;
+            short method = CSMethod_Bytesum;
+            short complement = 0;
+            Logger("Checksum research:");
+            if (chkCSUtilTryAll.Checked)
+            {
+                for (complement = 0; complement <= 2; complement ++)
+                {
+                    Logger("Method: CRC16,    Complement: " + complement.ToString() + ", result: ", false);
+                    Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_crc16, complement, (ushort)numCSBytes.Value, false).ToString("X"));
+                    Logger("Method: CRC32,    Complement: " + complement.ToString() + ", result: ", false);
+                    Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_crc32, complement, (ushort)numCSBytes.Value, false).ToString("X"));
+                    Logger("Method: Bytesum,  Complement: " + complement.ToString() + ", result: ", false);
+                    Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_Bytesum, complement, (ushort)numCSBytes.Value, false).ToString("X"));
+                    Logger("Method: WordSum,  Complement: " + complement.ToString() + ", result: ", false);
+                    Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_Wordsum, complement, (ushort)numCSBytes.Value, false).ToString("X"));
+                    Logger("Method: DwordSum, Complement: " + complement.ToString() + ", result: ", false);
+                    Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_Dwordsum, complement, (ushort)numCSBytes.Value, false).ToString("X"));
+                }
+            }
+            else
+            {
+                if (radioCSUtilCrc16.Checked)
+                    method = CSMethod_crc16;
+                if (radioCSUtilCrc32.Checked)
+                    method = CSMethod_crc32;
+                if (radioCSUtilDwordSum.Checked)
+                    method = CSMethod_Dwordsum;
+                if (radioCSUtilSUM.Checked)
+                    method = CSMethod_Bytesum;
+                if (radioCSUtilWordSum.Checked)
+                    method = CSMethod_Wordsum;
+                if (radioCSUtilComplement1.Checked)
+                    complement = 1;
+                if (radioCSUtilComplement2.Checked)
+                    complement = 2;
+                Logger("Result: ", false);
+                Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, method, complement, (ushort)numCSBytes.Value, false).ToString("X"));
+            }
+        }
     }
 }
 
