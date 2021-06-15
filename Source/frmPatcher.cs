@@ -3036,7 +3036,7 @@ namespace UniversalPatcher
 
         }
 
-        private void btnTestChecksum_Click(object sender, EventArgs e)
+        private uint csUtilCalcCS(bool calcOnly)
         {
             List<Block> blocks;
             ParseAddress(txtChecksumRange.Text, basefile, out blocks);
@@ -3050,25 +3050,27 @@ namespace UniversalPatcher
             csAddr.Type = 0;
             short method = CSMethod_Bytesum;
             short complement = 0;
-            Logger("Checksum research:");
-            if (chkCSUtilTryAll.Checked)
+
+            if (chkCSUtilTryAll.Checked && calcOnly)
             {
-                for (complement = 0; complement <= 2; complement ++)
+                for (complement = 0; complement <= 2; complement++)
                 {
                     Logger("Method: CRC16,    Complement: " + complement.ToString() + ", result: ", false);
-                    Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_crc16, complement, (ushort)numCSBytes.Value, false).ToString("X"));
+                    Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_crc16, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked).ToString("X"));
                     Logger("Method: CRC32,    Complement: " + complement.ToString() + ", result: ", false);
-                    Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_crc32, complement, (ushort)numCSBytes.Value, false).ToString("X"));
+                    Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_crc32, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked).ToString("X"));
                     Logger("Method: Bytesum,  Complement: " + complement.ToString() + ", result: ", false);
-                    Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_Bytesum, complement, (ushort)numCSBytes.Value, false).ToString("X"));
+                    Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_Bytesum, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked).ToString("X"));
                     Logger("Method: WordSum,  Complement: " + complement.ToString() + ", result: ", false);
-                    Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_Wordsum, complement, (ushort)numCSBytes.Value, false).ToString("X"));
+                    Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_Wordsum, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked).ToString("X"));
                     Logger("Method: DwordSum, Complement: " + complement.ToString() + ", result: ", false);
-                    Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_Dwordsum, complement, (ushort)numCSBytes.Value, false).ToString("X"));
+                    Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_Dwordsum, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked).ToString("X"));
                 }
+                return 0;
             }
             else
             {
+
                 if (radioCSUtilCrc16.Checked)
                     method = CSMethod_crc16;
                 if (radioCSUtilCrc32.Checked)
@@ -3083,9 +3085,63 @@ namespace UniversalPatcher
                     complement = 1;
                 if (radioCSUtilComplement2.Checked)
                     complement = 2;
-                Logger("Result: ", false);
-                Logger(CalculateChecksum(basefile.buf, csAddr, blocks, excludes, method, complement, (ushort)numCSBytes.Value, false).ToString("X"));
+                return CalculateChecksum(basefile.buf, csAddr, blocks, excludes, method, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
             }
+        }
+
+        private void btnTestChecksum_Click(object sender, EventArgs e)
+        {
+            Logger("Checksum research:");
+
+            uint oldVal = 0;
+            uint csAddr;
+            if (HexToUint(txtCSAddr.Text, out csAddr))
+            {
+                if (numCSBytes.Value == 1)
+                    oldVal = basefile.buf[csAddr];
+                else if (numCSBytes.Value == 2)
+                    oldVal = BEToUint16(basefile.buf, csAddr);
+                else if (numCSBytes.Value == 4)
+                    oldVal = BEToUint32(basefile.buf, csAddr);
+
+                Logger("Saved value: " + oldVal.ToString("X"));
+            }
+
+            if (chkCSUtilTryAll.Checked)
+            {
+                csUtilCalcCS(true);
+            }
+            else
+            {
+                Logger("Result: ", false);
+                Logger(csUtilCalcCS(true).ToString("X"));
+            }
+        }
+
+        private void btnCsUtilFix_Click(object sender, EventArgs e)
+        {
+            uint CS1Calc = csUtilCalcCS(false);
+            uint csAddr;
+            HexToUint(txtCSAddr.Text, out csAddr);
+
+            uint oldVal = 0;
+            if (numCSBytes.Value == 1)
+            {
+                oldVal = basefile.buf[csAddr];
+                basefile.buf[csAddr] = (byte)CS1Calc;
+            }
+            else if (numCSBytes.Value == 2)
+            {
+                oldVal = BEToUint16(basefile.buf, csAddr);
+                SaveUshort(basefile.buf, csAddr, (ushort)CS1Calc);
+            }
+            else if (numCSBytes.Value == 4)
+            {
+                oldVal = BEToUint32(basefile.buf, csAddr);
+                SaveUint32(basefile.buf, csAddr, CS1Calc);
+            }
+            Logger("Checksum: " + oldVal.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
+
         }
     }
 }
