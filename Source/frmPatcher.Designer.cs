@@ -178,6 +178,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.btnExtractSegments = new System.Windows.Forms.Button();
             this.tabChecksumUtil = new System.Windows.Forms.TabPage();
+            this.chkCsUtilSwapBytes = new System.Windows.Forms.CheckBox();
             this.btnCsUtilFix = new System.Windows.Forms.Button();
             this.numCSBytes = new System.Windows.Forms.NumericUpDown();
             this.label20 = new System.Windows.Forms.Label();
@@ -221,7 +222,6 @@
             this.oBD2CodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkCsUtilSwapBytes = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1959,11 +1959,21 @@
             this.tabChecksumUtil.Text = "Checksum research";
             this.tabChecksumUtil.UseVisualStyleBackColor = true;
             // 
+            // chkCsUtilSwapBytes
+            // 
+            this.chkCsUtilSwapBytes.AutoSize = true;
+            this.chkCsUtilSwapBytes.Location = new System.Drawing.Point(184, 83);
+            this.chkCsUtilSwapBytes.Name = "chkCsUtilSwapBytes";
+            this.chkCsUtilSwapBytes.Size = new System.Drawing.Size(81, 17);
+            this.chkCsUtilSwapBytes.TabIndex = 133;
+            this.chkCsUtilSwapBytes.Text = "Swap bytes";
+            this.chkCsUtilSwapBytes.UseVisualStyleBackColor = true;
+            // 
             // btnCsUtilFix
             // 
-            this.btnCsUtilFix.Location = new System.Drawing.Point(513, 57);
+            this.btnCsUtilFix.Location = new System.Drawing.Point(512, 71);
             this.btnCsUtilFix.Name = "btnCsUtilFix";
-            this.btnCsUtilFix.Size = new System.Drawing.Size(75, 38);
+            this.btnCsUtilFix.Size = new System.Drawing.Size(109, 23);
             this.btnCsUtilFix.TabIndex = 153;
             this.btnCsUtilFix.Text = "Write Checksum";
             this.btnCsUtilFix.UseVisualStyleBackColor = true;
@@ -2050,9 +2060,9 @@
             // 
             // btnTestChecksum
             // 
-            this.btnTestChecksum.Location = new System.Drawing.Point(513, 33);
+            this.btnTestChecksum.Location = new System.Drawing.Point(512, 39);
             this.btnTestChecksum.Name = "btnTestChecksum";
-            this.btnTestChecksum.Size = new System.Drawing.Size(75, 23);
+            this.btnTestChecksum.Size = new System.Drawing.Size(109, 23);
             this.btnTestChecksum.TabIndex = 144;
             this.btnTestChecksum.Text = "Calculate";
             this.btnTestChecksum.UseVisualStyleBackColor = true;
@@ -2354,16 +2364,6 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // chkCsUtilSwapBytes
-            // 
-            this.chkCsUtilSwapBytes.AutoSize = true;
-            this.chkCsUtilSwapBytes.Location = new System.Drawing.Point(184, 83);
-            this.chkCsUtilSwapBytes.Name = "chkCsUtilSwapBytes";
-            this.chkCsUtilSwapBytes.Size = new System.Drawing.Size(81, 17);
-            this.chkCsUtilSwapBytes.TabIndex = 133;
-            this.chkCsUtilSwapBytes.Text = "Swap bytes";
-            this.chkCsUtilSwapBytes.UseVisualStyleBackColor = true;
             // 
             // FrmPatcher
             // 
