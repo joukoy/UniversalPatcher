@@ -2213,21 +2213,21 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "&Save bin";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click_1);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveAsToolStripMenuItem.Text = "Save bin &as...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
@@ -2244,10 +2244,10 @@
             this.pIDSearchToolStripMenuItem,
             this.tableSeekToolStripMenuItem,
             this.segmentSeekToolStripMenuItem,
+            this.oBD2CodesToolStripMenuItem,
             this.rememberWindowSizeToolStripMenuItem,
             this.disableTunerAutloadConfigToolStripMenuItem,
-            this.moreSettingsToolStripMenuItem,
-            this.oBD2CodesToolStripMenuItem});
+            this.moreSettingsToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "&Settings";
@@ -2334,7 +2334,7 @@
             this.disableTunerAutloadConfigToolStripMenuItem.Name = "disableTunerAutloadConfigToolStripMenuItem";
             this.disableTunerAutloadConfigToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.disableTunerAutloadConfigToolStripMenuItem.Text = "Disable tuner autoload config";
-            this.disableTunerAutloadConfigToolStripMenuItem.Click += new System.EventHandler(this.disableTunerAutloadConfigToolStripMenuItem_Click);
+            this.disableTunerAutloadConfigToolStripMenuItem.Click += new System.EventHandler(this.disableTunerAutoloadConfigToolStripMenuItem_Click);
             // 
             // moreSettingsToolStripMenuItem
             // 

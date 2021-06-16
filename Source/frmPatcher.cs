@@ -974,6 +974,7 @@ namespace UniversalPatcher
                 Logger("Saving to file: " + fileName);
                 basefile.saveBin(fileName);
                 this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
+                txtBaseFile.Text = fileName;
                 Logger("Done.");
             }
             catch (Exception ex)
@@ -2969,7 +2970,7 @@ namespace UniversalPatcher
             SaveBin();
         }
 
-        private void disableTunerAutloadConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        private void disableTunerAutoloadConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
             disableTunerAutloadConfigToolStripMenuItem.Checked = !disableTunerAutloadConfigToolStripMenuItem.Checked;
             Properties.Settings.Default.disableTunerAutoloadSettings = disableTunerAutloadConfigToolStripMenuItem.Checked;

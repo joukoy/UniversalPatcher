@@ -884,5 +884,17 @@ namespace UniversalPatcher.Properties {
                 this["MulitableChars"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DisableAutoFixChecksum {
+            get {
+                return ((bool)(this["DisableAutoFixChecksum"]));
+            }
+            set {
+                this["DisableAutoFixChecksum"] = value;
+            }
+        }
     }
 }

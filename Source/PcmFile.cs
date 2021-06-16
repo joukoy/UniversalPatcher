@@ -440,7 +440,10 @@ namespace UniversalPatcher
         {
             try
             {
-                FixCheckSums();
+                if (Properties.Settings.Default.DisableAutoFixChecksum)
+                    LoggerBold("Warning! Automatic checksum fix is disabled");
+                else
+                    FixCheckSums();
                 WriteBinToFile(fName, buf);
                 FileName = fName;
             }
@@ -449,6 +452,7 @@ namespace UniversalPatcher
                 LoggerBold(Environment.NewLine + ex.Message);
             }
         }
+
         public bool FixCheckSums()
         {
             bool needFix = false;

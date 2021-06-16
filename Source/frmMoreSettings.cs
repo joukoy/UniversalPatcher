@@ -22,6 +22,7 @@ namespace UniversalPatcher
             Properties.Settings.Default.keyPressWait100ms = (int)numKeypressWait.Value;
             Properties.Settings.Default.TableEditorMinOtherEquivalency = (int)numTunerMinEqOther.Value;
             Properties.Settings.Default.MulitableChars = txtMultitableChars.Text;
+            Properties.Settings.Default.DisableAutoFixChecksum = chkDisableAutoCS.Checked;
             this.Close();
         }
 
@@ -31,6 +32,7 @@ namespace UniversalPatcher
             numKeypressWait.Value = Properties.Settings.Default.keyPressWait100ms;
             numTunerMinEqOther.Value = Properties.Settings.Default.TableEditorMinOtherEquivalency;
             txtMultitableChars.Text = Properties.Settings.Default.MulitableChars;
+            chkDisableAutoCS.Checked = Properties.Settings.Default.DisableAutoFixChecksum;
         }
 
         private void numKeypressWait_ValueChanged(object sender, EventArgs e)

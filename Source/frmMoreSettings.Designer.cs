@@ -41,6 +41,7 @@ namespace UniversalPatcher
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txtMultitableChars = new System.Windows.Forms.TextBox();
+            this.chkDisableAutoCS = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerTableMinEquivalency)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numKeypressWait)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerMinEqOther)).BeginInit();
@@ -72,7 +73,7 @@ namespace UniversalPatcher
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(240, 185);
+            this.btnOK.Location = new System.Drawing.Point(240, 209);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 2;
@@ -164,11 +165,23 @@ namespace UniversalPatcher
             this.txtMultitableChars.Size = new System.Drawing.Size(113, 23);
             this.txtMultitableChars.TabIndex = 11;
             // 
+            // chkDisableAutoCS
+            // 
+            this.chkDisableAutoCS.AutoSize = true;
+            this.chkDisableAutoCS.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkDisableAutoCS.Location = new System.Drawing.Point(12, 182);
+            this.chkDisableAutoCS.Name = "chkDisableAutoCS";
+            this.chkDisableAutoCS.Size = new System.Drawing.Size(150, 17);
+            this.chkDisableAutoCS.TabIndex = 12;
+            this.chkDisableAutoCS.Text = "Disable auto checksum fix";
+            this.chkDisableAutoCS.UseVisualStyleBackColor = true;
+            // 
             // frmMoreSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(322, 220);
+            this.ClientSize = new System.Drawing.Size(322, 244);
+            this.Controls.Add(this.chkDisableAutoCS);
             this.Controls.Add(this.txtMultitableChars);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.groupBox2);
@@ -203,5 +216,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtMultitableChars;
+        private System.Windows.Forms.CheckBox chkDisableAutoCS;
     }
 }
