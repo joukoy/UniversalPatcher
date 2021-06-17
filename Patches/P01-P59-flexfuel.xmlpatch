@@ -203,4 +203,11 @@
     <CompatibleOS>Table:Flex_Fuel_Equipped*1mb,columns:1,rows:1</CompatibleOS>
     <Data>1 </Data>
   </XmlPatch>
+    <XmlPatch>
+    <Description>This patch adds values to flexfuel tables, if OS have flexfuel support</Description>
+    <XmlFile>p01-p59</XmlFile>
+    <Segment>EngineCal</Segment>
+    <CompatibleOS>Table:Stoichiometric_Fuel_Air*1mb,columns:1,rows:17</CompatibleOS>
+    <Data>0.068115234375 0.070068359375 0.072021484375 0.073974609375 0.075927734375 0.078125 0.080322265625 0.082763671875 0.08544921875 0.088134765625 0.091064453125 0.09423828125 0.09765625 0.101318359375 0.105224609375 0.109375 0.114013671875 </Data>
+  </XmlPatch>
 </ArrayOfXmlPatch>
