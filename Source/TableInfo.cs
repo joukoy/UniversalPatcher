@@ -58,8 +58,9 @@ namespace UniversalPatcher
             }
         }
 
-        public void saveValue(double val,bool isRawValue = false)
+        public bool saveValue(double val,bool isRawValue = false)
         {
+            bool retVal = false;    //Return true if value modified
             try
             {
                 UInt32 bufAddr = addr - tableInfo.compareFile.tableBufferOffset;
@@ -68,7 +69,7 @@ namespace UniversalPatcher
                 {
                     bool flag = Convert.ToBoolean(val);
                     saveFlag(bufAddr, flag);
-                    return;
+                    return true;
                 }
                 double newRawValue;
                 if (isRawValue)
@@ -125,7 +126,8 @@ namespace UniversalPatcher
                     SaveInt64(tableBuffer, bufAddr, (Int64)newRawValue);
                 if (td.DataType == InDataType.UINT64)
                     SaveUint64(tableBuffer, bufAddr, (UInt64)newRawValue);
-
+                if (newRawValue != lastRawValue)
+                    retVal = true;
                 lastValue = calculatedValue(newRawValue);
                 lastRawValue = newRawValue;
             }
@@ -134,6 +136,7 @@ namespace UniversalPatcher
                 Debug.WriteLine(ex.Message);
                 Logger("Invalid value");
             }
+            return retVal;
         }
 
         private void saveFlag(uint bufAddr, bool flag)

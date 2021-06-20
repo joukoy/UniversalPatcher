@@ -1091,7 +1091,7 @@ namespace UniversalPatcher
                     Logger("Nothing to do");
                     return;
                 }
-                ApplyXMLPatch(basefile);
+                ApplyXMLPatch(ref basefile);
             }
             catch (Exception ex)
             {

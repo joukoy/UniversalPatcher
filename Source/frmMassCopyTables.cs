@@ -179,7 +179,7 @@ namespace UniversalPatcher
                 dstTc.saveValue(Convert.ToDouble(srcTc.lastValue));
             }
 
-            dstTE.saveTable();
+            dstTE.saveTable(false);
             srcTE.Dispose();
             dstTE.Dispose();
         }

@@ -4,6 +4,13 @@
     <Description>This patch adds values to flexfuel tables, if OS have flexfuel support</Description>
     <XmlFile>p01-p59</XmlFile>
     <Segment>EngineCal</Segment>
+    <CompatibleOS>Table:Crank_Afterstart_Time,columns:1,rows:19</CompatibleOS>
+    <Data>10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 </Data>
+  </XmlPatch>
+  <XmlPatch>
+    <Description>This patch adds values to flexfuel tables, if OS have flexfuel support</Description>
+    <XmlFile>p01-p59</XmlFile>
+    <Segment>EngineCal</Segment>
     <CompatibleOS>Table:Crank_Afterstart_Step,columns:1,rows:19</CompatibleOS>
     <Data>1.0107421875 1.0107421875 1.0107421875 1.0107421875 1.0107421875 1.0107421875 1.0107421875 1.0107421875 1.0107421875 1.0107421875 1.0107421875 1.0107421875 1.0107421875 1.0107421875 1.0107421875 1.0107421875 1.0107421875 1.0107421875 1.0107421875 </Data>
   </XmlPatch>
@@ -48,13 +55,6 @@
     <Segment>EngineCal</Segment>
     <CompatibleOS>Table:Impact_Factor_20kPa_MAP*1mb,columns:19,rows:5</CompatibleOS>
     <Data>0.10009765625 0.10009765625 0.10009765625 0.10009765625 0.10009765625 0.10009765625 0.099365234375 0.092529296875 0.085693359375 0.07861328125 0.072509765625 0.066162109375 0.061767578125 0.057373046875 0.053955078125 0.051025390625 0.04833984375 0.045654296875 0.044677734375 0.123291015625 0.123291015625 0.123291015625 0.123291015625 0.123291015625 0.121337890625 0.118408203125 0.1083984375 0.098388671875 0.08837890625 0.079833984375 0.07177734375 0.065673828125 0.06005859375 0.055908203125 0.05224609375 0.04833984375 0.044921875 0.042724609375 0.146484375 0.146484375 0.146484375 0.146484375 0.146484375 0.142578125 0.1376953125 0.124267578125 0.111083984375 0.098388671875 0.0869140625 0.077392578125 0.0693359375 0.062744140625 0.057861328125 0.05322265625 0.048583984375 0.04443359375 0.040771484375 0.2158203125 0.2158203125 0.2158203125 0.2158203125 0.2158203125 0.206298828125 0.195068359375 0.171630859375 0.149169921875 0.1279296875 0.10888671875 0.093994140625 0.080810546875 0.071044921875 0.0634765625 0.056884765625 0.049072265625 0.04248046875 0.03515625 0.285400390625 0.285400390625 0.285400390625 0.285400390625 0.285400390625 0.27001953125 0.252685546875 0.21923828125 0.187255859375 0.157470703125 0.130615234375 0.11083984375 0.09228515625 0.0791015625 0.069091796875 0.060302734375 0.04931640625 0.04052734375 0.029541015625 </Data>
-  </XmlPatch>
-  <XmlPatch>
-    <Description>This patch adds values to flexfuel tables, if OS have flexfuel support</Description>
-    <XmlFile>p01-p59</XmlFile>
-    <Segment>EngineCal</Segment>
-    <CompatibleOS>Table:Crank_Afterstart_Time,columns:1,rows:19</CompatibleOS>
-    <Data>10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 </Data>
   </XmlPatch>
   <XmlPatch>
     <Description>This patch adds values to flexfuel tables, if OS have flexfuel support</Description>
@@ -251,13 +251,6 @@
     <Segment>EngineCal</Segment>
     <CompatibleOS>Table:FFS_Comp_Change_Thresh*1mb,columns:1,rows:1</CompatibleOS>
     <Data>0.80078125 </Data>
-  </XmlPatch>
-  <XmlPatch>
-    <Description>This patch adds values to flexfuel tables, if OS have flexfuel support</Description>
-    <XmlFile>p01-p59</XmlFile>
-    <Segment>EngineCal</Segment>
-    <CompatibleOS>Table:COT_FFS_Multiplier*1mb,columns:1,rows:5</CompatibleOS>
-    <Data>1 0.9951171875 0.989990234375 0.97509765625 0.9599609375 </Data>
   </XmlPatch>
   <XmlPatch>
     <Description>This patch adds values to flexfuel tables, if OS have flexfuel support</Description>

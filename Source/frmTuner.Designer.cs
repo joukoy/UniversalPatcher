@@ -107,6 +107,7 @@ namespace UniversalPatcher
             this.deleteRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.duplicateTableConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addTablesToExistingPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.comboFilterBy = new System.Windows.Forms.ComboBox();
             this.txtResult = new System.Windows.Forms.RichTextBox();
@@ -149,7 +150,6 @@ namespace UniversalPatcher
             this.contextMenuStripTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compareSelectedTablesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.addTablesToExistingPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -617,7 +617,7 @@ namespace UniversalPatcher
             this.createPatchToolStripMenuItem,
             this.addTablesToExistingPatchToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 362);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 340);
             // 
             // cutToolStripMenuItem
             // 
@@ -776,6 +776,13 @@ namespace UniversalPatcher
             this.createPatchToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.createPatchToolStripMenuItem.Text = "Create patch...";
             this.createPatchToolStripMenuItem.Click += new System.EventHandler(this.createPatchToolStripMenuItem_Click);
+            // 
+            // addTablesToExistingPatchToolStripMenuItem
+            // 
+            this.addTablesToExistingPatchToolStripMenuItem.Name = "addTablesToExistingPatchToolStripMenuItem";
+            this.addTablesToExistingPatchToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.addTablesToExistingPatchToolStripMenuItem.Text = "Add tables to existing patch...";
+            this.addTablesToExistingPatchToolStripMenuItem.Click += new System.EventHandler(this.addTablesToExistingPatchToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -1156,7 +1163,7 @@ namespace UniversalPatcher
             this.btnCollapse.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCollapse.ImageKey = "collapse.ico";
             this.btnCollapse.ImageList = this.imageList2;
-            this.btnCollapse.Location = new System.Drawing.Point(196, 27);
+            this.btnCollapse.Location = new System.Drawing.Point(350, 28);
             this.btnCollapse.Name = "btnCollapse";
             this.btnCollapse.Size = new System.Drawing.Size(24, 24);
             this.btnCollapse.TabIndex = 25;
@@ -1168,7 +1175,7 @@ namespace UniversalPatcher
             this.btnExpand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnExpand.ImageKey = "expand.ico";
             this.btnExpand.ImageList = this.imageList2;
-            this.btnExpand.Location = new System.Drawing.Point(166, 27);
+            this.btnExpand.Location = new System.Drawing.Point(320, 28);
             this.btnExpand.Name = "btnExpand";
             this.btnExpand.Size = new System.Drawing.Size(24, 24);
             this.btnExpand.TabIndex = 24;
@@ -1272,7 +1279,7 @@ namespace UniversalPatcher
             // labelBy
             // 
             this.labelBy.AutoSize = true;
-            this.labelBy.Location = new System.Drawing.Point(163, 33);
+            this.labelBy.Location = new System.Drawing.Point(163, 34);
             this.labelBy.Name = "labelBy";
             this.labelBy.Size = new System.Drawing.Size(21, 13);
             this.labelBy.TabIndex = 31;
@@ -1299,13 +1306,6 @@ namespace UniversalPatcher
             this.compareSelectedTablesToolStripMenuItem1.Size = new System.Drawing.Size(203, 22);
             this.compareSelectedTablesToolStripMenuItem1.Text = "Compare selected tables";
             this.compareSelectedTablesToolStripMenuItem1.Click += new System.EventHandler(this.compareSelectedTablesToolStripMenuItem1_Click);
-            // 
-            // addTablesToExistingPatchToolStripMenuItem
-            // 
-            this.addTablesToExistingPatchToolStripMenuItem.Name = "addTablesToExistingPatchToolStripMenuItem";
-            this.addTablesToExistingPatchToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.addTablesToExistingPatchToolStripMenuItem.Text = "Add tables to existing patch...";
-            this.addTablesToExistingPatchToolStripMenuItem.Click += new System.EventHandler(this.addTablesToExistingPatchToolStripMenuItem_Click);
             // 
             // frmTuner
             // 

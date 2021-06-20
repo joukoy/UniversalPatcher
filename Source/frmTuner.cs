@@ -2809,7 +2809,7 @@ namespace UniversalPatcher
             {
                 Logger("Loading file: " + fileName);
                 PatchList = loadPatchFile(fileName);
-                ApplyXMLPatch(PCM);
+                ApplyXMLPatch(ref PCM);
             }
             catch (Exception ex)
             {
@@ -3003,9 +3003,9 @@ namespace UniversalPatcher
             copyToolStripMenuItem.Enabled = false;
             pasteToolStripMenuItem.Enabled = false;
             selectToolStripMenuItem.Enabled = true;
-            labelBy.Visible = false;
-            comboFilterBy.Visible = false;
-            comboFilterBy.Text = "TableName";
+            //labelBy.Visible = false;
+            //comboFilterBy.Visible = false;
+            //comboFilterBy.Text = "TableName";
             labelCategory.Visible = false;
             comboTableCategory.Visible = false;
             comboTableCategory.Text = "_All";

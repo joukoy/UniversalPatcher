@@ -25,6 +25,22 @@ namespace UniversalPatcher.Properties
                     searchPids(step,true);
                 return;
             }
+            else if (PCM.configFile.StartsWith("p01"))
+            {
+                step = 8;
+                startAddress = searchBytes(PCM, "00 01 02 00 * * * * 00 03 01 00 * * * * 00 04 00 00 * * * * 00 05 00 00", 0, PCM.fsize - 28);
+                if (startAddress < uint.MaxValue)
+                    searchPids(step, false);
+                return;
+            }
+            else if (PCM.configFile.StartsWith("v6"))
+            {
+                startAddress = searchBytes(PCM, "00 00 02 00 * * * * * * 00 01 02 00", 0, PCM.fsize - 14);
+                step = 10;
+                if (startAddress < uint.MaxValue)
+                    searchPids(step, false);
+                return;
+            }
             else
             {
                 string cnfFile = PCM.configFile;

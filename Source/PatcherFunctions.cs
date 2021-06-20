@@ -779,7 +779,7 @@ public class upatcher
         return retVal;
     }
 
-    public static uint checkPatchCompatibility(XmlPatch xpatch, PcmFile basefile)
+    public static uint checkPatchCompatibility(XmlPatch xpatch, PcmFile basefile, bool newline = true)
     {
         uint retVal = uint.MaxValue;
         bool isCompatible = false;
@@ -855,7 +855,7 @@ public class upatcher
                 }
                 TableData tmpTd = new TableData();
                 tmpTd.TableName = tbName;
-                Logger("Table: " + tbName);
+                Logger("Table: " + tbName,newline);
                 int id = findTableDataId(tmpTd, basefile.tableDatas);
                 if (id > -1)
                 {
@@ -913,7 +913,7 @@ public class upatcher
         return retVal;
     }
 
-    public static uint applyTablePatch(PcmFile basefile, XmlPatch xpatch, int tdId)
+    public static uint applyTablePatch(ref PcmFile basefile, XmlPatch xpatch, int tdId)
     {
         int diffCount = 0;
         frmTableEditor frmTE = new frmTableEditor();
@@ -928,12 +928,12 @@ public class upatcher
             for (int cell = 0; cell < frmTE.compareFiles[0].tableInfos[0].tableCells.Count; cell++)
             {
                 TableCell tCell = frmTE.compareFiles[0].tableInfos[0].tableCells[cell];
-                double val = Convert.ToDouble(dataParts[diffCount].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                if (val != Convert.ToDouble(tCell.origValue))
+                double val = Convert.ToDouble(dataParts[cell].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                if (tCell.saveValue(val))
                     diffCount++;
-                tCell.saveValue(val);
             }
-            frmTE.saveTable();
+            //frmTE.saveTable(false);
+            Array.Copy(frmTE.compareFiles[0].buf, 0, basefile.buf, frmTE.compareFiles[0].tableBufferOffset, frmTE.compareFiles[0].buf.Length);
             frmTE.Dispose();
         }
         catch (Exception ex)
@@ -949,7 +949,7 @@ public class upatcher
         return (uint)(diffCount * step);
     }
 
-    public static bool ApplyXMLPatch(PcmFile basefile)
+    public static bool ApplyXMLPatch(ref PcmFile basefile)
     {
         try
         {
@@ -964,14 +964,14 @@ public class upatcher
                 if (xpatch.Description != null && xpatch.Description != "" && xpatch.Description != prevDescr)
                     Logger(xpatch.Description);
                 prevDescr = xpatch.Description;
-                uint Addr = checkPatchCompatibility(xpatch, basefile);
+                if (xpatch.Segment != null && xpatch.Segment.Length > 0 && PrevSegment != xpatch.Segment)
+                {
+                    PrevSegment = xpatch.Segment;
+                    Logger("Segment: " + xpatch.Segment);
+                }
+                uint Addr = checkPatchCompatibility(xpatch, basefile,false);
                 if (Addr < uint.MaxValue)
                 {
-                    if (xpatch.Segment != null && xpatch.Segment.Length > 0 && PrevSegment != xpatch.Segment)
-                    {
-                        PrevSegment = xpatch.Segment;
-                        Logger("Segment: " + xpatch.Segment);
-                    }
                     bool PatchRule = true; //If there is no rule, apply patch
                     if (xpatch.Rule != null && (xpatch.Rule.Contains(':') || xpatch.Rule.Contains('[')))
                     {
@@ -1021,7 +1021,9 @@ public class upatcher
                     {
                         if (xpatch.CompatibleOS.ToLower().StartsWith("table:"))
                         {
-                            ByteCount += applyTablePatch(basefile, xpatch, (int)Addr);
+                            uint bCount = applyTablePatch(ref basefile, xpatch, (int)Addr);
+                            Logger(", " + bCount.ToString() + " bytes");
+                            ByteCount += bCount;
                         }
                         else
                         {
@@ -1072,7 +1074,8 @@ public class upatcher
                 }
             }
             Logger("Applied: " + ByteCount.ToString() + " Bytes");
-            Logger("You can save BIN file now");
+            if (ByteCount > 0)
+                Logger("You can save BIN file now");
         }
         catch (Exception ex)
         {

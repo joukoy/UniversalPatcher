@@ -162,7 +162,7 @@ namespace UniversalPatcher
                     DialogResult dialogResult = MessageBox.Show("Apply modifications?", "Apply modifications?", MessageBoxButtons.YesNo);
                     if (dialogResult == DialogResult.Yes)
                     {
-                        saveTable();
+                        saveTable(true);
                         this.DialogResult = DialogResult.OK;
                     }
                     else
@@ -1805,11 +1805,12 @@ namespace UniversalPatcher
             }
         }
 
-        public void saveTable()
+        public void saveTable(bool useDataGrid)
         {
             try
             {
-                dataGridView1.EndEdit();
+                if (useDataGrid)
+                    dataGridView1.EndEdit();
                 byte[] tableBuffer = compareFiles[0].buf;
                 Array.Copy(tableBuffer, 0, compareFiles[0].pcm.buf,compareFiles[0].tableBufferOffset, tableBuffer.Length);
             }
@@ -2074,7 +2075,7 @@ namespace UniversalPatcher
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveTable();
+            saveTable(true);
         }
 
         private void exportCSVToolStripMenuItem1_Click(object sender, EventArgs e)
