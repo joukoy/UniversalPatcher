@@ -94,6 +94,7 @@ namespace UniversalPatcher
 
             comboFilterBy.Items.Clear();
             TableData tdTmp = new TableData();
+            comboFilterBy.Items.Add("All");
             foreach (var prop in tdTmp.GetType().GetProperties())
             {
                 //Add to filter by-combo
@@ -586,15 +587,40 @@ namespace UniversalPatcher
                     {
                         string[] orStr = newStr.Split('|');
                         List<TableData> newTDList = new List<TableData>();
-                        foreach (string orS in orStr)
+                        TableData tdTmp = new TableData();
+                        if (comboFilterBy.Text == "All")
                         {
-                            IEnumerable<TableData> tmpRes = new List<TableData>();
-                            if (caseSensitiveFilteringToolStripMenuItem.Checked)
-                                tmpRes = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(orS.Trim()));
-                            else
-                                tmpRes = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(orS.Trim().ToLower()));
-                            foreach (TableData td in tmpRes)
-                                newTDList.Add(td);
+                            foreach (var prop in tdTmp.GetType().GetProperties())
+                            {
+                                foreach (string orS in orStr)
+                                {
+                                    List<TableData> tmpRes = filterTdList(results, orS.Trim(), prop.Name, caseSensitiveFilteringToolStripMenuItem.Checked);
+                                    foreach (TableData td in tmpRes)
+                                    {
+                                        bool isInList = false;
+                                        foreach (TableData nTd in newTDList)
+                                        {
+                                            if (td.id == nTd.id)
+                                            {
+                                                isInList = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!isInList)
+                                            newTDList.Add(td);
+                                    }
+                                }
+
+                            }
+                        }
+                        else
+                        {
+                            foreach (string orS in orStr)
+                            {
+                                List<TableData> tmpRes = filterTdList(results, orS.Trim(), comboFilterBy.Text, caseSensitiveFilteringToolStripMenuItem.Checked);
+                                foreach (TableData td in tmpRes)
+                                    newTDList.Add(td);
+                            }
                         }
                         results = newTDList;
                     }
@@ -602,12 +628,44 @@ namespace UniversalPatcher
                     {
                         newStr = txtSearchTableSeek.Text.Replace("AND", "&");
                         string[] andStr = newStr.Split('&');
-                        foreach (string sStr in andStr)
+                        if (comboFilterBy.Text == "All")
                         {
-                            if (caseSensitiveFilteringToolStripMenuItem.Checked)
-                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(sStr.Trim()));
-                            else
-                                results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(sStr.ToLower().Trim()));
+                            List<TableData> newTDList = new List<TableData>();
+                            TableData tdTmp = new TableData();
+                            foreach (var prop in tdTmp.GetType().GetProperties())
+                            {
+                                Debug.WriteLine(prop.Name);
+                                List<TableData> tmpRes = results.ToList();
+                                foreach (string sStr in andStr)
+                                {
+                                    tmpRes = filterTdList(tmpRes, sStr, prop.Name, caseSensitiveFilteringToolStripMenuItem.Checked);
+                                }
+                                foreach (TableData td in tmpRes)
+                                {
+                                    bool isInList = false;
+                                    foreach(TableData nTd in newTDList)
+                                    {
+                                        if (td.id == nTd.id)
+                                        {
+                                            isInList = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!isInList)
+                                        newTDList.Add(td);
+                                }
+                            }
+                            results = newTDList;
+                        }
+                        else
+                        {
+                            foreach (string sStr in andStr)
+                            {
+                                if (caseSensitiveFilteringToolStripMenuItem.Checked)
+                                    results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(sStr.Trim()));
+                                else
+                                    results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(sStr.ToLower().Trim()));
+                            }
                         }
                     }
                 }
@@ -757,7 +815,13 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+
+                Debug.WriteLine("frmTune, line: " + line + ", " + ex.Message);
             }
 
         }
@@ -2744,11 +2808,7 @@ namespace UniversalPatcher
             try
             {
                 Logger("Loading file: " + fileName);
-                System.Xml.Serialization.XmlSerializer reader =
-                    new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
-                System.IO.StreamReader file = new System.IO.StreamReader(fileName);
-                PatchList = (List<XmlPatch>)reader.Deserialize(file);
-                file.Close();
+                PatchList = loadPatchFile(fileName);
                 ApplyXMLPatch(PCM);
             }
             catch (Exception ex)
@@ -2806,7 +2866,7 @@ namespace UniversalPatcher
             return tableIds;
         }
 
-        private void generateTablePatch()
+        private void generateTablePatch(bool createNew)
         {
             try
             {
@@ -2816,17 +2876,31 @@ namespace UniversalPatcher
                     Logger("No tables selected");
                     return;
                 }
-                string defName = Path.Combine(Application.StartupPath, "Patches", "newpatch.xmlpatch");
-                string patchFname = SelectSaveFile("PATCH files (*.xmlpatch)|*.xmlpatch|ALL files (*.*)|*.*", defName);
-                if (patchFname.Length == 0)
-                    return;
                 string Description = "";
-                frmData frmD = new frmData();
-                frmD.Text = "Patch Description";
-                if (frmD.ShowDialog() == DialogResult.OK)
-                    Description = frmD.txtData.Text;
-                frmD.Dispose();
-                List<XmlPatch> newPatch = new List<XmlPatch>();
+                List<XmlPatch> newPatch;
+                string patchFname;
+                if (createNew)
+                {
+                    string defName = Path.Combine(Application.StartupPath, "Patches", "newpatch.xmlpatch");
+                    patchFname = SelectSaveFile("PATCH files (*.xmlpatch)|*.xmlpatch|ALL files (*.*)|*.*", defName);
+                    if (patchFname.Length == 0)
+                        return;
+                    frmData frmD = new frmData();
+                    frmD.Text = "Patch Description";
+                    if (frmD.ShowDialog() == DialogResult.OK)
+                        Description = frmD.txtData.Text;
+                    frmD.Dispose();
+                    newPatch = new List<XmlPatch>();
+                }
+                else
+                {
+                    patchFname = SelectFile("Select patch", "PATCH files (*.xmlpatch)|*.xmlpatch|ALL files (*.*)|*.*");
+                    if (patchFname.Length == 0)
+                        return;
+                    newPatch = loadPatchFile(patchFname);
+                    if (newPatch.Count > 0)
+                        Description = newPatch[0].Description;
+                }
                 for (int i = 0; i < tableIds.Count; i++)
                 {
                     int id = tableIds[i];
@@ -2889,7 +2963,7 @@ namespace UniversalPatcher
 
         private void createPatchToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            generateTablePatch();
+            generateTablePatch(true);
         }
 
         private void selectTreemode()
@@ -3932,6 +4006,11 @@ namespace UniversalPatcher
         private void selectFileToolStripMenuItem3_Click(object sender, EventArgs e)
         {
             selectDiffFile(true);
+        }
+
+        private void addTablesToExistingPatchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            generateTablePatch(false);
         }
     }
 }

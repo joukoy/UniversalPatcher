@@ -34,6 +34,7 @@ namespace UniversalPatcher
             Values = "";
             ExtraDescription = "";
             CompatibleOS = "";
+            BitMask = "";
         }
         public uint id { get; set; }
         public string OS { get; set; }

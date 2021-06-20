@@ -1759,7 +1759,7 @@ public class upatcher
             uint cvnInt = 0;
             if (!HexToUint(cvn, out cvnInt))
             {
-                throw new Exception("Can't convert from HEX: " + cvn);
+                LoggerBold("Can't convert from HEX: " + cvn);
             }
             string refString = "";
             if (referenceCvnList == null) return "";
@@ -1771,7 +1771,7 @@ public class upatcher
                     cvnMismatch = true;    //Found from referencelist, match not found YET
                     if (!HexToUint(referenceCvnList[r].CVN, out refC))
                     {
-                        throw new Exception("Can't convert from HEX: " + referenceCvnList[r].CVN);
+                        LoggerBold("Can't convert from HEX: " + referenceCvnList[r].CVN);
                     }
                     if (refC == cvnInt)
                     {
@@ -1783,7 +1783,7 @@ public class upatcher
                     ushort refShort;
                     if (!HexToUshort(referenceCvnList[r].CVN, out refShort))
                     {
-                        throw new Exception("Can't convert from HEX: " + referenceCvnList[r].CVN);
+                        Debug.WriteLine("CheckStockCVN (ushort): Can't convert from HEX: " + referenceCvnList[r].CVN);
                     }
                     if (SwapBytes(refShort) == cvnInt)
                     {
@@ -2410,4 +2410,31 @@ public class upatcher
         }
     }
 
+    public static List<XmlPatch> loadPatchFile(string fileName)
+    {
+        System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
+        System.IO.StreamReader file = new System.IO.StreamReader(fileName);
+        List<XmlPatch> pList = (List<XmlPatch>)reader.Deserialize(file);
+        file.Close();
+        return pList;
+    }
+
+    public static List<TableData> filterTdList(IEnumerable<TableData> results, string filterTxt, string filterBy, bool caseSens)
+    {
+        TableData tdTmp = new TableData();
+        try
+        {
+            if (caseSens)
+                results = results.Where(t => typeof(TableData).GetProperty(filterBy).GetValue(t, null).ToString().Contains(filterTxt.Trim()));
+            else
+                results = results.Where(t => typeof(TableData).GetProperty(filterBy).GetValue(t, null).ToString().ToLower().Contains(filterTxt.ToLower().Trim()));
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            List<TableData> emptyList = new List<TableData>();
+            return emptyList;
+        }
+        return results.ToList();
+    }
 }

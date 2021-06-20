@@ -149,6 +149,7 @@ namespace UniversalPatcher
             this.contextMenuStripTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compareSelectedTablesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.addTablesToExistingPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -377,7 +378,7 @@ namespace UniversalPatcher
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.newToolStripMenuItem.Text = "New...";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -471,21 +472,21 @@ namespace UniversalPatcher
             // cSVToolStripMenuItem
             // 
             this.cSVToolStripMenuItem.Name = "cSVToolStripMenuItem";
-            this.cSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.cSVToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.cSVToolStripMenuItem.Text = "CSV";
             this.cSVToolStripMenuItem.Click += new System.EventHandler(this.cSVToolStripMenuItem_Click);
             // 
             // xDFToolStripMenuItem
             // 
             this.xDFToolStripMenuItem.Name = "xDFToolStripMenuItem";
-            this.xDFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.xDFToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.xDFToolStripMenuItem.Text = "XDF";
             this.xDFToolStripMenuItem.Click += new System.EventHandler(this.xDFToolStripMenuItem_Click);
             // 
             // xMLGeneratorExportToolStripMenuItem
             // 
             this.xMLGeneratorExportToolStripMenuItem.Name = "xMLGeneratorExportToolStripMenuItem";
-            this.xMLGeneratorExportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.xMLGeneratorExportToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.xMLGeneratorExportToolStripMenuItem.Text = "XML Generator CSV";
             this.xMLGeneratorExportToolStripMenuItem.Click += new System.EventHandler(this.xMLGeneratorExportToolStripMenuItem_Click);
             // 
@@ -613,63 +614,64 @@ namespace UniversalPatcher
             this.insertRowToolStripMenuItem,
             this.deleteRowToolStripMenuItem,
             this.duplicateTableConfigToolStripMenuItem,
-            this.createPatchToolStripMenuItem});
+            this.createPatchToolStripMenuItem,
+            this.addTablesToExistingPatchToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(206, 318);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 362);
             // 
             // cutToolStripMenuItem
             // 
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.cutToolStripMenuItem.Text = "Cut";
             this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // editTableToolStripMenuItem
             // 
             this.editTableToolStripMenuItem.Name = "editTableToolStripMenuItem";
-            this.editTableToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.editTableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.editTableToolStripMenuItem.Text = "Edit table(s)";
             this.editTableToolStripMenuItem.Click += new System.EventHandler(this.editTableToolStripMenuItem_Click);
             // 
             // searchAndCompareToolStripMenuItem
             // 
             this.searchAndCompareToolStripMenuItem.Name = "searchAndCompareToolStripMenuItem";
-            this.searchAndCompareToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.searchAndCompareToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.searchAndCompareToolStripMenuItem.Text = "Search and compare";
             this.searchAndCompareToolStripMenuItem.Click += new System.EventHandler(this.searchAndCompareToolStripMenuItem_Click);
             // 
             // searchAndCompareAllToolStripMenuItem
             // 
             this.searchAndCompareAllToolStripMenuItem.Name = "searchAndCompareAllToolStripMenuItem";
-            this.searchAndCompareAllToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.searchAndCompareAllToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.searchAndCompareAllToolStripMenuItem.Text = "Search and compare All";
             this.searchAndCompareAllToolStripMenuItem.Click += new System.EventHandler(this.searchAndCompareAllToolStripMenuItem_Click);
             // 
             // compareSelectedTablesToolStripMenuItem
             // 
             this.compareSelectedTablesToolStripMenuItem.Name = "compareSelectedTablesToolStripMenuItem";
-            this.compareSelectedTablesToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.compareSelectedTablesToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.compareSelectedTablesToolStripMenuItem.Text = "Compare selected tables";
             this.compareSelectedTablesToolStripMenuItem.Click += new System.EventHandler(this.compareSelectedTablesToolStripMenuItem_Click);
             // 
             // copySelectedTablesToToolStripMenuItem
             // 
             this.copySelectedTablesToToolStripMenuItem.Name = "copySelectedTablesToToolStripMenuItem";
-            this.copySelectedTablesToToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.copySelectedTablesToToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.copySelectedTablesToToolStripMenuItem.Text = "Copy selected tables to...";
             this.copySelectedTablesToToolStripMenuItem.Click += new System.EventHandler(this.copySelectedTablesToToolStripMenuItem_Click);
             // 
@@ -685,7 +687,7 @@ namespace UniversalPatcher
             this.numberToolStripMenuItem});
             this.selectToolStripMenuItem.Enabled = false;
             this.selectToolStripMenuItem.Name = "selectToolStripMenuItem";
-            this.selectToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.selectToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.selectToolStripMenuItem.Text = "Select all...";
             this.selectToolStripMenuItem.Visible = false;
             // 
@@ -734,13 +736,13 @@ namespace UniversalPatcher
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(202, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(227, 6);
             // 
             // editRowToolStripMenuItem
             // 
             this.editRowToolStripMenuItem.Enabled = false;
             this.editRowToolStripMenuItem.Name = "editRowToolStripMenuItem";
-            this.editRowToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.editRowToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.editRowToolStripMenuItem.Text = "Edit table config";
             this.editRowToolStripMenuItem.Click += new System.EventHandler(this.editRowToolStripMenuItem_Click);
             // 
@@ -748,7 +750,7 @@ namespace UniversalPatcher
             // 
             this.insertRowToolStripMenuItem.Enabled = false;
             this.insertRowToolStripMenuItem.Name = "insertRowToolStripMenuItem";
-            this.insertRowToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.insertRowToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.insertRowToolStripMenuItem.Text = "Insert table config";
             this.insertRowToolStripMenuItem.Click += new System.EventHandler(this.insertRowToolStripMenuItem_Click);
             // 
@@ -756,7 +758,7 @@ namespace UniversalPatcher
             // 
             this.deleteRowToolStripMenuItem.Enabled = false;
             this.deleteRowToolStripMenuItem.Name = "deleteRowToolStripMenuItem";
-            this.deleteRowToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.deleteRowToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.deleteRowToolStripMenuItem.Text = "Delete table config";
             this.deleteRowToolStripMenuItem.Click += new System.EventHandler(this.deleteRowToolStripMenuItem_Click);
             // 
@@ -764,14 +766,14 @@ namespace UniversalPatcher
             // 
             this.duplicateTableConfigToolStripMenuItem.Enabled = false;
             this.duplicateTableConfigToolStripMenuItem.Name = "duplicateTableConfigToolStripMenuItem";
-            this.duplicateTableConfigToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.duplicateTableConfigToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.duplicateTableConfigToolStripMenuItem.Text = "Duplicate table config";
             this.duplicateTableConfigToolStripMenuItem.Click += new System.EventHandler(this.duplicateTableConfigToolStripMenuItem_Click);
             // 
             // createPatchToolStripMenuItem
             // 
             this.createPatchToolStripMenuItem.Name = "createPatchToolStripMenuItem";
-            this.createPatchToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.createPatchToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.createPatchToolStripMenuItem.Text = "Create patch...";
             this.createPatchToolStripMenuItem.Click += new System.EventHandler(this.createPatchToolStripMenuItem_Click);
             // 
@@ -1298,6 +1300,13 @@ namespace UniversalPatcher
             this.compareSelectedTablesToolStripMenuItem1.Text = "Compare selected tables";
             this.compareSelectedTablesToolStripMenuItem1.Click += new System.EventHandler(this.compareSelectedTablesToolStripMenuItem1_Click);
             // 
+            // addTablesToExistingPatchToolStripMenuItem
+            // 
+            this.addTablesToExistingPatchToolStripMenuItem.Name = "addTablesToExistingPatchToolStripMenuItem";
+            this.addTablesToExistingPatchToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.addTablesToExistingPatchToolStripMenuItem.Text = "Add tables to existing patch...";
+            this.addTablesToExistingPatchToolStripMenuItem.Click += new System.EventHandler(this.addTablesToExistingPatchToolStripMenuItem_Click);
+            // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1470,5 +1479,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem expand2LevelsToolStripMenuItem;
         private ToolStripMenuItem expand3LevelsToolStripMenuItem;
         private ToolStripMenuItem reloadFileFromDiskToolStripMenuItem;
+        private ToolStripMenuItem addTablesToExistingPatchToolStripMenuItem;
     }
 }
