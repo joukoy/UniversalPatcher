@@ -111,6 +111,7 @@ namespace UniversalPatcher
             labelTableName.Text = "";
             lastSelectedId = -1;
             dataGridView1.DataSource = bindingsource;
+            dataGridView1.AllowUserToAddRows = false;
             filterTables();
         }
 
@@ -812,6 +813,7 @@ namespace UniversalPatcher
                 txtDescription.Text = "";
                 filterTree();
                 this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
+                dataGridView1.CellEndEdit += DataGridView1_CellEndEdit;
             }
             catch (Exception ex)
             {
@@ -824,6 +826,11 @@ namespace UniversalPatcher
                 Debug.WriteLine("frmTune, line: " + line + ", " + ex.Message);
             }
 
+        }
+
+        private void DataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            //Debug.WriteLine("End edit");
         }
 
         private void filterTree()
@@ -1880,7 +1887,7 @@ namespace UniversalPatcher
         }
         private void DataGridView1_ColumnDisplayIndexChanged(object sender, DataGridViewColumnEventArgs e)
         {
-            Debug.WriteLine("Displayindex: " + e.Column.HeaderText);
+            //Debug.WriteLine("Displayindex: " + e.Column.HeaderText);
             columnsModified = true;
         }
         private void DataGridView1_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
