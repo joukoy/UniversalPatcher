@@ -22,7 +22,10 @@ namespace UniversalPatcher
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new FrmPatcher());
+                if (Properties.Settings.Default.SimpleMode)
+                    Application.Run(new FrmMain());
+                else
+                    Application.Run(new FrmPatcher());
             }
             catch (Exception ex)
             {

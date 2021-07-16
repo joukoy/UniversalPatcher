@@ -150,6 +150,8 @@ namespace UniversalPatcher
             this.contextMenuStripTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compareSelectedTablesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStripPatch = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.applyPatchToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -171,6 +173,7 @@ namespace UniversalPatcher
             this.splitContainerListMode.SuspendLayout();
             this.contextMenuStripListTree.SuspendLayout();
             this.contextMenuStripTree.SuspendLayout();
+            this.contextMenuStripPatch.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -871,10 +874,10 @@ namespace UniversalPatcher
             this.tabControl1.Controls.Add(this.tabPatches);
             this.tabControl1.Controls.Add(this.tabFileInfo);
             this.tabControl1.ImageList = this.imageList3;
-            this.tabControl1.Location = new System.Drawing.Point(176, 15);
+            this.tabControl1.Location = new System.Drawing.Point(176, 105);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(449, 371);
+            this.tabControl1.Size = new System.Drawing.Size(449, 281);
             this.tabControl1.TabIndex = 1;
             this.tabControl1.Visible = false;
             // 
@@ -884,7 +887,7 @@ namespace UniversalPatcher
             this.tabDimensions.Location = new System.Drawing.Point(4, 31);
             this.tabDimensions.Name = "tabDimensions";
             this.tabDimensions.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDimensions.Size = new System.Drawing.Size(441, 336);
+            this.tabDimensions.Size = new System.Drawing.Size(441, 246);
             this.tabDimensions.TabIndex = 0;
             this.tabDimensions.UseVisualStyleBackColor = true;
             // 
@@ -894,7 +897,7 @@ namespace UniversalPatcher
             this.tabValueType.Location = new System.Drawing.Point(4, 31);
             this.tabValueType.Name = "tabValueType";
             this.tabValueType.Padding = new System.Windows.Forms.Padding(3);
-            this.tabValueType.Size = new System.Drawing.Size(441, 336);
+            this.tabValueType.Size = new System.Drawing.Size(441, 246);
             this.tabValueType.TabIndex = 1;
             this.tabValueType.UseVisualStyleBackColor = true;
             // 
@@ -903,7 +906,7 @@ namespace UniversalPatcher
             this.tabCategory.ImageKey = "category.ico";
             this.tabCategory.Location = new System.Drawing.Point(4, 31);
             this.tabCategory.Name = "tabCategory";
-            this.tabCategory.Size = new System.Drawing.Size(441, 336);
+            this.tabCategory.Size = new System.Drawing.Size(441, 246);
             this.tabCategory.TabIndex = 2;
             this.tabCategory.UseVisualStyleBackColor = true;
             // 
@@ -912,7 +915,7 @@ namespace UniversalPatcher
             this.tabSegments.ImageKey = "segments.ico";
             this.tabSegments.Location = new System.Drawing.Point(4, 31);
             this.tabSegments.Name = "tabSegments";
-            this.tabSegments.Size = new System.Drawing.Size(441, 336);
+            this.tabSegments.Size = new System.Drawing.Size(441, 246);
             this.tabSegments.TabIndex = 3;
             this.tabSegments.UseVisualStyleBackColor = true;
             // 
@@ -925,7 +928,7 @@ namespace UniversalPatcher
             this.tabSettings.ImageKey = "modify.ico";
             this.tabSettings.Location = new System.Drawing.Point(4, 31);
             this.tabSettings.Name = "tabSettings";
-            this.tabSettings.Size = new System.Drawing.Size(441, 336);
+            this.tabSettings.Size = new System.Drawing.Size(441, 246);
             this.tabSettings.TabIndex = 5;
             this.tabSettings.UseVisualStyleBackColor = true;
             // 
@@ -988,7 +991,7 @@ namespace UniversalPatcher
             this.tabPatches.ImageKey = "patch.ico";
             this.tabPatches.Location = new System.Drawing.Point(4, 31);
             this.tabPatches.Name = "tabPatches";
-            this.tabPatches.Size = new System.Drawing.Size(441, 336);
+            this.tabPatches.Size = new System.Drawing.Size(441, 246);
             this.tabPatches.TabIndex = 4;
             this.tabPatches.UseVisualStyleBackColor = true;
             // 
@@ -998,7 +1001,7 @@ namespace UniversalPatcher
             this.tabFileInfo.ImageKey = "info.ico";
             this.tabFileInfo.Location = new System.Drawing.Point(4, 31);
             this.tabFileInfo.Name = "tabFileInfo";
-            this.tabFileInfo.Size = new System.Drawing.Size(441, 336);
+            this.tabFileInfo.Size = new System.Drawing.Size(441, 246);
             this.tabFileInfo.TabIndex = 6;
             this.tabFileInfo.UseVisualStyleBackColor = true;
             // 
@@ -1307,6 +1310,20 @@ namespace UniversalPatcher
             this.compareSelectedTablesToolStripMenuItem1.Text = "Compare selected tables";
             this.compareSelectedTablesToolStripMenuItem1.Click += new System.EventHandler(this.compareSelectedTablesToolStripMenuItem1_Click);
             // 
+            // contextMenuStripPatch
+            // 
+            this.contextMenuStripPatch.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.applyPatchToolStripMenuItem1});
+            this.contextMenuStripPatch.Name = "contextMenuStripPatch";
+            this.contextMenuStripPatch.Size = new System.Drawing.Size(181, 48);
+            // 
+            // applyPatchToolStripMenuItem1
+            // 
+            this.applyPatchToolStripMenuItem1.Name = "applyPatchToolStripMenuItem1";
+            this.applyPatchToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.applyPatchToolStripMenuItem1.Text = "Apply patch";
+            this.applyPatchToolStripMenuItem1.Click += new System.EventHandler(this.applyPatchToolStripMenuItem1_Click);
+            // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1355,6 +1372,7 @@ namespace UniversalPatcher
             this.splitContainerListMode.ResumeLayout(false);
             this.contextMenuStripListTree.ResumeLayout(false);
             this.contextMenuStripTree.ResumeLayout(false);
+            this.contextMenuStripPatch.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1480,5 +1498,7 @@ namespace UniversalPatcher
         private ToolStripMenuItem expand3LevelsToolStripMenuItem;
         private ToolStripMenuItem reloadFileFromDiskToolStripMenuItem;
         private ToolStripMenuItem addTablesToExistingPatchToolStripMenuItem;
+        private ContextMenuStrip contextMenuStripPatch;
+        private ToolStripMenuItem applyPatchToolStripMenuItem1;
     }
 }

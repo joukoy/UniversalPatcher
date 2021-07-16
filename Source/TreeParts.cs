@@ -28,6 +28,76 @@ namespace UniversalPatcher
             return includesCollection(node.Parent, nodeName, true);
         }
 
+        private static Patch loadPatch(string fileName, PcmFile pcm)
+        {
+            try
+            {
+                Patch patch = new Patch();
+                System.Xml.Serialization.XmlSerializer reader =
+                    new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
+                System.IO.StreamReader file = new System.IO.StreamReader(fileName);
+                patch.patches = (List<XmlPatch>)reader.Deserialize(file);
+                file.Close();
+                string CompOS = "";
+                patch.Name = patch.patches[0].Name;
+                if (patch.patches.Count > 0)
+                {
+                    string[] OsList = patch.patches[0].CompatibleOS.Split(',');
+                    foreach (string OS in OsList)
+                    {
+                        if (CompOS != "")
+                            CompOS += ",";
+                        string[] Parts = OS.Split(':');
+                        CompOS += Parts[0];
+                    }
+                }
+                bool isCompatible = false;
+                for (int x = 0; x < patch.patches.Count; x++)
+                {
+                    if (checkPatchCompatibility(patch.patches[x], pcm) < uint.MaxValue)
+                    {
+                        isCompatible = true;
+                    }
+                }
+                if (isCompatible)
+                    return patch;
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+            return null;
+        }
+
+        public static void addPatchNodes(TreeNode node, PcmFile pcm)
+        {
+            if (patches.Count == 0)
+            {
+                string folder = Path.Combine(Application.StartupPath, "Patches");
+                DirectoryInfo d = new DirectoryInfo(folder);
+                FileInfo[] Files = d.GetFiles("*.*", SearchOption.AllDirectories);
+
+                foreach (FileInfo file in Files)
+                {
+                    Patch patch = loadPatch(file.FullName, pcm);
+                    if (patch != null)
+                    {
+                        patches.Add(patch);
+                    }
+                }
+            }
+            int ind = 0;
+            foreach (Patch patch in patches)
+            {
+                TreeNode tn = new TreeNode(patch.Name);
+                tn.Name = patch.Name;
+                tn.Tag = ind;
+                node.Nodes.Add(tn);
+                ind++;
+            }
+
+        }
+
         public static void addChildNodes(TreeNode node, PcmFile pcm)
         {
             if (node.Name == "Dimensions" || node.Name == "ValueTypes" || node.Name == "Categories" || node.Name == "Segments")
@@ -36,10 +106,7 @@ namespace UniversalPatcher
                     addChildNodes(childTn, pcm);
                 return;
             }
-            if (node.Name == "Patches")
-            {
 
-            }
             List<TableData> filteredTableDatas = filterTD(node, pcm);
             if (!includesCollection(node, "Dimensions",false))
                 TreeParts.addDimensions(node.Nodes,filteredTableDatas);
@@ -67,13 +134,13 @@ namespace UniversalPatcher
             addCategories(parent, pcm1, pcm1.tableDatas);
             addSegments(parent, pcm1, pcm1.tableDatas);
 
-            /*
-            TreeNode tnP = new TreeNode("");
+            
+            TreeNode tnP = new TreeNode();
             tnP.Name = "Patches";
             tnP.ImageKey = "patch.ico";
             tnP.SelectedImageKey = "patch.ico";
             parent.Add(tnP);
-            */
+            
         }
 
         public static void addDimensions(TreeNodeCollection parent, List<TableData> filteredTableDatas)

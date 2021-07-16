@@ -23,6 +23,8 @@ namespace UniversalPatcher
             Properties.Settings.Default.TableEditorMinOtherEquivalency = (int)numTunerMinEqOther.Value;
             Properties.Settings.Default.MulitableChars = txtMultitableChars.Text;
             Properties.Settings.Default.DisableAutoFixChecksum = chkDisableAutoCS.Checked;
+            Properties.Settings.Default.SimpleMode = chkStartSimple.Checked;
+            Properties.Settings.Default.Save();
             this.Close();
         }
 
@@ -33,6 +35,7 @@ namespace UniversalPatcher
             numTunerMinEqOther.Value = Properties.Settings.Default.TableEditorMinOtherEquivalency;
             txtMultitableChars.Text = Properties.Settings.Default.MulitableChars;
             chkDisableAutoCS.Checked = Properties.Settings.Default.DisableAutoFixChecksum;
+            chkStartSimple.Checked = Properties.Settings.Default.SimpleMode;
         }
 
         private void numKeypressWait_ValueChanged(object sender, EventArgs e)

@@ -121,6 +121,7 @@ namespace UniversalPatcher
                 LoggerBold(ex.Message);
             }
         }
+
         public void loadPatches()
         {
             patchFileList = new List<PatchFile>();

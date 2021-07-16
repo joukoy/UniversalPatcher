@@ -59,10 +59,8 @@ namespace UniversalPatcher
         private uint lastCustomSearchResult = 0;
         private string logFile;
         StreamWriter logwriter;
-        private void FrmPatcher_Load(object sender, EventArgs e)
+        public void FrmPatcher_Load(object sender, EventArgs e)
         {
-            this.Show();
-
             /*string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1 && File.Exists(args[1]))
             {

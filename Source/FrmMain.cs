@@ -38,30 +38,62 @@ namespace UniversalPatcher
 
         private void btnPatcher_Click(object sender, EventArgs e)
         {
-            if (frmP != null && frmP.Visible)
+            try
             {
-                frmP.BringToFront();
-                return;
+                if (frmP != null && frmP.Visible)
+                {
+                    frmP.BringToFront();
+                    return;
+                }
+                frmP = new FrmPatcher();
+                frmP.Show(this);
             }
-            frmP = new FrmPatcher();
-            frmP.Show(this);
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error");
+            }
         }
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Patches")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
+            try
+            {
+                //Load patcher once, so all settings are correct
+                FrmPatcher frmP = new FrmPatcher();
+                frmP.FrmPatcher_Load(sender,e);
+                frmP.Dispose();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error");
+            }
+        }
 
-            Properties.Settings.Default.LastBINfolder = Properties.Settings.Default.LastBINfolder;
-            Properties.Settings.Default.LastPATCHfolder = Properties.Settings.Default.LastPATCHfolder;
-            Properties.Settings.Default.LastXMLfolder = Properties.Settings.Default.LastXMLfolder;
+        private void btnTuner_Click(object sender, EventArgs e)
+        {
+            PcmFile PCM = new PcmFile();
+            frmTuner frmT = new frmTuner(PCM);
+            frmT.Show();
+        }
 
-            if (Properties.Settings.Default.LastXMLfolder == "")
-                Properties.Settings.Default.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
-            if (Properties.Settings.Default.LastPATCHfolder == "")
-                Properties.Settings.Default.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                frmMoreSettings frmTS = new frmMoreSettings();
+                frmTS.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error");
+            }
+
+        }
+
+        private void btnAbout_Click(object sender, EventArgs e)
+        {
+            AboutBox1 aboutBox = new AboutBox1();
+            aboutBox.Show();
         }
     }
 }

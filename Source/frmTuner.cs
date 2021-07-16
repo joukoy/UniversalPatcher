@@ -694,7 +694,7 @@ namespace UniversalPatcher
                     }
                 }
 
-                if (!treeMode && !treeView1.Nodes["All"].IsSelected && treeView1.SelectedNodes.Count > 0)
+                if (!treeMode && !treeView1.Nodes["All"].IsSelected && !treeView1.Nodes["Patches"].IsSelected && treeView1.SelectedNodes.Count > 0)
                 {
                     List<string> selectedSegs = new List<string>();
                     List<string> selectedCats = new List<string>();
@@ -823,7 +823,7 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
 
-                Debug.WriteLine("frmTune, line: " + line + ", " + ex.Message);
+                Debug.WriteLine("frmTuner, line: " + line + ", " + ex.Message);
             }
 
         }
@@ -965,7 +965,6 @@ namespace UniversalPatcher
         {
             try
             {
-
                 if (dataGridView1.SelectedCells.Count > 0 && e.Button == MouseButtons.Right)
                 {
                     lastSelectedId = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
@@ -1708,6 +1707,8 @@ namespace UniversalPatcher
 
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
+            if (treeView1.SelectedNode.Name == "Patches" || treeView1.SelectedNode.Parent.Name == "Patches")
+                return;
             showTableDescription(PCM);
         }
 
@@ -3128,16 +3129,62 @@ namespace UniversalPatcher
 
         private void TreeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
+            if (e.Button == MouseButtons.Right && treeView1.SelectedNode.Parent.Name == "Patches")
+            {
+                contextMenuStripPatch.Show(Cursor.Position.X, Cursor.Position.Y);
+            }
             ContextMenuStrip cxMenu = new ContextMenuStrip();
             MenuItem mi = new MenuItem("Expand all");
         }
 
+        private void showPatch(int ind)
+        {
+            try
+            {
+                dataGridView1.DataSource = patches[ind].patches;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner showPatch, line " + line + ": " + ex.Message);
+            }
+        }
 
         private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            filterTables();
-            if (e.Node.Nodes.Count == 0 && e.Node.Name != "All" && e.Node.Parent != null)
-                TreeParts.addChildNodes(e.Node, PCM);
+            try
+            {
+                if (e.Node.Name == "Patches")
+                {
+                    TreeParts.addPatchNodes(e.Node, PCM);
+                    treeView1.ContextMenuStrip = contextMenuStripPatch;
+                    return;
+                }
+                if (e.Node.Parent.Name == "Patches")
+                {
+                    showPatch(Convert.ToInt32(e.Node.Tag));
+                    treeView1.ContextMenuStrip = contextMenuStripPatch;
+                    return;
+                }
+                dataGridView1.DataSource = bindingsource;
+                treeView1.ContextMenuStrip = contextMenuStripListTree;
+                filterTables();
+                if (e.Node.Nodes.Count == 0 && e.Node.Name != "All" && e.Node.Parent != null)
+                    TreeParts.addChildNodes(e.Node, PCM);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner TreeView1_AfterSelect, line " + line + ": " + ex.Message);
+            }
         }
 
         private void Tree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -4018,6 +4065,12 @@ namespace UniversalPatcher
         private void addTablesToExistingPatchToolStripMenuItem_Click(object sender, EventArgs e)
         {
             generateTablePatch(false);
+        }
+
+        private void applyPatchToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            PatchList = patches[Convert.ToInt32(treeView1.SelectedNode.Tag)].patches;
+            ApplyXMLPatch(ref PCM);
         }
     }
 }
