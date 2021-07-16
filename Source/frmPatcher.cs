@@ -49,6 +49,7 @@ namespace UniversalPatcher
         private BindingSource pidListBindingSource = new BindingSource();
         private BindingSource dtcBindingSource = new BindingSource();
         private BindingSource tableSeekBindingSource = new BindingSource();
+        private BindingSource patchesBindingSource = new BindingSource();
         private List<PidSearch.PID> pidList = new List<PidSearch.PID>();
         private BindingList<FoundTable> filteredCategories = new BindingList<FoundTable>();
         private BindingSource categoryBindingSource = new BindingSource();
@@ -185,6 +186,7 @@ namespace UniversalPatcher
             pidSearchConfigs = new List<PidSearchConfig>();
             SwapSegments = new List<SwapSegment>();
             unitList = new List<Units>();
+            patches = new List<Patch>();
             //Dirty fix to make system work without stockcvn.xml
             CVN ctmp = new CVN();
             ctmp.cvn = "";
@@ -915,10 +917,10 @@ namespace UniversalPatcher
             txtResult.Text = "";
 
             CompareBins();
-            RefreshPatchList();
+            RefreshPatch();
         }
 
-        private void SavePatch(string Description)
+        private void SavePatch(string Description, string fileName = "")
         {
             try
             {
@@ -932,10 +934,11 @@ namespace UniversalPatcher
                     Logger("Supply patch description");
                     return;
                 }*/
-                string FileName = SelectSaveFile("XMLPATCH files (*.xmlpatch)|*.xmlpatch|All files (*.*)|*.*");
-                if (FileName.Length < 1)
+                if (fileName == "")
+                    fileName = SelectSaveFile("XMLPATCH files (*.xmlpatch)|*.xmlpatch|All files (*.*)|*.*");
+                if (fileName.Length < 1)
                     return;
-                Logger("Saving to file: " + Path.GetFileName(FileName), false);
+                Logger("Saving to file: " + Path.GetFileName(fileName), false);
                 if (PatchList[0].Description == null)
                 {
                     XmlPatch xpatch = PatchList[0];
@@ -943,7 +946,7 @@ namespace UniversalPatcher
                     PatchList[0] = xpatch;
                 }
 
-                using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                using (FileStream stream = new FileStream(fileName, FileMode.Create))
                 {
                     System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
                     writer.Serialize(stream, PatchList);
@@ -1128,7 +1131,7 @@ namespace UniversalPatcher
                     PatchList = new List<XmlPatch>();
                 Logger("[OK]");
                 PatchList.Add(xpatch);
-                RefreshPatchList();
+                RefreshPatch();
 
             }
             catch (Exception ex)
@@ -1207,11 +1210,10 @@ namespace UniversalPatcher
             }
         }
 
-        public void RefreshPatchList()
+        public void RefreshPatch()
         {
             bindingSource.DataSource = null;
             bindingSource.DataSource = PatchList;
-            dataPatch.DataSource = null;
             dataPatch.DataSource = bindingSource;
             if (PatchList == null || PatchList.Count == 0)
             { 
@@ -1221,6 +1223,15 @@ namespace UniversalPatcher
             { 
                 tabPatch.Text = "Patch editor (" + PatchList.Count.ToString() +")";
             }
+        }
+
+        public void RefreshPatchList()
+        {
+            patchesBindingSource.DataSource = null;
+            listPatches.DataSource = null;
+            patchesBindingSource.DataSource = patches;
+            listPatches.DataSource = patchesBindingSource;
+            listPatches.DisplayMember = "Name";
         }
 
         private void btnManualPatch_Click(object sender, EventArgs e)
@@ -1254,6 +1265,7 @@ namespace UniversalPatcher
                 if (PatchList == null)
                     PatchList = new List<XmlPatch>();
                 XmlPatch XP = new XmlPatch();
+                XP.Name = frmM.txtName.Text;
                 XP.Description = frmM.txtDescription.Text;
                 XP.Segment = frmM.txtSegment.Text;
                 XP.XmlFile = frmM.txtXML.Text;
@@ -1267,7 +1279,7 @@ namespace UniversalPatcher
                     XP.Rule += frmM.txtValue.Text;
                 }
                 PatchList.Add(XP);
-                RefreshPatchList();
+                RefreshPatch();
             }
         }
 
@@ -1280,7 +1292,7 @@ namespace UniversalPatcher
                 frmPS.Show();
                 Application.DoEvents();
                 frmPS.loadPatches();
-                RefreshPatchList();
+                RefreshPatch();
             }
             catch (Exception ex)
             {
@@ -1321,19 +1333,21 @@ namespace UniversalPatcher
                 if (dataPatch.SelectedRows.Count == 0)
                     dataPatch.Rows[dataPatch.SelectedCells[0].RowIndex].Selected = true;
                 frmManualPatch frmM = new frmManualPatch();
-                if (dataPatch.CurrentRow.Cells[0].Value != null)
-                    frmM.txtDescription.Text = dataPatch.CurrentRow.Cells[0].Value.ToString();
-                if (dataPatch.CurrentRow.Cells[1].Value != null)
-                    frmM.txtXML.Text = dataPatch.CurrentRow.Cells[1].Value.ToString();
-                if (dataPatch.CurrentRow.Cells[2].Value != null)
-                    frmM.txtSegment.Text = dataPatch.CurrentRow.Cells[2].Value.ToString();
-                if (dataPatch.CurrentRow.Cells[3].Value != null)
-                    frmM.txtCompOS.Text = dataPatch.CurrentRow.Cells[3].Value.ToString();
-                if (dataPatch.CurrentRow.Cells[4].Value != null)
-                    frmM.txtData.Text = dataPatch.CurrentRow.Cells[4].Value.ToString();
-                if (dataPatch.CurrentRow.Cells[5].Value != null && dataPatch.CurrentRow.Cells[5].Value.ToString().Contains(":"))
+                if (dataPatch.CurrentRow.Cells["Name"].Value != null)
+                    frmM.txtName.Text = dataPatch.CurrentRow.Cells["Name"].Value.ToString();
+                if (dataPatch.CurrentRow.Cells["Description"].Value != null)
+                    frmM.txtDescription.Text = dataPatch.CurrentRow.Cells["Description"].Value.ToString();
+                if (dataPatch.CurrentRow.Cells["XmlFile"].Value != null)
+                    frmM.txtXML.Text = dataPatch.CurrentRow.Cells["XmlFile"].Value.ToString();
+                if (dataPatch.CurrentRow.Cells["Segment"].Value != null)
+                    frmM.txtSegment.Text = dataPatch.CurrentRow.Cells["Segment"].Value.ToString();
+                if (dataPatch.CurrentRow.Cells["CompatibleOS"].Value != null)
+                    frmM.txtCompOS.Text = dataPatch.CurrentRow.Cells["CompatibleOS"].Value.ToString();
+                if (dataPatch.CurrentRow.Cells["Data"].Value != null)
+                    frmM.txtData.Text = dataPatch.CurrentRow.Cells["Data"].Value.ToString();
+                if (dataPatch.CurrentRow.Cells["Rule"].Value != null && dataPatch.CurrentRow.Cells["Rule"].Value.ToString().Contains(":"))
                 {
-                    string[] Parts = dataPatch.CurrentRow.Cells[5].Value.ToString().Split(':');
+                    string[] Parts = dataPatch.CurrentRow.Cells["Rule"].Value.ToString().Split(':');
                     if (Parts.Length == 3)
                     {
                         frmM.txtReadAddr.Text = Parts[0];
@@ -1341,21 +1355,22 @@ namespace UniversalPatcher
                         frmM.txtValue.Text = Parts[2];
                     }
                 }
-                if (dataPatch.CurrentRow.Cells[6].Value != null)
-                    frmM.txtHelpFile.Text = dataPatch.CurrentRow.Cells[6].Value.ToString();
+                if (dataPatch.CurrentRow.Cells["HelpFile"].Value != null)
+                    frmM.txtHelpFile.Text = dataPatch.CurrentRow.Cells["HelpFile"].Value.ToString();
 
                 if (frmM.ShowDialog(this) == DialogResult.OK)
                 {
-                    dataPatch.CurrentRow.Cells[0].Value = frmM.txtDescription.Text;
-                    dataPatch.CurrentRow.Cells[1].Value = frmM.txtXML.Text;
-                    dataPatch.CurrentRow.Cells[2].Value = frmM.txtSegment.Text;
-                    dataPatch.CurrentRow.Cells[3].Value = frmM.txtCompOS.Text;
-                    dataPatch.CurrentRow.Cells[4].Value = frmM.txtData.Text;
+                    dataPatch.CurrentRow.Cells["Name"].Value = frmM.txtName.Text;
+                    dataPatch.CurrentRow.Cells["Description"].Value = frmM.txtDescription.Text;
+                    dataPatch.CurrentRow.Cells["XmlFile"].Value = frmM.txtXML.Text;
+                    dataPatch.CurrentRow.Cells["Segment"].Value = frmM.txtSegment.Text;
+                    dataPatch.CurrentRow.Cells["CompatibleOS"].Value = frmM.txtCompOS.Text;
+                    dataPatch.CurrentRow.Cells["Data"].Value = frmM.txtData.Text;
                     if (frmM.txtReadAddr.Text.Length > 0)
                     {
-                        dataPatch.CurrentRow.Cells[5].Value = frmM.txtReadAddr.Text + ":" + frmM.txtMask.Text + ":" + frmM.txtValue.Text;
+                        dataPatch.CurrentRow.Cells["Rule"].Value = frmM.txtReadAddr.Text + ":" + frmM.txtMask.Text + ":" + frmM.txtValue.Text;
                     }
-                    dataPatch.CurrentRow.Cells[6].Value = frmM.txtHelpFile.Text;
+                    dataPatch.CurrentRow.Cells["HelpFile"].Value = frmM.txtHelpFile.Text;
                 }
                 frmM.Dispose();
             }
@@ -1391,7 +1406,7 @@ namespace UniversalPatcher
             XmlPatch CurrentP = PatchList[row];
             PatchList.RemoveAt(row);
             PatchList.Insert(row - 1, CurrentP);
-            RefreshPatchList();
+            RefreshPatch();
             dataPatch.CurrentCell = dataPatch.Rows[row - 1].Cells[0];
             dataPatch.Rows[row - 1].Selected = true;
         }
@@ -1404,7 +1419,7 @@ namespace UniversalPatcher
             XmlPatch CurrentP = PatchList[row];
             PatchList.RemoveAt(row);
             PatchList.Insert(row + 1, CurrentP);
-            RefreshPatchList();
+            RefreshPatch();
             dataPatch.CurrentCell = dataPatch.Rows[row + 1].Cells[0];
             dataPatch.Rows[row + 1].Selected = true;
         }
@@ -1478,13 +1493,13 @@ namespace UniversalPatcher
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            RefreshPatchList();
+            RefreshPatch();
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PatchList = new List<XmlPatch>();
-            RefreshPatchList();
+            RefreshPatch();
 
         }
 
@@ -1526,7 +1541,7 @@ namespace UniversalPatcher
                         btnApplypatch.Enabled = true;
                         Logger("Patch is compatible, you can apply it");
                     }
-                    RefreshPatchList();
+                    RefreshPatch();
                 }
             }
             catch (Exception ex)
@@ -1630,13 +1645,13 @@ namespace UniversalPatcher
         private void btnNew_Click(object sender, EventArgs e)
         {
             PatchList = new List<XmlPatch>();
-            RefreshPatchList();
+            RefreshPatch();
 
         }
 
         private void btnRefresh_Click_1(object sender, EventArgs e)
         {
-            RefreshPatchList();
+            RefreshPatch();
 
         }
         private void RefreshBadCVNlist()
@@ -3159,6 +3174,44 @@ namespace UniversalPatcher
             Logger("Checksum: " + oldVal.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
             Logger("You can save BIN file now");
 
+        }
+
+        private void listPatches_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            PatchList = patches[listPatches.SelectedIndex].patches;
+            RefreshPatch();
+        }
+
+        private void btnSaveAllPatches_Click(object sender, EventArgs e)
+        {
+            foreach (Patch pa in patches)
+            {
+                PatchList = pa.patches;
+                string fileName = Path.Combine(Application.StartupPath, "Patches", pa.Name + ".xmlpatch");
+                Logger("Saving patch: " + fileName, false);
+                SavePatch(pa.Name,fileName);
+                Logger (" [OK]");
+            }
+        }
+
+        private void btnAddPatch_Click(object sender, EventArgs e)
+        {
+            frmData frmD = new frmData();
+            frmD.Text = "Patch Name:";
+            if (frmD.ShowDialog() == DialogResult.OK)
+            {
+                Patch patch = new Patch();
+                patch.Name = frmD.txtData.Text;                
+                patches.Add(patch);
+                RefreshPatchList();
+            }
+            frmD.Dispose();
+        }
+
+        private void btnDelPatch_Click(object sender, EventArgs e)
+        {
+            patches.RemoveAt(listPatches.SelectedIndex);
+            RefreshPatchList();
         }
     }
 }

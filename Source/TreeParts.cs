@@ -36,7 +36,10 @@ namespace UniversalPatcher
                     addChildNodes(childTn, pcm);
                 return;
             }
+            if (node.Name == "Patches")
+            {
 
+            }
             List<TableData> filteredTableDatas = filterTD(node, pcm);
             if (!includesCollection(node, "Dimensions",false))
                 TreeParts.addDimensions(node.Nodes,filteredTableDatas);
@@ -64,6 +67,13 @@ namespace UniversalPatcher
             addCategories(parent, pcm1, pcm1.tableDatas);
             addSegments(parent, pcm1, pcm1.tableDatas);
 
+            /*
+            TreeNode tnP = new TreeNode("");
+            tnP.Name = "Patches";
+            tnP.ImageKey = "patch.ico";
+            tnP.SelectedImageKey = "patch.ico";
+            parent.Add(tnP);
+            */
         }
 
         public static void addDimensions(TreeNodeCollection parent, List<TableData> filteredTableDatas)
@@ -374,5 +384,6 @@ namespace UniversalPatcher
             return results;
 
         }
+
     }
 }

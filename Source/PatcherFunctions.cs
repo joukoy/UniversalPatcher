@@ -33,6 +33,7 @@ public class upatcher
     public class XmlPatch
     {
         public XmlPatch() { }
+        public string Name { get; set; }
         public string Description { get; set; }
         public string XmlFile { get; set; }
         public string Segment { get; set; }
@@ -41,6 +42,16 @@ public class upatcher
         public string Rule { get; set; }
         public string HelpFile { get; set; }
         public string PostMessage { get; set; }
+    }
+
+    public class Patch
+    {
+        public Patch()
+        {
+            patches = new List<XmlPatch>();
+        }
+        public string Name { get; set; }
+        public List<XmlPatch> patches { get; set; }
     }
 
     public class CVN
@@ -321,6 +332,7 @@ public class upatcher
 
     public static List<DetectRule> DetectRules;
     public static List<XmlPatch> PatchList;
+    public static List<Patch> patches;
     public static List<CVN> StockCVN;
     public static List<CVN> ListCVN;
     public static List<CVN> BadCvnList;

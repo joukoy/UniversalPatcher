@@ -1744,7 +1744,10 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        newValue = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
+                        if (tCell.td.OutputType == OutDataType.Hex)
+                            newValue = (double)Convert.ToInt64(dataGridView1.Rows[r].Cells[c].Value.ToString(), 16);
+                        else
+                            newValue = Convert.ToDouble(dataGridView1.Rows[r].Cells[c].Value);
                         if (radioDifference.Checked)
                         {
                             if (radioAbsolute.Checked)

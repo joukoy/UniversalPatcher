@@ -339,23 +339,35 @@ namespace UniversalPatcher
 
                 }
 
+                patches = new List<Patch>();
                 foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFPATCH"))
                 {
-                    XmlPatch xmlPatch = new XmlPatch();
-                    xmlPatch.Description = element.Element("title").Value;
-                    if (element.Element("XDFPATCHENTRY").Attribute("address") != null)
+                    Patch patch = new Patch();
+                    foreach (XElement patchEle in element.Elements("XDFPATCHENTRY"))
                     {
-                        xmlPatch.CompatibleOS = "ALL:" + element.Element("XDFPATCHENTRY").Attribute("address").Value;
+                        XmlPatch xmlPatch = new XmlPatch();
+                        xmlPatch.Name = element.Element("title").Value.Replace(":",";");
+                        patch.Name = xmlPatch.Name;
+                        if (element.Element("description") != null)
+                            xmlPatch.Description = element.Element("description").Value;
+                        if (PCM.configFile.Length > 0)
+                            xmlPatch.XmlFile = PCM.configFile;
+                        if (patchEle.Attribute("name") != null)
+                            xmlPatch.Name += ": " + patchEle.Attribute("name").Value;
+                        if (patchEle.Attribute("address") != null)
+                            xmlPatch.CompatibleOS = "ALL:" + patchEle.Attribute("address").Value.Trim().Replace("0x","");
+                        if (patchEle.Attribute("patchdata") != null)
+                        {
+                            string origData = patchEle.Attribute("patchdata").Value;
+                            string newData = "";
+                            for (int c = 0; c < origData.Length; c += 2)
+                                newData += origData.Substring(c, 2) + " ";
+                            xmlPatch.Data = newData.Trim();
+                        }
+                        //PatchList.Add(xmlPatch);
+                        patch.patches.Add(xmlPatch);
                     }
-                    if (element.Element("XDFPATCHENTRY").Attribute("patchdata") != null)
-                    {
-                        string origData = element.Element("XDFPATCHENTRY").Attribute("patchdata").Value;
-                        string newData = "";
-                        for (int c = 0; c < origData.Length; c += 2)
-                            newData += origData.Substring(c, 2) + " ";
-                        xmlPatch.Data = newData.Trim();
-                    }
-                    PatchList.Add(xmlPatch);
+                    patches.Add(patch);
                     havePatches = true;
                 }
                 

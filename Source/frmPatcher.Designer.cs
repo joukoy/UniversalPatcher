@@ -58,6 +58,12 @@
             this.txtDebug = new System.Windows.Forms.RichTextBox();
             this.chkDebug = new System.Windows.Forms.CheckBox();
             this.tabPatch = new System.Windows.Forms.TabPage();
+            this.btnSaveAllPatches = new System.Windows.Forms.Button();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnDelPatch = new System.Windows.Forms.Button();
+            this.btnAddPatch = new System.Windows.Forms.Button();
+            this.listPatches = new System.Windows.Forms.ListBox();
+            this.dataPatch = new System.Windows.Forms.DataGridView();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnNew = new System.Windows.Forms.Button();
             this.btnLoadPatch = new System.Windows.Forms.Button();
@@ -69,7 +75,6 @@
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnManualPatch = new System.Windows.Forms.Button();
             this.labelPatchname = new System.Windows.Forms.Label();
-            this.dataPatch = new System.Windows.Forms.DataGridView();
             this.tabCVN = new System.Windows.Forms.TabPage();
             this.checkAutorefreshCVNlist = new System.Windows.Forms.CheckBox();
             this.btnRefreshCvnList = new System.Windows.Forms.Button();
@@ -216,10 +221,10 @@
             this.pIDSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.segmentSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.oBD2CodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTunerAutloadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.oBD2CodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
@@ -227,6 +232,10 @@
             this.tabInfo.SuspendLayout();
             this.tabDebug.SuspendLayout();
             this.tabPatch.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataPatch)).BeginInit();
             this.tabCVN.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataCVN)).BeginInit();
@@ -584,6 +593,8 @@
             // 
             // tabPatch
             // 
+            this.tabPatch.Controls.Add(this.btnSaveAllPatches);
+            this.tabPatch.Controls.Add(this.splitContainer1);
             this.tabPatch.Controls.Add(this.btnRefresh);
             this.tabPatch.Controls.Add(this.btnNew);
             this.tabPatch.Controls.Add(this.btnLoadPatch);
@@ -595,7 +606,6 @@
             this.tabPatch.Controls.Add(this.btnDelete);
             this.tabPatch.Controls.Add(this.btnManualPatch);
             this.tabPatch.Controls.Add(this.labelPatchname);
-            this.tabPatch.Controls.Add(this.dataPatch);
             this.tabPatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabPatch.Location = new System.Drawing.Point(4, 22);
             this.tabPatch.Name = "tabPatch";
@@ -604,10 +614,87 @@
             this.tabPatch.Text = "Patch editor";
             this.tabPatch.UseVisualStyleBackColor = true;
             // 
+            // btnSaveAllPatches
+            // 
+            this.btnSaveAllPatches.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveAllPatches.Location = new System.Drawing.Point(768, 1);
+            this.btnSaveAllPatches.Name = "btnSaveAllPatches";
+            this.btnSaveAllPatches.Size = new System.Drawing.Size(67, 23);
+            this.btnSaveAllPatches.TabIndex = 262;
+            this.btnSaveAllPatches.Text = "Save All";
+            this.btnSaveAllPatches.UseVisualStyleBackColor = true;
+            this.btnSaveAllPatches.Click += new System.EventHandler(this.btnSaveAllPatches_Click);
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(3, 25);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnDelPatch);
+            this.splitContainer1.Panel1.Controls.Add(this.btnAddPatch);
+            this.splitContainer1.Panel1.Controls.Add(this.listPatches);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.dataPatch);
+            this.splitContainer1.Size = new System.Drawing.Size(780, 323);
+            this.splitContainer1.SplitterDistance = 210;
+            this.splitContainer1.TabIndex = 261;
+            // 
+            // btnDelPatch
+            // 
+            this.btnDelPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnDelPatch.Location = new System.Drawing.Point(53, 293);
+            this.btnDelPatch.Name = "btnDelPatch";
+            this.btnDelPatch.Size = new System.Drawing.Size(46, 20);
+            this.btnDelPatch.TabIndex = 262;
+            this.btnDelPatch.Text = "Del";
+            this.btnDelPatch.UseVisualStyleBackColor = true;
+            this.btnDelPatch.Click += new System.EventHandler(this.btnDelPatch_Click);
+            // 
+            // btnAddPatch
+            // 
+            this.btnAddPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnAddPatch.Location = new System.Drawing.Point(5, 293);
+            this.btnAddPatch.Name = "btnAddPatch";
+            this.btnAddPatch.Size = new System.Drawing.Size(42, 20);
+            this.btnAddPatch.TabIndex = 261;
+            this.btnAddPatch.Text = "Add";
+            this.btnAddPatch.UseVisualStyleBackColor = true;
+            this.btnAddPatch.Click += new System.EventHandler(this.btnAddPatch_Click);
+            // 
+            // listPatches
+            // 
+            this.listPatches.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listPatches.FormattingEnabled = true;
+            this.listPatches.Location = new System.Drawing.Point(0, 0);
+            this.listPatches.Name = "listPatches";
+            this.listPatches.Size = new System.Drawing.Size(210, 290);
+            this.listPatches.TabIndex = 260;
+            this.listPatches.SelectedIndexChanged += new System.EventHandler(this.listPatches_SelectedIndexChanged);
+            // 
+            // dataPatch
+            // 
+            this.dataPatch.AllowUserToOrderColumns = true;
+            this.dataPatch.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataPatch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataPatch.Location = new System.Drawing.Point(0, 0);
+            this.dataPatch.Name = "dataPatch";
+            this.dataPatch.Size = new System.Drawing.Size(566, 323);
+            this.dataPatch.TabIndex = 0;
+            this.dataPatch.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPatch_CellContentDoubleClick);
+            // 
             // btnRefresh
             // 
             this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefresh.Location = new System.Drawing.Point(609, 0);
+            this.btnRefresh.Location = new System.Drawing.Point(540, 1);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(59, 23);
             this.btnRefresh.TabIndex = 250;
@@ -618,7 +705,7 @@
             // btnNew
             // 
             this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNew.Location = new System.Drawing.Point(674, 0);
+            this.btnNew.Location = new System.Drawing.Point(605, 1);
             this.btnNew.Name = "btnNew";
             this.btnNew.Size = new System.Drawing.Size(49, 23);
             this.btnNew.TabIndex = 251;
@@ -629,7 +716,7 @@
             // btnLoadPatch
             // 
             this.btnLoadPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLoadPatch.Location = new System.Drawing.Point(727, 0);
+            this.btnLoadPatch.Location = new System.Drawing.Point(658, 1);
             this.btnLoadPatch.Name = "btnLoadPatch";
             this.btnLoadPatch.Size = new System.Drawing.Size(49, 23);
             this.btnLoadPatch.TabIndex = 252;
@@ -640,7 +727,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(782, 2);
+            this.btnSave.Location = new System.Drawing.Point(713, 1);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(49, 23);
             this.btnSave.TabIndex = 253;
@@ -722,19 +809,6 @@
             this.labelPatchname.Size = new System.Drawing.Size(10, 13);
             this.labelPatchname.TabIndex = 131;
             this.labelPatchname.Text = "-";
-            // 
-            // dataPatch
-            // 
-            this.dataPatch.AllowUserToOrderColumns = true;
-            this.dataPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataPatch.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataPatch.Location = new System.Drawing.Point(1, 27);
-            this.dataPatch.Name = "dataPatch";
-            this.dataPatch.Size = new System.Drawing.Size(783, 320);
-            this.dataPatch.TabIndex = 0;
-            this.dataPatch.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPatch_CellContentDoubleClick);
             // 
             // tabCVN
             // 
@@ -2213,21 +2287,21 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.saveToolStripMenuItem.Text = "&Save bin";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click_1);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.saveAsToolStripMenuItem.Text = "Save bin &as...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
@@ -2322,6 +2396,13 @@
             this.segmentSeekToolStripMenuItem.Text = "SegmentSeek";
             this.segmentSeekToolStripMenuItem.Click += new System.EventHandler(this.segmentSeekToolStripMenuItem_Click);
             // 
+            // oBD2CodesToolStripMenuItem
+            // 
+            this.oBD2CodesToolStripMenuItem.Name = "oBD2CodesToolStripMenuItem";
+            this.oBD2CodesToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.oBD2CodesToolStripMenuItem.Text = "OBD2 Codes";
+            this.oBD2CodesToolStripMenuItem.Click += new System.EventHandler(this.oBD2CodesToolStripMenuItem_Click);
+            // 
             // rememberWindowSizeToolStripMenuItem
             // 
             this.rememberWindowSizeToolStripMenuItem.Name = "rememberWindowSizeToolStripMenuItem";
@@ -2342,13 +2423,6 @@
             this.moreSettingsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.moreSettingsToolStripMenuItem.Text = "More settings...";
             this.moreSettingsToolStripMenuItem.Click += new System.EventHandler(this.moreSettingsToolStripMenuItem_Click);
-            // 
-            // oBD2CodesToolStripMenuItem
-            // 
-            this.oBD2CodesToolStripMenuItem.Name = "oBD2CodesToolStripMenuItem";
-            this.oBD2CodesToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.oBD2CodesToolStripMenuItem.Text = "OBD2 Codes";
-            this.oBD2CodesToolStripMenuItem.Click += new System.EventHandler(this.oBD2CodesToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -2391,6 +2465,10 @@
             this.tabDebug.PerformLayout();
             this.tabPatch.ResumeLayout(false);
             this.tabPatch.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataPatch)).EndInit();
             this.tabCVN.ResumeLayout(false);
             this.tabCVN.PerformLayout();
@@ -2637,5 +2715,10 @@
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Button btnCsUtilFix;
         private System.Windows.Forms.CheckBox chkCsUtilSwapBytes;
+        private System.Windows.Forms.ListBox listPatches;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.Button btnSaveAllPatches;
+        private System.Windows.Forms.Button btnDelPatch;
+        private System.Windows.Forms.Button btnAddPatch;
     }
 }
