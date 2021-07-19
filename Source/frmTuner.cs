@@ -4072,5 +4072,65 @@ namespace UniversalPatcher
             PatchList = patches[Convert.ToInt32(treeView1.SelectedNode.Tag)].patches;
             ApplyXMLPatch(ref PCM);
         }
+
+        private void swapSegmentsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (PCM == null)
+                {
+                    Logger("No file loaded");
+                    return;
+                }
+                if (PCM.OS == null || PCM.OS == "")
+                {
+                    Logger("No OS segment defined");
+                    return;
+                }
+                List<string> currentSegements = new List<string>();
+                for (int s = 0; s < PCM.Segments.Count; s++)
+                {
+                    if (!PCM.Segments[s].Missing)
+                    {
+                        string seg = PCM.segmentinfos[s].Name.PadRight(15) + PCM.segmentinfos[s].PN + PCM.segmentinfos[s].Ver;
+                        currentSegements.Add(seg);
+                    }
+                }
+                frmSwapSegmentList frmSw = new frmSwapSegmentList();
+                frmSw.LoadSegmentList(ref PCM);
+                if (frmSw.ShowDialog(this) == DialogResult.OK)
+                {
+                    PCM = frmSw.PCM;
+                    PCM.GetInfo();
+                    PCM.FixCheckSums();
+                    LoggerBold(Environment.NewLine + "Swapped segments:");
+                    for (int s = 0; s < PCM.Segments.Count; s++)
+                    {
+                        if (!PCM.Segments[s].Missing)
+                        {
+                            string newPN = PCM.segmentinfos[s].PN + PCM.segmentinfos[s].Ver;
+                            if (!currentSegements[s].EndsWith(newPN))
+                                Logger(currentSegements[s] + " => " + PCM.segmentinfos[s].PN + PCM.segmentinfos[s].Ver);
+                        }
+                    }
+                    Logger("Segment(s) swapped and checksums fixed (you can save BIN now)");
+                }
+                frmSw.Dispose();
+            }
+            catch (Exception ex) { LoggerBold(ex.Message); }
+
+        }
+
+        private void patcherToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (frmpatcher == null)
+            {
+                frmpatcher = new FrmPatcher();
+                frmpatcher.Show();
+            }
+            else
+                frmpatcher.BringToFront();
+
+        }
     }
 }

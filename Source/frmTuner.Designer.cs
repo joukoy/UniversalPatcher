@@ -77,6 +77,7 @@ namespace UniversalPatcher
             this.massModifyTableListsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.massModifyTableListsSelectFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.applyPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.swapSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadTablelistxmlTableseekImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -152,6 +153,7 @@ namespace UniversalPatcher
             this.compareSelectedTablesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripPatch = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.applyPatchToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.patcherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -394,7 +396,9 @@ namespace UniversalPatcher
             this.findDifferencesHEXToolStripMenuItem,
             this.massModifyTableListsToolStripMenuItem,
             this.massModifyTableListsSelectFilesToolStripMenuItem,
-            this.applyPatchToolStripMenuItem});
+            this.applyPatchToolStripMenuItem,
+            this.swapSegmentsToolStripMenuItem,
+            this.patcherToolStripMenuItem});
             this.utilitiesToolStripMenuItem.Name = "utilitiesToolStripMenuItem";
             this.utilitiesToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
             this.utilitiesToolStripMenuItem.Text = "Utilities";
@@ -543,6 +547,13 @@ namespace UniversalPatcher
             this.applyPatchToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
             this.applyPatchToolStripMenuItem.Text = "Apply patch...";
             this.applyPatchToolStripMenuItem.Click += new System.EventHandler(this.applyPatchToolStripMenuItem_Click);
+            // 
+            // swapSegmentsToolStripMenuItem
+            // 
+            this.swapSegmentsToolStripMenuItem.Name = "swapSegmentsToolStripMenuItem";
+            this.swapSegmentsToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.swapSegmentsToolStripMenuItem.Text = "Swap segments...";
+            this.swapSegmentsToolStripMenuItem.Click += new System.EventHandler(this.swapSegmentsToolStripMenuItem_Click);
             // 
             // xmlToolStripMenuItem
             // 
@@ -1315,14 +1326,21 @@ namespace UniversalPatcher
             this.contextMenuStripPatch.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.applyPatchToolStripMenuItem1});
             this.contextMenuStripPatch.Name = "contextMenuStripPatch";
-            this.contextMenuStripPatch.Size = new System.Drawing.Size(181, 48);
+            this.contextMenuStripPatch.Size = new System.Drawing.Size(139, 26);
             // 
             // applyPatchToolStripMenuItem1
             // 
             this.applyPatchToolStripMenuItem1.Name = "applyPatchToolStripMenuItem1";
-            this.applyPatchToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.applyPatchToolStripMenuItem1.Size = new System.Drawing.Size(138, 22);
             this.applyPatchToolStripMenuItem1.Text = "Apply patch";
             this.applyPatchToolStripMenuItem1.Click += new System.EventHandler(this.applyPatchToolStripMenuItem1_Click);
+            // 
+            // patcherToolStripMenuItem
+            // 
+            this.patcherToolStripMenuItem.Name = "patcherToolStripMenuItem";
+            this.patcherToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.patcherToolStripMenuItem.Text = "Patcher";
+            this.patcherToolStripMenuItem.Click += new System.EventHandler(this.patcherToolStripMenuItem_Click);
             // 
             // frmTuner
             // 
@@ -1500,5 +1518,7 @@ namespace UniversalPatcher
         private ToolStripMenuItem addTablesToExistingPatchToolStripMenuItem;
         private ContextMenuStrip contextMenuStripPatch;
         private ToolStripMenuItem applyPatchToolStripMenuItem1;
+        private ToolStripMenuItem swapSegmentsToolStripMenuItem;
+        private ToolStripMenuItem patcherToolStripMenuItem;
     }
 }

@@ -54,12 +54,12 @@ namespace UniversalPatcher
         private BindingList<FoundTable> filteredCategories = new BindingList<FoundTable>();
         private BindingSource categoryBindingSource = new BindingSource();
 
-        private frmSplashScreen frmSplash = new frmSplashScreen();
 
         private uint lastCustomSearchResult = 0;
         private string logFile;
         StreamWriter logwriter;
-        public void FrmPatcher_Load(object sender, EventArgs e)
+
+        private void FrmPatcher_Load(object sender, EventArgs e)
         {
             /*string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1 && File.Exists(args[1]))
@@ -70,10 +70,7 @@ namespace UniversalPatcher
             }*/
 
 
-            LogReceivers = new List<RichTextBox>();
             basefile = new PcmFile();
-            tableSeeks = new List<TableSeek>();
-            segmentSeeks = new List<SegmentSeek>();
 
             if (Properties.Settings.Default.MainWindowPersistence)
             {
@@ -93,10 +90,6 @@ namespace UniversalPatcher
             {
                 rememberWindowSizeToolStripMenuItem.Checked = false;
             }
-            frmSplash.Show(this);
-            System.Drawing.Point xy = new Point((int)(this.Location.X + 300),(int)(this.Location.Y + 150));
-            frmSplash.moveMe(xy);
-            frmSplash.labelProgress.Text = "";
 
             //Set default values for Tuner datagrid, if not set previously:
             TableData tdTmp = new TableData();
@@ -131,31 +124,13 @@ namespace UniversalPatcher
             numSuppress.Value = Properties.Settings.Default.SuppressAfter;
             if (numSuppress.Value == 0)
                 numSuppress.Value = 10;
-
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Patches")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Segments")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Segments"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Log")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Log"));
-            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Tuner")))
-                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Tuner"));
             logFile = Path.Combine(Application.StartupPath, "Log", "universalpatcher" + DateTime.Now.ToString("_yyyyMMdd_hhmm") + ".rtf");
-            
 
-            if (Properties.Settings.Default.LastXMLfolder == "")
-                Properties.Settings.Default.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
-            if (Properties.Settings.Default.LastPATCHfolder == "")
-                Properties.Settings.Default.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
             chkDebug.Checked = Properties.Settings.Default.DebugOn;
             checkAutorefreshCVNlist.Checked = Properties.Settings.Default.AutorefreshCVNlist;
             checkAutorefreshFileinfo.Checked = Properties.Settings.Default.AutorefreshFileinfo;
             disableTunerAutloadConfigToolStripMenuItem.Checked = Properties.Settings.Default.disableTunerAutoloadSettings;
 
-            loadSettingFiles();
-            frmSplash.Dispose();
             listCSAddresses.Enabled = true;
             listCSAddresses.Clear();
             listCSAddresses.View = View.Details;
@@ -166,163 +141,104 @@ namespace UniversalPatcher
             listCSAddresses.Columns.Add("MAF Address");
             listCSAddresses.Columns.Add("VE table");
             listCSAddresses.Columns.Add("3d tables");
+
+            advancedModeToolStripMenuItem.Checked = Properties.Settings.Default.PatcherAdvancedMode;
+            setWorkingMode();
         }
 
-        private void ShowSplash (string txt, bool newLine = true)
+        private void setWorkingMode()
         {
-            frmSplash.labelProgress.Text += txt;
-            if (newLine)
-                frmSplash.labelProgress.Text += Environment.NewLine;
+            try
+            {
+                if (Properties.Settings.Default.PatcherAdvancedMode)
+                {
+                    if (!tabFunction.TabPages.Contains(tabCreate))
+                        tabFunction.TabPages.Add(tabCreate);
+                    if (!tabFunction.TabPages.Contains(tabExtract))
+                        tabFunction.TabPages.Add(tabExtract);
+                    if (!tabFunction.TabPages.Contains(tabExtractSegments))
+                        tabFunction.TabPages.Add(tabExtractSegments);
+                    if (!tabFunction.TabPages.Contains(tabChecksumUtil))
+                        tabFunction.TabPages.Add(tabChecksumUtil);
+
+
+                    if (!tabControl1.TabPages.Contains(tabDebug))
+                        tabControl1.TabPages.Add(tabDebug);
+                    if (!tabControl1.TabPages.Contains(tabPatch))
+                        tabControl1.TabPages.Add(tabPatch);
+                    if (!tabControl1.TabPages.Contains(tabCVN))
+                        tabControl1.TabPages.Add(tabCVN);
+                    if (!tabControl1.TabPages.Contains(tabBadCvn))
+                        tabControl1.TabPages.Add(tabBadCvn);
+                    if (!tabControl1.TabPages.Contains(tabCsAddress))
+                        tabControl1.TabPages.Add(tabCsAddress);
+                    if (!tabControl1.TabPages.Contains(tabBadChkFile))
+                        tabControl1.TabPages.Add(tabBadChkFile);
+                    if (!tabControl1.TabPages.Contains(tabSearchedTables))
+                        tabControl1.TabPages.Add(tabSearchedTables);
+                    if (!tabControl1.TabPages.Contains(tabPIDList))
+                        tabControl1.TabPages.Add(tabPIDList);
+                    if (!tabControl1.TabPages.Contains(tabDTC))
+                        tabControl1.TabPages.Add(tabDTC);
+                    if (!tabControl1.TabPages.Contains(tabTableSeek))
+                        tabControl1.TabPages.Add(tabTableSeek);
+
+                    groupSearch.Visible = true;
+
+                    setupSegmentsToolStripMenuItem.Visible = true;
+                    autodetectToolStripMenuItem.Visible = true;
+                    stockCVNToolStripMenuItem.Visible = true;
+                    editTableSearchToolStripMenuItem.Visible = true;
+                    fileTypesToolStripMenuItem.Visible = true;
+                    dTCSearchToolStripMenuItem.Visible = true;
+                    pIDSearchToolStripMenuItem.Visible = true;
+                    tableSeekToolStripMenuItem.Visible = true;
+                    segmentSeekToolStripMenuItem.Visible = true;
+                    oBD2CodesToolStripMenuItem.Visible = true;
+                    rememberWindowSizeToolStripMenuItem.Visible = true;
+                    disableTunerAutloadConfigToolStripMenuItem.Visible = true;
+                }
+                else
+                {
+                    tabFunction.TabPages.Remove(tabCreate);
+                    tabFunction.TabPages.Remove(tabExtract);
+                    tabFunction.TabPages.Remove(tabExtractSegments);
+                    tabFunction.TabPages.Remove(tabChecksumUtil);
+
+
+                    tabControl1.TabPages.Remove(tabDebug);
+                    tabControl1.TabPages.Remove(tabPatch);
+                    tabControl1.TabPages.Remove(tabCVN);
+                    tabControl1.TabPages.Remove(tabBadCvn);
+                    tabControl1.TabPages.Remove(tabCsAddress);
+                    tabControl1.TabPages.Remove(tabBadChkFile);
+                    tabControl1.TabPages.Remove(tabSearchedTables);
+                    tabControl1.TabPages.Remove(tabPIDList);
+                    tabControl1.TabPages.Remove(tabDTC);
+                    tabControl1.TabPages.Remove(tabTableSeek);
+
+                    groupSearch.Visible = false;
+
+                    setupSegmentsToolStripMenuItem.Visible = false;
+                    autodetectToolStripMenuItem.Visible = false;
+                    stockCVNToolStripMenuItem.Visible = false;
+                    editTableSearchToolStripMenuItem.Visible = false;
+                    fileTypesToolStripMenuItem.Visible = false;
+                    dTCSearchToolStripMenuItem.Visible = false;
+                    pIDSearchToolStripMenuItem.Visible = false;
+                    tableSeekToolStripMenuItem.Visible = false;
+                    segmentSeekToolStripMenuItem.Visible = false;
+                    oBD2CodesToolStripMenuItem.Visible = false;
+                    rememberWindowSizeToolStripMenuItem.Visible = false;
+                    disableTunerAutloadConfigToolStripMenuItem.Visible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
-        private void loadSettingFiles()
-        {
-            DetectRules = new List<DetectRule>();
-            StockCVN = new List<CVN>();
-            fileTypeList = new List<FileType>();
-            dtcSearchConfigs = new List<DtcSearchConfig>();
-            pidSearchConfigs = new List<PidSearchConfig>();
-            SwapSegments = new List<SwapSegment>();
-            unitList = new List<Units>();
-            patches = new List<Patch>();
-            //Dirty fix to make system work without stockcvn.xml
-            CVN ctmp = new CVN();
-            ctmp.cvn = "";
-            ctmp.PN = "";
-            StockCVN.Add(ctmp);
-
-            Logger("Loading configurations... filetypes", false);
-            ShowSplash("Loading configurations...");
-            ShowSplash("filetypes");
-            Application.DoEvents();
-
-            string FileTypeListFile = Path.Combine(Application.StartupPath, "XML", "filetypes.xml");
-            if (File.Exists(FileTypeListFile))
-            {
-                Debug.WriteLine("Loading filetypes.xml");
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<FileType>));
-                System.IO.StreamReader file = new System.IO.StreamReader(FileTypeListFile);
-                fileTypeList = (List<FileType>)reader.Deserialize(file);
-                file.Close();
-
-            }
-
-            Logger(",dtcsearch", false);
-            ShowSplash("dtcsearch");
-            Application.DoEvents();
-            string CtsSearchFile = Path.Combine(Application.StartupPath, "XML", "DtcSearch.xml");
-            if (File.Exists(CtsSearchFile))
-            {
-                Debug.WriteLine("Loading DtcSearch.xml");
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<DtcSearchConfig>));
-                System.IO.StreamReader file = new System.IO.StreamReader(CtsSearchFile);
-                dtcSearchConfigs = (List<DtcSearchConfig>)reader.Deserialize(file);
-                file.Close();
-
-            }
-
-            Logger(",pidsearch", false);
-            ShowSplash("pidsearch");
-            Application.DoEvents();
-
-            string pidSearchFile = Path.Combine(Application.StartupPath, "XML", "PidSearch.xml");
-            if (File.Exists(pidSearchFile))
-            {
-                Debug.WriteLine("Loading PidSearch.xml");
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<PidSearchConfig>));
-                System.IO.StreamReader file = new System.IO.StreamReader(pidSearchFile);
-                pidSearchConfigs = (List<PidSearchConfig>)reader.Deserialize(file);
-                file.Close();
-
-            }
-
-            Logger(",autodetect", false);
-            ShowSplash("autodetect");
-            Application.DoEvents();
-
-            string AutoDetectFile = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
-            if (File.Exists(AutoDetectFile))
-            {
-                Debug.WriteLine("Loading autodetect.xml");
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<DetectRule>));
-                System.IO.StreamReader file = new System.IO.StreamReader(AutoDetectFile);
-                DetectRules = (List<DetectRule>)reader.Deserialize(file);
-                file.Close();
-            }
-
-            Logger(",extractedsegments", false);
-            ShowSplash("extractedsegments");
-            Application.DoEvents();
-
-            string SwapSegmentListFile = Path.Combine(Application.StartupPath, "Segments", "extractedsegments.xml");
-            if (File.Exists(SwapSegmentListFile))
-            {
-                Debug.WriteLine("Loading extractedsegments.xml");
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<SwapSegment>));
-                System.IO.StreamReader file = new System.IO.StreamReader(SwapSegmentListFile);
-                SwapSegments = (List<SwapSegment>)reader.Deserialize(file);
-                file.Close();
-
-            }
-
-            Logger(",units", false);
-            ShowSplash("units");
-            Application.DoEvents();
-
-            string unitsFile = Path.Combine(Application.StartupPath, "Tuner", "units.xml");
-            if (File.Exists(unitsFile))
-            {
-                Debug.WriteLine("Loading units.xml");
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<Units>));
-                System.IO.StreamReader file = new System.IO.StreamReader(unitsFile);
-                unitList = (List<Units>)reader.Deserialize(file);
-                file.Close();
-
-            }
-
-            Logger(",stockcvn", false);
-            ShowSplash("stockcvn");
-            Application.DoEvents();
-
-            string StockCVNFile = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
-            if (File.Exists(StockCVNFile))
-            {
-                Debug.WriteLine("Loading stockcvn.xml");
-                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<CVN>));
-                System.IO.StreamReader file = new System.IO.StreamReader(StockCVNFile);
-                StockCVN = (List<CVN>)reader.Deserialize(file);
-                file.Close();
-            }
-            loadReferenceCvn();
-
-            Logger(" - Done");
-            ShowSplash("Done");
-
-        }
-        public void refreshSearchedTables()
-        {
-            int count = 0;
-            if (tableSearchResult == null)
-                return;
-            searchedTablesBindingSource.DataSource = null;
-            if (chkTableSearchNoFilters.Checked)
-            {
-                searchedTablesBindingSource.DataSource = tableSearchResultNoFilters;
-                count = tableSearchResultNoFilters.Count;
-            }
-            else
-            {
-                searchedTablesBindingSource.DataSource = tableSearchResult;
-                count = tableSearchResult.Count;
-            }
-            dataGridSearchedTables.DataSource = null;
-            dataGridSearchedTables.DataSource = searchedTablesBindingSource;
-            dataGridSearchedTables.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-            if (tableSearchResult.Count == 0)
-                tabSearchedTables.Text = "Searched Tables";
-            else
-                tabSearchedTables.Text = "Searched Tables (" + count.ToString() + ")";
-        }
         public void refreshPidList()
         {
             pidListBindingSource.DataSource = null;
@@ -625,6 +541,30 @@ namespace UniversalPatcher
                 Logger("Error: " + ex.Message);
             }
 
+        }
+        public void refreshSearchedTables()
+        {
+            int count = 0;
+            if (tableSearchResult == null)
+                return;
+            searchedTablesBindingSource.DataSource = null;
+            if (chkTableSearchNoFilters.Checked)
+            {
+                searchedTablesBindingSource.DataSource = tableSearchResultNoFilters;
+                count = tableSearchResultNoFilters.Count;
+            }
+            else
+            {
+                searchedTablesBindingSource.DataSource = tableSearchResult;
+                count = tableSearchResult.Count;
+            }
+            dataGridSearchedTables.DataSource = null;
+            dataGridSearchedTables.DataSource = searchedTablesBindingSource;
+            dataGridSearchedTables.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+            if (tableSearchResult.Count == 0)
+                tabSearchedTables.Text = "Searched Tables";
+            else
+                tabSearchedTables.Text = "Searched Tables (" + count.ToString() + ")";
         }
 
         private void GetFileInfo(string FileName, ref PcmFile PCM, bool InfoOnly, bool Show = true)
@@ -1943,7 +1883,8 @@ namespace UniversalPatcher
         }
 
         private void btnSwapSegments_Click(object sender, EventArgs e)
-        {try
+        {
+            try
             {
                 if (basefile == null)
                 {
@@ -3210,6 +3151,14 @@ namespace UniversalPatcher
         {
             patches.RemoveAt(listPatches.SelectedIndex);
             RefreshPatchList();
+        }
+
+        private void advancedModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            advancedModeToolStripMenuItem.Checked = !advancedModeToolStripMenuItem.Checked;
+            Properties.Settings.Default.PatcherAdvancedMode = advancedModeToolStripMenuItem.Checked;
+            Properties.Settings.Default.Save();
+            setWorkingMode();
         }
     }
 }

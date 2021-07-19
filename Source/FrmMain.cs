@@ -58,10 +58,6 @@ namespace UniversalPatcher
         {
             try
             {
-                //Load patcher once, so all settings are correct
-                FrmPatcher frmP = new FrmPatcher();
-                frmP.FrmPatcher_Load(sender,e);
-                frmP.Dispose();
             }
             catch (Exception ex)
             {

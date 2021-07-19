@@ -360,6 +360,7 @@ public class upatcher
     public static SavingMath savingMath = new SavingMath();
 
     public static FrmPatcher frmpatcher;
+    private static  frmSplashScreen frmSplash = new frmSplashScreen();
 
     public static string[] dtcStatusCombined = { "MIL and reporting off", "Type A/no MIL", "Type B/no MIL", "Type C/no MIL", "Not reported/MIL", "Type A/MIL", "Type B/MIL", "Type C/MIL" };
     public static string[] dtcStatus = { "1 Trip/immediately", "2 Trips", "Store only", "Disabled" };
@@ -402,6 +403,170 @@ public class upatcher
         selection,
         bitmask,
         number
+    }
+
+    public static void StartupSettings()
+    {
+        LogReceivers = new List<RichTextBox>();
+        tableSeeks = new List<TableSeek>();
+        segmentSeeks = new List<SegmentSeek>();
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Patches")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Segments")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Segments"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Log")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Log"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Tuner")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Tuner"));
+
+        if (UniversalPatcher.Properties.Settings.Default.LastXMLfolder == "")
+            UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
+        if (UniversalPatcher.Properties.Settings.Default.LastPATCHfolder == "")
+            UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
+
+        frmSplash.Show();
+        //System.Drawing.Point xy = new Point((int)(this.Location.X + 300), (int)(this.Location.Y + 150));
+        Screen myScreen = Screen.FromPoint(Control.MousePosition);
+        System.Drawing.Rectangle area = myScreen.WorkingArea;
+        Point xy = new Point(area.Width / 2 - 115, area.Height / 2 - 130);
+        frmSplash.moveMe(xy);
+        frmSplash.labelProgress.Text = "";
+        loadSettingFiles();
+        frmSplash.Dispose();
+    }
+
+    private static void ShowSplash(string txt, bool newLine = true)
+    {
+        frmSplash.labelProgress.Text += txt;
+        if (newLine)
+            frmSplash.labelProgress.Text += Environment.NewLine;
+    }
+
+    private static void loadSettingFiles()
+    {
+        DetectRules = new List<DetectRule>();
+        StockCVN = new List<CVN>();
+        fileTypeList = new List<FileType>();
+        dtcSearchConfigs = new List<DtcSearchConfig>();
+        pidSearchConfigs = new List<PidSearchConfig>();
+        SwapSegments = new List<SwapSegment>();
+        unitList = new List<Units>();
+        patches = new List<Patch>();
+        //Dirty fix to make system work without stockcvn.xml
+        CVN ctmp = new CVN();
+        ctmp.cvn = "";
+        ctmp.PN = "";
+        StockCVN.Add(ctmp);
+
+        Logger("Loading configurations... filetypes", false);
+        ShowSplash("Loading configurations...");
+        ShowSplash("filetypes");
+        Application.DoEvents();
+
+        string FileTypeListFile = Path.Combine(Application.StartupPath, "XML", "filetypes.xml");
+        if (File.Exists(FileTypeListFile))
+        {
+            Debug.WriteLine("Loading filetypes.xml");
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<FileType>));
+            System.IO.StreamReader file = new System.IO.StreamReader(FileTypeListFile);
+            fileTypeList = (List<FileType>)reader.Deserialize(file);
+            file.Close();
+
+        }
+
+        Logger(",dtcsearch", false);
+        ShowSplash("dtcsearch");
+        Application.DoEvents();
+        string CtsSearchFile = Path.Combine(Application.StartupPath, "XML", "DtcSearch.xml");
+        if (File.Exists(CtsSearchFile))
+        {
+            Debug.WriteLine("Loading DtcSearch.xml");
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<DtcSearchConfig>));
+            System.IO.StreamReader file = new System.IO.StreamReader(CtsSearchFile);
+            dtcSearchConfigs = (List<DtcSearchConfig>)reader.Deserialize(file);
+            file.Close();
+
+        }
+
+        Logger(",pidsearch", false);
+        ShowSplash("pidsearch");
+        Application.DoEvents();
+
+        string pidSearchFile = Path.Combine(Application.StartupPath, "XML", "PidSearch.xml");
+        if (File.Exists(pidSearchFile))
+        {
+            Debug.WriteLine("Loading PidSearch.xml");
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<PidSearchConfig>));
+            System.IO.StreamReader file = new System.IO.StreamReader(pidSearchFile);
+            pidSearchConfigs = (List<PidSearchConfig>)reader.Deserialize(file);
+            file.Close();
+
+        }
+
+        Logger(",autodetect", false);
+        ShowSplash("autodetect");
+        Application.DoEvents();
+
+        string AutoDetectFile = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
+        if (File.Exists(AutoDetectFile))
+        {
+            Debug.WriteLine("Loading autodetect.xml");
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<DetectRule>));
+            System.IO.StreamReader file = new System.IO.StreamReader(AutoDetectFile);
+            DetectRules = (List<DetectRule>)reader.Deserialize(file);
+            file.Close();
+        }
+
+        Logger(",extractedsegments", false);
+        ShowSplash("extractedsegments");
+        Application.DoEvents();
+
+        string SwapSegmentListFile = Path.Combine(Application.StartupPath, "Segments", "extractedsegments.xml");
+        if (File.Exists(SwapSegmentListFile))
+        {
+            Debug.WriteLine("Loading extractedsegments.xml");
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<SwapSegment>));
+            System.IO.StreamReader file = new System.IO.StreamReader(SwapSegmentListFile);
+            SwapSegments = (List<SwapSegment>)reader.Deserialize(file);
+            file.Close();
+
+        }
+
+        Logger(",units", false);
+        ShowSplash("units");
+        Application.DoEvents();
+
+        string unitsFile = Path.Combine(Application.StartupPath, "Tuner", "units.xml");
+        if (File.Exists(unitsFile))
+        {
+            Debug.WriteLine("Loading units.xml");
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<Units>));
+            System.IO.StreamReader file = new System.IO.StreamReader(unitsFile);
+            unitList = (List<Units>)reader.Deserialize(file);
+            file.Close();
+
+        }
+
+        Logger(",stockcvn", false);
+        ShowSplash("stockcvn");
+        Application.DoEvents();
+
+        string StockCVNFile = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
+        if (File.Exists(StockCVNFile))
+        {
+            Debug.WriteLine("Loading stockcvn.xml");
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<CVN>));
+            System.IO.StreamReader file = new System.IO.StreamReader(StockCVNFile);
+            StockCVN = (List<CVN>)reader.Deserialize(file);
+            file.Close();
+        }
+        loadReferenceCvn();
+
+        Logger(" - Done");
+        ShowSplash("Done");
+
     }
 
     public static TableValueType getValueType(TableData td)

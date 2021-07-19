@@ -22,10 +22,25 @@ namespace UniversalPatcher
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                if (Properties.Settings.Default.SimpleMode)
-                    Application.Run(new FrmMain());
-                else
-                    Application.Run(new FrmPatcher());
+                upatcher.StartupSettings();
+                switch (Properties.Settings.Default.StartupForm)
+                {
+                    case 0:
+                        Application.Run(new FrmMain());
+                        break;
+                    case 1:
+                        PcmFile pcm = new PcmFile();
+                        Application.Run(new frmTuner(pcm));
+                        break;
+                    case 2:
+                        Application.Run(new FrmPatcher());
+                        break;
+                    default:
+                        Application.Run(new FrmMain());
+                        break;
+
+                }
+
             }
             catch (Exception ex)
             {

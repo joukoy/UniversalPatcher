@@ -146,17 +146,18 @@
             this.btnCheckSums = new System.Windows.Forms.Button();
             this.btnApplypatch = new System.Windows.Forms.Button();
             this.tabFileinfo = new System.Windows.Forms.TabPage();
+            this.groupSearch = new System.Windows.Forms.GroupBox();
+            this.txtCustomSearchString = new System.Windows.Forms.TextBox();
+            this.txtCustomSearchStartAddress = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.chkCustomTableSearch = new System.Windows.Forms.CheckBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.btnCustomFindAll = new System.Windows.Forms.Button();
+            this.btnCustomSearch = new System.Windows.Forms.Button();
+            this.btnCustomSearchNext = new System.Windows.Forms.Button();
             this.chkSearchPids = new System.Windows.Forms.CheckBox();
             this.chkTableSeek = new System.Windows.Forms.CheckBox();
             this.chkSearchDTC = new System.Windows.Forms.CheckBox();
-            this.chkCustomTableSearch = new System.Windows.Forms.CheckBox();
-            this.btnCustomFindAll = new System.Windows.Forms.Button();
-            this.btnCustomSearchNext = new System.Windows.Forms.Button();
-            this.btnCustomSearch = new System.Windows.Forms.Button();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.txtCustomSearchStartAddress = new System.Windows.Forms.TextBox();
-            this.txtCustomSearchString = new System.Windows.Forms.TextBox();
             this.chkSearchTables = new System.Windows.Forms.CheckBox();
             this.tabCreate = new System.Windows.Forms.TabPage();
             this.chkForceCompare = new System.Windows.Forms.CheckBox();
@@ -225,6 +226,7 @@
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTunerAutloadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.advancedModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
@@ -257,6 +259,7 @@
             this.tabFunction.SuspendLayout();
             this.tabApply.SuspendLayout();
             this.tabFileinfo.SuspendLayout();
+            this.groupSearch.SuspendLayout();
             this.tabCreate.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numCrossVariation)).BeginInit();
             this.tabExtract.SuspendLayout();
@@ -1426,6 +1429,7 @@
             this.label13.Size = new System.Drawing.Size(73, 13);
             this.label13.TabIndex = 120;
             this.label13.Text = "Max variation:";
+            this.label13.Visible = false;
             // 
             // btnCrossTableSearch
             // 
@@ -1436,6 +1440,7 @@
             this.btnCrossTableSearch.TabIndex = 118;
             this.btnCrossTableSearch.Text = "Cross table search";
             this.btnCrossTableSearch.UseVisualStyleBackColor = true;
+            this.btnCrossTableSearch.Visible = false;
             this.btnCrossTableSearch.Click += new System.EventHandler(this.btnCrossTableSearch_Click);
             // 
             // chkExtra
@@ -1603,17 +1608,10 @@
             // 
             // tabFileinfo
             // 
+            this.tabFileinfo.Controls.Add(this.groupSearch);
             this.tabFileinfo.Controls.Add(this.chkSearchPids);
             this.tabFileinfo.Controls.Add(this.chkTableSeek);
             this.tabFileinfo.Controls.Add(this.chkSearchDTC);
-            this.tabFileinfo.Controls.Add(this.chkCustomTableSearch);
-            this.tabFileinfo.Controls.Add(this.btnCustomFindAll);
-            this.tabFileinfo.Controls.Add(this.btnCustomSearchNext);
-            this.tabFileinfo.Controls.Add(this.btnCustomSearch);
-            this.tabFileinfo.Controls.Add(this.label12);
-            this.tabFileinfo.Controls.Add(this.label11);
-            this.tabFileinfo.Controls.Add(this.txtCustomSearchStartAddress);
-            this.tabFileinfo.Controls.Add(this.txtCustomSearchString);
             this.tabFileinfo.Controls.Add(this.chkSearchTables);
             this.tabFileinfo.Controls.Add(this.chkExtra);
             this.tabFileinfo.Controls.Add(this.btnLoadFolder);
@@ -1627,6 +1625,98 @@
             this.tabFileinfo.TabIndex = 2;
             this.tabFileinfo.Text = "File info";
             this.tabFileinfo.UseVisualStyleBackColor = true;
+            // 
+            // groupSearch
+            // 
+            this.groupSearch.Controls.Add(this.txtCustomSearchString);
+            this.groupSearch.Controls.Add(this.txtCustomSearchStartAddress);
+            this.groupSearch.Controls.Add(this.label11);
+            this.groupSearch.Controls.Add(this.chkCustomTableSearch);
+            this.groupSearch.Controls.Add(this.label12);
+            this.groupSearch.Controls.Add(this.btnCustomFindAll);
+            this.groupSearch.Controls.Add(this.btnCustomSearch);
+            this.groupSearch.Controls.Add(this.btnCustomSearchNext);
+            this.groupSearch.Location = new System.Drawing.Point(342, 30);
+            this.groupSearch.Name = "groupSearch";
+            this.groupSearch.Size = new System.Drawing.Size(459, 70);
+            this.groupSearch.TabIndex = 190;
+            this.groupSearch.TabStop = false;
+            // 
+            // txtCustomSearchString
+            // 
+            this.txtCustomSearchString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtCustomSearchString.Location = new System.Drawing.Point(121, 13);
+            this.txtCustomSearchString.Name = "txtCustomSearchString";
+            this.txtCustomSearchString.Size = new System.Drawing.Size(229, 20);
+            this.txtCustomSearchString.TabIndex = 179;
+            // 
+            // txtCustomSearchStartAddress
+            // 
+            this.txtCustomSearchStartAddress.Location = new System.Drawing.Point(186, 41);
+            this.txtCustomSearchStartAddress.Name = "txtCustomSearchStartAddress";
+            this.txtCustomSearchStartAddress.Size = new System.Drawing.Size(84, 20);
+            this.txtCustomSearchStartAddress.TabIndex = 180;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(8, 44);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(175, 13);
+            this.label11.TabIndex = 181;
+            this.label11.Text = "Start searching from address (HEX):";
+            // 
+            // chkCustomTableSearch
+            // 
+            this.chkCustomTableSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkCustomTableSearch.AutoSize = true;
+            this.chkCustomTableSearch.Location = new System.Drawing.Point(356, 16);
+            this.chkCustomTableSearch.Name = "chkCustomTableSearch";
+            this.chkCustomTableSearch.Size = new System.Drawing.Size(88, 17);
+            this.chkCustomTableSearch.TabIndex = 186;
+            this.chkCustomTableSearch.Text = "Table search";
+            this.chkCustomTableSearch.UseVisualStyleBackColor = true;
+            this.chkCustomTableSearch.CheckedChanged += new System.EventHandler(this.chkCustomTableSearch_CheckedChanged);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(8, 16);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(108, 13);
+            this.label12.TabIndex = 182;
+            this.label12.Text = "Custom search string:";
+            // 
+            // btnCustomFindAll
+            // 
+            this.btnCustomFindAll.Location = new System.Drawing.Point(402, 38);
+            this.btnCustomFindAll.Name = "btnCustomFindAll";
+            this.btnCustomFindAll.Size = new System.Drawing.Size(51, 23);
+            this.btnCustomFindAll.TabIndex = 185;
+            this.btnCustomFindAll.Text = "Find all";
+            this.btnCustomFindAll.UseVisualStyleBackColor = true;
+            this.btnCustomFindAll.Click += new System.EventHandler(this.btnCustomFindAll_Click);
+            // 
+            // btnCustomSearch
+            // 
+            this.btnCustomSearch.Location = new System.Drawing.Point(276, 38);
+            this.btnCustomSearch.Name = "btnCustomSearch";
+            this.btnCustomSearch.Size = new System.Drawing.Size(54, 23);
+            this.btnCustomSearch.TabIndex = 183;
+            this.btnCustomSearch.Text = "Search";
+            this.btnCustomSearch.UseVisualStyleBackColor = true;
+            this.btnCustomSearch.Click += new System.EventHandler(this.btnCustomSearch_Click);
+            // 
+            // btnCustomSearchNext
+            // 
+            this.btnCustomSearchNext.Location = new System.Drawing.Point(336, 38);
+            this.btnCustomSearchNext.Name = "btnCustomSearchNext";
+            this.btnCustomSearchNext.Size = new System.Drawing.Size(60, 23);
+            this.btnCustomSearchNext.TabIndex = 184;
+            this.btnCustomSearchNext.Text = "Find next";
+            this.btnCustomSearchNext.UseVisualStyleBackColor = true;
+            this.btnCustomSearchNext.Click += new System.EventHandler(this.btnCustomSearchNext_Click);
             // 
             // chkSearchPids
             // 
@@ -1663,83 +1753,6 @@
             this.chkSearchDTC.TabIndex = 187;
             this.chkSearchDTC.Text = "Search DTC";
             this.chkSearchDTC.UseVisualStyleBackColor = true;
-            // 
-            // chkCustomTableSearch
-            // 
-            this.chkCustomTableSearch.AutoSize = true;
-            this.chkCustomTableSearch.Location = new System.Drawing.Point(384, 78);
-            this.chkCustomTableSearch.Name = "chkCustomTableSearch";
-            this.chkCustomTableSearch.Size = new System.Drawing.Size(88, 17);
-            this.chkCustomTableSearch.TabIndex = 186;
-            this.chkCustomTableSearch.Text = "Table search";
-            this.chkCustomTableSearch.UseVisualStyleBackColor = true;
-            this.chkCustomTableSearch.CheckedChanged += new System.EventHandler(this.chkCustomTableSearch_CheckedChanged);
-            // 
-            // btnCustomFindAll
-            // 
-            this.btnCustomFindAll.Location = new System.Drawing.Point(599, 77);
-            this.btnCustomFindAll.Name = "btnCustomFindAll";
-            this.btnCustomFindAll.Size = new System.Drawing.Size(75, 23);
-            this.btnCustomFindAll.TabIndex = 185;
-            this.btnCustomFindAll.Text = "Find all";
-            this.btnCustomFindAll.UseVisualStyleBackColor = true;
-            this.btnCustomFindAll.Click += new System.EventHandler(this.btnCustomFindAll_Click);
-            // 
-            // btnCustomSearchNext
-            // 
-            this.btnCustomSearchNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCustomSearchNext.Location = new System.Drawing.Point(680, 78);
-            this.btnCustomSearchNext.Name = "btnCustomSearchNext";
-            this.btnCustomSearchNext.Size = new System.Drawing.Size(75, 23);
-            this.btnCustomSearchNext.TabIndex = 184;
-            this.btnCustomSearchNext.Text = "Find next";
-            this.btnCustomSearchNext.UseVisualStyleBackColor = true;
-            this.btnCustomSearchNext.Click += new System.EventHandler(this.btnCustomSearchNext_Click);
-            // 
-            // btnCustomSearch
-            // 
-            this.btnCustomSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCustomSearch.Location = new System.Drawing.Point(680, 54);
-            this.btnCustomSearch.Name = "btnCustomSearch";
-            this.btnCustomSearch.Size = new System.Drawing.Size(75, 23);
-            this.btnCustomSearch.TabIndex = 183;
-            this.btnCustomSearch.Text = "Search";
-            this.btnCustomSearch.UseVisualStyleBackColor = true;
-            this.btnCustomSearch.Click += new System.EventHandler(this.btnCustomSearch_Click);
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(378, 31);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(108, 13);
-            this.label12.TabIndex = 182;
-            this.label12.Text = "Custom search string:";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(378, 57);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(175, 13);
-            this.label11.TabIndex = 181;
-            this.label11.Text = "Start searching from address (HEX):";
-            // 
-            // txtCustomSearchStartAddress
-            // 
-            this.txtCustomSearchStartAddress.Location = new System.Drawing.Point(557, 54);
-            this.txtCustomSearchStartAddress.Name = "txtCustomSearchStartAddress";
-            this.txtCustomSearchStartAddress.Size = new System.Drawing.Size(117, 20);
-            this.txtCustomSearchStartAddress.TabIndex = 180;
-            // 
-            // txtCustomSearchString
-            // 
-            this.txtCustomSearchString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtCustomSearchString.Location = new System.Drawing.Point(492, 31);
-            this.txtCustomSearchString.Name = "txtCustomSearchString";
-            this.txtCustomSearchString.Size = new System.Drawing.Size(341, 20);
-            this.txtCustomSearchString.TabIndex = 179;
             // 
             // chkSearchTables
             // 
@@ -1797,6 +1810,7 @@
             0,
             0,
             0});
+            this.numCrossVariation.Visible = false;
             // 
             // checkAppendPatch
             // 
@@ -2321,7 +2335,8 @@
             this.oBD2CodesToolStripMenuItem,
             this.rememberWindowSizeToolStripMenuItem,
             this.disableTunerAutloadConfigToolStripMenuItem,
-            this.moreSettingsToolStripMenuItem});
+            this.moreSettingsToolStripMenuItem,
+            this.advancedModeToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "&Settings";
@@ -2424,6 +2439,13 @@
             this.moreSettingsToolStripMenuItem.Text = "More settings...";
             this.moreSettingsToolStripMenuItem.Click += new System.EventHandler(this.moreSettingsToolStripMenuItem_Click);
             // 
+            // advancedModeToolStripMenuItem
+            // 
+            this.advancedModeToolStripMenuItem.Name = "advancedModeToolStripMenuItem";
+            this.advancedModeToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.advancedModeToolStripMenuItem.Text = "Advanced Mode";
+            this.advancedModeToolStripMenuItem.Click += new System.EventHandler(this.advancedModeToolStripMenuItem_Click);
+            // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -2498,6 +2520,8 @@
             this.tabApply.ResumeLayout(false);
             this.tabFileinfo.ResumeLayout(false);
             this.tabFileinfo.PerformLayout();
+            this.groupSearch.ResumeLayout(false);
+            this.groupSearch.PerformLayout();
             this.tabCreate.ResumeLayout(false);
             this.tabCreate.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numCrossVariation)).EndInit();
@@ -2720,5 +2744,7 @@
         private System.Windows.Forms.Button btnSaveAllPatches;
         private System.Windows.Forms.Button btnDelPatch;
         private System.Windows.Forms.Button btnAddPatch;
+        private System.Windows.Forms.ToolStripMenuItem advancedModeToolStripMenuItem;
+        private System.Windows.Forms.GroupBox groupSearch;
     }
 }
