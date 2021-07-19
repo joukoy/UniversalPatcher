@@ -42,8 +42,6 @@ namespace UniversalPatcher
             this.label2 = new System.Windows.Forms.Label();
             this.txtMultitableChars = new System.Windows.Forms.TextBox();
             this.chkDisableAutoCS = new System.Windows.Forms.CheckBox();
-            this.comboStartupForm = new System.Windows.Forms.ComboBox();
-            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerTableMinEquivalency)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numKeypressWait)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerMinEqOther)).BeginInit();
@@ -75,7 +73,7 @@ namespace UniversalPatcher
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(227, 237);
+            this.btnOK.Location = new System.Drawing.Point(226, 203);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 2;
@@ -171,42 +169,18 @@ namespace UniversalPatcher
             // 
             this.chkDisableAutoCS.AutoSize = true;
             this.chkDisableAutoCS.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkDisableAutoCS.Location = new System.Drawing.Point(152, 209);
+            this.chkDisableAutoCS.Location = new System.Drawing.Point(152, 180);
             this.chkDisableAutoCS.Name = "chkDisableAutoCS";
             this.chkDisableAutoCS.Size = new System.Drawing.Size(150, 17);
             this.chkDisableAutoCS.TabIndex = 12;
             this.chkDisableAutoCS.Text = "Disable auto checksum fix";
             this.chkDisableAutoCS.UseVisualStyleBackColor = true;
             // 
-            // comboStartupForm
-            // 
-            this.comboStartupForm.FormattingEnabled = true;
-            this.comboStartupForm.Items.AddRange(new object[] {
-            "Launcher",
-            "Tuner",
-            "Patcher"});
-            this.comboStartupForm.Location = new System.Drawing.Point(188, 182);
-            this.comboStartupForm.Name = "comboStartupForm";
-            this.comboStartupForm.Size = new System.Drawing.Size(113, 21);
-            this.comboStartupForm.TabIndex = 13;
-            this.comboStartupForm.Text = "Launcher";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(15, 185);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(80, 13);
-            this.label5.TabIndex = 14;
-            this.label5.Text = "Startup window";
-            // 
             // frmMoreSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(307, 272);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.comboStartupForm);
+            this.ClientSize = new System.Drawing.Size(307, 229);
             this.Controls.Add(this.chkDisableAutoCS);
             this.Controls.Add(this.txtMultitableChars);
             this.Controls.Add(this.label2);
@@ -243,7 +217,5 @@ namespace UniversalPatcher
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtMultitableChars;
         private System.Windows.Forms.CheckBox chkDisableAutoCS;
-        public System.Windows.Forms.ComboBox comboStartupForm;
-        private System.Windows.Forms.Label label5;
     }
 }

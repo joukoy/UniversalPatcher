@@ -221,11 +221,8 @@
     <Setting Name="DisableAutoFixChecksum" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="StartupForm" Type="System.Int32" Scope="User">
+    <Setting Name="PatcherMode" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="PatcherAdvancedMode" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

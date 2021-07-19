@@ -41,8 +41,8 @@
             this.labelDescr = new System.Windows.Forms.Label();
             this.labelXML = new System.Windows.Forms.Label();
             this.numSuppress = new System.Windows.Forms.NumericUpDown();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.labelShowMax = new System.Windows.Forms.Label();
+            this.labelPatchRows = new System.Windows.Forms.Label();
             this.chkCompareAll = new System.Windows.Forms.CheckBox();
             this.chkAutodetect = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -226,7 +226,10 @@
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTunerAutloadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.advancedModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.touristToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.basicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.advancedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
@@ -393,23 +396,23 @@
             0,
             0});
             // 
-            // label2
+            // labelShowMax
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(341, 5);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(59, 13);
-            this.label2.TabIndex = 19;
-            this.label2.Text = "Show max:";
+            this.labelShowMax.AutoSize = true;
+            this.labelShowMax.Location = new System.Drawing.Point(341, 5);
+            this.labelShowMax.Name = "labelShowMax";
+            this.labelShowMax.Size = new System.Drawing.Size(59, 13);
+            this.labelShowMax.TabIndex = 19;
+            this.labelShowMax.Text = "Show max:";
             // 
-            // label3
+            // labelPatchRows
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(449, 5);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(59, 13);
-            this.label3.TabIndex = 20;
-            this.label3.Text = "patch rows";
+            this.labelPatchRows.AutoSize = true;
+            this.labelPatchRows.Location = new System.Drawing.Point(449, 5);
+            this.labelPatchRows.Name = "labelPatchRows";
+            this.labelPatchRows.Size = new System.Drawing.Size(59, 13);
+            this.labelPatchRows.TabIndex = 20;
+            this.labelPatchRows.Text = "patch rows";
             // 
             // chkCompareAll
             // 
@@ -465,9 +468,9 @@
             this.tabInfo.Controls.Add(this.chkLogtoFile);
             this.tabInfo.Controls.Add(this.txtResult);
             this.tabInfo.Controls.Add(this.numSuppress);
-            this.tabInfo.Controls.Add(this.label2);
+            this.tabInfo.Controls.Add(this.labelShowMax);
             this.tabInfo.Controls.Add(this.btnSaveFileInfo);
-            this.tabInfo.Controls.Add(this.label3);
+            this.tabInfo.Controls.Add(this.labelPatchRows);
             this.tabInfo.Controls.Add(this.label1);
             this.tabInfo.Controls.Add(this.labelBinSize);
             this.tabInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -2336,7 +2339,7 @@
             this.rememberWindowSizeToolStripMenuItem,
             this.disableTunerAutloadConfigToolStripMenuItem,
             this.moreSettingsToolStripMenuItem,
-            this.advancedModeToolStripMenuItem});
+            this.modeToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "&Settings";
@@ -2439,12 +2442,36 @@
             this.moreSettingsToolStripMenuItem.Text = "More settings...";
             this.moreSettingsToolStripMenuItem.Click += new System.EventHandler(this.moreSettingsToolStripMenuItem_Click);
             // 
-            // advancedModeToolStripMenuItem
+            // modeToolStripMenuItem
             // 
-            this.advancedModeToolStripMenuItem.Name = "advancedModeToolStripMenuItem";
-            this.advancedModeToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.advancedModeToolStripMenuItem.Text = "Advanced Mode";
-            this.advancedModeToolStripMenuItem.Click += new System.EventHandler(this.advancedModeToolStripMenuItem_Click);
+            this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.touristToolStripMenuItem,
+            this.basicToolStripMenuItem,
+            this.advancedToolStripMenuItem});
+            this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
+            this.modeToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.modeToolStripMenuItem.Text = "Mode";
+            // 
+            // touristToolStripMenuItem
+            // 
+            this.touristToolStripMenuItem.Name = "touristToolStripMenuItem";
+            this.touristToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.touristToolStripMenuItem.Text = "Tourist";
+            this.touristToolStripMenuItem.Click += new System.EventHandler(this.touristToolStripMenuItem_Click);
+            // 
+            // basicToolStripMenuItem
+            // 
+            this.basicToolStripMenuItem.Name = "basicToolStripMenuItem";
+            this.basicToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.basicToolStripMenuItem.Text = "Basic";
+            this.basicToolStripMenuItem.Click += new System.EventHandler(this.basicToolStripMenuItem_Click);
+            // 
+            // advancedToolStripMenuItem
+            // 
+            this.advancedToolStripMenuItem.Name = "advancedToolStripMenuItem";
+            this.advancedToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.advancedToolStripMenuItem.Text = "Advanced";
+            this.advancedToolStripMenuItem.Click += new System.EventHandler(this.advancedToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -2557,8 +2584,8 @@
         public System.Windows.Forms.Button btnModFile;
         private System.Windows.Forms.Label labelDescr;
         private System.Windows.Forms.NumericUpDown numSuppress;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label labelShowMax;
+        private System.Windows.Forms.Label labelPatchRows;
         private System.Windows.Forms.CheckBox chkCompareAll;
         private System.Windows.Forms.CheckBox chkAutodetect;
         private System.Windows.Forms.TabControl tabControl1;
@@ -2744,7 +2771,10 @@
         private System.Windows.Forms.Button btnSaveAllPatches;
         private System.Windows.Forms.Button btnDelPatch;
         private System.Windows.Forms.Button btnAddPatch;
-        private System.Windows.Forms.ToolStripMenuItem advancedModeToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupSearch;
+        private System.Windows.Forms.ToolStripMenuItem modeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem touristToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem basicToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem advancedToolStripMenuItem;
     }
 }

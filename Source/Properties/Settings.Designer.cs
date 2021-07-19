@@ -900,24 +900,12 @@ namespace UniversalPatcher.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int StartupForm {
+        public int PatcherMode {
             get {
-                return ((int)(this["StartupForm"]));
+                return ((int)(this["PatcherMode"]));
             }
             set {
-                this["StartupForm"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool PatcherAdvancedMode {
-            get {
-                return ((bool)(this["PatcherAdvancedMode"]));
-            }
-            set {
-                this["PatcherAdvancedMode"] = value;
+                this["PatcherMode"] = value;
             }
         }
     }

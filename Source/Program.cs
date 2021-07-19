@@ -21,25 +21,8 @@ namespace UniversalPatcher
             try
             {
                 Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                upatcher.StartupSettings();
-                switch (Properties.Settings.Default.StartupForm)
-                {
-                    case 0:
-                        Application.Run(new FrmMain());
-                        break;
-                    case 1:
-                        PcmFile pcm = new PcmFile();
-                        Application.Run(new frmTuner(pcm));
-                        break;
-                    case 2:
-                        Application.Run(new FrmPatcher());
-                        break;
-                    default:
-                        Application.Run(new FrmMain());
-                        break;
-
-                }
+                Application.SetCompatibleTextRenderingDefault(false);                
+                Application.Run(new FrmPatcher());
 
             }
             catch (Exception ex)

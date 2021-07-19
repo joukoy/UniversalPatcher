@@ -142,15 +142,64 @@ namespace UniversalPatcher
             listCSAddresses.Columns.Add("VE table");
             listCSAddresses.Columns.Add("3d tables");
 
-            advancedModeToolStripMenuItem.Checked = Properties.Settings.Default.PatcherAdvancedMode;
+            switch (Properties.Settings.Default.PatcherMode)
+            {
+                case 0:
+                    advancedToolStripMenuItem.Checked = false;
+                    basicToolStripMenuItem.Checked = false;
+                    touristToolStripMenuItem.Checked = true;
+                    break;
+                case 1:
+                    advancedToolStripMenuItem.Checked = false;
+                    basicToolStripMenuItem.Checked = true;
+                    touristToolStripMenuItem.Checked = false;
+                    break;
+                case 2:
+                    advancedToolStripMenuItem.Checked = true;
+                    basicToolStripMenuItem.Checked = false;
+                    touristToolStripMenuItem.Checked = false;
+                    break;
+
+            }
+
             setWorkingMode();
+
+            this.Show();
+            upatcher.StartupSettings();
+
         }
 
         private void setWorkingMode()
         {
             try
             {
-                if (Properties.Settings.Default.PatcherAdvancedMode)
+                int patcherMode = Properties.Settings.Default.PatcherMode;
+                if (patcherMode == 0)   //Tourist mode
+                {
+                    tabControl1.TabPages.Remove(tabFinfo);
+                    tabFunction.Visible = false;
+                    tabControl1.Location = new Point(0,60);
+                    tabControl1.Height = this.Height - 100;
+                    chkLogtodisplay.Visible = false;
+                    chkLogtoFile.Visible = false;
+                    labelShowMax.Visible = false;
+                    labelPatchRows.Visible = false;
+                    numSuppress.Visible = false;
+                }
+                else
+                {
+                    if (!tabFunction.TabPages.Contains(tabFinfo))
+                        tabControl1.TabPages.Add(tabFinfo);
+                    tabFunction.Visible = true;
+                    tabControl1.Location = new Point(0, 191);
+                    tabControl1.Height = this.Height - 230;
+                    chkLogtodisplay.Visible = true;
+                    chkLogtoFile.Visible = true;
+                    labelShowMax.Visible = true;
+                    labelPatchRows.Visible = true;
+                    numSuppress.Visible = true;
+                }
+                if (patcherMode == 2)   //Advanced
                 {
                     if (!tabFunction.TabPages.Contains(tabCreate))
                         tabFunction.TabPages.Add(tabCreate);
@@ -197,8 +246,9 @@ namespace UniversalPatcher
                     oBD2CodesToolStripMenuItem.Visible = true;
                     rememberWindowSizeToolStripMenuItem.Visible = true;
                     disableTunerAutloadConfigToolStripMenuItem.Visible = true;
-                }
-                else
+
+                } 
+                else //Tourist or Basic
                 {
                     tabFunction.TabPages.Remove(tabCreate);
                     tabFunction.TabPages.Remove(tabExtract);
@@ -231,6 +281,7 @@ namespace UniversalPatcher
                     oBD2CodesToolStripMenuItem.Visible = false;
                     rememberWindowSizeToolStripMenuItem.Visible = false;
                     disableTunerAutloadConfigToolStripMenuItem.Visible = false;
+                   
                 }
             }
             catch (Exception ex)
@@ -3153,10 +3204,34 @@ namespace UniversalPatcher
             RefreshPatchList();
         }
 
-        private void advancedModeToolStripMenuItem_Click(object sender, EventArgs e)
+
+        private void touristToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            advancedModeToolStripMenuItem.Checked = !advancedModeToolStripMenuItem.Checked;
-            Properties.Settings.Default.PatcherAdvancedMode = advancedModeToolStripMenuItem.Checked;
+            touristToolStripMenuItem.Checked = true;
+            advancedToolStripMenuItem.Checked = false;
+            basicToolStripMenuItem.Checked = false;
+            Properties.Settings.Default.PatcherMode = 0;
+
+            Properties.Settings.Default.Save();
+            setWorkingMode();
+        }
+
+        private void basicToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            basicToolStripMenuItem.Checked = true;
+            advancedToolStripMenuItem.Checked = false;
+            touristToolStripMenuItem.Checked = false;
+            Properties.Settings.Default.PatcherMode = 1;
+            Properties.Settings.Default.Save();
+            setWorkingMode();
+        }
+
+        private void advancedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            advancedToolStripMenuItem.Checked = true;
+            touristToolStripMenuItem.Checked = false;
+            basicToolStripMenuItem.Checked = false;
+            Properties.Settings.Default.PatcherMode = 2;
             Properties.Settings.Default.Save();
             setWorkingMode();
         }
