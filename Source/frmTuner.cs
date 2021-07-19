@@ -3042,8 +3042,13 @@ namespace UniversalPatcher
             cSV2ExperimentalToolStripMenuItem.Visible = false;
             massModifyTableListsToolStripMenuItem.Visible = false;
             massModifyTableListsSelectFilesToolStripMenuItem.Visible = false;
+            swapSegmentsToolStripMenuItem.Visible = false;
 
-
+            xmlToolStripMenuItem.Visible = false;
+            tableListToolStripMenuItem.Visible = false;
+            findDifferencesHEXToolStripMenuItem.Visible = false;
+            findDifferencesToolStripMenuItem.Visible = false;
+            applyPatchToolStripMenuItem.Visible = false;
 
             showTablesWithEmptyAddressToolStripMenuItem.Visible = false;
             unitsToolStripMenuItem.Visible = false;
@@ -3134,6 +3139,13 @@ namespace UniversalPatcher
             cSV2ExperimentalToolStripMenuItem.Visible = true;
             massModifyTableListsToolStripMenuItem.Visible = true;
             massModifyTableListsSelectFilesToolStripMenuItem.Visible = true;
+
+            xmlToolStripMenuItem.Visible = true;
+            tableListToolStripMenuItem.Visible = true;
+            findDifferencesHEXToolStripMenuItem.Visible = true;
+            findDifferencesToolStripMenuItem.Visible = true;
+            applyPatchToolStripMenuItem.Visible = true;
+            swapSegmentsToolStripMenuItem.Visible = true;
 
             showTablesWithEmptyAddressToolStripMenuItem.Visible = true;
             unitsToolStripMenuItem.Visible = true;

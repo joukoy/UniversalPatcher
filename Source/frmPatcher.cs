@@ -188,7 +188,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    if (!tabFunction.TabPages.Contains(tabFinfo))
+                    if (!tabControl1.TabPages.Contains(tabFinfo))
                         tabControl1.TabPages.Add(tabFinfo);
                     tabFunction.Visible = true;
                     tabControl1.Location = new Point(0, 191);

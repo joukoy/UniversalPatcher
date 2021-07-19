@@ -153,7 +153,6 @@ namespace UniversalPatcher
             this.compareSelectedTablesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripPatch = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.applyPatchToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.patcherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -383,7 +382,7 @@ namespace UniversalPatcher
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newToolStripMenuItem.Text = "New...";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -397,8 +396,7 @@ namespace UniversalPatcher
             this.massModifyTableListsToolStripMenuItem,
             this.massModifyTableListsSelectFilesToolStripMenuItem,
             this.applyPatchToolStripMenuItem,
-            this.swapSegmentsToolStripMenuItem,
-            this.patcherToolStripMenuItem});
+            this.swapSegmentsToolStripMenuItem});
             this.utilitiesToolStripMenuItem.Name = "utilitiesToolStripMenuItem";
             this.utilitiesToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
             this.utilitiesToolStripMenuItem.Text = "Utilities";
@@ -508,7 +506,7 @@ namespace UniversalPatcher
             // selectFileToolStripMenuItem
             // 
             this.selectFileToolStripMenuItem.Name = "selectFileToolStripMenuItem";
-            this.selectFileToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.selectFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.selectFileToolStripMenuItem.Text = "Select file...";
             this.selectFileToolStripMenuItem.Click += new System.EventHandler(this.selectFileToolStripMenuItem_Click);
             // 
@@ -523,7 +521,7 @@ namespace UniversalPatcher
             // selectFileToolStripMenuItem1
             // 
             this.selectFileToolStripMenuItem1.Name = "selectFileToolStripMenuItem1";
-            this.selectFileToolStripMenuItem1.Size = new System.Drawing.Size(133, 22);
+            this.selectFileToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.selectFileToolStripMenuItem1.Text = "Select file...";
             this.selectFileToolStripMenuItem1.Click += new System.EventHandler(this.selectFileToolStripMenuItem1_Click);
             // 
@@ -1335,13 +1333,6 @@ namespace UniversalPatcher
             this.applyPatchToolStripMenuItem1.Text = "Apply patch";
             this.applyPatchToolStripMenuItem1.Click += new System.EventHandler(this.applyPatchToolStripMenuItem1_Click);
             // 
-            // patcherToolStripMenuItem
-            // 
-            this.patcherToolStripMenuItem.Name = "patcherToolStripMenuItem";
-            this.patcherToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.patcherToolStripMenuItem.Text = "Patcher";
-            this.patcherToolStripMenuItem.Click += new System.EventHandler(this.patcherToolStripMenuItem_Click);
-            // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1519,6 +1510,5 @@ namespace UniversalPatcher
         private ContextMenuStrip contextMenuStripPatch;
         private ToolStripMenuItem applyPatchToolStripMenuItem1;
         private ToolStripMenuItem swapSegmentsToolStripMenuItem;
-        private ToolStripMenuItem patcherToolStripMenuItem;
     }
 }
