@@ -1686,30 +1686,44 @@ namespace UniversalPatcher
 
         public void showTableDescription(PcmFile PCM, int ind = -1)
         {
-            txtDescription.Text = "";
-            if ((ind == -1 && dataGridView1.SelectedCells.Count < 1) || PCM.tableDatas.Count == 0)
+            try
             {
-                return;
-            }
-            if (ind < 0)
-                ind = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
-            txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Bold);
-            txtDescription.AppendText(PCM.tableDatas[ind].TableName + Environment.NewLine);
-            txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
-            if (PCM.tableDatas[ind].TableDescription != null)
-                txtDescription.AppendText(PCM.tableDatas[ind].TableDescription + Environment.NewLine);
-            if (PCM.tableDatas[ind].ExtraDescription != null)
-                txtDescription.AppendText(PCM.tableDatas[ind].ExtraDescription + Environment.NewLine);
+                txtDescription.Text = "";
+                if ((ind == -1 && dataGridView1.SelectedCells.Count < 1) || PCM.tableDatas.Count == 0)
+                {
+                    return;
+                }
+                if (ind < 0)
+                    ind = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
+                txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Bold);
+                txtDescription.AppendText(PCM.tableDatas[ind].TableName + Environment.NewLine);
+                txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
+                if (PCM.tableDatas[ind].TableDescription != null)
+                    txtDescription.AppendText(PCM.tableDatas[ind].TableDescription + Environment.NewLine);
+                if (PCM.tableDatas[ind].ExtraDescription != null)
+                    txtDescription.AppendText(PCM.tableDatas[ind].ExtraDescription + Environment.NewLine);
 
-            peekTableValuesWithCompare(ind);
-            labelTableName.Text = PCM.tableDatas[ind].TableName;
+                peekTableValuesWithCompare(ind);
+                labelTableName.Text = PCM.tableDatas[ind].TableName;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            if (treeView1.SelectedNode.Name == "Patches" || treeView1.SelectedNode.Parent.Name == "Patches")
-                return;
-            showTableDescription(PCM);
+            try
+            {
+                if (treeView1.SelectedNode.Name == "Patches" || treeView1.SelectedNode.Parent.Name == "Patches")
+                    return;
+                showTableDescription(PCM);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
@@ -3921,13 +3935,21 @@ namespace UniversalPatcher
 
         private void selectDispMode()
         {
-            if (radioTreeMode.Checked)
-                selectTreemode();
-            else
-                selectListMode();
-            Properties.Settings.Default.TunerTreeMode = radioTreeMode.Checked;
-            Properties.Settings.Default.Save();
-            filterTables();
+            try
+            {
+                if (radioTreeMode.Checked)
+                    selectTreemode();
+                else
+                    selectListMode();
+                Properties.Settings.Default.TunerTreeMode = radioTreeMode.Checked;
+                Properties.Settings.Default.Save();
+                filterTables();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
         }
         private void radioTreeMode_CheckedChanged(object sender, EventArgs e)
         {
