@@ -70,12 +70,18 @@ namespace UniversalPatcher
                         radioTourist.Checked = true;
                         break;
                 }
+
+                ToolTip t1 = new ToolTip();
+                t1.SetToolTip(radioTourist, "Very limited funcionality, only basic open/Save is available");
+                t1.SetToolTip(radioBasic, "Common functions available");
+                t1.SetToolTip(radioAdvanced, "For professional users. All functions available");
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error");
             }
         }
+
 
         private void btnTuner_Click(object sender, EventArgs e)
         {
