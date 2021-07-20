@@ -19,8 +19,6 @@ namespace UniversalPatcher
 
             contextMenuStrip2.Opening += new System.ComponentModel.CancelEventHandler(cms_Opening);
 
-            enableConfigModeToolStripMenuItem.Checked = Properties.Settings.Default.TunerConfigMode;
-
             PCM = PCM1;
             //tableDataList = PCM.tableDatas;
             if (PCM == null || PCM1.fsize == 0) return; //No file selected
@@ -55,11 +53,7 @@ namespace UniversalPatcher
 
         private void frmTuner_Load(object sender, EventArgs e)
         {
-            enableConfigModeToolStripMenuItem.Checked = Properties.Settings.Default.TunerConfigMode;
-            insertRowToolStripMenuItem.Enabled = Properties.Settings.Default.TunerConfigMode;
-            deleteRowToolStripMenuItem.Enabled = Properties.Settings.Default.TunerConfigMode;
-            editRowToolStripMenuItem.Enabled = Properties.Settings.Default.TunerConfigMode;
-            duplicateTableConfigToolStripMenuItem.Enabled = Properties.Settings.Default.TunerConfigMode;
+            selectWorkingMode();
             disableConfigAutoloadToolStripMenuItem.Checked = Properties.Settings.Default.disableTunerAutoloadSettings;
             chkShowCategorySubfolder.Checked = Properties.Settings.Default.TableExplorerUseCategorySubfolder;
             chkAutoMulti1d.Checked = Properties.Settings.Default.TunerAutomulti1d;
@@ -137,7 +131,6 @@ namespace UniversalPatcher
                 Properties.Settings.Default.TunerLogWindowSize = logSize;
                 Properties.Settings.Default.TunerListModeTreeWidth = splitContainerListMode.SplitterDistance;
             }
-            Properties.Settings.Default.TunerConfigMode = enableConfigModeToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
         }
 
@@ -509,7 +502,7 @@ namespace UniversalPatcher
                 int invisibleIndex = tunerColumns.Length;
                 for (int c = 0; c < dataGridView1.Columns.Count; c++)
                 {
-                    if (enableConfigModeToolStripMenuItem.Checked)
+                    if (Properties.Settings.Default.WorkingMode == 2) //advanced
                     {
                         dataGridView1.Columns[c].ReadOnly = false;
                         dataGridView1.Columns[c].Visible = true;
@@ -965,7 +958,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (dataGridView1.SelectedCells.Count > 0 && e.Button == MouseButtons.Right)
+                if (Properties.Settings.Default.WorkingMode > 0 && dataGridView1.SelectedCells.Count > 0 && e.Button == MouseButtons.Right)
                 {
                     lastSelectedId = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
                     contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
@@ -1417,7 +1410,7 @@ namespace UniversalPatcher
                 strSortOrder = getSortOrder(sortIndex);
                 filterTables();
             }
-            else if (!enableConfigModeToolStripMenuItem.Checked)
+            else if (Properties.Settings.Default.WorkingMode != 2)
             {
                 contextMenuStrip2.Show(Cursor.Position.X, Cursor.Position.Y);
             }
@@ -1476,7 +1469,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (!enableConfigModeToolStripMenuItem.Checked)
+                if (Properties.Settings.Default.WorkingMode != 2)
                 {
                     e.Cancel = true;
                     return;
@@ -1731,25 +1724,6 @@ namespace UniversalPatcher
 
         }
 
-        private void setConfigMode()
-        {
-            cSVexperimentalToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
-            cSV2ExperimentalToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
-            xMLGeneratorExportToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;
-            xMlgeneratorImportCSVToolStripMenuItem.Visible = enableConfigModeToolStripMenuItem.Checked;     
-        }
-        private void enableConfigModeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            enableConfigModeToolStripMenuItem.Checked = !enableConfigModeToolStripMenuItem.Checked;
-            insertRowToolStripMenuItem.Enabled = enableConfigModeToolStripMenuItem.Checked;
-            deleteRowToolStripMenuItem.Enabled = enableConfigModeToolStripMenuItem.Checked;
-            editRowToolStripMenuItem.Enabled = enableConfigModeToolStripMenuItem.Checked;
-            duplicateTableConfigToolStripMenuItem.Enabled = enableConfigModeToolStripMenuItem.Checked;
-            filterTables();
-            setConfigMode();
-            Application.DoEvents();
-            //dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
-        }
 
         private void tunerModeColumnsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1983,9 +1957,9 @@ namespace UniversalPatcher
                 }
                 Debug.WriteLine("Display order: " + order);
                 Debug.WriteLine("Column width: " + columnWidth);
-                if (enableConfigModeToolStripMenuItem.Checked)
+                if (Properties.Settings.Default.WorkingMode == 2)
                 {
-                    //Config mode
+                    //Advanced mode
                     Properties.Settings.Default.ConfigModeColumnOrder = order.Trim(',');
                     Properties.Settings.Default.ConfigModeColumnWidth = columnWidth.Trim(',');
                 }
@@ -2036,7 +2010,7 @@ namespace UniversalPatcher
             Debug.WriteLine(menuItem.Name);
             dataGridView1.Columns[menuItem.Name].Visible = menuItem.Checked;
             columnsModified = true;
-            if (!enableConfigModeToolStripMenuItem.Checked)
+            if (Properties.Settings.Default.WorkingMode != 2)
                 filterTables();
         }
 
@@ -2988,6 +2962,95 @@ namespace UniversalPatcher
             generateTablePatch(true);
         }
 
+        private void selectWorkingMode()
+        {
+            int workingMode = Properties.Settings.Default.WorkingMode;
+            if (workingMode == 0)   //Tourist mode
+            {
+                settingsToolStripMenuItem.Visible = false;
+                utilitiesToolStripMenuItem.Visible = false;
+
+                xmlToolStripMenuItem.Visible = false;
+                tableListToolStripMenuItem.Visible = false;
+                findDifferencesHEXToolStripMenuItem.Visible = false;
+                findDifferencesToolStripMenuItem.Visible = false;
+                applyPatchToolStripMenuItem.Visible = false;
+
+                saveAllBINFilesToolStripMenuItem.Visible = false;
+                openMultipleBINToolStripMenuItem.Visible = false;
+                reloadFileFromDiskToolStripMenuItem.Visible = false;
+            }
+            else
+            {
+                settingsToolStripMenuItem.Visible = true;
+                utilitiesToolStripMenuItem.Visible = true;
+                xmlToolStripMenuItem.Visible = true;
+                tableListToolStripMenuItem.Visible = true;
+                findDifferencesHEXToolStripMenuItem.Visible = true;
+                findDifferencesToolStripMenuItem.Visible = true;
+                applyPatchToolStripMenuItem.Visible = true;
+                swapSegmentsToolStripMenuItem.Visible = true;
+
+                saveAllBINFilesToolStripMenuItem.Visible = true;
+                openMultipleBINToolStripMenuItem.Visible = true;
+                reloadFileFromDiskToolStripMenuItem.Visible = true;
+
+            }
+            if (workingMode == 2) //advanced
+            {
+                cSVexperimentalToolStripMenuItem.Visible = true;
+                cSV2ExperimentalToolStripMenuItem.Visible = true;
+                xMLGeneratorExportToolStripMenuItem.Visible = true;
+                xMlgeneratorImportCSVToolStripMenuItem.Visible = true;
+                insertRowToolStripMenuItem.Enabled = true;
+                deleteRowToolStripMenuItem.Enabled = true;
+                editRowToolStripMenuItem.Enabled = true;
+                duplicateTableConfigToolStripMenuItem.Enabled = true;
+
+                dTCToolStripMenuItem.Visible = true;
+                tableSeekToolStripMenuItem.Visible = true;
+                tinyTunerDBV6OnlyToolStripMenuItem.Visible = true;
+                xMLGeneratorExportToolStripMenuItem.Visible = true;
+                xMlgeneratorImportCSVToolStripMenuItem.Visible = true;
+                cSVexperimentalToolStripMenuItem.Visible = true;
+                cSV2ExperimentalToolStripMenuItem.Visible = true;
+                massModifyTableListsToolStripMenuItem.Visible = true;
+                massModifyTableListsSelectFilesToolStripMenuItem.Visible = true;
+
+                showTablesWithEmptyAddressToolStripMenuItem.Visible = true;
+                unitsToolStripMenuItem.Visible = true;
+                resetTunerModeColumnsToolStripMenuItem.Visible = false;
+
+            }
+            else
+            {
+                cSVexperimentalToolStripMenuItem.Visible = false;
+                cSV2ExperimentalToolStripMenuItem.Visible = false;
+                xMLGeneratorExportToolStripMenuItem.Visible = false;
+                xMlgeneratorImportCSVToolStripMenuItem.Visible = false;
+                insertRowToolStripMenuItem.Enabled = false;
+                deleteRowToolStripMenuItem.Enabled = false;
+                editRowToolStripMenuItem.Enabled = false;
+                duplicateTableConfigToolStripMenuItem.Enabled = false;
+
+                dTCToolStripMenuItem.Visible = false;
+                tableSeekToolStripMenuItem.Visible = false;
+                tinyTunerDBV6OnlyToolStripMenuItem.Visible = false;
+                xMLGeneratorExportToolStripMenuItem.Visible = false;
+                xMlgeneratorImportCSVToolStripMenuItem.Visible = false;
+                cSVexperimentalToolStripMenuItem.Visible = false;
+                cSV2ExperimentalToolStripMenuItem.Visible = false;
+                massModifyTableListsToolStripMenuItem.Visible = false;
+                massModifyTableListsSelectFilesToolStripMenuItem.Visible = false;
+                swapSegmentsToolStripMenuItem.Visible = false;
+
+                showTablesWithEmptyAddressToolStripMenuItem.Visible = false;
+                unitsToolStripMenuItem.Visible = false;
+                resetTunerModeColumnsToolStripMenuItem.Visible = false;
+
+            }
+        }
+
         private void selectTreemode()
         {
             treeMode = true;
@@ -3031,29 +3094,6 @@ namespace UniversalPatcher
             labelCategory.Visible = false;
             comboTableCategory.Visible = false;
             comboTableCategory.Text = "_All";
-            settingsToolStripMenuItem.Visible = false;
-            //utilitiesToolStripMenuItem.Visible = false;
-            dTCToolStripMenuItem.Visible = false;
-            tableSeekToolStripMenuItem.Visible = false;
-            tinyTunerDBV6OnlyToolStripMenuItem.Visible = false;
-            xMLGeneratorExportToolStripMenuItem.Visible = false;
-            xMlgeneratorImportCSVToolStripMenuItem.Visible = false;
-            cSVexperimentalToolStripMenuItem.Visible = false;
-            cSV2ExperimentalToolStripMenuItem.Visible = false;
-            massModifyTableListsToolStripMenuItem.Visible = false;
-            massModifyTableListsSelectFilesToolStripMenuItem.Visible = false;
-            swapSegmentsToolStripMenuItem.Visible = false;
-
-            xmlToolStripMenuItem.Visible = false;
-            tableListToolStripMenuItem.Visible = false;
-            findDifferencesHEXToolStripMenuItem.Visible = false;
-            findDifferencesToolStripMenuItem.Visible = false;
-            applyPatchToolStripMenuItem.Visible = false;
-
-            showTablesWithEmptyAddressToolStripMenuItem.Visible = false;
-            unitsToolStripMenuItem.Visible = false;
-            enableConfigModeToolStripMenuItem.Visible = false;
-            resetTunerModeColumnsToolStripMenuItem.Visible = false;
         }
 
         private void updateFileInfoTab()
@@ -3128,29 +3168,6 @@ namespace UniversalPatcher
             comboFilterBy.Visible = true;
             labelCategory.Visible = true;
             comboTableCategory.Visible = true;
-            settingsToolStripMenuItem.Visible = true;
-            //utilitiesToolStripMenuItem.Visible = true;
-            dTCToolStripMenuItem.Visible = true;
-            tableSeekToolStripMenuItem.Visible = true;
-            tinyTunerDBV6OnlyToolStripMenuItem.Visible = true;
-            xMLGeneratorExportToolStripMenuItem.Visible = true;
-            xMlgeneratorImportCSVToolStripMenuItem.Visible = true;
-            cSVexperimentalToolStripMenuItem.Visible = true;
-            cSV2ExperimentalToolStripMenuItem.Visible = true;
-            massModifyTableListsToolStripMenuItem.Visible = true;
-            massModifyTableListsSelectFilesToolStripMenuItem.Visible = true;
-
-            xmlToolStripMenuItem.Visible = true;
-            tableListToolStripMenuItem.Visible = true;
-            findDifferencesHEXToolStripMenuItem.Visible = true;
-            findDifferencesToolStripMenuItem.Visible = true;
-            applyPatchToolStripMenuItem.Visible = true;
-            swapSegmentsToolStripMenuItem.Visible = true;
-
-            showTablesWithEmptyAddressToolStripMenuItem.Visible = true;
-            unitsToolStripMenuItem.Visible = true;
-            enableConfigModeToolStripMenuItem.Visible = true;
-            resetTunerModeColumnsToolStripMenuItem.Visible = false;
         }
 
         private void TreeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -3963,6 +3980,8 @@ namespace UniversalPatcher
             }
 
         }
+
+
         private void radioTreeMode_CheckedChanged(object sender, EventArgs e)
         {
             radioListMode.Checked = !radioTreeMode.Checked;

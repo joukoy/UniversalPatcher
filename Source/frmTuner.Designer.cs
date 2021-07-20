@@ -49,7 +49,6 @@ namespace UniversalPatcher
             this.showTablesWithEmptyAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableMultitableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.unitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.enableConfigModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetTunerModeColumnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableConfigAutoloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.caseSensitiveFilteringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -300,7 +299,6 @@ namespace UniversalPatcher
             this.showTablesWithEmptyAddressToolStripMenuItem,
             this.disableMultitableToolStripMenuItem,
             this.unitsToolStripMenuItem,
-            this.enableConfigModeToolStripMenuItem,
             this.resetTunerModeColumnsToolStripMenuItem,
             this.disableConfigAutoloadToolStripMenuItem,
             this.caseSensitiveFilteringToolStripMenuItem,
@@ -329,13 +327,6 @@ namespace UniversalPatcher
             this.unitsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.unitsToolStripMenuItem.Text = "Units";
             this.unitsToolStripMenuItem.Click += new System.EventHandler(this.unitsToolStripMenuItem_Click);
-            // 
-            // enableConfigModeToolStripMenuItem
-            // 
-            this.enableConfigModeToolStripMenuItem.Name = "enableConfigModeToolStripMenuItem";
-            this.enableConfigModeToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
-            this.enableConfigModeToolStripMenuItem.Text = "Enable config mode";
-            this.enableConfigModeToolStripMenuItem.Click += new System.EventHandler(this.enableConfigModeToolStripMenuItem_Click);
             // 
             // resetTunerModeColumnsToolStripMenuItem
             // 
@@ -382,7 +373,7 @@ namespace UniversalPatcher
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.newToolStripMenuItem.Text = "New...";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -506,7 +497,7 @@ namespace UniversalPatcher
             // selectFileToolStripMenuItem
             // 
             this.selectFileToolStripMenuItem.Name = "selectFileToolStripMenuItem";
-            this.selectFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.selectFileToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.selectFileToolStripMenuItem.Text = "Select file...";
             this.selectFileToolStripMenuItem.Click += new System.EventHandler(this.selectFileToolStripMenuItem_Click);
             // 
@@ -521,7 +512,7 @@ namespace UniversalPatcher
             // selectFileToolStripMenuItem1
             // 
             this.selectFileToolStripMenuItem1.Name = "selectFileToolStripMenuItem1";
-            this.selectFileToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.selectFileToolStripMenuItem1.Size = new System.Drawing.Size(133, 22);
             this.selectFileToolStripMenuItem1.Text = "Select file...";
             this.selectFileToolStripMenuItem1.Click += new System.EventHandler(this.selectFileToolStripMenuItem1_Click);
             // 
@@ -1412,7 +1403,6 @@ namespace UniversalPatcher
         private RichTextBox txtResult;
         private SplitContainer splitContainer1;
         private SplitContainer splitContainer2;
-        private ToolStripMenuItem enableConfigModeToolStripMenuItem;
         private RichTextBox txtDescription;
         private ContextMenuStrip contextMenuStrip2;
         private ToolStripMenuItem resetTunerModeColumnsToolStripMenuItem;

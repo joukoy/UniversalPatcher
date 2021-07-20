@@ -21,8 +21,9 @@ namespace UniversalPatcher
             try
             {
                 Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);                
-                Application.Run(new FrmPatcher());
+                Application.SetCompatibleTextRenderingDefault(false);
+                upatcher.StartupSettings();
+                Application.Run(new FrmMain());
 
             }
             catch (Exception ex)

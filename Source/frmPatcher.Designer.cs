@@ -226,10 +226,6 @@
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTunerAutloadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.touristToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.basicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.advancedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
@@ -2338,8 +2334,7 @@
             this.oBD2CodesToolStripMenuItem,
             this.rememberWindowSizeToolStripMenuItem,
             this.disableTunerAutloadConfigToolStripMenuItem,
-            this.moreSettingsToolStripMenuItem,
-            this.modeToolStripMenuItem});
+            this.moreSettingsToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "&Settings";
@@ -2441,37 +2436,6 @@
             this.moreSettingsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.moreSettingsToolStripMenuItem.Text = "More settings...";
             this.moreSettingsToolStripMenuItem.Click += new System.EventHandler(this.moreSettingsToolStripMenuItem_Click);
-            // 
-            // modeToolStripMenuItem
-            // 
-            this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.touristToolStripMenuItem,
-            this.basicToolStripMenuItem,
-            this.advancedToolStripMenuItem});
-            this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
-            this.modeToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.modeToolStripMenuItem.Text = "Mode";
-            // 
-            // touristToolStripMenuItem
-            // 
-            this.touristToolStripMenuItem.Name = "touristToolStripMenuItem";
-            this.touristToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
-            this.touristToolStripMenuItem.Text = "Tourist";
-            this.touristToolStripMenuItem.Click += new System.EventHandler(this.touristToolStripMenuItem_Click);
-            // 
-            // basicToolStripMenuItem
-            // 
-            this.basicToolStripMenuItem.Name = "basicToolStripMenuItem";
-            this.basicToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
-            this.basicToolStripMenuItem.Text = "Basic";
-            this.basicToolStripMenuItem.Click += new System.EventHandler(this.basicToolStripMenuItem_Click);
-            // 
-            // advancedToolStripMenuItem
-            // 
-            this.advancedToolStripMenuItem.Name = "advancedToolStripMenuItem";
-            this.advancedToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
-            this.advancedToolStripMenuItem.Text = "Advanced";
-            this.advancedToolStripMenuItem.Click += new System.EventHandler(this.advancedToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -2772,9 +2736,5 @@
         private System.Windows.Forms.Button btnDelPatch;
         private System.Windows.Forms.Button btnAddPatch;
         private System.Windows.Forms.GroupBox groupSearch;
-        private System.Windows.Forms.ToolStripMenuItem modeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem touristToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem basicToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem advancedToolStripMenuItem;
     }
 }

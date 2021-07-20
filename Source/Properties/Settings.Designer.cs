@@ -385,18 +385,6 @@ namespace UniversalPatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool TunerConfigMode {
-            get {
-                return ((bool)(this["TunerConfigMode"]));
-            }
-            set {
-                this["TunerConfigMode"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string ConfigModeColumnOrder {
             get {
@@ -900,12 +888,12 @@ namespace UniversalPatcher.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int PatcherMode {
+        public int WorkingMode {
             get {
-                return ((int)(this["PatcherMode"]));
+                return ((int)(this["WorkingMode"]));
             }
             set {
-                this["PatcherMode"] = value;
+                this["WorkingMode"] = value;
             }
         }
     }

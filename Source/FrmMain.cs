@@ -58,6 +58,18 @@ namespace UniversalPatcher
         {
             try
             {
+                switch(Properties.Settings.Default.WorkingMode)
+                {
+                    case 1:
+                        radioBasic.Checked = true;
+                        break;
+                    case 2:
+                        radioAdvanced.Checked = true;
+                        break;
+                    default:
+                        radioTourist.Checked = true;
+                        break;
+                }
             }
             catch (Exception ex)
             {
@@ -90,6 +102,32 @@ namespace UniversalPatcher
         {
             AboutBox1 aboutBox = new AboutBox1();
             aboutBox.Show();
+        }
+
+        private void setWorkinkMode()
+        {
+            if (radioTourist.Checked)
+                Properties.Settings.Default.WorkingMode = 0;
+            else if (radioBasic.Checked)
+                Properties.Settings.Default.WorkingMode = 1;
+            else
+                Properties.Settings.Default.WorkingMode = 2;
+
+            Properties.Settings.Default.Save();
+        }
+        private void radioTourist_CheckedChanged(object sender, EventArgs e)
+        {
+            setWorkinkMode();
+        }
+
+        private void radioBasic_CheckedChanged(object sender, EventArgs e)
+        {
+            setWorkinkMode();
+        }
+
+        private void radioAdvanced_CheckedChanged(object sender, EventArgs e)
+        {
+            setWorkinkMode();
         }
     }
 }

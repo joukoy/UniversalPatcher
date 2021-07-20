@@ -142,30 +142,8 @@ namespace UniversalPatcher
             listCSAddresses.Columns.Add("VE table");
             listCSAddresses.Columns.Add("3d tables");
 
-            switch (Properties.Settings.Default.PatcherMode)
-            {
-                case 0:
-                    advancedToolStripMenuItem.Checked = false;
-                    basicToolStripMenuItem.Checked = false;
-                    touristToolStripMenuItem.Checked = true;
-                    break;
-                case 1:
-                    advancedToolStripMenuItem.Checked = false;
-                    basicToolStripMenuItem.Checked = true;
-                    touristToolStripMenuItem.Checked = false;
-                    break;
-                case 2:
-                    advancedToolStripMenuItem.Checked = true;
-                    basicToolStripMenuItem.Checked = false;
-                    touristToolStripMenuItem.Checked = false;
-                    break;
-
-            }
 
             setWorkingMode();
-
-            this.Show();
-            upatcher.StartupSettings();
 
         }
 
@@ -173,7 +151,7 @@ namespace UniversalPatcher
         {
             try
             {
-                int patcherMode = Properties.Settings.Default.PatcherMode;
+                int patcherMode = Properties.Settings.Default.WorkingMode;
                 if (patcherMode == 0)   //Tourist mode
                 {
                     tabControl1.TabPages.Remove(tabFinfo);
@@ -185,6 +163,10 @@ namespace UniversalPatcher
                     labelShowMax.Visible = false;
                     labelPatchRows.Visible = false;
                     numSuppress.Visible = false;
+                    toolStripMenuItem1.Visible = false;
+
+                    btnSearch.Visible = false;
+                    btnSaveFileInfo.Visible = false;
                 }
                 else
                 {
@@ -198,6 +180,9 @@ namespace UniversalPatcher
                     labelShowMax.Visible = true;
                     labelPatchRows.Visible = true;
                     numSuppress.Visible = true;
+                    toolStripMenuItem1.Visible = true;
+                    btnSearch.Visible = true;
+                    btnSaveFileInfo.Visible = true;
                 }
                 if (patcherMode == 2)   //Advanced
                 {
@@ -3204,37 +3189,6 @@ namespace UniversalPatcher
             RefreshPatchList();
         }
 
-
-        private void touristToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            touristToolStripMenuItem.Checked = true;
-            advancedToolStripMenuItem.Checked = false;
-            basicToolStripMenuItem.Checked = false;
-            Properties.Settings.Default.PatcherMode = 0;
-
-            Properties.Settings.Default.Save();
-            setWorkingMode();
-        }
-
-        private void basicToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            basicToolStripMenuItem.Checked = true;
-            advancedToolStripMenuItem.Checked = false;
-            touristToolStripMenuItem.Checked = false;
-            Properties.Settings.Default.PatcherMode = 1;
-            Properties.Settings.Default.Save();
-            setWorkingMode();
-        }
-
-        private void advancedToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            advancedToolStripMenuItem.Checked = true;
-            touristToolStripMenuItem.Checked = false;
-            basicToolStripMenuItem.Checked = false;
-            Properties.Settings.Default.PatcherMode = 2;
-            Properties.Settings.Default.Save();
-            setWorkingMode();
-        }
     }
 }
 
