@@ -618,7 +618,7 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        public void addCompareFiletoMenu(PcmFile cmpPCM, TableData _compareTd, string menuTxt)
+        public void addCompareFiletoMenu(PcmFile cmpPCM, TableData _compareTd, string menuTxt, string selectedFile)
         {
             try
             {
@@ -642,13 +642,12 @@ namespace UniversalPatcher
                 }
                 prepareCompareTable(cmpFile);
                 menuitem.Click += compareSelection_Click;
-                if (compareToolStripMenuItem.DropDownItems.Count == 0)
+                if (cmpFile.fileLetter == selectedFile || (compareToolStripMenuItem.DropDownItems.Count == 0 && selectedFile == ""))
                 {
-                    //First file selected by default
                     menuitem.Checked = true;
                     groupSelectCompare.Enabled = true;
                     modifyRadioText(menuTxt);
-                    currentCmpFile = 1;
+                    currentCmpFile = compareToolStripMenuItem.DropDownItems.Count;
                 }
                 compareToolStripMenuItem.DropDownItems.Add(menuitem);
             }
@@ -710,6 +709,7 @@ namespace UniversalPatcher
             menuitem.Checked = true;
             CompareFile cmpFile = (CompareFile)menuitem.Tag;
             currentCmpFile = findFile(cmpFile.fileLetter);
+            selectedCompareBin = cmpFile.fileLetter;
             if (radioCompareFile.Checked)
                 selectFile(cmpFile.fileLetter);
             //prepareCompareTable(cmpFile); //Not again
@@ -2303,15 +2303,22 @@ namespace UniversalPatcher
 
         private void setMyText()
         {
-            this.Text = "Tuner: " + compareFiles[currentFile].tableInfos[0].td.TableName + " [";
-            if (radioOriginal.Checked)
-                this.Text += compareFiles[currentFile].pcm.FileName + "]";
-            if (radioDifference.Checked || radioSideBySide.Checked || radioSideBySideText.Checked)
-                this.Text += compareFiles[currentFile].pcm.FileName + " - " + compareFiles[currentCmpFile].pcm.FileName + "]";
-            if (radioCompareFile.Checked)
-                this.Text += compareFiles[currentCmpFile].pcm.FileName + "]";
-            if (radioCompareAll.Checked)
-                this.Text += compareFiles[currentFile].pcm.FileName + " - * ]";
+            try
+            {
+                this.Text = "Tuner: " + compareFiles[currentFile].tableInfos[0].td.TableName + " [";
+                if (radioOriginal.Checked)
+                    this.Text += compareFiles[currentFile].pcm.FileName + "]";
+                if (radioDifference.Checked || radioSideBySide.Checked || radioSideBySideText.Checked)
+                    this.Text += compareFiles[currentFile].pcm.FileName + " - " + compareFiles[currentCmpFile].pcm.FileName + "]";
+                if (radioCompareFile.Checked)
+                    this.Text += compareFiles[currentCmpFile].pcm.FileName + "]";
+                if (radioCompareAll.Checked)
+                    this.Text += compareFiles[currentFile].pcm.FileName + " - * ]";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("SetMyText: " + ex.Message);
+            }
         }
 
         private void numDecimals_ValueChanged(object sender, EventArgs e)

@@ -152,6 +152,7 @@ namespace UniversalPatcher
             this.compareSelectedTablesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripPatch = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.applyPatchToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.openCompareBINToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -246,6 +247,7 @@ namespace UniversalPatcher
             this.saveBinAsToolStripMenuItem,
             this.saveAllBINFilesToolStripMenuItem,
             this.openMultipleBINToolStripMenuItem,
+            this.openCompareBINToolStripMenuItem,
             this.reloadFileFromDiskToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -1324,6 +1326,13 @@ namespace UniversalPatcher
             this.applyPatchToolStripMenuItem1.Text = "Apply patch";
             this.applyPatchToolStripMenuItem1.Click += new System.EventHandler(this.applyPatchToolStripMenuItem1_Click);
             // 
+            // openCompareBINToolStripMenuItem
+            // 
+            this.openCompareBINToolStripMenuItem.Name = "openCompareBINToolStripMenuItem";
+            this.openCompareBINToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.openCompareBINToolStripMenuItem.Text = "Open Compare BIN";
+            this.openCompareBINToolStripMenuItem.Click += new System.EventHandler(this.openCompareBINToolStripMenuItem_Click);
+            // 
             // frmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1500,5 +1509,6 @@ namespace UniversalPatcher
         private ContextMenuStrip contextMenuStripPatch;
         private ToolStripMenuItem applyPatchToolStripMenuItem1;
         private ToolStripMenuItem swapSegmentsToolStripMenuItem;
+        private ToolStripMenuItem openCompareBINToolStripMenuItem;
     }
 }

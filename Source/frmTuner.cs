@@ -49,10 +49,11 @@ namespace UniversalPatcher
         string currentTab;
         int iconSize;
         bool treeMode;
-        string currentBin = "A";
+        string currentBin = "A";        
 
         private void frmTuner_Load(object sender, EventArgs e)
         {
+            selectedCompareBin = "";
             selectWorkingMode();
             disableConfigAutoloadToolStripMenuItem.Checked = Properties.Settings.Default.disableTunerAutoloadSettings;
             chkShowCategorySubfolder.Checked = Properties.Settings.Default.TableExplorerUseCategorySubfolder;
@@ -174,7 +175,10 @@ namespace UniversalPatcher
 
                 ToolStripMenuItem mitem = (ToolStripMenuItem)currentFileToolStripMenuItem.DropDownItems[PCM.FileName];
                 mitem.Checked = true;
+                string tmpFL = currentBin;
                 currentBin = getFileLetter(mitem.Text);
+                if (currentBin == selectedCompareBin)
+                    selectedCompareBin = tmpFL;
 
                 filterTables();
                 if (treeView1.Visible)
@@ -238,7 +242,6 @@ namespace UniversalPatcher
                                 importTinyTunerDB(ref newPCM);
                         }
                     }
-                    this.Text = "Tuner: " + newPCM.FileName + " [" + newPCM.tunerFile + "]";
 
                 }
             }
@@ -295,7 +298,7 @@ namespace UniversalPatcher
                         {
                             PcmFile tmpPcm = comparePCM.ShallowCopy(); //Don't mess with original
                             tmpPcm.tableDatas = PCM.tableDatas;
-                            frmT.addCompareFiletoMenu(tmpPcm, td, mi.Text);
+                            frmT.addCompareFiletoMenu(tmpPcm, td, mi.Text, selectedCompareBin);
                             Logger("[OK]");
                         }
                         else
@@ -314,7 +317,7 @@ namespace UniversalPatcher
                             }
                             else
                             {
-                                frmT.addCompareFiletoMenu(comparePCM, comparePCM.tableDatas[x], mi.Text);
+                                frmT.addCompareFiletoMenu(comparePCM, comparePCM.tableDatas[x], mi.Text,selectedCompareBin);
                                 if (PCM.configFile != comparePCM.configFile)
                                 {
                                     LoggerBold(Environment.NewLine + "Warning: file type different, results undefined!");
@@ -2022,7 +2025,7 @@ namespace UniversalPatcher
             filterTables();
         }
 
-        private void openNewBinFile()
+        private void openNewBinFile(bool asCompare)
         {
             try
             {
@@ -2032,10 +2035,13 @@ namespace UniversalPatcher
                 {
                     if (newFile.Length == 0) return;
                     PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName);
-                    addtoCurrentFileMenu(newPCM);
-                    PCM = newPCM;
-                    loadConfigforPCM(ref PCM);
-                    selectPCM();
+                    addtoCurrentFileMenu(newPCM,false);
+                    loadConfigforPCM(ref newPCM);
+                    if (!asCompare)
+                    {
+                        PCM = newPCM;
+                        selectPCM();                        
+                    }
                 }
             }
             catch (Exception ex)
@@ -2053,7 +2059,7 @@ namespace UniversalPatcher
         {
             Stopwatch timer = new Stopwatch();
             timer.Start();
-            openNewBinFile();
+            openNewBinFile(false);
             timer.Stop();
             Debug.WriteLine("Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
         }
@@ -2676,7 +2682,7 @@ namespace UniversalPatcher
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
                 PcmFile comparePCM = PCM.ShallowCopy();
                 comparePCM.FileName = td2.TableName;
-                frmT.addCompareFiletoMenu(comparePCM, td2, "");
+                frmT.addCompareFiletoMenu(comparePCM, td2, "",selectedCompareBin);
                 frmT.Show();
                 frmT.prepareTable(PCM, td1, null, "A");
                 frmT.loadTable();
@@ -4184,6 +4190,11 @@ namespace UniversalPatcher
             else
                 frmpatcher.BringToFront();
 
+        }
+
+        private void openCompareBINToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openNewBinFile(true);
         }
     }
 }
