@@ -3097,58 +3097,71 @@ namespace UniversalPatcher
 
         private void btnTestChecksum_Click(object sender, EventArgs e)
         {
-            Logger("Checksum research:");
-
-            uint oldVal = 0;
-            uint csAddr;
-            if (HexToUint(txtCSAddr.Text, out csAddr))
+            try
             {
-                if (numCSBytes.Value == 1)
-                    oldVal = basefile.buf[csAddr];
-                else if (numCSBytes.Value == 2)
-                    oldVal = BEToUint16(basefile.buf, csAddr);
-                else if (numCSBytes.Value == 4)
-                    oldVal = BEToUint32(basefile.buf, csAddr);
+                Logger("Checksum research:");
 
-                Logger("Saved value: " + oldVal.ToString("X"));
+                uint oldVal = 0;
+                uint csAddr;
+                if (HexToUint(txtCSAddr.Text, out csAddr))
+                {
+                    if (numCSBytes.Value == 1)
+                        oldVal = basefile.buf[csAddr];
+                    else if (numCSBytes.Value == 2)
+                        oldVal = BEToUint16(basefile.buf, csAddr);
+                    else if (numCSBytes.Value == 4)
+                        oldVal = BEToUint32(basefile.buf, csAddr);
+
+                    Logger("Saved value: " + oldVal.ToString("X"));
+                }
+
+                if (chkCSUtilTryAll.Checked)
+                {
+                    csUtilCalcCS(true, oldVal);
+                }
+                else
+                {
+                    Logger("Result: ", false);
+                    Logger(csUtilCalcCS(true, oldVal).ToString("X"));
+                }
             }
-
-            if (chkCSUtilTryAll.Checked)
+            catch (Exception ex)
             {
-                csUtilCalcCS(true, oldVal);
-            }
-            else
-            {
-                Logger("Result: ", false);
-                Logger(csUtilCalcCS(true, oldVal).ToString("X"));
+                Logger(ex.Message);
             }
         }
 
         private void btnCsUtilFix_Click(object sender, EventArgs e)
         {
-            uint CS1Calc = csUtilCalcCS(false, 0);
-            uint csAddr;
-            HexToUint(txtCSAddr.Text, out csAddr);
+            try
+            {
+                uint CS1Calc = csUtilCalcCS(false, 0);
+                uint csAddr;
+                HexToUint(txtCSAddr.Text, out csAddr);
 
-            uint oldVal = 0;
-            if (numCSBytes.Value == 1)
-            {
-                oldVal = basefile.buf[csAddr];
-                basefile.buf[csAddr] = (byte)CS1Calc;
+                uint oldVal = 0;
+                if (numCSBytes.Value == 1)
+                {
+                    oldVal = basefile.buf[csAddr];
+                    basefile.buf[csAddr] = (byte)CS1Calc;
+                }
+                else if (numCSBytes.Value == 2)
+                {
+                    oldVal = BEToUint16(basefile.buf, csAddr);
+                    SaveUshort(basefile.buf, csAddr, (ushort)CS1Calc);
+                }
+                else if (numCSBytes.Value == 4)
+                {
+                    oldVal = BEToUint32(basefile.buf, csAddr);
+                    SaveUint32(basefile.buf, csAddr, CS1Calc);
+                }
+                Logger("Checksum: " + oldVal.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
+                Logger("You can save BIN file now");
             }
-            else if (numCSBytes.Value == 2)
+            catch (Exception ex)
             {
-                oldVal = BEToUint16(basefile.buf, csAddr);
-                SaveUshort(basefile.buf, csAddr, (ushort)CS1Calc);
+                Logger(ex.Message);
             }
-            else if (numCSBytes.Value == 4)
-            {
-                oldVal = BEToUint32(basefile.buf, csAddr);
-                SaveUint32(basefile.buf, csAddr, CS1Calc);
-            }
-            Logger("Checksum: " + oldVal.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
-            Logger("You can save BIN file now");
-
         }
 
         private void listPatches_SelectedIndexChanged(object sender, EventArgs e)
@@ -3159,34 +3172,58 @@ namespace UniversalPatcher
 
         private void btnSaveAllPatches_Click(object sender, EventArgs e)
         {
-            foreach (Patch pa in patches)
+            try
             {
-                PatchList = pa.patches;
-                string fileName = Path.Combine(Application.StartupPath, "Patches", pa.Name + ".xmlpatch");
-                Logger("Saving patch: " + fileName, false);
-                SavePatch(pa.Name,fileName);
-                Logger (" [OK]");
+                foreach (Patch pa in patches)
+                {
+                    PatchList = pa.patches;
+                    string fileName = Path.Combine(Application.StartupPath, "Patches", pa.Name + ".xmlpatch");
+                    Logger("Saving patch: " + fileName, false);
+                    SavePatch(pa.Name, fileName);
+                    Logger(" [OK]");
+                }
             }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
+
         }
 
         private void btnAddPatch_Click(object sender, EventArgs e)
         {
-            frmData frmD = new frmData();
-            frmD.Text = "Patch Name:";
-            if (frmD.ShowDialog() == DialogResult.OK)
+            try
             {
-                Patch patch = new Patch();
-                patch.Name = frmD.txtData.Text;                
-                patches.Add(patch);
-                RefreshPatchList();
+                frmData frmD = new frmData();
+                frmD.Text = "Patch Name:";
+                if (frmD.ShowDialog() == DialogResult.OK)
+                {
+                    Patch patch = new Patch();
+                    patch.Name = frmD.txtData.Text;
+                    patches.Add(patch);
+                    RefreshPatchList();
+                }
+                frmD.Dispose();
             }
-            frmD.Dispose();
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
         }
 
         private void btnDelPatch_Click(object sender, EventArgs e)
         {
-            patches.RemoveAt(listPatches.SelectedIndex);
-            RefreshPatchList();
+            try
+            {
+                if (listPatches.SelectedIndex < 0)
+                    return;
+                patches.RemoveAt(listPatches.SelectedIndex);
+                RefreshPatchList();
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
     }
