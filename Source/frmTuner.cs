@@ -431,11 +431,11 @@ namespace UniversalPatcher
 
         private void importTableSeek(ref PcmFile _PCM)
         {
-            Logger("Importing tableseek...");
+            Logger("Importing tableseek...", false);
             Application.DoEvents();
             _PCM.importSeekTables();
             refreshTablelist();
-            Logger("OK");
+            Logger(" [OK]");
         }
 
         private void btnLoadXml_Click(object sender, EventArgs e)
@@ -2985,6 +2985,7 @@ namespace UniversalPatcher
                 saveAllBINFilesToolStripMenuItem.Visible = false;
                 openMultipleBINToolStripMenuItem.Visible = false;
                 reloadFileFromDiskToolStripMenuItem.Visible = false;
+                openCompareBINToolStripMenuItem.Visible = false;
             }
             else
             {
@@ -3000,6 +3001,7 @@ namespace UniversalPatcher
                 saveAllBINFilesToolStripMenuItem.Visible = true;
                 openMultipleBINToolStripMenuItem.Visible = true;
                 reloadFileFromDiskToolStripMenuItem.Visible = true;
+                openCompareBINToolStripMenuItem.Visible = true;
 
             }
             if (workingMode == 2) //advanced
