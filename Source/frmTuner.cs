@@ -919,7 +919,7 @@ namespace UniversalPatcher
         {
             try
             {
-                Logger("Importing DTC codes... ", false);
+                Logger("Importing DTC codes...", false);
                 bool haveDTC = false;
                 for (int t = 0; t < _PCM.tableDatas.Count; t++)
                 {
@@ -1712,8 +1712,9 @@ namespace UniversalPatcher
         {
             try
             {
-                if (treeView1.SelectedNode.Name == "Patches" || treeView1.SelectedNode.Parent.Name == "Patches")
-                    return;
+                if (treeView1.SelectedNode != null)
+                    if (treeView1.SelectedNode.Name == "Patches" || treeView1.SelectedNode.Parent.Name == "Patches")
+                        return;
                 showTableDescription(PCM);
             }
             catch (Exception ex)
