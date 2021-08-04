@@ -228,6 +228,7 @@
             this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.splitPatcher = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -269,6 +270,10 @@
             this.groupBox5.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitPatcher)).BeginInit();
+            this.splitPatcher.Panel1.SuspendLayout();
+            this.splitPatcher.Panel2.SuspendLayout();
+            this.splitPatcher.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOrgFile
@@ -297,7 +302,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtBaseFile.Location = new System.Drawing.Point(96, 34);
             this.txtBaseFile.Name = "txtBaseFile";
-            this.txtBaseFile.Size = new System.Drawing.Size(744, 20);
+            this.txtBaseFile.Size = new System.Drawing.Size(725, 20);
             this.txtBaseFile.TabIndex = 15;
             // 
             // txtModifierFile
@@ -322,7 +327,7 @@
             // btnSaveBin
             // 
             this.btnSaveBin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveBin.Location = new System.Drawing.Point(725, 6);
+            this.btnSaveBin.Location = new System.Drawing.Point(703, 6);
             this.btnSaveBin.Name = "btnSaveBin";
             this.btnSaveBin.Size = new System.Drawing.Size(108, 25);
             this.btnSaveBin.TabIndex = 188;
@@ -435,9 +440,6 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabInfo);
             this.tabControl1.Controls.Add(this.tabDebug);
             this.tabControl1.Controls.Add(this.tabPatch);
@@ -450,10 +452,11 @@
             this.tabControl1.Controls.Add(this.tabPIDList);
             this.tabControl1.Controls.Add(this.tabDTC);
             this.tabControl1.Controls.Add(this.tabTableSeek);
-            this.tabControl1.Location = new System.Drawing.Point(0, 191);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(843, 370);
+            this.tabControl1.Size = new System.Drawing.Size(824, 341);
             this.tabControl1.TabIndex = 200;
             // 
             // tabInfo
@@ -473,7 +476,7 @@
             this.tabInfo.Location = new System.Drawing.Point(4, 22);
             this.tabInfo.Name = "tabInfo";
             this.tabInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabInfo.Size = new System.Drawing.Size(835, 344);
+            this.tabInfo.Size = new System.Drawing.Size(816, 315);
             this.tabInfo.TabIndex = 0;
             this.tabInfo.Text = "Log";
             this.tabInfo.UseVisualStyleBackColor = true;
@@ -520,14 +523,14 @@
             this.txtResult.HideSelection = false;
             this.txtResult.Location = new System.Drawing.Point(2, 26);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(833, 317);
+            this.txtResult.Size = new System.Drawing.Size(814, 288);
             this.txtResult.TabIndex = 202;
             this.txtResult.Text = "";
             // 
             // btnSaveFileInfo
             // 
             this.btnSaveFileInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveFileInfo.Location = new System.Drawing.Point(757, 2);
+            this.btnSaveFileInfo.Location = new System.Drawing.Point(738, 2);
             this.btnSaveFileInfo.Name = "btnSaveFileInfo";
             this.btnSaveFileInfo.Size = new System.Drawing.Size(78, 23);
             this.btnSaveFileInfo.TabIndex = 171;
@@ -1514,18 +1517,17 @@
             // 
             // tabFunction
             // 
-            this.tabFunction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabFunction.Controls.Add(this.tabApply);
             this.tabFunction.Controls.Add(this.tabFileinfo);
             this.tabFunction.Controls.Add(this.tabCreate);
             this.tabFunction.Controls.Add(this.tabExtract);
             this.tabFunction.Controls.Add(this.tabExtractSegments);
             this.tabFunction.Controls.Add(this.tabChecksumUtil);
-            this.tabFunction.Location = new System.Drawing.Point(2, 60);
+            this.tabFunction.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabFunction.Location = new System.Drawing.Point(0, 0);
             this.tabFunction.Name = "tabFunction";
             this.tabFunction.SelectedIndex = 0;
-            this.tabFunction.Size = new System.Drawing.Size(846, 129);
+            this.tabFunction.Size = new System.Drawing.Size(824, 138);
             this.tabFunction.TabIndex = 100;
             // 
             // tabApply
@@ -1540,7 +1542,7 @@
             this.tabApply.Location = new System.Drawing.Point(4, 22);
             this.tabApply.Name = "tabApply";
             this.tabApply.Padding = new System.Windows.Forms.Padding(3);
-            this.tabApply.Size = new System.Drawing.Size(838, 103);
+            this.tabApply.Size = new System.Drawing.Size(816, 112);
             this.tabApply.TabIndex = 1;
             this.tabApply.Text = "Modify bin";
             this.tabApply.UseVisualStyleBackColor = true;
@@ -2282,7 +2284,7 @@
             this.toolStripMenuItem2});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(843, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(824, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuMain";
             this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
@@ -2452,13 +2454,32 @@
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // splitPatcher
+            // 
+            this.splitPatcher.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitPatcher.Location = new System.Drawing.Point(0, 62);
+            this.splitPatcher.Name = "splitPatcher";
+            this.splitPatcher.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitPatcher.Panel1
+            // 
+            this.splitPatcher.Panel1.Controls.Add(this.tabFunction);
+            // 
+            // splitPatcher.Panel2
+            // 
+            this.splitPatcher.Panel2.Controls.Add(this.tabControl1);
+            this.splitPatcher.Size = new System.Drawing.Size(824, 483);
+            this.splitPatcher.SplitterDistance = 138;
+            this.splitPatcher.TabIndex = 201;
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(843, 561);
-            this.Controls.Add(this.tabFunction);
-            this.Controls.Add(this.tabControl1);
+            this.ClientSize = new System.Drawing.Size(824, 542);
+            this.Controls.Add(this.splitPatcher);
             this.Controls.Add(this.chkAutodetect);
             this.Controls.Add(this.labelXML);
             this.Controls.Add(this.txtBaseFile);
@@ -2531,6 +2552,10 @@
             this.groupBox1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.splitPatcher.Panel1.ResumeLayout(false);
+            this.splitPatcher.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitPatcher)).EndInit();
+            this.splitPatcher.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2736,5 +2761,6 @@
         private System.Windows.Forms.Button btnDelPatch;
         private System.Windows.Forms.Button btnAddPatch;
         private System.Windows.Forms.GroupBox groupSearch;
+        private System.Windows.Forms.SplitContainer splitPatcher;
     }
 }

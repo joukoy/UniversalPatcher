@@ -85,6 +85,10 @@ namespace UniversalPatcher
                     this.Location = Properties.Settings.Default.MainWindowLocation;
                     this.Size = Properties.Settings.Default.MainWindowSize;
                 }
+                if (Properties.Settings.Default.PatcherSplitterDistance > 0)
+                    splitPatcher.SplitterDistance = Properties.Settings.Default.PatcherSplitterDistance;
+                else
+                    splitPatcher.SplitterDistance = 138;
             }
             else
             {
@@ -156,8 +160,10 @@ namespace UniversalPatcher
                 {
                     tabControl1.TabPages.Remove(tabFinfo);
                     tabFunction.Visible = false;
-                    tabControl1.Location = new Point(0,60);
-                    tabControl1.Height = this.Height - 100;
+                    //tabControl1.Location = new Point(0,60);
+                    //tabControl1.Height = this.Height - 100;
+                    splitPatcher.Panel1Collapsed = true;
+                    splitPatcher.Panel1.Hide();
                     chkLogtodisplay.Visible = false;
                     chkLogtoFile.Visible = false;
                     labelShowMax.Visible = false;
@@ -173,8 +179,10 @@ namespace UniversalPatcher
                     if (!tabControl1.TabPages.Contains(tabFinfo))
                         tabControl1.TabPages.Add(tabFinfo);
                     tabFunction.Visible = true;
-                    tabControl1.Location = new Point(0, 191);
-                    tabControl1.Height = this.Height - 230;
+                    //tabControl1.Location = new Point(0, 191);
+                    //tabControl1.Height = this.Height - 230;
+                    splitPatcher.Panel1Collapsed = false;
+                    splitPatcher.Panel1.Show();
                     chkLogtodisplay.Visible = true;
                     chkLogtoFile.Visible = true;
                     labelShowMax.Visible = true;
@@ -339,6 +347,7 @@ namespace UniversalPatcher
                     Properties.Settings.Default.MainWindowLocation = this.RestoreBounds.Location;
                     Properties.Settings.Default.MainWindowSize = this.RestoreBounds.Size;
                 }
+                Properties.Settings.Default.PatcherSplitterDistance = splitPatcher.SplitterDistance;
                 Properties.Settings.Default.Save();
             }
         }

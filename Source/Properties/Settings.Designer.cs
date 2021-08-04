@@ -433,13 +433,13 @@ namespace UniversalPatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Setting1 {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int PatcherSplitterDistance {
             get {
-                return ((string)(this["Setting1"]));
+                return ((int)(this["PatcherSplitterDistance"]));
             }
             set {
-                this["Setting1"] = value;
+                this["PatcherSplitterDistance"] = value;
             }
         }
         
@@ -894,6 +894,18 @@ namespace UniversalPatcher.Properties {
             }
             set {
                 this["WorkingMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool startPatcher {
+            get {
+                return ((bool)(this["startPatcher"]));
+            }
+            set {
+                this["startPatcher"] = value;
             }
         }
     }

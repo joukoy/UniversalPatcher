@@ -23,7 +23,10 @@ namespace UniversalPatcher
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 upatcher.StartupSettings();
-                Application.Run(new FrmMain());
+                if (Properties.Settings.Default.startPatcher)
+                    Application.Run(new FrmPatcher());
+                else
+                    Application.Run(new FrmMain());
 
             }
             catch (Exception ex)
