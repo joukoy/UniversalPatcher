@@ -452,7 +452,7 @@ namespace UniversalPatcher
             for (int i = 0; i < tdList2.Count; i++)
                 pcmNew2.tableDatas.Add(pcm2.tableDatas[tdList2[i]]);
 
-            frmTuner frmT = new frmTuner(pcmNew,false);
+            FrmTuner frmT = new FrmTuner(pcmNew,false);
             frmT.addtoCurrentFileMenu(pcmNew2,false);
             frmT.Show();
         }

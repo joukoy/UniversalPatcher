@@ -11,9 +11,9 @@ using static upatcher;
 
 namespace UniversalPatcher
 {
-    public partial class frmTuner : Form
+    public partial class FrmTuner : Form
     {
-        public frmTuner(PcmFile PCM1, bool loadTableList = true)
+        public FrmTuner(PcmFile PCM1, bool loadTableList = true)
         {
             InitializeComponent();
 

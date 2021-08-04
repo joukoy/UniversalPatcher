@@ -23,7 +23,18 @@ namespace UniversalPatcher
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 upatcher.StartupSettings();
+                /*
                 if (Properties.Settings.Default.startPatcher)
+                    Application.Run(new FrmPatcher());
+                else
+                    Application.Run(new FrmMain());
+                */
+                if (System.Diagnostics.Process.GetCurrentProcess().ProcessName == "Tuner")
+                {
+                    PcmFile pcm = new PcmFile();
+                    Application.Run(new FrmTuner(pcm));
+                }
+                else if (System.Diagnostics.Process.GetCurrentProcess().ProcessName == "Patcher")
                     Application.Run(new FrmPatcher());
                 else
                     Application.Run(new FrmMain());

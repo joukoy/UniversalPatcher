@@ -86,7 +86,7 @@ namespace UniversalPatcher
         private void btnTuner_Click(object sender, EventArgs e)
         {
             PcmFile PCM = new PcmFile();
-            frmTuner frmT = new frmTuner(PCM);
+            FrmTuner frmT = new FrmTuner(PCM);
             frmT.Show();
         }
 

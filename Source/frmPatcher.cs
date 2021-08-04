@@ -2912,7 +2912,7 @@ namespace UniversalPatcher
                     //return;
                 }
                 //basefile.tableDatas = new List<TableData>();
-                frmTuner ft = new frmTuner(basefile);
+                FrmTuner ft = new FrmTuner(basefile);
                 ft.Show();
             }
             catch(Exception ex)

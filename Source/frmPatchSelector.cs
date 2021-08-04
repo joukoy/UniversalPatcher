@@ -28,7 +28,7 @@ namespace UniversalPatcher
 
         private List<PatchFile> patchFileList;
         public PcmFile basefile;
-        public frmTuner tunerForm;
+        public FrmTuner tunerForm;
         private BindingSource bindingSource;
 
         private void frmPatchSelector_Load(object sender, EventArgs e)

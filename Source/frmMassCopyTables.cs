@@ -371,7 +371,7 @@ namespace UniversalPatcher
                 Logger("No files selected");
                 return;
             }
-            frmTuner frmT = new frmTuner(null);
+            FrmTuner frmT = new FrmTuner(null);
             frmT.Show();
             for (int i = 0; i < pcmList.Count; i++)
             {

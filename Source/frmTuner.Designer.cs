@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace UniversalPatcher
 {
-    partial class frmTuner
+    partial class FrmTuner
     {
         /// <summary>
         /// Required designer variable.
@@ -32,7 +32,7 @@ namespace UniversalPatcher
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTuner));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmTuner));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.txtSearchTableSeek = new System.Windows.Forms.TextBox();
             this.comboTableCategory = new System.Windows.Forms.ComboBox();
@@ -44,6 +44,7 @@ namespace UniversalPatcher
             this.saveBinAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAllBINFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openMultipleBINToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openCompareBINToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadFileFromDiskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showTablesWithEmptyAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -129,7 +130,6 @@ namespace UniversalPatcher
             this.tabControlFileInfo = new System.Windows.Forms.TabControl();
             this.imageList3 = new System.Windows.Forms.ImageList(this.components);
             this.splitContainerListMode = new System.Windows.Forms.SplitContainer();
-            this.treeView1 = new UniversalPatcher.TreeViewMS();
             this.contextMenuStripListTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expand2LevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -152,7 +152,7 @@ namespace UniversalPatcher
             this.compareSelectedTablesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripPatch = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.applyPatchToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.openCompareBINToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.treeView1 = new UniversalPatcher.TreeViewMS();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -287,6 +287,13 @@ namespace UniversalPatcher
             this.openMultipleBINToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.openMultipleBINToolStripMenuItem.Text = "Open multiple BIN";
             this.openMultipleBINToolStripMenuItem.Click += new System.EventHandler(this.openMultipleBINToolStripMenuItem_Click);
+            // 
+            // openCompareBINToolStripMenuItem
+            // 
+            this.openCompareBINToolStripMenuItem.Name = "openCompareBINToolStripMenuItem";
+            this.openCompareBINToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.openCompareBINToolStripMenuItem.Text = "Open Compare BIN";
+            this.openCompareBINToolStripMenuItem.Click += new System.EventHandler(this.openCompareBINToolStripMenuItem_Click);
             // 
             // reloadFileFromDiskToolStripMenuItem
             // 
@@ -1045,22 +1052,6 @@ namespace UniversalPatcher
             this.splitContainerListMode.SplitterDistance = 340;
             this.splitContainerListMode.TabIndex = 3;
             // 
-            // treeView1
-            // 
-            this.treeView1.ContextMenuStrip = this.contextMenuStripListTree;
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.HideSelection = false;
-            this.treeView1.ImageIndex = 0;
-            this.treeView1.ImageList = this.imageList1;
-            this.treeView1.Indent = 20;
-            this.treeView1.ItemHeight = 18;
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.SelectedImageIndex = 0;
-            this.treeView1.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("treeView1.SelectedNodes")));
-            this.treeView1.Size = new System.Drawing.Size(340, 409);
-            this.treeView1.TabIndex = 2;
-            // 
             // contextMenuStripListTree
             // 
             this.contextMenuStripListTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1326,14 +1317,23 @@ namespace UniversalPatcher
             this.applyPatchToolStripMenuItem1.Text = "Apply patch";
             this.applyPatchToolStripMenuItem1.Click += new System.EventHandler(this.applyPatchToolStripMenuItem1_Click);
             // 
-            // openCompareBINToolStripMenuItem
+            // treeView1
             // 
-            this.openCompareBINToolStripMenuItem.Name = "openCompareBINToolStripMenuItem";
-            this.openCompareBINToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            this.openCompareBINToolStripMenuItem.Text = "Open Compare BIN";
-            this.openCompareBINToolStripMenuItem.Click += new System.EventHandler(this.openCompareBINToolStripMenuItem_Click);
+            this.treeView1.ContextMenuStrip = this.contextMenuStripListTree;
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.HideSelection = false;
+            this.treeView1.ImageIndex = 0;
+            this.treeView1.ImageList = this.imageList1;
+            this.treeView1.Indent = 20;
+            this.treeView1.ItemHeight = 18;
+            this.treeView1.Location = new System.Drawing.Point(0, 0);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.SelectedImageIndex = 0;
+            this.treeView1.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("treeView1.SelectedNodes")));
+            this.treeView1.Size = new System.Drawing.Size(340, 409);
+            this.treeView1.TabIndex = 2;
             // 
-            // frmTuner
+            // FrmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -1354,7 +1354,7 @@ namespace UniversalPatcher
             this.Controls.Add(this.splitContainer2);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "frmTuner";
+            this.Name = "FrmTuner";
             this.Text = "Tuner";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmTuner_FormClosing);
             this.Load += new System.EventHandler(this.frmTuner_Load);

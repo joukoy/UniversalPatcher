@@ -84,7 +84,7 @@ namespace UniversalPatcher
         public int currentFile = 0;
         public int currentCmpFile = 1;
 
-        public frmTuner tuner;
+        public FrmTuner tuner;
         private string lastTable = "";
         List<CheckBox> fileCheckBoxes;
 
