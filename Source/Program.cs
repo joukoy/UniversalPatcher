@@ -31,13 +31,21 @@ namespace UniversalPatcher
                 */
                 if (System.Diagnostics.Process.GetCurrentProcess().ProcessName == "Tuner")
                 {
+                    Properties.Settings.Default.WorkingMode = 2;//Advanced
+                    Properties.Settings.Default.Save();
                     PcmFile pcm = new PcmFile();
                     Application.Run(new FrmTuner(pcm));
                 }
                 else if (System.Diagnostics.Process.GetCurrentProcess().ProcessName == "Patcher")
+                {
+                    Properties.Settings.Default.WorkingMode = 2;//Advanced
+                    Properties.Settings.Default.Save();
                     Application.Run(new FrmPatcher());
+                }
                 else
+                {
                     Application.Run(new FrmMain());
+                }
 
             }
             catch (Exception ex)
