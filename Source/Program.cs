@@ -22,7 +22,6 @@ namespace UniversalPatcher
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                upatcher.StartupSettings();
                 /*
                 if (Properties.Settings.Default.startPatcher)
                     Application.Run(new FrmPatcher());
@@ -48,6 +47,24 @@ namespace UniversalPatcher
                     Application.Run(new FrmMain());
                 }
                 */
+                string[] progArgs = Environment.GetCommandLineArgs();
+                if (progArgs.Length > 1)
+                {
+                    if (progArgs[1].ToLower().Contains("tourist"))
+                        Properties.Settings.Default.WorkingMode = 0;
+                    else if (progArgs[1].ToLower().Contains("basic"))
+                        Properties.Settings.Default.WorkingMode = 1;
+                    else if (progArgs[1].ToLower().Contains("advanced"))
+                        Properties.Settings.Default.WorkingMode = 2;
+                    else
+                    {
+                        throw new Exception("Usage: " + Path.GetFileName(progArgs[0]) + " [tourist | basic | advanced]");
+                    }
+                    Properties.Settings.Default.Save();
+                }
+
+                upatcher.StartupSettings();
+
                 Application.Run(new FrmPatcher());
             }
             catch (Exception ex)

@@ -61,15 +61,6 @@ namespace UniversalPatcher
 
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
-            /*string[] args = Environment.GetCommandLineArgs();
-            if (args.Length > 1 && File.Exists(args[1]))
-            {
-                Logger(args[1]);
-                frmSegmenList frmSL = new frmSegmenList();
-                frmSL.LoadFile(args[1]);
-            }*/
-
-
             basefile = new PcmFile();
 
             if (Properties.Settings.Default.MainWindowPersistence)
@@ -145,7 +136,6 @@ namespace UniversalPatcher
             listCSAddresses.Columns.Add("MAF Address");
             listCSAddresses.Columns.Add("VE table");
             listCSAddresses.Columns.Add("3d tables");
-
 
             setWorkingMode();
 
