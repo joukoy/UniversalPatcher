@@ -72,7 +72,7 @@ namespace UniversalPatcher
                 }
 
                 ToolTip t1 = new ToolTip();
-                t1.SetToolTip(radioTourist, "Very limited funcionality, only basic open/Save is available");
+                t1.SetToolTip(radioTourist, "Very limited funcionality, only basic Open/Save is available");
                 t1.SetToolTip(radioBasic, "Common functions available");
                 t1.SetToolTip(radioAdvanced, "For professional users. All functions available");
             }
