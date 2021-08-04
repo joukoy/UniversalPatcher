@@ -29,6 +29,7 @@ namespace UniversalPatcher
                 else
                     Application.Run(new FrmMain());
                 */
+                /*
                 if (System.Diagnostics.Process.GetCurrentProcess().ProcessName == "Tuner")
                 {
                     Properties.Settings.Default.WorkingMode = 2;//Advanced
@@ -46,7 +47,8 @@ namespace UniversalPatcher
                 {
                     Application.Run(new FrmMain());
                 }
-
+                */
+                Application.Run(new FrmPatcher());
             }
             catch (Exception ex)
             {

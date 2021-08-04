@@ -156,6 +156,25 @@ namespace UniversalPatcher
             try
             {
                 int patcherMode = Properties.Settings.Default.WorkingMode;
+                switch (patcherMode)
+                {
+                    case 0:
+                        touristToolStripMenuItem.Checked = true;
+                        basicToolStripMenuItem.Checked = false;
+                        advancedToolStripMenuItem.Checked = false;
+                        break;
+                    case 1:
+                        touristToolStripMenuItem.Checked = false;
+                        basicToolStripMenuItem.Checked = true;
+                        advancedToolStripMenuItem.Checked = false;
+                        break;
+                    case 2:
+                        touristToolStripMenuItem.Checked = false;
+                        basicToolStripMenuItem.Checked = false;
+                        advancedToolStripMenuItem.Checked = true;
+                        break;
+
+                }
                 if (patcherMode == 0)   //Tourist mode
                 {
                     tabControl1.TabPages.Remove(tabFinfo);
@@ -3235,6 +3254,26 @@ namespace UniversalPatcher
             }
         }
 
+        private void touristToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.WorkingMode = 0;
+            Properties.Settings.Default.Save();
+            setWorkingMode();
+        }
+
+        private void basicToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.WorkingMode = 1;
+            Properties.Settings.Default.Save();
+            setWorkingMode();
+        }
+
+        private void advancedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.WorkingMode = 2;
+            Properties.Settings.Default.Save();
+            setWorkingMode();
+        }
     }
 }
 

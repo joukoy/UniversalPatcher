@@ -518,8 +518,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetPath) $(ProjectDir)..\
-copy $(TargetPath) $(ProjectDir)..\Tuner.exe
-copy $(TargetPath) $(ProjectDir)..\Patcher.exe
+
 copy $(TargetPath).config $(ProjectDir)..\
 
 </PostBuildEvent>
