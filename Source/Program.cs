@@ -47,25 +47,44 @@ namespace UniversalPatcher
                     Application.Run(new FrmMain());
                 }
                 */
-                string[] progArgs = Environment.GetCommandLineArgs();
-                if (progArgs.Length > 1)
+                //string[] progArgs = Environment.GetCommandLineArgs();
+                if (args.Length > 0)
                 {
-                    if (progArgs[1].ToLower().Contains("tourist"))
+                    if (args[0].ToLower().Contains("tourist"))
                         Properties.Settings.Default.WorkingMode = 0;
-                    else if (progArgs[1].ToLower().Contains("basic"))
+                    else if (args[0].ToLower().Contains("basic"))
                         Properties.Settings.Default.WorkingMode = 1;
-                    else if (progArgs[1].ToLower().Contains("advanced"))
+                    else if (args[0].ToLower().Contains("advanced"))
                         Properties.Settings.Default.WorkingMode = 2;
                     else
                     {
-                        throw new Exception("Usage: " + Path.GetFileName(progArgs[0]) + " [tourist | basic | advanced]");
+                        throw new Exception("Usage: " + Path.GetFileName(Application.ExecutablePath) + " [tourist | basic | advanced]");
                     }
                     Properties.Settings.Default.Save();
                 }
 
                 upatcher.StartupSettings();
 
-                Application.Run(new FrmPatcher());
+                if (args.Length > 1)
+                {
+                    if (args[1].ToLower().Contains("launcher"))
+                    {
+                        Application.Run(new FrmMain());
+                    }
+                    else if (args[1].ToLower().Contains("tuner"))
+                    {
+                        PcmFile pcm = new PcmFile();
+                        Application.Run(new FrmTuner(pcm));
+                    }
+                    else
+                    {
+                        Application.Run(new FrmPatcher());
+                    }
+                }
+                else
+                {
+                    Application.Run(new FrmPatcher());
+                }
             }
             catch (Exception ex)
             {
