@@ -896,17 +896,5 @@ namespace UniversalPatcher.Properties {
                 this["WorkingMode"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool startPatcher {
-            get {
-                return ((bool)(this["startPatcher"]));
-            }
-            set {
-                this["startPatcher"] = value;
-            }
-        }
     }
 }

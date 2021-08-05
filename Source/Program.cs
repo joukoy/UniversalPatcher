@@ -22,32 +22,7 @@ namespace UniversalPatcher
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                /*
-                if (Properties.Settings.Default.startPatcher)
-                    Application.Run(new FrmPatcher());
-                else
-                    Application.Run(new FrmMain());
-                */
-                /*
-                if (System.Diagnostics.Process.GetCurrentProcess().ProcessName == "Tuner")
-                {
-                    Properties.Settings.Default.WorkingMode = 2;//Advanced
-                    Properties.Settings.Default.Save();
-                    PcmFile pcm = new PcmFile();
-                    Application.Run(new FrmTuner(pcm));
-                }
-                else if (System.Diagnostics.Process.GetCurrentProcess().ProcessName == "Patcher")
-                {
-                    Properties.Settings.Default.WorkingMode = 2;//Advanced
-                    Properties.Settings.Default.Save();
-                    Application.Run(new FrmPatcher());
-                }
-                else
-                {
-                    Application.Run(new FrmMain());
-                }
-                */
-                //string[] progArgs = Environment.GetCommandLineArgs();
+
                 if (args.Length > 0)
                 {
                     if (args[0].ToLower().Contains("tourist"))
