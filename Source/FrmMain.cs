@@ -110,7 +110,7 @@ namespace UniversalPatcher
             aboutBox.Show();
         }
 
-        private void setWorkinkMode()
+        private void setWorkingMode()
         {
             if (radioTourist.Checked)
                 Properties.Settings.Default.WorkingMode = 0;
@@ -123,17 +123,17 @@ namespace UniversalPatcher
         }
         private void radioTourist_CheckedChanged(object sender, EventArgs e)
         {
-            setWorkinkMode();
+            setWorkingMode();
         }
 
         private void radioBasic_CheckedChanged(object sender, EventArgs e)
         {
-            setWorkinkMode();
+            setWorkingMode();
         }
 
         private void radioAdvanced_CheckedChanged(object sender, EventArgs e)
         {
-            setWorkinkMode();
+            setWorkingMode();
         }
     }
 }

@@ -25,7 +25,9 @@ namespace UniversalPatcher
 
                 if (args.Length > 0)
                 {
-                    if (args[0].ToLower().Contains("tourist"))
+                    if (args[0] == "-") ;
+                        //Remember previous
+                    else if (args[0].ToLower().Contains("tourist"))
                         Properties.Settings.Default.WorkingMode = 0;
                     else if (args[0].ToLower().Contains("basic"))
                         Properties.Settings.Default.WorkingMode = 1;
