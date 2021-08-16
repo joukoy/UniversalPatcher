@@ -3216,7 +3216,7 @@ namespace UniversalPatcher
                     treeView1.ContextMenuStrip = contextMenuStripPatch;
                     return;
                 }
-                if (e.Node.Parent.Name == "Patches")
+                if (e.Node.Parent != null && e.Node.Parent.Name == "Patches")
                 {
                     showPatch(Convert.ToInt32(e.Node.Tag));
                     treeView1.ContextMenuStrip = contextMenuStripPatch;
