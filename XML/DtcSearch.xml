@@ -232,7 +232,7 @@
     <MilOffset>0</MilOffset>
     <StatusSteps>1</StatusSteps>
     <MilSteps>1</MilSteps>
-    <ConditionalOffset>code</ConditionalOffset>
+    <ConditionalOffset>signed:code,signed:offset</ConditionalOffset>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>e67</XMLFile>
@@ -245,7 +245,7 @@
     <MilOffset>0</MilOffset>
     <StatusSteps>1</StatusSteps>
     <MilSteps>1</MilSteps>
-    <ConditionalOffset>code</ConditionalOffset>
+    <ConditionalOffset>signed:code,signed:offset</ConditionalOffset>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>e92</XMLFile>
@@ -389,7 +389,7 @@
     <MilOffset>1</MilOffset>
     <StatusSteps>1</StatusSteps>
     <MilSteps>1</MilSteps>
-    <ConditionalOffset />
+    <ConditionalOffset>signed:code,signed:offset</ConditionalOffset>
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>e39</XMLFile>
@@ -455,5 +455,15 @@
     <StatusSteps>1</StatusSteps>
     <MilSteps>1</MilSteps>
     <ConditionalOffset>signed:code,signed:offset</ConditionalOffset>
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <MilTable>opcode</MilTable>
+    <CodeOffset>1</CodeOffset>
+    <CodeSteps>4</CodeSteps>
+    <StatusOffset>1</StatusOffset>
+    <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
+    <ConditionalOffset />
   </DtcSearchConfig>
 </ArrayOfDtcSearchConfig>
