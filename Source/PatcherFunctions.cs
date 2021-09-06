@@ -1453,12 +1453,13 @@ public class upatcher
         AutoDetect autod = new AutoDetect();
         return autod.autoDetect(PCM);
     }
-    public static uint CalculateChecksum(byte[] Data, AddressData CSAddress, List<Block> CSBlocks,List<Block> ExcludeBlocks, short Method, short Complement, ushort Bytes, Boolean SwapB)
+    public static uint CalculateChecksum(byte[] Data, AddressData CSAddress, List<Block> CSBlocks,List<Block> ExcludeBlocks, short Method, short Complement, ushort Bytes, Boolean SwapB, bool dbg=true)
     {
         uint sum = 0;
         try
         {
-            Debug.WriteLine("Calculating checksum, method: " + Method);
+            if (dbg)
+                Debug.WriteLine("Calculating checksum, method: " + Method);
             uint BufSize = 0;
             List<Block> Blocks = new List<Block>();
 
@@ -1473,13 +1474,15 @@ public class upatcher
                     if (CSAddress.Address == B.Start)    //At beginning of segment
                     {
                         //At beginning of segment
-                        Debug.WriteLine("Checksum is at start of block, skipping");
+                        if (dbg)
+                            Debug.WriteLine("Checksum is at start of block, skipping");
                         B.Start += CSAddress.Bytes;
                     }
                     else
                     {
                         //Located at middle of block, create new block C, ending before checksum
-                        Debug.WriteLine("Checksum is at middle of block, skipping");
+                        if (dbg)
+                            Debug.WriteLine("Checksum is at middle of block, skipping");
                         Block C = new Block();
                         C.Start = B.Start;
                         C.End = CSAddress.Address - 1;
@@ -1526,7 +1529,8 @@ public class upatcher
             foreach (Block B in Blocks)
             {
                 //Copy blocks to tmp array for calculation
-                Debug.WriteLine("Block: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
+                if (dbg)
+                    Debug.WriteLine("Block: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                 uint BlockSize = B.End - B.Start + 1;
                 Array.Copy(Data, B.Start, tmp, Offset, BlockSize);
                 Offset += BlockSize;
@@ -1593,7 +1597,8 @@ public class upatcher
                     sum = SwapBytes(sum);
 
             }
-            Debug.WriteLine("Result: " + sum.ToString("X"));
+            if (dbg)
+                Debug.WriteLine("Result: " + sum.ToString("X"));
         }
         catch (Exception ex)
         {

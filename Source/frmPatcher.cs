@@ -212,6 +212,17 @@ namespace UniversalPatcher
                     if (!tabFunction.TabPages.Contains(tabChecksumUtil))
                         tabFunction.TabPages.Add(tabChecksumUtil);
 
+                    string[] args = Environment.GetCommandLineArgs();
+                    if (args.Length > 3 && args[3].Contains("fakecvn"))
+                    {
+                        if (!tabFunction.TabPages.Contains(tabCvnFake))
+                            tabFunction.TabPages.Add(tabCvnFake);
+                    }
+                    else
+                    {
+                        tabFunction.TabPages.Remove(tabCvnFake);
+                    }
+
 
                     if (!tabControl1.TabPages.Contains(tabDebug))
                         tabControl1.TabPages.Add(tabDebug);
@@ -256,6 +267,8 @@ namespace UniversalPatcher
                     tabFunction.TabPages.Remove(tabExtract);
                     tabFunction.TabPages.Remove(tabExtractSegments);
                     tabFunction.TabPages.Remove(tabChecksumUtil);
+
+                    tabFunction.TabPages.Remove(tabCvnFake);
 
 
                     tabControl1.TabPages.Remove(tabDebug);
@@ -697,6 +710,9 @@ namespace UniversalPatcher
                     GetFileInfo(txtBaseFile.Text, ref basefile, false);
                     this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
                     txtOS.Text = basefile.OS;
+                    comboFakeCvnSegment.Items.Clear();
+                    for (int s = 0; s < basefile.Segments.Count; s++)
+                        comboFakeCvnSegment.Items.Add(basefile.Segments[s].Name);
                 }
                 timer.Stop();
                 Debug.WriteLine("Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
@@ -3263,6 +3279,122 @@ namespace UniversalPatcher
             Properties.Settings.Default.WorkingMode = 2;
             Properties.Settings.Default.Save();
             setWorkingMode();
+        }
+
+        private void btnFakeCVN_Click(object sender, EventArgs e)
+        {
+            uint freeAddr = uint.MaxValue;
+            if (!HexToUint(txtFreeAddress.Text,out freeAddr))
+            {
+                LoggerBold("Can't convert from HEX: " + txtFreeAddress.Text);
+                return;
+            }
+            uint targetCvn = uint.MaxValue;
+            if (!HexToUint(txtTargetCVN.Text, out targetCvn))
+            {
+                LoggerBold("Can't convert from HEX: " + txtTargetCVN.Text);
+                return;
+            }
+
+            if (comboFakeCvnSegment.Text == "")
+                return;
+
+            int seg = comboFakeCvnSegment.SelectedIndex;
+            uint maxVal = byte.MaxValue;
+            switch((int)numFakeCvnBytes.Value)
+            {
+                case 2:
+                    maxVal = ushort.MaxValue;
+                    break;
+                case 4:
+                    maxVal = uint.MaxValue;
+                    break;
+            }
+
+            bool found = false;
+
+            for (uint testVal = 0; testVal < maxVal; testVal++)
+            {
+                labelFakeCVNTestVal.Text = testVal.ToString("X");
+                if ((int)(testVal % 100) == 0)
+                    Application.DoEvents();
+                switch ((int)numFakeCvnBytes.Value)
+                {
+                    case 2:
+                        SaveUshort(basefile.buf, freeAddr, (ushort)testVal);
+                        break;
+                    case 4:
+                        SaveUint32(basefile.buf, freeAddr, testVal);
+                        break;
+                    default:
+                        basefile.buf[freeAddr] = (byte)testVal;
+                        break;
+                }
+                uint calcCVN = 0;
+
+                uint CS1Calc = CalculateChecksum(basefile.buf, basefile.segmentAddressDatas[seg].CS1Address, basefile.segmentAddressDatas[seg].CS1Blocks, basefile.segmentAddressDatas[seg].ExcludeBlocks, basefile.Segments[seg].CS1Method, basefile.Segments[seg].CS1Complement, basefile.segmentAddressDatas[seg].CS1Address.Bytes, basefile.Segments[seg].CS1SwapBytes,false);
+                if (basefile.Segments[seg].CVN == 1)
+                    calcCVN = CS1Calc;
+                else
+                {
+                    //Fix CS1 first
+                    if (basefile.segmentAddressDatas[seg].CS1Address.Bytes == 1)
+                        basefile.buf[basefile.segmentAddressDatas[seg].CS1Address.Address] = (byte)CS1Calc;
+                    else if (basefile.segmentAddressDatas[seg].CS1Address.Bytes == 2)
+                        SaveUshort(basefile.buf, basefile.segmentAddressDatas[seg].CS1Address.Address, (ushort)CS1Calc);
+                    else if (basefile.segmentAddressDatas[seg].CS1Address.Bytes == 4)
+                        SaveUint32(basefile.buf, basefile.segmentAddressDatas[seg].CS1Address.Address, CS1Calc);
+
+                    calcCVN = CalculateChecksum(basefile.buf, basefile.segmentAddressDatas[seg].CS2Address, basefile.segmentAddressDatas[seg].CS2Blocks, basefile.segmentAddressDatas[seg].ExcludeBlocks, basefile.Segments[seg].CS2Method, basefile.Segments[seg].CS2Complement, basefile.segmentAddressDatas[seg].CS2Address.Bytes, basefile.Segments[seg].CS2SwapBytes,false);
+                }
+                if (calcCVN == targetCvn)
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found)
+            {
+                Logger("CVN fixed");
+            }
+            else
+            {
+                Logger("Can't fix CVN!");
+            }
+        }
+
+        private void numFakeCvnBytes_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboFakeCvnSegment_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            int seg = comboFakeCvnSegment.SelectedIndex;
+
+            txtFreeAddress.Text = (basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - 6).ToString("X");
+
+            txtTargetCVN.Text = "";
+            for (int c = 0; c < StockCVN.Count; c++)
+            {
+                if (StockCVN[c].PN == basefile.segmentinfos[seg].PN && StockCVN[c].Ver == basefile.segmentinfos[seg].Ver && StockCVN[c].SegmentNr == seg.ToString())
+                {
+                    txtTargetCVN.Text = StockCVN[c].cvn;
+                    break;
+                }
+            }
+            if (txtTargetCVN.Text == "")
+            {
+                for (int r = 0; r < referenceCvnList.Count; r++)
+                {
+                    if (basefile.segmentinfos[seg].PN == referenceCvnList[r].PN)
+                    {
+                        txtTargetCVN.Text = referenceCvnList[r].CVN;
+                    }
+                }
+            }
         }
     }
 }

@@ -35,7 +35,7 @@ namespace UniversalPatcher
                         Properties.Settings.Default.WorkingMode = 2;
                     else
                     {
-                        throw new Exception("Usage: " + Path.GetFileName(Application.ExecutablePath) + " [tourist | basic | advanced]");
+                        throw new Exception("Usage: " + Path.GetFileName(Application.ExecutablePath) + " [tourist | basic | advanced] [launcher | tuner]");
                     }
                     Properties.Settings.Default.Save();
                 }
