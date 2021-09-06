@@ -211,6 +211,10 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.touristToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.basicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.advancedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.loadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setupSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -229,10 +233,6 @@
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
-            this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.touristToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.basicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.advancedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -306,7 +306,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtBaseFile.Location = new System.Drawing.Point(96, 34);
             this.txtBaseFile.Name = "txtBaseFile";
-            this.txtBaseFile.Size = new System.Drawing.Size(725, 20);
+            this.txtBaseFile.Size = new System.Drawing.Size(745, 20);
             this.txtBaseFile.TabIndex = 15;
             // 
             // txtModifierFile
@@ -331,7 +331,7 @@
             // btnSaveBin
             // 
             this.btnSaveBin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveBin.Location = new System.Drawing.Point(703, 6);
+            this.btnSaveBin.Location = new System.Drawing.Point(723, 6);
             this.btnSaveBin.Name = "btnSaveBin";
             this.btnSaveBin.Size = new System.Drawing.Size(108, 25);
             this.btnSaveBin.TabIndex = 188;
@@ -460,7 +460,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(824, 341);
+            this.tabControl1.Size = new System.Drawing.Size(844, 358);
             this.tabControl1.TabIndex = 200;
             // 
             // tabInfo
@@ -480,7 +480,7 @@
             this.tabInfo.Location = new System.Drawing.Point(4, 22);
             this.tabInfo.Name = "tabInfo";
             this.tabInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabInfo.Size = new System.Drawing.Size(816, 315);
+            this.tabInfo.Size = new System.Drawing.Size(836, 332);
             this.tabInfo.TabIndex = 0;
             this.tabInfo.Text = "Log";
             this.tabInfo.UseVisualStyleBackColor = true;
@@ -527,14 +527,14 @@
             this.txtResult.HideSelection = false;
             this.txtResult.Location = new System.Drawing.Point(2, 26);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(814, 288);
+            this.txtResult.Size = new System.Drawing.Size(834, 305);
             this.txtResult.TabIndex = 202;
             this.txtResult.Text = "";
             // 
             // btnSaveFileInfo
             // 
             this.btnSaveFileInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveFileInfo.Location = new System.Drawing.Point(738, 2);
+            this.btnSaveFileInfo.Location = new System.Drawing.Point(758, 2);
             this.btnSaveFileInfo.Name = "btnSaveFileInfo";
             this.btnSaveFileInfo.Size = new System.Drawing.Size(78, 23);
             this.btnSaveFileInfo.TabIndex = 171;
@@ -551,7 +551,7 @@
             this.tabDebug.Location = new System.Drawing.Point(4, 22);
             this.tabDebug.Name = "tabDebug";
             this.tabDebug.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDebug.Size = new System.Drawing.Size(816, 315);
+            this.tabDebug.Size = new System.Drawing.Size(836, 332);
             this.tabDebug.TabIndex = 1;
             this.tabDebug.Text = "Debug";
             this.tabDebug.UseVisualStyleBackColor = true;
@@ -559,7 +559,7 @@
             // btnSaveDebug
             // 
             this.btnSaveDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveDebug.Location = new System.Drawing.Point(760, -1);
+            this.btnSaveDebug.Location = new System.Drawing.Point(758, 1);
             this.btnSaveDebug.Name = "btnSaveDebug";
             this.btnSaveDebug.Size = new System.Drawing.Size(75, 23);
             this.btnSaveDebug.TabIndex = 214;
@@ -585,7 +585,7 @@
             this.txtDebug.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtDebug.Location = new System.Drawing.Point(2, 24);
             this.txtDebug.Name = "txtDebug";
-            this.txtDebug.Size = new System.Drawing.Size(833, 323);
+            this.txtDebug.Size = new System.Drawing.Size(853, 340);
             this.txtDebug.TabIndex = 212;
             this.txtDebug.Text = "";
             // 
@@ -618,7 +618,7 @@
             this.tabPatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabPatch.Location = new System.Drawing.Point(4, 22);
             this.tabPatch.Name = "tabPatch";
-            this.tabPatch.Size = new System.Drawing.Size(816, 315);
+            this.tabPatch.Size = new System.Drawing.Size(836, 332);
             this.tabPatch.TabIndex = 2;
             this.tabPatch.Text = "Patch editor";
             this.tabPatch.UseVisualStyleBackColor = true;
@@ -626,7 +626,7 @@
             // btnSaveAllPatches
             // 
             this.btnSaveAllPatches.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveAllPatches.Location = new System.Drawing.Point(768, 1);
+            this.btnSaveAllPatches.Location = new System.Drawing.Point(764, 2);
             this.btnSaveAllPatches.Name = "btnSaveAllPatches";
             this.btnSaveAllPatches.Size = new System.Drawing.Size(67, 23);
             this.btnSaveAllPatches.TabIndex = 262;
@@ -651,14 +651,14 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dataPatch);
-            this.splitContainer1.Size = new System.Drawing.Size(780, 323);
-            this.splitContainer1.SplitterDistance = 210;
+            this.splitContainer1.Size = new System.Drawing.Size(777, 304);
+            this.splitContainer1.SplitterDistance = 209;
             this.splitContainer1.TabIndex = 261;
             // 
             // btnDelPatch
             // 
             this.btnDelPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnDelPatch.Location = new System.Drawing.Point(53, 293);
+            this.btnDelPatch.Location = new System.Drawing.Point(53, 274);
             this.btnDelPatch.Name = "btnDelPatch";
             this.btnDelPatch.Size = new System.Drawing.Size(46, 20);
             this.btnDelPatch.TabIndex = 262;
@@ -669,7 +669,7 @@
             // btnAddPatch
             // 
             this.btnAddPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnAddPatch.Location = new System.Drawing.Point(5, 293);
+            this.btnAddPatch.Location = new System.Drawing.Point(5, 274);
             this.btnAddPatch.Name = "btnAddPatch";
             this.btnAddPatch.Size = new System.Drawing.Size(42, 20);
             this.btnAddPatch.TabIndex = 261;
@@ -685,7 +685,7 @@
             this.listPatches.FormattingEnabled = true;
             this.listPatches.Location = new System.Drawing.Point(0, 0);
             this.listPatches.Name = "listPatches";
-            this.listPatches.Size = new System.Drawing.Size(210, 290);
+            this.listPatches.Size = new System.Drawing.Size(209, 264);
             this.listPatches.TabIndex = 260;
             this.listPatches.SelectedIndexChanged += new System.EventHandler(this.listPatches_SelectedIndexChanged);
             // 
@@ -696,14 +696,14 @@
             this.dataPatch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataPatch.Location = new System.Drawing.Point(0, 0);
             this.dataPatch.Name = "dataPatch";
-            this.dataPatch.Size = new System.Drawing.Size(566, 323);
+            this.dataPatch.Size = new System.Drawing.Size(564, 304);
             this.dataPatch.TabIndex = 0;
             this.dataPatch.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPatch_CellContentDoubleClick);
             // 
             // btnRefresh
             // 
             this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefresh.Location = new System.Drawing.Point(540, 1);
+            this.btnRefresh.Location = new System.Drawing.Point(536, 2);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(59, 23);
             this.btnRefresh.TabIndex = 250;
@@ -714,7 +714,7 @@
             // btnNew
             // 
             this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNew.Location = new System.Drawing.Point(605, 1);
+            this.btnNew.Location = new System.Drawing.Point(601, 2);
             this.btnNew.Name = "btnNew";
             this.btnNew.Size = new System.Drawing.Size(49, 23);
             this.btnNew.TabIndex = 251;
@@ -725,7 +725,7 @@
             // btnLoadPatch
             // 
             this.btnLoadPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLoadPatch.Location = new System.Drawing.Point(658, 1);
+            this.btnLoadPatch.Location = new System.Drawing.Point(654, 2);
             this.btnLoadPatch.Name = "btnLoadPatch";
             this.btnLoadPatch.Size = new System.Drawing.Size(49, 23);
             this.btnLoadPatch.TabIndex = 252;
@@ -736,7 +736,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(713, 1);
+            this.btnSave.Location = new System.Drawing.Point(709, 2);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(49, 23);
             this.btnSave.TabIndex = 253;
@@ -747,7 +747,7 @@
             // btnHelp
             // 
             this.btnHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnHelp.Location = new System.Drawing.Point(789, 140);
+            this.btnHelp.Location = new System.Drawing.Point(785, 138);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(43, 22);
             this.btnHelp.TabIndex = 257;
@@ -758,7 +758,7 @@
             // btnEdit
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEdit.Location = new System.Drawing.Point(789, 58);
+            this.btnEdit.Location = new System.Drawing.Point(785, 56);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(43, 22);
             this.btnEdit.TabIndex = 254;
@@ -769,7 +769,7 @@
             // btnDown
             // 
             this.btnDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDown.Location = new System.Drawing.Point(790, 221);
+            this.btnDown.Location = new System.Drawing.Point(786, 219);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(43, 22);
             this.btnDown.TabIndex = 259;
@@ -780,7 +780,7 @@
             // btnUp
             // 
             this.btnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUp.Location = new System.Drawing.Point(789, 193);
+            this.btnUp.Location = new System.Drawing.Point(785, 191);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(43, 22);
             this.btnUp.TabIndex = 258;
@@ -791,7 +791,7 @@
             // btnDelete
             // 
             this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDelete.Location = new System.Drawing.Point(789, 112);
+            this.btnDelete.Location = new System.Drawing.Point(785, 110);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(43, 22);
             this.btnDelete.TabIndex = 256;
@@ -802,7 +802,7 @@
             // btnManualPatch
             // 
             this.btnManualPatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnManualPatch.Location = new System.Drawing.Point(789, 86);
+            this.btnManualPatch.Location = new System.Drawing.Point(785, 84);
             this.btnManualPatch.Name = "btnManualPatch";
             this.btnManualPatch.Size = new System.Drawing.Size(43, 22);
             this.btnManualPatch.TabIndex = 255;
@@ -828,7 +828,7 @@
             this.tabCVN.Controls.Add(this.dataCVN);
             this.tabCVN.Location = new System.Drawing.Point(4, 22);
             this.tabCVN.Name = "tabCVN";
-            this.tabCVN.Size = new System.Drawing.Size(816, 315);
+            this.tabCVN.Size = new System.Drawing.Size(836, 332);
             this.tabCVN.TabIndex = 3;
             this.tabCVN.Text = "CVN";
             this.tabCVN.UseVisualStyleBackColor = true;
@@ -869,7 +869,7 @@
             // btnAddtoStock
             // 
             this.btnAddtoStock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddtoStock.Location = new System.Drawing.Point(696, 3);
+            this.btnAddtoStock.Location = new System.Drawing.Point(697, 5);
             this.btnAddtoStock.Name = "btnAddtoStock";
             this.btnAddtoStock.Size = new System.Drawing.Size(136, 22);
             this.btnAddtoStock.TabIndex = 177;
@@ -885,7 +885,7 @@
             this.dataCVN.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataCVN.Location = new System.Drawing.Point(1, 33);
             this.dataCVN.Name = "dataCVN";
-            this.dataCVN.Size = new System.Drawing.Size(831, 310);
+            this.dataCVN.Size = new System.Drawing.Size(851, 327);
             this.dataCVN.TabIndex = 0;
             // 
             // tabBadCvn
@@ -895,7 +895,7 @@
             this.tabBadCvn.Controls.Add(this.dataGridBadCvn);
             this.tabBadCvn.Location = new System.Drawing.Point(4, 22);
             this.tabBadCvn.Name = "tabBadCvn";
-            this.tabBadCvn.Size = new System.Drawing.Size(816, 315);
+            this.tabBadCvn.Size = new System.Drawing.Size(836, 332);
             this.tabBadCvn.TabIndex = 9;
             this.tabBadCvn.Text = "Mismatch CVN";
             this.tabBadCvn.UseVisualStyleBackColor = true;
@@ -928,7 +928,7 @@
             this.dataGridBadCvn.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridBadCvn.Location = new System.Drawing.Point(0, 34);
             this.dataGridBadCvn.Name = "dataGridBadCvn";
-            this.dataGridBadCvn.Size = new System.Drawing.Size(839, 310);
+            this.dataGridBadCvn.Size = new System.Drawing.Size(859, 327);
             this.dataGridBadCvn.TabIndex = 1;
             // 
             // tabFinfo
@@ -941,7 +941,7 @@
             this.tabFinfo.Controls.Add(this.dataFileInfo);
             this.tabFinfo.Location = new System.Drawing.Point(4, 22);
             this.tabFinfo.Name = "tabFinfo";
-            this.tabFinfo.Size = new System.Drawing.Size(816, 315);
+            this.tabFinfo.Size = new System.Drawing.Size(836, 332);
             this.tabFinfo.TabIndex = 4;
             this.tabFinfo.Text = "File info";
             this.tabFinfo.UseVisualStyleBackColor = true;
@@ -949,7 +949,7 @@
             // btnSaveDecCsv
             // 
             this.btnSaveDecCsv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveDecCsv.Location = new System.Drawing.Point(638, 3);
+            this.btnSaveDecCsv.Location = new System.Drawing.Point(631, 4);
             this.btnSaveDecCsv.Name = "btnSaveDecCsv";
             this.btnSaveDecCsv.Size = new System.Drawing.Size(116, 23);
             this.btnSaveDecCsv.TabIndex = 7;
@@ -983,7 +983,7 @@
             // btnSaveCSV
             // 
             this.btnSaveCSV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveCSV.Location = new System.Drawing.Point(760, 3);
+            this.btnSaveCSV.Location = new System.Drawing.Point(753, 4);
             this.btnSaveCSV.Name = "btnSaveCSV";
             this.btnSaveCSV.Size = new System.Drawing.Size(75, 23);
             this.btnSaveCSV.TabIndex = 4;
@@ -1009,7 +1009,7 @@
             this.dataFileInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataFileInfo.Location = new System.Drawing.Point(1, 31);
             this.dataFileInfo.Name = "dataFileInfo";
-            this.dataFileInfo.Size = new System.Drawing.Size(834, 312);
+            this.dataFileInfo.Size = new System.Drawing.Size(854, 329);
             this.dataFileInfo.TabIndex = 0;
             this.dataFileInfo.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataFileInfo_CellContentDoubleClick);
             // 
@@ -1021,7 +1021,7 @@
             this.tabCsAddress.Controls.Add(this.listCSAddresses);
             this.tabCsAddress.Location = new System.Drawing.Point(4, 22);
             this.tabCsAddress.Name = "tabCsAddress";
-            this.tabCsAddress.Size = new System.Drawing.Size(816, 315);
+            this.tabCsAddress.Size = new System.Drawing.Size(836, 332);
             this.tabCsAddress.TabIndex = 5;
             this.tabCsAddress.Text = "Gm-v6 info";
             this.tabCsAddress.UseVisualStyleBackColor = true;
@@ -1048,7 +1048,7 @@
             // btnSaveCSaddresses
             // 
             this.btnSaveCSaddresses.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveCSaddresses.Location = new System.Drawing.Point(760, 4);
+            this.btnSaveCSaddresses.Location = new System.Drawing.Point(756, 5);
             this.btnSaveCSaddresses.Name = "btnSaveCSaddresses";
             this.btnSaveCSaddresses.Size = new System.Drawing.Size(75, 25);
             this.btnSaveCSaddresses.TabIndex = 1;
@@ -1064,7 +1064,7 @@
             this.listCSAddresses.HideSelection = false;
             this.listCSAddresses.Location = new System.Drawing.Point(2, 31);
             this.listCSAddresses.Name = "listCSAddresses";
-            this.listCSAddresses.Size = new System.Drawing.Size(834, 316);
+            this.listCSAddresses.Size = new System.Drawing.Size(854, 333);
             this.listCSAddresses.TabIndex = 0;
             this.listCSAddresses.UseCompatibleStateImageBehavior = false;
             // 
@@ -1078,7 +1078,7 @@
             this.tabBadChkFile.Controls.Add(this.dataBadChkFile);
             this.tabBadChkFile.Location = new System.Drawing.Point(4, 22);
             this.tabBadChkFile.Name = "tabBadChkFile";
-            this.tabBadChkFile.Size = new System.Drawing.Size(816, 315);
+            this.tabBadChkFile.Size = new System.Drawing.Size(836, 332);
             this.tabBadChkFile.TabIndex = 6;
             this.tabBadChkFile.Text = "bad chk file";
             this.tabBadChkFile.UseVisualStyleBackColor = true;
@@ -1117,7 +1117,7 @@
             // btnSaveCsvBadChkFile
             // 
             this.btnSaveCsvBadChkFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveCsvBadChkFile.Location = new System.Drawing.Point(757, 4);
+            this.btnSaveCsvBadChkFile.Location = new System.Drawing.Point(758, 4);
             this.btnSaveCsvBadChkFile.Name = "btnSaveCsvBadChkFile";
             this.btnSaveCsvBadChkFile.Size = new System.Drawing.Size(75, 23);
             this.btnSaveCsvBadChkFile.TabIndex = 8;
@@ -1143,7 +1143,7 @@
             this.dataBadChkFile.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataBadChkFile.Location = new System.Drawing.Point(-1, 30);
             this.dataBadChkFile.Name = "dataBadChkFile";
-            this.dataBadChkFile.Size = new System.Drawing.Size(837, 312);
+            this.dataBadChkFile.Size = new System.Drawing.Size(857, 329);
             this.dataBadChkFile.TabIndex = 6;
             this.dataBadChkFile.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataBadChkFile_CellContentDoubleClick);
             // 
@@ -1156,7 +1156,7 @@
             this.tabSearchedTables.Controls.Add(this.dataGridSearchedTables);
             this.tabSearchedTables.Location = new System.Drawing.Point(4, 22);
             this.tabSearchedTables.Name = "tabSearchedTables";
-            this.tabSearchedTables.Size = new System.Drawing.Size(816, 315);
+            this.tabSearchedTables.Size = new System.Drawing.Size(836, 332);
             this.tabSearchedTables.TabIndex = 7;
             this.tabSearchedTables.Text = "Searched Tables";
             this.tabSearchedTables.UseVisualStyleBackColor = true;
@@ -1210,7 +1210,7 @@
             this.dataGridSearchedTables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridSearchedTables.Location = new System.Drawing.Point(1, 35);
             this.dataGridSearchedTables.Name = "dataGridSearchedTables";
-            this.dataGridSearchedTables.Size = new System.Drawing.Size(835, 308);
+            this.dataGridSearchedTables.Size = new System.Drawing.Size(855, 325);
             this.dataGridSearchedTables.TabIndex = 0;
             this.dataGridSearchedTables.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridSearchedTables_CellContentDoubleClick);
             // 
@@ -1221,7 +1221,7 @@
             this.tabPIDList.Controls.Add(this.dataGridPIDlist);
             this.tabPIDList.Location = new System.Drawing.Point(4, 22);
             this.tabPIDList.Name = "tabPIDList";
-            this.tabPIDList.Size = new System.Drawing.Size(816, 315);
+            this.tabPIDList.Size = new System.Drawing.Size(836, 332);
             this.tabPIDList.TabIndex = 8;
             this.tabPIDList.Text = "PIDs";
             this.tabPIDList.UseVisualStyleBackColor = true;
@@ -1254,7 +1254,7 @@
             this.dataGridPIDlist.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridPIDlist.Location = new System.Drawing.Point(1, 33);
             this.dataGridPIDlist.Name = "dataGridPIDlist";
-            this.dataGridPIDlist.Size = new System.Drawing.Size(834, 310);
+            this.dataGridPIDlist.Size = new System.Drawing.Size(854, 327);
             this.dataGridPIDlist.TabIndex = 0;
             // 
             // tabDTC
@@ -1266,7 +1266,7 @@
             this.tabDTC.Controls.Add(this.dataGridDTC);
             this.tabDTC.Location = new System.Drawing.Point(4, 22);
             this.tabDTC.Name = "tabDTC";
-            this.tabDTC.Size = new System.Drawing.Size(816, 315);
+            this.tabDTC.Size = new System.Drawing.Size(836, 332);
             this.tabDTC.TabIndex = 10;
             this.tabDTC.Text = "DTC";
             this.tabDTC.UseVisualStyleBackColor = true;
@@ -1323,7 +1323,7 @@
             this.dataGridDTC.Location = new System.Drawing.Point(1, 32);
             this.dataGridDTC.MultiSelect = false;
             this.dataGridDTC.Name = "dataGridDTC";
-            this.dataGridDTC.Size = new System.Drawing.Size(831, 310);
+            this.dataGridDTC.Size = new System.Drawing.Size(851, 327);
             this.dataGridDTC.TabIndex = 5;
             this.dataGridDTC.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridDTC_CellContentDoubleClick);
             // 
@@ -1339,7 +1339,7 @@
             this.tabTableSeek.Controls.Add(this.btnClearTableSeek);
             this.tabTableSeek.Location = new System.Drawing.Point(4, 22);
             this.tabTableSeek.Name = "tabTableSeek";
-            this.tabTableSeek.Size = new System.Drawing.Size(816, 315);
+            this.tabTableSeek.Size = new System.Drawing.Size(836, 332);
             this.tabTableSeek.TabIndex = 11;
             this.tabTableSeek.Text = "Table Seek";
             this.tabTableSeek.UseVisualStyleBackColor = true;
@@ -1383,7 +1383,7 @@
             // 
             this.btnReadTinyTunerDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnReadTinyTunerDB.Enabled = false;
-            this.btnReadTinyTunerDB.Location = new System.Drawing.Point(793, 3);
+            this.btnReadTinyTunerDB.Location = new System.Drawing.Point(668, 5);
             this.btnReadTinyTunerDB.Name = "btnReadTinyTunerDB";
             this.btnReadTinyTunerDB.Size = new System.Drawing.Size(165, 23);
             this.btnReadTinyTunerDB.TabIndex = 3;
@@ -1412,7 +1412,7 @@
             this.dataGridTableSeek.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridTableSeek.Location = new System.Drawing.Point(-2, 32);
             this.dataGridTableSeek.Name = "dataGridTableSeek";
-            this.dataGridTableSeek.Size = new System.Drawing.Size(834, 312);
+            this.dataGridTableSeek.Size = new System.Drawing.Size(854, 329);
             this.dataGridTableSeek.TabIndex = 1;
             this.dataGridTableSeek.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridTableSeek_CellContentDoubleClick);
             // 
@@ -1531,7 +1531,7 @@
             this.tabFunction.Location = new System.Drawing.Point(0, 0);
             this.tabFunction.Name = "tabFunction";
             this.tabFunction.SelectedIndex = 0;
-            this.tabFunction.Size = new System.Drawing.Size(824, 138);
+            this.tabFunction.Size = new System.Drawing.Size(844, 144);
             this.tabFunction.TabIndex = 100;
             // 
             // tabApply
@@ -1546,7 +1546,7 @@
             this.tabApply.Location = new System.Drawing.Point(4, 22);
             this.tabApply.Name = "tabApply";
             this.tabApply.Padding = new System.Windows.Forms.Padding(3);
-            this.tabApply.Size = new System.Drawing.Size(816, 112);
+            this.tabApply.Size = new System.Drawing.Size(836, 118);
             this.tabApply.TabIndex = 1;
             this.tabApply.Text = "Modify bin";
             this.tabApply.UseVisualStyleBackColor = true;
@@ -1626,7 +1626,7 @@
             this.tabFileinfo.Controls.Add(this.chkSize);
             this.tabFileinfo.Location = new System.Drawing.Point(4, 22);
             this.tabFileinfo.Name = "tabFileinfo";
-            this.tabFileinfo.Size = new System.Drawing.Size(816, 112);
+            this.tabFileinfo.Size = new System.Drawing.Size(836, 118);
             this.tabFileinfo.TabIndex = 2;
             this.tabFileinfo.Text = "File info";
             this.tabFileinfo.UseVisualStyleBackColor = true;
@@ -1787,7 +1787,7 @@
             this.tabCreate.Location = new System.Drawing.Point(4, 22);
             this.tabCreate.Name = "tabCreate";
             this.tabCreate.Padding = new System.Windows.Forms.Padding(3);
-            this.tabCreate.Size = new System.Drawing.Size(816, 112);
+            this.tabCreate.Size = new System.Drawing.Size(836, 118);
             this.tabCreate.TabIndex = 0;
             this.tabCreate.Text = "Create Patch";
             this.tabCreate.UseVisualStyleBackColor = true;
@@ -1854,7 +1854,7 @@
             this.tabExtract.Controls.Add(this.txtExtractRange);
             this.tabExtract.Location = new System.Drawing.Point(4, 22);
             this.tabExtract.Name = "tabExtract";
-            this.tabExtract.Size = new System.Drawing.Size(816, 112);
+            this.tabExtract.Size = new System.Drawing.Size(836, 118);
             this.tabExtract.TabIndex = 3;
             this.tabExtract.Text = "Extract table";
             this.tabExtract.UseVisualStyleBackColor = true;
@@ -1928,7 +1928,7 @@
             this.tabExtractSegments.Controls.Add(this.btnExtractSegments);
             this.tabExtractSegments.Location = new System.Drawing.Point(4, 22);
             this.tabExtractSegments.Name = "tabExtractSegments";
-            this.tabExtractSegments.Size = new System.Drawing.Size(816, 112);
+            this.tabExtractSegments.Size = new System.Drawing.Size(836, 118);
             this.tabExtractSegments.TabIndex = 4;
             this.tabExtractSegments.Text = "Extract segments";
             this.tabExtractSegments.UseVisualStyleBackColor = true;
@@ -2047,7 +2047,7 @@
             this.tabChecksumUtil.Controls.Add(this.groupBox1);
             this.tabChecksumUtil.Location = new System.Drawing.Point(4, 22);
             this.tabChecksumUtil.Name = "tabChecksumUtil";
-            this.tabChecksumUtil.Size = new System.Drawing.Size(816, 112);
+            this.tabChecksumUtil.Size = new System.Drawing.Size(836, 118);
             this.tabChecksumUtil.TabIndex = 5;
             this.tabChecksumUtil.Text = "Checksum research";
             this.tabChecksumUtil.UseVisualStyleBackColor = true;
@@ -2288,7 +2288,7 @@
             this.toolStripMenuItem2});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(824, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(844, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuMain";
             this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
@@ -2307,23 +2307,54 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.saveToolStripMenuItem.Text = "&Save bin";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click_1);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.saveAsToolStripMenuItem.Text = "Save bin &as...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
+            // modeToolStripMenuItem
+            // 
+            this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.touristToolStripMenuItem,
+            this.basicToolStripMenuItem,
+            this.advancedToolStripMenuItem});
+            this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
+            this.modeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.modeToolStripMenuItem.Text = "Mode";
+            // 
+            // touristToolStripMenuItem
+            // 
+            this.touristToolStripMenuItem.Name = "touristToolStripMenuItem";
+            this.touristToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.touristToolStripMenuItem.Text = "Tourist";
+            this.touristToolStripMenuItem.Click += new System.EventHandler(this.touristToolStripMenuItem_Click);
+            // 
+            // basicToolStripMenuItem
+            // 
+            this.basicToolStripMenuItem.Name = "basicToolStripMenuItem";
+            this.basicToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.basicToolStripMenuItem.Text = "Basic";
+            this.basicToolStripMenuItem.Click += new System.EventHandler(this.basicToolStripMenuItem_Click);
+            // 
+            // advancedToolStripMenuItem
+            // 
+            this.advancedToolStripMenuItem.Name = "advancedToolStripMenuItem";
+            this.advancedToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.advancedToolStripMenuItem.Text = "Advanced";
+            this.advancedToolStripMenuItem.Click += new System.EventHandler(this.advancedToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -2475,46 +2506,15 @@
             // splitPatcher.Panel2
             // 
             this.splitPatcher.Panel2.Controls.Add(this.tabControl1);
-            this.splitPatcher.Size = new System.Drawing.Size(824, 483);
-            this.splitPatcher.SplitterDistance = 138;
+            this.splitPatcher.Size = new System.Drawing.Size(844, 506);
+            this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
-            // 
-            // modeToolStripMenuItem
-            // 
-            this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.touristToolStripMenuItem,
-            this.basicToolStripMenuItem,
-            this.advancedToolStripMenuItem});
-            this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
-            this.modeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.modeToolStripMenuItem.Text = "Mode";
-            // 
-            // touristToolStripMenuItem
-            // 
-            this.touristToolStripMenuItem.Name = "touristToolStripMenuItem";
-            this.touristToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.touristToolStripMenuItem.Text = "Tourist";
-            this.touristToolStripMenuItem.Click += new System.EventHandler(this.touristToolStripMenuItem_Click);
-            // 
-            // basicToolStripMenuItem
-            // 
-            this.basicToolStripMenuItem.Name = "basicToolStripMenuItem";
-            this.basicToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.basicToolStripMenuItem.Text = "Basic";
-            this.basicToolStripMenuItem.Click += new System.EventHandler(this.basicToolStripMenuItem_Click);
-            // 
-            // advancedToolStripMenuItem
-            // 
-            this.advancedToolStripMenuItem.Name = "advancedToolStripMenuItem";
-            this.advancedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.advancedToolStripMenuItem.Text = "Advanced";
-            this.advancedToolStripMenuItem.Click += new System.EventHandler(this.advancedToolStripMenuItem_Click);
             // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(824, 542);
+            this.ClientSize = new System.Drawing.Size(844, 565);
             this.Controls.Add(this.splitPatcher);
             this.Controls.Add(this.chkAutodetect);
             this.Controls.Add(this.labelXML);
