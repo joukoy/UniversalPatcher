@@ -3284,6 +3284,7 @@ namespace UniversalPatcher
         private void btnFakeCVN_Click(object sender, EventArgs e)
         {
             uint freeAddr = uint.MaxValue;
+
             if (!HexToUint(txtFreeAddress.Text,out freeAddr))
             {
                 LoggerBold("Can't convert from HEX: " + txtFreeAddress.Text);
@@ -3374,7 +3375,13 @@ namespace UniversalPatcher
 
             int seg = comboFakeCvnSegment.SelectedIndex;
 
-            txtFreeAddress.Text = (basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - 6).ToString("X");
+            if (radioFakeCVNRelativeAddr.Checked)
+                txtFreeAddress.Text = (basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - (int)numFakeCvnBytesFromEnd.Value).ToString("X");
+            else if (radioFakeCvnUseVer.Checked)
+            {
+                txtFreeAddress.Text = basefile.segmentAddressDatas[seg].VerAddr.Address.ToString("X");
+                numFakeCvnBytes.Value = basefile.segmentAddressDatas[seg].VerAddr.Bytes;
+            }
 
             txtTargetCVN.Text = "";
             for (int c = 0; c < StockCVN.Count; c++)
@@ -3395,6 +3402,48 @@ namespace UniversalPatcher
                     }
                 }
             }
+        }
+
+        private void radioFakeCVNRelativeAddr_CheckedChanged(object sender, EventArgs e)
+        {
+            if (comboFakeCvnSegment.Text == "")
+                return;
+            int seg = comboFakeCvnSegment.SelectedIndex;
+            txtFreeAddress.Text = (basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - (int)numFakeCvnBytesFromEnd.Value).ToString("X");
+            if (radioFakeCVNRelativeAddr.Checked)
+                numFakeCvnBytesFromEnd.Enabled = true;
+            else
+                numFakeCvnBytesFromEnd.Enabled = false;
+        }
+
+        private void numFakeCvnBytesFromEnd_ValueChanged(object sender, EventArgs e)
+        {
+            if (comboFakeCvnSegment.Text == "" || !radioFakeCVNRelativeAddr.Checked)
+                return;
+            int seg = comboFakeCvnSegment.SelectedIndex;
+            txtFreeAddress.Text = (basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - (int)numFakeCvnBytesFromEnd.Value).ToString("X");
+        }
+
+        private void radioFakeCvnUseVer_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioFakeCvnUseVer.Checked)
+            {
+                txtFreeAddress.Enabled = false;
+                numFakeCvnBytes.Enabled = false;
+            }
+            else
+            {
+                txtFreeAddress.Enabled = true;
+                numFakeCvnBytes.Enabled = true;
+            }
+        }
+
+        private void radioFakeCvnAddr_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioFakeCvnAddr.Checked)
+                txtFreeAddress.Enabled = true;
+            else
+                txtFreeAddress.Enabled = false;
         }
     }
 }

@@ -207,15 +207,20 @@
             this.radioCSUtilCrc32 = new System.Windows.Forms.RadioButton();
             this.radioCSUtilCrc16 = new System.Windows.Forms.RadioButton();
             this.tabCvnFake = new System.Windows.Forms.TabPage();
-            this.comboFakeCvnSegment = new System.Windows.Forms.ComboBox();
-            this.label22 = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.numFakeCvnBytesFromEnd = new System.Windows.Forms.NumericUpDown();
+            this.radioFakeCvnUseVer = new System.Windows.Forms.RadioButton();
+            this.radioFakeCVNRelativeAddr = new System.Windows.Forms.RadioButton();
+            this.radioFakeCvnAddr = new System.Windows.Forms.RadioButton();
+            this.txtFreeAddress = new System.Windows.Forms.TextBox();
             this.label21 = new System.Windows.Forms.Label();
             this.numFakeCvnBytes = new System.Windows.Forms.NumericUpDown();
+            this.labelFakeCVNTestVal = new System.Windows.Forms.Label();
+            this.comboFakeCvnSegment = new System.Windows.Forms.ComboBox();
+            this.label22 = new System.Windows.Forms.Label();
             this.btnFakeCVN = new System.Windows.Forms.Button();
             this.txtTargetCVN = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtFreeAddress = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -243,7 +248,6 @@
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
-            this.labelFakeCVNTestVal = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -285,6 +289,8 @@
             this.groupBox5.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabCvnFake.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numFakeCvnBytesFromEnd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numFakeCvnBytes)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitPatcher)).BeginInit();
@@ -2296,22 +2302,136 @@
             // 
             // tabCvnFake
             // 
+            this.tabCvnFake.Controls.Add(this.groupBox3);
             this.tabCvnFake.Controls.Add(this.labelFakeCVNTestVal);
             this.tabCvnFake.Controls.Add(this.comboFakeCvnSegment);
             this.tabCvnFake.Controls.Add(this.label22);
-            this.tabCvnFake.Controls.Add(this.label21);
-            this.tabCvnFake.Controls.Add(this.numFakeCvnBytes);
             this.tabCvnFake.Controls.Add(this.btnFakeCVN);
             this.tabCvnFake.Controls.Add(this.txtTargetCVN);
             this.tabCvnFake.Controls.Add(this.label3);
-            this.tabCvnFake.Controls.Add(this.txtFreeAddress);
-            this.tabCvnFake.Controls.Add(this.label2);
             this.tabCvnFake.Location = new System.Drawing.Point(4, 22);
             this.tabCvnFake.Name = "tabCvnFake";
             this.tabCvnFake.Size = new System.Drawing.Size(836, 118);
             this.tabCvnFake.TabIndex = 6;
             this.tabCvnFake.Text = "CVN Research";
             this.tabCvnFake.UseVisualStyleBackColor = true;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.numFakeCvnBytesFromEnd);
+            this.groupBox3.Controls.Add(this.radioFakeCvnUseVer);
+            this.groupBox3.Controls.Add(this.radioFakeCVNRelativeAddr);
+            this.groupBox3.Controls.Add(this.radioFakeCvnAddr);
+            this.groupBox3.Controls.Add(this.txtFreeAddress);
+            this.groupBox3.Controls.Add(this.label21);
+            this.groupBox3.Controls.Add(this.numFakeCvnBytes);
+            this.groupBox3.Location = new System.Drawing.Point(219, 3);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(291, 112);
+            this.groupBox3.TabIndex = 10;
+            this.groupBox3.TabStop = false;
+            // 
+            // numFakeCvnBytesFromEnd
+            // 
+            this.numFakeCvnBytesFromEnd.Location = new System.Drawing.Point(177, 34);
+            this.numFakeCvnBytesFromEnd.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numFakeCvnBytesFromEnd.Name = "numFakeCvnBytesFromEnd";
+            this.numFakeCvnBytesFromEnd.Size = new System.Drawing.Size(100, 20);
+            this.numFakeCvnBytesFromEnd.TabIndex = 7;
+            this.numFakeCvnBytesFromEnd.Value = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+            this.numFakeCvnBytesFromEnd.ValueChanged += new System.EventHandler(this.numFakeCvnBytesFromEnd_ValueChanged);
+            // 
+            // radioFakeCvnUseVer
+            // 
+            this.radioFakeCvnUseVer.AutoSize = true;
+            this.radioFakeCvnUseVer.Location = new System.Drawing.Point(10, 59);
+            this.radioFakeCvnUseVer.Name = "radioFakeCvnUseVer";
+            this.radioFakeCvnUseVer.Size = new System.Drawing.Size(94, 17);
+            this.radioFakeCvnUseVer.TabIndex = 2;
+            this.radioFakeCvnUseVer.Text = "Modify Version";
+            this.radioFakeCvnUseVer.UseVisualStyleBackColor = true;
+            this.radioFakeCvnUseVer.CheckedChanged += new System.EventHandler(this.radioFakeCvnUseVer_CheckedChanged);
+            // 
+            // radioFakeCVNRelativeAddr
+            // 
+            this.radioFakeCVNRelativeAddr.AutoSize = true;
+            this.radioFakeCVNRelativeAddr.Checked = true;
+            this.radioFakeCVNRelativeAddr.Location = new System.Drawing.Point(10, 36);
+            this.radioFakeCVNRelativeAddr.Name = "radioFakeCVNRelativeAddr";
+            this.radioFakeCVNRelativeAddr.Size = new System.Drawing.Size(150, 17);
+            this.radioFakeCVNRelativeAddr.TabIndex = 1;
+            this.radioFakeCVNRelativeAddr.TabStop = true;
+            this.radioFakeCVNRelativeAddr.Text = "Bytes from end of segment";
+            this.radioFakeCVNRelativeAddr.UseVisualStyleBackColor = true;
+            this.radioFakeCVNRelativeAddr.CheckedChanged += new System.EventHandler(this.radioFakeCVNRelativeAddr_CheckedChanged);
+            // 
+            // radioFakeCvnAddr
+            // 
+            this.radioFakeCvnAddr.AutoSize = true;
+            this.radioFakeCvnAddr.Location = new System.Drawing.Point(10, 16);
+            this.radioFakeCvnAddr.Name = "radioFakeCvnAddr";
+            this.radioFakeCvnAddr.Size = new System.Drawing.Size(66, 17);
+            this.radioFakeCvnAddr.TabIndex = 0;
+            this.radioFakeCvnAddr.Text = "Address:";
+            this.radioFakeCvnAddr.UseVisualStyleBackColor = true;
+            this.radioFakeCvnAddr.CheckedChanged += new System.EventHandler(this.radioFakeCvnAddr_CheckedChanged);
+            // 
+            // txtFreeAddress
+            // 
+            this.txtFreeAddress.Enabled = false;
+            this.txtFreeAddress.Location = new System.Drawing.Point(177, 13);
+            this.txtFreeAddress.Name = "txtFreeAddress";
+            this.txtFreeAddress.Size = new System.Drawing.Size(100, 20);
+            this.txtFreeAddress.TabIndex = 1;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(11, 86);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(36, 13);
+            this.label21.TabIndex = 6;
+            this.label21.Text = "Bytes:";
+            // 
+            // numFakeCvnBytes
+            // 
+            this.numFakeCvnBytes.Location = new System.Drawing.Point(59, 82);
+            this.numFakeCvnBytes.Maximum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.numFakeCvnBytes.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numFakeCvnBytes.Name = "numFakeCvnBytes";
+            this.numFakeCvnBytes.Size = new System.Drawing.Size(55, 20);
+            this.numFakeCvnBytes.TabIndex = 5;
+            this.numFakeCvnBytes.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.numFakeCvnBytes.ValueChanged += new System.EventHandler(this.numFakeCvnBytes_ValueChanged);
+            // 
+            // labelFakeCVNTestVal
+            // 
+            this.labelFakeCVNTestVal.AutoSize = true;
+            this.labelFakeCVNTestVal.Location = new System.Drawing.Point(92, 67);
+            this.labelFakeCVNTestVal.Name = "labelFakeCVNTestVal";
+            this.labelFakeCVNTestVal.Size = new System.Drawing.Size(10, 13);
+            this.labelFakeCVNTestVal.TabIndex = 9;
+            this.labelFakeCVNTestVal.Text = "-";
             // 
             // comboFakeCvnSegment
             // 
@@ -2331,41 +2451,9 @@
             this.label22.TabIndex = 7;
             this.label22.Text = "Segment:";
             // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(321, 41);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(36, 13);
-            this.label21.TabIndex = 6;
-            this.label21.Text = "Bytes:";
-            // 
-            // numFakeCvnBytes
-            // 
-            this.numFakeCvnBytes.Location = new System.Drawing.Point(369, 37);
-            this.numFakeCvnBytes.Maximum = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            this.numFakeCvnBytes.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numFakeCvnBytes.Name = "numFakeCvnBytes";
-            this.numFakeCvnBytes.Size = new System.Drawing.Size(55, 20);
-            this.numFakeCvnBytes.TabIndex = 5;
-            this.numFakeCvnBytes.Value = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            this.numFakeCvnBytes.ValueChanged += new System.EventHandler(this.numFakeCvnBytes_ValueChanged);
-            // 
             // btnFakeCVN
             // 
-            this.btnFakeCVN.Location = new System.Drawing.Point(433, 8);
+            this.btnFakeCVN.Location = new System.Drawing.Point(11, 62);
             this.btnFakeCVN.Name = "btnFakeCVN";
             this.btnFakeCVN.Size = new System.Drawing.Size(75, 23);
             this.btnFakeCVN.TabIndex = 4;
@@ -2388,22 +2476,6 @@
             this.label3.Size = new System.Drawing.Size(66, 13);
             this.label3.TabIndex = 2;
             this.label3.Text = "Target CVN:";
-            // 
-            // txtFreeAddress
-            // 
-            this.txtFreeAddress.Location = new System.Drawing.Point(324, 12);
-            this.txtFreeAddress.Name = "txtFreeAddress";
-            this.txtFreeAddress.Size = new System.Drawing.Size(100, 20);
-            this.txtFreeAddress.TabIndex = 1;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(223, 13);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(87, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Write to address:";
             // 
             // menuStrip1
             // 
@@ -2635,15 +2707,6 @@
             this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
             // 
-            // labelFakeCVNTestVal
-            // 
-            this.labelFakeCVNTestVal.AutoSize = true;
-            this.labelFakeCVNTestVal.Location = new System.Drawing.Point(17, 67);
-            this.labelFakeCVNTestVal.Name = "labelFakeCVNTestVal";
-            this.labelFakeCVNTestVal.Size = new System.Drawing.Size(10, 13);
-            this.labelFakeCVNTestVal.TabIndex = 9;
-            this.labelFakeCVNTestVal.Text = "-";
-            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2722,6 +2785,9 @@
             this.groupBox1.PerformLayout();
             this.tabCvnFake.ResumeLayout(false);
             this.tabCvnFake.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numFakeCvnBytesFromEnd)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numFakeCvnBytes)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -2946,9 +3012,13 @@
         private System.Windows.Forms.TextBox txtTargetCVN;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtFreeAddress;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox comboFakeCvnSegment;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Label labelFakeCVNTestVal;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.RadioButton radioFakeCVNRelativeAddr;
+        private System.Windows.Forms.RadioButton radioFakeCvnAddr;
+        private System.Windows.Forms.NumericUpDown numFakeCvnBytesFromEnd;
+        private System.Windows.Forms.RadioButton radioFakeCvnUseVer;
     }
 }
