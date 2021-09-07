@@ -3281,15 +3281,39 @@ namespace UniversalPatcher
             setWorkingMode();
         }
 
-        private void btnFakeCVN_Click(object sender, EventArgs e)
+        private void fakeCvn(int seg)
         {
             uint freeAddr = uint.MaxValue;
 
-            if (!HexToUint(txtFreeAddress.Text,out freeAddr))
+            Logger(basefile.Segments[seg].Name.PadRight(20), false);
+            if (basefile.Segments[seg].CVN == 0)
             {
-                LoggerBold("Can't convert from HEX: " + txtFreeAddress.Text);
+                Logger("No CVN defined");
+            }
+            if (txtTargetCVN.Text.Length == 0)
+            {
+                Logger("No target CVN");
                 return;
             }
+
+            if (radioFakeCvnAddr.Checked)
+            {
+                if (!HexToUint(txtFreeAddress.Text, out freeAddr))
+                {
+                    LoggerBold("Can't convert from HEX: " + txtFreeAddress.Text);
+                    return;
+                }
+            }
+            else if (radioFakeCVNRelativeAddr.Checked)
+            {
+                freeAddr = basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - (uint)numFakeCvnBytesFromEnd.Value;
+            }
+            else //Ver
+            {
+                freeAddr = basefile.segmentAddressDatas[seg].VerAddr.Address;
+                numFakeCvnBytes.Value = basefile.segmentAddressDatas[seg].VerAddr.Bytes;
+            }
+
             uint targetCvn = uint.MaxValue;
             if (!HexToUint(txtTargetCVN.Text, out targetCvn))
             {
@@ -3297,12 +3321,20 @@ namespace UniversalPatcher
                 return;
             }
 
-            if (comboFakeCvnSegment.Text == "")
-                return;
 
-            int seg = comboFakeCvnSegment.SelectedIndex;
+            uint cvn;
+            if (basefile.Segments[seg].CVN == 1)
+                cvn = basefile.calculateCS1(seg, false);
+            else
+                cvn = basefile.calculateCS2(seg, false);
+
+            if (CheckStockCVN(basefile.segmentinfos[seg].PN, basefile.segmentinfos[seg].Ver, basefile.segmentinfos[seg].SegNr,cvn.ToString("X"),false,basefile.configFile) == "[stock]")
+            {
+                Logger("[OK]");
+                return;
+            }
             uint maxVal = byte.MaxValue;
-            switch((int)numFakeCvnBytes.Value)
+            switch ((int)numFakeCvnBytes.Value)
             {
                 case 2:
                     maxVal = ushort.MaxValue;
@@ -3316,6 +3348,8 @@ namespace UniversalPatcher
 
             for (uint testVal = 0; testVal < maxVal; testVal++)
             {
+                if (btnFakeCVN.Text == "Go")    //Stop pressed
+                    return;
                 labelFakeCVNTestVal.Text = testVal.ToString("X");
                 if ((int)(testVal % 100) == 0)
                     Application.DoEvents();
@@ -3333,20 +3367,14 @@ namespace UniversalPatcher
                 }
                 uint calcCVN = 0;
 
-                uint CS1Calc = CalculateChecksum(basefile.buf, basefile.segmentAddressDatas[seg].CS1Address, basefile.segmentAddressDatas[seg].CS1Blocks, basefile.segmentAddressDatas[seg].ExcludeBlocks, basefile.Segments[seg].CS1Method, basefile.Segments[seg].CS1Complement, basefile.segmentAddressDatas[seg].CS1Address.Bytes, basefile.Segments[seg].CS1SwapBytes,false);
+                uint CS1Calc = basefile.calculateCS1(seg,false);
                 if (basefile.Segments[seg].CVN == 1)
                     calcCVN = CS1Calc;
                 else
                 {
                     //Fix CS1 first
-                    if (basefile.segmentAddressDatas[seg].CS1Address.Bytes == 1)
-                        basefile.buf[basefile.segmentAddressDatas[seg].CS1Address.Address] = (byte)CS1Calc;
-                    else if (basefile.segmentAddressDatas[seg].CS1Address.Bytes == 2)
-                        SaveUshort(basefile.buf, basefile.segmentAddressDatas[seg].CS1Address.Address, (ushort)CS1Calc);
-                    else if (basefile.segmentAddressDatas[seg].CS1Address.Bytes == 4)
-                        SaveUint32(basefile.buf, basefile.segmentAddressDatas[seg].CS1Address.Address, CS1Calc);
-
-                    calcCVN = CalculateChecksum(basefile.buf, basefile.segmentAddressDatas[seg].CS2Address, basefile.segmentAddressDatas[seg].CS2Blocks, basefile.segmentAddressDatas[seg].ExcludeBlocks, basefile.Segments[seg].CS2Method, basefile.Segments[seg].CS2Complement, basefile.segmentAddressDatas[seg].CS2Address.Bytes, basefile.Segments[seg].CS2SwapBytes,false);
+                    basefile.saveCS1(seg, CS1Calc);
+                    calcCVN = basefile.calculateCS2(seg, false);
                 }
                 if (calcCVN == targetCvn)
                 {
@@ -3357,12 +3385,59 @@ namespace UniversalPatcher
 
             if (found)
             {
-                Logger("CVN fixed");
+                Logger("[fixed]");
             }
             else
             {
-                Logger("Can't fix CVN!");
+                LoggerBold("Can't fix CVN!");
             }
+
+        }
+
+        private void btnFakeCVN_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (btnFakeCVN.Text == "Go")
+                {
+                    btnFakeCVN.Text = "Stop";
+                    LoggerBold(Environment.NewLine + "Searching CVN");
+                    if (radioFakeCvnSingleSegment.Checked)
+                    {
+                        fakeCvn(comboFakeCvnSegment.SelectedIndex);
+                    }
+                    else
+                    {
+                        for (int i=0; i<comboFakeCvnSegment.Items.Count;i++)
+                        {
+                            if (btnFakeCVN.Text == "Go")
+                                break;
+                            getTargetCvn(i);
+                            Application.DoEvents();
+                            if (!basefile.Segments[i].Name.ToLower().Contains("eeprom"))
+                            {
+                                comboFakeCvnSegment.Text = basefile.Segments[i].Name;
+                                Application.DoEvents();
+                                fakeCvn(i);
+                            }
+                        }
+                    }
+                    Logger("Done");
+                    basefile.FixCheckSums();
+                    basefile.GetInfo();
+                    ShowFileInfo(basefile,true);
+                    //GetFileInfo(txtBaseFile.Text, ref basefile, false);
+                }
+                else //stop
+                {
+                    btnFakeCVN.Text = "Go";
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+            btnFakeCVN.Text = "Go";
         }
 
         private void numFakeCvnBytes_ValueChanged(object sender, EventArgs e)
@@ -3370,23 +3445,12 @@ namespace UniversalPatcher
 
         }
 
-        private void comboFakeCvnSegment_SelectedIndexChanged(object sender, EventArgs e)
+        private void getTargetCvn(int seg)
         {
-
-            int seg = comboFakeCvnSegment.SelectedIndex;
-
-            if (radioFakeCVNRelativeAddr.Checked)
-                txtFreeAddress.Text = (basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - (int)numFakeCvnBytesFromEnd.Value).ToString("X");
-            else if (radioFakeCvnUseVer.Checked)
-            {
-                txtFreeAddress.Text = basefile.segmentAddressDatas[seg].VerAddr.Address.ToString("X");
-                numFakeCvnBytes.Value = basefile.segmentAddressDatas[seg].VerAddr.Bytes;
-            }
-
             txtTargetCVN.Text = "";
             for (int c = 0; c < StockCVN.Count; c++)
             {
-                if (StockCVN[c].PN == basefile.segmentinfos[seg].PN && StockCVN[c].Ver == basefile.segmentinfos[seg].Ver && StockCVN[c].SegmentNr == seg.ToString())
+                if (StockCVN[c].PN == basefile.segmentinfos[seg].PN && StockCVN[c].Ver == basefile.segmentinfos[seg].Ver && StockCVN[c].SegmentNr == basefile.segmentinfos[seg].SegNr)
                 {
                     txtTargetCVN.Text = StockCVN[c].cvn;
                     break;
@@ -3402,6 +3466,22 @@ namespace UniversalPatcher
                     }
                 }
             }
+
+        }
+
+        private void comboFakeCvnSegment_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            int seg = comboFakeCvnSegment.SelectedIndex;
+
+            if (radioFakeCVNRelativeAddr.Checked)
+                txtFreeAddress.Text = (basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - (int)numFakeCvnBytesFromEnd.Value).ToString("X");
+            else if (radioFakeCvnUseVer.Checked)
+            {
+                txtFreeAddress.Text = basefile.segmentAddressDatas[seg].VerAddr.Address.ToString("X");
+                numFakeCvnBytes.Value = basefile.segmentAddressDatas[seg].VerAddr.Bytes;
+            }
+            getTargetCvn(seg);
         }
 
         private void radioFakeCVNRelativeAddr_CheckedChanged(object sender, EventArgs e)
@@ -3430,6 +3510,9 @@ namespace UniversalPatcher
             {
                 txtFreeAddress.Enabled = false;
                 numFakeCvnBytes.Enabled = false;
+                txtFreeAddress.Text = basefile.segmentAddressDatas[comboFakeCvnSegment.SelectedIndex].VerAddr.Address.ToString("X");
+                numFakeCvnBytes.Value = basefile.segmentAddressDatas[comboFakeCvnSegment.SelectedIndex].VerAddr.Bytes;
+
             }
             else
             {
@@ -3444,6 +3527,28 @@ namespace UniversalPatcher
                 txtFreeAddress.Enabled = true;
             else
                 txtFreeAddress.Enabled = false;
+        }
+
+        private void txtTargetCVN_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void radioFakeCvnAllSegments_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioFakeCvnAllSegments.Checked)
+            {
+                if (radioFakeCvnAddr.Checked)
+                    radioFakeCVNRelativeAddr.Checked = true;
+                radioFakeCvnAddr.Enabled = false;
+                txtTargetCVN.Enabled = false;
+            }
+            else
+            {
+                radioFakeCvnAddr.Enabled = true;
+                txtTargetCVN.Enabled = true;
+            }
+
         }
     }
 }

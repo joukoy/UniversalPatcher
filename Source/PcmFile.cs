@@ -453,17 +453,49 @@ namespace UniversalPatcher
             }
         }
 
+        public void saveCS1(int seg, uint CS1Calc)
+        {
+            if (segmentAddressDatas[seg].CS1Address.Bytes == 1)
+                buf[segmentAddressDatas[seg].CS1Address.Address] = (byte)CS1Calc;
+            else if (segmentAddressDatas[seg].CS1Address.Bytes == 2)
+                SaveUshort(buf, segmentAddressDatas[seg].CS1Address.Address, (ushort)CS1Calc);
+            else if (segmentAddressDatas[seg].CS1Address.Bytes == 4)
+                SaveUint32(buf, segmentAddressDatas[seg].CS1Address.Address, CS1Calc);
+        }
+
+        public void saveCS2(int seg, uint CS2Calc)
+        {
+            if (segmentAddressDatas[seg].CS2Address.Bytes == 1)
+                buf[segmentAddressDatas[seg].CS2Address.Address] = (byte)CS2Calc;
+            else if (segmentAddressDatas[seg].CS2Address.Bytes == 2)
+                SaveUshort(buf, segmentAddressDatas[seg].CS2Address.Address, (ushort)CS2Calc);
+            else if (segmentAddressDatas[seg].CS2Address.Bytes == 4)
+                SaveUint32(buf, segmentAddressDatas[seg].CS2Address.Address, CS2Calc);
+
+        }
+
+        public uint calculateCS1(int seg, bool dbg = true)
+        {
+            SegmentConfig S = Segments[seg];
+            return CalculateChecksum(buf, segmentAddressDatas[seg].CS1Address, segmentAddressDatas[seg].CS1Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.CS1Method, S.CS1Complement, segmentAddressDatas[seg].CS1Address.Bytes, S.CS1SwapBytes,dbg);
+        }
+
+        public uint calculateCS2(int seg, bool dbg = true)
+        {
+            SegmentConfig S = Segments[seg];
+            return CalculateChecksum(buf, segmentAddressDatas[seg].CS2Address, segmentAddressDatas[seg].CS2Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.CS2Method, S.CS2Complement, segmentAddressDatas[seg].CS2Address.Bytes, S.CS2SwapBytes,dbg);
+        }
         public bool FixCheckSums()
         {
             bool needFix = false;
             try
             {
                 Logger("Fixing Checksums:");
-                for (int i = 0; i < Segments.Count; i++)
+                for (int seg = 0; seg < Segments.Count; seg++)
                 {
-                    if (Segments[i].CS1Blocks.Length == 0)
+                    if (Segments[seg].CS1Blocks.Length == 0)
                         continue;
-                    SegmentConfig S = Segments[i];
+                    SegmentConfig S = Segments[seg];
                     Logger(S.Name);
                     if (S.Eeprom)
                     {
@@ -475,49 +507,39 @@ namespace UniversalPatcher
                         if (S.CS1Method != CSMethod_None)
                         {
                             uint CS1 = 0;
-                            uint CS1Calc = CalculateChecksum(buf, segmentAddressDatas[i].CS1Address, segmentAddressDatas[i].CS1Blocks, segmentAddressDatas[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, segmentAddressDatas[i].CS1Address.Bytes, S.CS1SwapBytes);
-                            if (segmentAddressDatas[i].CS1Address.Address < uint.MaxValue)
+                            uint CS1Calc = calculateCS1(seg);
+                            if (segmentAddressDatas[seg].CS1Address.Address < uint.MaxValue)
                             {
-                                if (segmentAddressDatas[i].CS1Address.Bytes == 1)
+                                if (segmentAddressDatas[seg].CS1Address.Bytes == 1)
                                 {
-                                    CS1 = buf[segmentAddressDatas[i].CS1Address.Address];
+                                    CS1 = buf[segmentAddressDatas[seg].CS1Address.Address];
                                 }
-                                else if (segmentAddressDatas[i].CS1Address.Bytes == 2)
+                                else if (segmentAddressDatas[seg].CS1Address.Bytes == 2)
                                 {
-                                    CS1 = BEToUint16(buf, segmentAddressDatas[i].CS1Address.Address);
+                                    CS1 = BEToUint16(buf, segmentAddressDatas[seg].CS1Address.Address);
                                 }
-                                else if (segmentAddressDatas[i].CS1Address.Bytes == 4)
+                                else if (segmentAddressDatas[seg].CS1Address.Bytes == 4)
                                 {
-                                    CS1 = BEToUint32(buf, segmentAddressDatas[i].CS1Address.Address);
+                                    CS1 = BEToUint32(buf, segmentAddressDatas[seg].CS1Address.Address);
                                 }
                             }
                             if (CS1 == CS1Calc)
                                 Logger(" Checksum 1: " + CS1.ToString("X4") + " [OK]");
                             else
                             {
-                                if (segmentAddressDatas[i].CS1Address.Address == uint.MaxValue)
+                                if (segmentAddressDatas[seg].CS1Address.Address == uint.MaxValue)
                                 {
                                     string hexdigits;
-                                    if (segmentAddressDatas[i].CS1Address.Bytes == 0)
+                                    if (segmentAddressDatas[seg].CS1Address.Bytes == 0)
                                         hexdigits = "X4";
                                     else
-                                        hexdigits = "X" + (segmentAddressDatas[i].CS1Address.Bytes * 2).ToString();
+                                        hexdigits = "X" + (segmentAddressDatas[seg].CS1Address.Bytes * 2).ToString();
                                     Logger("Checksum 1: " + CS1Calc.ToString(hexdigits) + " [Not saved]");
                                 }
                                 else
                                 {
                                     needFix = true;
-                                    if (segmentAddressDatas[i].CS1Address.Bytes == 1)
-                                        buf[segmentAddressDatas[i].CS1Address.Address] = (byte)CS1Calc;
-                                    else if (segmentAddressDatas[i].CS1Address.Bytes == 2)
-                                    {
-                                        SaveUshort(buf, segmentAddressDatas[i].CS1Address.Address, (ushort)CS1Calc);
-                                    }
-                                    else if (segmentAddressDatas[i].CS1Address.Bytes == 4)
-                                    {
-                                        SaveUint32(buf, segmentAddressDatas[i].CS1Address.Address, CS1Calc);
-
-                                    }
+                                    saveCS1(seg, CS1Calc);
                                     Logger(" Checksum 1: " + CS1.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
                                 }
                             }
@@ -526,49 +548,39 @@ namespace UniversalPatcher
                         if (S.CS2Method != CSMethod_None)
                         {
                             uint CS2 = 0;
-                            uint CS2Calc = CalculateChecksum(buf, segmentAddressDatas[i].CS2Address, segmentAddressDatas[i].CS2Blocks, segmentAddressDatas[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, segmentAddressDatas[i].CS2Address.Bytes, S.CS2SwapBytes);
-                            if (segmentAddressDatas[i].CS2Address.Address < uint.MaxValue)
+                            uint CS2Calc = calculateCS2(seg);
+                            if (segmentAddressDatas[seg].CS2Address.Address < uint.MaxValue)
                             {
-                                if (segmentAddressDatas[i].CS2Address.Bytes == 1)
+                                if (segmentAddressDatas[seg].CS2Address.Bytes == 1)
                                 {
-                                    CS2 = buf[segmentAddressDatas[i].CS2Address.Address];
+                                    CS2 = buf[segmentAddressDatas[seg].CS2Address.Address];
                                 }
-                                else if (segmentAddressDatas[i].CS2Address.Bytes == 2)
+                                else if (segmentAddressDatas[seg].CS2Address.Bytes == 2)
                                 {
-                                    CS2 = BEToUint16(buf, segmentAddressDatas[i].CS2Address.Address);
+                                    CS2 = BEToUint16(buf, segmentAddressDatas[seg].CS2Address.Address);
                                 }
-                                else if (segmentAddressDatas[i].CS2Address.Bytes == 4)
+                                else if (segmentAddressDatas[seg].CS2Address.Bytes == 4)
                                 {
-                                    CS2 = BEToUint32(buf, segmentAddressDatas[i].CS2Address.Address);
+                                    CS2 = BEToUint32(buf, segmentAddressDatas[seg].CS2Address.Address);
                                 }
                             }
                             if (CS2 == CS2Calc)
                                 Logger(" Checksum 2: " + CS2.ToString("X4") + " [OK]");
                             else
                             {
-                                if (segmentAddressDatas[i].CS2Address.Address == uint.MaxValue)
+                                if (segmentAddressDatas[seg].CS2Address.Address == uint.MaxValue)
                                 {
                                     string hexdigits;
-                                    if (segmentAddressDatas[i].CS1Address.Bytes == 0)
+                                    if (segmentAddressDatas[seg].CS1Address.Bytes == 0)
                                         hexdigits = "X4";
                                     else
-                                        hexdigits = "X" + (segmentAddressDatas[i].CS2Address.Bytes * 2).ToString();
+                                        hexdigits = "X" + (segmentAddressDatas[seg].CS2Address.Bytes * 2).ToString();
                                     Logger(" Checksum 2: " + CS2Calc.ToString("X4") + " [Not saved]");
                                 }
                                 else
                                 {
                                     needFix = true;
-                                    if (segmentAddressDatas[i].CS2Address.Bytes == 1)
-                                        buf[segmentAddressDatas[i].CS2Address.Address] = (byte)CS2Calc;
-                                    else if (segmentAddressDatas[i].CS2Address.Bytes == 2)
-                                    {
-                                        SaveUshort(buf, segmentAddressDatas[i].CS2Address.Address, (ushort)CS2Calc);
-                                    }
-                                    else if (segmentAddressDatas[i].CS2Address.Bytes == 4)
-                                    {
-                                        SaveUint32(buf, segmentAddressDatas[i].CS2Address.Address, CS2Calc);
-
-                                    }
+                                    saveCS2(seg, CS2Calc);
                                     Logger(" Checksum 2: " + CS2.ToString("X") + " => " + CS2Calc.ToString("X4") + " [Fixed]");
                                 }
                             }
@@ -745,7 +757,7 @@ namespace UniversalPatcher
                         { 
                             HexLength = "X" + (segmentAddressDatas[i].CS1Address.Bytes * 2).ToString();
                         }
-                        uint CS1Calc = CalculateChecksum(buf, segmentAddressDatas[i].CS1Address, segmentAddressDatas[i].CS1Blocks, segmentAddressDatas[i].ExcludeBlocks, S.CS1Method, S.CS1Complement, segmentAddressDatas[i].CS1Address.Bytes, S.CS1SwapBytes);
+                        uint CS1Calc = calculateCS1(i);
                         segmentinfos[i].CS1Calc = CS1Calc.ToString(HexLength);
                         if (S.CVN == 1)
                         {
@@ -787,7 +799,7 @@ namespace UniversalPatcher
                         {
                             HexLength = "X" + (segmentAddressDatas[i].CS2Address.Bytes * 2).ToString();
                         }
-                        uint CS2Calc = CalculateChecksum(buf, segmentAddressDatas[i].CS2Address, segmentAddressDatas[i].CS2Blocks, segmentAddressDatas[i].ExcludeBlocks, S.CS2Method, S.CS2Complement, segmentAddressDatas[i].CS2Address.Bytes, S.CS2SwapBytes);
+                        uint CS2Calc = calculateCS2(i);
                         segmentinfos[i].CS2Calc = CS2Calc.ToString(HexLength);
                         if (S.CVN == 2)
                         {

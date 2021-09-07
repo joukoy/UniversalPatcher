@@ -1536,42 +1536,39 @@ public class upatcher
                 Offset += BlockSize;
             }
 
-            if (Method == CSMethod_Bytesum)
+            switch (Method)
             {
+                case CSMethod_Bytesum:
                 for (uint i = 0; i < tmp.Length; i++)
                 {
                     sum += tmp[i];
                 }
-            }
+                break;
 
-            if (Method == CSMethod_Wordsum)
-            {
+                case CSMethod_Wordsum:
                 for (uint i = 0; i < tmp.Length - 1; i += 2)
                 {
                     sum += BEToUint16(tmp, i);
                 }
-            }
+                    break;
 
-            if (Method == CSMethod_Dwordsum)
-            {
+                case CSMethod_Dwordsum:
                 for (uint i = 0; i < tmp.Length - 3; i += 4)
                 {
                     sum += BEToUint32(tmp, i);
                 }
-            }
+                    break;
 
-            if (Method == CSMethod_crc16)
-            {
+                case CSMethod_crc16:
                 Crc16 C16 = new Crc16();
                 sum = C16.ComputeChecksum(tmp);
-            }
+                    break;
 
-            if (Method == CSMethod_crc32)
-            {
+                case CSMethod_crc32:
                 Crc32 C32 = new Crc32();
                 sum = C32.ComputeChecksum(tmp);
+                    break;
             }
-
 
             if (Complement == 1)
             {
