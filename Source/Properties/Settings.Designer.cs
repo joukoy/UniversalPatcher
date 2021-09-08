@@ -896,5 +896,17 @@ namespace UniversalPatcher.Properties {
                 this["WorkingMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CvnPopupAccepted {
+            get {
+                return ((bool)(this["CvnPopupAccepted"]));
+            }
+            set {
+                this["CvnPopupAccepted"] = value;
+            }
+        }
     }
 }

@@ -206,7 +206,7 @@
             this.radioCSUtilSUM = new System.Windows.Forms.RadioButton();
             this.radioCSUtilCrc32 = new System.Windows.Forms.RadioButton();
             this.radioCSUtilCrc16 = new System.Windows.Forms.RadioButton();
-            this.tabCvnFake = new System.Windows.Forms.TabPage();
+            this.tabFakeCvn = new System.Windows.Forms.TabPage();
             this.btnFakeCvnAddtoStock = new System.Windows.Forms.Button();
             this.btnOpenBrowser = new System.Windows.Forms.Button();
             this.labelFakeCvnPn = new System.Windows.Forms.Label();
@@ -293,7 +293,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numCSBytes)).BeginInit();
             this.groupBox5.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.tabCvnFake.SuspendLayout();
+            this.tabFakeCvn.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numFakeCvnBytesFromEnd)).BeginInit();
@@ -1552,7 +1552,7 @@
             this.tabFunction.Controls.Add(this.tabExtract);
             this.tabFunction.Controls.Add(this.tabExtractSegments);
             this.tabFunction.Controls.Add(this.tabChecksumUtil);
-            this.tabFunction.Controls.Add(this.tabCvnFake);
+            this.tabFunction.Controls.Add(this.tabFakeCvn);
             this.tabFunction.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabFunction.Location = new System.Drawing.Point(0, 0);
             this.tabFunction.Name = "tabFunction";
@@ -2306,23 +2306,23 @@
             this.radioCSUtilCrc16.Text = "CRC16";
             this.radioCSUtilCrc16.UseVisualStyleBackColor = true;
             // 
-            // tabCvnFake
+            // tabFakeCvn
             // 
-            this.tabCvnFake.Controls.Add(this.btnFakeCvnAddtoStock);
-            this.tabCvnFake.Controls.Add(this.btnOpenBrowser);
-            this.tabCvnFake.Controls.Add(this.labelFakeCvnPn);
-            this.tabCvnFake.Controls.Add(this.groupBox4);
-            this.tabCvnFake.Controls.Add(this.groupBox3);
-            this.tabCvnFake.Controls.Add(this.labelFakeCVNTestVal);
-            this.tabCvnFake.Controls.Add(this.btnFakeCVN);
-            this.tabCvnFake.Controls.Add(this.txtTargetCVN);
-            this.tabCvnFake.Controls.Add(this.label3);
-            this.tabCvnFake.Location = new System.Drawing.Point(4, 22);
-            this.tabCvnFake.Name = "tabCvnFake";
-            this.tabCvnFake.Size = new System.Drawing.Size(836, 118);
-            this.tabCvnFake.TabIndex = 6;
-            this.tabCvnFake.Text = "CVN Research";
-            this.tabCvnFake.UseVisualStyleBackColor = true;
+            this.tabFakeCvn.Controls.Add(this.btnFakeCvnAddtoStock);
+            this.tabFakeCvn.Controls.Add(this.btnOpenBrowser);
+            this.tabFakeCvn.Controls.Add(this.labelFakeCvnPn);
+            this.tabFakeCvn.Controls.Add(this.groupBox4);
+            this.tabFakeCvn.Controls.Add(this.groupBox3);
+            this.tabFakeCvn.Controls.Add(this.labelFakeCVNTestVal);
+            this.tabFakeCvn.Controls.Add(this.btnFakeCVN);
+            this.tabFakeCvn.Controls.Add(this.txtTargetCVN);
+            this.tabFakeCvn.Controls.Add(this.label3);
+            this.tabFakeCvn.Location = new System.Drawing.Point(4, 22);
+            this.tabFakeCvn.Name = "tabFakeCvn";
+            this.tabFakeCvn.Size = new System.Drawing.Size(836, 118);
+            this.tabFakeCvn.TabIndex = 6;
+            this.tabFakeCvn.Text = "CVN Research";
+            this.tabFakeCvn.UseVisualStyleBackColor = true;
             // 
             // btnFakeCvnAddtoStock
             // 
@@ -2847,8 +2847,8 @@
             this.groupBox5.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.tabCvnFake.ResumeLayout(false);
-            this.tabCvnFake.PerformLayout();
+            this.tabFakeCvn.ResumeLayout(false);
+            this.tabFakeCvn.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -3071,7 +3071,7 @@
         private System.Windows.Forms.ToolStripMenuItem touristToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem basicToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem advancedToolStripMenuItem;
-        private System.Windows.Forms.TabPage tabCvnFake;
+        private System.Windows.Forms.TabPage tabFakeCvn;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.NumericUpDown numFakeCvnBytes;
         private System.Windows.Forms.Button btnFakeCVN;

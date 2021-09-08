@@ -143,6 +143,30 @@ namespace UniversalPatcher
 
             setWorkingMode();
             dataCVN.ColumnHeaderMouseClick += DataCVN_ColumnHeaderMouseClick;
+            tabFakeCvn.Enter += TabFakeCvn_Enter;
+        }
+
+        private void TabFakeCvn_Enter(object sender, EventArgs e)
+        {
+            if (!Properties.Settings.Default.CvnPopupAccepted)
+            {
+                string msg = "Avoiding emission checks can be illegal at some areas." + Environment.NewLine;
+                msg += "Use for educational and research purposes only, solely at your own risk." + Environment.NewLine;
+                msg += "By accepting this disclaimer you agree to take full reponsibility for" + Environment.NewLine;
+                msg += "any damage or legal actions that can result by using this program" + Environment.NewLine;
+                msg += "outside of its educational purpose." + Environment.NewLine + Environment.NewLine;
+                msg += "Do you agree?";
+                DialogResult dialogResult = MessageBox.Show(msg, "Disclaimer", MessageBoxButtons.YesNo);
+                if  (dialogResult == DialogResult.No)
+                {
+                    tabFunction.TabPages.Remove(tabFakeCvn);
+                }
+                else
+                {
+                    Properties.Settings.Default.CvnPopupAccepted = true;
+                    Properties.Settings.Default.Save();
+                }
+            }
         }
 
         private void DataCVN_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -266,12 +290,12 @@ namespace UniversalPatcher
                     string[] args = Environment.GetCommandLineArgs();
                     if (args.Length > 3 && args[3].Contains("fakecvn"))
                     {
-                        if (!tabFunction.TabPages.Contains(tabCvnFake))
-                            tabFunction.TabPages.Add(tabCvnFake);
+                        if (!tabFunction.TabPages.Contains(tabFakeCvn))
+                            tabFunction.TabPages.Add(tabFakeCvn);
                     }
                     else
                     {
-                        tabFunction.TabPages.Remove(tabCvnFake);
+                        tabFunction.TabPages.Remove(tabFakeCvn);
                     }
 
 
@@ -319,7 +343,7 @@ namespace UniversalPatcher
                     tabFunction.TabPages.Remove(tabExtractSegments);
                     tabFunction.TabPages.Remove(tabChecksumUtil);
 
-                    tabFunction.TabPages.Remove(tabCvnFake);
+                    tabFunction.TabPages.Remove(tabFakeCvn);
 
 
                     tabControl1.TabPages.Remove(tabDebug);
@@ -762,9 +786,7 @@ namespace UniversalPatcher
                     GetFileInfo(txtBaseFile.Text, ref basefile, false);
                     this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
                     txtOS.Text = basefile.OS;
-                    comboFakeCvnSegment.Items.Clear();
-                    for (int s = 0; s < basefile.Segments.Count; s++)
-                        comboFakeCvnSegment.Items.Add(basefile.Segments[s].Name);
+                    clearFakeCVN();
                 }
                 timer.Stop();
                 Debug.WriteLine("Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
@@ -3650,13 +3672,25 @@ namespace UniversalPatcher
 
         }
 
+        private void clearFakeCVN()
+        {
+            comboFakeCvnSegment.Items.Clear();
+            comboFakeCvnSegment.Text = "";
+            for (int s = 0; s < basefile.Segments.Count; s++)
+                comboFakeCvnSegment.Items.Add(basefile.Segments[s].Name);
+            txtTargetCVN.Text = "";
+            txtFreeAddress.Text = "";
+            numFakeCvnBytes.Value = 4;
+            radioFakeCVNRelativeAddr.Checked = true;
+            radioFakeCvnSingleSegment.Checked = true;
+        }
         private void btnOpenBrowser_Click(object sender, EventArgs e)
         {
             try
             {
                 string url = "http://tis2web.service.gm.com/";
                 Clipboard.SetText(labelFakeCvnPn.Text.Replace("P/N: ", ""));
-                Logger("Added P/N: " + labelFakeCvnPn.Text.Replace("P/N: ", "") + " to clipboard");
+                Logger("Added " + labelFakeCvnPn.Text + " to clipboard");
                 System.Diagnostics.Process.Start(url);
             }
             catch (Exception ex)
@@ -3674,7 +3708,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (comboFakeCvnSegment.Text.Length == 0)
+                if (comboFakeCvnSegment.Text.Length == 0 || txtTargetCVN.Text.Length == 0)
                     return;
                 int seg = comboFakeCvnSegment.SelectedIndex;
                 CVN stock = new CVN();
@@ -3682,7 +3716,7 @@ namespace UniversalPatcher
                 stock.PN = basefile.segmentinfos[seg].PN;
                 stock.SegmentNr = basefile.segmentinfos[seg].SegNr;
                 stock.Ver = basefile.segmentinfos[seg].Ver;
-                stock.XmlFile = basefile.configFile;
+                stock.XmlFile = basefile.configFile + ".xml";
 
                 if (CheckStockCVN(stock.PN, stock.Ver, stock.SegmentNr, stock.cvn, false, basefile.configFileFullName) != "[stock]")
                 {
