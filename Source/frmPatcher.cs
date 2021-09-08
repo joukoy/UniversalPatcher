@@ -3401,6 +3401,8 @@ namespace UniversalPatcher
             }
 
             bool found = false;
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
 
             for (uint testVal = 0; testVal < maxVal; testVal++)
             {
@@ -3441,10 +3443,12 @@ namespace UniversalPatcher
                     break;
                 }
             }
+            timer.Stop();
 
             if (found)
             {
-                Logger("[fixed]");
+                Logger("[fixed]", false);
+                Logger(" (" + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'") + ")");
             }
             else
             {
@@ -3479,6 +3483,7 @@ namespace UniversalPatcher
                                 comboFakeCvnSegment.Text = basefile.Segments[i].Name;
                                 Application.DoEvents();
                                 fakeCvn(i);
+
                             }
                         }
                     }
