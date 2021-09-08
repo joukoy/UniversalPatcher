@@ -3407,7 +3407,10 @@ namespace UniversalPatcher
             for (uint testVal = 0; testVal < maxVal; testVal++)
             {
                 if (btnFakeCVN.Text == "Go")    //Stop pressed
+                {
+                    SaveUint32(basefile.buf, freeAddr, orgValue); //Restore original data
                     return;
+                }
                 labelFakeCVNTestVal.Text = testVal.ToString("X");
                 if ((int)(testVal % 100) == 0)
                     Application.DoEvents();
@@ -3513,6 +3516,7 @@ namespace UniversalPatcher
         private void getTargetCvn(int seg)
         {
             txtTargetCVN.Text = "";
+            labelFakeCvnPn.Text = "P/N: " + basefile.segmentinfos[seg].PN;
             for (int c = 0; c < StockCVN.Count; c++)
             {
                 if (StockCVN[c].PN == basefile.segmentinfos[seg].PN && StockCVN[c].Ver == basefile.segmentinfos[seg].Ver && StockCVN[c].SegmentNr == basefile.segmentinfos[seg].SegNr)
@@ -3643,6 +3647,17 @@ namespace UniversalPatcher
                 radioFakeCvnAddr.Enabled = true;
                 txtTargetCVN.Enabled = true;
             }
+
+        }
+
+        private void btnOpenBrowser_Click(object sender, EventArgs e)
+        {
+            string url = "http://tis2web.service.gm.com/";
+            System.Diagnostics.Process.Start(url);
+        }
+
+        private void radioFakeCvnSingleSegment_CheckedChanged(object sender, EventArgs e)
+        {
 
         }
     }
