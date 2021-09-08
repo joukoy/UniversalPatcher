@@ -321,8 +321,9 @@ namespace UniversalPatcher
                     this.Size = Properties.Settings.Default.EditXMLWindowSize;
                 }
             }
-
+            dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
         }
+
         private void frmEditXML_FormClosing(object sender, EventArgs e)
         {
             if (Properties.Settings.Default.MainWindowPersistence)

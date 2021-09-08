@@ -59,6 +59,10 @@ namespace UniversalPatcher
         private string logFile;
         StreamWriter logwriter;
 
+        private string cvnSortBy = "";
+        private int cvnSortIndex = 0;
+        SortOrder cvnStrSortOrder = SortOrder.Ascending;
+
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
             basefile = new PcmFile();
@@ -138,7 +142,54 @@ namespace UniversalPatcher
             listCSAddresses.Columns.Add("3d tables");
 
             setWorkingMode();
+            dataCVN.ColumnHeaderMouseClick += DataCVN_ColumnHeaderMouseClick;
+        }
 
+        private void DataCVN_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                cvnSortBy = dataCVN.Columns[e.ColumnIndex].Name;
+                cvnSortIndex = e.ColumnIndex;
+                cvnStrSortOrder = getSortOrder(cvnSortIndex);
+                filterCVN();
+            }
+
+        }
+
+        private void filterCVN()
+        {
+            List<CVN> compareList = new List<CVN>();
+            if (cvnStrSortOrder == SortOrder.Ascending)
+                compareList = ListCVN.OrderBy(x => typeof(CVN).GetProperty(cvnSortBy).GetValue(x, null)).ToList();
+            else
+                compareList = ListCVN.OrderByDescending(x => typeof(CVN).GetProperty(cvnSortBy).GetValue(x, null)).ToList();
+            CvnSource.DataSource = compareList;
+            dataCVN.Columns[cvnSortIndex].HeaderCell.SortGlyphDirection = cvnStrSortOrder;
+            //RefreshCVNlist();
+        }
+
+        private SortOrder getSortOrder(int columnIndex)
+        {
+            try
+            {
+                if (dataCVN.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.Descending
+                    || dataCVN.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.None)
+                {
+                    dataCVN.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
+                    return SortOrder.Ascending;
+                }
+                else
+                {
+                    dataCVN.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Descending;
+                    return SortOrder.Descending;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return SortOrder.Ascending;
         }
 
         private void setWorkingMode()
@@ -341,12 +392,13 @@ namespace UniversalPatcher
             else
                 tabTableSeek.Text = "Table Seek (" + basefile.foundTables.Count.ToString() + ")";
             dataGridTableSeek.DataSource = tableSeekBindingSource;
-            dataGridTableSeek.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+            //dataGridTableSeek.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             comboTableCategory.DataSource = null;
             categoryBindingSource.DataSource = null;
             basefile.tableCategories.Sort();
             categoryBindingSource.DataSource = basefile.tableCategories;
             comboTableCategory.DataSource = categoryBindingSource;
+            dataGridTableSeek.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
         }
 
         private void FrmPatcher_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -3321,6 +3373,7 @@ namespace UniversalPatcher
                 return;
             }
 
+            uint orgValue = BEToUint32(basefile.buf, freeAddr);
 
             uint cvn;
             if (basefile.Segments[seg].CVN == 1)
@@ -3338,6 +3391,9 @@ namespace UniversalPatcher
             {
                 case 2:
                     maxVal = ushort.MaxValue;
+                    break;
+                case 3:
+                    maxVal = 0xFFFFFF;
                     break;
                 case 4:
                     maxVal = uint.MaxValue;
@@ -3357,6 +3413,9 @@ namespace UniversalPatcher
                 {
                     case 2:
                         SaveUshort(basefile.buf, freeAddr, (ushort)testVal);
+                        break;
+                    case 3:
+                        Save3Bytes(basefile.buf, freeAddr, testVal);
                         break;
                     case 4:
                         SaveUint32(basefile.buf, freeAddr, testVal);
@@ -3390,6 +3449,7 @@ namespace UniversalPatcher
             else
             {
                 LoggerBold("Can't fix CVN!");
+                SaveUint32(basefile.buf,freeAddr, orgValue); //Restore original data
             }
 
         }
@@ -3471,53 +3531,83 @@ namespace UniversalPatcher
 
         private void comboFakeCvnSegment_SelectedIndexChanged(object sender, EventArgs e)
         {
-
-            int seg = comboFakeCvnSegment.SelectedIndex;
-
-            if (radioFakeCVNRelativeAddr.Checked)
-                txtFreeAddress.Text = (basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - (int)numFakeCvnBytesFromEnd.Value).ToString("X");
-            else if (radioFakeCvnUseVer.Checked)
+            try
             {
-                txtFreeAddress.Text = basefile.segmentAddressDatas[seg].VerAddr.Address.ToString("X");
-                numFakeCvnBytes.Value = basefile.segmentAddressDatas[seg].VerAddr.Bytes;
+                int seg = comboFakeCvnSegment.SelectedIndex;
+
+                if (radioFakeCVNRelativeAddr.Checked)
+                    txtFreeAddress.Text = (basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - (int)numFakeCvnBytesFromEnd.Value).ToString("X");
+                else if (radioFakeCvnUseVer.Checked)
+                {
+                    txtFreeAddress.Text = basefile.segmentAddressDatas[seg].VerAddr.Address.ToString("X");
+                    numFakeCvnBytes.Value = basefile.segmentAddressDatas[seg].VerAddr.Bytes;
+                }
+                getTargetCvn(seg);
             }
-            getTargetCvn(seg);
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void radioFakeCVNRelativeAddr_CheckedChanged(object sender, EventArgs e)
         {
-            if (comboFakeCvnSegment.Text == "")
-                return;
-            int seg = comboFakeCvnSegment.SelectedIndex;
-            txtFreeAddress.Text = (basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - (int)numFakeCvnBytesFromEnd.Value).ToString("X");
-            if (radioFakeCVNRelativeAddr.Checked)
-                numFakeCvnBytesFromEnd.Enabled = true;
-            else
-                numFakeCvnBytesFromEnd.Enabled = false;
+            try
+            {
+                if (comboFakeCvnSegment.Text == "")
+                    return;
+                int seg = comboFakeCvnSegment.SelectedIndex;
+                txtFreeAddress.Text = (basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - (int)numFakeCvnBytesFromEnd.Value).ToString("X");
+                if (radioFakeCVNRelativeAddr.Checked)
+                    numFakeCvnBytesFromEnd.Enabled = true;
+                else
+                    numFakeCvnBytesFromEnd.Enabled = false;
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+
         }
 
         private void numFakeCvnBytesFromEnd_ValueChanged(object sender, EventArgs e)
         {
-            if (comboFakeCvnSegment.Text == "" || !radioFakeCVNRelativeAddr.Checked)
-                return;
-            int seg = comboFakeCvnSegment.SelectedIndex;
-            txtFreeAddress.Text = (basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - (int)numFakeCvnBytesFromEnd.Value).ToString("X");
+            try
+            {
+                if (comboFakeCvnSegment.Text == "" || !radioFakeCVNRelativeAddr.Checked)
+                    return;
+                int seg = comboFakeCvnSegment.SelectedIndex;
+                txtFreeAddress.Text = (basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - (int)numFakeCvnBytesFromEnd.Value).ToString("X");
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void radioFakeCvnUseVer_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioFakeCvnUseVer.Checked)
+            try
             {
-                txtFreeAddress.Enabled = false;
-                numFakeCvnBytes.Enabled = false;
-                txtFreeAddress.Text = basefile.segmentAddressDatas[comboFakeCvnSegment.SelectedIndex].VerAddr.Address.ToString("X");
-                numFakeCvnBytes.Value = basefile.segmentAddressDatas[comboFakeCvnSegment.SelectedIndex].VerAddr.Bytes;
-
+                if (radioFakeCvnUseVer.Checked)
+                {
+                    txtFreeAddress.Enabled = false;
+                    numFakeCvnBytes.Enabled = false;
+                    if (comboFakeCvnSegment.Text.Length > 1)
+                    {
+                        txtFreeAddress.Text = basefile.segmentAddressDatas[comboFakeCvnSegment.SelectedIndex].VerAddr.Address.ToString("X");
+                        numFakeCvnBytes.Value = basefile.segmentAddressDatas[comboFakeCvnSegment.SelectedIndex].VerAddr.Bytes;
+                    }
+                }
+                else
+                {
+                    txtFreeAddress.Enabled = true;
+                    numFakeCvnBytes.Enabled = true;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                txtFreeAddress.Enabled = true;
-                numFakeCvnBytes.Enabled = true;
+                LoggerBold(ex.Message);
             }
         }
 

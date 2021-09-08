@@ -607,7 +607,7 @@
             this.txtDebug.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtDebug.Location = new System.Drawing.Point(2, 24);
             this.txtDebug.Name = "txtDebug";
-            this.txtDebug.Size = new System.Drawing.Size(853, 340);
+            this.txtDebug.Size = new System.Drawing.Size(835, 309);
             this.txtDebug.TabIndex = 212;
             this.txtDebug.Text = "";
             // 
@@ -905,9 +905,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataCVN.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataCVN.Location = new System.Drawing.Point(1, 33);
+            this.dataCVN.Location = new System.Drawing.Point(0, 33);
             this.dataCVN.Name = "dataCVN";
-            this.dataCVN.Size = new System.Drawing.Size(851, 327);
+            this.dataCVN.Size = new System.Drawing.Size(836, 299);
             this.dataCVN.TabIndex = 0;
             // 
             // tabBadCvn
@@ -950,7 +950,7 @@
             this.dataGridBadCvn.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridBadCvn.Location = new System.Drawing.Point(0, 34);
             this.dataGridBadCvn.Name = "dataGridBadCvn";
-            this.dataGridBadCvn.Size = new System.Drawing.Size(859, 327);
+            this.dataGridBadCvn.Size = new System.Drawing.Size(837, 298);
             this.dataGridBadCvn.TabIndex = 1;
             // 
             // tabFinfo
@@ -1031,7 +1031,7 @@
             this.dataFileInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataFileInfo.Location = new System.Drawing.Point(1, 31);
             this.dataFileInfo.Name = "dataFileInfo";
-            this.dataFileInfo.Size = new System.Drawing.Size(854, 329);
+            this.dataFileInfo.Size = new System.Drawing.Size(832, 298);
             this.dataFileInfo.TabIndex = 0;
             this.dataFileInfo.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataFileInfo_CellContentDoubleClick);
             // 
@@ -1086,7 +1086,7 @@
             this.listCSAddresses.HideSelection = false;
             this.listCSAddresses.Location = new System.Drawing.Point(2, 31);
             this.listCSAddresses.Name = "listCSAddresses";
-            this.listCSAddresses.Size = new System.Drawing.Size(854, 333);
+            this.listCSAddresses.Size = new System.Drawing.Size(834, 301);
             this.listCSAddresses.TabIndex = 0;
             this.listCSAddresses.UseCompatibleStateImageBehavior = false;
             // 
@@ -1165,7 +1165,7 @@
             this.dataBadChkFile.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataBadChkFile.Location = new System.Drawing.Point(-1, 30);
             this.dataBadChkFile.Name = "dataBadChkFile";
-            this.dataBadChkFile.Size = new System.Drawing.Size(857, 329);
+            this.dataBadChkFile.Size = new System.Drawing.Size(837, 303);
             this.dataBadChkFile.TabIndex = 6;
             this.dataBadChkFile.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataBadChkFile_CellContentDoubleClick);
             // 
@@ -1232,7 +1232,7 @@
             this.dataGridSearchedTables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridSearchedTables.Location = new System.Drawing.Point(1, 35);
             this.dataGridSearchedTables.Name = "dataGridSearchedTables";
-            this.dataGridSearchedTables.Size = new System.Drawing.Size(855, 325);
+            this.dataGridSearchedTables.Size = new System.Drawing.Size(835, 298);
             this.dataGridSearchedTables.TabIndex = 0;
             this.dataGridSearchedTables.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridSearchedTables_CellContentDoubleClick);
             // 
@@ -1276,7 +1276,7 @@
             this.dataGridPIDlist.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridPIDlist.Location = new System.Drawing.Point(1, 33);
             this.dataGridPIDlist.Name = "dataGridPIDlist";
-            this.dataGridPIDlist.Size = new System.Drawing.Size(854, 327);
+            this.dataGridPIDlist.Size = new System.Drawing.Size(835, 299);
             this.dataGridPIDlist.TabIndex = 0;
             // 
             // tabDTC
@@ -1345,7 +1345,7 @@
             this.dataGridDTC.Location = new System.Drawing.Point(1, 32);
             this.dataGridDTC.MultiSelect = false;
             this.dataGridDTC.Name = "dataGridDTC";
-            this.dataGridDTC.Size = new System.Drawing.Size(851, 327);
+            this.dataGridDTC.Size = new System.Drawing.Size(835, 300);
             this.dataGridDTC.TabIndex = 5;
             this.dataGridDTC.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridDTC_CellContentDoubleClick);
             // 
@@ -1434,7 +1434,7 @@
             this.dataGridTableSeek.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridTableSeek.Location = new System.Drawing.Point(-2, 32);
             this.dataGridTableSeek.Name = "dataGridTableSeek";
-            this.dataGridTableSeek.Size = new System.Drawing.Size(854, 329);
+            this.dataGridTableSeek.Size = new System.Drawing.Size(838, 300);
             this.dataGridTableSeek.TabIndex = 1;
             this.dataGridTableSeek.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridTableSeek_CellContentDoubleClick);
             // 
@@ -2325,7 +2325,7 @@
             this.groupBox4.Controls.Add(this.comboFakeCvnSegment);
             this.groupBox4.Location = new System.Drawing.Point(13, 3);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(242, 63);
+            this.groupBox4.Size = new System.Drawing.Size(242, 57);
             this.groupBox4.TabIndex = 11;
             this.groupBox4.TabStop = false;
             // 
@@ -2355,7 +2355,7 @@
             // comboFakeCvnSegment
             // 
             this.comboFakeCvnSegment.FormattingEnabled = true;
-            this.comboFakeCvnSegment.Location = new System.Drawing.Point(121, 12);
+            this.comboFakeCvnSegment.Location = new System.Drawing.Point(115, 12);
             this.comboFakeCvnSegment.Name = "comboFakeCvnSegment";
             this.comboFakeCvnSegment.Size = new System.Drawing.Size(121, 21);
             this.comboFakeCvnSegment.TabIndex = 8;
@@ -2490,7 +2490,7 @@
             // 
             // txtTargetCVN
             // 
-            this.txtTargetCVN.Location = new System.Drawing.Point(135, 66);
+            this.txtTargetCVN.Location = new System.Drawing.Point(128, 66);
             this.txtTargetCVN.Name = "txtTargetCVN";
             this.txtTargetCVN.Size = new System.Drawing.Size(121, 20);
             this.txtTargetCVN.TabIndex = 3;

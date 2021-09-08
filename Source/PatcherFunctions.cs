@@ -1539,34 +1539,34 @@ public class upatcher
             switch (Method)
             {
                 case CSMethod_Bytesum:
-                for (uint i = 0; i < tmp.Length; i++)
-                {
-                    sum += tmp[i];
-                }
-                break;
+                    for (uint i = 0; i < tmp.Length; i++)
+                    {
+                        sum += tmp[i];
+                    }
+                    break;
 
                 case CSMethod_Wordsum:
-                for (uint i = 0; i < tmp.Length - 1; i += 2)
-                {
-                    sum += BEToUint16(tmp, i);
-                }
+                    for (uint i = 0; i < tmp.Length - 1; i += 2)
+                    {
+                        sum += BEToUint16(tmp, i);
+                    }
                     break;
 
                 case CSMethod_Dwordsum:
-                for (uint i = 0; i < tmp.Length - 3; i += 4)
-                {
-                    sum += BEToUint32(tmp, i);
-                }
+                    for (uint i = 0; i < tmp.Length - 3; i += 4)
+                    {
+                        sum += BEToUint32(tmp, i);
+                    }
                     break;
 
                 case CSMethod_crc16:
-                Crc16 C16 = new Crc16();
-                sum = C16.ComputeChecksum(tmp);
+                    Crc16 C16 = new Crc16();
+                    sum = C16.ComputeChecksum(tmp);
                     break;
 
                 case CSMethod_crc32:
-                Crc32 C32 = new Crc32();
-                sum = C32.ComputeChecksum(tmp);
+                    Crc32 C32 = new Crc32();
+                    sum = C32.ComputeChecksum(tmp);
                     break;
             }
 
@@ -2389,6 +2389,15 @@ public class upatcher
         Array.Reverse(tmp);
         Array.Copy(tmp, 0, buf, offset, 4);
     }
+
+    public static void Save3Bytes(byte[] buf, uint offset, UInt32 data)
+    {
+        buf[offset] = (byte)(data & 0xff);
+        buf[offset + 1] = (byte)((data >> 8 ) & 0xff);
+        buf[offset + 2] = (byte)((data >> 16 ) & 0xff);
+    }
+
+
     public static void SaveUshort(byte[] buf, uint offset, ushort data)
     {
         byte[] tmp = new byte[2];
