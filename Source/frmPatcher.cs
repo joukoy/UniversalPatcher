@@ -3652,12 +3652,61 @@ namespace UniversalPatcher
 
         private void btnOpenBrowser_Click(object sender, EventArgs e)
         {
-            string url = "http://tis2web.service.gm.com/";
-            System.Diagnostics.Process.Start(url);
+            try
+            {
+                string url = "http://tis2web.service.gm.com/";
+                Clipboard.SetText(labelFakeCvnPn.Text.Replace("P/N: ", ""));
+                Logger("Added P/N: " + labelFakeCvnPn.Text.Replace("P/N: ", "") + " to clipboard");
+                System.Diagnostics.Process.Start(url);
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void radioFakeCvnSingleSegment_CheckedChanged(object sender, EventArgs e)
         {
+
+        }
+
+        private void btnFakeCvnAddtoStock_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (comboFakeCvnSegment.Text.Length == 0)
+                    return;
+                int seg = comboFakeCvnSegment.SelectedIndex;
+                CVN stock = new CVN();
+                stock.cvn = txtTargetCVN.Text;
+                stock.PN = basefile.segmentinfos[seg].PN;
+                stock.SegmentNr = basefile.segmentinfos[seg].SegNr;
+                stock.Ver = basefile.segmentinfos[seg].Ver;
+                stock.XmlFile = basefile.configFile;
+
+                if (CheckStockCVN(stock.PN, stock.Ver, stock.SegmentNr, stock.cvn, false, basefile.configFileFullName) != "[stock]")
+                {
+                    //Add if not already in list
+                    StockCVN.Add(stock);
+                    Logger("Saving file stockcvn.xml");
+                    string FileName = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
+                    using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                    {
+                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<CVN>));
+                        writer.Serialize(stream, StockCVN);
+                        stream.Close();
+                    }
+                    Logger("[OK]");
+                }
+                else
+                {
+                    Logger("Already in list: " + stock.cvn);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger(ex.Message);
+            }
 
         }
     }

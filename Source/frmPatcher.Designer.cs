@@ -207,6 +207,7 @@
             this.radioCSUtilCrc32 = new System.Windows.Forms.RadioButton();
             this.radioCSUtilCrc16 = new System.Windows.Forms.RadioButton();
             this.tabCvnFake = new System.Windows.Forms.TabPage();
+            this.btnFakeCvnAddtoStock = new System.Windows.Forms.Button();
             this.btnOpenBrowser = new System.Windows.Forms.Button();
             this.labelFakeCvnPn = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -2307,6 +2308,7 @@
             // 
             // tabCvnFake
             // 
+            this.tabCvnFake.Controls.Add(this.btnFakeCvnAddtoStock);
             this.tabCvnFake.Controls.Add(this.btnOpenBrowser);
             this.tabCvnFake.Controls.Add(this.labelFakeCvnPn);
             this.tabCvnFake.Controls.Add(this.groupBox4);
@@ -2322,20 +2324,30 @@
             this.tabCvnFake.Text = "CVN Research";
             this.tabCvnFake.UseVisualStyleBackColor = true;
             // 
+            // btnFakeCvnAddtoStock
+            // 
+            this.btnFakeCvnAddtoStock.Location = new System.Drawing.Point(161, 88);
+            this.btnFakeCvnAddtoStock.Name = "btnFakeCvnAddtoStock";
+            this.btnFakeCvnAddtoStock.Size = new System.Drawing.Size(95, 23);
+            this.btnFakeCvnAddtoStock.TabIndex = 14;
+            this.btnFakeCvnAddtoStock.Text = "Add to Stock";
+            this.btnFakeCvnAddtoStock.UseVisualStyleBackColor = true;
+            this.btnFakeCvnAddtoStock.Click += new System.EventHandler(this.btnFakeCvnAddtoStock_Click);
+            // 
             // btnOpenBrowser
             // 
-            this.btnOpenBrowser.Location = new System.Drawing.Point(128, 62);
+            this.btnOpenBrowser.Location = new System.Drawing.Point(161, 61);
             this.btnOpenBrowser.Name = "btnOpenBrowser";
-            this.btnOpenBrowser.Size = new System.Drawing.Size(121, 23);
+            this.btnOpenBrowser.Size = new System.Drawing.Size(95, 23);
             this.btnOpenBrowser.TabIndex = 13;
-            this.btnOpenBrowser.Text = "GM web service";
+            this.btnOpenBrowser.Text = "Web Check";
             this.btnOpenBrowser.UseVisualStyleBackColor = true;
             this.btnOpenBrowser.Click += new System.EventHandler(this.btnOpenBrowser_Click);
             // 
             // labelFakeCvnPn
             // 
             this.labelFakeCvnPn.AutoSize = true;
-            this.labelFakeCvnPn.Location = new System.Drawing.Point(21, 66);
+            this.labelFakeCvnPn.Location = new System.Drawing.Point(10, 66);
             this.labelFakeCvnPn.Name = "labelFakeCvnPn";
             this.labelFakeCvnPn.Size = new System.Drawing.Size(27, 13);
             this.labelFakeCvnPn.TabIndex = 12;
@@ -2514,16 +2526,16 @@
             // 
             // txtTargetCVN
             // 
-            this.txtTargetCVN.Location = new System.Drawing.Point(128, 90);
+            this.txtTargetCVN.Location = new System.Drawing.Point(79, 90);
             this.txtTargetCVN.Name = "txtTargetCVN";
-            this.txtTargetCVN.Size = new System.Drawing.Size(121, 20);
+            this.txtTargetCVN.Size = new System.Drawing.Size(76, 20);
             this.txtTargetCVN.TabIndex = 3;
             this.txtTargetCVN.TextChanged += new System.EventHandler(this.txtTargetCVN_TextChanged);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(18, 93);
+            this.label3.Location = new System.Drawing.Point(7, 93);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(66, 13);
             this.label3.TabIndex = 2;
@@ -3078,5 +3090,6 @@
         private System.Windows.Forms.RadioButton radioFakeCvnSingleSegment;
         private System.Windows.Forms.Button btnOpenBrowser;
         private System.Windows.Forms.Label labelFakeCvnPn;
+        private System.Windows.Forms.Button btnFakeCvnAddtoStock;
     }
 }
