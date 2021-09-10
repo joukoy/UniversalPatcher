@@ -25,7 +25,7 @@ namespace UniversalPatcher
                 FileName = Fname;
                 altTableDatas[0].Name = Fname;
                 fsize = (uint)new FileInfo(FileName).Length;
-                buf = ReadBin(FileName, 0, fsize);
+                buf = ReadBin(FileName);
                 osStoreAddress = uint.MaxValue;
                 if (autodetect)
                 {
@@ -186,7 +186,7 @@ namespace UniversalPatcher
 
         public void reloadBinFile()
         {
-            buf = ReadBin(FileName, 0, fsize);
+            buf = ReadBin(FileName);
         }
 
         public void importSeekTables()

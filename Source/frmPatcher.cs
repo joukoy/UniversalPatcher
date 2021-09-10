@@ -1876,7 +1876,7 @@ namespace UniversalPatcher
             return FileName;
         }
 
-        private void ExtractSegments(PcmFile PCM, string Descr, bool AllSegments, string dstFolder)
+        private void ExtractSegments(PcmFile PCM, string Descr, bool AllSegments, string dstFolder, string prefix="", string suffix="", bool segnr = false)
         {            
             if (PCM.segmentinfos == null)
             {
@@ -1885,6 +1885,21 @@ namespace UniversalPatcher
             }
             try
             {
+                string scriptFName = prefix + Path.GetFileNameWithoutExtension(PCM.FileName) + suffix + ".csv";
+                scriptFName = Path.Combine(dstFolder, scriptFName);
+                string scriptContent = "Filename;Part1";
+                int maxBlocks = 1;
+                for (int s = 0; s < PCM.segmentinfos.Length; s++)
+                {
+                    if (PCM.segmentAddressDatas[s].SegmentBlocks.Count > maxBlocks)
+                        maxBlocks = PCM.segmentAddressDatas[s].SegmentBlocks.Count;
+                }
+                for (int b=1; b<maxBlocks;b++)
+                {
+                    scriptContent += ";Part" + (b + 1).ToString();
+                }
+                scriptContent += Environment.NewLine + "Fill:4A FC;" + PCM.fsize.ToString("X") + Environment.NewLine;
+
                 for (int s=0;s<PCM.segmentinfos.Length;s++)
                 {
                     if (AllSegments || chkExtractSegments[s].Checked)
@@ -1892,7 +1907,11 @@ namespace UniversalPatcher
                         string FileName;
                         if (dstFolder.Length > 0)
                         {
-                            string FnameStart = Path.Combine(dstFolder, PCM.segmentinfos[s].PN.PadLeft(8,'0'));
+                            string FnameStart = PCM.segmentinfos[s].PN.PadLeft(8,'0');
+                            if (segnr)
+                               FnameStart = PCM.segmentinfos[s].SegNr + "-" + FnameStart ; 
+                            FnameStart = prefix + FnameStart + suffix;
+                            FnameStart = Path.Combine(dstFolder, FnameStart);
                             FileName = SegmentFileName(FnameStart, ".bin");
                         }
                         else
@@ -1953,12 +1972,19 @@ namespace UniversalPatcher
                             {
                                 Logger("Writing " + PCM.segmentinfos[s].Name + " to file: " + FileName + ", size: " + PCM.segmentinfos[s].SwapSize);
                                 WriteSegmentToFile(FileName, PCM.segmentAddressDatas[s].SwapBlocks, PCM.buf);
+                                scriptContent += FileName + ";" + PCM.segmentAddressDatas[s].SwapBlocks[0].Start.ToString("X") + "-" + PCM.segmentAddressDatas[s].SwapBlocks[0].End.ToString("X");
+                                for (int b=1; b< PCM.segmentAddressDatas[s].SwapBlocks.Count; b++)
+                                    scriptContent += ";" + PCM.segmentAddressDatas[s].SwapBlocks[b].Start.ToString("X") + "-" + PCM.segmentAddressDatas[s].SwapBlocks[b].End.ToString("X");
                             }
                             else
                             { 
                                 Logger("Writing " + PCM.segmentinfos[s].Name + " to file: " + FileName + ", size: " + PCM.segmentinfos[s].Size);
                                 WriteSegmentToFile(FileName, PCM.segmentAddressDatas[s].SegmentBlocks, PCM.buf);
+                                scriptContent += FileName + ";" + PCM.segmentAddressDatas[s].SegmentBlocks[0].Start.ToString("X") + "-" + PCM.segmentAddressDatas[s].SegmentBlocks[0].End.ToString("X");
+                                for (int b = 1; b < PCM.segmentAddressDatas[s].SegmentBlocks.Count; b++)
+                                    scriptContent += ";" + PCM.segmentAddressDatas[s].SegmentBlocks[b].Start.ToString("X") + "-" + PCM.segmentAddressDatas[s].SegmentBlocks[b].End.ToString("X");
                             }
+                            scriptContent += Environment.NewLine;
                             StreamWriter sw = new StreamWriter(FileName + ".txt");
                             sw.WriteLine(Descr);
                             sw.Close();
@@ -1966,6 +1992,14 @@ namespace UniversalPatcher
                         }
                     }
                 }
+
+                if (dstFolder.Length > 0) //Custom destination
+                {
+                    Logger("Writing rebuild script: " + scriptFName + "... ");
+                    WriteTextFile(scriptFName, scriptContent);
+                    Logger("[OK]");
+                }
+
             }
             catch (Exception ex)
             {
@@ -1996,22 +2030,33 @@ namespace UniversalPatcher
         {
             try
             {
-                frmFileSelection frmF = new frmFileSelection();
-                frmF.labelCustomdst.Visible = true;
-                frmF.btnCustomdst.Visible = true;
-                frmF.btnOK.Text = "Extract!";
-                frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
-                if (frmF.ShowDialog(this) == DialogResult.OK)
+                frmExtractSegments frmES = new frmExtractSegments();
+                frmES.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+                if (frmES.ShowDialog(this) == DialogResult.OK)
                 {
                     if (!chkLogtodisplay.Checked)
                         txtResult.AppendText("Extracting...");
-                    string dstFolder = frmF.labelCustomdst.Text;
-                    for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                    string dstFolder = frmES.labelCustomdst.Text;
+                    for (int i = 0; i < frmES.listFiles.CheckedItems.Count; i++)
                     {
-                        string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
-                        PcmFile PCM = new PcmFile(FileName, chkAutodetect.Checked, basefile.configFileFullName);
-                        GetFileInfo(FileName, ref PCM, true, checkExtractShowinfo.Checked);
-                        ExtractSegments(PCM, Path.GetFileName(FileName).Replace(".bin", ""), true, dstFolder);
+                        string fileName = frmES.listFiles.CheckedItems[i].Tag.ToString();
+                        PcmFile PCM = new PcmFile(fileName, chkAutodetect.Checked, basefile.configFileFullName);
+                        GetFileInfo(fileName, ref PCM, true, checkExtractShowinfo.Checked);
+                        string descr = Path.GetFileName(fileName).Replace(".bin", "");
+                        if (frmES.txtDescription.Text.Length > 0)
+                            descr = frmES.txtDescription.Text;
+                        string prefix = "";
+                        string suffix = "";
+                        if (frmES.txtFilenameFix.Text.Length > 0)
+                        {
+                            if (frmES.txtFilenameFix.Text.StartsWith("-"))
+                                suffix = frmES.txtFilenameFix.Text;
+                            else if (frmES.txtFilenameFix.Text.EndsWith("-"))
+                                prefix = frmES.txtFilenameFix.Text;
+                            else
+                                prefix = frmES.txtFilenameFix.Text + "-";
+                        }
+                        ExtractSegments(PCM, descr, true, dstFolder,prefix,suffix, frmES.chkFilenameSegmentNr.Checked);
                     }
                     if (!chkLogtodisplay.Checked)
                         txtResult.AppendText(Environment.NewLine + "Segments extracted" + Environment.NewLine);
@@ -2025,6 +2070,7 @@ namespace UniversalPatcher
                 LoggerBold(ex.Message);
             }
         }
+
 
         private void btnSwapSegments_Click(object sender, EventArgs e)
         {
@@ -3742,6 +3788,109 @@ namespace UniversalPatcher
                 Logger(ex.Message);
             }
 
+        }
+
+        private void btnRebuild_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                byte[] buf = new byte[1];
+
+                string scriptFname = SelectFile("Select script file", "CSV Files (*.csv)|*.csv|All FIles (*.*)|*.*");
+                if (scriptFname.Length == 0)
+                    return;
+
+                Logger("Rebuilding...");
+                string line = "";
+                StreamReader sr = new StreamReader(scriptFname);
+                while ((line = sr.ReadLine()) != null)
+                {
+                    if (!line.StartsWith("Filename") && !line.StartsWith("#"))
+                    {
+                        string[] lParts = line.Split(';');
+                        if (lParts[0].StartsWith("Fill:")) //Create and fill filebuffer
+                        {
+                            string[] fillParts = lParts[0].Replace("Fill:", "").Split(' ');
+                            byte[] fillBytes = new byte[fillParts.Length];
+                            for (int x = 0; x < fillParts.Length; x++)
+                            {
+                                HexToByte(fillParts[x], out fillBytes[x]);
+                            }
+
+                            if (lParts.Length < 2)
+                            {
+                                LoggerBold("Missing file size: " + line);
+                                return;
+                            }
+                            uint fsize;
+                            if (!HexToUint(lParts[1], out fsize))
+                            {
+                                LoggerBold("Can't convert file size form HEX: " + lParts[1]);
+                                return;
+                            }
+
+                            buf = new byte[fsize];
+
+                            uint addr = 0;
+                            for (;addr <= (fsize - fillBytes.Length);)
+                            {
+                                for (int f=0; f < fillBytes.Length ; f++)
+                                {
+                                    buf[addr] = fillBytes[f];
+                                    addr++;
+                                }
+                            }
+                            
+                        }
+                        else
+                        {
+                            string[] fParts = line.Split(';');
+                            if (!File.Exists(fParts[0]))
+                            {
+                                LoggerBold("File not found: " + fParts[0]);
+                                return;
+                            }
+                            byte[] segment = ReadBin(fParts[0]);
+                            uint offset = 0;
+                            for (int x=1; x < fParts.Length;x++) //Part1, Part2...
+                            {
+                                string[] pParts = fParts[x].Split('-');
+                                if (pParts.Length != 2)
+                                {
+                                    LoggerBold("Unknown segment Start - End: " + fParts[x]);
+                                    return;
+                                }
+
+                                uint start;
+                                uint end;
+                                if (!HexToUint(pParts[0], out start))
+                                {
+                                    LoggerBold("Unknown segment Start - End: " + fParts[x]);
+                                    return;
+                                }
+                                if (!HexToUint(pParts[1], out end))
+                                {
+                                    LoggerBold("Unknown segment Start - End: " + fParts[x]);
+                                    return;
+                                }
+                                Array.Copy(segment, offset, buf, start, end -start + 1);
+                                offset += end - start + 1;
+                            }
+                        }
+                    }
+                }
+                string defName = Path.GetFileNameWithoutExtension(scriptFname) + "-rebuild.bin";
+                string fName = SelectSaveFile("",defName);
+                if (fName.Length == 0)
+                    return;
+                Logger("Writing to file: " + fName);
+                WriteBinToFile(fName, buf);
+                Logger(" [OK]");
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
     }
 }

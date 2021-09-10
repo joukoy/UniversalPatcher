@@ -35,11 +35,11 @@ namespace UniversalPatcher
             this.btnOK = new System.Windows.Forms.Button();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.txtFolder = new System.Windows.Forms.TextBox();
-            this.btnCustomdst = new System.Windows.Forms.Button();
-            this.labelCustomdst = new System.Windows.Forms.Label();
             this.chkSubfolders = new System.Windows.Forms.CheckBox();
             this.chkIncludeCustomFileTypes = new System.Windows.Forms.CheckBox();
             this.chkSelectAll = new System.Windows.Forms.CheckBox();
+            this.labelCustomdst = new System.Windows.Forms.Label();
+            this.btnCustomdst = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listFiles
@@ -48,16 +48,16 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listFiles.HideSelection = false;
-            this.listFiles.Location = new System.Drawing.Point(3, 83);
+            this.listFiles.Location = new System.Drawing.Point(3, 103);
             this.listFiles.Name = "listFiles";
-            this.listFiles.Size = new System.Drawing.Size(777, 367);
+            this.listFiles.Size = new System.Drawing.Size(777, 347);
             this.listFiles.TabIndex = 0;
             this.listFiles.UseCompatibleStateImageBehavior = false;
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(678, 50);
+            this.btnOK.Location = new System.Drawing.Point(678, 46);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(89, 27);
             this.btnOK.TabIndex = 1;
@@ -86,28 +86,6 @@ namespace UniversalPatcher
             this.txtFolder.TabIndex = 4;
             this.txtFolder.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtFolder_KeyDown);
             // 
-            // btnCustomdst
-            // 
-            this.btnCustomdst.Location = new System.Drawing.Point(81, 50);
-            this.btnCustomdst.Name = "btnCustomdst";
-            this.btnCustomdst.Size = new System.Drawing.Size(117, 27);
-            this.btnCustomdst.TabIndex = 5;
-            this.btnCustomdst.Text = "Custom destination:";
-            this.btnCustomdst.UseVisualStyleBackColor = true;
-            this.btnCustomdst.Visible = false;
-            this.btnCustomdst.Click += new System.EventHandler(this.btnCustomdst_Click);
-            // 
-            // labelCustomdst
-            // 
-            this.labelCustomdst.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelCustomdst.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.labelCustomdst.Location = new System.Drawing.Point(204, 54);
-            this.labelCustomdst.Name = "labelCustomdst";
-            this.labelCustomdst.Size = new System.Drawing.Size(470, 23);
-            this.labelCustomdst.TabIndex = 6;
-            this.labelCustomdst.Visible = false;
-            // 
             // chkSubfolders
             // 
             this.chkSubfolders.AutoSize = true;
@@ -135,7 +113,7 @@ namespace UniversalPatcher
             // chkSelectAll
             // 
             this.chkSelectAll.AutoSize = true;
-            this.chkSelectAll.Location = new System.Drawing.Point(6, 54);
+            this.chkSelectAll.Location = new System.Drawing.Point(6, 80);
             this.chkSelectAll.Name = "chkSelectAll";
             this.chkSelectAll.Size = new System.Drawing.Size(69, 17);
             this.chkSelectAll.TabIndex = 9;
@@ -143,16 +121,35 @@ namespace UniversalPatcher
             this.chkSelectAll.UseVisualStyleBackColor = true;
             this.chkSelectAll.CheckedChanged += new System.EventHandler(this.chkSelectAll_CheckedChanged);
             // 
+            // labelCustomdst
+            // 
+            this.labelCustomdst.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelCustomdst.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.labelCustomdst.Location = new System.Drawing.Point(124, 47);
+            this.labelCustomdst.Name = "labelCustomdst";
+            this.labelCustomdst.Size = new System.Drawing.Size(548, 23);
+            this.labelCustomdst.TabIndex = 11;
+            // 
+            // btnCustomdst
+            // 
+            this.btnCustomdst.Location = new System.Drawing.Point(7, 50);
+            this.btnCustomdst.Name = "btnCustomdst";
+            this.btnCustomdst.Size = new System.Drawing.Size(111, 23);
+            this.btnCustomdst.TabIndex = 10;
+            this.btnCustomdst.Text = "Custom destination:";
+            this.btnCustomdst.UseVisualStyleBackColor = true;
+            // 
             // frmFileSelection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(779, 450);
+            this.Controls.Add(this.labelCustomdst);
+            this.Controls.Add(this.btnCustomdst);
             this.Controls.Add(this.chkSelectAll);
             this.Controls.Add(this.chkIncludeCustomFileTypes);
             this.Controls.Add(this.chkSubfolders);
-            this.Controls.Add(this.labelCustomdst);
-            this.Controls.Add(this.btnCustomdst);
             this.Controls.Add(this.txtFolder);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.btnOK);
@@ -171,11 +168,11 @@ namespace UniversalPatcher
         public System.Windows.Forms.ListView listFiles;
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.TextBox txtFolder;
-        public System.Windows.Forms.Button btnCustomdst;
-        public System.Windows.Forms.Label labelCustomdst;
         public System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.CheckBox chkSubfolders;
         private System.Windows.Forms.CheckBox chkIncludeCustomFileTypes;
         private System.Windows.Forms.CheckBox chkSelectAll;
+        public System.Windows.Forms.Label labelCustomdst;
+        public System.Windows.Forms.Button btnCustomdst;
     }
 }

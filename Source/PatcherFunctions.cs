@@ -1343,9 +1343,10 @@ public class upatcher
         return match;
     }
 
-    public static byte[] ReadBin(string FileName, uint FileOffset, uint Length)
+    public static byte[] ReadBin(string FileName)
     {
 
+        uint Length = (uint)new FileInfo(FileName).Length;
         byte[] buf = new byte[Length];
 
         long offset = 0;
@@ -1353,7 +1354,7 @@ public class upatcher
 
         using (BinaryReader freader = new BinaryReader(File.Open(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
         {
-            freader.BaseStream.Seek(FileOffset, 0);
+            freader.BaseStream.Seek(0, 0);
             while (remaining > 0)
             {
                 int read = freader.Read(buf, (int)offset, (int)remaining);
@@ -1795,11 +1796,14 @@ public class upatcher
         return "";
 
     }
-    public static string SelectSaveFile(string Filter = "BIN files (*.bin)|*.bin", string defaultFileName = "")
+    public static string SelectSaveFile(string Filter = "", string defaultFileName = "")
     {
         SaveFileDialog saveFileDialog = new SaveFileDialog();
         //saveFileDialog.Filter = "BIN files (*.bin)|*.bin";
-        saveFileDialog.Filter = Filter;
+        if (Filter == "")
+            saveFileDialog.Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*";
+        else
+            saveFileDialog.Filter = Filter;
         saveFileDialog.RestoreDirectory = true;
         saveFileDialog.Title = "Save to file";
         if (defaultFileName.Length > 0)

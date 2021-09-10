@@ -91,7 +91,7 @@ namespace UniversalPatcher
             long fsize = new System.IO.FileInfo(FileName).Length;
             byte[] tmpBuf = new byte[fsize];
 
-            tmpBuf = ReadBin(FileName, 0, (uint)fsize);
+            tmpBuf = ReadBin(FileName);
 
             return GetVIN(tmpBuf);
         }

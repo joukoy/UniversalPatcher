@@ -174,6 +174,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.txtExtractRange = new System.Windows.Forms.TextBox();
             this.tabExtractSegments = new System.Windows.Forms.TabPage();
+            this.btnRebuild = new System.Windows.Forms.Button();
             this.checkExtractShowinfo = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.radioRename = new System.Windows.Forms.RadioButton();
@@ -1946,6 +1947,7 @@
             // 
             // tabExtractSegments
             // 
+            this.tabExtractSegments.Controls.Add(this.btnRebuild);
             this.tabExtractSegments.Controls.Add(this.checkExtractShowinfo);
             this.tabExtractSegments.Controls.Add(this.groupBox2);
             this.tabExtractSegments.Controls.Add(this.btnExtractSegmentsFolder);
@@ -1958,6 +1960,17 @@
             this.tabExtractSegments.TabIndex = 4;
             this.tabExtractSegments.Text = "Extract segments";
             this.tabExtractSegments.UseVisualStyleBackColor = true;
+            // 
+            // btnRebuild
+            // 
+            this.btnRebuild.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRebuild.Location = new System.Drawing.Point(632, 73);
+            this.btnRebuild.Name = "btnRebuild";
+            this.btnRebuild.Size = new System.Drawing.Size(171, 25);
+            this.btnRebuild.TabIndex = 507;
+            this.btnRebuild.Text = "Rebuild...";
+            this.btnRebuild.UseVisualStyleBackColor = true;
+            this.btnRebuild.Click += new System.EventHandler(this.btnRebuild_Click);
             // 
             // checkExtractShowinfo
             // 
@@ -3091,5 +3104,6 @@
         private System.Windows.Forms.Button btnOpenBrowser;
         private System.Windows.Forms.Label labelFakeCvnPn;
         private System.Windows.Forms.Button btnFakeCvnAddtoStock;
+        private System.Windows.Forms.Button btnRebuild;
     }
 }
