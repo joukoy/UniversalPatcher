@@ -1876,7 +1876,7 @@ namespace UniversalPatcher
             return FileName;
         }
 
-        private void ExtractSegments(PcmFile PCM, string Descr, bool AllSegments, string dstFolder, string prefix="", string suffix="", bool segnr = false)
+        private void ExtractSegments(PcmFile PCM, string Descr, bool AllSegments, string dstFolder, string prefix="", string suffix="")
         {            
             if (PCM.segmentinfos == null)
             {
@@ -1885,7 +1885,9 @@ namespace UniversalPatcher
             }
             try
             {
-                string scriptFName = prefix + Path.GetFileNameWithoutExtension(PCM.FileName) + suffix + ".csv";
+                string scriptFName = prefix.Replace("$nr", "").Replace("$ver", "").Replace("$cvn", "").Replace("-", "").Replace("#", "") + "-";
+                scriptFName += Path.GetFileNameWithoutExtension(PCM.FileName) + "-";
+                scriptFName += suffix.Replace("$ver", "").Replace("$cvn", "").Replace("-","").Replace("#", "") + ".csv";
                 scriptFName = Path.Combine(dstFolder, scriptFName);
                 string scriptContent = "Filename;Part1";
                 int maxBlocks = 1;
@@ -1908,9 +1910,9 @@ namespace UniversalPatcher
                         if (dstFolder.Length > 0)
                         {
                             string FnameStart = PCM.segmentinfos[s].PN.PadLeft(8,'0');
-                            if (segnr)
-                               FnameStart = PCM.segmentinfos[s].SegNr + "-" + FnameStart ; 
-                            FnameStart = prefix + FnameStart + suffix;
+                            string tmpPrefix = prefix.Replace("$nr", PCM.segmentinfos[s].SegNr).Replace("$ver", PCM.segmentinfos[s].Ver).Replace("$cvn", PCM.segmentinfos[s].cvn);
+                            string tmpSuffix = suffix.Replace("$nr", PCM.segmentinfos[s].SegNr).Replace("$ver", PCM.segmentinfos[s].Ver).Replace("$cvn", PCM.segmentinfos[s].cvn);
+                            FnameStart = tmpPrefix + FnameStart + tmpSuffix;
                             FnameStart = Path.Combine(dstFolder, FnameStart);
                             FileName = SegmentFileName(FnameStart, ".bin");
                         }
@@ -2045,18 +2047,9 @@ namespace UniversalPatcher
                         string descr = Path.GetFileName(fileName).Replace(".bin", "");
                         if (frmES.txtDescription.Text.Length > 0)
                             descr = frmES.txtDescription.Text;
-                        string prefix = "";
-                        string suffix = "";
-                        if (frmES.txtFilenameFix.Text.Length > 0)
-                        {
-                            if (frmES.txtFilenameFix.Text.StartsWith("-"))
-                                suffix = frmES.txtFilenameFix.Text;
-                            else if (frmES.txtFilenameFix.Text.EndsWith("-"))
-                                prefix = frmES.txtFilenameFix.Text;
-                            else
-                                prefix = frmES.txtFilenameFix.Text + "-";
-                        }
-                        ExtractSegments(PCM, descr, true, dstFolder,prefix,suffix, frmES.chkFilenameSegmentNr.Checked);
+                        string prefix = frmES.txtFileNamePrefix.Text.ToLower();
+                        string suffix = frmES.txtFilenameSuffix.Text.ToLower();
+                        ExtractSegments(PCM, descr, true, dstFolder,prefix,suffix);
                     }
                     if (!chkLogtodisplay.Checked)
                         txtResult.AppendText(Environment.NewLine + "Segments extracted" + Environment.NewLine);
