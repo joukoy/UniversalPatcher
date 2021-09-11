@@ -3618,12 +3618,12 @@ namespace UniversalPatcher
                 for (uint a = start; a < basefile.fsize && a < (freeAddr + 15); a++)
                 {
                     if (a >= freeAddr && a < (freeAddr + numFakeCvnBytes.Value))
-                        richEndOfSegment.SelectionFont = new Font(richEndOfSegment.Font, FontStyle.Bold);
-                    else
-                        richEndOfSegment.SelectionFont = new Font(richEndOfSegment.Font, FontStyle.Regular);
-
-                    if (a >= segStartAddr && a <= segEndAddr)
+                        //richEndOfSegment.SelectionFont = new Font(richEndOfSegment.Font, FontStyle.Bold);
+                        richEndOfSegment.SelectionColor = Color.Red;
+                    else if (a >= segStartAddr && a <= segEndAddr)
                         richEndOfSegment.SelectionColor = Color.Black;
+                    //else
+                      //  richEndOfSegment.SelectionFont = new Font(richEndOfSegment.Font, FontStyle.Regular);
                     else
                         richEndOfSegment.SelectionColor = Color.LightBlue;
                     richEndOfSegment.AppendText(basefile.buf[a].ToString("X2") + " ");
