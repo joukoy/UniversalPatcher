@@ -3442,7 +3442,7 @@ namespace UniversalPatcher
             else
                 cvn = basefile.calculateCS2(seg, false);
 
-            if (CheckStockCVN(basefile.segmentinfos[seg].PN, basefile.segmentinfos[seg].Ver, basefile.segmentinfos[seg].SegNr,cvn.ToString("X"),false,basefile.configFile) == "[stock]")
+            if (cvn == targetCvn)
             {
                 Logger("[OK]");
                 return;
