@@ -144,6 +144,7 @@ namespace UniversalPatcher
             setWorkingMode();
             dataCVN.ColumnHeaderMouseClick += DataCVN_ColumnHeaderMouseClick;
             tabFakeCvn.Enter += TabFakeCvn_Enter;
+            numFakeCvnBytes.KeyPress += numFakeCvnBytesFromEnd_ValueChanged;
         }
 
         private void TabFakeCvn_Enter(object sender, EventArgs e)
@@ -3555,7 +3556,7 @@ namespace UniversalPatcher
                     basefile.FixCheckSums();
                     basefile.GetInfo();
                     ShowFileInfo(basefile,true);
-                    showEndOfSegment();
+                    showFakeCvnSelectedBytes();
                     //GetFileInfo(txtBaseFile.Text, ref basefile, false);
                 }
                 else //stop
@@ -3572,7 +3573,7 @@ namespace UniversalPatcher
 
         private void numFakeCvnBytes_ValueChanged(object sender, EventArgs e)
         {
-            showEndOfSegment();
+            showFakeCvnSelectedBytes();
         }
 
         private void getTargetCvn(int seg)
@@ -3600,7 +3601,7 @@ namespace UniversalPatcher
 
         }
 
-        private void showEndOfSegment()
+        private void showFakeCvnSelectedBytes()
         {
             uint freeAddr = 0;
             if (!HexToUint(txtFreeAddress.Text, out freeAddr))
@@ -3615,19 +3616,37 @@ namespace UniversalPatcher
                 uint start = segStartAddr;
                 if ((int)(freeAddr - 15) > 0)
                     start = freeAddr - 15;
+                uint otherSegAddr = uint.MaxValue;
                 for (uint a = start; a < basefile.fsize && a < (freeAddr + 15); a++)
                 {
                     if (a >= freeAddr && a < (freeAddr + numFakeCvnBytes.Value))
-                        //richEndOfSegment.SelectionFont = new Font(richEndOfSegment.Font, FontStyle.Bold);
+                    {
                         richEndOfSegment.SelectionColor = Color.Red;
+                    }
                     else if (a >= segStartAddr && a <= segEndAddr)
+                    {
                         richEndOfSegment.SelectionColor = Color.Black;
-                    //else
-                      //  richEndOfSegment.SelectionFont = new Font(richEndOfSegment.Font, FontStyle.Regular);
+                    }
                     else
+                    {
                         richEndOfSegment.SelectionColor = Color.LightBlue;
-                    richEndOfSegment.AppendText(basefile.buf[a].ToString("X2") + " ");
+                        otherSegAddr = a;
+                    }
+                    if (a==segEndAddr || a == (segStartAddr-1))
+                        richEndOfSegment.AppendText(basefile.buf[a].ToString("X2") + "|");
+                    else
+                        richEndOfSegment.AppendText(basefile.buf[a].ToString("X2") + " ");
                 }
+                richEndOfSegment.SelectionColor = Color.Black;
+                richEndOfSegment.AppendText(Environment.NewLine + "Black:" + basefile.Segments[seg].Name);
+                string otherSegment = basefile.GetSegmentName(otherSegAddr);
+                if (otherSegment != "")
+                {
+                    richEndOfSegment.SelectionColor = Color.LightBlue;
+                    richEndOfSegment.AppendText(Environment.NewLine + "Lightblue:" + otherSegment);
+                }
+                richEndOfSegment.SelectionColor = Color.Red;
+                richEndOfSegment.AppendText(Environment.NewLine + "Red:Selected bytes");
             }
             catch { };
         }
@@ -3681,7 +3700,7 @@ namespace UniversalPatcher
             {
                 if (comboFakeCvnSegment.Text == "" || !radioFakeCVNRelativeAddr.Checked)
                     return;
-                int seg = comboFakeCvnSegment.SelectedIndex;
+                int seg = comboFakeCvnSegment.SelectedIndex;   
                 txtFreeAddress.Text = (basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End - (int)numFakeCvnBytesFromEnd.Value).ToString("X");
             }
             catch (Exception ex)
@@ -3923,7 +3942,7 @@ namespace UniversalPatcher
 
         private void txtFreeAddress_TextChanged(object sender, EventArgs e)
         {
-            showEndOfSegment();
+            showFakeCvnSelectedBytes();
         }
     }
 }
