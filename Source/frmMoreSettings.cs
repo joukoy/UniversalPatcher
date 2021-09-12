@@ -23,6 +23,7 @@ namespace UniversalPatcher
             Properties.Settings.Default.TableEditorMinOtherEquivalency = (int)numTunerMinEqOther.Value;
             Properties.Settings.Default.MulitableChars = txtMultitableChars.Text;
             Properties.Settings.Default.DisableAutoFixChecksum = chkDisableAutoCS.Checked;
+            Properties.Settings.Default.RequireValidVerForStock = chkRequireValidVerForStock.Checked;
             //Properties.Settings.Default.startPatcher = chkStartPatcher.Checked;
             Properties.Settings.Default.Save();
             this.Close();
@@ -35,6 +36,7 @@ namespace UniversalPatcher
             numTunerMinEqOther.Value = Properties.Settings.Default.TableEditorMinOtherEquivalency;
             txtMultitableChars.Text = Properties.Settings.Default.MulitableChars;
             chkDisableAutoCS.Checked = Properties.Settings.Default.DisableAutoFixChecksum;
+            chkRequireValidVerForStock.Checked = Properties.Settings.Default.RequireValidVerForStock;
             //chkStartPatcher.Checked = Properties.Settings.Default.startPatcher;
         }
 

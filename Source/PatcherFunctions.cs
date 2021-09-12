@@ -1955,6 +1955,12 @@ public class upatcher
             {
                 if (PN == referenceCvnList[r].PN)
                 {
+                    if (UniversalPatcher.Properties.Settings.Default.RequireValidVerForStock)
+                        if (Ver.Contains("?"))
+                        {
+                            Logger("No valid version");
+                            return "[modded/R]";
+                        }
                     refString = referenceCvnList[r].CVN;
                     cvnMismatch = true;    //Found from referencelist, match not found YET
                     if (!HexToUint(referenceCvnList[r].CVN, out refC))

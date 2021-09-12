@@ -908,5 +908,17 @@ namespace UniversalPatcher.Properties {
                 this["CvnPopupAccepted"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool RequireValidVerForStock {
+            get {
+                return ((bool)(this["RequireValidVerForStock"]));
+            }
+            set {
+                this["RequireValidVerForStock"] = value;
+            }
+        }
     }
 }

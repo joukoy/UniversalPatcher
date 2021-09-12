@@ -42,11 +42,14 @@ namespace UniversalPatcher
             this.label2 = new System.Windows.Forms.Label();
             this.txtMultitableChars = new System.Windows.Forms.TextBox();
             this.chkDisableAutoCS = new System.Windows.Forms.CheckBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.chkRequireValidVerForStock = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerTableMinEquivalency)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numKeypressWait)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerMinEqOther)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // numTunerTableMinEquivalency
@@ -73,7 +76,7 @@ namespace UniversalPatcher
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(226, 205);
+            this.btnOK.Location = new System.Drawing.Point(225, 265);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 2;
@@ -176,11 +179,34 @@ namespace UniversalPatcher
             this.chkDisableAutoCS.Text = "Disable auto checksum fix";
             this.chkDisableAutoCS.UseVisualStyleBackColor = true;
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.chkRequireValidVerForStock);
+            this.groupBox3.Location = new System.Drawing.Point(8, 207);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(292, 51);
+            this.groupBox3.TabIndex = 13;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Stock CVN Check";
+            // 
+            // chkRequireValidVerForStock
+            // 
+            this.chkRequireValidVerForStock.AutoSize = true;
+            this.chkRequireValidVerForStock.Checked = true;
+            this.chkRequireValidVerForStock.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRequireValidVerForStock.Location = new System.Drawing.Point(10, 19);
+            this.chkRequireValidVerForStock.Name = "chkRequireValidVerForStock";
+            this.chkRequireValidVerForStock.Size = new System.Drawing.Size(243, 17);
+            this.chkRequireValidVerForStock.TabIndex = 0;
+            this.chkRequireValidVerForStock.Text = "Mark modified if \"version\" have no valid chars";
+            this.chkRequireValidVerForStock.UseVisualStyleBackColor = true;
+            // 
             // frmMoreSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(307, 231);
+            this.ClientSize = new System.Drawing.Size(307, 300);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.chkDisableAutoCS);
             this.Controls.Add(this.txtMultitableChars);
             this.Controls.Add(this.label2);
@@ -198,6 +224,8 @@ namespace UniversalPatcher
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -217,5 +245,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtMultitableChars;
         private System.Windows.Forms.CheckBox chkDisableAutoCS;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.CheckBox chkRequireValidVerForStock;
     }
 }
