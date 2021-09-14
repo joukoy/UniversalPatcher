@@ -3944,6 +3944,15 @@ namespace UniversalPatcher
         {
             showFakeCvnSelectedBytes();
         }
+
+
+        private void btnVisualSegments_Click_1(object sender, EventArgs e)
+        {
+            frmVisualSegments fvs = new frmVisualSegments();
+            fvs.Show();
+            fvs.showChart(basefile);
+
+        }
     }
 }
 

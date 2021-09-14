@@ -672,6 +672,16 @@ namespace UniversalPatcher
             }
         }
 
+        public uint getSegmentSize (int seg)
+        {
+            uint SSize = 0;
+            for (int s = 0; s < segmentAddressDatas[seg].SegmentBlocks.Count; s++)
+            {
+                SSize += segmentAddressDatas[seg].SegmentBlocks[s].End - segmentAddressDatas[seg].SegmentBlocks[s].Start + 1;
+            }
+            return SSize;
+        }
+
         public void GetInfo()
         {
             if (SegmentList == null)

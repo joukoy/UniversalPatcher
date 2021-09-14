@@ -146,6 +146,7 @@
             this.btnCheckSums = new System.Windows.Forms.Button();
             this.btnApplypatch = new System.Windows.Forms.Button();
             this.tabFileinfo = new System.Windows.Forms.TabPage();
+            this.btnVisualSegments = new System.Windows.Forms.Button();
             this.groupSearch = new System.Windows.Forms.GroupBox();
             this.txtCustomSearchString = new System.Windows.Forms.TextBox();
             this.txtCustomSearchStartAddress = new System.Windows.Forms.TextBox();
@@ -1641,6 +1642,7 @@
             // 
             // tabFileinfo
             // 
+            this.tabFileinfo.Controls.Add(this.btnVisualSegments);
             this.tabFileinfo.Controls.Add(this.groupSearch);
             this.tabFileinfo.Controls.Add(this.chkSearchPids);
             this.tabFileinfo.Controls.Add(this.chkTableSeek);
@@ -1658,6 +1660,16 @@
             this.tabFileinfo.TabIndex = 2;
             this.tabFileinfo.Text = "File info";
             this.tabFileinfo.UseVisualStyleBackColor = true;
+            // 
+            // btnVisualSegments
+            // 
+            this.btnVisualSegments.Location = new System.Drawing.Point(6, 62);
+            this.btnVisualSegments.Name = "btnVisualSegments";
+            this.btnVisualSegments.Size = new System.Drawing.Size(124, 29);
+            this.btnVisualSegments.TabIndex = 191;
+            this.btnVisualSegments.Text = "Visualize segments";
+            this.btnVisualSegments.UseVisualStyleBackColor = true;
+            this.btnVisualSegments.Click += new System.EventHandler(this.btnVisualSegments_Click_1);
             // 
             // groupSearch
             // 
@@ -3120,5 +3132,6 @@
         private System.Windows.Forms.Button btnFakeCvnAddtoStock;
         private System.Windows.Forms.Button btnRebuild;
         private System.Windows.Forms.RichTextBox richEndOfSegment;
+        private System.Windows.Forms.Button btnVisualSegments;
     }
 }

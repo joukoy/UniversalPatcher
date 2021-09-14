@@ -129,6 +129,7 @@ public class upatcher
         public string Address { get; set; }
         public string SwapAddress { get; set; }
         public string Size { get; set; }
+        public int SizeInt;
         public string SwapSize { get; set; }
         public string CS1 { get; set; }
         public string CS2 { get; set; }

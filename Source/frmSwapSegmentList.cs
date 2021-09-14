@@ -462,9 +462,8 @@ namespace UniversalPatcher
                         throw new Exception("Cant't decode HEX: " + PCM.segmentinfos[Seg].Size);
                 }
                 else
-                { 
-                    if (!HexToUint(PCM.segmentinfos[Seg].Size, out TotalLength))
-                        throw new Exception("Cant't decode HEX: " + PCM.segmentinfos[Seg].Size);
+                {
+                    TotalLength = PCM.getSegmentSize(Seg);
                 }
                 Logger("Reading segment from file: " + FileName,false);
                 uint fsize = (uint)new FileInfo(FileName).Length;
