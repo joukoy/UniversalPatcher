@@ -574,7 +574,10 @@ namespace UniversalPatcher
                         tableText = tableText.Replace("REPLACE-MATH", mathTxt);
 
                         tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
-                        string descr = tdList[t].TableDescription.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
+                        string descr = tdList[t].TableDescription;
+                        if (tdList[t].Values.ToLower().StartsWith("enum:"))
+                            descr += ", " + tdList[t].Values;
+                        descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
                         tableText = tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
                         tableText = tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
@@ -643,7 +646,10 @@ namespace UniversalPatcher
                         tableText = tableText.Replace("REPLACE-DECIMALS", tdList[t].Decimals.ToString());
                         tableText = tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)tdList[t].OutputType).ToString());
                         tableText = tableText.Replace("REPLACE-TABLEADDRESS",((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
-                        string descr = tdList[t].TableDescription.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
+                        string descr = tdList[t].TableDescription;
+                        if (tdList[t].Values.ToLower().StartsWith("enum:"))
+                            descr += ", " + tdList[t].Values;
+                        descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
                         tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
                         tableText = tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
                         tableText = tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());

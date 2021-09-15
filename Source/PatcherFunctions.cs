@@ -15,6 +15,7 @@ using System.Xml.Serialization;
 using MathParserTK;
 using System.Text;
 
+
 public class upatcher
 {
     public class DetectRule
@@ -2602,8 +2603,7 @@ public class upatcher
             Shell32.FolderItem folderItem = folder.ParseName(filenameOnly);
             if (folderItem != null)
             {
-                Shell32.ShellLinkObject link =
-            (Shell32.ShellLinkObject)folderItem.GetLink;
+                Shell32.ShellLinkObject link = (Shell32.ShellLinkObject)folderItem.GetLink;
                 return link.Path;
             }
             return ""; // not found
@@ -2614,7 +2614,20 @@ public class upatcher
         }
     }
 
-    public static List<XmlPatch> loadPatchFile(string fileName)
+ 
+private void CreateShortcut()
+{
+    object shDesktop = (object)"Desktop";
+        IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
+    string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\Notepad.lnk";
+        IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(shortcutAddress);
+    shortcut.Description = "New shortcut for a Notepad";
+    shortcut.Hotkey = "Ctrl+Shift+N";
+    shortcut.TargetPath = Environment.GetFolderPath(Environment.SpecialFolder.System) + @"\notepad.exe";
+    shortcut.Save();
+}
+
+public static List<XmlPatch> loadPatchFile(string fileName)
     {
         System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
         System.IO.StreamReader file = new System.IO.StreamReader(fileName);
