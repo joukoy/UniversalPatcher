@@ -2615,19 +2615,23 @@ public class upatcher
     }
 
  
-private void CreateShortcut()
-{
-    object shDesktop = (object)"Desktop";
+    public static void CreateShortcut(string DestinationFolder,string scName, string args)
+    {
+        object shDesktop = (object)"Desktop";
+    
         IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
-    string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\Notepad.lnk";
+        string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop);
+        if (DestinationFolder.Length > 0)
+            shortcutAddress = DestinationFolder;
+        shortcutAddress = Path.Combine(shortcutAddress, scName + ".lnk");
         IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(shortcutAddress);
-    shortcut.Description = "New shortcut for a Notepad";
-    shortcut.Hotkey = "Ctrl+Shift+N";
-    shortcut.TargetPath = Environment.GetFolderPath(Environment.SpecialFolder.System) + @"\notepad.exe";
-    shortcut.Save();
-}
+        shortcut.Description = "UniversalPatcher";
+        shortcut.Arguments = args;
+        shortcut.TargetPath = Application.ExecutablePath;
+        shortcut.Save();
+    }
 
-public static List<XmlPatch> loadPatchFile(string fileName)
+    public static List<XmlPatch> loadPatchFile(string fileName)
     {
         System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
         System.IO.StreamReader file = new System.IO.StreamReader(fileName);

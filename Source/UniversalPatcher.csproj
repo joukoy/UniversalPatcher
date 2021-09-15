@@ -103,6 +103,12 @@
     <Compile Include="Crc.cs" />
     <Compile Include="Debug.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="frmCreateShortcuts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmCreateShortcuts.Designer.cs">
+      <DependentUpon>frmCreateShortcuts.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmData.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -370,6 +376,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmAutodetect.resx">
       <DependentUpon>frmAutodetect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmCreateShortcuts.resx">
+      <DependentUpon>frmCreateShortcuts.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmData.resx">
       <DependentUpon>frmData.cs</DependentUpon>

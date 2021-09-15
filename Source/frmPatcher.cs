@@ -3953,6 +3953,12 @@ namespace UniversalPatcher
             fvs.showChart(basefile);
 
         }
+
+        private void createProgramShortcutsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmCreateShortcuts fcs = new frmCreateShortcuts();
+            fcs.Show();
+        }
     }
 }
 
