@@ -102,48 +102,6 @@ public class upatcher
         public List<AddressData> ExtraInfo;
     }
 
-    public class SegmentInfo
-    {
-        public SegmentInfo()
-        {
-            Name = "";
-            FileName = "";
-            XmlFile = "";
-            Address = "";
-            SwapAddress = "";
-            Size = "";
-            SwapSize = "";
-            CS1 = "";
-            CS2 = "";
-            CS1Calc = "";
-            CS2Calc = "";
-            cvn = "";
-            Stock = "";
-            PN = "";
-            Ver = "";
-            SegNr = "";
-            ExtraInfo = "";
-        }
-        public string Name { get; set; }
-        public string FileName { get; set; }
-        public string XmlFile { get; set; }
-        public string Address { get; set; }
-        public string SwapAddress { get; set; }
-        public string Size { get; set; }
-        public int SizeInt;
-        public string SwapSize { get; set; }
-        public string CS1 { get; set; }
-        public string CS2 { get; set; }
-        public string CS1Calc { get; set; }
-        public string CS2Calc { get; set; }
-        public string cvn { get; set; }
-        public string Stock { get; set; }
-        public string PN { get; set; }
-        public string Ver { get; set; }
-        public string SegNr { get; set; }
-        public string ExtraInfo { get; set; }
-
-    }
 
     public class dtcCode
     {
@@ -1456,11 +1414,14 @@ public class upatcher
         AutoDetect autod = new AutoDetect();
         return autod.autoDetect(PCM);
     }
-    public static uint CalculateChecksum(byte[] Data, AddressData CSAddress, List<Block> CSBlocks,List<Block> ExcludeBlocks, short Method, short Complement, ushort Bytes, Boolean SwapB, bool dbg=true)
+
+    public static UInt64 CalculateChecksum(byte[] Data, AddressData CSAddress, List<Block> CSBlocks,List<Block> ExcludeBlocks, short Method, short Complement, ushort Bytes, Boolean SwapB, bool dbg=true)
     {
         uint sum = 0;
         try
         {
+            if (Method == CSMethod_None)
+                return UInt64.MaxValue;
             if (dbg)
                 Debug.WriteLine("Calculating checksum, method: " + Method);
             uint BufSize = 0;
@@ -1911,7 +1872,7 @@ public class upatcher
         }
     }
 
-    public static string CheckStockCVN(string PN, string Ver, string SegNr, string cvn, bool AddToList, string XMLFile)
+    public static string CheckStockCVN(string PN, string Ver, string SegNr, UInt64 cvnInt, bool AddToList, string XMLFile)
     {
         string retVal = "[n/a]";
         for (int c = 0; c < StockCVN.Count; c++)
@@ -1926,7 +1887,9 @@ public class upatcher
                     StockCVN.RemoveAt(c);
                     StockCVN.Insert(c, c1);
                 }
-                if (StockCVN[c].cvn == cvn)
+                uint stockCvnInt = 0;
+                if(HexToUint(StockCVN[c].cvn, out stockCvnInt))
+                if (stockCvnInt == cvnInt)
                 {
                     retVal = "[stock]";
                     break;
@@ -1946,11 +1909,6 @@ public class upatcher
             //Check if it's in referencelist
             bool cvnMismatch = false;
             uint refC = 0;
-            uint cvnInt = 0;
-            if (!HexToUint(cvn, out cvnInt))
-            {
-                LoggerBold("Can't convert from HEX: " + cvn);
-            }
             string refString = "";
             if (referenceCvnList == null) return "";
             for (int r = 0; r < referenceCvnList.Count; r++)
@@ -2004,18 +1962,22 @@ public class upatcher
                     BadCvnList = new List<CVN>();
                 for (int i = 0; i < BadCvnList.Count; i++)
                 {
-                    if (BadCvnList[i].PN == PN && BadCvnList[i].cvn == cvn)
+                    uint badCvnInt = 0;
+                    if (HexToUint(BadCvnList[i].cvn, out badCvnInt))
                     {
-                        isInBadCvnList = true;
-                        Debug.WriteLine("PN: " + PN + ", CVN: " + cvn + " is already in badCvnList");
-                        break;
+                        if (BadCvnList[i].PN == PN && badCvnInt == cvnInt)
+                        {
+                            isInBadCvnList = true;
+                            Debug.WriteLine("PN: " + PN + ", CVN: " + cvnInt + " is already in badCvnList");
+                            break;
+                        }
                     }
                 }
                 if (!isInBadCvnList)
                 {
-                    Debug.WriteLine("Adding PN: " + PN + ", CVN: " + cvn + " to badCvnList");
+                    Debug.WriteLine("Adding PN: " + PN + ", CVN: " + cvnInt + " to badCvnList");
                     CVN C1 = new CVN();
-                    C1.cvn = cvn;
+                    C1.cvn = cvnInt.ToString("X");
                     C1.PN = PN;
                     C1.SegmentNr = SegNr;
                     C1.Ver = Ver;
@@ -2035,9 +1997,11 @@ public class upatcher
             for (int c = 0; c < ListCVN.Count; c++)
             {
                 //if (ListCVN[c].XmlFile == Path.GetFileName(XMLFile) && ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && ListCVN[c].cvn == cvn)
-                if (ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && ListCVN[c].cvn == cvn)
+                uint listCvnInt = 0;
+                if (HexToUint(ListCVN[c].cvn, out listCvnInt))
+                if (ListCVN[c].PN == PN && ListCVN[c].Ver == Ver && ListCVN[c].SegmentNr == SegNr && listCvnInt == cvnInt)
                 {
-                    Debug.WriteLine("Already in CVN list: " + cvn);
+                    Debug.WriteLine("Already in CVN list: " + cvnInt);
                     IsinCVNlist = true;
                     break;
                 }
@@ -2045,7 +2009,7 @@ public class upatcher
             if (!IsinCVNlist)
             {
                 CVN C1 = new CVN();
-                C1.cvn = cvn;
+                C1.cvn = cvnInt.ToString("X");
                 C1.PN = PN;
                 C1.SegmentNr = SegNr;
                 C1.Ver = Ver;

@@ -144,6 +144,7 @@ namespace UniversalPatcher
                 Ret += " * Calculated: " + Key.NewKey.ToString("X4") + " [Fail]" + Environment.NewLine;
             return Ret;
         }
+
         public static string GetEEpromInfoText(byte[] buf)
         {
             uint VINAddr = GetVINAddr(buf);
@@ -168,20 +169,25 @@ namespace UniversalPatcher
             return Ret;
         }
 
-        public static void GetEEpromInfo(byte[] buf, ref SegmentInfo sinfo)
+        public static string getVer(byte[] buf)
         {
             uint VINAddr = GetVINAddr(buf);
-
             if (VINAddr == 1) //Check word not found
-            {
-                sinfo.PN = "Eeprom_data unreadable";
-                return;
-            }
+                return "?";
+            return ReadTextBlock(buf, (int)VINAddr + 0x1C, 4);
+        }
 
-            sinfo.Address = "4000-7FFF";            
-            sinfo.Size = "4000";
-            sinfo.PN = BEToUint32(buf, VINAddr + 4).ToString();
-            sinfo.Ver = ReadTextBlock(buf, (int)VINAddr + 0x1C, 4);
+        public static string getPN(byte[] buf)
+        {
+            uint VINAddr = GetVINAddr(buf);
+            if (VINAddr == 1) //Check word not found
+                return "?";
+            return BEToUint32(buf, VINAddr + 4).ToString();
+        }
+
+        public static string GetExtraInfo(byte[] buf)
+        {
+            uint VINAddr = GetVINAddr(buf);
 
             string Ret = " Hardware ".PadRight(20) + BEToUint32(buf, VINAddr + 4).ToString() + Environment.NewLine;
             Ret += " Serial ".PadRight(20) + ReadTextBlock(buf, (int)VINAddr + 8, 12) + Environment.NewLine;
@@ -189,7 +195,7 @@ namespace UniversalPatcher
             Ret += " Id2 ".PadRight(20) + BEToUint32(buf, VINAddr + 0x18).ToString() + Environment.NewLine;
             Ret += " Broadcast ".PadRight(20) + ReadTextBlock(buf, (int)VINAddr + 0x1C, 4) + Environment.NewLine;
             Ret += " VIN ".PadRight(20) + GetVIN(buf) + Environment.NewLine;
-            sinfo.ExtraInfo = Ret;
+            return Ret;
         }
 
     }

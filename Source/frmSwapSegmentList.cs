@@ -34,7 +34,7 @@ namespace UniversalPatcher
                     name[s] = pcm.segmentinfos[s].Name;
                     if (pcm.segmentinfos[s].SwapAddress.Length > 1)
                     {
-                        size[s] = pcm.segmentinfos[s].SwapSize;
+                        size[s] = pcm.segmentinfos[s].SwapSize.ToString("X");
                         range[s] = pcm.segmentinfos[s].SwapAddress;
                     }
                     else
@@ -165,7 +165,7 @@ namespace UniversalPatcher
                 string SegAddr;
                 if (PCM.segmentinfos[SegIndex].SwapAddress != "")
                 { 
-                    SegSize = PCM.segmentinfos[SegIndex].SwapSize;
+                    SegSize = PCM.segmentinfos[SegIndex].SwapSize.ToString("X");
                     SegAddr = PCM.segmentinfos[SegIndex].SwapAddress;
                 }
                 else
@@ -174,12 +174,16 @@ namespace UniversalPatcher
                     SegAddr = PCM.segmentinfos[SegIndex].Address;
                 }
 
-                if (SwapSegments[i].SegIndex == SegIndex && SwapSegments[i].XmlFile == PCM.segmentinfos[SegIndex].XmlFile && SwapSegments[i].Size == SegSize)
+                if (SwapSegments[i].SegIndex == SegIndex && SwapSegments[i].XmlFile == PCM.configFile + ".xml" && SwapSegments[i].Size == SegSize)
                 { 
                     var item = new ListViewItem(Path.GetFileName(SwapSegments[i].FileName));
                     item.Tag = Application.StartupPath + SwapSegments[i].FileName;
                     if (SwapSegments[i].Cvn != null && SwapSegments[i].Cvn != "")
-                        item.SubItems.Add(CheckStockCVN(SwapSegments[i].PN, SwapSegments[i].Ver, SwapSegments[i].SegNr, SwapSegments[i].Cvn, false, PCM.configFile + ".xml"));
+                    {
+                        uint cvnInt = 0;
+                        if (HexToUint(SwapSegments[i].Cvn, out cvnInt))
+                        item.SubItems.Add(CheckStockCVN(SwapSegments[i].PN, SwapSegments[i].Ver, SwapSegments[i].SegNr, cvnInt, false, PCM.configFile + ".xml"));
+                    }
                     else
                         item.SubItems.Add(SwapSegments[i].Stock);
                     SegmentData swapdata;                    
@@ -458,12 +462,11 @@ namespace UniversalPatcher
                 uint TotalLength = 0;
                 if (PCM.segmentinfos[Seg].SwapAddress.Length > 1)
                 {
-                    if (!HexToUint(PCM.segmentinfos[Seg].SwapSize, out TotalLength))
-                        throw new Exception("Cant't decode HEX: " + PCM.segmentinfos[Seg].Size);
+                    TotalLength = PCM.segmentinfos[Seg].SwapSize;
                 }
                 else
                 {
-                    TotalLength = PCM.getSegmentSize(Seg);
+                    TotalLength = PCM.segmentinfos[Seg].getSize();
                 }
                 Logger("Reading segment from file: " + FileName,false);
                 uint fsize = (uint)new FileInfo(FileName).Length;

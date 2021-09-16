@@ -214,6 +214,7 @@ namespace UniversalPatcher
                 dtcTd.Math = "X";
                 dtcTd.OS = PCM.OS;
                 dtcTd.Max = 1;
+                dtcTd.Units = "Boolean";
                 for (int i = 0; i < PCM.dtcCodes.Count; i++)
                 {
                     dtcTd.RowHeaders += PCM.dtcCodes[i].Code + ",";

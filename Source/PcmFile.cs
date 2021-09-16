@@ -43,7 +43,6 @@ namespace UniversalPatcher
                 {
                     loadConfigFile(configFileFullName);
                     GetSegmentAddresses();
-                    GetInfo();
                 }
             }
             catch (Exception ex)
@@ -79,12 +78,8 @@ namespace UniversalPatcher
         public SegmentAddressData[] segmentAddressDatas;
         public SegmentInfo[] segmentinfos;
         public uint fsize;
-        public string OS;
-        public int OSSegment;
-        public int diagSegment;
         public uint osStoreAddress;
         public string mafAddress;
-        public bool checksumOK;
         public List<V6Table> v6tables;
         public V6Table v6VeTable;
         public List<osAddresses> osAddressList;
@@ -105,6 +100,45 @@ namespace UniversalPatcher
         public string tunerFile { get; set; }
         public List<string> tunerFileList { get; set; }
         public bool seekTablesImported;
+
+        public string OS
+        {
+            get
+            {
+                for (int s=0; s < Segments.Count; s++)
+                { 
+                    if (Segments[s].Name == "OS")
+                        return segmentinfos[s].PN;
+                }
+                return "";
+            }
+        }
+
+        public int OSSegment
+        {
+            get
+            {
+                for (int s = 0; s < Segments.Count; s++)
+                {
+                    if (Segments[s].Name == "OS")
+                        return s;
+                }
+                return int.MaxValue;
+            }
+        }
+
+        public int diagSegment
+        {
+            get
+            {
+                for (int s=0; s<Segments.Count; s++)
+                if (Segments[s].Name == "EngineDiag")
+                {
+                        return s;
+                }
+                return int.MaxValue;
+            }
+        }
 
         public string tableSeekFile
         {
@@ -162,10 +196,7 @@ namespace UniversalPatcher
         }
 
         public void setDefaultValues()
-        {
-            OS = "";
-            OSSegment = -1;
-            diagSegment = -1;
+        {            
             _configFileFullName = "";
             Segments = new List<SegmentConfig>();
             dtcCodes = new List<dtcCode>();
@@ -474,13 +505,13 @@ namespace UniversalPatcher
 
         }
 
-        public uint calculateCS1(int seg, bool dbg = true)
+        public UInt64 calculateCS1(int seg, bool dbg = true)
         {
             SegmentConfig S = Segments[seg];
             return CalculateChecksum(buf, segmentAddressDatas[seg].CS1Address, segmentAddressDatas[seg].CS1Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.CS1Method, S.CS1Complement, segmentAddressDatas[seg].CS1Address.Bytes, S.CS1SwapBytes,dbg);
         }
 
-        public uint calculateCS2(int seg, bool dbg = true)
+        public UInt64 calculateCS2(int seg, bool dbg = true)
         {
             SegmentConfig S = Segments[seg];
             return CalculateChecksum(buf, segmentAddressDatas[seg].CS2Address, segmentAddressDatas[seg].CS2Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.CS2Method, S.CS2Complement, segmentAddressDatas[seg].CS2Address.Bytes, S.CS2SwapBytes,dbg);
@@ -507,7 +538,7 @@ namespace UniversalPatcher
                         if (S.CS1Method != CSMethod_None)
                         {
                             uint CS1 = 0;
-                            uint CS1Calc = calculateCS1(seg);
+                            UInt64 CS1Calc = calculateCS1(seg);
                             if (segmentAddressDatas[seg].CS1Address.Address < uint.MaxValue)
                             {
                                 if (segmentAddressDatas[seg].CS1Address.Bytes == 1)
@@ -539,7 +570,7 @@ namespace UniversalPatcher
                                 else
                                 {
                                     needFix = true;
-                                    saveCS1(seg, CS1Calc);
+                                    saveCS1(seg, (uint)CS1Calc);
                                     Logger(" Checksum 1: " + CS1.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
                                 }
                             }
@@ -548,7 +579,7 @@ namespace UniversalPatcher
                         if (S.CS2Method != CSMethod_None)
                         {
                             uint CS2 = 0;
-                            uint CS2Calc = calculateCS2(seg);
+                            UInt64 CS2Calc = calculateCS2(seg);
                             if (segmentAddressDatas[seg].CS2Address.Address < uint.MaxValue)
                             {
                                 if (segmentAddressDatas[seg].CS2Address.Bytes == 1)
@@ -580,7 +611,7 @@ namespace UniversalPatcher
                                 else
                                 {
                                     needFix = true;
-                                    saveCS2(seg, CS2Calc);
+                                    saveCS2(seg, (uint)CS2Calc);
                                     Logger(" Checksum 2: " + CS2.ToString("X") + " => " + CS2Calc.ToString("X4") + " [Fixed]");
                                 }
                             }
@@ -611,8 +642,10 @@ namespace UniversalPatcher
         private void GetSegmentAddresses()
         {
             segmentAddressDatas = new SegmentAddressData[Segments.Count];
+            segmentinfos = new SegmentInfo[Segments.Count];
             for (int i = 0; i < Segments.Count; i++)
             {
+                segmentinfos[i] = new SegmentInfo(this, i);
                 SegmentConfig S = Segments[i];
                 S.Missing = false;
                 List<Block> B = new List<Block>();
@@ -670,174 +703,47 @@ namespace UniversalPatcher
                     Segments.Insert(i, S);
                 }
             }
-        }
-
-        public uint getSegmentSize (int seg)
-        {
-            uint SSize = 0;
-            for (int s = 0; s < segmentAddressDatas[seg].SegmentBlocks.Count; s++)
-            {
-                SSize += segmentAddressDatas[seg].SegmentBlocks[s].End - segmentAddressDatas[seg].SegmentBlocks[s].Start + 1;
-            }
-            return SSize;
+            osAddressList = new List<osAddresses>();
+            loadAddresses();
+            GetInfo();
         }
 
         public void GetInfo()
         {
+                    
+            bool checksumOK = true;
+
             if (SegmentList == null)
                 SegmentList = new List<SegmentInfo>();
-            segmentinfos = new SegmentInfo[Segments.Count];
-            checksumOK = true;
             for (int i = 0; i < Segments.Count; i++)
             {
                 SegmentConfig S = Segments[i];
                 if (S.Missing)
                     continue;
-                segmentinfos[i] = new SegmentInfo();
-                segmentinfos[i].Name = S.Name;
-                segmentinfos[i].FileName = FileName;
-                segmentinfos[i].XmlFile = configFile + ".xml";
-                string tmp = "";
-                uint SSize = 0;
-                if (S.SwapAddress != null && S.SwapAddress.Length > 1)
-                { 
-                    for (int s = 0; s < segmentAddressDatas[i].SwapBlocks.Count; s++)
-                    {
-                        if (s > 0)
-                            tmp += ", ";
-                        tmp += segmentAddressDatas[i].SwapBlocks[s].Start.ToString("X4") + " - " + segmentAddressDatas[i].SwapBlocks[s].End.ToString("X4");
-                        SSize += segmentAddressDatas[i].SwapBlocks[s].End - segmentAddressDatas[i].SwapBlocks[s].Start + 1;
-                    }
-                    segmentinfos[i].SwapSize = SSize.ToString("X");
-                    segmentinfos[i].SwapAddress = tmp;
-                }
-                if (S.Eeprom)
-                {
-                    //Special handling for P01/P59 eeprom -segment
-                    GmEeprom.GetEEpromInfo(buf, ref segmentinfos[i]);
-                    segmentinfos[i].CS1 = GmEeprom.GetKeyStatus(buf);
-                }
-                else
-                {
-                    tmp = "";
-                    SSize = 0;
-                    for (int s = 0; s < segmentAddressDatas[i].SegmentBlocks.Count; s++)
-                    {
-                        if (s > 0)
-                            tmp += ", ";
-                        tmp += segmentAddressDatas[i].SegmentBlocks[s].Start.ToString("X4") + " - " + segmentAddressDatas[i].SegmentBlocks[s].End.ToString("X4");
-                        SSize += segmentAddressDatas[i].SegmentBlocks[s].End - segmentAddressDatas[i].SegmentBlocks[s].Start + 1;
-                    }
-                    segmentinfos[i].Size = SSize.ToString("X");
-                    segmentinfos[i].Address = tmp;
-                    segmentinfos[i].PN = ReadInfo(segmentAddressDatas[i].PNaddr);
-                    if (S.Name == "OS")
-                    {
-                        OS = segmentinfos[i].PN;
-                        OSSegment = i;
-                    }
-                    if (S.Name == "EngineDiag")
-                    {
-                        diagSegment = i;
-                    }
-                    segmentinfos[i].Ver = ReadInfo(segmentAddressDatas[i].VerAddr);
-                    segmentinfos[i].SegNr = ReadInfo(segmentAddressDatas[i].SegNrAddr);
-                    if (segmentAddressDatas[i].ExtraInfo != null && segmentAddressDatas[i].ExtraInfo.Count > 0)
-                    {
-                        string ExtraI = "";
-                        for (int e = 0; e < segmentAddressDatas[i].ExtraInfo.Count; e++)
-                        {
-                            if (e > 0)
-                                ExtraI += Environment.NewLine;
-                            ExtraI += " " + segmentAddressDatas[i].ExtraInfo[e].Name + ": " + ReadInfo(segmentAddressDatas[i].ExtraInfo[e]);
-                        }
-                        segmentinfos[i].ExtraInfo = ExtraI;
-                    }
 
-                    if (S.CS1Method != CSMethod_None)
+                if (S.CS1Method != CSMethod_None)
+                {
+                    if (segmentAddressDatas[i].CS1Address.Address != uint.MaxValue)
                     {
-                        string HexLength;
-                        if (segmentAddressDatas[i].CS1Address.Bytes == 0)
-                        {
-                            HexLength = "X4";
-                            if (S.CS1Method == CSMethod_crc32 || S.CS1Method == CSMethod_Dwordsum)
-                                HexLength = "X8";
-                        }
-                        else
+                        if (segmentinfos[i].getCS1() != segmentinfos[i].getCS1Calc())
                         { 
-                            HexLength = "X" + (segmentAddressDatas[i].CS1Address.Bytes * 2).ToString();
+                            checksumOK = false;
                         }
-                        uint CS1Calc = calculateCS1(i);
-                        segmentinfos[i].CS1Calc = CS1Calc.ToString(HexLength);
-                        if (S.CVN == 1)
-                        {
-                            //segmentinfos[i].cvn = CS1Calc.ToString("X8");
-                            segmentinfos[i].cvn = CS1Calc.ToString(HexLength);
-                        }
-                        if (segmentAddressDatas[i].CS1Address.Address == uint.MaxValue)
-                        {
-                            segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true,configFile + ".xml").ToString();
-                        }
-                        else
-                        {
-                            segmentinfos[i].CS1 = ReadInfo(segmentAddressDatas[i].CS1Address);
-                            if (segmentinfos[i].CS1 == segmentinfos[i].CS1Calc)
-                            { 
-                                if (S.CVN == 1)
-                                {
-                                    segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true,configFile + ".pcm").ToString();
-                                }
-                            }
-                            else
-                            {
-                                checksumOK = false;
-                            }
-                        }
-                        
                     }
+                        
+                }
 
-                    if (S.CS2Method != CSMethod_None)
+                if (S.CS2Method != CSMethod_None)
+                {
+                    if (segmentAddressDatas[i].CS2Address.Address != uint.MaxValue)
                     {
-                        string HexLength;
-                        if (segmentAddressDatas[i].CS2Address.Bytes == 0)
+                        if (segmentinfos[i].getCS2() != segmentinfos[i].getCS2Calc())
                         {
-                            HexLength = "X4";
-                            if (S.CS2Method == CSMethod_crc32 || S.CS2Method == CSMethod_Dwordsum)
-                                HexLength = "X8";
-                        }
-                        else
-                        {
-                            HexLength = "X" + (segmentAddressDatas[i].CS2Address.Bytes * 2).ToString();
-                        }
-                        uint CS2Calc = calculateCS2(i);
-                        segmentinfos[i].CS2Calc = CS2Calc.ToString(HexLength);
-                        if (S.CVN == 2)
-                        {
-                            //segmentinfos[i].cvn = CS2Calc.ToString("X8");
-                            segmentinfos[i].cvn = CS2Calc.ToString(HexLength);
-                        }
-
-                        if (segmentAddressDatas[i].CS2Address.Address == uint.MaxValue)
-                        {
-                            segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true, configFile + ".xml").ToString();
-                        }
-                        else
-                        {
-                            segmentinfos[i].CS2 = ReadInfo(segmentAddressDatas[i].CS2Address);
-                            if (segmentinfos[i].CS2 == segmentinfos[i].CS2Calc)
-                            {
-                                if (S.CVN == 2)
-                                {
-                                    segmentinfos[i].Stock = CheckStockCVN(segmentinfos[i].PN, segmentinfos[i].Ver, segmentinfos[i].SegNr, segmentinfos[i].cvn, true, configFile + ".xml").ToString();
-                                }
-                            }
-                            else
-                            {
-                                checksumOK = false;
-                            }
+                            checksumOK = false;
                         }
                     }
                 }
+               
                 SegmentList.Add(segmentinfos[i]);
             }
             if (!checksumOK)
@@ -845,11 +751,9 @@ namespace UniversalPatcher
                 for (int i = 0; i< Segments.Count; i++)
                 {
                     if (!Segments[i].Missing)
-                    BadChkFileList.Add(segmentinfos[i]);
+                        BadChkFileList.Add(segmentinfos[i]);
                 }
             }
-            osAddressList = new List<osAddresses>();
-            loadAddresses();
         }
 
         public bool FindSegment(SegmentConfig S, int SegNr)
@@ -1065,6 +969,37 @@ namespace UniversalPatcher
             }
 
             Debug.WriteLine("Result: " + Result);
+            return Result;
+        }
+
+        public UInt64 ReadValue(AddressData AD)
+        {
+            Debug.WriteLine("Reading address: " + AD.Address.ToString("X") + ", bytes: " + AD.Bytes.ToString() + ", Type: " + AD.Type);
+            if (AD.Address == uint.MaxValue)
+            {
+                Debug.WriteLine("Address not defined");
+                return UInt64.MaxValue;
+            }
+            UInt64 Result = UInt64.MaxValue;
+
+            if (AD.Bytes == 1)
+            {
+                Result = (uint)buf[AD.Address];
+            }
+            else if (AD.Bytes == 2)
+            {
+                Result = BEToUint16(buf, AD.Address);
+            }
+            else if (AD.Bytes == 8)
+            {
+                Result = (UInt64)BEToUint64(buf, AD.Address);
+            }
+            else //Default is 4 bytes
+            {
+                Result = BEToUint32(buf, AD.Address);
+            }
+
+            Debug.WriteLine("Result: " + Result.ToString("X"));
             return Result;
         }
 

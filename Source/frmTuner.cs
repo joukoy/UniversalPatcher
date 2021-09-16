@@ -4163,7 +4163,6 @@ namespace UniversalPatcher
                 if (frmSw.ShowDialog(this) == DialogResult.OK)
                 {
                     PCM = frmSw.PCM;
-                    PCM.GetInfo();
                     PCM.FixCheckSums();
                     LoggerBold(Environment.NewLine + "Swapped segments:");
                     for (int s = 0; s < PCM.Segments.Count; s++)

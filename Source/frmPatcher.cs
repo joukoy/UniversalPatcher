@@ -145,6 +145,14 @@ namespace UniversalPatcher
             dataCVN.ColumnHeaderMouseClick += DataCVN_ColumnHeaderMouseClick;
             tabFakeCvn.Enter += TabFakeCvn_Enter;
             numFakeCvnBytes.KeyPress += numFakeCvnBytesFromEnd_ValueChanged;
+
+            dataFileInfo.DataError += DataGridView_DataError;
+            dataBadChkFile.DataError += DataGridView_DataError;
+        }
+
+        private void DataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            Debug.WriteLine(e.Exception);
         }
 
         private void TabFakeCvn_Enter(object sender, EventArgs e)
@@ -622,6 +630,8 @@ namespace UniversalPatcher
                         if (S.Missing)
                             continue;
                         Logger(" " + PCM.segmentinfos[i].Name.PadRight(11), false);
+                        if (S.Eeprom)
+                            Logger(GmEeprom.GetKeyStatus(PCM.buf),false);
                         if (S.CS1Method != CSMethod_None && chkCS1.Checked)
                         {
                             if (PCM.segmentAddressDatas[i].CS1Address.Address == uint.MaxValue)
@@ -630,7 +640,7 @@ namespace UniversalPatcher
                             }
                             else
                             {
-                                if (PCM.segmentinfos[i].CS1 == PCM.segmentinfos[i].CS1Calc)
+                                if (PCM.segmentinfos[i].getCS1() == PCM.segmentinfos[i].getCS1Calc())
                                 {
                                     Logger(" Checksum 1: " + PCM.segmentinfos[i].CS1 + " [OK]", false);
                                 }
@@ -649,7 +659,7 @@ namespace UniversalPatcher
                             }
                             else
                             {
-                                if (PCM.segmentinfos[i].CS2 == PCM.segmentinfos[i].CS2Calc)
+                                if (PCM.segmentinfos[i].getCS2() == PCM.segmentinfos[i].getCS2Calc())
                                 {
                                     Logger(" Checksum 2: " + PCM.segmentinfos[i].CS2 + " [OK]", false);
                                 }
@@ -659,10 +669,11 @@ namespace UniversalPatcher
                                 }
                             }
                         }
-                        if (PCM.segmentinfos[i].Stock == "[stock]")
+                        string st = PCM.segmentinfos[i].Stock;
+                        if (st == "[stock]")
                             LoggerBold(" [stock]", false);
                         else
-                            Logger(" " + PCM.segmentinfos[i].Stock, false);
+                            Logger(" " + st, false);
                         if (!txtResult.Text.EndsWith(Environment.NewLine) || chkLogtoFile.Checked)
                             Logger("");
                     }
@@ -827,6 +838,7 @@ namespace UniversalPatcher
             else
                 tabFinfo.Text = "File info (" + SegmentList.Count.ToString() + ")";
         }
+
         private void RefreshBadChkFile()
         {
             dataBadChkFile.DataSource = null;
@@ -1665,7 +1677,9 @@ namespace UniversalPatcher
                 {
                     CVN stock = ListCVN[i];
                     counter++;
-                    if (CheckStockCVN(stock.PN,stock.Ver,stock.SegmentNr,stock.cvn , false, basefile.configFileFullName) != "[stock]")
+                    uint cvnInt = 0;
+                    if (HexToUint(stock.cvn, out cvnInt))
+                    if (CheckStockCVN(stock.PN,stock.Ver,stock.SegmentNr, cvnInt, false, basefile.configFileFullName) != "[stock]")
                     {
                         //Add if not already in list
                         StockCVN.Add(stock);
@@ -1935,7 +1949,7 @@ namespace UniversalPatcher
                                 if (PCM.segmentinfos[s].SwapAddress != "")
                                 {
                                     swapsegment.Address = PCM.segmentinfos[s].SwapAddress;
-                                    swapsegment.Size = PCM.segmentinfos[s].SwapSize;
+                                    swapsegment.Size = PCM.segmentinfos[s].SwapSize.ToString("X");
                                 }
                                 else
                                 {
@@ -1943,7 +1957,7 @@ namespace UniversalPatcher
                                     swapsegment.Size = PCM.segmentinfos[s].Size;
                                 }
                                 swapsegment.Stock = PCM.segmentinfos[s].Stock;
-                                swapsegment.XmlFile = PCM.segmentinfos[s].XmlFile;
+                                swapsegment.XmlFile = PCM.configFile + ".xml";
                                 if (PCM.segmentinfos[s].Name == "OS")
                                 {
                                     for (int x=0;x< PCM.segmentinfos.Length;x++)
@@ -2094,7 +2108,6 @@ namespace UniversalPatcher
                 if (frmSw.ShowDialog(this) == DialogResult.OK)
                 {
                     basefile = frmSw.PCM;
-                    basefile.GetInfo();
                     basefile.FixCheckSums();
                     LoggerBold(Environment.NewLine + "Swapped segments:");
                     for (int s = 0; s < basefile.Segments.Count; s++)
@@ -2705,7 +2718,7 @@ namespace UniversalPatcher
                                 val = dataFileInfo.Rows[r].Cells[i].Value.ToString();
                             if (i > 0)
                                 row += ";";
-                            if (i == 3 || i == 4)  //Address (block)
+                            if (dataFileInfo.Columns[i].Name.Contains("Address"))  //Address (block)
                             {
                                 string[] aparts = val.Split(',');
                                 val = "";
@@ -2732,7 +2745,7 @@ namespace UniversalPatcher
                                 }
 
                             }
-                            else if (i> 4 && i < 12)
+                            else if (dataFileInfo.Columns[i].Name.StartsWith("CS") || dataFileInfo.Columns[i].Name.Contains("Size") || dataFileInfo.Columns[i].Name == "cvn") //(i> 4 && i < 12)
                             {
                                 if (HexToUint(val, out valDec))
                                     val = valDec.ToString();
@@ -3171,7 +3184,7 @@ namespace UniversalPatcher
 
         }
 
-        private uint csUtilCalcCS(bool calcOnly, uint oldVal)
+        private UInt64 csUtilCalcCS(bool calcOnly, uint oldVal)
         {
             List<Block> blocks;
             ParseAddress(txtChecksumRange.Text, basefile, out blocks);
@@ -3189,8 +3202,8 @@ namespace UniversalPatcher
             if (chkCSUtilTryAll.Checked && calcOnly)
             {
                 for (complement = 0; complement <= 2; complement++)
-                {                                        
-                    uint csCalc = CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_crc16, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
+                {
+                    UInt64 csCalc = CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_crc16, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
                     if (csCalc == oldVal)
                         LoggerBold("Method: CRC16,    Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
                     else
@@ -3283,7 +3296,7 @@ namespace UniversalPatcher
         {
             try
             {
-                uint CS1Calc = csUtilCalcCS(false, 0);
+                UInt64 CS1Calc = csUtilCalcCS(false, 0);
                 uint csAddr;
                 HexToUint(txtCSAddr.Text, out csAddr);
 
@@ -3301,7 +3314,7 @@ namespace UniversalPatcher
                 else if (numCSBytes.Value == 4)
                 {
                     oldVal = BEToUint32(basefile.buf, csAddr);
-                    SaveUint32(basefile.buf, csAddr, CS1Calc);
+                    SaveUint32(basefile.buf, csAddr, (uint)CS1Calc);
                 }
                 Logger("Checksum: " + oldVal.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
                 Logger("You can save BIN file now");
@@ -3437,11 +3450,7 @@ namespace UniversalPatcher
 
             uint orgValue = BEToUint32(basefile.buf, freeAddr);
 
-            uint cvn;
-            if (basefile.Segments[seg].CVN == 1)
-                cvn = basefile.calculateCS1(seg, false);
-            else
-                cvn = basefile.calculateCS2(seg, false);
+            UInt64 cvn = basefile.segmentinfos[seg].getCvn();
 
             if (cvn == targetCvn)
             {
@@ -3491,15 +3500,15 @@ namespace UniversalPatcher
                         basefile.buf[freeAddr] = (byte)testVal;
                         break;
                 }
-                uint calcCVN = 0;
+                UInt64 calcCVN = 0;
 
-                uint CS1Calc = basefile.calculateCS1(seg,false);
+                UInt64 CS1Calc = basefile.segmentinfos[seg].getCS1Calc();
                 if (basefile.Segments[seg].CVN == 1)
                     calcCVN = CS1Calc;
                 else
                 {
                     //Fix CS1 first
-                    basefile.saveCS1(seg, CS1Calc);
+                    basefile.saveCS1(seg, (uint)CS1Calc);
                     calcCVN = basefile.calculateCS2(seg, false);
                 }
                 if (calcCVN == targetCvn)
@@ -3554,7 +3563,6 @@ namespace UniversalPatcher
                     }
                     Logger("Done");
                     basefile.FixCheckSums();
-                    basefile.GetInfo();
                     ShowFileInfo(basefile,true);
                     showFakeCvnSelectedBytes();
                     //GetFileInfo(txtBaseFile.Text, ref basefile, false);
@@ -3811,19 +3819,23 @@ namespace UniversalPatcher
                 stock.Ver = basefile.segmentinfos[seg].Ver;
                 stock.XmlFile = basefile.configFile + ".xml";
 
-                if (CheckStockCVN(stock.PN, stock.Ver, stock.SegmentNr, stock.cvn, false, basefile.configFileFullName) != "[stock]")
+                uint cvnInt = 0;
+                if (HexToUint(stock.cvn, out cvnInt))
                 {
-                    //Add if not already in list
-                    StockCVN.Add(stock);
-                    Logger("Saving file stockcvn.xml");
-                    string FileName = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
-                    using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                    if (CheckStockCVN(stock.PN, stock.Ver, stock.SegmentNr, cvnInt, false, basefile.configFileFullName) != "[stock]")
                     {
-                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<CVN>));
-                        writer.Serialize(stream, StockCVN);
-                        stream.Close();
+                        //Add if not already in list
+                        StockCVN.Add(stock);
+                        Logger("Saving file stockcvn.xml");
+                        string FileName = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
+                        using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                        {
+                            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<CVN>));
+                            writer.Serialize(stream, StockCVN);
+                            stream.Close();
+                        }
+                        Logger("[OK]");
                     }
-                    Logger("[OK]");
                 }
                 else
                 {
