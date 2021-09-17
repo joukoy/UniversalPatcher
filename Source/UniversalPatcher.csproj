@@ -357,6 +357,7 @@
     <Compile Include="SegmentInfo.cs" />
     <Compile Include="SegmentSeek.cs" />
     <Compile Include="Serializer.cs" />
+    <Compile Include="StaticSegmentInfo.cs" />
     <Compile Include="TableInfo.cs" />
     <Compile Include="TableSeek.cs" />
     <Compile Include="tableSearch.cs" />

@@ -34,7 +34,7 @@ namespace UniversalPatcher
                     name[s] = pcm.segmentinfos[s].Name;
                     if (pcm.segmentinfos[s].SwapAddress.Length > 1)
                     {
-                        size[s] = pcm.segmentinfos[s].SwapSize.ToString("X");
+                        size[s] = pcm.segmentinfos[s].SwapSize;
                         range[s] = pcm.segmentinfos[s].SwapAddress;
                     }
                     else
@@ -165,7 +165,7 @@ namespace UniversalPatcher
                 string SegAddr;
                 if (PCM.segmentinfos[SegIndex].SwapAddress != "")
                 { 
-                    SegSize = PCM.segmentinfos[SegIndex].SwapSize.ToString("X");
+                    SegSize = PCM.segmentinfos[SegIndex].SwapSize;
                     SegAddr = PCM.segmentinfos[SegIndex].SwapAddress;
                 }
                 else
@@ -462,7 +462,7 @@ namespace UniversalPatcher
                 uint TotalLength = 0;
                 if (PCM.segmentinfos[Seg].SwapAddress.Length > 1)
                 {
-                    TotalLength = PCM.segmentinfos[Seg].SwapSize;
+                    TotalLength = PCM.segmentinfos[Seg].getSwapSize();
                 }
                 else
                 {

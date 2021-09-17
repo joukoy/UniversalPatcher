@@ -714,7 +714,7 @@ namespace UniversalPatcher
             bool checksumOK = true;
 
             if (SegmentList == null)
-                SegmentList = new List<SegmentInfo>();
+                SegmentList = new List<StaticSegmentInfo>();
             for (int i = 0; i < Segments.Count; i++)
             {
                 SegmentConfig S = Segments[i];
@@ -743,15 +743,19 @@ namespace UniversalPatcher
                         }
                     }
                 }
-               
-                SegmentList.Add(segmentinfos[i]);
+
+                StaticSegmentInfo ssi = new StaticSegmentInfo(segmentinfos[i]);
+                SegmentList.Add(ssi);
             }
             if (!checksumOK)
             {
                 for (int i = 0; i< Segments.Count; i++)
                 {
                     if (!Segments[i].Missing)
-                        BadChkFileList.Add(segmentinfos[i]);
+                    {
+                        StaticSegmentInfo ssi = new StaticSegmentInfo(segmentinfos[i]);
+                        BadChkFileList.Add(ssi);
+                    }
                 }
             }
         }

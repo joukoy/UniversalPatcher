@@ -296,8 +296,8 @@ public class upatcher
     public static List<CVN> StockCVN;
     public static List<CVN> ListCVN;
     public static List<CVN> BadCvnList;
-    public static List<SegmentInfo> SegmentList;
-    public static List<SegmentInfo> BadChkFileList = new List<SegmentInfo>();
+    public static List<StaticSegmentInfo> SegmentList;
+    public static List<StaticSegmentInfo> BadChkFileList = new List<StaticSegmentInfo>();
     public static List<SwapSegment> SwapSegments;
     //public static List<TableSearchConfig> tableSearchConfig;
     public static List<TableSearchResult> tableSearchResult;

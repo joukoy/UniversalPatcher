@@ -1949,7 +1949,7 @@ namespace UniversalPatcher
                                 if (PCM.segmentinfos[s].SwapAddress != "")
                                 {
                                     swapsegment.Address = PCM.segmentinfos[s].SwapAddress;
-                                    swapsegment.Size = PCM.segmentinfos[s].SwapSize.ToString("X");
+                                    swapsegment.Size = PCM.segmentinfos[s].SwapSize;
                                 }
                                 else
                                 {
@@ -2383,7 +2383,7 @@ namespace UniversalPatcher
 
         private void btnClearBadchkFile_Click(object sender, EventArgs e)
         {
-            BadChkFileList = new List<SegmentInfo>();
+            BadChkFileList = new List<StaticSegmentInfo>();
             RefreshBadChkFile();
         }
 
