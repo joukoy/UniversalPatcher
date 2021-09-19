@@ -2160,6 +2160,7 @@
             0,
             0,
             0});
+            this.numCSBytes.ValueChanged += new System.EventHandler(this.numCSBytes_ValueChanged);
             // 
             // label20
             // 

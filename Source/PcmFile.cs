@@ -1782,16 +1782,23 @@ namespace UniversalPatcher
         public string GetSegmentName(uint addr)
         {
             string retVal = "";
-            for (int s = 0; s<segmentinfos.Length; s++)
+            try
             {
-                for (int b=0; b< segmentAddressDatas[s].SegmentBlocks.Count; b++)
+                for (int s = 0; s < segmentinfos.Length; s++)
                 {
-                    if (addr >= segmentAddressDatas[s].SegmentBlocks[b].Start && addr <= segmentAddressDatas[s].SegmentBlocks[b].End)
+                    for (int b = 0; b < segmentAddressDatas[s].SegmentBlocks.Count; b++)
                     {
-                        retVal = segmentinfos[s].Name;
-                        return retVal;
+                        if (addr >= segmentAddressDatas[s].SegmentBlocks[b].Start && addr <= segmentAddressDatas[s].SegmentBlocks[b].End)
+                        {
+                            retVal = segmentinfos[s].Name;
+                            return retVal;
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
             return retVal;
         }
@@ -1799,16 +1806,23 @@ namespace UniversalPatcher
         public int GetSegmentNumber(uint addr)
         {
             int retVal = -1;
-            for (int s = 0; s < segmentinfos.Length; s++)
+            try
             {
-                for (int b = 0; b < segmentAddressDatas[s].SegmentBlocks.Count; b++)
+                for (int s = 0; s < segmentinfos.Length; s++)
                 {
-                    if (addr >= segmentAddressDatas[s].SegmentBlocks[b].Start && addr <= segmentAddressDatas[s].SegmentBlocks[b].End)
+                    for (int b = 0; b < segmentAddressDatas[s].SegmentBlocks.Count; b++)
                     {
-                        retVal = s;
-                        return retVal;
+                        if (addr >= segmentAddressDatas[s].SegmentBlocks[b].Start && addr <= segmentAddressDatas[s].SegmentBlocks[b].End)
+                        {
+                            retVal = s;
+                            return retVal;
+                        }
                     }
                 }
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
             return retVal;
         }

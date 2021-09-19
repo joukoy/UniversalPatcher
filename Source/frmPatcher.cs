@@ -3316,6 +3316,7 @@ namespace UniversalPatcher
                     oldVal = BEToUint32(basefile.buf, csAddr);
                     SaveUint32(basefile.buf, csAddr, (uint)CS1Calc);
                 }
+                showChkData();
                 Logger("Checksum: " + oldVal.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
                 Logger("You can save BIN file now");
             }
@@ -3982,8 +3983,13 @@ namespace UniversalPatcher
             {
                 int seg = basefile.GetSegmentNumber(chkAddr);
                 richChkData.Text = "";
-                uint segStartAddr = basefile.segmentAddressDatas[seg].SegmentBlocks[0].Start;
-                uint segEndAddr = basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End;
+                uint segStartAddr = 0;
+                uint segEndAddr = basefile.fsize;
+                if (seg > -1)
+                { 
+                    segStartAddr = basefile.segmentAddressDatas[seg].SegmentBlocks[0].Start;
+                    segEndAddr = basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End;
+                }
                 uint start = segStartAddr;
                 if ((int)(chkAddr - 15) > 0)
                     start = chkAddr - 15;
@@ -4009,7 +4015,8 @@ namespace UniversalPatcher
                         richChkData.AppendText(basefile.buf[a].ToString("X2") + " ");
                 }
                 richChkData.SelectionColor = Color.Black;
-                richChkData.AppendText(Environment.NewLine + "Black:" + basefile.Segments[seg].Name);
+                if (seg > -1)
+                    richChkData.AppendText(Environment.NewLine + "Black:" + basefile.Segments[seg].Name);
                 string otherSegment = basefile.GetSegmentName(otherSegAddr);
                 if (otherSegment != "")
                 {
@@ -4024,6 +4031,11 @@ namespace UniversalPatcher
         }
 
         private void txtCSAddr_TextChanged(object sender, EventArgs e)
+        {
+            showChkData();
+        }
+
+        private void numCSBytes_ValueChanged(object sender, EventArgs e)
         {
             showChkData();
         }
