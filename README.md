@@ -16,5 +16,5 @@ joukoy@gmail.com
 # Contributor/GM file specialist
 kur4o@pcmhacking.net
 
-#Homepage and documentation
+# Homepage and documentation
 https://universalpatcher.net/
