@@ -186,6 +186,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.btnExtractSegments = new System.Windows.Forms.Button();
             this.tabChecksumUtil = new System.Windows.Forms.TabPage();
+            this.richChkData = new System.Windows.Forms.RichTextBox();
             this.chkCsUtilSwapBytes = new System.Windows.Forms.CheckBox();
             this.btnCsUtilFix = new System.Windows.Forms.Button();
             this.numCSBytes = new System.Windows.Forms.NumericUpDown();
@@ -238,6 +239,7 @@
             this.touristToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.basicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.advancedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createProgramShortcutsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.loadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setupSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -256,7 +258,6 @@
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
-            this.createProgramShortcutsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -2084,6 +2085,7 @@
             // 
             // tabChecksumUtil
             // 
+            this.tabChecksumUtil.Controls.Add(this.richChkData);
             this.tabChecksumUtil.Controls.Add(this.chkCsUtilSwapBytes);
             this.tabChecksumUtil.Controls.Add(this.btnCsUtilFix);
             this.tabChecksumUtil.Controls.Add(this.numCSBytes);
@@ -2104,6 +2106,18 @@
             this.tabChecksumUtil.TabIndex = 5;
             this.tabChecksumUtil.Text = "Checksum research";
             this.tabChecksumUtil.UseVisualStyleBackColor = true;
+            // 
+            // richChkData
+            // 
+            this.richChkData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richChkData.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richChkData.Location = new System.Drawing.Point(627, 3);
+            this.richChkData.Name = "richChkData";
+            this.richChkData.Size = new System.Drawing.Size(210, 112);
+            this.richChkData.TabIndex = 154;
+            this.richChkData.Text = "";
             // 
             // chkCsUtilSwapBytes
             // 
@@ -2178,6 +2192,7 @@
             this.txtCSAddr.Name = "txtCSAddr";
             this.txtCSAddr.Size = new System.Drawing.Size(137, 20);
             this.txtCSAddr.TabIndex = 148;
+            this.txtCSAddr.TextChanged += new System.EventHandler(this.txtCSAddr_TextChanged);
             // 
             // label18
             // 
@@ -2658,6 +2673,13 @@
             this.advancedToolStripMenuItem.Text = "Advanced";
             this.advancedToolStripMenuItem.Click += new System.EventHandler(this.advancedToolStripMenuItem_Click);
             // 
+            // createProgramShortcutsToolStripMenuItem
+            // 
+            this.createProgramShortcutsToolStripMenuItem.Name = "createProgramShortcutsToolStripMenuItem";
+            this.createProgramShortcutsToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.createProgramShortcutsToolStripMenuItem.Text = "Create program shortcuts";
+            this.createProgramShortcutsToolStripMenuItem.Click += new System.EventHandler(this.createProgramShortcutsToolStripMenuItem_Click);
+            // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -2811,13 +2833,6 @@
             this.splitPatcher.Size = new System.Drawing.Size(844, 506);
             this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
-            // 
-            // createProgramShortcutsToolStripMenuItem
-            // 
-            this.createProgramShortcutsToolStripMenuItem.Name = "createProgramShortcutsToolStripMenuItem";
-            this.createProgramShortcutsToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.createProgramShortcutsToolStripMenuItem.Text = "Create program shortcuts";
-            this.createProgramShortcutsToolStripMenuItem.Click += new System.EventHandler(this.createProgramShortcutsToolStripMenuItem_Click);
             // 
             // FrmPatcher
             // 
@@ -3143,5 +3158,6 @@
         private System.Windows.Forms.RichTextBox richEndOfSegment;
         private System.Windows.Forms.Button btnVisualSegments;
         private System.Windows.Forms.ToolStripMenuItem createProgramShortcutsToolStripMenuItem;
+        private System.Windows.Forms.RichTextBox richChkData;
     }
 }

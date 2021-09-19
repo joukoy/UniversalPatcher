@@ -647,9 +647,10 @@ namespace UniversalPatcher
                     menuitem.Checked = true;
                     groupSelectCompare.Enabled = true;
                     modifyRadioText(menuTxt);
-                    currentCmpFile = compareToolStripMenuItem.DropDownItems.Count;
+                    //currentCmpFile = compareToolStripMenuItem.DropDownItems.Count;
                 }
                 compareToolStripMenuItem.DropDownItems.Add(menuitem);
+                currentCmpFile = findFile(cmpFile.fileLetter);
             }
             catch (Exception ex)
             {
@@ -2717,6 +2718,8 @@ namespace UniversalPatcher
                 LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
         }
+
+
 
 
         /*        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)

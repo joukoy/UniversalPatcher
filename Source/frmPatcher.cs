@@ -3971,6 +3971,62 @@ namespace UniversalPatcher
             frmCreateShortcuts fcs = new frmCreateShortcuts();
             fcs.Show();
         }
+
+        private void showChkData()
+        {
+            uint chkAddr = 0;
+            if (!HexToUint(txtCSAddr.Text, out chkAddr))
+                return;
+
+            try
+            {
+                int seg = basefile.GetSegmentNumber(chkAddr);
+                richChkData.Text = "";
+                uint segStartAddr = basefile.segmentAddressDatas[seg].SegmentBlocks[0].Start;
+                uint segEndAddr = basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End;
+                uint start = segStartAddr;
+                if ((int)(chkAddr - 15) > 0)
+                    start = chkAddr - 15;
+                uint otherSegAddr = uint.MaxValue;
+                for (uint a = start; a < basefile.fsize && a < (chkAddr + 15); a++)
+                {
+                    if (a >= chkAddr && a < (chkAddr + numCSBytes.Value))
+                    {
+                        richChkData.SelectionColor = Color.Red;
+                    }
+                    else if (a >= segStartAddr && a <= segEndAddr)
+                    {
+                        richChkData.SelectionColor = Color.Black;
+                    }
+                    else
+                    {
+                        richChkData.SelectionColor = Color.LightBlue;
+                        otherSegAddr = a;
+                    }
+                    if (a == segEndAddr || a == (segStartAddr - 1))
+                        richChkData.AppendText(basefile.buf[a].ToString("X2") + "|");
+                    else
+                        richChkData.AppendText(basefile.buf[a].ToString("X2") + " ");
+                }
+                richChkData.SelectionColor = Color.Black;
+                richChkData.AppendText(Environment.NewLine + "Black:" + basefile.Segments[seg].Name);
+                string otherSegment = basefile.GetSegmentName(otherSegAddr);
+                if (otherSegment != "")
+                {
+                    richChkData.SelectionColor = Color.LightBlue;
+                    richChkData.AppendText(Environment.NewLine + "Lightblue:" + otherSegment);
+                }
+                richChkData.SelectionColor = Color.Red;
+                richChkData.AppendText(Environment.NewLine + "Red:Selected bytes");
+            }
+            catch { };
+
+        }
+
+        private void txtCSAddr_TextChanged(object sender, EventArgs e)
+        {
+            showChkData();
+        }
     }
 }
 
