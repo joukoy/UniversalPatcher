@@ -4198,5 +4198,25 @@ namespace UniversalPatcher
         {
             openNewBinFile(true);
         }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AboutBox1 aboutBox = new AboutBox1();
+            aboutBox.Show();
+        }
+
+        private void homepageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string url = "https://universalpatcher.net/";
+                System.Diagnostics.Process.Start(url);
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+
+        }
     }
 }

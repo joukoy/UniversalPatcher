@@ -3985,16 +3985,30 @@ namespace UniversalPatcher
                 richChkData.Text = "";
                 uint segStartAddr = 0;
                 uint segEndAddr = basefile.fsize;
+                uint rStart = uint.MaxValue;
+                uint rEnd = 0;
+
+                if (txtChecksumRange.Text.Contains("-"))
+                {
+                    string[] rParts = txtChecksumRange.Text.Split('-');
+                    if (rParts.Length == 2)
+                    {
+                        HexToUint(rParts[0], out rStart);
+                        HexToUint(rParts[1], out rEnd);
+                    }
+                }
+
                 if (seg > -1)
                 { 
                     segStartAddr = basefile.segmentAddressDatas[seg].SegmentBlocks[0].Start;
                     segEndAddr = basefile.segmentAddressDatas[seg].SegmentBlocks[basefile.segmentAddressDatas[seg].SegmentBlocks.Count - 1].End;
                 }
                 uint start = segStartAddr;
-                if ((int)(chkAddr - 15) > 0)
-                    start = chkAddr - 15;
-                uint otherSegAddr = uint.MaxValue;
-                for (uint a = start; a < basefile.fsize && a < (chkAddr + 15); a++)
+                if ((int)(chkAddr - 4) > 0)
+                    start = chkAddr - 4;
+                uint prevSegAddr = uint.MaxValue;
+                uint nextSegAddr = uint.MaxValue;
+                for (uint a = start; a < basefile.fsize && a < (chkAddr + 10); a++)
                 {
                     if (a >= chkAddr && a < (chkAddr + numCSBytes.Value))
                     {
@@ -4004,27 +4018,83 @@ namespace UniversalPatcher
                     {
                         richChkData.SelectionColor = Color.Black;
                     }
-                    else
+                    else if (a < segStartAddr)
                     {
                         richChkData.SelectionColor = Color.LightBlue;
-                        otherSegAddr = a;
+                        prevSegAddr = a;
                     }
+                    else
+                    {
+                        richChkData.SelectionColor = Color.LightGreen;
+                        nextSegAddr = a;
+                    }
+                    if (a >= rStart && a <= rEnd)
+                        richChkData.SelectionFont = new Font(richChkData.SelectionFont, FontStyle.Underline);
+                    else
+                        richChkData.SelectionFont = new Font(richChkData.SelectionFont, FontStyle.Regular);
                     if (a == segEndAddr || a == (segStartAddr - 1))
                         richChkData.AppendText(basefile.buf[a].ToString("X2") + "|");
                     else
                         richChkData.AppendText(basefile.buf[a].ToString("X2") + " ");
                 }
+
+                if (rEnd > (chkAddr + 8))
+                {
+                    richChkData.AppendText("... ");
+                    for (uint a = rEnd - 4; a < basefile.fsize && a < (rEnd + 4); a++)
+                    {
+                        if (a >= chkAddr && a < (chkAddr + numCSBytes.Value))
+                        {
+                            richChkData.SelectionColor = Color.Red;
+                        }
+                        else if (a >= segStartAddr && a <= segEndAddr)
+                        {
+                            richChkData.SelectionColor = Color.Black;
+                        }
+                        else if (a < segStartAddr)
+                        {
+                            richChkData.SelectionColor = Color.LightBlue;
+                            prevSegAddr = a;
+                        }
+                        else
+                        {
+                            richChkData.SelectionColor = Color.LightGreen;
+                            nextSegAddr = a;
+                        }
+                        if (a >= rStart && a <= rEnd)
+                            richChkData.SelectionFont = new Font(richChkData.SelectionFont, FontStyle.Underline);
+                        else
+                            richChkData.SelectionFont = new Font(richChkData.SelectionFont, FontStyle.Regular);
+                        if (a == segEndAddr || a == (segStartAddr - 1))
+                            richChkData.AppendText(basefile.buf[a].ToString("X2") + "|");
+                        else
+                            richChkData.AppendText(basefile.buf[a].ToString("X2") + " ");
+                    }
+                }
+
                 richChkData.SelectionColor = Color.Black;
+                richChkData.SelectionFont = new Font(richChkData.SelectionFont, FontStyle.Underline);
+                richChkData.AppendText(Environment.NewLine + "Underlined:selected range");
+                richChkData.SelectionFont = new Font(richChkData.SelectionFont, FontStyle.Regular);
                 if (seg > -1)
                     richChkData.AppendText(Environment.NewLine + "Black:" + basefile.Segments[seg].Name);
-                string otherSegment = basefile.GetSegmentName(otherSegAddr);
-                if (otherSegment != "")
+                string prevSegment = basefile.GetSegmentName(prevSegAddr);
+                if (prevSegment != "")
                 {
                     richChkData.SelectionColor = Color.LightBlue;
-                    richChkData.AppendText(Environment.NewLine + "Lightblue:" + otherSegment);
+                    richChkData.AppendText(Environment.NewLine + "Lightblue:" + prevSegment);
+                }
+                string nextSegment = basefile.GetSegmentName(nextSegAddr);
+                if (nextSegment != "")
+                {
+                    richChkData.SelectionColor = Color.LightGreen;
+                    richChkData.AppendText(Environment.NewLine + "LightGreen:" + nextSegment);
                 }
                 richChkData.SelectionColor = Color.Red;
                 richChkData.AppendText(Environment.NewLine + "Red:Selected bytes");
+
+                richChkData.SelectionColor = Color.Black;
+
             }
             catch { };
 
@@ -4038,6 +4108,25 @@ namespace UniversalPatcher
         private void numCSBytes_ValueChanged(object sender, EventArgs e)
         {
             showChkData();
+        }
+
+        private void txtChecksumRange_TextChanged(object sender, EventArgs e)
+        {
+            showChkData();
+        }
+
+        private void homepageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string url = "https://universalpatcher.net/";
+                System.Diagnostics.Process.Start(url);
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -108,7 +109,53 @@ namespace UniversalPatcher
 
         private void labelCompanyName_Click(object sender, EventArgs e)
         {
+            try
+            {
+                string url = "https://universalpatcher.net/";
+                System.Diagnostics.Process.Start(url);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
 
+        }
+
+        private void tableLayoutPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void btnHomePage_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string url = "https://universalpatcher.net/";
+                System.Diagnostics.Process.Start(url);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+        }
+
+        private void btnDonate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string url = "https://universalpatcher.net/support-the-project/";
+                System.Diagnostics.Process.Start(url);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

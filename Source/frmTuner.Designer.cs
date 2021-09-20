@@ -85,6 +85,9 @@ namespace UniversalPatcher
             this.saveXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveXMLAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -130,6 +133,7 @@ namespace UniversalPatcher
             this.tabControlFileInfo = new System.Windows.Forms.TabControl();
             this.imageList3 = new System.Windows.Forms.ImageList(this.components);
             this.splitContainerListMode = new System.Windows.Forms.SplitContainer();
+            this.treeView1 = new UniversalPatcher.TreeViewMS();
             this.contextMenuStripListTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expand2LevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -139,10 +143,6 @@ namespace UniversalPatcher
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.timerFilter = new System.Windows.Forms.Timer(this.components);
             this.imageList2 = new System.Windows.Forms.ImageList(this.components);
-            this.btnCollapse = new System.Windows.Forms.Button();
-            this.btnExpand = new System.Windows.Forms.Button();
-            this.radioListMode = new System.Windows.Forms.RadioButton();
-            this.radioTreeMode = new System.Windows.Forms.RadioButton();
             this.imageList4 = new System.Windows.Forms.ImageList(this.components);
             this.label2 = new System.Windows.Forms.Label();
             this.labelTableName = new System.Windows.Forms.Label();
@@ -152,7 +152,10 @@ namespace UniversalPatcher
             this.compareSelectedTablesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripPatch = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.applyPatchToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.treeView1 = new UniversalPatcher.TreeViewMS();
+            this.radioListMode = new System.Windows.Forms.RadioButton();
+            this.radioTreeMode = new System.Windows.Forms.RadioButton();
+            this.btnCollapse = new System.Windows.Forms.Button();
+            this.btnExpand = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -231,7 +234,8 @@ namespace UniversalPatcher
             this.currentFileToolStripMenuItem,
             this.tableListToolStripMenuItem,
             this.utilitiesToolStripMenuItem,
-            this.xmlToolStripMenuItem});
+            this.xmlToolStripMenuItem,
+            this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1021, 24);
@@ -607,6 +611,29 @@ namespace UniversalPatcher
             this.clearTableToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
             this.clearTableToolStripMenuItem.Text = "&Clear Tablelist";
             this.clearTableToolStripMenuItem.Click += new System.EventHandler(this.clearTableToolStripMenuItem_Click);
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aboutToolStripMenuItem,
+            this.homepageToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "&Help";
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Text = "&About...";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // homepageToolStripMenuItem
+            // 
+            this.homepageToolStripMenuItem.Name = "homepageToolStripMenuItem";
+            this.homepageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.homepageToolStripMenuItem.Text = "Homepage";
+            this.homepageToolStripMenuItem.Click += new System.EventHandler(this.homepageToolStripMenuItem_Click);
             // 
             // contextMenuStrip1
             // 
@@ -1052,6 +1079,22 @@ namespace UniversalPatcher
             this.splitContainerListMode.SplitterDistance = 340;
             this.splitContainerListMode.TabIndex = 3;
             // 
+            // treeView1
+            // 
+            this.treeView1.ContextMenuStrip = this.contextMenuStripListTree;
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.HideSelection = false;
+            this.treeView1.ImageIndex = 0;
+            this.treeView1.ImageList = this.imageList1;
+            this.treeView1.Indent = 20;
+            this.treeView1.ItemHeight = 18;
+            this.treeView1.Location = new System.Drawing.Point(0, 0);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.SelectedImageIndex = 0;
+            this.treeView1.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("treeView1.SelectedNodes")));
+            this.treeView1.Size = new System.Drawing.Size(340, 409);
+            this.treeView1.TabIndex = 2;
+            // 
             // contextMenuStripListTree
             // 
             this.contextMenuStripListTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1154,59 +1197,6 @@ namespace UniversalPatcher
             this.imageList2.Images.SetKeyName(8, "pieces.ico");
             this.imageList2.Images.SetKeyName(9, "stapler.ico");
             // 
-            // btnCollapse
-            // 
-            this.btnCollapse.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCollapse.ImageKey = "collapse.ico";
-            this.btnCollapse.ImageList = this.imageList2;
-            this.btnCollapse.Location = new System.Drawing.Point(350, 28);
-            this.btnCollapse.Name = "btnCollapse";
-            this.btnCollapse.Size = new System.Drawing.Size(24, 24);
-            this.btnCollapse.TabIndex = 25;
-            this.btnCollapse.UseVisualStyleBackColor = true;
-            this.btnCollapse.Click += new System.EventHandler(this.btnCollapse_Click);
-            // 
-            // btnExpand
-            // 
-            this.btnExpand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnExpand.ImageKey = "expand.ico";
-            this.btnExpand.ImageList = this.imageList2;
-            this.btnExpand.Location = new System.Drawing.Point(320, 28);
-            this.btnExpand.Name = "btnExpand";
-            this.btnExpand.Size = new System.Drawing.Size(24, 24);
-            this.btnExpand.TabIndex = 24;
-            this.btnExpand.UseVisualStyleBackColor = true;
-            this.btnExpand.Click += new System.EventHandler(this.btnExpand_Click);
-            // 
-            // radioListMode
-            // 
-            this.radioListMode.AutoSize = true;
-            this.radioListMode.ImageKey = "listmode.ico";
-            this.radioListMode.ImageList = this.imageList2;
-            this.radioListMode.Location = new System.Drawing.Point(326, 1);
-            this.radioListMode.MaximumSize = new System.Drawing.Size(40, 40);
-            this.radioListMode.Name = "radioListMode";
-            this.radioListMode.Padding = new System.Windows.Forms.Padding(4);
-            this.radioListMode.Size = new System.Drawing.Size(38, 24);
-            this.radioListMode.TabIndex = 1;
-            this.radioListMode.UseVisualStyleBackColor = true;
-            this.radioListMode.CheckedChanged += new System.EventHandler(this.radioListMode_CheckedChanged);
-            // 
-            // radioTreeMode
-            // 
-            this.radioTreeMode.AutoSize = true;
-            this.radioTreeMode.Checked = true;
-            this.radioTreeMode.ImageKey = "category.ico";
-            this.radioTreeMode.ImageList = this.imageList3;
-            this.radioTreeMode.Location = new System.Drawing.Point(370, -1);
-            this.radioTreeMode.Name = "radioTreeMode";
-            this.radioTreeMode.Padding = new System.Windows.Forms.Padding(2);
-            this.radioTreeMode.Size = new System.Drawing.Size(42, 28);
-            this.radioTreeMode.TabIndex = 0;
-            this.radioTreeMode.TabStop = true;
-            this.radioTreeMode.UseVisualStyleBackColor = true;
-            this.radioTreeMode.CheckedChanged += new System.EventHandler(this.radioTreeMode_CheckedChanged);
-            // 
             // imageList4
             // 
             this.imageList4.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList4.ImageStream")));
@@ -1254,7 +1244,7 @@ namespace UniversalPatcher
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(422, 7);
+            this.label2.Location = new System.Drawing.Point(487, 4);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(37, 13);
             this.label2.TabIndex = 29;
@@ -1266,7 +1256,7 @@ namespace UniversalPatcher
             this.labelTableName.BackColor = System.Drawing.SystemColors.Window;
             this.labelTableName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.labelTableName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTableName.Location = new System.Drawing.Point(465, 5);
+            this.labelTableName.Location = new System.Drawing.Point(530, 2);
             this.labelTableName.Name = "labelTableName";
             this.labelTableName.Size = new System.Drawing.Size(74, 18);
             this.labelTableName.TabIndex = 30;
@@ -1317,21 +1307,58 @@ namespace UniversalPatcher
             this.applyPatchToolStripMenuItem1.Text = "Apply patch";
             this.applyPatchToolStripMenuItem1.Click += new System.EventHandler(this.applyPatchToolStripMenuItem1_Click);
             // 
-            // treeView1
+            // radioListMode
             // 
-            this.treeView1.ContextMenuStrip = this.contextMenuStripListTree;
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.HideSelection = false;
-            this.treeView1.ImageIndex = 0;
-            this.treeView1.ImageList = this.imageList1;
-            this.treeView1.Indent = 20;
-            this.treeView1.ItemHeight = 18;
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.SelectedImageIndex = 0;
-            this.treeView1.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("treeView1.SelectedNodes")));
-            this.treeView1.Size = new System.Drawing.Size(340, 409);
-            this.treeView1.TabIndex = 2;
+            this.radioListMode.AutoSize = true;
+            this.radioListMode.ImageKey = "listmode.ico";
+            this.radioListMode.ImageList = this.imageList2;
+            this.radioListMode.Location = new System.Drawing.Point(395, 0);
+            this.radioListMode.MaximumSize = new System.Drawing.Size(40, 40);
+            this.radioListMode.Name = "radioListMode";
+            this.radioListMode.Padding = new System.Windows.Forms.Padding(4);
+            this.radioListMode.Size = new System.Drawing.Size(38, 24);
+            this.radioListMode.TabIndex = 1;
+            this.radioListMode.UseVisualStyleBackColor = true;
+            this.radioListMode.CheckedChanged += new System.EventHandler(this.radioListMode_CheckedChanged);
+            // 
+            // radioTreeMode
+            // 
+            this.radioTreeMode.AutoSize = true;
+            this.radioTreeMode.Checked = true;
+            this.radioTreeMode.ImageKey = "category.ico";
+            this.radioTreeMode.ImageList = this.imageList3;
+            this.radioTreeMode.Location = new System.Drawing.Point(439, -3);
+            this.radioTreeMode.Name = "radioTreeMode";
+            this.radioTreeMode.Padding = new System.Windows.Forms.Padding(2);
+            this.radioTreeMode.Size = new System.Drawing.Size(42, 28);
+            this.radioTreeMode.TabIndex = 0;
+            this.radioTreeMode.TabStop = true;
+            this.radioTreeMode.UseVisualStyleBackColor = true;
+            this.radioTreeMode.CheckedChanged += new System.EventHandler(this.radioTreeMode_CheckedChanged);
+            // 
+            // btnCollapse
+            // 
+            this.btnCollapse.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCollapse.ImageKey = "collapse.ico";
+            this.btnCollapse.ImageList = this.imageList2;
+            this.btnCollapse.Location = new System.Drawing.Point(350, 28);
+            this.btnCollapse.Name = "btnCollapse";
+            this.btnCollapse.Size = new System.Drawing.Size(24, 24);
+            this.btnCollapse.TabIndex = 25;
+            this.btnCollapse.UseVisualStyleBackColor = true;
+            this.btnCollapse.Click += new System.EventHandler(this.btnCollapse_Click);
+            // 
+            // btnExpand
+            // 
+            this.btnExpand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnExpand.ImageKey = "expand.ico";
+            this.btnExpand.ImageList = this.imageList2;
+            this.btnExpand.Location = new System.Drawing.Point(320, 28);
+            this.btnExpand.Name = "btnExpand";
+            this.btnExpand.Size = new System.Drawing.Size(24, 24);
+            this.btnExpand.TabIndex = 24;
+            this.btnExpand.UseVisualStyleBackColor = true;
+            this.btnExpand.Click += new System.EventHandler(this.btnExpand_Click);
             // 
             // FrmTuner
             // 
@@ -1510,5 +1537,8 @@ namespace UniversalPatcher
         private ToolStripMenuItem applyPatchToolStripMenuItem1;
         private ToolStripMenuItem swapSegmentsToolStripMenuItem;
         private ToolStripMenuItem openCompareBINToolStripMenuItem;
+        private ToolStripMenuItem helpToolStripMenuItem;
+        private ToolStripMenuItem aboutToolStripMenuItem;
+        private ToolStripMenuItem homepageToolStripMenuItem;
     }
 }
