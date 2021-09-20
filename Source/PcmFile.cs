@@ -516,6 +516,7 @@ namespace UniversalPatcher
             SegmentConfig S = Segments[seg];
             return CalculateChecksum(buf, segmentAddressDatas[seg].CS2Address, segmentAddressDatas[seg].CS2Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.CS2Method, S.CS2Complement, segmentAddressDatas[seg].CS2Address.Bytes, S.CS2SwapBytes,dbg);
         }
+
         public bool FixCheckSums()
         {
             bool needFix = false;

@@ -4,3 +4,5 @@
 - Help menu to Tuner
 - Homepage to Help -menu
 
+0.18.01
+- Fixed bug: Showing Checksum1 in place of Checksum2
