@@ -1,0 +1,6 @@
+0.18.00
+- First version with HISTORY information.
+- Imroved HEX preview in "Checksum research"
+- Help menu to Tuner
+- Homepage to Help -menu
+
