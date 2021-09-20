@@ -139,9 +139,9 @@ namespace UniversalPatcher
             string Ret = " Seed: " + Key.Seed.ToString("X4");
             Ret += ", Bin Key " + Key.Key.ToString("X4");
             if (Key.Key == Key.NewKey)
-                Ret += " [OK]" + Environment.NewLine;
+                Ret += " [OK]";
             else
-                Ret += " * Calculated: " + Key.NewKey.ToString("X4") + " [Fail]" + Environment.NewLine;
+                Ret += " * Calculated: " + Key.NewKey.ToString("X4") + " [Fail]" ;
             return Ret;
         }
 

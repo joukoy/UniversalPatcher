@@ -105,6 +105,8 @@ namespace UniversalPatcher
         {
             get
             {
+                if (PCM.Segments[seg].CVN == 0)
+                    return "";
                 return CheckStockCVN(PN, Ver, SegNr, getCvn(), true, PCM.configFile + ".xml");
             }
         }
@@ -218,5 +220,14 @@ namespace UniversalPatcher
             return cs.ToString(HexLength);
         }
 
+        public uint getStartAddr()
+        {
+            return PCM.segmentAddressDatas[seg].SegmentBlocks[0].Start;
+        }
+
+        public uint getEndAddr()
+        {
+            return PCM.segmentAddressDatas[seg].SegmentBlocks[PCM.segmentAddressDatas[seg].SegmentBlocks.Count-1].End;
+        }
     }
 }

@@ -578,7 +578,19 @@ public class upatcher
     }
     public static int getElementSize(InDataType dataType)
     {
-        return getBits(dataType) / 8;
+        int bytes = 1; // Assume one byte if not defined. OK?
+        if (dataType == InDataType.SBYTE || dataType == InDataType.UBYTE)
+            bytes = 1;
+        if (dataType == InDataType.SWORD || dataType == InDataType.UWORD)
+            bytes = 2;
+        if (dataType == InDataType.INT32 || dataType == InDataType.UINT32 || dataType == InDataType.FLOAT32)
+            bytes = 4;
+        if (dataType == InDataType.INT64 || dataType == InDataType.UINT64 || dataType == InDataType.FLOAT64)
+            bytes = 8;
+        if (dataType == InDataType.UNKNOWN)
+            Logger("Warning, unknown data type. Assuming UBYTE");
+
+        return bytes;
     }
     public static bool getSigned(InDataType dataType)
     {

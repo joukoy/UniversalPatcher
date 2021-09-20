@@ -91,6 +91,8 @@ namespace UniversalPatcher
         int multiplierDecimals = 3;
         int decimals = 0;
 
+        frmTableVis ftv;
+
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
             dataGridView1.AutoResizeColumns();
@@ -239,6 +241,9 @@ namespace UniversalPatcher
                 }
                 string valTxt = " Last value " + Convert.ToDouble(tCell.lastValue).ToString(formatStr) + " Saved value " + Convert.ToDouble(tCell.origValue).ToString(formatStr);
                 labelInfo.Text = minMaxTxt + valTxt + " Address: " + tCell.addr.ToString("X");
+
+                if (ftv != null && ftv.Visible)
+                    ftv.displayData(tCell.addr);
             }
             catch (Exception ex)
             {
@@ -2716,6 +2721,27 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void showTableVisualizationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ftv = new frmTableVis(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td);
+                ftv.Show();
+                uint addr = 0;
+                if (dataGridView1.SelectedCells.Count > 0)
+                {
+                    TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
+                    addr = tCell.addr;
+                }
+
+                ftv.displayData(addr);
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
             }
         }
 

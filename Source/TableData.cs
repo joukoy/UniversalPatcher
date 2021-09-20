@@ -114,7 +114,21 @@ namespace UniversalPatcher
                 return 2;
         } 
         
+        public uint endAddress()
+        {
+            return (uint)(addrInt + size());
+        }
+
+        public int size()
+        {
+            return Rows * Columns * elementSize() - 1;
+        }
         
+        public int elementSize()
+        {
+            return getElementSize(DataType);
+        }
+
         public TableData ShallowCopy()
         {
             return (TableData)this.MemberwiseClone();

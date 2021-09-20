@@ -80,6 +80,7 @@ namespace UniversalPatcher
             this.radioMultiplier = new System.Windows.Forms.RadioButton();
             this.radioAbsolute = new System.Windows.Forms.RadioButton();
             this.chkRawHex = new System.Windows.Forms.CheckBox();
+            this.showTableVisualizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -302,7 +303,8 @@ namespace UniversalPatcher
             // graphToolStripMenuItem
             // 
             this.graphToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showGraphicToolStripMenuItem});
+            this.showGraphicToolStripMenuItem,
+            this.showTableVisualizationToolStripMenuItem});
             this.graphToolStripMenuItem.Name = "graphToolStripMenuItem";
             this.graphToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
             this.graphToolStripMenuItem.Text = "Graph";
@@ -310,7 +312,7 @@ namespace UniversalPatcher
             // showGraphicToolStripMenuItem
             // 
             this.showGraphicToolStripMenuItem.Name = "showGraphicToolStripMenuItem";
-            this.showGraphicToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showGraphicToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
             this.showGraphicToolStripMenuItem.Text = "Show graphic";
             this.showGraphicToolStripMenuItem.Click += new System.EventHandler(this.showGraphicToolStripMenuItem_Click);
             // 
@@ -587,6 +589,13 @@ namespace UniversalPatcher
             this.chkRawHex.UseVisualStyleBackColor = true;
             this.chkRawHex.CheckedChanged += new System.EventHandler(this.chkRawHex_CheckedChanged);
             // 
+            // showTableVisualizationToolStripMenuItem
+            // 
+            this.showTableVisualizationToolStripMenuItem.Name = "showTableVisualizationToolStripMenuItem";
+            this.showTableVisualizationToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.showTableVisualizationToolStripMenuItem.Text = "Show table visualization";
+            this.showTableVisualizationToolStripMenuItem.Click += new System.EventHandler(this.showTableVisualizationToolStripMenuItem_Click);
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -679,5 +688,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem copyTableFromCompareToolStripMenuItem;
         private CheckBox chkRawHex;
         private ToolStripMenuItem pasteSpecialToolStripMenuItem;
+        private ToolStripMenuItem showTableVisualizationToolStripMenuItem;
     }
 }
