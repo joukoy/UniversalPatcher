@@ -15,3 +15,5 @@
 0.18.03
 - Improvements to Table data visualizer
 
+0.18.04
+- Speed optimization to Table data visualizer
