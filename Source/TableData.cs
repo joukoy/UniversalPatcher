@@ -129,6 +129,11 @@ namespace UniversalPatcher
             return getElementSize(DataType);
         }
 
+        public int elements()
+        {
+            return Rows * Columns;
+        }
+
         public TableData ShallowCopy()
         {
             return (TableData)this.MemberwiseClone();

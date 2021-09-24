@@ -172,6 +172,8 @@ namespace UniversalPatcher
                         this.DialogResult = DialogResult.Cancel;
                     }
                 }
+                if (ftv != null && ftv.Visible)
+                    ftv.Dispose();
             }
             catch (Exception ex)
             {
@@ -241,9 +243,10 @@ namespace UniversalPatcher
                 }
                 string valTxt = " Last value " + Convert.ToDouble(tCell.lastValue).ToString(formatStr) + " Saved value " + Convert.ToDouble(tCell.origValue).ToString(formatStr);
                 labelInfo.Text = minMaxTxt + valTxt + " Address: " + tCell.addr.ToString("X");
-
                 if (ftv != null && ftv.Visible)
-                    ftv.displayData(tCell.addr);
+                    ftv.changeSelection(tCell.addr);
+                    //ftv.displayData(tCell.addr, compareFiles[0].buf);
+
             }
             catch (Exception ex)
             {
@@ -1716,6 +1719,8 @@ namespace UniversalPatcher
                         setCellColor(e.RowIndex, e.ColumnIndex, tc);
                     }
                 }
+                if (ftv != null && ftv.Visible)
+                    ftv.updateTableValues(compareFiles[0].buf);
             }
             catch (Exception ex)
             {
@@ -2737,7 +2742,7 @@ namespace UniversalPatcher
                     addr = tCell.addr;
                 }
 
-                ftv.displayData(addr);
+                ftv.displayData(addr, compareFiles[0].buf);
             }
             catch (Exception ex)
             {

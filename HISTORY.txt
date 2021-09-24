@@ -11,3 +11,7 @@
 - Fixed bug: If CVN not defined, show nothing, not FFFFFFFF
 - Added initial table HEX visualization:
 	Table editor -> Graph -> Show table visualization
+
+0.18.03
+- Improvements to Table data visualizer
+
