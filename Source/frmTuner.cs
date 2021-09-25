@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using static upatcher;
 
@@ -1638,7 +1639,8 @@ namespace UniversalPatcher
                 }
                 else //Not 1D
                 {
-                    string tblData = "Current values: " + minMax + Environment.NewLine;
+                    //string tblData = "Current values: " + minMax + Environment.NewLine;
+                    StringBuilder tblData = new StringBuilder("Current values: " + minMax + Environment.NewLine);
                     uint addr = (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset);
                     if (peekPCM.tableDatas[ind].RowMajor)
                     {
@@ -1648,9 +1650,9 @@ namespace UniversalPatcher
                             {
                                 double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0, peekPCM);
                                 addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
-                                tblData += "[" + curVal.ToString("#0.0") + "]";
+                                tblData.Append("[" + curVal.ToString("#0.0") + "]");
                             }
-                            tblData += Environment.NewLine;
+                            tblData.Append(Environment.NewLine);
                         }
                     }
                     else
@@ -1660,7 +1662,6 @@ namespace UniversalPatcher
                             tblRows.Add("");
                         for (int c = 0; c < peekPCM.tableDatas[ind].Columns; c++)
                         {
-
                             for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
                             {
                                 double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0, peekPCM);
@@ -1669,9 +1670,9 @@ namespace UniversalPatcher
                             }
                         }
                         for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
-                            tblData += tblRows[r] + Environment.NewLine;
+                            tblData.Append(tblRows[r] + Environment.NewLine);
                     }
-                    txtDescription.AppendText(tblData);
+                    txtDescription.AppendText(tblData.ToString());
                 }
             }
             catch (Exception ex)

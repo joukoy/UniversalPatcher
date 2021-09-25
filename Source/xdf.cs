@@ -494,8 +494,8 @@ namespace UniversalPatcher
             PCM = basefile;
             tdList = tdList1;
             string retVal = "";
-            string tableRows = "";
-            String tableText = "";
+            StringBuilder tableRows;
+            StringBuilder tableText = new StringBuilder();
             string templateTxt = "";
             int lastCategory = 0;
             int dtcCategory = 0;
@@ -506,24 +506,24 @@ namespace UniversalPatcher
             {
 
                 string fName = Path.Combine(Application.StartupPath, "Templates", "xdfheader.txt");
-                string xdfText = ReadTextFile(fName);
-                xdfText = xdfText.Replace("REPLACE-TIMESTAMP", DateTime.Today.ToString("MM/dd/yyyy H:mm"));
-                xdfText = xdfText.Replace("REPLACE-OSID", basefile.OS);
-                xdfText = xdfText.Replace("REPLACE-BINSIZE", basefile.fsize.ToString("X"));
+                StringBuilder xdfText = new StringBuilder(ReadTextFile(fName));
+                xdfText.Replace("REPLACE-TIMESTAMP", DateTime.Today.ToString("MM/dd/yyyy H:mm"));
+                xdfText.Replace("REPLACE-OSID", basefile.OS);
+                xdfText.Replace("REPLACE-BINSIZE", basefile.fsize.ToString("X"));
                 for (int s = 1; s < basefile.tableCategories.Count; s++)
                 {
-                    tableText += "     <CATEGORY index = \"0x" + (s - 1).ToString("X") + "\" name = \"" + basefile.tableCategories[s] + "\" />" + Environment.NewLine;
+                    tableText.Append( "     <CATEGORY index = \"0x" + (s - 1).ToString("X") + "\" name = \"" + basefile.tableCategories[s] + "\" />" + Environment.NewLine);
                     lastCategory = s;
                 }
                 dtcCategory = lastCategory + 1;
-                tableText += "     <CATEGORY index = \"0x" + (dtcCategory - 1).ToString("X") + "\" name = \"DTC\" />" + Environment.NewLine;
+                tableText.Append("     <CATEGORY index = \"0x" + (dtcCategory - 1).ToString("X") + "\" name = \"DTC\" />" + Environment.NewLine);
                 lastCategory = dtcCategory + 1;
-                tableText += "     <CATEGORY index = \"0x" + (lastCategory - 1).ToString("X") + "\" name = \"Other\" />";
-                xdfText = xdfText.Replace("REPLACE-CATEGORYNAME", tableText) + Environment.NewLine;
+                tableText.Append("     <CATEGORY index = \"0x" + (lastCategory - 1).ToString("X") + "\" name = \"Other\" />");
+                xdfText.Replace("REPLACE-CATEGORYNAME", tableText.ToString() + Environment.NewLine);
                 
                 fName = Path.Combine(Application.StartupPath, "Templates", basefile.configFile + "-checksum.txt");
                 if (File.Exists(fName))
-                    xdfText += ReadTextFile(fName);
+                    xdfText.Append(ReadTextFile(fName));
                 else
                     LoggerBold("File not found: " + fName + " - add checksum calculation manually, if necessary.");
 
@@ -531,19 +531,19 @@ namespace UniversalPatcher
                 //Add OS ID:
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
                 templateTxt = ReadTextFile(fName);
-                tableText = templateTxt.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
+                tableText = new StringBuilder(templateTxt.Replace("REPLACE-TABLEID", uniqId.ToString("X")));
                 uniqId++;
-                tableText = tableText.Replace("REPLACE-LINKMATH", "");
-                tableText = tableText.Replace("REPLACE-MATH", "x");
+                tableText.Replace("REPLACE-LINKMATH", "");
+                tableText.Replace("REPLACE-MATH", "x");
 
-                tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "DON&apos;T MODIFY");
-                tableText = tableText.Replace("REPLACE-TABLETITLE", "OS ID - Don&apos;t modify, must match XDF!");
-                tableText = tableText.Replace("REPLACE-BITS", "32");
-                tableText = tableText.Replace("REPLACE-MINVALUE", basefile.OS);
-                tableText = tableText.Replace("REPLACE-MAXVALUE", basefile.OS);
-                tableText = tableText.Replace("REPLACE-TABLEADDRESS", basefile.segmentAddressDatas[basefile.OSSegment].PNaddr.Address.ToString("X"));
-                tableText = tableText.Replace("REPLACE-CATEGORY", (basefile.OSSegment + 1).ToString("X"));
-                xdfText += tableText;
+                tableText.Replace("REPLACE-TABLEDESCRIPTION", "DON&apos;T MODIFY");
+                tableText.Replace("REPLACE-TABLETITLE", "OS ID - Don&apos;t modify, must match XDF!");
+                tableText.Replace("REPLACE-BITS", "32");
+                tableText.Replace("REPLACE-MINVALUE", basefile.OS);
+                tableText.Replace("REPLACE-MAXVALUE", basefile.OS);
+                tableText.Replace("REPLACE-TABLEADDRESS", basefile.segmentAddressDatas[basefile.OSSegment].PNaddr.Address.ToString("X"));
+                tableText.Replace("REPLACE-CATEGORY", (basefile.OSSegment + 1).ToString("X"));
+                xdfText.Append(tableText);
 
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
                 templateTxt = ReadTextFile(fName);
@@ -555,11 +555,11 @@ namespace UniversalPatcher
                         string tableName = tdList[t].TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;"); ;
                         if (tdList[t].TableName == null || tdList[t].TableName.Length == 0)
                             tableName = tdList[t].Address;
-                        tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableName);
+                        tableText = new StringBuilder(templateTxt.Replace("REPLACE-TABLETITLE", tableName));
                         int s = basefile.GetSegmentNumber(tdList[t].addrInt);
                         if (s == -1) s = lastCategory;
-                        tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
-                        tableText = tableText.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
+                        tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
+                        tableText.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
                         uniqIds.Add(uniqId);
                         tableNames.Add(tdList[t].TableName.ToLower());
                         uniqId++;
@@ -570,25 +570,25 @@ namespace UniversalPatcher
                         {
                             mathTxt = linkConversionRaw(mathTxt, out linkTxt);
                         }
-                        tableText = tableText.Replace("REPLACE-LINKMATH", linkTxt);
-                        tableText = tableText.Replace("REPLACE-MATH", mathTxt);
+                        tableText.Replace("REPLACE-LINKMATH", linkTxt);
+                        tableText.Replace("REPLACE-MATH", mathTxt);
 
-                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
+                        tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
                         string descr = tdList[t].TableDescription;
                         if (tdList[t].Values.ToLower().StartsWith("enum:"))
                             descr += ", " + tdList[t].Values;
                         descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
-                        tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
-                        tableText = tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
-                        tableText = tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
-                        tableText = tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
-                        xdfText += tableText;       //Add generated table to end of xdfText
+                        tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
+                        tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
+                        tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
+                        tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
+                        xdfText.Append(tableText);       //Add generated table to end of xdfText
                     }
                 }
 
 
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdftable.txt");
-                templateTxt = ReadTextFile(fName);
+                templateTxt =ReadTextFile(fName);
                 for (int t = 0; t < tdList.Count; t++)
                 {
                     //Add all tables
@@ -597,7 +597,7 @@ namespace UniversalPatcher
                         string tableName = tdList[t].TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;"); 
                         if (tdList[t].TableName == null || tdList[t].TableName.Length == 0)
                             tableName = tdList[t].Address;
-                        tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableName);
+                        tableText = new StringBuilder(templateTxt.Replace("REPLACE-TABLETITLE", tableName));
                         int s = basefile.GetSegmentNumber(tdList[t].addrInt);
                         if (s == -1) s = lastCategory;
                         if (tdList[t].Category != null && tdList[t].Category != "")
@@ -613,7 +613,7 @@ namespace UniversalPatcher
                         }
                         else
                         {
-                            tableText = tableText.Replace("REPLACE-CATEGORY", s.ToString());
+                            tableText.Replace("REPLACE-CATEGORY", s.ToString());
                         }
                         /*if (tdList[t].Values.StartsWith("Enum: ") && !descr.ToLower().Contains("enum"))
                         {
@@ -634,25 +634,25 @@ namespace UniversalPatcher
                             mathTxt = linkConversionRaw(mathTxt, out tmpTxt);
                             linkTxt += tmpTxt;
                         }
-                        tableText = tableText.Replace("REPLACE-LINKMATH", linkTxt);
-                        tableText = tableText.Replace("REPLACE-MATH", mathTxt);
+                        tableText.Replace("REPLACE-LINKMATH", linkTxt);
+                        tableText.Replace("REPLACE-MATH", mathTxt);
 
-                        tableText = tableText.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
+                        tableText.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
                         uniqId++;
-                        tableText = tableText.Replace("REPLACE-UNITS", tdList[t].Units);
-                        tableText = tableText.Replace("REPLACE-ROWCOUNT", tdList[t].Rows.ToString());
-                        tableText = tableText.Replace("REPLACE-COLCOUNT", tdList[t].Columns.ToString());
-                        tableText = tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
-                        tableText = tableText.Replace("REPLACE-DECIMALS", tdList[t].Decimals.ToString());
-                        tableText = tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)tdList[t].OutputType).ToString());
-                        tableText = tableText.Replace("REPLACE-TABLEADDRESS",((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
+                        tableText.Replace("REPLACE-UNITS", tdList[t].Units);
+                        tableText.Replace("REPLACE-ROWCOUNT", tdList[t].Rows.ToString());
+                        tableText.Replace("REPLACE-COLCOUNT", tdList[t].Columns.ToString());
+                        tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
+                        tableText.Replace("REPLACE-DECIMALS", tdList[t].Decimals.ToString());
+                        tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)tdList[t].OutputType).ToString());
+                        tableText.Replace("REPLACE-TABLEADDRESS",((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
                         string descr = tdList[t].TableDescription;
                         if (tdList[t].Values.ToLower().StartsWith("enum:"))
                             descr += ", " + tdList[t].Values;
                         descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
-                        tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
-                        tableText = tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
-                        tableText = tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
+                        tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
+                        tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
+                        tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
                         int tableFlags = 0;
                         if (getSigned(tdList[t].DataType))
                         {
@@ -662,16 +662,16 @@ namespace UniversalPatcher
                         {
                             tableFlags += 4;
                         }
-                        tableText = tableText.Replace("REPLACE-TYPEFLAGS", tableFlags.ToString("X2"));
+                        tableText.Replace("REPLACE-TYPEFLAGS", tableFlags.ToString("X2"));
 
-                        tableRows = "";
+                        tableRows = new StringBuilder();
                         if (tdList[t].RowHeaders == "")
                         {
                             for (int d = 0; d < tdList[t].Rows; d++)
                             {
-                                tableRows += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />";
+                                tableRows.Append("     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />");
                                 if (d < tdList[t].Rows - 1)
-                                    tableRows += Environment.NewLine;
+                                    tableRows.Append(Environment.NewLine);
                             }
                         }
                         else
@@ -679,20 +679,20 @@ namespace UniversalPatcher
                             string[] hParts = tdList[t].RowHeaders.Split(',');
                             for (int row = 0; row < hParts.Length; row++)
                             {
-                                tableRows += "     <LABEL index=\"" + row.ToString() + "\" value=\"" + hParts[row] + "\" />";
+                                tableRows.Append("     <LABEL index=\"" + row.ToString() + "\" value=\"" + hParts[row] + "\" />");
                                 if (row < hParts.Length - 1)
-                                    tableRows += Environment.NewLine;
+                                    tableRows.Append(Environment.NewLine);
                             }
                         }
-                        tableText = tableText.Replace("REPLACE-TABLEROWS", tableRows);
-                        string tableCols = "";
+                        tableText = tableText.Replace("REPLACE-TABLEROWS", tableRows.ToString());
+                        StringBuilder tableCols = new StringBuilder();
                         if (tdList[t].ColumnHeaders == "")
                         {
                             for (int d = 0; d < tdList[t].Columns; d++)
                             {
-                                tableCols += "     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />";
+                                tableCols.Append("     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />");
                                 if (d < tdList[t].Columns - 1)
-                                    tableCols += Environment.NewLine;
+                                    tableCols.Append(Environment.NewLine);
                             }
                         }                        
                         else
@@ -700,14 +700,14 @@ namespace UniversalPatcher
                             string[] hParts = tdList[t].ColumnHeaders.Split(',');
                             for (int col = 0; col < hParts.Length; col++)
                             {
-                                tableCols += "     <LABEL index=\"" + col.ToString() + "\" value=\"" + hParts[col] + "\" />";
+                                tableCols.Append("     <LABEL index=\"" + col.ToString() + "\" value=\"" + hParts[col] + "\" />");
                                 if (col < hParts.Length - 1)
-                                    tableCols += Environment.NewLine;
+                                    tableCols.Append( Environment.NewLine);
                             }
                         }
-                        tableText = tableText.Replace("REPLACE-TABLECOLS", tableCols);
+                        tableText = tableText.Replace("REPLACE-TABLECOLS", tableCols.ToString());
 
-                        xdfText += tableText;       //Add generated table to end of xdfText
+                        xdfText.Append(tableText.ToString());       //Add generated table to end of xdfText
                     }
                 }
 
@@ -722,30 +722,30 @@ namespace UniversalPatcher
                         string tableName = tdList[t].TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;"); 
                         if (tdList[t].TableName == null || tdList[t].TableName.Length == 0)
                             tableName = tdList[t].Address;
-                        tableText = templateTxt.Replace("REPLACE-TABLETITLE", tableName);
+                        tableText = new StringBuilder(templateTxt.Replace("REPLACE-TABLETITLE", tableName));
                         int s = basefile.GetSegmentNumber(tdList[t].addrInt);
                         if (s == -1) s = lastCategory;
-                        tableText = tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
-                        tableText = tableText.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
+                        tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
+                        tableText.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
                         uniqId++;
-                        tableText = tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
-                        tableText = tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
-                        tableText = tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
-                        tableText = tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
-                        tableText = tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
-                        tableText = tableText.Replace("REPLACE-MASK", tdList[t].BitMask);
-                        xdfText += tableText;       //Add generated table to end of xdfText
+                        tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
+                        tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
+                        tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
+                        tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
+                        tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
+                        tableText.Replace("REPLACE-MASK", tdList[t].BitMask);
+                        xdfText.Append(tableText);       //Add generated table to end of xdfText
 
                     }
                 }
 
-                xdfText += "</XDFFORMAT>" + Environment.NewLine;
+                xdfText.Append("</XDFFORMAT>" + Environment.NewLine);
                 string defFname = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions", basefile.OS + "-generated.xdf");
                 string fileName = SelectSaveFile("XDF Files(*.xdf)|*.xdf|ALL Files (*.*)|*.*",defFname);
                 if (fileName.Length == 0)
                     return "";
                 retVal += "Writing to file: " + Path.GetFileName(fileName);
-                WriteTextFile(fileName, xdfText);
+                WriteTextFile(fileName, xdfText.ToString());
                 retVal += " [OK]";
 
             }

@@ -17,3 +17,7 @@
 
 0.18.04
 - Speed optimization to Table data visualizer
+
+0.18.05
+- Speed optimization to Tuner table preview display
+- Speed optimization to XDF export
