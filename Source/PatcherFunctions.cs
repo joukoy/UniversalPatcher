@@ -2281,7 +2281,8 @@ public class upatcher
         string result = System.Text.Encoding.ASCII.GetString(buf, (int)Address, Bytes);
         if (numsLettersOnly)
             result = Regex.Replace(result, "[^a-zA-Z0-9]", "?");
-        //result = Regex.Replace(result, @"[^\u0020-\u007E]", "?");
+        else
+            result = Regex.Replace(result, @"[^\u0020-\u007E]", "?");
         return result;
     }
 
