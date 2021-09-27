@@ -21,3 +21,12 @@
 0.18.05
 - Speed optimization to Tuner table preview display
 - Speed optimization to XDF export
+
+0.18.06
+- Support for address seek to extrainfo
+- Support for long searchstring to autodetect
+
+0.18.07
+- Load segmentseek-file always when BIN-file file opened
+
+

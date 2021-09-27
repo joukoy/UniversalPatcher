@@ -644,6 +644,8 @@ namespace UniversalPatcher
         {
             segmentAddressDatas = new SegmentAddressData[Segments.Count];
             segmentinfos = new SegmentInfo[Segments.Count];
+            seekSegments();
+
             for (int i = 0; i < Segments.Count; i++)
             {
                 segmentinfos[i] = new SegmentInfo(this, i);
@@ -1311,23 +1313,26 @@ namespace UniversalPatcher
 
         }
 
+        private void seekSegments()
+        {
+            if (foundSegments.Count == 0)
+            {
+                SegmentSeek sSeek = new SegmentSeek();
+                sSeek.seekSegments(this);
+                if (foundSegments.Count == 0)
+                {
+                    //Stop seeking again if nothing is found
+                    FoundSegment fs = new FoundSegment(this);
+                    foundSegments.Add(fs);
+                }
+            }
+        }
+
         private uint seekAddress(string line)
         {
             uint retVal = uint.MaxValue;
             try
             {
-                if (foundSegments.Count == 0)
-                {
-                    SegmentSeek sSeek = new SegmentSeek();
-                    sSeek.seekSegments(this);
-                    if (foundSegments.Count == 0)
-                    {
-                        //Stop seeking again if nothing is found
-                        FoundSegment fs = new FoundSegment(this);
-                        foundSegments.Add(fs);
-                    }
-                }
-
                 string[] parts = line.Split(':');
                 if (parts.Length < 2)
                     throw new Exception("Name missing: " + line);
