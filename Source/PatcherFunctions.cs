@@ -28,6 +28,7 @@ public class upatcher
         public string address { get; set; }
         public UInt64 data { get; set; }
         public string compare { get; set; }        //==, <, >, !=      
+        public string hexdata { get; set; }
     }
 
 

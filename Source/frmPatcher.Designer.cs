@@ -257,8 +257,9 @@
             this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.splitPatcher = new System.Windows.Forms.SplitContainer();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.splitPatcher = new System.Windows.Forms.SplitContainer();
+            this.btnDisplayFileInfo = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1645,6 +1646,7 @@
             // 
             // tabFileinfo
             // 
+            this.tabFileinfo.Controls.Add(this.btnDisplayFileInfo);
             this.tabFileinfo.Controls.Add(this.btnVisualSegments);
             this.tabFileinfo.Controls.Add(this.groupSearch);
             this.tabFileinfo.Controls.Add(this.chkSearchPids);
@@ -1666,7 +1668,7 @@
             // 
             // btnVisualSegments
             // 
-            this.btnVisualSegments.Location = new System.Drawing.Point(6, 62);
+            this.btnVisualSegments.Location = new System.Drawing.Point(6, 74);
             this.btnVisualSegments.Name = "btnVisualSegments";
             this.btnVisualSegments.Size = new System.Drawing.Size(124, 29);
             this.btnVisualSegments.TabIndex = 191;
@@ -2814,9 +2816,16 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // homepageToolStripMenuItem
+            // 
+            this.homepageToolStripMenuItem.Name = "homepageToolStripMenuItem";
+            this.homepageToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.homepageToolStripMenuItem.Text = "&Homepage";
+            this.homepageToolStripMenuItem.Click += new System.EventHandler(this.homepageToolStripMenuItem_Click);
             // 
             // splitPatcher
             // 
@@ -2838,12 +2847,15 @@
             this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
             // 
-            // homepageToolStripMenuItem
+            // btnDisplayFileInfo
             // 
-            this.homepageToolStripMenuItem.Name = "homepageToolStripMenuItem";
-            this.homepageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.homepageToolStripMenuItem.Text = "&Homepage";
-            this.homepageToolStripMenuItem.Click += new System.EventHandler(this.homepageToolStripMenuItem_Click);
+            this.btnDisplayFileInfo.Location = new System.Drawing.Point(6, 34);
+            this.btnDisplayFileInfo.Name = "btnDisplayFileInfo";
+            this.btnDisplayFileInfo.Size = new System.Drawing.Size(124, 38);
+            this.btnDisplayFileInfo.TabIndex = 192;
+            this.btnDisplayFileInfo.Text = "Show info for current file";
+            this.btnDisplayFileInfo.UseVisualStyleBackColor = true;
+            this.btnDisplayFileInfo.Click += new System.EventHandler(this.btnDisplayFileInfo_Click);
             // 
             // FrmPatcher
             // 
@@ -3171,5 +3183,6 @@
         private System.Windows.Forms.ToolStripMenuItem createProgramShortcutsToolStripMenuItem;
         private System.Windows.Forms.RichTextBox richChkData;
         private System.Windows.Forms.ToolStripMenuItem homepageToolStripMenuItem;
+        private System.Windows.Forms.Button btnDisplayFileInfo;
     }
 }

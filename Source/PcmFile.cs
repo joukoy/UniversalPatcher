@@ -1720,37 +1720,46 @@ namespace UniversalPatcher
                 foreach (string LinePart in LineParts)
                 {
                     AddressData E = new AddressData();
+
                     string[] AddrParts = LinePart.Split(':');
                     if (AddrParts.Length < 3)
                         return LEX;
 
-                    E.Name = AddrParts[0];
-
-                    CheckWord CWAddr;
-                    CWAddr.Key = "";
-                    CWAddr.Address = 0;
-                    bool Negative = false;
-                    if (AddrParts[1].Contains("CW"))
+                    if (AddrParts[0] == ("seek"))
                     {
-                        CWAddr = GetCheckwordAddress(AddrParts[1], SegNr);
-                        if (CWAddr.Key != "")
-                            AddrParts[1] = AddrParts[1].Replace(CWAddr.Key, "");
+                        E.Address = seekAddress(Line);
+                        E.Name = AddrParts[1];
                     }
-                    if (AddrParts[1].Contains("-"))
-                        Negative = true;
-                    AddrParts[1] = AddrParts[1].Replace("-", "");
-                    AddrParts[1] = AddrParts[1].Replace("+", "");
-                    if (!HexToUint(AddrParts[1].Replace("#", ""), out E.Address))
-                        return LEX;
-
-                    if (Negative)
-                        E.Address = CWAddr.Address - E.Address;
                     else
-                        E.Address += CWAddr.Address;
-
-                    if (AddrParts[1].StartsWith("#"))
                     {
-                        E.Address += segmentAddressDatas[SegNr].SegmentBlocks[0].Start;
+                        E.Name = AddrParts[0];
+
+                        CheckWord CWAddr;
+                        CWAddr.Key = "";
+                        CWAddr.Address = 0;
+                        bool Negative = false;
+                        if (AddrParts[1].Contains("CW"))
+                        {
+                            CWAddr = GetCheckwordAddress(AddrParts[1], SegNr);
+                            if (CWAddr.Key != "")
+                                AddrParts[1] = AddrParts[1].Replace(CWAddr.Key, "");
+                        }
+                        if (AddrParts[1].Contains("-"))
+                            Negative = true;
+                        AddrParts[1] = AddrParts[1].Replace("-", "");
+                        AddrParts[1] = AddrParts[1].Replace("+", "");
+                        if (!HexToUint(AddrParts[1].Replace("#", ""), out E.Address))
+                            return LEX;
+
+                        if (Negative)
+                            E.Address = CWAddr.Address - E.Address;
+                        else
+                            E.Address += CWAddr.Address;
+
+                        if (AddrParts[1].StartsWith("#"))
+                        {
+                            E.Address += segmentAddressDatas[SegNr].SegmentBlocks[0].Start;
+                        }
                     }
 
                     if (AddrParts.Length > 2)

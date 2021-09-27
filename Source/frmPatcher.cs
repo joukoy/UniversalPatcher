@@ -4128,6 +4128,11 @@ namespace UniversalPatcher
             }
 
         }
+
+        private void btnDisplayFileInfo_Click(object sender, EventArgs e)
+        {
+            ShowFileInfo(basefile, true);
+        }
     }
 }
 

@@ -37,19 +37,50 @@ namespace UniversalPatcher
                         Addr = BEToUint32(PCM.buf, Addr);
                     if (Parts[0].EndsWith("@"))
                         Addr = (uint)PCM.buf.Length - Addr;
-                    if (Parts.Length == 1)
-                        Data = BEToUint16(PCM.buf, Addr);
+                    if (DR.hexdata != null && DR.hexdata.Length > 0)
+                    {
+                        uint bytes = 1;
+                        uint.TryParse(Parts[1], out bytes);
+                        StringBuilder readBytes = new StringBuilder();
+                        for (int a = 0; a < bytes; a++)
+                        {
+                            readBytes.Append(PCM.buf[Addr + a].ToString("X2"));
+                        }
+                        if (readBytes.ToString() == DR.hexdata)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
                     else
                     {
-                        if (Parts[1] == "1")
-                            Data = (uint)PCM.buf[Addr];
-                        if (Parts[1] == "2")
-                            Data = (uint)BEToUint16(PCM.buf, Addr);
-                        if (Parts[1] == "4")
-                            Data = BEToUint32(PCM.buf, Addr);
-                        if (Parts[1] == "8")
-                            Data = BEToUint64(PCM.buf, Addr);
+                        if (Parts.Length == 1)
+                            Data = BEToUint16(PCM.buf, Addr);
+                        else
+                        {
+                            switch (Parts[1])
+                            {
+                                case "1":
+                                    Data = BEToUint16(PCM.buf, Addr);
+                                    break;
+                                case "2":
+                                    Data = (uint)BEToUint16(PCM.buf, Addr);
+                                    break;
+                                case "4":
+                                    Data = BEToUint32(PCM.buf, Addr);
+                                    break;
+                                case "8":
+                                    Data = BEToUint64(PCM.buf, Addr);
+                                    break;
+                                default:
+                                        Data = BEToUint32(PCM.buf, Addr);
+                                    break;
+                            }
 
+                        }
                     }
                 }
 

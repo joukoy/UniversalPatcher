@@ -90,9 +90,16 @@ namespace UniversalPatcher
             DetectRule DR = new DetectRule();
             DR.address = txtAddress.Text;
             DR.compare = comboCompare.Text;
-            UInt64 x;
-            HexToUint64(txtData.Text, out x);
-            DR.data = x;
+            if (comboCompare.Text == "==")
+            {
+                DR.hexdata = txtData.Text;
+            }
+            else
+            {
+                UInt64 x;
+                HexToUint64(txtData.Text, out x);
+                DR.data = x;
+            }
             DR.group = (ushort) numGroup.Value;
             DR.grouplogic = comboGroupLogic.Text;
             DR.xml = comboXML.Text;
@@ -185,7 +192,10 @@ namespace UniversalPatcher
                 {
                     var item = new ListViewItem(DetectRules[s].address);
                     item.SubItems.Add(DetectRules[s].compare);
-                    item.SubItems.Add(DetectRules[s].data.ToString("X"));
+                    if (DetectRules[s].hexdata != null && DetectRules[s].hexdata.Length > 0)
+                        item.SubItems.Add(DetectRules[s].hexdata);
+                    else
+                        item.SubItems.Add(DetectRules[s].data.ToString("X"));
                     item.SubItems.Add(DetectRules[s].group.ToString());
                     item.SubItems.Add(DetectRules[s].grouplogic);
                     item.Tag = s;
@@ -216,7 +226,10 @@ namespace UniversalPatcher
                 radioData.Checked = true;
             txtAddress.Text = DetectRules[d].address;
             comboCompare.Text = DetectRules[d].compare;
-            txtData.Text = DetectRules[d].data.ToString("X");
+            if (DetectRules[d].hexdata != null && DetectRules[d].hexdata.Length > 0)
+                txtData.Text = DetectRules[d].hexdata;
+            else
+                txtData.Text = DetectRules[d].data.ToString("X");
         }
 
         private void comboCompare_KeyPress(object sender, KeyPressEventArgs e)
@@ -241,9 +254,16 @@ namespace UniversalPatcher
             int d = (int)listRules.SelectedItems[0].Tag;
             DR.address = txtAddress.Text;
             DR.compare = comboCompare.Text;
-            UInt64 x;
-            HexToUint64(txtData.Text, out x);
-            DR.data = x;
+            if (comboCompare.Text == "==")
+            {
+                DR.hexdata = txtData.Text;
+            }
+            else
+            {
+                UInt64 x;
+                HexToUint64(txtData.Text, out x);
+                DR.data = x;
+            }
             DR.group = (ushort)numGroup.Value;
             DR.grouplogic = comboGroupLogic.Text;
             DR.xml = comboXML.Text;
