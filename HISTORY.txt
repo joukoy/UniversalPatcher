@@ -29,4 +29,8 @@
 0.18.07
 - Load segmentseek-file always when BIN-file file opened
 
+0.18.08
+- Support for special chars in Extrainfo
+
+
 

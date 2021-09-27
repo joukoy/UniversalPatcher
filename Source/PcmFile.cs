@@ -952,7 +952,7 @@ namespace UniversalPatcher
             }
             else if (AD.Type == TypeText)
             {
-                Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes);
+                Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes,false);
             }
             else if (AD.Type == TypeFilename)
             {

@@ -2276,11 +2276,13 @@ public class upatcher
         return true;
     }
 
-    public static string ReadTextBlock(byte[] buf, int Address, int Bytes)
+    public static string ReadTextBlock(byte[] buf, int Address, int Bytes, bool numsLettersOnly = true)
     {
-        string Result = System.Text.Encoding.ASCII.GetString(buf, (int)Address, Bytes);
-        Result = Regex.Replace(Result, "[^a-zA-Z0-9]", "?");
-        return Result;
+        string result = System.Text.Encoding.ASCII.GetString(buf, (int)Address, Bytes);
+        if (numsLettersOnly)
+            result = Regex.Replace(result, "[^a-zA-Z0-9]", "?");
+        //result = Regex.Replace(result, @"[^\u0020-\u007E]", "?");
+        return result;
     }
 
     public static UInt64 BEToUint64(byte[] buf, uint offset)
