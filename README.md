@@ -18,3 +18,7 @@ kur4o@pcmhacking.net
 
 # Homepage and documentation
 https://universalpatcher.net/
+
+# Facebook group
+https://www.facebook.com/groups/469801280719722
+
