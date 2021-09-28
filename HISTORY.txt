@@ -40,3 +40,6 @@
 
 0.18.11
 - Support for 2 byte addresses in searchstring, Tableseek & Segmentseek
+
+0.18.12
+- Fixed MSB/LSB for 2 byte seek

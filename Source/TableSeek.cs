@@ -279,11 +279,17 @@ namespace UniversalPatcher
                 //We are here, so we must have @ @ @ @ or @ @ in searchsting
                 if (l == 4)
                 {
-                    retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 24 | PCM.buf[addr + locations[1]] << 16 | PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
+                    if (MSB)
+                        retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 24 | PCM.buf[addr + locations[1]] << 16 | PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
+                    else
+                        retVal.Addr = (uint)(PCM.buf[addr + locations[3]] << 24 | PCM.buf[addr + locations[2]] << 16 | PCM.buf[addr + locations[1]] << 8 | PCM.buf[addr + locations[0]]);
                 }
                 else if (l == 2)
                 {
-                    retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 8 | PCM.buf[addr + locations[1]]);
+                    if (MSB)
+                        retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 8 | PCM.buf[addr + locations[1]]);
+                    else
+                        retVal.Addr = (uint)(PCM.buf[addr + locations[1]] << 8 | PCM.buf[addr + locations[0]]);
                 }
                 else
                 {
@@ -570,8 +576,6 @@ namespace UniversalPatcher
                             string[] ssParts = tableSeeks[s].SearchStr.Split('+');     //At end of string can be +D4 +1W6 etc, for reading next address from found addr
                             Debug.WriteLine("TableSeek: Searching: " + tableSeeks[s].SearchStr + ", Start: " + startAddr.ToString("X") + ", end: " + endAddr.ToString("X"));                            
                             sAddr = searchAddrBySearchString(PCM, ssParts[0], ref startAddr, endAddr, tableSeeks[s]);
-                            if (!MSB)
-                                sAddr.Addr = SwapBytes(sAddr.Addr);
                             for (int jump = 1; jump < ssParts.Length && (sAddr.Addr + tableSeeks[s].Offset) < PCM.fsize; jump++)
                             {
                                 //Read table address from address we found by searchstring
