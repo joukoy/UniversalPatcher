@@ -276,14 +276,21 @@ namespace UniversalPatcher
                     return retVal;
                 }
 
-                //We are here, so we must have @ @ @ @  in searchsting
-                if (l < 4)
+                //We are here, so we must have @ @ @ @ or @ @ in searchsting
+                if (l == 4)
                 {
-                    Logger("Less than 4 @ in searchstring, address need 4 bytes! (" + searchStr + ")");
+                    retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 24 | PCM.buf[addr + locations[1]] << 16 | PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
+                }
+                else if (l == 2)
+                {
+                    retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 8 | PCM.buf[addr + locations[1]]);
+                }
+                else
+                {
+                    LoggerBold("Unknown address definition, must be @ @ or @ @ @ @: " + searchStr);
                     retVal.Addr = uint.MaxValue;
                 }
 
-                retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 24 | PCM.buf[addr + locations[1]] << 16 | PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
                 if (tSeek.ConditionalOffset)
                 {
                     ushort addrWord = (ushort)(PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);

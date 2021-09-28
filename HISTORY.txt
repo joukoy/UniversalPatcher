@@ -38,3 +38,5 @@
 0.18.10
 - MSB/LSB (Byteswap) support for Tableseek & Segmentseek
 
+0.18.11
+- Support for 2 byte addresses in searchstring, Tableseek & Segmentseek
