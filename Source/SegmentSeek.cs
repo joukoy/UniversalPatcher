@@ -23,6 +23,7 @@ namespace UniversalPatcher
             Description = "";
             ConditionalOffset = false;
             SignedOffset = false;
+            MSB = true;
         }
         public string Name { get; set; }
         public string SearchStr { get; set; }
@@ -34,6 +35,7 @@ namespace UniversalPatcher
         public string Segments { get; set; }
         public string ValidationSearchStr { get; set; }
         public string Description { get; set; }
+        public bool MSB { get; set; }
 
         private PcmFile PCM;
 
@@ -443,6 +445,8 @@ namespace UniversalPatcher
                             string[] ssParts = segmentSeeks[s].SearchStr.Split('+');     //At end of string can be +D4 +1W6 etc, for reading next address from found addr
                             Debug.WriteLine("SegmentSeek: Searching: " + segmentSeeks[s].SearchStr + ", Start: " + startAddr.ToString("X") + ", end: " + endAddr.ToString("X"));
                             sAddr = searchAddrBySearchString(PCM, ssParts[0], ref startAddr, endAddr, segmentSeeks[s]);
+                            if (!MSB)
+                                sAddr.Addr = SwapBytes(sAddr.Addr);
                             for (int jump = 1; jump < ssParts.Length && sAddr.Addr < PCM.fsize; jump++)
                             {
                                 //Read table address from address we found by searchstring

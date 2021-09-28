@@ -36,6 +36,7 @@ namespace UniversalPatcher
             Units = "";
             Values = "";
             RowMajor = true;
+            MSB = true;
         }
 
         public string Name { get; set; }
@@ -64,6 +65,7 @@ namespace UniversalPatcher
         public string BitMask { get; set; }
         public bool RowMajor { get; set; }
         public string Description { get; set; }
+        public bool MSB { get; set; }
 
         private PcmFile PCM;
 
@@ -561,6 +563,8 @@ namespace UniversalPatcher
                             string[] ssParts = tableSeeks[s].SearchStr.Split('+');     //At end of string can be +D4 +1W6 etc, for reading next address from found addr
                             Debug.WriteLine("TableSeek: Searching: " + tableSeeks[s].SearchStr + ", Start: " + startAddr.ToString("X") + ", end: " + endAddr.ToString("X"));                            
                             sAddr = searchAddrBySearchString(PCM, ssParts[0], ref startAddr, endAddr, tableSeeks[s]);
+                            if (!MSB)
+                                sAddr.Addr = SwapBytes(sAddr.Addr);
                             for (int jump = 1; jump < ssParts.Length && (sAddr.Addr + tableSeeks[s].Offset) < PCM.fsize; jump++)
                             {
                                 //Read table address from address we found by searchstring

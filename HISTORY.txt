@@ -35,5 +35,6 @@
 0.18.09
 - Fix: filter control characters from extrainfo
 
-
+0.18.10
+- MSB/LSB (Byteswap) support for Tableseek & Segmentseek
 
