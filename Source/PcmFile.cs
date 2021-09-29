@@ -1465,7 +1465,7 @@ namespace UniversalPatcher
                     {
                         if (lParts[3].ToLower() == "hex")
                             AD.Type = TypeHex;
-                        else if (lParts[2].ToLower() == "text")
+                        else if (lParts[3].ToLower() == "text")
                             AD.Type = TypeText;
                     }
 
@@ -1792,17 +1792,18 @@ namespace UniversalPatcher
                     return LEX;
 
                 string[] LineParts = Line.Split(',');
-                foreach (string LinePart in LineParts)
+                for  (int p=0; p < LineParts.Length; p++)
                 {
                     AddressData E = new AddressData();
 
+                    string LinePart = LineParts[p].Trim();
                     string[] AddrParts = LinePart.Split(':');
                     if (AddrParts.Length < 3)
                         return LEX;
 
                     if (AddrParts[0] == ("seek"))
                     {
-                        E.Address = seekAddress(Line);
+                        E.Address = seekAddress(LinePart);
                         E.Name = AddrParts[1];
                     }
                     else

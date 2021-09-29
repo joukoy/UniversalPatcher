@@ -47,3 +47,6 @@
 0.18.13
 - Fixed MSB/LSB in Tableseek & SegmentSeek (last fix failed)
 - Support for platform-specific config-file (example: E38-platform.xml)
+
+0.18.14
+- Bugfixes for seek: Multiple extrainfo entries, seek text entries
