@@ -1723,7 +1723,6 @@ public class upatcher
 
     private static string generateFilter()
     {
-        List<string> filters = new List<string>();
 
         string  Filter = "BIN files (*.bin)|*.bin";
         int def = int.MaxValue;

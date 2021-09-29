@@ -55,4 +55,6 @@
 - Little Endian (LSB) support for BIN-files (need testing)
 - File Types handling improved, added default selection
 
+0.18.16
+- Small fixes to File Types, BIN (*.bin) added automatically as default to list
  
