@@ -389,7 +389,7 @@ namespace UniversalPatcher
                                 tc.RowhHeader = rowHeaders[r];
                                 tc.addr = addr;
                                 tc.lastValue = getValue(pcm.buf, addr, tData, 0, pcm);
-                                tc.lastRawValue = getRawValue(pcm.buf, addr, tData, 0);
+                                tc.lastRawValue = getRawValue(pcm.buf, addr, tData, 0,pcm.platformConfig.MSB);
                                 addr += (uint)step;
                                 tInfo.tableCells.Add(tc);
                             }
@@ -412,7 +412,7 @@ namespace UniversalPatcher
                                 tc.RowhHeader = rowHeaders[r];
                                 tc.addr = addr;
                                 tc.lastValue = getValue(pcm.buf, addr, tData, 0, pcm);
-                                tc.lastRawValue = getRawValue(pcm.buf, addr, tData, 0);
+                                tc.lastRawValue = getRawValue(pcm.buf, addr, tData, 0,pcm.platformConfig.MSB);
                                 addr += (uint)step;
                                 tInfo.tableCells.Add(tc);
                             }

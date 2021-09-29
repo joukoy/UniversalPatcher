@@ -22,11 +22,11 @@ namespace UniversalPatcher
         public TableData td { get; set; }
         public object lastValue { get; set; }
         public object origValue { get { return getValue(tableInfo.compareFile.pcm.buf,addr, td, 0, tableInfo.compareFile.pcm); }}
-        public double origRawValue {get {return getRawValue(tableInfo.compareFile.pcm.buf, addr, td, 0); }}
+        public double origRawValue {get {return getRawValue(tableInfo.compareFile.pcm.buf, addr, td, 0,tableInfo.compareFile.pcm.platformConfig.MSB); }}
         public double lastRawValue  { get; set; }
         public double cmpValue { get; set; }
         public TableInfo tableInfo { get; set; }
-
+        private bool MSB { get { return tableInfo.compareFile.pcm.platformConfig.MSB; } }
         public TableCell ShallowCopy()
         {
             return (TableCell)this.MemberwiseClone();
@@ -111,21 +111,21 @@ namespace UniversalPatcher
                 if (td.DataType == InDataType.UBYTE || td.DataType == InDataType.SBYTE)
                     tableBuffer[bufAddr] = (byte)newRawValue;
                 if (td.DataType == InDataType.SWORD)
-                    SaveShort(tableBuffer, bufAddr, (short)newRawValue);
+                    SaveShort(tableBuffer, bufAddr, (short)newRawValue,MSB);
                 if (td.DataType == InDataType.UWORD)
-                    SaveUshort(tableBuffer, bufAddr, (ushort)newRawValue);
+                    SaveUshort(tableBuffer, bufAddr, (ushort)newRawValue, MSB);
                 if (td.DataType == InDataType.FLOAT32)
-                    SaveFloat32(tableBuffer, bufAddr, (Single)newRawValue);
+                    SaveFloat32(tableBuffer, bufAddr, (Single)newRawValue, MSB);
                 if (td.DataType == InDataType.INT32)
-                    SaveInt32(tableBuffer, bufAddr, (Int32)newRawValue);
+                    SaveInt32(tableBuffer, bufAddr, (Int32)newRawValue, MSB);
                 if (td.DataType == InDataType.UINT32)
-                    SaveUint32(tableBuffer, bufAddr, (UInt32)newRawValue);
+                    SaveUint32(tableBuffer, bufAddr, (UInt32)newRawValue, MSB);
                 if (td.DataType == InDataType.FLOAT64)
-                    SaveFloat64(tableBuffer, bufAddr, newRawValue);
+                    SaveFloat64(tableBuffer, bufAddr, newRawValue, MSB);
                 if (td.DataType == InDataType.INT64)
-                    SaveInt64(tableBuffer, bufAddr, (Int64)newRawValue);
+                    SaveInt64(tableBuffer, bufAddr, (Int64)newRawValue, MSB);
                 if (td.DataType == InDataType.UINT64)
-                    SaveUint64(tableBuffer, bufAddr, (UInt64)newRawValue);
+                    SaveUint64(tableBuffer, bufAddr, (UInt64)newRawValue, MSB);
                 if (newRawValue != lastRawValue)
                     retVal = true;
                 lastValue = calculatedValue(newRawValue);
@@ -166,7 +166,7 @@ namespace UniversalPatcher
             else if (td.DataType == InDataType.SWORD || td.DataType == InDataType.UWORD)
             {
                 ushort mask = Convert.ToUInt16(maskStr, 16);
-                ushort curVal = BEToUint16(tableBuffer, bufAddr);
+                ushort curVal = readUint16(tableBuffer, bufAddr, MSB);
                 ushort newVal;
                 if (flag)
                 {
@@ -177,14 +177,14 @@ namespace UniversalPatcher
                     mask = (byte)~mask;
                     newVal = (ushort)(curVal & mask);
                 }
-                SaveUshort(tableBuffer, bufAddr, newVal);
+                SaveUshort(tableBuffer, bufAddr, newVal, MSB);
                 lastValue = newVal;
                 lastRawValue = newVal;
             }
             else if (td.DataType == InDataType.INT32 || td.DataType == InDataType.UINT32)
             {
                 UInt32 mask = Convert.ToUInt32(maskStr, 16);
-                UInt32 curVal = BEToUint32(tableBuffer, bufAddr);
+                UInt32 curVal = readUint32(tableBuffer, bufAddr, MSB);
                 UInt32 newVal;
                 if (flag)
                 {
@@ -195,14 +195,14 @@ namespace UniversalPatcher
                     mask = ~mask;
                     newVal = (UInt32)(curVal & mask);
                 }
-                SaveUint32(tableBuffer, bufAddr, newVal);
+                SaveUint32(tableBuffer, bufAddr, newVal, MSB);
                 lastValue = newVal;
                 lastRawValue = newVal;
             }
             else if (td.DataType == InDataType.INT64 || td.DataType == InDataType.UINT64)
             {
                 UInt64 mask = Convert.ToUInt64(maskStr, 16);
-                UInt64 curVal = BEToUint64(tableBuffer, bufAddr);
+                UInt64 curVal = readUint64(tableBuffer, bufAddr, MSB);
                 UInt64 newVal;
                 if (flag)
                 {
@@ -213,7 +213,7 @@ namespace UniversalPatcher
                     mask = ~mask;
                     newVal = (UInt64)(curVal & mask);
                 }
-                SaveUint64(tableBuffer, bufAddr, newVal);
+                SaveUint64(tableBuffer, bufAddr, newVal, MSB);
                 lastValue = newVal;
                 lastRawValue = newVal;
             }

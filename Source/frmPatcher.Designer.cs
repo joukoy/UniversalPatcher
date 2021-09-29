@@ -244,6 +244,7 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.loadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setupSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editPlatformConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autodetectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editTableSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -260,7 +261,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
-            this.editPlatformConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chkCsMSB = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -2099,6 +2100,7 @@
             // 
             // tabChecksumUtil
             // 
+            this.tabChecksumUtil.Controls.Add(this.chkCsMSB);
             this.tabChecksumUtil.Controls.Add(this.richChkData);
             this.tabChecksumUtil.Controls.Add(this.chkCsUtilSwapBytes);
             this.tabChecksumUtil.Controls.Add(this.btnCsUtilFix);
@@ -2136,7 +2138,7 @@
             // chkCsUtilSwapBytes
             // 
             this.chkCsUtilSwapBytes.AutoSize = true;
-            this.chkCsUtilSwapBytes.Location = new System.Drawing.Point(184, 83);
+            this.chkCsUtilSwapBytes.Location = new System.Drawing.Point(184, 90);
             this.chkCsUtilSwapBytes.Name = "chkCsUtilSwapBytes";
             this.chkCsUtilSwapBytes.Size = new System.Drawing.Size(81, 17);
             this.chkCsUtilSwapBytes.TabIndex = 133;
@@ -2732,6 +2734,13 @@
             this.setupSegmentsToolStripMenuItem.Text = "Edit segment config (XML)";
             this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
             // 
+            // editPlatformConfigToolStripMenuItem
+            // 
+            this.editPlatformConfigToolStripMenuItem.Name = "editPlatformConfigToolStripMenuItem";
+            this.editPlatformConfigToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.editPlatformConfigToolStripMenuItem.Text = "Edit platform config";
+            this.editPlatformConfigToolStripMenuItem.Click += new System.EventHandler(this.editPlatformConfigToolStripMenuItem_Click);
+            // 
             // autodetectToolStripMenuItem
             // 
             this.autodetectToolStripMenuItem.Name = "autodetectToolStripMenuItem";
@@ -2859,12 +2868,17 @@
             this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
             // 
-            // editPlatformConfigToolStripMenuItem
+            // chkCsMSB
             // 
-            this.editPlatformConfigToolStripMenuItem.Name = "editPlatformConfigToolStripMenuItem";
-            this.editPlatformConfigToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.editPlatformConfigToolStripMenuItem.Text = "Edit platform config";
-            this.editPlatformConfigToolStripMenuItem.Click += new System.EventHandler(this.editPlatformConfigToolStripMenuItem_Click);
+            this.chkCsMSB.AutoSize = true;
+            this.chkCsMSB.Checked = true;
+            this.chkCsMSB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkCsMSB.Location = new System.Drawing.Point(6, 90);
+            this.chkCsMSB.Name = "chkCsMSB";
+            this.chkCsMSB.Size = new System.Drawing.Size(49, 17);
+            this.chkCsMSB.TabIndex = 155;
+            this.chkCsMSB.Text = "MSB";
+            this.chkCsMSB.UseVisualStyleBackColor = true;
             // 
             // FrmPatcher
             // 
@@ -3194,5 +3208,6 @@
         private System.Windows.Forms.ToolStripMenuItem homepageToolStripMenuItem;
         private System.Windows.Forms.Button btnDisplayFileInfo;
         private System.Windows.Forms.ToolStripMenuItem editPlatformConfigToolStripMenuItem;
+        private System.Windows.Forms.CheckBox chkCsMSB;
     }
 }

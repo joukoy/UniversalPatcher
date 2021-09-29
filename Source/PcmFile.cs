@@ -559,9 +559,9 @@ namespace UniversalPatcher
             if (segmentAddressDatas[seg].CS1Address.Bytes == 1)
                 buf[segmentAddressDatas[seg].CS1Address.Address] = (byte)CS1Calc;
             else if (segmentAddressDatas[seg].CS1Address.Bytes == 2)
-                SaveUshort(buf, segmentAddressDatas[seg].CS1Address.Address, (ushort)CS1Calc);
+                 SaveUshort(segmentAddressDatas[seg].CS1Address.Address, (ushort)CS1Calc);
             else if (segmentAddressDatas[seg].CS1Address.Bytes == 4)
-                SaveUint32(buf, segmentAddressDatas[seg].CS1Address.Address, CS1Calc);
+                SaveUint32(segmentAddressDatas[seg].CS1Address.Address, CS1Calc);
         }
 
         public void saveCS2(int seg, uint CS2Calc)
@@ -569,22 +569,22 @@ namespace UniversalPatcher
             if (segmentAddressDatas[seg].CS2Address.Bytes == 1)
                 buf[segmentAddressDatas[seg].CS2Address.Address] = (byte)CS2Calc;
             else if (segmentAddressDatas[seg].CS2Address.Bytes == 2)
-                SaveUshort(buf, segmentAddressDatas[seg].CS2Address.Address, (ushort)CS2Calc);
+                SaveUshort(segmentAddressDatas[seg].CS2Address.Address, (ushort)CS2Calc);
             else if (segmentAddressDatas[seg].CS2Address.Bytes == 4)
-                SaveUint32(buf, segmentAddressDatas[seg].CS2Address.Address, CS2Calc);
+                SaveUint32(segmentAddressDatas[seg].CS2Address.Address, CS2Calc);
 
         }
 
         public UInt64 calculateCS1(int seg, bool dbg = true)
         {
             SegmentConfig S = Segments[seg];
-            return CalculateChecksum(buf, segmentAddressDatas[seg].CS1Address, segmentAddressDatas[seg].CS1Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.CS1Method, S.CS1Complement, segmentAddressDatas[seg].CS1Address.Bytes, S.CS1SwapBytes,dbg);
+            return CalculateChecksum(platformConfig.MSB, buf, segmentAddressDatas[seg].CS1Address, segmentAddressDatas[seg].CS1Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.CS1Method, S.CS1Complement, segmentAddressDatas[seg].CS1Address.Bytes, S.CS1SwapBytes,dbg);
         }
 
         public UInt64 calculateCS2(int seg, bool dbg = true)
         {
             SegmentConfig S = Segments[seg];
-            return CalculateChecksum(buf, segmentAddressDatas[seg].CS2Address, segmentAddressDatas[seg].CS2Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.CS2Method, S.CS2Complement, segmentAddressDatas[seg].CS2Address.Bytes, S.CS2SwapBytes,dbg);
+            return CalculateChecksum(platformConfig.MSB, buf, segmentAddressDatas[seg].CS2Address, segmentAddressDatas[seg].CS2Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.CS2Method, S.CS2Complement, segmentAddressDatas[seg].CS2Address.Bytes, S.CS2SwapBytes,dbg);
         }
 
         public bool FixCheckSums()
@@ -612,18 +612,7 @@ namespace UniversalPatcher
                             UInt64 CS1Calc = calculateCS1(seg);
                             if (segmentAddressDatas[seg].CS1Address.Address < uint.MaxValue)
                             {
-                                if (segmentAddressDatas[seg].CS1Address.Bytes == 1)
-                                {
-                                    CS1 = buf[segmentAddressDatas[seg].CS1Address.Address];
-                                }
-                                else if (segmentAddressDatas[seg].CS1Address.Bytes == 2)
-                                {
-                                    CS1 = BEToUint16(buf, segmentAddressDatas[seg].CS1Address.Address);
-                                }
-                                else if (segmentAddressDatas[seg].CS1Address.Bytes == 4)
-                                {
-                                    CS1 = BEToUint32(buf, segmentAddressDatas[seg].CS1Address.Address);
-                                }
+                                CS1 = (uint)ReadValue(segmentAddressDatas[seg].CS1Address);
                             }
                             if (CS1 == CS1Calc)
                                 Logger(" Checksum 1: " + CS1.ToString("X4") + " [OK]");
@@ -653,18 +642,7 @@ namespace UniversalPatcher
                             UInt64 CS2Calc = calculateCS2(seg);
                             if (segmentAddressDatas[seg].CS2Address.Address < uint.MaxValue)
                             {
-                                if (segmentAddressDatas[seg].CS2Address.Bytes == 1)
-                                {
-                                    CS2 = buf[segmentAddressDatas[seg].CS2Address.Address];
-                                }
-                                else if (segmentAddressDatas[seg].CS2Address.Bytes == 2)
-                                {
-                                    CS2 = BEToUint16(buf, segmentAddressDatas[seg].CS2Address.Address);
-                                }
-                                else if (segmentAddressDatas[seg].CS2Address.Bytes == 4)
-                                {
-                                    CS2 = BEToUint32(buf, segmentAddressDatas[seg].CS2Address.Address);
-                                }
+                                CS2 = (uint)ReadValue(segmentAddressDatas[seg].CS2Address);
                             }
                             if (CS2 == CS2Calc)
                                 Logger(" Checksum 2: " + CS2.ToString("X4") + " [OK]");
@@ -876,21 +854,21 @@ namespace UniversalPatcher
                     {
 
                         if (Bytes == 8)
-                            if (BEToUint64(buf, Addr) == SearchFor)
+                            if (readUInt64(Addr) == SearchFor)
                             {
                                 segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
                         if (Bytes == 4)
-                            if (BEToUint32(buf, Addr) == SearchFor)
+                            if (readUInt32(Addr) == SearchFor)
                             {
                                 segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
                         if (Bytes == 2)
-                            if (BEToUint16(buf, Addr) == SearchFor)
+                            if (readUInt16(Addr) == SearchFor)
                             {
                                 segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
@@ -907,21 +885,21 @@ namespace UniversalPatcher
                     else
                     {
                         if (Bytes == 8)
-                            if (BEToUint64(buf, Addr) != SearchFor)
+                            if (readUInt64(Addr) != SearchFor)
                             {
                                 segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
                         if (Bytes == 4)
-                            if (BEToUint32(buf, Addr) != SearchFor)
+                            if (readUInt32(Addr) != SearchFor)
                             {
                                 segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
                         if (Bytes == 2)
-                            if (BEToUint16(buf, Addr) != SearchFor)
+                            if (readUInt16(Addr) != SearchFor)
                             {
                                 segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
@@ -982,19 +960,19 @@ namespace UniversalPatcher
                             binfile.Checkwords.Add(checkw);
                         }
                     if (Bytes == 2)
-                        if (BEToUint16(buf, Location) == CW)
+                        if (readUInt16(Location) == CW)
                         {
                             Debug.WriteLine("Checkword: " + checkw.Key + " Found in: " + Location.ToString("X") + ", Data location: " + checkw.Address.ToString("X2"));
                             binfile.Checkwords.Add(checkw);
                         }
                     if (Bytes == 4)
-                        if (BEToUint32(buf, Location) == CW)
+                        if (readUInt32(Location) == CW)
                         {
                             Debug.WriteLine("Checkword: " + checkw.Key + " Found in: " + Location.ToString("X") + ", Data location: " + checkw.Address.ToString("X4"));
                             binfile.Checkwords.Add(checkw);
                         }
                     if (Bytes == 8)
-                        if (BEToUint64(buf, Location) == CW)
+                        if (readUInt64(Location) == CW)
                         {
                             Debug.WriteLine("Checkword: " + checkw.Key + " Found in: " + Location.ToString("X") + ", Data location: " + checkw.Address.ToString("X8"));
                             binfile.Checkwords.Add(checkw);
@@ -1028,21 +1006,9 @@ namespace UniversalPatcher
             {
                 Result = AD.Address.ToString();
             }
-            else if (AD.Bytes == 1)
+            else
             {
-                    Result = buf[AD.Address].ToString();
-            }
-            else if (AD.Bytes == 2)
-            {
-                    Result = BEToUint16(buf, AD.Address).ToString();
-            }
-            else if (AD.Bytes == 8)
-            {
-                    Result = BEToUint64(buf, AD.Address).ToString();
-            }
-            else //Default is 4 bytes
-            {
-                    Result = BEToUint32(buf, AD.Address).ToString();
+                Result = ReadValue(AD).ToString();
             }
 
             Debug.WriteLine("Result: " + Result);
@@ -1065,15 +1031,15 @@ namespace UniversalPatcher
             }
             else if (AD.Bytes == 2)
             {
-                Result = BEToUint16(buf, AD.Address);
+                Result = readUInt16(AD.Address);
             }
             else if (AD.Bytes == 8)
             {
-                Result = (UInt64)BEToUint64(buf, AD.Address);
+                Result = (UInt64)readUInt64(AD.Address);
             }
             else //Default is 4 bytes
             {
-                Result = BEToUint32(buf, AD.Address);
+                Result = readUInt32(AD.Address);
             }
 
             Debug.WriteLine("Result: " + Result.ToString("X"));
@@ -1164,7 +1130,7 @@ namespace UniversalPatcher
             {
                 if (buf[i] == searchfor[0] && buf[i+1] == searchfor[1])
                 {
-                    return BEToUint32(buf, i + 2);
+                    return readUInt32(i + 2);
                 }
             }
             //Not found?
@@ -1189,7 +1155,7 @@ namespace UniversalPatcher
                 if (match)
                 {
                     Debug.WriteLine("Found MAF address from: " + i.ToString("X"));
-                    uint mafAddr = BEToUint32(buf, i + 6);
+                    uint mafAddr = readUInt32(i + 6);
                     if (mafAddr != prevMafAddr)
                     { 
                         if (res.Length > 0)
@@ -1239,7 +1205,7 @@ namespace UniversalPatcher
                     if (buf[i + length] == 0x74 && buf[i+length+2] == 0x20 &&  buf[i + length + 3] == 0x7C)
                     {
                         Debug.WriteLine("Found V6 VE table from: " + v6.address.ToString("X"));
-                        v6.address = BEToUint32(buf, i + length + 4);
+                        v6.address = readUInt32(i + length + 4);
                         v6.rows = buf[i + length + 1];
                     }
                 }
@@ -1282,7 +1248,7 @@ namespace UniversalPatcher
                     {
                         if (buf[i-j] == 0x74)
                         {
-                            uint addr = BEToUint32(buf,i + 2);
+                            uint addr = readUInt32(i + 2);
                             if (addr < fsize && addr > calStartAddr)
                             { 
                                 Debug.WriteLine("Found V6 table address from address: " + (i + 3).ToString("X"));
@@ -1305,7 +1271,7 @@ namespace UniversalPatcher
 
             for (int i = 2; i < 20; i++)
             {
-                if (BEToUint16(buf, (uint)(BufSize - i)) == 0xA55A) //Read OS version from end of file, before bytes A5 5A
+                if (readUInt16((uint)(BufSize - i)) == 0xA55A) //Read OS version from end of file, before bytes A5 5A
                 {
                     segmentAddressDatas[SegNr].PNaddr.Address = (uint)(BufSize - (i + 4));
                     Debug.WriteLine("V6: Found PN address from: " + segmentAddressDatas[SegNr].PNaddr.Address.ToString("X"));
@@ -1313,7 +1279,7 @@ namespace UniversalPatcher
             }
             if (segmentAddressDatas[SegNr].PNaddr.Address == 0)
                 throw new Exception("OS id missing");
-            GMOS = BEToUint32(buf, segmentAddressDatas[SegNr].PNaddr.Address);
+            GMOS = readUInt32(segmentAddressDatas[SegNr].PNaddr.Address);
             segmentAddressDatas[SegNr].PNaddr.Bytes = 4;
             segmentAddressDatas[SegNr].PNaddr.Type = TypeInt;
             Block B = new Block();
@@ -1721,14 +1687,14 @@ namespace UniversalPatcher
 
                             if (isWord)
                             {
-                                B.Start = BEToUint16(buf, tmpStart);
-                                B.End = BEToUint16(buf, tmpStart + 2);
+                                B.Start = readUInt16(tmpStart);
+                                B.End = readUInt16(tmpStart + 2);
                                 tmpStart += 4;
                             }
                             else
                             {
-                                B.Start = BEToUint32(buf, tmpStart);
-                                B.End = BEToUint32(buf, tmpStart + 4);
+                                B.Start = readUInt32(tmpStart);
+                                B.End = readUInt32(tmpStart + 4);
                                 tmpStart += 8;
                             }
                             if (Multiple > 1)
@@ -1752,7 +1718,7 @@ namespace UniversalPatcher
                         if (StartEnd.Length > 1 && StartEnd[1].StartsWith("@"))
                         {
                             //Read End address from bin at this address
-                            B.End = BEToUint32(buf, B.End);
+                            B.End = readUInt32(B.End);
                         }
                         if (StartEnd.Length > 1 && StartEnd[1].EndsWith("@"))
                         {
@@ -1929,5 +1895,169 @@ namespace UniversalPatcher
 
             return retVal;
         }
+
+        public byte readByte(uint addr)
+        {
+            return buf[addr];
+        }
+
+        public ushort readUInt16(uint addr)
+        {
+            if (platformConfig.MSB)
+                return (UInt16)((buf[addr] << 8) | buf[addr + 1]);
+            else
+                return (UInt16)((buf[addr + 1] << 8) | buf[addr]);
+        }
+
+        public Int16 readInt16(uint addr)
+        {
+            if (platformConfig.MSB)
+                return (Int16)((buf[addr] << 8) | buf[addr + 1]);
+            else
+                return (Int16)((buf[addr + 1] << 8) | buf[addr]);
+        }
+
+        public UInt32 readUInt32(uint addr)
+        {
+            byte[] tmp = new byte[4];
+            Array.Copy(buf, addr, tmp, 0, 4);
+            if (platformConfig.MSB)
+                Array.Reverse(tmp);
+            return BitConverter.ToUInt32(tmp, 0);
+        }
+
+        public Int32 readInt32(uint addr)
+        {
+            byte[] tmp = new byte[4];
+            Array.Copy(buf, addr, tmp, 0, 4);
+            if (platformConfig.MSB)
+                Array.Reverse(tmp);
+            return BitConverter.ToInt32(tmp, 0);
+        }
+
+        public Double readFloat32(uint addr)
+        {
+            byte[] tmp = new byte[4];
+            Array.Copy(buf, addr, tmp, 0, 4);
+            if (platformConfig.MSB)
+                Array.Reverse(tmp);
+            return BitConverter.ToSingle(tmp, 0);
+        }
+
+        public UInt64 readUInt64(uint addr)
+        {
+            byte[] tmp = new byte[8];
+            Array.Copy(buf, addr, tmp, 0, 8);
+            if (platformConfig.MSB)
+                Array.Reverse(tmp);
+            return BitConverter.ToUInt64(tmp, 0);
+        }
+
+        public Int64 readInt64(uint addr)
+        {
+            byte[] tmp = new byte[8];
+            Array.Copy(buf, addr, tmp, 0, 8);
+            if (platformConfig.MSB)
+                Array.Reverse(tmp);
+            return BitConverter.ToInt64(tmp, 0);
+        }
+
+        public Double readFloat64(uint addr)
+        {
+            byte[] tmp = new byte[8];
+            Array.Copy(buf, addr, tmp, 0, 8);
+            if (platformConfig.MSB)
+                Array.Reverse(tmp);
+            return BitConverter.ToDouble(tmp, 0);
+        }
+
+
+        public void SaveFloat32(uint offset, Single data)
+        {
+            byte[] tmp = new byte[4];
+            tmp = BitConverter.GetBytes(data);
+            if (platformConfig.MSB)
+                Array.Reverse(tmp);
+            Array.Copy(tmp, 0, buf, offset, 4);
+        }
+
+        public void SaveFloat64(uint offset, double data)
+        {
+            byte[] tmp = new byte[8];
+            tmp = BitConverter.GetBytes(data);
+            if (platformConfig.MSB)
+                Array.Reverse(tmp);
+            Array.Copy(tmp, 0, buf, offset, 8);
+        }
+
+        public void SaveUint64(uint offset, UInt64 data)
+        {
+            byte[] tmp = new byte[8];
+            tmp = BitConverter.GetBytes(data);
+            if (platformConfig.MSB)
+                Array.Reverse(tmp);
+            Array.Copy(tmp, 0, buf, offset, 8);
+        }
+
+        public void SaveInt64(uint offset, Int64 data)
+        {
+            byte[] tmp = new byte[8];
+            tmp = BitConverter.GetBytes(data);
+            if (platformConfig.MSB)
+                Array.Reverse(tmp);
+            Array.Copy(tmp, 0, buf, offset, 8);
+        }
+        public void SaveUint32(uint offset, UInt32 data)
+        {
+            byte[] tmp = new byte[4];
+            tmp = BitConverter.GetBytes(data);
+            if (platformConfig.MSB)
+                Array.Reverse(tmp);
+            Array.Copy(tmp, 0, buf, offset, 4);
+        }
+        public void SaveInt32(uint offset, Int32 data)
+        {
+            byte[] tmp = new byte[4];
+            tmp = BitConverter.GetBytes(data);
+            if (platformConfig.MSB)
+                Array.Reverse(tmp);
+            Array.Copy(tmp, 0, buf, offset, 4);
+        }
+
+        public void Save3Bytes(uint offset, UInt32 data)
+        {
+            if (platformConfig.MSB)
+            {
+                buf[offset] = (byte)(data & 0xff);
+                buf[offset + 1] = (byte)((data >> 8) & 0xff);
+                buf[offset + 2] = (byte)((data >> 16) & 0xff);
+            }
+            else
+            {
+                buf[offset + 2] = (byte)(data & 0xff);
+                buf[offset + 1] = (byte)((data >> 8) & 0xff);
+                buf[offset] = (byte)((data >> 16) & 0xff);
+            }
+        }
+
+        public void SaveUshort(uint offset, ushort data)
+        {
+            byte[] tmp = new byte[2];
+            tmp = BitConverter.GetBytes(data);
+            if (platformConfig.MSB)
+                Array.Reverse(tmp);
+            Array.Copy(tmp, 0, buf, offset, 2);
+        }
+
+        public void SaveShort(uint offset, short data)
+        {
+            byte[] tmp = new byte[2];
+            tmp = BitConverter.GetBytes(data);
+            if (platformConfig.MSB)
+                Array.Reverse(tmp);
+            Array.Copy(tmp, 0, buf, offset, 2);
+        }
+
+
     }
 }

@@ -44,7 +44,7 @@ namespace UniversalPatcher
             if (td.DataType == InDataType.UWORD || td.DataType == InDataType.SWORD)
             {
                 ushort mask = Convert.ToUInt16(maskStr, 16);
-                if ((BEToInt16(PCM.buf,addr) & mask) == mask)
+                if ((PCM.readUInt16(addr) & mask) == mask)
                     chkFlag.Checked = true;
                 else
                     chkFlag.Checked = false;
@@ -52,7 +52,7 @@ namespace UniversalPatcher
             if (td.DataType == InDataType.INT32 || td.DataType == InDataType.UINT32)
             {
                 UInt32 mask = Convert.ToUInt32(maskStr, 16);
-                if ((BEToInt32(PCM.buf, addr) & mask) == mask)
+                if ((PCM.readUInt32(addr) & mask) == mask)
                     chkFlag.Checked = true;
                 else
                     chkFlag.Checked = false;
@@ -60,7 +60,7 @@ namespace UniversalPatcher
             if (td.DataType == InDataType.INT64 || td.DataType == InDataType.UINT64)
             {
                 UInt64 mask = Convert.ToUInt64(maskStr, 16);
-                if ((BEToUint64(PCM.buf, addr) & mask) == mask)
+                if ((PCM.readUInt64(addr) & mask) == mask)
                     chkFlag.Checked = true;
                 else
                     chkFlag.Checked = false;
@@ -88,7 +88,7 @@ namespace UniversalPatcher
             else if (td.DataType == InDataType.SWORD || td.DataType == InDataType.UWORD)
             {
                 ushort mask = Convert.ToUInt16(maskStr, 16);
-                ushort curVal = BEToUint16(PCM.buf, addr);
+                ushort curVal = PCM.readUInt16(addr);
                 ushort newVal;
                 if (chkFlag.Checked)
                 {
@@ -99,12 +99,12 @@ namespace UniversalPatcher
                     mask = (byte)~mask;
                     newVal = (ushort)(curVal & mask);
                 }
-                SaveUshort(PCM.buf, addr, newVal);
+                PCM.SaveUshort(addr, newVal);
             }
             else if (td.DataType == InDataType.INT32 || td.DataType == InDataType.UINT32)
             {
                 UInt32 mask = Convert.ToUInt32(maskStr, 16);
-                UInt32 curVal = BEToUint32(PCM.buf, addr);
+                UInt32 curVal = PCM.readUInt32(addr);
                 UInt32 newVal;
                 if (chkFlag.Checked)
                 {
@@ -115,12 +115,12 @@ namespace UniversalPatcher
                     mask = ~mask;
                     newVal = (UInt32)(curVal & mask);
                 }
-                SaveUint32(PCM.buf, addr, newVal);
+                PCM.SaveUint32(addr, newVal);
             }
             else if (td.DataType == InDataType.INT64 || td.DataType == InDataType.UINT64)
             {
                 UInt64 mask = Convert.ToUInt64(maskStr, 16);
-                UInt64 curVal = BEToUint64(PCM.buf, addr);
+                UInt64 curVal = PCM.readUInt64(addr);
                 UInt64 newVal;
                 if (chkFlag.Checked)
                 {
@@ -131,7 +131,7 @@ namespace UniversalPatcher
                     mask = ~mask;
                     newVal = (UInt64)(curVal & mask);
                 }
-                SaveUint64(PCM.buf, addr, newVal);
+                PCM.SaveUint64(addr, newVal);
             }
             this.Close();
         }

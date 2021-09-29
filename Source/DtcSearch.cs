@@ -179,19 +179,19 @@ namespace UniversalPatcher
                             if (condOffsetStatus)
                             {
                                 uint a = codeAddr;
-                                int prevCode = BEToUint16(PCM.buf, a);
+                                int prevCode = PCM.readUInt16(a);
                                 for (int x = 0; x < 30; x++)
                                 {
                                     //Check if codes (30 first) are increasing
                                     a += (uint)dtcSearchConfigs[configIndex].CodeSteps;
-                                    int nextCode = BEToUint16(PCM.buf, a);
+                                    int nextCode = PCM.readUInt16(a);
                                     if (nextCode <= prevCode)
                                     {
                                         //Not increasing, use offset
                                         codeAddr += 0x10000;
                                         break;
                                     }
-                                    prevCode = BEToUint16(PCM.buf, a);
+                                    prevCode = PCM.readUInt16(a);
                                 }
                             }
                             Debug.WriteLine("DTC status table address: " + statusAddr.ToString("X"));
@@ -223,7 +223,7 @@ namespace UniversalPatcher
                     dtcCode dtc = new dtcCode();
                     dtc.codeAddrInt = addr;
                     dtc.CodeAddr = addr.ToString("X8");
-                    dtc.codeInt = BEToUint16(PCM.buf, addr);
+                    dtc.codeInt = PCM.readUInt16(addr);
 
                     string codeTmp = dtc.codeInt.ToString("X");
                     if (dtc.codeInt < 10 && PCM.dtcCodes.Count > 10)
@@ -383,8 +383,8 @@ namespace UniversalPatcher
                     opCodeAddr = searchBytes(PCM, searchStr, PCM.segmentAddressDatas[PCM.OSSegment].SegmentBlocks[b].Start, PCM.segmentAddressDatas[PCM.OSSegment].SegmentBlocks[b].End);
                     if (opCodeAddr < uint.MaxValue)
                     {
-                        ushort highBytes = BEToUint16(PCM.buf, (uint)(opCodeAddr + 2));
-                        ushort lowBytes = BEToUint16(PCM.buf, (uint)(opCodeAddr + 6));
+                        ushort highBytes = PCM.readUInt16((uint)(opCodeAddr + 2));
+                        ushort lowBytes = PCM.readUInt16((uint)(opCodeAddr + 6));
                         tableStart = (uint)(highBytes << 16 | lowBytes);
                         ushort tmp = (ushort)(opCodeAddr & 0xffff);
                         if (tmp > 0x5000) tableStart -= 0x10000; //Some kind of address offset 
@@ -394,7 +394,7 @@ namespace UniversalPatcher
                             dtcCode dtc = new dtcCode();
                             dtc.codeAddrInt = addr;
                             dtc.CodeAddr = addr.ToString("X8");
-                            dtc.codeInt = BEToUint16(PCM.buf, addr);
+                            dtc.codeInt = PCM.readUInt16(addr);
 
                             string codeTmp = dtc.codeInt.ToString("X4");
                             if (dCodes && !codeTmp.StartsWith("D"))
@@ -419,8 +419,8 @@ namespace UniversalPatcher
                 opCodeAddr = searchBytes(PCM, "3C A0 * * 38 A5 * * 7D 85 50", 0, PCM.fsize);
                 if (opCodeAddr < uint.MaxValue)
                 {
-                    ushort highBytes = BEToUint16(PCM.buf, (uint)(opCodeAddr + 2));
-                    ushort lowBytes = BEToUint16(PCM.buf, (uint)(opCodeAddr + 6));
+                    ushort highBytes = PCM.readUInt16((uint)(opCodeAddr + 2));
+                    ushort lowBytes = PCM.readUInt16((uint)(opCodeAddr + 6));
                     tableStart = (uint)(highBytes << 16 | lowBytes);
                 }
 

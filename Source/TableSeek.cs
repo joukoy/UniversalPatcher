@@ -248,7 +248,7 @@ namespace UniversalPatcher
                 else
                 {
                     //Address is AFTER searchstring
-                    retVal.Addr = BEToUint32(PCM.buf, addr + (uint)sParts.Length);
+                    retVal.Addr = PCM.readUInt32(addr + (uint)sParts.Length);
                 }
                 for (int p = 0; p < sParts.Length; p++)
                 {
@@ -584,9 +584,9 @@ namespace UniversalPatcher
                                 uint currentAddr = (uint)(sAddr.Addr + offset);
                                 Debug.WriteLine("seekTables: Reading new address from:" + currentAddr.ToString("X"));
                                 if (ssParts[jump].Contains("D"))
-                                    sAddr.Addr = (uint)(BEToUint32(PCM.buf, currentAddr));
+                                    sAddr.Addr = (uint)(PCM.readUInt32(currentAddr));
                                 else
-                                    sAddr.Addr = (uint)(BEToUint16(PCM.buf, currentAddr));
+                                    sAddr.Addr = (uint)(PCM.readUInt16(currentAddr));
                                 Debug.WriteLine("seekTables: New address:" + sAddr.Addr.ToString("X"));
                             }
 

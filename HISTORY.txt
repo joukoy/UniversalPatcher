@@ -50,3 +50,9 @@
 
 0.18.14
 - Bugfixes for seek: Multiple extrainfo entries, seek text entries
+
+0.18.15
+- Little Endian (LSB) support for BIN-files (need testing)
+- File Types handling improved, added default selection
+
+ 

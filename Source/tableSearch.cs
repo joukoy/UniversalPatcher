@@ -410,7 +410,7 @@ namespace UniversalPatcher
 
                             if (itemParts[0].StartsWith("@"))
                             {
-                                tsr.AddressInt = BEToUint32(PCM.buf, location);
+                                tsr.AddressInt = PCM.readUInt32(location);
                             }
                             if (tsr.Data != null && tsr.Data.Length > 1)
                                 tsr.Data += "; ";
@@ -422,11 +422,11 @@ namespace UniversalPatcher
                             if (itemParts[2] == "1")
                                 tsr.Data += PCM.buf[location].ToString(formatString);
                             if (itemParts[2] == "2")
-                                tsr.Data += BEToUint16(PCM.buf, location).ToString(formatString);
+                                tsr.Data += PCM.readUInt16(location).ToString(formatString);
                             if (itemParts[2] == "4")
-                                tsr.Data += BEToUint32(PCM.buf, location).ToString(formatString);
+                                tsr.Data += PCM.readUInt32(location).ToString(formatString);
                             if (itemParts[2] == "8")
-                                tsr.Data += BEToUint16(PCM.buf, location).ToString(formatString);
+                                tsr.Data += PCM.readUInt64(location).ToString(formatString);
 
                         }
                         tsr.Segment = PCM.GetSegmentName(tsr.AddressInt);
@@ -462,7 +462,7 @@ namespace UniversalPatcher
                                 uint location = (uint)(addr + k);
                                 if (varParts[0].ToLower().StartsWith("@"))
                                 {
-                                    tsr.AddressInt = BEToUint32(PCM.buf, location);
+                                    tsr.AddressInt = PCM.readUInt32(location);
                                 }
                                 if (varParts[0].ToLower().StartsWith("row"))
                                 {
@@ -477,11 +477,11 @@ namespace UniversalPatcher
                                 if (varParts[1] == "1")
                                     tsr.Data += PCM.buf[location].ToString(formatString);
                                 if (varParts[1] == "2")
-                                    tsr.Data += BEToUint16(PCM.buf, location).ToString(formatString);
+                                    tsr.Data += PCM.readUInt16(location).ToString(formatString);
                                 if (varParts[1] == "4")
-                                    tsr.Data += BEToUint32(PCM.buf, location).ToString(formatString);
+                                    tsr.Data += PCM.readUInt32(location).ToString(formatString);
                                 if (varParts[1] == "8")
-                                    tsr.Data += BEToUint64(PCM.buf, location).ToString(formatString);
+                                    tsr.Data += PCM.readUInt64(location).ToString(formatString);
 
 
                             }

@@ -23,20 +23,20 @@ namespace UniversalPatcher
             try
             {
 
-                UInt64 Data = 0;
-                uint Addr = 0;
+                UInt64 data = 0;
+                uint addr = 0;
                 if (DR.address == "filesize")
                 {
-                    Data = (UInt64)new FileInfo(PCM.FileName).Length;
+                    data = (UInt64)new FileInfo(PCM.FileName).Length;
                 }
                 else
                 {
                     string[] Parts = DR.address.Split(':');
-                    HexToUint(Parts[0].Replace("@", ""), out Addr);
+                    HexToUint(Parts[0].Replace("@", ""), out addr);
                     if (DR.address.StartsWith("@"))
-                        Addr = BEToUint32(PCM.buf, Addr);
+                        addr = PCM.readUInt32(addr);
                     if (Parts[0].EndsWith("@"))
-                        Addr = (uint)PCM.buf.Length - Addr;
+                        addr = (uint)PCM.buf.Length - addr;
                     if (DR.hexdata != null && DR.hexdata.Length > 0)
                     {
                         uint bytes = 1;
@@ -44,7 +44,7 @@ namespace UniversalPatcher
                         StringBuilder readBytes = new StringBuilder();
                         for (int a = 0; a < bytes; a++)
                         {
-                            readBytes.Append(PCM.buf[Addr + a].ToString("X2"));
+                            readBytes.Append(PCM.buf[addr + a].ToString("X2"));
                         }
                         if (readBytes.ToString() == DR.hexdata)
                         {
@@ -58,25 +58,25 @@ namespace UniversalPatcher
                     else
                     {
                         if (Parts.Length == 1)
-                            Data = BEToUint16(PCM.buf, Addr);
+                            data = PCM.readUInt16(addr);
                         else
                         {
                             switch (Parts[1])
                             {
                                 case "1":
-                                    Data = BEToUint16(PCM.buf, Addr);
+                                    data = PCM.readByte(addr);
                                     break;
                                 case "2":
-                                    Data = (uint)BEToUint16(PCM.buf, Addr);
+                                    data = (uint)PCM.readUInt16(addr);
                                     break;
                                 case "4":
-                                    Data = BEToUint32(PCM.buf, Addr);
+                                    data = PCM.readUInt32(addr);
                                     break;
                                 case "8":
-                                    Data = BEToUint64(PCM.buf, Addr);
+                                    data = PCM.readUInt64(addr);
                                     break;
                                 default:
-                                        Data = BEToUint32(PCM.buf, Addr);
+                                        data = PCM.readUInt32(addr);
                                     break;
                             }
 
@@ -88,22 +88,22 @@ namespace UniversalPatcher
 
                 if (DR.compare == "==")
                 {
-                    if (Data == DR.data)
+                    if (data == DR.data)
                         return true;
                 }
                 if (DR.compare == "<")
                 {
-                    if (Data < DR.data)
+                    if (data < DR.data)
                         return true;
                 }
                 if (DR.compare == ">")
                 {
-                    if (Data > DR.data)
+                    if (data > DR.data)
                         return true;
                 }
                 if (DR.compare == "!=")
                 {
-                    if (Data != DR.data)
+                    if (data != DR.data)
                         return true;
                 }
                 //Logger("Not match");

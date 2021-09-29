@@ -118,19 +118,19 @@ namespace UniversalPatcher.Properties
         private PID readPid(uint addr)
         {
             PID pid = new PID();
-            pid.pidNumberInt = BEToUint16(PCM.buf, addr);
+            pid.pidNumberInt = PCM.readUInt16(addr);
             pid.PidNumber = pid.pidNumberInt.ToString("X4");
             pid.Bytes = (ushort)(PCM.buf[addr + 2] + 1);
             if (pid.Bytes == 3)
                 pid.Bytes = 4;
-            pid.SubroutineInt = BEToUint32(PCM.buf, addr + 4);
+            pid.SubroutineInt = PCM.readUInt32(addr + 4);
             pid.Subroutine = pid.SubroutineInt.ToString("X8");
             uint ramStoreAddr = searchBytes(PCM, "10 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
             if (ramStoreAddr == uint.MaxValue)
                 ramStoreAddr = searchBytes(PCM, "30 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
             if (ramStoreAddr < uint.MaxValue)
             {
-                pid.RamAddressInt = BEToUint16(PCM.buf, ramStoreAddr + 2);
+                pid.RamAddressInt = PCM.readUInt16(ramStoreAddr + 2);
                 pid.RamAddress = pid.RamAddressInt.ToString("X4");
             }
             for (int p=0; p< pidNameList.Count;p++)
@@ -147,12 +147,12 @@ namespace UniversalPatcher.Properties
         private PID readPidDiesel(uint addr)
         {
             PID pid = new PID();
-            pid.pidNumberInt = BEToUint16(PCM.buf, addr);
+            pid.pidNumberInt = PCM.readUInt16(addr);
             pid.PidNumber = pid.pidNumberInt.ToString("X4");
             pid.Bytes = (ushort)(PCM.buf[addr + 2]);
             if (pid.Bytes > 4)
                 pid.Bytes = 0;
-            pid.SubroutineInt = BEToUint32(PCM.buf, addr + 6);
+            pid.SubroutineInt = PCM.readUInt32(addr + 6);
             pid.Subroutine = pid.SubroutineInt.ToString("X8");
             pid.RamAddressInt = searchRamAddressDiesel(pid.SubroutineInt);
             if (pid.RamAddressInt != uint.MaxValue)
@@ -180,12 +180,12 @@ namespace UniversalPatcher.Properties
             addr = searchBytes(PCM, "10 39 * * * * 55 00 67 06", startAddr, PCM.fsize);
             if (addr != uint.MaxValue)
             {
-                skipWord1 = BEToUint32(PCM.buf, addr + 2);
+                skipWord1 = PCM.readUInt32(addr + 2);
             }
             addr = searchBytes(PCM, "12 39 * * * * 41 EE FF", startAddr, PCM.fsize);
             if (addr != uint.MaxValue)
             {
-                skipWord2 = BEToUint32(PCM.buf, addr + 2);
+                skipWord2 = PCM.readUInt32(addr + 2);
             }
 
             ushort[] wordList = { 0x1039, 0x3039, 0x1239, 0x3239, 0x1e39, 0x3e39, 0x20b9, 0x33f9 };
@@ -194,13 +194,13 @@ namespace UniversalPatcher.Properties
             {
                 for (addr = startAddr; addr < PCM.fsize-1; addr++)
                 {
-                    if (BEToUint16(PCM.buf, addr) == 0x4E75)   //End of subroutine
+                    if (PCM.readUInt16(addr) == 0x4E75)   //End of subroutine
                     {
                         break;
                     }
-                    if (BEToUint16(PCM.buf, addr) == wordList[s]) 
+                    if (PCM.readUInt16(addr) == wordList[s]) 
                     {
-                        ramAddress = BEToUint32(PCM.buf, addr + 2);
+                        ramAddress = PCM.readUInt32(addr + 2);
                         Debug.WriteLine("Searchword: " + wordList[s].ToString("X2") + " found in: " + addr.ToString("X") + " Data: " + ramAddress.ToString("X"));
                         if (ramAddress != skipWord1 && ramAddress != skipWord2)
                             return ramAddress;

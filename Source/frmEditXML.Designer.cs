@@ -42,6 +42,7 @@ namespace UniversalPatcher
             this.convertToDataTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.labelHelp = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -95,14 +96,14 @@ namespace UniversalPatcher
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveCSVToolStripMenuItem
             // 
             this.saveCSVToolStripMenuItem.Name = "saveCSVToolStripMenuItem";
-            this.saveCSVToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.saveCSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveCSVToolStripMenuItem.Text = "Save CSV";
             this.saveCSVToolStripMenuItem.Click += new System.EventHandler(this.saveCSVToolStripMenuItem_Click);
             // 
@@ -133,15 +134,25 @@ namespace UniversalPatcher
             // importCSVToolStripMenuItem
             // 
             this.importCSVToolStripMenuItem.Name = "importCSVToolStripMenuItem";
-            this.importCSVToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.importCSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.importCSVToolStripMenuItem.Text = "Import CSV";
             this.importCSVToolStripMenuItem.Click += new System.EventHandler(this.importCSVToolStripMenuItem_Click);
+            // 
+            // labelHelp
+            // 
+            this.labelHelp.AutoSize = true;
+            this.labelHelp.Location = new System.Drawing.Point(7, 432);
+            this.labelHelp.Name = "labelHelp";
+            this.labelHelp.Size = new System.Drawing.Size(10, 13);
+            this.labelHelp.TabIndex = 6;
+            this.labelHelp.Text = "-";
             // 
             // frmEditXML
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(651, 457);
+            this.Controls.Add(this.labelHelp);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.menuStrip1);
@@ -172,5 +183,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem convertToDataTypeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importCSVToolStripMenuItem;
+        private Label labelHelp;
     }
 }

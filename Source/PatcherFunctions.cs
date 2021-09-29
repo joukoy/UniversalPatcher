@@ -275,6 +275,7 @@ public class upatcher
 
         public string Description { get; set; }
         public string Extension { get; set; }
+        public bool Default { get; set; }
     }
 
     public struct SearchedAddress
@@ -768,7 +769,7 @@ public class upatcher
         tmpTd.Address = rawParts[1];
         tmpTd.Offset = 0;
         tmpTd.DataType = idt;
-        double rawVal = (double)getRawValue(PCM.buf, tmpTd.addrInt, tmpTd, 0);
+        double rawVal = (double)getRawValue(PCM.buf, tmpTd.addrInt, tmpTd, 0,PCM.platformConfig.MSB);
         if (rawParts.Length > 3 && rawParts[3].StartsWith("lsb"))
         {
             int eSize = getElementSize(idt);
@@ -794,7 +795,7 @@ public class upatcher
 
             if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
             {
-                UInt64 rawVal = (UInt64)getRawValue(myBuffer, addr, mathTd, offset);
+                UInt64 rawVal = (UInt64)getRawValue(myBuffer, addr, mathTd, offset,PCM.platformConfig.MSB);
                 UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
                 if (((UInt64) rawVal & mask) == mask)
                     return 1;
@@ -809,21 +810,21 @@ public class upatcher
             if (mathTd.DataType == InDataType.UBYTE)
                 retVal = myBuffer[bufAddr];
             if (mathTd.DataType == InDataType.SWORD)
-                retVal = BEToInt16(myBuffer, bufAddr);
+                retVal = readInt16(myBuffer, bufAddr, PCM.platformConfig.MSB);
             if (mathTd.DataType == InDataType.UWORD)
-                retVal = BEToUint16(myBuffer, bufAddr);
+                retVal = readUint16(myBuffer, bufAddr, PCM.platformConfig.MSB);
             if (mathTd.DataType == InDataType.INT32)
-                retVal = BEToInt32(myBuffer, bufAddr);
+                retVal = readInt32(myBuffer, bufAddr, PCM.platformConfig.MSB);
             if (mathTd.DataType == InDataType.UINT32)
-                retVal = BEToUint32(myBuffer, bufAddr);
+                retVal = readUint32(myBuffer, bufAddr, PCM.platformConfig.MSB);
             if (mathTd.DataType == InDataType.INT64)
-                retVal = BEToInt64(myBuffer, bufAddr);
+                retVal = readInt64(myBuffer, bufAddr, PCM.platformConfig.MSB);
             if (mathTd.DataType == InDataType.UINT64)
-                retVal = BEToUint64(myBuffer, bufAddr);
+                retVal = readUint64(myBuffer, bufAddr, PCM.platformConfig.MSB);
             if (mathTd.DataType == InDataType.FLOAT32)
-                retVal = BEToFloat32(myBuffer, bufAddr);
+                retVal = readFloat32(myBuffer, bufAddr, PCM.platformConfig.MSB);
             if (mathTd.DataType == InDataType.FLOAT64)
-                retVal = BEToFloat64(myBuffer, bufAddr);
+                retVal = BEToFloat64(myBuffer, bufAddr, PCM.platformConfig.MSB);
 
             if (mathTd.Math == null || mathTd.Math.Length == 0)
                 mathTd.Math = "X";
@@ -852,7 +853,7 @@ public class upatcher
         return retVal;
     }
 
-    public static double getRawValue(byte[] myBuffer, UInt32 addr, TableData mathTd, uint offset)
+    public static double getRawValue(byte[] myBuffer, UInt32 addr, TableData mathTd, uint offset, bool MSB)
     {
         UInt32 bufAddr = addr - offset;
         double retVal = 0;
@@ -865,21 +866,21 @@ public class upatcher
                 case InDataType.UBYTE:
                     return (byte)myBuffer[bufAddr];
                 case InDataType.SWORD:
-                    return (Int16)BEToInt16(myBuffer, bufAddr);
+                    return (Int16)readInt16(myBuffer, bufAddr, MSB);
                 case InDataType.UWORD:
-                    return (UInt16)BEToUint16(myBuffer, bufAddr);
+                    return (UInt16)readUint16(myBuffer, bufAddr, MSB);
                 case InDataType.INT32:
-                    return (Int32)BEToInt32(myBuffer, bufAddr);
+                    return (Int32)readInt32(myBuffer, bufAddr, MSB);
                 case InDataType.UINT32:
-                    return (UInt32)BEToUint32(myBuffer, bufAddr);
+                    return (UInt32)readUint32(myBuffer, bufAddr, MSB);
                 case InDataType.INT64:
-                    return (Int64)BEToInt64(myBuffer, bufAddr);
+                    return (Int64)readInt64(myBuffer, bufAddr, MSB);
                 case InDataType.UINT64:
-                    return (UInt64)BEToInt64(myBuffer, bufAddr);
+                    return (UInt64)readInt64(myBuffer, bufAddr, MSB);
                 case InDataType.FLOAT32:
-                    return (float)BEToFloat32(myBuffer, bufAddr);
+                    return (float)readFloat32(myBuffer, bufAddr, MSB);
                 case InDataType.FLOAT64:
-                    return BEToFloat64(myBuffer, bufAddr);
+                    return BEToFloat64(myBuffer, bufAddr, MSB);
             }
 
         }
@@ -1428,7 +1429,7 @@ public class upatcher
         return autod.autoDetect(PCM);
     }
 
-    public static UInt64 CalculateChecksum(byte[] Data, AddressData CSAddress, List<Block> CSBlocks,List<Block> ExcludeBlocks, short Method, short Complement, ushort Bytes, Boolean SwapB, bool dbg=true)
+    public static UInt64 CalculateChecksum(bool MSB, byte[] Data, AddressData CSAddress, List<Block> CSBlocks,List<Block> ExcludeBlocks, short Method, short Complement, ushort Bytes, Boolean SwapB, bool dbg=true)
     {
         uint sum = 0;
         try
@@ -1525,14 +1526,14 @@ public class upatcher
                 case CSMethod_Wordsum:
                     for (uint i = 0; i < tmp.Length - 1; i += 2)
                     {
-                        sum += BEToUint16(tmp, i);
+                        sum += readUint16(tmp, i,MSB);
                     }
                     break;
 
                 case CSMethod_Dwordsum:
                     for (uint i = 0; i < tmp.Length - 3; i += 4)
                     {
-                        sum += BEToUint32(tmp, i);
+                        sum += readUint32(tmp, i,MSB);
                     }
                     break;
 
@@ -1631,8 +1632,8 @@ public class upatcher
             if (StartEnd[0].StartsWith("@"))
             {
                 uint tmpStart = B.Start;
-                B.Start = BEToUint32(PCM.buf, tmpStart);
-                B.End = BEToUint32(PCM.buf, tmpStart + 4);
+                B.Start = PCM.readUInt32(tmpStart);
+                B.End = PCM.readUInt32(tmpStart + 4);
                 tmpStart += 8;
             }
             else
@@ -1645,7 +1646,7 @@ public class upatcher
             if (StartEnd.Length > 1 && StartEnd[1].StartsWith("@"))
             {
                 //Read End address from bin at this address
-                B.End = BEToUint32(PCM.buf, B.End);
+                B.End = PCM.readUInt32(B.End);
             }
             if (StartEnd.Length > 1 && StartEnd[1].EndsWith("@"))
             {
@@ -1720,6 +1721,33 @@ public class upatcher
 
     }
 
+    private static string generateFilter()
+    {
+        List<string> filters = new List<string>();
+
+        string  Filter = "BIN files (*.bin)|*.bin";
+        int def = int.MaxValue;
+        for (int f = 0; f < fileTypeList.Count; f++)
+        {
+            if (fileTypeList[f].Default)
+                def = f;
+        }
+
+        if (def < int.MaxValue)
+        {
+            Filter = fileTypeList[def].Description + "|" +  fileTypeList[def].Extension;
+        }
+        for (int f = 0; f < fileTypeList.Count; f++)
+        {
+            if (f != def)
+            {
+                string newFilter = "|" + fileTypeList[f].Description + "|" + fileTypeList[f].Extension;
+                Filter += newFilter;
+            }
+        }
+        Filter += "|All files (*.*)|*.*";
+        return Filter;
+    }
 
     public static string SelectFile(string Title = "Select file", string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*", string defaultFile = "")
     {
@@ -1727,13 +1755,7 @@ public class upatcher
         if (Filter.Contains("BIN"))
         {
             fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
-            Filter = "BIN files (*.bin)|*.bin";
-            for (int f = 0; f < fileTypeList.Count; f++)
-            {
-                string newFilter = "|" + fileTypeList[f].Description + "|" + "*." + fileTypeList[f].Extension;
-                Filter += newFilter;
-            }
-            Filter += "|All files (*.*)|*.*";
+            Filter = generateFilter();
         }
         else if (Filter.ToLower().Contains("xdf"))
         {
@@ -1776,8 +1798,9 @@ public class upatcher
     {
         SaveFileDialog saveFileDialog = new SaveFileDialog();
         //saveFileDialog.Filter = "BIN files (*.bin)|*.bin";
-        if (Filter == "")
-            saveFileDialog.Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*";
+        if (Filter == "" || Filter.Contains("BIN"))
+            //saveFileDialog.Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*";
+            saveFileDialog.Filter = generateFilter();
         else
             saveFileDialog.Filter = Filter;
         saveFileDialog.RestoreDirectory = true;
@@ -2086,7 +2109,7 @@ public class upatcher
             for (addr = Start; addr < End; addr++)
             {
                 bool match = true;
-                if (stopVal != 0 && BEToUint16(PCM.buf, addr) == stopVal)
+                if (stopVal != 0 && PCM.readUInt16(addr) == stopVal)
                 {
                     return uint.MaxValue;
                 }
@@ -2158,7 +2181,7 @@ public class upatcher
             else
             {
                 //Address is AFTER searchstring
-                retVal.Addr = BEToUint32(PCM.buf, addr + (uint)sParts.Length);
+                retVal.Addr = PCM.readUInt32(addr + (uint)sParts.Length);
             }
             for (int p = 0; p < sParts.Length; p++)
             {
@@ -2225,11 +2248,11 @@ public class upatcher
     {
         for (uint addr = Start; addr < End; addr++)
         {
-            if (stopVal != 0 && BEToUint16(PCM.buf, addr) == stopVal)
+            if (stopVal != 0 && PCM.readUInt16(addr) == stopVal)
             {
                 return uint.MaxValue;
             }
-            if (BEToUint16(PCM.buf, addr) == sWord)
+            if (PCM.readUInt16(addr) == sWord)
             { 
                 return addr;
             }
@@ -2286,122 +2309,160 @@ public class upatcher
         return result;
     }
 
-    public static UInt64 BEToUint64(byte[] buf, uint offset)
+    public static UInt64 readUint64(byte[] buf, uint offset, bool MSB)
     {
         byte[] tmp = new byte[8];
         Array.Copy(buf, offset, tmp, 0, 8);
-        Array.Reverse(tmp);
+        if (MSB)
+            Array.Reverse(tmp);
         return BitConverter.ToUInt64(tmp,0);
     }
 
-    public static Int64 BEToInt64(byte[] buf, uint offset)
+    public static Int64 readInt64(byte[] buf, uint offset, bool MSB)
     {
         byte[] tmp = new byte[8];
         Array.Copy(buf, offset, tmp, 0, 8);
-        Array.Reverse(tmp);
+        if (MSB)
+            Array.Reverse(tmp);
         return BitConverter.ToInt64(tmp, 0);
     }
-    public static Double BEToFloat64(byte[] buf, uint offset)
+    public static Double BEToFloat64(byte[] buf, uint offset, bool MSB)
     {
         byte[] tmp = new byte[8];
         Array.Copy(buf, offset, tmp, 0, 8);
-        Array.Reverse(tmp);
+        if (MSB)
+            Array.Reverse(tmp);
         return BitConverter.ToDouble(tmp, 0);
     }
-    public static float BEToFloat32(byte[] buf, uint offset)
+    public static float readFloat32(byte[] buf, uint offset, bool MSB)
     {
         byte[] tmp = new byte[4];
         Array.Copy(buf, offset, tmp, 0, 4);
-        Array.Reverse(tmp);
+        if (MSB)
+            Array.Reverse(tmp);
         return BitConverter.ToSingle(tmp, 0);
     }
 
-    public static uint BEToUint32(byte[] buf, uint offset)
+    public static uint readUint32(byte[] buf, uint offset, bool MSB)
     {
         //Shift first byte 24 bits left, second 16bits left...
-        return (uint)((buf[offset] << 24) | (buf[offset + 1] << 16) | (buf[offset + 2] << 8) | buf[offset + 3]);
+        //return (uint)((buf[offset] << 24) | (buf[offset + 1] << 16) | (buf[offset + 2] << 8) | buf[offset + 3]);
+        byte[] tmp = new byte[4];
+        Array.Copy(buf, offset, tmp, 0, 4);
+        if (MSB)
+            Array.Reverse(tmp);
+        return BitConverter.ToUInt32(tmp, 0);
     }
 
-    public static UInt16 BEToUint16(byte[] buf, uint offset)
+    public static UInt16 readUint16(byte[] buf, uint offset, bool MSB)
     {
-        return (UInt16)((buf[offset] << 8) | buf[offset + 1]);
+        if (MSB)
+            return (UInt16)((buf[offset] << 8) | buf[offset + 1]);
+        else
+            return (UInt16)((buf[offset + 1] << 8) | buf[offset]);
     }
 
-    public static int BEToInt32(byte[] buf, uint offset)
+    public static int readInt32(byte[] buf, uint offset, bool MSB)
     {
         //Shift first byte 24 bits left, second 16bits left...
-        return (int)((buf[offset] << 24) | (buf[offset + 1] << 16) | (buf[offset + 2] << 8) | buf[offset + 3]);
+        //return (int)((buf[offset] << 24) | (buf[offset + 1] << 16) | (buf[offset + 2] << 8) | buf[offset + 3]);
+        byte[] tmp = new byte[4];
+        Array.Copy(buf, offset, tmp, 0, 4);
+        if (MSB)
+            Array.Reverse(tmp);
+        return BitConverter.ToInt32(tmp, 0);
     }
 
-    public static Int16 BEToInt16(byte[] buf, uint offset)
+    public static Int16 readInt16(byte[] buf, uint offset, bool MSB)
     {
-        return (Int16)((buf[offset] << 8) | buf[offset + 1]);
+        if (MSB)
+            return (Int16)((buf[offset] << 8) | buf[offset + 1]);
+        else
+            return (Int16)((buf[offset + 1] << 8) | buf[offset]);
     }
-    public static void SaveFloat32(byte[] buf, uint offset, Single data)
+    public static void SaveFloat32(byte[] buf, uint offset, Single data, bool MSB)
     {
         byte[] tmp = new byte[4];
         tmp = BitConverter.GetBytes(data);
-        Array.Reverse(tmp);
+        if (MSB)
+            Array.Reverse(tmp);
         Array.Copy(tmp, 0, buf, offset, 4);
     }
-    public static void SaveFloat64(byte[] buf, uint offset, double data)
+    public static void SaveFloat64(byte[] buf, uint offset, double data, bool MSB)
     {
         byte[] tmp = new byte[8];
         tmp = BitConverter.GetBytes(data);
-        Array.Reverse(tmp);
+        if (MSB)
+            Array.Reverse(tmp);
         Array.Copy(tmp, 0, buf, offset, 8);
     }
 
-    public static void SaveUint64(byte[] buf, uint offset, UInt64 data)
+    public static void SaveUint64(byte[] buf, uint offset, UInt64 data, bool MSB)
     {
         byte[] tmp = new byte[8];
         tmp = BitConverter.GetBytes(data);
-        Array.Reverse(tmp);
+        if (MSB)
+            Array.Reverse(tmp);
         Array.Copy(tmp,0,buf,offset,8);
     }
 
-    public static void SaveInt64(byte[] buf, uint offset, Int64 data)
+    public static void SaveInt64(byte[] buf, uint offset, Int64 data, bool MSB)
     {
         byte[] tmp = new byte[8];
         tmp = BitConverter.GetBytes(data);
-        Array.Reverse(tmp);
+        if (MSB)
+            Array.Reverse(tmp);
         Array.Copy(tmp, 0, buf, offset, 8);
     }
-    public static void SaveUint32(byte[] buf, uint offset, UInt32 data)
+    public static void SaveUint32(byte[] buf, uint offset, UInt32 data, bool MSB)
     {
         byte[] tmp = new byte[4];
         tmp = BitConverter.GetBytes(data);
-        Array.Reverse(tmp);
+        if (MSB)
+            Array.Reverse(tmp);
         Array.Copy(tmp, 0, buf, offset, 4);
     }
-    public static void SaveInt32(byte[] buf, uint offset, Int32 data)
+    public static void SaveInt32(byte[] buf, uint offset, Int32 data, bool MSB)
     {
         byte[] tmp = new byte[4];
         tmp = BitConverter.GetBytes(data);
-        Array.Reverse(tmp);
+        if (MSB)
+            Array.Reverse(tmp);
         Array.Copy(tmp, 0, buf, offset, 4);
     }
 
-    public static void Save3Bytes(byte[] buf, uint offset, UInt32 data)
+    public static void Save3Bytes(byte[] buf, uint offset, UInt32 data, bool MSB)
     {
-        buf[offset] = (byte)(data & 0xff);
-        buf[offset + 1] = (byte)((data >> 8 ) & 0xff);
-        buf[offset + 2] = (byte)((data >> 16 ) & 0xff);
+        if (MSB)
+        {
+            buf[offset] = (byte)(data & 0xff);
+            buf[offset + 1] = (byte)((data >> 8) & 0xff);
+            buf[offset + 2] = (byte)((data >> 16) & 0xff);
+        }
+        else
+        {
+            buf[offset + 2] = (byte)(data & 0xff);
+            buf[offset + 1] = (byte)((data >> 8) & 0xff);
+            buf[offset] = (byte)((data >> 16) & 0xff);
+        }
+
     }
 
 
-    public static void SaveUshort(byte[] buf, uint offset, ushort data)
+    public static void SaveUshort(byte[] buf, uint offset, ushort data, bool MSB)
     {
         byte[] tmp = new byte[2];
         tmp = BitConverter.GetBytes(data);
+        if (MSB)
         Array.Reverse(tmp);
         Array.Copy(tmp, 0, buf, offset, 2);
     }
-    public static void SaveShort(byte[] buf, uint offset, short data)
+    public static void SaveShort(byte[] buf, uint offset, short data, bool MSB)
     {
         byte[] tmp = new byte[2];
         tmp = BitConverter.GetBytes(data);
-        Array.Reverse(tmp);
+        if (MSB)
+            Array.Reverse(tmp);
         Array.Copy(tmp, 0, buf, offset, 2);
     }
 

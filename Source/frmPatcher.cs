@@ -3203,31 +3203,31 @@ namespace UniversalPatcher
             {
                 for (complement = 0; complement <= 2; complement++)
                 {
-                    UInt64 csCalc = CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_crc16, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
+                    UInt64 csCalc = CalculateChecksum(chkCsMSB.Checked, basefile.buf, csAddr, blocks, excludes, CSMethod_crc16, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
                     if (csCalc == oldVal)
                         LoggerBold("Method: CRC16,    Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
                     else
                         Logger("Method: CRC16,    Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
 
-                    csCalc = CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_crc32, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
+                    csCalc = CalculateChecksum(chkCsMSB.Checked, basefile.buf, csAddr, blocks, excludes, CSMethod_crc32, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
                     if (csCalc == oldVal)
                         LoggerBold("Method: CRC32,    Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
                     else
                         Logger("Method: CRC32,    Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
 
-                    csCalc = CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_Bytesum, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
+                    csCalc = CalculateChecksum(chkCsMSB.Checked, basefile.buf, csAddr, blocks, excludes, CSMethod_Bytesum, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
                     if (csCalc == oldVal)
                         LoggerBold("Method: Bytesum,  Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
                     else
                         Logger("Method: Bytesum,  Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
 
-                    csCalc = CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_Wordsum, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
+                    csCalc = CalculateChecksum(chkCsMSB.Checked, basefile.buf, csAddr, blocks, excludes, CSMethod_Wordsum, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
                     if (csCalc == oldVal)
                         LoggerBold("Method: WordSum,  Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
                     else
                         Logger("Method: WordSum,  Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
 
-                    csCalc = CalculateChecksum(basefile.buf, csAddr, blocks, excludes, CSMethod_Dwordsum, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
+                    csCalc = CalculateChecksum(chkCsMSB.Checked, basefile.buf, csAddr, blocks, excludes, CSMethod_Dwordsum, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
                     if (csCalc == oldVal)
                         LoggerBold("Method: DwordSum, Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
                     else
@@ -3252,7 +3252,7 @@ namespace UniversalPatcher
                     complement = 1;
                 if (radioCSUtilComplement2.Checked)
                     complement = 2;
-                return CalculateChecksum(basefile.buf, csAddr, blocks, excludes, method, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
+                return CalculateChecksum(chkCsMSB.Checked, basefile.buf, csAddr, blocks, excludes, method, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
             }
         }
 
@@ -3267,11 +3267,11 @@ namespace UniversalPatcher
                 if (HexToUint(txtCSAddr.Text, out csAddr))
                 {
                     if (numCSBytes.Value == 1)
-                        oldVal = basefile.buf[csAddr];
+                        oldVal = basefile.readByte(csAddr);
                     else if (numCSBytes.Value == 2)
-                        oldVal = BEToUint16(basefile.buf, csAddr);
+                        oldVal = basefile.readUInt16(csAddr);
                     else if (numCSBytes.Value == 4)
-                        oldVal = BEToUint32(basefile.buf, csAddr);
+                        oldVal = basefile.readUInt32(csAddr);
 
                     Logger("Saved value: " + oldVal.ToString("X"));
                 }
@@ -3303,18 +3303,18 @@ namespace UniversalPatcher
                 uint oldVal = 0;
                 if (numCSBytes.Value == 1)
                 {
-                    oldVal = basefile.buf[csAddr];
+                    oldVal = basefile.readByte(csAddr);
                     basefile.buf[csAddr] = (byte)CS1Calc;
                 }
                 else if (numCSBytes.Value == 2)
                 {
-                    oldVal = BEToUint16(basefile.buf, csAddr);
-                    SaveUshort(basefile.buf, csAddr, (ushort)CS1Calc);
+                    oldVal = basefile.readUInt16(csAddr);
+                    basefile.SaveUshort(csAddr, (ushort)CS1Calc);
                 }
                 else if (numCSBytes.Value == 4)
                 {
-                    oldVal = BEToUint32(basefile.buf, csAddr);
-                    SaveUint32(basefile.buf, csAddr, (uint)CS1Calc);
+                    oldVal = basefile.readUInt32(csAddr);
+                    basefile.SaveUint32(csAddr, (uint)CS1Calc);
                 }
                 showChkData();
                 Logger("Checksum: " + oldVal.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
@@ -3449,7 +3449,7 @@ namespace UniversalPatcher
                 return;
             }
 
-            uint orgValue = BEToUint32(basefile.buf, freeAddr);
+            uint orgValue = basefile.readUInt32(freeAddr);
 
             UInt64 cvn = basefile.segmentinfos[seg].getCvn();
 
@@ -3480,7 +3480,7 @@ namespace UniversalPatcher
             {
                 if (btnFakeCVN.Text == "Go")    //Stop pressed
                 {
-                    SaveUint32(basefile.buf, freeAddr, orgValue); //Restore original data
+                    basefile.SaveUint32(freeAddr, orgValue); //Restore original data
                     return;
                 }
                 labelFakeCVNTestVal.Text = testVal.ToString("X");
@@ -3489,13 +3489,13 @@ namespace UniversalPatcher
                 switch ((int)numFakeCvnBytes.Value)
                 {
                     case 2:
-                        SaveUshort(basefile.buf, freeAddr, (ushort)testVal);
+                        basefile.SaveUshort(freeAddr, (ushort)testVal);
                         break;
                     case 3:
-                        Save3Bytes(basefile.buf, freeAddr, testVal);
+                        basefile.Save3Bytes(freeAddr, testVal);
                         break;
                     case 4:
-                        SaveUint32(basefile.buf, freeAddr, testVal);
+                        basefile.SaveUint32(freeAddr, testVal);
                         break;
                     default:
                         basefile.buf[freeAddr] = (byte)testVal;
@@ -3528,7 +3528,7 @@ namespace UniversalPatcher
             else
             {
                 LoggerBold("Can't fix CVN!");
-                SaveUint32(basefile.buf,freeAddr, orgValue); //Restore original data
+                basefile.SaveUint32(freeAddr, orgValue); //Restore original data
             }
 
         }

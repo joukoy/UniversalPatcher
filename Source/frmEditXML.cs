@@ -98,6 +98,7 @@ namespace UniversalPatcher
         public void LoadFileTypes()
         {
             this.Text = "File Types";
+            labelHelp.Text = "Select ONE as default. Example: Description = BIN files, Extension = *.bin;*.dat";
             bindingSource.DataSource = null;
             bindingSource.DataSource = fileTypeList;
             dataGridView1.DataSource = null;
