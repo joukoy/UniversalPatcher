@@ -17,6 +17,16 @@ namespace UniversalPatcher.Properties
             PCM = PCM1;
             uint step = 8;
             loadPidList();
+
+            if (PCM.platformConfig.PidSearchString != null && PCM.platformConfig.PidSearchString.Length > 0)
+            {
+                startAddress = searchBytes(PCM, PCM.platformConfig.PidSearchString, 0, (uint)(PCM.fsize - PCM.platformConfig.PidSearchString.Length));
+                step = PCM.platformConfig.PidSearchStep;
+                if (startAddress < uint.MaxValue)
+                    searchPids(step, true);
+                return;
+            }
+
             if (PCM.configFile.StartsWith("diesel01"))
             {
                 startAddress = searchBytes(PCM, "00 00 04 * * * * * * * 00 01 04 * * * * * * * 00 02 02", 0, PCM.fsize - 23);
@@ -44,12 +54,6 @@ namespace UniversalPatcher.Properties
             else
             {
                 string cnfFile = PCM.configFile;
-/*                if (PCM.configFile.Contains("."))
-                {
-                    int pos = PCM.configFile.IndexOf(".");
-                    cnfFile = cnfFile.Substring(0, pos);
-                }
-*/
                 foreach (PidSearchConfig psc in pidSearchConfigs)
                 {
                     if (psc.XMLFile.ToLower() == cnfFile)

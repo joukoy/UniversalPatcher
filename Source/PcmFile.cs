@@ -39,9 +39,10 @@ namespace UniversalPatcher
                 {
                     _configFileFullName = cnfFile;
                 }
-                if (configFileFullName.Length > 0)
+                if (segmentFile.Length > 0)
                 {
-                    loadConfigFile(configFileFullName);
+                    loadPlatformConfig();
+                    loadConfigFile(segmentFile);
                     GetSegmentAddresses();
                 }
             }
@@ -100,7 +101,18 @@ namespace UniversalPatcher
         public string tunerFile { get; set; }
         public List<string> tunerFileList { get; set; }
         public bool seekTablesImported;
+        public PcmPlatform platformConfig = new PcmPlatform();
 
+        public string segmentFile
+        {
+            get
+            {
+                if (platformConfig.SegmentFile != null && platformConfig.SegmentFile.Length > 0)
+                    return Path.Combine(Application.StartupPath,"XML", platformConfig.SegmentFile);
+                else
+                    return Path.Combine(Application.StartupPath, "XML", configFile + ".xml");
+            }
+        }
         public string OS
         {
             get
@@ -152,6 +164,8 @@ namespace UniversalPatcher
                 }
 
                 string tSeekFile = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + cnfFile + ".xml");
+                if (platformConfig.TableSeekFile != null && platformConfig.TableSeekFile.Length > 0)
+                    tSeekFile = Path.Combine(Application.StartupPath, "XML", platformConfig.TableSeekFile);
 
                 if (File.Exists(tSeekFile))
                 {
@@ -168,6 +182,7 @@ namespace UniversalPatcher
             }
         }
 
+
         public string segmentSeekFile
         {
             get
@@ -180,6 +195,9 @@ namespace UniversalPatcher
                 }
 
                 string ssFile = Path.Combine(Application.StartupPath, "XML", "SegmentSeek-" + cnfFile + ".xml");
+                if (platformConfig.SegmentSeekFile != null && platformConfig.SegmentSeekFile.Length > 0)
+                    ssFile = Path.Combine(Application.StartupPath, "XML", platformConfig.SegmentSeekFile);
+
                 if (File.Exists(ssFile))
                 {
                     long conFileSize = new FileInfo(ssFile).Length;
@@ -194,6 +212,8 @@ namespace UniversalPatcher
 
             }
         }
+
+        public string platformConfigFile { get {return Path.Combine(Application.StartupPath, "XML", configFile + "-platform.xml"); } }
 
         public void setDefaultValues()
         {            
@@ -213,6 +233,56 @@ namespace UniversalPatcher
         public PcmFile ShallowCopy()
         {
             return (PcmFile)this.MemberwiseClone();
+        }
+
+        public void loadPlatformConfig()
+        {
+            string fName = platformConfigFile;
+            if (File.Exists(fName))
+            {
+                Logger("Reading Platform config: " + Path.GetFileName(fName), false);
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(PcmPlatform));
+                System.IO.StreamReader file = new System.IO.StreamReader(fName);
+                platformConfig = (PcmPlatform)reader.Deserialize(file);
+                file.Close();
+                Logger(" [OK]");
+            }
+            else
+            {
+                //Create file && do conversion
+                Logger("Creating Platform config: " + Path.GetFileName(fName), false);
+                platformConfig.MSB = true;
+                platformConfig.SegmentFile = configFile + ".xml";
+                platformConfig.SegmentSeekFile = Path.GetFileName(segmentSeekFile);
+                platformConfig.TableSeekFile = Path.GetFileName(tableSeekFile);
+                for (int i=0; i< pidSearchConfigs.Count; i++)
+                {
+                    if (pidSearchConfigs[i].XMLFile == configFile)
+                    {
+                        platformConfig.PidSearchString = pidSearchConfigs[i].SearchString;
+                        platformConfig.PidSearchStep = (uint)pidSearchConfigs[i].Step;
+                    }
+                    savePlatformConfig();
+                }
+                Logger(" [OK]");
+            }
+        }
+
+        public void savePlatformConfig()
+        {
+            try
+            {
+                using (FileStream stream = new FileStream(platformConfigFile, FileMode.Create))
+                {
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(PcmPlatform));
+                    writer.Serialize(stream, platformConfig);
+                    stream.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         public void reloadBinFile()

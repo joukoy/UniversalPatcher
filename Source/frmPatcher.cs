@@ -4133,6 +4133,21 @@ namespace UniversalPatcher
         {
             ShowFileInfo(basefile, true);
         }
+
+        private void editPlatformConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                frmEditXML frmE = new frmEditXML();
+                frmE.LoadPlatformConfig(basefile);
+                frmE.Show();
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+
+        }
     }
 }
 

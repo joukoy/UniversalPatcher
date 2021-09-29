@@ -25,8 +25,9 @@ namespace UniversalPatcher
         private string sortBy = "";
         private int sortIndex = 0;
         SortOrder strSortOrder = SortOrder.Ascending;
-
         string fileName = "";
+        private PcmFile PCM;
+
         public void LoadRules()
         {
             bindingSource.DataSource = null;
@@ -117,14 +118,31 @@ namespace UniversalPatcher
             loadOBD2Codes();
             refreshOBD2Codes();
         }
+        public void LoadPlatformConfig(PcmFile PCM)
+        {
+            this.PCM = PCM;
+            fileName = PCM.platformConfigFile;
+            this.Text = "Platform config: " + PCM.configFile;
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = PCM.platformConfig;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
 
+        }
         private void refreshOBD2Codes()
         {
             bindingSource.DataSource = null;
             bindingSource.DataSource = OBD2Codes;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
+        }
 
+        private void refreshPlatformConfig()
+        {
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = PCM.platformConfig;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
         }
 
         private void refreshTableSeek()
@@ -228,6 +246,17 @@ namespace UniversalPatcher
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentSeek>));
                         writer.Serialize(stream, segmentSeeks);
+                        stream.Close();
+                    }
+                    Logger(" [OK]");
+                }
+                else if (this.Text.ToLower().Contains("platform config"))
+                {
+                    Logger("Saving file " + Path.GetFileName(fileName), false);
+                    using (FileStream stream = new FileStream(fileName, FileMode.Create))
+                    {
+                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(PcmPlatform));
+                        writer.Serialize(stream, PCM.platformConfig);
                         stream.Close();
                     }
                     Logger(" [OK]");

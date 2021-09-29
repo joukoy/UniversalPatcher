@@ -279,14 +279,14 @@ namespace UniversalPatcher
                 //We are here, so we must have @ @ @ @ or @ @ in searchsting
                 if (l == 4)
                 {
-                    if (MSB)
+                    if (tSeek.MSB)
                         retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 24 | PCM.buf[addr + locations[1]] << 16 | PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
                     else
                         retVal.Addr = (uint)(PCM.buf[addr + locations[3]] << 24 | PCM.buf[addr + locations[2]] << 16 | PCM.buf[addr + locations[1]] << 8 | PCM.buf[addr + locations[0]]);
                 }
                 else if (l == 2)
                 {
-                    if (MSB)
+                    if (tSeek.MSB)
                         retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 8 | PCM.buf[addr + locations[1]]);
                     else
                         retVal.Addr = (uint)(PCM.buf[addr + locations[1]] << 8 | PCM.buf[addr + locations[0]]);

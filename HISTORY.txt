@@ -43,3 +43,7 @@
 
 0.18.12
 - Fixed MSB/LSB for 2 byte seek
+
+0.18.13
+- Fixed MSB/LSB in Tableseek & SegmentSeek (last fix failed)
+- Support for platform-specific config-file (example: E38-platform.xml)

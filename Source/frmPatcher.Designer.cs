@@ -146,6 +146,7 @@
             this.btnCheckSums = new System.Windows.Forms.Button();
             this.btnApplypatch = new System.Windows.Forms.Button();
             this.tabFileinfo = new System.Windows.Forms.TabPage();
+            this.btnDisplayFileInfo = new System.Windows.Forms.Button();
             this.btnVisualSegments = new System.Windows.Forms.Button();
             this.groupSearch = new System.Windows.Forms.GroupBox();
             this.txtCustomSearchString = new System.Windows.Forms.TextBox();
@@ -259,7 +260,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
-            this.btnDisplayFileInfo = new System.Windows.Forms.Button();
+            this.editPlatformConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1666,6 +1667,16 @@
             this.tabFileinfo.Text = "File info";
             this.tabFileinfo.UseVisualStyleBackColor = true;
             // 
+            // btnDisplayFileInfo
+            // 
+            this.btnDisplayFileInfo.Location = new System.Drawing.Point(6, 34);
+            this.btnDisplayFileInfo.Name = "btnDisplayFileInfo";
+            this.btnDisplayFileInfo.Size = new System.Drawing.Size(124, 38);
+            this.btnDisplayFileInfo.TabIndex = 192;
+            this.btnDisplayFileInfo.Text = "Show info for current file";
+            this.btnDisplayFileInfo.UseVisualStyleBackColor = true;
+            this.btnDisplayFileInfo.Click += new System.EventHandler(this.btnDisplayFileInfo_Click);
+            // 
             // btnVisualSegments
             // 
             this.btnVisualSegments.Location = new System.Drawing.Point(6, 74);
@@ -2690,6 +2701,7 @@
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadConfigToolStripMenuItem,
             this.setupSegmentsToolStripMenuItem,
+            this.editPlatformConfigToolStripMenuItem,
             this.autodetectToolStripMenuItem,
             this.stockCVNToolStripMenuItem,
             this.editTableSearchToolStripMenuItem,
@@ -2717,7 +2729,7 @@
             // 
             this.setupSegmentsToolStripMenuItem.Name = "setupSegmentsToolStripMenuItem";
             this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.setupSegmentsToolStripMenuItem.Text = "Edit config (XML)";
+            this.setupSegmentsToolStripMenuItem.Text = "Edit segment config (XML)";
             this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
             // 
             // autodetectToolStripMenuItem
@@ -2847,15 +2859,12 @@
             this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
             // 
-            // btnDisplayFileInfo
+            // editPlatformConfigToolStripMenuItem
             // 
-            this.btnDisplayFileInfo.Location = new System.Drawing.Point(6, 34);
-            this.btnDisplayFileInfo.Name = "btnDisplayFileInfo";
-            this.btnDisplayFileInfo.Size = new System.Drawing.Size(124, 38);
-            this.btnDisplayFileInfo.TabIndex = 192;
-            this.btnDisplayFileInfo.Text = "Show info for current file";
-            this.btnDisplayFileInfo.UseVisualStyleBackColor = true;
-            this.btnDisplayFileInfo.Click += new System.EventHandler(this.btnDisplayFileInfo_Click);
+            this.editPlatformConfigToolStripMenuItem.Name = "editPlatformConfigToolStripMenuItem";
+            this.editPlatformConfigToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.editPlatformConfigToolStripMenuItem.Text = "Edit platform config";
+            this.editPlatformConfigToolStripMenuItem.Click += new System.EventHandler(this.editPlatformConfigToolStripMenuItem_Click);
             // 
             // FrmPatcher
             // 
@@ -3184,5 +3193,6 @@
         private System.Windows.Forms.RichTextBox richChkData;
         private System.Windows.Forms.ToolStripMenuItem homepageToolStripMenuItem;
         private System.Windows.Forms.Button btnDisplayFileInfo;
+        private System.Windows.Forms.ToolStripMenuItem editPlatformConfigToolStripMenuItem;
     }
 }
