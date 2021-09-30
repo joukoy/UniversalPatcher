@@ -58,3 +58,6 @@
 0.18.16
 - Small fixes to File Types, BIN (*.bin) added automatically as default to list
  
+0.18.17
+- Fixed bug in Table data visualizer: Offset not used
+- Platform config editor added

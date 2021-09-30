@@ -143,7 +143,7 @@ namespace UniversalPatcher
                 this.tableBuf = tableBuf;
                 uint start = 0;
                 uint end = 0;
-                uint tableStart = td.addrInt;
+                uint tableStart = td.startAddress();
                 int tableSize = td.size();
                 uint tableEnd = td.endAddress();
                 int tbHeaderStart = 0;
@@ -178,9 +178,6 @@ namespace UniversalPatcher
                 richTableData.Clear();
                 if (radioSegmentTBNames.Checked)
                 {
-                    Stopwatch timer = new Stopwatch();
-                    timer.Start();
-
                     for (uint a = start; a <= end && a < PCM.fsize; a++)
                     {
                         HexData hd = new HexData();
@@ -189,8 +186,6 @@ namespace UniversalPatcher
                         hd.prefix = "";
                         hexDatas.Add(hd);
                     }
-                    timer.Stop();
-                    Debug.WriteLine("HEX Convert: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
 
                     int hexAddr = 0;
                     for (int t = 0; t < PCM.tableDatas.Count; t++)
@@ -198,9 +193,9 @@ namespace UniversalPatcher
                         TableData tmpTd = PCM.tableDatas[t];
                         if (tmpTd.addrInt >= start && tmpTd.addrInt < end)
                         {
-                            hexAddr = (int)(tmpTd.addrInt - start);
+                            hexAddr = (int)(tmpTd.startAddress() - start);
                             if (hexAddr > -1 && hexAddr < hexDatas.Count)
-                                hexDatas[hexAddr].prefix = tmpTd.TableName + ": " + tmpTd.Address + " - " + tmpTd.endAddress().ToString("X8") + " [";
+                                hexDatas[hexAddr].prefix = tmpTd.TableName + ": " + tmpTd.startAddress().ToString("X8") + " - " + tmpTd.endAddress().ToString("X8") + " [";
                             hexAddr = (int)(tmpTd.endAddress() - start);
                             if (hexAddr > -1 && hexAddr < hexDatas.Count)
                                 hexDatas[hexAddr].suffix = "]"; // + PCM.tableDatas[t].TableName; 

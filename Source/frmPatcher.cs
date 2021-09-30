@@ -4138,9 +4138,19 @@ namespace UniversalPatcher
         {
             try
             {
-                frmEditXML frmE = new frmEditXML();
+                /*frmEditXML frmE = new frmEditXML();
                 frmE.LoadPlatformConfig(basefile);
-                frmE.Show();
+                frmE.Show();*/
+                frmPropertyEditor fpe = new frmPropertyEditor();
+                fpe.loadTd(basefile.platformConfig);
+                fpe.Text = "Platform config [" + basefile.configFile + "]";
+                if (fpe.ShowDialog() == DialogResult.OK)
+                {
+                    Logger("Saving platform config: " + Path.GetFileName(basefile.platformConfigFile), false);
+                    basefile.savePlatformConfig();
+                    Logger(" [OK]");
+                }
+                fpe.Dispose();
             }
             catch (Exception ex)
             {

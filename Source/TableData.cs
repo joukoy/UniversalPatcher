@@ -112,11 +112,17 @@ namespace UniversalPatcher
                 return 3;
             else
                 return 2;
-        } 
-        
+        }
+
+
+        public uint startAddress()
+        {
+            return (uint)(addrInt + Offset);
+        }
+
         public uint endAddress()
         {
-            return (uint)(addrInt + size());
+            return (uint)(addrInt + Offset + size());
         }
 
         public int size()
