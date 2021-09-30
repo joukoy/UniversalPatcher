@@ -69,7 +69,7 @@ namespace UniversalPatcher
             richTableData.Select(bufTableStart, tableTxtSize);
             richTableData.SelectionColor = Color.Black;
             //New selection:
-            selectedTxt = (int)(bufTableStart + 3 * (selectedByte - td.addrInt));
+            selectedTxt = (int)(bufTableStart + 3 * (selectedByte - td.startAddress()));
             richTableData.Select(selectedTxt, elementSize * 3 - 1);
             richTableData.SelectionColor = Color.Red;
             richTableData.Select(selectedTxt, 0);
@@ -143,6 +143,7 @@ namespace UniversalPatcher
                 this.tableBuf = tableBuf;
                 uint start = 0;
                 uint end = 0;
+                uint tableWithOffsetStart = td.addrInt;
                 uint tableStart = td.startAddress();
                 int tableSize = td.size();
                 uint tableEnd = td.endAddress();
@@ -156,10 +157,10 @@ namespace UniversalPatcher
                     radioShowSegment.Text = "Segment [" + PCM.Segments[seg].Name +"]";
                 if (radioShowTable.Checked)
                 {
-                    if ((tableStart - numExtraBytes.Value) < 0)
+                    if ((tableWithOffsetStart - numExtraBytes.Value) < 0)
                         start = 0;
                     else
-                        start = (uint)(tableStart - numExtraBytes.Value);
+                        start = (uint)(tableWithOffsetStart - numExtraBytes.Value);
 
                     end = (uint)(tableEnd + numExtraBytes.Value);
                 }
@@ -193,9 +194,17 @@ namespace UniversalPatcher
                         TableData tmpTd = PCM.tableDatas[t];
                         if (tmpTd.addrInt >= start && tmpTd.addrInt < end)
                         {
-                            hexAddr = (int)(tmpTd.startAddress() - start);
+                            hexAddr = (int)(tmpTd.addrInt - start);
                             if (hexAddr > -1 && hexAddr < hexDatas.Count)
-                                hexDatas[hexAddr].prefix = tmpTd.TableName + ": " + tmpTd.startAddress().ToString("X8") + " - " + tmpTd.endAddress().ToString("X8") + " [";
+                            {
+                                if (td.Offset > 0)
+                                {
+                                    hexDatas[hexAddr].prefix = tmpTd.TableName + ": " + tmpTd.Address + "+" + td.Offset.ToString("X") + " - " + tmpTd.endAddress().ToString("X8");
+                                    hexDatas[hexAddr + td.Offset - 1].suffix = "[";
+                                }
+                                else
+                                    hexDatas[hexAddr].prefix = tmpTd.TableName + ": " + tmpTd.Address + " - " + tmpTd.endAddress().ToString("X8") + " [";
+                            }
                             hexAddr = (int)(tmpTd.endAddress() - start);
                             if (hexAddr > -1 && hexAddr < hexDatas.Count)
                                 hexDatas[hexAddr].suffix = "]"; // + PCM.tableDatas[t].TableName; 
@@ -232,9 +241,9 @@ namespace UniversalPatcher
                         }
                     }
                     richTableData.Text = sb.ToString();
-                    string searchTxt = hexDatas[(int)(tableStart - start)].prefix;
+                    string searchTxt = hexDatas[(int)(tableWithOffsetStart - start)].prefix;
                     tbHeaderStart = richTableData.Find(searchTxt, 0, RichTextBoxFinds.None);
-                    bufTableStart = tbHeaderStart + searchTxt.Length + 1;
+                    bufTableStart = tbHeaderStart + searchTxt.Length + 1 + (td.Offset * 3);
                     bufTableEnd = richTableData.Find("]", bufTableStart, RichTextBoxFinds.None);
                     tableTxtSize = bufTableEnd - bufTableStart;
 
@@ -282,13 +291,19 @@ namespace UniversalPatcher
                     richTableData.SelectionColor = Color.Blue;
 
                 }
+                if (td.Offset > 0)
+                {
+                    richTableData.Select(bufTableStart - (3 * td.Offset), 3 * td.Offset - 1);
+                    richTableData.SelectionColor = Color.Green;
+                }
 
-                selectedTxt = (int)(bufTableStart + 3 * (selectedByte - td.addrInt));
+
+                selectedTxt = (int)(bufTableStart + 3 * (selectedByte - tableStart));
 
                 richTableData.Select(selectedTxt, elementSize * 3 - 1);
                 richTableData.SelectionColor = Color.Red;
 
-                if (selectedByte - td.addrInt < 100 && radioSegmentTBNames.Checked)
+                if (selectedByte - td.startAddress() < 100 && radioSegmentTBNames.Checked)
                     richTableData.Select(tbHeaderStart, 0);
                 else
                     richTableData.Select(selectedTxt, 0);

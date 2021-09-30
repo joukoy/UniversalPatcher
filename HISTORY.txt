@@ -61,3 +61,7 @@
 0.18.17
 - Fixed bug in Table data visualizer: Offset not used
 - Platform config editor added
+
+0.18.18
+- Show offset bytes as green in table data visualizer
+
