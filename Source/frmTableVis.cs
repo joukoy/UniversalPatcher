@@ -197,10 +197,10 @@ namespace UniversalPatcher
                             hexAddr = (int)(tmpTd.addrInt - start);
                             if (hexAddr > -1 && hexAddr < hexDatas.Count)
                             {
-                                if (td.Offset > 0)
+                                if (tmpTd.Offset > 0)
                                 {
-                                    hexDatas[hexAddr].prefix = tmpTd.TableName + ": " + tmpTd.Address + "+" + td.Offset.ToString("X") + " - " + tmpTd.endAddress().ToString("X8");
-                                    hexDatas[hexAddr + td.Offset - 1].suffix = "[";
+                                    hexDatas[hexAddr].prefix = tmpTd.TableName + ": " + tmpTd.Address + "+" + tmpTd.Offset.ToString("X") + " - " + tmpTd.endAddress().ToString("X8");
+                                    hexDatas[hexAddr + tmpTd.Offset - 1].suffix = "[";
                                 }
                                 else
                                     hexDatas[hexAddr].prefix = tmpTd.TableName + ": " + tmpTd.Address + " - " + tmpTd.endAddress().ToString("X8") + " [";

@@ -68,3 +68,5 @@
 0.18.19
 - Fixed bug: Offset bytes duplicated in table data visualizer
 
+0.18.20
+- Fixed bug: Wrong offset applied to tables in table data visualizer
