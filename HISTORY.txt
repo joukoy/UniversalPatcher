@@ -65,3 +65,6 @@
 0.18.18
 - Show offset bytes as green in table data visualizer
 
+0.18.19
+- Fixed bug: Offset bytes duplicated in table data visualizer
+

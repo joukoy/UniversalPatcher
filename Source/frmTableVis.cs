@@ -174,7 +174,7 @@ namespace UniversalPatcher
 
                 byte[] buf = new byte[end - start + 1];
                 Array.Copy(PCM.buf, start, buf, 0, end - start);
-                Array.Copy(tableBuf, 0, buf, tableStart - start,tableBuf.Length);
+                Array.Copy(tableBuf, 0, buf, tableWithOffsetStart - start,tableBuf.Length);
                 int r = 0;
                 richTableData.Clear();
                 if (radioSegmentTBNames.Checked)
