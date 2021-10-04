@@ -312,6 +312,7 @@ namespace UniversalPatcher
                         rHeaders = loadHeaderFromTable(tData.RowHeaders.Substring(7), tData.Rows, pcm).Split(',');
                     }
 
+
                     string RowPrefix = "";
                     string colPrefix = "";
                     if (!disableMultiTable)
@@ -1134,6 +1135,7 @@ namespace UniversalPatcher
             }
             return headers;
         }
+
 
         private int getColumnByHeader(string hdrTxt)
         {

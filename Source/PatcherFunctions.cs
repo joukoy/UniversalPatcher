@@ -824,7 +824,7 @@ public class upatcher
             if (mathTd.DataType == InDataType.FLOAT32)
                 retVal = readFloat32(myBuffer, bufAddr, PCM.platformConfig.MSB);
             if (mathTd.DataType == InDataType.FLOAT64)
-                retVal = BEToFloat64(myBuffer, bufAddr, PCM.platformConfig.MSB);
+                retVal = readFloat64(myBuffer, bufAddr, PCM.platformConfig.MSB);
 
             if (mathTd.Math == null || mathTd.Math.Length == 0)
                 mathTd.Math = "X";
@@ -880,7 +880,7 @@ public class upatcher
                 case InDataType.FLOAT32:
                     return (float)readFloat32(myBuffer, bufAddr, MSB);
                 case InDataType.FLOAT64:
-                    return BEToFloat64(myBuffer, bufAddr, MSB);
+                    return readFloat64(myBuffer, bufAddr, MSB);
             }
 
         }
@@ -2328,7 +2328,7 @@ public class upatcher
             Array.Reverse(tmp);
         return BitConverter.ToInt64(tmp, 0);
     }
-    public static Double BEToFloat64(byte[] buf, uint offset, bool MSB)
+    public static Double readFloat64(byte[] buf, uint offset, bool MSB)
     {
         byte[] tmp = new byte[8];
         Array.Copy(buf, offset, tmp, 0, 8);
