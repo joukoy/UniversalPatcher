@@ -20,6 +20,7 @@ using System.Configuration;
 using System.Xml.Linq;
 using System.Globalization;
 using System.Xml;
+using UniversalPatcher.a2l;
 
 namespace UniversalPatcher
 {
@@ -306,7 +307,14 @@ namespace UniversalPatcher
                     {
                         tabFunction.TabPages.Remove(tabFakeCvn);
                     }
-
+                    for (int a=0; a< args.Length; a++)
+                    {
+                        if (args[a] == "a2l")
+                        {
+                            btnImportA2l.Enabled = true;
+                            btnImportA2l.Visible = true;
+                        }
+                    }
 
                     if (!tabControl1.TabPages.Contains(tabDebug))
                         tabControl1.TabPages.Add(tabDebug);
@@ -4157,6 +4165,12 @@ namespace UniversalPatcher
                 LoggerBold(ex.Message);
             }
 
+        }
+
+        private void btnImportA2l_Click(object sender, EventArgs e)
+        {
+            frmImportA2L fa2l = new frmImportA2L();
+            fa2l.Show();
         }
     }
 }

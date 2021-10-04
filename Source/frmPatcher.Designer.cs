@@ -139,6 +139,7 @@
             this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tabFunction = new System.Windows.Forms.TabControl();
             this.tabApply = new System.Windows.Forms.TabPage();
+            this.btnImportA2l = new System.Windows.Forms.Button();
             this.btnTuner = new System.Windows.Forms.Button();
             this.btnFixFilesChecksum = new System.Windows.Forms.Button();
             this.btnSwapSegments = new System.Windows.Forms.Button();
@@ -187,6 +188,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.btnExtractSegments = new System.Windows.Forms.Button();
             this.tabChecksumUtil = new System.Windows.Forms.TabPage();
+            this.chkCsMSB = new System.Windows.Forms.CheckBox();
             this.richChkData = new System.Windows.Forms.RichTextBox();
             this.chkCsUtilSwapBytes = new System.Windows.Forms.CheckBox();
             this.btnCsUtilFix = new System.Windows.Forms.Button();
@@ -261,7 +263,6 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
-            this.chkCsMSB = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1571,6 +1572,7 @@
             // 
             // tabApply
             // 
+            this.tabApply.Controls.Add(this.btnImportA2l);
             this.tabApply.Controls.Add(this.btnTuner);
             this.tabApply.Controls.Add(this.btnFixFilesChecksum);
             this.tabApply.Controls.Add(this.btnSwapSegments);
@@ -1585,6 +1587,18 @@
             this.tabApply.TabIndex = 1;
             this.tabApply.Text = "Modify bin";
             this.tabApply.UseVisualStyleBackColor = true;
+            // 
+            // btnImportA2l
+            // 
+            this.btnImportA2l.Enabled = false;
+            this.btnImportA2l.Location = new System.Drawing.Point(352, 38);
+            this.btnImportA2l.Name = "btnImportA2l";
+            this.btnImportA2l.Size = new System.Drawing.Size(104, 23);
+            this.btnImportA2l.TabIndex = 190;
+            this.btnImportA2l.Text = "Import a2l";
+            this.btnImportA2l.UseVisualStyleBackColor = true;
+            this.btnImportA2l.Visible = false;
+            this.btnImportA2l.Click += new System.EventHandler(this.btnImportA2l_Click);
             // 
             // btnTuner
             // 
@@ -2122,6 +2136,18 @@
             this.tabChecksumUtil.TabIndex = 5;
             this.tabChecksumUtil.Text = "Checksum research";
             this.tabChecksumUtil.UseVisualStyleBackColor = true;
+            // 
+            // chkCsMSB
+            // 
+            this.chkCsMSB.AutoSize = true;
+            this.chkCsMSB.Checked = true;
+            this.chkCsMSB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkCsMSB.Location = new System.Drawing.Point(6, 90);
+            this.chkCsMSB.Name = "chkCsMSB";
+            this.chkCsMSB.Size = new System.Drawing.Size(49, 17);
+            this.chkCsMSB.TabIndex = 155;
+            this.chkCsMSB.Text = "MSB";
+            this.chkCsMSB.UseVisualStyleBackColor = true;
             // 
             // richChkData
             // 
@@ -2868,18 +2894,6 @@
             this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
             // 
-            // chkCsMSB
-            // 
-            this.chkCsMSB.AutoSize = true;
-            this.chkCsMSB.Checked = true;
-            this.chkCsMSB.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCsMSB.Location = new System.Drawing.Point(6, 90);
-            this.chkCsMSB.Name = "chkCsMSB";
-            this.chkCsMSB.Size = new System.Drawing.Size(49, 17);
-            this.chkCsMSB.TabIndex = 155;
-            this.chkCsMSB.Text = "MSB";
-            this.chkCsMSB.UseVisualStyleBackColor = true;
-            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3209,5 +3223,6 @@
         private System.Windows.Forms.Button btnDisplayFileInfo;
         private System.Windows.Forms.ToolStripMenuItem editPlatformConfigToolStripMenuItem;
         private System.Windows.Forms.CheckBox chkCsMSB;
+        private System.Windows.Forms.Button btnImportA2l;
     }
 }
