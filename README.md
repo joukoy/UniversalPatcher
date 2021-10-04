@@ -22,6 +22,8 @@ https://universalpatcher.net/
 # Facebook page
 https://www.facebook.com/universalpatcher
 
+# Facebook group
+https://www.facebook.com/groups/universalpatcher.net
 (Previous Facebook group is offline)
 
 
