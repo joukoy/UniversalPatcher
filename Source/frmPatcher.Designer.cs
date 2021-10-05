@@ -1588,18 +1588,6 @@
             this.tabApply.Text = "Modify bin";
             this.tabApply.UseVisualStyleBackColor = true;
             // 
-            // btnImportA2l
-            // 
-            this.btnImportA2l.Enabled = false;
-            this.btnImportA2l.Location = new System.Drawing.Point(352, 38);
-            this.btnImportA2l.Name = "btnImportA2l";
-            this.btnImportA2l.Size = new System.Drawing.Size(104, 23);
-            this.btnImportA2l.TabIndex = 190;
-            this.btnImportA2l.Text = "Import a2l";
-            this.btnImportA2l.UseVisualStyleBackColor = true;
-            this.btnImportA2l.Visible = false;
-            this.btnImportA2l.Click += new System.EventHandler(this.btnImportA2l_Click);
-            // 
             // btnTuner
             // 
             this.btnTuner.Location = new System.Drawing.Point(349, 6);

@@ -4167,11 +4167,6 @@ namespace UniversalPatcher
 
         }
 
-        private void btnImportA2l_Click(object sender, EventArgs e)
-        {
-            frmImportA2L fa2l = new frmImportA2L();
-            fa2l.Show();
-        }
     }
 }
 
