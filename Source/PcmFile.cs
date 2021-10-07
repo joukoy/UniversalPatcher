@@ -41,7 +41,7 @@ namespace UniversalPatcher
                 }
                 if (segmentFile.Length > 0)
                 {
-                    loadPlatformConfig();
+                    loadPlatformConfig(platformConfigFile);
                     loadConfigFile(segmentFile);
                     GetSegmentAddresses();
                 }
@@ -235,9 +235,10 @@ namespace UniversalPatcher
             return (PcmFile)this.MemberwiseClone();
         }
 
-        public void loadPlatformConfig()
+        public void loadPlatformConfig(string fName)
         {
-            string fName = platformConfigFile;
+            if (fName.Length == 0)
+                fName = platformConfigFile;
             if (File.Exists(fName))
             {
                 Logger("Reading Platform config: " + Path.GetFileName(fName), false);
@@ -262,17 +263,17 @@ namespace UniversalPatcher
                         platformConfig.PidSearchString = pidSearchConfigs[i].SearchString;
                         platformConfig.PidSearchStep = (uint)pidSearchConfigs[i].Step;
                     }
-                    savePlatformConfig();
+                    savePlatformConfig(platformConfigFile);
                 }
                 Logger(" [OK]");
             }
         }
 
-        public void savePlatformConfig()
+        public void savePlatformConfig(string fName)
         {
             try
             {
-                using (FileStream stream = new FileStream(platformConfigFile, FileMode.Create))
+                using (FileStream stream = new FileStream(fName, FileMode.Create))
                 {
                     System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(PcmPlatform));
                     writer.Serialize(stream, platformConfig);

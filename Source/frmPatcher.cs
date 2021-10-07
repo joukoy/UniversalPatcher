@@ -20,7 +20,6 @@ using System.Configuration;
 using System.Xml.Linq;
 using System.Globalization;
 using System.Xml;
-using UniversalPatcher.a2l;
 
 namespace UniversalPatcher
 {
@@ -306,14 +305,6 @@ namespace UniversalPatcher
                     else
                     {
                         tabFunction.TabPages.Remove(tabFakeCvn);
-                    }
-                    for (int a=0; a< args.Length; a++)
-                    {
-                        if (args[a] == "a2l")
-                        {
-                            btnImportA2l.Enabled = true;
-                            btnImportA2l.Visible = true;
-                        }
                     }
 
                     if (!tabControl1.TabPages.Contains(tabDebug))
@@ -2948,14 +2939,20 @@ namespace UniversalPatcher
         private void tableSeekToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try 
-            { 
-                if (basefile.configFileFullName == null)
+            {
+                string fName;
+                if (basefile.configFileFullName.Length == 0)
                 {
-                    Logger("No file/XML selected");
-                    return;
+                    fName = SelectFile("Select tableseekfile", "XML (*.xml)|*.xml|All (*.*)|*.*");
+                    if (fName.Length == 0)
+                        return;
+                }
+                else
+                {
+                     fName = basefile.tableSeekFile;
                 }
                 frmEditXML frmE = new frmEditXML();
-                frmE.LoadTableSeek(basefile.tableSeekFile);
+                frmE.LoadTableSeek(fName);
                 frmE.Show();
             }
             catch (Exception ex)
@@ -3161,14 +3158,20 @@ namespace UniversalPatcher
         {
             try
             {
-                if (basefile.configFileFullName == null)
+                string fName;
+                if (basefile.configFileFullName.Length == 0)
                 {
-                    Logger("No file/XML selected");
-                    return;
+                    fName = SelectFile("Select segmentSeekfile", "XML (*.xml)|*.xml|All (*.*)|*.*");
+                    if (fName.Length == 0)
+                        return;
+                }
+                else
+                {
+                    fName = basefile.segmentSeekFile;
                 }
                 frmEditXML frmE = new frmEditXML();
                 frmE.Show();
-                frmE.LoadSegmentSeek(basefile.segmentSeekFile);
+                frmE.LoadSegmentSeek(fName);
             }
             catch (Exception ex)
             {
@@ -4154,8 +4157,13 @@ namespace UniversalPatcher
                 fpe.Text = "Platform config [" + basefile.configFile + "]";
                 if (fpe.ShowDialog() == DialogResult.OK)
                 {
-                    Logger("Saving platform config: " + Path.GetFileName(basefile.platformConfigFile), false);
-                    basefile.savePlatformConfig();
+                    string fName = basefile.platformConfigFile;
+                    if (basefile.configFile.Length == 0)
+                        fName = SelectSaveFile("XML (*.xml)|*.xml|All (*.*)|*.*","new-platform.xml");
+                    if (fName.Length == 0)
+                        return;
+                    Logger("Saving platform config: " + Path.GetFileName(fName), false);
+                    basefile.savePlatformConfig(fName);
                     Logger(" [OK]");
                 }
                 fpe.Dispose();
@@ -4167,6 +4175,14 @@ namespace UniversalPatcher
 
         }
 
+        private void loadPlatformConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fName = SelectFile("Select platform config", "XML (*.xml)|*.xml|ALL (*.*)|*.*");
+            if (fName.Length == 0)
+                return;
+            basefile.loadPlatformConfig(fName);
+
+        }
     }
 }
 

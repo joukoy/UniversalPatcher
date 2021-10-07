@@ -27,6 +27,8 @@ namespace UniversalPatcher
         SortOrder strSortOrder = SortOrder.Ascending;
         string fileName = "";
         private PcmFile PCM;
+        private List<TableSeek> tSeeks;
+        private List<SegmentSeek> sSeeks;
 
         public void LoadRules()
         {
@@ -65,12 +67,16 @@ namespace UniversalPatcher
             dataGridView1.DataSource = bindingSource;
             UseComboBoxForEnums(dataGridView1);
         }
+       
         public void LoadTableSeek(string fname)
         {
             fileName = fname;
             this.Text = "Edit Table Seek config";
-            if (tableSeeks == null) 
-                tableSeeks = new List<TableSeek>();
+
+            if (File.Exists(fname))
+                tSeeks = TableSeek.loadtTableSeekFile(fname);
+            else
+                tSeeks = new List<TableSeek>();
             refreshTableSeek();
         }
 
@@ -78,8 +84,10 @@ namespace UniversalPatcher
         {
             fileName = fname;
             this.Text = "Edit Segment Seek config";
-            if (segmentSeeks == null) 
-                segmentSeeks = new List<SegmentSeek>();
+            if (File.Exists(fname))
+                sSeeks = SegmentSeek.loadSegmentSeekFile(fname);
+            else
+                sSeeks = new List<SegmentSeek>();
             refreshSegmentSeek();
         }
 
@@ -157,7 +165,7 @@ namespace UniversalPatcher
         private void refreshTableSeek()
         {
             bindingSource.DataSource = null;
-            bindingSource.DataSource = tableSeeks;
+            bindingSource.DataSource = tSeeks;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
 
@@ -170,7 +178,7 @@ namespace UniversalPatcher
         private void refreshSegmentSeek()
         {
             bindingSource.DataSource = null;
-            bindingSource.DataSource = segmentSeeks;
+            bindingSource.DataSource = sSeeks;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
 
@@ -180,7 +188,7 @@ namespace UniversalPatcher
             UseComboBoxForEnums(dataGridView1);
         }
 
-        private void saveThis()
+        private void saveThis(string fName)
         {
             try
             {
@@ -188,8 +196,9 @@ namespace UniversalPatcher
                 if (this.Text.Contains("CVN"))
                 {
                     Logger("Saving file stockcvn.xml", false);
-                    string FileName = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
-                    using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                    if (fName.Length == 0)
+                        fName = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
+                    using (FileStream stream = new FileStream(fName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<CVN>));
                         writer.Serialize(stream, StockCVN);
@@ -200,8 +209,9 @@ namespace UniversalPatcher
                 else if (this.Text.Contains("File Types"))
                 {
                     Logger("Saving file filetypes.xml", false);
-                    string FileName = Path.Combine(Application.StartupPath, "XML", "filetypes.xml");
-                    using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                    if (fName.Length == 0)
+                        fName = Path.Combine(Application.StartupPath, "XML", "filetypes.xml");
+                    using (FileStream stream = new FileStream(fName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<FileType>));
                         writer.Serialize(stream, fileTypeList);
@@ -212,8 +222,9 @@ namespace UniversalPatcher
                 else if (this.Text.Contains("DTC"))
                 {
                     Logger("Saving file DtcSearch.xml", false);
-                    string FileName = Path.Combine(Application.StartupPath, "XML", "DtcSearch.xml");
-                    using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                    if (fName.Length == 0)
+                        fName = Path.Combine(Application.StartupPath, "XML", "DtcSearch.xml");
+                    using (FileStream stream = new FileStream(fName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<DtcSearchConfig>));
                         writer.Serialize(stream, dtcSearchConfigs);
@@ -224,8 +235,9 @@ namespace UniversalPatcher
                 else if (this.Text.Contains("PID"))
                 {
                     Logger("Saving file PidSearch.xml", false);
-                    string FileName = Path.Combine(Application.StartupPath, "XML", "PidSearch.xml");
-                    using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                    if (fName.Length == 0)
+                        fName = Path.Combine(Application.StartupPath, "XML", "PidSearch.xml");
+                    using (FileStream stream = new FileStream(fName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<PidSearchConfig>));
                         writer.Serialize(stream, pidSearchConfigs);
@@ -239,30 +251,30 @@ namespace UniversalPatcher
                 }
                 else if (this.Text.ToLower().Contains("table seek"))
                 {
-                    Logger("Saving file " + fileName, false);
-                    using (FileStream stream = new FileStream(fileName, FileMode.Create))
+                    Logger("Saving file " + fName, false);
+                    using (FileStream stream = new FileStream(fName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSeek>));
-                        writer.Serialize(stream, tableSeeks);
+                        writer.Serialize(stream, tSeeks);
                         stream.Close();
                     }
                     Logger(" [OK]");
                 }
                 else if (this.Text.ToLower().Contains("segment seek"))
                 {
-                    Logger("Saving file " + fileName, false);
+                    Logger("Saving file " + fName, false);
                     using (FileStream stream = new FileStream(fileName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentSeek>));
-                        writer.Serialize(stream, segmentSeeks);
+                        writer.Serialize(stream, sSeeks);
                         stream.Close();
                     }
                     Logger(" [OK]");
                 }
                 else if (this.Text.ToLower().Contains("platform config"))
                 {
-                    Logger("Saving file " + Path.GetFileName(fileName), false);
-                    using (FileStream stream = new FileStream(fileName, FileMode.Create))
+                    Logger("Saving file " + Path.GetFileName(fName), false);
+                    using (FileStream stream = new FileStream(fName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(PcmPlatform));
                         writer.Serialize(stream, PCM.platformConfig);
@@ -272,8 +284,9 @@ namespace UniversalPatcher
                 }
                 else if (this.Text.Contains("Units"))
                 {
-                    fileName = Path.Combine(Application.StartupPath, "Tuner", "units.xml");
-                    Logger("Saving file " + fileName, false);
+                    if (fName.Length == 0)
+                        fName = Path.Combine(Application.StartupPath, "Tuner", "units.xml");
+                    Logger("Saving file " + fName, false);
                     using (FileStream stream = new FileStream(fileName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<Units>));
@@ -285,8 +298,9 @@ namespace UniversalPatcher
                 else
                 {
                     Logger("Saving file autodetect.xml", false);
-                    string FileName = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
-                    using (FileStream stream = new FileStream(FileName, FileMode.Create))
+                    if (fName.Length == 0)
+                        fName = Path.Combine(Application.StartupPath, "XML", "autodetect.xml");
+                    using (FileStream stream = new FileStream(fName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<DetectRule>));
                         writer.Serialize(stream, DetectRules);
@@ -304,7 +318,7 @@ namespace UniversalPatcher
         }
         private void btnSave_Click(object sender, EventArgs e)
         {
-            saveThis();
+            saveThis(fileName);
         }
 
         private void saveCSV()
@@ -414,18 +428,18 @@ namespace UniversalPatcher
                                 xtension = lineparts[i + 3];
                             // ts.Name += "*" + lineparts[i + 3];
 
-                            for (int s = 0; s < tableSeeks.Count; s++)
+                            for (int s = 0; s < tSeeks.Count; s++)
                             {
-                                if (tableSeeks[s].Name != null && tableSeeks[s].Category != null && tableSeeks[s].Name.ToLower() == lineparts[1].ToLower() && tableSeeks[s].Category.ToLower() == ts.Category.ToLower())
+                                if (tSeeks[s].Name != null && tSeeks[s].Category != null && tSeeks[s].Name.ToLower() == lineparts[1].ToLower() && tSeeks[s].Category.ToLower() == ts.Category.ToLower())
                                 {
                                     TableSeek tsNew = new TableSeek();
-                                    tsNew = tableSeeks[s].ShallowCopy();
+                                    tsNew = tSeeks[s].ShallowCopy();
                                     tsNew.SearchStr = ts.SearchStr;
                                     tsNew.UseHit = ts.UseHit;
                                     tsNew.Offset = ts.Offset;
                                     if (xtension.Length > 0)
                                         tsNew.Name += "*" + xtension;
-                                    tableSeeks.Add(tsNew);
+                                    tSeeks.Add(tsNew);
                                     Debug.WriteLine(tsNew.Name);
                                     break;
                                 }
@@ -436,15 +450,15 @@ namespace UniversalPatcher
                 }
                 sr.Close();
 
-                for (int s = tableSeeks.Count - 1; s >= 0; s--)
+                for (int s = tSeeks.Count - 1; s >= 0; s--)
                 {
-                    if (tableSeeks[s].Name.ToLower().StartsWith("ka_") || tableSeeks[s].Name.ToLower().StartsWith("ke_") || tableSeeks[s].Name.ToLower().StartsWith("kv_"))
-                        tableSeeks[s].Name = tableSeeks[s].Name.Substring(3);
-                    if (tableSeeks[s].SearchStr.Length == 0)
-                        tableSeeks.RemoveAt(s);
+                    if (tSeeks[s].Name.ToLower().StartsWith("ka_") || tSeeks[s].Name.ToLower().StartsWith("ke_") || tSeeks[s].Name.ToLower().StartsWith("kv_"))
+                        tSeeks[s].Name = tSeeks[s].Name.Substring(3);
+                    if (tSeeks[s].SearchStr.Length == 0)
+                        tSeeks.RemoveAt(s);
                 }
                 bindingSource.DataSource = null;
-                bindingSource.DataSource = tableSeeks;
+                bindingSource.DataSource = tSeeks;
                 dataGridView1.DataSource = null;
                 dataGridView1.DataSource = bindingSource;
             }
@@ -479,7 +493,7 @@ namespace UniversalPatcher
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveThis();
+            saveThis(fileName);
         }
 
         private void saveCSVToolStripMenuItem_Click(object sender, EventArgs e)
@@ -546,9 +560,9 @@ namespace UniversalPatcher
                 {
                     List<TableSeek> compareList = new List<TableSeek>();
                     if (strSortOrder == SortOrder.Ascending)
-                        compareList = tableSeeks.OrderBy(x => typeof(TableSeek).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        compareList = tSeeks.OrderBy(x => typeof(TableSeek).GetProperty(sortBy).GetValue(x, null)).ToList();
                     else
-                        compareList = tableSeeks.OrderByDescending(x => typeof(TableSeek).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        compareList = tSeeks.OrderByDescending(x => typeof(TableSeek).GetProperty(sortBy).GetValue(x, null)).ToList();
                     bindingSource.DataSource = compareList;
                 }
                 else if (this.Text.Contains("Autodetect"))
@@ -619,5 +633,12 @@ namespace UniversalPatcher
             return SortOrder.Ascending;
         }
 
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fName = SelectSaveFile("XML (*.xml)|*.xml|All (*.*)|*.*",fileName);
+            if (fName.Length == 0)
+                return;
+            saveThis(fName);
+        }
     }
 }

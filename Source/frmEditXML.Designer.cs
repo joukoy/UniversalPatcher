@@ -43,6 +43,7 @@ namespace UniversalPatcher
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.labelHelp = new System.Windows.Forms.Label();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -88,6 +89,7 @@ namespace UniversalPatcher
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.saveToolStripMenuItem,
+            this.saveAsToolStripMenuItem,
             this.saveCSVToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -134,7 +136,7 @@ namespace UniversalPatcher
             // importCSVToolStripMenuItem
             // 
             this.importCSVToolStripMenuItem.Name = "importCSVToolStripMenuItem";
-            this.importCSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importCSVToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.importCSVToolStripMenuItem.Text = "Import CSV";
             this.importCSVToolStripMenuItem.Click += new System.EventHandler(this.importCSVToolStripMenuItem_Click);
             // 
@@ -146,6 +148,13 @@ namespace UniversalPatcher
             this.labelHelp.Size = new System.Drawing.Size(10, 13);
             this.labelHelp.TabIndex = 6;
             this.labelHelp.Text = "-";
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Text = "Save As...";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // frmEditXML
             // 
@@ -184,5 +193,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importCSVToolStripMenuItem;
         private Label labelHelp;
+        private ToolStripMenuItem saveAsToolStripMenuItem;
     }
 }

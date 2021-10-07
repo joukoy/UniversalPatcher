@@ -322,6 +322,16 @@ namespace UniversalPatcher
             return retVal;
         }
 
+        public static List<TableSeek> loadtTableSeekFile(string fName)
+        {
+            Logger(" (" + Path.GetFileName(fName) + ") ", false);
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSeek>));
+            System.IO.StreamReader file = new System.IO.StreamReader(fName);
+            List<TableSeek> tSeeks = (List<TableSeek>)reader.Deserialize(file);
+            file.Close();
+            return tSeeks;
+        }
+
         public string seekTables(PcmFile PCM1)
         {
             PCM = PCM1;
@@ -343,13 +353,8 @@ namespace UniversalPatcher
 
                 string fileName = PCM.tableSeekFile;
                 if (File.Exists(fileName))
-                {                        
-                    Logger(" (" + Path.GetFileName(fileName) + ") ",false);
-                    System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<TableSeek>));
-                    System.IO.StreamReader file = new System.IO.StreamReader(fileName);
-                    tableSeeks = (List<TableSeek>)reader.Deserialize(file);
-                    file.Close();
-
+                {
+                    tableSeeks = loadtTableSeekFile(fileName);
                 }
                 else
                 {

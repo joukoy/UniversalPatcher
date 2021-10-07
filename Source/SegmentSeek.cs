@@ -293,6 +293,16 @@ namespace UniversalPatcher
             return retVal;
         }
 
+        public static List<SegmentSeek> loadSegmentSeekFile(string fName)
+        {
+            Logger(" (" + Path.GetFileName(fName) + ") ", false);
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentSeek>));
+            System.IO.StreamReader file = new System.IO.StreamReader(fName);
+            List <SegmentSeek> sSeeks = (List<SegmentSeek>)reader.Deserialize(file);
+            file.Close();
+            return sSeeks;
+        }
+
         public string seekSegments(PcmFile PCM1)
         {
             PCM = PCM1;
@@ -306,12 +316,7 @@ namespace UniversalPatcher
                 string fileName = PCM.segmentSeekFile;
                 if (File.Exists(fileName))
                 {
-                    Logger(" (" + Path.GetFileName(fileName) + ") ", false);
-                    System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentSeek>));
-                    System.IO.StreamReader file = new System.IO.StreamReader(fileName);
-                    segmentSeeks = (List<SegmentSeek>)reader.Deserialize(file);
-                    file.Close();
-
+                    segmentSeeks = loadSegmentSeekFile(fileName);
                 }
                 else
                 {

@@ -92,15 +92,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="a2l\Core.cs" />
-    <Compile Include="a2l\frmImportA2L.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="a2l\frmImportA2L.Designer.cs">
-      <DependentUpon>frmImportA2L.cs</DependentUpon>
-    </Compile>
-    <Compile Include="a2l\Helpers.cs" />
-    <Compile Include="a2l\Models.cs" />
     <Compile Include="AboutBox1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -392,9 +383,6 @@
     <Compile Include="win32.cs" />
     <Compile Include="TableData.cs" />
     <Compile Include="xdf.cs" />
-    <EmbeddedResource Include="a2l\frmImportA2L.resx">
-      <DependentUpon>frmImportA2L.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </EmbeddedResource>

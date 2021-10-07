@@ -73,3 +73,9 @@
 
 0.18.21
 - Minimal UI fixes
+
+0.18.22
+- If no BIN-file loaded, ask what file to load for tableseek & segmentseek
+- Save As... to XML editor
+- Manual load for platform config file
+- Ask filename when saving platform config and no segment config loaded

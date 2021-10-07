@@ -139,7 +139,6 @@
             this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tabFunction = new System.Windows.Forms.TabControl();
             this.tabApply = new System.Windows.Forms.TabPage();
-            this.btnImportA2l = new System.Windows.Forms.Button();
             this.btnTuner = new System.Windows.Forms.Button();
             this.btnFixFilesChecksum = new System.Windows.Forms.Button();
             this.btnSwapSegments = new System.Windows.Forms.Button();
@@ -246,6 +245,7 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.loadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setupSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadPlatformConfigToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.editPlatformConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autodetectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1572,7 +1572,6 @@
             // 
             // tabApply
             // 
-            this.tabApply.Controls.Add(this.btnImportA2l);
             this.tabApply.Controls.Add(this.btnTuner);
             this.tabApply.Controls.Add(this.btnFixFilesChecksum);
             this.tabApply.Controls.Add(this.btnSwapSegments);
@@ -2717,6 +2716,7 @@
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadConfigToolStripMenuItem,
             this.setupSegmentsToolStripMenuItem,
+            this.loadPlatformConfigToolStripMenuItem1,
             this.editPlatformConfigToolStripMenuItem,
             this.autodetectToolStripMenuItem,
             this.stockCVNToolStripMenuItem,
@@ -2747,6 +2747,13 @@
             this.setupSegmentsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.setupSegmentsToolStripMenuItem.Text = "Edit segment config (XML)";
             this.setupSegmentsToolStripMenuItem.Click += new System.EventHandler(this.setupSegmentsToolStripMenuItem_Click);
+            // 
+            // loadPlatformConfigToolStripMenuItem1
+            // 
+            this.loadPlatformConfigToolStripMenuItem1.Name = "loadPlatformConfigToolStripMenuItem1";
+            this.loadPlatformConfigToolStripMenuItem1.Size = new System.Drawing.Size(230, 22);
+            this.loadPlatformConfigToolStripMenuItem1.Text = "Load platform config";
+            this.loadPlatformConfigToolStripMenuItem1.Click += new System.EventHandler(this.loadPlatformConfigToolStripMenuItem_Click);
             // 
             // editPlatformConfigToolStripMenuItem
             // 
@@ -3211,6 +3218,6 @@
         private System.Windows.Forms.Button btnDisplayFileInfo;
         private System.Windows.Forms.ToolStripMenuItem editPlatformConfigToolStripMenuItem;
         private System.Windows.Forms.CheckBox chkCsMSB;
-        private System.Windows.Forms.Button btnImportA2l;
+        private System.Windows.Forms.ToolStripMenuItem loadPlatformConfigToolStripMenuItem1;
     }
 }
