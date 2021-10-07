@@ -36,6 +36,11 @@ namespace UniversalPatcher
         public int StatusSteps { get; set; }
         public int MilSteps { get; set; }
         public string ConditionalOffset { get; set; }
+
+        public DtcSearchConfig ShallowCopy()
+        {
+            return (DtcSearchConfig)this.MemberwiseClone();
+        }
     }
 
     public class DtcSearch

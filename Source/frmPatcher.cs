@@ -2942,15 +2942,9 @@ namespace UniversalPatcher
             {
                 string fName;
                 if (basefile.configFileFullName.Length == 0)
-                {
                     fName = SelectFile("Select tableseekfile", "XML (*.xml)|*.xml|All (*.*)|*.*");
-                    if (fName.Length == 0)
-                        return;
-                }
                 else
-                {
                      fName = basefile.tableSeekFile;
-                }
                 frmEditXML frmE = new frmEditXML();
                 frmE.LoadTableSeek(fName);
                 frmE.Show();
@@ -3160,15 +3154,9 @@ namespace UniversalPatcher
             {
                 string fName;
                 if (basefile.configFileFullName.Length == 0)
-                {
                     fName = SelectFile("Select segmentSeekfile", "XML (*.xml)|*.xml|All (*.*)|*.*");
-                    if (fName.Length == 0)
-                        return;
-                }
                 else
-                {
                     fName = basefile.segmentSeekFile;
-                }
                 frmEditXML frmE = new frmEditXML();
                 frmE.Show();
                 frmE.LoadSegmentSeek(fName);

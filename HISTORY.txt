@@ -79,3 +79,8 @@
 - Save As... to XML editor
 - Manual load for platform config file
 - Ask filename when saving platform config and no segment config loaded
+
+0.18.23
+- Improvements to XML editor, save & close, cancel
+- Right click -> "Edit row" to XML editor
+

@@ -230,5 +230,10 @@ namespace UniversalPatcher.Properties
         public string XMLFile { get; set; }
         public string SearchString { get; set; }
         public int Step { get; set; }
+
+        public PidSearchConfig ShallowCopy()
+        {
+            return (PidSearchConfig)this.MemberwiseClone();
+        }
     }
 }

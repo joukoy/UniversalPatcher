@@ -29,6 +29,11 @@ public class upatcher
         public UInt64 data { get; set; }
         public string compare { get; set; }        //==, <, >, !=      
         public string hexdata { get; set; }
+
+        public DetectRule ShallowCopy()
+        {
+            return (DetectRule)this.MemberwiseClone();
+        }
     }
 
 
@@ -66,6 +71,11 @@ public class upatcher
         public string Ver { get; set; }
         public string cvn { get; set; }
         public string ReferenceCvn { get; set; }
+
+        public CVN ShallowCopy()
+        {
+            return (CVN)this.MemberwiseClone();
+        }
     }
     public struct Block
     {
@@ -276,6 +286,11 @@ public class upatcher
         public string Description { get; set; }
         public string Extension { get; set; }
         public bool Default { get; set; }
+
+        public FileType ShallowCopy()
+        {
+            return (FileType)this.MemberwiseClone();
+        }
     }
 
     public struct SearchedAddress
@@ -1436,6 +1451,7 @@ public class upatcher
         Logger(" [OK]");
 
     }
+
     public static void loadOBD2Codes()
     {
         string OBD2CodeFile = Path.Combine(Application.StartupPath, "XML", "OBD2Codes.xml");

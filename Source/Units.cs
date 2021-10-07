@@ -9,5 +9,10 @@ namespace UniversalPatcher
     {
         public string Abbreviation { get; set; }
         public string Unit { get; set; }
+
+        public Units ShallowCopy()
+        {
+            return (Units)this.MemberwiseClone();
+        }
     }
 }

@@ -29,11 +29,69 @@ namespace UniversalPatcher
         private PcmFile PCM;
         private List<TableSeek> tSeeks;
         private List<SegmentSeek> sSeeks;
+        private List<CVN> sCVN;
+        private List<DtcSearchConfig> dtcSC;
+        private List<PidSearchConfig> pidSC;
+        private List<Units> units;
+        private List<FileType> fileTypes;
+        private List<DetectRule> detectrules;
+
+        private void frmEditXML_Load(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.MainWindowPersistence)
+            {
+                if (Properties.Settings.Default.EditXMLWindowSize.Width > 0 || Properties.Settings.Default.EditXMLWindowSize.Height > 0)
+                {
+                    this.WindowState = Properties.Settings.Default.EditXMLWindowState;
+                    if (this.WindowState == FormWindowState.Minimized)
+                    {
+                        this.WindowState = FormWindowState.Normal;
+                    }
+                    this.Location = Properties.Settings.Default.EditXMLWindowLocation;
+                    this.Size = Properties.Settings.Default.EditXMLWindowSize;
+                }
+            }
+            dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;            
+            //dataGridView1.CellMouseClick += DataGridView1_CellMouseClick;
+        }
+
+        private void DataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+
+            }
+        }
+
+        private void frmEditXML_FormClosing(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.MainWindowPersistence)
+            {
+                Properties.Settings.Default.EditXMLWindowState = this.WindowState;
+                if (this.WindowState == FormWindowState.Normal)
+                {
+                    Properties.Settings.Default.EditXMLWindowLocation = this.Location;
+                    Properties.Settings.Default.EditXMLWindowSize = this.Size;
+                }
+                else
+                {
+                    Properties.Settings.Default.EditXMLWindowLocation = this.RestoreBounds.Location;
+                    Properties.Settings.Default.EditXMLWindowSize = this.RestoreBounds.Size;
+                }
+                Properties.Settings.Default.Save();
+            }
+        }
 
         public void LoadRules()
         {
+            detectrules = new List<DetectRule>();
+            for (int i=0;i<DetectRules.Count;i++)
+            {
+                DetectRule dr = DetectRules[i].ShallowCopy();
+                detectrules.Add(dr);
+            }
             bindingSource.DataSource = null;
-            bindingSource.DataSource = DetectRules;
+            bindingSource.DataSource = detectrules;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
             UseComboBoxForEnums(dataGridView1);
@@ -42,8 +100,14 @@ namespace UniversalPatcher
         public void LoadStockCVN()
         {
             this.Text = "Edit stock CVN list";
+            sCVN = new List<CVN>();
+            for (int i=0; i<StockCVN.Count;i++)
+            {
+                CVN cvn = StockCVN[i].ShallowCopy();
+                sCVN.Add(cvn);
+            }
             bindingSource.DataSource = null;
-            bindingSource.DataSource = StockCVN;
+            bindingSource.DataSource = sCVN;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
             UseComboBoxForEnums(dataGridView1);
@@ -51,8 +115,14 @@ namespace UniversalPatcher
         public void LoadDTCSearchConfig()
         {
             this.Text = "Edit DTC Search config";
+            dtcSC = new List<DtcSearchConfig>();
+            for (int i=0; i< dtcSearchConfigs.Count;i++)
+            {
+                DtcSearchConfig dsc = dtcSearchConfigs[i].ShallowCopy();
+                dtcSC.Add(dsc);
+            }
             bindingSource.DataSource = null;
-            bindingSource.DataSource = dtcSearchConfigs;
+            bindingSource.DataSource = dtcSC;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
             dataGridView1.Columns["ConditionalOffset"].ToolTipText = "Possible values:code,status,mil (Multiple values allowed)";
@@ -61,8 +131,14 @@ namespace UniversalPatcher
         public void LoadPIDSearchConfig()
         {
             this.Text = "Edit PID Search config";
+            pidSC = new List<PidSearchConfig>();
+            for (int i=0; i< pidSearchConfigs.Count; i++)
+            {
+                PidSearchConfig psc = pidSearchConfigs[i].ShallowCopy();
+                pidSC.Add(psc);
+            }
             bindingSource.DataSource = null;
-            bindingSource.DataSource = pidSearchConfigs;
+            bindingSource.DataSource = pidSC;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
             UseComboBoxForEnums(dataGridView1);
@@ -73,7 +149,7 @@ namespace UniversalPatcher
             fileName = fname;
             this.Text = "Edit Table Seek config";
 
-            if (File.Exists(fname))
+            if (fname.Length > 0 &&  File.Exists(fname))
                 tSeeks = TableSeek.loadtTableSeekFile(fname);
             else
                 tSeeks = new List<TableSeek>();
@@ -84,7 +160,7 @@ namespace UniversalPatcher
         {
             fileName = fname;
             this.Text = "Edit Segment Seek config";
-            if (File.Exists(fname))
+            if (fname.Length > 0 &&  File.Exists(fname))
                 sSeeks = SegmentSeek.loadSegmentSeekFile(fname);
             else
                 sSeeks = new List<SegmentSeek>();
@@ -106,25 +182,37 @@ namespace UniversalPatcher
         public void LoadFileTypes()
         {
             this.Text = "File Types";
+            fileTypes = new List<FileType>();
+            for (int i=0; i<fileTypeList.Count;i++)
+            {
+                FileType ft = fileTypeList[i].ShallowCopy();
+                fileTypes.Add(ft);
+            }
             labelHelp.Text = "Select ONE as default. Example: Description = BIN files, Extension = *.bin;*.dat";
-            if (fileTypeList.Count == 0)
+            if (fileTypes.Count == 0)
             {
                 FileType ft = new FileType();
                 ft.Default = true;
                 ft.Description = "BIN files";
                 ft.Extension = "*.bin";
-                fileTypeList.Add(ft);
+                fileTypes.Add(ft);
             }
             bindingSource.DataSource = null;
-            bindingSource.DataSource = fileTypeList;
+            bindingSource.DataSource = fileTypes;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
         }
         public void LoadUnits()
         {
             this.Text = "Units";
+            units = new List<Units>();
+            for (int i=0; i<unitList.Count;i++)
+            {
+                Units u = unitList[i].ShallowCopy();
+                units.Add(u);
+            }
             bindingSource.DataSource = null;
-            bindingSource.DataSource = unitList;
+            bindingSource.DataSource = units;
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
         }
@@ -135,17 +223,17 @@ namespace UniversalPatcher
             loadOBD2Codes();
             refreshOBD2Codes();
         }
-        public void LoadPlatformConfig(PcmFile PCM)
-        {
-            this.PCM = PCM;
-            fileName = PCM.platformConfigFile;
-            this.Text = "Platform config: " + PCM.configFile;
-            bindingSource.DataSource = null;
-            bindingSource.DataSource = PCM.platformConfig;
-            dataGridView1.DataSource = null;
-            dataGridView1.DataSource = bindingSource;
 
+        private void refreshdgrid()
+        {
+            object tmp = bindingSource.DataSource;
+            bindingSource.DataSource = null;
+            dataGridView1.DataSource = null;
+            bindingSource.DataSource = tmp;
+            dataGridView1.DataSource = bindingSource;
         }
+
+
         private void refreshOBD2Codes()
         {
             bindingSource.DataSource = null;
@@ -154,13 +242,6 @@ namespace UniversalPatcher
             dataGridView1.DataSource = bindingSource;
         }
 
-        private void refreshPlatformConfig()
-        {
-            bindingSource.DataSource = null;
-            bindingSource.DataSource = PCM.platformConfig;
-            dataGridView1.DataSource = null;
-            dataGridView1.DataSource = bindingSource;
-        }
 
         private void refreshTableSeek()
         {
@@ -201,9 +282,10 @@ namespace UniversalPatcher
                     using (FileStream stream = new FileStream(fName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<CVN>));
-                        writer.Serialize(stream, StockCVN);
+                        writer.Serialize(stream, sCVN);
                         stream.Close();
                     }
+                    StockCVN = sCVN;
                     Logger(" [OK]");
                 }
                 else if (this.Text.Contains("File Types"))
@@ -214,9 +296,10 @@ namespace UniversalPatcher
                     using (FileStream stream = new FileStream(fName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<FileType>));
-                        writer.Serialize(stream, fileTypeList);
+                        writer.Serialize(stream, fileTypes);
                         stream.Close();
                     }
+                    fileTypeList = fileTypes;
                     Logger(" [OK]");
                 }
                 else if (this.Text.Contains("DTC"))
@@ -227,9 +310,10 @@ namespace UniversalPatcher
                     using (FileStream stream = new FileStream(fName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<DtcSearchConfig>));
-                        writer.Serialize(stream, dtcSearchConfigs);
+                        writer.Serialize(stream, dtcSC);
                         stream.Close();
                     }
+                    dtcSearchConfigs = dtcSC;
                     Logger(" [OK]");
                 }
                 else if (this.Text.Contains("PID"))
@@ -240,9 +324,10 @@ namespace UniversalPatcher
                     using (FileStream stream = new FileStream(fName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<PidSearchConfig>));
-                        writer.Serialize(stream, pidSearchConfigs);
+                        writer.Serialize(stream, pidSC);
                         stream.Close();
                     }
+                    pidSearchConfigs = pidSC;
                     Logger(" [OK]");
                 }
                 else if (this.Text.Contains("OBD2"))
@@ -251,6 +336,10 @@ namespace UniversalPatcher
                 }
                 else if (this.Text.ToLower().Contains("table seek"))
                 {
+                    if (fName.Length == 0)
+                        fName = SelectSaveFile("XML (*.xml)|*.xml|All (*.*)|*.*","new-tableseek.xml");
+                    if (fName.Length == 0)
+                        return;
                     Logger("Saving file " + fName, false);
                     using (FileStream stream = new FileStream(fName, FileMode.Create))
                     {
@@ -258,10 +347,15 @@ namespace UniversalPatcher
                         writer.Serialize(stream, tSeeks);
                         stream.Close();
                     }
+                    tableSeeks = tSeeks;
                     Logger(" [OK]");
                 }
                 else if (this.Text.ToLower().Contains("segment seek"))
                 {
+                    if (fName.Length == 0)
+                        fName = SelectSaveFile("XML (*.xml)|*.xml|All (*.*)|*.*", "new-segmentseek.xml");
+                    if (fName.Length == 0)
+                        return;
                     Logger("Saving file " + fName, false);
                     using (FileStream stream = new FileStream(fileName, FileMode.Create))
                     {
@@ -269,17 +363,7 @@ namespace UniversalPatcher
                         writer.Serialize(stream, sSeeks);
                         stream.Close();
                     }
-                    Logger(" [OK]");
-                }
-                else if (this.Text.ToLower().Contains("platform config"))
-                {
-                    Logger("Saving file " + Path.GetFileName(fName), false);
-                    using (FileStream stream = new FileStream(fName, FileMode.Create))
-                    {
-                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(PcmPlatform));
-                        writer.Serialize(stream, PCM.platformConfig);
-                        stream.Close();
-                    }
+                    segmentSeeks = sSeeks;
                     Logger(" [OK]");
                 }
                 else if (this.Text.Contains("Units"))
@@ -290,9 +374,10 @@ namespace UniversalPatcher
                     using (FileStream stream = new FileStream(fileName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<Units>));
-                        writer.Serialize(stream, unitList);
+                        writer.Serialize(stream, units);
                         stream.Close();
                     }
+                    unitList = units;
                     Logger(" [OK]");
                 }
                 else
@@ -303,9 +388,10 @@ namespace UniversalPatcher
                     using (FileStream stream = new FileStream(fName, FileMode.Create))
                     {
                         System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<DetectRule>));
-                        writer.Serialize(stream, DetectRules);
+                        writer.Serialize(stream, detectrules);
                         stream.Close();
                     }
+                    DetectRules = detectrules;
                     Logger(" [OK]");
 
                 }
@@ -319,6 +405,7 @@ namespace UniversalPatcher
         private void btnSave_Click(object sender, EventArgs e)
         {
             saveThis(fileName);
+            this.Close();
         }
 
         private void saveCSV()
@@ -358,42 +445,6 @@ namespace UniversalPatcher
             saveCSV();
         }
 
-        private void frmEditXML_Load(object sender, EventArgs e)
-        {
-            if (Properties.Settings.Default.MainWindowPersistence)
-            {                
-                if (Properties.Settings.Default.EditXMLWindowSize.Width > 0 || Properties.Settings.Default.EditXMLWindowSize.Height > 0)
-                {
-                    this.WindowState = Properties.Settings.Default.EditXMLWindowState;
-                    if (this.WindowState == FormWindowState.Minimized)
-                    {
-                        this.WindowState = FormWindowState.Normal;
-                    }
-                    this.Location = Properties.Settings.Default.EditXMLWindowLocation;
-                    this.Size = Properties.Settings.Default.EditXMLWindowSize;
-                }
-            }
-            dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
-        }
-
-        private void frmEditXML_FormClosing(object sender, EventArgs e)
-        {
-            if (Properties.Settings.Default.MainWindowPersistence)
-            {
-                Properties.Settings.Default.EditXMLWindowState = this.WindowState;
-                if (this.WindowState == FormWindowState.Normal)
-                {
-                    Properties.Settings.Default.EditXMLWindowLocation = this.Location;
-                    Properties.Settings.Default.EditXMLWindowSize = this.Size;
-                }
-                else
-                {
-                    Properties.Settings.Default.EditXMLWindowLocation = this.RestoreBounds.Location;
-                    Properties.Settings.Default.EditXMLWindowSize = this.RestoreBounds.Size;
-                }
-                Properties.Settings.Default.Save();
-            }
-        }
 
         private void importCSV()
         {
@@ -569,27 +620,27 @@ namespace UniversalPatcher
                 {
                     List<DetectRule> compareList = new List<DetectRule>();
                     if (strSortOrder == SortOrder.Ascending)
-                        compareList = DetectRules.OrderBy(x => typeof(DetectRule).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        compareList = detectrules.OrderBy(x => typeof(DetectRule).GetProperty(sortBy).GetValue(x, null)).ToList();
                     else
-                        compareList = DetectRules.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        compareList = detectrules.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
                     bindingSource.DataSource = compareList;
                 }
                 else if (this.Text.Contains("stock CVN"))
                 {
                     List<CVN> compareList = new List<CVN>();
                     if (strSortOrder == SortOrder.Ascending)
-                        compareList = StockCVN.OrderBy(x => typeof(CVN).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        compareList = sCVN.OrderBy(x => typeof(CVN).GetProperty(sortBy).GetValue(x, null)).ToList();
                     else
-                        compareList = StockCVN.OrderByDescending(x => typeof(CVN).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        compareList = sCVN.OrderByDescending(x => typeof(CVN).GetProperty(sortBy).GetValue(x, null)).ToList();
                     bindingSource.DataSource = compareList;
                 }
                 else if (this.Text.Contains("DTC Search"))
                 {
                     List<DtcSearchConfig> compareList = new List<DtcSearchConfig>();
                     if (strSortOrder == SortOrder.Ascending)
-                        compareList = dtcSearchConfigs.OrderBy(x => typeof(DtcSearchConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        compareList = dtcSC.OrderBy(x => typeof(DtcSearchConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
                     else
-                        compareList = dtcSearchConfigs.OrderByDescending(x => typeof(DtcSearchConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
+                        compareList = dtcSC.OrderByDescending(x => typeof(DtcSearchConfig).GetProperty(sortBy).GetValue(x, null)).ToList();
                     bindingSource.DataSource = compareList;
                 }
                 dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
@@ -639,6 +690,22 @@ namespace UniversalPatcher
             if (fName.Length == 0)
                 return;
             saveThis(fName);
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void editToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            frmPropertyEditor fpe = new frmPropertyEditor();
+            object myObj = dataGridView1.CurrentRow.DataBoundItem;
+            fpe.loadTd(myObj);
+            if (fpe.ShowDialog() == DialogResult.OK)
+            {
+                refreshdgrid();
+            }
         }
     }
 }
