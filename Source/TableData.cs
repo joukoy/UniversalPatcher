@@ -221,6 +221,8 @@ namespace UniversalPatcher
                 dtcTd.TableName = "DTC.Codes";
                 dtcTd.Max = 3;
             }
+            if (PCM.dtcCodes[0].Values != null && PCM.dtcCodes[0].Values.Length > 0)
+                dtcTd.Values = PCM.dtcCodes[0].Values;
 
             tdList.Insert(0, dtcTd);
 

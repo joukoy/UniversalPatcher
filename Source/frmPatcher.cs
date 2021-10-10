@@ -4141,7 +4141,7 @@ namespace UniversalPatcher
                 frmE.LoadPlatformConfig(basefile);
                 frmE.Show();*/
                 frmPropertyEditor fpe = new frmPropertyEditor();
-                fpe.loadTd(basefile.platformConfig);
+                fpe.loadObject(basefile.platformConfig);
                 fpe.Text = "Platform config [" + basefile.configFile + "]";
                 if (fpe.ShowDialog() == DialogResult.OK)
                 {

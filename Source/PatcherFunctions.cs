@@ -136,6 +136,7 @@ public class upatcher
         public string StatusTxt { get; set; }
         public byte MilStatus { get; set; }
         public string Description { get; set; }
+        public string Values { get; set; }
         public uint codeAddrInt;
         public string CodeAddr
         {

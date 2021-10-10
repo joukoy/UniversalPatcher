@@ -90,7 +90,7 @@ namespace UniversalPatcher
             DetectRule DR = new DetectRule();
             DR.address = txtAddress.Text;
             DR.compare = comboCompare.Text;
-            if (comboCompare.Text == "==")
+            if (radioData.Checked && comboCompare.Text == "==")
             {
                 DR.hexdata = txtData.Text;
             }
@@ -107,7 +107,10 @@ namespace UniversalPatcher
 
             var item = new ListViewItem(DR.address);
             item.SubItems.Add(DR.compare);
-            item.SubItems.Add(DR.data.ToString("X"));
+            if (DR.hexdata!= null && DR.hexdata.Length > 0)
+                item.SubItems.Add(DR.hexdata);
+            else
+                item.SubItems.Add(DR.data.ToString("X"));
             item.SubItems.Add(DR.group.ToString());
             item.SubItems.Add(DR.grouplogic);
             item.Tag = DetectRules.Count - 1;

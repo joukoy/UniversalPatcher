@@ -36,6 +36,7 @@ namespace UniversalPatcher
         public int StatusSteps { get; set; }
         public int MilSteps { get; set; }
         public string ConditionalOffset { get; set; }
+        public string Values { get; set; }
 
         public DtcSearchConfig ShallowCopy()
         {
@@ -227,6 +228,7 @@ namespace UniversalPatcher
                 {
                     dtcCode dtc = new dtcCode();
                     dtc.codeAddrInt = addr;
+                    dtc.Values = dtcSearchConfigs[configIndex].Values;
                     dtc.CodeAddr = addr.ToString("X8");
                     dtc.codeInt = PCM.readUInt16(addr);
 

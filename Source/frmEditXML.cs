@@ -701,7 +701,7 @@ namespace UniversalPatcher
         {
             frmPropertyEditor fpe = new frmPropertyEditor();
             object myObj = dataGridView1.CurrentRow.DataBoundItem;
-            fpe.loadTd(myObj);
+            fpe.loadObject(myObj);
             if (fpe.ShowDialog() == DialogResult.OK)
             {
                 refreshdgrid();
