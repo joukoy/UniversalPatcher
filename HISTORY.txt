@@ -93,4 +93,4 @@
 - Autodetect: Convert all chars to capital before comparing.
 
 0.18.26
-- New button: read hex data from current bin file
+- Autodetect new button: read hex data from current bin file
