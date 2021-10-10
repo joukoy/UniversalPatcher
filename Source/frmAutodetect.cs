@@ -107,10 +107,17 @@ namespace UniversalPatcher
             DR.xml = comboXML.Text;
             DetectRules.Add(DR);
 
+            int bytes = 1;
+            if (txtAddress.Text.Contains(":"))
+            {
+                string[] Parts = txtAddress.Text.Split(':');
+                int.TryParse(Parts[1], out bytes);
+            }
+
             var item = new ListViewItem(DR.address);
             item.SubItems.Add(DR.compare);
             if (DR.hexdata!= null && DR.hexdata.Length > 0)
-                item.SubItems.Add(DR.hexdata);
+                item.SubItems.Add(DR.hexdata.PadLeft(bytes*2,'0'));
             else
                 item.SubItems.Add(DR.data.ToString("X"));
             item.SubItems.Add(DR.group.ToString());
@@ -256,12 +263,19 @@ namespace UniversalPatcher
 
             DetectRule DR = new DetectRule();
 
+            int bytes = 1;
+            if (txtAddress.Text.Contains(":"))
+            {
+                string[] Parts = txtAddress.Text.Split(':');
+                int.TryParse(Parts[1], out bytes);
+            }
+
             int d = (int)listRules.SelectedItems[0].Tag;
             DR.address = txtAddress.Text;
             DR.compare = comboCompare.Text;
             if (comboCompare.Text == "==")
             {
-                DR.hexdata = txtData.Text;
+                DR.hexdata = txtData.Text.PadLeft(bytes*2,'0');
             }
             else
             {
@@ -277,7 +291,7 @@ namespace UniversalPatcher
 
             listRules.SelectedItems[0].SubItems[0].Text = txtAddress.Text;
             listRules.SelectedItems[0].SubItems[1].Text = comboCompare.Text;
-            listRules.SelectedItems[0].SubItems[2].Text = txtData.Text;
+            listRules.SelectedItems[0].SubItems[2].Text = txtData.Text.PadLeft(bytes * 2, '0');
             listRules.SelectedItems[0].SubItems[3].Text = numGroup.Value.ToString();
             listRules.SelectedItems[0].SubItems[4].Text = comboGroupLogic.Text;
 
@@ -352,6 +366,25 @@ namespace UniversalPatcher
             {
                 LoggerBold(ex.Message);
             }
+        }
+
+        private void txtData_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                int bytes = 1;
+                if (txtAddress.Text.Contains(":"))
+                {
+                    string[] Parts = txtAddress.Text.Split(':');
+                    int.TryParse(Parts[1], out bytes);
+                }
+
+                if (txtData.Text.Length > (bytes * 2))
+                    txtData.BackColor = Color.Red;
+                else
+                    txtData.BackColor = Color.White;
+            }
+            catch { }
         }
     }
 

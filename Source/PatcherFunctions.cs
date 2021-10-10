@@ -789,12 +789,7 @@ public class upatcher
         if (rawParts.Length > 3 && rawParts[3].StartsWith("lsb"))
         {
             int eSize = getElementSize(idt);
-            if (eSize == 2)
-                rawVal = SwapBytes((ushort)rawVal);
-            else if (eSize == 4)
-                rawVal = SwapBytes((UInt32)rawVal);
-            else if (eSize == 8)
-                rawVal = SwapBytes((UInt64)rawVal);
+            rawVal = SwapBytes((UInt64)rawVal,eSize);
         }
         retVal = mathStr.Replace(rawStr, rawVal.ToString());
         return retVal;
@@ -1614,11 +1609,7 @@ public class upatcher
             }
             if (SwapB)
             {
-                if (Method == CSMethod_Wordsum || Method == CSMethod_crc16)
-                    sum = (ushort)SwapBytes((ushort)sum);
-                else
-                    sum = SwapBytes(sum);
-
+                sum = (uint)SwapBytes(sum,Bytes);
             }
             if (dbg)
                 Debug.WriteLine("Result: " + sum.ToString("X"));
@@ -2022,7 +2013,7 @@ public class upatcher
                     {
                         Debug.WriteLine("CheckStockCVN (ushort): Can't convert from HEX: " + referenceCvnList[r].CVN);
                     }
-                    if (SwapBytes(refShort) == cvnInt)
+                    if (SwapBytes(refShort,4) == cvnInt)
                     {
                         Debug.WriteLine("PN: " + PN + " byteswapped CVN found from Referencelist: " + referenceCvnList[r].CVN);
                         cvnMismatch = false; //Found from referencelist, no mismatch
@@ -2030,7 +2021,7 @@ public class upatcher
                     }
                     else
                     {
-                        Debug.WriteLine("Byte swapped CVN doesn't match: " + SwapBytes(refShort).ToString("X") + " <> " + cvnInt.ToString("X"));
+                        Debug.WriteLine("Byte swapped CVN doesn't match: " + SwapBytes(refShort,4).ToString("X") + " <> " + cvnInt.ToString("X"));
                     }
                     break;
                 }
@@ -2516,7 +2507,7 @@ public class upatcher
         Array.Copy(tmp, 0, buf, offset, 2);
     }
 
-    public static ushort SwapBytes(ushort x)
+/*    public static ushort SwapBytes(ushort x)
     {
         return (ushort)((ushort)((x & 0xff) << 8) | ((x >> 8) & 0xff));
     }
@@ -2528,12 +2519,16 @@ public class upatcher
                ((x & 0x00ff0000) >> 8) +
                ((x & 0xff000000) >> 24);
     }
-
-    public static UInt64 SwapBytes(UInt64 data)
+*/
+    public static UInt64 SwapBytes(UInt64 data, int bytes)
     {
         byte[] tmp = new byte[8];
         tmp = BitConverter.GetBytes(data);
-        Array.Reverse(tmp);
+        byte[] tmp2 = new byte[bytes];
+        Array.Copy(tmp, 0, tmp2, 0, bytes);
+        Array.Reverse(tmp2);
+        tmp = BitConverter.GetBytes((UInt64)0);
+        Array.Copy(tmp2, tmp, bytes);
         return BitConverter.ToUInt64(tmp, 0);
     }
 

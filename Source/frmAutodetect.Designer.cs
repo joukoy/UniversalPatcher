@@ -182,6 +182,7 @@
             this.txtData.Name = "txtData";
             this.txtData.Size = new System.Drawing.Size(135, 20);
             this.txtData.TabIndex = 9;
+            this.txtData.TextChanged += new System.EventHandler(this.txtData_TextChanged);
             // 
             // txtAddress
             // 

@@ -3264,6 +3264,8 @@ namespace UniversalPatcher
 
                 uint oldVal = 0;
                 uint csAddr;
+                string formatStr = "X" + ((int)numCSBytes.Value * 2).ToString();
+
                 if (HexToUint(txtCSAddr.Text, out csAddr))
                 {
                     if (numCSBytes.Value == 1)
@@ -3273,8 +3275,13 @@ namespace UniversalPatcher
                     else if (numCSBytes.Value == 4)
                         oldVal = basefile.readUInt32(csAddr);
 
-                    Logger("Saved value: " + oldVal.ToString("X"));
+                    if (chkCsUtilSwapBytes.Checked)
+                    {
+                        oldVal = (uint)SwapBytes(oldVal,(int)numCSBytes.Value);
+                    }
+                    Logger("Saved value: " + oldVal.ToString(formatStr));
                 }
+
 
                 if (chkCSUtilTryAll.Checked)
                 {
@@ -3283,7 +3290,7 @@ namespace UniversalPatcher
                 else
                 {
                     Logger("Result: ", false);
-                    Logger(csUtilCalcCS(true, oldVal).ToString("X"));
+                    Logger(csUtilCalcCS(true, oldVal).ToString(formatStr));
                 }
             }
             catch (Exception ex)

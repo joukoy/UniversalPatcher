@@ -106,7 +106,7 @@ namespace UniversalPatcher
             tmpKey.Key = readUint16(buf, VINAddr + 2,true);
 
             tmpKey.NewKey = (UInt16)(tmpKey.Seed + 0x5201);
-            tmpKey.NewKey = (UInt16)(SwapBytes(tmpKey.NewKey) + 0x9738);
+            tmpKey.NewKey = (UInt16)(SwapBytes(tmpKey.NewKey,2) + 0x9738);
             tmpKey.NewKey = (UInt16)(0xffff - tmpKey.NewKey - 0xd428);
 
             return tmpKey;

@@ -94,3 +94,8 @@
 
 0.18.26
 - Autodetect new button: read hex data from current bin file
+
+0.18.27
+- Checksum research: Print correct number of hex bytes. Swap bytes for current values if selected.
+- Autodetect: Add required number of zeros to front of hex value automatically. Set hex textbox red if value too long
+
