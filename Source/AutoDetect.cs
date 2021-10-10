@@ -46,7 +46,7 @@ namespace UniversalPatcher
                         {
                             readBytes.Append(PCM.buf[addr + a].ToString("X2"));
                         }
-                        if (readBytes.ToString() == DR.hexdata)
+                        if (readBytes.ToString() == DR.hexdata.ToUpper())
                         {
                             return true;
                         }
