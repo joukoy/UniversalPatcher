@@ -1572,6 +1572,7 @@ namespace UniversalPatcher
                 frmAutodetect frmAD = new frmAutodetect();
                 frmAD.Show();
                 frmAD.InitMe();
+                frmAD.PCM = basefile;
             }
             catch (Exception ex)
             {

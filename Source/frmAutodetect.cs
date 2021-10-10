@@ -18,6 +18,8 @@ namespace UniversalPatcher
             InitializeComponent();
         }
 
+        public PcmFile PCM;
+
         public void InitMe()
         {
             listRules.Clear();
@@ -310,6 +312,46 @@ namespace UniversalPatcher
                 SelectXML();
             }
             frmN.Dispose();
+        }
+
+        public void readDataFromBin()
+        {
+            uint addr;
+            string address = txtAddress.Text;
+            if (address.Length == 0)
+                return ;
+
+            string[] Parts = address.Split(':');
+            HexToUint(Parts[0].Replace("@", ""), out addr);
+            if (address.StartsWith("@"))
+                addr = PCM.readUInt32(addr);
+            if (Parts[0].EndsWith("@"))
+                addr = (uint)PCM.buf.Length - addr;
+
+            uint bytes = 1;
+            uint.TryParse(Parts[1], out bytes);
+            StringBuilder readBytes = new StringBuilder();
+            for (int a = 0; a < bytes; a++)
+            {
+                readBytes.Append(PCM.buf[addr + a].ToString("X2"));
+            }
+            txtData.Text = readBytes.ToString();
+        }
+
+        private void btnRead_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (PCM.buf != null && PCM.buf.Length > 0)
+                {
+                    readDataFromBin();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
     }
 
