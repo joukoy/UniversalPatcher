@@ -99,3 +99,7 @@
 - Checksum research: Print correct number of hex bytes. Swap bytes for current values if selected.
 - Autodetect: Add required number of zeros to front of hex value automatically. Set hex textbox red if value too long
 
+0.18.28
+- Custom search textbox resizable
+
+

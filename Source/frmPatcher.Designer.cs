@@ -1548,7 +1548,7 @@
             // 
             this.btnLoadFolder.Location = new System.Drawing.Point(6, 3);
             this.btnLoadFolder.Name = "btnLoadFolder";
-            this.btnLoadFolder.Size = new System.Drawing.Size(124, 29);
+            this.btnLoadFolder.Size = new System.Drawing.Size(137, 29);
             this.btnLoadFolder.TabIndex = 170;
             this.btnLoadFolder.Text = "Show info for files...";
             this.btnLoadFolder.UseVisualStyleBackColor = true;
@@ -1673,7 +1673,7 @@
             // 
             this.btnDisplayFileInfo.Location = new System.Drawing.Point(6, 34);
             this.btnDisplayFileInfo.Name = "btnDisplayFileInfo";
-            this.btnDisplayFileInfo.Size = new System.Drawing.Size(124, 38);
+            this.btnDisplayFileInfo.Size = new System.Drawing.Size(137, 29);
             this.btnDisplayFileInfo.TabIndex = 192;
             this.btnDisplayFileInfo.Text = "Show info for current file";
             this.btnDisplayFileInfo.UseVisualStyleBackColor = true;
@@ -1681,9 +1681,9 @@
             // 
             // btnVisualSegments
             // 
-            this.btnVisualSegments.Location = new System.Drawing.Point(6, 74);
+            this.btnVisualSegments.Location = new System.Drawing.Point(6, 65);
             this.btnVisualSegments.Name = "btnVisualSegments";
-            this.btnVisualSegments.Size = new System.Drawing.Size(124, 29);
+            this.btnVisualSegments.Size = new System.Drawing.Size(137, 29);
             this.btnVisualSegments.TabIndex = 191;
             this.btnVisualSegments.Text = "Visualize segments";
             this.btnVisualSegments.UseVisualStyleBackColor = true;
@@ -1691,6 +1691,8 @@
             // 
             // groupSearch
             // 
+            this.groupSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupSearch.Controls.Add(this.txtCustomSearchString);
             this.groupSearch.Controls.Add(this.txtCustomSearchStartAddress);
             this.groupSearch.Controls.Add(this.label11);
@@ -1701,7 +1703,7 @@
             this.groupSearch.Controls.Add(this.btnCustomSearchNext);
             this.groupSearch.Location = new System.Drawing.Point(342, 30);
             this.groupSearch.Name = "groupSearch";
-            this.groupSearch.Size = new System.Drawing.Size(459, 70);
+            this.groupSearch.Size = new System.Drawing.Size(486, 70);
             this.groupSearch.TabIndex = 190;
             this.groupSearch.TabStop = false;
             // 
@@ -1711,7 +1713,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCustomSearchString.Location = new System.Drawing.Point(121, 13);
             this.txtCustomSearchString.Name = "txtCustomSearchString";
-            this.txtCustomSearchString.Size = new System.Drawing.Size(229, 20);
+            this.txtCustomSearchString.Size = new System.Drawing.Size(265, 20);
             this.txtCustomSearchString.TabIndex = 179;
             // 
             // txtCustomSearchStartAddress
@@ -1734,7 +1736,7 @@
             // 
             this.chkCustomTableSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkCustomTableSearch.AutoSize = true;
-            this.chkCustomTableSearch.Location = new System.Drawing.Point(356, 16);
+            this.chkCustomTableSearch.Location = new System.Drawing.Point(392, 15);
             this.chkCustomTableSearch.Name = "chkCustomTableSearch";
             this.chkCustomTableSearch.Size = new System.Drawing.Size(88, 17);
             this.chkCustomTableSearch.TabIndex = 186;
