@@ -84,3 +84,7 @@
 - Improvements to XML editor, save & close, cancel
 - Right click -> "Edit row" to XML editor
 
+0.18.24
+- Small UI fix to XML editor
+- Fix to Autodetect, file size must be stored as uint, not as hex data. Display hex data when available
+- Dtcsearch: support for custom values (Enum:  01:xxx,02:xxx ...)
