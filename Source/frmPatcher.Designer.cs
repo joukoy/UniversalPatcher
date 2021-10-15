@@ -263,6 +263,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
+            this.radioCsUtilBosch = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -2174,7 +2175,7 @@
             // 
             this.numCSBytes.Location = new System.Drawing.Point(369, 80);
             this.numCSBytes.Maximum = new decimal(new int[] {
-            4,
+            8,
             0,
             0,
             0});
@@ -2317,6 +2318,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.radioCsUtilBosch);
             this.groupBox1.Controls.Add(this.radioCSUtilDwordSum);
             this.groupBox1.Controls.Add(this.radioCSUtilWordSum);
             this.groupBox1.Controls.Add(this.radioCSUtilSUM);
@@ -2891,6 +2893,17 @@
             this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
             // 
+            // radioCsUtilBosch
+            // 
+            this.radioCsUtilBosch.AutoSize = true;
+            this.radioCsUtilBosch.Location = new System.Drawing.Point(6, 53);
+            this.radioCsUtilBosch.Name = "radioCsUtilBosch";
+            this.radioCsUtilBosch.Size = new System.Drawing.Size(72, 17);
+            this.radioCsUtilBosch.TabIndex = 126;
+            this.radioCsUtilBosch.TabStop = true;
+            this.radioCsUtilBosch.Text = "Bosch inv";
+            this.radioCsUtilBosch.UseVisualStyleBackColor = true;
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3221,5 +3234,6 @@
         private System.Windows.Forms.ToolStripMenuItem editPlatformConfigToolStripMenuItem;
         private System.Windows.Forms.CheckBox chkCsMSB;
         private System.Windows.Forms.ToolStripMenuItem loadPlatformConfigToolStripMenuItem1;
+        private System.Windows.Forms.RadioButton radioCsUtilBosch;
     }
 }

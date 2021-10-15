@@ -102,4 +102,6 @@
 0.18.28
 - Custom search textbox resizable
 
+0.18.29
+- Bosch inv checksum to Checksum Research
 

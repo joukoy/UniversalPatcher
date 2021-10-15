@@ -3184,7 +3184,7 @@ namespace UniversalPatcher
 
         }
 
-        private UInt64 csUtilCalcCS(bool calcOnly, uint oldVal)
+        private UInt64 csUtilCalcCS(bool calcOnly, UInt64 oldVal)
         {
             List<Block> blocks;
             ParseAddress(txtChecksumRange.Text, basefile, out blocks);
@@ -3232,6 +3232,13 @@ namespace UniversalPatcher
                         LoggerBold("Method: DwordSum, Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
                     else
                         Logger("Method: DwordSum, Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
+
+                    csCalc = CalculateChecksum(chkCsMSB.Checked, basefile.buf, csAddr, blocks, excludes, CSMethod_BoschInv, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
+                    if (csCalc == oldVal)
+                        LoggerBold("Method: Bosch Inv,  Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
+                    else
+                        Logger("Method: Bosch Inv,  Complement: " + complement.ToString() + ", result: " + csCalc.ToString("X"));
+
                 }
                 return 0;
             }
@@ -3248,6 +3255,8 @@ namespace UniversalPatcher
                     method = CSMethod_Bytesum;
                 if (radioCSUtilWordSum.Checked)
                     method = CSMethod_Wordsum;
+                if (radioCsUtilBosch.Checked)
+                    method = CSMethod_BoschInv;
                 if (radioCSUtilComplement1.Checked)
                     complement = 1;
                 if (radioCSUtilComplement2.Checked)
@@ -3262,7 +3271,7 @@ namespace UniversalPatcher
             {
                 Logger("Checksum research:");
 
-                uint oldVal = 0;
+                UInt64 oldVal = 0;
                 uint csAddr;
                 string formatStr = "X" + ((int)numCSBytes.Value * 2).ToString();
 
@@ -3274,6 +3283,8 @@ namespace UniversalPatcher
                         oldVal = basefile.readUInt16(csAddr);
                     else if (numCSBytes.Value == 4)
                         oldVal = basefile.readUInt32(csAddr);
+                    else if (numCSBytes.Value == 8)
+                        oldVal = basefile.readUInt64(csAddr);
 
                     if (chkCsUtilSwapBytes.Checked)
                     {
@@ -3290,7 +3301,12 @@ namespace UniversalPatcher
                 else
                 {
                     Logger("Result: ", false);
-                    Logger(csUtilCalcCS(true, oldVal).ToString(formatStr));
+                    ulong calCval = csUtilCalcCS(true, oldVal);
+                    Logger(calCval.ToString(formatStr), false);
+                    if (oldVal == calCval)
+                        Logger(" [Match]");
+                    else
+                        Logger ("");
                 }
             }
             catch (Exception ex)
