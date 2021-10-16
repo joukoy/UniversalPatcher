@@ -579,13 +579,13 @@ namespace UniversalPatcher
         public UInt64 calculateCS1(int seg, bool dbg = true)
         {
             SegmentConfig S = Segments[seg];
-            return CalculateChecksum(platformConfig.MSB, buf, segmentAddressDatas[seg].CS1Address, segmentAddressDatas[seg].CS1Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.CS1Method, S.CS1Complement, segmentAddressDatas[seg].CS1Address.Bytes, S.CS1SwapBytes,dbg);
+            return CalculateChecksum(platformConfig.MSB, buf, segmentAddressDatas[seg].CS1Address, segmentAddressDatas[seg].CS1Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.Checksum1Method, S.CS1Complement, segmentAddressDatas[seg].CS1Address.Bytes, S.CS1SwapBytes,dbg);
         }
 
         public UInt64 calculateCS2(int seg, bool dbg = true)
         {
             SegmentConfig S = Segments[seg];
-            return CalculateChecksum(platformConfig.MSB, buf, segmentAddressDatas[seg].CS2Address, segmentAddressDatas[seg].CS2Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.CS2Method, S.CS2Complement, segmentAddressDatas[seg].CS2Address.Bytes, S.CS2SwapBytes,dbg);
+            return CalculateChecksum(platformConfig.MSB, buf, segmentAddressDatas[seg].CS2Address, segmentAddressDatas[seg].CS2Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.Checksum2Method, S.CS2Complement, segmentAddressDatas[seg].CS2Address.Bytes, S.CS2SwapBytes,dbg);
         }
 
         public bool FixCheckSums()
@@ -607,7 +607,7 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        if (S.CS1Method != CSMethod_None)
+                        if (S.Checksum1Method != CSMethod.None)
                         {
                             uint CS1 = 0;
                             UInt64 CS1Calc = calculateCS1(seg);
@@ -637,7 +637,7 @@ namespace UniversalPatcher
                             }
                         }
 
-                        if (S.CS2Method != CSMethod_None)
+                        if (S.Checksum2Method != CSMethod.None)
                         {
                             uint CS2 = 0;
                             UInt64 CS2Calc = calculateCS2(seg);
@@ -773,7 +773,7 @@ namespace UniversalPatcher
                 if (S.Missing)
                     continue;
 
-                if (S.CS1Method != CSMethod_None)
+                if (S.Checksum1Method != CSMethod.None)
                 {
                     if (segmentAddressDatas[i].CS1Address.Address != uint.MaxValue)
                     {
@@ -785,7 +785,7 @@ namespace UniversalPatcher
                         
                 }
 
-                if (S.CS2Method != CSMethod_None)
+                if (S.Checksum2Method != CSMethod.None)
                 {
                     if (segmentAddressDatas[i].CS2Address.Address != uint.MaxValue)
                     {

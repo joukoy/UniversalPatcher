@@ -223,5 +223,10 @@ namespace UniversalPatcher
         {
             PasteClipboardValue();
         }
+
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        {
+
+        }
     }
 }

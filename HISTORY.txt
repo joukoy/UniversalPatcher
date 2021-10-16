@@ -105,3 +105,10 @@
 0.18.29
 - Bosch inv checksum to Checksum Research
 
+0.18.30
+- Fixed MSB & Byteswap handling in Checksum Research
+- Support for "Bosch Inv" Checksum method to Segment Config
+- SegmentConfig Converted Struct -> Class, CSMethod converted const -> enum
+- Added "Edit XML" to SegmentConfig
+- Added Copy, Paste, Cut to XML Editor
+

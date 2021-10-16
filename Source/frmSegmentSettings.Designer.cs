@@ -99,6 +99,8 @@
             this.txtSwapAddr = new System.Windows.Forms.TextBox();
             this.btnEditSwapddr = new System.Windows.Forms.Button();
             this.chkHide = new System.Windows.Forms.CheckBox();
+            this.radioCs1Bosch = new System.Windows.Forms.RadioButton();
+            this.radioCs2Bosch = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -107,6 +109,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.radioCs1Bosch);
             this.groupBox1.Controls.Add(this.radioCS1DwordSum);
             this.groupBox1.Controls.Add(this.radioCS1None);
             this.groupBox1.Controls.Add(this.radioCS1WordSum);
@@ -115,7 +118,7 @@
             this.groupBox1.Controls.Add(this.radioCS1Crc16);
             this.groupBox1.Location = new System.Drawing.Point(9, 280);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(122, 135);
+            this.groupBox1.Size = new System.Drawing.Size(122, 154);
             this.groupBox1.TabIndex = 126;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Checksum 1 method";
@@ -217,6 +220,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.radioCs2Bosch);
             this.groupBox2.Controls.Add(this.radioCS2DwordSum);
             this.groupBox2.Controls.Add(this.radioCS2None);
             this.groupBox2.Controls.Add(this.radioCS2WordSum);
@@ -225,7 +229,7 @@
             this.groupBox2.Controls.Add(this.radioCS2Crc16);
             this.groupBox2.Location = new System.Drawing.Point(262, 280);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(124, 135);
+            this.groupBox2.Size = new System.Drawing.Size(124, 154);
             this.groupBox2.TabIndex = 157;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Checksum 2 method";
@@ -568,7 +572,7 @@
             // chkEeprom
             // 
             this.chkEeprom.AutoSize = true;
-            this.chkEeprom.Location = new System.Drawing.Point(11, 421);
+            this.chkEeprom.Location = new System.Drawing.Point(8, 472);
             this.chkEeprom.Name = "chkEeprom";
             this.chkEeprom.Size = new System.Drawing.Size(271, 17);
             this.chkEeprom.TabIndex = 180;
@@ -779,12 +783,34 @@
             // chkHide
             // 
             this.chkHide.AutoSize = true;
-            this.chkHide.Location = new System.Drawing.Point(301, 421);
+            this.chkHide.Location = new System.Drawing.Point(396, 417);
             this.chkHide.Name = "chkHide";
             this.chkHide.Size = new System.Drawing.Size(129, 17);
             this.chkHide.TabIndex = 226;
             this.chkHide.Text = "Hide from segment list";
             this.chkHide.UseVisualStyleBackColor = true;
+            // 
+            // radioCs1Bosch
+            // 
+            this.radioCs1Bosch.AutoSize = true;
+            this.radioCs1Bosch.Location = new System.Drawing.Point(6, 127);
+            this.radioCs1Bosch.Name = "radioCs1Bosch";
+            this.radioCs1Bosch.Size = new System.Drawing.Size(73, 17);
+            this.radioCs1Bosch.TabIndex = 126;
+            this.radioCs1Bosch.TabStop = true;
+            this.radioCs1Bosch.Text = "Bosch Inv";
+            this.radioCs1Bosch.UseVisualStyleBackColor = true;
+            // 
+            // radioCs2Bosch
+            // 
+            this.radioCs2Bosch.AutoSize = true;
+            this.radioCs2Bosch.Location = new System.Drawing.Point(6, 127);
+            this.radioCs2Bosch.Name = "radioCs2Bosch";
+            this.radioCs2Bosch.Size = new System.Drawing.Size(73, 17);
+            this.radioCs2Bosch.TabIndex = 156;
+            this.radioCs2Bosch.TabStop = true;
+            this.radioCs2Bosch.Text = "Bosch Inv";
+            this.radioCs2Bosch.UseVisualStyleBackColor = true;
             // 
             // frmSegmentSettings
             // 
@@ -931,5 +957,7 @@
         private System.Windows.Forms.TextBox txtSwapAddr;
         private System.Windows.Forms.Button btnEditSwapddr;
         private System.Windows.Forms.CheckBox chkHide;
+        private System.Windows.Forms.RadioButton radioCs1Bosch;
+        private System.Windows.Forms.RadioButton radioCs2Bosch;
     }
 }

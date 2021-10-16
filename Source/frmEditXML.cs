@@ -35,6 +35,7 @@ namespace UniversalPatcher
         private List<Units> units;
         private List<FileType> fileTypes;
         private List<DetectRule> detectrules;
+        private List<SegmentConfig> segmentconfig;
 
         private void frmEditXML_Load(object sender, EventArgs e)
         {
@@ -51,17 +52,22 @@ namespace UniversalPatcher
                     this.Size = Properties.Settings.Default.EditXMLWindowSize;
                 }
             }
-            dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;            
+            dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
+            dataGridView1.DataError += DataGridView1_DataError;
+            dataGridView1.KeyPress += DataGridView1_KeyPress;
             //dataGridView1.CellMouseClick += DataGridView1_CellMouseClick;
         }
 
-        private void DataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void DataGridView1_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
-            {
-
-            }
+            dataGridView1.BeginEdit(true);
         }
+
+        private void DataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            Debug.WriteLine(e.Exception);
+        }
+
 
         private void frmEditXML_FormClosing(object sender, EventArgs e)
         {
@@ -176,6 +182,19 @@ namespace UniversalPatcher
             dataGridView1.DataSource = bindingSource;
             btnSave.Visible = false;
             dataGridView1.Columns["DataType"].ToolTipText = "UBYTE,SBYTE,UWORD,SWORD,UINT32,INT32,UINT64,INT64,FLOAT32,FLOAT64";
+            UseComboBoxForEnums(dataGridView1);
+        }
+
+        public void loadSegemtConfig(PcmFile PCM)
+        {
+            segmentconfig = new List<SegmentConfig>();
+            for (int s = 0; s < PCM.Segments.Count; s++)
+                segmentconfig.Add(PCM.Segments[s].ShallowCopy());
+            this.Text = "Segment Config";
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = segmentconfig;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
             UseComboBoxForEnums(dataGridView1);
         }
 
@@ -378,6 +397,15 @@ namespace UniversalPatcher
                         stream.Close();
                     }
                     unitList = units;
+                    Logger(" [OK]");
+                }
+                else if (this.Text.Contains("Segment Config"))
+                {
+                    if (fName.Length == 0)
+                        fName = PCM.segmentFile;
+                    Logger("Saving file " + fName, false);
+                    PCM.Segments = segmentconfig;
+                    PCM.saveConfigFile(fName);
                     Logger(" [OK]");
                 }
                 else
@@ -706,6 +734,162 @@ namespace UniversalPatcher
             {
                 refreshdgrid();
             }
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CopyToClipboard();
+        }
+
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PasteClipboardValue();
+        }
+
+        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //Copy to clipboard
+                CopyToClipboard();
+
+                //Clear selected cells
+                foreach (DataGridViewCell dgvCell in dataGridView1.SelectedCells)
+                    dgvCell.Value = string.Empty;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+
+        }
+
+        private void CopyToClipboard()
+        {
+            try
+            {
+                //Copy to clipboard
+                DataObject dataObj = dataGridView1.GetClipboardContent();
+                if (dataObj != null)
+                    Clipboard.SetDataObject(dataObj);
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+        }
+
+
+        private DataGridViewCell GetStartCell(DataGridView dgView)
+        {
+            //get the smallest row,column index
+            if (dgView.SelectedCells.Count == 0)
+                return null;
+
+            int rowIndex = dgView.Rows.Count - 1;
+            int colIndex = dgView.Columns.Count - 1;
+
+            foreach (DataGridViewCell dgvCell in dgView.SelectedCells)
+            {
+                if (dgvCell.RowIndex < rowIndex)
+                    rowIndex = dgvCell.RowIndex;
+                if (dgvCell.ColumnIndex < colIndex)
+                    colIndex = dgvCell.ColumnIndex;
+            }
+
+            return dgView[colIndex, rowIndex];
+        }
+        private void PasteClipboardValue()
+        {
+            try
+            {
+                //Show Error if no cell is selected
+                if (dataGridView1.SelectedCells.Count == 0)
+                {
+                    MessageBox.Show("Please select a cell", "Paste",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                //Get the starting Cell
+                DataGridViewCell startCell = GetStartCell(dataGridView1);
+                //Get the clipboard value in a dictionary
+                Dictionary<int, Dictionary<int, string>> cbValue =
+                        ClipBoardValues(Clipboard.GetText());
+
+                int iRowIndex = startCell.RowIndex;
+                foreach (int rowKey in cbValue.Keys)
+                {
+                    int iColIndex = startCell.ColumnIndex;
+                    foreach (int cellKey in cbValue[rowKey].Keys)
+                    {
+                        //Check if the index is within the limit
+                        if (iColIndex <= dataGridView1.Columns.Count - 1
+                        && iRowIndex <= dataGridView1.Rows.Count - 1)
+                        {                            
+                            DataGridViewCell cell = dataGridView1[iColIndex, iRowIndex];
+                            //Copy to selected cells if 'chkPasteToSelectedCells' is checked
+                            /*if ((chkPasteToSelectedCells.Checked && cell.Selected) ||
+                                (!chkPasteToSelectedCells.Checked))*/
+                            cell.Value = cbValue[rowKey][cellKey];
+                            dataGridView1.BeginEdit(true);
+                            dataGridView1.NotifyCurrentCellDirty(true);
+                            dataGridView1.EndEdit();
+                        }
+                        iColIndex++;
+                    }
+                    iRowIndex++;
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+
+        }
+
+        private Dictionary<int, Dictionary<int, string>> ClipBoardValues(string clipboardValue)
+        {
+            Dictionary<int, Dictionary<int, string>>
+            copyValues = new Dictionary<int, Dictionary<int, string>>();
+
+            try
+            {
+                String[] lines = clipboardValue.Split('\n');
+
+                for (int i = 0; i <= lines.Length - 1; i++)
+                {
+                    copyValues[i] = new Dictionary<int, string>();
+                    String[] lineContent = lines[i].Split('\t');
+
+                    //if an empty cell value copied, then set the dictionary with an empty string
+                    //else Set value to dictionary
+                    if (lineContent.Length == 0)
+                        copyValues[i][0] = string.Empty;
+                    else
+                    {
+                        for (int j = 0; j <= lineContent.Length - 1; j++)
+                            copyValues[i][j] = lineContent[j];
+                    }
+                }
+            }
+            catch { }
+            return copyValues;
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

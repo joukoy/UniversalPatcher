@@ -44,6 +44,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.txtVersion = new System.Windows.Forms.TextBox();
             this.btnSaveOnly = new System.Windows.Forms.Button();
+            this.btnEditXML = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnMoveDown
@@ -193,11 +194,22 @@
             this.btnSaveOnly.UseVisualStyleBackColor = true;
             this.btnSaveOnly.Click += new System.EventHandler(this.btnSaveOnly_Click);
             // 
+            // btnEditXML
+            // 
+            this.btnEditXML.Location = new System.Drawing.Point(347, 327);
+            this.btnEditXML.Name = "btnEditXML";
+            this.btnEditXML.Size = new System.Drawing.Size(75, 23);
+            this.btnEditXML.TabIndex = 53;
+            this.btnEditXML.Text = "Edit XML";
+            this.btnEditXML.UseVisualStyleBackColor = true;
+            this.btnEditXML.Click += new System.EventHandler(this.btnEditXML_Click);
+            // 
             // frmSegmenList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(547, 364);
+            this.Controls.Add(this.btnEditXML);
             this.Controls.Add(this.btnSaveOnly);
             this.Controls.Add(this.txtVersion);
             this.Controls.Add(this.label1);
@@ -238,5 +250,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtVersion;
         private System.Windows.Forms.Button btnSaveOnly;
+        private System.Windows.Forms.Button btnEditXML;
     }
 }

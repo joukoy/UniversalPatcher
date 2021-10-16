@@ -211,38 +211,6 @@ public class upatcher
         public string Data { get; set; }
     }
 
-    public struct SegmentConfig
-    {
-        public string Name;
-        public string Version;
-        public string Addresses;    //Segment addresses, can be multiple parts
-        public string SwapAddress;  //Segment addresses, can be multiple parts, used for segment swapping
-        public string CS1Address;           //Checksum 1 Address
-        public string CS2Address;           //Checksum 2 Address
-        public short CS1Method;     //Checksum 1 calculation method
-        public short CS2Method;     //Checksum 2 calculation method
-        public string CS1Blocks;       //Calculate checksum 1 from these addresses
-        public string CS2Blocks;       //Calculate checksum 2 from these addresses
-        public short CS1Complement;   //Calculate 1's or 2's Complement from Checksum?
-        public short CS2Complement;   //Calculate 1's or 2's Complement from Checksum?
-        public bool CS1SwapBytes;
-        public bool CS2SwapBytes;
-        public int CVN;             //0=None, 1=Checksum 1, 2=Checksum 2
-        public bool Eeprom;         //Special case: P01 or P59 Eeprom segment
-        public string PNAddr;
-        public string VerAddr;
-        public string SegNrAddr;
-        public string ExtraInfo;
-        public string Comment;
-        public string CheckWords;
-        public string SearchAddresses;  //Possible start addresses for searched segment
-        public string Searchfor;  //search if this found/not found in segment
-        public bool Hidden;
-        public bool Missing;
-        //public string Searchfrom; //Search above in these addresses OBSOLETE
-        //public bool SearchNot;     //Search where NOT found OBSOLETE
-    }
-
     public class SwapSegment
     {
         //For storing information about extracted calibration segments
@@ -301,13 +269,26 @@ public class upatcher
         public ushort Columns;
     }
 
-    public const short CSMethod_None = 0;
-    public const short CSMethod_crc16 = 1;
-    public const short CSMethod_crc32 = 2;
-    public const short CSMethod_Bytesum = 3;
-    public const short CSMethod_Wordsum = 4;
-    public const short CSMethod_Dwordsum = 5;
-    public const short CSMethod_BoschInv = 6;
+    /*    public const short CSMethod_None = 0;
+        public const short CSMethod_crc16 = 1;
+        public const short CSMethod_crc32 = 2;
+        public const short CSMethod_Bytesum = 3;
+        public const short CSMethod_Wordsum = 4;
+        public const short CSMethod_Dwordsum = 5;
+        public const short CSMethod_BoschInv = 6;
+    */
+
+    public enum CSMethod
+    {
+        None = 0,
+        crc16 = 1,
+        crc32 = 2,
+        Bytesum = 3,
+        Wordsum = 4,
+        Dwordsum = 5,
+        BoschInv = 6,
+        Unknown = 99
+    }
 
     public static List<DetectRule> DetectRules;
     public static List<XmlPatch> PatchList;
@@ -1473,19 +1454,19 @@ public class upatcher
         return autod.autoDetect(PCM);
     }
 
-    public static UInt64 CalculateChecksum(bool MSB, byte[] Data, AddressData CSAddress, List<Block> CSBlocks,List<Block> ExcludeBlocks, short Method, short Complement, ushort Bytes, Boolean SwapB, bool dbg=true)
+    public static UInt64 CalculateChecksum(bool MSB, byte[] Data, AddressData CSAddress, List<Block> CSBlocks,List<Block> ExcludeBlocks, CSMethod Method, short Complement, ushort Bytes, Boolean SwapB, bool dbg=true)
     {
         UInt64 sum = 0;
         try
         {
-            if (Method == CSMethod_None)
+            if (Method == CSMethod.None)
                 return UInt64.MaxValue;
             if (dbg)
                 Debug.WriteLine("Calculating checksum, method: " + Method);
             uint BufSize = 0;
             List<Block> Blocks = new List<Block>();
 
-            if (Method == CSMethod_BoschInv)
+            if (Method == CSMethod.BoschInv)
             {
                 UInt64 sum1 = 0;
                 UInt64 sum2 = 0;
@@ -1593,33 +1574,33 @@ public class upatcher
 
                 switch (Method)
                 {
-                    case CSMethod_Bytesum:
+                    case CSMethod.Bytesum:
                         for (uint i = 0; i < tmp.Length; i++)
                         {
                             sum += tmp[i];
                         }
                         break;
 
-                    case CSMethod_Wordsum:
+                    case CSMethod.Wordsum:
                         for (uint i = 0; i < tmp.Length - 1; i += 2)
                         {
                             sum += readUint16(tmp, i, MSB);
                         }
                         break;
 
-                    case CSMethod_Dwordsum:
+                    case CSMethod.Dwordsum:
                         for (uint i = 0; i < tmp.Length - 3; i += 4)
                         {
                             sum += readUint32(tmp, i, MSB);
                         }
                         break;
 
-                    case CSMethod_crc16:
+                    case CSMethod.crc16:
                         Crc16 C16 = new Crc16();
                         sum = C16.ComputeChecksum(tmp);
                         break;
 
-                    case CSMethod_crc32:
+                    case CSMethod.crc32:
                         Crc32 C32 = new Crc32();
                         sum = C32.ComputeChecksum(tmp);
                         break;
@@ -1644,7 +1625,7 @@ public class upatcher
             }
             if (SwapB)
             {
-                sum = (uint)SwapBytes(sum,Bytes);
+                sum = SwapBytes(sum,Bytes);
             }
             if (dbg)
                 Debug.WriteLine("Result: " + sum.ToString("X"));

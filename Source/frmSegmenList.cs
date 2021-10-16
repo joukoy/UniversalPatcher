@@ -222,5 +222,19 @@ namespace UniversalPatcher
         {
             saveXML(PCM.configFileFullName);
         }
+
+        private void btnEditXML_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                frmEditXML fex = new frmEditXML();
+                fex.Show();
+                fex.loadSegemtConfig(PCM);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
     }
 }

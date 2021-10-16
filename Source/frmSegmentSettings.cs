@@ -42,30 +42,35 @@ namespace UniversalPatcher
             S.CheckWords = txtCheckWords.Text;
 
             if (radioCS1None.Checked)
-                S.CS1Method = CSMethod_None;
+                S.Checksum1Method = CSMethod.None;
             if (radioCS1Crc16.Checked)
-                S.CS1Method = CSMethod_crc16;
+                S.Checksum1Method = CSMethod.crc16;
             if (radioCS1Crc32.Checked)
-                S.CS1Method = CSMethod_crc32;
+                S.Checksum1Method = CSMethod.crc32;
             if (radioCS1SUM.Checked)
-                S.CS1Method = CSMethod_Bytesum;
+                S.Checksum1Method = CSMethod.Bytesum;
             if (radioCS1WordSum.Checked)
-                S.CS1Method = CSMethod_Wordsum;
+                S.Checksum1Method = CSMethod.Wordsum;
             if (radioCS1DwordSum.Checked)
-                S.CS1Method = CSMethod_Dwordsum;
+                S.Checksum1Method = CSMethod.Dwordsum;
+            if (radioCs1Bosch.Checked)
+                S.Checksum1Method = CSMethod.BoschInv;
 
             if (radioCS2None.Checked)
-                S.CS2Method = CSMethod_None;
+                S.Checksum2Method = CSMethod.None;
             if (radioCS2Crc16.Checked)
-                S.CS2Method = CSMethod_crc16;
+                S.Checksum2Method = CSMethod.crc16;
             if (radioCS2Crc32.Checked)
-                S.CS2Method = CSMethod_crc32;
+                S.Checksum2Method = CSMethod.crc32;
             if (radioCS2SUM.Checked)
-                S.CS2Method = CSMethod_Bytesum;
+                S.Checksum2Method = CSMethod.Bytesum;
             if (radioCS2WordSum.Checked)
-                S.CS2Method = CSMethod_Wordsum;
+                S.Checksum2Method = CSMethod.Wordsum;
             if (radioCS2DwordSum.Checked)
-                S.CS2Method = CSMethod_Dwordsum;
+                S.Checksum2Method = CSMethod.Dwordsum;
+            if (radioCs2Bosch.Checked)
+                S.Checksum2Method = CSMethod.BoschInv;
+
             S.CS1SwapBytes = checkSwapBytes1.Checked;
 
             if (radioCS1Complement0.Checked)
@@ -119,30 +124,34 @@ namespace UniversalPatcher
 
             checkSwapBytes1.Checked = S.CS1SwapBytes;
             checkSwapBytes2.Checked = S.CS2SwapBytes;
-            if (S.CS1Method == CSMethod_None)
+            if (S.Checksum1Method == CSMethod.None)
                 radioCS1None.Checked = true;
-            if (S.CS1Method == CSMethod_crc16)
+            if (S.Checksum1Method == CSMethod.crc16)
                 radioCS1Crc16.Checked = true;
-            if (S.CS1Method == CSMethod_crc32)
+            if (S.Checksum1Method == CSMethod.crc32)
                 radioCS1Crc32.Checked = true;
-            if (S.CS1Method == CSMethod_Bytesum)
+            if (S.Checksum1Method == CSMethod.Bytesum)
                 radioCS1SUM.Checked = true;
-            if (S.CS1Method == CSMethod_Wordsum)
+            if (S.Checksum1Method == CSMethod.Wordsum)
                 radioCS1WordSum.Checked = true;
-            if (S.CS1Method == CSMethod_Dwordsum)
+            if (S.Checksum1Method == CSMethod.Dwordsum)
                 radioCS1DwordSum.Checked = true;
-            if (S.CS2Method == CSMethod_None)
+            if (S.Checksum1Method == CSMethod.BoschInv)
+                radioCs1Bosch.Checked = true;
+            if (S.Checksum2Method == CSMethod.None)
                 radioCS2None.Checked = true;
-            if (S.CS2Method == CSMethod_crc16)
+            if (S.Checksum2Method == CSMethod.crc16)
                 radioCS2Crc16.Checked = true;
-            if (S.CS2Method == CSMethod_crc32)
+            if (S.Checksum2Method == CSMethod.crc32)
                 radioCS2Crc32.Checked = true;
-            if (S.CS2Method == CSMethod_Bytesum)
+            if (S.Checksum2Method == CSMethod.Bytesum)
                 radioCS2SUM.Checked = true;
-            if (S.CS2Method == CSMethod_Wordsum)
+            if (S.Checksum2Method == CSMethod.Wordsum)
                 radioCS2WordSum.Checked = true;
-            if (S.CS2Method == CSMethod_Dwordsum)
+            if (S.Checksum2Method == CSMethod.Dwordsum)
                 radioCS2DwordSum.Checked = true;
+            if (S.Checksum2Method == CSMethod.BoschInv)
+                radioCs2Bosch.Checked = true;
             if (S.CS1Complement == 0)
                 radioCS1Complement0.Checked = true;
             if (S.CS1Complement == 1)
