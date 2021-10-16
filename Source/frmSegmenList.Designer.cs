@@ -196,9 +196,9 @@
             // 
             // btnEditXML
             // 
-            this.btnEditXML.Location = new System.Drawing.Point(347, 327);
+            this.btnEditXML.Location = new System.Drawing.Point(321, 325);
             this.btnEditXML.Name = "btnEditXML";
-            this.btnEditXML.Size = new System.Drawing.Size(75, 23);
+            this.btnEditXML.Size = new System.Drawing.Size(71, 27);
             this.btnEditXML.TabIndex = 53;
             this.btnEditXML.Text = "Edit XML";
             this.btnEditXML.UseVisualStyleBackColor = true;
@@ -208,7 +208,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(547, 364);
+            this.ClientSize = new System.Drawing.Size(547, 362);
             this.Controls.Add(this.btnEditXML);
             this.Controls.Add(this.btnSaveOnly);
             this.Controls.Add(this.txtVersion);

@@ -112,3 +112,5 @@
 - Added "Edit XML" to SegmentConfig
 - Added Copy, Paste, Cut to XML Editor
 
+0.18.31
+- XML Editor editmode fix, small UI fixes

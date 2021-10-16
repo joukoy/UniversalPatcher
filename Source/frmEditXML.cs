@@ -196,6 +196,13 @@ namespace UniversalPatcher
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = bindingSource;
             UseComboBoxForEnums(dataGridView1);
+            dataGridView1.Columns["CS1Method"].ToolTipText = "For backward compatibility. Ignore";
+            dataGridView1.Columns["CS2Method"].ToolTipText = "For backward compatibility. Ignore";
+            for (int r=0; r< dataGridView1.Rows.Count;r++)
+            {
+                dataGridView1.Rows[r].Cells["CS1Method"].ToolTipText = "For backward compatibility. Ignore";
+                dataGridView1.Rows[r].Cells["CS2Method"].ToolTipText = "For backward compatibility. Ignore";
+            }
         }
 
         public void LoadFileTypes()
