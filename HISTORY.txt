@@ -114,3 +114,8 @@
 
 0.18.31
 - XML Editor editmode fix, small UI fixes
+
+0.18.32
+- Show cheksum byteswapped for LSB files
+- Added Cut, Copy, Paste rows to XML Editor
+

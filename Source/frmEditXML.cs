@@ -811,6 +811,7 @@ namespace UniversalPatcher
 
             return dgView[colIndex, rowIndex];
         }
+
         private void PasteClipboardValue()
         {
             try
@@ -897,6 +898,46 @@ namespace UniversalPatcher
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
+        }
+
+        private void cutRowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Selected = true;
+            }
+            CopyToClipboard();
+            dataGridView1.Rows.RemoveAt(dataGridView1.SelectedRows[0].Index);
+        }
+
+        private void copyRowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Selected = true;
+            }
+            CopyToClipboard();
+        }
+
+        private void pasteRowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dataGridView1.SelectedRows.Count == 0)
+                {
+                    dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Selected = true;
+                }
+                dataGridView1.Rows[dataGridView1.SelectedRows[0].Index].Cells[0].Selected = true;
+                PasteClipboardValue();
+                dataGridView1.BeginEdit(true);
+                dataGridView1.NotifyCurrentCellDirty(true);
+                dataGridView1.EndEdit();
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
     }
 }

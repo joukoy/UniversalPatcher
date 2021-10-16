@@ -78,12 +78,12 @@ namespace UniversalPatcher
                 if (PCM.Segments[seg].Eeprom)
                     return GmEeprom.GetKeyStatus(PCM.buf);
                 else
-                    return csToString(getCS1(), PCM.segmentAddressDatas[seg].CS1Address.Bytes, PCM.Segments[seg].Checksum1Method);
+                    return csToString(getCS1(), PCM.segmentAddressDatas[seg].CS1Address.Bytes, PCM.Segments[seg].Checksum1Method, PCM.platformConfig.MSB);
             }
         }
-        public string CS2 { get { return csToString(getCS2(), PCM.segmentAddressDatas[seg].CS2Address.Bytes, PCM.Segments[seg].Checksum2Method); } }
-        public string CS1Calc { get { return csToString(getCS1Calc(), PCM.segmentAddressDatas[seg].CS1Address.Bytes, PCM.Segments[seg].Checksum1Method); } }
-        public string CS2Calc { get { return csToString(getCS2Calc(), PCM.segmentAddressDatas[seg].CS1Address.Bytes, PCM.Segments[seg].Checksum1Method); } }
+        public string CS2 { get { return csToString(getCS2(), PCM.segmentAddressDatas[seg].CS2Address.Bytes, PCM.Segments[seg].Checksum2Method, PCM.platformConfig.MSB); } }
+        public string CS1Calc { get { return csToString(getCS1Calc(), PCM.segmentAddressDatas[seg].CS1Address.Bytes, PCM.Segments[seg].Checksum1Method, PCM.platformConfig.MSB); } }
+        public string CS2Calc { get { return csToString(getCS2Calc(), PCM.segmentAddressDatas[seg].CS1Address.Bytes, PCM.Segments[seg].Checksum1Method, PCM.platformConfig.MSB); } }
 
         public string cvn
         {
@@ -202,7 +202,7 @@ namespace UniversalPatcher
             }
         }
 
-        public static string csToString(UInt64 cs, int csBytes, CSMethod csMethod)
+        public static string csToString(UInt64 cs, int csBytes, CSMethod csMethod, bool MSB)
         {
             string HexLength;
             if (cs == UInt64.MaxValue)
@@ -212,10 +212,14 @@ namespace UniversalPatcher
                 HexLength = "X4";
                 if (csMethod == CSMethod.crc32 || csMethod == CSMethod.Dwordsum)
                     HexLength = "X8";
+                if (!MSB)
+                    cs = SwapBytes(cs, 4);
             }
             else
             {
                 HexLength = "X" + (csBytes * 2).ToString();
+                if (!MSB)
+                    cs = SwapBytes(cs, csBytes);
             }
             return cs.ToString(HexLength);
         }
