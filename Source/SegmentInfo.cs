@@ -204,9 +204,18 @@ namespace UniversalPatcher
 
         public static string csToString(UInt64 cs, int csBytes, CSMethod csMethod, bool MSB)
         {
-            string HexLength;
+            string HexLength="X4";
             if (cs == UInt64.MaxValue)
                 return "";
+
+/*            if (csMethod == CSMethod.BoschInv)
+            {
+                cs = SwapBytes(cs, csBytes);
+                uint part1 = (uint)(cs >> 32);
+                uint part2 = (uint)(cs & 0xFFFFFFFF);
+                return (part2.ToString("X4") + part1.ToString("X4"));
+            }
+            else */
             if (csBytes == 0)
             {
                 HexLength = "X4";

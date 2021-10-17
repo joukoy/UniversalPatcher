@@ -36,6 +36,7 @@ namespace UniversalPatcher
         private List<FileType> fileTypes;
         private List<DetectRule> detectrules;
         private List<SegmentConfig> segmentconfig;
+        private object currentObj;
 
         private void frmEditXML_Load(object sender, EventArgs e)
         {
@@ -91,6 +92,7 @@ namespace UniversalPatcher
         public void LoadRules()
         {
             detectrules = new List<DetectRule>();
+            currentObj = new DetectRule();
             for (int i=0;i<DetectRules.Count;i++)
             {
                 DetectRule dr = DetectRules[i].ShallowCopy();
@@ -107,6 +109,7 @@ namespace UniversalPatcher
         {
             this.Text = "Edit stock CVN list";
             sCVN = new List<CVN>();
+            currentObj = new CVN();
             for (int i=0; i<StockCVN.Count;i++)
             {
                 CVN cvn = StockCVN[i].ShallowCopy();
@@ -122,6 +125,7 @@ namespace UniversalPatcher
         {
             this.Text = "Edit DTC Search config";
             dtcSC = new List<DtcSearchConfig>();
+            currentObj = new DtcSearchConfig();
             for (int i=0; i< dtcSearchConfigs.Count;i++)
             {
                 DtcSearchConfig dsc = dtcSearchConfigs[i].ShallowCopy();
@@ -138,6 +142,7 @@ namespace UniversalPatcher
         {
             this.Text = "Edit PID Search config";
             pidSC = new List<PidSearchConfig>();
+            currentObj = new PidSearchConfig();
             for (int i=0; i< pidSearchConfigs.Count; i++)
             {
                 PidSearchConfig psc = pidSearchConfigs[i].ShallowCopy();
@@ -154,7 +159,7 @@ namespace UniversalPatcher
         {
             fileName = fname;
             this.Text = "Edit Table Seek config";
-
+            currentObj = new TableSeek();
             if (fname.Length > 0 &&  File.Exists(fname))
                 tSeeks = TableSeek.loadtTableSeekFile(fname);
             else
@@ -166,6 +171,7 @@ namespace UniversalPatcher
         {
             fileName = fname;
             this.Text = "Edit Segment Seek config";
+            currentObj = new SegmentSeek();
             if (fname.Length > 0 &&  File.Exists(fname))
                 sSeeks = SegmentSeek.loadSegmentSeekFile(fname);
             else
@@ -176,6 +182,7 @@ namespace UniversalPatcher
         public void LoadTableData()
         {
             this.Text = "Table data";
+            currentObj = new TableData();
             bindingSource.DataSource = null;
             bindingSource.DataSource = tableViews;
             dataGridView1.DataSource = null;
@@ -188,6 +195,7 @@ namespace UniversalPatcher
         public void loadSegemtConfig(PcmFile PCM)
         {
             segmentconfig = new List<SegmentConfig>();
+            currentObj = new SegmentConfig();
             for (int s = 0; s < PCM.Segments.Count; s++)
                 segmentconfig.Add(PCM.Segments[s].ShallowCopy());
             this.Text = "Segment Config";
@@ -209,6 +217,7 @@ namespace UniversalPatcher
         {
             this.Text = "File Types";
             fileTypes = new List<FileType>();
+            currentObj = new FileType();
             for (int i=0; i<fileTypeList.Count;i++)
             {
                 FileType ft = fileTypeList[i].ShallowCopy();
@@ -232,6 +241,7 @@ namespace UniversalPatcher
         {
             this.Text = "Units";
             units = new List<Units>();
+            currentObj = new Units();
             for (int i=0; i<unitList.Count;i++)
             {
                 Units u = unitList[i].ShallowCopy();
@@ -246,6 +256,7 @@ namespace UniversalPatcher
         public void loadOBD2CodeList()
         {
             this.Text = "Edit OBD2 Codes";
+            currentObj = new OBD2Code();
             loadOBD2Codes();
             refreshOBD2Codes();
         }
@@ -923,16 +934,20 @@ namespace UniversalPatcher
         {
             try
             {
+                
                 if (dataGridView1.SelectedRows.Count == 0)
                 {
                     dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Selected = true;
                 }
-                dataGridView1.Rows[dataGridView1.SelectedRows[0].Index].Cells[0].Selected = true;
+                int row = dataGridView1.SelectedCells[0].RowIndex;
+                bindingSource.Insert(row, currentObj);
+
+                dataGridView1.Rows[row].Cells[0].Selected = true;
                 PasteClipboardValue();
                 dataGridView1.BeginEdit(true);
                 dataGridView1.NotifyCurrentCellDirty(true);
                 dataGridView1.EndEdit();
-
+                dataGridView1.ClearSelection();
             }
             catch (Exception ex)
             {

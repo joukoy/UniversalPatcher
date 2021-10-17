@@ -23,6 +23,7 @@ namespace UniversalPatcher
             StatusSteps = 1;
             MilSteps = 1;
             ConditionalOffset = "";
+            Linear = true;
         }
         public string XMLFile { get; set; }
         public string CodeSearch { get; set; }
@@ -37,7 +38,7 @@ namespace UniversalPatcher
         public int MilSteps { get; set; }
         public string ConditionalOffset { get; set; }
         public string Values { get; set; }
-
+        public bool Linear { get; set; }
         public DtcSearchConfig ShallowCopy()
         {
             return (DtcSearchConfig)this.MemberwiseClone();
@@ -128,10 +129,12 @@ namespace UniversalPatcher
                 bool signedOffsetMil = false;
                 uint statusAddr = uint.MaxValue;
                 uint milAddr = uint.MaxValue;
+                bool linear = true;
 
                 for (configIndex = 0; configIndex < dtcSearchConfigs.Count; configIndex++)
                 {
                     string cnfFile = PCM.configFile;
+                    linear = dtcSearchConfigs[configIndex].Linear;
 /*                    if (PCM.configFile.Contains("."))
                     {
                         int pos = PCM.configFile.IndexOf(".");
@@ -231,6 +234,8 @@ namespace UniversalPatcher
                     dtc.Values = dtcSearchConfigs[configIndex].Values;
                     dtc.CodeAddr = addr.ToString("X8");
                     dtc.codeInt = PCM.readUInt16(addr);
+                    if (dtc.codeInt == 0 && PCM.dtcCodes.Count > 0 && !linear)
+                        continue;
 
                     string codeTmp = dtc.codeInt.ToString("X");
                     if (dtc.codeInt < 10 && PCM.dtcCodes.Count > 10)
@@ -250,6 +255,7 @@ namespace UniversalPatcher
                     PCM.dtcCodes.Add(dtc);
                 }
 
+                PCM.dtcCodes = PCM.dtcCodes.OrderBy(x => x.codeInt).ToList();
                 List<uint> milAddrList = new List<uint>();
 
                 if (dtcSearchConfigs[configIndex].MilTable == "afterstatus")
@@ -323,10 +329,18 @@ namespace UniversalPatcher
                 for (uint addr2 = statusAddr; dtcNr < PCM.dtcCodes.Count; addr2+= (uint)dtcSearchConfigs[configIndex].StatusSteps, addr3+= (uint)dtcSearchConfigs[configIndex].MilSteps)
                 {
                     if (PCM.buf[addr2] > 7)
-                        break;
+                    {
+                        if (linear)
+                            break;
+                        else
+                            continue;
+                    }
                     if (!PCM.dtcCombined && PCM.buf[addr2] > 3) //DTC = 0-3
                     {
-                        break;
+                        if (linear)
+                            break;
+                        else
+                            continue;
                     }
                     dtcCode dtc = PCM.dtcCodes[dtcNr];
                     dtc.statusAddrInt = addr2;

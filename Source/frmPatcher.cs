@@ -3186,6 +3186,7 @@ namespace UniversalPatcher
 
         private UInt64 csUtilCalcCS(bool calcOnly, UInt64 oldVal)
         {
+            CSMethod method = csUtilSelectedMethod();
             List<Block> blocks;
             ParseAddress(txtChecksumRange.Text, basefile, out blocks);
             List<Block> excludes;
@@ -3196,7 +3197,6 @@ namespace UniversalPatcher
             csAddr.Bytes = (ushort)numCSBytes.Value;
             csAddr.Name = "CS";
             csAddr.Type = 0;
-            CSMethod method = CSMethod.Bytesum;
             short complement = 0;
 
             if (chkCSUtilTryAll.Checked && calcOnly)
@@ -3245,24 +3245,30 @@ namespace UniversalPatcher
             else
             {
 
-                if (radioCSUtilCrc16.Checked)
-                    method = CSMethod.crc16;
-                if (radioCSUtilCrc32.Checked)
-                    method = CSMethod.crc32;
-                if (radioCSUtilDwordSum.Checked)
-                    method = CSMethod.Dwordsum;
-                if (radioCSUtilSUM.Checked)
-                    method = CSMethod.Bytesum;
-                if (radioCSUtilWordSum.Checked)
-                    method = CSMethod.Wordsum;
-                if (radioCsUtilBosch.Checked)
-                    method = CSMethod.BoschInv;
                 if (radioCSUtilComplement1.Checked)
                     complement = 1;
                 if (radioCSUtilComplement2.Checked)
                     complement = 2;
                 return CalculateChecksum(chkCsMSB.Checked, basefile.buf, csAddr, blocks, excludes, method, complement, (ushort)numCSBytes.Value, chkCsUtilSwapBytes.Checked);
             }
+        }
+
+        private CSMethod csUtilSelectedMethod()
+        {
+            CSMethod method = CSMethod.Bytesum;
+            if (radioCSUtilCrc16.Checked)
+                method = CSMethod.crc16;
+            if (radioCSUtilCrc32.Checked)
+                method = CSMethod.crc32;
+            if (radioCSUtilDwordSum.Checked)
+                method = CSMethod.Dwordsum;
+            if (radioCSUtilSUM.Checked)
+                method = CSMethod.Bytesum;
+            if (radioCSUtilWordSum.Checked)
+                method = CSMethod.Wordsum;
+            if (radioCsUtilBosch.Checked)
+                method = CSMethod.BoschInv;
+            return method;
         }
 
         private void btnTestChecksum_Click(object sender, EventArgs e)
@@ -3272,8 +3278,8 @@ namespace UniversalPatcher
                 Logger("Checksum research:");
 
                 UInt64 savedVal = 0;
-                uint csAddr;
-                string formatStr = "X" + ((int)numCSBytes.Value * 2).ToString();
+                uint csAddr;                
+                CSMethod method = csUtilSelectedMethod();
 
                 if (HexToUint(txtCSAddr.Text, out csAddr))
                 {
@@ -3285,14 +3291,9 @@ namespace UniversalPatcher
                         savedVal = readUint32(basefile.buf, csAddr, chkCsMSB.Checked);
                     else if (numCSBytes.Value == 8)
                         savedVal = readUint64(basefile.buf, csAddr, chkCsMSB.Checked);
-
-                    /*if (chkCsUtilSwapBytes.Checked)
-                    {
-                        oldVal = (uint)SwapBytes(oldVal,(int)numCSBytes.Value);
-                    }*/
-                    Logger("Saved value: " + savedVal.ToString(formatStr));
+                    Logger("Saved value: ", false);
+                    Logger(SegmentInfo.csToString(savedVal, (int)numCSBytes.Value, method, chkCsMSB.Checked));
                 }
-
 
                 if (chkCSUtilTryAll.Checked)
                 {
@@ -3302,7 +3303,7 @@ namespace UniversalPatcher
                 {
                     Logger("Result: ", false);
                     ulong calCval = csUtilCalcCS(true, savedVal);
-                    Logger(calCval.ToString(formatStr), false);
+                    Logger(SegmentInfo.csToString(calCval,(int)numCSBytes.Value,method,chkCsMSB.Checked), false);
                     if (savedVal == calCval)
                         Logger(" [Match]");
                     else
@@ -3319,11 +3320,12 @@ namespace UniversalPatcher
         {
             try
             {
+                CSMethod method = csUtilSelectedMethod();
                 UInt64 CS1Calc = csUtilCalcCS(false, 0);
                 uint csAddr;
                 HexToUint(txtCSAddr.Text, out csAddr);
 
-                uint oldVal = 0;
+                UInt64 oldVal = 0;
                 if (numCSBytes.Value == 1)
                 {
                     oldVal = basefile.readByte(csAddr);
@@ -3339,8 +3341,13 @@ namespace UniversalPatcher
                     oldVal = basefile.readUInt32(csAddr);
                     basefile.SaveUint32(csAddr, (uint)CS1Calc);
                 }
+                else if (numCSBytes.Value == 8)
+                {
+                    oldVal = basefile.readUInt64(csAddr);
+                    basefile.SaveUint64(csAddr, CS1Calc);
+                }
                 showChkData();
-                Logger("Checksum: " + oldVal.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
+                Logger("Checksum: " + SegmentInfo.csToString(oldVal, (int)numCSBytes.Value, method, chkCsMSB.Checked) + " => " + SegmentInfo.csToString(CS1Calc, (int)numCSBytes.Value, method, chkCsMSB.Checked) + " [Fixed]");
                 Logger("You can save BIN file now");
             }
             catch (Exception ex)

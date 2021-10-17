@@ -555,24 +555,28 @@ namespace UniversalPatcher
             }
         }
 
-        public void saveCS1(int seg, uint CS1Calc)
+        public void saveCS1(int seg, UInt64 CS1Calc)
         {
             if (segmentAddressDatas[seg].CS1Address.Bytes == 1)
                 buf[segmentAddressDatas[seg].CS1Address.Address] = (byte)CS1Calc;
             else if (segmentAddressDatas[seg].CS1Address.Bytes == 2)
                  SaveUshort(segmentAddressDatas[seg].CS1Address.Address, (ushort)CS1Calc);
             else if (segmentAddressDatas[seg].CS1Address.Bytes == 4)
-                SaveUint32(segmentAddressDatas[seg].CS1Address.Address, CS1Calc);
+                SaveUint32(segmentAddressDatas[seg].CS1Address.Address, (uint)CS1Calc);
+            else if (segmentAddressDatas[seg].CS1Address.Bytes == 8)
+                SaveUint64(segmentAddressDatas[seg].CS1Address.Address, CS1Calc);
         }
 
-        public void saveCS2(int seg, uint CS2Calc)
+        public void saveCS2(int seg, UInt64 CS2Calc)
         {
             if (segmentAddressDatas[seg].CS2Address.Bytes == 1)
                 buf[segmentAddressDatas[seg].CS2Address.Address] = (byte)CS2Calc;
             else if (segmentAddressDatas[seg].CS2Address.Bytes == 2)
                 SaveUshort(segmentAddressDatas[seg].CS2Address.Address, (ushort)CS2Calc);
             else if (segmentAddressDatas[seg].CS2Address.Bytes == 4)
-                SaveUint32(segmentAddressDatas[seg].CS2Address.Address, CS2Calc);
+                SaveUint32(segmentAddressDatas[seg].CS2Address.Address, (uint)CS2Calc);
+            else if (segmentAddressDatas[seg].CS2Address.Bytes == 8)
+                SaveUint64(segmentAddressDatas[seg].CS2Address.Address, CS2Calc);
 
         }
 
@@ -631,7 +635,7 @@ namespace UniversalPatcher
                                 else
                                 {
                                     needFix = true;
-                                    saveCS1(seg, (uint)CS1Calc);
+                                    saveCS1(seg, CS1Calc);
                                     Logger(" Checksum 1: " + CS1.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
                                 }
                             }
@@ -661,7 +665,7 @@ namespace UniversalPatcher
                                 else
                                 {
                                     needFix = true;
-                                    saveCS2(seg, (uint)CS2Calc);
+                                    saveCS2(seg, CS2Calc);
                                     Logger(" Checksum 2: " + CS2.ToString("X") + " => " + CS2Calc.ToString("X4") + " [Fixed]");
                                 }
                             }

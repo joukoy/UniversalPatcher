@@ -119,3 +119,8 @@
 - Show cheksum byteswapped for LSB files
 - Added Cut, Copy, Paste rows to XML Editor
 
+0.18.33
+- Fixed Bosch Inv Checksum, 64 bit Chekcsum generated from 2*32bit values in wrong order
+- XML Editor "Paste row" is now adding new row instead of replacing current row
+- Support for non-linear DTC codes
+

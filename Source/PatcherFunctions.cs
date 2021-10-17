@@ -1487,12 +1487,14 @@ public class upatcher
                     {
                         //Checksum address inside of range
                         sum = 0x1FFFE + sum1 ;
-                        sum = (sum << 32) + (0xFFFFFFFF - sum);
+                        //sum = (sum << 32) + (0xFFFFFFFF - sum);
+                        sum = ((0xFFFFFFFF - sum)<<32) + sum;
                         Debug.WriteLine("sum: " + sum.ToString("X"));
                     }
                     else
                     {
-                        sum = (sum2 << 32) + (0xFFFFFFFF - sum2);
+                        //sum = (sum2 << 32) + (0xFFFFFFFF - sum2);
+                        sum = ((0xFFFFFFFF - sum2) << 32) + sum2;
                         Debug.WriteLine("sum: " + sum.ToString("X"));
                     }
                 }
