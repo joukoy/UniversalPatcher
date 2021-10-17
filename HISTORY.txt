@@ -124,3 +124,5 @@
 - XML Editor "Paste row" is now adding new row instead of replacing current row
 - Support for non-linear DTC codes
 
+0.18.34
+- DTC Search debugging

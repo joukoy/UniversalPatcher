@@ -234,11 +234,9 @@ namespace UniversalPatcher
                     dtc.Values = dtcSearchConfigs[configIndex].Values;
                     dtc.CodeAddr = addr.ToString("X8");
                     dtc.codeInt = PCM.readUInt16(addr);
-                    if (dtc.codeInt == 0 && PCM.dtcCodes.Count > 0 && !linear)
-                        continue;
 
                     string codeTmp = dtc.codeInt.ToString("X");
-                    if (dtc.codeInt < 10 && PCM.dtcCodes.Count > 10)
+                    if (dtc.codeInt < 10 && PCM.dtcCodes.Count > 10 && linear)
                             break;
                     if (dCodes)
                     {
@@ -255,7 +253,7 @@ namespace UniversalPatcher
                     PCM.dtcCodes.Add(dtc);
                 }
 
-                PCM.dtcCodes = PCM.dtcCodes.OrderBy(x => x.codeInt).ToList();
+                //PCM.dtcCodes = PCM.dtcCodes.OrderBy(x => x.codeInt).ToList();
                 List<uint> milAddrList = new List<uint>();
 
                 if (dtcSearchConfigs[configIndex].MilTable == "afterstatus")
