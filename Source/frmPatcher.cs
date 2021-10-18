@@ -2825,7 +2825,7 @@ namespace UniversalPatcher
                     basefile.buf[basefile.dtcCodes[codeIndex].statusAddrInt] = basefile.dtcCodes[codeIndex].Status;
                     if (basefile.dtcCombined)
                     {
-                        basefile.dtcCodes[codeIndex].StatusTxt = dtcStatusCombined[basefile.dtcCodes[codeIndex].Status];
+                        basefile.dtcCodes[codeIndex].StatusTxt = basefile.dtcValues[basefile.dtcCodes[codeIndex].Status].ToString();
                         dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = basefile.dtcCodes[codeIndex].StatusTxt;
 
                         if (basefile.dtcCodes[codeIndex].Status > 3)
@@ -2836,7 +2836,7 @@ namespace UniversalPatcher
                     else
                     {
                         basefile.dtcCodes[codeIndex].MilStatus = (byte)frmS.comboMIL.SelectedIndex;
-                        basefile.dtcCodes[codeIndex].StatusTxt = dtcStatus[basefile.dtcCodes[codeIndex].Status];
+                        basefile.dtcCodes[codeIndex].StatusTxt = basefile.dtcValues[basefile.dtcCodes[codeIndex].Status].ToString();
                         basefile.buf[basefile.dtcCodes[codeIndex].milAddrInt] = basefile.dtcCodes[codeIndex].MilStatus;
                         dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = basefile.dtcCodes[codeIndex].StatusTxt;
                     }

@@ -219,6 +219,8 @@ namespace UniversalPatcher
                     if (PCM.configFile == "e38" || PCM.configFile == "e67")
                     {
                         PCM.dtcCombined = true;
+                        string vals = "Enum: 0:MIL and reporting off,1:Type A/no MIL,2:Type B/no MIL,3:Type C/no MIL,4:Not reported/MIL,5:Type A/MIL,6:Type B/MIL,7:Type C/MIL";
+                        PCM.dtcValues = parseDtcValues(vals.ToLower().Replace("enum: ", ""));
                         string retval = SearchDtcE38(PCM);
                         return retval;
                     }
@@ -245,6 +247,9 @@ namespace UniversalPatcher
                             break;
                     }
                     codeTmp = dtc.codeInt.ToString("X4");
+                    if (codeTmp.StartsWith("4") || codeTmp.StartsWith("5") || codeTmp.StartsWith("6") || codeTmp.StartsWith("7") || codeTmp.StartsWith("8")
+                        || codeTmp.StartsWith("9") || codeTmp.StartsWith("A") || codeTmp.StartsWith("B") || codeTmp.StartsWith("F"))
+                        break;
                     dtc.Code = decodeDTC(codeTmp);
                     if (codeTmp.StartsWith("D")) 
                         dCodes = true;
@@ -322,31 +327,32 @@ namespace UniversalPatcher
                 }
 
                 //Read DTC status bytes:
-
-                string[] statusStrings;
+                string values;
                 if (dtcSearchConfigs[configIndex].Values != null && dtcSearchConfigs[configIndex].Values.Length > 0)
                 {
-                    statusStrings = dtcSearchConfigs[configIndex].Values.ToLower().Replace("enum:","").Split(',');
-                    for (int x=0; x<statusStrings.Length;x++)
+                    values = dtcSearchConfigs[configIndex].Values;
+                    /*for (int x=0; x<statusStrings.Length;x++)
                     {
                         int pos = statusStrings[x].IndexOf(":");
                         if (pos > -1)
                             statusStrings[x] = statusStrings[x].Substring(pos+1);
-                    }
+                    }*/
                 }
                 else if (PCM.dtcCombined)
                 {
-                    statusStrings = (string[])dtcStatusCombined.Clone();
+                    values = "Enum: 0:MIL and reporting off,1:Type A/no MIL,2:Type B/no MIL,3:Type C/no MIL,4:Not reported/MIL,5:Type A/MIL,6:Type B/MIL,7:Type C/MIL";
                 }
                 else
                 {
-                    statusStrings = (string[])dtcStatus.Clone();
+                    values = "Enum: 0:1 Trip/immediately,1:2 Trips,2:Store only,3:Disabled"; ;
                 }
+                PCM.dtcValues = parseDtcValues(values.ToLower().Replace("enum: ", ""));
                 int dtcNr = 0;
+                uint addr2 = statusAddr;
                 uint addr3 = milAddr;
                 uint e55addr = statusAddr;
                 uint e55Counter = 0;
-                for (uint addr2 = statusAddr; dtcNr < PCM.dtcCodes.Count; addr2+= (uint)dtcSearchConfigs[configIndex].StatusSteps, addr3+= (uint)dtcSearchConfigs[configIndex].MilSteps)
+                for (; dtcNr < PCM.dtcCodes.Count; addr2+= (uint)dtcSearchConfigs[configIndex].StatusSteps, addr3+= (uint)dtcSearchConfigs[configIndex].MilSteps)
                 {
                     if (PCM.buf[addr2] > 7)
                     {
@@ -365,7 +371,7 @@ namespace UniversalPatcher
                     dtcCode dtc = PCM.dtcCodes[dtcNr];
 
                     byte statusByte;
-                    if (PCM.configFile.StartsWith("e55"))
+                    if (PCM.configFile.StartsWith("e55-wsl"))
                     {
                         dtc.statusAddrInt = e55addr;
                         statusByte = PCM.buf[e55addr];
@@ -383,10 +389,12 @@ namespace UniversalPatcher
                         statusByte = PCM.buf[addr2];
                         dtc.Status = statusByte;
                     }
+                    if (PCM.dtcValues.ContainsKey(dtc.Status))
+                        dtc.StatusTxt = PCM.dtcValues[dtc.Status].ToString();
+                    else
+                        break;
                     if (PCM.dtcCombined)
                     {
-                        if (dtc.Status < statusStrings.Length)
-                            dtc.StatusTxt = statusStrings[dtc.Status];
                         if (statusByte > 4)
                             dtc.MilStatus = 1;
                         else
@@ -394,8 +402,6 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        if (dtc.Status < statusStrings.Length)
-                            dtc.StatusTxt = statusStrings[dtc.Status];
                         //Read MIL bytes:
                         dtc.milAddrInt = addr3;
                         dtc.MilAddr = addr3.ToString("X8");
@@ -404,6 +410,12 @@ namespace UniversalPatcher
                     PCM.dtcCodes.RemoveAt(dtcNr);
                     PCM.dtcCodes.Insert(dtcNr, dtc);
                     dtcNr++;
+                }
+                //Remove codes with invalid status:
+                if (dtcNr<PCM.dtcCodes.Count - 1)
+                {
+                    for (int x = PCM.dtcCodes.Count - 1; x >= dtcNr; x--)
+                        PCM.dtcCodes.RemoveAt(x);
                 }
 
             }
@@ -501,8 +513,7 @@ namespace UniversalPatcher
                         else
                             dtc.MilStatus = 0;
                         dtc.Status = statusByte;
-                        dtc.StatusTxt = dtcStatusCombined[dtc.Status];
-
+                        dtc.StatusTxt = PCM.dtcValues[dtc.Status].ToString();
                         PCM.dtcCodes.RemoveAt(dtcNr);
                         PCM.dtcCodes.Insert(dtcNr, dtc);
                         dtcNr++;

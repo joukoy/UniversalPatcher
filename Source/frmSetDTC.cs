@@ -29,24 +29,26 @@ namespace UniversalPatcher
             codeIndex = code;
             comboDtcStatus.Items.Clear();
 
+            comboDtcStatus.DataSource = PCM.dtcValues;
             if (PCM.dtcCombined)
             {
-                for (int i = 0; i < dtcStatusCombined.Length; i++)
-                    comboDtcStatus.Items.Add(dtcStatusCombined[i]);
+                /*for (int i = 0; i < dtcStatusCombined.Length; i++)
+                    comboDtcStatus.Items.Add(dtcStatusCombined[i]);*/
                 comboMIL.Visible = false;
                 labelMil.Visible = false;
-                comboDtcStatus.Text = dtcStatusCombined[PCM.dtcCodes[code].Status];
+                comboDtcStatus.Text = PCM.dtcValues[PCM.dtcCodes[code].Status].ToString();
                 labelCode.Text = PCM.dtcCodes[code].Code;
                 labelDescription.Text = PCM.dtcCodes[code].Description;
             }
             else
             {
-                for (int i = 0; i < dtcStatus.Length; i++)
-                    comboDtcStatus.Items.Add(dtcStatus[i]);
+                /*for (int i = 0; i < dtcStatus.Length; i++)
+                    comboDtcStatus.Items.Add(dtcStatus[i]);*/
+
                 comboMIL.Items.Add("Disabled");
                 comboMIL.Items.Add("Enabled");
                 comboMIL.SelectedIndex = PCM.dtcCodes[code].MilStatus;
-                comboDtcStatus.Text = dtcStatus[PCM.dtcCodes[code].Status];
+                comboDtcStatus.Text = PCM.dtcValues[PCM.dtcCodes[code].Status].ToString();
                 labelCode.Text = PCM.dtcCodes[code].Code;
                 labelDescription.Text = PCM.dtcCodes[code].Description;
             }

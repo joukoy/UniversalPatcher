@@ -322,8 +322,9 @@ public class upatcher
     public static FrmPatcher frmpatcher;
     private static  frmSplashScreen frmSplash = new frmSplashScreen();
 
-    public static string[] dtcStatusCombined = { "MIL and reporting off", "Type A/no MIL", "Type B/no MIL", "Type C/no MIL", "Not reported/MIL", "Type A/MIL", "Type B/MIL", "Type C/MIL" };
-    public static string[] dtcStatus = { "1 Trip/immediately", "2 Trips", "Store only", "Disabled" };
+    //public static string[] dtcStatusCombined = { "MIL and reporting off", "Type A/no MIL", "Type B/no MIL", "Type C/no MIL", "Not reported/MIL", "Type A/MIL", "Type B/MIL", "Type C/MIL" };
+    //public static string[] dtcStatus = { "1 Trip/immediately", "2 Trips", "Store only", "Disabled" };
+
 
     public static string selectedCompareBin;
     
@@ -918,6 +919,23 @@ public class upatcher
             int val = 0;
             int.TryParse(parts[0], out val);
             string txt = posVals[r];
+            if (!retVal.ContainsKey(val))
+                retVal.Add(val, txt);
+        }
+        retVal.Add(int.MaxValue, "------------");
+        return retVal;
+    }
+
+    public static Dictionary<int, string> parseDtcValues(string eVals)
+    {
+        Dictionary<int, string> retVal = new Dictionary<int, string>();
+        string[] posVals = eVals.Split(',');
+        for (int r = 0; r < posVals.Length; r++)
+        {
+            string[] parts = posVals[r].Split(':');
+            int val = 0;
+            int.TryParse(parts[0], out val);
+            string txt = parts[1];
             if (!retVal.ContainsKey(val))
                 retVal.Add(val, txt);
         }

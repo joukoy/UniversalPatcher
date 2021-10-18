@@ -126,3 +126,6 @@
 
 0.18.34
 - DTC Search debugging
+
+0.18.36
+- DTC status-string display fixed
