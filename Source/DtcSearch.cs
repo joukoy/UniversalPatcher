@@ -322,8 +322,30 @@ namespace UniversalPatcher
                 }
 
                 //Read DTC status bytes:
+
+                string[] statusStrings;
+                if (dtcSearchConfigs[configIndex].Values != null && dtcSearchConfigs[configIndex].Values.Length > 0)
+                {
+                    statusStrings = dtcSearchConfigs[configIndex].Values.ToLower().Replace("enum:","").Split(',');
+                    for (int x=0; x<statusStrings.Length;x++)
+                    {
+                        int pos = statusStrings[x].IndexOf(":");
+                        if (pos > -1)
+                            statusStrings[x] = statusStrings[x].Substring(pos+1);
+                    }
+                }
+                else if (PCM.dtcCombined)
+                {
+                    statusStrings = (string[])dtcStatusCombined.Clone();
+                }
+                else
+                {
+                    statusStrings = (string[])dtcStatus.Clone();
+                }
                 int dtcNr = 0;
                 uint addr3 = milAddr;
+                uint e55addr = statusAddr;
+                uint e55Counter = 0;
                 for (uint addr2 = statusAddr; dtcNr < PCM.dtcCodes.Count; addr2+= (uint)dtcSearchConfigs[configIndex].StatusSteps, addr3+= (uint)dtcSearchConfigs[configIndex].MilSteps)
                 {
                     if (PCM.buf[addr2] > 7)
@@ -341,14 +363,30 @@ namespace UniversalPatcher
                             continue;
                     }
                     dtcCode dtc = PCM.dtcCodes[dtcNr];
-                    dtc.statusAddrInt = addr2;
-                    //dtc.StatusAddr = addr2.ToString("X8");
-                    byte statusByte = PCM.buf[addr2];
-                    dtc.Status = statusByte;
 
+                    byte statusByte;
+                    if (PCM.configFile.StartsWith("e55"))
+                    {
+                        dtc.statusAddrInt = e55addr;
+                        statusByte = PCM.buf[e55addr];
+                        dtc.Status = statusByte;
+                        e55Counter++;
+                        if (e55Counter >= 4)
+                        {
+                            e55Counter = 0;
+                            e55addr++;
+                        }
+                    }
+                    else
+                    {
+                        dtc.statusAddrInt = addr2;
+                        statusByte = PCM.buf[addr2];
+                        dtc.Status = statusByte;
+                    }
                     if (PCM.dtcCombined)
                     {
-                        dtc.StatusTxt = dtcStatusCombined[dtc.Status];
+                        if (dtc.Status < statusStrings.Length)
+                            dtc.StatusTxt = statusStrings[dtc.Status];
                         if (statusByte > 4)
                             dtc.MilStatus = 1;
                         else
@@ -356,7 +394,8 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        dtc.StatusTxt = dtcStatus[dtc.Status];
+                        if (dtc.Status < statusStrings.Length)
+                            dtc.StatusTxt = statusStrings[dtc.Status];
                         //Read MIL bytes:
                         dtc.milAddrInt = addr3;
                         dtc.MilAddr = addr3.ToString("X8");
