@@ -165,6 +165,27 @@ namespace UniversalPatcher
             }
         }
 
+
+        public string getExtraData(int ind)
+        {
+            string retVal = "";
+            if (PCM.segmentAddressDatas[seg].ExtraInfo != null && PCM.segmentAddressDatas[seg].ExtraInfo.Count > 0)
+            {
+                retVal = PCM.ReadInfo(PCM.segmentAddressDatas[seg].ExtraInfo[ind]);
+            }
+            return retVal;
+        }
+
+        public void setExtraData(int ind, string Data)
+        {
+            uint addr = PCM.segmentAddressDatas[seg].ExtraInfo[ind].Address;
+            for (int i=0; i< Data.Length; i++)
+            {
+                byte b = (byte)Data[i];
+                PCM.buf[addr + i] = b;
+            }
+        }
+
         public uint getSize()
         {
             try

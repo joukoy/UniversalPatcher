@@ -999,16 +999,16 @@ namespace UniversalPatcher
             }
             string Result = "";
 
-            if (AD.Type == TypeHex)
+            if (AD.Type == AddressDataType.Hex)
             {
                 for (int a = 0; a < AD.Bytes; a++)
                     Result += buf[AD.Address + a].ToString("X2");
             }
-            else if (AD.Type == TypeText)
+            else if (AD.Type == AddressDataType.Text)
             {
                 Result = ReadTextBlock(buf, (int)AD.Address, AD.Bytes,false);
             }
-            else if (AD.Type == TypeFilename)
+            else if (AD.Type == AddressDataType.Filename)
             {
                 Result = AD.Address.ToString();
             }
@@ -1287,7 +1287,7 @@ namespace UniversalPatcher
                 throw new Exception("OS id missing");
             GMOS = readUInt32(segmentAddressDatas[SegNr].PNaddr.Address);
             segmentAddressDatas[SegNr].PNaddr.Bytes = 4;
-            segmentAddressDatas[SegNr].PNaddr.Type = TypeInt;
+            segmentAddressDatas[SegNr].PNaddr.Type = AddressDataType.Int;
             Block B = new Block();
             B.Start = segmentAddressDatas[SegNr].PNaddr.Address;
             B.End = segmentAddressDatas[SegNr].PNaddr.Address + 3;
@@ -1304,7 +1304,7 @@ namespace UniversalPatcher
             {
                 Debug.WriteLine("Find V6 checksum address: " + AD.Address.ToString("X"));
                 AD.Bytes = 4;
-                AD.Type = TypeHex;
+                AD.Type = AddressDataType.Hex;
                 return AD;
             }
 
@@ -1329,7 +1329,7 @@ namespace UniversalPatcher
                             Debug.WriteLine("Address: " + AD.Address.ToString("X") + ", Bytes: 4, Type: HEX");
                             sr.Close();
                             AD.Bytes = 4;
-                            AD.Type = TypeHex;
+                            AD.Type = AddressDataType.Hex;
                             return AD;
                         }
                     }
@@ -1407,7 +1407,7 @@ namespace UniversalPatcher
             AddressData AD = new AddressData();
             AD.Address = uint.MaxValue;
             AD.Bytes = 2;
-            AD.Type = TypeInt;
+            AD.Type = AddressDataType.Int;
             try
             {
                 Debug.WriteLine("Addressline: " + Line);
@@ -1436,9 +1436,9 @@ namespace UniversalPatcher
                     if (lParts.Length > 3)
                     {
                         if (lParts[3].ToLower() == "hex")
-                            AD.Type = TypeHex;
+                            AD.Type = AddressDataType.Hex;
                         else if (lParts[3].ToLower() == "text")
-                            AD.Type = TypeText;
+                            AD.Type = AddressDataType.Text;
                     }
 
                     return AD;
@@ -1479,7 +1479,7 @@ namespace UniversalPatcher
                                 AD.Address = uint.Parse(value);
                                 Debug.WriteLine("PN from filename: {0}", AD.Address);
                                 AD.Bytes = digits;
-                                AD.Type = TypeFilename;
+                                AD.Type = AddressDataType.Filename;
                                 return AD;
                             }
                         }
@@ -1546,9 +1546,9 @@ namespace UniversalPatcher
                 if (Lineparts.Length > 2)
                 {
                     if (Lineparts[2].ToLower() == "hex")
-                        AD.Type = TypeHex;
+                        AD.Type = AddressDataType.Hex;
                     else if (Lineparts[2].ToLower() == "text")
-                        AD.Type = TypeText;
+                        AD.Type = AddressDataType.Text;
                 }
                 Debug.WriteLine("Name: " + AD.Name + ", Address: " + AD.Address.ToString("X") + ", Bytes: " + AD.Bytes.ToString() + ", Type: " + AD.Type.ToString());
             }
@@ -1812,13 +1812,13 @@ namespace UniversalPatcher
 
                     if (AddrParts.Length > 2)
                         UInt16.TryParse(AddrParts[2], out E.Bytes);
-                    E.Type = TypeInt;
+                    E.Type = AddressDataType.Int;
                     if (AddrParts.Length > 3)
                     {
                         if (AddrParts[3].ToLower() == "hex")
-                            E.Type = TypeHex;
+                            E.Type = AddressDataType.Hex;
                         else if (AddrParts[3].ToLower() == "text")
-                            E.Type = TypeText;
+                            E.Type = AddressDataType.Text;
                     }
                     LEX.Add(E);
                 }

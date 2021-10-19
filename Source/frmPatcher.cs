@@ -148,6 +148,19 @@ namespace UniversalPatcher
 
             dataFileInfo.DataError += DataGridView_DataError;
             dataBadChkFile.DataError += DataGridView_DataError;
+
+            tabEditExtra.Enter += TabEditExtra_Enter;
+        }
+
+        private void TabEditExtra_Enter(object sender, EventArgs e)
+        {
+            refreshExtraInfoTab();
+        }
+
+        private void refreshExtraInfoTab()
+        {
+            comboExtrainfoSegment.DataSource = basefile.Segments;
+            comboExtrainfoSegment.DisplayMember = "Name";            
         }
 
         private void DataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -295,6 +308,8 @@ namespace UniversalPatcher
                         tabFunction.TabPages.Add(tabExtractSegments);
                     if (!tabFunction.TabPages.Contains(tabChecksumUtil))
                         tabFunction.TabPages.Add(tabChecksumUtil);
+                    if (!tabFunction.TabPages.Contains(tabEditExtra))
+                        tabFunction.TabPages.Add(tabEditExtra);
 
                     string[] args = Environment.GetCommandLineArgs();
                     if (args.Length > 3 && args[3].Contains("fakecvn"))
@@ -352,6 +367,7 @@ namespace UniversalPatcher
                     tabFunction.TabPages.Remove(tabChecksumUtil);
 
                     tabFunction.TabPages.Remove(tabFakeCvn);
+                    tabFunction.TabPages.Remove(tabEditExtra);
 
 
                     tabControl1.TabPages.Remove(tabDebug);
@@ -4201,6 +4217,38 @@ namespace UniversalPatcher
                 return;
             basefile.loadPlatformConfig(fName);
 
+        }
+
+        private void comboExtrainfoSegment_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            comboExtraInfoExtra.Items.Clear();
+            int seg = comboExtrainfoSegment.SelectedIndex;
+            for (int i = 0; i < basefile.segmentAddressDatas[seg].ExtraInfo.Count; i++)
+                comboExtraInfoExtra.Items.Add(basefile.segmentAddressDatas[seg].ExtraInfo[i].Name);            
+        }
+
+        private void comboExtraInfoExtra_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int seg = comboExtrainfoSegment.SelectedIndex;
+            int ind = comboExtraInfoExtra.SelectedIndex;
+            txtExtrainfoData.Text = basefile.segmentinfos[seg].getExtraData(ind);
+        }
+
+        private void btnExtrainfoApply_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int seg = comboExtrainfoSegment.SelectedIndex;
+                int ind = comboExtraInfoExtra.SelectedIndex;
+                Logger("Replacing: " + basefile.segmentinfos[seg].getExtraData(ind));
+                Logger("New data:" + txtExtrainfoData.Text);
+                basefile.segmentinfos[seg].setExtraData(ind, txtExtrainfoData.Text);
+                Logger("OK, you can save BIN-file now");
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
     }
 }

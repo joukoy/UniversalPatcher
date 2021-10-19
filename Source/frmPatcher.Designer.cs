@@ -206,6 +206,7 @@
             this.radioCSUtilComplement1 = new System.Windows.Forms.RadioButton();
             this.radioCSUtilComplement0 = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioCsUtilBosch = new System.Windows.Forms.RadioButton();
             this.radioCSUtilDwordSum = new System.Windows.Forms.RadioButton();
             this.radioCSUtilWordSum = new System.Windows.Forms.RadioButton();
             this.radioCSUtilSUM = new System.Windows.Forms.RadioButton();
@@ -232,6 +233,14 @@
             this.txtTargetCVN = new System.Windows.Forms.TextBox();
             this.btnFakeCVN = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
+            this.tabEditExtra = new System.Windows.Forms.TabPage();
+            this.btnExtrainfoApply = new System.Windows.Forms.Button();
+            this.txtExtrainfoData = new System.Windows.Forms.TextBox();
+            this.label23 = new System.Windows.Forms.Label();
+            this.comboExtraInfoExtra = new System.Windows.Forms.ComboBox();
+            this.label22 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.comboExtrainfoSegment = new System.Windows.Forms.ComboBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -263,7 +272,6 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
-            this.radioCsUtilBosch = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -309,6 +317,7 @@
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numFakeCvnBytesFromEnd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numFakeCvnBytes)).BeginInit();
+            this.tabEditExtra.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitPatcher)).BeginInit();
             this.splitPatcher.Panel1.SuspendLayout();
@@ -1564,6 +1573,7 @@
             this.tabFunction.Controls.Add(this.tabExtractSegments);
             this.tabFunction.Controls.Add(this.tabChecksumUtil);
             this.tabFunction.Controls.Add(this.tabFakeCvn);
+            this.tabFunction.Controls.Add(this.tabEditExtra);
             this.tabFunction.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabFunction.Location = new System.Drawing.Point(0, 0);
             this.tabFunction.Name = "tabFunction";
@@ -2331,6 +2341,17 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Checksum method";
             // 
+            // radioCsUtilBosch
+            // 
+            this.radioCsUtilBosch.AutoSize = true;
+            this.radioCsUtilBosch.Location = new System.Drawing.Point(6, 53);
+            this.radioCsUtilBosch.Name = "radioCsUtilBosch";
+            this.radioCsUtilBosch.Size = new System.Drawing.Size(72, 17);
+            this.radioCsUtilBosch.TabIndex = 126;
+            this.radioCsUtilBosch.TabStop = true;
+            this.radioCsUtilBosch.Text = "Bosch inv";
+            this.radioCsUtilBosch.UseVisualStyleBackColor = true;
+            // 
             // radioCSUtilDwordSum
             // 
             this.radioCSUtilDwordSum.AutoSize = true;
@@ -2631,6 +2652,84 @@
             this.label3.TabIndex = 2;
             this.label3.Text = "Target CVN:";
             // 
+            // tabEditExtra
+            // 
+            this.tabEditExtra.Controls.Add(this.btnExtrainfoApply);
+            this.tabEditExtra.Controls.Add(this.txtExtrainfoData);
+            this.tabEditExtra.Controls.Add(this.label23);
+            this.tabEditExtra.Controls.Add(this.comboExtraInfoExtra);
+            this.tabEditExtra.Controls.Add(this.label22);
+            this.tabEditExtra.Controls.Add(this.label2);
+            this.tabEditExtra.Controls.Add(this.comboExtrainfoSegment);
+            this.tabEditExtra.Location = new System.Drawing.Point(4, 22);
+            this.tabEditExtra.Name = "tabEditExtra";
+            this.tabEditExtra.Size = new System.Drawing.Size(836, 118);
+            this.tabEditExtra.TabIndex = 7;
+            this.tabEditExtra.Text = "Edit Extrainfo";
+            this.tabEditExtra.UseVisualStyleBackColor = true;
+            // 
+            // btnExtrainfoApply
+            // 
+            this.btnExtrainfoApply.Location = new System.Drawing.Point(300, 57);
+            this.btnExtrainfoApply.Name = "btnExtrainfoApply";
+            this.btnExtrainfoApply.Size = new System.Drawing.Size(75, 23);
+            this.btnExtrainfoApply.TabIndex = 6;
+            this.btnExtrainfoApply.Text = "Apply";
+            this.btnExtrainfoApply.UseVisualStyleBackColor = true;
+            this.btnExtrainfoApply.Click += new System.EventHandler(this.btnExtrainfoApply_Click);
+            // 
+            // txtExtrainfoData
+            // 
+            this.txtExtrainfoData.Location = new System.Drawing.Point(65, 59);
+            this.txtExtrainfoData.Name = "txtExtrainfoData";
+            this.txtExtrainfoData.Size = new System.Drawing.Size(229, 20);
+            this.txtExtrainfoData.TabIndex = 5;
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(13, 62);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(33, 13);
+            this.label23.TabIndex = 4;
+            this.label23.Text = "Data:";
+            // 
+            // comboExtraInfoExtra
+            // 
+            this.comboExtraInfoExtra.FormattingEnabled = true;
+            this.comboExtraInfoExtra.Location = new System.Drawing.Point(65, 32);
+            this.comboExtraInfoExtra.Name = "comboExtraInfoExtra";
+            this.comboExtraInfoExtra.Size = new System.Drawing.Size(121, 21);
+            this.comboExtraInfoExtra.TabIndex = 3;
+            this.comboExtraInfoExtra.SelectedIndexChanged += new System.EventHandler(this.comboExtraInfoExtra_SelectedIndexChanged);
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(12, 34);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(34, 13);
+            this.label22.TabIndex = 2;
+            this.label22.Text = "Extra:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(8, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(52, 13);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Segment:";
+            // 
+            // comboExtrainfoSegment
+            // 
+            this.comboExtrainfoSegment.FormattingEnabled = true;
+            this.comboExtrainfoSegment.Location = new System.Drawing.Point(66, 6);
+            this.comboExtrainfoSegment.Name = "comboExtrainfoSegment";
+            this.comboExtrainfoSegment.Size = new System.Drawing.Size(121, 21);
+            this.comboExtrainfoSegment.TabIndex = 0;
+            this.comboExtrainfoSegment.SelectedIndexChanged += new System.EventHandler(this.comboExtrainfoSegment_SelectedIndexChanged);
+            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -2893,17 +2992,6 @@
             this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
             // 
-            // radioCsUtilBosch
-            // 
-            this.radioCsUtilBosch.AutoSize = true;
-            this.radioCsUtilBosch.Location = new System.Drawing.Point(6, 53);
-            this.radioCsUtilBosch.Name = "radioCsUtilBosch";
-            this.radioCsUtilBosch.Size = new System.Drawing.Size(72, 17);
-            this.radioCsUtilBosch.TabIndex = 126;
-            this.radioCsUtilBosch.TabStop = true;
-            this.radioCsUtilBosch.Text = "Bosch inv";
-            this.radioCsUtilBosch.UseVisualStyleBackColor = true;
-            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2988,6 +3076,8 @@
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numFakeCvnBytesFromEnd)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numFakeCvnBytes)).EndInit();
+            this.tabEditExtra.ResumeLayout(false);
+            this.tabEditExtra.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitPatcher.Panel1.ResumeLayout(false);
@@ -3235,5 +3325,13 @@
         private System.Windows.Forms.CheckBox chkCsMSB;
         private System.Windows.Forms.ToolStripMenuItem loadPlatformConfigToolStripMenuItem1;
         private System.Windows.Forms.RadioButton radioCsUtilBosch;
+        private System.Windows.Forms.TabPage tabEditExtra;
+        private System.Windows.Forms.Button btnExtrainfoApply;
+        private System.Windows.Forms.TextBox txtExtrainfoData;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.ComboBox comboExtraInfoExtra;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox comboExtrainfoSegment;
     }
 }

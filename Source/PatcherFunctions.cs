@@ -239,7 +239,7 @@ public class upatcher
         public string Name;
         public uint Address;
         public ushort Bytes;
-        public ushort Type;
+        public AddressDataType Type;
     }
 
     public struct referenceCvn
@@ -320,21 +320,24 @@ public class upatcher
     public static SavingMath savingMath = new SavingMath();
 
     public static FrmPatcher frmpatcher;
-    private static  frmSplashScreen frmSplash = new frmSplashScreen();
+    private static frmSplashScreen frmSplash = new frmSplashScreen();
 
     //public static string[] dtcStatusCombined = { "MIL and reporting off", "Type A/no MIL", "Type B/no MIL", "Type C/no MIL", "Not reported/MIL", "Type A/MIL", "Type B/MIL", "Type C/MIL" };
     //public static string[] dtcStatus = { "1 Trip/immediately", "2 Trips", "Store only", "Disabled" };
 
 
     public static string selectedCompareBin;
-    
-    public const ushort TypeFloat = 1;
-    public const ushort TypeInt = 2;
-    public const ushort TypeHex = 3;
-    public const ushort TypeText = 4;
-    public const ushort TypeFlag = 5;
-    public const ushort TypeFilename = 10;
-    
+
+    public enum AddressDataType
+    {
+        Float = 1,
+        Int = 2,
+        Hex = 3,
+        Text = 4,
+        Flag = 5,
+        Filename = 10
+    }
+
     public enum OutDataType
     {
         Float = 1,

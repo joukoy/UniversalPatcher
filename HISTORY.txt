@@ -129,3 +129,7 @@
 
 0.18.36
 - DTC status-string display fixed
+
+0.18.37
+- Added Edit Extrainfo -tab for editing EEPROM-data
+
