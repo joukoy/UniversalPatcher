@@ -88,7 +88,7 @@ namespace UniversalPatcher
         public List<FoundTable> foundTables;
         public List<FoundSegment> foundSegments;
         public List<dtcCode> dtcCodes;
-        public Dictionary<int, string> dtcValues;
+        public Dictionary<byte, string> dtcValues;
         public List<string> tableCategories;
         public List<TableData> tableDatas;
         public bool dtcCombined = false;

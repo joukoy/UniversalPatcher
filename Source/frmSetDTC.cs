@@ -29,7 +29,9 @@ namespace UniversalPatcher
             codeIndex = code;
             comboDtcStatus.Items.Clear();
 
-            comboDtcStatus.DataSource = PCM.dtcValues;
+            comboDtcStatus.DataSource = PCM.dtcValues.ToList();
+            comboDtcStatus.DisplayMember = "Value";
+            comboDtcStatus.ValueMember = "Key";
             if (PCM.dtcCombined)
             {
                 /*for (int i = 0; i < dtcStatusCombined.Length; i++)

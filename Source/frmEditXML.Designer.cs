@@ -225,6 +225,7 @@ namespace UniversalPatcher
             // 
             // labelHelp
             // 
+            this.labelHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelHelp.AutoSize = true;
             this.labelHelp.Location = new System.Drawing.Point(7, 432);
             this.labelHelp.Name = "labelHelp";

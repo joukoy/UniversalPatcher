@@ -118,7 +118,7 @@ namespace UniversalPatcher
                     }
                     else if (vt == TableValueType.selection)
                     {
-                        Dictionary<double, string> possibleVals = parseEnumHeaders(peekPCM.tableDatas[ind].Values.Replace("Enum: ", ""));
+                        Dictionary<double, string> possibleVals = parseEnumHeaders(peekPCM.tableDatas[ind].Values);
                         if (possibleVals.ContainsKey(curVal))
                             unitTxt = " (" + possibleVals[curVal] + ")";
                         else

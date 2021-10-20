@@ -2836,8 +2836,10 @@ namespace UniversalPatcher
                 frmS.startMe(codeIndex, basefile);
                 if (frmS.ShowDialog() == DialogResult.OK)
                 {
-                    basefile.dtcCodes[codeIndex].Status = (byte)frmS.comboDtcStatus.SelectedIndex;
 
+                    byte dtcVal = ((KeyValuePair<byte, string>)frmS.comboDtcStatus.SelectedItem).Key;
+                    basefile.dtcCodes[codeIndex].Status = dtcVal;
+                    
                     basefile.buf[basefile.dtcCodes[codeIndex].statusAddrInt] = basefile.dtcCodes[codeIndex].Status;
                     if (basefile.dtcCombined)
                     {
@@ -4244,6 +4246,25 @@ namespace UniversalPatcher
                 Logger("New data:" + txtExtrainfoData.Text);
                 basefile.segmentinfos[seg].setExtraData(ind, txtExtrainfoData.Text);
                 Logger("OK, you can save BIN-file now");
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+        }
+
+        private void btnCsutilSearchBosch_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                for (uint a=0; a<(basefile.fsize-7);a++)
+                {
+                    uint dWord1 = basefile.readUInt32(a);
+                    uint dWord2 = basefile.readUInt32(a+4);
+                    if (dWord1 == ~dWord2)
+                        Logger("Address: " + a.ToString("X8") + ": " + dWord1.ToString("X8") + " " + dWord2.ToString("X8"));
+                }
+                Logger("Done.");
             }
             catch (Exception ex)
             {

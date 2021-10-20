@@ -897,6 +897,8 @@ public class upatcher
 
     public static  Dictionary<double, string> parseEnumHeaders(string eVals)
     {
+        if (eVals.ToLower().StartsWith("enum:"))
+            eVals = eVals.Substring(5).Trim();
         Dictionary<double, string> retVal = new Dictionary<double, string>();
         string[] posVals = eVals.Split(',');
         for (int r = 0; r < posVals.Length; r++)
@@ -914,6 +916,8 @@ public class upatcher
 
     public static Dictionary<int, string> parseIntEnumHeaders(string eVals)
     {
+        if (eVals.ToLower().StartsWith("enum:"))
+            eVals = eVals.Substring(5).Trim();
         Dictionary<int, string> retVal = new Dictionary<int, string>();
         string[] posVals = eVals.Split(',');
         for (int r = 0; r < posVals.Length; r++)
@@ -929,20 +933,22 @@ public class upatcher
         return retVal;
     }
 
-    public static Dictionary<int, string> parseDtcValues(string eVals)
+    public static Dictionary<byte, string> parseDtcValues(string eVals)
     {
-        Dictionary<int, string> retVal = new Dictionary<int, string>();
+        if (eVals.ToLower().StartsWith("enum:"))
+            eVals = eVals.Substring(5).Trim();
+        Dictionary<byte, string> retVal = new Dictionary<byte, string>();
         string[] posVals = eVals.Split(',');
         for (int r = 0; r < posVals.Length; r++)
         {
             string[] parts = posVals[r].Split(':');
-            int val = 0;
-            int.TryParse(parts[0], out val);
+            byte val = 0;
+            byte.TryParse(parts[0], out val);
             string txt = parts[1];
             if (!retVal.ContainsKey(val))
                 retVal.Add(val, txt);
         }
-        retVal.Add(int.MaxValue, "------------");
+        retVal.Add(byte.MaxValue, "------------");
         return retVal;
     }
 

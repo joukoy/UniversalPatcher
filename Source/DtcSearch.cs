@@ -24,6 +24,7 @@ namespace UniversalPatcher
             MilSteps = 1;
             ConditionalOffset = "";
             Linear = true;
+            CodesPerStatus = 1;
         }
         public string XMLFile { get; set; }
         public string CodeSearch { get; set; }
@@ -39,6 +40,8 @@ namespace UniversalPatcher
         public string ConditionalOffset { get; set; }
         public string Values { get; set; }
         public bool Linear { get; set; }
+        public int CodesPerStatus { get; set; }
+
         public DtcSearchConfig ShallowCopy()
         {
             return (DtcSearchConfig)this.MemberwiseClone();
@@ -110,6 +113,7 @@ namespace UniversalPatcher
             }
             return retVal;
         }
+
         public string searchDtc(PcmFile PCM)
         {
             try
@@ -130,17 +134,14 @@ namespace UniversalPatcher
                 uint statusAddr = uint.MaxValue;
                 uint milAddr = uint.MaxValue;
                 bool linear = true;
+                int codePerStatus = 1;
 
                 for (configIndex = 0; configIndex < dtcSearchConfigs.Count; configIndex++)
                 {
                     string cnfFile = PCM.configFile;
                     linear = dtcSearchConfigs[configIndex].Linear;
-/*                    if (PCM.configFile.Contains("."))
-                    {
-                        int pos = PCM.configFile.IndexOf(".");
-                        cnfFile = cnfFile.Substring(0, pos);
-                    }
-*/
+                    if (dtcSearchConfigs[configIndex].CodesPerStatus > 0)
+                        codePerStatus = dtcSearchConfigs[configIndex].CodesPerStatus;
 
                     if (cnfFile == dtcSearchConfigs[configIndex].XMLFile.ToLower())
                     {
@@ -240,7 +241,7 @@ namespace UniversalPatcher
                     string codeTmp = dtc.codeInt.ToString("X");
                     if (dtc.codeInt < 10 && PCM.dtcCodes.Count > 10 && linear)
                             break;
-                    if (dCodes)
+                    if (dCodes && linear)
                     {
                         //There should be only D or E (U) codes after first D code
                         if (!codeTmp.StartsWith("D") && !codeTmp.StartsWith("E"))
@@ -249,7 +250,10 @@ namespace UniversalPatcher
                     codeTmp = dtc.codeInt.ToString("X4");
                     if (codeTmp.StartsWith("4") || codeTmp.StartsWith("5") || codeTmp.StartsWith("6") || codeTmp.StartsWith("7") || codeTmp.StartsWith("8")
                         || codeTmp.StartsWith("9") || codeTmp.StartsWith("A") || codeTmp.StartsWith("B") || codeTmp.StartsWith("F"))
+                    {
+                        Debug.WriteLine("DTC Code out of range: " + codeTmp);
                         break;
+                    }
                     dtc.Code = decodeDTC(codeTmp);
                     if (codeTmp.StartsWith("D")) 
                         dCodes = true;
@@ -331,12 +335,6 @@ namespace UniversalPatcher
                 if (dtcSearchConfigs[configIndex].Values != null && dtcSearchConfigs[configIndex].Values.Length > 0)
                 {
                     values = dtcSearchConfigs[configIndex].Values;
-                    /*for (int x=0; x<statusStrings.Length;x++)
-                    {
-                        int pos = statusStrings[x].IndexOf(":");
-                        if (pos > -1)
-                            statusStrings[x] = statusStrings[x].Substring(pos+1);
-                    }*/
                 }
                 else if (PCM.dtcCombined)
                 {
@@ -346,12 +344,12 @@ namespace UniversalPatcher
                 {
                     values = "Enum: 0:1 Trip/immediately,1:2 Trips,2:Store only,3:Disabled"; ;
                 }
-                PCM.dtcValues = parseDtcValues(values.ToLower().Replace("enum: ", ""));
+                PCM.dtcValues = parseDtcValues(values);
                 int dtcNr = 0;
                 uint addr2 = statusAddr;
                 uint addr3 = milAddr;
-                uint e55addr = statusAddr;
-                uint e55Counter = 0;
+                uint codePerStatusaddr = statusAddr;
+                uint codePerStatusCounter = 0;
                 for (; dtcNr < PCM.dtcCodes.Count; addr2+= (uint)dtcSearchConfigs[configIndex].StatusSteps, addr3+= (uint)dtcSearchConfigs[configIndex].MilSteps)
                 {
                     if (PCM.buf[addr2] > 7)
@@ -371,28 +369,24 @@ namespace UniversalPatcher
                     dtcCode dtc = PCM.dtcCodes[dtcNr];
 
                     byte statusByte;
-                    if (PCM.configFile.StartsWith("e55-wsl"))
+                    dtc.statusAddrInt = codePerStatusaddr;
+                    statusByte = PCM.buf[codePerStatusaddr];
+                    dtc.Status = statusByte;
+                    codePerStatusCounter++;
+                    if (codePerStatusCounter >= codePerStatus)
                     {
-                        dtc.statusAddrInt = e55addr;
-                        statusByte = PCM.buf[e55addr];
-                        dtc.Status = statusByte;
-                        e55Counter++;
-                        if (e55Counter >= 4)
-                        {
-                            e55Counter = 0;
-                            e55addr++;
-                        }
-                    }
-                    else
-                    {
-                        dtc.statusAddrInt = addr2;
-                        statusByte = PCM.buf[addr2];
-                        dtc.Status = statusByte;
+                        codePerStatusCounter = 0;
+                        codePerStatusaddr++;
                     }
                     if (PCM.dtcValues.ContainsKey(dtc.Status))
+                    {
                         dtc.StatusTxt = PCM.dtcValues[dtc.Status].ToString();
+                    }
                     else
+                    {
+                        Debug.WriteLine("DTC Status out of range: " + dtc.Status);
                         break;
+                    }
                     if (PCM.dtcCombined)
                     {
                         if (statusByte > 4)

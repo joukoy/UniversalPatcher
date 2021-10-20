@@ -1189,12 +1189,12 @@ namespace UniversalPatcher
                     DataGridViewComboBoxCell dgc = new DataGridViewComboBoxCell();
                     if (ft.OutputType == OutDataType.Float)
                     {
-                        Dictionary<double, string> possibleVals = parseEnumHeaders(ft.Values.Replace("Enum: ", ""));
+                        Dictionary<double, string> possibleVals = parseEnumHeaders(ft.Values);
                         dgc.DataSource = new BindingSource(possibleVals, null);
                     }
                     else
                     {
-                        Dictionary<int, string> possibleVals = parseIntEnumHeaders(ft.Values.Replace("Enum: ", ""));
+                        Dictionary<int, string> possibleVals = parseIntEnumHeaders(ft.Values);
                         dgc.DataSource = new BindingSource(possibleVals, null);
                     }
                     dgc.ValueMember = "key";

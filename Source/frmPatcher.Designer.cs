@@ -272,6 +272,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
+            this.btnCsutilSearchBosch = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -2114,6 +2115,7 @@
             // 
             // tabChecksumUtil
             // 
+            this.tabChecksumUtil.Controls.Add(this.btnCsutilSearchBosch);
             this.tabChecksumUtil.Controls.Add(this.chkCsMSB);
             this.tabChecksumUtil.Controls.Add(this.richChkData);
             this.tabChecksumUtil.Controls.Add(this.chkCsUtilSwapBytes);
@@ -2173,7 +2175,7 @@
             // 
             // btnCsUtilFix
             // 
-            this.btnCsUtilFix.Location = new System.Drawing.Point(512, 71);
+            this.btnCsUtilFix.Location = new System.Drawing.Point(513, 60);
             this.btnCsUtilFix.Name = "btnCsUtilFix";
             this.btnCsUtilFix.Size = new System.Drawing.Size(109, 23);
             this.btnCsUtilFix.TabIndex = 153;
@@ -2265,7 +2267,7 @@
             // 
             // btnTestChecksum
             // 
-            this.btnTestChecksum.Location = new System.Drawing.Point(512, 39);
+            this.btnTestChecksum.Location = new System.Drawing.Point(513, 32);
             this.btnTestChecksum.Name = "btnTestChecksum";
             this.btnTestChecksum.Size = new System.Drawing.Size(109, 23);
             this.btnTestChecksum.TabIndex = 144;
@@ -2992,6 +2994,16 @@
             this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
             // 
+            // btnCsutilSearchBosch
+            // 
+            this.btnCsutilSearchBosch.Location = new System.Drawing.Point(513, 86);
+            this.btnCsutilSearchBosch.Name = "btnCsutilSearchBosch";
+            this.btnCsutilSearchBosch.Size = new System.Drawing.Size(109, 23);
+            this.btnCsutilSearchBosch.TabIndex = 156;
+            this.btnCsutilSearchBosch.Text = "Search Bosch inv";
+            this.btnCsutilSearchBosch.UseVisualStyleBackColor = true;
+            this.btnCsutilSearchBosch.Click += new System.EventHandler(this.btnCsutilSearchBosch_Click);
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3333,5 +3345,6 @@
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox comboExtrainfoSegment;
+        private System.Windows.Forms.Button btnCsutilSearchBosch;
     }
 }

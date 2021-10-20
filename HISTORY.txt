@@ -133,3 +133,8 @@
 0.18.37
 - Added Edit Extrainfo -tab for editing EEPROM-data
 
+0.18.38
+- New parameter to dtcsearch: CodesPerStatus for binaries where one status is linked to multiple codes
+- Fix to "Set DTC" in patcher
+- Added "Bosch inv search" to Checksum research (Find possible checksum locations from Bosch file)
+ 
