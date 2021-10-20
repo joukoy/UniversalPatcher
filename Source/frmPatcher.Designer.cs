@@ -187,6 +187,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.btnExtractSegments = new System.Windows.Forms.Button();
             this.tabChecksumUtil = new System.Windows.Forms.TabPage();
+            this.btnCsutilSearchBosch = new System.Windows.Forms.Button();
             this.chkCsMSB = new System.Windows.Forms.CheckBox();
             this.richChkData = new System.Windows.Forms.RichTextBox();
             this.chkCsUtilSwapBytes = new System.Windows.Forms.CheckBox();
@@ -272,7 +273,8 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
-            this.btnCsutilSearchBosch = new System.Windows.Forms.Button();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.chkCsUtilFilter = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -324,6 +326,7 @@
             this.splitPatcher.Panel1.SuspendLayout();
             this.splitPatcher.Panel2.SuspendLayout();
             this.splitPatcher.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOrgFile
@@ -2115,7 +2118,7 @@
             // 
             // tabChecksumUtil
             // 
-            this.tabChecksumUtil.Controls.Add(this.btnCsutilSearchBosch);
+            this.tabChecksumUtil.Controls.Add(this.groupBox6);
             this.tabChecksumUtil.Controls.Add(this.chkCsMSB);
             this.tabChecksumUtil.Controls.Add(this.richChkData);
             this.tabChecksumUtil.Controls.Add(this.chkCsUtilSwapBytes);
@@ -2138,6 +2141,16 @@
             this.tabChecksumUtil.TabIndex = 5;
             this.tabChecksumUtil.Text = "Checksum research";
             this.tabChecksumUtil.UseVisualStyleBackColor = true;
+            // 
+            // btnCsutilSearchBosch
+            // 
+            this.btnCsutilSearchBosch.Location = new System.Drawing.Point(22, 31);
+            this.btnCsutilSearchBosch.Name = "btnCsutilSearchBosch";
+            this.btnCsutilSearchBosch.Size = new System.Drawing.Size(70, 25);
+            this.btnCsutilSearchBosch.TabIndex = 156;
+            this.btnCsutilSearchBosch.Text = "Search ";
+            this.btnCsutilSearchBosch.UseVisualStyleBackColor = true;
+            this.btnCsutilSearchBosch.Click += new System.EventHandler(this.btnCsutilSearchBosch_Click);
             // 
             // chkCsMSB
             // 
@@ -2166,7 +2179,7 @@
             // chkCsUtilSwapBytes
             // 
             this.chkCsUtilSwapBytes.AutoSize = true;
-            this.chkCsUtilSwapBytes.Location = new System.Drawing.Point(184, 90);
+            this.chkCsUtilSwapBytes.Location = new System.Drawing.Point(81, 90);
             this.chkCsUtilSwapBytes.Name = "chkCsUtilSwapBytes";
             this.chkCsUtilSwapBytes.Size = new System.Drawing.Size(81, 17);
             this.chkCsUtilSwapBytes.TabIndex = 133;
@@ -2175,7 +2188,7 @@
             // 
             // btnCsUtilFix
             // 
-            this.btnCsUtilFix.Location = new System.Drawing.Point(513, 60);
+            this.btnCsUtilFix.Location = new System.Drawing.Point(512, 33);
             this.btnCsUtilFix.Name = "btnCsUtilFix";
             this.btnCsUtilFix.Size = new System.Drawing.Size(109, 23);
             this.btnCsUtilFix.TabIndex = 153;
@@ -2267,7 +2280,7 @@
             // 
             // btnTestChecksum
             // 
-            this.btnTestChecksum.Location = new System.Drawing.Point(513, 32);
+            this.btnTestChecksum.Location = new System.Drawing.Point(512, 10);
             this.btnTestChecksum.Name = "btnTestChecksum";
             this.btnTestChecksum.Size = new System.Drawing.Size(109, 23);
             this.btnTestChecksum.TabIndex = 144;
@@ -2278,7 +2291,7 @@
             // chkCSUtilTryAll
             // 
             this.chkCSUtilTryAll.AutoSize = true;
-            this.chkCSUtilTryAll.Location = new System.Drawing.Point(513, 13);
+            this.chkCSUtilTryAll.Location = new System.Drawing.Point(178, 90);
             this.chkCSUtilTryAll.Name = "chkCSUtilTryAll";
             this.chkCSUtilTryAll.Size = new System.Drawing.Size(54, 17);
             this.chkCSUtilTryAll.TabIndex = 143;
@@ -2994,15 +3007,26 @@
             this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
             // 
-            // btnCsutilSearchBosch
+            // groupBox6
             // 
-            this.btnCsutilSearchBosch.Location = new System.Drawing.Point(513, 86);
-            this.btnCsutilSearchBosch.Name = "btnCsutilSearchBosch";
-            this.btnCsutilSearchBosch.Size = new System.Drawing.Size(109, 23);
-            this.btnCsutilSearchBosch.TabIndex = 156;
-            this.btnCsutilSearchBosch.Text = "Search Bosch inv";
-            this.btnCsutilSearchBosch.UseVisualStyleBackColor = true;
-            this.btnCsutilSearchBosch.Click += new System.EventHandler(this.btnCsutilSearchBosch_Click);
+            this.groupBox6.Controls.Add(this.chkCsUtilFilter);
+            this.groupBox6.Controls.Add(this.btnCsutilSearchBosch);
+            this.groupBox6.Location = new System.Drawing.Point(512, 56);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(112, 59);
+            this.groupBox6.TabIndex = 157;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Search Bosch inv";
+            // 
+            // chkCsUtilFilter
+            // 
+            this.chkCsUtilFilter.AutoSize = true;
+            this.chkCsUtilFilter.Location = new System.Drawing.Point(20, 14);
+            this.chkCsUtilFilter.Name = "chkCsUtilFilter";
+            this.chkCsUtilFilter.Size = new System.Drawing.Size(69, 17);
+            this.chkCsUtilFilter.TabIndex = 157;
+            this.chkCsUtilFilter.Text = "Filter 0+F";
+            this.chkCsUtilFilter.UseVisualStyleBackColor = true;
             // 
             // FrmPatcher
             // 
@@ -3096,6 +3120,8 @@
             this.splitPatcher.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitPatcher)).EndInit();
             this.splitPatcher.ResumeLayout(false);
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -3346,5 +3372,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox comboExtrainfoSegment;
         private System.Windows.Forms.Button btnCsutilSearchBosch;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.CheckBox chkCsUtilFilter;
     }
 }

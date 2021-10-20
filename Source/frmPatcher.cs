@@ -4262,7 +4262,10 @@ namespace UniversalPatcher
                     uint dWord1 = basefile.readUInt32(a);
                     uint dWord2 = basefile.readUInt32(a+4);
                     if (dWord1 == ~dWord2)
-                        Logger("Address: " + a.ToString("X8") + ": " + dWord1.ToString("X8") + " " + dWord2.ToString("X8"));
+                    {
+                        if (!chkCsUtilFilter.Checked || dWord1.ToString("X8").Replace("F","").Replace("0","") != "")
+                            Logger("Address: " + a.ToString("X8") + ": " + dWord1.ToString("X8") + " " + dWord2.ToString("X8"));
+                    }
                 }
                 Logger("Done.");
             }
