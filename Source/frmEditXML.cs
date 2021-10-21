@@ -194,6 +194,7 @@ namespace UniversalPatcher
 
         public void loadSegemtConfig(PcmFile PCM)
         {
+            this.PCM = PCM;
             segmentconfig = new List<SegmentConfig>();
             currentObj = new SegmentConfig();
             for (int s = 0; s < PCM.Segments.Count; s++)

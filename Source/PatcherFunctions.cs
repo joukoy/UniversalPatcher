@@ -1514,14 +1514,18 @@ public class upatcher
                     {
                         //Checksum address inside of range
                         sum = 0x1FFFE + sum1 ;
-                        //sum = (sum << 32) + (0xFFFFFFFF - sum);
-                        sum = ((0xFFFFFFFF - sum)<<32) + sum;
+                        if (MSB)
+                            sum = (sum << 32) + (0xFFFFFFFF - sum);
+                        else
+                            sum = ((0xFFFFFFFF - sum)<<32) + sum;
                         Debug.WriteLine("sum: " + sum.ToString("X"));
                     }
                     else
                     {
-                        //sum = (sum2 << 32) + (0xFFFFFFFF - sum2);
-                        sum = ((0xFFFFFFFF - sum2) << 32) + sum2;
+                        if (MSB)
+                            sum = (sum2 << 32) + (0xFFFFFFFF - sum2);
+                        else
+                            sum = ((0xFFFFFFFF - sum2) << 32) + sum2;
                         Debug.WriteLine("sum: " + sum.ToString("X"));
                     }
                 }
@@ -1645,12 +1649,17 @@ public class upatcher
                 sum = ~sum + 1;
             }
 
-            if (Bytes == 1)
-                sum = (sum & 0xFF);
-            //if (Bytes == 2 || Bytes == 0) //Bytes = 0 if not saving
-            if (Bytes == 2) //Bytes = 0 if not saving
+            switch (Bytes)
             {
-                sum = (sum & 0xFFFF);
+                case 1:
+                    sum = (sum & 0xFF);
+                    break;
+                case 2:
+                    sum = (sum & 0xFFFF);
+                    break;
+                case 4:
+                    sum = (sum & 0xFFFFFFFF);
+                    break;
             }
             if (SwapB)
             {

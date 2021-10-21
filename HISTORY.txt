@@ -138,3 +138,8 @@
 - Fix to "Set DTC" in patcher
 - Added "Bosch inv search" to Checksum research (Find possible checksum locations from Bosch file)
  
+0.18.39
+- Fixed bug: Segment Config not saved when editing in XML Editor
+- Swapped DWORDS in Boshc inv checksum for MSB bin
+- Support for multiple seek: addresses in Segment PN, Ver etc.
+

@@ -1428,20 +1428,27 @@ namespace UniversalPatcher
                 //Special handling, seek address
                 if (Line.ToLower().StartsWith("seek:"))
                 {
-                    AD.Address = seekAddress(Line);
-                    //Address handled, handle bytes & type:
-                    string[] lParts = Line.Split(':');
-                    if (lParts.Length > 2)
-                        UInt16.TryParse(lParts[2], out AD.Bytes);
-                    if (lParts.Length > 3)
+                    string[] lineParts = Line.Split(',');   
+                    foreach (string linePart in lineParts)
                     {
-                        if (lParts[3].ToLower() == "hex")
-                            AD.Type = AddressDataType.Hex;
-                        else if (lParts[3].ToLower() == "text")
-                            AD.Type = AddressDataType.Text;
+                        //If there is multiple seek's return first we can find
+                        AD.Address = seekAddress(linePart);
+                        if (AD.Address < uint.MaxValue)
+                        {
+                            //Address handled, handle bytes & type:
+                            string[] lParts = linePart.Split(':');
+                            if (lParts.Length > 2)
+                                UInt16.TryParse(lParts[2], out AD.Bytes);
+                            if (lParts.Length > 3)
+                            {
+                                if (lParts[3].ToLower() == "hex")
+                                    AD.Type = AddressDataType.Hex;
+                                else if (lParts[3].ToLower() == "text")
+                                    AD.Type = AddressDataType.Text;
+                            }
+                            return AD;
+                        }
                     }
-
-                    return AD;
                 }
 
                 //Special handling, get info from filename:
