@@ -52,7 +52,7 @@ namespace UniversalPatcher
         string currentTab;
         int iconSize;
         bool treeMode;
-        string currentBin = "A";        
+        string currentBin = "A";
 
         private void frmTuner_Load(object sender, EventArgs e)
         {
@@ -293,7 +293,7 @@ namespace UniversalPatcher
                     return;
                 }
 
-                if (td.OS != PCM.OS && !td.CompatibleOS.Contains("," + PCM.OS +","))
+                if (td.OS != PCM.OS && !td.CompatibleOS.Contains("," + PCM.OS + ","))
                 {
                     LoggerBold("WARING! OS Mismatch, File OS: " + PCM.OS + ", config OS: " + td.OS);
                 }
@@ -337,7 +337,7 @@ namespace UniversalPatcher
                             }
                             else
                             {
-                                frmT.addCompareFiletoMenu(comparePCM, comparePCM.tableDatas[x], mi.Text,selectedCompareBin);
+                                frmT.addCompareFiletoMenu(comparePCM, comparePCM.tableDatas[x], mi.Text, selectedCompareBin);
                                 if (PCM.configFile != comparePCM.configFile)
                                 {
                                     LoggerBold(Environment.NewLine + "Warning: file type different, results undefined!");
@@ -351,7 +351,7 @@ namespace UniversalPatcher
                     }
                 }
                 frmT.Show();
-                frmT.loadTable();                
+                frmT.loadTable();
             }
             catch (Exception ex)
             {
@@ -390,7 +390,7 @@ namespace UniversalPatcher
                     Logger("Nothing to save");
                     return;
                 }
-                string fileName = SelectSaveFile("BIN files (*.bin)|*.bin|ALL files(*.*)|*.*",PCM.FileName);
+                string fileName = SelectSaveFile("BIN files (*.bin)|*.bin|ALL files(*.*)|*.*", PCM.FileName);
                 if (fileName.Length == 0)
                     return;
 
@@ -468,7 +468,7 @@ namespace UniversalPatcher
         private void btnSaveXML_Click(object sender, EventArgs e)
         {
             dataGridView1.EndEdit();
-            SaveTableList(PCM,"",compXml);
+            SaveTableList(PCM, "", compXml);
         }
 
         private void btnImportDTC_Click(object sender, EventArgs e)
@@ -632,7 +632,7 @@ namespace UniversalPatcher
                                 foreach (TableData td in tmpRes)
                                 {
                                     bool isInList = false;
-                                    foreach(TableData nTd in newTDList)
+                                    foreach (TableData nTd in newTDList)
                                     {
                                         if (td.id == nTd.id)
                                         {
@@ -896,7 +896,7 @@ namespace UniversalPatcher
         private void saveXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dataGridView1.EndEdit();
-            SaveTableList(PCM, PCM.tunerFile,compXml);
+            SaveTableList(PCM, PCM.tunerFile, compXml);
         }
 
         private void saveBINToolStripMenuItem_Click(object sender, EventArgs e)
@@ -969,7 +969,7 @@ namespace UniversalPatcher
             if (g != null)
             {
                 Point p = g.PointToClient(MousePosition);
-                DataGridView.HitTestInfo  hti = g.HitTest(p.X, p.Y);
+                DataGridView.HitTestInfo hti = g.HitTest(p.X, p.Y);
                 if (hti.Type != DataGridViewHitTestType.ColumnHeader && hti.Type != DataGridViewHitTestType.RowHeader)
                     openTableEditor();
             }
@@ -1116,8 +1116,8 @@ namespace UniversalPatcher
 
         private void editTableToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<int> tableIds = getSelectedTableIds();            
-            openTableEditor(tableIds,true);
+            List<int> tableIds = getSelectedTableIds();
+            openTableEditor(tableIds, true);
         }
 
         private void exportCSV()
@@ -1282,7 +1282,7 @@ namespace UniversalPatcher
                 SegmentConfig S = pcm.Segments[i];
                 if (S.Hidden)
                     continue;
-                txtBox.AppendText( " " + pcm.segmentinfos[i].Name.PadRight(11));
+                txtBox.AppendText(" " + pcm.segmentinfos[i].Name.PadRight(11));
                 if (pcm.segmentinfos[i].PN.Length > 1)
                 {
                     if (pcm.segmentinfos[i].Stock == "[stock]")
@@ -1295,8 +1295,8 @@ namespace UniversalPatcher
 
                 if (pcm.segmentinfos[i].SegNr.Length > 0)
                     txtBox.AppendText(", Nr: " + pcm.segmentinfos[i].SegNr.PadRight(3));
-                    txtBox.AppendText("[" + pcm.segmentinfos[i].Address + "]");
-                    txtBox.AppendText(", Size: " + pcm.segmentinfos[i].Size.ToString());
+                txtBox.AppendText("[" + pcm.segmentinfos[i].Address + "]");
+                txtBox.AppendText(", Size: " + pcm.segmentinfos[i].Size.ToString());
                 if (pcm.segmentinfos[i].ExtraInfo != null && pcm.segmentinfos[i].ExtraInfo.Length > 0)
                     txtBox.AppendText(Environment.NewLine + pcm.segmentinfos[i].ExtraInfo);
                 txtBox.AppendText(Environment.NewLine);
@@ -1453,7 +1453,7 @@ namespace UniversalPatcher
 
         private void fixTableNamesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            for (int i=0;i<PCM.tableDatas.Count; i++)
+            for (int i = 0; i < PCM.tableDatas.Count; i++)
             {
                 if (PCM.tableDatas[i].TableName.ToLower().StartsWith("ka_") || PCM.tableDatas[i].TableName.ToLower().StartsWith("ke_") || PCM.tableDatas[i].TableName.ToLower().StartsWith("kv_"))
                     PCM.tableDatas[i].TableName = PCM.tableDatas[i].TableName.Substring(3);
@@ -1540,8 +1540,8 @@ namespace UniversalPatcher
                     minMax += "] ";
                 if (peekPCM.tableDatas[ind].Dimensions() == 1)
                 {
-                    double curVal = getValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0, peekPCM);
-                    UInt64 rawVal = (UInt64) getRawValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0,peekPCM.platformConfig.MSB);
+                    double curVal = getValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind], 0, peekPCM);
+                    UInt64 rawVal = (UInt64)getRawValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind], 0, peekPCM.platformConfig.MSB);
                     string valTxt = curVal.ToString();
                     string unitTxt = " " + peekPCM.tableDatas[ind].Units;
                     string maskTxt = "";
@@ -1571,7 +1571,7 @@ namespace UniversalPatcher
                             maskTxt = " [" + rawBinVal + "], bit $" + bit.ToString();
                         }
                     }
-                    else if(vt == TableValueType.boolean)
+                    else if (vt == TableValueType.boolean)
                     {
                         unitTxt = ", Unset/Set";
                         if (curVal > 0)
@@ -1640,7 +1640,7 @@ namespace UniversalPatcher
                         {
                             for (int c = 0; c < peekPCM.tableDatas[ind].Columns; c++)
                             {
-                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0, peekPCM);
+                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind], 0, peekPCM);
                                 addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
                                 tblData.Append("[" + curVal.ToString("#0.0") + "]");
                             }
@@ -1656,7 +1656,7 @@ namespace UniversalPatcher
                         {
                             for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
                             {
-                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0, peekPCM);
+                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind], 0, peekPCM);
                                 addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
                                 tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
                             }
@@ -1863,10 +1863,10 @@ namespace UniversalPatcher
         private void saveXMLAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dataGridView1.EndEdit();
-            SaveTableList(PCM,"",compXml);
+            SaveTableList(PCM, "", compXml);
         }
 
-      
+
         private struct DisplayOrder
         {
             public int index;
@@ -1985,7 +1985,7 @@ namespace UniversalPatcher
         void cms_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             string[] tunerModCols = Properties.Settings.Default.TunerModeColumns.Split(',');
-           
+
             //Mark checked all visible columns
             foreach (ToolStripMenuItem menuItem in contextMenuStrip2.Items)
             {
@@ -2000,7 +2000,7 @@ namespace UniversalPatcher
                 }
             }
         }
-        
+
         void columnSelection_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
@@ -2015,7 +2015,7 @@ namespace UniversalPatcher
         private void resetTunerModeColumnsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.TunerModeColumns = "id,TableName,Category,Units,Columns,Rows,TableDescription";
-            Properties.Settings.Default.TunerModeColumnWidth = "35,100,237,135,100,100,100,100,100,114,100,100,100,100,60,46,100,100,100,100,100,493,100,";           
+            Properties.Settings.Default.TunerModeColumnWidth = "35,100,237,135,100,100,100,100,100,114,100,100,100,100,60,46,100,100,100,100,100,493,100,";
             Properties.Settings.Default.Save();
             filterTables();
         }
@@ -2031,12 +2031,12 @@ namespace UniversalPatcher
                 {
                     if (newFile.Length == 0) return;
                     PcmFile newPCM = new PcmFile(newFile, true, PCM.configFileFullName);
-                    addtoCurrentFileMenu(newPCM,false);
+                    addtoCurrentFileMenu(newPCM, false);
                     loadConfigforPCM(ref newPCM);
                     if (!asCompare)
                     {
                         PCM = newPCM;
-                        selectPCM();                        
+                        selectPCM();
                     }
                 }
             }
@@ -2136,8 +2136,8 @@ namespace UniversalPatcher
         {
             ToolStripMenuItem menuitem = (ToolStripMenuItem)sender;
             bool isChecked = menuitem.Checked;
-//            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
-//                mi.Checked = false;
+            //            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+            //                mi.Checked = false;
             menuitem.Checked = !isChecked;
             PCM = (PcmFile)menuitem.Tag;
             selectPCM();
@@ -2155,7 +2155,7 @@ namespace UniversalPatcher
         }
 
         int diffMissingTables;
-        private int compareTableHEX(int tInd,PcmFile pcm1, PcmFile pcm2)
+        private int compareTableHEX(int tInd, PcmFile pcm1, PcmFile pcm2)
         {
             try
             {
@@ -2367,7 +2367,7 @@ namespace UniversalPatcher
             }
 
             ToolStripMenuItem mItem = (ToolStripMenuItem)sender;
-            PCM.selectTableDatas((int)mItem.Tag,mItem.Name);
+            PCM.selectTableDatas((int)mItem.Tag, mItem.Name);
             mItem.Checked = true;
             filterTables();
         }
@@ -2566,7 +2566,7 @@ namespace UniversalPatcher
         private void loadTablelistxmlTableseekImportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PCM.LoadTableList();
-            importDTC(ref PCM);            
+            importDTC(ref PCM);
             importTableSeek(ref PCM);
             comboTableCategory.Text = "_All";
             filterTables();
@@ -2616,7 +2616,7 @@ namespace UniversalPatcher
         private void disableConfigAutoloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             disableConfigAutoloadToolStripMenuItem.Checked = !disableConfigAutoloadToolStripMenuItem.Checked;
-            
+
             Properties.Settings.Default.disableTunerAutoloadSettings = disableConfigAutoloadToolStripMenuItem.Checked;
             Properties.Settings.Default.Save();
 
@@ -2678,7 +2678,7 @@ namespace UniversalPatcher
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
                 PcmFile comparePCM = PCM.ShallowCopy();
                 comparePCM.FileName = td2.TableName;
-                frmT.addCompareFiletoMenu(comparePCM, td2, "",selectedCompareBin);
+                frmT.addCompareFiletoMenu(comparePCM, td2, "", selectedCompareBin);
                 frmT.Show();
                 frmT.prepareTable(PCM, td1, null, "A");
                 frmT.loadTable();
@@ -3340,7 +3340,7 @@ namespace UniversalPatcher
             clearPanel2();
             List<int> tableIds = new List<int>();
             //int tbId = Convert.ToInt32(e.Node.Tag);
-            foreach(TreeNode tn in tms.SelectedNodes)
+            foreach (TreeNode tn in tms.SelectedNodes)
                 if (tn.Tag != null)
                     tableIds.Add((int)tn.Tag);
             showTableDescription(PCM, tableIds[0]);
@@ -4002,7 +4002,7 @@ namespace UniversalPatcher
         {
         }
 
- 
+
         private void chkShowCategorySubfolder_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.TableExplorerUseCategorySubfolder = chkShowCategorySubfolder.Checked;
@@ -4091,7 +4091,7 @@ namespace UniversalPatcher
             foreach (TreeNode childTn in tn.Nodes)
             {
                 TreeParts.addChildNodes(childTn, PCM);
-                foreach(TreeNode grandChild in childTn.Nodes)
+                foreach (TreeNode grandChild in childTn.Nodes)
                     TreeParts.addChildNodes(grandChild, PCM);
             }
             tn.ExpandAll();
@@ -4232,11 +4232,11 @@ namespace UniversalPatcher
 
                 SWCNTDATEN data = (SWCNTDATEN)swcnt.Items[3];
                 SWCNTDATENDATENBLOECKEDATENBLOCK[] segments = data.DATENBLOECKE;
-                
+
                 int blockCount = segments.Length;
                 List<byte[]> binBlocks = new List<byte[]>();
                 int size = 0;
-                for (int i=0; i< blockCount; i++)
+                for (int i = 0; i < blockCount; i++)
                 {
                     string b64Data = segments[i].DATENBLOCKDATEN;
                     b64Data = b64Data.Substring(b64Data.IndexOf("base64") + 6);
@@ -4248,16 +4248,16 @@ namespace UniversalPatcher
                     HexToInt(segments[i].GROESSEDEKOMPRIMIERT.Replace("0x", ""), out bSize);
                     if (size < (start + bSize))
                         size = start + bSize;
-                    Logger("Segment: " + segments[i].DATENBLOCKNAME + " ", false); 
+                    Logger("Segment: " + segments[i].DATENBLOCKNAME + " ", false);
                     SWCNTDATENDATENBLOECKEDATENBLOCKDATENBLOCKCHECK[] cs = segments[i].DATENBLOCKCHECK;
                     SWCNTDATENDATENBLOECKEDATENBLOCKLOESCHBEREICH[] segBlocks = segments[i].LOESCHBEREICH;
                     string sbStr = "";
-                    for (int sb=0; sb < segBlocks.Length; sb++)
+                    for (int sb = 0; sb < segBlocks.Length; sb++)
                     {
                         sbStr += segBlocks[sb].STARTADR.Replace("0x", "") + " - " + segBlocks[sb].ENDADR.Replace("0x", "") + ", ";
                     }
                     //sbStr = sbStr.Trim(',');
-                    Logger(sbStr,false );
+                    Logger(sbStr, false);
 
                     for (int x = 0; x < cs.Length; x++)
                     {
@@ -4284,9 +4284,12 @@ namespace UniversalPatcher
                 fileName = SelectSaveFile("BIN (*.bin)|*.bin|All(*.*)|*.*", "imported-file.bin");
                 if (fileName.Length == 0)
                     return;
-                Logger("Saving to file: " + fileName,false);
+                Logger("Saving to file: " + fileName, false);
                 WriteBinToFile(fileName, binbuf);
                 Logger(" [OK]");
+                List<string> fList = new List<string>();
+                fList.Add(fileName);
+                openNewBinFile(false, fList);
             }
             catch (Exception ex)
             {
@@ -4294,5 +4297,92 @@ namespace UniversalPatcher
             }
 
         }
+
+        private void intelHEXToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string fileName = SelectFile("Select HEX File", "hex files (*.hex)|*.hex|All files (*.*)|*.*");
+                if (fileName.Length == 0)
+                    return;
+
+                Logger("Importing file: " + fileName, false);
+                List<byte> buf = new List<byte>();
+
+                IntelHex hexR = new IntelHex();
+                System.IO.StreamReader file = new System.IO.StreamReader(fileName);
+                while (true)
+                {
+                    IntelHexStructure ihex = hexR.Read(file);
+                    if (ihex == null)
+                        break;
+                    for (int a = 0; a < ihex.dataLen; a++)
+                        buf.Add(ihex.data[a]);
+                }
+                file.Close();
+                Logger(" [OK]");
+
+                byte[] binbuf = new byte[buf.Count];
+                binbuf = buf.ToArray();
+                string outfileName = SelectSaveFile("BIN (*.bin)|*.bin|All(*.*)|*.*", "imported-file.bin");
+                if (outfileName.Length == 0)
+                    return;
+
+                Logger("Saving to file: " + outfileName, false);
+                WriteBinToFile(outfileName, binbuf);
+                Logger(" [OK]");
+                List<string> fList = new List<string>();
+                fList.Add(outfileName);
+                openNewBinFile(false, fList);
+
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+        }
+
+        private void motorolaSrecordToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string fileName = SelectFile("Select S19 File", "S19 files (*.s19)|*.s19|All files (*.*)|*.*");
+                if (fileName.Length == 0)
+                    return;
+                Logger("Importing file: " + fileName, false);
+                List<byte> buf = new List<byte>();
+
+                SRecord srecord = new SRecord();
+                System.IO.StreamReader file = new System.IO.StreamReader(fileName);
+                while (true)
+                {
+                    SRecordStructure sRec = srecord.Read(file);
+                    if (sRec == null)
+                        break;
+                    for (int a = 0; a < sRec.dataLen; a++)
+                        buf.Add(sRec.data[a]);
+                }
+                file.Close();
+                Logger(" [OK]");
+
+                byte[] binbuf = new byte[buf.Count];
+                binbuf = buf.ToArray();
+                string outfileName = SelectSaveFile("BIN (*.bin)|*.bin|All(*.*)|*.*", "imported-file.bin");
+                if (outfileName.Length == 0)
+                    return;
+
+                Logger("Saving to file: " + outfileName, false);
+                WriteBinToFile(outfileName, binbuf);
+                Logger(" [OK]");
+                List<string> fList = new List<string>();
+                fList.Add(outfileName);
+                openNewBinFile(false, fList);
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+        }
     }
 }
+

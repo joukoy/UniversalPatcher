@@ -160,7 +160,8 @@ namespace UniversalPatcher
         private void FrmPatcher_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            openBaseFile(files[0]);
+            foreach (string file in files)
+                openBaseFile(file);
         }
 
         private void FrmPatcher_DragEnter(object sender, DragEventArgs e)

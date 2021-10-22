@@ -66,6 +66,8 @@ namespace UniversalPatcher
             this.xMlgeneratorImportCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cSVexperimentalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cSV2ExperimentalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sGMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.intelHEXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.cSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xDFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -156,7 +158,7 @@ namespace UniversalPatcher
             this.radioTreeMode = new System.Windows.Forms.RadioButton();
             this.btnCollapse = new System.Windows.Forms.Button();
             this.btnExpand = new System.Windows.Forms.Button();
-            this.sGMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.motorolaSrecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -416,7 +418,9 @@ namespace UniversalPatcher
             this.xMlgeneratorImportCSVToolStripMenuItem,
             this.cSVexperimentalToolStripMenuItem,
             this.cSV2ExperimentalToolStripMenuItem,
-            this.sGMToolStripMenuItem});
+            this.sGMToolStripMenuItem,
+            this.intelHEXToolStripMenuItem,
+            this.motorolaSrecordToolStripMenuItem});
             this.importToolStripMenuItem1.Name = "importToolStripMenuItem1";
             this.importToolStripMenuItem1.Size = new System.Drawing.Size(219, 22);
             this.importToolStripMenuItem1.Text = "Import";
@@ -470,6 +474,20 @@ namespace UniversalPatcher
             this.cSV2ExperimentalToolStripMenuItem.Text = "CSV2 (Experimental)";
             this.cSV2ExperimentalToolStripMenuItem.Click += new System.EventHandler(this.cSV2ExperimentalToolStripMenuItem_Click);
             // 
+            // sGMToolStripMenuItem
+            // 
+            this.sGMToolStripMenuItem.Name = "sGMToolStripMenuItem";
+            this.sGMToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.sGMToolStripMenuItem.Text = "SGM";
+            this.sGMToolStripMenuItem.Click += new System.EventHandler(this.sGMToolStripMenuItem_Click);
+            // 
+            // intelHEXToolStripMenuItem
+            // 
+            this.intelHEXToolStripMenuItem.Name = "intelHEXToolStripMenuItem";
+            this.intelHEXToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.intelHEXToolStripMenuItem.Text = "Intel HEX";
+            this.intelHEXToolStripMenuItem.Click += new System.EventHandler(this.intelHEXToolStripMenuItem_Click);
+            // 
             // exportToolStripMenuItem1
             // 
             this.exportToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -483,21 +501,21 @@ namespace UniversalPatcher
             // cSVToolStripMenuItem
             // 
             this.cSVToolStripMenuItem.Name = "cSVToolStripMenuItem";
-            this.cSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.cSVToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.cSVToolStripMenuItem.Text = "CSV";
             this.cSVToolStripMenuItem.Click += new System.EventHandler(this.cSVToolStripMenuItem_Click);
             // 
             // xDFToolStripMenuItem
             // 
             this.xDFToolStripMenuItem.Name = "xDFToolStripMenuItem";
-            this.xDFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.xDFToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.xDFToolStripMenuItem.Text = "XDF";
             this.xDFToolStripMenuItem.Click += new System.EventHandler(this.xDFToolStripMenuItem_Click);
             // 
             // xMLGeneratorExportToolStripMenuItem
             // 
             this.xMLGeneratorExportToolStripMenuItem.Name = "xMLGeneratorExportToolStripMenuItem";
-            this.xMLGeneratorExportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.xMLGeneratorExportToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.xMLGeneratorExportToolStripMenuItem.Text = "XML Generator CSV";
             this.xMLGeneratorExportToolStripMenuItem.Click += new System.EventHandler(this.xMLGeneratorExportToolStripMenuItem_Click);
             // 
@@ -1362,12 +1380,12 @@ namespace UniversalPatcher
             this.btnExpand.UseVisualStyleBackColor = true;
             this.btnExpand.Click += new System.EventHandler(this.btnExpand_Click);
             // 
-            // sGMToolStripMenuItem
+            // motorolaSrecordToolStripMenuItem
             // 
-            this.sGMToolStripMenuItem.Name = "sGMToolStripMenuItem";
-            this.sGMToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
-            this.sGMToolStripMenuItem.Text = "SGM";
-            this.sGMToolStripMenuItem.Click += new System.EventHandler(this.sGMToolStripMenuItem_Click);
+            this.motorolaSrecordToolStripMenuItem.Name = "motorolaSrecordToolStripMenuItem";
+            this.motorolaSrecordToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.motorolaSrecordToolStripMenuItem.Text = "Motorola S-record";
+            this.motorolaSrecordToolStripMenuItem.Click += new System.EventHandler(this.motorolaSrecordToolStripMenuItem_Click);
             // 
             // FrmTuner
             // 
@@ -1550,5 +1568,7 @@ namespace UniversalPatcher
         private ToolStripMenuItem aboutToolStripMenuItem;
         private ToolStripMenuItem homepageToolStripMenuItem;
         private ToolStripMenuItem sGMToolStripMenuItem;
+        private ToolStripMenuItem intelHEXToolStripMenuItem;
+        private ToolStripMenuItem motorolaSrecordToolStripMenuItem;
     }
 }
