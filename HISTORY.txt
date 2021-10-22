@@ -143,3 +143,9 @@
 - Swapped DWORDS in Boshc inv checksum for MSB bin
 - Support for multiple seek: addresses in Segment PN, Ver etc.
 
+0.18.40
+- Fixed bug in pcmfile.parseaddress: if Address not found by seek, return uint.maxvalue, don't continue
+- Added Tuner -> Utilities -> Import -> SGM
+- File drag & drop support to Patcher & Tuner
+
+

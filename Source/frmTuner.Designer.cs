@@ -156,6 +156,7 @@ namespace UniversalPatcher
             this.radioTreeMode = new System.Windows.Forms.RadioButton();
             this.btnCollapse = new System.Windows.Forms.Button();
             this.btnExpand = new System.Windows.Forms.Button();
+            this.sGMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -414,7 +415,8 @@ namespace UniversalPatcher
             this.tinyTunerDBV6OnlyToolStripMenuItem,
             this.xMlgeneratorImportCSVToolStripMenuItem,
             this.cSVexperimentalToolStripMenuItem,
-            this.cSV2ExperimentalToolStripMenuItem});
+            this.cSV2ExperimentalToolStripMenuItem,
+            this.sGMToolStripMenuItem});
             this.importToolStripMenuItem1.Name = "importToolStripMenuItem1";
             this.importToolStripMenuItem1.Size = new System.Drawing.Size(219, 22);
             this.importToolStripMenuItem1.Text = "Import";
@@ -481,21 +483,21 @@ namespace UniversalPatcher
             // cSVToolStripMenuItem
             // 
             this.cSVToolStripMenuItem.Name = "cSVToolStripMenuItem";
-            this.cSVToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.cSVToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.cSVToolStripMenuItem.Text = "CSV";
             this.cSVToolStripMenuItem.Click += new System.EventHandler(this.cSVToolStripMenuItem_Click);
             // 
             // xDFToolStripMenuItem
             // 
             this.xDFToolStripMenuItem.Name = "xDFToolStripMenuItem";
-            this.xDFToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.xDFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.xDFToolStripMenuItem.Text = "XDF";
             this.xDFToolStripMenuItem.Click += new System.EventHandler(this.xDFToolStripMenuItem_Click);
             // 
             // xMLGeneratorExportToolStripMenuItem
             // 
             this.xMLGeneratorExportToolStripMenuItem.Name = "xMLGeneratorExportToolStripMenuItem";
-            this.xMLGeneratorExportToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.xMLGeneratorExportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.xMLGeneratorExportToolStripMenuItem.Text = "XML Generator CSV";
             this.xMLGeneratorExportToolStripMenuItem.Click += new System.EventHandler(this.xMLGeneratorExportToolStripMenuItem_Click);
             // 
@@ -624,14 +626,14 @@ namespace UniversalPatcher
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.aboutToolStripMenuItem.Text = "&About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // homepageToolStripMenuItem
             // 
             this.homepageToolStripMenuItem.Name = "homepageToolStripMenuItem";
-            this.homepageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.homepageToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.homepageToolStripMenuItem.Text = "Homepage";
             this.homepageToolStripMenuItem.Click += new System.EventHandler(this.homepageToolStripMenuItem_Click);
             // 
@@ -1360,6 +1362,13 @@ namespace UniversalPatcher
             this.btnExpand.UseVisualStyleBackColor = true;
             this.btnExpand.Click += new System.EventHandler(this.btnExpand_Click);
             // 
+            // sGMToolStripMenuItem
+            // 
+            this.sGMToolStripMenuItem.Name = "sGMToolStripMenuItem";
+            this.sGMToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.sGMToolStripMenuItem.Text = "SGM";
+            this.sGMToolStripMenuItem.Click += new System.EventHandler(this.sGMToolStripMenuItem_Click);
+            // 
             // FrmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1540,5 +1549,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem helpToolStripMenuItem;
         private ToolStripMenuItem aboutToolStripMenuItem;
         private ToolStripMenuItem homepageToolStripMenuItem;
+        private ToolStripMenuItem sGMToolStripMenuItem;
     }
 }

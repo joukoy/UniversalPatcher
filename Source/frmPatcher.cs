@@ -150,6 +150,22 @@ namespace UniversalPatcher
             dataBadChkFile.DataError += DataGridView_DataError;
 
             tabEditExtra.Enter += TabEditExtra_Enter;
+
+            this.AllowDrop = true;
+            this.DragEnter += FrmPatcher_DragEnter;
+            this.DragDrop += FrmPatcher_DragDrop;
+
+        }
+
+        private void FrmPatcher_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            openBaseFile(files[0]);
+        }
+
+        private void FrmPatcher_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
         }
 
         private void TabEditExtra_Enter(object sender, EventArgs e)
@@ -796,14 +812,15 @@ namespace UniversalPatcher
             }
         }
 
-        private void openBaseFile()
+        private void openBaseFile(string fileName = "")
         {
             try
             {
                 Stopwatch timer = new Stopwatch();
                 timer.Start();
 
-                string fileName = SelectFile();
+                if (fileName.Length == 0)
+                    fileName = SelectFile();
                 if (fileName.Length > 1)
                 {
                     basefile.tableCategories = new List<string>(); //Clear list

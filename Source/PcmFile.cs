@@ -1449,6 +1449,8 @@ namespace UniversalPatcher
                             return AD;
                         }
                     }
+                    //Not found?
+                    return AD;
                 }
 
                 //Special handling, get info from filename:

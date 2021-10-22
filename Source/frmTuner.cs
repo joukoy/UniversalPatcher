@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Serialization;
 using static upatcher;
 
 namespace UniversalPatcher
@@ -109,8 +111,25 @@ namespace UniversalPatcher
             dataGridView1.DataSource = bindingsource;
             dataGridView1.AllowUserToAddRows = false;
             filterTables();
+
+            this.AllowDrop = true;
+            this.DragEnter += FrmTuner_DragEnter;
+            this.DragDrop += FrmTuner_DragDrop;
         }
 
+        private void FrmTuner_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            List<string> fileList = new List<string>();
+            foreach (string file in files)
+                fileList.Add(file);
+            openNewBinFile(false, fileList);
+        }
+
+        private void FrmTuner_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+        }
 
         private void frmTuner_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -2001,12 +2020,13 @@ namespace UniversalPatcher
             filterTables();
         }
 
-        private void openNewBinFile(bool asCompare)
+        private void openNewBinFile(bool asCompare, List<string> fileList = null)
         {
             try
             {
                 //string newFile = SelectFile();
-                List<string> fileList = SelectMultipleFiles();
+                if (fileList == null)
+                    fileList = SelectMultipleFiles();
                 foreach (string newFile in fileList)
                 {
                     if (newFile.Length == 0) return;
@@ -4186,6 +4206,87 @@ namespace UniversalPatcher
             {
                 string url = "https://universalpatcher.net/";
                 System.Diagnostics.Process.Start(url);
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+
+        }
+
+
+        private void sGMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string fileName = SelectFile("Select SGM File", "sgm files (*.sgm)|*.sgm|All files (*.*)|*.*");
+                if (fileName.Length == 0)
+                    return;
+
+                Logger("Reading file: " + fileName, false);
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(SWCNT));
+                System.IO.StreamReader file = new System.IO.StreamReader(fileName);
+                SWCNT swcnt = (SWCNT)reader.Deserialize(file);
+                file.Close();
+                Logger(" [OK], converting...");
+
+                SWCNTDATEN data = (SWCNTDATEN)swcnt.Items[3];
+                SWCNTDATENDATENBLOECKEDATENBLOCK[] segments = data.DATENBLOECKE;
+                
+                int blockCount = segments.Length;
+                List<byte[]> binBlocks = new List<byte[]>();
+                int size = 0;
+                for (int i=0; i< blockCount; i++)
+                {
+                    string b64Data = segments[i].DATENBLOCKDATEN;
+                    b64Data = b64Data.Substring(b64Data.IndexOf("base64") + 6);
+                    byte[] b = System.Convert.FromBase64String(b64Data);
+                    binBlocks.Add(b);
+                    int start;
+                    HexToInt(segments[i].STARTADR.Replace("0x", ""), out start);
+                    int bSize = 0;
+                    HexToInt(segments[i].GROESSEDEKOMPRIMIERT.Replace("0x", ""), out bSize);
+                    if (size < (start + bSize))
+                        size = start + bSize;
+                    Logger("Segment: " + segments[i].DATENBLOCKNAME + " ", false); 
+                    SWCNTDATENDATENBLOECKEDATENBLOCKDATENBLOCKCHECK[] cs = segments[i].DATENBLOCKCHECK;
+                    SWCNTDATENDATENBLOECKEDATENBLOCKLOESCHBEREICH[] segBlocks = segments[i].LOESCHBEREICH;
+                    string sbStr = "";
+                    for (int sb=0; sb < segBlocks.Length; sb++)
+                    {
+                        sbStr += segBlocks[sb].STARTADR.Replace("0x", "") + " - " + segBlocks[sb].ENDADR.Replace("0x", "") + ", ";
+                    }
+                    //sbStr = sbStr.Trim(',');
+                    Logger(sbStr,false );
+
+                    for (int x = 0; x < cs.Length; x++)
+                    {
+                        Logger("Checksum: " + cs[x].CHECKSUMME.Replace("0x", "") + " (" + cs[x].STARTADR.Replace("0x", "") + " - " + cs[x].ENDADR.Replace("0x", "") + ")");
+                        int csend = 0;
+                        HexToInt(cs[x].ENDADR.Replace("0x", ""), out csend);
+                        if (csend > size)
+                            size = csend;
+                    }
+                }
+
+                byte[] binbuf = new byte[size];
+
+                for (int i = 0; i < blockCount; i++)
+                {
+                    byte[] b = binBlocks[i];
+                    int start;
+                    HexToInt(segments[i].STARTADR.Replace("0x", ""), out start);
+                    Array.Copy(b, 0, binbuf, start, b.Length);
+                }
+
+                Logger("Done");
+
+                fileName = SelectSaveFile("BIN (*.bin)|*.bin|All(*.*)|*.*", "imported-file.bin");
+                if (fileName.Length == 0)
+                    return;
+                Logger("Saving to file: " + fileName,false);
+                WriteBinToFile(fileName, binbuf);
+                Logger(" [OK]");
             }
             catch (Exception ex)
             {
