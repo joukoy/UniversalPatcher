@@ -27,6 +27,8 @@ namespace UniversalPatcher
 		public int dataLen;     //< The number of bytes of data stored in this record.
 		public int type;        //< The Motorola S-Record type of this record (S0-S9).
 		public byte checksum;   //< The checksum of this record. */
+
+
 	}
 
 	/// <summary>

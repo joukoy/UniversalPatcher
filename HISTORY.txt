@@ -155,4 +155,8 @@
 0.18.42
 - Fixes to Intel & Motorola import
 
+0.18.43
+- Use address from S-record/hex-record when writing imported Motorola/intel file
+- New dialog: set offset for intel hex/motorola srecord import
+- New setting: More settings -> Auto open imported file
 

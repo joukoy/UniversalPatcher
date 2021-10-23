@@ -24,6 +24,7 @@ namespace UniversalPatcher
             Properties.Settings.Default.MulitableChars = txtMultitableChars.Text;
             Properties.Settings.Default.DisableAutoFixChecksum = chkDisableAutoCS.Checked;
             Properties.Settings.Default.RequireValidVerForStock = chkRequireValidVerForStock.Checked;
+            Properties.Settings.Default.AutomaticOpenImportedFile = chkAutoOpenImportedFile.Checked;
             //Properties.Settings.Default.startPatcher = chkStartPatcher.Checked;
             Properties.Settings.Default.Save();
             this.Close();
@@ -37,6 +38,7 @@ namespace UniversalPatcher
             txtMultitableChars.Text = Properties.Settings.Default.MulitableChars;
             chkDisableAutoCS.Checked = Properties.Settings.Default.DisableAutoFixChecksum;
             chkRequireValidVerForStock.Checked = Properties.Settings.Default.RequireValidVerForStock;
+            chkAutoOpenImportedFile.Checked = Properties.Settings.Default.AutomaticOpenImportedFile;
             //chkStartPatcher.Checked = Properties.Settings.Default.startPatcher;
         }
 

@@ -920,5 +920,29 @@ namespace UniversalPatcher.Properties {
                 this["RequireValidVerForStock"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutomaticOpenImportedFile {
+            get {
+                return ((bool)(this["AutomaticOpenImportedFile"]));
+            }
+            set {
+                this["AutomaticOpenImportedFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Setting1 {
+            get {
+                return ((bool)(this["Setting1"]));
+            }
+            set {
+                this["Setting1"] = value;
+            }
+        }
     }
 }

@@ -4287,9 +4287,12 @@ namespace UniversalPatcher
                 Logger("Saving to file: " + fileName, false);
                 WriteBinToFile(fileName, binbuf);
                 Logger(" [OK]");
-                List<string> fList = new List<string>();
-                fList.Add(fileName);
-                openNewBinFile(false, fList);
+                if (Properties.Settings.Default.AutomaticOpenImportedFile)
+                {
+                    List<string> fList = new List<string>();
+                    fList.Add(fileName);
+                    openNewBinFile(false, fList);
+                }
             }
             catch (Exception ex)
             {
@@ -4307,39 +4310,23 @@ namespace UniversalPatcher
                     return;
 
                 Logger("Importing file: " + fileName);
-                /*                frmImportFile fif = new frmImportFile();
-                                fif.Show();
-                                fif.importIntel(fileName);
-                */
-                string defName = Path.GetFileNameWithoutExtension(fileName) + ".bin";
-                string outfileName = SelectSaveFile("BIN (*.bin)|*.bin|All(*.*)|*.*", defName);
-                if (outfileName.Length == 0)
+                frmImportFile fif = new frmImportFile();
+                fif.importIntel(fileName);
+                if (fif.ShowDialog() == DialogResult.OK && Properties.Settings.Default.AutomaticOpenImportedFile)
                 {
-                    Logger(" User cancel");
-                    return;
+                    List<string> fList = new List<string>();
+                    fList.Add(fif.outFileName);
+                    openNewBinFile(false, fList);
                 }
-                Logger("Saving to file: " + outfileName, false);
-                FileStream stream = new FileStream(outfileName, FileMode.Create);
-                BinaryWriter writer = new BinaryWriter(stream);
-                IntelHex intelHex = new IntelHex();
-                StreamReader file = new StreamReader(fileName);
-                IntelHexStructure ihex = intelHex.Read(file); //Skip first block. Header ?
-                while (ihex != null)
-                {
-                    ihex = intelHex.Read(file);
-                    if (ihex == null)
-                        break;
-                    writer.Write(ihex.data, 0, ihex.dataLen);
-                }
-                file.Close();
-
-                writer.Close();
-                Logger(" [OK]");
-
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner intelHEXToolStripMenuItem_Click, line " + line + ": " + ex.Message);
             }
         }
 
@@ -4352,38 +4339,24 @@ namespace UniversalPatcher
                     return;
                 Logger("Importing file: " + fileName);
 
-                /*                frmImportFile fif = new frmImportFile();
-                                fif.Show();
-                                fif.importMotorola(fileName);
-                */
-                string defName = Path.GetFileNameWithoutExtension(fileName) + ".bin";
-                string outfileName = SelectSaveFile("BIN (*.bin)|*.bin|All(*.*)|*.*", defName);
-                if (outfileName.Length == 0)
+                frmImportFile fif = new frmImportFile();
+                fif.importMotorola(fileName);
+                if (fif.ShowDialog() == DialogResult.OK && Properties.Settings.Default.AutomaticOpenImportedFile)
                 {
-                    Logger(" User cancel");
-                    return;
+                    List<string> fList = new List<string>();
+                    fList.Add(fif.outFileName);
+                    openNewBinFile(false, fList);
                 }
-                Logger("Saving to file: " + outfileName, false);
-                FileStream stream = new FileStream(outfileName, FileMode.Create);
-                BinaryWriter writer = new BinaryWriter(stream);
-                SRecord srecord = new SRecord();
-                StreamReader file = new StreamReader(fileName);
-                SRecordStructure sRec = srecord.Read(file); //Skip first block. Header ?
-                while (sRec != null)
-                {
-                    sRec = srecord.Read(file);
-                    if (sRec == null)
-                        break;
-                    writer.Write(sRec.data, 0, sRec.dataLen);
-                }
-                file.Close();
-                writer.Close();
-                Logger(" [OK]");
 
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner motorolaSrecordToolStripMenuItem_Click, line " + line + ": " + ex.Message);
             }
         }
     }

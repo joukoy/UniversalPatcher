@@ -11,7 +11,7 @@
 using System;
 using System.Text;
 using System.IO;
-
+using System.Diagnostics;
 
 namespace UniversalPatcher
 {
@@ -22,12 +22,14 @@ namespace UniversalPatcher
 	/// </summary>
 	public class IntelHexStructure
 	{
-		public UInt16 address;  //< The 16-bit address field.
-		//< The 8-bit array data field, which has a maximum size of 256 bytes.
+		//public UInt16 address;  //< The 16-bit address field.
+		public uint address;  //< The 32-bit address field.
+							  //< The 8-bit array data field, which has a maximum size of 256 bytes.
 		public byte[] data = new byte[IntelHex.IHEX_MAX_DATA_LEN / 2];
 		public int dataLen;     //< The number of bytes of data stored in this record.
 		public int type;        //< The Intel HEX8 record type of this record.
 		public byte checksum;   //< The checksum of this record.
+
 	}
 
 	/// <summary>
@@ -71,6 +73,7 @@ namespace UniversalPatcher
 
 		IntelHexStructure irec = new IntelHexStructure();   // internal structure that holds the record information.
 		int status = IHEX_ERROR_INVALID_ARGUMENTS;          // internal variable that saves the status of the last function call.
+		uint segmentAddress = 0;
 
 		// Accessor variable to return status of last function call.
 		public int Status
@@ -159,11 +162,31 @@ namespace UniversalPatcher
 			// Copy the ASCII hex encoding of the count field into hexBuff, convert it to a usable integer
 			dataCount = Convert.ToInt16(recordBuff.Substring(IHEX_COUNT_OFFSET, IHEX_COUNT_LEN), 16);
 
-			// Copy the ASCII hex encoding of the address field into hexBuff, convert it to a usable integer
-			irec.address  = Convert.ToUInt16(recordBuff.Substring(IHEX_ADDRESS_OFFSET, IHEX_ADDRESS_LEN), 16);
+			// Copy the ASCII hex encoding of the Type field into hexBuff, convert it to a usable integer
+			irec.type = Convert.ToInt16(recordBuff.Substring(IHEX_TYPE_OFFSET, IHEX_TYPE_LEN), 16);
+			
+			switch (irec.type)
+            {
+				case 1://End of file
+					return null;
+					break;
+				case 2: //Extended address
+					segmentAddress = (uint)(Convert.ToUInt16(recordBuff.Substring(IHEX_DATA_OFFSET, IHEX_ADDRESS_LEN), 16) * 16);
+					Debug.WriteLine("Segment address: " + segmentAddress.ToString("X"));
+					break;
+				case 4: //Extended Linear Address 
+					segmentAddress = (uint)(Convert.ToUInt16(recordBuff.Substring(IHEX_DATA_OFFSET, IHEX_ADDRESS_LEN), 16) << 16);
+					Debug.WriteLine(segmentAddress.ToString("X"));
+					break;
+				case 5:
+					segmentAddress = (uint)(Convert.ToUInt32(recordBuff.Substring(IHEX_DATA_OFFSET, 8), 16));
+					Debug.WriteLine(segmentAddress.ToString("X"));
+					break;
+			}
 
 			// Copy the ASCII hex encoding of the address field into hexBuff, convert it to a usable integer
-			irec.type = Convert.ToInt16(recordBuff.Substring(IHEX_TYPE_OFFSET, IHEX_TYPE_LEN), 16);
+			UInt16 addrLow = Convert.ToUInt16(recordBuff.Substring(IHEX_ADDRESS_OFFSET, IHEX_ADDRESS_LEN), 16);
+			irec.address = segmentAddress + addrLow;
 
 			// Size check for start code, count, address, type, data and checksum fields
 			if (recordBuff.Length < (1 + IHEX_COUNT_LEN + IHEX_ADDRESS_LEN + IHEX_TYPE_LEN + dataCount * 2 + IHEX_CHECKSUM_LEN))
@@ -177,7 +200,7 @@ namespace UniversalPatcher
 			for (i = 0; i < dataCount; i++)
 			{
 				// Times two i because every byte is represented by two ASCII hex characters
-				irec.data[i] = Convert.ToByte(recordBuff.Substring(IHEX_DATA_OFFSET+2*i, IHEX_ASCII_HEX_BYTE_LEN), 16);
+				irec.data[i] = Convert.ToByte(recordBuff.Substring(IHEX_DATA_OFFSET + 2 * i, IHEX_ASCII_HEX_BYTE_LEN), 16);
 			}
 			irec.dataLen = dataCount;
 

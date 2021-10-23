@@ -44,6 +44,7 @@ namespace UniversalPatcher
             this.chkDisableAutoCS = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.chkRequireValidVerForStock = new System.Windows.Forms.CheckBox();
+            this.chkAutoOpenImportedFile = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerTableMinEquivalency)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numKeypressWait)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerMinEqOther)).BeginInit();
@@ -76,7 +77,7 @@ namespace UniversalPatcher
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(225, 265);
+            this.btnOK.Location = new System.Drawing.Point(225, 293);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 2;
@@ -201,11 +202,23 @@ namespace UniversalPatcher
             this.chkRequireValidVerForStock.Text = "Mark modified if \"version\" have no valid chars";
             this.chkRequireValidVerForStock.UseVisualStyleBackColor = true;
             // 
+            // chkAutoOpenImportedFile
+            // 
+            this.chkAutoOpenImportedFile.AutoSize = true;
+            this.chkAutoOpenImportedFile.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkAutoOpenImportedFile.Location = new System.Drawing.Point(168, 264);
+            this.chkAutoOpenImportedFile.Name = "chkAutoOpenImportedFile";
+            this.chkAutoOpenImportedFile.Size = new System.Drawing.Size(134, 17);
+            this.chkAutoOpenImportedFile.TabIndex = 14;
+            this.chkAutoOpenImportedFile.Text = "Auto open imported file";
+            this.chkAutoOpenImportedFile.UseVisualStyleBackColor = true;
+            // 
             // frmMoreSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(307, 300);
+            this.ClientSize = new System.Drawing.Size(307, 328);
+            this.Controls.Add(this.chkAutoOpenImportedFile);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.chkDisableAutoCS);
             this.Controls.Add(this.txtMultitableChars);
@@ -247,5 +260,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.CheckBox chkDisableAutoCS;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.CheckBox chkRequireValidVerForStock;
+        private System.Windows.Forms.CheckBox chkAutoOpenImportedFile;
     }
 }
