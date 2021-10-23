@@ -4306,34 +4306,35 @@ namespace UniversalPatcher
                 if (fileName.Length == 0)
                     return;
 
-                Logger("Importing file: " + fileName, false);
-                List<byte> buf = new List<byte>();
-
-                IntelHex hexR = new IntelHex();
-                System.IO.StreamReader file = new System.IO.StreamReader(fileName);
-                while (true)
+                Logger("Importing file: " + fileName);
+                /*                frmImportFile fif = new frmImportFile();
+                                fif.Show();
+                                fif.importIntel(fileName);
+                */
+                string defName = Path.GetFileNameWithoutExtension(fileName) + ".bin";
+                string outfileName = SelectSaveFile("BIN (*.bin)|*.bin|All(*.*)|*.*", defName);
+                if (outfileName.Length == 0)
                 {
-                    IntelHexStructure ihex = hexR.Read(file);
+                    Logger(" User cancel");
+                    return;
+                }
+                Logger("Saving to file: " + outfileName, false);
+                FileStream stream = new FileStream(outfileName, FileMode.Create);
+                BinaryWriter writer = new BinaryWriter(stream);
+                IntelHex intelHex = new IntelHex();
+                StreamReader file = new StreamReader(fileName);
+                IntelHexStructure ihex = intelHex.Read(file); //Skip first block. Header ?
+                while (ihex != null)
+                {
+                    ihex = intelHex.Read(file);
                     if (ihex == null)
                         break;
-                    for (int a = 0; a < ihex.dataLen; a++)
-                        buf.Add(ihex.data[a]);
+                    writer.Write(ihex.data, 0, ihex.dataLen);
                 }
                 file.Close();
-                Logger(" [OK]");
 
-                byte[] binbuf = new byte[buf.Count];
-                binbuf = buf.ToArray();
-                string outfileName = SelectSaveFile("BIN (*.bin)|*.bin|All(*.*)|*.*", "imported-file.bin");
-                if (outfileName.Length == 0)
-                    return;
-
-                Logger("Saving to file: " + outfileName, false);
-                WriteBinToFile(outfileName, binbuf);
+                writer.Close();
                 Logger(" [OK]");
-                List<string> fList = new List<string>();
-                fList.Add(outfileName);
-                openNewBinFile(false, fList);
 
             }
             catch (Exception ex)
@@ -4349,34 +4350,36 @@ namespace UniversalPatcher
                 string fileName = SelectFile("Select S19 File", "S19 files (*.s19)|*.s19|All files (*.*)|*.*");
                 if (fileName.Length == 0)
                     return;
-                Logger("Importing file: " + fileName, false);
-                List<byte> buf = new List<byte>();
+                Logger("Importing file: " + fileName);
 
-                SRecord srecord = new SRecord();
-                System.IO.StreamReader file = new System.IO.StreamReader(fileName);
-                while (true)
+                /*                frmImportFile fif = new frmImportFile();
+                                fif.Show();
+                                fif.importMotorola(fileName);
+                */
+                string defName = Path.GetFileNameWithoutExtension(fileName) + ".bin";
+                string outfileName = SelectSaveFile("BIN (*.bin)|*.bin|All(*.*)|*.*", defName);
+                if (outfileName.Length == 0)
                 {
-                    SRecordStructure sRec = srecord.Read(file);
+                    Logger(" User cancel");
+                    return;
+                }
+                Logger("Saving to file: " + outfileName, false);
+                FileStream stream = new FileStream(outfileName, FileMode.Create);
+                BinaryWriter writer = new BinaryWriter(stream);
+                SRecord srecord = new SRecord();
+                StreamReader file = new StreamReader(fileName);
+                SRecordStructure sRec = srecord.Read(file); //Skip first block. Header ?
+                while (sRec != null)
+                {
+                    sRec = srecord.Read(file);
                     if (sRec == null)
                         break;
-                    for (int a = 0; a < sRec.dataLen; a++)
-                        buf.Add(sRec.data[a]);
+                    writer.Write(sRec.data, 0, sRec.dataLen);
                 }
                 file.Close();
+                writer.Close();
                 Logger(" [OK]");
 
-                byte[] binbuf = new byte[buf.Count];
-                binbuf = buf.ToArray();
-                string outfileName = SelectSaveFile("BIN (*.bin)|*.bin|All(*.*)|*.*", "imported-file.bin");
-                if (outfileName.Length == 0)
-                    return;
-
-                Logger("Saving to file: " + outfileName, false);
-                WriteBinToFile(outfileName, binbuf);
-                Logger(" [OK]");
-                List<string> fList = new List<string>();
-                fList.Add(outfileName);
-                openNewBinFile(false, fList);
             }
             catch (Exception ex)
             {

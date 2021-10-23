@@ -152,5 +152,7 @@
 - Added Tuner -> Utilities -> Import -> Intel HEX
 - Added Tuner -> Utilities -> Import -> Motorola S-Record
 
+0.18.42
+- Fixes to Intel & Motorola import
 
 
