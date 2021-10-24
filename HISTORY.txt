@@ -160,3 +160,5 @@
 - New dialog: set offset for intel hex/motorola srecord import
 - New setting: More settings -> Auto open imported file
 
+0.18.44
+- Improved intel hex/motorola import

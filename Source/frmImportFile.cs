@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,24 @@ namespace UniversalPatcher
         }
 
         public string outFileName = "";
+
+        private List<uint> SegStarts = new List<uint>();
+        private List<uint> SegEnds = new List<uint>();
+
+        private class RecordBlock
+        {
+            public RecordBlock()
+            {
+                data = new List<byte>();
+                dataStart = uint.MaxValue;
+            }
+            public uint segStart { get; set; }
+            public uint dataStart { get; set; }
+            public uint dataEnd { get; set; }
+            public List<byte> data { get; set; }
+        }
+
+        private List<RecordBlock> rBlocks = new List<RecordBlock>();
 
         private void frmImportFile_Load(object sender, EventArgs e)
         {
@@ -49,17 +68,58 @@ namespace UniversalPatcher
                 labelFileName.Text = fileName;
                 SRecord srecord = new SRecord();
                 StreamReader file = new StreamReader(labelFileName.Text);
-                SRecordStructure sRec = srecord.Read(file); //Skip first block. Header ?
-                Logger("Starting address:" + sRec.address.ToString("X") + "(HEX), " + sRec.address.ToString() + " (DEC)");
-                txtOffset.Text = sRec.address.ToString("X");
-                file.Close();
+                RecordBlock rblock = new RecordBlock();
+                while (true)
+                {
+                    SRecordStructure rRec = srecord.Read(file);
+                    if (rRec == null)
+                    {
+                        rBlocks.Add(rblock);
+                        break;
+                    }
+                    if (rRec.address > (rblock.dataStart + rblock.data.Count)) //gap
+                    {
+                        rBlocks.Add(rblock);
+                        rblock = new RecordBlock();
+                        rblock.segStart = rRec.address;
+                    }
+                    if (rRec.type > 0 && rRec.type < 4) //Data block
+                    {
+                        for (int b = 0; b < rRec.dataLen; b++)
+                            rblock.data.Add(rRec.data[b]);
+                        if (rblock.dataStart == uint.MaxValue)
+                            rblock.dataStart = rRec.address;
+                        rblock.dataEnd = (uint)(rRec.address + rRec.dataLen - 1);
+                    }
+                }
+
+                txtOffset.Text = rBlocks[0].dataStart.ToString("X");
+                txtFileSize.Text = (rBlocks[rBlocks.Count - 1].dataEnd - rBlocks[0].dataStart + 1).ToString("X");
+                uint totalData = 0;
+                for (int b = 0; b < rBlocks.Count; b++)
+                {
+                    Logger("Segment start: " + rBlocks[b].segStart.ToString("X"));
+                    if (b == 0 && rBlocks[b].dataStart > rBlocks[b].segStart)
+                        Logger("Gap: " + rBlocks[b].segStart.ToString("X") + " - " + (rBlocks[b].dataStart - 1).ToString("X"));
+                    if (b > 0 && rBlocks[b].dataStart > (rBlocks[b - 1].dataEnd + 1))
+                        Logger("Gap: " + (rBlocks[b - 1].dataEnd + 1).ToString("X") + " - " + (rBlocks[b].dataStart - 1).ToString("X"));
+                    Logger("Segment data: " + rBlocks[b].dataStart.ToString("X") + " - " + rBlocks[b].dataEnd.ToString("X"));
+                    totalData += (uint)rBlocks[b].data.Count;
+                }
+                Logger("Total data: " + totalData.ToString());
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmImport line " + line + ": " + ex.Message);
             }
 
         }
+
 
         public void importIntel(string fileName)
         {
@@ -69,31 +129,210 @@ namespace UniversalPatcher
                 labelFileName.Text = fileName;
                 IntelHex intelHex = new IntelHex();
                 StreamReader file = new StreamReader(labelFileName.Text);
-                //IntelHexStructure ihex = intelHex.Read(file); //Skip first block. Header ?
+
+                RecordBlock iblock = new RecordBlock();
                 while (true)
                 {
                     IntelHexStructure ihex = intelHex.Read(file);
                     if (ihex == null)
-                        break;
-                    if (ihex.type == 4)
                     {
-                        Logger("Segment address:" + ihex.address.ToString("X") + " (HEX), " + ihex.address.ToString() + " (DEC)");
-                    }
-                    if (ihex.type == 0) //First datablock
-                    {
-                        Logger("Starting address:" + ihex.address.ToString("X") + " (HEX), " + ihex.address.ToString() + " (DEC)");
-                        txtOffset.Text = ihex.address.ToString("X");
+                        rBlocks.Add(iblock);
                         break;
                     }
-
+                    if (ihex.address > (iblock.dataStart + iblock.data.Count)) //gap
+                    {
+                        rBlocks.Add(iblock);
+                        iblock = new RecordBlock();
+                        iblock.segStart = ihex.address;
+                    }
+                    if (ihex.type == 0) //Data block
+                    {
+                        for (int b = 0; b < ihex.dataLen; b++)
+                            iblock.data.Add(ihex.data[b]);
+                        if (iblock.dataStart == uint.MaxValue)
+                            iblock.dataStart = ihex.address;
+                        iblock.dataEnd = (uint)(ihex.address + ihex.dataLen - 1);
+                    }
                 }
-                file.Close();
 
-
+                txtOffset.Text = rBlocks[0].dataStart.ToString("X");
+                txtFileSize.Text = (rBlocks[rBlocks.Count - 1].dataEnd - rBlocks[0].dataStart + 1).ToString("X");
+                uint totalData = 0;
+                for (int b=0;b<rBlocks.Count;b++)
+                {
+                    Logger("Segment start: " + rBlocks[b].segStart.ToString("X"));
+                    if (b == 0 && rBlocks[b].dataStart > rBlocks[b].segStart)
+                        Logger("Gap: " + rBlocks[b].segStart.ToString("X") + " - " + (rBlocks[b].dataStart - 1).ToString("X"));
+                    if (b> 0 && rBlocks[b].dataStart > (rBlocks[b-1].dataEnd + 1))
+                        Logger("Gap: " + (rBlocks[b-1].dataEnd + 1).ToString("X") + " - " + (rBlocks[b].dataStart - 1).ToString("X"));
+                    Logger("Segment data: " + rBlocks[b].dataStart.ToString("X") + " - " + rBlocks[b].dataEnd.ToString("X"));
+                    totalData += (uint)rBlocks[b].data.Count;
+                }
+                Logger("Total data: " + totalData.ToString());
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmImport line " + line + ": " + ex.Message);
+            }
+
+        }
+
+        public static List<byte> Decompress2(List<byte> input)
+        {
+            const int THRESHOLD = 2;
+            const int BufferSize = 1 << 10;
+            const int DictionarySize = 34;
+            var text_buf = new byte[BufferSize];
+            int inputIdx = 0;
+            var output = new List<byte>();
+            int bufferIdx = BufferSize - DictionarySize; //r
+            byte c = 0;
+            ushort flags;
+
+
+            for (int i = 0; i < BufferSize - DictionarySize; i++)
+                text_buf[i] = 0x0;
+
+            flags = 0;
+            for (; ; )
+            {
+                if (((flags >>= 1) & 0x100) == 0)
+                {
+                    if (inputIdx < input.Count) c = input[inputIdx++]; else break;
+                    flags = (ushort)(c | 0xFF00);  /* uses higher byte cleverly */
+                }   /* to count eight */
+                if ((flags & 1) > 0)
+                {
+                    if (inputIdx < input.Count) c = input[inputIdx++]; else break;
+                    output.Add(c);
+                    text_buf[bufferIdx++] = c;
+                    bufferIdx &= (BufferSize - 1);
+                }
+                else
+                {
+                    int i = 0;
+                    int j = 0;
+                    if (inputIdx < input.Count) i = input[inputIdx++]; else break;
+                    if (inputIdx < input.Count) j = input[inputIdx++]; else break;
+                    i |= ((j & 0xE0) << 3);
+                    j = (j & 0x1F) + THRESHOLD;
+                    for (int k = 0; k <= j; k++)
+                    {
+                        c = text_buf[(i + k) & (BufferSize - 1)];
+                        output.Add(c);
+                        text_buf[bufferIdx++] = c;
+                        bufferIdx &= (BufferSize - 1);
+                    }
+                }
+            }
+
+            return output;
+        }
+
+
+
+        public void importSGM(string fileName)
+        {
+            try
+            {
+                this.Text = "Import SGM file";
+                labelFileName.Text = fileName;
+                Logger("Reading file: " + fileName, false);
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(SWCNT));
+                System.IO.StreamReader file = new System.IO.StreamReader(fileName);
+                SWCNT swcnt = (SWCNT)reader.Deserialize(file);
+                file.Close();
+                Logger(" [OK], converting...");
+
+                SWCNTDATEN data = (SWCNTDATEN)swcnt.Items[3];
+                SWCNTDATENDATENBLOECKEDATENBLOCK[] segments = data.DATENBLOECKE;
+
+                int blockCount = segments.Length;
+                //List<byte[]> binBlocks = new List<byte[]>();
+                int size = 0;
+                uint totalData = 0;
+                for (int i = 0; i < blockCount; i++)
+                {
+                    RecordBlock rBlock = new RecordBlock();
+                    string b64Data = segments[i].DATENBLOCKDATEN;
+                    b64Data = b64Data.Substring(b64Data.IndexOf("base64") + 6);
+                    byte[] b = System.Convert.FromBase64String(b64Data);
+                    string bStr = System.Text.Encoding.UTF8.GetString(b);
+                    List<byte> compressed = new List<byte>();
+                    int pos = bStr.IndexOf("[END_ADDRESS]");
+                    for (; pos < b.Length; pos++)
+                    {
+                        if (b[pos] == 0x0a && b[pos + 1] == 0x1a && b[pos + 2] == 1)
+                            break;
+                    }
+
+                    int pos2 = (b[pos + 2] << 8) + b[pos + 3];
+                    for (int y=pos2; y<b.Length;y++)
+                            compressed.Add(b[y]);
+                    //string uncompressed = Decompress(compressed);
+                    //rBlock.data = Encoding.ASCII.GetBytes(uncompressed).ToList();
+                    rBlock.data = Decompress2(compressed);
+                    //rBlock.data = b.ToList();
+                    totalData += (uint)rBlock.data.Count;
+                    //binBlocks.Add(b);
+                    int start;
+                    HexToInt(segments[i].STARTADR.Replace("0x", ""), out start);
+                    rBlock.dataStart = (uint)start;
+                    rBlock.dataEnd = (uint)(rBlock.dataStart + rBlock.data.Count);
+                    int bSize = 0;
+                    HexToInt(segments[i].GROESSEDEKOMPRIMIERT.Replace("0x", ""), out bSize);
+                    if (size < (start + bSize))
+                        size = start + bSize;
+                    if (i == 0)
+                    {
+                        if (start > 0)
+                            Logger("Gap: 0 - " + (start - 1).ToString("X") +", ", false);
+                    }
+                    else
+                    {
+                        if (start > (rBlocks[i - 1].dataEnd + 1))
+                            Logger("Gap: " + (rBlocks[i - 1].dataEnd + 1).ToString("X") + " - " + (start - 1).ToString("X") +", ", false);
+
+                    }
+                    Logger("Data: " + start.ToString("X") + " - " + (start + rBlock.data.Count).ToString("X"));
+                    Logger("Segment: " + segments[i].DATENBLOCKNAME + " ", false);
+                    SWCNTDATENDATENBLOECKEDATENBLOCKDATENBLOCKCHECK[] cs = segments[i].DATENBLOCKCHECK;
+                    SWCNTDATENDATENBLOECKEDATENBLOCKLOESCHBEREICH[] segBlocks = segments[i].LOESCHBEREICH;
+                    string sbStr = "";
+                    for (int sb = 0; sb < segBlocks.Length; sb++)
+                    {
+                        sbStr += segBlocks[sb].STARTADR.Replace("0x", "") + " - " + segBlocks[sb].ENDADR.Replace("0x", "") + ", ";
+                    }
+                    //sbStr = sbStr.Trim(',');
+                    Logger(sbStr, false);
+
+                    for (int x = 0; x < cs.Length; x++)
+                    {
+                        Logger("Checksum: " + cs[x].CHECKSUMME.Replace("0x", "") + " (" + cs[x].STARTADR.Replace("0x", "") + " - " + cs[x].ENDADR.Replace("0x", "") + ")");
+                        int csend = 0;
+                        HexToInt(cs[x].ENDADR.Replace("0x", ""), out csend);
+                        if (csend > size)
+                            size = csend;
+                    }
+                    rBlocks.Add(rBlock);
+                }
+                txtOffset.Text = "0";
+                txtFileSize.Text = size.ToString("X");
+                Logger("Total data: " + totalData.ToString());
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmImport line " + line + ": " + ex.Message);
             }
 
         }
@@ -106,59 +345,74 @@ namespace UniversalPatcher
                 outFileName = SelectSaveFile("BIN (*.bin)|*.bin|All(*.*)|*.*", defName);
                 if (outFileName.Length == 0)
                     return;
-                Logger("Saving to file: " + outFileName, false);
-                FileStream stream = new FileStream(outFileName, FileMode.Create);
-                BinaryWriter writer = new BinaryWriter(stream);
+
                 uint offset = 0;
                 if (!HexToUint(txtOffset.Text, out offset))
                 {
                     LoggerBold("Can't decode HEX offset: " + txtOffset.Text);
                     return;
                 }
-                if (this.Text.Contains("Motorola"))
+
+                if (chkSplit.Checked)
                 {
-                    StreamReader file = new StreamReader(labelFileName.Text);
-                    SRecord srecord = new SRecord();
-                    while (true)
+                    string baseFile = outFileName;
+                    for (int i = 0; i < rBlocks.Count; i++)
                     {
-                        SRecordStructure sRec = srecord.Read(file);
-                        if (sRec == null)
-                            break;
-                        if (sRec.type > 0 && sRec.type < 4) //Data records are type  1 - 3
-                        {
-                            writer.Seek((int)(sRec.address - offset), SeekOrigin.Begin);
-                            writer.Write(sRec.data, 0, sRec.dataLen);
-                        }
+                        outFileName = Path.Combine(Path.GetDirectoryName(baseFile), Path.GetFileNameWithoutExtension(baseFile) + "-" + i.ToString() + ".bin");
+                        Logger("Saving to file: " + outFileName, false);
+                        WriteBinToFile(outFileName, rBlocks[i].data.ToArray());
+                        Logger(" [OK]");
+                        this.DialogResult = DialogResult.No;
                     }
-                    file.Close();
-                
                 }
                 else
                 {
-                    IntelHex intelHex = new IntelHex();
-                    StreamReader file = new StreamReader(labelFileName.Text);
-                    //IntelHexStructure ihex = intelHex.Read(file); //Skip first block. Header ?
-                    while (true)
+                    Logger("Saving to file: " + outFileName, false);
+
+                    List<byte> fillBytes = new List<byte>();
+                    if (txtFillGaps.Text.Length > 0)
                     {
-                        IntelHexStructure ihex = intelHex.Read(file);
-                        if (ihex == null)
-                            break;
-                        if (ihex.type == 0) //Datablock
+                        string[] fillStr = txtFillGaps.Text.Split(' ');
+                        foreach (string str in fillStr)
                         {
-                            writer.Seek((int)(ihex.address - offset), SeekOrigin.Begin);
-                            writer.Write(ihex.data, 0, ihex.dataLen);
+                            byte b;
+                            HexToByte(str, out b);
+                            fillBytes.Add(b);
                         }
                     }
 
+                    int fsize = 0;
+                    if (!HexToInt(txtFileSize.Text, out fsize))
+                        throw new Exception("Can't convert files size from HEX: " + txtFileSize.Text);
+                    byte[] buf = new byte[fsize];
+                    if (fillBytes.Count > 0)
+                    {
+                        for (uint addr = 0; addr < fsize; addr++)
+                        {
+                            for (int x = 0; x < fillBytes.Count; x++)
+                                if ((addr + x) < fsize)
+                                    buf[addr + x] = fillBytes[x];
+                        }
+                    }
+                    for (int r = 0; r < rBlocks.Count; r++)
+                    {
+                        Debug.WriteLine("Start: " + (rBlocks[r].dataStart - offset).ToString() + ", End: " + (rBlocks[r].dataStart - offset + rBlocks[r].data.Count).ToString() + ", Buf size: " + fsize.ToString());
+                        Array.Copy(rBlocks[r].data.ToArray(), 0, buf,(int)(rBlocks[r].dataStart - offset), rBlocks[r].data.Count);
+                    }
+                    WriteBinToFile(outFileName, buf);
+                    Logger(" [OK]");
+                    this.DialogResult = DialogResult.OK;
                 }
-                writer.Close();
-                Logger(" [OK]");
-                this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             catch (Exception ex)
             {
-                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmImport line " + line + ": " + ex.Message);
             }
         }
 

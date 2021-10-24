@@ -68,6 +68,7 @@ namespace UniversalPatcher
             this.cSV2ExperimentalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sGMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.intelHEXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.motorolaSrecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.cSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xDFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -158,7 +159,6 @@ namespace UniversalPatcher
             this.radioTreeMode = new System.Windows.Forms.RadioButton();
             this.btnCollapse = new System.Windows.Forms.Button();
             this.btnExpand = new System.Windows.Forms.Button();
-            this.motorolaSrecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -476,6 +476,7 @@ namespace UniversalPatcher
             // 
             // sGMToolStripMenuItem
             // 
+            this.sGMToolStripMenuItem.Enabled = false;
             this.sGMToolStripMenuItem.Name = "sGMToolStripMenuItem";
             this.sGMToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.sGMToolStripMenuItem.Text = "SGM";
@@ -487,6 +488,13 @@ namespace UniversalPatcher
             this.intelHEXToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.intelHEXToolStripMenuItem.Text = "Intel HEX";
             this.intelHEXToolStripMenuItem.Click += new System.EventHandler(this.intelHEXToolStripMenuItem_Click);
+            // 
+            // motorolaSrecordToolStripMenuItem
+            // 
+            this.motorolaSrecordToolStripMenuItem.Name = "motorolaSrecordToolStripMenuItem";
+            this.motorolaSrecordToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.motorolaSrecordToolStripMenuItem.Text = "Motorola S-record";
+            this.motorolaSrecordToolStripMenuItem.Click += new System.EventHandler(this.motorolaSrecordToolStripMenuItem_Click);
             // 
             // exportToolStripMenuItem1
             // 
@@ -1379,13 +1387,6 @@ namespace UniversalPatcher
             this.btnExpand.TabIndex = 24;
             this.btnExpand.UseVisualStyleBackColor = true;
             this.btnExpand.Click += new System.EventHandler(this.btnExpand_Click);
-            // 
-            // motorolaSrecordToolStripMenuItem
-            // 
-            this.motorolaSrecordToolStripMenuItem.Name = "motorolaSrecordToolStripMenuItem";
-            this.motorolaSrecordToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
-            this.motorolaSrecordToolStripMenuItem.Text = "Motorola S-record";
-            this.motorolaSrecordToolStripMenuItem.Click += new System.EventHandler(this.motorolaSrecordToolStripMenuItem_Click);
             // 
             // FrmTuner
             // 

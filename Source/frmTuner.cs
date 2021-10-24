@@ -4223,6 +4223,17 @@ namespace UniversalPatcher
                 if (fileName.Length == 0)
                     return;
 
+                frmImportFile fif = new frmImportFile();
+                fif.importSGM(fileName);
+                if (fif.ShowDialog() == DialogResult.OK && Properties.Settings.Default.AutomaticOpenImportedFile)
+                {
+                    List<string> fList = new List<string>();
+                    fList.Add(fif.outFileName);
+                    openNewBinFile(false, fList);
+                }
+                return;
+
+                //Old code:
                 Logger("Reading file: " + fileName, false);
                 System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(SWCNT));
                 System.IO.StreamReader file = new System.IO.StreamReader(fileName);
