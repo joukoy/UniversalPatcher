@@ -517,10 +517,14 @@ namespace UniversalPatcher
                         {
                             if (rBlocks[r].blockType == 0)
                             {
-                                Logger("Block: " + rBlocks[r].Name + ": " + pos.ToString("X") + " - " + (pos + rBlocks[r].dataEnd - rBlocks[r].dataStart).ToString("X"));
-                                Array.Copy(rBlocks[r].data.ToArray(), 0, buf,pos, rBlocks[r].data.Count);
+                                Logger("Block: " + rBlocks[r].Name + ": " + pos.ToString("X") + " - " + (pos + rBlocks[r].data.Count - 1).ToString("X"));
+                                Array.Copy(rBlocks[r].data.ToArray(), 0, buf, pos, rBlocks[r].data.Count);
+                                pos += (uint)rBlocks[r].data.Count ;
                             }
-                            pos += rBlocks[r].dataEnd - rBlocks[r].dataStart ;
+                            else
+                            {
+                                pos += rBlocks[r].dataEnd - rBlocks[r].dataStart + 1;
+                            }
                         }
                     }
                     WriteBinToFile(outFileName, buf);

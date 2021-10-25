@@ -174,3 +174,6 @@
 0.18.47
 - Allow modify Data + Gap addresses in Intel/Motorola import, Separate offset removed
 - Fixed bug in dtcsearch, only 0-3 or 0-7 (combined) values were allowed in linear mode.
+
+0.18.48
+- Fixed bug in Intel/Motorola import, gap calculation off by byte
