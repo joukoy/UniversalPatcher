@@ -167,3 +167,6 @@
 - Intel/Motorola import: Select segments for import, supply segment filenames
 - Fixed bug in XML Editor: Copying multiple rows: modified values reflected to other copies
 - Fixed OBD2 Description import, separator can be "," or ";"
+
+0.18.46
+- Rmoved filtering 4xxx, 5xxx and Axxx in DTC search
