@@ -19,6 +19,14 @@ namespace UniversalPatcher
             InitializeComponent();
         }
 
+        private void frmImportFile_Load(object sender, EventArgs e)
+        {
+            LogReceivers.Add(txtResult);
+            refreshData();
+            dataGridView1.CellEndEdit += DataGridView1_CellEndEdit;
+        }
+
+
         public string outFileName = "";
 
         private List<uint> SegStarts = new List<uint>();
@@ -26,6 +34,7 @@ namespace UniversalPatcher
         private List<RecordBlock> rBlocks = new List<RecordBlock>();
         //private List<ImportSegment> importSegs = new List<ImportSegment>();
         private BindingSource bindingSource = new BindingSource();
+        private uint fSize;
 
         private class RecordBlock
         {
@@ -48,66 +57,43 @@ namespace UniversalPatcher
 
             public string Name { get; set; }
             public string BlockType { get; set; }
-            public string Start
-            {
+            public string Start {
                 get { return dataStart.ToString("X"); }
                 set { HexToUint(value, out dataStart); }
             }
-            public string End
-            {
+            public string End {
                 get { return dataEnd.ToString("X"); }
                 set { HexToUint(value, out dataEnd); }
             }
-/*            public string Range
-            {
+            public string Size {
                 get
                 {
-                    string retVal = "";
-                    if (segStart < uint.MaxValue)
-                        retVal = segStart.ToString("X") + " - ";
+                    if (BlockType == "Data")
+                        return data.Count.ToString("X");
                     else
-                        retVal = dataStart.ToString("X") + " - ";
-                    if (segEnd < uint.MaxValue)
-                        retVal += segEnd.ToString("X");
-                    return retVal;
+                        return ((uint)(dataEnd - dataStart + 1)).ToString("X");
                 }
             }
-            public string DataRange
-            {
-                get
-                {
-                    string retVal = "";
-                    if (dataStart < uint.MaxValue)
-                        retVal = dataStart.ToString("X") + " - ";
-                    if (dataEnd < uint.MaxValue)
-                        retVal += dataEnd.ToString("X");
-                    return retVal;
-                }
-            }*/
             public bool Select { get; set; }
             public string FileName { get; set; }
         }
 
-        /*private class ImportSegment
+        private void DataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            public ImportSegment()
-            {
-                Name = "";
-                Import = true;
-            }
-            public string Name { get; set; }
-            public string Range { get; set; }
-            public string DataRange { get; set; }
-            public bool Import { get; set; }
-            public string FileName { get; set; }
-        }*/
-
-
-        private void frmImportFile_Load(object sender, EventArgs e)
-        {
-            LogReceivers.Add(txtResult);
-            refreshData();
+            calcFileSize();
         }
+
+        private void calcFileSize()
+        {
+            fSize = 0;
+            for (int i = 0; i < rBlocks.Count; i++)
+            {
+                if (rBlocks[i].Select && rBlocks[i].dataEnd > rBlocks[i].dataStart)
+                    fSize += rBlocks[i].dataEnd - rBlocks[i].dataStart + 1;
+            }
+            labelFileSize.Text = fSize.ToString("X");
+        }
+
 
         private void refreshData()
         {
@@ -115,6 +101,7 @@ namespace UniversalPatcher
             dataGridView1.DataSource = null;
             bindingSource.DataSource = rBlocks;
             dataGridView1.DataSource = bindingSource;
+            calcFileSize();
         }
 
         public void LoggerBold(string LogText, Boolean NewLine = true)
@@ -232,6 +219,14 @@ namespace UniversalPatcher
                 //Logger("Segment data: " + rBlocks[b].dataStart.ToString("X") + " - " + rBlocks[b].dataEnd.ToString("X"));
                 totalData += (uint)rBlocks[b].data.Count;
             }
+            RecordBlock iblock2 = new RecordBlock();
+            iblock2.BlockType = "Gap";
+            //iblock.segStart = rBlocks[0].segStart;
+            iblock2.dataStart = rBlocks[rBlocks.Count-1].dataEnd + 1;
+            iblock2.dataEnd = iblock2.dataStart;
+            iblock2.Select = false;
+            rBlocks.Add(iblock2);
+
             for (int b = 0; b < rBlocks.Count; b++)
             {
                 if (rBlocks[b].BlockType == "Data")
@@ -240,10 +235,7 @@ namespace UniversalPatcher
                     rBlocks[b].Name = "Gap-" + b.ToString();
             }
             Logger("Total data: " + totalData.ToString());
-            if (rBlocks[0].Name == "Offset")
-                txtFileSize.Text = (rBlocks[rBlocks.Count - 1].dataEnd - rBlocks[1].dataStart + 1).ToString("X");
-            else
-                txtFileSize.Text = (rBlocks[rBlocks.Count - 1].dataEnd - rBlocks[0].dataStart + 1).ToString("X");
+            calcFileSize();
         }
 
         public void importIntel(string fileName)
@@ -439,8 +431,6 @@ namespace UniversalPatcher
                     }
                     rBlocks.Add(rBlock);
                 }
-                txtOffset.Text = "0";
-                txtFileSize.Text = size.ToString("X");
                 Logger("Total data: " + totalData.ToString());
             }
             catch (Exception ex)
@@ -462,10 +452,6 @@ namespace UniversalPatcher
                 /*uint offset = 0;
                 if (!HexToUint(txtOffset.Text, out offset))
                     throw new Exception("Can't decode HEX offset: " + txtOffset.Text);*/
-                int fsize = 0;
-                if (!HexToInt(txtFileSize.Text, out fsize))
-                    throw new Exception("Can't convert files size from HEX: " + txtFileSize.Text);
-
 
                 if (chkSplit.Checked)
                 {
@@ -485,17 +471,6 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    uint minFSize = 0;
-                    for (int i = 0; i < rBlocks.Count; i++)
-                    {
-                        if (rBlocks[i].Select)
-                            minFSize += rBlocks[i].dataEnd - rBlocks[i].dataStart + 1;
-                    }
-                    if (fsize < minFSize)
-                    {
-                        LoggerBold("Minimum filesize for current selections: " + minFSize.ToString("X"));
-                        return;
-                    }
                     string defName = Path.GetFileNameWithoutExtension(labelFileName.Text) + ".bin";
                     outFileName = SelectSaveFile("BIN (*.bin)|*.bin|All(*.*)|*.*", defName);
                     if (outFileName.Length == 0)
@@ -514,13 +489,13 @@ namespace UniversalPatcher
                         }
                     }
 
-                    byte[] buf = new byte[fsize];
+                    byte[] buf = new byte[fSize];
                     if (fillBytes.Count > 0)
                     {
-                        for (uint addr = 0; addr < fsize; addr++)
+                        for (uint addr = 0; addr < fSize; addr++)
                         {
                             for (int x = 0; x < fillBytes.Count; x++)
-                                if ((addr + x) < fsize)
+                                if ((addr + x) < fSize)
                                     buf[addr + x] = fillBytes[x];
                         }
                     }

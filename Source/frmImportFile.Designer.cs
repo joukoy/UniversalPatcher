@@ -29,44 +29,22 @@ namespace UniversalPatcher
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.txtOffset = new System.Windows.Forms.TextBox();
             this.btnSave = new System.Windows.Forms.Button();
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.labelFileName = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.txtFileSize = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txtFillGaps = new System.Windows.Forms.TextBox();
             this.chkSplit = new System.Windows.Forms.CheckBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.labelFileSize = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Enabled = false;
-            this.label1.Location = new System.Drawing.Point(318, 104);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(69, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Offset (HEX):";
-            this.label1.Visible = false;
-            // 
-            // txtOffset
-            // 
-            this.txtOffset.Enabled = false;
-            this.txtOffset.Location = new System.Drawing.Point(409, 101);
-            this.txtOffset.Name = "txtOffset";
-            this.txtOffset.Size = new System.Drawing.Size(100, 20);
-            this.txtOffset.TabIndex = 2;
-            this.txtOffset.Visible = false;
             // 
             // btnSave
             // 
@@ -92,7 +70,7 @@ namespace UniversalPatcher
             // labelFileName
             // 
             this.labelFileName.AutoSize = true;
-            this.labelFileName.Location = new System.Drawing.Point(12, 9);
+            this.labelFileName.Location = new System.Drawing.Point(10, 9);
             this.labelFileName.Name = "labelFileName";
             this.labelFileName.Size = new System.Drawing.Size(51, 13);
             this.labelFileName.TabIndex = 6;
@@ -106,13 +84,6 @@ namespace UniversalPatcher
             this.label2.Size = new System.Drawing.Size(78, 13);
             this.label2.TabIndex = 7;
             this.label2.Text = "File size (HEX):";
-            // 
-            // txtFileSize
-            // 
-            this.txtFileSize.Location = new System.Drawing.Point(101, 31);
-            this.txtFileSize.Name = "txtFileSize";
-            this.txtFileSize.Size = new System.Drawing.Size(100, 20);
-            this.txtFileSize.TabIndex = 8;
             // 
             // label3
             // 
@@ -169,23 +140,31 @@ namespace UniversalPatcher
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.txtOffset);
-            this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Panel2.Controls.Add(this.txtResult);
             this.splitContainer1.Size = new System.Drawing.Size(652, 430);
             this.splitContainer1.SplitterDistance = 256;
             this.splitContainer1.TabIndex = 13;
+            // 
+            // labelFileSize
+            // 
+            this.labelFileSize.AutoSize = true;
+            this.labelFileSize.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.labelFileSize.Location = new System.Drawing.Point(94, 34);
+            this.labelFileSize.Name = "labelFileSize";
+            this.labelFileSize.Size = new System.Drawing.Size(37, 15);
+            this.labelFileSize.TabIndex = 14;
+            this.labelFileSize.Text = "label1";
             // 
             // frmImportFile
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(653, 487);
+            this.Controls.Add(this.labelFileSize);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.chkSplit);
             this.Controls.Add(this.txtFillGaps);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.txtFileSize);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.labelFileName);
             this.Controls.Add(this.btnSave);
@@ -195,7 +174,6 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -204,17 +182,15 @@ namespace UniversalPatcher
         }
 
         #endregion
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtOffset;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.RichTextBox txtResult;
         private System.Windows.Forms.Label labelFileName;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txtFileSize;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtFillGaps;
         private System.Windows.Forms.CheckBox chkSplit;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.Label labelFileSize;
     }
 }

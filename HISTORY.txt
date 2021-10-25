@@ -182,3 +182,5 @@
 - Add Offset-gap to beginning of file if in imported file in Intel/Motorola import
 - Lot of new XML-files by kur4o
 
+0.18.50
+- Block size display and automatic file size calculation to Intel/Motorola import
