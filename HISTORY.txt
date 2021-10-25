@@ -162,3 +162,8 @@
 
 0.18.44
 - Improved intel hex/motorola import
+
+0.18.45
+- Intel/Motorola import: Select segments for import, supply segment filenames
+- Fixed bug in XML Editor: Copying multiple rows: modified values reflected to other copies
+- Fixed OBD2 Description import, separator can be "," or ";"

@@ -248,8 +248,8 @@ namespace UniversalPatcher
                             break;
                     }
                     codeTmp = dtc.codeInt.ToString("X4");
-                    if (codeTmp.StartsWith("4") || codeTmp.StartsWith("5") || codeTmp.StartsWith("6") || codeTmp.StartsWith("7") || codeTmp.StartsWith("8")
-                        || codeTmp.StartsWith("9") || codeTmp.StartsWith("A") || codeTmp.StartsWith("B") || codeTmp.StartsWith("F"))
+                    if ( codeTmp.StartsWith("6") || codeTmp.StartsWith("7") || codeTmp.StartsWith("8")
+                        || codeTmp.StartsWith("9")  || codeTmp.StartsWith("B") || codeTmp.StartsWith("F"))
                     {
                         Debug.WriteLine("DTC Code out of range: " + codeTmp);
                         break;
