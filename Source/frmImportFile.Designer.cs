@@ -39,6 +39,13 @@ namespace UniversalPatcher
             this.label3 = new System.Windows.Forms.Label();
             this.txtFillGaps = new System.Windows.Forms.TextBox();
             this.chkSplit = new System.Windows.Forms.CheckBox();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -69,14 +76,12 @@ namespace UniversalPatcher
             // 
             // txtResult
             // 
-            this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtResult.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtResult.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtResult.HideSelection = false;
-            this.txtResult.Location = new System.Drawing.Point(0, 58);
+            this.txtResult.Location = new System.Drawing.Point(0, 0);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(652, 262);
+            this.txtResult.Size = new System.Drawing.Size(652, 226);
             this.txtResult.TabIndex = 5;
             this.txtResult.Text = "";
             // 
@@ -131,25 +136,63 @@ namespace UniversalPatcher
             this.chkSplit.TabIndex = 11;
             this.chkSplit.Text = "Segment/file";
             this.chkSplit.UseVisualStyleBackColor = true;
+            this.chkSplit.CheckedChanged += new System.EventHandler(this.chkSplit_CheckedChanged);
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(652, 200);
+            this.dataGridView1.TabIndex = 12;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(1, 58);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.txtResult);
+            this.splitContainer1.Size = new System.Drawing.Size(652, 430);
+            this.splitContainer1.SplitterDistance = 200;
+            this.splitContainer1.TabIndex = 13;
             // 
             // frmImportFile
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(653, 320);
+            this.ClientSize = new System.Drawing.Size(653, 487);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.chkSplit);
             this.Controls.Add(this.txtFillGaps);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtFileSize);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.labelFileName);
-            this.Controls.Add(this.txtResult);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.txtOffset);
             this.Controls.Add(this.label1);
             this.Name = "frmImportFile";
             this.Text = "Import";
             this.Load += new System.EventHandler(this.frmImportFile_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -166,5 +209,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtFillGaps;
         private System.Windows.Forms.CheckBox chkSplit;
+        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }

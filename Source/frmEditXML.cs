@@ -604,16 +604,19 @@ namespace UniversalPatcher
             string FileName = SelectFile("Select CSV file", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
             if (FileName.Length == 0)
                 return;
+            Logger("Importing file: " + FileName, false);
             StreamReader sr = new StreamReader(FileName);
             string line;
             while ((line = sr.ReadLine()) != null)
             {
-                int pos = line.IndexOf(' ');
+                int pos = line.IndexOf(';');
+                if (pos < 0)
+                    pos = line.IndexOf(',');
                 if (pos > -1)
                 {
                     OBD2Code oc = new OBD2Code();
                     oc.Code = line.Substring(0,pos).Trim();
-                    oc.Description = line.Substring(pos).Trim();
+                    oc.Description = line.Substring(pos+1).Trim();
                     bool exist = false;
                     for (int i = 0; i < OBD2Codes.Count; i++)
                     {
@@ -630,6 +633,7 @@ namespace UniversalPatcher
                     }
                 }
             }
+            Logger(" [OK]");
             sr.Close();
             
         }
@@ -941,8 +945,8 @@ namespace UniversalPatcher
                     dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Selected = true;
                 }
                 int row = dataGridView1.SelectedCells[0].RowIndex;
+                currentObj = Activator.CreateInstance(currentObj.GetType());
                 bindingSource.Insert(row, currentObj);
-
                 dataGridView1.Rows[row].Cells[0].Selected = true;
                 PasteClipboardValue();
                 dataGridView1.BeginEdit(true);
