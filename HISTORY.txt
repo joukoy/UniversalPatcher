@@ -170,3 +170,7 @@
 
 0.18.46
 - Removed filtering 4xxx, 5xxx and Axxx in DTC search
+
+0.18.47
+- Allow modify Data + Gap addresses in Intel/Motorola import, Separate offset removed
+- Fixed bug in dtcsearch, only 0-3 or 0-7 (combined) values were allowed in linear mode.

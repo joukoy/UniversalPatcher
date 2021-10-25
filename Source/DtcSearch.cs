@@ -352,7 +352,8 @@ namespace UniversalPatcher
                 uint codePerStatusCounter = 0;
                 for (; dtcNr < PCM.dtcCodes.Count; addr2+= (uint)dtcSearchConfigs[configIndex].StatusSteps, addr3+= (uint)dtcSearchConfigs[configIndex].MilSteps)
                 {
-                    if (PCM.buf[addr2] > 7)
+
+                    /*if (PCM.buf[addr2] > 7)
                     {
                         if (linear)
                             break;
@@ -365,7 +366,7 @@ namespace UniversalPatcher
                             break;
                         else
                             continue;
-                    }
+                    }*/
                     dtcCode dtc = PCM.dtcCodes[dtcNr];
 
                     byte statusByte;

@@ -51,18 +51,22 @@ namespace UniversalPatcher
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 9);
+            this.label1.Enabled = false;
+            this.label1.Location = new System.Drawing.Point(318, 104);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(69, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "Offset (HEX):";
+            this.label1.Visible = false;
             // 
             // txtOffset
             // 
-            this.txtOffset.Location = new System.Drawing.Point(101, 6);
+            this.txtOffset.Enabled = false;
+            this.txtOffset.Location = new System.Drawing.Point(409, 101);
             this.txtOffset.Name = "txtOffset";
             this.txtOffset.Size = new System.Drawing.Size(100, 20);
             this.txtOffset.TabIndex = 2;
+            this.txtOffset.Visible = false;
             // 
             // btnSave
             // 
@@ -88,11 +92,11 @@ namespace UniversalPatcher
             // labelFileName
             // 
             this.labelFileName.AutoSize = true;
-            this.labelFileName.Location = new System.Drawing.Point(207, 9);
+            this.labelFileName.Location = new System.Drawing.Point(12, 9);
             this.labelFileName.Name = "labelFileName";
-            this.labelFileName.Size = new System.Drawing.Size(10, 13);
+            this.labelFileName.Size = new System.Drawing.Size(51, 13);
             this.labelFileName.TabIndex = 6;
-            this.labelFileName.Text = "-";
+            this.labelFileName.Text = "FileName";
             // 
             // label2
             // 
@@ -165,6 +169,8 @@ namespace UniversalPatcher
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.txtOffset);
+            this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Panel2.Controls.Add(this.txtResult);
             this.splitContainer1.Size = new System.Drawing.Size(652, 430);
             this.splitContainer1.SplitterDistance = 200;
@@ -183,14 +189,13 @@ namespace UniversalPatcher
             this.Controls.Add(this.label2);
             this.Controls.Add(this.labelFileName);
             this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.txtOffset);
-            this.Controls.Add(this.label1);
             this.Name = "frmImportFile";
             this.Text = "Import";
             this.Load += new System.EventHandler(this.frmImportFile_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);

@@ -38,15 +38,27 @@ namespace UniversalPatcher
                 segStart = uint.MaxValue;
                 Select = true;
                 FileName = "";
+                blockType = 0;
             }
             public uint segStart;
             public uint segEnd;
             public uint dataStart;
             public uint dataEnd;
             public List<byte> data;
+            public ushort blockType; // 0 = Data, 1 = Gap
 
             public string Name { get; set; }
-            public string Range
+            public string Start
+            {
+                get { return dataStart.ToString("X"); }
+                set { HexToUint(value, out dataStart); }
+            }
+            public string End
+            {
+                get { return dataEnd.ToString("X"); }
+                set { HexToUint(value, out dataEnd); }
+            }
+/*            public string Range
             {
                 get
                 {
@@ -71,7 +83,7 @@ namespace UniversalPatcher
                         retVal += dataEnd.ToString("X");
                     return retVal;
                 }
-            }
+            }*/
             public bool Select { get; set; }
             public string FileName { get; set; }
         }
@@ -131,6 +143,7 @@ namespace UniversalPatcher
                 SRecord srecord = new SRecord();
                 StreamReader file = new StreamReader(labelFileName.Text);
                 RecordBlock rblock = new RecordBlock();
+                bool firstRec = true;
                 while (true)
                 {
                     SRecordStructure rRec = srecord.Read(file);
@@ -139,6 +152,12 @@ namespace UniversalPatcher
                         rBlocks.Add(rblock);
                         break;
                     }
+                    if (firstRec)
+                    {
+                        rblock.segStart = rRec.address;
+                        firstRec = false;
+                    }
+
                     if (rRec.address > (rblock.dataStart + rblock.data.Count)) //gap
                     {
                         rBlocks.Add(rblock);
@@ -155,20 +174,9 @@ namespace UniversalPatcher
                     }
                 }
 
-                txtOffset.Text = rBlocks[0].dataStart.ToString("X");
+                //txtOffset.Text = rBlocks[0].dataStart.ToString("X");
                 txtFileSize.Text = (rBlocks[rBlocks.Count - 1].dataEnd - rBlocks[0].dataStart + 1).ToString("X");
-                uint totalData = 0;
-                for (int b = 0; b < rBlocks.Count; b++)
-                {
-                    //Logger("Segment start: " + rBlocks[b].segStart.ToString("X"));
-                    if (b == 0 && rBlocks[b].dataStart > rBlocks[b].segStart)
-                        Logger("Gap: " + rBlocks[b].segStart.ToString("X") + " - " + (rBlocks[b].dataStart - 1).ToString("X"));
-                    if (b > 0 && rBlocks[b].dataStart > (rBlocks[b - 1].dataEnd + 1))
-                        Logger("Gap: " + (rBlocks[b - 1].dataEnd + 1).ToString("X") + " - " + (rBlocks[b].dataStart - 1).ToString("X"));
-                    //Logger("Segment data: " + rBlocks[b].dataStart.ToString("X") + " - " + rBlocks[b].dataEnd.ToString("X"));
-                    totalData += (uint)rBlocks[b].data.Count;
-                }
-                Logger("Total data: " + totalData.ToString());
+                addGaps();
             }
             catch (Exception ex)
             {
@@ -182,6 +190,47 @@ namespace UniversalPatcher
 
         }
 
+        private void addGaps()
+        {
+            uint totalData = 0;
+            for (int b = 0; b < rBlocks.Count; b++)
+            {
+                //Logger("Segment start: " + rBlocks[b].segStart.ToString("X"));
+                if (b == 0 && rBlocks[b].dataStart > rBlocks[b].segStart)
+                {
+                    //Logger("Gap: " + rBlocks[b].segStart.ToString("X") + " - " + (rBlocks[b].dataStart - 1).ToString("X"));
+                    RecordBlock iblock = new RecordBlock();
+                    iblock.blockType = 1;
+                    iblock.segStart = rBlocks[0].segStart;
+                    iblock.dataStart = rBlocks[0].segStart;
+                    iblock.dataEnd = rBlocks[0].dataStart - 1;
+                    rBlocks.Insert(0, iblock);
+                }
+
+                if (b > 0 && rBlocks[b].dataStart > (rBlocks[b - 1].dataEnd + 1))
+                {
+                    //Logger("Gap: " + (rBlocks[b - 1].dataEnd + 1).ToString("X") + " - " + (rBlocks[b].dataStart - 1).ToString("X"));
+                    RecordBlock iblock = new RecordBlock();
+                    iblock.blockType = 1;
+                    //iblock.segStart = rBlocks[0].segStart;
+                    iblock.dataStart = rBlocks[b - 1].dataEnd + 1;
+                    iblock.dataEnd = rBlocks[b].dataStart - 1;
+                    rBlocks.Insert(b, iblock);
+
+                }
+                //Logger("Segment data: " + rBlocks[b].dataStart.ToString("X") + " - " + rBlocks[b].dataEnd.ToString("X"));
+                totalData += (uint)rBlocks[b].data.Count;
+            }
+            for (int b = 0; b < rBlocks.Count; b++)
+            {
+                if (rBlocks[b].blockType == 0)
+                    rBlocks[b].Name = "Data-" + b.ToString();
+                else
+                    rBlocks[b].Name = "Gap-" + b.ToString();
+            }
+            Logger("Total data: " + totalData.ToString());
+
+        }
 
         public void importIntel(string fileName)
         {
@@ -191,7 +240,7 @@ namespace UniversalPatcher
                 labelFileName.Text = fileName;
                 IntelHex intelHex = new IntelHex();
                 StreamReader file = new StreamReader(labelFileName.Text);
-
+                bool firstRec = true;
                 RecordBlock iblock = new RecordBlock();
                 while (true)
                 {
@@ -200,6 +249,11 @@ namespace UniversalPatcher
                     {
                         rBlocks.Add(iblock);
                         break;
+                    }
+                    if (firstRec)
+                    {
+                        iblock.segStart = ihex.address;
+                        firstRec = false;
                     }
                     if (ihex.address > (iblock.dataStart + iblock.data.Count)) //gap
                     {
@@ -217,20 +271,8 @@ namespace UniversalPatcher
                     }
                 }
 
-                txtOffset.Text = rBlocks[0].dataStart.ToString("X");
+                addGaps();
                 txtFileSize.Text = (rBlocks[rBlocks.Count - 1].dataEnd - rBlocks[0].dataStart + 1).ToString("X");
-                uint totalData = 0;
-                for (int b = 0; b < rBlocks.Count; b++)
-                {
-                    //Logger("Segment start: " + rBlocks[b].segStart.ToString("X"));
-                    if (b == 0 && rBlocks[b].dataStart > rBlocks[b].segStart)
-                        Logger("Gap: " + rBlocks[b].segStart.ToString("X") + " - " + (rBlocks[b].dataStart - 1).ToString("X"));
-                    if (b > 0 && rBlocks[b].dataStart > (rBlocks[b - 1].dataEnd + 1))
-                        Logger("Gap: " + (rBlocks[b - 1].dataEnd + 1).ToString("X") + " - " + (rBlocks[b].dataStart - 1).ToString("X"));
-                    //Logger("Segment data: " + rBlocks[b].dataStart.ToString("X") + " - " + rBlocks[b].dataEnd.ToString("X"));
-                    totalData += (uint)rBlocks[b].data.Count;
-                }
-                Logger("Total data: " + totalData.ToString());
             }
             catch (Exception ex)
             {
@@ -403,31 +445,20 @@ namespace UniversalPatcher
         {
             try
             {
-                uint offset = 0;
+                /*uint offset = 0;
                 if (!HexToUint(txtOffset.Text, out offset))
-                    throw new Exception("Can't decode HEX offset: " + txtOffset.Text);
-                uint minFSize = 0;
-                for (int i = 0; i < rBlocks.Count; i++)
-                {
-                    if (rBlocks[i].Select && (rBlocks[i].dataEnd - offset) > minFSize)
-                        minFSize = rBlocks[i].dataEnd - offset;
-                }
+                    throw new Exception("Can't decode HEX offset: " + txtOffset.Text);*/
                 int fsize = 0;
                 if (!HexToInt(txtFileSize.Text, out fsize))
                     throw new Exception("Can't convert files size from HEX: " + txtFileSize.Text);
 
-                if (fsize < minFSize)
-                {
-                    LoggerBold("Minimum filesize for current selections: " + minFSize.ToString("X"));
-                    return;
-                }
 
                 if (chkSplit.Checked)
                 {
                     string fldr = SelectFolder("Save to folder:");
                     for (int i = 0; i < rBlocks.Count; i++)
                     {
-                        if (rBlocks[i].Select)
+                        if (rBlocks[i].Select && rBlocks[i].blockType == 0)
                         {
                             outFileName = Path.Combine(fldr, rBlocks[i].FileName);
                             Logger("Saving to file: " + outFileName, false);
@@ -435,15 +466,27 @@ namespace UniversalPatcher
                             Logger(" [OK]");
                         }                        
                     }
-                    this.DialogResult = DialogResult.No;
+                    Logger("[OK]");
+                    //this.DialogResult = DialogResult.No;
                 }
                 else
                 {
+                    uint minFSize = 0;
+                    for (int i = 0; i < rBlocks.Count; i++)
+                    {
+                        if (rBlocks[i].Select)
+                            minFSize += rBlocks[i].dataEnd - rBlocks[i].dataStart + 1;
+                    }
+                    if (fsize < minFSize)
+                    {
+                        LoggerBold("Minimum filesize for current selections: " + minFSize.ToString("X"));
+                        return;
+                    }
                     string defName = Path.GetFileNameWithoutExtension(labelFileName.Text) + ".bin";
                     outFileName = SelectSaveFile("BIN (*.bin)|*.bin|All(*.*)|*.*", defName);
                     if (outFileName.Length == 0)
                         return;
-                    Logger("Saving to file: " + outFileName, false);
+                    Logger("Saving to file: " + outFileName);
 
                     List<byte> fillBytes = new List<byte>();
                     if (txtFillGaps.Text.Length > 0)
@@ -467,16 +510,24 @@ namespace UniversalPatcher
                                     buf[addr + x] = fillBytes[x];
                         }
                     }
+                    uint pos = 0;
                     for (int r = 0; r < rBlocks.Count; r++)
                     {
-                        Debug.WriteLine("Start: " + (rBlocks[r].dataStart - offset).ToString() + ", End: " + (rBlocks[r].dataStart - offset + rBlocks[r].data.Count).ToString() + ", Buf size: " + fsize.ToString());
-                        Array.Copy(rBlocks[r].data.ToArray(), 0, buf, (int)(rBlocks[r].dataStart - offset), rBlocks[r].data.Count);
+                        if (rBlocks[r].Select)
+                        {
+                            if (rBlocks[r].blockType == 0)
+                            {
+                                Logger("Block: " + rBlocks[r].Name + ": " + pos.ToString("X") + " - " + (pos + rBlocks[r].dataEnd - rBlocks[r].dataStart).ToString("X"));
+                                Array.Copy(rBlocks[r].data.ToArray(), 0, buf,pos, rBlocks[r].data.Count);
+                            }
+                            pos += rBlocks[r].dataEnd - rBlocks[r].dataStart ;
+                        }
                     }
                     WriteBinToFile(outFileName, buf);
-                    Logger(" [OK]");
-                    this.DialogResult = DialogResult.OK;
+                    Logger("[OK]");
+                    //this.DialogResult = DialogResult.OK;
                 }
-                this.Close();
+                //this.Close();
             }
             catch (Exception ex)
             {
@@ -494,7 +545,7 @@ namespace UniversalPatcher
             string baseFile = labelFileName.Text;
             for (int i = 0; i < rBlocks.Count; i++)
             {
-                if (rBlocks[i].FileName.Length == 0)
+                if (rBlocks[i].blockType == 0 && rBlocks[i].FileName.Length == 0)
                 {
 
                     if (rBlocks[i].Name.Length > 0)
