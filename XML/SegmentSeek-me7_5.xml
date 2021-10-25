@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<ArrayOfSegmentSeek xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SegmentSeek>
+    <Name>ecm</Name>
+    <SearchStr># * 2F * 2F 4D 45 37 2E * 2F</SearchStr>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>os</Name>
+    <SearchStr>* * F7 8E * * F7 8E * * E6 F4 @ @ F6 F4 * * E6 FC * * DA</SearchStr>
+    <Offset>65536</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>false</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>engine</Name>
+    <SearchStr>* * F7 8E * * F7 8E * * E6 F4 @ @ F6 F4 * * E6 FC * * DA</SearchStr>
+    <Offset>65547</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>false</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>version</Name>
+    <SearchStr>* * F7 8E * * F7 8E * * E6 F4 @ @ F6 F4 * * E6 FC * * DA</SearchStr>
+    <Offset>65568</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>false</MSB>
+  </SegmentSeek>
+</ArrayOfSegmentSeek>

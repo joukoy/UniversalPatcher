@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<ArrayOfSegmentSeek xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SegmentSeek>
+    <Name>ver</Name>
+    <SearchStr># 00 6E 2F 61 20 00</SearchStr>
+    <Offset>7</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>ver2</Name>
+    <SearchStr># 4D 45 39 2E 36 2E 31 20</SearchStr>
+    <Offset>9</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+  <SegmentSeek>
+    <Name>verOS</Name>
+    <SearchStr># 4D 45 28 44 29 39 2E 31 2F 39 2E 35 20</SearchStr>
+    <Offset>27</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <ValidationSearchStr />
+    <Description />
+    <MSB>true</MSB>
+  </SegmentSeek>
+</ArrayOfSegmentSeek>

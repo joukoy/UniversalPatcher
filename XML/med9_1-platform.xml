@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<PcmPlatform xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <MSB>true</MSB>
+  <SegmentFile>med9_1.xml</SegmentFile>
+  <TableSeekFile>TableSeek-med9_1.xml</TableSeekFile>
+  <SegmentSeekFile>SegmentSeek-med9_1.xml</SegmentSeekFile>
+  <PidSearchStep>0</PidSearchStep>
+</PcmPlatform>
