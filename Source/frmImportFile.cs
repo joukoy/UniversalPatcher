@@ -38,16 +38,16 @@ namespace UniversalPatcher
                 segStart = uint.MaxValue;
                 Select = true;
                 FileName = "";
-                blockType = 0;
+                BlockType = "Data";
             }
             public uint segStart;
             public uint segEnd;
             public uint dataStart;
             public uint dataEnd;
             public List<byte> data;
-            public ushort blockType; // 0 = Data, 1 = Gap
 
             public string Name { get; set; }
+            public string BlockType { get; set; }
             public string Start
             {
                 get { return dataStart.ToString("X"); }
@@ -175,7 +175,6 @@ namespace UniversalPatcher
                 }
 
                 //txtOffset.Text = rBlocks[0].dataStart.ToString("X");
-                txtFileSize.Text = (rBlocks[rBlocks.Count - 1].dataEnd - rBlocks[0].dataStart + 1).ToString("X");
                 addGaps();
             }
             catch (Exception ex)
@@ -192,26 +191,38 @@ namespace UniversalPatcher
 
         private void addGaps()
         {
+            if (rBlocks[0].segStart > 0)
+            {
+                RecordBlock iblock = new RecordBlock();
+                iblock.BlockType = "Gap";
+                iblock.segStart = 0;
+                iblock.dataStart = 0;
+                iblock.dataEnd = rBlocks[0].segStart - 1;
+                iblock.Name = "Offset";
+                iblock.Select = false;
+                rBlocks.Insert(0, iblock);
+
+            }
+            if (rBlocks[0].dataStart > rBlocks[0].segStart)
+            {
+                //Logger("Gap: " + rBlocks[b].segStart.ToString("X") + " - " + (rBlocks[b].dataStart - 1).ToString("X"));
+                RecordBlock iblock = new RecordBlock();
+                iblock.BlockType = "Gap";
+                iblock.segStart = rBlocks[0].segStart;
+                iblock.dataStart = rBlocks[0].segStart;
+                iblock.dataEnd = rBlocks[0].dataStart - 1;
+                rBlocks.Insert(0, iblock);
+            }
             uint totalData = 0;
-            for (int b = 0; b < rBlocks.Count; b++)
+            for (int b = 1; b < rBlocks.Count; b++)
             {
                 //Logger("Segment start: " + rBlocks[b].segStart.ToString("X"));
-                if (b == 0 && rBlocks[b].dataStart > rBlocks[b].segStart)
-                {
-                    //Logger("Gap: " + rBlocks[b].segStart.ToString("X") + " - " + (rBlocks[b].dataStart - 1).ToString("X"));
-                    RecordBlock iblock = new RecordBlock();
-                    iblock.blockType = 1;
-                    iblock.segStart = rBlocks[0].segStart;
-                    iblock.dataStart = rBlocks[0].segStart;
-                    iblock.dataEnd = rBlocks[0].dataStart - 1;
-                    rBlocks.Insert(0, iblock);
-                }
 
-                if (b > 0 && rBlocks[b].dataStart > (rBlocks[b - 1].dataEnd + 1))
+                if (rBlocks[b].dataStart > (rBlocks[b - 1].dataEnd + 1))
                 {
                     //Logger("Gap: " + (rBlocks[b - 1].dataEnd + 1).ToString("X") + " - " + (rBlocks[b].dataStart - 1).ToString("X"));
                     RecordBlock iblock = new RecordBlock();
-                    iblock.blockType = 1;
+                    iblock.BlockType = "Gap";
                     //iblock.segStart = rBlocks[0].segStart;
                     iblock.dataStart = rBlocks[b - 1].dataEnd + 1;
                     iblock.dataEnd = rBlocks[b].dataStart - 1;
@@ -223,13 +234,16 @@ namespace UniversalPatcher
             }
             for (int b = 0; b < rBlocks.Count; b++)
             {
-                if (rBlocks[b].blockType == 0)
+                if (rBlocks[b].BlockType == "Data")
                     rBlocks[b].Name = "Data-" + b.ToString();
-                else
+                else if (rBlocks[b].Name.Length == 0)
                     rBlocks[b].Name = "Gap-" + b.ToString();
             }
             Logger("Total data: " + totalData.ToString());
-
+            if (rBlocks[0].Name == "Offset")
+                txtFileSize.Text = (rBlocks[rBlocks.Count - 1].dataEnd - rBlocks[1].dataStart + 1).ToString("X");
+            else
+                txtFileSize.Text = (rBlocks[rBlocks.Count - 1].dataEnd - rBlocks[0].dataStart + 1).ToString("X");
         }
 
         public void importIntel(string fileName)
@@ -272,7 +286,7 @@ namespace UniversalPatcher
                 }
 
                 addGaps();
-                txtFileSize.Text = (rBlocks[rBlocks.Count - 1].dataEnd - rBlocks[0].dataStart + 1).ToString("X");
+                
             }
             catch (Exception ex)
             {
@@ -458,7 +472,7 @@ namespace UniversalPatcher
                     string fldr = SelectFolder("Save to folder:");
                     for (int i = 0; i < rBlocks.Count; i++)
                     {
-                        if (rBlocks[i].Select && rBlocks[i].blockType == 0)
+                        if (rBlocks[i].Select && rBlocks[i].BlockType == "Data")
                         {
                             outFileName = Path.Combine(fldr, rBlocks[i].FileName);
                             Logger("Saving to file: " + outFileName, false);
@@ -515,7 +529,7 @@ namespace UniversalPatcher
                     {
                         if (rBlocks[r].Select)
                         {
-                            if (rBlocks[r].blockType == 0)
+                            if (rBlocks[r].BlockType == "Data")
                             {
                                 Logger("Block: " + rBlocks[r].Name + ": " + pos.ToString("X") + " - " + (pos + rBlocks[r].data.Count - 1).ToString("X"));
                                 Array.Copy(rBlocks[r].data.ToArray(), 0, buf, pos, rBlocks[r].data.Count);
@@ -549,7 +563,7 @@ namespace UniversalPatcher
             string baseFile = labelFileName.Text;
             for (int i = 0; i < rBlocks.Count; i++)
             {
-                if (rBlocks[i].blockType == 0 && rBlocks[i].FileName.Length == 0)
+                if (rBlocks[i].BlockType == "Data" && rBlocks[i].FileName.Length == 0)
                 {
 
                     if (rBlocks[i].Name.Length > 0)

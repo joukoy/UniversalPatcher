@@ -2,18 +2,47 @@
 <ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SegmentConfig>
     <Name>OS</Name>
-    <Version />
-    <Addresses>20000-1bffff,1f0000-1fffff</Addresses>
-    <CS1Address>#0:2:hex</CS1Address>
+    <Version>1</Version>
+    <Addresses />
+    <SwapAddress />
+    <CS1Address />
     <CS2Address />
-    <CS1Method>4</CS1Method>
-    <CS2Method>2</CS2Method>
+    <Checksum1Method>None</Checksum1Method>
+    <Checksum2Method>None</Checksum2Method>
+    <CS1Blocks />
+    <CS2Blocks />
+    <CS1Complement>0</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>0</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>seek:ver:10:text,seek:verOS:10:text</PNAddr>
+    <VerAddr />
+    <SegNrAddr />
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>0</CS1Method>
+    <CS2Method>0</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>OS-1</Name>
+    <Version>1</Version>
+    <Addresses>20000-1bffff,1f0000-1fffff</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address>#:4:hex</CS2Address>
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc32</Checksum2Method>
     <CS1Blocks>20002-1bffff,1f0000-1fffff</CS1Blocks>
     <CS2Blocks>20000-1bffff,1f0000-1fffff</CS2Blocks>
     <CS1Complement>2</CS1Complement>
     <CS2Complement>0</CS2Complement>
     <CS1SwapBytes>false</CS1SwapBytes>
-    <CS2SwapBytes>false</CS2SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
     <CVN>2</CVN>
     <Eeprom>false</Eeprom>
     <PNAddr>#5:8:text</PNAddr>
@@ -22,20 +51,25 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>2</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>EngineOper</Name>
     <Addresses>1c2000-1ecf27</Addresses>
+    <SwapAddress />
     <CS1Address>#0:2:hex</CS1Address>
-    <CS2Address />
-    <CS1Method>4</CS1Method>
-    <CS2Method>2</CS2Method>
+    <CS2Address>#:4:hex</CS2Address>
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc32</Checksum2Method>
     <CS1Blocks>1c2002-1ecf27</CS1Blocks>
     <CS2Blocks>1c2000-1ecf27</CS2Blocks>
     <CS1Complement>2</CS1Complement>
     <CS2Complement>0</CS2Complement>
     <CS1SwapBytes>false</CS1SwapBytes>
-    <CS2SwapBytes>false</CS2SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
     <CVN>2</CVN>
     <Eeprom>false</Eeprom>
     <PNAddr>#5:8:text</PNAddr>
@@ -44,20 +78,25 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>2</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>System</Name>
     <Addresses>1ecf28-1eef17</Addresses>
+    <SwapAddress />
     <CS1Address>#0:2:hex</CS1Address>
-    <CS2Address />
-    <CS1Method>4</CS1Method>
-    <CS2Method>2</CS2Method>
+    <CS2Address>#:4:hex</CS2Address>
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc32</Checksum2Method>
     <CS1Blocks>1ecf2a-1eef17</CS1Blocks>
     <CS2Blocks>1ecf28-1eef17</CS2Blocks>
     <CS1Complement>2</CS1Complement>
     <CS2Complement>0</CS2Complement>
     <CS1SwapBytes>false</CS1SwapBytes>
-    <CS2SwapBytes>false</CS2SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
     <CVN>2</CVN>
     <Eeprom>false</Eeprom>
     <PNAddr>#5:8:text</PNAddr>
@@ -66,20 +105,25 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>2</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>Speedo</Name>
     <Addresses>1eef18-1effff</Addresses>
+    <SwapAddress />
     <CS1Address>#0:2:hex</CS1Address>
-    <CS2Address />
-    <CS1Method>4</CS1Method>
-    <CS2Method>2</CS2Method>
+    <CS2Address>#:4:hex</CS2Address>
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc32</Checksum2Method>
     <CS1Blocks>1eef1a-1effff</CS1Blocks>
     <CS2Blocks>1eef18-1effff</CS2Blocks>
     <CS1Complement>2</CS1Complement>
     <CS2Complement>0</CS2Complement>
     <CS1SwapBytes>false</CS1SwapBytes>
-    <CS2SwapBytes>false</CS2SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
     <CVN>2</CVN>
     <Eeprom>false</Eeprom>
     <PNAddr>#5:8:text</PNAddr>
@@ -88,5 +132,9 @@
     <ExtraInfo />
     <Comment />
     <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>2</CS2Method>
   </SegmentConfig>
 </ArrayOfSegmentConfig>

@@ -85,7 +85,7 @@ namespace UniversalPatcher
             this.txtResult.HideSelection = false;
             this.txtResult.Location = new System.Drawing.Point(0, 0);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(652, 226);
+            this.txtResult.Size = new System.Drawing.Size(652, 170);
             this.txtResult.TabIndex = 5;
             this.txtResult.Text = "";
             // 
@@ -151,7 +151,7 @@ namespace UniversalPatcher
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(652, 200);
+            this.dataGridView1.Size = new System.Drawing.Size(652, 256);
             this.dataGridView1.TabIndex = 12;
             // 
             // splitContainer1
@@ -173,7 +173,7 @@ namespace UniversalPatcher
             this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Panel2.Controls.Add(this.txtResult);
             this.splitContainer1.Size = new System.Drawing.Size(652, 430);
-            this.splitContainer1.SplitterDistance = 200;
+            this.splitContainer1.SplitterDistance = 256;
             this.splitContainer1.TabIndex = 13;
             // 
             // frmImportFile

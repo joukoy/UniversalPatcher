@@ -177,3 +177,8 @@
 
 0.18.48
 - Fixed bug in Intel/Motorola import, gap calculation off by byte
+
+0.18.49
+- Add Offset-gap to beginning of file if in imported file in Intel/Motorola import
+- Lot of new XML-files by kur4o
+
