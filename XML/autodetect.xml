@@ -4787,4 +4787,31 @@
     <compare>==</compare>
     <hexdata>FFFFFFFFFFFFFFFF</hexdata>
   </DetectRule>
+  <DetectRule>
+    <xml>t76.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>1FDFF8:8</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>AA5555AAFFFFFFFF</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>t76.xml</xml>
+    <group>1</group>
+    <grouplogic>Or</grouplogic>
+    <address>1BFFF8:8</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>AA5555AAFFFFFFFF</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>t76.xml</xml>
+    <group>1</group>
+    <grouplogic>Or</grouplogic>
+    <address>1BFFF0:8</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>AA5555AAFFFFFFFF</hexdata>
+  </DetectRule>
 </ArrayOfDetectRule>

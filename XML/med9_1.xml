@@ -32,9 +32,9 @@
     <Name>sum1</Name>
     <Addresses />
     <SwapAddress />
-    <CS1Address>seek:sum1:8:hex</CS1Address>
+    <CS1Address />
     <CS2Address />
-    <Checksum1Method>BoschInv</Checksum1Method>
+    <Checksum1Method>None</Checksum1Method>
     <Checksum2Method>None</Checksum2Method>
     <CS1Blocks />
     <CS2Blocks />
@@ -47,23 +47,23 @@
     <PNAddr />
     <VerAddr />
     <SegNrAddr />
-    <ExtraInfo />
+    <ExtraInfo>seek:sum1:8:hex</ExtraInfo>
     <Comment />
     <CheckWords />
     <Hidden>false</Hidden>
     <Missing>false</Missing>
-    <CS1Method>6</CS1Method>
+    <CS1Method>0</CS1Method>
     <CS2Method>0</CS2Method>
   </SegmentConfig>
   <SegmentConfig>
     <Name>RSA string</Name>
     <Addresses />
     <SwapAddress />
-    <CS1Address>seek:RSA:80:hex</CS1Address>
+    <CS1Address />
     <CS2Address />
-    <Checksum1Method>crc32</Checksum1Method>
+    <Checksum1Method>None</Checksum1Method>
     <Checksum2Method>None</Checksum2Method>
-    <CS1Blocks>0-@0</CS1Blocks>
+    <CS1Blocks />
     <CS2Blocks />
     <CS1Complement>0</CS1Complement>
     <CS2Complement>0</CS2Complement>
@@ -79,7 +79,7 @@
     <CheckWords />
     <Hidden>false</Hidden>
     <Missing>false</Missing>
-    <CS1Method>2</CS1Method>
+    <CS1Method>0</CS1Method>
     <CS2Method>0</CS2Method>
   </SegmentConfig>
 </ArrayOfSegmentConfig>
