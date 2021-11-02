@@ -187,3 +187,6 @@
 
 0.18.51
 - Support for secondary DTC codes
+
+0.18.52
+- Small bugfix to platform config
