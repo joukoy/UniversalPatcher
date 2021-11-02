@@ -184,3 +184,6 @@
 
 0.18.50
 - Block size display and automatic file size calculation to Intel/Motorola import
+
+0.18.51
+- Support for secondary DTC codes

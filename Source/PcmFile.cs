@@ -87,7 +87,8 @@ namespace UniversalPatcher
         public List<SegmentConfig> Segments;
         public List<FoundTable> foundTables;
         public List<FoundSegment> foundSegments;
-        public List<dtcCode> dtcCodes;
+        public List<DtcCode> dtcCodes;
+        public List<DtcCode> dtcCodes2;
         public Dictionary<byte, string> dtcValues;
         public List<string> tableCategories;
         public List<TableData> tableDatas;
@@ -220,7 +221,8 @@ namespace UniversalPatcher
         {            
             _configFileFullName = "";
             Segments = new List<SegmentConfig>();
-            dtcCodes = new List<dtcCode>();
+            //dtcCodes = new List<DtcCode>();
+            //dtcCodes2 = new List<DtcCode>();
             tableDatas = new List<TableData>();
             foundTables = new List<FoundTable>();
             foundSegments = new List<FoundSegment>();
@@ -339,7 +341,8 @@ namespace UniversalPatcher
             {
                 Logger("Importing DTC codes... ", false);
                 TableData tdTmp = new TableData();
-                tdTmp.importDTC(this, ref tableDatas);
+                tdTmp.importDTC(this, ref tableDatas,true);
+                tdTmp.importDTC(this, ref tableDatas, false);
                 Logger(" [OK]");
             }
         }

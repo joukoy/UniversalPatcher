@@ -438,11 +438,22 @@ namespace UniversalPatcher
         {
             dtcBindingSource.DataSource = null;
             dataGridDTC.DataSource = null;
-            dtcBindingSource.DataSource = basefile.dtcCodes;
-            if (basefile.dtcCodes.Count == 0)
-                tabDTC.Text = "DTC";
+            if (radioDtcPrimary.Checked)
+            {
+                dtcBindingSource.DataSource = basefile.dtcCodes;
+                if (basefile.dtcCodes == null)
+                    tabDTC.Text = "DTC";
+                else
+                    tabDTC.Text = "DTC (" + basefile.dtcCodes.Count.ToString() + ")";
+            }
             else
-                tabDTC.Text = "DTC (" + basefile.dtcCodes.Count.ToString() + ")";
+            {
+                dtcBindingSource.DataSource = basefile.dtcCodes2;
+                if (basefile.dtcCodes2 == null)
+                    tabDTC.Text = "DTC";
+                else
+                    tabDTC.Text = "DTC (" + basefile.dtcCodes2.Count.ToString() + ")";
+            }
             dataGridDTC.DataSource = dtcBindingSource;
             dataGridDTC.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
 
@@ -787,13 +798,11 @@ namespace UniversalPatcher
                 }
                 RefreshBadCVNlist();
 
-                basefile.dtcCodes = new List<dtcCode>();
                 DtcSearch DS = new DtcSearch();
-                string dtcSearchResult = "";
                 if (chkSearchDTC.Checked)
                 {
-                    dtcSearchResult = DS.searchDtc(PCM);
-                    Logger(dtcSearchResult);
+                    PCM.dtcCodes = DS.searchDtc(PCM, true);
+                    PCM.dtcCodes2 = DS.searchDtc(PCM, false);
                 }
                 refreshDtcList();
 
@@ -2848,35 +2857,41 @@ namespace UniversalPatcher
         private void modifyDtc()
         {
             try
-            { 
+            {
+                List<DtcCode> dtcCodes;
+                if (radioDtcPrimary.Checked)
+                    dtcCodes = basefile.dtcCodes;
+                else
+                    dtcCodes = basefile.dtcCodes2;
+
                 int codeIndex = dataGridDTC.SelectedCells[0].RowIndex;
                 frmSetDTC frmS = new frmSetDTC();
-                frmS.startMe(codeIndex, basefile);
+                frmS.startMe(codeIndex, basefile, dtcCodes);
                 if (frmS.ShowDialog() == DialogResult.OK)
                 {
 
                     byte dtcVal = ((KeyValuePair<byte, string>)frmS.comboDtcStatus.SelectedItem).Key;
-                    basefile.dtcCodes[codeIndex].Status = dtcVal;
+                    dtcCodes[codeIndex].Status = dtcVal;
                     
-                    basefile.buf[basefile.dtcCodes[codeIndex].statusAddrInt] = basefile.dtcCodes[codeIndex].Status;
+                    basefile.buf[dtcCodes[codeIndex].statusAddrInt] = dtcCodes[codeIndex].Status;
                     if (basefile.dtcCombined)
                     {
-                        basefile.dtcCodes[codeIndex].StatusTxt = basefile.dtcValues[basefile.dtcCodes[codeIndex].Status].ToString();
-                        dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = basefile.dtcCodes[codeIndex].StatusTxt;
+                        dtcCodes[codeIndex].StatusTxt = basefile.dtcValues[dtcCodes[codeIndex].Status].ToString();
+                        dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = dtcCodes[codeIndex].StatusTxt;
 
-                        if (basefile.dtcCodes[codeIndex].Status > 3)
-                            basefile.dtcCodes[codeIndex].MilStatus = 1;
+                        if (dtcCodes[codeIndex].Status > 3)
+                            dtcCodes[codeIndex].MilStatus = 1;
                         else
-                            basefile.dtcCodes[codeIndex].MilStatus = 0;
+                            dtcCodes[codeIndex].MilStatus = 0;
                     }
                     else
                     {
-                        basefile.dtcCodes[codeIndex].MilStatus = (byte)frmS.comboMIL.SelectedIndex;
-                        basefile.dtcCodes[codeIndex].StatusTxt = basefile.dtcValues[basefile.dtcCodes[codeIndex].Status].ToString();
-                        basefile.buf[basefile.dtcCodes[codeIndex].milAddrInt] = basefile.dtcCodes[codeIndex].MilStatus;
-                        dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = basefile.dtcCodes[codeIndex].StatusTxt;
+                        dtcCodes[codeIndex].MilStatus = (byte)frmS.comboMIL.SelectedIndex;
+                        dtcCodes[codeIndex].StatusTxt = basefile.dtcValues[dtcCodes[codeIndex].Status].ToString();
+                        basefile.buf[dtcCodes[codeIndex].milAddrInt] = dtcCodes[codeIndex].MilStatus;
+                        dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = dtcCodes[codeIndex].StatusTxt;
                     }
-                    dataGridDTC.Rows[codeIndex].Cells["Status"].Value = basefile.dtcCodes[codeIndex].Status;
+                    dataGridDTC.Rows[codeIndex].Cells["Status"].Value = dtcCodes[codeIndex].Status;
                 
 
                     tabFunction.SelectedTab = tabApply;
@@ -4291,6 +4306,11 @@ namespace UniversalPatcher
             {
                 LoggerBold(ex.Message);
             }
+        }
+
+        private void radioDtcPrimary_CheckedChanged(object sender, EventArgs e)
+        {
+            refreshDtcList();
         }
     }
 }

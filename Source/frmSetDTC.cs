@@ -24,7 +24,7 @@ namespace UniversalPatcher
 
         public int codeIndex;
 
-        public void startMe(int code, PcmFile PCM)
+        public void startMe(int code, PcmFile PCM, List<DtcCode> dtcCodes)
         {
             codeIndex = code;
             comboDtcStatus.Items.Clear();
@@ -38,9 +38,9 @@ namespace UniversalPatcher
                     comboDtcStatus.Items.Add(dtcStatusCombined[i]);*/
                 comboMIL.Visible = false;
                 labelMil.Visible = false;
-                comboDtcStatus.Text = PCM.dtcValues[PCM.dtcCodes[code].Status].ToString();
-                labelCode.Text = PCM.dtcCodes[code].Code;
-                labelDescription.Text = PCM.dtcCodes[code].Description;
+                comboDtcStatus.Text = PCM.dtcValues[dtcCodes[code].Status].ToString();
+                labelCode.Text = dtcCodes[code].Code;
+                labelDescription.Text = dtcCodes[code].Description;
             }
             else
             {
@@ -49,10 +49,10 @@ namespace UniversalPatcher
 
                 comboMIL.Items.Add("Disabled");
                 comboMIL.Items.Add("Enabled");
-                comboMIL.SelectedIndex = PCM.dtcCodes[code].MilStatus;
-                comboDtcStatus.Text = PCM.dtcValues[PCM.dtcCodes[code].Status].ToString();
-                labelCode.Text = PCM.dtcCodes[code].Code;
-                labelDescription.Text = PCM.dtcCodes[code].Description;
+                comboMIL.SelectedIndex = dtcCodes[code].MilStatus;
+                comboDtcStatus.Text = PCM.dtcValues[dtcCodes[code].Status].ToString();
+                labelCode.Text = dtcCodes[code].Code;
+                labelDescription.Text = dtcCodes[code].Description;
             }
         }
 

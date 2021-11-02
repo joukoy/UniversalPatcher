@@ -17,5 +17,6 @@ namespace UniversalPatcher
         public string SegmentSeekFile { get; set; }
         public string PidSearchString { get; set; }
         public uint PidSearchStep { get; set; }
+        public string DTC2 { get; set; }
     }
 }

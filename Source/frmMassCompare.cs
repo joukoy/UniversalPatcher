@@ -324,7 +324,8 @@ namespace UniversalPatcher
         {
             Logger("Importing DTC codes... ", false);
             TableData tdTmp = new TableData();
-            tdTmp.importDTC(cmpPCM, ref cmpPCM.tableDatas);
+            tdTmp.importDTC(cmpPCM, ref cmpPCM.tableDatas, true);
+            tdTmp.importDTC(cmpPCM, ref cmpPCM.tableDatas, false);
             Logger(" [OK]");
         }
 

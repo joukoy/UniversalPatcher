@@ -926,7 +926,8 @@ namespace UniversalPatcher
                 if (!haveDTC)
                 {
                     TableData tdTmp = new TableData();
-                    tdTmp.importDTC(_PCM, ref _PCM.tableDatas);
+                    tdTmp.importDTC(_PCM, ref _PCM.tableDatas,true);
+                    tdTmp.importDTC(_PCM, ref _PCM.tableDatas, false);
                     Logger(" [OK]");
                     filterTables();
                 }

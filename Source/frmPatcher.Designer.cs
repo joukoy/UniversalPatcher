@@ -115,6 +115,9 @@
             this.btnSavePidList = new System.Windows.Forms.Button();
             this.dataGridPIDlist = new System.Windows.Forms.DataGridView();
             this.tabDTC = new System.Windows.Forms.TabPage();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.radioDtcSecondary = new System.Windows.Forms.RadioButton();
+            this.radioDtcPrimary = new System.Windows.Forms.RadioButton();
             this.btnSetDTC = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
             this.btnClearDTC = new System.Windows.Forms.Button();
@@ -187,6 +190,8 @@
             this.label8 = new System.Windows.Forms.Label();
             this.btnExtractSegments = new System.Windows.Forms.Button();
             this.tabChecksumUtil = new System.Windows.Forms.TabPage();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.chkCsUtilFilter = new System.Windows.Forms.CheckBox();
             this.btnCsutilSearchBosch = new System.Windows.Forms.Button();
             this.chkCsMSB = new System.Windows.Forms.CheckBox();
             this.richChkData = new System.Windows.Forms.RichTextBox();
@@ -273,8 +278,6 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.chkCsUtilFilter = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -299,6 +302,7 @@
             this.tabPIDList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridPIDlist)).BeginInit();
             this.tabDTC.SuspendLayout();
+            this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridDTC)).BeginInit();
             this.tabTableSeek.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridTableSeek)).BeginInit();
@@ -312,6 +316,7 @@
             this.tabExtractSegments.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tabChecksumUtil.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numCSBytes)).BeginInit();
             this.groupBox5.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -326,7 +331,6 @@
             this.splitPatcher.Panel1.SuspendLayout();
             this.splitPatcher.Panel2.SuspendLayout();
             this.splitPatcher.SuspendLayout();
-            this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOrgFile
@@ -1308,6 +1312,7 @@
             // 
             // tabDTC
             // 
+            this.tabDTC.Controls.Add(this.groupBox7);
             this.tabDTC.Controls.Add(this.btnSetDTC);
             this.tabDTC.Controls.Add(this.label14);
             this.tabDTC.Controls.Add(this.btnClearDTC);
@@ -1319,6 +1324,40 @@
             this.tabDTC.TabIndex = 10;
             this.tabDTC.Text = "DTC";
             this.tabDTC.UseVisualStyleBackColor = true;
+            // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.radioDtcSecondary);
+            this.groupBox7.Controls.Add(this.radioDtcPrimary);
+            this.groupBox7.Location = new System.Drawing.Point(256, -1);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(154, 30);
+            this.groupBox7.TabIndex = 11;
+            this.groupBox7.TabStop = false;
+            // 
+            // radioDtcSecondary
+            // 
+            this.radioDtcSecondary.AutoSize = true;
+            this.radioDtcSecondary.Location = new System.Drawing.Point(71, 7);
+            this.radioDtcSecondary.Name = "radioDtcSecondary";
+            this.radioDtcSecondary.Size = new System.Drawing.Size(76, 17);
+            this.radioDtcSecondary.TabIndex = 1;
+            this.radioDtcSecondary.TabStop = true;
+            this.radioDtcSecondary.Text = "Secondary";
+            this.radioDtcSecondary.UseVisualStyleBackColor = true;
+            // 
+            // radioDtcPrimary
+            // 
+            this.radioDtcPrimary.AutoSize = true;
+            this.radioDtcPrimary.Checked = true;
+            this.radioDtcPrimary.Location = new System.Drawing.Point(6, 7);
+            this.radioDtcPrimary.Name = "radioDtcPrimary";
+            this.radioDtcPrimary.Size = new System.Drawing.Size(59, 17);
+            this.radioDtcPrimary.TabIndex = 0;
+            this.radioDtcPrimary.TabStop = true;
+            this.radioDtcPrimary.Text = "Primary";
+            this.radioDtcPrimary.UseVisualStyleBackColor = true;
+            this.radioDtcPrimary.CheckedChanged += new System.EventHandler(this.radioDtcPrimary_CheckedChanged);
             // 
             // btnSetDTC
             // 
@@ -1333,7 +1372,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(337, 8);
+            this.label14.Location = new System.Drawing.Point(439, 8);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(81, 13);
             this.label14.TabIndex = 8;
@@ -2141,6 +2180,27 @@
             this.tabChecksumUtil.TabIndex = 5;
             this.tabChecksumUtil.Text = "Checksum research";
             this.tabChecksumUtil.UseVisualStyleBackColor = true;
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.chkCsUtilFilter);
+            this.groupBox6.Controls.Add(this.btnCsutilSearchBosch);
+            this.groupBox6.Location = new System.Drawing.Point(512, 56);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(112, 59);
+            this.groupBox6.TabIndex = 157;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Search Bosch inv";
+            // 
+            // chkCsUtilFilter
+            // 
+            this.chkCsUtilFilter.AutoSize = true;
+            this.chkCsUtilFilter.Location = new System.Drawing.Point(20, 14);
+            this.chkCsUtilFilter.Name = "chkCsUtilFilter";
+            this.chkCsUtilFilter.Size = new System.Drawing.Size(69, 17);
+            this.chkCsUtilFilter.TabIndex = 157;
+            this.chkCsUtilFilter.Text = "Filter 0+F";
+            this.chkCsUtilFilter.UseVisualStyleBackColor = true;
             // 
             // btnCsutilSearchBosch
             // 
@@ -3007,27 +3067,6 @@
             this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
             // 
-            // groupBox6
-            // 
-            this.groupBox6.Controls.Add(this.chkCsUtilFilter);
-            this.groupBox6.Controls.Add(this.btnCsutilSearchBosch);
-            this.groupBox6.Location = new System.Drawing.Point(512, 56);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(112, 59);
-            this.groupBox6.TabIndex = 157;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Search Bosch inv";
-            // 
-            // chkCsUtilFilter
-            // 
-            this.chkCsUtilFilter.AutoSize = true;
-            this.chkCsUtilFilter.Location = new System.Drawing.Point(20, 14);
-            this.chkCsUtilFilter.Name = "chkCsUtilFilter";
-            this.chkCsUtilFilter.Size = new System.Drawing.Size(69, 17);
-            this.chkCsUtilFilter.TabIndex = 157;
-            this.chkCsUtilFilter.Text = "Filter 0+F";
-            this.chkCsUtilFilter.UseVisualStyleBackColor = true;
-            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3078,6 +3117,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridPIDlist)).EndInit();
             this.tabDTC.ResumeLayout(false);
             this.tabDTC.PerformLayout();
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridDTC)).EndInit();
             this.tabTableSeek.ResumeLayout(false);
             this.tabTableSeek.PerformLayout();
@@ -3099,6 +3140,8 @@
             this.groupBox2.PerformLayout();
             this.tabChecksumUtil.ResumeLayout(false);
             this.tabChecksumUtil.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numCSBytes)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
@@ -3120,8 +3163,6 @@
             this.splitPatcher.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitPatcher)).EndInit();
             this.splitPatcher.ResumeLayout(false);
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -3374,5 +3415,8 @@
         private System.Windows.Forms.Button btnCsutilSearchBosch;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.CheckBox chkCsUtilFilter;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.RadioButton radioDtcSecondary;
+        private System.Windows.Forms.RadioButton radioDtcPrimary;
     }
 }

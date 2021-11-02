@@ -114,9 +114,9 @@ public class upatcher
     }
 
 
-    public class dtcCode
+    public class DtcCode
     {
-        public dtcCode()
+        public DtcCode()
         {
             codeInt = 0;
             codeAddrInt = uint.MaxValue;

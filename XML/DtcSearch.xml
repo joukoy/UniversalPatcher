@@ -60,6 +60,40 @@
     <StatusSteps>1</StatusSteps>
     <MilSteps>1</MilSteps>
     <ConditionalOffset />
+    <Values />
+    <Linear>true</Linear>
+    <CodesPerStatus>1</CodesPerStatus>
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <XMLFile>p01-p59</XMLFile>
+    <CodeSearch>BE 30 35 B0 * * * * 66</CodeSearch>
+    <StatusSearch>20 1f 4e 75 4A 38 * * 67 08 24 7C @ @ @ @ 60 * * * * * * * * * * * * * 00 00 4e 75</StatusSearch>
+    <MilSearch>00 00 4e 75 4A 38 * * 67 08 24 7C @ @ @ @ 60 * * * * * * * * * * * * * 00 00 4e 75</MilSearch>
+    <MilTable>opcode</MilTable>
+    <CodeOffset>1</CodeOffset>
+    <CodeSteps>4</CodeSteps>
+    <StatusOffset>1</StatusOffset>
+    <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
+    <ConditionalOffset />
+    <Linear>true</Linear>
+    <CodesPerStatus>1</CodesPerStatus>
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <XMLFile>p01-p59-DTC2</XMLFile>
+    <CodeSearch>BE 30 35 B0 * * * * 66</CodeSearch>
+    <StatusSearch>20 1f 4e 75 4A 38 * * 67 08 24 7C * * * * 60 * * * @ @ @ @ * * * * * * 00 00 4e 75</StatusSearch>
+    <MilSearch>00 00 4e 75 4A 38 * * 67 08 24 7C * * * * 60 * * * @ @ @ @ * * * * * * 00 00 4e 75</MilSearch>
+    <MilTable>opcode</MilTable>
+    <CodeOffset>1</CodeOffset>
+    <CodeSteps>4</CodeSteps>
+    <StatusOffset>1</StatusOffset>
+    <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
+    <ConditionalOffset />
+    <Values />
     <Linear>true</Linear>
     <CodesPerStatus>1</CodesPerStatus>
   </DtcSearchConfig>
@@ -765,17 +799,5 @@
     <Values>Enum: 0:0,2:2,3:3,4:4,5:5,6:6,9:9,11:11,12:12,13:13,19:19,20:20,21:21,30:30,32:32,33:33,34:34,35:35,36:36</Values>
     <Linear>false</Linear>
     <CodesPerStatus>4</CodesPerStatus>
-  </DtcSearchConfig>
-  <DtcSearchConfig>
-    <MilTable>opcode</MilTable>
-    <CodeOffset>1</CodeOffset>
-    <CodeSteps>4</CodeSteps>
-    <StatusOffset>1</StatusOffset>
-    <MilOffset>1</MilOffset>
-    <StatusSteps>1</StatusSteps>
-    <MilSteps>1</MilSteps>
-    <ConditionalOffset />
-    <Linear>true</Linear>
-    <CodesPerStatus>1</CodesPerStatus>
   </DtcSearchConfig>
 </ArrayOfDtcSearchConfig>

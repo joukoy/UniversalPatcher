@@ -114,8 +114,9 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        public string searchDtc(PcmFile PCM)
+        public List<DtcCode> searchDtc(PcmFile PCM, bool primary)
         {
+            List<DtcCode> retVal = new List<DtcCode>();
             try
             {
                 loadOBD2Codes();
@@ -136,14 +137,17 @@ namespace UniversalPatcher
                 bool linear = true;
                 int codePerStatus = 1;
 
+                string cnfFile = PCM.configFile;
+                if (!primary)
+                    cnfFile += "-dtc2";
+
                 for (configIndex = 0; configIndex < dtcSearchConfigs.Count; configIndex++)
                 {
-                    string cnfFile = PCM.configFile;
                     linear = dtcSearchConfigs[configIndex].Linear;
                     if (dtcSearchConfigs[configIndex].CodesPerStatus > 0)
                         codePerStatus = dtcSearchConfigs[configIndex].CodesPerStatus;
 
-                    if (cnfFile == dtcSearchConfigs[configIndex].XMLFile.ToLower())
+                    if (dtcSearchConfigs[configIndex].XMLFile != null && cnfFile == dtcSearchConfigs[configIndex].XMLFile.ToLower())
                     {
                         searchStr = dtcSearchConfigs[configIndex].CodeSearch;
                         startAddr = 0;
@@ -215,31 +219,38 @@ namespace UniversalPatcher
                     }
                 }
 
-                if (codeAddr == uint.MaxValue)
+                if (codeAddr == uint.MaxValue || codeAddr == 0)
                 {
                     if (PCM.configFile == "e38" || PCM.configFile == "e67")
                     {
                         PCM.dtcCombined = true;
                         string vals = "Enum: 0:MIL and reporting off,1:Type A/no MIL,2:Type B/no MIL,3:Type C/no MIL,4:Not reported/MIL,5:Type A/MIL,6:Type B/MIL,7:Type C/MIL";
                         PCM.dtcValues = parseDtcValues(vals.ToLower().Replace("enum: ", ""));
-                        string retval = SearchDtcE38(PCM);
-                        return retval;
+                        retVal = SearchDtcE38(PCM);
                     }
-                    return "DTC search: can't find DTC code table";
+                    else if (primary)
+                    {
+                        LoggerBold("DTC search: can't find DTC code table");
+                        return null;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
 
                 //Read codes:
                 bool dCodes = false;
                 for (uint addr = codeAddr; addr < PCM.fsize; addr += (uint)dtcSearchConfigs[configIndex].CodeSteps)
                 {
-                    dtcCode dtc = new dtcCode();
+                    DtcCode dtc = new DtcCode();
                     dtc.codeAddrInt = addr;
                     dtc.Values = dtcSearchConfigs[configIndex].Values;
                     dtc.CodeAddr = addr.ToString("X8");
                     dtc.codeInt = PCM.readUInt16(addr);
 
                     string codeTmp = dtc.codeInt.ToString("X");
-                    if (dtc.codeInt < 10 && PCM.dtcCodes.Count > 10 && linear)
+                    if (dtc.codeInt < 10 && retVal.Count > 10 && linear)
                             break;
                     if (dCodes && linear)
                     {
@@ -259,7 +270,7 @@ namespace UniversalPatcher
                         dCodes = true;
                     //Find description for code:
                     dtc.Description = getDtcDescription(dtc.Code);
-                    PCM.dtcCodes.Add(dtc);
+                    retVal.Add(dtc);
                 }
 
                 //PCM.dtcCodes = PCM.dtcCodes.OrderBy(x => x.codeInt).ToList();
@@ -267,7 +278,7 @@ namespace UniversalPatcher
 
                 if (dtcSearchConfigs[configIndex].MilTable == "afterstatus")
                 {
-                    milAddr = (uint)(statusAddr + PCM.dtcCodes.Count + (uint)dtcSearchConfigs[configIndex].MilOffset);
+                    milAddr = (uint)(statusAddr + retVal.Count + (uint)dtcSearchConfigs[configIndex].MilOffset);
                     if (PCM.configFile == "p01-p59" && PCM.buf[milAddr - 1] == 0xFF) milAddr++; //P59 hack: If there is FF before first byte, skip first byte 
                     milAddrList.Add(milAddr);
                 }
@@ -310,8 +321,8 @@ namespace UniversalPatcher
                     for (int m = 0; m < milAddrList.Count; m++)
                     {
                         Debug.WriteLine("MIL Start: " + (milAddrList[m] - 1).ToString("X"));
-                        Debug.WriteLine("MIL End: " + (milAddrList[m] + PCM.dtcCodes.Count).ToString("X"));
-                        if (PCM.buf[milAddrList[m] - 2] == 0xFF && PCM.buf[milAddrList[m] + PCM.dtcCodes.Count] == 0xFF)
+                        Debug.WriteLine("MIL End: " + (milAddrList[m] + retVal.Count).ToString("X"));
+                        if (PCM.buf[milAddrList[m] - 2] == 0xFF && PCM.buf[milAddrList[m] + retVal.Count] == 0xFF)
                         {
                             milAddr = milAddrList[m];
                             break;
@@ -327,7 +338,8 @@ namespace UniversalPatcher
                 Debug.WriteLine("MIL: " + milAddr.ToString("X"));
                 if (milAddr >= PCM.fsize)
                 {
-                    return "DTC search: MIL table address out of address range:" + milAddr.ToString("X8");
+                   LoggerBold( "DTC search: MIL table address out of address range:" + milAddr.ToString("X8"));
+                    return null;
                 }
 
                 //Read DTC status bytes:
@@ -350,7 +362,7 @@ namespace UniversalPatcher
                 uint addr3 = milAddr;
                 uint codePerStatusaddr = statusAddr;
                 uint codePerStatusCounter = 0;
-                for (; dtcNr < PCM.dtcCodes.Count; addr2+= (uint)dtcSearchConfigs[configIndex].StatusSteps, addr3+= (uint)dtcSearchConfigs[configIndex].MilSteps)
+                for (; dtcNr < retVal.Count; addr2+= (uint)dtcSearchConfigs[configIndex].StatusSteps, addr3+= (uint)dtcSearchConfigs[configIndex].MilSteps)
                 {
 
                     /*if (PCM.buf[addr2] > 7)
@@ -367,7 +379,7 @@ namespace UniversalPatcher
                         else
                             continue;
                     }*/
-                    dtcCode dtc = PCM.dtcCodes[dtcNr];
+                    DtcCode dtc = retVal[dtcNr];
 
                     byte statusByte;
                     dtc.statusAddrInt = codePerStatusaddr;
@@ -402,15 +414,15 @@ namespace UniversalPatcher
                         dtc.MilAddr = addr3.ToString("X8");
                         dtc.MilStatus = PCM.buf[addr3];
                     }
-                    PCM.dtcCodes.RemoveAt(dtcNr);
-                    PCM.dtcCodes.Insert(dtcNr, dtc);
+                    retVal.RemoveAt(dtcNr);
+                    retVal.Insert(dtcNr, dtc);
                     dtcNr++;
                 }
                 //Remove codes with invalid status:
-                if (dtcNr<PCM.dtcCodes.Count - 1)
+                if (dtcNr<retVal.Count - 1)
                 {
-                    for (int x = PCM.dtcCodes.Count - 1; x >= dtcNr; x--)
-                        PCM.dtcCodes.RemoveAt(x);
+                    for (int x = retVal.Count - 1; x >= dtcNr; x--)
+                        retVal.RemoveAt(x);
                 }
 
             }
@@ -421,22 +433,25 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                return "DTC search, line " + line + ": " + ex.Message;
+                LoggerBold( "DTC search, line " + line + ": " + ex.Message);
             }
-            return "";
+            return retVal;
         }
         //Search GM e38/e67 DTC codes
-        public string SearchDtcE38(PcmFile PCM)
+        public List<DtcCode> SearchDtcE38(PcmFile PCM)
         {
+            List<DtcCode> retVal = new List<DtcCode>();
             try
             {
                 if (PCM.OSSegment == -1)
                 {
-                    return "DTC search: No OS segment??";
+                    LoggerBold("DTC search: No OS segment??");
+                    return null;
                 }
                 if (PCM.diagSegment == -1)
                 {
-                    return "DTC search: No Diagnostic segment??";
+                    LoggerBold( "DTC search: No Diagnostic segment??");
+                    return null;
                 }
 
                 //Get codes from OS segment:
@@ -456,7 +471,7 @@ namespace UniversalPatcher
                         bool dCodes = false;
                         for (uint addr = tableStart; addr < PCM.fsize; addr += 2)
                         {
-                            dtcCode dtc = new dtcCode();
+                            DtcCode dtc = new DtcCode();
                             dtc.codeAddrInt = addr;
                             dtc.CodeAddr = addr.ToString("X8");
                             dtc.codeInt = PCM.readUInt16(addr);
@@ -472,13 +487,13 @@ namespace UniversalPatcher
                             }
                             dtc.Code = decodeDTC(codeTmp);
                             dtc.Description = getDtcDescription(dtc.Code);
-                            PCM.dtcCodes.Add(dtc);
+                            retVal.Add(dtc);
                         }
                         break;
                     }
                 }
 
-                int dtcCount = PCM.dtcCodes.Count;
+                int dtcCount = retVal.Count;
 
                 //Search by opcode:
                 opCodeAddr = searchBytes(PCM, "3C A0 * * 38 A5 * * 7D 85 50", 0, PCM.fsize);
@@ -496,9 +511,9 @@ namespace UniversalPatcher
                     {
                         if (PCM.buf[addr2] == 0xFF)
                         {
-                            return "";
+                            return retVal;
                         }
-                        dtcCode dtc = PCM.dtcCodes[dtcNr];
+                        DtcCode dtc = retVal[dtcNr];
                         dtc.statusAddrInt = addr2;
                         //dtc.StatusAddr = addr2.ToString("X8");
                         //dtc.Status = PCM.buf[addr2];
@@ -509,8 +524,8 @@ namespace UniversalPatcher
                             dtc.MilStatus = 0;
                         dtc.Status = statusByte;
                         dtc.StatusTxt = PCM.dtcValues[dtc.Status].ToString();
-                        PCM.dtcCodes.RemoveAt(dtcNr);
-                        PCM.dtcCodes.Insert(dtcNr, dtc);
+                        retVal.RemoveAt(dtcNr);
+                        retVal.Insert(dtcNr, dtc);
                         dtcNr++;
                     }
                 }
@@ -522,9 +537,10 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                return "DTC search, line " + line + ": " + ex.Message;
+                LoggerBold( "DTC search, line " + line + ": " + ex.Message);
+                return null;
             }
-            return "";
+            return retVal;
         }
 
     }
