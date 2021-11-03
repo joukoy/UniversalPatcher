@@ -195,3 +195,6 @@
 - Support for patches in TableData (Patch is like table in tablelist)
 - Import patches from XDF as table
 
+0.18.54
+- Added "patch" as valuetype to tuner, tree-mode (enum,bitmask,bool,number or patch)
+

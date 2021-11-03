@@ -3639,6 +3639,11 @@ namespace UniversalPatcher
                             tnChild.ImageKey = "enum.ico";
                             tnChild.SelectedImageKey = "enum.ico";
                         }
+                        else if (vt == TableValueType.patch)
+                        {
+                            tnChild.ImageKey = "patch.ico";
+                            tnChild.SelectedImageKey = "patch.ico";
+                        }
                         else
                         {
                             tnChild.ImageKey = "number.ico";
@@ -3722,6 +3727,7 @@ namespace UniversalPatcher
                     treeValueType.Nodes.Add(createTreeNode("enum"));
                     treeValueType.Nodes.Add(createTreeNode("bitmask"));
                     treeValueType.Nodes.Add(createTreeNode("boolean"));
+                    treeValueType.Nodes.Add(createTreeNode("patch"));
                 }
 
                 for (int i = 0; i < filteredTableDatas.Count; i++)
@@ -3755,6 +3761,8 @@ namespace UniversalPatcher
                             nodeKey = "boolean";
                         else if (vt == TableValueType.selection)
                             nodeKey = "enum";
+                        else if (vt == TableValueType.patch)
+                            nodeKey = "patch";
                         else
                             nodeKey = "number";
 
@@ -3832,6 +3840,10 @@ namespace UniversalPatcher
                         else if (vt == TableValueType.boolean)
                         {
                             ico = "flag";
+                        }
+                        else if (vt == TableValueType.patch)
+                        {
+                            ico = "patch";
                         }
                         else if (vt == TableValueType.selection)
                         {
@@ -3959,6 +3971,10 @@ namespace UniversalPatcher
                         else if (vt == TableValueType.boolean)
                         {
                             ico = "flag";
+                        }
+                        else if (vt == TableValueType.patch)
+                        {
+                            ico = "patch";
                         }
                         else if (vt == TableValueType.selection)
                         {

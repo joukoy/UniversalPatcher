@@ -247,6 +247,15 @@ namespace UniversalPatcher
                 tnT.Nodes.Add(tnN);
             }
 
+            if (usedValueTypes.Contains("patch"))
+            {
+                TreeNode tnN = new TreeNode();
+                tnN.Name = "patch";
+                tnN.ImageKey = "patch.ico";
+                tnN.SelectedImageKey = "patch.ico";
+                tnT.Nodes.Add(tnN);
+            }
+
             if (tnT.Nodes.Count > 0)
                 parent.Add(tnT);
 

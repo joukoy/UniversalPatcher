@@ -1,19 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using MathParserTK;
 using System;
-using System.IO;
-using System.Windows.Forms;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using System.Diagnostics;
-using UniversalPatcher;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Globalization;
-using UniversalPatcher.Properties;
-using System.Linq;
 using System.Drawing;
-using System.Xml.Serialization;
-using MathParserTK;
-using System.Text;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using UniversalPatcher;
+using UniversalPatcher.Properties;
 
 
 public class upatcher
@@ -368,7 +364,8 @@ public class upatcher
         boolean,
         selection,
         bitmask,
-        number
+        number,
+        patch
     }
 
     public static void StartupSettings()
@@ -541,7 +538,11 @@ public class upatcher
 
         if (td.Units == null)
             td.Units = "";
-        if (td.BitMask != null && td.BitMask.Length > 0)
+        if (td.Values.ToLower().StartsWith("patch:") || td.Values.ToLower().StartsWith("tablepatch:"))
+        {
+            retVal = TableValueType.patch;
+        }
+        else if (td.BitMask != null && td.BitMask.Length > 0)
         {
             retVal = TableValueType.bitmask;
         }

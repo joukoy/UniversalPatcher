@@ -226,7 +226,7 @@ namespace UniversalPatcher
                         PCM.dtcCombined = true;
                         string vals = "Enum: 0:MIL and reporting off,1:Type A/no MIL,2:Type B/no MIL,3:Type C/no MIL,4:Not reported/MIL,5:Type A/MIL,6:Type B/MIL,7:Type C/MIL";
                         PCM.dtcValues = parseDtcValues(vals.ToLower().Replace("enum: ", ""));
-                        retVal = SearchDtcE38(PCM);
+                        return SearchDtcE38(PCM);
                     }
                     else if (primary)
                     {
