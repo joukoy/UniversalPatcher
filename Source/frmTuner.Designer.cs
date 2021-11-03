@@ -115,6 +115,7 @@ namespace UniversalPatcher
             this.duplicateTableConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addTablesToExistingPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createPatchToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.comboFilterBy = new System.Windows.Forms.ComboBox();
             this.txtResult = new System.Windows.Forms.RichTextBox();
@@ -682,9 +683,10 @@ namespace UniversalPatcher
             this.deleteRowToolStripMenuItem,
             this.duplicateTableConfigToolStripMenuItem,
             this.createPatchToolStripMenuItem,
-            this.addTablesToExistingPatchToolStripMenuItem});
+            this.addTablesToExistingPatchToolStripMenuItem,
+            this.createPatchToolStripMenuItem1});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 340);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 384);
             // 
             // cutToolStripMenuItem
             // 
@@ -850,6 +852,13 @@ namespace UniversalPatcher
             this.addTablesToExistingPatchToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.addTablesToExistingPatchToolStripMenuItem.Text = "Add tables to existing patch...";
             this.addTablesToExistingPatchToolStripMenuItem.Click += new System.EventHandler(this.addTablesToExistingPatchToolStripMenuItem_Click);
+            // 
+            // createPatchToolStripMenuItem1
+            // 
+            this.createPatchToolStripMenuItem1.Name = "createPatchToolStripMenuItem1";
+            this.createPatchToolStripMenuItem1.Size = new System.Drawing.Size(230, 22);
+            this.createPatchToolStripMenuItem1.Text = "Create patch (Tablelist)";
+            this.createPatchToolStripMenuItem1.Click += new System.EventHandler(this.createPatchToolStripMenuItem1_Click);
             // 
             // label1
             // 
@@ -1571,5 +1580,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem sGMToolStripMenuItem;
         private ToolStripMenuItem intelHEXToolStripMenuItem;
         private ToolStripMenuItem motorolaSrecordToolStripMenuItem;
+        private ToolStripMenuItem createPatchToolStripMenuItem1;
     }
 }

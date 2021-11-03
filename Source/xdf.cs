@@ -339,38 +339,38 @@ namespace UniversalPatcher
 
                 }
 
-                patches = new List<Patch>();
                 foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFPATCH"))
                 {
-                    Patch patch = new Patch();
+                    TableData patchTd = new TableData();
+                    patchTd.addrInt = 0;
+                    patchTd.DataType = InDataType.UBYTE;
+                    patchTd.TableName = element.Element("title").Value.Replace(":", ";");
+                    if (element.Element("description") != null)
+                        patchTd.TableDescription = element.Element("description").Value;
+                    if (element.Element("CATEGORYMEM") != null && element.Element("CATEGORYMEM").Attribute("category") != null)
+                    {
+                        int catid = 0;
+                        foreach (XElement catEle in element.Elements("CATEGORYMEM"))
+                        {
+                            catid = Convert.ToInt16(catEle.Attribute("category").Value);
+                            if (patchTd.Category.Length > 0)
+                                patchTd.Category += " - ";
+                            patchTd.Category += categories[catid - 1];
+                        }
+                    }
+                    patchTd.Values = "Patch: ";
                     foreach (XElement patchEle in element.Elements("XDFPATCHENTRY"))
                     {
-                        XmlPatch xmlPatch = new XmlPatch();
-                        xmlPatch.Name = element.Element("title").Value.Replace(":",";");
-                        patch.Name = xmlPatch.Name;
-                        if (element.Element("description") != null)
-                            xmlPatch.Description = element.Element("description").Value;
-                        if (PCM.configFile.Length > 0)
-                            xmlPatch.XmlFile = PCM.configFile;
-                        if (patchEle.Attribute("name") != null)
-                            xmlPatch.Name += ": " + patchEle.Attribute("name").Value;
                         if (patchEle.Attribute("address") != null)
-                            xmlPatch.CompatibleOS = "ALL:" + patchEle.Attribute("address").Value.Trim().Replace("0x","");
+                            patchTd.Values += patchEle.Attribute("address").Value.Trim().Replace("0x", "") + ":";
                         if (patchEle.Attribute("patchdata") != null)
-                        {
-                            string origData = patchEle.Attribute("patchdata").Value;
-                            string newData = "";
-                            for (int c = 0; c < origData.Length; c += 2)
-                                newData += origData.Substring(c, 2) + " ";
-                            xmlPatch.Data = newData.Trim();
-                        }
-                        //PatchList.Add(xmlPatch);
-                        patch.patches.Add(xmlPatch);
+                            patchTd.Values += patchEle.Attribute("patchdata").Value;
+                        patchTd.Values += ",";
                     }
-                    patches.Add(patch);
-                    havePatches = true;
+                    patchTd.Values.Trim(',');
+                    PCM.tableDatas.Add(patchTd);
                 }
-                
+
                 for (int i = 0; i< tableLinks.Count; i++)
                 {
                     TableLink tl = tableLinks[i];
@@ -391,11 +391,6 @@ namespace UniversalPatcher
                 {
                     if (!PCM.tableCategories.Contains(PCM.tableDatas[i].Category))
                         PCM.tableCategories.Add(PCM.tableDatas[i].Category);
-                }
-                if (havePatches)
-                {
-                    frmpatcher.RefreshPatchList();
-                    LoggerBold("Patches imported, see pachlist in main window");
                 }
             }
             catch (Exception ex)

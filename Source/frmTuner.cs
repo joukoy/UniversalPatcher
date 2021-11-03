@@ -287,6 +287,24 @@ namespace UniversalPatcher
                     tableIds = getSelectedTableIds();
                 }
                 TableData td = PCM.tableDatas[tableIds[0]];
+                if (td.Values.StartsWith("Patch:"))
+                {
+                    if (MessageBox.Show(td.TableDescription, "Apply patch?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        applyTdPatch(td, ref PCM);
+                    }
+                    return;
+                }
+                else if (td.Values.StartsWith("TablePatch:"))
+                {
+                    if (MessageBox.Show(td.TableDescription, "Apply patch?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        applyTdTablePatch(ref PCM, td);
+                    }
+                    return;
+
+                }
+
                 if (td.addrInt == uint.MaxValue)
                 {
                     Logger("No address defined!");
@@ -939,7 +957,7 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+                LoggerBold("Error, frmTuner importDTC, line " + line + ": " + ex.Message);
             }
         }
 
@@ -2960,6 +2978,76 @@ namespace UniversalPatcher
 
         }
 
+        private void generateTablePatchTableData()
+        {
+            try
+            {
+                List<int> tableIds = getSelectedTableIds();
+                if (tableIds.Count == 0)
+                {
+                    Logger("No tables selected");
+                    return;
+                }
+                Logger("Creating patches...");
+                for (int i = 0; i < tableIds.Count; i++)
+                {
+                    int id = tableIds[i];
+                    TableData srcTd = PCM.tableDatas[id];
+                    TableData patchTd = new TableData();
+                    patchTd.addrInt = 0;
+                    patchTd.DataType = InDataType.UBYTE;
+                    patchTd.TableDescription = srcTd.TableDescription;
+                    patchTd.TableName = "Patch: " + srcTd.TableName;
+                    patchTd.Category = "Patch";
+                    if (srcTd.Category.Length > 1)
+                        patchTd.Category += "." + srcTd.Category;
+                    patchTd.OS = srcTd.OS;
+                    patchTd.CompatibleOS = "Table:" + srcTd.TableName + ",columns:" + srcTd.Columns.ToString() + ",rows:" + srcTd.Rows.ToString();
+                    frmTableEditor frmTE = new frmTableEditor();
+                    frmTE.prepareTable(PCM, srcTd, null, "A");
+                    frmTE.loadTable();
+                    uint step = (uint)getElementSize(srcTd.DataType);
+                    uint addr = (uint)(srcTd.addrInt + srcTd.Offset);
+                    patchTd.Values = "TablePatch: ";
+                    if (srcTd.RowMajor)
+                    {
+                        for (int r = 0; r < srcTd.Rows; r++)
+                        {
+                            for (int c = 0; c < srcTd.Columns; c++)
+                            {
+                                patchTd.Values += getValue(PCM.buf, addr, srcTd, 0, PCM).ToString().Replace(",", ".") + " ";
+                                addr += step;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int c = 0; c < srcTd.Columns; c++)
+                        {
+                            for (int r = 0; r < srcTd.Rows; r++)
+                            {
+                                patchTd.Values += getValue(PCM.buf, addr, srcTd, 0, PCM).ToString().Replace(",", ".") + " ";
+                                addr += step;
+                            }
+                        }
+                    }
+                    PCM.tableDatas.Add(patchTd);
+                }
+                filterTables();
+                Logger(" [OK]");
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+
+        }
+
         private void createPatchToolStripMenuItem_Click(object sender, EventArgs e)
         {
             generateTablePatch(true);
@@ -4370,6 +4458,11 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmTuner motorolaSrecordToolStripMenuItem_Click, line " + line + ": " + ex.Message);
             }
+        }
+
+        private void createPatchToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            generateTablePatchTableData();
         }
     }
 }

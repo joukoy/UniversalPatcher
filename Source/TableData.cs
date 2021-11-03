@@ -6,6 +6,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Globalization;
 using static upatcher;
+using System.Diagnostics;
 
 namespace UniversalPatcher
 {
@@ -95,10 +96,13 @@ namespace UniversalPatcher
                 altOS = value;
                 if (altOS.Length > 0)
                 {
-                    if (!altOS.StartsWith(","))
-                        altOS = "," + altOS;
-                    if (!altOS.EndsWith(","))
-                        altOS += ",";
+                    if (!altOS.ToLower().StartsWith("table:"))
+                    {
+                        if (!altOS.StartsWith(","))
+                            altOS = "," + altOS;
+                        if (!altOS.EndsWith(","))
+                            altOS += ",";
+                    }
                 }
             }
         }
@@ -180,83 +184,34 @@ namespace UniversalPatcher
 
         }
 
-        public void importDTC(PcmFile PCM, ref List<TableData>tdList, bool primary)
+        public void importDTC(PcmFile PCM, ref List<TableData> tdList, bool primary)
         {
-            List<DtcCode> dtcCodes;
-            if (primary)
-                dtcCodes = PCM.dtcCodes;
-            else
-                dtcCodes = PCM.dtcCodes2;
-            if (dtcCodes == null)
+            try
             {
-                DtcSearch DS = new DtcSearch();
-                dtcCodes = DS.searchDtc(PCM, primary);
-            }
-            if (dtcCodes.Count == 0)
-                return;
-            TableData dtcTd = new TableData();
-            DtcCode dtc = dtcCodes[0];
-            dtcTd.Origin = "seek";
-            dtcTd.addrInt = dtc.statusAddrInt;
-            dtcTd.Category = "DTC";
-            dtcTd.Columns = 1;
-            //td.Floating = false;
-            dtcTd.OutputType = OutDataType.Int;
-            dtcTd.Decimals = 0;
-            dtcTd.DataType = InDataType.UBYTE;
-            dtcTd.Math = "X";
-            dtcTd.OS = PCM.OS;
-            for (int i = 0; i < dtcCodes.Count; i++)
-            {
-                dtcTd.RowHeaders += dtcCodes[i].Code + ",";
-            }
-            dtcTd.RowHeaders = dtcTd.RowHeaders.Trim(',');
-            dtcTd.Rows = (ushort)dtcCodes.Count;
-            //dtcTd.SavingMath = "X";
-            if (PCM.dtcCombined)
-            {
-                //td.TableDescription = "00 MIL and reporting off, 01 type A/no mil, 02 type B/no mil, 03 type C/no mil, 04 not reported/mil, 05 type A/mil, 06 type B/mil, 07 type c/mil";
-                dtcTd.Values = "Enum: 00:MIL and reporting off,01:type A/no mil,02:type B/no mil,03:type C/no mil,04:not reported/mil,05:type A/mil,06:type B/mil,07:type c/mil";
+                List<DtcCode> dtcCodes;
                 if (primary)
-                    dtcTd.TableName = "DTC";
+                    dtcCodes = PCM.dtcCodes;
                 else
-                    dtcTd.TableName = "DTC2";
-                dtcTd.Max = 7;
-            }
-            else
-            {
-                //td.TableDescription = "0 = 1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY), 1 = 2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles), 2 = Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC), 3 = Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)";
-                dtcTd.Values = "Enum: 0:1 Trip (MIL IMMEDIATELY),1:2 Trips (MIL if DTC active two drive cycles),2:(No MIL store DTC),3:Not Reported (DTC Disabled)";
-                if (primary)
-                    dtcTd.TableName = "DTC.Codes";
-                else
-                    dtcTd.TableName = "DTC2.Codes";
-                dtcTd.Max = 3;
-            }
-            if (dtcCodes[0].Values != null && dtcCodes[0].Values.Length > 0)
-                dtcTd.Values = dtcCodes[0].Values;
-
-            tdList.Insert(0, dtcTd);
-
-            if (!PCM.dtcCombined)
-            {
-                dtcTd = new TableData();
-                if (primary)
-                    dtcTd.TableName = "DTC.MIL_Enable";
-                else
-                    dtcTd.TableName = "DTC2.MIL_Enable";
-                dtcTd.addrInt = dtc.milAddrInt;
-                dtcTd.Category = "DTC";
+                    dtcCodes = PCM.dtcCodes2;
+                if (dtcCodes == null)
+                {
+                    DtcSearch DS = new DtcSearch();
+                    dtcCodes = DS.searchDtc(PCM, primary);
+                }
+                if (dtcCodes== null)
+                    return;
+                TableData dtcTd = new TableData();
+                DtcCode dtc = dtcCodes[0];
                 dtcTd.Origin = "seek";
-                //td.ColumnHeaders = "MIL";
+                dtcTd.addrInt = dtc.statusAddrInt;
+                dtcTd.Category = "DTC";
                 dtcTd.Columns = 1;
-                dtcTd.OutputType = OutDataType.Flag;
+                //td.Floating = false;
+                dtcTd.OutputType = OutDataType.Int;
                 dtcTd.Decimals = 0;
                 dtcTd.DataType = InDataType.UBYTE;
                 dtcTd.Math = "X";
                 dtcTd.OS = PCM.OS;
-                dtcTd.Max = 1;
-                dtcTd.Units = "Boolean";
                 for (int i = 0; i < dtcCodes.Count; i++)
                 {
                     dtcTd.RowHeaders += dtcCodes[i].Code + ",";
@@ -264,13 +219,75 @@ namespace UniversalPatcher
                 dtcTd.RowHeaders = dtcTd.RowHeaders.Trim(',');
                 dtcTd.Rows = (ushort)dtcCodes.Count;
                 //dtcTd.SavingMath = "X";
-                //td.Signed = false;
-                dtcTd.TableDescription = "0 = No MIL (Lamp always off) 1 = MIL (Lamp may be commanded on by PCM)";
-                //td.Values = "Enum: 0:No MIL (Lamp always off),1:MIL (Lamp may be commanded on by PCM)";
-                tdList.Insert(1, dtcTd);
+                if (PCM.dtcCombined)
+                {
+                    //td.TableDescription = "00 MIL and reporting off, 01 type A/no mil, 02 type B/no mil, 03 type C/no mil, 04 not reported/mil, 05 type A/mil, 06 type B/mil, 07 type c/mil";
+                    dtcTd.Values = "Enum: 00:MIL and reporting off,01:type A/no mil,02:type B/no mil,03:type C/no mil,04:not reported/mil,05:type A/mil,06:type B/mil,07:type c/mil";
+                    if (primary)
+                        dtcTd.TableName = "DTC";
+                    else
+                        dtcTd.TableName = "DTC2";
+                    dtcTd.Max = 7;
+                }
+                else
+                {
+                    //td.TableDescription = "0 = 1 Trip, Emissions Related (MIL will illuminate IMMEDIATELY), 1 = 2 Trips, Emissions Related (MIL will illuminate if the DTC is active for two consecutive drive cycles), 2 = Non Emssions (MIL will NOT be illuminated, but the PCM will store the DTC), 3 = Not Reported (the DTC test/algorithm is NOT functional, i.e. the DTC is Disabled)";
+                    dtcTd.Values = "Enum: 0:1 Trip (MIL IMMEDIATELY),1:2 Trips (MIL if DTC active two drive cycles),2:(No MIL store DTC),3:Not Reported (DTC Disabled)";
+                    if (primary)
+                        dtcTd.TableName = "DTC.Codes";
+                    else
+                        dtcTd.TableName = "DTC2.Codes";
+                    dtcTd.Max = 3;
+                }
+                if (dtcCodes[0].Values != null && dtcCodes[0].Values.Length > 0)
+                    dtcTd.Values = dtcCodes[0].Values;
+
+                tdList.Insert(0, dtcTd);
+
+                if (!PCM.dtcCombined)
+                {
+                    dtcTd = new TableData();
+                    if (primary)
+                        dtcTd.TableName = "DTC.MIL_Enable";
+                    else
+                        dtcTd.TableName = "DTC2.MIL_Enable";
+                    dtcTd.addrInt = dtc.milAddrInt;
+                    dtcTd.Category = "DTC";
+                    dtcTd.Origin = "seek";
+                    //td.ColumnHeaders = "MIL";
+                    dtcTd.Columns = 1;
+                    dtcTd.OutputType = OutDataType.Flag;
+                    dtcTd.Decimals = 0;
+                    dtcTd.DataType = InDataType.UBYTE;
+                    dtcTd.Math = "X";
+                    dtcTd.OS = PCM.OS;
+                    dtcTd.Max = 1;
+                    dtcTd.Units = "Boolean";
+                    for (int i = 0; i < dtcCodes.Count; i++)
+                    {
+                        dtcTd.RowHeaders += dtcCodes[i].Code + ",";
+                    }
+                    dtcTd.RowHeaders = dtcTd.RowHeaders.Trim(',');
+                    dtcTd.Rows = (ushort)dtcCodes.Count;
+                    //dtcTd.SavingMath = "X";
+                    //td.Signed = false;
+                    dtcTd.TableDescription = "0 = No MIL (Lamp always off) 1 = MIL (Lamp may be commanded on by PCM)";
+                    //td.Values = "Enum: 0:No MIL (Lamp always off),1:MIL (Lamp may be commanded on by PCM)";
+                    tdList.Insert(1, dtcTd);
+                }
+                if (!PCM.tableCategories.Contains("DTC"))
+                    PCM.tableCategories.Add("DTC");
+
             }
-            if (!PCM.tableCategories.Contains("DTC"))
-                PCM.tableCategories.Add("DTC");
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, importDTC, line " + line + ": " + ex.Message);
+            }
 
         }
 

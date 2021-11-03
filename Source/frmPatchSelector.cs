@@ -137,6 +137,18 @@ namespace UniversalPatcher
             refreshFileList();
         }
 
+        public void convertToXmlPatch(TableData td, PcmFile PCM)
+        {
+            patchFileList = new List<PatchFile>();
+            PatchFile pFile = new PatchFile();
+            pFile.CompatibleOS = td.OS;
+            pFile.Description = td.TableDescription;
+            pFile.FileName = td.TableName;
+            pFile.Platform = PCM.configFile ;
+            patchFileList.Add(pFile);
+            refreshFileList();
+        }
+
         private void chkShowAll_CheckedChanged(object sender, EventArgs e)
         {
             loadPatches();

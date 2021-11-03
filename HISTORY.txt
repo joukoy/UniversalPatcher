@@ -190,3 +190,8 @@
 
 0.18.52
 - Small bugfix to platform config
+
+0.18.53
+- Support for patches in TableData (Patch is like table in tablelist)
+- Import patches from XDF as table
+

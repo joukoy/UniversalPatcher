@@ -1122,6 +1122,69 @@ public class upatcher
         return (uint)(diffCount * step);
     }
 
+    public static void applyTdPatch(TableData td, ref PcmFile PCM)
+    {
+        try
+        {
+            Logger("Applying patch: " + td.TableName, false);
+            string data = td.Values.Substring(7); //Remove "Patch: "
+            string[] parts = data.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            int byteCount = 0;
+            foreach(string part in parts)
+            {
+                string[] dParts = part.Split(':');
+                if (dParts.Length != 2)
+                    throw new Exception(" Data error: " + td.Values);
+                uint addr;
+                if (!HexToUint(dParts[0], out addr))
+                    throw new Exception(" Data error: " + td.Values);
+
+                for (int i = 0; i < dParts[1].Length; i += 2)
+                {
+                    string byteStr = dParts[1].Substring(i, 2);
+                    byte b;
+                    if (!HexToByte(byteStr, out b))
+                        throw new Exception(" Data error: " + td.Values);
+                    if (PCM.buf[addr] != b)
+                        byteCount++;
+                    PCM.buf[addr] = b;
+                    addr++;
+                }
+            }
+            Logger(" [OK]");
+            Logger("Modified " + byteCount.ToString() + " bytes");
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold(" Error, applyTdPatch line " + line + ": " + ex.Message);
+
+        }
+
+    }
+
+    public static void applyTdTablePatch(ref PcmFile PCM, TableData patchTd)
+    {
+        XmlPatch xpatch = new XmlPatch();
+        xpatch.CompatibleOS = patchTd.CompatibleOS.TrimStart(',');
+        xpatch.Data = patchTd.Values.Substring(11).Trim();
+        xpatch.Description = patchTd.TableDescription;
+        xpatch.Name = patchTd.TableName;
+        xpatch.XmlFile = PCM.configFile;
+        Logger("Applying patch...");
+
+        uint ind = checkPatchCompatibility(xpatch, PCM, false);
+        if (ind < uint.MaxValue)
+        {
+            uint bytes = applyTablePatch(ref PCM, xpatch, (int)ind);
+            Logger(Environment.NewLine +  "Modified: " + bytes.ToString() + " bytes");
+        }
+    }
+
     public static bool ApplyXMLPatch(ref PcmFile basefile)
     {
         try
