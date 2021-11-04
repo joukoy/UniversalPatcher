@@ -201,4 +201,6 @@
 0.18.55
 - Support for imperial/metric display units in Tuner. Config in Settings -> More Settings
 
+0.18.56
+- Fix sorting in Tuner
 

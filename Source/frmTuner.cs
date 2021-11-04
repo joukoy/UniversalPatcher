@@ -579,28 +579,29 @@ namespace UniversalPatcher
                 for (int tbId = 0; tbId < PCM.tableDatas.Count; tbId++)
                     PCM.tableDatas[tbId].id = (uint)tbId;
 
-                List<TableData> compareList = new List<TableData>();
-                if (strSortOrder == SortOrder.Ascending)
-                    compareList = PCM.tableDatas.OrderBy(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
-                else
-                    compareList = PCM.tableDatas.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
 
-                IEnumerable<TableData> results = compareList;
-
+                List<TableData> compareList = PCM.tableDatas;
                 if (!Properties.Settings.Default.TunerShowUnitsUndefined || !Properties.Settings.Default.TunerShowUnitsMetric || !Properties.Settings.Default.TunerShowUnitsImperial)
                 {
                     List<TableData> newTDList = new List<TableData>();
                     if (Properties.Settings.Default.TunerShowUnitsUndefined)
-                        foreach (TableData tmpTd in results.Where(x => x.DispUnits == DisplayUnits.Undefined))
+                        foreach (TableData tmpTd in PCM.tableDatas.Where(x => x.DispUnits == DisplayUnits.Undefined))
                             newTDList.Add(tmpTd);
                     if (Properties.Settings.Default.TunerShowUnitsImperial)
-                        foreach (TableData tmpTd in results.Where(x => x.DispUnits == DisplayUnits.Imperial))
+                        foreach (TableData tmpTd in PCM.tableDatas.Where(x => x.DispUnits == DisplayUnits.Imperial))
                             newTDList.Add(tmpTd);
                     if (Properties.Settings.Default.TunerShowUnitsMetric)
-                        foreach (TableData tmpTd in results.Where(x => x.DispUnits == DisplayUnits.Metric))
+                        foreach (TableData tmpTd in PCM.tableDatas.Where(x => x.DispUnits == DisplayUnits.Metric))
                             newTDList.Add(tmpTd);
-                    results = newTDList;
+                    compareList = newTDList;
                 }
+
+                if (strSortOrder == SortOrder.Ascending)
+                    compareList = compareList.OrderBy(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
+                else
+                    compareList = compareList.OrderByDescending(x => typeof(TableData).GetProperty(sortBy).GetValue(x, null)).ToList();
+
+                IEnumerable<TableData> results = compareList;
 
                 if (txtSearchTableSeek.Text.Length > 0)
                 {
