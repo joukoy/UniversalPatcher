@@ -45,12 +45,17 @@ namespace UniversalPatcher
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.chkRequireValidVerForStock = new System.Windows.Forms.CheckBox();
             this.chkAutoOpenImportedFile = new System.Windows.Forms.CheckBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.chkDisplayUndefined = new System.Windows.Forms.CheckBox();
+            this.chkDisplayImperial = new System.Windows.Forms.CheckBox();
+            this.chkDisplayMetric = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerTableMinEquivalency)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numKeypressWait)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerMinEqOther)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // numTunerTableMinEquivalency
@@ -77,7 +82,7 @@ namespace UniversalPatcher
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(225, 293);
+            this.btnOK.Location = new System.Drawing.Point(225, 318);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 2;
@@ -173,7 +178,7 @@ namespace UniversalPatcher
             // 
             this.chkDisableAutoCS.AutoSize = true;
             this.chkDisableAutoCS.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkDisableAutoCS.Location = new System.Drawing.Point(152, 180);
+            this.chkDisableAutoCS.Location = new System.Drawing.Point(9, 237);
             this.chkDisableAutoCS.Name = "chkDisableAutoCS";
             this.chkDisableAutoCS.Size = new System.Drawing.Size(150, 17);
             this.chkDisableAutoCS.TabIndex = 12;
@@ -183,7 +188,7 @@ namespace UniversalPatcher
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.chkRequireValidVerForStock);
-            this.groupBox3.Location = new System.Drawing.Point(8, 207);
+            this.groupBox3.Location = new System.Drawing.Point(10, 180);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(292, 51);
             this.groupBox3.TabIndex = 13;
@@ -206,18 +211,61 @@ namespace UniversalPatcher
             // 
             this.chkAutoOpenImportedFile.AutoSize = true;
             this.chkAutoOpenImportedFile.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkAutoOpenImportedFile.Location = new System.Drawing.Point(168, 264);
+            this.chkAutoOpenImportedFile.Location = new System.Drawing.Point(168, 237);
             this.chkAutoOpenImportedFile.Name = "chkAutoOpenImportedFile";
             this.chkAutoOpenImportedFile.Size = new System.Drawing.Size(134, 17);
             this.chkAutoOpenImportedFile.TabIndex = 14;
             this.chkAutoOpenImportedFile.Text = "Auto open imported file";
             this.chkAutoOpenImportedFile.UseVisualStyleBackColor = true;
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.chkDisplayMetric);
+            this.groupBox4.Controls.Add(this.chkDisplayImperial);
+            this.groupBox4.Controls.Add(this.chkDisplayUndefined);
+            this.groupBox4.Location = new System.Drawing.Point(9, 260);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(288, 48);
+            this.groupBox4.TabIndex = 15;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Display units";
+            // 
+            // chkDisplayUndefined
+            // 
+            this.chkDisplayUndefined.AutoSize = true;
+            this.chkDisplayUndefined.Location = new System.Drawing.Point(13, 18);
+            this.chkDisplayUndefined.Name = "chkDisplayUndefined";
+            this.chkDisplayUndefined.Size = new System.Drawing.Size(75, 17);
+            this.chkDisplayUndefined.TabIndex = 0;
+            this.chkDisplayUndefined.Text = "Undefined";
+            this.chkDisplayUndefined.UseVisualStyleBackColor = true;
+            // 
+            // chkDisplayImperial
+            // 
+            this.chkDisplayImperial.AutoSize = true;
+            this.chkDisplayImperial.Location = new System.Drawing.Point(94, 18);
+            this.chkDisplayImperial.Name = "chkDisplayImperial";
+            this.chkDisplayImperial.Size = new System.Drawing.Size(62, 17);
+            this.chkDisplayImperial.TabIndex = 1;
+            this.chkDisplayImperial.Text = "Imperial";
+            this.chkDisplayImperial.UseVisualStyleBackColor = true;
+            // 
+            // chkDisplayMetric
+            // 
+            this.chkDisplayMetric.AutoSize = true;
+            this.chkDisplayMetric.Location = new System.Drawing.Point(172, 19);
+            this.chkDisplayMetric.Name = "chkDisplayMetric";
+            this.chkDisplayMetric.Size = new System.Drawing.Size(55, 17);
+            this.chkDisplayMetric.TabIndex = 2;
+            this.chkDisplayMetric.Text = "Metric";
+            this.chkDisplayMetric.UseVisualStyleBackColor = true;
+            // 
             // frmMoreSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(307, 328);
+            this.ClientSize = new System.Drawing.Size(307, 353);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.chkAutoOpenImportedFile);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.chkDisableAutoCS);
@@ -239,6 +287,8 @@ namespace UniversalPatcher
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -261,5 +311,9 @@ namespace UniversalPatcher
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.CheckBox chkRequireValidVerForStock;
         private System.Windows.Forms.CheckBox chkAutoOpenImportedFile;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.CheckBox chkDisplayMetric;
+        private System.Windows.Forms.CheckBox chkDisplayImperial;
+        private System.Windows.Forms.CheckBox chkDisplayUndefined;
     }
 }

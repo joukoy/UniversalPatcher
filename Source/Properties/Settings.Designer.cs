@@ -935,13 +935,37 @@ namespace UniversalPatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool Setting1 {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool TunerShowUnitsUndefined {
             get {
-                return ((bool)(this["Setting1"]));
+                return ((bool)(this["TunerShowUnitsUndefined"]));
             }
             set {
-                this["Setting1"] = value;
+                this["TunerShowUnitsUndefined"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool TunerShowUnitsImperial {
+            get {
+                return ((bool)(this["TunerShowUnitsImperial"]));
+            }
+            set {
+                this["TunerShowUnitsImperial"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool TunerShowUnitsMetric {
+            get {
+                return ((bool)(this["TunerShowUnitsMetric"]));
+            }
+            set {
+                this["TunerShowUnitsMetric"] = value;
             }
         }
     }

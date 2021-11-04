@@ -587,6 +587,21 @@ namespace UniversalPatcher
 
                 IEnumerable<TableData> results = compareList;
 
+                if (!Properties.Settings.Default.TunerShowUnitsUndefined || !Properties.Settings.Default.TunerShowUnitsMetric || !Properties.Settings.Default.TunerShowUnitsImperial)
+                {
+                    List<TableData> newTDList = new List<TableData>();
+                    if (Properties.Settings.Default.TunerShowUnitsUndefined)
+                        foreach (TableData tmpTd in results.Where(x => x.DispUnits == DisplayUnits.Undefined))
+                            newTDList.Add(tmpTd);
+                    if (Properties.Settings.Default.TunerShowUnitsImperial)
+                        foreach (TableData tmpTd in results.Where(x => x.DispUnits == DisplayUnits.Imperial))
+                            newTDList.Add(tmpTd);
+                    if (Properties.Settings.Default.TunerShowUnitsMetric)
+                        foreach (TableData tmpTd in results.Where(x => x.DispUnits == DisplayUnits.Metric))
+                            newTDList.Add(tmpTd);
+                    results = newTDList;
+                }
+
                 if (txtSearchTableSeek.Text.Length > 0)
                 {
                     string newStr = txtSearchTableSeek.Text.Replace("OR", "|");
@@ -2779,7 +2794,8 @@ namespace UniversalPatcher
         private void moreSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             frmMoreSettings frmTS = new frmMoreSettings();
-            frmTS.Show();
+            frmTS.ShowDialog();
+            filterTables();
         }
 
         private void timerFilter_Tick(object sender, EventArgs e)

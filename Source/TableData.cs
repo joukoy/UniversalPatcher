@@ -19,6 +19,7 @@ namespace UniversalPatcher
             TableName = "";
             //Address = "";
             addrInt = uint.MaxValue;
+            DispUnits = DisplayUnits.Undefined;
             Math = "X";
             //SavingMath = "X";
             Units = "";
@@ -41,6 +42,7 @@ namespace UniversalPatcher
         public string OS { get; set; }
         public string TableName { get; set; }
         public string Category { get; set; }
+        public DisplayUnits DispUnits { get; set; }
         public uint addrInt;
         public string Address
         {
@@ -179,6 +181,7 @@ namespace UniversalPatcher
             Values = tSeek.Values;
             Min = tSeek.Min;
             Max = tSeek.Max;
+            DispUnits = tSeek.DispUnits;
             if (!PCM.tableCategories.Contains(Category))
                 PCM.tableCategories.Add(Category);
 

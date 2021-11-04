@@ -66,6 +66,7 @@ namespace UniversalPatcher
         public bool RowMajor { get; set; }
         public string Description { get; set; }
         public bool MSB { get; set; }
+        public DisplayUnits DispUnits { get; set; }
 
         private PcmFile PCM;
 

@@ -32,6 +32,12 @@ public class upatcher
         }
     }
 
+    public enum DisplayUnits
+    {
+        Undefined,
+        Metric,
+        Imperial
+    }
 
     public class XmlPatch
     {

@@ -198,3 +198,7 @@
 0.18.54
 - Added "patch" as valuetype to tuner, tree-mode (enum,bitmask,bool,number or patch)
 
+0.18.55
+- Support for imperial/metric display units in Tuner. Config in Settings -> More Settings
+
+

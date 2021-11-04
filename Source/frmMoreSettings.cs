@@ -25,6 +25,10 @@ namespace UniversalPatcher
             Properties.Settings.Default.DisableAutoFixChecksum = chkDisableAutoCS.Checked;
             Properties.Settings.Default.RequireValidVerForStock = chkRequireValidVerForStock.Checked;
             Properties.Settings.Default.AutomaticOpenImportedFile = chkAutoOpenImportedFile.Checked;
+            Properties.Settings.Default.TunerShowUnitsImperial = chkDisplayImperial.Checked;
+            Properties.Settings.Default.TunerShowUnitsMetric = chkDisplayMetric.Checked;
+            Properties.Settings.Default.TunerShowUnitsUndefined = chkDisplayUndefined.Checked;
+
             //Properties.Settings.Default.startPatcher = chkStartPatcher.Checked;
             Properties.Settings.Default.Save();
             this.Close();
@@ -39,6 +43,9 @@ namespace UniversalPatcher
             chkDisableAutoCS.Checked = Properties.Settings.Default.DisableAutoFixChecksum;
             chkRequireValidVerForStock.Checked = Properties.Settings.Default.RequireValidVerForStock;
             chkAutoOpenImportedFile.Checked = Properties.Settings.Default.AutomaticOpenImportedFile;
+            chkDisplayImperial.Checked = Properties.Settings.Default.TunerShowUnitsImperial;
+            chkDisplayMetric.Checked = Properties.Settings.Default.TunerShowUnitsMetric;
+            chkDisplayUndefined.Checked = Properties.Settings.Default.TunerShowUnitsUndefined;
             //chkStartPatcher.Checked = Properties.Settings.Default.startPatcher;
         }
 
