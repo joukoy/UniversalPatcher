@@ -228,8 +228,6 @@ namespace UniversalPatcher
                     return; //No files selected
                 for (int f = 0; f < tunerFiles.Count; f++)
                     tunerFiles[f].id = f;
-                for (int i = 0; i < displayDatas.Count; i++)
-                    displayDatas[i].id = (uint)i;
                 dataGridView1.DataSource = bindingSource;
                 filterData();
 
@@ -781,7 +779,6 @@ namespace UniversalPatcher
                             PropertyInfo tdeProp = tdeType.GetProperty(tdProp.Name);
                             tdeProp.SetValue(tde, tdProp.GetValue(tabledata, null), null);
                         }
-                        tde.id = (uint)t;
                         tde.fileId = tf;
                         tde.File = tunerFiles[tf].FileName;
                         tde.Select = true;
@@ -931,29 +928,29 @@ namespace UniversalPatcher
                 {
                     TableData sourceTd = sourceTdList[t];
                     Type tdType = sourceTd.GetType();
-                    int dstId = findTableDataId(sourceTd, tunerFiles[dstF].tableDatas);
+                    TableData dstTd = findTableData(sourceTd, tunerFiles[dstF].tableDatas);
                     if (copyMode == CopyMode.overwrite)
                     {
-                        if (dstId > -1)
+                        if (dstTd != null)
                         {
                             for (int s = 0; s < selectedProps.Count; s++)
                             {
                                 PropertyInfo tdProp = tdType.GetProperty(selectedProps[s]);
-                                tdProp.SetValue(tunerFiles[dstF].tableDatas[dstId], tdProp.GetValue(sourceTd, null), null);
+                                tdProp.SetValue(dstTd, tdProp.GetValue(sourceTd, null), null);
                             }
                             copiedTables++;
                         }
                     }
                     else if (copyMode == CopyMode.addMissing || copyMode == CopyMode.overwriteAdd)
                     {
-                        if (dstId > -1)
+                        if (dstTd != null)
                         { 
                             if (copyMode == CopyMode.overwriteAdd)
                             {
                                 for (int s = 0; s < selectedProps.Count; s++)
                                 {
                                     PropertyInfo tdProp = tdType.GetProperty(selectedProps[s]);
-                                    tdProp.SetValue(tunerFiles[dstF].tableDatas[dstId], tdProp.GetValue(sourceTd, null), null);
+                                    tdProp.SetValue(dstTd, tdProp.GetValue(sourceTd, null), null);
                                 }
                                 copiedTables++;
                             }

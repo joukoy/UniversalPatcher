@@ -204,3 +204,6 @@
 0.18.56
 - Fix sorting in Tuner
 
+0.18.57
+- Use Guid instead of id in Tablelists
+- Rowheaders can be loaded from table using "guid: <tableguid>". "Table: <TableName>" is still possible, too.

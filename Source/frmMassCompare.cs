@@ -70,23 +70,23 @@ namespace UniversalPatcher
 
         }
 
-        private string peekTableValues(int ind, PcmFile peekPCM)
+        private string peekTableValues(TableData compTd, PcmFile peekPCM)
         {
             string retVal = "";
             try
             {
-                if (peekPCM.tableDatas[ind].Dimensions() == 1)
+                if (compTd.Dimensions() == 1)
                 {
-                    double curVal = getValue(peekPCM.buf, (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0,peekPCM);
-                    UInt64 rawVal = (UInt64) getRawValue(peekPCM.buf,(uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset), peekPCM.tableDatas[ind],0,peekPCM.platformConfig.MSB);
+                    double curVal = getValue(peekPCM.buf, (uint)(compTd.addrInt + compTd.Offset), compTd,0,peekPCM);
+                    UInt64 rawVal = (UInt64) getRawValue(peekPCM.buf,(uint)(compTd.addrInt + compTd.Offset), compTd,0,peekPCM.platformConfig.MSB);
                     string valTxt = curVal.ToString();
-                    string unitTxt = " " + peekPCM.tableDatas[ind].Units;
+                    string unitTxt = " " + compTd.Units;
                     string maskTxt = "";
-                    TableValueType vt = getValueType(peekPCM.tableDatas[ind]);
+                    TableValueType vt = getValueType(compTd);
                     if (vt == TableValueType.bitmask)
                     {
                         unitTxt = "";
-                        UInt64 maskVal = Convert.ToUInt64(peekPCM.tableDatas[ind].BitMask.Replace("0x", ""), 16);
+                        UInt64 maskVal = Convert.ToUInt64(compTd.BitMask.Replace("0x", ""), 16);
                         if ((rawVal & maskVal) == maskVal)
                             valTxt = "Set";
                         else
@@ -104,7 +104,7 @@ namespace UniversalPatcher
                         if (bit > -1)
                         {
                             string rawBinVal = Convert.ToString((Int64)rawVal, 2);
-                            rawBinVal = rawBinVal.PadLeft(getBits(peekPCM.tableDatas[ind].DataType), '0');
+                            rawBinVal = rawBinVal.PadLeft(getBits(compTd.DataType), '0');
                             maskTxt = " [" + rawBinVal + "], bit $" + bit.ToString();
                         }
                     }
@@ -118,15 +118,15 @@ namespace UniversalPatcher
                     }
                     else if (vt == TableValueType.selection)
                     {
-                        Dictionary<double, string> possibleVals = parseEnumHeaders(peekPCM.tableDatas[ind].Values);
+                        Dictionary<double, string> possibleVals = parseEnumHeaders(compTd.Values);
                         if (possibleVals.ContainsKey(curVal))
                             unitTxt = " (" + possibleVals[curVal] + ")";
                         else
                             unitTxt = " (Out of range)";
                     }
-                    string formatStr = "X" + (getElementSize(peekPCM.tableDatas[ind].DataType) * 2).ToString();
+                    string formatStr = "X" + (getElementSize(compTd.DataType) * 2).ToString();
                     string rawTxt = "";
-                    switch (peekPCM.tableDatas[ind].DataType)
+                    switch (compTd.DataType)
                     {
                         case InDataType.FLOAT32:
                             rawTxt = ((Single)rawVal).ToString(formatStr);
@@ -169,15 +169,15 @@ namespace UniversalPatcher
                 else
                 {
                     string tblData = ""; //"Current values: " + Environment.NewLine;
-                    uint addr = (uint)(peekPCM.tableDatas[ind].addrInt + peekPCM.tableDatas[ind].Offset);
-                    if (peekPCM.tableDatas[ind].RowMajor)
+                    uint addr = (uint)(compTd.addrInt + compTd.Offset);
+                    if (compTd.RowMajor)
                     {
-                        for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
+                        for (int r = 0; r < compTd.Rows; r++)
                         {
-                            for (int c = 0; c < peekPCM.tableDatas[ind].Columns; c++)
+                            for (int c = 0; c < compTd.Columns; c++)
                             {
-                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0, peekPCM);
-                                addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
+                                double curVal = getValue(peekPCM.buf, addr, compTd,0, peekPCM);
+                                addr += (uint)getElementSize(compTd.DataType);
                                 tblData += "[" + curVal.ToString("#0.0") + "]";
                             }
                             tblData += Environment.NewLine;
@@ -186,19 +186,19 @@ namespace UniversalPatcher
                     else
                     {
                         List<string> tblRows = new List<string>();
-                        for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
+                        for (int r = 0; r < compTd.Rows; r++)
                             tblRows.Add("");
-                        for (int c = 0; c < peekPCM.tableDatas[ind].Columns; c++)
+                        for (int c = 0; c < compTd.Columns; c++)
                         {
 
-                            for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
+                            for (int r = 0; r < compTd.Rows; r++)
                             {
-                                double curVal = getValue(peekPCM.buf, addr, peekPCM.tableDatas[ind],0, peekPCM);
-                                addr += (uint)getElementSize(peekPCM.tableDatas[ind].DataType);
+                                double curVal = getValue(peekPCM.buf, addr, compTd,0, peekPCM);
+                                addr += (uint)getElementSize(compTd.DataType);
                                 tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
                             }
                         }
-                        for (int r = 0; r < peekPCM.tableDatas[ind].Rows; r++)
+                        for (int r = 0; r < compTd.Rows; r++)
                             tblData += tblRows[r] + Environment.NewLine;
                     }
                     retVal = tblData;
@@ -247,13 +247,13 @@ namespace UniversalPatcher
 
         private void compareTable(PcmFile cmpPCM)
         {
-            int id = findTableDataId(td, cmpPCM.tableDatas);
-            if (id < 0)
+            TableData cmpTd = findTableData(td, cmpPCM.tableDatas);
+            if (cmpTd == null)
             {
                 Logger("Table not found");
                 return;
             }
-            TableData cmpTd = cmpPCM.tableDatas[id];
+            //cmpPCM.tableDatas[id];
             int row = dataGridView1.Rows.Add();
             dataGridView1.Rows[row].HeaderCell.Value = cmpPCM.FileName;
             dataGridView1.Rows[row].Cells["OS"].Value = cmpPCM.OS;
@@ -266,7 +266,7 @@ namespace UniversalPatcher
             }
             dataGridView1.Rows[row].Cells["Table Name"].Value = cmpTd.TableName;
             dataGridView1.Rows[row].Cells["Table Address"].Value = cmpTd.Address;
-            dataGridView1.Rows[row].Cells["Current Value"].Value = peekTableValues(id, cmpPCM);
+            dataGridView1.Rows[row].Cells["Current Value"].Value = peekTableValues(cmpTd, cmpPCM);
             //dataGridView1.Rows[row].Height = 50;
         }
 
@@ -355,8 +355,7 @@ namespace UniversalPatcher
                     for (int p = 0; p < pcmfiles.Count; p++)
                     {
                         PcmFile cmpPCM = pcmfiles[p];
-                        int id = findTableDataId(td, cmpPCM.tableDatas);
-                        if (id < 0)
+                        if (findTableData(td, cmpPCM.tableDatas) == null)
                         {
                             continue;
                         }

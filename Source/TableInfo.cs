@@ -241,8 +241,8 @@ namespace UniversalPatcher
         {
             pcm = _pcm;
             tableInfos = new List<TableInfo>();
-            tableIds = new List<int>();
-            refTableIds = new Dictionary<int, int>();
+            tableIds = new List<Guid>();
+            refTableIds = new Dictionary<Guid, TableData>();
             filteredTables = new List<TableData>();
         }
         public byte[] buf;
@@ -250,9 +250,9 @@ namespace UniversalPatcher
         public PcmFile pcm { get; set; }
         public List<TableInfo> tableInfos { get; set; }
         public List<TableData> filteredTables { get; set; }
-        public List<int> tableIds { get; set; }
+        public List<Guid> tableIds { get; set; }
         //public List<TableId> refTableIds { get; set; }
-        public Dictionary<int, int> refTableIds { get; set; }
+        public Dictionary<Guid, TableData> refTableIds { get; set; }
         public string fileLetter { get; set; }
         public int Rows { get; set; }   //How many rows (in multitable)
         public int Cols { get; set; }

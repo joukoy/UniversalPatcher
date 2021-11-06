@@ -37,7 +37,7 @@ namespace UniversalPatcher
         }
 
         public PcmFile PCM;
-        public List<int> tableIds;
+        public List<TableData> tableTds;
         private List<SelectPCM> pcmList;
         private BindingSource bindingSource;
 
@@ -96,7 +96,7 @@ namespace UniversalPatcher
                     string fileName = pcmList[i].pcmFile.FileName;
                     SelectPCM sPCM = pcmList[i];
                     LoggerBold(fileName);
-                    searchTargetTables(sPCM.pcmFile, tableIds, true);                    
+                    searchTargetTables(sPCM.pcmFile, tableTds, true);                    
                 }
             }
 
@@ -184,19 +184,18 @@ namespace UniversalPatcher
             dstTE.Dispose();
         }
 
-        private void searchTargetTables(PcmFile dstPCM, List<int> tableIds, bool execNow)
+        private void searchTargetTables(PcmFile dstPCM, List<TableData> tableTds, bool execNow)
         {
-            for (int x = 0; x < tableIds.Count; x++)
+            for (int x = 0; x < tableTds.Count; x++)
             {
-                TableData sourceTd = PCM.tableDatas[tableIds[x]];
-                int targetId = findTableDataId(sourceTd, dstPCM.tableDatas);
-                if (targetId < 0)
+                TableData sourceTd = tableTds[x];
+                TableData dstTd = findTableData(sourceTd, dstPCM.tableDatas);
+                if (dstTd == null)
                 {
                     Logger("Table missing: " + sourceTd.TableName);
                 }
                 else
                 {
-                    TableData dstTd = dstPCM.tableDatas[targetId];
                     if (sourceTd.Rows != dstTd.Rows || sourceTd.Columns != dstTd.Columns || sourceTd.RowMajor != dstTd.RowMajor)
                     {
                         Logger("Table size not match: " + sourceTd.TableName);
@@ -239,7 +238,7 @@ namespace UniversalPatcher
                             newPCM.importSeekTables();
                         SelectPCM sPCM = new SelectPCM();
                         sPCM.pcmFile = newPCM;
-                        searchTargetTables(sPCM.pcmFile, tableIds, false);
+                        searchTargetTables(sPCM.pcmFile, tableTds, false);
                         pcmList.Add(sPCM);
                     }
                     LoggerBold("Select destination files and Press Apply to copy tables");

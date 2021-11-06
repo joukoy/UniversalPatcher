@@ -38,7 +38,23 @@ namespace UniversalPatcher
             CompatibleOS = "";
             BitMask = "";
         }
-        public uint id { get; set; }
+        //public uint id { get; set; }
+        private Guid _guid;
+        public Guid guid
+        {
+            get
+            {
+                if (_guid == Guid.Empty)
+                {
+                    _guid = Guid.NewGuid();
+                }
+                return _guid;
+            }
+            set
+            {
+                _guid = value;
+            }
+        }
         public string OS { get; set; }
         public string TableName { get; set; }
         public string Category { get; set; }
@@ -108,8 +124,6 @@ namespace UniversalPatcher
                 }
             }
         }
-
-
         public int Dimensions ()
         {
             if (Rows < 2 && Columns < 2)

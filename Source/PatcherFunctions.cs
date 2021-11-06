@@ -749,10 +749,9 @@ public class upatcher
         string conversionTable = mathStr.Substring(start, mid - start + 1);
         TableData tmpTd = new TableData();
         tmpTd.TableName = conversionTable.Replace("'", "");
-        int targetId = findTableDataId(tmpTd, PCM.tableDatas);
-        if (targetId > -1)
+        TableData conversionTd = findTableData(tmpTd, PCM.tableDatas);
+        if (conversionTd != null)
         {
-            TableData conversionTd = PCM.tableDatas[targetId];
             double conversionVal = getValue(PCM.buf, (uint)(conversionTd.addrInt + conversionTd.Offset), conversionTd, 0, PCM);
             retVal = mathStr.Replace("table:" + conversionTable, conversionVal.ToString());
             Debug.WriteLine("Using conversion table: " + conversionTd.TableName);
@@ -1036,14 +1035,13 @@ public class upatcher
                 TableData tmpTd = new TableData();
                 tmpTd.TableName = tbName;
                 Logger("Table: " + tbName,newline);
-                int id = findTableDataId(tmpTd, basefile.tableDatas);
-                if (id > -1)
+                int findId = findTableDataId(tmpTd, basefile.tableDatas);
+                if (findId > -1)
                 {
-                    tmpTd = basefile.tableDatas[id];
                     if (tmpTd.Rows == rows && tmpTd.Columns == columns)
                     {
                         isCompatible = true;
-                        retVal = (uint)id;
+                        retVal = (uint)findId;
                     }
                 }
             }
@@ -1328,12 +1326,9 @@ public class upatcher
         return true;
     }
 
-    public static bool compareTables(int id1, int id2, PcmFile pcm1, PcmFile pcm2)
+    public static bool compareTables(TableData td1, TableData td2, PcmFile pcm1, PcmFile pcm2)
     {
         bool match = true;
-
-        TableData td1 = pcm1.tableDatas[id1];
-        TableData td2 = pcm2.tableDatas[id2];
 
         if ((td1.Rows * td1.Columns) != (td2.Rows * td2.Columns))
             return false;
@@ -2728,6 +2723,44 @@ public class upatcher
         }
 
         return -1;
+    }
+
+    public static TableData findTableData(TableData refTd, List<TableData> tdList)
+    {
+        int pos1 = refTd.TableName.IndexOf("*");
+        if (pos1 < 0)
+            pos1 = refTd.TableName.Length;
+
+        string refTableName = refTd.TableName.ToLower().Substring(0, pos1).Replace(" ", "_");
+        for (int t = 0; t < tdList.Count; t++)
+        {
+            int pos2 = tdList[t].TableName.IndexOf("*");
+            if (pos2 < 0)
+                pos2 = tdList[t].TableName.Length;
+            //if (pcm1.tableDatas[t].TableName.ToLower().Substring(0, pos2) == refTd.TableName.ToLower().Substring(0, pos1) && pcm1.tableDatas[t].Category.ToLower() == refTd.Category.ToLower())
+            if (tdList[t].TableName.ToLower().Substring(0, pos2).Replace(" ", "_") == refTableName)
+            {
+                return tdList[t];
+            }
+        }
+        //Not found (exact match) maybe close enough?
+        int required = UniversalPatcher.Properties.Settings.Default.TunerMinTableEquivalency;
+        if (required == 100)
+            return null;  //already searched for 100% match
+        for (int t = 0; t < tdList.Count; t++)
+        {
+            int pos2 = tdList[t].TableName.IndexOf("*");
+            if (pos2 < 0)
+                pos2 = tdList[t].TableName.Length;
+            double percentage = ComputeSimilarity.CalculateSimilarity(tdList[t].TableName.ToLower().Substring(0, pos2).Replace(" ", "_"), refTableName);
+            if ((int)(percentage * 100) >= required)
+            {
+                Debug.WriteLine(refTd.TableName + " <=> " + tdList[t].TableName + "; Equivalency: " + (percentage * 100).ToString() + "%");
+                return tdList[t];
+            }
+        }
+
+        return null;
     }
 
     public static void Logger(string LogText, Boolean NewLine = true)

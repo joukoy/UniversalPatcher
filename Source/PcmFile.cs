@@ -315,9 +315,6 @@ namespace UniversalPatcher
                 }
                 if (!tableCategories.Contains("DTC"))
                     tableCategories.Add("DTC");
-                //Fix table id's
-                for (int i = 0; i < tableDatas.Count; i++)
-                    tableDatas[i].id = (uint)i;
                 seekTablesImported = true;
             }
             catch (Exception ex)
