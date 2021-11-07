@@ -27,7 +27,7 @@ namespace UniversalPatcher
             int top = 19;
             foreach (var prop in td.GetType().GetProperties())
             {
-                if (prop.Name == "id")
+                if (prop.Name == "guid")
                     continue;
                 CheckBox chk = new CheckBox();
                 chk.Name = prop.Name;

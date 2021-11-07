@@ -10,6 +10,7 @@ using System.IO;
 using static upatcher;
 using UniversalPatcher.Properties;
 using System.Diagnostics;
+using static UniversalPatcher.ExtensionMethods;
 
 namespace UniversalPatcher
 {
@@ -18,6 +19,7 @@ namespace UniversalPatcher
         public frmEditXML()
         {
             InitializeComponent();
+            DrawingControl.SetDoubleBuffered(dataGridView1);
         }
 
         private BindingSource bindingSource = new BindingSource();

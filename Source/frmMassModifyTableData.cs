@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using static UniversalPatcher.ExtensionMethods;
 using static upatcher;
 
 namespace UniversalPatcher
@@ -18,6 +19,9 @@ namespace UniversalPatcher
         public frmMassModifyTableData()
         {
             InitializeComponent();
+            DrawingControl.SetDoubleBuffered(dataGridView1);
+            DrawingControl.SetDoubleBuffered(dataGridView2);
+
         }
 
         public class TunerFile
@@ -102,7 +106,7 @@ namespace UniversalPatcher
 
         private void DataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            if (dataGridView1.Columns[e.ColumnIndex].Name == "id" || dataGridView1.Columns[e.ColumnIndex].Name == "UsedInOS")
+            if (dataGridView1.Columns[e.ColumnIndex].Name == "guid" || dataGridView1.Columns[e.ColumnIndex].Name == "UsedInOS")
                 e.Cancel = true;
         }
 
@@ -155,12 +159,12 @@ namespace UniversalPatcher
             {
                 if (dataGridView1.Columns.Count < 4)
                     return;
-                if (dataGridView1.Columns[e.ColumnIndex].Name == "id" || dataGridView1.Columns[e.ColumnIndex].Name == "UsedInOS")
+                if (dataGridView1.Columns[e.ColumnIndex].Name == "guid" || dataGridView1.Columns[e.ColumnIndex].Name == "UsedInOS")
                     return;
                 int row = dataGridView2.Rows.Add();
                 dataGridView2.Rows[row].Cells["Property"].Value = dataGridView1.Columns[e.ColumnIndex].Name;
-                int mmid = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value);
-                TableData td = displayDatas[mmid].td;
+                Guid mmid = (Guid)dataGridView1.Rows[e.RowIndex].Cells["guid"].Value;
+                MassModProperties td = displayDatas.Where(x=>x.guid == mmid).FirstOrDefault();
                 if (td != null)
                 {
                     Type type = td.GetType();
@@ -170,7 +174,7 @@ namespace UniversalPatcher
                 }
                 dataGridView2.Rows[row].Cells["TableName"].Value = td.TableName;
                 dataGridView2.Rows[row].Cells["OS"].Value = dataGridView1.Rows[e.RowIndex].Cells["UsedInOS"].Value;
-                dataGridView2.Rows[row].Cells["OS"].Tag = displayDatas[mmid].UsingTableDatas;
+                dataGridView2.Rows[row].Cells["OS"].Tag = td.UsingTableDatas;
                 dataGridView2.Rows[row].Cells["NewValue"].Value = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
                 if (dataGridView2.Rows.Count < 3)
                     dataGridView2.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
@@ -247,7 +251,7 @@ namespace UniversalPatcher
 
                 comboFiles.DataSource = tunerFiles;
                 comboFiles.DisplayMember = "FileName";
-                comboFiles.ValueMember = "id";
+                comboFiles.ValueMember = "guid";
                 comboFiles.SelectedIndexChanged += ComboFiles_SelectedIndexChanged;
                 refreshTdList();
                 Logger("Files loaded");
@@ -314,7 +318,7 @@ namespace UniversalPatcher
                 TableData td = tdList[t];
                 foreach (var prop in td.GetType().GetProperties())
                 {
-                    if (prop.Name != "id" && prop.Name != "Address" && prop.Name != "CompatibleOS" && prop.Name != "OS")
+                    if (prop.Name != "guid" && prop.Name != "Address" && prop.Name != "CompatibleOS" && prop.Name != "OS")
                         ser += prop.GetValue(td, null);
 
                     Type type = mmp.GetType();
@@ -608,7 +612,7 @@ namespace UniversalPatcher
             clipBrd = new List<ClibBrd>();
             for (int c = 0; c < dataGridView1.Columns.Count; c++)
             {
-                if (dataGridView1.Columns[c].Name != "id" && dataGridView1.Columns[c].Name != "UsedInOS" && dataGridView1.Columns[c].Name != "OS" && dataGridView1.Columns[c].Name != "Address" && dataGridView1.Rows[row].Cells[c].Value != null)
+                if (dataGridView1.Columns[c].Name != "guid" && dataGridView1.Columns[c].Name != "UsedInOS" && dataGridView1.Columns[c].Name != "OS" && dataGridView1.Columns[c].Name != "Address" && dataGridView1.Rows[row].Cells[c].Value != null)
                 {
                     ClibBrd cb = new ClibBrd();
                     cb.Property = dataGridView1.Columns[c].Name;
@@ -646,8 +650,8 @@ namespace UniversalPatcher
             clipBrd = new List<ClibBrd>();
             frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
             fst.groupBox2.Visible = false;
-            int mmid = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
-            TableData td = displayDatas[mmid].td;
+            Guid mmid = (Guid)dataGridView1.Rows[row].Cells["guid"].Value;
+            TableData td = displayDatas.Where(x=>x.td.guid == mmid).First();
             fst.loadProperties(td);
             if (fst.ShowDialog() == DialogResult.OK)
             {
@@ -704,8 +708,8 @@ namespace UniversalPatcher
             else
                 return;
 
-            int mmid = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
-            TableData td = displayDatas[mmid].td;
+            Guid mmid = (Guid)dataGridView1.Rows[row].Cells["guid"].Value;
+            TableData td = displayDatas.Where(x => x.td.guid == mmid).First();
 
             frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
             fst.loadProperties(td);
@@ -800,17 +804,17 @@ namespace UniversalPatcher
                 if (Convert.ToBoolean(frmSmt.dataGridView1.Rows[r].Cells["Select"].Value) == true)
                 {
                     int tf = Convert.ToInt32(frmSmt.dataGridView1.Rows[r].Cells["fileId"].Value);
-                    int t = Convert.ToInt32(frmSmt.dataGridView1.Rows[r].Cells["id"].Value);
+                    Guid guid = (Guid)frmSmt.dataGridView1.Rows[r].Cells["guid"].Value;
+                    TableData xTd = tunerFiles[tf].tableDatas.Where(x => x.guid == guid).First();
+                    Type tdType = xTd.GetType();
                     Logger("Updating table list: " + tunerFiles[tf].FileName);
                     for (int cb = 0; cb < clipBrd.Count; cb++)
                     {
-                        TableData tabledata = tunerFiles[tf].tableDatas[t];
-                        Type tdType = tabledata.GetType();
                         PropertyInfo tdProp = tdType.GetProperty(clipBrd[cb].Property);
                         if (tdProp.PropertyType.IsEnum)
-                            tdProp.SetValue(tunerFiles[tf].tableDatas[t], Enum.Parse(tdProp.PropertyType, clipBrd[cb].Value), null);
+                            tdProp.SetValue(xTd, Enum.Parse(tdProp.PropertyType, clipBrd[cb].Value), null);
                         else
-                            tdProp.SetValue(tunerFiles[tf].tableDatas[t], Convert.ChangeType(clipBrd[cb].Value, tdProp.PropertyType), null);
+                            tdProp.SetValue(xTd, Convert.ChangeType(clipBrd[cb].Value, tdProp.PropertyType), null);
                         Logger("Property: " + clipBrd[cb].Property + ", value: " + clipBrd[cb].Value);
                     }
                     modifiedFiles.Add(tf);
@@ -854,8 +858,8 @@ namespace UniversalPatcher
                 for (int c = 0; c < dataGridView1.SelectedCells.Count; c++)
                 {
                     int r = dataGridView1.SelectedCells[c].RowIndex;
-                    int id = Convert.ToInt32(dataGridView1.Rows[r].Cells["id"].Value);
-                    sourceTdList.Add(displayDatas[id].td);
+                    MassModProperties mp = (MassModProperties)dataGridView1.Rows[r].DataBoundItem;
+                    sourceTdList.Add(mp.td);
                 }
             }
             

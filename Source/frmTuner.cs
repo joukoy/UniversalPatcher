@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
+using static UniversalPatcher.ExtensionMethods;
 using static upatcher;
 
 namespace UniversalPatcher
@@ -19,7 +20,7 @@ namespace UniversalPatcher
         public FrmTuner(PcmFile PCM1, bool loadTableList = true)
         {
             InitializeComponent();
-
+            DrawingControl.SetDoubleBuffered(dataGridView1);
             contextMenuStrip2.Opening += new System.ComponentModel.CancelEventHandler(cms_Opening);
 
             PCM = PCM1;
@@ -57,6 +58,7 @@ namespace UniversalPatcher
 
         private void frmTuner_Load(object sender, EventArgs e)
         {
+            
             selectedCompareBin = "";
             selectWorkingMode();
             disableConfigAutoloadToolStripMenuItem.Checked = Properties.Settings.Default.disableTunerAutoloadSettings;
@@ -98,13 +100,10 @@ namespace UniversalPatcher
             {
                 //Add to filter by-combo
                 comboFilterBy.Items.Add(prop.Name);
-                if (prop.Name != "id")
-                {
-                    ToolStripMenuItem menuItem = new ToolStripMenuItem(prop.Name);
-                    menuItem.Name = prop.Name;
-                    contextMenuStrip2.Items.Add(menuItem);
-                    menuItem.Click += new EventHandler(columnSelection_Click);
-                }
+                ToolStripMenuItem menuItem = new ToolStripMenuItem(prop.Name);
+                menuItem.Name = prop.Name;
+                contextMenuStrip2.Items.Add(menuItem);
+                menuItem.Click += new EventHandler(columnSelection_Click);
             }
             comboFilterBy.Text = "TableName";
             labelTableName.Text = "";
@@ -571,6 +570,7 @@ namespace UniversalPatcher
             try
             {
                 this.dataGridView1.SelectionChanged -= new System.EventHandler(this.DataGridView1_SelectionChanged);
+                DrawingControl.SuspendDrawing(dataGridView1);
 
                 //if (PCM == null || PCM.fsize == 0) return;
                 if (PCM == null || PCM.tableDatas == null)
@@ -835,6 +835,7 @@ namespace UniversalPatcher
                 filterTree();
                 this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
                 dataGridView1.CellEndEdit += DataGridView1_CellEndEdit;
+                DrawingControl.ResumeDrawing(dataGridView1);
             }
             catch (Exception ex)
             {
@@ -2081,7 +2082,7 @@ namespace UniversalPatcher
             timer.Start();
             openNewBinFile(false);
             timer.Stop();
-            Debug.WriteLine("Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
+            Debug.WriteLine("Open new file time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
         }
 
         private string getFileLetter(string menuTxt)

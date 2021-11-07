@@ -1551,6 +1551,9 @@ public class upatcher
         UInt64 sum = 0;
         try
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             if (Method == CSMethod.None)
                 return UInt64.MaxValue;
             if (dbg)
@@ -1732,6 +1735,8 @@ public class upatcher
             }
             if (dbg)
                 Debug.WriteLine("Result: " + sum.ToString("X"));
+            stopwatch.Stop();
+            Debug.WriteLine("CalculateChecksum took " + stopwatch.Elapsed.Milliseconds + " ms");
         }
         catch (Exception ex)
         {

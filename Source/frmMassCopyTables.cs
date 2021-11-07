@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using static UniversalPatcher.ExtensionMethods;
 using static upatcher;
 
 namespace UniversalPatcher
@@ -16,6 +17,7 @@ namespace UniversalPatcher
         public frmMassCopyTables()
         {
             InitializeComponent();
+            DrawingControl.SetDoubleBuffered(dataGridView1);
         }
 
 

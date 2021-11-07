@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms.DataVisualization.Charting;
+using static UniversalPatcher.ExtensionMethods;
 
 namespace UniversalPatcher
 {
@@ -20,6 +21,7 @@ namespace UniversalPatcher
         public frmTableEditor()
         {
             InitializeComponent();
+            DrawingControl.SetDoubleBuffered(dataGridView1);
         }
 
 
@@ -93,10 +95,14 @@ namespace UniversalPatcher
 
         frmTableVis ftv;
 
+        private Dictionary<string, int> dgColumnHeaders;
+        private Dictionary<string, int> dgRowHeaders;
+
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
-            dataGridView1.AutoResizeColumns();
-            dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
+            //dataGridView1.AutoResizeColumns();
+            //dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
+            dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             if (Properties.Settings.Default.TableEditorFont == null)
                 dataFont = new Font("Consolas", 9);
             else
@@ -464,6 +470,9 @@ namespace UniversalPatcher
         {
             try
             {
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+
                 TableInfo tInfo = new TableInfo(pcm, td);
                 CompareFile orgFile = new CompareFile(pcm);
                 orgFile.fileLetter = fileLetter;
@@ -528,6 +537,10 @@ namespace UniversalPatcher
                 orgFile.filteredTables.Add(tableTds[0]);
                 parseTableInfo(orgFile);
                 setMyText();
+
+                stopwatch.Stop();
+                Debug.WriteLine("prepareTable time Taken: " + stopwatch.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
+
             }
             catch (Exception ex)
             {
@@ -545,6 +558,9 @@ namespace UniversalPatcher
         {
             try
             {
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+
                 int maxCols = 0;
                 int maxRows = 0;
                 int cols = 0;
@@ -607,6 +623,9 @@ namespace UniversalPatcher
                 cmpFile.Cols = cols;
                 parseTableInfo(cmpFile);
                 setMyText();
+                stopwatch.Stop();
+                Debug.WriteLine("prepareMultiTable time Taken: " + stopwatch.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
+
             }
             catch (Exception ex)
             {
@@ -694,6 +713,7 @@ namespace UniversalPatcher
             {
                 for (int i = 0; i < compareFiles[0].tableIds.Count; i++)
                 {
+
                     TableData origTd = compareFiles[0].tableInfos[i].td;
                     TableData cmpTd = origTd; 
                     if (cmpFile.pcm.OS == compareFiles[0].pcm.OS)
@@ -1176,15 +1196,14 @@ namespace UniversalPatcher
         {
             int ind = int.MinValue;
             hdrTxt = hdrTxt.Trim();
-            for (int c = 0; c < dataGridView1.Columns.Count; c++)
+            if (dgColumnHeaders.ContainsKey(hdrTxt))
             {
-                if (dataGridView1.Columns[c].HeaderText == hdrTxt)
-                    ind = c;
+                ind = dgColumnHeaders[hdrTxt];
             }
-                
-            if (ind < 0)
+            else
             {
                 ind = dataGridView1.Columns.Add(hdrTxt, hdrTxt);
+                dgColumnHeaders.Add(hdrTxt, ind);
             }
             return ind;
         }
@@ -1193,15 +1212,15 @@ namespace UniversalPatcher
         {
             int ind = int.MinValue;
             hdrTxt = hdrTxt.Trim();
-            for (int c = 0; c < dataGridView1.Rows.Count; c++)
+            if (dgRowHeaders.ContainsKey(hdrTxt))
             {
-                if (dataGridView1.Rows[c].HeaderCell.Value.ToString() == hdrTxt)
-                    ind = c;
+                ind = dgRowHeaders[hdrTxt];
             }
-            if (ind < 0)
+            else
             {
                 ind = dataGridView1.Rows.Add();
                 dataGridView1.Rows[ind].HeaderCell.Value = hdrTxt;
+                dgRowHeaders.Add(hdrTxt, ind);
             }
             return ind;
         }
@@ -1261,6 +1280,13 @@ namespace UniversalPatcher
             try
             {
                 this.dataGridView1.CellValueChanged -= new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
+                dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+                dataGridView1.ColumnHeadersHeightSizeMode =  DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                dgColumnHeaders = new Dictionary<string, int>();
+                dgRowHeaders = new Dictionary<string, int>();
 
                 CompareFile selectedFile = compareFiles[currentFile];
                 PcmFile PCM = selectedFile.pcm;
@@ -1329,6 +1355,8 @@ namespace UniversalPatcher
                                 cellCount = cmpTinfo.tableCells.Count;
                         }
                     }
+
+                    DrawingControl.SuspendDrawing(dataGridView1);
 
                     for (int cell = 0; cell < cellCount; cell++)
                     {
@@ -1511,6 +1539,9 @@ namespace UniversalPatcher
                 dataGridView1.EndEdit();
                 this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
                 showCellInfo();
+                DrawingControl.ResumeDrawing(dataGridView1);
+                stopwatch.Stop();
+                Debug.WriteLine("LoadTable time Taken: " + stopwatch.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
 
             }
             catch (Exception ex)

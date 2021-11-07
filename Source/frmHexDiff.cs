@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using static UniversalPatcher.ExtensionMethods;
 using static upatcher;
 
 namespace UniversalPatcher
@@ -17,6 +18,7 @@ namespace UniversalPatcher
         public frmHexDiff(PcmFile _pcm1, PcmFile _pcm2, List<Guid> _tdList, List<Guid> _tdList2)
         {
             InitializeComponent();
+            DrawingControl.SetDoubleBuffered(dataGridView1);
             pcm1 = _pcm1;
             pcm2 = _pcm2;
             tdList = _tdList;

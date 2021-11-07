@@ -843,7 +843,7 @@ namespace UniversalPatcher
                     clearFakeCVN();
                 }
                 timer.Stop();
-                Debug.WriteLine("Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
+                Debug.WriteLine("OpenBaseFile Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
 
             }
             catch (Exception ex)
