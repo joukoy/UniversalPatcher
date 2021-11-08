@@ -224,3 +224,7 @@
 0.18.60
 - Tuner: Fixed bug: "Compare selected tables" not working (Functions in wrong order)
 - Tuner: Added Right click menu "Sort by" to tree mode
+
+0.18.61
+- Speed improvements to TableEditor (Don't enable radiobuttons after setting every cell value)
+- Sort by address added to Tuner, tree mode

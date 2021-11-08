@@ -32,6 +32,16 @@ namespace UniversalPatcher
             Value
         }
 
+        private enum ShowMode
+        {
+            normal,
+            compare,
+            sideBySide,
+            sideBySideTxt,
+            compareAll,
+            diff,
+            diff2
+        }
 
         private class MultiTableName
         {
@@ -97,6 +107,10 @@ namespace UniversalPatcher
 
         private Dictionary<string, int> dgColumnHeaders;
         private Dictionary<string, int> dgRowHeaders;
+
+        private ShowMode showMode = ShowMode.normal;
+        private bool showRawHex = false;
+        private bool enableDiff = false;
 
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
@@ -818,17 +832,14 @@ namespace UniversalPatcher
                 double curRawValue = tCell.lastRawValue;
                 double cmpRawValue = UInt64.MaxValue;
                 double cmpVal = double.MinValue;
-                bool showSidebySide = radioSideBySide.Checked;
-                if (cmpTCell == null)
-                    showSidebySide = false;
                 if (cmpTCell != null && !radioOriginal.Checked)
                 {
                     cmpVal = Convert.ToDouble(cmpTCell.lastValue);
                     cmpRawValue = (double)cmpTCell.lastRawValue;
                     tCell.cmpValue = cmpVal;
                 }
-                //if (radioSideBySide.Checked && !disableSideBySide)
-                if (radioSideBySideText.Checked)
+
+                if (showMode == ShowMode.sideBySide)
                 {
                     string curTxt = "";
                     string cmpTxt = "";
@@ -897,11 +908,11 @@ namespace UniversalPatcher
                         dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightPink;
                     return;
                 }
-                //Not side by side text mode, continue...
 
+                //Not side by side text mode, continue...
                 double showVal = curVal;
                 double showRawVal = curRawValue;
-                if (radioDifference.Checked)
+                if (showMode == ShowMode.diff)
                 {
                     if (radioMultiplier.Checked)
                         showVal = curVal / cmpVal;
@@ -911,7 +922,7 @@ namespace UniversalPatcher
                         showVal = curVal - cmpVal;
                     showRawVal = curRawValue - cmpRawValue;
                 }    
-                else if (radioDifference2.Checked)
+                else if (showMode == ShowMode.diff2)
                 {
                     if (radioMultiplier.Checked)
                         showVal = cmpVal / curVal;
@@ -923,7 +934,7 @@ namespace UniversalPatcher
 
                 }
 
-                if (showRawHEXValuesToolStripMenuItem.Checked)
+                if (showRawHex)
                 {
                     switch (mathTd.DataType)
                     {
@@ -963,27 +974,28 @@ namespace UniversalPatcher
                     }
                     //dataGridView1.Rows[row].Cells[col].Value = Convert.ToInt64(showRawVal);
                 }
-                else if (mathTd.OutputType == OutDataType.Text)
-                {
-                    dataGridView1.Rows[row].Cells[col].Value = Convert.ToChar((ushort)showRawVal);
-                    //dataGridView1.Rows[row].Cells[col].Value = ReadTextBlock(tCell.tableInfo.compareFile.buf, (int)(tCell.addr - tCell.tableInfo.compareFile.tableBufferOffset), tCell.td.Columns);
-                }
-                else if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
-                {
-                    dataGridView1.Rows[row].Cells[col].Value = (int)showVal;
-                }
-                else if (mathTd.OutputType == OutDataType.Hex)
-                {
-                    dataGridView1.Rows[row].Cells[col].Value = (uint)showVal;
-                }
-                else if (mathTd.OutputType == OutDataType.Int)
-                {
-                    dataGridView1.Rows[row].Cells[col].Value = (int)showVal;
-                }
                 else
                 {
-                    dataGridView1.Rows[row].Cells[col].Value = showVal;
+                    switch (mathTd.OutputType)
+                    {
+                        case OutDataType.Float:
+                            dataGridView1.Rows[row].Cells[col].Value = showVal;
+                            break;
+                        case OutDataType.Flag:
+                            dataGridView1.Rows[row].Cells[col].Value = (int)showVal;
+                            break;
+                        case OutDataType.Hex:
+                            dataGridView1.Rows[row].Cells[col].Value = (uint)showVal;
+                            break;
+                        case OutDataType.Int:
+                            dataGridView1.Rows[row].Cells[col].Value = (int)showVal;
+                            break;
+                        default:
+                            dataGridView1.Rows[row].Cells[col].Value = showVal;
+                            break;
+                    }
                 }
+                //else if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
 
                 dataGridView1.Rows[row].Cells[col].Tag = tCell;
                 setCellColor(row, col,tCell);
@@ -1228,7 +1240,7 @@ namespace UniversalPatcher
 
         private void addCellByType(TableData ft, int gridRow, int gridCol)
         {
-            if (radioSideBySideText.Checked || showRawHEXValuesToolStripMenuItem.Checked)
+            if (showMode == ShowMode.sideBySide || showRawHex)
                 return;
             try
             {
@@ -1259,8 +1271,7 @@ namespace UniversalPatcher
                 else
                 {
                     //at least one table which difference can be shown
-                    radioDifference.Enabled = true;
-                    radioDifference2.Enabled = true;
+                    enableDiff = true;
                 }
 
             }
@@ -1292,6 +1303,9 @@ namespace UniversalPatcher
                 CompareFile selectedFile = compareFiles[currentFile];
                 PcmFile PCM = selectedFile.pcm;
                 TableData td = selectedFile.tableInfos[0].td;
+
+                showRawHex = showRawHEXValuesToolStripMenuItem.Checked;
+                enableDiff = false;
 
                 if (td.Units.ToLower().Contains("bitmask"))
                     labelUnits.Text = "Units: Boolean";
@@ -1390,7 +1404,7 @@ namespace UniversalPatcher
                                     colHdr = "[" + selectedFile.fileLetter + "] "; //Show only [A]
                                     rowHdr = "[" + tcell.td.TableName + "] " + tcell.ColHeader;
                                 }
-                                else if (radioSideBySide.Checked || radioCompareAll.Checked)
+                                else if (showMode == ShowMode.sideBySide || showMode == ShowMode.compareAll)
                                 {
                                     if (multiSelect)
                                         colHdr = "[" + selectedFile.fileLetter + "] " + "[" + tcell.td.TableName + "] " + tcell.ColHeader;
@@ -1411,7 +1425,7 @@ namespace UniversalPatcher
                                     rowHdr = "[" + selectedFile.fileLetter + "] "; //Show only [A]
                                     colHdr = "[" + tcell.td.TableName + "] " + tcell.ColHeader;
                                 }
-                                else if (radioSideBySide.Checked || radioCompareAll.Checked)
+                                else if (showMode == ShowMode.sideBySide || showMode == ShowMode.compareAll)
                                 {
                                     if (multiSelect)
                                     {
@@ -1541,6 +1555,11 @@ namespace UniversalPatcher
                 this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView1_CellValueChanged);
                 showCellInfo();
                 DrawingControl.ResumeDrawing(dataGridView1);
+                if (enableDiff)
+                {
+                    radioDifference.Enabled = true;
+                    radioDifference2.Enabled = true;
+                }
                 stopwatch.Stop();
                 Debug.WriteLine("LoadTable time Taken: " + stopwatch.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
 
@@ -1675,6 +1694,8 @@ namespace UniversalPatcher
         {
             try
             {
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
                 if (numDecimals.Value < 0 && td != null)
                 {
                     this.numDecimals.ValueChanged -= new System.EventHandler(this.numDecimals_ValueChanged);
@@ -1713,6 +1734,8 @@ namespace UniversalPatcher
                 dataGridView1.AutoResizeColumns();
                 dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
                 if (autoResizeToolStripMenuItem.Checked) AutoResize();
+                stopwatch.Stop();
+                Debug.WriteLine("setDataGridLayout time Taken: " + stopwatch.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
                 //dataGridView1.RefreshEdit();
             }
             catch (Exception ex)
@@ -2319,6 +2342,7 @@ namespace UniversalPatcher
         {
             if (radioCompareFile.Checked)
             {
+                showMode = ShowMode.compare;
                 selectFile(radioCompareFile.Text);
                 dataGridView1.BackgroundColor = Color.Red;
                 setMyText();
@@ -2329,8 +2353,12 @@ namespace UniversalPatcher
 
         private void radioDifference_CheckedChanged(object sender, EventArgs e)
         {
+            if (radioDifference.Checked)
+                showMode = ShowMode.diff;
+
             if (radioDifference.Checked || radioDifference2.Checked)
             {
+                showMode = ShowMode.diff;
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
                 disableSaving = false;
@@ -2357,6 +2385,7 @@ namespace UniversalPatcher
         {
             if (radioSideBySide.Checked)
             {
+                showMode = ShowMode.sideBySide;
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
                 //disableSaving = true;
@@ -2371,6 +2400,7 @@ namespace UniversalPatcher
         {
             if (radioOriginal.Checked)
             {
+                showMode = ShowMode.normal;
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Gray;
                 disableSaving = false;
@@ -2491,6 +2521,7 @@ namespace UniversalPatcher
         {
             if (radioSideBySideText.Checked)
             {
+                showMode = ShowMode.sideBySideTxt;
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
                 loadTable();
@@ -2536,6 +2567,7 @@ namespace UniversalPatcher
         {
             if (radioCompareAll.Checked)
             {
+                showMode = ShowMode.compareAll;
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
                 addFileCheckBoxes();
@@ -2630,8 +2662,12 @@ namespace UniversalPatcher
 
         private void radioDifference2_CheckedChanged(object sender, EventArgs e)
         {
+            if (radioDifference2.Checked)
+                showMode = ShowMode.diff2;
+
             if (radioDifference.Checked || radioDifference2.Checked)
             {
+                showMode = ShowMode.diff;
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
                 disableSaving = false;

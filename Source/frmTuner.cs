@@ -105,7 +105,10 @@ namespace UniversalPatcher
                 menuItem.Click += new EventHandler(columnSelection_Click);
 
             }
-            string[] sortStrs = Properties.Settings.Default.TunerModeColumns.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            string tunerCols = Properties.Settings.Default.TunerModeColumns;
+            if (!tunerCols.Contains("Address"))
+                tunerCols = tunerCols.Trim(',') + ",Address";
+            string[] sortStrs = tunerCols.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string sortStr in sortStrs )
             {
                 ToolStripMenuItem sortItem = new ToolStripMenuItem(sortStr);
