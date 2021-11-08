@@ -572,7 +572,7 @@ namespace UniversalPatcher
                 {
                     //Manually selected multiple tables
                     cmpFile.filteredTables = new List<TableData>();
-                    tableTds.Sort();
+                    //tableTds.Sort();
 
                     List<string> tableNameList = new List<string>();
                     for (int i = 0; i < tableTds.Count; i++)
@@ -683,7 +683,7 @@ namespace UniversalPatcher
                     menuitem.Text = fLetter + ": " + cmpPCM.FileName;
                     cmpFile.fileLetter = fLetter;
                 }
-                prepareCompareTable(cmpFile);
+                prepareCompareTable(cmpFile, _compareTd);
                 menuitem.Click += compareSelection_Click;
                 if (cmpFile.fileLetter == selectedFile || (compareToolStripMenuItem.DropDownItems.Count == 0 && selectedFile == ""))
                 {
@@ -707,7 +707,7 @@ namespace UniversalPatcher
 
         }
 
-        public void prepareCompareTable(CompareFile cmpFile)
+        public void prepareCompareTable(CompareFile cmpFile, TableData cmpTd)
         {
             try
             {
@@ -715,7 +715,8 @@ namespace UniversalPatcher
                 {
 
                     TableData origTd = compareFiles[0].tableInfos[i].td;
-                    TableData cmpTd = origTd; 
+                    //TableData cmpTd = origTd; 
+
                     if (cmpFile.pcm.OS == compareFiles[0].pcm.OS)
                     {
                         cmpFile.tableIds.Add(origTd.guid);

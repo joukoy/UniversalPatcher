@@ -90,7 +90,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="TunerModeColumns" Type="System.String" Scope="User">
-      <Value Profile="(Default)">id,TableName,Category,Units,Columns,Rows,TableDescription</Value>
+      <Value Profile="(Default)">TableName,Category,Units,Columns,Rows,TableDescription</Value>
     </Setting>
     <Setting Name="ConfigModeColumnOrder" Type="System.String" Scope="User">
       <Value Profile="(Default)" />

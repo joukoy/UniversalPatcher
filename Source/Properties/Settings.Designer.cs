@@ -373,7 +373,7 @@ namespace UniversalPatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("id,TableName,Category,Units,Columns,Rows,TableDescription")]
+        [global::System.Configuration.DefaultSettingValueAttribute("TableName,Category,Units,Columns,Rows,TableDescription")]
         public string TunerModeColumns {
             get {
                 return ((string)(this["TunerModeColumns"]));

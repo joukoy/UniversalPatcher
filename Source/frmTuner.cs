@@ -103,6 +103,17 @@ namespace UniversalPatcher
                 menuItem.Name = prop.Name;
                 contextMenuStrip2.Items.Add(menuItem);
                 menuItem.Click += new EventHandler(columnSelection_Click);
+
+            }
+            string[] sortStrs = Properties.Settings.Default.TunerModeColumns.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string sortStr in sortStrs )
+            {
+                ToolStripMenuItem sortItem = new ToolStripMenuItem(sortStr);
+                sortItem.Name = sortStr;
+                if (sortBy == sortStr)
+                    sortItem.Checked = true;
+                sortByToolStripMenuItem.DropDownItems.Add(sortItem);
+                sortItem.Click += SortItem_Click;
             }
             comboFilterBy.Text = "TableName";
             labelTableName.Text = "";
@@ -115,6 +126,19 @@ namespace UniversalPatcher
             this.AllowDrop = true;
             this.DragEnter += FrmTuner_DragEnter;
             this.DragDrop += FrmTuner_DragDrop;
+        }
+
+        private void SortItem_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem sortItem = (ToolStripMenuItem)sender;
+            sortItem.Checked = true;
+            sortBy = sortItem.Name;
+            foreach (ToolStripMenuItem mi in sortByToolStripMenuItem.DropDownItems)
+            {
+                if (mi.Name != sortItem.Name)
+                    mi.Checked = false;
+            }
+            filterTables();
         }
 
         private void FrmTuner_DragDrop(object sender, DragEventArgs e)
@@ -2710,9 +2734,10 @@ namespace UniversalPatcher
                 frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
                 PcmFile comparePCM = PCM.ShallowCopy();
                 comparePCM.FileName = td2.TableName;
-                frmT.addCompareFiletoMenu(comparePCM, td2, "", selectedCompareBin);
+                //frmT.prepareTable(PCM, td1, tds, currentBin);
+                frmT.prepareTable(PCM, td1, tds, "A");
+                frmT.addCompareFiletoMenu(comparePCM, td2, "", "B");
                 frmT.Show();
-                frmT.prepareTable(PCM, td1, null, "A");
                 frmT.loadTable();
 
             }
@@ -4499,6 +4524,10 @@ namespace UniversalPatcher
             generateTablePatchTableData();
         }
 
+        private void sortByToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
 

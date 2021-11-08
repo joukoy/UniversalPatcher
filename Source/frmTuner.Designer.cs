@@ -160,6 +160,7 @@ namespace UniversalPatcher
             this.radioTreeMode = new System.Windows.Forms.RadioButton();
             this.btnCollapse = new System.Windows.Forms.Button();
             this.btnExpand = new System.Windows.Forms.Button();
+            this.sortByToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -686,7 +687,7 @@ namespace UniversalPatcher
             this.addTablesToExistingPatchToolStripMenuItem,
             this.createPatchToolStripMenuItem1});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 384);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 362);
             // 
             // cutToolStripMenuItem
             // 
@@ -1312,9 +1313,10 @@ namespace UniversalPatcher
             // 
             this.contextMenuStripTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openInNewWindowToolStripMenuItem,
-            this.compareSelectedTablesToolStripMenuItem1});
+            this.compareSelectedTablesToolStripMenuItem1,
+            this.sortByToolStripMenuItem});
             this.contextMenuStripTree.Name = "contextMenuStripTree";
-            this.contextMenuStripTree.Size = new System.Drawing.Size(204, 48);
+            this.contextMenuStripTree.Size = new System.Drawing.Size(204, 92);
             // 
             // openInNewWindowToolStripMenuItem
             // 
@@ -1396,6 +1398,13 @@ namespace UniversalPatcher
             this.btnExpand.TabIndex = 24;
             this.btnExpand.UseVisualStyleBackColor = true;
             this.btnExpand.Click += new System.EventHandler(this.btnExpand_Click);
+            // 
+            // sortByToolStripMenuItem
+            // 
+            this.sortByToolStripMenuItem.Name = "sortByToolStripMenuItem";
+            this.sortByToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.sortByToolStripMenuItem.Text = "Sort by";
+            this.sortByToolStripMenuItem.Click += new System.EventHandler(this.sortByToolStripMenuItem_Click);
             // 
             // FrmTuner
             // 
@@ -1581,5 +1590,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem intelHEXToolStripMenuItem;
         private ToolStripMenuItem motorolaSrecordToolStripMenuItem;
         private ToolStripMenuItem createPatchToolStripMenuItem1;
+        private ToolStripMenuItem sortByToolStripMenuItem;
     }
 }

@@ -221,3 +221,6 @@
 - Tuner: Column order & size tuning
 - Patcher: Don't seek tables or collect other information when fixing multiple files checksums
 
+0.18.60
+- Tuner: Fixed bug: "Compare selected tables" not working (Functions in wrong order)
+- Tuner: Added Right click menu "Sort by" to tree mode
