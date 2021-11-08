@@ -970,7 +970,7 @@ public class upatcher
         }
         if (!isCompatible)
         {
-            Logger("Incompatible patch, current configfile: " + basefile.configFile + ", patch configile: " + xpatch.XmlFile.Replace(".xml", ""));
+            LoggerBold("Incompatible patch, current configfile: " + basefile.configFile + ", patch configile: " + xpatch.XmlFile.Replace(".xml", ""));
             return retVal;
         }
 
@@ -1003,7 +1003,7 @@ public class upatcher
                 if (tmpVal < uint.MaxValue)
                     Logger("Patch is already applied, data found at: " + tmpVal.ToString("X8"));
                 else
-                    Logger("Data not found. Incompatible patch");
+                    LoggerBold("Data not found. Incompatible patch");
             }
         }
         else if (xpatch.CompatibleOS.ToLower().StartsWith("table:"))
@@ -1015,7 +1015,7 @@ public class upatcher
             string[] tableParts = xpatch.CompatibleOS.Split(',');
             if (tableParts.Length < 3)
             {
-                Logger("Incomplete table definition:" + xpatch.CompatibleOS);
+                LoggerBold("Incomplete table definition:" + xpatch.CompatibleOS);
             }
             else
             {
@@ -1038,7 +1038,8 @@ public class upatcher
                 int findId = findTableDataId(tmpTd, basefile.tableDatas);
                 if (findId > -1)
                 {
-                    if (tmpTd.Rows == rows && tmpTd.Columns == columns)
+                    TableData findTd = basefile.tableDatas[findId];
+                    if (findTd.Rows == rows && findTd.Columns == columns)
                     {
                         isCompatible = true;
                         retVal = (uint)findId;
@@ -1074,6 +1075,7 @@ public class upatcher
                                 {
                                     isCompatible = true;
                                     BinPN = PN;
+                                    break;
                                 }
                             }
                         }
@@ -1131,6 +1133,29 @@ public class upatcher
     {
         try
         {
+            XmlPatch tmpPatch = new XmlPatch();
+            if (td.CompatibleOS.Length > 0)
+                tmpPatch.CompatibleOS = td.CompatibleOS;
+            else if (td.OS.Length > 0)
+            {
+                /*
+                string tmpData = td.Values.Substring(7); //Remove "Patch: "
+                string[] tmpParts = tmpData.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] tmpDParts = tmpParts[0].Split(':');
+                tmpPatch.CompatibleOS = td.OS + ":" + tmpDParts[0];
+                */
+                tmpPatch.CompatibleOS = td.OS + ":0";
+            }
+            else
+                tmpPatch.CompatibleOS = "ALL:0";
+            tmpPatch.Description = td.TableDescription;
+            tmpPatch.Name = td.TableName;
+            tmpPatch.XmlFile = PCM.configFile;
+            if (checkPatchCompatibility(tmpPatch, PCM, true) == uint.MaxValue)
+            {
+                LoggerBold("Incompatible patch");
+                return;
+            }
             Logger("Applying patch: " + td.TableName, false);
             string data = td.Values.Substring(7); //Remove "Patch: "
             string[] parts = data.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -1310,7 +1335,7 @@ public class upatcher
                 }
                 else
                 {
-                    Logger("Patch is not compatible");
+                    LoggerBold("Patch is not compatible");
                     return false;
                 }
             }

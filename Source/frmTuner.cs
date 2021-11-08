@@ -41,7 +41,6 @@ namespace UniversalPatcher
         BindingSource categoryBindingSource = new BindingSource();
         private BindingList<TableData> filteredTableDatas = new BindingList<TableData>();
         SortOrder strSortOrder = SortOrder.Ascending;
-        private int lastSelectedId;
         private TableData lastSelectTd;
         string compXml = "";
         int keyDelayCounter = 0;
@@ -991,7 +990,6 @@ namespace UniversalPatcher
             {
                 if (Properties.Settings.Default.WorkingMode > 0 && dataGridView1.SelectedCells.Count > 0 && e.Button == MouseButtons.Right)
                 {
-                    lastSelectedId = Convert.ToInt32(dataGridView1.Rows[dataGridView1.SelectedCells[0].RowIndex].Cells["id"].Value);
                     lastSelectTd = (TableData)dataGridView1.CurrentRow.DataBoundItem;
                     contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
                 }
@@ -1857,7 +1855,7 @@ namespace UniversalPatcher
                             {
                                 if (PCM.tableDatas[t].TableName == osAddrList[x].tableName && PCM.tableDatas[t].Category == osAddrList[x].category)
                                 {
-                                    TableData newTd = PCM.tableDatas[t].ShallowCopy();
+                                    TableData newTd = PCM.tableDatas[t].ShallowCopy(true);
                                     newTd.OS = osList[o];
                                     newTd.Address = osAddrList[x].addr;
                                     newTds.Add(newTd);
@@ -1931,7 +1929,7 @@ namespace UniversalPatcher
         {
             try
             {
-                Debug.WriteLine("Disabling event");
+                //Debug.WriteLine("Disabling event");
                 this.dataGridView1.ColumnDisplayIndexChanged -= new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView1_ColumnDisplayIndexChanged);
                 this.dataGridView1.ColumnWidthChanged -= new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView1_ColumnWidthChanged);
             }
@@ -1948,13 +1946,13 @@ namespace UniversalPatcher
                 if (!columnsModified) return;
 
                 if (dataGridView1.Columns.Count < 2) return;
-                string columnWidth = "";
+                StringBuilder columnWidth = new StringBuilder();
                 int maxDispIndex = 0;
                 List<DisplayOrder> displayOrder = new List<DisplayOrder>();
                 for (int c = 0; c < dataGridView1.Columns.Count; c++)
                 {
-                    columnWidth += dataGridView1.Columns[c].Width.ToString() + ",";
-                    if (dataGridView1.Columns[c].Visible && dataGridView1.Columns[c].Name != "id")
+                    columnWidth.Append(dataGridView1.Columns[c].Width.ToString() + ",");
+                    if (dataGridView1.Columns[c].Visible)
                     {
                         DisplayOrder dispO = new DisplayOrder();
                         dispO.columnName = dataGridView1.Columns[c].Name;
@@ -1966,31 +1964,31 @@ namespace UniversalPatcher
                 }
 
 
-                string order = "id,";
+                StringBuilder order = new StringBuilder();
                 for (int i = 0; i <= maxDispIndex; i++)
                 {
                     for (int j = 0; j < displayOrder.Count; j++)
                     {
                         if (displayOrder[j].index == i)
                         {
-                            order += displayOrder[j].columnName + ",";
+                            order.Append(displayOrder[j].columnName + ",");
                             break;
                         }
                     }
                 }
-                Debug.WriteLine("Display order: " + order);
+                Debug.WriteLine("Display order: " + order.ToString());
                 Debug.WriteLine("Column width: " + columnWidth);
                 if (Properties.Settings.Default.WorkingMode == 2)
                 {
                     //Advanced mode
-                    Properties.Settings.Default.ConfigModeColumnOrder = order.Trim(',');
-                    Properties.Settings.Default.ConfigModeColumnWidth = columnWidth.Trim(',');
+                    Properties.Settings.Default.ConfigModeColumnOrder = order.ToString().Trim(',');
+                    Properties.Settings.Default.ConfigModeColumnWidth = columnWidth.ToString().Trim(',');
                 }
                 else
                 {
                     //Tuner mode
-                    Properties.Settings.Default.TunerModeColumns = order.Trim(',');
-                    Properties.Settings.Default.TunerModeColumnWidth = columnWidth.Trim(',');
+                    Properties.Settings.Default.TunerModeColumns = order.ToString().Trim(',');
+                    Properties.Settings.Default.TunerModeColumnWidth = columnWidth.ToString().Trim(',');
                 }
                 Properties.Settings.Default.Save();
                 columnsModified = false;
@@ -2184,7 +2182,7 @@ namespace UniversalPatcher
         {
             try
             {
-                TableData td2 = td1.ShallowCopy();
+                TableData td2 = td1.ShallowCopy(false);
                 int tbSize = td1.Rows * td1.Columns * getElementSize(td1.DataType);
                 TableData cmpTd = td1;
                 if (pcm1.OS != pcm2.OS && !td1.CompatibleOS.Contains("," + pcm2.OS + ","))
@@ -2487,15 +2485,22 @@ namespace UniversalPatcher
         {
             try
             {
-                TableData newTd = lastSelectTd;
+                TableData newTd = lastSelectTd.ShallowCopy(true);
                 newTd.OS = PCM.OS;
                 frmTdEditor fte = new frmTdEditor();
                 fte.td = newTd;
                 fte.loadTd();
                 if (fte.ShowDialog() == DialogResult.OK)
                 {
-                    PCM.tableDatas.Insert(lastSelectedId, fte.td);
-                    filterTables();
+                    for (int id = 0; id < PCM.tableDatas.Count; id++)
+                    {
+                        if (PCM.tableDatas[id].guid == lastSelectTd.guid)
+                        {
+                            PCM.tableDatas.Insert(id, fte.td);
+                            filterTables();
+                            break;
+                        }
+                    }
                 }
                 fte.Dispose();
             }
@@ -2514,13 +2519,13 @@ namespace UniversalPatcher
         {
             try
             {
-                TableData newTd = lastSelectTd.ShallowCopy();
+                TableData newTd = lastSelectTd.ShallowCopy(false);
                 frmTdEditor fte = new frmTdEditor();
                 fte.td = newTd;
                 fte.loadTd();
                 if (fte.ShowDialog() == DialogResult.OK)
                 {
-                    PCM.tableDatas[lastSelectedId] = fte.td.ShallowCopy();
+                    lastSelectTd = fte.td;
                     filterTables();
                 }
                 fte.Dispose();
@@ -2539,15 +2544,22 @@ namespace UniversalPatcher
 
         private void deleteRowToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PCM.tableDatas.RemoveAt(lastSelectedId);
+            PCM.tableDatas.Remove(lastSelectTd);
             filterTables();
         }
 
         private void duplicateTableConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TableData newTd = lastSelectTd.ShallowCopy();
-            PCM.tableDatas.Insert(lastSelectedId, newTd);
-            filterTables();
+            TableData newTd = lastSelectTd.ShallowCopy(true);
+            for (int id = 0; id < PCM.tableDatas.Count; id++)
+            {
+                if (PCM.tableDatas[id].guid == lastSelectTd.guid)
+                {
+                    PCM.tableDatas.Insert(id, newTd);
+                    filterTables();
+                    break;
+                }
+            }
         }
 
         private void searchAndCompareToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3338,7 +3350,6 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        lastSelectedId = -1;
                         lastSelectTd = null;
                     }
                     contextMenuStripTree.Show(Cursor.Position.X, Cursor.Position.Y);
@@ -4487,6 +4498,7 @@ namespace UniversalPatcher
         {
             generateTablePatchTableData();
         }
+
     }
 }
 

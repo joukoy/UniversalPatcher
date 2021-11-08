@@ -225,7 +225,7 @@ namespace UniversalPatcher
                         for (int m=0; m< multiMath.Count; m++)
                         {
                             TableData tdNew = new TableData();
-                            tdNew = xdf.ShallowCopy();
+                            tdNew = xdf.ShallowCopy(true);
                             tdNew.Rows = 1; //Convert to single-row, multitable
                             tdNew.Math = multiMath[m];
                             tdNew.Address = multiAddr[m];

@@ -394,8 +394,9 @@
             // 
             // txtPatchDescription
             // 
-            this.txtPatchDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtPatchDescription.Location = new System.Drawing.Point(129, 62);
+            this.txtPatchDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtPatchDescription.Location = new System.Drawing.Point(129, 56);
             this.txtPatchDescription.Name = "txtPatchDescription";
             this.txtPatchDescription.Size = new System.Drawing.Size(449, 20);
             this.txtPatchDescription.TabIndex = 116;
@@ -421,7 +422,7 @@
             // labelDescr
             // 
             this.labelDescr.AutoSize = true;
-            this.labelDescr.Location = new System.Drawing.Point(24, 62);
+            this.labelDescr.Location = new System.Drawing.Point(24, 59);
             this.labelDescr.Name = "labelDescr";
             this.labelDescr.Size = new System.Drawing.Size(92, 13);
             this.labelDescr.TabIndex = 11;

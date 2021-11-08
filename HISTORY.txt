@@ -211,3 +211,13 @@
 0.18.58
 - Fixes to MassModifyTableData
 - Speed improvements to Tuner, Table Editor & some other DataGridView controls
+
+0.18.59
+- Bug fixes to tuner: Right-click menu broken
+- Bug fix: XMLPatch, Table patch compatibility not detected
+- Patch selector: Show filename without path, show incompatibility Bold text
+- Added compatibility check to Tablelist patches
+- Patcher: Refresh "Extra info" comboboxes when opening new file
+- Tuner: Column order & size tuning
+- Patcher: Don't seek tables or collect other information when fixing multiple files checksums
+

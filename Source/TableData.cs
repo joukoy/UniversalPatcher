@@ -39,6 +39,8 @@ namespace UniversalPatcher
             BitMask = "";
         }
         //public uint id { get; set; }
+        public string TableName { get; set; }
+        public string Category { get; set; }
         private Guid _guid;
         public Guid guid
         {
@@ -56,8 +58,6 @@ namespace UniversalPatcher
             }
         }
         public string OS { get; set; }
-        public string TableName { get; set; }
-        public string Category { get; set; }
         public DisplayUnits DispUnits { get; set; }
         public uint addrInt;
         public string Address
@@ -160,9 +160,12 @@ namespace UniversalPatcher
             return Rows * Columns;
         }
 
-        public TableData ShallowCopy()
+        public TableData ShallowCopy(bool newGuid)
         {
-            return (TableData)this.MemberwiseClone();
+            TableData newTd = (TableData)this.MemberwiseClone();
+            if (newGuid)
+                newTd.guid = Guid.NewGuid();
+            return newTd;
         }
 
         public void importFoundTable(int tId, PcmFile PCM)

@@ -104,16 +104,16 @@ namespace UniversalPatcher
 
             if (Properties.Settings.Default.TunerModeColumns == null || Properties.Settings.Default.TunerModeColumns.Length == 0)
             {
-                Properties.Settings.Default.ConfigModeColumnOrder = "id,TableName,Category,Units,Columns,Rows,TableDescription";
+                Properties.Settings.Default.TunerModeColumns = "TableName,Category,Units,Columns,Rows,TableDescription";
             }
 
             if (Properties.Settings.Default.ConfigModeColumnWidth == null || Properties.Settings.Default.ConfigModeColumnWidth.Length == 0)
             {
-                Properties.Settings.Default.ConfigModeColumnWidth = "35,200,234,135,100,100,100,100,100,114,100,100,100,100,60,46,100,100,100,100,100,100,100";
+                Properties.Settings.Default.ConfigModeColumnWidth = "180,114,32,63,86,71,48,81,100,50,78,49,69,60,54,43,58,64,43,78,100,100,243,100,100";
             }
             if (Properties.Settings.Default.TunerModeColumnWidth == null || Properties.Settings.Default.TunerModeColumnWidth.Length == 0)
             {
-                Properties.Settings.Default.TunerModeColumnWidth = "35,100,237,135,100,100,100,100,100,114,100,100,100,100,60,46,100,100,100,100,100,493,100,";
+                Properties.Settings.Default.TunerModeColumnWidth = "192,110,100,100,100,100,100,100,100,72,100,100,100,100,60,46,100,100,100,100,100,100,197,100,100";
 
             }
 
@@ -841,6 +841,7 @@ namespace UniversalPatcher
                     this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
                     txtOS.Text = basefile.OS;
                     clearFakeCVN();
+                    refreshExtraInfoTab();
                 }
                 timer.Stop();
                 Debug.WriteLine("OpenBaseFile Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
@@ -2174,7 +2175,7 @@ namespace UniversalPatcher
             try
             {
                 basefile = new PcmFile(fileName,chkAutodetect.Checked, basefile.configFileFullName);
-                GetFileInfo(fileName, ref basefile, true, false);                
+                //GetFileInfo(fileName, ref basefile, true, false);                
                 if (basefile.FixCheckSums())  //Returns true, if need fix for checksum
                 {  
                     Logger("Saving file: " + fileName);

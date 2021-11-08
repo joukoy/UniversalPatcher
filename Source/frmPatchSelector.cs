@@ -20,7 +20,8 @@ namespace UniversalPatcher
 
         private class PatchFile
         {
-            public string FileName { get; set; }
+            public string fullFileName;
+            public string FileName  {  get { return Path.GetFileName(fullFileName); }}
             public string Description { get; set; }
             public string CompatibleOS { get; set; }
             public string Platform { get; set; }
@@ -111,7 +112,7 @@ namespace UniversalPatcher
                     PatchFile pFile = new PatchFile();
                     pFile.CompatibleOS = CompOS;
                     pFile.Description = newPatchList[0].Description;
-                    pFile.FileName = fileName;
+                    pFile.fullFileName = fileName;
                     pFile.Platform = newPatchList[0].XmlFile;
                     patchFileList.Add(pFile);
                 }
@@ -137,13 +138,13 @@ namespace UniversalPatcher
             refreshFileList();
         }
 
-        public void convertToXmlPatch(TableData td, PcmFile PCM)
+        public void convertToXmlPatch(TableData td, PcmFile PCM)    //Not in use??
         {
             patchFileList = new List<PatchFile>();
             PatchFile pFile = new PatchFile();
             pFile.CompatibleOS = td.OS;
             pFile.Description = td.TableDescription;
-            pFile.FileName = td.TableName;
+            pFile.fullFileName = td.TableName;
             pFile.Platform = PCM.configFile ;
             patchFileList.Add(pFile);
             refreshFileList();
@@ -159,7 +160,8 @@ namespace UniversalPatcher
             if (patchFileList == null || patchFileList.Count == 0)
                 return;
             int row = dataGridView1.SelectedCells[0].RowIndex;
-            string fName = dataGridView1.Rows[row].Cells["FileName"].Value.ToString();
+            PatchFile pFile = (PatchFile)dataGridView1.Rows[row].DataBoundItem;
+            string fName = pFile.fullFileName;
             if (tunerForm == null)
             {
                 this.Hide();
