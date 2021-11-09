@@ -1647,10 +1647,10 @@ namespace UniversalPatcher
                     switch (shTd.DataType)
                     {
                         case InDataType.FLOAT32:
-                            rawTxt = ((Single)rawVal).ToString(formatStr);
+                            rawTxt = ((Int32)rawVal).ToString(formatStr);
                             break;
                         case InDataType.FLOAT64:
-                            rawTxt = ((double)rawVal).ToString(formatStr);
+                            rawTxt = ((Int64)rawVal).ToString(formatStr);
                             break;
                         case InDataType.INT64:
                             rawTxt = ((Int64)rawVal).ToString(formatStr);
@@ -2734,13 +2734,17 @@ namespace UniversalPatcher
                 }
                 Logger("Comparing....");
                 frmTableEditor frmT = new frmTableEditor();
-                frmT.disableMultiTable = disableMultitableToolStripMenuItem.Checked;
-                PcmFile comparePCM = PCM.ShallowCopy();
-                comparePCM.FileName = td2.TableName;
-                //frmT.prepareTable(PCM, td1, tds, currentBin);
-                frmT.prepareTable(PCM, td1, tds, "A");
-                frmT.addCompareFiletoMenu(comparePCM, td2, "", "B");
+                frmT.disableMultiTable = true;
+                PcmFile pcm1 = PCM.ShallowCopy();
+                pcm1.FileName = td1.TableName;
+                PcmFile pcm2 = PCM.ShallowCopy();
+                pcm2.FileName = td2.TableName;
+                List<TableData> tds2 = new List<TableData>();
+                tds2.Add(td1);
+                frmT.prepareTable(pcm1, td1, tds2, "A");
+                frmT.addCompareFiletoMenu(pcm2, td2, "B: " + td2.TableName, "B");
                 frmT.Show();
+                frmT.radioSideBySide.Checked = true;
                 frmT.loadTable();
 
             }

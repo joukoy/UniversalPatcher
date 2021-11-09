@@ -228,3 +228,8 @@
 0.18.61
 - Speed improvements to TableEditor (Don't enable radiobuttons after setting every cell value)
 - Sort by address added to Tuner, tree mode
+
+0.18.62
+- Tuner, fixed bug: Side by side & Side by [side] modes mixed, neither working correctly
+- Tuner, fixed bug: Float & Double values not displayed in table description window.
+- Tuner, Fix: "Compare selected tables" 

@@ -733,8 +733,8 @@ namespace UniversalPatcher
 
                     if (cmpFile.pcm.OS == compareFiles[0].pcm.OS)
                     {
-                        cmpFile.tableIds.Add(origTd.guid);
-                        cmpFile.filteredTables.Add(origTd);
+                        cmpFile.tableIds.Add(cmpTd.guid);
+                        cmpFile.filteredTables.Add(cmpTd);
                     }
                     else
                     {
@@ -839,7 +839,7 @@ namespace UniversalPatcher
                     tCell.cmpValue = cmpVal;
                 }
 
-                if (showMode == ShowMode.sideBySide)
+                if (showMode == ShowMode.sideBySideTxt)
                 {
                     string curTxt = "";
                     string cmpTxt = "";
