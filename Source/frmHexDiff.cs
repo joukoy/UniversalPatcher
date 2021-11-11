@@ -15,7 +15,7 @@ namespace UniversalPatcher
 {
     public partial class frmHexDiff : Form
     {
-        public frmHexDiff(PcmFile _pcm1, PcmFile _pcm2, List<Guid> _tdList, List<Guid> _tdList2)
+        public frmHexDiff(PcmFile _pcm1, PcmFile _pcm2, List<TableData> _tdList, List<TableData> _tdList2)
         {
             InitializeComponent();
             DrawingControl.SetDoubleBuffered(dataGridView1);
@@ -30,8 +30,8 @@ namespace UniversalPatcher
         private List<TableDiff> tdiffList;
         private PcmFile pcm1;
         private PcmFile pcm2;
-        private List<Guid> tdList;
-        private List<Guid> tdList2;
+        private List<TableData> tdList;
+        private List<TableData> tdList2;
 
         SortOrder strSortOrder = SortOrder.Ascending;
         private int sortIndex = 0;
@@ -72,6 +72,7 @@ namespace UniversalPatcher
             public string Data1 { get; set; }
             public string Data2 { get; set; }
             public TableData td;
+            public TableData td2;
         }
 
         public void findDifferences(bool showAsHex)
@@ -85,8 +86,8 @@ namespace UniversalPatcher
 
                 for (int t = 0; t < tdList.Count; t++)
                 {
-                    TableData td = pcm1.tableDatas.Where(x=>x.guid == tdList[t]).First();
-                    TableData td2 = pcm2.tableDatas.Where(x => x.guid == tdList2[t]).First();
+                    TableData td = tdList[t];
+                    TableData td2 = tdList2[t];
                     uint step = (uint)getElementSize(td.DataType);
                     uint step2 = (uint)getElementSize(td2.DataType);
                     int count = td.Rows * td.Columns;
@@ -116,12 +117,13 @@ namespace UniversalPatcher
                     TableDiff tDiff = new TableDiff();
                     tDiff.Data1 = data1.Trim();
                     tDiff.Data2 = data2.Trim();
-                    tDiff.id = tdList[t];
+                    tDiff.id = tdList[t].guid;
                     tDiff.TableName = td.TableName;
                     tDiff.td = td;
-                    tDiff.id2 = tdList2[t];
+                    tDiff.id2 = tdList2[t].guid;
                     tDiff.addr1 = td.Address;
                     tDiff.addr2 = td2.Address;
+                    tDiff.td2 = td2;
                     tdiffList.Add(tDiff);
                 }
                 dataGridView1.DataSource = bindingSource;
@@ -328,15 +330,13 @@ namespace UniversalPatcher
             {
                 if (e.RowIndex > -1)
                 {
-                    Guid id = (Guid)dataGridView1.Rows[e.RowIndex].Cells["id"].Value;
-                    Guid id2 = (Guid)dataGridView1.Rows[e.RowIndex].Cells["id2"].Value;
-                    TableData td = pcm1.tableDatas.Where(x=>x.guid == id).First();
-                    TableData td2 = pcm2.tableDatas.Where(x => x.guid == id2).First();
+                    TableData td = ((TableDiff)dataGridView1.Rows[e.RowIndex].DataBoundItem).td;
+                    TableData td2 = ((TableDiff)dataGridView1.Rows[e.RowIndex].DataBoundItem).td2;
                     frmTableEditor frmT = new frmTableEditor();
                     List<TableData> tableIds = new List<TableData>();
                     tableIds.Add(td);
                     frmT.prepareTable(pcm1, td, tableIds, "A");
-                    frmT.addCompareFiletoMenu(pcm2, td2, "B:" + pcm2.FileName,"B");
+                    frmT.addCompareFiletoMenu(pcm2, null, "B:" + pcm2.FileName,"B");
                     frmT.Show();
                     frmT.loadTable();
                     frmT.radioSideBySide.Checked = true;
@@ -423,7 +423,7 @@ namespace UniversalPatcher
 
                 List<TableData> tableDatas = new List<TableData>();
                 for (int i = 0; i < tdList.Count; i++)
-                    tableDatas.Add(pcm1.tableDatas.Where(x=>x.guid == tdList[i]).First());
+                    tableDatas.Add(tdList[i]);
                 using (FileStream stream = new FileStream(fName, FileMode.Create))
                 {
                     System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
@@ -448,12 +448,12 @@ namespace UniversalPatcher
             PcmFile pcmNew = pcm1.ShallowCopy();
             pcmNew.tableDatas = new List<TableData>();
             for (int i = 0; i < tdList.Count; i++)
-                pcmNew.tableDatas.Add(pcm1.tableDatas.Where(x => x.guid == tdList[i]).First());
+                pcmNew.tableDatas.Add(tdList[i]);
 
             PcmFile pcmNew2 = pcm2.ShallowCopy();
             pcmNew2.tableDatas = new List<TableData>();
             for (int i = 0; i < tdList2.Count; i++)
-                pcmNew2.tableDatas.Add(pcm2.tableDatas.Where(x => x.guid == tdList2[i]).First());
+                pcmNew2.tableDatas.Add(tdList2[i]);
 
             FrmTuner frmT = new FrmTuner(pcmNew,false);
             frmT.addtoCurrentFileMenu(pcmNew2,false);
@@ -515,8 +515,7 @@ namespace UniversalPatcher
                 List<XmlPatch> newPatch = new List<XmlPatch>();
                 for (int i = 0; i < tdiffList.Count; i++)
                 {
-                    Guid id = tdiffList[i].id;
-                    TableData pTd = pcm1.tableDatas.Where(x=>x.guid ==id).First();
+                    TableData pTd = tdiffList[i].td;
                     XmlPatch xpatch = new XmlPatch();
                     xpatch.CompatibleOS = "Table:" + pTd.TableName + ",columns:" + pTd.Columns.ToString() + ",rows:" + pTd.Rows.ToString();
                     xpatch.XmlFile = pcm1.configFile;

@@ -363,7 +363,7 @@ namespace UniversalPatcher
                         {
                             PcmFile tmpPcm = comparePCM.ShallowCopy(); //Don't mess with original
                             tmpPcm.tableDatas = PCM.tableDatas;
-                            frmT.addCompareFiletoMenu(tmpPcm, td, mi.Text, selectedCompareBin);
+                            frmT.addCompareFiletoMenu(tmpPcm, null, mi.Text, selectedCompareBin);
                             Logger("[OK]");
                         }
                         else
@@ -382,7 +382,7 @@ namespace UniversalPatcher
                             }
                             else
                             {
-                                frmT.addCompareFiletoMenu(comparePCM, xTd, mi.Text, selectedCompareBin);
+                                frmT.addCompareFiletoMenu(comparePCM, null, mi.Text, selectedCompareBin);
                                 if (PCM.configFile != comparePCM.configFile)
                                 {
                                     LoggerBold(Environment.NewLine + "Warning: file type different, results undefined!");
@@ -2270,8 +2270,8 @@ namespace UniversalPatcher
             {
                 Logger("Finding tables with different data");
                 cmpWithPcm.selectTableDatas(0, "");
-                List<Guid> diffTableDatas = new List<Guid>();
-                List<Guid> cmpTableDatas = new List<Guid>();
+                List<TableData> diffTableDatas = new List<TableData>();
+                List<TableData> cmpTableDatas = new List<TableData>();
                 for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
                 {
                     if (PCM.tableDatas[t1].addrInt < PCM.fsize)
@@ -2285,8 +2285,8 @@ namespace UniversalPatcher
                         {
                             if (!compareTables(PCM.tableDatas[t1], cmpId, PCM, cmpWithPcm))
                             {
-                                diffTableDatas.Add(PCM.tableDatas[t1].guid);
-                                cmpTableDatas.Add(cmpId.guid);
+                                diffTableDatas.Add(PCM.tableDatas[t1]);
+                                cmpTableDatas.Add(cmpId);
                             }
                         }
                     }
@@ -2376,8 +2376,8 @@ namespace UniversalPatcher
 
                 }
                 cmpWithPcm.selectTableDatas(0, "");
-                List<Guid> diffTableDatas = new List<Guid>();
-                List<Guid> cmpTableDatas = new List<Guid>();
+                List<TableData> diffTableDatas = new List<TableData>();
+                List<TableData> cmpTableDatas = new List<TableData>();
                 for (int t1 = 0; t1 < PCM.tableDatas.Count; t1++)
                 {
                     if (PCM.tableDatas[t1].addrInt < PCM.fsize)
@@ -2385,12 +2385,17 @@ namespace UniversalPatcher
                         TableData cmpTd = compareTableHEX(PCM.tableDatas[t1], PCM, cmpWithPcm);
                         if (cmpTd != null)
                         {
-                            diffTableDatas.Add(PCM.tableDatas[t1].guid);
-                            cmpTableDatas.Add(cmpTd.guid);
+                            diffTableDatas.Add(PCM.tableDatas[t1]);
+                            cmpTableDatas.Add(cmpTd);
                         }
                     }
                 }
                 Logger(" [OK]");
+                if (diffTableDatas.Count == 0)
+                {
+                    Logger("All tables are identical");
+                    return;
+                }
                 frmHexDiff fhd = new frmHexDiff(PCM, cmpWithPcm, diffTableDatas, cmpTableDatas);
                 fhd.Show();
                 fhd.findDifferences(true);

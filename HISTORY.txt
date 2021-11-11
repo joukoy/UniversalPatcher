@@ -233,3 +233,8 @@
 - Tuner, fixed bug: Side by side & Side by [side] modes mixed, neither working correctly
 - Tuner, fixed bug: Float & Double values not displayed in table description window.
 - Tuner, Fix: "Compare selected tables" 
+
+0.18.63
+- Table Editor, fixed bug: A<B and A>B show same value
+- Table Editor, fixed bugs in multitable view
+- Fixed "Find differences (HEX)"

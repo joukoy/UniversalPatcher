@@ -111,6 +111,7 @@ namespace UniversalPatcher
         private ShowMode showMode = ShowMode.normal;
         private bool showRawHex = false;
         private bool enableDiff = false;
+        bool disableTooltips = false;
 
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
@@ -675,8 +676,9 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        public void addCompareFiletoMenu(PcmFile cmpPCM, TableData _compareTd, string menuTxt, string selectedFile)
+        public void addCompareFiletoMenu(PcmFile cmpPCM, TableData cmpTd, string menuTxt, string selectedFile)
         {
+            //If cmpTd is not null AND cmpPCM.OS == PCM.OS, cmpTd is used as is (Compare 2 tables)
             try
             {
                 CompareFile cmpFile = new CompareFile(cmpPCM);
@@ -697,7 +699,7 @@ namespace UniversalPatcher
                     menuitem.Text = fLetter + ": " + cmpPCM.FileName;
                     cmpFile.fileLetter = fLetter;
                 }
-                prepareCompareTable(cmpFile, _compareTd);
+                prepareCompareTable(cmpFile, cmpTd);
                 menuitem.Click += compareSelection_Click;
                 if (cmpFile.fileLetter == selectedFile || (compareToolStripMenuItem.DropDownItems.Count == 0 && selectedFile == ""))
                 {
@@ -729,12 +731,21 @@ namespace UniversalPatcher
                 {
 
                     TableData origTd = compareFiles[0].tableInfos[i].td;
-                    //TableData cmpTd = origTd; 
-
                     if (cmpFile.pcm.OS == compareFiles[0].pcm.OS)
                     {
-                        cmpFile.tableIds.Add(cmpTd.guid);
-                        cmpFile.filteredTables.Add(cmpTd);
+                        if (cmpTd == null)
+                        {
+                            //If cmpTd is not null AND cmpPCM.OS == PCM.OS, cmpTd is used as is (Compare 2 tables)
+                            cmpFile.tableIds.Add(origTd.guid);
+                            cmpFile.filteredTables.Add(origTd);
+                            cmpFile.refTableIds.Add(compareFiles[0].tableIds[i], origTd);
+                        }
+                        else
+                        {
+                            cmpFile.tableIds.Add(cmpTd.guid);
+                            cmpFile.filteredTables.Add(cmpTd);
+                            cmpFile.refTableIds.Add(compareFiles[0].tableIds[i], cmpTd);
+                        }
                     }
                     else
                     {
@@ -743,9 +754,9 @@ namespace UniversalPatcher
                         {
                             cmpFile.tableIds.Add(cmpTd.guid);
                             cmpFile.filteredTables.Add(cmpTd);
+                            cmpFile.refTableIds.Add(compareFiles[0].tableIds[i], cmpTd);
                         }
                     }
-                    cmpFile.refTableIds.Add(compareFiles[0].tableIds[i], cmpTd);
                 }
                 parseTableInfo(cmpFile);
             }
@@ -999,7 +1010,7 @@ namespace UniversalPatcher
 
                 dataGridView1.Rows[row].Cells[col].Tag = tCell;
                 setCellColor(row, col,tCell);
-                if (!disableTooltipsToolStripMenuItem.Checked && mathTd.TableDescription != null)
+                if (!disableTooltips && mathTd.TableDescription != null)
                 {
                     if (mathTd.TableDescription.Length > 200)
                         dataGridView1.Rows[row].Cells[col].ToolTipText = mathTd.TableDescription.Substring(0, 200);
@@ -1077,7 +1088,7 @@ namespace UniversalPatcher
                         Color.FromArgb(255, 64, 0, 64),
                     };
 
-                if (radioSideBySide.Checked || radioCompareAll.Checked)
+                if (showMode == ShowMode.sideBySide || showMode == ShowMode.compareAll)
                 {
                     if (tCell.tableInfo.compareFile.pcm.FileName != compareFiles[0].pcm.FileName)
                     {
@@ -1112,7 +1123,7 @@ namespace UniversalPatcher
                     if (curVal != origVal)
                     {
                         dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.Yellow;
-                        if (!disableTooltipsToolStripMenuItem.Checked)
+                        if (!disableTooltips)
                             dataGridView1.Rows[row].Cells[col].ToolTipText = "Original value: " + origVal.ToString();
                     }
                     else
@@ -1127,7 +1138,7 @@ namespace UniversalPatcher
                             dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.AliceBlue;
                         else if (curVal < (1.1 * mathTd.Min))
                             dataGridView1.Rows[row].Cells[col].Style.BackColor = Color.LightBlue;
-                        if (!disableTooltipsToolStripMenuItem.Checked)
+                        if (!disableTooltips)
                             dataGridView1.Rows[row].Cells[col].ToolTipText = mathTd.TableDescription;
                     }
                 }
@@ -1137,13 +1148,13 @@ namespace UniversalPatcher
                     if (curVal != origVal)
                     {
                         cell.Style.Font = new Font(dataGridView1.Font, FontStyle.Italic);
-                        if (!disableTooltipsToolStripMenuItem.Checked)
+                        if (!disableTooltips)
                             cell.ToolTipText = "Original value: " + origVal.ToString();
                     }
                     else
                     {
                         cell.Style.Font = new Font(dataGridView1.Font, FontStyle.Regular);
-                        if (!disableTooltipsToolStripMenuItem.Checked)
+                        if (!disableTooltips)
                             cell.ToolTipText = mathTd.TableDescription;
                     }
                 }
@@ -1240,7 +1251,7 @@ namespace UniversalPatcher
 
         private void addCellByType(TableData ft, int gridRow, int gridCol)
         {
-            if (showMode == ShowMode.sideBySide || showRawHex)
+            if (showMode == ShowMode.sideBySideTxt || showRawHex)
                 return;
             try
             {
@@ -1305,6 +1316,7 @@ namespace UniversalPatcher
                 TableData td = selectedFile.tableInfos[0].td;
 
                 showRawHex = showRawHEXValuesToolStripMenuItem.Checked;
+                disableTooltips = disableTooltipsToolStripMenuItem.Checked;
                 enableDiff = false;
 
                 if (td.Units.ToLower().Contains("bitmask"))
@@ -1319,7 +1331,8 @@ namespace UniversalPatcher
 
                 bool xySwapped = chkSwapXY.Checked;
 
-                if (selectedFile.Cols > 5 && selectedFile.Rows < 5)
+                //if (selectedFile.Cols > 5 && selectedFile.Rows < 5)
+                if (compareFiles[0].Cols > 5 && compareFiles[0].Rows < 5)
                     xySwapped = !chkSwapXY.Checked;
 
                 List<CompareFile> cmpFiles = new List<CompareFile>();
@@ -2230,6 +2243,7 @@ namespace UniversalPatcher
         {
             if (disableTooltipsToolStripMenuItem.Checked)
             {
+                disableTooltips = false;
                 disableTooltipsToolStripMenuItem.Checked = false;
                 for (int r = 0; r < dataGridView1.Rows.Count; r++)
                 {
@@ -2243,6 +2257,7 @@ namespace UniversalPatcher
             }
             else
             {
+                disableTooltips = true;
                 disableTooltipsToolStripMenuItem.Checked = true;
                 for (int r = 0; r < dataGridView1.Rows.Count; r++)
                 {
@@ -2358,7 +2373,6 @@ namespace UniversalPatcher
 
             if (radioDifference.Checked || radioDifference2.Checked)
             {
-                showMode = ShowMode.diff;
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
                 disableSaving = false;
@@ -2416,7 +2430,7 @@ namespace UniversalPatcher
                 this.Text = "Tuner: " + compareFiles[currentFile].tableInfos[0].td.TableName + " [";
                 if (radioOriginal.Checked)
                     this.Text += compareFiles[currentFile].pcm.FileName + "]";
-                if (radioDifference.Checked || radioSideBySide.Checked || radioSideBySideText.Checked)
+                if (radioDifference.Checked || radioDifference2.Checked || radioSideBySide.Checked || radioSideBySideText.Checked)
                     this.Text += compareFiles[currentFile].pcm.FileName + " - " + compareFiles[currentCmpFile].pcm.FileName + "]";
                 if (radioCompareFile.Checked)
                     this.Text += compareFiles[currentCmpFile].pcm.FileName + "]";
@@ -2667,7 +2681,6 @@ namespace UniversalPatcher
 
             if (radioDifference.Checked || radioDifference2.Checked)
             {
-                showMode = ShowMode.diff;
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
                 disableSaving = false;
