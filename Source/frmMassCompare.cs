@@ -279,12 +279,9 @@ namespace UniversalPatcher
         {
             if (!Properties.Settings.Default.disableTunerAutoloadSettings)
             {
-                string defaultXml = Path.Combine(Application.StartupPath, "Tuner", cmpPCM.OS + ".xml");
-                if (cmpPCM.OS.Length == 0)
-                    defaultXml = Path.Combine(Application.StartupPath, "Tuner", cmpPCM.configFile + "-def.xml");
-                if (File.Exists(defaultXml))
+                cmpPCM.autoLoadTunerConfig();
+                if (cmpPCM.tunerFile.Length > 0)
                 {
-                    cmpPCM.LoadTableList(defaultXml);
                     bool haveDTC = false;
                     for (int t = 0; t < cmpPCM.tableDatas.Count; t++)
                     {
@@ -295,11 +292,12 @@ namespace UniversalPatcher
                         }
                     }
                     if (!haveDTC)
+                    {
                         importDTC(cmpPCM);
+                    }
                 }
                 else
                 {
-                    Logger("File not found: " + defaultXml);
                     importDTC(cmpPCM);
                     importTableSeek(cmpPCM);
                 }

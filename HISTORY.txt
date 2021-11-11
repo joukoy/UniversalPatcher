@@ -238,3 +238,8 @@
 - Table Editor, fixed bug: A<B and A>B show same value
 - Table Editor, fixed bugs in multitable view
 - Fixed "Find differences (HEX)"
+
+0.18.64
+- Table Editor: Show only 4 first chars of guid after tablename, if have duplicate tablenames in multitable
+- Table editor: Find tablelist-file from Tuner -folder subfolders, search file with name (in order): <OS>-<Ver>.xml, <OS>.xml, <Platform>-def.xml 
+- Upgraded dtcsearch.xml and tableseek-p01-p59.xml

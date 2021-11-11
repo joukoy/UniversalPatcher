@@ -1009,7 +1009,7 @@ public class upatcher
         else if (xpatch.CompatibleOS.ToLower().StartsWith("table:"))
         {
             if (basefile.tableDatas.Count < 3)
-                basefile.loadTunerConfig();
+                basefile.autoLoadTunerConfig();
             basefile.importDTC();
             basefile.importSeekTables();
             string[] tableParts = xpatch.CompatibleOS.Split(',');
@@ -1503,34 +1503,6 @@ public class upatcher
 
     }
 
-    public static void SaveTableList(PcmFile PCM, string fName, string compXml)
-    {
-        try
-        {
-            string defName = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
-            if (PCM.OS.Length == 0)
-                defName = Path.Combine(Application.StartupPath, "Tuner", PCM.configFile + "-def.xml");
-            if (compXml.Length > 0)
-                defName = Path.Combine(Application.StartupPath, "Tuner", compXml);
-            if (fName.Length == 0)
-                fName = SelectSaveFile("XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
-            if (fName.Length == 0)
-                return;            
-            Logger("Saving file " + fName + "...", false);
-            PCM.SaveTableList(fName);
-            Logger(" [OK]");
-        }
-        catch (Exception ex)
-        {
-            var st = new StackTrace(ex, true);
-            // Get the top stack frame
-            var frame = st.GetFrame(st.FrameCount - 1);
-            // Get the line number from the stack frame
-            var line = frame.GetFileLineNumber();
-            LoggerBold("Error, frmTuner line " + line + ": " + ex.Message);
-        }
-
-    }
 
 
     public static void saveOBD2Codes()

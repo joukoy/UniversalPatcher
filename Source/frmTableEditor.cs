@@ -383,7 +383,7 @@ namespace UniversalPatcher
                         else
                             cHdr = tData.Units + " " + c.ToString();
                         if (duplicateTableName)
-                            cHdr += " [" + tData.guid.ToString().Substring(3) + "]";
+                            cHdr += " [" + tData.guid.ToString().Substring(0,4) + "]";
                         if (colHeaders.Contains(colPrefix + cHdr))
                             colHeaders.Add(colPrefix + cHdr + c.ToString());
                         else

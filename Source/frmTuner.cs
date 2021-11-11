@@ -41,8 +41,7 @@ namespace UniversalPatcher
         BindingSource categoryBindingSource = new BindingSource();
         private BindingList<TableData> filteredTableDatas = new BindingList<TableData>();
         SortOrder strSortOrder = SortOrder.Ascending;
-        private TableData lastSelectTd;
-        string compXml = "";
+        private TableData lastSelectTd;        
         int keyDelayCounter = 0;
         private SplitContainer splitTree;
         private TreeViewMS treeDimensions;
@@ -251,45 +250,16 @@ namespace UniversalPatcher
             {
                 if (!Properties.Settings.Default.disableTunerAutoloadSettings)
                 {
-                    string defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", newPCM.OS + ".xml");
-                    if (newPCM.OS.Length == 0)
-                        defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", newPCM.configFile + "-def.xml");
-                    compXml = "";
-                    if (File.Exists(defaultTunerFile))
+                    newPCM.autoLoadTunerConfig();
+                    if (newPCM.tunerFile.Length == 0)
                     {
-                        long conFileSize = new FileInfo(defaultTunerFile).Length;
-                        if (conFileSize < 255)
-                        {
-                            compXml = ReadTextFile(defaultTunerFile);
-                            defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", compXml);
-                            Logger("Using compatible file: " + compXml);
-                        }
+                        importTableSeek(ref newPCM);
+                        if (newPCM.Segments.Count > 0 && newPCM.Segments[0].CS1Address.StartsWith("GM-V6"))
+                            importTinyTunerDB(ref newPCM);
                     }
-                    if (File.Exists(defaultTunerFile))
-                    {
-                        Logger(newPCM.LoadTableList(defaultTunerFile));
-                        importDTC(ref newPCM);
-                        refreshTablelist();
-                    }
-                    else
-                    {
-                        defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", newPCM.configFile + "-def.xml");
-                        if (File.Exists(defaultTunerFile))
-                        {
-                            Logger(newPCM.LoadTableList(defaultTunerFile));
-                            importDTC(ref newPCM);
-                            refreshTablelist();
-                        }
-                        else
-                        {
-                            Logger("File not found: " + defaultTunerFile);
-                            importDTC(ref newPCM);
-                            importTableSeek(ref newPCM);
-                            if (newPCM.Segments.Count > 0 && newPCM.Segments[0].CS1Address.StartsWith("GM-V6"))
-                                importTinyTunerDB(ref newPCM);
-                        }
-                    }
+                    importDTC(ref newPCM);
 
+                    refreshTablelist();
                 }
             }
             catch (Exception ex)
@@ -505,7 +475,7 @@ namespace UniversalPatcher
 
         private void btnLoadXml_Click(object sender, EventArgs e)
         {
-            Logger(PCM.LoadTableList());
+            PCM.LoadTableList();
             refreshTablelist();
         }
 
@@ -513,7 +483,7 @@ namespace UniversalPatcher
         private void btnSaveXML_Click(object sender, EventArgs e)
         {
             dataGridView1.EndEdit();
-            SaveTableList(PCM, "", compXml);
+            PCM.SaveTableList("");
         }
 
         private void btnImportDTC_Click(object sender, EventArgs e)
@@ -947,7 +917,7 @@ namespace UniversalPatcher
 
         private void loadXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Logger(PCM.LoadTableList());
+            PCM.LoadTableList();
             comboTableCategory.Text = "_All";
             refreshTablelist();
             //currentXmlFile = PCM.configFileFullName;
@@ -956,7 +926,7 @@ namespace UniversalPatcher
         private void saveXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dataGridView1.EndEdit();
-            SaveTableList(PCM, PCM.tunerFile, compXml);
+            PCM.SaveTableList("");
         }
 
         private void saveBINToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1913,7 +1883,10 @@ namespace UniversalPatcher
         private void saveXMLAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dataGridView1.EndEdit();
-            SaveTableList(PCM, "", compXml);
+            string defName = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
+            //string defName = PCM.OS + ".xml";
+            string fName = SelectSaveFile("XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
+            PCM.SaveTableList(fName);
         }
 
 

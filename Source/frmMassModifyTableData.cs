@@ -163,18 +163,17 @@ namespace UniversalPatcher
                     return;
                 int row = dataGridView2.Rows.Add();
                 dataGridView2.Rows[row].Cells["Property"].Value = dataGridView1.Columns[e.ColumnIndex].Name;
-                Guid mmid = (Guid)dataGridView1.Rows[e.RowIndex].Cells["guid"].Value;
-                MassModProperties td = displayDatas.Where(x=>x.guid == mmid).FirstOrDefault();
-                if (td != null)
+                MassModProperties mmp = ((MassModProperties)dataGridView1.Rows[e.RowIndex].DataBoundItem);
+                if (mmp != null)
                 {
-                    Type type = td.GetType();
+                    Type type = mmp.GetType();
                     PropertyInfo prop = type.GetProperty(dataGridView1.Columns[e.ColumnIndex].Name);
                     if (prop != null)
-                        dataGridView2.Rows[row].Cells["OldValue"].Value = prop.GetValue(td, null);
+                        dataGridView2.Rows[row].Cells["OldValue"].Value = prop.GetValue(mmp, null);
                 }
-                dataGridView2.Rows[row].Cells["TableName"].Value = td.TableName;
+                dataGridView2.Rows[row].Cells["TableName"].Value = mmp.TableName;
                 dataGridView2.Rows[row].Cells["OS"].Value = dataGridView1.Rows[e.RowIndex].Cells["UsedInOS"].Value;
-                dataGridView2.Rows[row].Cells["OS"].Tag = td.UsingTableDatas;
+                dataGridView2.Rows[row].Cells["OS"].Tag = mmp.UsingTableDatas;
                 dataGridView2.Rows[row].Cells["NewValue"].Value = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
                 if (dataGridView2.Rows.Count < 3)
                     dataGridView2.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
@@ -650,8 +649,7 @@ namespace UniversalPatcher
             clipBrd = new List<ClibBrd>();
             frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
             fst.groupBox2.Visible = false;
-            Guid mmid = (Guid)dataGridView1.Rows[row].Cells["guid"].Value;
-            TableData td = displayDatas.Where(x=>x.td.guid == mmid).First();
+            TableData td = ((MassModProperties)dataGridView1.Rows[row].DataBoundItem).td;
             fst.loadProperties(td);
             if (fst.ShowDialog() == DialogResult.OK)
             {
@@ -708,8 +706,7 @@ namespace UniversalPatcher
             else
                 return;
 
-            Guid mmid = (Guid)dataGridView1.Rows[row].Cells["guid"].Value;
-            TableData td = displayDatas.Where(x => x.td.guid == mmid).First();
+            TableData td = ((MassModProperties)dataGridView1.Rows[row].DataBoundItem).td;
 
             frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
             fst.loadProperties(td);

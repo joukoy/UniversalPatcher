@@ -101,6 +101,7 @@ namespace UniversalPatcher
         public string configFileFullName { get { return _configFileFullName; } }
         public string configFile { get { return Path.GetFileNameWithoutExtension(configFileFullName); } }
         public string tunerFile { get; set; }
+        public string compXml = "";
         public List<string> tunerFileList { get; set; }
         public bool seekTablesImported;
         public PcmPlatform platformConfig = new PcmPlatform();
@@ -351,42 +352,53 @@ namespace UniversalPatcher
             Logger(tt.readTinyDBtoTableData(this, tableDatas));
         }
 
-        public void loadTunerConfig()
+        public void autoLoadTunerConfig()
         {
             if (!Properties.Settings.Default.disableTunerAutoloadSettings)
             {
-                string defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", OS + ".xml");
-                string compXml = "";
-                if (File.Exists(defaultTunerFile))
+                DirectoryInfo d = new DirectoryInfo(Path.Combine(Application.StartupPath, "Tuner"));
+                FileInfo[] Files = d.GetFiles("*.*", SearchOption.AllDirectories);
+
+                string defaultTunerFile = OS;
+                if (OS.Length == 0)
+                    defaultTunerFile = configFile + "-def";
+                else if (OSSegment < segmentinfos.Length)
+                    defaultTunerFile = OS + "-" + segmentinfos[OSSegment].Ver;
+                defaultTunerFile += ".xml";
+                FileInfo tFile = null;
+                tFile = Files.Where(x => x.Name == defaultTunerFile).FirstOrDefault();
+                if (tFile == null)
                 {
-                    long conFileSize = new FileInfo(defaultTunerFile).Length;
-                    if (conFileSize < 255)
+                    defaultTunerFile = OS + ".xml";
+                    tFile = Files.Where(x => x.Name == defaultTunerFile).FirstOrDefault();
+                }
+                compXml = "";
+                if (tFile != null)
+                {
+
+                    if (tFile.Length < 255)
                     {
-                        compXml = ReadTextFile(defaultTunerFile).Split(new[] { '\r', '\n' }).FirstOrDefault();
-                        defaultTunerFile = Path.Combine(Application.StartupPath, "Tuner", compXml);
+                        compXml = ReadTextFile(tFile.FullName);
+                        tFile = Files.Where(x => x.Name == compXml).FirstOrDefault();
                         Logger("Using compatible file: " + compXml);
                     }
                 }
-                if (File.Exists(defaultTunerFile))
+                if (tFile == null)
                 {
-                    Logger(LoadTableList(defaultTunerFile));
-                    importDTC();
+                    defaultTunerFile = configFile + "-def.xml";
+                    tFile = Files.Where(x => x.Name == defaultTunerFile).FirstOrDefault();
                 }
-                else
+                if (tFile != null)
                 {
-                    Logger("File not found: " + defaultTunerFile);
-                    importDTC();
-                    importSeekTables();
-                    if (Segments.Count > 0 && Segments[0].CS1Address.StartsWith("GM-V6"))
-                        importTinyTunerDB();
+                    LoadTableList(tFile.FullName);
+                    tunerFile = tFile.FullName;
                 }
             }
 
         }
 
-        public string LoadTableList(string fName = "")
+        public void LoadTableList(string fName = "")
         {
-            string retVal = "";
             try
             {
 
@@ -395,16 +407,16 @@ namespace UniversalPatcher
                 if (fName == "")
                     fName = SelectFile("Select XML File", "XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
                 if (fName.Length == 0)
-                    return retVal;
+                    return ;
                 List<TableData> tmpTableDatas = new List<TableData>();
                 long conFileSize = new FileInfo(fName).Length;
                 if (conFileSize < 255)
                 {
                     string compXml = ReadTextFile(fName);
-                    retVal += Path.GetFileName(fName) + " => " + compXml + Environment.NewLine;
+                    Logger(Path.GetFileName(fName) + " => " + compXml);
                     fName = Path.Combine(Path.GetDirectoryName(fName),compXml);
                 }
-                retVal += "Loading file: " + fName;
+                Logger( "Loading tuner file: " + Path.GetFileName(fName), false);
                 if (File.Exists(fName))
                 {
                     Debug.WriteLine("Loading " + fName + "...");
@@ -425,7 +437,7 @@ namespace UniversalPatcher
                 if (!tableCategories.Contains("DTC"))
                     tableCategories.Add("DTC");
 
-                retVal += " [OK]";
+                Logger(" [OK]");
                 Application.DoEvents();
                 //dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             }
@@ -436,16 +448,20 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, pcmfile pcmfile line " + line + ": " + ex.Message);
-                retVal += "Error, pcmfile line " + line + ": " + ex.Message;
+                LoggerBold(" Error, pcmfile line " + line + ": " + ex.Message);
             }
-            return retVal;
         }
 
         public void SaveTableList(string fName)
         {
             try
             {
+                if (fName.Length == 0)
+                    fName = tunerFile;
+                if (tunerFile.Length == 0)
+                    tunerFile = Path.Combine(Application.StartupPath, "Tuner", OS + ".xml");
+                Logger("Saving file " + tunerFile + "...", false);
+
                 using (FileStream stream = new FileStream(fName, FileMode.Create))
                 {
                     System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TableData>));
@@ -453,6 +469,7 @@ namespace UniversalPatcher
                     stream.Close();
                 }
                 tunerFile = fName;
+                Logger(" [OK]");
             }
             catch (Exception ex)
             {

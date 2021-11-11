@@ -235,7 +235,7 @@ namespace UniversalPatcher
                         string fileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                         PcmFile newPCM = new PcmFile(fileName, true, "");
                         LoggerBold(fileName);
-                        newPCM.loadTunerConfig();
+                        newPCM.autoLoadTunerConfig();
                         if (PCM.seekTablesImported && !newPCM.seekTablesImported)
                             newPCM.importSeekTables();
                         SelectPCM sPCM = new SelectPCM();

@@ -77,6 +77,7 @@
     <StatusSteps>1</StatusSteps>
     <MilSteps>1</MilSteps>
     <ConditionalOffset />
+    <Values />
     <Linear>true</Linear>
     <CodesPerStatus>1</CodesPerStatus>
   </DtcSearchConfig>
@@ -93,7 +94,6 @@
     <StatusSteps>1</StatusSteps>
     <MilSteps>1</MilSteps>
     <ConditionalOffset />
-    <Values />
     <Linear>true</Linear>
     <CodesPerStatus>1</CodesPerStatus>
   </DtcSearchConfig>
@@ -238,6 +238,23 @@
     <StatusSteps>1</StatusSteps>
     <MilSteps>1</MilSteps>
     <ConditionalOffset />
+    <Values />
+    <Linear>true</Linear>
+    <CodesPerStatus>1</CodesPerStatus>
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <XMLFile>diesel01-05-custom</XMLFile>
+    <CodeSearch>42 10 20 7C * * * * 1C</CodeSearch>
+    <StatusSearch>67 24 20 7C * * * * D1</StatusSearch>
+    <MilSearch>67 0C 20 7C * * * * D1</MilSearch>
+    <MilTable>opcode</MilTable>
+    <CodeOffset>-98302</CodeOffset>
+    <CodeSteps>4</CodeSteps>
+    <StatusOffset>327681</StatusOffset>
+    <MilOffset>327681</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
+    <ConditionalOffset />
     <Linear>true</Linear>
     <CodesPerStatus>1</CodesPerStatus>
   </DtcSearchConfig>
@@ -305,6 +322,23 @@
   <DtcSearchConfig>
     <XMLFile>e67</XMLFile>
     <CodeSearch>3D 80 * * 39 8C * * 7D 7B DA 14 7C 8C 5A 2E 80 BD</CodeSearch>
+    <StatusSearch>3C A0 * * 38 A5 * * 7D 85 50</StatusSearch>
+    <MilSearch />
+    <MilTable>combined</MilTable>
+    <CodeOffset>0</CodeOffset>
+    <CodeSteps>2</CodeSteps>
+    <StatusOffset>0</StatusOffset>
+    <MilOffset>0</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
+    <ConditionalOffset>signed:code,signed:offset</ConditionalOffset>
+    <Values />
+    <Linear>true</Linear>
+    <CodesPerStatus>1</CodesPerStatus>
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <XMLFile>e67</XMLFile>
+    <CodeSearch>3D 80 * * 39 8C * * 7D 67 3A 14 7C CC</CodeSearch>
     <StatusSearch>3C A0 * * 38 A5 * * 7D 85 50</StatusSearch>
     <MilTable>combined</MilTable>
     <CodeOffset>0</CodeOffset>
@@ -799,5 +833,17 @@
     <Values>Enum: 0:0,2:2,3:3,4:4,5:5,6:6,9:9,11:11,12:12,13:13,19:19,20:20,21:21,30:30,32:32,33:33,34:34,35:35,36:36</Values>
     <Linear>false</Linear>
     <CodesPerStatus>4</CodesPerStatus>
+  </DtcSearchConfig>
+  <DtcSearchConfig>
+    <MilTable>opcode</MilTable>
+    <CodeOffset>1</CodeOffset>
+    <CodeSteps>4</CodeSteps>
+    <StatusOffset>1</StatusOffset>
+    <MilOffset>1</MilOffset>
+    <StatusSteps>1</StatusSteps>
+    <MilSteps>1</MilSteps>
+    <ConditionalOffset />
+    <Linear>true</Linear>
+    <CodesPerStatus>1</CodesPerStatus>
   </DtcSearchConfig>
 </ArrayOfDtcSearchConfig>
