@@ -101,8 +101,15 @@
     <Compile Include="AutoDetect.cs" />
     <Compile Include="ComputeSimilarity.cs" />
     <Compile Include="Crc.cs" />
+    <Compile Include="CvnDB.cs" />
     <Compile Include="Debug.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="frmDB.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmDB.Designer.cs">
+      <DependentUpon>frmDB.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmImportFile.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -401,6 +408,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmAutodetect.resx">
       <DependentUpon>frmAutodetect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmDB.resx">
+      <DependentUpon>frmDB.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmImportFile.resx">
       <DependentUpon>frmImportFile.cs</DependentUpon>

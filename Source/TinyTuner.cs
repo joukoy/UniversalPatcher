@@ -58,7 +58,9 @@ namespace UniversalPatcher
         {
             string connetionString = null;
             OleDbConnection cnn;
-            string dbFile = Path.Combine(Application.StartupPath, "TinyTuner.mdb");
+            string dbFile = Path.Combine(Application.StartupPath, "db", "TinyTuner.mdb");
+            if (File.Exists(dbFile))
+                dbFile = Path.Combine(Application.StartupPath, "TinyTuner.mdb");
             connetionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + dbFile;
             cnn = new OleDbConnection(connetionString);
             try
@@ -163,7 +165,10 @@ namespace UniversalPatcher
         {
             string connetionString = null;
             OleDbConnection cnn;
-            string dbFile = Path.Combine(Application.StartupPath, "TinyTuner.mdb");
+            string dbFile = Path.Combine(Application.StartupPath,"db", "TinyTuner.mdb");
+            if (File.Exists(dbFile))
+                dbFile = Path.Combine(Application.StartupPath, "TinyTuner.mdb");
+
             connetionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + dbFile;
             cnn = new OleDbConnection(connetionString);
             try

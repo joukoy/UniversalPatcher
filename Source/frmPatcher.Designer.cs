@@ -263,7 +263,6 @@
             this.loadPlatformConfigToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.editPlatformConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autodetectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.stockCVNToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editTableSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dTCSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -274,6 +273,7 @@
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTunerAutloadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cVNDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -923,11 +923,11 @@
             // btnAddtoStock
             // 
             this.btnAddtoStock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddtoStock.Location = new System.Drawing.Point(697, 5);
+            this.btnAddtoStock.Location = new System.Drawing.Point(723, 5);
             this.btnAddtoStock.Name = "btnAddtoStock";
-            this.btnAddtoStock.Size = new System.Drawing.Size(136, 22);
+            this.btnAddtoStock.Size = new System.Drawing.Size(110, 22);
             this.btnAddtoStock.TabIndex = 177;
-            this.btnAddtoStock.Text = "Add to: \"stockcvn.xml\"";
+            this.btnAddtoStock.Text = "Add to stockcvn";
             this.btnAddtoStock.UseVisualStyleBackColor = true;
             this.btnAddtoStock.Click += new System.EventHandler(this.buttonAddtoStock_Click);
             // 
@@ -2898,7 +2898,6 @@
             this.loadPlatformConfigToolStripMenuItem1,
             this.editPlatformConfigToolStripMenuItem,
             this.autodetectToolStripMenuItem,
-            this.stockCVNToolStripMenuItem,
             this.editTableSearchToolStripMenuItem,
             this.fileTypesToolStripMenuItem,
             this.dTCSearchToolStripMenuItem,
@@ -2908,7 +2907,8 @@
             this.oBD2CodesToolStripMenuItem,
             this.rememberWindowSizeToolStripMenuItem,
             this.disableTunerAutloadConfigToolStripMenuItem,
-            this.moreSettingsToolStripMenuItem});
+            this.moreSettingsToolStripMenuItem,
+            this.cVNDatabaseToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "&Settings";
@@ -2947,13 +2947,6 @@
             this.autodetectToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.autodetectToolStripMenuItem.Text = "Autodetect";
             this.autodetectToolStripMenuItem.Click += new System.EventHandler(this.autodetectToolStripMenuItem_Click);
-            // 
-            // stockCVNToolStripMenuItem
-            // 
-            this.stockCVNToolStripMenuItem.Name = "stockCVNToolStripMenuItem";
-            this.stockCVNToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.stockCVNToolStripMenuItem.Text = "Stock CVN";
-            this.stockCVNToolStripMenuItem.Click += new System.EventHandler(this.stockCVNToolStripMenuItem_Click);
             // 
             // editTableSearchToolStripMenuItem
             // 
@@ -3024,6 +3017,13 @@
             this.moreSettingsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.moreSettingsToolStripMenuItem.Text = "More settings...";
             this.moreSettingsToolStripMenuItem.Click += new System.EventHandler(this.moreSettingsToolStripMenuItem_Click);
+            // 
+            // cVNDatabaseToolStripMenuItem
+            // 
+            this.cVNDatabaseToolStripMenuItem.Name = "cVNDatabaseToolStripMenuItem";
+            this.cVNDatabaseToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.cVNDatabaseToolStripMenuItem.Text = "CVN database";
+            this.cVNDatabaseToolStripMenuItem.Click += new System.EventHandler(this.cVNDatabaseToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -3230,7 +3230,6 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.Button btnHelp;
         private System.Windows.Forms.Button btnAddtoStock;
-        private System.Windows.Forms.ToolStripMenuItem stockCVNToolStripMenuItem;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnNew;
         private System.Windows.Forms.Button btnLoadPatch;
@@ -3419,5 +3418,6 @@
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.RadioButton radioDtcSecondary;
         private System.Windows.Forms.RadioButton radioDtcPrimary;
+        private System.Windows.Forms.ToolStripMenuItem cVNDatabaseToolStripMenuItem;
     }
 }

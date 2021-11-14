@@ -243,3 +243,9 @@
 - Table Editor: Show only 4 first chars of guid after tablename, if have duplicate tablenames in multitable
 - Table editor: Find tablelist-file from Tuner -folder subfolders, search file with name (in order): <OS>-<Ver>.xml, <OS>.xml, <Platform>-def.xml 
 - Upgraded dtcsearch.xml and tableseek-p01-p59.xml
+
+0.18.65
+- Tinytuner default location moved to DB folder. If not found, search from startup folder
+- stockcvn and referencecvn converted from XML to database
+- Added "DB Editor" for cvn editing
+

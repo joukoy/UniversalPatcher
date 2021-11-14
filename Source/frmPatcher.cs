@@ -364,7 +364,8 @@ namespace UniversalPatcher
 
                     setupSegmentsToolStripMenuItem.Visible = true;
                     autodetectToolStripMenuItem.Visible = true;
-                    stockCVNToolStripMenuItem.Visible = true;
+                    //stockCVNToolStripMenuItem.Visible = true;
+                    cVNDatabaseToolStripMenuItem.Visible = true;
                     editTableSearchToolStripMenuItem.Visible = true;
                     fileTypesToolStripMenuItem.Visible = true;
                     dTCSearchToolStripMenuItem.Visible = true;
@@ -402,7 +403,8 @@ namespace UniversalPatcher
 
                     setupSegmentsToolStripMenuItem.Visible = false;
                     autodetectToolStripMenuItem.Visible = false;
-                    stockCVNToolStripMenuItem.Visible = false;
+                    //stockCVNToolStripMenuItem.Visible = false;
+                    cVNDatabaseToolStripMenuItem.Visible = false;
                     editTableSearchToolStripMenuItem.Visible = false;
                     fileTypesToolStripMenuItem.Visible = false;
                     dTCSearchToolStripMenuItem.Visible = false;
@@ -1726,7 +1728,7 @@ namespace UniversalPatcher
                     if (CheckStockCVN(stock.PN,stock.Ver,stock.SegmentNr, cvnInt, false, basefile.configFileFullName) != "[stock]")
                     {
                         //Add if not already in list
-                        StockCVN.Add(stock);
+                        cvnDB.addtoStock(stock);
                         isNew = true;
                         Debug.WriteLine(stock.PN + " " + stock.Ver + " cvn: " + stock.cvn + " added");
                     }
@@ -1745,7 +1747,7 @@ namespace UniversalPatcher
                     Logger("All segments already in stock list");
                     return;
                 }
-                Logger("Saving file stockcvn.xml");
+/*                Logger("Saving file stockcvn.xml");
                 string FileName = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
                 using (FileStream stream = new FileStream(FileName, FileMode.Create))
                 {
@@ -1754,6 +1756,7 @@ namespace UniversalPatcher
                     stream.Close();
                 }
                 Logger("[OK]");
+*/
             }
             catch (Exception ex)
             {
@@ -3671,24 +3674,7 @@ namespace UniversalPatcher
         {
             txtTargetCVN.Text = "";
             labelFakeCvnPn.Text = "P/N: " + basefile.segmentinfos[seg].PN;
-            for (int c = 0; c < StockCVN.Count; c++)
-            {
-                if (StockCVN[c].PN == basefile.segmentinfos[seg].PN && StockCVN[c].Ver == basefile.segmentinfos[seg].Ver && StockCVN[c].SegmentNr == basefile.segmentinfos[seg].SegNr)
-                {
-                    txtTargetCVN.Text = StockCVN[c].cvn;
-                    break;
-                }
-            }
-            if (txtTargetCVN.Text == "")
-            {
-                for (int r = 0; r < referenceCvnList.Count; r++)
-                {
-                    if (basefile.segmentinfos[seg].PN == referenceCvnList[r].PN)
-                    {
-                        txtTargetCVN.Text = referenceCvnList[r].CVN;
-                    }
-                }
-            }
+            txtTargetCVN.Text = cvnDB.getStockCvn(basefile.segmentinfos[seg].PN, basefile.segmentinfos[seg].Ver, basefile.segmentinfos[seg].SegNr);
 
         }
 
@@ -4312,6 +4298,14 @@ namespace UniversalPatcher
         private void radioDtcPrimary_CheckedChanged(object sender, EventArgs e)
         {
             refreshDtcList();
+        }
+
+        private void cVNDatabaseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmDB frmdb = new frmDB();
+            frmdb.Show();
+            string[] tables = { "cvn", "referencecvn" };
+            frmdb.loadDB(tables);
         }
     }
 }
