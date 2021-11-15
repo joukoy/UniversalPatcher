@@ -235,14 +235,14 @@ namespace UniversalPatcher
                     if (useStockDB)
                     {
                         cvnDB.stockAdapter.InsertCommand = builder.GetInsertCommand();
+                        cvnDB.stockAdapter.UpdateCommand = builder.GetUpdateCommand();
                         cvnDB.stockAdapter.DeleteCommand = builder.GetDeleteCommand();
-                        cvnDB.stockAdapter.UpdateCommand = builder.GetDeleteCommand();
                     }
                     else
                     {
                         cvnDB.refAdapter.InsertCommand = builder.GetInsertCommand();
+                        cvnDB.refAdapter.UpdateCommand = builder.GetUpdateCommand();
                         cvnDB.refAdapter.DeleteCommand = builder.GetDeleteCommand();
-                        cvnDB.refAdapter.UpdateCommand = builder.GetDeleteCommand();
                     }
                     cvnDB.stockAdapter.Update(cvnTable);
                     labelStatus.Text = cvnTable.Rows.Count + " Records";
@@ -354,7 +354,7 @@ namespace UniversalPatcher
                 else
                 {
                     List<referenceCvn> refList = new List<referenceCvn>(); ;
-                    string defFile = Path.Combine(Application.StartupPath, "XML", "referencecvn.xml");
+                    string defFile = Path.Combine(Application.StartupPath, "XML", "reference-cvn.xml");
                     string refCVNFile = SelectFile("Select refrence CVN file", "XML (*.xml)|*.xml|ALL (*.*)|*.*", defFile);
                     if (refCVNFile.Length > 0 && File.Exists(refCVNFile))
                     {
@@ -370,7 +370,7 @@ namespace UniversalPatcher
 
                         referenceCvn cvn = refList[i];
                         DataRow newRow = cvnTable.NewRow();
-                        newRow["cvn"] = cvn.PN;
+                        newRow["cvn"] = cvn.CVN;
                         newRow["PN"] = cvn.PN;
                         cvnTable.Rows.Add(newRow);
                         if (i % 100 == 0)
@@ -499,7 +499,7 @@ namespace UniversalPatcher
                     if (lineparts.Length > cvnPos)
                     {
                         DataRow newRow = cvnTable.NewRow();
-                        newRow["PN"] = lineparts[PnPos].Replace("'","");
+                        newRow["pn"] = lineparts[PnPos].Replace("'","");
                         newRow["cvn"] = lineparts[cvnPos].Replace("'", "");
                         cvnTable.Rows.Add(newRow);
                         counter++;

@@ -249,3 +249,5 @@
 - stockcvn and referencecvn converted from XML to database
 - Added "DB Editor" for cvn editing
 
+0.18.66
+- CVN DB: bugfix, xml import put pn to cvn column
