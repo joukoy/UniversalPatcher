@@ -28,7 +28,7 @@ namespace UniversalPatcher
             Properties.Settings.Default.TunerShowUnitsImperial = chkDisplayImperial.Checked;
             Properties.Settings.Default.TunerShowUnitsMetric = chkDisplayMetric.Checked;
             Properties.Settings.Default.TunerShowUnitsUndefined = chkDisplayUndefined.Checked;
-
+            Properties.Settings.Default.SplashShowTime = (int)numSplashTime.Value;
             //Properties.Settings.Default.startPatcher = chkStartPatcher.Checked;
             Properties.Settings.Default.Save();
             this.Close();
@@ -46,6 +46,7 @@ namespace UniversalPatcher
             chkDisplayImperial.Checked = Properties.Settings.Default.TunerShowUnitsImperial;
             chkDisplayMetric.Checked = Properties.Settings.Default.TunerShowUnitsMetric;
             chkDisplayUndefined.Checked = Properties.Settings.Default.TunerShowUnitsUndefined;
+            numSplashTime.Value = Properties.Settings.Default.SplashShowTime;
             //chkStartPatcher.Checked = Properties.Settings.Default.startPatcher;
         }
 

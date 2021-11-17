@@ -24,5 +24,23 @@ namespace UniversalPatcher
         {
 
         }
+
+        private void frmSplashScreen_Load(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.SplashShowTime > 0)
+            {
+                timer1.Interval = Properties.Settings.Default.SplashShowTime * 1000;
+                timer1.Enabled = true;
+            }
+            else
+            {
+                this.Close();
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

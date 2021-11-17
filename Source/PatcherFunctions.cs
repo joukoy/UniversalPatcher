@@ -403,7 +403,8 @@ public class upatcher
         if (UniversalPatcher.Properties.Settings.Default.LastPATCHfolder == "")
             UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
 
-        frmSplash.Show();
+        if (UniversalPatcher.Properties.Settings.Default.SplashShowTime > 0)
+            frmSplash.Show();
         //System.Drawing.Point xy = new Point((int)(this.Location.X + 300), (int)(this.Location.Y + 150));
         Screen myScreen = Screen.FromPoint(Control.MousePosition);
         System.Drawing.Rectangle area = myScreen.WorkingArea;
@@ -411,7 +412,7 @@ public class upatcher
         frmSplash.moveMe(xy);
         frmSplash.labelProgress.Text = "";
         loadSettingFiles();
-        frmSplash.Dispose();
+        //frmSplash.Dispose();
     }
 
     private static void ShowSplash(string txt, bool newLine = true)

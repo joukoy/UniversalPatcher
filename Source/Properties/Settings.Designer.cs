@@ -968,5 +968,17 @@ namespace UniversalPatcher.Properties {
                 this["TunerShowUnitsMetric"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        public int SplashShowTime {
+            get {
+                return ((int)(this["SplashShowTime"]));
+            }
+            set {
+                this["SplashShowTime"] = value;
+            }
+        }
     }
 }

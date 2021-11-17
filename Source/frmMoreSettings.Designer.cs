@@ -46,9 +46,11 @@ namespace UniversalPatcher
             this.chkRequireValidVerForStock = new System.Windows.Forms.CheckBox();
             this.chkAutoOpenImportedFile = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.chkDisplayUndefined = new System.Windows.Forms.CheckBox();
-            this.chkDisplayImperial = new System.Windows.Forms.CheckBox();
             this.chkDisplayMetric = new System.Windows.Forms.CheckBox();
+            this.chkDisplayImperial = new System.Windows.Forms.CheckBox();
+            this.chkDisplayUndefined = new System.Windows.Forms.CheckBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.numSplashTime = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerTableMinEquivalency)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numKeypressWait)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerMinEqOther)).BeginInit();
@@ -56,6 +58,7 @@ namespace UniversalPatcher
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numSplashTime)).BeginInit();
             this.SuspendLayout();
             // 
             // numTunerTableMinEquivalency
@@ -230,15 +233,15 @@ namespace UniversalPatcher
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Display units";
             // 
-            // chkDisplayUndefined
+            // chkDisplayMetric
             // 
-            this.chkDisplayUndefined.AutoSize = true;
-            this.chkDisplayUndefined.Location = new System.Drawing.Point(13, 18);
-            this.chkDisplayUndefined.Name = "chkDisplayUndefined";
-            this.chkDisplayUndefined.Size = new System.Drawing.Size(75, 17);
-            this.chkDisplayUndefined.TabIndex = 0;
-            this.chkDisplayUndefined.Text = "Undefined";
-            this.chkDisplayUndefined.UseVisualStyleBackColor = true;
+            this.chkDisplayMetric.AutoSize = true;
+            this.chkDisplayMetric.Location = new System.Drawing.Point(172, 19);
+            this.chkDisplayMetric.Name = "chkDisplayMetric";
+            this.chkDisplayMetric.Size = new System.Drawing.Size(55, 17);
+            this.chkDisplayMetric.TabIndex = 2;
+            this.chkDisplayMetric.Text = "Metric";
+            this.chkDisplayMetric.UseVisualStyleBackColor = true;
             // 
             // chkDisplayImperial
             // 
@@ -250,21 +253,44 @@ namespace UniversalPatcher
             this.chkDisplayImperial.Text = "Imperial";
             this.chkDisplayImperial.UseVisualStyleBackColor = true;
             // 
-            // chkDisplayMetric
+            // chkDisplayUndefined
             // 
-            this.chkDisplayMetric.AutoSize = true;
-            this.chkDisplayMetric.Location = new System.Drawing.Point(172, 19);
-            this.chkDisplayMetric.Name = "chkDisplayMetric";
-            this.chkDisplayMetric.Size = new System.Drawing.Size(55, 17);
-            this.chkDisplayMetric.TabIndex = 2;
-            this.chkDisplayMetric.Text = "Metric";
-            this.chkDisplayMetric.UseVisualStyleBackColor = true;
+            this.chkDisplayUndefined.AutoSize = true;
+            this.chkDisplayUndefined.Location = new System.Drawing.Point(13, 18);
+            this.chkDisplayUndefined.Name = "chkDisplayUndefined";
+            this.chkDisplayUndefined.Size = new System.Drawing.Size(75, 17);
+            this.chkDisplayUndefined.TabIndex = 0;
+            this.chkDisplayUndefined.Text = "Undefined";
+            this.chkDisplayUndefined.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(12, 323);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(135, 13);
+            this.label5.TabIndex = 16;
+            this.label5.Text = "Splash screen showtime (s)";
+            // 
+            // numSplashTime
+            // 
+            this.numSplashTime.Location = new System.Drawing.Point(160, 321);
+            this.numSplashTime.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numSplashTime.Name = "numSplashTime";
+            this.numSplashTime.Size = new System.Drawing.Size(50, 20);
+            this.numSplashTime.TabIndex = 17;
             // 
             // frmMoreSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(307, 353);
+            this.Controls.Add(this.numSplashTime);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.chkAutoOpenImportedFile);
             this.Controls.Add(this.groupBox3);
@@ -289,6 +315,7 @@ namespace UniversalPatcher
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numSplashTime)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -315,5 +342,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.CheckBox chkDisplayMetric;
         private System.Windows.Forms.CheckBox chkDisplayImperial;
         private System.Windows.Forms.CheckBox chkDisplayUndefined;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.NumericUpDown numSplashTime;
     }
 }

@@ -1317,16 +1317,20 @@ namespace UniversalPatcher
                 if (pcm.segmentinfos[i].PN.Length > 1)
                 {
                     if (pcm.segmentinfos[i].Stock == "[stock]")
-                        txtBox.AppendText(" PN: " + pcm.segmentinfos[i].PN.PadRight(9));
+                        txtBox.AppendText(" PN: " + pcm.segmentinfos[i].PN.PadLeft(9));
                     else
-                        txtBox.AppendText(" PN: " + pcm.segmentinfos[i].PN.PadRight(9));
+                        txtBox.AppendText(" PN: " + pcm.segmentinfos[i].PN.PadLeft(9));
                 }
                 if (pcm.segmentinfos[i].Ver.Length > 1)
-                    txtBox.AppendText(", Ver: " + pcm.segmentinfos[i].Ver);
-
+                    txtBox.AppendText(", Ver: " + pcm.segmentinfos[i].Ver.PadLeft(4));
+                else
+                    txtBox.AppendText(" ".PadLeft(11));
                 if (pcm.segmentinfos[i].SegNr.Length > 0)
-                    txtBox.AppendText(", Nr: " + pcm.segmentinfos[i].SegNr.PadRight(3));
+                    txtBox.AppendText(", Nr: " + pcm.segmentinfos[i].SegNr.PadLeft(3));
+                else
+                    txtBox.AppendText(" ".PadLeft(9));
                 txtBox.AppendText("[" + pcm.segmentinfos[i].Address + "]");
+
                 txtBox.AppendText(", Size: " + pcm.segmentinfos[i].Size.ToString());
                 if (pcm.segmentinfos[i].ExtraInfo != null && pcm.segmentinfos[i].ExtraInfo.Length > 0)
                     txtBox.AppendText(Environment.NewLine + pcm.segmentinfos[i].ExtraInfo);
@@ -3230,6 +3234,7 @@ namespace UniversalPatcher
                         PcmFile infoPcm = (PcmFile)mi.Tag;
                         RichTextBox rBox = new RichTextBox();
                         tabControlFileInfo.TabPages[tabName].Controls.Add(rBox);
+                        rBox.Font = new Font("Consolas", 8);
                         rBox.Dock = DockStyle.Fill;
                         showFileInfo(infoPcm, rBox);
                     }

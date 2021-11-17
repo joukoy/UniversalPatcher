@@ -66,7 +66,7 @@ namespace UniversalPatcher
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
             basefile = new PcmFile();
-
+            
             if (Properties.Settings.Default.MainWindowPersistence)
             {
                 rememberWindowSizeToolStripMenuItem.Checked = true;
@@ -647,15 +647,20 @@ namespace UniversalPatcher
                     if (PCM.segmentinfos[i].PN.Length > 1)
                     {
                         if (PCM.segmentinfos[i].Stock == "[stock]")
-                            LoggerBold(" PN: " + PCM.segmentinfos[i].PN.PadRight(9), false);
+                            LoggerBold(" PN: " + PCM.segmentinfos[i].PN.PadLeft(9), false);
                         else
-                            Logger(" PN: " + PCM.segmentinfos[i].PN.PadRight(9), false);
+                            Logger(" PN: " + PCM.segmentinfos[i].PN.PadLeft(9), false);
                     }
                     if (PCM.segmentinfos[i].Ver.Length > 1)
-                        Logger(", Ver: " + PCM.segmentinfos[i].Ver, false);
+                        Logger(", Ver: " + PCM.segmentinfos[i].Ver.PadLeft(4), false);
+                    else
+                        Logger("".PadLeft(11), false);
 
                     if (PCM.segmentinfos[i].SegNr.Length > 0)
                         Logger(", Nr: " + PCM.segmentinfos[i].SegNr.PadRight(3), false);
+                    else
+                        Logger("".PadLeft(9), false);
+
                     if (chkRange.Checked)
                         Logger("[" + PCM.segmentinfos[i].Address + "]", false);
                     if (chkSize.Checked)
@@ -2177,12 +2182,12 @@ namespace UniversalPatcher
         {
             try
             {
-                basefile = new PcmFile(fileName,chkAutodetect.Checked, basefile.configFileFullName);
+                PcmFile newPcm = new PcmFile(fileName,chkAutodetect.Checked, "");
                 //GetFileInfo(fileName, ref basefile, true, false);                
-                if (basefile.FixCheckSums())  //Returns true, if need fix for checksum
+                if (newPcm.FixCheckSums())  //Returns true, if need fix for checksum
                 {  
                     Logger("Saving file: " + fileName);
-                    basefile.saveBin(fileName);
+                    newPcm.saveBin(fileName);
                     Logger("[OK]");
                 }
             }

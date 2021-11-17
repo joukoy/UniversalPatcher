@@ -357,7 +357,16 @@ namespace UniversalPatcher
             if (!Properties.Settings.Default.disableTunerAutoloadSettings)
             {
                 DirectoryInfo d = new DirectoryInfo(Path.Combine(Application.StartupPath, "Tuner"));
-                FileInfo[] Files = d.GetFiles("*.*", SearchOption.AllDirectories);
+               // FileInfo[] Files = d.GetFiles("*.*", SearchOption.AllDirectories);
+
+                DirectoryInfo[] dirs = d.GetDirectories();
+                List<FileInfo> filterdFiles = new List<FileInfo>();
+                for (int di=0; di< dirs.Length;di++)
+                {
+                    string fldr = Path.GetFileName(dirs[di].Name);
+                    if (!fldr.StartsWith(".") && !fldr.StartsWith("."))
+                        filterdFiles.AddRange(dirs[di].GetFiles("*.*", SearchOption.AllDirectories));
+                }
 
                 string defaultTunerFile = OS;
                 if (OS.Length == 0)
@@ -366,11 +375,11 @@ namespace UniversalPatcher
                     defaultTunerFile = OS + "-" + segmentinfos[OSSegment].Ver;
                 defaultTunerFile += ".xml";
                 FileInfo tFile = null;
-                tFile = Files.Where(x => x.Name == defaultTunerFile).FirstOrDefault();
+                tFile = filterdFiles.Where(x => x.Name == defaultTunerFile).FirstOrDefault();
                 if (tFile == null)
                 {
                     defaultTunerFile = OS + ".xml";
-                    tFile = Files.Where(x => x.Name == defaultTunerFile).FirstOrDefault();
+                    tFile = filterdFiles.Where(x => x.Name == defaultTunerFile).FirstOrDefault();
                 }
                 compXml = "";
                 if (tFile != null)
@@ -379,14 +388,14 @@ namespace UniversalPatcher
                     if (tFile.Length < 255)
                     {
                         compXml = ReadTextFile(tFile.FullName);
-                        tFile = Files.Where(x => x.Name == compXml).FirstOrDefault();
+                        tFile = filterdFiles.Where(x => x.Name == compXml).FirstOrDefault();
                         Logger("Using compatible file: " + compXml);
                     }
                 }
                 if (tFile == null)
                 {
                     defaultTunerFile = configFile + "-def.xml";
-                    tFile = Files.Where(x => x.Name == defaultTunerFile).FirstOrDefault();
+                    tFile = filterdFiles.Where(x => x.Name == defaultTunerFile).FirstOrDefault();
                 }
                 if (tFile != null)
                 {

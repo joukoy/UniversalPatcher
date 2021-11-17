@@ -42,6 +42,7 @@ namespace UniversalPatcher
 
                 upatcher.StartupSettings();
 
+
                 if (args.Length > 1)
                 {
                     if (args[1].ToLower().Contains("launcher"))
@@ -62,6 +63,7 @@ namespace UniversalPatcher
                 {
                     Application.Run(new FrmPatcher());
                 }
+
             }
             catch (Exception ex)
             {

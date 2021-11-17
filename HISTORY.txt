@@ -251,3 +251,7 @@
 
 0.18.66
 - CVN DB: bugfix, xml import put pn to cvn column
+
+0.18.67
+- Splash screen showtime as user configurable setting. Default: 4s
+- Skip Tuner subfolder if name starts with "."

@@ -270,10 +270,10 @@
             this.tableSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.segmentSeekToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.oBD2CodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cVNDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rememberWindowSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableTunerAutloadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cVNDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -577,7 +577,7 @@
             this.txtResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtResult.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtResult.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtResult.HideSelection = false;
             this.txtResult.Location = new System.Drawing.Point(2, 26);
             this.txtResult.Name = "txtResult";
@@ -2905,10 +2905,10 @@
             this.tableSeekToolStripMenuItem,
             this.segmentSeekToolStripMenuItem,
             this.oBD2CodesToolStripMenuItem,
+            this.cVNDatabaseToolStripMenuItem,
             this.rememberWindowSizeToolStripMenuItem,
             this.disableTunerAutloadConfigToolStripMenuItem,
-            this.moreSettingsToolStripMenuItem,
-            this.cVNDatabaseToolStripMenuItem});
+            this.moreSettingsToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(61, 20);
             this.toolStripMenuItem1.Text = "&Settings";
@@ -2997,6 +2997,13 @@
             this.oBD2CodesToolStripMenuItem.Text = "OBD2 Codes";
             this.oBD2CodesToolStripMenuItem.Click += new System.EventHandler(this.oBD2CodesToolStripMenuItem_Click);
             // 
+            // cVNDatabaseToolStripMenuItem
+            // 
+            this.cVNDatabaseToolStripMenuItem.Name = "cVNDatabaseToolStripMenuItem";
+            this.cVNDatabaseToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.cVNDatabaseToolStripMenuItem.Text = "CVN database";
+            this.cVNDatabaseToolStripMenuItem.Click += new System.EventHandler(this.cVNDatabaseToolStripMenuItem_Click);
+            // 
             // rememberWindowSizeToolStripMenuItem
             // 
             this.rememberWindowSizeToolStripMenuItem.Name = "rememberWindowSizeToolStripMenuItem";
@@ -3017,13 +3024,6 @@
             this.moreSettingsToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.moreSettingsToolStripMenuItem.Text = "More settings...";
             this.moreSettingsToolStripMenuItem.Click += new System.EventHandler(this.moreSettingsToolStripMenuItem_Click);
-            // 
-            // cVNDatabaseToolStripMenuItem
-            // 
-            this.cVNDatabaseToolStripMenuItem.Name = "cVNDatabaseToolStripMenuItem";
-            this.cVNDatabaseToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.cVNDatabaseToolStripMenuItem.Text = "CVN database";
-            this.cVNDatabaseToolStripMenuItem.Click += new System.EventHandler(this.cVNDatabaseToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
