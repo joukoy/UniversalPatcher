@@ -58,6 +58,12 @@ namespace UniversalPatcher
                 tsmiSelectAll.Click += (sender, e) => rtb.SelectAll();
                 cms.Items.Add(tsmiSelectAll);
 
+                //8. Add Font selection
+                ToolStripMenuItem tsmiFont = new ToolStripMenuItem("Font");
+                tsmiFont.Click += (sender, e) => TsmiFont_Click(sender, e, rtb);
+                cms.Items.Add(tsmiFont);
+
+
                 // When opening the menu, check if the condition is fulfilled 
                 // in order to enable the action
                 cms.Opening += (sender, e) =>
@@ -75,7 +81,27 @@ namespace UniversalPatcher
             }
         }
 
-    public static class DrawingControl
+        private static void TsmiFont_Click(object sender, EventArgs e,RichTextBox rtb)
+        {
+            FontDialog fontDlg = new FontDialog();
+            fontDlg.ShowColor = true;
+            fontDlg.ShowApply = true;
+            fontDlg.ShowEffects = true;
+            fontDlg.ShowHelp = true;
+            fontDlg.Font = rtb.Font;
+            if (fontDlg.ShowDialog() != DialogResult.Cancel)
+            {
+                rtb.Font = fontDlg.Font;
+                if (rtb.Name == "txtResult")
+                    Properties.Settings.Default.PatcherLogFont = fontDlg.Font;
+                else
+                    Properties.Settings.Default.DebugFont = fontDlg.Font;
+                Properties.Settings.Default.Save();
+            }
+            fontDlg.Dispose();
+        }
+
+        public static class DrawingControl
     {
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, Int32 wMsg, bool wParam, Int32 lParam);

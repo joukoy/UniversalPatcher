@@ -980,5 +980,27 @@ namespace UniversalPatcher.Properties {
                 this["SplashShowTime"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Font PatcherLogFont {
+            get {
+                return ((global::System.Drawing.Font)(this["PatcherLogFont"]));
+            }
+            set {
+                this["PatcherLogFont"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Font DebugFont {
+            get {
+                return ((global::System.Drawing.Font)(this["DebugFont"]));
+            }
+            set {
+                this["DebugFont"] = value;
+            }
+        }
     }
 }

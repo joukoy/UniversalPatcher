@@ -364,7 +364,7 @@ namespace UniversalPatcher
                 for (int di=0; di< dirs.Length;di++)
                 {
                     string fldr = Path.GetFileName(dirs[di].Name);
-                    if (!fldr.StartsWith(".") && !fldr.StartsWith("."))
+                    if (!fldr.StartsWith(".") && !fldr.StartsWith(".") && !fldr.StartsWith("~"))
                         filterdFiles.AddRange(dirs[di].GetFiles("*.*", SearchOption.AllDirectories));
                 }
 

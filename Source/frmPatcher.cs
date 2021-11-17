@@ -117,6 +117,11 @@ namespace UniversalPatcher
 
             }
 
+            if (Properties.Settings.Default.PatcherLogFont != null)
+                txtResult.Font = Properties.Settings.Default.PatcherLogFont;
+            if (Properties.Settings.Default.DebugFont != null)
+                txtDebug.Font = Properties.Settings.Default.DebugFont;
+
             Application.DoEvents();
 
             addCheckBoxes();
@@ -4311,6 +4316,42 @@ namespace UniversalPatcher
             frmdb.Show();
             string[] tables = { "cvn", "referencecvn" };
             frmdb.loadDB(tables);
+        }
+
+        private void fontToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FontDialog fontDlg = new FontDialog();
+            fontDlg.ShowColor = true;
+            fontDlg.ShowApply = true;
+            fontDlg.ShowEffects = true;
+            fontDlg.ShowHelp = true;
+            fontDlg.Font = txtResult.Font;
+            if (fontDlg.ShowDialog() != DialogResult.Cancel)
+            {
+                txtResult.Font = fontDlg.Font;
+                Properties.Settings.Default.PatcherLogFont = fontDlg.Font;
+                Properties.Settings.Default.Save();
+            }
+            fontDlg.Dispose();
+
+        }
+
+        private void fontToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            FontDialog fontDlg = new FontDialog();
+            fontDlg.ShowColor = true;
+            fontDlg.ShowApply = true;
+            fontDlg.ShowEffects = true;
+            fontDlg.ShowHelp = true;
+            fontDlg.Font = txtDebug.Font;
+            if (fontDlg.ShowDialog() != DialogResult.Cancel)
+            {
+                txtResult.Font = fontDlg.Font;
+                Properties.Settings.Default.DebugFont = fontDlg.Font;
+                Properties.Settings.Default.Save();
+            }
+            fontDlg.Dispose();
+
         }
     }
 }

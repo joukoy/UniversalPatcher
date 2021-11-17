@@ -255,3 +255,8 @@
 0.18.67
 - Splash screen showtime as user configurable setting. Default: 4s
 - Skip Tuner subfolder if name starts with "."
+
+0.18.68
+- Skip Tuner subfolder if name starts with . or ~
+- Patcher log & debug font selection added to right-lick menu
+
