@@ -313,6 +313,7 @@ namespace UniversalPatcher
         {
             try
             {
+                dataGridView1.NotifyCurrentCellDirty(true);
                 dataGridView1.EndEdit();
                 if (this.Text.Contains("CVN"))
                 {

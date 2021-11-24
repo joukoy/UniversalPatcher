@@ -260,3 +260,7 @@
 - Skip Tuner subfolder if name starts with . or ~
 - Patcher log & debug font selection added to right-lick menu
 
+0.18.69
+- Fixed bug: address definition parsing stopped after one part with "seek:"
+- XML editor: Fixed bug: Modifications not always saved
+

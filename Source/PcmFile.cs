@@ -1665,12 +1665,9 @@ namespace UniversalPatcher
                         if (B.Start < uint.MaxValue && B.End < uint.MaxValue)
                         {
                             Blocks.Add(B);
-                            return true;
+                           
                         }
-                        else
-                        {
-                            return false;
-                        }
+                        continue;   //Don't parse more
                     }
 
                     if (StartEnd[0].Contains(">"))
