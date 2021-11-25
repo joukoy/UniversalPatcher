@@ -176,8 +176,11 @@ namespace UniversalPatcher
                     if (conFileSize < 255)
                     {
                         string compXml = ReadTextFile(tSeekFile).Split(new[] { '\r', '\n' }).FirstOrDefault();
-                        tSeekFile = Path.Combine(Application.StartupPath, "XML", compXml);
-                        Logger("Using compatible file: " + compXml);
+                        if (File.Exists(compXml))
+                        {
+                            tSeekFile = Path.Combine(Application.StartupPath, "XML", compXml);
+                            Logger("Using compatible file: " + compXml);
+                        }
                     }
                 }
 
@@ -207,10 +210,14 @@ namespace UniversalPatcher
                     if (conFileSize < 255)
                     {
                         string compXml = ReadTextFile(ssFile).Split(new[] { '\r', '\n' }).FirstOrDefault();
-                        ssFile = Path.Combine(Application.StartupPath, "XML", compXml);
-                        Logger("Using compatible file: " + compXml);
+                        if (File.Exists(compXml))
+                        {
+                            ssFile = Path.Combine(Application.StartupPath, "XML", compXml);
+                            Logger("Using compatible file: " + compXml);
+                        }
                     }
                 }
+
                 return ssFile;
 
             }
@@ -387,9 +394,13 @@ namespace UniversalPatcher
 
                     if (tFile.Length < 255)
                     {
-                        compXml = ReadTextFile(tFile.FullName);
-                        tFile = filterdFiles.Where(x => x.Name == compXml).FirstOrDefault();
-                        Logger("Using compatible file: " + compXml);
+                        string tmpXml= ReadTextFile(tFile.FullName);
+                        if (File.Exists(tmpXml))
+                        {
+                            compXml = tmpXml;
+                            tFile = filterdFiles.Where(x => x.Name == compXml).FirstOrDefault();
+                            Logger("Using compatible file: " + compXml);
+                        }
                     }
                 }
                 if (tFile == null)
@@ -422,8 +433,11 @@ namespace UniversalPatcher
                 if (conFileSize < 255)
                 {
                     string compXml = ReadTextFile(fName);
-                    Logger(Path.GetFileName(fName) + " => " + compXml);
-                    fName = Path.Combine(Path.GetDirectoryName(fName),compXml);
+                    if (File.Exists(compXml))
+                    {
+                        Logger(Path.GetFileName(fName) + " => " + compXml);
+                        fName = Path.Combine(Path.GetDirectoryName(fName), compXml);
+                    }
                 }
                 Logger( "Loading tuner file: " + Path.GetFileName(fName), false);
                 if (File.Exists(fName))
@@ -1667,7 +1681,6 @@ namespace UniversalPatcher
                             Blocks.Add(B);
                            
                         }
-                        continue;   //Don't parse more
                     }
 
                     if (StartEnd[0].Contains(">"))
@@ -1711,11 +1724,14 @@ namespace UniversalPatcher
                         isWord = true;
                     }
 
-
-                    if (!HexToUint(StartEnd[0].Replace("@", ""), out B.Start))
+                    if (!StartEnd[0].Contains("seek"))
                     {
-                        throw new Exception("Can't decode from HEX: " + StartEnd[0].Replace("@", "") + " (" + Line + ")");
+                        if (!HexToUint(StartEnd[0].Replace("@", ""), out B.Start))
+                        {
+                            throw new Exception("Can't decode from HEX: " + StartEnd[0].Replace("@", "") + " (" + Line + ")");
+                        }
                     }
+
                     if (StartEnd[0].StartsWith("@"))
                     {
                         uint tmpStart = B.Start;
@@ -1744,13 +1760,14 @@ namespace UniversalPatcher
                             }
                         }
                     }
-                    else
+                    else if (!StartEnd[1].Contains("seek"))
                     {
                         if (!HexToUint(StartEnd[1].Replace("@", ""), out B.End))
                             throw new Exception("Can't decode from HEX: " + StartEnd[1].Replace("@", "") + " (" + Line + ")");
                         if (B.End >= buf.Length)    //Make 1MB config work with 512kB bin
                             B.End = (uint)buf.Length - 1;
                     }
+
                     if (Multiple < 2)
                     {
                         if (StartEnd.Length > 1 && StartEnd[1].StartsWith("@"))

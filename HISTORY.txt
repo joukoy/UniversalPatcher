@@ -264,3 +264,7 @@
 - Fixed bug: address definition parsing stopped after one part with "seek:"
 - XML editor: Fixed bug: Modifications not always saved
 
+0.18.70
+- Fixed bug: address definition with "<number>-seek:" or "seek:-<number>" not parsed correctly
+- Fixed bug: Use "compatiblity XML-file" (filename as content of file) only if file exist.
+
