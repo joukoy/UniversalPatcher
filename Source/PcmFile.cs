@@ -1674,7 +1674,7 @@ namespace UniversalPatcher
                     {
                         B.End = seekAddress(StartEnd[1]);
                     }
-                    if (Part.Contains("seek:"))
+/*                    if (Part.Contains("seek:"))
                     {
                         if (B.Start < uint.MaxValue && B.End < uint.MaxValue)
                         {
@@ -1682,7 +1682,7 @@ namespace UniversalPatcher
                            
                         }
                     }
-
+*/
                     if (StartEnd[0].Contains(">"))
                     {
                         string[] SO = StartEnd[0].Split('>');

@@ -268,3 +268,5 @@
 - Fixed bug: address definition with "<number>-seek:" or "seek:-<number>" not parsed correctly
 - Fixed bug: Use "compatiblity XML-file" (filename as content of file) only if file exist.
 
+0.18.71
+- Fixed bug: address definition with "<number>-seek:" or "seek:-<number>" not parsed correctly 
