@@ -270,3 +270,6 @@
 
 0.18.71
 - Fixed bug: address definition with "<number>-seek:" or "seek:-<number>" not parsed correctly 
+
+0.18.72
+- Fixed bug: CVN Check failed if no "SegNr" defined

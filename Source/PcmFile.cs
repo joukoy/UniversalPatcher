@@ -624,12 +624,16 @@ namespace UniversalPatcher
         public UInt64 calculateCS1(int seg, bool dbg = true)
         {
             SegmentConfig S = Segments[seg];
+            if (Segments[seg].Checksum1Method == CSMethod.None)
+                return uint.MaxValue;
             return CalculateChecksum(platformConfig.MSB, buf, segmentAddressDatas[seg].CS1Address, segmentAddressDatas[seg].CS1Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.Checksum1Method, S.CS1Complement, segmentAddressDatas[seg].CS1Address.Bytes, S.CS1SwapBytes,dbg);
         }
 
         public UInt64 calculateCS2(int seg, bool dbg = true)
         {
             SegmentConfig S = Segments[seg];
+            if (Segments[seg].Checksum2Method == CSMethod.None)
+                return uint.MaxValue;
             return CalculateChecksum(platformConfig.MSB, buf, segmentAddressDatas[seg].CS2Address, segmentAddressDatas[seg].CS2Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.Checksum2Method, S.CS2Complement, segmentAddressDatas[seg].CS2Address.Bytes, S.CS2SwapBytes,dbg);
         }
 

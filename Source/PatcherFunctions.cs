@@ -2094,7 +2094,11 @@ public class upatcher
     {
         string retVal = "[n/a]";
 
-        string qry = "pn = '" + PN + "' AND ver = '" + Ver + "' AND segmentnr = " + SegNr.ToString(); //+ " AND xmlfile = '" + XMLFile + "'";
+        string qry = "";
+        if (SegNr.Length > 0)
+            qry = "pn = '" + PN + "' AND ver = '" + Ver + "' AND segmentnr = " + SegNr.ToString(); //+ " AND xmlfile = '" + XMLFile + "'";
+        else
+            qry = "pn = '" + PN + "' AND ver = '" + Ver + "'"; //+ " AND xmlfile = '" + XMLFile + "'";
         DataRow[] res = cvnDB.stockCvn.Select(qry);
 
         for (int c = 0; c < res.Length; c++)
