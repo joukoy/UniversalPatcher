@@ -366,8 +366,10 @@ namespace UniversalPatcher
                 DirectoryInfo d = new DirectoryInfo(Path.Combine(Application.StartupPath, "Tuner"));
                // FileInfo[] Files = d.GetFiles("*.*", SearchOption.AllDirectories);
 
-                DirectoryInfo[] dirs = d.GetDirectories();
                 List<FileInfo> filterdFiles = new List<FileInfo>();
+                FileInfo[] Files = d.GetFiles("*.*");
+                filterdFiles.AddRange(Files);
+                DirectoryInfo[] dirs = d.GetDirectories();
                 for (int di=0; di< dirs.Length;di++)
                 {
                     string fldr = Path.GetFileName(dirs[di].Name);

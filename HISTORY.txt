@@ -273,3 +273,6 @@
 
 0.18.72
 - Fixed bug: CVN Check failed if no "SegNr" defined
+
+0.18.73
+- Fixed bug: Tuner: Not loading files from Tuner -folder, but loading from subfolders
