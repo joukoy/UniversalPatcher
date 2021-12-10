@@ -54,8 +54,7 @@ namespace UniversalPatcher
                 //List<string> categories = new List<string>();
                 Dictionary<int, string> categories = new Dictionary<int, string>();
                 List<TableLink> tableLinks = new List<TableLink>();
-                List<TableLink> tableTargets = new List<TableLink>();
-                bool havePatches = false;
+                List<TableLink> tableTargets = new List<TableLink>();                
 
                 foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFHEADER"))
                 {
@@ -198,7 +197,7 @@ namespace UniversalPatcher
                             }
                         }
                     }
-                    xdf.TableName = element.Element("title").Value.Replace("."," ");
+                    xdf.TableName = element.Element("title").Value.Replace("."," ").Trim();
                     if (element.Element("units") != null)
                         xdf.Units = element.Element("units").Value;
                     /*if (element.Element("datatype") != null)
@@ -210,9 +209,12 @@ namespace UniversalPatcher
                         {
                             catid = Convert.ToInt16(catEle.Attribute("category").Value);
                             Debug.WriteLine(catid);
-                            if (xdf.Category.Length > 0)
-                                xdf.Category += " - ";
-                            xdf.Category += categories[catid - 1] ;
+                            if (categories.ContainsKey(catid - 1))
+                            {
+                                if (xdf.Category.Length > 0)
+                                    xdf.Category += " - ";
+                                xdf.Category += categories[catid - 1];
+                            }
                         }
                     }
                     if (element.Element("description") != null)
@@ -260,7 +262,7 @@ namespace UniversalPatcher
                     }
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                     {
-                        xdf.TableName = element.Element("title").Value.Replace("."," ");
+                        xdf.TableName =  element.Element("title").Value.Replace("."," ").Trim();
                         //xdf.AddrInt = Convert.ToUInt32(element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim(), 16);
                         xdf.Address = element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
                         elementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
@@ -287,9 +289,12 @@ namespace UniversalPatcher
                             foreach (XElement catEle in element.Elements("CATEGORYMEM"))
                             {
                                 catid = Convert.ToInt16(catEle.Attribute("category").Value);
-                                if (xdf.Category.Length > 0)
-                                    xdf.Category += " - ";
-                                xdf.Category += categories[catid - 1];
+                                if (categories.ContainsKey(catid - 1))
+                                {
+                                    if (xdf.Category.Length > 0)
+                                        xdf.Category += " - ";
+                                    xdf.Category += categories[catid - 1];
+                                }
                             }
                         }
                         if (element.Element("description") != null)
@@ -309,7 +314,7 @@ namespace UniversalPatcher
                     xdf.Max = double.MaxValue;
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                     {
-                        xdf.TableName = element.Element("title").Value.Replace(".", " ");
+                        xdf.TableName = element.Element("title").Value.Replace(".", " ").Trim();
                         //xdf.AddrInt = Convert.ToUInt32(element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim(), 16);
                         xdf.Address = element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
                         int elementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
@@ -325,9 +330,12 @@ namespace UniversalPatcher
                             foreach (XElement catEle in element.Elements("CATEGORYMEM"))
                             {
                                 catid = Convert.ToInt16(catEle.Attribute("category").Value);
-                                if (xdf.Category.Length > 0)
-                                    xdf.Category += " - ";
-                                xdf.Category += categories[catid - 1];
+                                if (categories.ContainsKey(catid - 1))
+                                {
+                                    if (xdf.Category.Length > 0)
+                                        xdf.Category += " - ";
+                                    xdf.Category += categories[catid - 1];
+                                }
                             }
                         }
                         if (element.Element("description") != null)
@@ -344,7 +352,7 @@ namespace UniversalPatcher
                     TableData patchTd = new TableData();
                     patchTd.addrInt = 0;
                     patchTd.DataType = InDataType.UBYTE;
-                    patchTd.TableName = element.Element("title").Value.Replace(":", ";");
+                    patchTd.TableName = element.Element("title").Value.Replace(":", ";").Trim();
                     if (element.Element("description") != null)
                         patchTd.TableDescription = element.Element("description").Value;
                     if (element.Element("CATEGORYMEM") != null && element.Element("CATEGORYMEM").Attribute("category") != null)
@@ -353,9 +361,12 @@ namespace UniversalPatcher
                         foreach (XElement catEle in element.Elements("CATEGORYMEM"))
                         {
                             catid = Convert.ToInt16(catEle.Attribute("category").Value);
-                            if (patchTd.Category.Length > 0)
-                                patchTd.Category += " - ";
-                            patchTd.Category += categories[catid - 1];
+                            if (categories.ContainsKey(catid - 1))
+                            {
+                                if (patchTd.Category.Length > 0)
+                                    patchTd.Category += " - ";
+                                patchTd.Category += categories[catid - 1];
+                            }
                         }
                     }
                     patchTd.Values = "Patch: ";
@@ -419,7 +430,8 @@ namespace UniversalPatcher
                     return retVal;
                 retVal = "Importing file " + fname + "...";
 
-                doc = new XDocument(new XComment(" Written " + DateTime.Now.ToString("G", DateTimeFormatInfo.InvariantInfo)), XElement.Load(fname));
+                //doc = new XDocument(new XComment(" Written " + DateTime.Now.ToString("G", DateTimeFormatInfo.InvariantInfo)), XElement.Load(fname));
+                doc = new XDocument(XElement.Load(fname));
                 retVal += ConvertXdf(doc);
                 retVal += "Done" + Environment.NewLine;
             }

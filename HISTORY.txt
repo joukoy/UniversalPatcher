@@ -276,3 +276,6 @@
 
 0.18.73
 - Fixed bug: Tuner: Not loading files from Tuner -folder, but loading from subfolders
+
+0.18.74
+- Bug fixes to XDF import: Don't stop to invalid Category, Remove spaces from start of tablename
