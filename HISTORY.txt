@@ -284,3 +284,6 @@
 - Patcher: Extract segments: Show fileinfo only if checkbox checked, don't seek tables
 - Fix for T43 autodetect
 - Added "sort files" for sorting large bin file libraries
+
+0.18.76
+- Disable sorter in Tourist & Basic mode

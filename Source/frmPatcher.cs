@@ -332,6 +332,8 @@ namespace UniversalPatcher
                         tabFunction.TabPages.Add(tabChecksumUtil);
                     if (!tabFunction.TabPages.Contains(tabEditExtra))
                         tabFunction.TabPages.Add(tabEditExtra);
+                    if (!tabFunction.TabPages.Contains(tabSorter))
+                        tabFunction.TabPages.Add(tabSorter);
 
                     string[] args = Environment.GetCommandLineArgs();
                     if (args.Length > 3 && args[3].Contains("fakecvn"))
@@ -391,6 +393,7 @@ namespace UniversalPatcher
 
                     tabFunction.TabPages.Remove(tabFakeCvn);
                     tabFunction.TabPages.Remove(tabEditExtra);
+                    tabFunction.TabPages.Remove(tabSorter);
 
 
                     tabControl1.TabPages.Remove(tabDebug);
