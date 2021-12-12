@@ -361,14 +361,6 @@
     <compare>==</compare>
   </DetectRule>
   <DetectRule>
-    <xml>E67.xml</xml>
-    <group>1</group>
-    <grouplogic>And</grouplogic>
-    <address>3f5:4</address>
-    <data>12605811</data>
-    <compare>==</compare>
-  </DetectRule>
-  <DetectRule>
     <xml>e78.xml</xml>
     <group>1</group>
     <grouplogic>And</grouplogic>
@@ -4629,7 +4621,7 @@
     <xml>t43.xml</xml>
     <group>3</group>
     <grouplogic>And</grouplogic>
-    <address>60001:2</address>
+    <address>60002:2</address>
     <data>0</data>
     <compare>==</compare>
     <hexdata>0001</hexdata>
@@ -4813,5 +4805,57 @@
     <data>0</data>
     <compare>==</compare>
     <hexdata>AA5555AAFFFFFFFF</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>e67.xml</xml>
+    <group>2</group>
+    <grouplogic>Or</grouplogic>
+    <address>3f5:4</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>00C05973</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>e67.xml</xml>
+    <group>2</group>
+    <grouplogic>Or</grouplogic>
+    <address>3f5:4</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>00C05019</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>diesel01-05-custom.xml</xml>
+    <group>1</group>
+    <grouplogic>Or</grouplogic>
+    <address>filesize</address>
+    <data>524288</data>
+    <compare>==</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>diesel01-05-custom.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>8002:2</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>0001</hexdata>
+  </DetectRule>
+  <DetectRule>
+    <xml>diesel01-05-custom.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>800a:2</address>
+    <data>256</data>
+    <compare>!=</compare>
+  </DetectRule>
+  <DetectRule>
+    <xml>diesel01-05-custom.xml</xml>
+    <group>2</group>
+    <grouplogic>And</grouplogic>
+    <address>6fffe:2</address>
+    <data>0</data>
+    <compare>==</compare>
+    <hexdata>4AFC</hexdata>
   </DetectRule>
 </ArrayOfDetectRule>

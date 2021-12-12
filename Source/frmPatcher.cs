@@ -2115,8 +2115,10 @@ namespace UniversalPatcher
                     {
                         string fileName = frmES.listFiles.CheckedItems[i].Tag.ToString();
                         PcmFile PCM = new PcmFile(fileName, chkAutodetect.Checked, basefile.configFileFullName);
-                        GetFileInfo(fileName, ref PCM, true, checkExtractShowinfo.Checked);
-                        string descr = Path.GetFileName(fileName).Replace(".bin", "");
+                        if (checkExtractShowinfo.Checked)
+                            ShowFileInfo(PCM, true);
+                        //GetFileInfo(fileName, ref PCM, true, checkExtractShowinfo.Checked);
+                        string descr = Path.GetFileNameWithoutExtension(fileName);
                         if (frmES.txtDescription.Text.Length > 0)
                             descr = frmES.txtDescription.Text;
                         string prefix = frmES.txtFileNamePrefix.Text.ToLower();
@@ -4351,6 +4353,94 @@ namespace UniversalPatcher
                 Properties.Settings.Default.Save();
             }
             fontDlg.Dispose();
+
+        }
+
+        private void btnSortFiles_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+                frmFileSelection frmF = new frmFileSelection();
+                frmF.btnOK.Text = "OK";
+                frmF.LoadFiles(Properties.Settings.Default.LastBINfolder);
+                if (frmF.ShowDialog(this) == DialogResult.OK)
+                {
+                    Properties.Settings.Default.LastBINfolder = frmF.txtFolder.Text;
+                    Properties.Settings.Default.Save();
+                    string dstFldr = frmF.labelCustomdst.Text;
+                    if (dstFldr.Length == 0)
+                    {
+                        Logger("No destination selected");
+                        return;
+                    }
+                    for (int i = 0; i < frmF.listFiles.CheckedItems.Count; i++)
+                    {
+                        string fName = frmF.listFiles.CheckedItems[i].Tag.ToString();
+                        PcmFile PCM = new PcmFile(fName, true, "");
+                        Logger("File: " + fName +", Platform: " + PCM.configFile + ", OS: " + PCM.OS);
+                        string dstFile;
+                        if (radioSortPlatform.Checked)
+                            dstFile = Path.Combine(dstFldr, PCM.configFile, Path.GetFileName(fName));
+                        else if (radioSortOS.Checked)
+                            dstFile = Path.Combine(dstFldr, PCM.OS, Path.GetFileName(fName));
+                        else
+                        {
+                            dstFile = Path.Combine(dstFldr, PCM.configFile, PCM.OS, Path.GetFileName(fName));
+                            if (!File.Exists(Path.Combine(dstFldr, PCM.configFile)))
+                                Directory.CreateDirectory(Path.Combine(dstFldr, PCM.configFile));
+                        }
+                        if (!File.Exists(Path.GetDirectoryName(dstFile)))
+                        {
+                            Directory.CreateDirectory(Path.GetDirectoryName(dstFile));
+                        }
+                        if (File.Exists(dstFile))
+                        {
+                            if (radioSortSkip.Checked)
+                            {
+                                Logger("File exist, skipping");
+                                continue;
+                            }
+                            else if (radioSortOverWrite.Checked)
+                            {
+                                File.Delete(dstFile);
+                            }
+                            else //Rename
+                            {
+                                uint Fnr = 0;
+                                string tmpF = Path.Combine(Path.GetDirectoryName(dstFile), Path.GetFileNameWithoutExtension(dstFile));
+                                string Extension = dstFile.Substring(tmpF.Length);
+                                while (File.Exists(dstFile))
+                                {
+                                    Fnr++;
+                                    dstFile = tmpF + "(" + Fnr.ToString() + ")" + Extension;
+                                }
+                            }
+                        }
+                        if (radioSortMove.Checked)
+                        {
+                            Logger("Moving to: " + dstFile);
+                            File.Move(fName, dstFile);
+                        }
+                        else
+                        {
+                            Logger("Copying to: " + dstFile);
+                            File.Copy(fName, dstFile);
+                        }
+
+                    }
+                    Logger("Done");
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Sort files " + line + ": " + ex.Message);
+            }
 
         }
     }

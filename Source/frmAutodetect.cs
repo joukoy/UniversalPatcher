@@ -193,7 +193,7 @@ namespace UniversalPatcher
             {
                 Logger(ex.Message);
             }
-            }
+        }
 
         private void SelectXML()
         {

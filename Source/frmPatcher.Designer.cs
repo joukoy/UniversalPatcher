@@ -247,6 +247,19 @@
             this.label22 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.comboExtrainfoSegment = new System.Windows.Forms.ComboBox();
+            this.tabSorter = new System.Windows.Forms.TabPage();
+            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.radioSortRename = new System.Windows.Forms.RadioButton();
+            this.radioSortOverWrite = new System.Windows.Forms.RadioButton();
+            this.radioSortSkip = new System.Windows.Forms.RadioButton();
+            this.groupBoxSortMode = new System.Windows.Forms.GroupBox();
+            this.radioSortMove = new System.Windows.Forms.RadioButton();
+            this.radioSortCopy = new System.Windows.Forms.RadioButton();
+            this.btnSortFiles = new System.Windows.Forms.Button();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.radioSortPlatformOS = new System.Windows.Forms.RadioButton();
+            this.radioSortOS = new System.Windows.Forms.RadioButton();
+            this.radioSortPlatform = new System.Windows.Forms.RadioButton();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -326,6 +339,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.numFakeCvnBytesFromEnd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numFakeCvnBytes)).BeginInit();
             this.tabEditExtra.SuspendLayout();
+            this.tabSorter.SuspendLayout();
+            this.groupBox9.SuspendLayout();
+            this.groupBoxSortMode.SuspendLayout();
+            this.groupBox8.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitPatcher)).BeginInit();
             this.splitPatcher.Panel1.SuspendLayout();
@@ -1618,6 +1635,7 @@
             this.tabFunction.Controls.Add(this.tabChecksumUtil);
             this.tabFunction.Controls.Add(this.tabFakeCvn);
             this.tabFunction.Controls.Add(this.tabEditExtra);
+            this.tabFunction.Controls.Add(this.tabSorter);
             this.tabFunction.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabFunction.Location = new System.Drawing.Point(0, 0);
             this.tabFunction.Name = "tabFunction";
@@ -2806,6 +2824,151 @@
             this.comboExtrainfoSegment.TabIndex = 0;
             this.comboExtrainfoSegment.SelectedIndexChanged += new System.EventHandler(this.comboExtrainfoSegment_SelectedIndexChanged);
             // 
+            // tabSorter
+            // 
+            this.tabSorter.Controls.Add(this.groupBox9);
+            this.tabSorter.Controls.Add(this.groupBoxSortMode);
+            this.tabSorter.Controls.Add(this.btnSortFiles);
+            this.tabSorter.Controls.Add(this.groupBox8);
+            this.tabSorter.Location = new System.Drawing.Point(4, 22);
+            this.tabSorter.Name = "tabSorter";
+            this.tabSorter.Size = new System.Drawing.Size(836, 118);
+            this.tabSorter.TabIndex = 8;
+            this.tabSorter.Text = "Sort files";
+            this.tabSorter.UseVisualStyleBackColor = true;
+            // 
+            // groupBox9
+            // 
+            this.groupBox9.Controls.Add(this.radioSortRename);
+            this.groupBox9.Controls.Add(this.radioSortOverWrite);
+            this.groupBox9.Controls.Add(this.radioSortSkip);
+            this.groupBox9.Location = new System.Drawing.Point(243, 14);
+            this.groupBox9.Name = "groupBox9";
+            this.groupBox9.Size = new System.Drawing.Size(114, 84);
+            this.groupBox9.TabIndex = 3;
+            this.groupBox9.TabStop = false;
+            this.groupBox9.Text = "Duplicates";
+            // 
+            // radioSortRename
+            // 
+            this.radioSortRename.AutoSize = true;
+            this.radioSortRename.Location = new System.Drawing.Point(6, 57);
+            this.radioSortRename.Name = "radioSortRename";
+            this.radioSortRename.Size = new System.Drawing.Size(65, 17);
+            this.radioSortRename.TabIndex = 2;
+            this.radioSortRename.Text = "Rename";
+            this.radioSortRename.UseVisualStyleBackColor = true;
+            // 
+            // radioSortOverWrite
+            // 
+            this.radioSortOverWrite.AutoSize = true;
+            this.radioSortOverWrite.Location = new System.Drawing.Point(6, 37);
+            this.radioSortOverWrite.Name = "radioSortOverWrite";
+            this.radioSortOverWrite.Size = new System.Drawing.Size(70, 17);
+            this.radioSortOverWrite.TabIndex = 1;
+            this.radioSortOverWrite.Text = "Overwrite";
+            this.radioSortOverWrite.UseVisualStyleBackColor = true;
+            // 
+            // radioSortSkip
+            // 
+            this.radioSortSkip.AutoSize = true;
+            this.radioSortSkip.Checked = true;
+            this.radioSortSkip.Location = new System.Drawing.Point(6, 18);
+            this.radioSortSkip.Name = "radioSortSkip";
+            this.radioSortSkip.Size = new System.Drawing.Size(46, 17);
+            this.radioSortSkip.TabIndex = 0;
+            this.radioSortSkip.TabStop = true;
+            this.radioSortSkip.Text = "Skip";
+            this.radioSortSkip.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxSortMode
+            // 
+            this.groupBoxSortMode.Controls.Add(this.radioSortMove);
+            this.groupBoxSortMode.Controls.Add(this.radioSortCopy);
+            this.groupBoxSortMode.Location = new System.Drawing.Point(162, 14);
+            this.groupBoxSortMode.Name = "groupBoxSortMode";
+            this.groupBoxSortMode.Size = new System.Drawing.Size(75, 85);
+            this.groupBoxSortMode.TabIndex = 2;
+            this.groupBoxSortMode.TabStop = false;
+            this.groupBoxSortMode.Text = "Mode";
+            // 
+            // radioSortMove
+            // 
+            this.radioSortMove.AutoSize = true;
+            this.radioSortMove.Location = new System.Drawing.Point(13, 41);
+            this.radioSortMove.Name = "radioSortMove";
+            this.radioSortMove.Size = new System.Drawing.Size(52, 17);
+            this.radioSortMove.TabIndex = 1;
+            this.radioSortMove.TabStop = true;
+            this.radioSortMove.Text = "Move";
+            this.radioSortMove.UseVisualStyleBackColor = true;
+            // 
+            // radioSortCopy
+            // 
+            this.radioSortCopy.AutoSize = true;
+            this.radioSortCopy.Checked = true;
+            this.radioSortCopy.Location = new System.Drawing.Point(13, 18);
+            this.radioSortCopy.Name = "radioSortCopy";
+            this.radioSortCopy.Size = new System.Drawing.Size(49, 17);
+            this.radioSortCopy.TabIndex = 0;
+            this.radioSortCopy.TabStop = true;
+            this.radioSortCopy.Text = "Copy";
+            this.radioSortCopy.UseVisualStyleBackColor = true;
+            // 
+            // btnSortFiles
+            // 
+            this.btnSortFiles.Location = new System.Drawing.Point(373, 19);
+            this.btnSortFiles.Name = "btnSortFiles";
+            this.btnSortFiles.Size = new System.Drawing.Size(75, 23);
+            this.btnSortFiles.TabIndex = 1;
+            this.btnSortFiles.Text = "Sort files...";
+            this.btnSortFiles.UseVisualStyleBackColor = true;
+            this.btnSortFiles.Click += new System.EventHandler(this.btnSortFiles_Click);
+            // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.radioSortPlatformOS);
+            this.groupBox8.Controls.Add(this.radioSortOS);
+            this.groupBox8.Controls.Add(this.radioSortPlatform);
+            this.groupBox8.Location = new System.Drawing.Point(13, 7);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(142, 93);
+            this.groupBox8.TabIndex = 0;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Destination folder naming";
+            // 
+            // radioSortPlatformOS
+            // 
+            this.radioSortPlatformOS.AutoSize = true;
+            this.radioSortPlatformOS.Location = new System.Drawing.Point(14, 64);
+            this.radioSortPlatformOS.Name = "radioSortPlatformOS";
+            this.radioSortPlatformOS.Size = new System.Drawing.Size(83, 17);
+            this.radioSortPlatformOS.TabIndex = 2;
+            this.radioSortPlatformOS.Text = "Platform\\OS";
+            this.radioSortPlatformOS.UseVisualStyleBackColor = true;
+            // 
+            // radioSortOS
+            // 
+            this.radioSortOS.AutoSize = true;
+            this.radioSortOS.Location = new System.Drawing.Point(14, 41);
+            this.radioSortOS.Name = "radioSortOS";
+            this.radioSortOS.Size = new System.Drawing.Size(40, 17);
+            this.radioSortOS.TabIndex = 1;
+            this.radioSortOS.Text = "OS";
+            this.radioSortOS.UseVisualStyleBackColor = true;
+            // 
+            // radioSortPlatform
+            // 
+            this.radioSortPlatform.AutoSize = true;
+            this.radioSortPlatform.Checked = true;
+            this.radioSortPlatform.Location = new System.Drawing.Point(14, 18);
+            this.radioSortPlatform.Name = "radioSortPlatform";
+            this.radioSortPlatform.Size = new System.Drawing.Size(63, 17);
+            this.radioSortPlatform.TabIndex = 0;
+            this.radioSortPlatform.TabStop = true;
+            this.radioSortPlatform.Text = "Platform";
+            this.radioSortPlatform.UseVisualStyleBackColor = true;
+            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -3158,6 +3321,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.numFakeCvnBytes)).EndInit();
             this.tabEditExtra.ResumeLayout(false);
             this.tabEditExtra.PerformLayout();
+            this.tabSorter.ResumeLayout(false);
+            this.groupBox9.ResumeLayout(false);
+            this.groupBox9.PerformLayout();
+            this.groupBoxSortMode.ResumeLayout(false);
+            this.groupBoxSortMode.PerformLayout();
+            this.groupBox8.ResumeLayout(false);
+            this.groupBox8.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitPatcher.Panel1.ResumeLayout(false);
@@ -3419,5 +3589,18 @@
         private System.Windows.Forms.RadioButton radioDtcSecondary;
         private System.Windows.Forms.RadioButton radioDtcPrimary;
         private System.Windows.Forms.ToolStripMenuItem cVNDatabaseToolStripMenuItem;
+        private System.Windows.Forms.TabPage tabSorter;
+        private System.Windows.Forms.Button btnSortFiles;
+        private System.Windows.Forms.GroupBox groupBox8;
+        private System.Windows.Forms.RadioButton radioSortPlatformOS;
+        private System.Windows.Forms.RadioButton radioSortOS;
+        private System.Windows.Forms.RadioButton radioSortPlatform;
+        private System.Windows.Forms.GroupBox groupBox9;
+        private System.Windows.Forms.RadioButton radioSortRename;
+        private System.Windows.Forms.RadioButton radioSortOverWrite;
+        private System.Windows.Forms.RadioButton radioSortSkip;
+        private System.Windows.Forms.GroupBox groupBoxSortMode;
+        private System.Windows.Forms.RadioButton radioSortMove;
+        private System.Windows.Forms.RadioButton radioSortCopy;
     }
 }

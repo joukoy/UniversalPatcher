@@ -139,6 +139,7 @@ namespace UniversalPatcher
             this.btnCustomdst.TabIndex = 10;
             this.btnCustomdst.Text = "Custom destination:";
             this.btnCustomdst.UseVisualStyleBackColor = true;
+            this.btnCustomdst.Click += new System.EventHandler(this.btnCustomdst_Click);
             // 
             // frmFileSelection
             // 
@@ -167,12 +168,12 @@ namespace UniversalPatcher
         #endregion
         public System.Windows.Forms.ListView listFiles;
         private System.Windows.Forms.Button btnBrowse;
-        private System.Windows.Forms.TextBox txtFolder;
         public System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.CheckBox chkSubfolders;
         private System.Windows.Forms.CheckBox chkIncludeCustomFileTypes;
         private System.Windows.Forms.CheckBox chkSelectAll;
         public System.Windows.Forms.Label labelCustomdst;
         public System.Windows.Forms.Button btnCustomdst;
+        public System.Windows.Forms.TextBox txtFolder;
     }
 }
