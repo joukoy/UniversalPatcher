@@ -26,7 +26,18 @@ namespace UniversalPatcher
         public double lastRawValue  { get; set; }
         public double cmpValue { get; set; }
         public TableInfo tableInfo { get; set; }
-        private bool MSB { get { return tableInfo.compareFile.pcm.platformConfig.MSB; } }
+        private bool MSB 
+        { 
+            get 
+            {
+                if (td.ByteOrder == Byte_Order.LSB)
+                    return false;
+                else if (td.ByteOrder == Byte_Order.MSB)
+                    return true;
+                else
+                    return tableInfo.compareFile.pcm.platformConfig.MSB; 
+            } 
+        }
         public TableCell ShallowCopy()
         {
             return (TableCell)this.MemberwiseClone();

@@ -382,6 +382,13 @@ public class upatcher
         patch
     }
 
+    public enum Byte_Order
+    {
+        PlatformOrder,
+        MSB,
+        LSB
+    }
+
     public static void StartupSettings()
     {
         LogReceivers = new List<RichTextBox>();
@@ -818,10 +825,15 @@ public class upatcher
         double retVal = 0;
         try
         {
+            bool msb = PCM.platformConfig.MSB;
+            if (mathTd.ByteOrder == Byte_Order.MSB)
+                msb = true;
+            else if (mathTd.ByteOrder == Byte_Order.LSB)
+                msb = false;
 
             if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
             {
-                UInt64 rawVal = (UInt64)getRawValue(myBuffer, addr, mathTd, offset,PCM.platformConfig.MSB);
+                UInt64 rawVal = (UInt64)getRawValue(myBuffer, addr, mathTd, offset,msb);
                 UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
                 if (((UInt64) rawVal & mask) == mask)
                     return 1;
@@ -831,26 +843,27 @@ public class upatcher
 
             UInt32 bufAddr = addr - offset;
 
+
             if (mathTd.DataType == InDataType.SBYTE)
                 retVal = (sbyte)myBuffer[bufAddr];
             if (mathTd.DataType == InDataType.UBYTE)
                 retVal = myBuffer[bufAddr];
             if (mathTd.DataType == InDataType.SWORD)
-                retVal = readInt16(myBuffer, bufAddr, PCM.platformConfig.MSB);
+                retVal = readInt16(myBuffer, bufAddr, msb);
             if (mathTd.DataType == InDataType.UWORD)
-                retVal = readUint16(myBuffer, bufAddr, PCM.platformConfig.MSB);
+                retVal = readUint16(myBuffer, bufAddr, msb);
             if (mathTd.DataType == InDataType.INT32)
-                retVal = readInt32(myBuffer, bufAddr, PCM.platformConfig.MSB);
+                retVal = readInt32(myBuffer, bufAddr, msb);
             if (mathTd.DataType == InDataType.UINT32)
-                retVal = readUint32(myBuffer, bufAddr, PCM.platformConfig.MSB);
+                retVal = readUint32(myBuffer, bufAddr, msb);
             if (mathTd.DataType == InDataType.INT64)
-                retVal = readInt64(myBuffer, bufAddr, PCM.platformConfig.MSB);
+                retVal = readInt64(myBuffer, bufAddr, msb);
             if (mathTd.DataType == InDataType.UINT64)
-                retVal = readUint64(myBuffer, bufAddr, PCM.platformConfig.MSB);
+                retVal = readUint64(myBuffer, bufAddr, msb);
             if (mathTd.DataType == InDataType.FLOAT32)
-                retVal = readFloat32(myBuffer, bufAddr, PCM.platformConfig.MSB);
+                retVal = readFloat32(myBuffer, bufAddr, msb);
             if (mathTd.DataType == InDataType.FLOAT64)
-                retVal = readFloat64(myBuffer, bufAddr, PCM.platformConfig.MSB);
+                retVal = readFloat64(myBuffer, bufAddr, msb);
 
             if (mathTd.Math == null || mathTd.Math.Length == 0)
                 mathTd.Math = "X";
@@ -879,12 +892,17 @@ public class upatcher
         return retVal;
     }
 
-    public static double getRawValue(byte[] myBuffer, UInt32 addr, TableData mathTd, uint offset, bool MSB)
+    public static double getRawValue(byte[] myBuffer, UInt32 addr, TableData mathTd, uint offset, bool platformMsb)
     {
         UInt32 bufAddr = addr - offset;
         double retVal = 0;
         try
         {
+            bool msb = platformMsb;
+            if (mathTd.ByteOrder == Byte_Order.MSB)
+                msb = true;
+            else if (mathTd.ByteOrder == Byte_Order.LSB)
+                msb = false;
             switch (mathTd.DataType)
             {
                 case InDataType.SBYTE:
@@ -892,21 +910,21 @@ public class upatcher
                 case InDataType.UBYTE:
                     return (byte)myBuffer[bufAddr];
                 case InDataType.SWORD:
-                    return (Int16)readInt16(myBuffer, bufAddr, MSB);
+                    return (Int16)readInt16(myBuffer, bufAddr, msb);
                 case InDataType.UWORD:
-                    return (UInt16)readUint16(myBuffer, bufAddr, MSB);
+                    return (UInt16)readUint16(myBuffer, bufAddr, msb);
                 case InDataType.INT32:
-                    return (Int32)readInt32(myBuffer, bufAddr, MSB);
+                    return (Int32)readInt32(myBuffer, bufAddr, msb);
                 case InDataType.UINT32:
-                    return (UInt32)readUint32(myBuffer, bufAddr, MSB);
+                    return (UInt32)readUint32(myBuffer, bufAddr, msb);
                 case InDataType.INT64:
-                    return (Int64)readInt64(myBuffer, bufAddr, MSB);
+                    return (Int64)readInt64(myBuffer, bufAddr, msb);
                 case InDataType.UINT64:
-                    return (UInt64)readInt64(myBuffer, bufAddr, MSB);
+                    return (UInt64)readInt64(myBuffer, bufAddr, msb);
                 case InDataType.FLOAT32:
-                    return (float)readFloat32(myBuffer, bufAddr, MSB);
+                    return (float)readFloat32(myBuffer, bufAddr, msb);
                 case InDataType.FLOAT64:
-                    return readFloat64(myBuffer, bufAddr, MSB);
+                    return readFloat64(myBuffer, bufAddr, msb);
             }
 
         }

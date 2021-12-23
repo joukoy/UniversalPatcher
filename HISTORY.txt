@@ -287,3 +287,6 @@
 
 0.18.76
 - Disable sorter in Tourist & Basic mode
+
+0.18.77
+- Support for per-table ByteOrder

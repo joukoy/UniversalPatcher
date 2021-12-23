@@ -37,6 +37,7 @@ namespace UniversalPatcher
             ExtraDescription = "";
             CompatibleOS = "";
             BitMask = "";
+            ByteOrder = Byte_Order.PlatformOrder;
         }
         //public uint id { get; set; }
         public string TableName { get; set; }
@@ -97,6 +98,7 @@ namespace UniversalPatcher
         //public bool Floating;
         public ushort Columns { get; set; }
         public ushort Rows { get; set; }
+        public Byte_Order ByteOrder { get; set; }
         public string BitMask { get; set; }
         public bool RowMajor { get; set; }
         public string Origin { get; set; }
