@@ -3910,6 +3910,7 @@ namespace UniversalPatcher
                     {
                         //Add if not already in list
                         StockCVN.Add(stock);
+                        /*
                         Logger("Saving file stockcvn.xml");
                         string FileName = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
                         using (FileStream stream = new FileStream(FileName, FileMode.Create))
@@ -3919,6 +3920,8 @@ namespace UniversalPatcher
                             stream.Close();
                         }
                         Logger("[OK]");
+                        */
+                        cvnDB.addtoStock(stock);
                     }
                 }
                 else
