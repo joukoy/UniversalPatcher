@@ -290,3 +290,6 @@
 
 0.18.77
 - Support for per-table ByteOrder
+
+0.18.78
+- Bug fix to TinuTuner DB handling, use subfolder db

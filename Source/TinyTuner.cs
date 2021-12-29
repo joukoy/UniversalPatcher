@@ -163,10 +163,15 @@ namespace UniversalPatcher
         }
         public string readTinyDBtoTableData(PcmFile PCM, List<TableData> tdList)
         {
+            if (PCM.OS == null || PCM.OS.Length == 0)
+            {
+                Logger("No OS defined");
+                return "";
+            }
             string connetionString = null;
             OleDbConnection cnn;
             string dbFile = Path.Combine(Application.StartupPath,"db", "TinyTuner.mdb");
-            if (File.Exists(dbFile))
+            if (!File.Exists(dbFile))
                 dbFile = Path.Combine(Application.StartupPath, "TinyTuner.mdb");
 
             connetionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + dbFile;
