@@ -451,6 +451,12 @@ namespace UniversalPatcher
 
                 Application.DoEvents();
                 filterTables();
+                if (treeView1.Visible)
+                {
+                    treeView1.SelectedNodes.Clear();
+                    TreeParts.addNodes(treeView1.Nodes, PCM);
+                }
+
             }
             catch (Exception ex)
             {
@@ -920,6 +926,7 @@ namespace UniversalPatcher
             PCM.LoadTableList();
             comboTableCategory.Text = "_All";
             refreshTablelist();
+
             //currentXmlFile = PCM.configFileFullName;
         }
 
@@ -2612,7 +2619,7 @@ namespace UniversalPatcher
             importDTC(ref PCM);
             importTableSeek(ref PCM);
             comboTableCategory.Text = "_All";
-            filterTables();
+            refreshTablelist();
         }
 
         private void loadTablelistnewToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2620,7 +2627,7 @@ namespace UniversalPatcher
             addNewTableList();
             PCM.LoadTableList();
             comboTableCategory.Text = "_All";
-            filterTables();
+            refreshTablelist();
         }
 
         private void openMultipleBINToolStripMenuItem_Click(object sender, EventArgs e)

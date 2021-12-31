@@ -111,9 +111,11 @@ namespace UniversalPatcher
             get
             {
                 if (platformConfig.SegmentFile != null && platformConfig.SegmentFile.Length > 0)
-                    return Path.Combine(Application.StartupPath,"XML", platformConfig.SegmentFile);
-                else
+                    return Path.Combine(Application.StartupPath, "XML", platformConfig.SegmentFile);
+                else if (configFile.Length > 0)
                     return Path.Combine(Application.StartupPath, "XML", configFile + ".xml");
+                else
+                    return "";
             }
         }
         public string OS
@@ -1897,14 +1899,17 @@ namespace UniversalPatcher
             string retVal = "";
             try
             {
-                for (int s = 0; s < segmentinfos.Length; s++)
+                if (segmentinfos != null)
                 {
-                    for (int b = 0; b < segmentAddressDatas[s].SegmentBlocks.Count; b++)
+                    for (int s = 0; s < segmentinfos.Length; s++)
                     {
-                        if (addr >= segmentAddressDatas[s].SegmentBlocks[b].Start && addr <= segmentAddressDatas[s].SegmentBlocks[b].End)
+                        for (int b = 0; b < segmentAddressDatas[s].SegmentBlocks.Count; b++)
                         {
-                            retVal = segmentinfos[s].Name;
-                            return retVal;
+                            if (addr >= segmentAddressDatas[s].SegmentBlocks[b].Start && addr <= segmentAddressDatas[s].SegmentBlocks[b].End)
+                            {
+                                retVal = segmentinfos[s].Name;
+                                return retVal;
+                            }
                         }
                     }
                 }
