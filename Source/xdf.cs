@@ -523,7 +523,7 @@ namespace UniversalPatcher
                 xdfText.Replace("REPLACE-BINSIZE", basefile.fsize.ToString("X"));
                 for (int s = 1; s < basefile.tableCategories.Count; s++)
                 {
-                    tableText.Append( "     <CATEGORY index = \"0x" + (s - 1).ToString("X") + "\" name = \"" + basefile.tableCategories[s] + "\" />" + Environment.NewLine);
+                    tableText.Append( "     <CATEGORY index = \"0x" + (s - 1).ToString("X") + "\" name = \"" + basefile.tableCategories[s].Replace("&","+") + "\" />" + Environment.NewLine);
                     lastCategory = s;
                 }
                 dtcCategory = lastCategory + 1;
@@ -545,21 +545,23 @@ namespace UniversalPatcher
 
                 //Add OS ID:
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
-                templateTxt = ReadTextFile(fName);
-                tableText = new StringBuilder(templateTxt.Replace("REPLACE-TABLEID", uniqId.ToString("X")));
-                uniqId++;
-                tableText.Replace("REPLACE-LINKMATH", "");
-                tableText.Replace("REPLACE-MATH", "x");
+                if (PCM.OS != null && PCM.OS.Length > 0)
+                {
+                    templateTxt = ReadTextFile(fName);
+                    tableText = new StringBuilder(templateTxt.Replace("REPLACE-TABLEID", uniqId.ToString("X")));
+                    uniqId++;
+                    tableText.Replace("REPLACE-LINKMATH", "");
+                    tableText.Replace("REPLACE-MATH", "x");
 
-                tableText.Replace("REPLACE-TABLEDESCRIPTION", "DON&apos;T MODIFY");
-                tableText.Replace("REPLACE-TABLETITLE", "OS ID - Don&apos;t modify, must match XDF!");
-                tableText.Replace("REPLACE-BITS", "32");
-                tableText.Replace("REPLACE-MINVALUE", basefile.OS);
-                tableText.Replace("REPLACE-MAXVALUE", basefile.OS);
-                tableText.Replace("REPLACE-TABLEADDRESS", basefile.segmentAddressDatas[basefile.OSSegment].PNaddr.Address.ToString("X"));
-                tableText.Replace("REPLACE-CATEGORY", (basefile.OSSegment + 1).ToString("X"));
-                xdfText.Append(tableText);
-
+                    tableText.Replace("REPLACE-TABLEDESCRIPTION", "DON&apos;T MODIFY");
+                    tableText.Replace("REPLACE-TABLETITLE", "OS ID - Don&apos;t modify, must match XDF!");
+                    tableText.Replace("REPLACE-BITS", "32");
+                    tableText.Replace("REPLACE-MINVALUE", basefile.OS);
+                    tableText.Replace("REPLACE-MAXVALUE", basefile.OS);
+                    tableText.Replace("REPLACE-TABLEADDRESS", basefile.segmentAddressDatas[basefile.OSSegment].PNaddr.Address.ToString("X"));
+                    tableText.Replace("REPLACE-CATEGORY", (basefile.OSSegment + 1).ToString("X"));
+                    xdfText.Append(tableText);
+                }
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
                 templateTxt = ReadTextFile(fName);
                 for (int t = 0; t < tdList.Count; t++)

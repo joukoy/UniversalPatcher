@@ -300,3 +300,7 @@
 
 0.18.80
 - MSB/LSB support to xdf export
+
+0.18.81
+- XDF export without segment definitions
+- New column to TableData: ExtraCategories

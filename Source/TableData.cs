@@ -105,6 +105,7 @@ namespace UniversalPatcher
         public string Values { get; set; }
         public string ColumnHeaders { get; set; }
         public string RowHeaders { get; set; }
+        public string ExtraCategories { get; set; }
         public string TableDescription { get; set; }
         public string ExtraDescription { get; set; }
         private string altOS;

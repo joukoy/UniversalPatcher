@@ -1926,6 +1926,8 @@ namespace UniversalPatcher
             int retVal = -1;
             try
             {
+                if (segmentinfos == null)
+                    return -1;
                 for (int s = 0; s < segmentinfos.Length; s++)
                 {
                     for (int b = 0; b < segmentAddressDatas[s].SegmentBlocks.Count; b++)
