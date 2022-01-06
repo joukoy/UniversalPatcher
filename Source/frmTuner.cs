@@ -1736,8 +1736,12 @@ namespace UniversalPatcher
             try
             {
                 if (treeView1.SelectedNode != null)
-                    if (treeView1.SelectedNode.Name == "Patches" || treeView1.SelectedNode.Parent.Name == "Patches")
+                {
+                    if (treeView1.SelectedNode.Name == "Patches")
                         return;
+                    if (treeView1.SelectedNode.Parent != null && treeView1.SelectedNode.Parent.Name == "Patches")
+                        return;
+                }
                 TableData selTd = (TableData)dataGridView1.CurrentRow.DataBoundItem;
                 showTableDescription(PCM,selTd);
             }

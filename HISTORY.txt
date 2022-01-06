@@ -304,3 +304,7 @@
 0.18.81
 - XDF export without segment definitions
 - New column to TableData: ExtraCategories
+
+0.18.82
+- Fixed bug: Tuner: Table preview stop updating in some cases
+
