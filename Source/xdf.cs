@@ -130,6 +130,10 @@ namespace UniversalPatcher
                                     Floating = true;
                                 else
                                     Floating = false;
+                                if ((flags & 2) == 2)
+                                {
+                                    xdf.ByteOrder = Byte_Order.LSB;
+                                }
                                 if ((flags & 4) == 4)
                                     xdf.RowMajor = false;
                                 else
@@ -527,6 +531,10 @@ namespace UniversalPatcher
                 lastCategory = dtcCategory + 1;
                 tableText.Append("     <CATEGORY index = \"0x" + (lastCategory - 1).ToString("X") + "\" name = \"Other\" />");
                 xdfText.Replace("REPLACE-CATEGORYNAME", tableText.ToString() + Environment.NewLine);
+                if (!PCM.platformConfig.MSB)
+                {
+                    xdfText.Replace("lsbfirst=\"0\"", "lsbfirst=\"1\"");
+                }
                 
                 fName = Path.Combine(Application.StartupPath, "Templates", basefile.configFile + "-checksum.txt");
                 if (File.Exists(fName))
@@ -664,6 +672,10 @@ namespace UniversalPatcher
                         if (getSigned(tdList[t].DataType))
                         {
                             tableFlags++;
+                        }
+                        if (tdList[t].ByteOrder == Byte_Order.LSB)
+                        {
+                            tableFlags += 2;
                         }
                         if (tdList[t].RowMajor == false)
                         {

@@ -297,3 +297,6 @@
 0.18.79
 - Fixed bug: empty/unknown platform: don't try to open "-platform.xml" (it may exist)
 - Tuner: Update left side tree after loading tablelist XML
+
+0.18.80
+- MSB/LSB support to xdf export
