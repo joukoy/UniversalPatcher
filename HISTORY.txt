@@ -308,3 +308,5 @@
 0.18.82
 - Fixed bug: Tuner: Table preview stop updating in some cases
 
+0.18.83
+- XDF Export: Support for linked X/Y axis tables (Requires new xdftable-template)

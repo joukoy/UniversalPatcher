@@ -6,6 +6,7 @@
       <EMBEDDEDDATA mmedelementsizebits="REPLACE-BITS" mmedmajorstridebits="-32" mmedminorstridebits="0" />
       <units>REPLACE-UNITS</units>
       <indexcount>REPLACE-COLCOUNT</indexcount>
+REPLACE-EMBEDINFOX
       <outputtype>4</outputtype>
       <datatype>0</datatype>
       <unittype>0</unittype>
@@ -21,6 +22,7 @@ REPLACE-TABLECOLS
     <XDFAXIS id="y" uniqueid="0x0">
       <EMBEDDEDDATA mmedelementsizebits="REPLACE-BITS" mmedmajorstridebits="-32" mmedminorstridebits="0" />
       <indexcount>REPLACE-ROWCOUNT</indexcount>
+REPLACE-EMBEDINFOY
       <outputtype>4</outputtype>
       <datatype>2</datatype>
       <unittype>2</unittype>

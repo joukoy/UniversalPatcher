@@ -451,7 +451,21 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        private string linkConversionTable(string mathStr, List<int> linkIds, List<string> tableNames, out string linkTxt)
+        private string linkConversionHeader(string HdrTxt, Dictionary<string, string> tableNameTPid)
+        {
+            //Examples: Table: haderTable
+            //Guid: headerTable
+            string retVal = "";
+            string conversionTable = HdrTxt.Substring(HdrTxt.IndexOf(':') + 1 ).Trim(); //Remove: table: or guid:
+            if (tableNameTPid.ContainsKey(conversionTable))
+            {
+                string idTxt = tableNameTPid[conversionTable];
+                retVal = "      <embedinfo type=\"3\" linkobjid=\"0x" + idTxt + "\" />";                
+            }
+            return retVal;
+        }
+
+        private string linkConversionTable(string mathStr, Dictionary<string,string> tableNameTPid, out string linkTxt)
         {
             //Example: TABLE:'MAF Scalar #1'
             string retVal = mathStr;
@@ -460,12 +474,28 @@ namespace UniversalPatcher
             int mid = mathStr.IndexOf("'", start + 7);
             string conversionTable = mathStr.Substring(start, mid - start + 1);            
             string table = conversionTable.Replace("'", "");
-            int linkIndex = tableNames.IndexOf(table);
-            if (linkIndex > -1)
+            if (tableNameTPid.ContainsKey(conversionTable))
             {
-                int linkId = linkIds[linkIndex];
                 retVal = mathStr.Replace("table:" + conversionTable, "s");
-                linkTxt = Environment.NewLine + "      <VAR id=\"s\" type=\"link\" linkid=\"0x" + linkId.ToString("X") +  "\" />";
+                linkTxt = Environment.NewLine + "      <VAR id=\"s\" type=\"link\" linkid=\"0x" + tableNameTPid[conversionTable] +  "\" />";
+            }
+
+            return retVal;
+        }
+
+        private string linkConversionGuid(string mathStr, Dictionary<string, string> tableNameTPid, out string linkTxt)
+        {
+            //Example: TABLE:'MAF Scalar #1'
+            string retVal = mathStr;
+            linkTxt = "";
+            int start = mathStr.IndexOf("guid:") + 5;
+            int mid = mathStr.IndexOf("'", start + 6);
+            string guidTxt = mathStr.Substring(start, mid - start + 1);
+            string table = guidTxt.Replace("'", "");
+            if (tableNameTPid.ContainsKey(guidTxt))
+            {
+                retVal = mathStr.Replace("table:" + guidTxt, "s");
+                linkTxt = Environment.NewLine + "      <VAR id=\"s\" type=\"link\" linkid=\"0x" + tableNameTPid[guidTxt] + "\" />";
             }
 
             return retVal;
@@ -511,11 +541,27 @@ namespace UniversalPatcher
             int lastCategory = 0;
             int dtcCategory = 0;
             int uniqId = 0x100;
-            List<int> uniqIds = new List<int>();
-            List<string> tableNames = new List<string>();   //Store constant id/name for later use
+            //List<int> uniqIds = new List<int>();
+            //List<string> tableNames = new List<string>();   //Store constant id/name for later use
+
+            Dictionary<string, int> tableNameNr = new Dictionary<string, int>();
+            Dictionary<string, string> tableNameTPid = new Dictionary<string, string>();
+            Dictionary<string, string> tableGuidTPid = new Dictionary<string, string>();
+
             try
             {
-
+                //Reserve TunerPro ID for all tables and add to dictionaries:
+                for (int nr =0; nr < tdList.Count;nr++)
+                {
+                    TableData td1 = tdList[nr];
+                    if (!tableNameNr.ContainsKey(td1.TableName))
+                    {
+                        tableNameNr.Add(td1.TableName, nr);
+                        tableNameTPid.Add(td1.TableName, uniqId.ToString("X"));
+                    }
+                    tableGuidTPid.Add(td1.guid.ToString(), uniqId.ToString("X"));
+                    uniqId++;
+                }
                 string fName = Path.Combine(Application.StartupPath, "Templates", "xdfheader.txt");
                 StringBuilder xdfText = new StringBuilder(ReadTextFile(fName));
                 xdfText.Replace("REPLACE-TIMESTAMP", DateTime.Today.ToString("MM/dd/yyyy H:mm"));
@@ -567,22 +613,23 @@ namespace UniversalPatcher
                 for (int t = 0; t < tdList.Count; t++)
                 {
                     //Add all constants
-                    if (tdList[t].Rows < 2 && tdList[t].OutputType != OutDataType.Flag)
+                    TableData td = tdList[t];
+                    if (td.Columns < 2 && td.Rows < 2 && td.OutputType != OutDataType.Flag)
                     {
-                        string tableName = tdList[t].TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;"); ;
-                        if (tdList[t].TableName == null || tdList[t].TableName.Length == 0)
-                            tableName = tdList[t].Address;
+                        string tableName = td.TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;"); ;
+                        if (td.TableName == null || td.TableName.Length == 0)
+                            tableName = td.Address;
                         tableText = new StringBuilder(templateTxt.Replace("REPLACE-TABLETITLE", tableName));
-                        int s = basefile.GetSegmentNumber(tdList[t].addrInt);
+                        int s = basefile.GetSegmentNumber(td.addrInt);
                         if (s == -1) s = lastCategory;
                         tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
-                        tableText.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
-                        uniqIds.Add(uniqId);
-                        tableNames.Add(tdList[t].TableName.ToLower());
-                        uniqId++;
+                        tableText.Replace("REPLACE-TABLEID", tableGuidTPid[td.guid.ToString()]);
+                        //uniqIds.Add(uniqId);
+                        //tableNames.Add(td.TableName.ToLower());
+                        //uniqId++;
 
                         string linkTxt = "";
-                        string mathTxt = tdList[t].Math.ToLower();
+                        string mathTxt = td.Math.ToLower();
                         if (mathTxt.Contains("raw:"))
                         {
                             mathTxt = linkConversionRaw(mathTxt, out linkTxt);
@@ -590,15 +637,15 @@ namespace UniversalPatcher
                         tableText.Replace("REPLACE-LINKMATH", linkTxt);
                         tableText.Replace("REPLACE-MATH", mathTxt);
 
-                        tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
-                        string descr = tdList[t].TableDescription;
-                        if (tdList[t].Values.ToLower().StartsWith("enum:"))
-                            descr += ", " + tdList[t].Values;
+                        tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(td.addrInt + td.Offset)).ToString("X"));
+                        string descr = td.TableDescription;
+                        if (td.Values.ToLower().StartsWith("enum:"))
+                            descr += ", " + td.Values;
                         descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
                         tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
-                        tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
-                        tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
-                        tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
+                        tableText.Replace("REPLACE-BITS", getBits(td.DataType).ToString());
+                        tableText.Replace("REPLACE-MINVALUE", td.Min.ToString());
+                        tableText.Replace("REPLACE-MAXVALUE", td.Max.ToString());
                         xdfText.Append(tableText);       //Add generated table to end of xdfText
                     }
                 }
@@ -609,19 +656,20 @@ namespace UniversalPatcher
                 for (int t = 0; t < tdList.Count; t++)
                 {
                     //Add all tables
-                    if (tdList[t].Dimensions() > 1)
+                    TableData td = tdList[t];
+                    if (td.Dimensions() > 1)
                     {
-                        string tableName = tdList[t].TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;"); 
-                        if (tdList[t].TableName == null || tdList[t].TableName.Length == 0)
-                            tableName = tdList[t].Address;
+                        string tableName = td.TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;"); 
+                        if (td.TableName == null || td.TableName.Length == 0)
+                            tableName = td.Address;
                         tableText = new StringBuilder(templateTxt.Replace("REPLACE-TABLETITLE", tableName));
-                        int s = basefile.GetSegmentNumber(tdList[t].addrInt);
+                        int s = basefile.GetSegmentNumber(td.addrInt);
                         if (s == -1) s = lastCategory;
-                        if (tdList[t].Category != null && tdList[t].Category != "")
+                        if (td.Category != null && td.Category != "")
                         {
                             for (int c = 1; c < PCM.tableCategories.Count; c++)
                             {
-                                if (PCM.tableCategories[c] == tdList[t].Category)
+                                if (PCM.tableCategories[c] == td.Category)
                                 {
                                     tableText = tableText.Replace("REPLACE-CATEGORY", c.ToString());
                                     break;
@@ -632,9 +680,9 @@ namespace UniversalPatcher
                         {
                             tableText.Replace("REPLACE-CATEGORY", s.ToString());
                         }
-                        /*if (tdList[t].Values.StartsWith("Enum: ") && !descr.ToLower().Contains("enum"))
+                        /*if (td.Values.StartsWith("Enum: ") && !descr.ToLower().Contains("enum"))
                         {
-                            string[] hParts = tdList[t].Values.Substring(6).Split(',');
+                            string[] hParts = td.Values.Substring(6).Split(',');
                             for (int x = 0; x < hParts.Length; x++)
                             {
                                 descr += Environment.NewLine + hParts[x];
@@ -642,9 +690,9 @@ namespace UniversalPatcher
                         }*/
 
                         string linkTxt = "";
-                        string mathTxt = tdList[t].Math.ToLower();
+                        string mathTxt = td.Math.ToLower();
                         if (mathTxt.Contains("table:"))
-                            mathTxt = linkConversionTable(mathTxt, uniqIds, tableNames, out linkTxt);
+                            mathTxt = linkConversionTable(mathTxt, tableNameTPid, out linkTxt);
                         if (mathTxt.Contains("raw:"))
                         {
                             string tmpTxt = "";
@@ -654,50 +702,58 @@ namespace UniversalPatcher
                         tableText.Replace("REPLACE-LINKMATH", linkTxt);
                         tableText.Replace("REPLACE-MATH", mathTxt);
 
-                        tableText.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
-                        uniqId++;
-                        tableText.Replace("REPLACE-UNITS", tdList[t].Units);
-                        tableText.Replace("REPLACE-ROWCOUNT", tdList[t].Rows.ToString());
-                        tableText.Replace("REPLACE-COLCOUNT", tdList[t].Columns.ToString());
-                        tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
-                        tableText.Replace("REPLACE-DECIMALS", tdList[t].Decimals.ToString());
-                        tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)tdList[t].OutputType).ToString());
-                        tableText.Replace("REPLACE-TABLEADDRESS",((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
-                        string descr = tdList[t].TableDescription;
-                        if (tdList[t].Values.ToLower().StartsWith("enum:"))
-                            descr += ", " + tdList[t].Values;
+                        tableText.Replace("REPLACE-TABLEID", tableGuidTPid[td.guid.ToString()]);
+                        tableText.Replace("REPLACE-UNITS", td.Units);
+                        tableText.Replace("REPLACE-ROWCOUNT", td.Rows.ToString());
+                        tableText.Replace("REPLACE-COLCOUNT", td.Columns.ToString());
+                        tableText.Replace("REPLACE-BITS", getBits(td.DataType).ToString());
+                        tableText.Replace("REPLACE-DECIMALS", td.Decimals.ToString());
+                        tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)td.OutputType).ToString());
+                        tableText.Replace("REPLACE-TABLEADDRESS",((uint)(td.addrInt + td.Offset)).ToString("X"));
+                        string descr = td.TableDescription;
+                        if (td.Values.ToLower().StartsWith("enum:"))
+                            descr += ", " + td.Values;
                         descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
                         tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
-                        tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
-                        tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
+                        tableText.Replace("REPLACE-MINVALUE", td.Min.ToString());
+                        tableText.Replace("REPLACE-MAXVALUE", td.Max.ToString());
                         int tableFlags = 0;
-                        if (getSigned(tdList[t].DataType))
+                        if (getSigned(td.DataType))
                         {
                             tableFlags++;
                         }
-                        if (tdList[t].ByteOrder == Byte_Order.LSB)
+                        if (td.ByteOrder == Byte_Order.LSB)
                         {
                             tableFlags += 2;
                         }
-                        if (tdList[t].RowMajor == false)
+                        if (td.RowMajor == false)
                         {
                             tableFlags += 4;
                         }
                         tableText.Replace("REPLACE-TYPEFLAGS", tableFlags.ToString("X2"));
 
                         tableRows = new StringBuilder();
-                        if (tdList[t].RowHeaders == "")
+                        string embedinfo = "";
+                        if (td.RowHeaders == "")
                         {
-                            for (int d = 0; d < tdList[t].Rows; d++)
+                            for (int d = 0; d < td.Rows; d++)
                             {
                                 tableRows.Append("     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />");
-                                if (d < tdList[t].Rows - 1)
+                                if (d < td.Rows - 1)
                                     tableRows.Append(Environment.NewLine);
                             }
                         }
+                        else if (td.RowHeaders.ToLower().StartsWith("table:"))
+                        {
+                            embedinfo = linkConversionHeader(td.RowHeaders, tableNameTPid);
+                        }
+                        else if (td.RowHeaders.ToLower().StartsWith("guid:"))
+                        {
+                            embedinfo = linkConversionHeader(td.RowHeaders, tableGuidTPid);
+                        }
                         else
                         {
-                            string[] hParts = tdList[t].RowHeaders.Split(',');
+                            string[] hParts = td.RowHeaders.Split(',');
                             for (int row = 0; row < hParts.Length; row++)
                             {
                                 tableRows.Append("     <LABEL index=\"" + row.ToString() + "\" value=\"" + hParts[row] + "\" />");
@@ -706,19 +762,29 @@ namespace UniversalPatcher
                             }
                         }
                         tableText = tableText.Replace("REPLACE-TABLEROWS", tableRows.ToString());
+                        tableText = tableText.Replace("REPLACE-EMBEDINFOY", embedinfo);
+
                         StringBuilder tableCols = new StringBuilder();
-                        if (tdList[t].ColumnHeaders == "")
+                        if (td.ColumnHeaders == "")
                         {
-                            for (int d = 0; d < tdList[t].Columns; d++)
+                            for (int d = 0; d < td.Columns; d++)
                             {
                                 tableCols.Append("     <LABEL index=\"" + d.ToString() + "\" value=\"" + d.ToString() + "\" />");
-                                if (d < tdList[t].Columns - 1)
+                                if (d < td.Columns - 1)
                                     tableCols.Append(Environment.NewLine);
                             }
-                        }                        
+                        }
+                        else if (td.ColumnHeaders.ToLower().StartsWith("table:"))
+                        {
+                            embedinfo = linkConversionHeader(td.ColumnHeaders, tableNameTPid);
+                        }
+                        else if (td.RowHeaders.ToLower().StartsWith("guid:"))
+                        {
+                            embedinfo = linkConversionHeader(td.ColumnHeaders, tableGuidTPid);
+                        }
                         else
                         {
-                            string[] hParts = tdList[t].ColumnHeaders.Split(',');
+                            string[] hParts = td.ColumnHeaders.Split(',');
                             for (int col = 0; col < hParts.Length; col++)
                             {
                                 tableCols.Append("     <LABEL index=\"" + col.ToString() + "\" value=\"" + hParts[col] + "\" />");
@@ -727,6 +793,7 @@ namespace UniversalPatcher
                             }
                         }
                         tableText = tableText.Replace("REPLACE-TABLECOLS", tableCols.ToString());
+                        tableText = tableText.Replace("REPLACE-EMBEDINFOX", embedinfo);
 
                         xdfText.Append(tableText.ToString());       //Add generated table to end of xdfText
                     }
@@ -737,24 +804,24 @@ namespace UniversalPatcher
                 templateTxt = ReadTextFile(fName);
                 for (int t = 0; t < tdList.Count; t++)
                 {
-                    //Add all constants
-                    if (tdList[t].OutputType == OutDataType.Flag)
+                    //Add all flags
+                    TableData td = tdList[t];
+                    if (td.OutputType == OutDataType.Flag)
                     {
-                        string tableName = tdList[t].TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;"); 
-                        if (tdList[t].TableName == null || tdList[t].TableName.Length == 0)
-                            tableName = tdList[t].Address;
+                        string tableName = td.TableName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;"); 
+                        if (td.TableName == null || td.TableName.Length == 0)
+                            tableName = td.Address;
                         tableText = new StringBuilder(templateTxt.Replace("REPLACE-TABLETITLE", tableName));
-                        int s = basefile.GetSegmentNumber(tdList[t].addrInt);
+                        int s = basefile.GetSegmentNumber(td.addrInt);
                         if (s == -1) s = lastCategory;
                         tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
-                        tableText.Replace("REPLACE-TABLEID", uniqId.ToString("X"));
-                        uniqId++;
-                        tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(tdList[t].addrInt + tdList[t].Offset)).ToString("X"));
+                        tableText.Replace("REPLACE-TABLEID", tableGuidTPid[td.guid.ToString()]);
+                        tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(td.addrInt + td.Offset)).ToString("X"));
                         tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
-                        tableText.Replace("REPLACE-BITS", getBits(tdList[t].DataType).ToString());
-                        tableText.Replace("REPLACE-MINVALUE", tdList[t].Min.ToString());
-                        tableText.Replace("REPLACE-MAXVALUE", tdList[t].Max.ToString());
-                        tableText.Replace("REPLACE-MASK", tdList[t].BitMask);
+                        tableText.Replace("REPLACE-BITS", getBits(td.DataType).ToString());
+                        tableText.Replace("REPLACE-MINVALUE", td.Min.ToString());
+                        tableText.Replace("REPLACE-MAXVALUE", td.Max.ToString());
+                        tableText.Replace("REPLACE-MASK", td.BitMask);
                         xdfText.Append(tableText);       //Add generated table to end of xdfText
 
                     }
