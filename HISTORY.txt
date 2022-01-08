@@ -310,3 +310,7 @@
 
 0.18.83
 - XDF Export: Support for linked X/Y axis tables (Requires new xdftable-template)
+
+0.18.84
+- XDF import: Support for linked X/Y axis tables, more parameters supported: Units, Min/max..
+

@@ -20,6 +20,7 @@ namespace UniversalPatcher
         }
         private PcmFile PCM;
         private List<TableData> tdList;
+
         private string convertMath(string math)
         {
             string retVal = math.ToLower();
@@ -33,7 +34,7 @@ namespace UniversalPatcher
             else if (retVal.StartsWith("x/"))
                 retVal = retVal.Replace("x/", "x*");
             else if (retVal.Contains("*"))
-                retVal = math.Replace("*","/");
+                retVal = math.Replace("*", "/");
 
             return retVal;
         }
@@ -46,13 +47,307 @@ namespace UniversalPatcher
             public int tdId;
         }
 
-        private string ConvertXdf(XDocument doc)
+        private enum LabelSource
+        {
+            Manual,
+            Internal,
+            Linked,
+            LinkedScale
+        }
+
+        private enum UnitType
+        {
+            None = 0,
+            External = 1,
+            Undefined = 2,
+            Unknown = 3,
+            AFR = 21,
+            Amps = 40,
+            Bar = 19,
+            Centimeters = 46,
+            Centipoise = 95,
+            Count = 26,
+            CubicCentimeters = 60,
+            CubicFeet = 57,
+            CubicInches = 58,
+            CubicMeters = 59,
+            CubicMillimeters = 61,
+            CubicYards = 56,
+            Days = 81,
+            Decibels = 31,
+            Celsius = 15,
+            Fahrenheit = 14,
+            Kelvin = 16,
+            DutyCycle = 68,
+            FeetPerSecond = 8,
+            FluidOunces = 66,
+            FootPounds = 75,
+            Gallons = 65,
+            Grams = 91,
+            GramsPerSecond = 11,
+            Hertz = 28,
+            Horsepower = 70,
+            Hours = 82,
+            InchesOfMercury = 99,
+            InchesOfWater = 101,
+            InchPounds = 76,
+            Joules = 72,
+            Kilograms = 92,
+            KilogramsPerHour = 13,
+            Kilohertz = 29,
+            Kilometers = 42,
+            KilometersPerHour = 6,
+            KilometersPerLiter = 79,
+            Kilopascal = 17,
+            Kilowatts = 35,
+            Knots = 7,
+            Lambda = 22,
+            Liters = 62,
+            LitersPer100km = 78,
+            LV16 = 25,
+            LV8 = 24,
+            Megahertz = 30,
+            Megawatts = 36,
+            Meters = 45,
+            MetersPerSec = 9,
+            MetersPerSecond = 10,
+            Microseconds = 86,
+            Miles = 43,
+            MilesPerGallon = 77,
+            MilesPerHour = 5,
+            Milliamps = 41,
+            Millibar = 20,
+            Milligrams = 90,
+            Millimeters = 47,
+            Milliohms = 39,
+            Milliseconds = 85,
+            Millivolts = 33,
+            Milliwatts = 37,
+            Minutes = 83,
+            mmOfMercury = 98,
+            mmOfWater = 100,
+            Multiplier = 97,
+            NauticalMile = 44,
+            NewtonCentimeter = 74,
+            NewtonMeters = 73,
+            Newtons = 71,
+            Ohms = 38,
+            Ounces = 89,
+            PascalSecond = 96,
+            Percent = 67,
+            Pints = 64,
+            Poise = 94,
+            Pounds = 88,
+            PoundsPerHour = 12,
+            PoundsPerSquare = 18,
+            PulseWidth = 69,
+            Quarts = 63,
+            RevolutionsPerMin = 4,
+            RotationalDegrees = 23,
+            Seconds = 84,
+            SquareCentimeters = 54,
+            SquareFeet = 50,
+            SquareInches = 51,
+            SquareKilometers = 52,
+            SquareMeters = 53,
+            SquareMiles = 48,
+            SquareMillimeters = 55,
+            SquareYards = 49,
+            Steps = 27,
+            Tonne = 93,
+            Tons = 87,
+            Volts = 32,
+            Watts = 34,
+            Years = 80
+        }
+
+        private TableData createTableFromAxis(Axis ax)
+        {
+            TableData td = new TableData();
+            td.Address = ax.Addr;
+            td.ByteOrder = ax.ByteOrder;
+            td.Columns = 1;
+            td.Rows = ax.IndexCount;
+            td.DataType = ax.InputType;
+            td.OutputType = ax.OutputType;
+            td.Decimals = ax.Decimals;
+            td.Math = ax.Math;
+            td.Min = ax.Min;
+            td.Max = ax.Max;
+            td.Units = ax.Units;
+            td.Category = "AXIS";
+            return td;
+        }
+
+        private class Axis
+        {
+            public Axis()
+            {
+                Addr = "";
+            }
+            public string Addr { get; set; }
+            public string Units { get; set; }
+            public string Math { get; set; }
+            public string Headers { get; set; }
+            public string LinkId { get; set; }
+            public ushort IndexCount { get; set; }
+            public ushort Decimals { get; set; }
+            public byte elementSize { get; set; }
+            public OutDataType OutputType { get; set; }
+            public InDataType InputType { get; set; }
+            public bool Signed { get; set; }
+            public bool Floating { get; set; }
+            public Byte_Order ByteOrder { get; set; }
+            public bool RowMajor { get; set; }
+            public double Min { get; set; }
+            public double Max { get; set; }
+            public List<string> multiMath = new List<string>();
+            public List<string> multiAddr = new List<string>();
+            public List<TableLink> tableLinks = new List<TableLink>();
+            public List<TableLink> tableTargets = new List<TableLink>();
+
+            public void convertAxis(XElement axle, ref List<TableData>tdList)
+            {
+                try
+                {
+                    foreach (XElement lbl in axle.Elements("LABEL"))
+                    {
+                        Headers += lbl.Attribute("value").Value + ",";
+                    }
+                    if (Headers != null)
+                        Headers = Headers.Trim(',');
+
+                    if (axle.Element("units") != null && axle.Element("units").Value.Length > 0)
+                    {
+                        Units = axle.Element("units").Value;
+                    }
+                    else if (axle.Element("unittype") != null)
+                    {
+                        int ut = Convert.ToInt32(axle.Element("unittype").Value);
+                        if (ut > 0)
+                            Units = ((UnitType)ut).ToString();
+                    }
+                    if (axle.Element("min") != null)
+                        Min = Convert.ToDouble(axle.Element("min").Value, System.Globalization.CultureInfo.InvariantCulture);
+                    if (axle.Element("max") != null)
+                        Max = Convert.ToDouble(axle.Element("max").Value, System.Globalization.CultureInfo.InvariantCulture);
+                    if (axle.Element("indexcount") != null)
+                        IndexCount = Convert.ToUInt16(axle.Element("indexcount").Value);
+
+                    if (axle.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
+                        Addr = axle.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
+                    string tmp = axle.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim();
+                    string size = (Convert.ToInt32(tmp) / 8).ToString();
+                    elementSize = (byte)(Convert.ToInt32(tmp) / 8);
+                    Math = axle.Element("MATH").Attribute("equation").Value.Trim().Replace("*.", "*0.");
+                    Math = Math.Replace("/.", "/0.").ToLower();
+                    Math = Math.Replace("+ -", "-").Replace("+-", "-").Replace("++", "+").Replace("+ + ", "+");
+                    if (axle.Element("decimalpl") != null)
+                        Decimals = Convert.ToUInt16(axle.Element("decimalpl").Value);
+                    if (axle.Element("outputtype") != null)
+                        OutputType = (OutDataType)Convert.ToUInt16(axle.Element("outputtype").Value);
+                    if (axle.Element("EMBEDDEDDATA") != null && axle.Element("EMBEDDEDDATA").Attribute("mmedtypeflags") != null)
+                    {
+                        byte flags = Convert.ToByte(axle.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value, 16);
+                        Signed = Convert.ToBoolean(flags & 1);
+                        if ((flags & 0x10000) == 0x10000)
+                            Floating = true;
+                        else
+                            Floating = false;
+                        if ((flags & 2) == 2)
+                        {
+                            ByteOrder = Byte_Order.LSB;
+                        }
+                        if ((flags & 4) == 4)
+                            RowMajor = false;
+                        else
+                            RowMajor = true;
+                    }
+
+                    if (axle.Element("embedinfo") != null && axle.Element("embedinfo").Attribute("linkobjid") != null)
+                    {
+                        LinkId = axle.Element("embedinfo").Attribute("linkobjid").Value.ToString();
+                    }
+                    foreach (XElement rowMath in axle.Elements("MATH"))
+                    {
+                        if (rowMath.Element("VAR").Attribute("address") != null)
+                        {
+                            //Table have different address for every (?) row
+                            Debug.WriteLine(rowMath.Element("VAR").Attribute("address").Value);
+                            Debug.WriteLine(rowMath.Attribute("equation").Value);
+                            multiAddr.Add(rowMath.Element("VAR").Attribute("address").Value);
+                            multiMath.Add(rowMath.Attribute("equation").Value);
+                        }
+                        foreach (XElement mathVar in rowMath.Elements("VAR"))
+                        {
+                            if (mathVar.Attribute("id") != null)
+                            {
+                                string mId = mathVar.Attribute("id").Value.ToLower();
+                                if (mId != "x")
+                                {
+                                    if (mathVar.Attribute("type") != null && mathVar.Attribute("type").Value == "link")
+                                    {
+                                        //Get math values from other table
+                                        string linktable = mathVar.Attribute("linkid").Value;
+                                        TableLink tl = new TableLink();
+                                        tl.tdId = tdList.Count;
+                                        tl.variable = mId;
+                                        tl.xdfId = linktable;
+                                        tableLinks.Add(tl);
+                                    }
+                                    if (mathVar.Attribute("type") != null && mathVar.Attribute("type").Value == "address")
+                                    {
+                                        string addrStr = mathVar.Attribute("address").Value.ToLower().Replace("0x", "");
+                                        string bits = "8";
+                                        bool lsb = false;
+                                        bool isSigned = false;
+                                        if (mathVar.Attribute("sizeinbits") != null)
+                                            bits = mathVar.Attribute("sizeinbits").Value;
+                                        if (mathVar.Attribute("flags") != null)
+                                        {
+                                            byte flags = Convert.ToByte(mathVar.Attribute("flags").Value, 16);
+                                            isSigned = Convert.ToBoolean(flags & 1);
+                                            if ((flags & 4) == 4)
+                                                lsb = true;
+                                            else
+                                                lsb = false;
+                                        }
+                                        InDataType idt = convertToDataType(bits, isSigned, false);
+                                        string replaceStr = "raw:" + addrStr + ":" + idt.ToString();
+                                        if (lsb)
+                                            replaceStr += ":lsb ";
+                                        else
+                                            replaceStr += ":msb ";
+                                        Math = Math.Replace(mId, replaceStr);
+                                        Math = Math.Replace("+ -", "-").Replace("+-", "-").Replace("++", "+").Replace("+ + ", "+");
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    var st = new StackTrace(ex, true);
+                    // Get the top stack frame
+                    var frame = st.GetFrame(st.FrameCount - 1);
+                    // Get the line number from the stack frame
+                    var line = frame.GetFileLineNumber();
+                    Logger("ConvertAxis, line " + line + ": " + ex.Message + Environment.NewLine);
+                }
+            }
+        }
+
+    private string ConvertXdf(XDocument doc)
         {
             string retVal = "";
             try
             {
                 //List<string> categories = new List<string>();
                 Dictionary<int, string> categories = new Dictionary<int, string>();
+                Dictionary<string, Guid> TpIdGuid = new Dictionary<string, Guid>();
                 List<TableLink> tableLinks = new List<TableLink>();
                 List<TableLink> tableTargets = new List<TableLink>();                
 
@@ -72,140 +367,84 @@ namespace UniversalPatcher
                     xdf.Origin = "xdf";
                     xdf.Min = double.MinValue;
                     xdf.Max = double.MaxValue;
-                    string RowHeaders = "";
-                    string ColHeaders = "";
-                    string size = "";
-                    string math = "";
-                    int elementSize = 0;
-                    bool Signed = false;
-                    bool Floating = false;
 
                     List<string> multiMath = new List<string>();
                     List<string> multiAddr = new List<string>();
                     if (PatchList == null)
                         PatchList = new List<XmlPatch>();
 
+                    xdf.TableName = element.Element("title").Value.Replace(".", " ").Trim();
+                    if (element.Attribute("uniqueid") != null)
+                    {
+                        if (TpIdGuid.ContainsKey(element.Attribute("uniqueid").Value))
+                            Logger("Duplicate id: " + element.Attribute("uniqueid").Value);
+                        else
+                            TpIdGuid.Add(element.Attribute("uniqueid").Value, xdf.guid);
+                    }
+
                     foreach (XElement axle in element.Elements("XDFAXIS"))
                     {
+                        Axis ax = new Axis();
+                        ax.convertAxis(axle, ref tdList);
                         if (axle.Attribute("id").Value == "x")
                         {
-                            xdf.Columns = Convert.ToUInt16(axle.Element("indexcount").Value);
-                            foreach (XElement lbl in axle.Elements("LABEL"))
+                            xdf.Columns = ax.IndexCount;
+                            if (ax.LinkId != null)
                             {
-                                ColHeaders += lbl.Attribute("value").Value + ",";
+                                xdf.ColumnHeaders = "TunerPro: " + ax.LinkId;
                             }
-                            ColHeaders = ColHeaders.Trim(',');
-                            xdf.ColumnHeaders = ColHeaders;
+                            else if (ax.Addr != null && ax.Addr.Length > 0)
+                            {
+                                TableData tdNew = createTableFromAxis(ax);
+                                tdNew.TableName = xdf.TableName + "-X";
+                                tdList.Add(tdNew);
+                                xdf.ColumnHeaders = "Table: " + tdNew.TableName;
+                            }
+                            else
+                            {
+                                xdf.ColumnHeaders = ax.Headers;
+                            }
                         }
                         if (axle.Attribute("id").Value == "y")
                         {
-                            xdf.Rows = Convert.ToUInt16(axle.Element("indexcount").Value);
-                            foreach (XElement lbl in axle.Elements("LABEL"))
+                            xdf.Rows = ax.IndexCount;
+                            if (ax.LinkId != null)
                             {
-                                RowHeaders += lbl.Attribute("value").Value + ",";
+                                xdf.RowHeaders = "TunerPro: " + ax.LinkId;
                             }
-                            RowHeaders = RowHeaders.Trim(',');
-                            xdf.RowHeaders = RowHeaders;
+                            else if (ax.Addr != null && ax.Addr.Length > 0)
+                            {
+                                TableData tdNew = createTableFromAxis(ax);
+                                tdNew.TableName = xdf.TableName + "-Y";
+                                tdList.Add(tdNew);
+                                xdf.RowHeaders = "Table: " + tdNew.TableName;
+                            }
+                            else
+                            {
+                                xdf.RowHeaders = ax.Headers;
+                            }
                         }
                         if (axle.Attribute("id").Value == "z")
                         {
-                            if (axle.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
-                                xdf.Address = axle.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
-                            //xdf.addrInt = Convert.ToUInt32(addr, 16);
-                            string tmp = axle.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim();
-                            size = (Convert.ToInt32(tmp) / 8).ToString();
-                            elementSize = (byte)(Convert.ToInt32(tmp) / 8);
-                            math = axle.Element("MATH").Attribute("equation").Value.Trim().Replace("*.", "*0.");
-                            xdf.Math = math.Replace("/.", "/0.").ToLower();
-                            xdf.Math = xdf.Math.Replace("+ -", "-").Replace("+-", "-").Replace("++", "+").Replace("+ + ", "+");
-                            //xdf.SavingMath = convertMath(xdf.Math);
-                            xdf.Decimals = Convert.ToUInt16(axle.Element("decimalpl").Value);
-                            if (axle.Element("outputtype") != null)
-                                xdf.OutputType = (OutDataType) Convert.ToUInt16(axle.Element("outputtype").Value);
-                            if (axle.Element("EMBEDDEDDATA") != null && axle.Element("EMBEDDEDDATA").Attribute("mmedtypeflags") != null)
-                            {
-                                byte flags = Convert.ToByte(axle.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value, 16);
-                                Signed = Convert.ToBoolean(flags & 1);
-                                if ((flags & 0x10000) == 0x10000)
-                                    Floating = true;
-                                else
-                                    Floating = false;
-                                if ((flags & 2) == 2)
-                                {
-                                    xdf.ByteOrder = Byte_Order.LSB;
-                                }
-                                if ((flags & 4) == 4)
-                                    xdf.RowMajor = false;
-                                else
-                                    xdf.RowMajor = true;
-                            }
+                            xdf.Address = ax.Addr;
+                            xdf.Math = ax.Math;
+                            xdf.Decimals = ax.Decimals;
+                            xdf.OutputType = ax.OutputType;
+                            xdf.ByteOrder = ax.ByteOrder;
+                            xdf.RowMajor = ax.RowMajor;
+                            xdf.DataType = convertToDataType(ax.elementSize, ax.Signed, ax.Floating);
+                            xdf.Min = ax.Min;
+                            xdf.Max = ax.Max;
+                            xdf.Units = ax.Units;
+                            tableLinks.AddRange(ax.tableLinks);
+                            tableTargets.AddRange(ax.tableTargets);
 
-                            foreach (XElement rowMath in axle.Elements("MATH"))
-                            {
-                                if (rowMath.Element("VAR").Attribute("address") != null)
-                                {
-                                    //Table have different address for every (?) row
-                                    Debug.WriteLine(rowMath.Element("VAR").Attribute("address").Value);
-                                    Debug.WriteLine(rowMath.Attribute("equation").Value);
-                                    multiAddr.Add(rowMath.Element("VAR").Attribute("address").Value);
-                                    multiMath.Add(rowMath.Attribute("equation").Value);
-                                }
-                                foreach (XElement mathVar in rowMath.Elements("VAR"))
-                                {
-                                    if (mathVar.Attribute("id") != null)
-                                    {
-                                        string mId = mathVar.Attribute("id").Value.ToLower();
-                                        if (mId != "x")
-                                        {
-                                            if (mathVar.Attribute("type") != null && mathVar.Attribute("type").Value == "link")
-                                            {
-                                                //Get math values from other table
-                                                string linktable = mathVar.Attribute("linkid").Value;
-                                                TableLink tl = new TableLink();
-                                                tl.tdId = tdList.Count;
-                                                tl.variable = mId;
-                                                tl.xdfId = linktable;
-                                                tableLinks.Add(tl);
-                                            }
-                                            if (mathVar.Attribute("type") != null && mathVar.Attribute("type").Value == "address")
-                                            {
-                                                string addrStr = mathVar.Attribute("address").Value.ToLower().Replace("0x","");                                                 
-                                                string bits = "8";
-                                                bool lsb = false;
-                                                bool isSigned = false;
-                                                if (mathVar.Attribute("sizeinbits") != null)
-                                                     bits = mathVar.Attribute("sizeinbits").Value;
-                                                if (mathVar.Attribute("flags") != null)
-                                                {
-                                                    byte flags = Convert.ToByte(mathVar.Attribute("flags").Value, 16);
-                                                    isSigned = Convert.ToBoolean(flags & 1);
-                                                    if ((flags & 4) == 4)
-                                                        lsb = true;
-                                                    else
-                                                        lsb = false;
-                                                }
-                                                InDataType idt = convertToDataType(bits, isSigned, false);
-                                                string replaceStr = "raw:" + addrStr + ":" + idt.ToString();
-                                                if (lsb)
-                                                    replaceStr += ":lsb ";
-                                                else
-                                                    replaceStr += ":msb ";
-                                                xdf.Math = xdf.Math.Replace(mId, replaceStr);
-                                                xdf.Math = xdf.Math.Replace("+ -", "-").Replace("+-", "-").Replace("++", "+").Replace("+ + ", "+");
-                                                //xdf.SavingMath = xdf.SavingMath.Replace(mId, replaceStr);
-                                            }
-                                        }
-
-                                    }
-                                }
-                            }
+                            multiAddr.AddRange(ax.multiAddr);
+                            multiMath.AddRange(ax.multiMath);
                         }
                     }
-                    xdf.TableName = element.Element("title").Value.Replace("."," ").Trim();
                     if (element.Element("units") != null)
                         xdf.Units = element.Element("units").Value;
-                    /*if (element.Element("datatype") != null)
-                        xdf.DataType = Convert.ToByte(element.Element("datatype").Value);*/
                     if (element.Element("CATEGORYMEM") != null && element.Element("CATEGORYMEM").Attribute("category") != null)
                     {
                         int catid= 0;
@@ -223,7 +462,6 @@ namespace UniversalPatcher
                     }
                     if (element.Element("description") != null)
                         xdf.TableDescription = element.Element("description").Value;
-                    xdf.DataType = convertToDataType(elementSize, Signed, Floating);
 
                     if (multiMath.Count > 0 && xdf.Rows == multiMath.Count)
                     {
@@ -263,6 +501,7 @@ namespace UniversalPatcher
                         tl.xdfId = element.Attribute("uniqueid").Value;
                         tl.tdId = tdList.Count;
                         tableTargets.Add(tl);
+                        //TpIdGuid.Add( element.Attribute("uniqueid").Value, xdf.guid);
                     }
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                     {
@@ -316,6 +555,10 @@ namespace UniversalPatcher
                     xdf.Origin = "xdf";
                     xdf.Min = double.MinValue;
                     xdf.Max = double.MaxValue;
+                    if (element.Attribute("uniqueid") != null)
+                    {
+                        TpIdGuid.Add(element.Attribute("uniqueid").Value, xdf.guid);
+                    }
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                     {
                         xdf.TableName = element.Element("title").Value.Replace(".", " ").Trim();
@@ -357,6 +600,10 @@ namespace UniversalPatcher
                     patchTd.addrInt = 0;
                     patchTd.DataType = InDataType.UBYTE;
                     patchTd.TableName = element.Element("title").Value.Replace(":", ";").Trim();
+                    if (element.Attribute("uniqueid") != null)
+                    {
+                        TpIdGuid.Add(element.Attribute("uniqueid").Value, patchTd.guid);
+                    }
                     if (element.Element("description") != null)
                         patchTd.TableDescription = element.Element("description").Value;
                     if (element.Element("CATEGORYMEM") != null && element.Element("CATEGORYMEM").Attribute("category") != null)
@@ -383,7 +630,7 @@ namespace UniversalPatcher
                         patchTd.Values += ",";
                     }
                     patchTd.Values.Trim(',');
-                    PCM.tableDatas.Add(patchTd);
+                    tdList.Add(patchTd);
                 }
 
                 for (int i = 0; i< tableLinks.Count; i++)
@@ -402,10 +649,41 @@ namespace UniversalPatcher
                     }
                 }
 
-                for (int i=0; i< PCM.tableDatas.Count; i++)
+                for (int i=0; i< tdList.Count; i++)
                 {
-                    if (!PCM.tableCategories.Contains(PCM.tableDatas[i].Category))
-                        PCM.tableCategories.Add(PCM.tableDatas[i].Category);
+                    TableData td = tdList[i];
+                    if (!PCM.tableCategories.Contains(td.Category))
+                        PCM.tableCategories.Add(td.Category);
+                    if (td.ColumnHeaders.StartsWith("TunerPro:"))
+                    {
+                        string id = td.ColumnHeaders.Replace("TunerPro: ", "").Trim();
+                        if (TpIdGuid.ContainsKey(id))
+                        {
+                            for (int t=0; t<tdList.Count;t++)
+                            {
+                                if (tdList[t].guid == TpIdGuid[id])
+                                {
+                                    td.ColumnHeaders = td.ColumnHeaders.Replace("TunerPro: ", "guid: ").Replace(id, tdList[t].guid.ToString());
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (td.RowHeaders.StartsWith("TunerPro:"))
+                    {
+                        string id = td.RowHeaders.Replace("TunerPro: ", "").Trim();
+                        if (TpIdGuid.ContainsKey(id))
+                        {
+                            for (int t = 0; t < tdList.Count; t++)
+                            {
+                                if (tdList[t].guid == TpIdGuid[id])
+                                {
+                                    td.RowHeaders = td.RowHeaders.Replace("TunerPro: ", "guid: ").Replace(id, tdList[t].guid.ToString());
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)
