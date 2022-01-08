@@ -277,6 +277,11 @@ namespace UniversalPatcher
         {
             try
             {
+                if (PCM.buf == null || PCM.buf.Length == 0)
+                {
+                    Logger("No file loaded");
+                    return;
+                }
                 if (tableTds == null)
                     tableTds = new List<TableData>();
                 if (tableTds.Count == 0)
@@ -1713,6 +1718,8 @@ namespace UniversalPatcher
         {
             try
             {
+                if (PCM.buf == null || PCM.buf.Length == 0)
+                    return;
                 txtDescription.Text = "";
                 txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Bold);
                 txtDescription.AppendText(shTd.TableName + Environment.NewLine);
@@ -2445,7 +2452,7 @@ namespace UniversalPatcher
         private void importXDF()
         {
             XDF xdf = new XDF();
-            Logger(xdf.importXdf(PCM, PCM.tableDatas));
+            xdf.importXdf(PCM, PCM.tableDatas);
             Debug.WriteLine("Categories: " + PCM.tableCategories.Count);
             //LoggerBold("Note: Only basic XDF conversions are supported, check Math and SavingMath values");
             refreshTablelist();

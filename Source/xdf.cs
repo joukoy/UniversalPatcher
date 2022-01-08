@@ -340,9 +340,8 @@ namespace UniversalPatcher
             }
         }
 
-    private string ConvertXdf(XDocument doc)
+    private void ConvertXdf(XDocument doc)
         {
-            string retVal = "";
             try
             {
                 //List<string> categories = new List<string>();
@@ -501,7 +500,10 @@ namespace UniversalPatcher
                         tl.xdfId = element.Attribute("uniqueid").Value;
                         tl.tdId = tdList.Count;
                         tableTargets.Add(tl);
-                        //TpIdGuid.Add( element.Attribute("uniqueid").Value, xdf.guid);
+                        if (TpIdGuid.ContainsKey(tl.xdfId))
+                            Logger("Duplicate id: " + tl.xdfId);
+                        else
+                            TpIdGuid.Add( element.Attribute("uniqueid").Value, xdf.guid);
                     }
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                     {
@@ -693,15 +695,13 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                retVal +="XdfImport, line " + line + ": " + ex.Message + Environment.NewLine;
+                LoggerBold ("XdfImport, line " + line + ": " + ex.Message + Environment.NewLine);
             }
-            return retVal;
 
         }
 
-        public string  importXdf(PcmFile PCM1, List<TableData> tdList1)
+        public void importXdf(PcmFile PCM1, List<TableData> tdList1)
         {
-            string retVal = "";
             try
             {
                 PCM = PCM1;
@@ -709,13 +709,13 @@ namespace UniversalPatcher
                 XDocument doc;
                 string fname = SelectFile("Select XDF file", "xdf files (*.xdf)|*.xdf|ALL files (*.*| *.*");
                 if (fname.Length == 0)
-                    return retVal;
-                retVal = "Importing file " + fname + "...";
+                    return ;
+                Logger("Importing file " + fname + "...",false);
 
                 //doc = new XDocument(new XComment(" Written " + DateTime.Now.ToString("G", DateTimeFormatInfo.InvariantInfo)), XElement.Load(fname));
                 doc = new XDocument(XElement.Load(fname));
-                retVal += ConvertXdf(doc);
-                retVal += "Done" + Environment.NewLine;
+                ConvertXdf(doc);
+                Logger("Done" + Environment.NewLine);
             }
             catch (Exception ex)
             {
@@ -724,9 +724,8 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                retVal += "XdfImport, line " + line + ": " + ex.Message + Environment.NewLine;
+                LoggerBold("XdfImport, line " + line + ": " + ex.Message + Environment.NewLine);
             }
-            return retVal;
         }
 
         private string linkConversionHeader(string HdrTxt, Dictionary<string, string> tableNameTPid)
