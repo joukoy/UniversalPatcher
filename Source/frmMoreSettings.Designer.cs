@@ -51,6 +51,7 @@ namespace UniversalPatcher
             this.chkDisplayUndefined = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.numSplashTime = new System.Windows.Forms.NumericUpDown();
+            this.chkXdfUseTableName = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerTableMinEquivalency)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numKeypressWait)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerMinEqOther)).BeginInit();
@@ -85,7 +86,7 @@ namespace UniversalPatcher
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(225, 318);
+            this.btnOK.Location = new System.Drawing.Point(225, 353);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 2;
@@ -180,8 +181,7 @@ namespace UniversalPatcher
             // chkDisableAutoCS
             // 
             this.chkDisableAutoCS.AutoSize = true;
-            this.chkDisableAutoCS.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkDisableAutoCS.Location = new System.Drawing.Point(9, 237);
+            this.chkDisableAutoCS.Location = new System.Drawing.Point(8, 237);
             this.chkDisableAutoCS.Name = "chkDisableAutoCS";
             this.chkDisableAutoCS.Size = new System.Drawing.Size(150, 17);
             this.chkDisableAutoCS.TabIndex = 12;
@@ -213,7 +213,6 @@ namespace UniversalPatcher
             // chkAutoOpenImportedFile
             // 
             this.chkAutoOpenImportedFile.AutoSize = true;
-            this.chkAutoOpenImportedFile.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.chkAutoOpenImportedFile.Location = new System.Drawing.Point(168, 237);
             this.chkAutoOpenImportedFile.Name = "chkAutoOpenImportedFile";
             this.chkAutoOpenImportedFile.Size = new System.Drawing.Size(134, 17);
@@ -226,7 +225,7 @@ namespace UniversalPatcher
             this.groupBox4.Controls.Add(this.chkDisplayMetric);
             this.groupBox4.Controls.Add(this.chkDisplayImperial);
             this.groupBox4.Controls.Add(this.chkDisplayUndefined);
-            this.groupBox4.Location = new System.Drawing.Point(9, 260);
+            this.groupBox4.Location = new System.Drawing.Point(9, 286);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(288, 48);
             this.groupBox4.TabIndex = 15;
@@ -266,7 +265,7 @@ namespace UniversalPatcher
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 323);
+            this.label5.Location = new System.Drawing.Point(14, 353);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(135, 13);
             this.label5.TabIndex = 16;
@@ -274,7 +273,7 @@ namespace UniversalPatcher
             // 
             // numSplashTime
             // 
-            this.numSplashTime.Location = new System.Drawing.Point(160, 321);
+            this.numSplashTime.Location = new System.Drawing.Point(162, 351);
             this.numSplashTime.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -284,11 +283,22 @@ namespace UniversalPatcher
             this.numSplashTime.Size = new System.Drawing.Size(50, 20);
             this.numSplashTime.TabIndex = 17;
             // 
+            // chkXdfUseTableName
+            // 
+            this.chkXdfUseTableName.AutoSize = true;
+            this.chkXdfUseTableName.Location = new System.Drawing.Point(8, 260);
+            this.chkXdfUseTableName.Name = "chkXdfUseTableName";
+            this.chkXdfUseTableName.Size = new System.Drawing.Size(228, 17);
+            this.chkXdfUseTableName.TabIndex = 18;
+            this.chkXdfUseTableName.Text = "XDF import: Link using tablename, not guid";
+            this.chkXdfUseTableName.UseVisualStyleBackColor = true;
+            // 
             // frmMoreSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(307, 353);
+            this.ClientSize = new System.Drawing.Size(307, 388);
+            this.Controls.Add(this.chkXdfUseTableName);
             this.Controls.Add(this.numSplashTime);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.groupBox4);
@@ -344,5 +354,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.CheckBox chkDisplayUndefined;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.NumericUpDown numSplashTime;
+        private System.Windows.Forms.CheckBox chkXdfUseTableName;
     }
 }

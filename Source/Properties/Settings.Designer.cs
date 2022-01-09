@@ -1002,5 +1002,17 @@ namespace UniversalPatcher.Properties {
                 this["DebugFont"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool xdfImportUseTableName {
+            get {
+                return ((bool)(this["xdfImportUseTableName"]));
+            }
+            set {
+                this["xdfImportUseTableName"] = value;
+            }
+        }
     }
 }

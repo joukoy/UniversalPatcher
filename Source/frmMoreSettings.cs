@@ -29,6 +29,7 @@ namespace UniversalPatcher
             Properties.Settings.Default.TunerShowUnitsMetric = chkDisplayMetric.Checked;
             Properties.Settings.Default.TunerShowUnitsUndefined = chkDisplayUndefined.Checked;
             Properties.Settings.Default.SplashShowTime = (int)numSplashTime.Value;
+            Properties.Settings.Default.xdfImportUseTableName = chkXdfUseTableName.Checked;
             //Properties.Settings.Default.startPatcher = chkStartPatcher.Checked;
             Properties.Settings.Default.Save();
             this.Close();
@@ -47,6 +48,7 @@ namespace UniversalPatcher
             chkDisplayMetric.Checked = Properties.Settings.Default.TunerShowUnitsMetric;
             chkDisplayUndefined.Checked = Properties.Settings.Default.TunerShowUnitsUndefined;
             numSplashTime.Value = Properties.Settings.Default.SplashShowTime;
+            chkXdfUseTableName.Checked = Properties.Settings.Default.xdfImportUseTableName;
             //chkStartPatcher.Checked = Properties.Settings.Default.startPatcher;
         }
 
