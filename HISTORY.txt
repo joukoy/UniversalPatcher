@@ -314,3 +314,7 @@
 0.18.84
 - XDF import: Support for linked X/Y axis tables, more parameters supported: Units, Min/max..
 
+0.18.85
+- Fixed bug in xdftable template: Min/max values exported with extra .0000 
+- Tuner: Added new menu entries: Open/Edit axis tables & Math tables
+- Fixed bug: Table config not always get saved when modified in editor

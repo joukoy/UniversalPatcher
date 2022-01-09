@@ -2866,8 +2866,6 @@ namespace UniversalPatcher
         }
 
 
-
-
         /*        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 {
 if (dataGridView1.IsCurrentCellInEditMode && dataGridView1.SelectedCells[0].GetType() != typeof(DataGridViewComboBoxCell))

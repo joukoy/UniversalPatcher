@@ -992,6 +992,41 @@ namespace UniversalPatcher
             refreshTablelist();
         }
 
+        private void enableAxisTableMenus(TableData selTd)
+        {
+            if (selTd.ColumnHeaders.ToLower().StartsWith("table:") || selTd.ColumnHeaders.ToLower().StartsWith("guid:"))
+            {
+                editXaxisTableToolStripMenuItem.Enabled = true;
+                openXaxisTableToolStripMenuItem.Enabled = true;
+            }
+            else
+            {
+                editXaxisTableToolStripMenuItem.Enabled = false;
+                openXaxisTableToolStripMenuItem.Enabled = false;
+            }
+
+            if (selTd.RowHeaders.ToLower().StartsWith("table:") || selTd.RowHeaders.ToLower().StartsWith("guid:"))
+            {
+                editYaxisTableToolStripMenuItem.Enabled = true;
+                openYaxisTableToolStripMenuItem.Enabled = true;
+            }
+            else
+            {
+                editYaxisTableToolStripMenuItem.Enabled = false;
+                openYaxisTableToolStripMenuItem.Enabled = false;
+            }
+            if (selTd.Math.ToLower().Contains("table:"))
+            {
+                editMathtableToolStripMenuItem.Enabled = true;
+                openMathtableToolStripMenuItem.Enabled = true;
+            }
+            else
+            {
+                editMathtableToolStripMenuItem.Enabled = false;
+                openMathtableToolStripMenuItem.Enabled = false;
+            }
+
+        }
 
         private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -1001,6 +1036,7 @@ namespace UniversalPatcher
                 {
                     lastSelectTd = (TableData)dataGridView1.CurrentRow.DataBoundItem;
                     contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
+                    enableAxisTableMenus(lastSelectTd);
                 }
             }
             catch { }
@@ -2553,7 +2589,15 @@ namespace UniversalPatcher
                 if (fte.ShowDialog() == DialogResult.OK)
                 {
                     lastSelectTd = fte.td;
-                    filterTables();
+                    for (int id = 0; id < PCM.tableDatas.Count; id++)
+                    {
+                        if (PCM.tableDatas[id].guid == lastSelectTd.guid)
+                        {
+                            PCM.tableDatas[id] = fte.td;
+                            filterTables();
+                            break;
+                        }
+                    }
                 }
                 fte.Dispose();
             }
@@ -4534,6 +4578,112 @@ namespace UniversalPatcher
 
         private void sortByToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
+        }
+
+        private void openAxisTable(string header)
+        {
+            TableData hTd = PCM.getTdbyHeader(header);
+            List<TableData> hTds = new List<TableData>();
+            hTds.Add(hTd);
+            openTableEditor(hTds, true);
+        }
+
+        private void editAxisTable(string header)
+        {
+            try
+            {
+                TableData newTd = PCM.getTdbyHeader(header).ShallowCopy(false);
+                frmTdEditor fte = new frmTdEditor();
+                fte.td = newTd;
+                fte.loadTd();
+                if (fte.ShowDialog() == DialogResult.OK)
+                {
+                    lastSelectTd = fte.td;
+                    for (int id = 0; id < PCM.tableDatas.Count; id++)
+                    {
+                        if (PCM.tableDatas[id].guid == lastSelectTd.guid)
+                        {
+                            PCM.tableDatas[id] = fte.td;
+                            filterTables();
+                            break;
+                        }
+                    }
+                }
+                fte.Dispose();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+
+        }
+
+        private void editXaxisTableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            editAxisTable(lastSelectTd.ColumnHeaders);
+        }
+
+        private void editYaxisTableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            editAxisTable(lastSelectTd.RowHeaders);
+        }
+
+        private void openXaxisTableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openAxisTable(lastSelectTd.ColumnHeaders);
+
+        }
+
+        private void openYaxisTableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openAxisTable(lastSelectTd.RowHeaders);
+        }
+
+        private void editMathtableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                TableData newTd = PCM.getConversiotableByMath(lastSelectTd.Math);
+                frmTdEditor fte = new frmTdEditor();
+                fte.td = newTd;
+                fte.loadTd();
+                if (fte.ShowDialog() == DialogResult.OK)
+                {
+                    for (int id = 0; id < PCM.tableDatas.Count; id++)
+                    {
+                        if (PCM.tableDatas[id].guid == lastSelectTd.guid)
+                        {
+                            PCM.tableDatas[id] = fte.td;
+                            filterTables();
+                            break;
+                        }
+                    }
+                }
+                fte.Dispose();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void openMathtableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TableData hTd = PCM.getConversiotableByMath(lastSelectTd.Math);
+            List<TableData> hTds = new List<TableData>();
+            hTds.Add(hTd);
+            openTableEditor(hTds, true);
 
         }
     }

@@ -1964,6 +1964,58 @@ namespace UniversalPatcher
             return retVal;
         }
 
+        public TableData getTdbyHeader(string header)
+        {
+            TableData headerTd = null;
+            try
+            {
+                if (header.ToLower().StartsWith("guid:"))
+                {
+                    Guid tdGuid = Guid.Parse(header.Substring(5).TrimStart());
+                    headerTd = tableDatas.Where(x => x.guid == tdGuid).First();
+                }
+                else if (header.ToLower().StartsWith("table:"))
+                {
+                    string tbName = header.Substring(6).Trim();
+                    headerTd = tableDatas.Where(x => x.TableName == tbName).First();
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var errline = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, PcmFile line " + errline + ": " + ex.Message);
+            }
+            return headerTd;
+        }
+
+        public TableData getConversiotableByMath(string mathStr)
+        {
+            TableData retVal = null;
+            try
+            {
+                //Example: TABLE:'MAF Scalar #1'
+                int start = mathStr.ToLower().IndexOf("table:") + 6;
+                int mid = mathStr.IndexOf("'", start + 2);
+                string conversionTable = mathStr.Substring(start, mid - start + 1);
+                string tbName = conversionTable.Replace("'", "");
+                retVal = tableDatas.Where(x => x.TableName == tbName).First();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var errline = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, PcmFile line " + errline + ": " + ex.Message);
+            }
+            return retVal;
+        }
+
         public byte readByte(uint addr)
         {
             return buf[addr];

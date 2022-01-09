@@ -59,6 +59,7 @@ namespace UniversalPatcher
             this.dataFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showGraphicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showTableVisualizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkSwapXY = new System.Windows.Forms.CheckBox();
             this.numColumn = new System.Windows.Forms.NumericUpDown();
@@ -80,7 +81,6 @@ namespace UniversalPatcher
             this.radioMultiplier = new System.Windows.Forms.RadioButton();
             this.radioAbsolute = new System.Windows.Forms.RadioButton();
             this.chkRawHex = new System.Windows.Forms.CheckBox();
-            this.showTableVisualizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -315,6 +315,13 @@ namespace UniversalPatcher
             this.showGraphicToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
             this.showGraphicToolStripMenuItem.Text = "Show graphic";
             this.showGraphicToolStripMenuItem.Click += new System.EventHandler(this.showGraphicToolStripMenuItem_Click);
+            // 
+            // showTableVisualizationToolStripMenuItem
+            // 
+            this.showTableVisualizationToolStripMenuItem.Name = "showTableVisualizationToolStripMenuItem";
+            this.showTableVisualizationToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.showTableVisualizationToolStripMenuItem.Text = "Show table visualization";
+            this.showTableVisualizationToolStripMenuItem.Click += new System.EventHandler(this.showTableVisualizationToolStripMenuItem_Click);
             // 
             // compareToolStripMenuItem
             // 
@@ -588,13 +595,6 @@ namespace UniversalPatcher
             this.chkRawHex.Text = "HEX";
             this.chkRawHex.UseVisualStyleBackColor = true;
             this.chkRawHex.CheckedChanged += new System.EventHandler(this.chkRawHex_CheckedChanged);
-            // 
-            // showTableVisualizationToolStripMenuItem
-            // 
-            this.showTableVisualizationToolStripMenuItem.Name = "showTableVisualizationToolStripMenuItem";
-            this.showTableVisualizationToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.showTableVisualizationToolStripMenuItem.Text = "Show table visualization";
-            this.showTableVisualizationToolStripMenuItem.Click += new System.EventHandler(this.showTableVisualizationToolStripMenuItem_Click);
             // 
             // frmTableEditor
             // 

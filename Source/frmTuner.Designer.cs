@@ -116,6 +116,13 @@ namespace UniversalPatcher
             this.createPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addTablesToExistingPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createPatchToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.editXaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editYaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openXaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openYaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editMathtableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openMathtableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.comboFilterBy = new System.Windows.Forms.ComboBox();
             this.txtResult = new System.Windows.Forms.RichTextBox();
@@ -154,13 +161,13 @@ namespace UniversalPatcher
             this.contextMenuStripTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openInNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compareSelectedTablesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.sortByToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripPatch = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.applyPatchToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.radioListMode = new System.Windows.Forms.RadioButton();
             this.radioTreeMode = new System.Windows.Forms.RadioButton();
             this.btnCollapse = new System.Windows.Forms.Button();
             this.btnExpand = new System.Windows.Forms.Button();
-            this.sortByToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -685,9 +692,16 @@ namespace UniversalPatcher
             this.duplicateTableConfigToolStripMenuItem,
             this.createPatchToolStripMenuItem,
             this.addTablesToExistingPatchToolStripMenuItem,
-            this.createPatchToolStripMenuItem1});
+            this.createPatchToolStripMenuItem1,
+            this.toolStripSeparator2,
+            this.openXaxisTableToolStripMenuItem,
+            this.openYaxisTableToolStripMenuItem,
+            this.openMathtableToolStripMenuItem,
+            this.editXaxisTableToolStripMenuItem,
+            this.editYaxisTableToolStripMenuItem,
+            this.editMathtableToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 362);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 500);
             // 
             // cutToolStripMenuItem
             // 
@@ -860,6 +874,59 @@ namespace UniversalPatcher
             this.createPatchToolStripMenuItem1.Size = new System.Drawing.Size(230, 22);
             this.createPatchToolStripMenuItem1.Text = "Create patch (Tablelist)";
             this.createPatchToolStripMenuItem1.Click += new System.EventHandler(this.createPatchToolStripMenuItem1_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(227, 6);
+            // 
+            // editXaxisTableToolStripMenuItem
+            // 
+            this.editXaxisTableToolStripMenuItem.Enabled = false;
+            this.editXaxisTableToolStripMenuItem.Name = "editXaxisTableToolStripMenuItem";
+            this.editXaxisTableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.editXaxisTableToolStripMenuItem.Text = "Edit X-axis table config";
+            this.editXaxisTableToolStripMenuItem.Click += new System.EventHandler(this.editXaxisTableToolStripMenuItem_Click);
+            // 
+            // editYaxisTableToolStripMenuItem
+            // 
+            this.editYaxisTableToolStripMenuItem.Enabled = false;
+            this.editYaxisTableToolStripMenuItem.Name = "editYaxisTableToolStripMenuItem";
+            this.editYaxisTableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.editYaxisTableToolStripMenuItem.Text = "Edit Y-axis table config";
+            this.editYaxisTableToolStripMenuItem.Click += new System.EventHandler(this.editYaxisTableToolStripMenuItem_Click);
+            // 
+            // openXaxisTableToolStripMenuItem
+            // 
+            this.openXaxisTableToolStripMenuItem.Enabled = false;
+            this.openXaxisTableToolStripMenuItem.Name = "openXaxisTableToolStripMenuItem";
+            this.openXaxisTableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.openXaxisTableToolStripMenuItem.Text = "Open X-axis table";
+            this.openXaxisTableToolStripMenuItem.Click += new System.EventHandler(this.openXaxisTableToolStripMenuItem_Click);
+            // 
+            // openYaxisTableToolStripMenuItem
+            // 
+            this.openYaxisTableToolStripMenuItem.Enabled = false;
+            this.openYaxisTableToolStripMenuItem.Name = "openYaxisTableToolStripMenuItem";
+            this.openYaxisTableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.openYaxisTableToolStripMenuItem.Text = "Open Y-axis table";
+            this.openYaxisTableToolStripMenuItem.Click += new System.EventHandler(this.openYaxisTableToolStripMenuItem_Click);
+            // 
+            // editMathtableToolStripMenuItem
+            // 
+            this.editMathtableToolStripMenuItem.Enabled = false;
+            this.editMathtableToolStripMenuItem.Name = "editMathtableToolStripMenuItem";
+            this.editMathtableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.editMathtableToolStripMenuItem.Text = "Edit Math-table config";
+            this.editMathtableToolStripMenuItem.Click += new System.EventHandler(this.editMathtableToolStripMenuItem_Click);
+            // 
+            // openMathtableToolStripMenuItem
+            // 
+            this.openMathtableToolStripMenuItem.Enabled = false;
+            this.openMathtableToolStripMenuItem.Name = "openMathtableToolStripMenuItem";
+            this.openMathtableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.openMathtableToolStripMenuItem.Text = "Open Math-table";
+            this.openMathtableToolStripMenuItem.Click += new System.EventHandler(this.openMathtableToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -1316,7 +1383,7 @@ namespace UniversalPatcher
             this.compareSelectedTablesToolStripMenuItem1,
             this.sortByToolStripMenuItem});
             this.contextMenuStripTree.Name = "contextMenuStripTree";
-            this.contextMenuStripTree.Size = new System.Drawing.Size(204, 92);
+            this.contextMenuStripTree.Size = new System.Drawing.Size(204, 70);
             // 
             // openInNewWindowToolStripMenuItem
             // 
@@ -1331,6 +1398,13 @@ namespace UniversalPatcher
             this.compareSelectedTablesToolStripMenuItem1.Size = new System.Drawing.Size(203, 22);
             this.compareSelectedTablesToolStripMenuItem1.Text = "Compare selected tables";
             this.compareSelectedTablesToolStripMenuItem1.Click += new System.EventHandler(this.compareSelectedTablesToolStripMenuItem1_Click);
+            // 
+            // sortByToolStripMenuItem
+            // 
+            this.sortByToolStripMenuItem.Name = "sortByToolStripMenuItem";
+            this.sortByToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.sortByToolStripMenuItem.Text = "Sort by";
+            this.sortByToolStripMenuItem.Click += new System.EventHandler(this.sortByToolStripMenuItem_Click);
             // 
             // contextMenuStripPatch
             // 
@@ -1398,13 +1472,6 @@ namespace UniversalPatcher
             this.btnExpand.TabIndex = 24;
             this.btnExpand.UseVisualStyleBackColor = true;
             this.btnExpand.Click += new System.EventHandler(this.btnExpand_Click);
-            // 
-            // sortByToolStripMenuItem
-            // 
-            this.sortByToolStripMenuItem.Name = "sortByToolStripMenuItem";
-            this.sortByToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.sortByToolStripMenuItem.Text = "Sort by";
-            this.sortByToolStripMenuItem.Click += new System.EventHandler(this.sortByToolStripMenuItem_Click);
             // 
             // FrmTuner
             // 
@@ -1591,5 +1658,12 @@ namespace UniversalPatcher
         private ToolStripMenuItem motorolaSrecordToolStripMenuItem;
         private ToolStripMenuItem createPatchToolStripMenuItem1;
         private ToolStripMenuItem sortByToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripMenuItem editXaxisTableToolStripMenuItem;
+        private ToolStripMenuItem editYaxisTableToolStripMenuItem;
+        private ToolStripMenuItem openXaxisTableToolStripMenuItem;
+        private ToolStripMenuItem openYaxisTableToolStripMenuItem;
+        private ToolStripMenuItem editMathtableToolStripMenuItem;
+        private ToolStripMenuItem openMathtableToolStripMenuItem;
     }
 }

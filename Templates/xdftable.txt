@@ -35,8 +35,8 @@ REPLACE-TABLEROWS
     <XDFAXIS id="z">
       <EMBEDDEDDATA mmedtypeflags="0xREPLACE-TYPEFLAGS" mmedaddress="0xREPLACE-TABLEADDRESS" mmedelementsizebits="REPLACE-BITS" mmedrowcount="REPLACE-ROWCOUNT" mmedmajorstridebits="0" mmedminorstridebits="0" />
       <decimalpl>REPLACE-DECIMALS</decimalpl>
-      <min>REPLACE-MINVALUE.000000</min>
-      <max>REPLACE-MAXVALUE.000000</max>
+      <min>REPLACE-MINVALUE</min>
+      <max>REPLACE-MAXVALUE</max>
       <outputtype>REPLACE-OUTPUTTYPE</outputtype>
       <MATH equation="REPLACE-MATH">
         <VAR id="X" />REPLACE-LINKMATH
