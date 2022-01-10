@@ -321,3 +321,7 @@
 
 0.18.86
 - Added setting: More settings -> "XDF import: Link using tablename, not guid"
+
+0.18.87
+- Fixed bug in XDF import, Units, min, max missing from constants. 
+- Fixed bug in XDF import, Units not always imported for tables

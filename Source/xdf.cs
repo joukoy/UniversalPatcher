@@ -161,7 +161,7 @@ namespace UniversalPatcher
             Years = 80
         }
 
-        private TableData createTableFromAxis(Axis ax)
+        private TableData createTableFromAxis(XdfAxis ax)
         {
             TableData td = new TableData();
             td.Address = ax.Addr;
@@ -179,9 +179,9 @@ namespace UniversalPatcher
             return td;
         }
 
-        private class Axis
+        private class XdfAxis
         {
-            public Axis()
+            public XdfAxis()
             {
                 Addr = "";
             }
@@ -227,10 +227,6 @@ namespace UniversalPatcher
                         if (ut > 0)
                             Units = ((UnitType)ut).ToString();
                     }
-                    if (axle.Element("min") != null)
-                        Min = Convert.ToDouble(axle.Element("min").Value, System.Globalization.CultureInfo.InvariantCulture);
-                    if (axle.Element("max") != null)
-                        Max = Convert.ToDouble(axle.Element("max").Value, System.Globalization.CultureInfo.InvariantCulture);
                     if (axle.Element("indexcount") != null)
                         IndexCount = Convert.ToUInt16(axle.Element("indexcount").Value);
 
@@ -263,6 +259,15 @@ namespace UniversalPatcher
                         else
                             RowMajor = true;
                     }
+                    InputType = convertToDataType(elementSize, Signed, Floating);
+                    if (axle.Element("min") != null)
+                        Min = Convert.ToDouble(axle.Element("min").Value, System.Globalization.CultureInfo.InvariantCulture);
+                    else
+                        Min = getMinValue(InputType);
+                    if (axle.Element("max") != null)
+                        Max = Convert.ToDouble(axle.Element("max").Value, System.Globalization.CultureInfo.InvariantCulture);
+                    else
+                        Max = getMaxValue(InputType);
 
                     if (axle.Element("embedinfo") != null && axle.Element("embedinfo").Attribute("linkobjid") != null)
                     {
@@ -270,7 +275,7 @@ namespace UniversalPatcher
                     }
                     foreach (XElement rowMath in axle.Elements("MATH"))
                     {
-                        if (rowMath.Element("VAR").Attribute("address") != null)
+                        if (rowMath.Element("VAR") != null && rowMath.Element("VAR").Attribute("address") != null)
                         {
                             //Table have different address for every (?) row
                             Debug.WriteLine(rowMath.Element("VAR").Attribute("address").Value);
@@ -383,11 +388,12 @@ namespace UniversalPatcher
 
                     foreach (XElement axle in element.Elements("XDFAXIS"))
                     {
-                        Axis ax = new Axis();
+                        XdfAxis ax = new XdfAxis();
                         ax.convertAxis(axle, ref tdList);
                         if (axle.Attribute("id").Value == "x")
                         {
                             xdf.Columns = ax.IndexCount;
+                            xdf.Units = ax.Units;
                             if (ax.LinkId != null)
                             {
                                 xdf.ColumnHeaders = "TunerPro: " + ax.LinkId;
@@ -431,10 +437,9 @@ namespace UniversalPatcher
                             xdf.OutputType = ax.OutputType;
                             xdf.ByteOrder = ax.ByteOrder;
                             xdf.RowMajor = ax.RowMajor;
-                            xdf.DataType = convertToDataType(ax.elementSize, ax.Signed, ax.Floating);
+                            xdf.DataType = ax.InputType;
                             xdf.Min = ax.Min;
                             xdf.Max = ax.Max;
-                            xdf.Units = ax.Units;
                             tableLinks.AddRange(ax.tableLinks);
                             tableTargets.AddRange(ax.tableTargets);
 
@@ -494,6 +499,11 @@ namespace UniversalPatcher
                     int elementSize = 0;
                     bool Signed = false;
                     bool Floating = false;
+
+                    xdf.TableName = element.Element("title").Value.Replace(".", " ").Trim();
+                    xdf.Math = element.Element("MATH").Attribute("equation").Value.Trim().Replace("*.", "*0.").Replace("/.", "/0.");
+                    xdf.Math = xdf.Math.Replace("+ -", "-").Replace("+-", "-").Replace("++", "+").Replace("+ + ", "+");
+
                     if (element.Attribute("uniqueid") != null)
                     {
                         TableLink tl = new TableLink();
@@ -505,50 +515,61 @@ namespace UniversalPatcher
                         else
                             TpIdGuid.Add( element.Attribute("uniqueid").Value, xdf.guid);
                     }
-                    if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
+
+                    if (element.Element("units") != null && element.Element("units").Value.Length > 0)
                     {
-                        xdf.TableName =  element.Element("title").Value.Replace("."," ").Trim();
-                        //xdf.AddrInt = Convert.ToUInt32(element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim(), 16);
+                        xdf.Units = element.Element("units").Value;
+                    }
+                    else if (element.Element("unittype") != null)
+                    {
+                        int ut = Convert.ToInt32(element.Element("unittype").Value);
+                        if (ut > 0)
+                            xdf.Units = ((UnitType)ut).ToString();
+                    }
+
+                    if (element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags") != null)
+                    {
+                        byte flags = Convert.ToByte(element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value, 16);
+                        Signed = Convert.ToBoolean(flags & 1);
+                        if ((flags & 0x10000) == 0x10000)
+                            Floating = true;
+                        else
+                            Floating = false;
+                    }
+                    if (element.Element("description") != null)
+                        xdf.TableDescription = element.Element("description").Value;
+                    elementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
+                    xdf.DataType = convertToDataType(elementSize, Signed, Floating);
+                    if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                         xdf.Address = element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
-                        elementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
-                        xdf.Math = element.Element("MATH").Attribute("equation").Value.Trim().Replace("*.", "*0.").Replace("/.", "/0.");
-                        xdf.Math = xdf.Math.Replace("+ -", "-").Replace("+-", "-").Replace("++", "+").Replace("+ + ", "+");
-                        //xdf.SavingMath = convertMath(xdf.Math);
-                        if (element.Element("units") != null)
-                            xdf.Units = element.Element("units").Value;
-                        if (element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags") != null)
+                    if (element.Element("CATEGORYMEM") != null && element.Element("CATEGORYMEM").Attribute("category") != null)
+                    {
+                        int catid = 0;
+                        foreach (XElement catEle in element.Elements("CATEGORYMEM"))
                         {
-                            byte flags = Convert.ToByte(element.Element("EMBEDDEDDATA").Attribute("mmedtypeflags").Value,16);
-                            Signed = Convert.ToBoolean(flags & 1);
-                            if ((flags & 0x10000) == 0x10000)
-                                Floating = true;
-                            else
-                                Floating = false;
-                        }
-                        xdf.Columns = 1;
-                        xdf.Rows = 1;
-                        xdf.RowMajor = false;
-                        if (element.Element("CATEGORYMEM") != null && element.Element("CATEGORYMEM").Attribute("category") != null)
-                        {
-                            int catid = 0;
-                            foreach (XElement catEle in element.Elements("CATEGORYMEM"))
+                            catid = Convert.ToInt16(catEle.Attribute("category").Value);
+                            if (categories.ContainsKey(catid - 1))
                             {
-                                catid = Convert.ToInt16(catEle.Attribute("category").Value);
-                                if (categories.ContainsKey(catid - 1))
-                                {
-                                    if (xdf.Category.Length > 0)
-                                        xdf.Category += " - ";
-                                    xdf.Category += categories[catid - 1];
-                                }
+                                if (xdf.Category.Length > 0)
+                                    xdf.Category += " - ";
+                                xdf.Category += categories[catid - 1];
                             }
                         }
-                        if (element.Element("description") != null)
-                            xdf.TableDescription = element.Element("description").Value;
-                        xdf.DataType = convertToDataType(elementSize, Signed, Floating);
-
-                        tdList.Add(xdf);
-
                     }
+                    if (element.Element("rangelow") != null)
+                        xdf.Min = Convert.ToDouble(element.Element("rangelow").Value, System.Globalization.CultureInfo.InvariantCulture);
+                    else 
+                        xdf.Min = getMinValue(xdf.DataType);
+
+                    if (element.Element("rangehigh") != null)
+                        xdf.Max = Convert.ToDouble(element.Element("rangehigh").Value, System.Globalization.CultureInfo.InvariantCulture);
+                    else
+                        xdf.Max = getMaxValue(xdf.DataType);
+
+                    xdf.Columns = 1;
+                    xdf.Rows = 1;
+                    xdf.RowMajor = false;
+                    tdList.Add(xdf);
                 }
                 foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFFLAG"))
                 {
@@ -562,37 +583,34 @@ namespace UniversalPatcher
                         TpIdGuid.Add(element.Attribute("uniqueid").Value, xdf.guid);
                     }
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
-                    {
-                        xdf.TableName = element.Element("title").Value.Replace(".", " ").Trim();
-                        //xdf.AddrInt = Convert.ToUInt32(element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim(), 16);
                         xdf.Address = element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
-                        int elementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
-                        xdf.Math = "X";
-                        xdf.BitMask = element.Element("mask").Value;
-                        xdf.OutputType = OutDataType.Flag;
-                        xdf.Columns = 1;
-                        xdf.Rows = 1;
-                        xdf.RowMajor = false;
-                        if (element.Element("CATEGORYMEM") != null && element.Element("CATEGORYMEM").Attribute("category") != null)
+                    xdf.TableName = element.Element("title").Value.Replace(".", " ").Trim();
+                    int elementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
+                    xdf.Math = "X";
+                    xdf.BitMask = element.Element("mask").Value;
+                    xdf.OutputType = OutDataType.Flag;
+                    xdf.Columns = 1;
+                    xdf.Rows = 1;
+                    xdf.RowMajor = false;
+                    if (element.Element("CATEGORYMEM") != null && element.Element("CATEGORYMEM").Attribute("category") != null)
+                    {
+                        int catid = 0;
+                        foreach (XElement catEle in element.Elements("CATEGORYMEM"))
                         {
-                            int catid = 0;
-                            foreach (XElement catEle in element.Elements("CATEGORYMEM"))
+                            catid = Convert.ToInt16(catEle.Attribute("category").Value);
+                            if (categories.ContainsKey(catid - 1))
                             {
-                                catid = Convert.ToInt16(catEle.Attribute("category").Value);
-                                if (categories.ContainsKey(catid - 1))
-                                {
-                                    if (xdf.Category.Length > 0)
-                                        xdf.Category += " - ";
-                                    xdf.Category += categories[catid - 1];
-                                }
+                                if (xdf.Category.Length > 0)
+                                    xdf.Category += " - ";
+                                xdf.Category += categories[catid - 1];
                             }
                         }
-                        if (element.Element("description") != null)
-                            xdf.TableDescription = element.Element("description").Value;
-                        xdf.DataType = convertToDataType(elementSize, false, false);
-                        tdList.Add(xdf);
-
                     }
+                    if (element.Element("description") != null)
+                        xdf.TableDescription = element.Element("description").Value;
+                    xdf.DataType = convertToDataType(elementSize, false, false);
+                    tdList.Add(xdf);
+
 
                 }
 

@@ -322,25 +322,18 @@ namespace UniversalPatcher
                     }
 
                     string[] cHeaders = tData.ColumnHeaders.Split(',');
-                    if (tData.ColumnHeaders.ToLower().StartsWith("table: "))
+                    if (tData.ColumnHeaders.ToLower().StartsWith("table:") || tData.ColumnHeaders.ToLower().StartsWith("guid:"))
                     {
-                        cHeaders = loadHeaderFromTable(tData.ColumnHeaders.Substring(6).TrimStart(), tData.Columns, pcm).Split(',');
-                    }
-                    else if (tData.ColumnHeaders.ToLower().StartsWith("guid: "))
-                    {
-                        cHeaders = loadHeaderFromGuidTable(Guid.Parse(tData.ColumnHeaders.Substring(5).TrimStart()), tData.Columns, pcm).Split(',');
+                        TableData headerTd = pcm.getTdbyHeader(tData.ColumnHeaders);
+                        cHeaders = loadHeaderFromTable(headerTd, tData.Columns, pcm).Split(',');
                     }
 
                     string[] rHeaders = tData.RowHeaders.Split(',');
-                    if (tData.RowHeaders.ToLower().StartsWith("table:"))
+                    if (tData.RowHeaders.ToLower().StartsWith("table:") || tData.RowHeaders.ToLower().StartsWith("guid:"))
                     {
-                        rHeaders = loadHeaderFromTable(tData.RowHeaders.Substring(6).TrimStart(), tData.Rows, pcm).Split(',');
+                        TableData headerTd = pcm.getTdbyHeader(tData.RowHeaders);
+                        rHeaders = loadHeaderFromTable(headerTd, tData.Rows, pcm).Split(',');
                     }
-                    else if (tData.RowHeaders.ToLower().StartsWith("guid:"))
-                    {
-                        rHeaders = loadHeaderFromGuidTable(Guid.Parse(tData.RowHeaders.Substring(5).TrimStart()), tData.Columns, pcm).Split(',');
-                    }
-
 
                     string RowPrefix = "";
                     string colPrefix = "";
@@ -1170,28 +1163,22 @@ namespace UniversalPatcher
             }
         }
 
-        private string loadHeaderFromTable(string tableName, int count, PcmFile pcm)
+        private string loadHeaderFromTable(TableData headerTd, int count, PcmFile pcm)
         {
+            if (headerTd == null)
+                return "";
             string headers = "" ;
-            for (int i=0; i < pcm.tableDatas.Count; i++)
+            uint step = (uint)(getBits(headerTd.DataType) / 8);
+            uint addr = (uint)(headerTd.addrInt + headerTd.Offset);
+            for (int a = 0; a < count; a++ )
             {
-                TableData headerTd = pcm.tableDatas[i];
-                if (headerTd.TableName == tableName)
-                {
-                    uint step = (uint)(getBits(headerTd.DataType) / 8);
-                    uint addr = (uint)(headerTd.addrInt + headerTd.Offset);
-                    for (int a = 0; a < count; a++ )
-                    {
-                        string formatStr = "0.####";
-                        if (headerTd.Units.Contains("%"))
-                            formatStr = "0";
-                        headers += headerTd.Units.Trim() + " " + getValue(pcm.buf, addr, headerTd, 0, pcm).ToString(formatStr).Replace(",", ".") + ",";
-                        addr += step;
-                    }
-                    headers = headers.Trim(',');
-                    break;
-                }
+                string formatStr = "0.####";
+                if (headerTd.Units.Contains("%"))
+                    formatStr = "0";
+                headers += headerTd.Units.Trim() + " " + getValue(pcm.buf, addr, headerTd, 0, pcm).ToString(formatStr).Replace(",", ".") + ",";
+                addr += step;
             }
+            headers = headers.Trim(',');
             return headers;
         }
 
