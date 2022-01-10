@@ -325,3 +325,6 @@
 0.18.87
 - Fixed bug in XDF import, Units, min, max missing from constants. 
 - Fixed bug in XDF import, Units not always imported for tables
+
+0.18.88
+- XDF import: Error handling for extra .0000 in min/max values

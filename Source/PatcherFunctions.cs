@@ -389,6 +389,7 @@ public class upatcher
         LSB
     }
 
+
     public static void StartupSettings()
     {
         LogReceivers = new List<RichTextBox>();

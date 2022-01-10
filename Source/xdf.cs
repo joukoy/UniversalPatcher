@@ -233,7 +233,6 @@ namespace UniversalPatcher
                     if (axle.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                         Addr = axle.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
                     string tmp = axle.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim();
-                    string size = (Convert.ToInt32(tmp) / 8).ToString();
                     elementSize = (byte)(Convert.ToInt32(tmp) / 8);
                     Math = axle.Element("MATH").Attribute("equation").Value.Trim().Replace("*.", "*0.");
                     Math = Math.Replace("/.", "/0.").ToLower();
@@ -261,11 +260,11 @@ namespace UniversalPatcher
                     }
                     InputType = convertToDataType(elementSize, Signed, Floating);
                     if (axle.Element("min") != null)
-                        Min = Convert.ToDouble(axle.Element("min").Value, System.Globalization.CultureInfo.InvariantCulture);
+                        Min = ParseDblValue(axle.Element("min").Value);
                     else
                         Min = getMinValue(InputType);
                     if (axle.Element("max") != null)
-                        Max = Convert.ToDouble(axle.Element("max").Value, System.Globalization.CultureInfo.InvariantCulture);
+                        Max = ParseDblValue(axle.Element("max").Value);
                     else
                         Max = getMaxValue(InputType);
 
@@ -345,7 +344,32 @@ namespace UniversalPatcher
             }
         }
 
-    private void ConvertXdf(XDocument doc)
+        private static double ParseDblValue(string dblStr)
+        {
+            double retVal = 0;
+            try
+            {
+                string[] dParts = dblStr.Split('.');
+                if (dParts.Length > 2)
+                {
+                    if (dParts[dParts.Length - 1].Replace("0", "").Length == 0) //Only zeros
+                        dblStr = dblStr.Substring(0, dblStr.Length - dParts[dParts.Length - 1].Length -1); //remove .0000 at end
+                }
+                retVal = Convert.ToDouble(dblStr, System.Globalization.CultureInfo.InvariantCulture);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Logger("ParseDblValue, line " + line + ": " + ex.Message + Environment.NewLine);
+            }
+            return retVal;
+        }
+
+        private void ConvertXdf(XDocument doc)
         {
             try
             {
@@ -557,12 +581,12 @@ namespace UniversalPatcher
                         }
                     }
                     if (element.Element("rangelow") != null)
-                        xdf.Min = Convert.ToDouble(element.Element("rangelow").Value, System.Globalization.CultureInfo.InvariantCulture);
+                        xdf.Min = ParseDblValue(element.Element("rangelow").Value);
                     else 
                         xdf.Min = getMinValue(xdf.DataType);
 
                     if (element.Element("rangehigh") != null)
-                        xdf.Max = Convert.ToDouble(element.Element("rangehigh").Value, System.Globalization.CultureInfo.InvariantCulture);
+                        xdf.Max = ParseDblValue(element.Element("rangehigh").Value);
                     else
                         xdf.Max = getMaxValue(xdf.DataType);
 
