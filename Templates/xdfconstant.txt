@@ -4,8 +4,8 @@
     <CATEGORYMEM index="0" category="REPLACE-CATEGORY" />
     <EMBEDDEDDATA mmedaddress="0xREPLACE-TABLEADDRESS" mmedelementsizebits="REPLACE-BITS" mmedmajorstridebits="0" mmedminorstridebits="0" />
     <outputtype>2</outputtype>
-    <rangehigh>REPLACE-MINVALUE</rangehigh>
-    <rangelow>REPLACE-MAXVALUE</rangelow>
+    <rangehigh>REPLACE-MAXVALUE</rangehigh>
+    <rangelow>REPLACE-MINVALUE</rangelow>
     <datatype>2</datatype>
     <unittype>2</unittype>
     <DALINK index="0" />

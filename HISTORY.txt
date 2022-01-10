@@ -328,3 +328,6 @@
 
 0.18.88
 - XDF import: Error handling for extra .0000 in min/max values
+
+0.18.89
+- Fixed bug: xdfexport, xdfconstant template min/max value swapped

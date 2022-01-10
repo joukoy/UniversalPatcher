@@ -969,8 +969,8 @@ namespace UniversalPatcher
                         descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
                         tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
                         tableText.Replace("REPLACE-BITS", getBits(td.DataType).ToString());
-                        tableText.Replace("REPLACE-MINVALUE", td.Min.ToString());
-                        tableText.Replace("REPLACE-MAXVALUE", td.Max.ToString());
+                        tableText.Replace("REPLACE-MINVALUE", td.Min.ToString().Replace(",","."));
+                        tableText.Replace("REPLACE-MAXVALUE", td.Max.ToString().Replace(",", "."));
                         xdfText.Append(tableText);       //Add generated table to end of xdfText
                     }
                 }
@@ -1040,8 +1040,8 @@ namespace UniversalPatcher
                             descr += ", " + td.Values;
                         descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
                         tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
-                        tableText.Replace("REPLACE-MINVALUE", td.Min.ToString());
-                        tableText.Replace("REPLACE-MAXVALUE", td.Max.ToString());
+                        tableText.Replace("REPLACE-MINVALUE", td.Min.ToString().Replace(",", "."));
+                        tableText.Replace("REPLACE-MAXVALUE", td.Max.ToString().Replace(",", "."));
                         int tableFlags = 0;
                         if (getSigned(td.DataType))
                         {
@@ -1144,8 +1144,6 @@ namespace UniversalPatcher
                         tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(td.addrInt + td.Offset)).ToString("X"));
                         tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
                         tableText.Replace("REPLACE-BITS", getBits(td.DataType).ToString());
-                        tableText.Replace("REPLACE-MINVALUE", td.Min.ToString());
-                        tableText.Replace("REPLACE-MAXVALUE", td.Max.ToString());
                         tableText.Replace("REPLACE-MASK", td.BitMask);
                         xdfText.Append(tableText);       //Add generated table to end of xdfText
 
