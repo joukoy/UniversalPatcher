@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static upatcher;
+using static Upatcher;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -55,27 +55,7 @@ namespace UniversalPatcher
 
         }
 
-
-        private int searchStringAddressOffset(string searchStr)
-        {
-            //searchBytes returns address of first byte, we want address of first *, or end of string
-            int offset = 0;
-
-            string[] sParts = searchStr.Trim().Split(' ');
-            if (!searchStr.Contains("*"))
-                return sParts.Length;
-
-            for (int p = 0; p < sParts.Length; p++)
-            {
-                if (sParts[p] == "*")
-                    return p;
-            }
-
-            return offset;
-        }
-
-
-        public string decodeDTC(string code)
+        public string DecodeDTC(string code)
         {
             if (code.StartsWith("5"))
             {
@@ -100,7 +80,7 @@ namespace UniversalPatcher
 
         }
 
-        public string getDtcDescription(string dtcCode)
+        public string GetDtcDescription(string dtcCode)
         {
             string retVal = "";
             for (int o = 0; o < OBD2Codes.Count; o++)
@@ -114,12 +94,12 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        public List<DtcCode> searchDtc(PcmFile PCM, bool primary)
+        public List<DtcCode> SearchDtc(PcmFile PCM, bool primary)
         {
             List<DtcCode> retVal = new List<DtcCode>();
             try
             {
-                loadOBD2Codes();
+                LoadOBD2Codes();
                 //Search DTC codes:
                 uint codeAddr = uint.MaxValue;
                 string searchStr;
@@ -178,10 +158,10 @@ namespace UniversalPatcher
                             }
                         }
 
-                        codeAddr = getAddrbySearchString(PCM, searchStr,ref startAddr,PCM.fsize, condOffsetCode, signedOffsetCode).Addr;
+                        codeAddr = GetAddrbySearchString(PCM, searchStr,ref startAddr,PCM.fsize, condOffsetCode, signedOffsetCode).Addr;
                         //Check if we found status table, too:
                         startAddr = 0;
-                        statusAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].StatusSearch, ref startAddr,PCM.fsize, condOffsetStatus, signedOffsetStatus).Addr;
+                        statusAddr = GetAddrbySearchString(PCM, dtcSearchConfigs[configIndex].StatusSearch, ref startAddr,PCM.fsize, condOffsetStatus, signedOffsetStatus).Addr;
                         if (codeAddr < uint.MaxValue) //If found
                             codeAddr = (uint)(codeAddr + dtcSearchConfigs[configIndex].CodeOffset);
                         if (statusAddr < uint.MaxValue)
@@ -193,19 +173,19 @@ namespace UniversalPatcher
                             if (condOffsetStatus)
                             {
                                 uint a = codeAddr;
-                                int prevCode = PCM.readUInt16(a);
+                                int prevCode = PCM.ReadUInt16(a);
                                 for (int x = 0; x < 30; x++)
                                 {
                                     //Check if codes (30 first) are increasing
                                     a += (uint)dtcSearchConfigs[configIndex].CodeSteps;
-                                    int nextCode = PCM.readUInt16(a);
+                                    int nextCode = PCM.ReadUInt16(a);
                                     if (nextCode <= prevCode)
                                     {
                                         //Not increasing, use offset
                                         codeAddr += 0x10000;
                                         break;
                                     }
-                                    prevCode = PCM.readUInt16(a);
+                                    prevCode = PCM.ReadUInt16(a);
                                 }
                             }
                             Debug.WriteLine("DTC status table address: " + statusAddr.ToString("X"));
@@ -225,7 +205,7 @@ namespace UniversalPatcher
                     {
                         PCM.dtcCombined = true;
                         string vals = "Enum: 0:MIL and reporting off,1:Type A/no MIL,2:Type B/no MIL,3:Type C/no MIL,4:Not reported/MIL,5:Type A/MIL,6:Type B/MIL,7:Type C/MIL";
-                        PCM.dtcValues = parseDtcValues(vals.ToLower().Replace("enum: ", ""));
+                        PCM.dtcValues = ParseDtcValues(vals.ToLower().Replace("enum: ", ""));
                         return SearchDtcE38(PCM);
                     }
                     else if (primary)
@@ -247,7 +227,7 @@ namespace UniversalPatcher
                     dtc.codeAddrInt = addr;
                     dtc.Values = dtcSearchConfigs[configIndex].Values;
                     dtc.CodeAddr = addr.ToString("X8");
-                    dtc.codeInt = PCM.readUInt16(addr);
+                    dtc.codeInt = PCM.ReadUInt16(addr);
 
                     string codeTmp = dtc.codeInt.ToString("X");
                     if (dtc.codeInt < 10 && retVal.Count > 10 && linear)
@@ -265,11 +245,11 @@ namespace UniversalPatcher
                         Debug.WriteLine("DTC Code out of range: " + codeTmp);
                         break;
                     }
-                    dtc.Code = decodeDTC(codeTmp);
+                    dtc.Code = DecodeDTC(codeTmp);
                     if (codeTmp.StartsWith("D")) 
                         dCodes = true;
                     //Find description for code:
-                    dtc.Description = getDtcDescription(dtc.Code);
+                    dtc.Description = GetDtcDescription(dtc.Code);
                     retVal.Add(dtc);
                 }
 
@@ -295,7 +275,7 @@ namespace UniversalPatcher
                     startAddr = 0;
                     for (int i = 0; i < 30; i++)
                     {
-                        milAddr = getAddrbySearchString(PCM, dtcSearchConfigs[configIndex].MilSearch, ref startAddr, PCM.fsize, condOffsetMil, signedOffsetMil).Addr;
+                        milAddr = GetAddrbySearchString(PCM, dtcSearchConfigs[configIndex].MilSearch, ref startAddr, PCM.fsize, condOffsetMil, signedOffsetMil).Addr;
                         if (milAddr < uint.MaxValue)
                         {
 
@@ -356,7 +336,7 @@ namespace UniversalPatcher
                 {
                     values = "Enum: 0:1 Trip/immediately,1:2 Trips,2:Store only,3:Disabled"; ;
                 }
-                PCM.dtcValues = parseDtcValues(values);
+                PCM.dtcValues = ParseDtcValues(values);
                 int dtcNr = 0;
                 uint addr2 = statusAddr;
                 uint addr3 = milAddr;
@@ -448,7 +428,7 @@ namespace UniversalPatcher
                     LoggerBold("DTC search: No OS segment??");
                     return null;
                 }
-                if (PCM.diagSegment == -1)
+                if (PCM.DiagSegment == -1)
                 {
                     LoggerBold( "DTC search: No Diagnostic segment??");
                     return null;
@@ -460,11 +440,11 @@ namespace UniversalPatcher
                 uint tableStart = 0;
                 for (int b = 0; b < PCM.segmentAddressDatas[PCM.OSSegment].SegmentBlocks.Count; b++)
                 {
-                    opCodeAddr = searchBytes(PCM, searchStr, PCM.segmentAddressDatas[PCM.OSSegment].SegmentBlocks[b].Start, PCM.segmentAddressDatas[PCM.OSSegment].SegmentBlocks[b].End);
+                    opCodeAddr = SearchBytes(PCM, searchStr, PCM.segmentAddressDatas[PCM.OSSegment].SegmentBlocks[b].Start, PCM.segmentAddressDatas[PCM.OSSegment].SegmentBlocks[b].End);
                     if (opCodeAddr < uint.MaxValue)
                     {
-                        ushort highBytes = PCM.readUInt16((uint)(opCodeAddr + 2));
-                        ushort lowBytes = PCM.readUInt16((uint)(opCodeAddr + 6));
+                        ushort highBytes = PCM.ReadUInt16((uint)(opCodeAddr + 2));
+                        ushort lowBytes = PCM.ReadUInt16((uint)(opCodeAddr + 6));
                         tableStart = (uint)(highBytes << 16 | lowBytes);
                         ushort tmp = (ushort)(opCodeAddr & 0xffff);
                         if (tmp > 0x5000) tableStart -= 0x10000; //Some kind of address offset 
@@ -474,7 +454,7 @@ namespace UniversalPatcher
                             DtcCode dtc = new DtcCode();
                             dtc.codeAddrInt = addr;
                             dtc.CodeAddr = addr.ToString("X8");
-                            dtc.codeInt = PCM.readUInt16(addr);
+                            dtc.codeInt = PCM.ReadUInt16(addr);
 
                             string codeTmp = dtc.codeInt.ToString("X4");
                             if (dCodes && !codeTmp.StartsWith("D"))
@@ -485,8 +465,8 @@ namespace UniversalPatcher
                             {
                                 dCodes = true;
                             }
-                            dtc.Code = decodeDTC(codeTmp);
-                            dtc.Description = getDtcDescription(dtc.Code);
+                            dtc.Code = DecodeDTC(codeTmp);
+                            dtc.Description = GetDtcDescription(dtc.Code);
                             retVal.Add(dtc);
                         }
                         break;
@@ -496,11 +476,11 @@ namespace UniversalPatcher
                 int dtcCount = retVal.Count;
 
                 //Search by opcode:
-                opCodeAddr = searchBytes(PCM, "3C A0 * * 38 A5 * * 7D 85 50", 0, PCM.fsize);
+                opCodeAddr = SearchBytes(PCM, "3C A0 * * 38 A5 * * 7D 85 50", 0, PCM.fsize);
                 if (opCodeAddr < uint.MaxValue)
                 {
-                    ushort highBytes = PCM.readUInt16((uint)(opCodeAddr + 2));
-                    ushort lowBytes = PCM.readUInt16((uint)(opCodeAddr + 6));
+                    ushort highBytes = PCM.ReadUInt16((uint)(opCodeAddr + 2));
+                    ushort lowBytes = PCM.ReadUInt16((uint)(opCodeAddr + 6));
                     tableStart = (uint)(highBytes << 16 | lowBytes);
                 }
 

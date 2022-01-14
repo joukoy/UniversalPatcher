@@ -5,8 +5,9 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Globalization;
-using static upatcher;
+using static Upatcher;
 using System.Diagnostics;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -138,27 +139,27 @@ namespace UniversalPatcher
         }
 
 
-        public uint startAddress()
+        public uint StartAddress()
         {
             return (uint)(addrInt + Offset);
         }
 
-        public uint endAddress()
+        public uint EndAddress()
         {
-            return (uint)(addrInt + Offset + size());
+            return (uint)(addrInt + Offset + Size());
         }
 
-        public int size()
+        public int Size()
         {
-            return Rows * Columns * elementSize() - 1;
+            return Rows * Columns * ElementSize() - 1;
         }
         
-        public int elementSize()
+        public int ElementSize()
         {
-            return getElementSize(DataType);
+            return GetElementSize(DataType);
         }
 
-        public int elements()
+        public int Elements()
         {
             return Rows * Columns;
         }
@@ -171,7 +172,7 @@ namespace UniversalPatcher
             return newTd;
         }
 
-        public void importFoundTable(int tId, PcmFile PCM)
+        public void ImportFoundTable(int tId, PcmFile PCM)
         {
 
             TableSeek tSeek = tableSeeks[PCM.foundTables[tId].configId];
@@ -207,7 +208,7 @@ namespace UniversalPatcher
 
         }
 
-        public void importDTC(PcmFile PCM, ref List<TableData> tdList, bool primary)
+        public void ImportDTC(PcmFile PCM, ref List<TableData> tdList, bool primary)
         {
             try
             {
@@ -219,7 +220,7 @@ namespace UniversalPatcher
                 if (dtcCodes == null)
                 {
                     DtcSearch DS = new DtcSearch();
-                    dtcCodes = DS.searchDtc(PCM, primary);
+                    dtcCodes = DS.SearchDtc(PCM, primary);
                 }
                 if (dtcCodes== null)
                     return;

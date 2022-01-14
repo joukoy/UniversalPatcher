@@ -10,7 +10,8 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using static UniversalPatcher.ExtensionMethods;
-using static upatcher;
+using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -133,7 +134,7 @@ namespace UniversalPatcher
                 }
                 if (dr == DialogResult.Yes)
                 {
-                    saveFiles();
+                    SaveFiles();
                 }
             }
             if (Properties.Settings.Default.MainWindowPersistence)
@@ -198,7 +199,7 @@ namespace UniversalPatcher
             catch { }
         }
 
-        public void loadData(List<string> fileList)
+        public void LoadData(List<string> fileList)
         {
             try
             {
@@ -222,17 +223,17 @@ namespace UniversalPatcher
                     if (conFileSize < 255 || Path.GetFileName(fName).ToLower() == "units.xml")
                         continue;
                     TunerFile tf = new TunerFile();
-                    tf.tableDatas = loadTableDataFile(fName);
+                    tf.tableDatas = LoadTableDataFile(fName);
                     tf.FileName = fName;
                     tunerFiles.Add(tf);
-                    addTableListTodgrid(tf.tableDatas);
+                    AddTableListTodgrid(tf.tableDatas);
                 }
                 if (tunerFiles.Count == 0)
                     return; //No files selected
                 for (int f = 0; f < tunerFiles.Count; f++)
                     tunerFiles[f].id = f;
                 dataGridView1.DataSource = bindingSource;
-                filterData();
+                FilterData();
 
                 dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
                 dataGridView1.CellValueChanged += DataGridView1_CellValueChanged;
@@ -252,7 +253,7 @@ namespace UniversalPatcher
                 comboFiles.DisplayMember = "FileName";
                 comboFiles.ValueMember = "guid";
                 comboFiles.SelectedIndexChanged += ComboFiles_SelectedIndexChanged;
-                refreshTdList();
+                RefreshTdList();
                 Logger("Files loaded");
             }
             catch (Exception ex)
@@ -269,10 +270,10 @@ namespace UniversalPatcher
 
         private void ComboFiles_SelectedIndexChanged(object sender, EventArgs e)
         {
-            filterTableList();
+            FilterTableList();
         }
 
-        private void refreshTdList()
+        private void RefreshTdList()
         {
             dataGridTd.DataSource = null;
             dataGridTd.DataSource = tdBindingSource;
@@ -292,8 +293,8 @@ namespace UniversalPatcher
                 //saveGridLayout(); //Save before reorder!
                 sortBy = dataGridTd.Columns[e.ColumnIndex].Name;
                 tdSortIndex = e.ColumnIndex;
-                tdSortOrder = getSortOrder(dataGridTd, tdSortIndex);
-                filterTableList();
+                tdSortOrder = GetSortOrder(dataGridTd, tdSortIndex);
+                FilterTableList();
             }
         }
 
@@ -306,7 +307,7 @@ namespace UniversalPatcher
 
         }
 
-        private void addTableListTodgrid(List<TableData> tdList)
+        private void AddTableListTodgrid(List<TableData> tdList)
         {
             for (int t = 0; t < tdList.Count; t++)
             {
@@ -357,11 +358,11 @@ namespace UniversalPatcher
                 //saveGridLayout(); //Save before reorder!
                 sortBy = dataGridView1.Columns[e.ColumnIndex].Name;
                 sortIndex = e.ColumnIndex;
-                strSortOrder = getSortOrder(dataGridView1, sortIndex);
-                filterData();
+                strSortOrder = GetSortOrder(dataGridView1, sortIndex);
+                FilterData();
             }
         }
-        private SortOrder getSortOrder(DataGridView dgv, int columnIndex)
+        private SortOrder GetSortOrder(DataGridView dgv, int columnIndex)
         {
             try
             {
@@ -384,7 +385,7 @@ namespace UniversalPatcher
             return SortOrder.Ascending;
         }
 
-        private void filterData()
+        private void FilterData()
         {
             List<MassModProperties> compareList = new List<MassModProperties>();
             if (strSortOrder == SortOrder.Ascending)
@@ -433,7 +434,7 @@ namespace UniversalPatcher
 
         }
 
-        private void filterTableList()
+        private void FilterTableList()
         {
             List<TableData> compareList = new List<TableData>();
             if (tdSortOrder == SortOrder.Ascending)
@@ -524,7 +525,7 @@ namespace UniversalPatcher
             }
         }
 
-        private void saveFiles()
+        private void SaveFiles()
         {
             for (int modF = 0; modF < modifiedFiles.Count; modF++)
             {
@@ -545,7 +546,7 @@ namespace UniversalPatcher
         }
         private void btnSave_Click(object sender, EventArgs e)
         {
-            saveFiles();
+            SaveFiles();
         }
         private void Logger(string LogText, Boolean NewLine = true)
         {
@@ -575,7 +576,7 @@ namespace UniversalPatcher
                 Debug.WriteLine(ex.InnerException);
             }
         }
-        private List<TableData> loadTableDataFile(string fName)
+        private List<TableData> LoadTableDataFile(string fName)
         {
             List<TableData> tmpTableDatas = new List<TableData>();
             try
@@ -650,7 +651,7 @@ namespace UniversalPatcher
             frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
             fst.groupBox2.Visible = false;
             TableData td = ((MassModProperties)dataGridView1.Rows[row].DataBoundItem).td;
-            fst.loadProperties(td);
+            fst.LoadProperties(td);
             if (fst.ShowDialog() == DialogResult.OK)
             {
                 for (int p = 0; p < fst.chkBoxes.Count; p++)
@@ -709,7 +710,7 @@ namespace UniversalPatcher
             TableData td = ((MassModProperties)dataGridView1.Rows[row].DataBoundItem).td;
 
             frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
-            fst.loadProperties(td);
+            fst.LoadProperties(td);
             for (int c = 0; c < fst.chkBoxes.Count; c++)
             {
                 if (fst.chkBoxes[c].Name == "TableName")
@@ -789,7 +790,7 @@ namespace UniversalPatcher
             }
             frmSelectMassTarget frmSmt = new frmSelectMassTarget();
             Application.DoEvents();
-            frmSmt.loadData(tdeList);
+            frmSmt.LoadData(tdeList);
             if (frmSmt.ShowDialog() != DialogResult.OK)
             {
                 frmSmt.Dispose();
@@ -829,7 +830,7 @@ namespace UniversalPatcher
             overwriteAdd
         }
 
-        private void copyTablestoFile(bool fileSelected)
+        private void CopyTablestoFile(bool fileSelected)
         {
             int sourceId;
             List<TableData> sourceTdList = new List<TableData>();
@@ -895,7 +896,7 @@ namespace UniversalPatcher
             frmSelectTableDataProperties fst = new frmSelectTableDataProperties();
             fst.groupBox2.Visible = true;
             TableData tmpTd = new TableData();
-            fst.loadProperties(tmpTd, false);
+            fst.LoadProperties(tmpTd, false);
             if (fst.ShowDialog() != DialogResult.OK)
                 return;
 
@@ -929,7 +930,7 @@ namespace UniversalPatcher
                 {
                     TableData sourceTd = sourceTdList[t];
                     Type tdType = sourceTd.GetType();
-                    TableData dstTd = findTableData(sourceTd, tunerFiles[dstF].tableDatas);
+                    TableData dstTd = FindTableData(sourceTd, tunerFiles[dstF].tableDatas);
                     if (copyMode == CopyMode.overwrite)
                     {
                         if (dstTd != null)
@@ -994,14 +995,14 @@ namespace UniversalPatcher
 
         private void copyTablesToToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            copyTablestoFile(true);
+            CopyTablestoFile(true);
 
         }
 
 
         private void copyTablesToduplicatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            copyTablestoFile(false);
+            CopyTablestoFile(false);
         }
 
 
@@ -1012,8 +1013,8 @@ namespace UniversalPatcher
             {
                 timerFilter.Enabled = false;
                 keyDelayCounter = 0;
-                filterData();
-                filterTableList();
+                FilterData();
+                FilterTableList();
             }
         }
 
@@ -1035,8 +1036,8 @@ namespace UniversalPatcher
 
         private void chkCaseSensitive_CheckedChanged(object sender, EventArgs e)
         {
-            filterData();
-            filterTableList();
+            FilterData();
+            FilterTableList();
         }
 
         private void comboFilterBy_SelectedIndexChanged(object sender, EventArgs e)

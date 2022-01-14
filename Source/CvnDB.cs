@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using static upatcher;
+using static Upatcher;
 
 namespace UniversalPatcher
 {
@@ -19,7 +19,7 @@ namespace UniversalPatcher
         public DataTable stockCvn;
         public DataTable refCvn;
 
-        public void loadDB()
+        public void LoadDB()
         {
             try
             {
@@ -53,7 +53,7 @@ namespace UniversalPatcher
             }
         }
 
-        public void addtoStock(CVN cvn)
+        public void AddtoStock(CVN cvn)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace UniversalPatcher
 
         }
 
-        public string getStockCvn(string PN, string Ver, string SegNr)
+        public string GetStockCvn(string PN, string Ver, string SegNr)
         {
             string retval = "";
             try

@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Diagnostics;
-using static upatcher;
+using static Upatcher;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -15,13 +16,13 @@ namespace UniversalPatcher
     {
         public PcmFile()
         {
-            setDefaultValues();
+            SetDefaultValues();
         }
         public PcmFile(string Fname, bool autodetect, string cnfFile)
         {
             try
             {
-                setDefaultValues();
+                SetDefaultValues();
                 FileName = Fname;
                 altTableDatas[0].Name = Fname;
                 fsize = (uint)new FileInfo(FileName).Length;
@@ -29,7 +30,7 @@ namespace UniversalPatcher
                 osStoreAddress = uint.MaxValue;
                 if (autodetect)
                 {
-                    string cfgFile = autoDetect(this);
+                    string cfgFile = AutoDetect(this);
                     if (cfgFile.Length > 0)
                     {
                         _configFileFullName = Path.Combine(Application.StartupPath, "XML", cfgFile);
@@ -41,8 +42,8 @@ namespace UniversalPatcher
                 }
                 if (segmentFile.Length > 0)
                 {
-                    loadPlatformConfig(platformConfigFile);
-                    loadConfigFile(segmentFile);
+                    LoadPlatformConfig(PlatformConfigFile);
+                    LoadConfigFile(segmentFile);
                     GetSegmentAddresses();
                 }
             }
@@ -144,7 +145,7 @@ namespace UniversalPatcher
             }
         }
 
-        public int diagSegment
+        public int DiagSegment
         {
             get
             {
@@ -157,7 +158,7 @@ namespace UniversalPatcher
             }
         }
 
-        public string tableSeekFile
+        public string TableSeekFile
         {
             get
             {
@@ -191,7 +192,7 @@ namespace UniversalPatcher
         }
 
 
-        public string segmentSeekFile
+        public string SegmentSeekFile
         {
             get
             {
@@ -225,9 +226,9 @@ namespace UniversalPatcher
             }
         }
 
-        public string platformConfigFile { get {return Path.Combine(Application.StartupPath, "XML", configFile + "-platform.xml"); } }
+        public string PlatformConfigFile { get {return Path.Combine(Application.StartupPath, "XML", configFile + "-platform.xml"); } }
 
-        public void setDefaultValues()
+        public void SetDefaultValues()
         {            
             _configFileFullName = "";
             Segments = new List<SegmentConfig>();
@@ -240,7 +241,7 @@ namespace UniversalPatcher
             altTableDatas = new List<AltTableData>();
             tunerFileList = new List<string>();
             currentTableDatasList = 0;
-            selectTableDatas(0, "");
+            SelectTableDatas(0, "");
             seekTablesImported = false;
         }
         public PcmFile ShallowCopy()
@@ -248,10 +249,10 @@ namespace UniversalPatcher
             return (PcmFile)this.MemberwiseClone();
         }
 
-        public void loadPlatformConfig(string fName)
+        public void LoadPlatformConfig(string fName)
         {
             if (fName.Length == 0)
-                fName = platformConfigFile;
+                fName = PlatformConfigFile;
             if (File.Exists(fName))
             {
                 Logger("Reading Platform config: " + Path.GetFileName(fName), false);
@@ -267,8 +268,8 @@ namespace UniversalPatcher
                 Logger("Creating Platform config: " + Path.GetFileName(fName), false);
                 platformConfig.MSB = true;
                 platformConfig.SegmentFile = configFile + ".xml";
-                platformConfig.SegmentSeekFile = Path.GetFileName(segmentSeekFile);
-                platformConfig.TableSeekFile = Path.GetFileName(tableSeekFile);
+                platformConfig.SegmentSeekFile = Path.GetFileName(SegmentSeekFile);
+                platformConfig.TableSeekFile = Path.GetFileName(TableSeekFile);
                 for (int i=0; i< pidSearchConfigs.Count; i++)
                 {
                     if (pidSearchConfigs[i].XMLFile == configFile)
@@ -276,13 +277,13 @@ namespace UniversalPatcher
                         platformConfig.PidSearchString = pidSearchConfigs[i].SearchString;
                         platformConfig.PidSearchStep = (uint)pidSearchConfigs[i].Step;
                     }
-                    savePlatformConfig(platformConfigFile);
+                    SavePlatformConfig(PlatformConfigFile);
                 }
                 Logger(" [OK]");
             }
         }
 
-        public void savePlatformConfig(string fName)
+        public void SavePlatformConfig(string fName)
         {
             try
             {
@@ -299,12 +300,27 @@ namespace UniversalPatcher
             }
         }
 
-        public void reloadBinFile()
+        public void ReloadBinFile()
         {
             buf = ReadBin(FileName);
         }
 
-        public void importSeekTables()
+        /// <summary>
+        /// This function checks if file is modified after loading
+        /// </summary>
+        /// 
+        public bool BufModified()
+        {
+            if (FileName == null || buf.Length == 0)
+                return false;
+            byte[] compareBuf = ReadBin(FileName);
+            if (buf.SequenceEqual(compareBuf))
+                return false;
+            else
+                return true;
+        }
+
+        public void ImportSeekTables()
         {
             try
             {
@@ -314,13 +330,13 @@ namespace UniversalPatcher
                 {
                     TableSeek TS = new TableSeek();
                     Logger("Seeking tables...", false);
-                    Logger(TS.seekTables(this));
+                    Logger(TS.SeekTables(this));
                 }
                 Logger("Importing TableSeek tables... ", false);
                 for (int i = 0; i < foundTables.Count; i++)
                 {
                     TableData tableData = new TableData();
-                    tableData.importFoundTable(i, this);
+                    tableData.ImportFoundTable(i, this);
                     tableDatas.Add(tableData);
                 }
                 if (!tableCategories.Contains("DTC"))
@@ -333,7 +349,7 @@ namespace UniversalPatcher
             }
         }
 
-        public void importDTC()
+        public void ImportDTC()
         {
             bool haveDTC = false;
             for (int t = 0; t < tableDatas.Count; t++)
@@ -348,20 +364,20 @@ namespace UniversalPatcher
             {
                 Logger("Importing DTC codes... ", false);
                 TableData tdTmp = new TableData();
-                tdTmp.importDTC(this, ref tableDatas,true);
-                tdTmp.importDTC(this, ref tableDatas, false);
+                tdTmp.ImportDTC(this, ref tableDatas,true);
+                tdTmp.ImportDTC(this, ref tableDatas, false);
                 Logger(" [OK]");
             }
         }
 
-        public void importTinyTunerDB()
+        public void ImportTinyTunerDB()
         {
             TinyTuner tt = new TinyTuner();
             Logger("Reading TinyTuner DB...", false);
-            Logger(tt.readTinyDBtoTableData(this, tableDatas));
+            Logger(tt.ReadTinyDBtoTableData(this, tableDatas));
         }
 
-        public void autoLoadTunerConfig()
+        public void AutoLoadTunerConfig()
         {
             if (!Properties.Settings.Default.disableTunerAutoloadSettings)
             {
@@ -510,7 +526,7 @@ namespace UniversalPatcher
 
         }
 
-        public void addTableDatas(string name)
+        public void AddTableDatas(string name)
         {
             AltTableData tdl = new AltTableData();
             tdl.Name = name;
@@ -520,11 +536,11 @@ namespace UniversalPatcher
             tunerFileList.Add("");
         }
 
-        public void selectTableDatas(int listNumber, string name)
+        public void SelectTableDatas(int listNumber, string name)
         {
             if (altTableDatas.Count < (listNumber + 1))
             {
-                addTableDatas(name);
+                AddTableDatas(name);
             }
             if (listNumber != currentTableDatasList)
             {
@@ -538,7 +554,7 @@ namespace UniversalPatcher
             }
         }
 
-        public void loadConfigFile(string fileName)
+        public void LoadConfigFile(string fileName)
         {
             try
             {
@@ -565,7 +581,7 @@ namespace UniversalPatcher
 
         }
 
-        public void saveConfigFile(string fileName)
+        public void SaveConfigFile(string fileName)
         {
             try
             {
@@ -583,7 +599,7 @@ namespace UniversalPatcher
             }
         }
 
-        public void saveBin(string fName)
+        public void SaveBin(string fName)
         {
             try
             {
@@ -600,7 +616,7 @@ namespace UniversalPatcher
             }
         }
 
-        public void saveCS1(int seg, UInt64 CS1Calc)
+        public void SaveCS1(int seg, UInt64 CS1Calc)
         {
             if (segmentAddressDatas[seg].CS1Address.Bytes == 1)
                 buf[segmentAddressDatas[seg].CS1Address.Address] = (byte)CS1Calc;
@@ -612,7 +628,7 @@ namespace UniversalPatcher
                 SaveUint64(segmentAddressDatas[seg].CS1Address.Address, CS1Calc);
         }
 
-        public void saveCS2(int seg, UInt64 CS2Calc)
+        public void SaveCS2(int seg, UInt64 CS2Calc)
         {
             if (segmentAddressDatas[seg].CS2Address.Bytes == 1)
                 buf[segmentAddressDatas[seg].CS2Address.Address] = (byte)CS2Calc;
@@ -625,7 +641,7 @@ namespace UniversalPatcher
 
         }
 
-        public UInt64 calculateCS1(int seg, bool dbg = true)
+        public UInt64 CalculateCS1(int seg, bool dbg = true)
         {
             SegmentConfig S = Segments[seg];
             if (Segments[seg].Checksum1Method == CSMethod.None)
@@ -633,7 +649,7 @@ namespace UniversalPatcher
             return CalculateChecksum(platformConfig.MSB, buf, segmentAddressDatas[seg].CS1Address, segmentAddressDatas[seg].CS1Blocks, segmentAddressDatas[seg].ExcludeBlocks, S.Checksum1Method, S.CS1Complement, segmentAddressDatas[seg].CS1Address.Bytes, S.CS1SwapBytes,dbg);
         }
 
-        public UInt64 calculateCS2(int seg, bool dbg = true)
+        public UInt64 CalculateCS2(int seg, bool dbg = true)
         {
             SegmentConfig S = Segments[seg];
             if (Segments[seg].Checksum2Method == CSMethod.None)
@@ -663,7 +679,7 @@ namespace UniversalPatcher
                         if (S.Checksum1Method != CSMethod.None)
                         {
                             uint CS1 = 0;
-                            UInt64 CS1Calc = calculateCS1(seg);
+                            UInt64 CS1Calc = CalculateCS1(seg);
                             if (segmentAddressDatas[seg].CS1Address.Address < uint.MaxValue)
                             {
                                 CS1 = (uint)ReadValue(segmentAddressDatas[seg].CS1Address);
@@ -684,7 +700,7 @@ namespace UniversalPatcher
                                 else
                                 {
                                     needFix = true;
-                                    saveCS1(seg, CS1Calc);
+                                    SaveCS1(seg, CS1Calc);
                                     Logger(" Checksum 1: " + CS1.ToString("X") + " => " + CS1Calc.ToString("X4") + " [Fixed]");
                                 }
                             }
@@ -693,7 +709,7 @@ namespace UniversalPatcher
                         if (S.Checksum2Method != CSMethod.None)
                         {
                             uint CS2 = 0;
-                            UInt64 CS2Calc = calculateCS2(seg);
+                            UInt64 CS2Calc = CalculateCS2(seg);
                             if (segmentAddressDatas[seg].CS2Address.Address < uint.MaxValue)
                             {
                                 CS2 = (uint)ReadValue(segmentAddressDatas[seg].CS2Address);
@@ -714,7 +730,7 @@ namespace UniversalPatcher
                                 else
                                 {
                                     needFix = true;
-                                    saveCS2(seg, CS2Calc);
+                                    SaveCS2(seg, CS2Calc);
                                     Logger(" Checksum 2: " + CS2.ToString("X") + " => " + CS2Calc.ToString("X4") + " [Fixed]");
                                 }
                             }
@@ -731,7 +747,7 @@ namespace UniversalPatcher
             return needFix;
         }
 
-        public void loadAddresses()
+        public void LoadAddresses()
         {
             string FileName = Path.Combine(Application.StartupPath, "XML", "addresses-" + OS + ".xml");
             if (!File.Exists(FileName))
@@ -746,7 +762,7 @@ namespace UniversalPatcher
         {
             segmentAddressDatas = new SegmentAddressData[Segments.Count];
             segmentinfos = new SegmentInfo[Segments.Count];
-            seekSegments();
+            SeekSegments();
 
             for (int i = 0; i < Segments.Count; i++)
             {
@@ -809,7 +825,7 @@ namespace UniversalPatcher
                 }
             }
             osAddressList = new List<osAddresses>();
-            loadAddresses();
+            LoadAddresses();
             GetInfo();
         }
 
@@ -830,7 +846,7 @@ namespace UniversalPatcher
                 {
                     if (segmentAddressDatas[i].CS1Address.Address != uint.MaxValue)
                     {
-                        if (segmentinfos[i].getCS1() != segmentinfos[i].getCS1Calc())
+                        if (segmentinfos[i].GetCS1() != segmentinfos[i].GetCS1Calc())
                         { 
                             checksumOK = false;
                         }
@@ -842,7 +858,7 @@ namespace UniversalPatcher
                 {
                     if (segmentAddressDatas[i].CS2Address.Address != uint.MaxValue)
                     {
-                        if (segmentinfos[i].getCS2() != segmentinfos[i].getCS2Calc())
+                        if (segmentinfos[i].GetCS2() != segmentinfos[i].GetCS2Calc())
                         {
                             checksumOK = false;
                         }
@@ -908,21 +924,21 @@ namespace UniversalPatcher
                     {
 
                         if (Bytes == 8)
-                            if (readUInt64(Addr) == SearchFor)
+                            if (ReadUInt64(Addr) == SearchFor)
                             {
                                 segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
                         if (Bytes == 4)
-                            if (readUInt32(Addr) == SearchFor)
+                            if (ReadUInt32(Addr) == SearchFor)
                             {
                                 segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
                         if (Bytes == 2)
-                            if (readUInt16(Addr) == SearchFor)
+                            if (ReadUInt16(Addr) == SearchFor)
                             {
                                 segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
@@ -939,21 +955,21 @@ namespace UniversalPatcher
                     else
                     {
                         if (Bytes == 8)
-                            if (readUInt64(Addr) != SearchFor)
+                            if (ReadUInt64(Addr) != SearchFor)
                             {
                                 segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
                         if (Bytes == 4)
-                            if (readUInt32(Addr) != SearchFor)
+                            if (ReadUInt32(Addr) != SearchFor)
                             {
                                 segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
                                 return true;
                             }
                         if (Bytes == 2)
-                            if (readUInt16(Addr) != SearchFor)
+                            if (ReadUInt16(Addr) != SearchFor)
                             {
                                 segmentAddressDatas[SegNr].SegmentBlocks.Add(B);
                                 Debug.WriteLine("Found: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
@@ -1014,19 +1030,19 @@ namespace UniversalPatcher
                             binfile.Checkwords.Add(checkw);
                         }
                     if (Bytes == 2)
-                        if (readUInt16(Location) == CW)
+                        if (ReadUInt16(Location) == CW)
                         {
                             Debug.WriteLine("Checkword: " + checkw.Key + " Found in: " + Location.ToString("X") + ", Data location: " + checkw.Address.ToString("X2"));
                             binfile.Checkwords.Add(checkw);
                         }
                     if (Bytes == 4)
-                        if (readUInt32(Location) == CW)
+                        if (ReadUInt32(Location) == CW)
                         {
                             Debug.WriteLine("Checkword: " + checkw.Key + " Found in: " + Location.ToString("X") + ", Data location: " + checkw.Address.ToString("X4"));
                             binfile.Checkwords.Add(checkw);
                         }
                     if (Bytes == 8)
-                        if (readUInt64(Location) == CW)
+                        if (ReadUInt64(Location) == CW)
                         {
                             Debug.WriteLine("Checkword: " + checkw.Key + " Found in: " + Location.ToString("X") + ", Data location: " + checkw.Address.ToString("X8"));
                             binfile.Checkwords.Add(checkw);
@@ -1085,15 +1101,15 @@ namespace UniversalPatcher
             }
             else if (AD.Bytes == 2)
             {
-                Result = readUInt16(AD.Address);
+                Result = ReadUInt16(AD.Address);
             }
             else if (AD.Bytes == 8)
             {
-                Result = (UInt64)readUInt64(AD.Address);
+                Result = (UInt64)ReadUInt64(AD.Address);
             }
             else //Default is 4 bytes
             {
-                Result = readUInt32(AD.Address);
+                Result = ReadUInt32(AD.Address);
             }
 
             Debug.WriteLine("Result: " + Result.ToString("X"));
@@ -1184,7 +1200,7 @@ namespace UniversalPatcher
             {
                 if (buf[i] == searchfor[0] && buf[i+1] == searchfor[1])
                 {
-                    return readUInt32(i + 2);
+                    return ReadUInt32(i + 2);
                 }
             }
             //Not found?
@@ -1209,7 +1225,7 @@ namespace UniversalPatcher
                 if (match)
                 {
                     Debug.WriteLine("Found MAF address from: " + i.ToString("X"));
-                    uint mafAddr = readUInt32(i + 6);
+                    uint mafAddr = ReadUInt32(i + 6);
                     if (mafAddr != prevMafAddr)
                     { 
                         if (res.Length > 0)
@@ -1259,7 +1275,7 @@ namespace UniversalPatcher
                     if (buf[i + length] == 0x74 && buf[i+length+2] == 0x20 &&  buf[i + length + 3] == 0x7C)
                     {
                         Debug.WriteLine("Found V6 VE table from: " + v6.address.ToString("X"));
-                        v6.address = readUInt32(i + length + 4);
+                        v6.address = ReadUInt32(i + length + 4);
                         v6.rows = buf[i + length + 1];
                     }
                 }
@@ -1302,7 +1318,7 @@ namespace UniversalPatcher
                     {
                         if (buf[i-j] == 0x74)
                         {
-                            uint addr = readUInt32(i + 2);
+                            uint addr = ReadUInt32(i + 2);
                             if (addr < fsize && addr > calStartAddr)
                             { 
                                 Debug.WriteLine("Found V6 table address from address: " + (i + 3).ToString("X"));
@@ -1325,7 +1341,7 @@ namespace UniversalPatcher
 
             for (int i = 2; i < 20; i++)
             {
-                if (readUInt16((uint)(BufSize - i)) == 0xA55A) //Read OS version from end of file, before bytes A5 5A
+                if (ReadUInt16((uint)(BufSize - i)) == 0xA55A) //Read OS version from end of file, before bytes A5 5A
                 {
                     segmentAddressDatas[SegNr].PNaddr.Address = (uint)(BufSize - (i + 4));
                     Debug.WriteLine("V6: Found PN address from: " + segmentAddressDatas[SegNr].PNaddr.Address.ToString("X"));
@@ -1333,7 +1349,7 @@ namespace UniversalPatcher
             }
             if (segmentAddressDatas[SegNr].PNaddr.Address == 0)
                 throw new Exception("OS id missing");
-            GMOS = readUInt32(segmentAddressDatas[SegNr].PNaddr.Address);
+            GMOS = ReadUInt32(segmentAddressDatas[SegNr].PNaddr.Address);
             segmentAddressDatas[SegNr].PNaddr.Bytes = 4;
             segmentAddressDatas[SegNr].PNaddr.Type = AddressDataType.Int;
             Block B = new Block();
@@ -1403,12 +1419,12 @@ namespace UniversalPatcher
 
         }
 
-        private void seekSegments()
+        private void SeekSegments()
         {
             if (foundSegments.Count == 0)
             {
                 SegmentSeek sSeek = new SegmentSeek();
-                sSeek.seekSegments(this);
+                sSeek.SeekSegments(this);
                 if (foundSegments.Count == 0)
                 {
                     //Stop seeking again if nothing is found
@@ -1418,7 +1434,7 @@ namespace UniversalPatcher
             }
         }
 
-        private uint seekAddress(string line)
+        private uint SeekAddress(string line)
         {
             uint retVal = uint.MaxValue;
             try
@@ -1480,7 +1496,7 @@ namespace UniversalPatcher
                     foreach (string linePart in lineParts)
                     {
                         //If there is multiple seek's return first we can find
-                        AD.Address = seekAddress(linePart);
+                        AD.Address = SeekAddress(linePart);
                         if (AD.Address < uint.MaxValue)
                         {
                             //Address handled, handle bytes & type:
@@ -1676,11 +1692,11 @@ namespace UniversalPatcher
 
                     if (StartEnd[0].ToLower().StartsWith("seek:"))
                     {
-                        B.Start = seekAddress(StartEnd[0]);
+                        B.Start = SeekAddress(StartEnd[0]);
                     }
                     if (StartEnd.Length > 1 && StartEnd[1].ToLower().StartsWith("seek:"))
                     {
-                        B.End = seekAddress(StartEnd[1]);
+                        B.End = SeekAddress(StartEnd[1]);
                     }
 /*                    if (Part.Contains("seek:"))
                     {
@@ -1749,14 +1765,14 @@ namespace UniversalPatcher
 
                             if (isWord)
                             {
-                                B.Start = readUInt16(tmpStart);
-                                B.End = readUInt16(tmpStart + 2);
+                                B.Start = ReadUInt16(tmpStart);
+                                B.End = ReadUInt16(tmpStart + 2);
                                 tmpStart += 4;
                             }
                             else
                             {
-                                B.Start = readUInt32(tmpStart);
-                                B.End = readUInt32(tmpStart + 4);
+                                B.Start = ReadUInt32(tmpStart);
+                                B.End = ReadUInt32(tmpStart + 4);
                                 tmpStart += 8;
                             }
                             if (Multiple > 1)
@@ -1781,7 +1797,7 @@ namespace UniversalPatcher
                         if (StartEnd.Length > 1 && StartEnd[1].StartsWith("@"))
                         {
                             //Read End address from bin at this address
-                            B.End = readUInt32(B.End);
+                            B.End = ReadUInt32(B.End);
                         }
                         if (StartEnd.Length > 1 && StartEnd[1].EndsWith("@"))
                         {
@@ -1832,7 +1848,7 @@ namespace UniversalPatcher
 
                     if (AddrParts[0] == ("seek"))
                     {
-                        E.Address = seekAddress(LinePart);
+                        E.Address = SeekAddress(LinePart);
                         E.Name = AddrParts[1];
                     }
                     else
@@ -1949,7 +1965,7 @@ namespace UniversalPatcher
 
         // If segment number can be read from bin, use that number
         // Othwerwise use ordernumber
-        public int getSegmentByNr(string nr)
+        public int GetSegmentByNr(string nr)
         {
             for (int i=0; i< segmentinfos.Length; i++)
             {
@@ -1964,7 +1980,7 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        public TableData getTdbyHeader(string header)
+        public TableData GetTdbyHeader(string header)
         {
             TableData headerTd = null;
             try
@@ -1992,7 +2008,7 @@ namespace UniversalPatcher
             return headerTd;
         }
 
-        public TableData getConversiotableByMath(string mathStr)
+        public TableData GetConversiotableByMath(string mathStr)
         {
             TableData retVal = null;
             try
@@ -2016,12 +2032,12 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        public byte readByte(uint addr)
+        public byte ReadByte(uint addr)
         {
             return buf[addr];
         }
 
-        public ushort readUInt16(uint addr)
+        public ushort ReadUInt16(uint addr)
         {
             if (platformConfig.MSB)
                 return (UInt16)((buf[addr] << 8) | buf[addr + 1]);
@@ -2029,7 +2045,7 @@ namespace UniversalPatcher
                 return (UInt16)((buf[addr + 1] << 8) | buf[addr]);
         }
 
-        public Int16 readInt16(uint addr)
+        public Int16 ReadInt16(uint addr)
         {
             if (platformConfig.MSB)
                 return (Int16)((buf[addr] << 8) | buf[addr + 1]);
@@ -2037,7 +2053,7 @@ namespace UniversalPatcher
                 return (Int16)((buf[addr + 1] << 8) | buf[addr]);
         }
 
-        public UInt32 readUInt32(uint addr)
+        public UInt32 ReadUInt32(uint addr)
         {
             byte[] tmp = new byte[4];
             Array.Copy(buf, addr, tmp, 0, 4);
@@ -2046,7 +2062,7 @@ namespace UniversalPatcher
             return BitConverter.ToUInt32(tmp, 0);
         }
 
-        public Int32 readInt32(uint addr)
+        public Int32 ReadInt32(uint addr)
         {
             byte[] tmp = new byte[4];
             Array.Copy(buf, addr, tmp, 0, 4);
@@ -2055,7 +2071,7 @@ namespace UniversalPatcher
             return BitConverter.ToInt32(tmp, 0);
         }
 
-        public Double readFloat32(uint addr)
+        public Double ReadFloat32(uint addr)
         {
             byte[] tmp = new byte[4];
             Array.Copy(buf, addr, tmp, 0, 4);
@@ -2064,7 +2080,7 @@ namespace UniversalPatcher
             return BitConverter.ToSingle(tmp, 0);
         }
 
-        public UInt64 readUInt64(uint addr)
+        public UInt64 ReadUInt64(uint addr)
         {
             byte[] tmp = new byte[8];
             Array.Copy(buf, addr, tmp, 0, 8);
@@ -2073,7 +2089,7 @@ namespace UniversalPatcher
             return BitConverter.ToUInt64(tmp, 0);
         }
 
-        public Int64 readInt64(uint addr)
+        public Int64 ReadInt64(uint addr)
         {
             byte[] tmp = new byte[8];
             Array.Copy(buf, addr, tmp, 0, 8);
@@ -2082,7 +2098,7 @@ namespace UniversalPatcher
             return BitConverter.ToInt64(tmp, 0);
         }
 
-        public Double readFloat64(uint addr)
+        public Double ReadFloat64(uint addr)
         {
             byte[] tmp = new byte[8];
             Array.Copy(buf, addr, tmp, 0, 8);

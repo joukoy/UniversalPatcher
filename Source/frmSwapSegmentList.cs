@@ -6,9 +6,10 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using static upatcher;
+using static Upatcher;
 using System.IO;
 using System.Diagnostics;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -121,7 +122,7 @@ namespace UniversalPatcher
             LoadSegments();
         }
 
-        private string segmentcompatible(SegmentData s1, SegmentData s2, int segNr)
+        private string Segmentcompatible(SegmentData s1, SegmentData s2, int segNr)
         {
             try {
                 if (s1.name[segNr].ToLower().Contains(txtSkiptext.Text.ToLower()) && chkSkipeeprom.Checked)
@@ -195,7 +196,7 @@ namespace UniversalPatcher
                         swapdata = new SegmentData(SwapSegments[i].SegmentAddresses, SwapSegments[i].SegmentSizes);
                         for (int x = 0; x < PCM.segmentinfos.Length; x++)
                         {
-                            string segmentcomp = segmentcompatible(PCMsegmentdata, swapdata, x);
+                            string segmentcomp = Segmentcompatible(PCMsegmentdata, swapdata, x);
                             if (segmentcomp == "0")
                             {
                                 if (complevel == "1")
@@ -278,7 +279,7 @@ namespace UniversalPatcher
                         {
                             if (radioShow1x0.Checked)
                             {
-                                item.SubItems.Add(segmentcompatible(PCMsegmentdata, swapdata, x));
+                                item.SubItems.Add(Segmentcompatible(PCMsegmentdata, swapdata, x));
                             }
                             else 
                             {
@@ -306,39 +307,7 @@ namespace UniversalPatcher
             }
             listSegments.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
-        /*
-                private void LoadSegments()
-                {
-                    listSegments.Items.Clear();
-                    SwapBuffer = null;
-                    labelSelectedSegment.Text = "-";
-                    if (comboSegments.Text == "OS")
-                    {
-                        return;
-                    }
-                    string SegNr = ((SegmentInfo)comboSegments.SelectedItem).SegNr;
-                    string Folder = Path.Combine(Application.StartupPath, "Segments", PCM.OS, SegNr);
-                    if (!Directory.Exists(Folder))
-                        return;
-                    DirectoryInfo d = new DirectoryInfo(Folder);
-                    FileInfo[] Files = d.GetFiles("*.binsegment");
-                    foreach (FileInfo file in Files)
-                    {
-                        var item = new ListViewItem(file.Name);
-                        string DescrFile = file.FullName + ".txt";
-                        if (File.Exists(DescrFile))
-                        {
-                            StreamReader sr = new StreamReader(DescrFile);
-                            string line = sr.ReadLine();
-                            sr.Close();
-                            item.SubItems.Add(line);
-                        }
-                        item.Tag = file.FullName;
-                        listSegments.Items.Add(item);
-                    }
 
-                }
-                */
         private void comboSegments_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadSegments();
@@ -462,11 +431,11 @@ namespace UniversalPatcher
                 uint TotalLength = 0;
                 if (PCM.segmentinfos[Seg].SwapAddress.Length > 1)
                 {
-                    TotalLength = PCM.segmentinfos[Seg].getSwapSize();
+                    TotalLength = PCM.segmentinfos[Seg].GetSwapSize();
                 }
                 else
                 {
-                    TotalLength = PCM.segmentinfos[Seg].getSize();
+                    TotalLength = PCM.segmentinfos[Seg].GetSize();
                 }
                 Logger("Reading segment from file: " + FileName,false);
                 uint fsize = (uint)new FileInfo(FileName).Length;

@@ -53,7 +53,6 @@
             this.label2.Size = new System.Drawing.Size(57, 13);
             this.label2.TabIndex = 1;
             this.label2.Text = "New XML:";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // txtOldXML
             // 

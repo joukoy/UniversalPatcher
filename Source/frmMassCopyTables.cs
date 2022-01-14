@@ -8,7 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using static UniversalPatcher.ExtensionMethods;
-using static upatcher;
+using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -98,7 +99,7 @@ namespace UniversalPatcher
                     string fileName = pcmList[i].pcmFile.FileName;
                     SelectPCM sPCM = pcmList[i];
                     LoggerBold(fileName);
-                    searchTargetTables(sPCM.pcmFile, tableTds, true);                    
+                    SearchTargetTables(sPCM.pcmFile, tableTds, true);                    
                 }
             }
 
@@ -108,12 +109,12 @@ namespace UniversalPatcher
             }
             else
             {
-                refreshPcmList();
+                RefreshPcmList();
                 LoggerBold("Done, You can now save files");
             }
         }
 
-        private void refreshPcmList()
+        private void RefreshPcmList()
         {
             bindingSource.DataSource = null;
             bindingSource.DataSource = pcmList;
@@ -165,33 +166,33 @@ namespace UniversalPatcher
 
 
 
-        private void copyTableData(TableData srcTd, TableData dstTd, ref PcmFile dstPCM)
+        private void CopyTableData(TableData srcTd, TableData dstTd, ref PcmFile dstPCM)
         {
             frmTableEditor srcTE = new frmTableEditor();
-            srcTE.prepareTable(PCM, srcTd, null,"A");
+            srcTE.PrepareTable(PCM, srcTd, null,"A");
             //srcTE.loadTable();
             frmTableEditor dstTE = new frmTableEditor();
-            dstTE.prepareTable(dstPCM, dstTd, null,"A");
+            dstTE.PrepareTable(dstPCM, dstTd, null,"A");
             //dstTE.loadTable();
 
             for (int cell = 0; cell < srcTE.compareFiles[0].tableInfos[0].tableCells.Count;cell++)
             {
                 TableCell srcTc = srcTE.compareFiles[0].tableInfos[0].tableCells[cell];
                 TableCell dstTc = dstTE.compareFiles[0].tableInfos[0].tableCells[cell];
-                dstTc.saveValue(Convert.ToDouble(srcTc.lastValue));
+                dstTc.SaveValue(Convert.ToDouble(srcTc.lastValue));
             }
 
-            dstTE.saveTable(false);
+            dstTE.SaveTable(false);
             srcTE.Dispose();
             dstTE.Dispose();
         }
 
-        private void searchTargetTables(PcmFile dstPCM, List<TableData> tableTds, bool execNow)
+        private void SearchTargetTables(PcmFile dstPCM, List<TableData> tableTds, bool execNow)
         {
             for (int x = 0; x < tableTds.Count; x++)
             {
                 TableData sourceTd = tableTds[x];
-                TableData dstTd = findTableData(sourceTd, dstPCM.tableDatas);
+                TableData dstTd = FindTableData(sourceTd, dstPCM.tableDatas);
                 if (dstTd == null)
                 {
                     Logger("Table missing: " + sourceTd.TableName);
@@ -207,7 +208,7 @@ namespace UniversalPatcher
                         if (execNow)
                         {
                             Logger("Copying table: " + sourceTd.TableName + "...", false);
-                            copyTableData(sourceTd, dstTd, ref dstPCM);
+                            CopyTableData(sourceTd, dstTd, ref dstPCM);
                             Logger(" [OK]");
                         }
                         else
@@ -219,7 +220,7 @@ namespace UniversalPatcher
             }
         }
 
-        public void startTableCopy()
+        public void StartTableCopy()
         {
             try 
             { 
@@ -235,16 +236,16 @@ namespace UniversalPatcher
                         string fileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                         PcmFile newPCM = new PcmFile(fileName, true, "");
                         LoggerBold(fileName);
-                        newPCM.autoLoadTunerConfig();
+                        newPCM.AutoLoadTunerConfig();
                         if (PCM.seekTablesImported && !newPCM.seekTablesImported)
-                            newPCM.importSeekTables();
+                            newPCM.ImportSeekTables();
                         SelectPCM sPCM = new SelectPCM();
                         sPCM.pcmFile = newPCM;
-                        searchTargetTables(sPCM.pcmFile, tableTds, false);
+                        SearchTargetTables(sPCM.pcmFile, tableTds, false);
                         pcmList.Add(sPCM);
                     }
                     LoggerBold("Select destination files and Press Apply to copy tables");
-                    refreshPcmList();
+                    RefreshPcmList();
                 }
             }
             catch (Exception ex)
@@ -255,7 +256,7 @@ namespace UniversalPatcher
         }
 
 
-        private int countSelections()
+        private int CountSelections()
         {
             int selCount = 0;
             for (int i = 0; i < pcmList.Count; i++)
@@ -266,7 +267,7 @@ namespace UniversalPatcher
             return selCount;
         }
 
-        private string generateFname(string origFname, string fPath="")
+        private string GenerateFname(string origFname, string fPath="")
         {
             string retVal = origFname;
             if (txtFnameExtension.Text.Length > 0)
@@ -282,7 +283,7 @@ namespace UniversalPatcher
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (countSelections() == 0)
+            if (CountSelections() == 0)
             {
                 Logger("No files selected");
                 return;
@@ -292,9 +293,9 @@ namespace UniversalPatcher
                 if (pcmList[i].Selected)
                 {
                     string origFname = pcmList[i].pcmFile.FileName;
-                    string newFname = generateFname(origFname);
+                    string newFname = GenerateFname(origFname);
                     Logger("Saving file: " + newFname, false);
-                    pcmList[i].pcmFile.saveBin(newFname);
+                    pcmList[i].pcmFile.SaveBin(newFname);
                     Logger(" [OK]");
                 }
             }
@@ -303,7 +304,7 @@ namespace UniversalPatcher
 
         private void btnSaveTo_Click(object sender, EventArgs e)
         {
-            if (countSelections() == 0)
+            if (CountSelections() == 0)
             {
                 Logger("No files selected");
                 return;
@@ -318,9 +319,9 @@ namespace UniversalPatcher
                 if (pcmList[i].Selected)
                 {
                     string origFName = Path.GetFileName(pcmList[i].pcmFile.FileName);
-                    string newFname = generateFname(origFName, savePath);
+                    string newFname = GenerateFname(origFName, savePath);
                     Logger("Saving file: " + newFname, false);
-                    pcmList[i].pcmFile.saveBin(newFname);
+                    pcmList[i].pcmFile.SaveBin(newFname);
                     Logger(" [OK]");
                 }
             }
@@ -329,7 +330,7 @@ namespace UniversalPatcher
 
         private void btnSaveAs_Click(object sender, EventArgs e)
         {
-            if (countSelections() == 0)
+            if (CountSelections() == 0)
             {
                 Logger("No files selected");
                 return;
@@ -343,7 +344,7 @@ namespace UniversalPatcher
                     if (newFname.Length > 0)
                     {
                         Logger("Saving file: " + newFname, false);
-                        pcmList[i].pcmFile.saveBin(newFname);
+                        pcmList[i].pcmFile.SaveBin(newFname);
                         Logger(" [OK]");
                     }
                 }
@@ -355,19 +356,19 @@ namespace UniversalPatcher
         {
             for (int i = 0; i < pcmList.Count; i++)
                 pcmList[i].Selected = true;
-            refreshPcmList();
+            RefreshPcmList();
         }
 
         private void unSelectAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < pcmList.Count; i++)
                 pcmList[i].Selected = false;
-            refreshPcmList();
+            RefreshPcmList();
         }
 
         private void btnTuner_Click(object sender, EventArgs e)
         {
-            if (countSelections() == 0)
+            if (CountSelections() == 0)
             {
                 Logger("No files selected");
                 return;
@@ -379,12 +380,12 @@ namespace UniversalPatcher
                 if (pcmList[i].Selected)
                 {
                     PcmFile newPCM = pcmList[i].pcmFile;
-                    frmT.addtoCurrentFileMenu(newPCM);
+                    frmT.AddtoCurrentFileMenu(newPCM);
                     frmT.PCM = newPCM;
-                    frmT.loadConfigforPCM(ref newPCM);
+                    frmT.LoadConfigforPCM(ref newPCM);
                 }
             }
-            frmT.selectPCM();
+            frmT.SelectPCM();
 
         }
     }

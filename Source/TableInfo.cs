@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using static upatcher;
+using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -21,8 +22,8 @@ namespace UniversalPatcher
         //public uint tableId { get; set; }
         public TableData td { get; set; }
         public object lastValue { get; set; }
-        public object origValue { get { return getValue(tableInfo.compareFile.pcm.buf,addr, td, 0, tableInfo.compareFile.pcm); }}
-        public double origRawValue {get {return getRawValue(tableInfo.compareFile.pcm.buf, addr, td, 0,tableInfo.compareFile.pcm.platformConfig.MSB); }}
+        public object origValue { get { return GetValue(tableInfo.compareFile.pcm.buf,addr, td, 0, tableInfo.compareFile.pcm); }}
+        public double origRawValue {get {return GetRawValue(tableInfo.compareFile.pcm.buf, addr, td, 0,tableInfo.compareFile.pcm.platformConfig.MSB); }}
         public double lastRawValue  { get; set; }
         public double cmpValue { get; set; }
         public TableInfo tableInfo { get; set; }
@@ -43,7 +44,7 @@ namespace UniversalPatcher
             return (TableCell)this.MemberwiseClone();
         }
 
-        public double calculatedValue(double rawValue)
+        public double CalculatedValue(double rawValue)
         {
             try
             {
@@ -53,11 +54,11 @@ namespace UniversalPatcher
 
                 if (mathStr.Contains("table:"))
                 {
-                    mathStr = readConversionTable(mathStr, tableInfo.pcm);
+                    mathStr = ReadConversionTable(mathStr, tableInfo.pcm);
                 }
                 if (mathStr.Contains("raw:"))
                 {
-                    mathStr = readConversionRaw(mathStr, tableInfo.pcm);
+                    mathStr = ReadConversionRaw(mathStr, tableInfo.pcm);
                 }
 
                 return parser.Parse(mathStr.Replace("x", rawValue.ToString()));
@@ -69,7 +70,7 @@ namespace UniversalPatcher
             }
         }
 
-        public bool saveValue(double val,bool isRawValue = false)
+        public bool SaveValue(double val,bool isRawValue = false)
         {
             bool retVal = false;    //Return true if value modified
             try
@@ -79,7 +80,7 @@ namespace UniversalPatcher
                 if (td.OutputType == OutDataType.Flag && td.BitMask != "")
                 {
                     bool flag = Convert.ToBoolean(val);
-                    saveFlag(bufAddr, flag);
+                    SaveFlag(bufAddr, flag);
                     return true;
                 }
                 double newRawValue;
@@ -92,21 +93,21 @@ namespace UniversalPatcher
                     string mathStr = td.Math.ToLower();
                     if (mathStr.Contains("table:"))
                     {
-                        mathStr = readConversionTable(mathStr, tableInfo.pcm);
+                        mathStr = ReadConversionTable(mathStr, tableInfo.pcm);
                     }
                     if (mathStr.Contains("raw:"))
                     {
-                        mathStr = readConversionRaw(mathStr, tableInfo.pcm);
+                        mathStr = ReadConversionRaw(mathStr, tableInfo.pcm);
                     }
 
-                    newRawValue = savingMath.getSavingValue(mathStr, td, val);
+                    newRawValue = savingMath.GetSavingValue(mathStr, td, val);
                     Debug.WriteLine("Calculated raw value: " + newRawValue);
                 }
                 if (td.DataType != InDataType.FLOAT32 && td.DataType != InDataType.FLOAT64)
                     newRawValue = Math.Round(newRawValue);
 
-                double minRawVal = getMinValue(td.DataType);
-                double maxRawVal = getMaxValue(td.DataType);
+                double minRawVal = GetMinValue(td.DataType);
+                double maxRawVal = GetMaxValue(td.DataType);
 
                 if (newRawValue < minRawVal)
                 {
@@ -139,7 +140,7 @@ namespace UniversalPatcher
                     SaveUint64(tableBuffer, bufAddr, (UInt64)newRawValue, MSB);
                 if (newRawValue != lastRawValue)
                     retVal = true;
-                lastValue = calculatedValue(newRawValue);
+                lastValue = CalculatedValue(newRawValue);
                 lastRawValue = newRawValue;
             }
             catch(Exception ex)
@@ -150,7 +151,7 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        private void saveFlag(uint bufAddr, bool flag)
+        private void SaveFlag(uint bufAddr, bool flag)
         {
             byte[] tableBuffer = tableInfo.compareFile.buf;
             string maskStr = "FF";
@@ -177,7 +178,7 @@ namespace UniversalPatcher
             else if (td.DataType == InDataType.SWORD || td.DataType == InDataType.UWORD)
             {
                 ushort mask = Convert.ToUInt16(maskStr, 16);
-                ushort curVal = readUint16(tableBuffer, bufAddr, MSB);
+                ushort curVal = ReadUint16(tableBuffer, bufAddr, MSB);
                 ushort newVal;
                 if (flag)
                 {
@@ -195,7 +196,7 @@ namespace UniversalPatcher
             else if (td.DataType == InDataType.INT32 || td.DataType == InDataType.UINT32)
             {
                 UInt32 mask = Convert.ToUInt32(maskStr, 16);
-                UInt32 curVal = readUint32(tableBuffer, bufAddr, MSB);
+                UInt32 curVal = ReadUint32(tableBuffer, bufAddr, MSB);
                 UInt32 newVal;
                 if (flag)
                 {
@@ -213,7 +214,7 @@ namespace UniversalPatcher
             else if (td.DataType == InDataType.INT64 || td.DataType == InDataType.UINT64)
             {
                 UInt64 mask = Convert.ToUInt64(maskStr, 16);
-                UInt64 curVal = readUint64(tableBuffer, bufAddr, MSB);
+                UInt64 curVal = ReadUint64(tableBuffer, bufAddr, MSB);
                 UInt64 newVal;
                 if (flag)
                 {

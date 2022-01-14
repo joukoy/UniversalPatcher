@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using static upatcher;
+using static Upatcher;
 using System.Text.RegularExpressions;
 //using System.Threading;
 //using System.Threading.Tasks;
@@ -20,6 +20,7 @@ using System.Configuration;
 using System.Xml.Linq;
 using System.Globalization;
 using System.Xml;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -124,7 +125,7 @@ namespace UniversalPatcher
 
             Application.DoEvents();
 
-            addCheckBoxes();
+            AddCheckBoxes();
             numSuppress.Value = Properties.Settings.Default.SuppressAfter;
             if (numSuppress.Value == 0)
                 numSuppress.Value = 10;
@@ -146,7 +147,7 @@ namespace UniversalPatcher
             listCSAddresses.Columns.Add("VE table");
             listCSAddresses.Columns.Add("3d tables");
 
-            setWorkingMode();
+            SetWorkingMode();
             dataCVN.ColumnHeaderMouseClick += DataCVN_ColumnHeaderMouseClick;
             tabFakeCvn.Enter += TabFakeCvn_Enter;
             numFakeCvnBytes.KeyPress += numFakeCvnBytesFromEnd_ValueChanged;
@@ -166,7 +167,7 @@ namespace UniversalPatcher
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string file in files)
-                openBaseFile(file);
+                OpenBaseFile(file);
         }
 
         private void FrmPatcher_DragEnter(object sender, DragEventArgs e)
@@ -176,10 +177,10 @@ namespace UniversalPatcher
 
         private void TabEditExtra_Enter(object sender, EventArgs e)
         {
-            refreshExtraInfoTab();
+            RefreshExtraInfoTab();
         }
 
-        private void refreshExtraInfoTab()
+        private void RefreshExtraInfoTab()
         {
             comboExtrainfoSegment.DataSource = basefile.Segments;
             comboExtrainfoSegment.DisplayMember = "Name";            
@@ -219,13 +220,13 @@ namespace UniversalPatcher
             {
                 cvnSortBy = dataCVN.Columns[e.ColumnIndex].Name;
                 cvnSortIndex = e.ColumnIndex;
-                cvnStrSortOrder = getSortOrder(cvnSortIndex);
-                filterCVN();
+                cvnStrSortOrder = GetSortOrder(cvnSortIndex);
+                FilterCVN();
             }
 
         }
 
-        private void filterCVN()
+        private void FilterCVN()
         {
             List<CVN> compareList = new List<CVN>();
             if (cvnStrSortOrder == SortOrder.Ascending)
@@ -237,7 +238,7 @@ namespace UniversalPatcher
             //RefreshCVNlist();
         }
 
-        private SortOrder getSortOrder(int columnIndex)
+        private SortOrder GetSortOrder(int columnIndex)
         {
             try
             {
@@ -260,7 +261,7 @@ namespace UniversalPatcher
             return SortOrder.Ascending;
         }
 
-        private void setWorkingMode()
+        private void SetWorkingMode()
         {
             try
             {
@@ -431,7 +432,7 @@ namespace UniversalPatcher
             }
         }
 
-        public void refreshPidList()
+        public void RefreshPidList()
         {
             pidListBindingSource.DataSource = null;
             pidListBindingSource.DataSource = pidList;
@@ -444,7 +445,7 @@ namespace UniversalPatcher
                 tabPIDList.Text = "PIDs (" + pidList.Count.ToString() + ")";
         }
 
-        public void refreshDtcList()
+        public void RefreshDtcList()
         {
             dtcBindingSource.DataSource = null;
             dataGridDTC.DataSource = null;
@@ -468,7 +469,7 @@ namespace UniversalPatcher
             dataGridDTC.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
 
         }
-        public void refreshTableSeek()
+        public void RefreshTableSeek()
         {
             tableSeekBindingSource.DataSource = null;
             dataGridTableSeek.DataSource = null;
@@ -510,8 +511,23 @@ namespace UniversalPatcher
                 Properties.Settings.Default.PatcherSplitterDistance = splitPatcher.SplitterDistance;
                 Properties.Settings.Default.Save();
             }
+            if (basefile.BufModified())
+            {
+                DialogResult res = MessageBox.Show("File modified.\n\rSave modifications before closing?", "Save changes?", MessageBoxButtons.YesNoCancel);
+                if (res == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
+                if (res == DialogResult.Yes)
+                {
+                    Logger("Saving to file: " + basefile.FileName);
+                    basefile.SaveBin(basefile.FileName);
+                    Logger("File saved");
+                }
+            }
+
         }
-        public void addCheckBoxes()
+        public void AddCheckBoxes()
         {
             if (LastXML == basefile.configFileFullName && chkSegments != null && chkSegments.Length == basefile.Segments.Count)
                 return;
@@ -588,7 +604,7 @@ namespace UniversalPatcher
                 }
             }
         }
-        private void getPidList()
+        private void GetPidList()
         {
             try
             {
@@ -601,17 +617,14 @@ namespace UniversalPatcher
                         Logger("PIDs not found");
                         return;
                     }
-                    for (int i = 0; i < pidSearch.pidList.Count; i++)
-                    {
-                        pidList.Add(pidSearch.pidList[i]);
-                    }
+                    pidList.AddRange(pidSearch.pidList);
                 }
             }
             catch (Exception ex)
             {
                 Logger(ex.Message);
             }
-            refreshPidList();
+            RefreshPidList();
         }
 
         private void ShowFileInfo(PcmFile PCM, bool InfoOnly)
@@ -698,7 +711,7 @@ namespace UniversalPatcher
                             }
                             else
                             {
-                                if (PCM.segmentinfos[i].getCS1() == PCM.segmentinfos[i].getCS1Calc())
+                                if (PCM.segmentinfos[i].GetCS1() == PCM.segmentinfos[i].GetCS1Calc())
                                 {
                                     Logger(" Checksum 1: " + PCM.segmentinfos[i].CS1 + " [OK]", false);
                                 }
@@ -717,7 +730,7 @@ namespace UniversalPatcher
                             }
                             else
                             {
-                                if (PCM.segmentinfos[i].getCS2() == PCM.segmentinfos[i].getCS2Calc())
+                                if (PCM.segmentinfos[i].GetCS2() == PCM.segmentinfos[i].GetCS2Calc())
                                 {
                                     Logger(" Checksum 2: " + PCM.segmentinfos[i].CS2 + " [OK]", false);
                                 }
@@ -737,11 +750,11 @@ namespace UniversalPatcher
                     }
                 }
 
-                refreshSearchedTables();
+                RefreshSearchedTables();
 
                 if (!InfoOnly)
                 {
-                    addCheckBoxes();
+                    AddCheckBoxes();
                     CheckSegmentCompatibility();
                 }
                 if (checkAutorefreshFileinfo.Checked)
@@ -755,7 +768,7 @@ namespace UniversalPatcher
             }
 
         }
-        public void refreshSearchedTables()
+        public void RefreshSearchedTables()
         {
             int count = 0;
             if (tableSearchResult == null)
@@ -788,7 +801,7 @@ namespace UniversalPatcher
                 {
                     labelXML.Text = "";
                     Logger(Environment.NewLine + Path.GetFileName(FileName));
-                    addCheckBoxes();
+                    AddCheckBoxes();
                     return;
                 }
                 labelXML.Text = PCM.configFile + " (v " + PCM.Segments[0].Version + ")";
@@ -798,7 +811,7 @@ namespace UniversalPatcher
                 if (chkSearchTables.Checked)
                 {
                     TableFinder tableFinder = new TableFinder();
-                    tableFinder.searchTables(PCM,false);
+                    tableFinder.SearchTables(PCM,false);
                 }
 
                 if (PCM.OS == null || PCM.OS == "")
@@ -816,20 +829,20 @@ namespace UniversalPatcher
                 DtcSearch DS = new DtcSearch();
                 if (chkSearchDTC.Checked)
                 {
-                    PCM.dtcCodes = DS.searchDtc(PCM, true);
-                    PCM.dtcCodes2 = DS.searchDtc(PCM, false);
+                    PCM.dtcCodes = DS.SearchDtc(PCM, true);
+                    PCM.dtcCodes2 = DS.SearchDtc(PCM, false);
                 }
-                refreshDtcList();
+                RefreshDtcList();
 
                 TableSeek TS = new TableSeek();
                 if (chkTableSeek.Checked)
                 {
                     Logger("Seeking tables...",false);
-                    Logger(TS.seekTables(PCM));
+                    Logger(TS.SeekTables(PCM));
                 }
-                refreshTableSeek();
+                RefreshTableSeek();
                                     
-                getPidList();
+                GetPidList();
             }
             catch (Exception ex)
             {
@@ -837,7 +850,7 @@ namespace UniversalPatcher
             }
         }
 
-        private void openBaseFile(string fileName = "")
+        private void OpenBaseFile(string fileName = "")
         {
             try
             {
@@ -855,8 +868,8 @@ namespace UniversalPatcher
                     GetFileInfo(txtBaseFile.Text, ref basefile, false);
                     this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
                     txtOS.Text = basefile.OS;
-                    clearFakeCVN();
-                    refreshExtraInfoTab();
+                    ClearFakeCVN();
+                    RefreshExtraInfoTab();
                 }
                 timer.Stop();
                 Debug.WriteLine("OpenBaseFile Time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
@@ -870,7 +883,7 @@ namespace UniversalPatcher
         }
         private void btnOrgFile_Click(object sender, EventArgs e)
         {
-            openBaseFile();
+            OpenBaseFile();
         }
 
         private void btnModFile_Click(object sender, EventArgs e)
@@ -1128,7 +1141,7 @@ namespace UniversalPatcher
                     return;
 
                 Logger("Saving to file: " + fileName);
-                basefile.saveBin(fileName);
+                basefile.SaveBin(fileName);
                 this.Text = "Universal Patcher - " + Path.GetFileName(fileName);
                 txtBaseFile.Text = fileName;
                 Logger("Done.");
@@ -1436,7 +1449,7 @@ namespace UniversalPatcher
             }
         }
 
-        public void openPatchSelector()
+        public void OpenPatchSelector()
         {
             try
             {
@@ -1444,7 +1457,7 @@ namespace UniversalPatcher
                 frmPS.basefile = basefile;
                 frmPS.Show();
                 Application.DoEvents();
-                frmPS.loadPatches();
+                frmPS.LoadPatches();
                 RefreshPatch();
             }
             catch (Exception ex)
@@ -1456,7 +1469,7 @@ namespace UniversalPatcher
         private void btnBinLoadPatch_Click(object sender, EventArgs e)
         {
             //LoadPatch();
-            openPatchSelector();
+            OpenPatchSelector();
         }
 
         private void chkDebug_CheckedChanged(object sender, EventArgs e)
@@ -1577,16 +1590,16 @@ namespace UniversalPatcher
             dataPatch.Rows[row + 1].Selected = true;
         }
 
-        private void loadXMLfile()
+        private void LoadConfigXMLfile()
         {
             try
             {
                 string fileName = SelectFile("Select XML file", "XML files (*.xml)|*.xml|All files (*.*)|*.*");
                 if (fileName.Length < 1)
                     return;
-                basefile.loadConfigFile(fileName);
+                basefile.LoadConfigFile(fileName);
                 labelXML.Text = Path.GetFileName(fileName) + " (v " + basefile.Segments[0].Version + ")";
-                addCheckBoxes();
+                AddCheckBoxes();
             }
             catch (Exception ex)
             {
@@ -1595,7 +1608,7 @@ namespace UniversalPatcher
         }
         private void loadConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            loadXMLfile();
+            LoadConfigXMLfile();
         }
 
         private void setupSegmentsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1666,7 +1679,7 @@ namespace UniversalPatcher
                 {
                     labelPatchname.Text = fileName;
                     Logger("Loading file: " + fileName);
-                    PatchList = loadPatchFile(fileName);
+                    PatchList = LoadPatchFile(fileName);
                     if (PatchList.Count > 0)
                     {
                         Logger("Description: " + PatchList[0].Description);
@@ -1687,7 +1700,7 @@ namespace UniversalPatcher
                     bool isCompatible = false;
                     for (int x=0; x<PatchList.Count; x++)
                     {
-                        if (checkPatchCompatibility(PatchList[x],basefile) < uint.MaxValue)
+                        if (CheckPatchCompatibility(PatchList[x],basefile) < uint.MaxValue)
                             isCompatible = true;
                     }
                     if (isCompatible)
@@ -1741,7 +1754,7 @@ namespace UniversalPatcher
                     if (CheckStockCVN(stock.PN,stock.Ver,stock.SegmentNr, cvnInt, false, basefile.configFileFullName) != "[stock]")
                     {
                         //Add if not already in list
-                        cvnDB.addtoStock(stock);
+                        cvnDB.AddtoStock(stock);
                         isNew = true;
                         Debug.WriteLine(stock.PN + " " + stock.Ver + " cvn: " + stock.cvn + " added");
                     }
@@ -1760,16 +1773,6 @@ namespace UniversalPatcher
                     Logger("All segments already in stock list");
                     return;
                 }
-/*                Logger("Saving file stockcvn.xml");
-                string FileName = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
-                using (FileStream stream = new FileStream(FileName, FileMode.Create))
-                {
-                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<CVN>));
-                    writer.Serialize(stream, StockCVN);
-                    stream.Close();
-                }
-                Logger("[OK]");
-*/
             }
             catch (Exception ex)
             {
@@ -2197,7 +2200,7 @@ namespace UniversalPatcher
                 if (newPcm.FixCheckSums())  //Returns true, if need fix for checksum
                 {  
                     Logger("Saving file: " + fileName);
-                    newPcm.saveBin(fileName);
+                    newPcm.SaveBin(fileName);
                     Logger("[OK]");
                 }
             }
@@ -2323,7 +2326,7 @@ namespace UniversalPatcher
         {
             if (!chkAutodetect.Checked)
             {
-                loadXMLfile();
+                LoadConfigXMLfile();
             }
         }
 
@@ -2409,7 +2412,7 @@ namespace UniversalPatcher
             try { 
                 frmSearchText frmS = new frmSearchText();
                 frmS.Show();
-                frmS.initMe(txtResult);
+                frmS.InitMe(txtResult);
             }
             catch (Exception ex)
             {
@@ -2417,11 +2420,11 @@ namespace UniversalPatcher
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnDebugSearch_Click(object sender, EventArgs e)
         {
             frmSearchText frmS = new frmSearchText();
             frmS.Show();
-            frmS.initMe(txtDebug);
+            frmS.InitMe(txtDebug);
         }
 
         private void btnSaveDebug_Click(object sender, EventArgs e)
@@ -2514,7 +2517,7 @@ namespace UniversalPatcher
         {
             tableSearchResult = new List<TableSearchResult>();
             tableSearchResultNoFilters = new List<TableSearchResult>();
-            refreshSearchedTables();
+            RefreshSearchedTables();
         }
 
         private void dataGridSearchedTables_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -2535,13 +2538,13 @@ namespace UniversalPatcher
 
         private void btnGetPidList_Click(object sender, EventArgs e)
         {
-            getPidList();
+            GetPidList();
         }
 
         private void btnClearPidList_Click(object sender, EventArgs e)
         {
             pidList = new List<PidSearch.PID>();
-            refreshPidList();
+            RefreshPidList();
         }
 
         private void btnSavePidList_Click(object sender, EventArgs e)
@@ -2586,7 +2589,7 @@ namespace UniversalPatcher
 
         private void chkTableSearchNoFilters_CheckedChanged(object sender, EventArgs e)
         {
-            refreshSearchedTables();
+            RefreshSearchedTables();
         }
 
         private void btnClearBadCvn_Click(object sender, EventArgs e)
@@ -2642,14 +2645,14 @@ namespace UniversalPatcher
                 if (chkCustomTableSearch.Checked)
                 {
                     TableFinder tableFinder = new TableFinder();
-                    tableFinder.searchTables(basefile,false, txtCustomSearchString.Text);
-                    refreshSearchedTables();
+                    tableFinder.SearchTables(basefile,false, txtCustomSearchString.Text);
+                    RefreshSearchedTables();
                     return;
                 }
                 uint startAddr = 0;
                 if (txtCustomSearchStartAddress.Text.Length == 0 || !HexToUint(txtCustomSearchStartAddress.Text, out startAddr))
                     startAddr = 0;
-                uint addr = searchBytes(basefile, txtCustomSearchString.Text, startAddr, basefile.fsize);
+                uint addr = SearchBytes(basefile, txtCustomSearchString.Text, startAddr, basefile.fsize);
                 if (addr == uint.MaxValue)
                     Logger("Not found");
                 else
@@ -2667,7 +2670,7 @@ namespace UniversalPatcher
         {
             try
             {
-                uint addr = searchBytes(basefile, txtCustomSearchString.Text, lastCustomSearchResult + 1, basefile.fsize);
+                uint addr = SearchBytes(basefile, txtCustomSearchString.Text, lastCustomSearchResult + 1, basefile.fsize);
                 if (addr == uint.MaxValue)
                     Logger("Not found");
                 else
@@ -2691,7 +2694,7 @@ namespace UniversalPatcher
                     startAddr = 0;
                 while (startAddr < uint.MaxValue)
                 {
-                    uint addr = searchBytes(basefile, txtCustomSearchString.Text, startAddr, basefile.fsize);
+                    uint addr = SearchBytes(basefile, txtCustomSearchString.Text, startAddr, basefile.fsize);
                     if (addr < uint.MaxValue)
                     {
                         ShowCustomSearchResult(addr);
@@ -2745,9 +2748,9 @@ namespace UniversalPatcher
             Logger("Cross table search...");
             tableSearchResult = new List<TableSearchResult>();
             TableFinder tableFinder = new TableFinder();
-            tableFinder.searchTables(basefile,false);
-            tableFinder.searchTables(modfile, true,"",(int)numCrossVariation.Value);
-            refreshSearchedTables();
+            tableFinder.SearchTables(basefile,false);
+            tableFinder.SearchTables(modfile, true,"",(int)numCrossVariation.Value);
+            RefreshSearchedTables();
             Logger("Done");
         }
 
@@ -2831,7 +2834,7 @@ namespace UniversalPatcher
 
         private void btnClearDTC_Click(object sender, EventArgs e)
         {
-            refreshDtcList();
+            RefreshDtcList();
         }
 
         private void btnSaveCsvDTC_Click(object sender, EventArgs e)
@@ -2873,7 +2876,7 @@ namespace UniversalPatcher
             }
         }
 
-        private void modifyDtc()
+        private void ModifyDtc()
         {
             try
             {
@@ -2885,7 +2888,7 @@ namespace UniversalPatcher
 
                 int codeIndex = dataGridDTC.SelectedCells[0].RowIndex;
                 frmSetDTC frmS = new frmSetDTC();
-                frmS.startMe(codeIndex, basefile, dtcCodes);
+                frmS.StartMe(codeIndex, basefile, dtcCodes);
                 if (frmS.ShowDialog() == DialogResult.OK)
                 {
 
@@ -2925,17 +2928,12 @@ namespace UniversalPatcher
         }
         private void dataGridDTC_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            modifyDtc();
+            ModifyDtc();
         }
 
         private void btnSetDTC_Click(object sender, EventArgs e)
         {
-            modifyDtc();
-        }
-
-        private void label14_Click(object sender, EventArgs e)
-        {
-
+            ModifyDtc();
         }
 
         private void dTCSearchToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3015,7 +3013,7 @@ namespace UniversalPatcher
                 if (basefile.configFileFullName.Length == 0)
                     fName = SelectFile("Select tableseekfile", "XML (*.xml)|*.xml|All (*.*)|*.*");
                 else
-                     fName = basefile.tableSeekFile;
+                     fName = basefile.TableSeekFile;
                 frmEditXML frmE = new frmEditXML();
                 frmE.LoadTableSeek(fName);
                 frmE.Show();
@@ -3029,10 +3027,10 @@ namespace UniversalPatcher
         private void btnClearTableSeek_Click(object sender, EventArgs e)
         {
             tableSeeks = new List<TableSeek>();
-            refreshTableSeek();
+            RefreshTableSeek();
         }
 
-        private void openTableEditor()
+        private void OpenTableEditor()
         {
             try
             {
@@ -3048,7 +3046,7 @@ namespace UniversalPatcher
                 }
 
                 frmTableEditor frmT = new frmTableEditor();
-                frmT.loadSeekTable(codeIndex, basefile);
+                frmT.LoadSeekTable(codeIndex, basefile);
                 frmT.Show();
             }
             catch (Exception ex)
@@ -3059,12 +3057,12 @@ namespace UniversalPatcher
 
         private void btnEditTable_Click(object sender, EventArgs e)
         {
-            openTableEditor();
+            OpenTableEditor();
         }
 
         private void dataGridTableSeek_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            openTableEditor();
+            OpenTableEditor();
         }
 
         private void rememberWindowSizeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3089,18 +3087,18 @@ namespace UniversalPatcher
             if (chkTableSeek.Checked)
             {
                 Logger("Seeking tables...", false);
-                Logger(TS.seekTables(basefile));
+                Logger(TS.SeekTables(basefile));
             }
 
             TinyTuner tt = new TinyTuner();
             Logger("Reading TinyTuner DB...", false);
-            Logger(tt.readTinyDB(basefile));
-            refreshTableSeek();
+            Logger(tt.ReadTinyDB(basefile));
+            RefreshTableSeek();
         }
 
         private void comboTableCategory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            filterTableSeek();
+            FilterTableSeek();
         }
 
         private void chkForceCompare_CheckedChanged(object sender, EventArgs e)
@@ -3143,7 +3141,7 @@ namespace UniversalPatcher
             }
         }
 
-        private void filterTableSeek()
+        private void FilterTableSeek()
         {
             try
             {
@@ -3161,7 +3159,7 @@ namespace UniversalPatcher
         }
         private void txtSearchTableSeek_TextChanged(object sender, EventArgs e)
         {
-            filterTableSeek();
+            FilterTableSeek();
         }
 
 
@@ -3172,13 +3170,13 @@ namespace UniversalPatcher
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openBaseFile();
+            OpenBaseFile();
         }
 
         private void saveToolStripMenuItem_Click_1(object sender, EventArgs e)
         {            
             Logger("Saving file: " + basefile.FileName);
-            basefile.saveBin(basefile.FileName);
+            basefile.SaveBin(basefile.FileName);
             Logger("OK");
         }
 
@@ -3209,13 +3207,13 @@ namespace UniversalPatcher
 
         private void btnLoadPatch_Click(object sender, EventArgs e)
         {
-            openPatchSelector();
+            OpenPatchSelector();
         }
 
         private void oBD2CodesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             frmEditXML frmEX = new frmEditXML();
-            frmEX.loadOBD2CodeList();
+            frmEX.LoadOBD2CodeList();
             frmEX.Show();
         }
 
@@ -3227,7 +3225,7 @@ namespace UniversalPatcher
                 if (basefile.configFileFullName.Length == 0)
                     fName = SelectFile("Select segmentSeekfile", "XML (*.xml)|*.xml|All (*.*)|*.*");
                 else
-                    fName = basefile.segmentSeekFile;
+                    fName = basefile.SegmentSeekFile;
                 frmEditXML frmE = new frmEditXML();
                 frmE.Show();
                 frmE.LoadSegmentSeek(fName);
@@ -3356,13 +3354,13 @@ namespace UniversalPatcher
                     if (numCSBytes.Value == 1)
                         savedVal = basefile.buf[csAddr];
                     else if (numCSBytes.Value == 2)
-                        savedVal = readUint16(basefile.buf, csAddr,chkCsMSB.Checked);
+                        savedVal = ReadUint16(basefile.buf, csAddr,chkCsMSB.Checked);
                     else if (numCSBytes.Value == 4)
-                        savedVal = readUint32(basefile.buf, csAddr, chkCsMSB.Checked);
+                        savedVal = ReadUint32(basefile.buf, csAddr, chkCsMSB.Checked);
                     else if (numCSBytes.Value == 8)
-                        savedVal = readUint64(basefile.buf, csAddr, chkCsMSB.Checked);
+                        savedVal = ReadUint64(basefile.buf, csAddr, chkCsMSB.Checked);
                     Logger("Saved value: ", false);
-                    Logger(SegmentInfo.csToString(savedVal, (int)numCSBytes.Value, method, chkCsMSB.Checked));
+                    Logger(SegmentInfo.CsToString(savedVal, (int)numCSBytes.Value, method, chkCsMSB.Checked));
                 }
 
                 if (chkCSUtilTryAll.Checked)
@@ -3373,7 +3371,7 @@ namespace UniversalPatcher
                 {
                     Logger("Result: ", false);
                     ulong calCval = csUtilCalcCS(true, savedVal);
-                    Logger(SegmentInfo.csToString(calCval,(int)numCSBytes.Value,method,chkCsMSB.Checked), false);
+                    Logger(SegmentInfo.CsToString(calCval,(int)numCSBytes.Value,method,chkCsMSB.Checked), false);
                     if (savedVal == calCval)
                         Logger(" [Match]");
                     else
@@ -3398,26 +3396,26 @@ namespace UniversalPatcher
                 UInt64 oldVal = 0;
                 if (numCSBytes.Value == 1)
                 {
-                    oldVal = basefile.readByte(csAddr);
+                    oldVal = basefile.ReadByte(csAddr);
                     basefile.buf[csAddr] = (byte)CS1Calc;
                 }
                 else if (numCSBytes.Value == 2)
                 {
-                    oldVal = basefile.readUInt16(csAddr);
+                    oldVal = basefile.ReadUInt16(csAddr);
                     basefile.SaveUshort(csAddr, (ushort)CS1Calc);
                 }
                 else if (numCSBytes.Value == 4)
                 {
-                    oldVal = basefile.readUInt32(csAddr);
+                    oldVal = basefile.ReadUInt32(csAddr);
                     basefile.SaveUint32(csAddr, (uint)CS1Calc);
                 }
                 else if (numCSBytes.Value == 8)
                 {
-                    oldVal = basefile.readUInt64(csAddr);
+                    oldVal = basefile.ReadUInt64(csAddr);
                     basefile.SaveUint64(csAddr, CS1Calc);
                 }
-                showChkData();
-                Logger("Checksum: " + SegmentInfo.csToString(oldVal, (int)numCSBytes.Value, method, chkCsMSB.Checked) + " => " + SegmentInfo.csToString(CS1Calc, (int)numCSBytes.Value, method, chkCsMSB.Checked) + " [Fixed]");
+                ShowChkData();
+                Logger("Checksum: " + SegmentInfo.CsToString(oldVal, (int)numCSBytes.Value, method, chkCsMSB.Checked) + " => " + SegmentInfo.CsToString(CS1Calc, (int)numCSBytes.Value, method, chkCsMSB.Checked) + " [Fixed]");
                 Logger("You can save BIN file now");
             }
             catch (Exception ex)
@@ -3492,24 +3490,24 @@ namespace UniversalPatcher
         {
             Properties.Settings.Default.WorkingMode = 0;
             Properties.Settings.Default.Save();
-            setWorkingMode();
+            SetWorkingMode();
         }
 
         private void basicToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.WorkingMode = 1;
             Properties.Settings.Default.Save();
-            setWorkingMode();
+            SetWorkingMode();
         }
 
         private void advancedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.WorkingMode = 2;
             Properties.Settings.Default.Save();
-            setWorkingMode();
+            SetWorkingMode();
         }
 
-        private void fakeCvn(int seg)
+        private void FakeCvn(int seg)
         {
             uint freeAddr = uint.MaxValue;
 
@@ -3549,9 +3547,9 @@ namespace UniversalPatcher
                 return;
             }
 
-            uint orgValue = basefile.readUInt32(freeAddr);
+            uint orgValue = basefile.ReadUInt32(freeAddr);
 
-            UInt64 cvn = basefile.segmentinfos[seg].getCvn();
+            UInt64 cvn = basefile.segmentinfos[seg].GetCvn();
 
             if (cvn == targetCvn)
             {
@@ -3603,14 +3601,14 @@ namespace UniversalPatcher
                 }
                 UInt64 calcCVN = 0;
 
-                UInt64 CS1Calc = basefile.segmentinfos[seg].getCS1Calc();
+                UInt64 CS1Calc = basefile.segmentinfos[seg].GetCS1Calc();
                 if (basefile.Segments[seg].CVN == 1)
                     calcCVN = CS1Calc;
                 else
                 {
                     //Fix CS1 first
-                    basefile.saveCS1(seg, (uint)CS1Calc);
-                    calcCVN = basefile.calculateCS2(seg, false);
+                    basefile.SaveCS1(seg, (uint)CS1Calc);
+                    calcCVN = basefile.CalculateCS2(seg, false);
                 }
                 if (calcCVN == targetCvn)
                 {
@@ -3643,7 +3641,7 @@ namespace UniversalPatcher
                     LoggerBold(Environment.NewLine + "Searching CVN");
                     if (radioFakeCvnSingleSegment.Checked)
                     {
-                        fakeCvn(comboFakeCvnSegment.SelectedIndex);
+                        FakeCvn(comboFakeCvnSegment.SelectedIndex);
                     }
                     else
                     {
@@ -3651,13 +3649,13 @@ namespace UniversalPatcher
                         {
                             if (btnFakeCVN.Text == "Go")
                                 break;
-                            getTargetCvn(i);
+                            GetTargetCvn(i);
                             Application.DoEvents();
                             if (!basefile.Segments[i].Name.ToLower().Contains("eeprom"))
                             {
                                 comboFakeCvnSegment.Text = basefile.Segments[i].Name;
                                 Application.DoEvents();
-                                fakeCvn(i);
+                                FakeCvn(i);
 
                             }
                         }
@@ -3665,7 +3663,7 @@ namespace UniversalPatcher
                     Logger("Done");
                     basefile.FixCheckSums();
                     ShowFileInfo(basefile,true);
-                    showFakeCvnSelectedBytes();
+                    ShowFakeCvnSelectedBytes();
                     //GetFileInfo(txtBaseFile.Text, ref basefile, false);
                 }
                 else //stop
@@ -3682,18 +3680,18 @@ namespace UniversalPatcher
 
         private void numFakeCvnBytes_ValueChanged(object sender, EventArgs e)
         {
-            showFakeCvnSelectedBytes();
+            ShowFakeCvnSelectedBytes();
         }
 
-        private void getTargetCvn(int seg)
+        private void GetTargetCvn(int seg)
         {
             txtTargetCVN.Text = "";
             labelFakeCvnPn.Text = "P/N: " + basefile.segmentinfos[seg].PN;
-            txtTargetCVN.Text = cvnDB.getStockCvn(basefile.segmentinfos[seg].PN, basefile.segmentinfos[seg].Ver, basefile.segmentinfos[seg].SegNr);
+            txtTargetCVN.Text = cvnDB.GetStockCvn(basefile.segmentinfos[seg].PN, basefile.segmentinfos[seg].Ver, basefile.segmentinfos[seg].SegNr);
 
         }
 
-        private void showFakeCvnSelectedBytes()
+        private void ShowFakeCvnSelectedBytes()
         {
             uint freeAddr = 0;
             if (!HexToUint(txtFreeAddress.Text, out freeAddr))
@@ -3758,7 +3756,7 @@ namespace UniversalPatcher
                     txtFreeAddress.Text = basefile.segmentAddressDatas[seg].VerAddr.Address.ToString("X");
                     numFakeCvnBytes.Value = basefile.segmentAddressDatas[seg].VerAddr.Bytes;
                 }
-                getTargetCvn(seg);
+                GetTargetCvn(seg);
             }
             catch (Exception ex)
             {
@@ -3857,7 +3855,7 @@ namespace UniversalPatcher
 
         }
 
-        private void clearFakeCVN()
+        private void ClearFakeCVN()
         {
             comboFakeCvnSegment.Items.Clear();
             comboFakeCvnSegment.Text = "";
@@ -3921,7 +3919,7 @@ namespace UniversalPatcher
                         }
                         Logger("[OK]");
                         */
-                        cvnDB.addtoStock(stock);
+                        cvnDB.AddtoStock(stock);
                     }
                 }
                 else
@@ -4041,7 +4039,7 @@ namespace UniversalPatcher
 
         private void txtFreeAddress_TextChanged(object sender, EventArgs e)
         {
-            showFakeCvnSelectedBytes();
+            ShowFakeCvnSelectedBytes();
         }
 
 
@@ -4059,7 +4057,7 @@ namespace UniversalPatcher
             fcs.Show();
         }
 
-        private void showChkData()
+        private void ShowChkData()
         {
             uint chkAddr = 0;
             if (!HexToUint(txtCSAddr.Text, out chkAddr))
@@ -4188,17 +4186,17 @@ namespace UniversalPatcher
 
         private void txtCSAddr_TextChanged(object sender, EventArgs e)
         {
-            showChkData();
+            ShowChkData();
         }
 
         private void numCSBytes_ValueChanged(object sender, EventArgs e)
         {
-            showChkData();
+            ShowChkData();
         }
 
         private void txtChecksumRange_TextChanged(object sender, EventArgs e)
         {
-            showChkData();
+            ShowChkData();
         }
 
         private void homepageToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4228,17 +4226,17 @@ namespace UniversalPatcher
                 frmE.LoadPlatformConfig(basefile);
                 frmE.Show();*/
                 frmPropertyEditor fpe = new frmPropertyEditor();
-                fpe.loadObject(basefile.platformConfig);
+                fpe.LoadObject(basefile.platformConfig);
                 fpe.Text = "Platform config [" + basefile.configFile + "]";
                 if (fpe.ShowDialog() == DialogResult.OK)
                 {
-                    string fName = basefile.platformConfigFile;
+                    string fName = basefile.PlatformConfigFile;
                     if (basefile.configFile.Length == 0)
                         fName = SelectSaveFile("XML (*.xml)|*.xml|All (*.*)|*.*","new-platform.xml");
                     if (fName.Length == 0)
                         return;
                     Logger("Saving platform config: " + Path.GetFileName(fName), false);
-                    basefile.savePlatformConfig(fName);
+                    basefile.SavePlatformConfig(fName);
                     Logger(" [OK]");
                 }
                 fpe.Dispose();
@@ -4255,7 +4253,7 @@ namespace UniversalPatcher
             string fName = SelectFile("Select platform config", "XML (*.xml)|*.xml|ALL (*.*)|*.*");
             if (fName.Length == 0)
                 return;
-            basefile.loadPlatformConfig(fName);
+            basefile.LoadPlatformConfig(fName);
 
         }
 
@@ -4271,7 +4269,7 @@ namespace UniversalPatcher
         {
             int seg = comboExtrainfoSegment.SelectedIndex;
             int ind = comboExtraInfoExtra.SelectedIndex;
-            txtExtrainfoData.Text = basefile.segmentinfos[seg].getExtraData(ind);
+            txtExtrainfoData.Text = basefile.segmentinfos[seg].GetExtraData(ind);
         }
 
         private void btnExtrainfoApply_Click(object sender, EventArgs e)
@@ -4280,9 +4278,9 @@ namespace UniversalPatcher
             {
                 int seg = comboExtrainfoSegment.SelectedIndex;
                 int ind = comboExtraInfoExtra.SelectedIndex;
-                Logger("Replacing: " + basefile.segmentinfos[seg].getExtraData(ind));
+                Logger("Replacing: " + basefile.segmentinfos[seg].GetExtraData(ind));
                 Logger("New data:" + txtExtrainfoData.Text);
-                basefile.segmentinfos[seg].setExtraData(ind, txtExtrainfoData.Text);
+                basefile.segmentinfos[seg].SetExtraData(ind, txtExtrainfoData.Text);
                 Logger("OK, you can save BIN-file now");
             }
             catch (Exception ex)
@@ -4297,8 +4295,8 @@ namespace UniversalPatcher
             {
                 for (uint a=0; a<(basefile.fsize-7);a++)
                 {
-                    uint dWord1 = basefile.readUInt32(a);
-                    uint dWord2 = basefile.readUInt32(a+4);
+                    uint dWord1 = basefile.ReadUInt32(a);
+                    uint dWord2 = basefile.ReadUInt32(a+4);
                     if (dWord1 == ~dWord2)
                     {
                         if (!chkCsUtilFilter.Checked || dWord1.ToString("X8").Replace("F","").Replace("0","") != "")
@@ -4315,7 +4313,7 @@ namespace UniversalPatcher
 
         private void radioDtcPrimary_CheckedChanged(object sender, EventArgs e)
         {
-            refreshDtcList();
+            RefreshDtcList();
         }
 
         private void cVNDatabaseToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4323,7 +4321,7 @@ namespace UniversalPatcher
             frmDB frmdb = new frmDB();
             frmdb.Show();
             string[] tables = { "cvn", "referencecvn" };
-            frmdb.loadDB(tables);
+            frmdb.LoadDB(tables);
         }
 
         private void fontToolStripMenuItem_Click(object sender, EventArgs e)

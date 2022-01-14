@@ -4,7 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using static upatcher;
+using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -16,7 +17,6 @@ namespace UniversalPatcher
             public uint Hits;
             public uint Miss;
         }
-
 
         private bool CheckRule(DetectRule DR, PcmFile PCM)
         {
@@ -34,7 +34,7 @@ namespace UniversalPatcher
                     string[] Parts = DR.address.Split(':');
                     HexToUint(Parts[0].Replace("@", ""), out addr);
                     if (DR.address.StartsWith("@"))
-                        addr = PCM.readUInt32(addr);
+                        addr = PCM.ReadUInt32(addr);
                     if (Parts[0].EndsWith("@"))
                         addr = (uint)PCM.buf.Length - addr;
                     if (DR.hexdata != null && DR.hexdata.Length > 0)
@@ -58,25 +58,25 @@ namespace UniversalPatcher
                     else
                     {
                         if (Parts.Length == 1)
-                            data = PCM.readUInt16(addr);
+                            data = PCM.ReadUInt16(addr);
                         else
                         {
                             switch (Parts[1])
                             {
                                 case "1":
-                                    data = PCM.readByte(addr);
+                                    data = PCM.ReadByte(addr);
                                     break;
                                 case "2":
-                                    data = (uint)PCM.readUInt16(addr);
+                                    data = (uint)PCM.ReadUInt16(addr);
                                     break;
                                 case "4":
-                                    data = PCM.readUInt32(addr);
+                                    data = PCM.ReadUInt32(addr);
                                     break;
                                 case "8":
-                                    data = PCM.readUInt64(addr);
+                                    data = PCM.ReadUInt64(addr);
                                     break;
                                 default:
-                                        data = PCM.readUInt32(addr);
+                                        data = PCM.ReadUInt32(addr);
                                     break;
                             }
 
@@ -116,7 +116,7 @@ namespace UniversalPatcher
                 return false;
             }
         }
-        public string autoDetect(PcmFile PCM)
+        public string DetectPlatform(PcmFile PCM)
         {
             string Result = "";
 

@@ -5,13 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using static upatcher;
+using static Upatcher;
 
 namespace UniversalPatcher
 {
     public static class TreeParts
     {
-        private static bool includesCollection(TreeNode node, string nodeName, bool parentCheck)
+        private static bool IncludesCollection(TreeNode node, string nodeName, bool parentCheck)
         {
             if (!parentCheck)
             {
@@ -25,10 +25,10 @@ namespace UniversalPatcher
                 return false;   //Root-node
             if (node.Parent.Name == nodeName)
                 return true;
-            return includesCollection(node.Parent, nodeName, true);
+            return IncludesCollection(node.Parent, nodeName, true);
         }
 
-        private static Patch loadPatch(string fileName, PcmFile pcm)
+        private static Patch LoadPatch(string fileName, PcmFile pcm)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace UniversalPatcher
                 bool isCompatible = false;
                 for (int x = 0; x < patch.patches.Count; x++)
                 {
-                    if (checkPatchCompatibility(patch.patches[x], pcm) < uint.MaxValue)
+                    if (CheckPatchCompatibility(patch.patches[x], pcm) < uint.MaxValue)
                     {
                         isCompatible = true;
                     }
@@ -69,7 +69,7 @@ namespace UniversalPatcher
             return null;
         }
 
-        public static void addPatchNodes(TreeNode node, PcmFile pcm)
+        public static void AddPatchNodes(TreeNode node, PcmFile pcm)
         {
             if (patches.Count == 0)
             {
@@ -79,7 +79,7 @@ namespace UniversalPatcher
 
                 foreach (FileInfo file in Files)
                 {
-                    Patch patch = loadPatch(file.FullName, pcm);
+                    Patch patch = LoadPatch(file.FullName, pcm);
                     if (patch != null)
                     {
                         patches.Add(patch);
@@ -98,28 +98,28 @@ namespace UniversalPatcher
 
         }
 
-        public static void addChildNodes(TreeNode node, PcmFile pcm)
+        public static void AddChildNodes(TreeNode node, PcmFile pcm)
         {
             if (node.Name == "Dimensions" || node.Name == "ValueTypes" || node.Name == "Categories" || node.Name == "Segments")
             {
                 foreach (TreeNode childTn in node.Nodes)
-                    addChildNodes(childTn, pcm);
+                    AddChildNodes(childTn, pcm);
                 return;
             }
 
-            List<TableData> filteredTableDatas = filterTD(node, pcm);
-            if (!includesCollection(node, "Dimensions",false))
-                TreeParts.addDimensions(node.Nodes,filteredTableDatas);
-            if (!includesCollection(node, "ValueTypes", false))
-                TreeParts.addValueTypes(node.Nodes,filteredTableDatas);
-            if (!includesCollection(node, "Categories", false))
-                TreeParts.addCategories(node.Nodes, pcm, filteredTableDatas);
-            if (!includesCollection(node, "Segments", false))
-                TreeParts.addSegments(node.Nodes, pcm, filteredTableDatas);
+            List<TableData> filteredTableDatas = FilterTD(node, pcm);
+            if (!IncludesCollection(node, "Dimensions",false))
+                TreeParts.AddDimensions(node.Nodes,filteredTableDatas);
+            if (!IncludesCollection(node, "ValueTypes", false))
+                TreeParts.AddValueTypes(node.Nodes,filteredTableDatas);
+            if (!IncludesCollection(node, "Categories", false))
+                TreeParts.AddCategories(node.Nodes, pcm, filteredTableDatas);
+            if (!IncludesCollection(node, "Segments", false))
+                TreeParts.AddSegments(node.Nodes, pcm, filteredTableDatas);
 
         }
 
-        public static void addNodes(TreeNodeCollection parent, PcmFile pcm1)
+        public static void AddNodes(TreeNodeCollection parent, PcmFile pcm1)
         {
             parent.Clear();
 
@@ -129,10 +129,10 @@ namespace UniversalPatcher
             tn.SelectedImageKey = "explorer.ico";
             parent.Add(tn);
 
-            addDimensions(parent,pcm1.tableDatas);
-            addValueTypes(parent, pcm1.tableDatas);
-            addCategories(parent, pcm1, pcm1.tableDatas);
-            addSegments(parent, pcm1, pcm1.tableDatas);
+            AddDimensions(parent,pcm1.tableDatas);
+            AddValueTypes(parent, pcm1.tableDatas);
+            AddCategories(parent, pcm1, pcm1.tableDatas);
+            AddSegments(parent, pcm1, pcm1.tableDatas);
 
             
             TreeNode tnP = new TreeNode();
@@ -143,7 +143,7 @@ namespace UniversalPatcher
             
         }
 
-        public static void addDimensions(TreeNodeCollection parent, List<TableData> filteredTableDatas)
+        public static void AddDimensions(TreeNodeCollection parent, List<TableData> filteredTableDatas)
         {
 
             TreeNode tnD = new TreeNode();
@@ -193,7 +193,7 @@ namespace UniversalPatcher
                 parent.Add(tnD);
 
         }
-        public static void addValueTypes(TreeNodeCollection parent, List<TableData> filteredTableDatas)
+        public static void AddValueTypes(TreeNodeCollection parent, List<TableData> filteredTableDatas)
         {
 
             TreeNode tnT = new TreeNode();
@@ -204,7 +204,7 @@ namespace UniversalPatcher
             List<string> usedValueTypes = new List<string>();
             for (int i = 0; i < filteredTableDatas.Count; i++)
             {
-                string vt = getValueType(filteredTableDatas[i]).ToString();
+                string vt = GetTableValueType(filteredTableDatas[i]).ToString();
                 if (!usedValueTypes.Contains(vt))
                     usedValueTypes.Add(vt);
                 if (usedValueTypes.Count == 4)
@@ -260,7 +260,7 @@ namespace UniversalPatcher
                 parent.Add(tnT);
 
         }
-        public static void addSegments(TreeNodeCollection parent, PcmFile PCM, List<TableData> filteredTableDatas)
+        public static void AddSegments(TreeNodeCollection parent, PcmFile PCM, List<TableData> filteredTableDatas)
         {
             string iconFolder = Path.Combine(Application.StartupPath, "Icons");
             string[] GalleryArray = System.IO.Directory.GetFiles(iconFolder);
@@ -317,7 +317,7 @@ namespace UniversalPatcher
                 parent.Add(tnS);
 
         }
-        public static void addCategories(TreeNodeCollection parent, PcmFile PCM, List<TableData> filteredTableDatas)
+        public static void AddCategories(TreeNodeCollection parent, PcmFile PCM, List<TableData> filteredTableDatas)
         {
             TreeNode tnC = new TreeNode();
             tnC.Name = "Categories";
@@ -347,7 +347,7 @@ namespace UniversalPatcher
 
         }
 
-        private static List<TableData> filterTD(TreeNode tn, PcmFile PCM)
+        private static List<TableData> FilterTD(TreeNode tn, PcmFile PCM)
         {
             List<string> selectedSegs = new List<string>();
             List<string> selectedCats = new List<string>();
@@ -438,7 +438,7 @@ namespace UniversalPatcher
                     {
                         foreach (TableData td in results)
                         {
-                            string tdValT = getValueType(td).ToString();
+                            string tdValT = GetTableValueType(td).ToString();
                             if (tdValT == valT)
                                 newTDList.Add(td);
                         }

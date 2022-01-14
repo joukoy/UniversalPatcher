@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using static UniversalPatcher.ExtensionMethods;
-using static upatcher;
+using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -20,7 +21,7 @@ namespace UniversalPatcher
 
         }
 
-        public void loadData(List<frmMassModifyTableData.TableDataExtended> tdeList)
+        public void LoadData(List<frmMassModifyTableData.TableDataExtended> tdeList)
         {
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
             dataGridView1.DataSource = tdeList;

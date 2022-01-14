@@ -12,9 +12,9 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using UniversalPatcher;
 using UniversalPatcher.Properties;
+using static Helpers;
 
-
-public class upatcher
+public class Upatcher
 {
     public class DetectRule
     {
@@ -251,7 +251,7 @@ public class upatcher
         public AddressDataType Type;
     }
 
-    public struct referenceCvn
+    public struct ReferenceCvn
     {
         public string PN;
         public string CVN;
@@ -312,14 +312,14 @@ public class upatcher
     public static List<TableSearchResult> tableSearchResult;
     public static List<TableSearchResult> tableSearchResultNoFilters;
     public static List<TableView> tableViews;
-    public static List<referenceCvn> referenceCvnList;
+    //public static List<ReferenceCvn> referenceCvnList;
     public static List<FileType> fileTypeList;
     public static List<OBD2Code> OBD2Codes;
     public static List<DtcSearchConfig> dtcSearchConfigs;
     public static List<PidSearchConfig> pidSearchConfigs;
     public static List<TableSeek> tableSeeks;
     public static List<SegmentSeek> segmentSeeks;
-    public static List<UniversalPatcher.TableData> XdfElements;
+    //public static List<TableData> XdfElements;
     public static List<Units> unitList;
     public static List<RichTextBox> LogReceivers;
 
@@ -419,7 +419,7 @@ public class upatcher
         Point xy = new Point(area.Width / 2 - 115, area.Height / 2 - 130);
         frmSplash.moveMe(xy);
         frmSplash.labelProgress.Text = "";
-        loadSettingFiles();
+        LoadSettingFiles();
         //frmSplash.Dispose();
     }
 
@@ -430,7 +430,7 @@ public class upatcher
             frmSplash.labelProgress.Text += Environment.NewLine;
     }
 
-    private static void loadSettingFiles()
+    private static void LoadSettingFiles()
     {
         DetectRules = new List<DetectRule>();
         StockCVN = new List<CVN>();
@@ -447,7 +447,7 @@ public class upatcher
         StockCVN.Add(ctmp);
 
         cvnDB = new CvnDB();
-        cvnDB.loadDB();
+        cvnDB.LoadDB();
 
         Logger("Loading configurations... filetypes", false);
         ShowSplash("Loading configurations...");
@@ -569,7 +569,7 @@ public class upatcher
 
     }
 
-    public static TableValueType getValueType(TableData td)
+    public static TableValueType GetTableValueType(TableData td)
     {
         TableValueType retVal;
 
@@ -602,7 +602,7 @@ public class upatcher
         return retVal;
     }
 
-    public static int getBits(InDataType dataType)
+    public static int GetBits(InDataType dataType)
     {
         int bits = 8; // Assume one byte if not defined. OK?
         if (dataType == InDataType.SBYTE || dataType == InDataType.UBYTE)
@@ -618,7 +618,7 @@ public class upatcher
 
         return bits;
     }
-    public static int getElementSize(InDataType dataType)
+    public static int GetElementSize(InDataType dataType)
     {
         int bytes = 1; // Assume one byte if not defined. OK?
         if (dataType == InDataType.SBYTE || dataType == InDataType.UBYTE)
@@ -634,7 +634,7 @@ public class upatcher
 
         return bytes;
     }
-    public static bool getSigned(InDataType dataType)
+    public static bool GetSigned(InDataType dataType)
     {
         bool signed = false;
         if (dataType == InDataType.INT32 || dataType == InDataType.INT64 || dataType == InDataType.SBYTE || dataType == InDataType.SWORD)
@@ -642,15 +642,15 @@ public class upatcher
         return signed;
     }
 
-    public static InDataType convertToDataType(string bitStr, bool signed, bool floating)
+    public static InDataType ConvertToDataType(string bitStr, bool signed, bool floating)
     {
         InDataType retVal = InDataType.UNKNOWN;
         int bits = Convert.ToInt32(bitStr);
-        retVal = convertToDataType(bits / 8, signed, floating);
+        retVal = ConvertToDataType(bits / 8, signed, floating);
         return retVal;
     }
 
-    public static InDataType convertToDataType(int elementSize, bool Signed, bool floating)
+    public static InDataType ConvertToDataType(int elementSize, bool Signed, bool floating)
     {
         InDataType DataType = InDataType.UNKNOWN; 
         if (elementSize == 1)
@@ -717,7 +717,7 @@ public class upatcher
         return DataType;
     }
 
-    public static double getMaxValue (InDataType dType)
+    public static double GetMaxValue (InDataType dType)
     {
         if (dType == InDataType.FLOAT32)
             return float.MaxValue;
@@ -744,7 +744,7 @@ public class upatcher
 
     }
 
-    public static double getMinValue(InDataType dType)
+    public static double GetMinValue(InDataType dType)
     {
         if (dType == InDataType.FLOAT32)
             return float.MinValue;
@@ -771,7 +771,7 @@ public class upatcher
 
     }
 
-    public static string readConversionTable(string mathStr, PcmFile PCM)
+    public static string ReadConversionTable(string mathStr, PcmFile PCM)
     {
         //Example: TABLE:'MAF Scalar #1'
         string retVal = mathStr;
@@ -780,10 +780,10 @@ public class upatcher
         string conversionTable = mathStr.Substring(start, mid - start + 1);
         TableData tmpTd = new TableData();
         tmpTd.TableName = conversionTable.Replace("'", "");
-        TableData conversionTd = findTableData(tmpTd, PCM.tableDatas);
+        TableData conversionTd = FindTableData(tmpTd, PCM.tableDatas);
         if (conversionTd != null)
         {
-            double conversionVal = getValue(PCM.buf, (uint)(conversionTd.addrInt + conversionTd.Offset), conversionTd, 0, PCM);
+            double conversionVal = GetValue(PCM.buf, (uint)(conversionTd.addrInt + conversionTd.Offset), conversionTd, 0, PCM);
             retVal = mathStr.Replace("table:" + conversionTable, conversionVal.ToString());
             Debug.WriteLine("Using conversion table: " + conversionTd.TableName);
         }
@@ -791,7 +791,7 @@ public class upatcher
         return retVal;
     }
 
-    public static string readConversionRaw(string mathStr, PcmFile PCM)
+    public static string ReadConversionRaw(string mathStr, PcmFile PCM)
     {
         // Example: RAW:0x321:SWORD:MSB
         string retVal = mathStr;
@@ -808,10 +808,10 @@ public class upatcher
         tmpTd.Address = rawParts[1];
         tmpTd.Offset = 0;
         tmpTd.DataType = idt;
-        double rawVal = (double)getRawValue(PCM.buf, tmpTd.addrInt, tmpTd, 0,PCM.platformConfig.MSB);
+        double rawVal = (double)GetRawValue(PCM.buf, tmpTd.addrInt, tmpTd, 0,PCM.platformConfig.MSB);
         if (rawParts.Length > 3 && rawParts[3].StartsWith("lsb"))
         {
-            int eSize = getElementSize(idt);
+            int eSize = GetElementSize(idt);
             rawVal = SwapBytes((UInt64)rawVal,eSize);
         }
         retVal = mathStr.Replace(rawStr, rawVal.ToString());
@@ -821,7 +821,7 @@ public class upatcher
     //
     //Get value from defined table, using defined math functions.
     //
-    public static double getValue(byte[] myBuffer, uint addr, TableData mathTd, uint offset, PcmFile PCM)
+    public static double GetValue(byte[] myBuffer, uint addr, TableData mathTd, uint offset, PcmFile PCM)
     {
         double retVal = 0;
         try
@@ -834,7 +834,7 @@ public class upatcher
 
             if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
             {
-                UInt64 rawVal = (UInt64)getRawValue(myBuffer, addr, mathTd, offset,msb);
+                UInt64 rawVal = (UInt64)GetRawValue(myBuffer, addr, mathTd, offset,msb);
                 UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
                 if (((UInt64) rawVal & mask) == mask)
                     return 1;
@@ -844,38 +844,37 @@ public class upatcher
 
             UInt32 bufAddr = addr - offset;
 
-
             if (mathTd.DataType == InDataType.SBYTE)
                 retVal = (sbyte)myBuffer[bufAddr];
             if (mathTd.DataType == InDataType.UBYTE)
                 retVal = myBuffer[bufAddr];
             if (mathTd.DataType == InDataType.SWORD)
-                retVal = readInt16(myBuffer, bufAddr, msb);
+                retVal = ReadInt16(myBuffer, bufAddr, msb);
             if (mathTd.DataType == InDataType.UWORD)
-                retVal = readUint16(myBuffer, bufAddr, msb);
+                retVal = ReadUint16(myBuffer, bufAddr, msb);
             if (mathTd.DataType == InDataType.INT32)
-                retVal = readInt32(myBuffer, bufAddr, msb);
+                retVal = ReadInt32(myBuffer, bufAddr, msb);
             if (mathTd.DataType == InDataType.UINT32)
-                retVal = readUint32(myBuffer, bufAddr, msb);
+                retVal = ReadUint32(myBuffer, bufAddr, msb);
             if (mathTd.DataType == InDataType.INT64)
-                retVal = readInt64(myBuffer, bufAddr, msb);
+                retVal = ReadInt64(myBuffer, bufAddr, msb);
             if (mathTd.DataType == InDataType.UINT64)
-                retVal = readUint64(myBuffer, bufAddr, msb);
+                retVal = ReadUint64(myBuffer, bufAddr, msb);
             if (mathTd.DataType == InDataType.FLOAT32)
-                retVal = readFloat32(myBuffer, bufAddr, msb);
+                retVal = ReadFloat32(myBuffer, bufAddr, msb);
             if (mathTd.DataType == InDataType.FLOAT64)
-                retVal = readFloat64(myBuffer, bufAddr, msb);
+                retVal = ReadFloat64(myBuffer, bufAddr, msb);
 
             if (mathTd.Math == null || mathTd.Math.Length == 0)
                 mathTd.Math = "X";
             string mathStr = mathTd.Math.ToLower().Replace("x", retVal.ToString());
             if (mathStr.Contains("table:"))
             {
-                mathStr = readConversionTable(mathStr, PCM);
+                mathStr = ReadConversionTable(mathStr, PCM);
             }
             if (mathStr.Contains("raw:"))
             {
-                mathStr = readConversionRaw(mathStr, PCM);
+                mathStr = ReadConversionRaw(mathStr, PCM);
             }
             retVal = parser.Parse(mathStr, false);
             //Debug.WriteLine(mathStr);
@@ -893,7 +892,7 @@ public class upatcher
         return retVal;
     }
 
-    public static double getRawValue(byte[] myBuffer, UInt32 addr, TableData mathTd, uint offset, bool platformMsb)
+    public static double GetRawValue(byte[] myBuffer, UInt32 addr, TableData mathTd, uint offset, bool platformMsb)
     {
         UInt32 bufAddr = addr - offset;
         double retVal = 0;
@@ -911,21 +910,21 @@ public class upatcher
                 case InDataType.UBYTE:
                     return (byte)myBuffer[bufAddr];
                 case InDataType.SWORD:
-                    return (Int16)readInt16(myBuffer, bufAddr, msb);
+                    return (Int16)ReadInt16(myBuffer, bufAddr, msb);
                 case InDataType.UWORD:
-                    return (UInt16)readUint16(myBuffer, bufAddr, msb);
+                    return (UInt16)ReadUint16(myBuffer, bufAddr, msb);
                 case InDataType.INT32:
-                    return (Int32)readInt32(myBuffer, bufAddr, msb);
+                    return (Int32)ReadInt32(myBuffer, bufAddr, msb);
                 case InDataType.UINT32:
-                    return (UInt32)readUint32(myBuffer, bufAddr, msb);
+                    return (UInt32)ReadUint32(myBuffer, bufAddr, msb);
                 case InDataType.INT64:
-                    return (Int64)readInt64(myBuffer, bufAddr, msb);
+                    return (Int64)ReadInt64(myBuffer, bufAddr, msb);
                 case InDataType.UINT64:
-                    return (UInt64)readInt64(myBuffer, bufAddr, msb);
+                    return (UInt64)ReadInt64(myBuffer, bufAddr, msb);
                 case InDataType.FLOAT32:
-                    return (float)readFloat32(myBuffer, bufAddr, msb);
+                    return (float)ReadFloat32(myBuffer, bufAddr, msb);
                 case InDataType.FLOAT64:
-                    return readFloat64(myBuffer, bufAddr, msb);
+                    return ReadFloat64(myBuffer, bufAddr, msb);
             }
 
         }
@@ -943,7 +942,7 @@ public class upatcher
     }
 
 
-    public static  Dictionary<double, string> parseEnumHeaders(string eVals)
+    public static Dictionary<double, string> ParseEnumHeaders(string eVals)
     {
         if (eVals.ToLower().StartsWith("enum:"))
             eVals = eVals.Substring(5).Trim();
@@ -962,7 +961,7 @@ public class upatcher
         return retVal;
     }
 
-    public static Dictionary<int, string> parseIntEnumHeaders(string eVals)
+    public static Dictionary<int, string> ParseIntEnumHeaders(string eVals)
     {
         if (eVals.ToLower().StartsWith("enum:"))
             eVals = eVals.Substring(5).Trim();
@@ -981,7 +980,7 @@ public class upatcher
         return retVal;
     }
 
-    public static Dictionary<byte, string> parseDtcValues(string eVals)
+    public static Dictionary<byte, string> ParseDtcValues(string eVals)
     {
         if (eVals.ToLower().StartsWith("enum:"))
             eVals = eVals.Substring(5).Trim();
@@ -1000,7 +999,7 @@ public class upatcher
         return retVal;
     }
 
-    public static uint checkPatchCompatibility(XmlPatch xpatch, PcmFile basefile, bool newline = true)
+    public static uint CheckPatchCompatibility(XmlPatch xpatch, PcmFile basefile, bool newline = true)
     {
         uint retVal = uint.MaxValue;
         bool isCompatible = false;
@@ -1026,14 +1025,14 @@ public class upatcher
                     Debug.WriteLine("Searching only segment: " + basefile.segmentinfos[seg].Name);
                     for (int b = 0; b < basefile.segmentAddressDatas[seg].SegmentBlocks.Count; b++)
                     {
-                        retVal = searchBytes(basefile, searchStr, basefile.segmentAddressDatas[seg].SegmentBlocks[b].Start, basefile.segmentAddressDatas[seg].SegmentBlocks[b].End);
+                        retVal = SearchBytes(basefile, searchStr, basefile.segmentAddressDatas[seg].SegmentBlocks[b].Start, basefile.segmentAddressDatas[seg].SegmentBlocks[b].End);
                         if (retVal < uint.MaxValue)
                             break;
                     }
                 }
             }
             if (retVal == uint.MaxValue) //Search whole bin
-                retVal = searchBytes(basefile, searchStr, 0, basefile.fsize);
+                retVal = SearchBytes(basefile, searchStr, 0, basefile.fsize);
             if (retVal < uint.MaxValue)
             {
                 Logger("Data found at address: " + retVal.ToString("X8"));
@@ -1041,7 +1040,7 @@ public class upatcher
             }
             else
             {
-                uint tmpVal = searchBytes(basefile, xpatch.Data, 0, basefile.fsize);
+                uint tmpVal = SearchBytes(basefile, xpatch.Data, 0, basefile.fsize);
                 if (tmpVal < uint.MaxValue)
                     Logger("Patch is already applied, data found at: " + tmpVal.ToString("X8"));
                 else
@@ -1051,9 +1050,9 @@ public class upatcher
         else if (xpatch.CompatibleOS.ToLower().StartsWith("table:"))
         {
             if (basefile.tableDatas.Count < 3)
-                basefile.autoLoadTunerConfig();
-            basefile.importDTC();
-            basefile.importSeekTables();
+                basefile.AutoLoadTunerConfig();
+            basefile.ImportDTC();
+            basefile.ImportSeekTables();
             string[] tableParts = xpatch.CompatibleOS.Split(',');
             if (tableParts.Length < 3)
             {
@@ -1077,7 +1076,7 @@ public class upatcher
                 TableData tmpTd = new TableData();
                 tmpTd.TableName = tbName;
                 Logger("Table: " + tbName,newline);
-                int findId = findTableDataId(tmpTd, basefile.tableDatas);
+                int findId = FindTableDataId(tmpTd, basefile.tableDatas);
                 if (findId > -1)
                 {
                     TableData findTd = basefile.tableDatas[findId];
@@ -1135,15 +1134,15 @@ public class upatcher
         return retVal;
     }
 
-    public static uint applyTablePatch(ref PcmFile basefile, XmlPatch xpatch, int tdId)
+    public static uint ApplyTablePatch(ref PcmFile basefile, XmlPatch xpatch, int tdId)
     {
         int diffCount = 0;
         frmTableEditor frmTE = new frmTableEditor();
         TableData pTd = basefile.tableDatas[tdId];
-        frmTE.prepareTable(basefile, pTd, null, "A");
+        frmTE.PrepareTable(basefile, pTd, null, "A");
         //frmTE.loadTable();
         uint addr = (uint)(pTd.addrInt + pTd.Offset);
-        uint step = (uint)getElementSize(pTd.DataType);
+        uint step = (uint)GetElementSize(pTd.DataType);
         try
         {
             string[] dataParts = xpatch.Data.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
@@ -1151,7 +1150,7 @@ public class upatcher
             {
                 TableCell tCell = frmTE.compareFiles[0].tableInfos[0].tableCells[cell];
                 double val = Convert.ToDouble(dataParts[cell].Trim(), System.Globalization.CultureInfo.InvariantCulture);
-                if (tCell.saveValue(val))
+                if (tCell.SaveValue(val))
                     diffCount++;
             }
             //frmTE.saveTable(false);
@@ -1171,7 +1170,7 @@ public class upatcher
         return (uint)(diffCount * step);
     }
 
-    public static void applyTdPatch(TableData td, ref PcmFile PCM)
+    public static void ApplyTdPatch(TableData td, ref PcmFile PCM)
     {
         try
         {
@@ -1193,7 +1192,7 @@ public class upatcher
             tmpPatch.Description = td.TableDescription;
             tmpPatch.Name = td.TableName;
             tmpPatch.XmlFile = PCM.configFile;
-            if (checkPatchCompatibility(tmpPatch, PCM, true) == uint.MaxValue)
+            if (CheckPatchCompatibility(tmpPatch, PCM, true) == uint.MaxValue)
             {
                 LoggerBold("Incompatible patch");
                 return;
@@ -1234,12 +1233,10 @@ public class upatcher
             // Get the line number from the stack frame
             var line = frame.GetFileLineNumber();
             LoggerBold(" Error, applyTdPatch line " + line + ": " + ex.Message);
-
         }
-
     }
 
-    public static void applyTdTablePatch(ref PcmFile PCM, TableData patchTd)
+    public static void ApplyTdTablePatch(ref PcmFile PCM, TableData patchTd)
     {
         XmlPatch xpatch = new XmlPatch();
         xpatch.CompatibleOS = patchTd.CompatibleOS.TrimStart(',');
@@ -1249,10 +1246,10 @@ public class upatcher
         xpatch.XmlFile = PCM.configFile;
         Logger("Applying patch...");
 
-        uint ind = checkPatchCompatibility(xpatch, PCM, false);
+        uint ind = CheckPatchCompatibility(xpatch, PCM, false);
         if (ind < uint.MaxValue)
         {
-            uint bytes = applyTablePatch(ref PCM, xpatch, (int)ind);
+            uint bytes = ApplyTablePatch(ref PCM, xpatch, (int)ind);
             Logger(Environment.NewLine +  "Modified: " + bytes.ToString() + " bytes");
         }
     }
@@ -1277,7 +1274,7 @@ public class upatcher
                     PrevSegment = xpatch.Segment;
                     Logger("Segment: " + xpatch.Segment);
                 }
-                uint Addr = checkPatchCompatibility(xpatch, basefile,false);
+                uint Addr = CheckPatchCompatibility(xpatch, basefile,false);
                 if (Addr < uint.MaxValue)
                 {
                     bool PatchRule = true; //If there is no rule, apply patch
@@ -1329,7 +1326,7 @@ public class upatcher
                     {
                         if (xpatch.CompatibleOS.ToLower().StartsWith("table:"))
                         {
-                            uint bCount = applyTablePatch(ref basefile, xpatch, (int)Addr);
+                            uint bCount = ApplyTablePatch(ref basefile, xpatch, (int)Addr);
                             Logger(", " + bCount.ToString() + " bytes");
                             ByteCount += bCount;
                         }
@@ -1393,7 +1390,7 @@ public class upatcher
         return true;
     }
 
-    public static bool compareTables(TableData td1, TableData td2, PcmFile pcm1, PcmFile pcm2)
+    public static bool CompareTables(TableData td1, TableData td2, PcmFile pcm1, PcmFile pcm2)
     {
         bool match = true;
 
@@ -1401,14 +1398,14 @@ public class upatcher
             return false;
         List<double> tableValues = new List<double>();
         uint addr = (uint)(td1.addrInt + td1.Offset);
-        uint step = (uint)getElementSize(td1.DataType);
+        uint step = (uint)GetElementSize(td1.DataType);
         if (td1.RowMajor)
         {
             for (int r = 0; r < td1.Rows; r++)
             {
                 for (int c = 0; c < td1.Columns; c++)
                 {
-                    double val = getValue(pcm1.buf,addr,td1,0,pcm1);
+                    double val = GetValue(pcm1.buf,addr,td1,0,pcm1);
                     tableValues.Add(val);
                     addr += step;
                 }
@@ -1420,16 +1417,15 @@ public class upatcher
             {
                 for (int r = 0; r < td1.Rows; r++)
                 {
-                    double val = getValue(pcm1.buf, addr, td1, 0, pcm1);
+                    double val = GetValue(pcm1.buf, addr, td1, 0, pcm1);
                     tableValues.Add(val);
                     addr += step;
                 }
             }
         }
 
-
         addr = (uint)(td2.addrInt + td2.Offset);
-        step = (uint)getElementSize(td2.DataType);
+        step = (uint)GetElementSize(td2.DataType);
         int i = 0;
         if (td2.RowMajor)
         {
@@ -1437,7 +1433,7 @@ public class upatcher
             {
                 for (int c = 0; c < td2.Columns; c++)
                 {
-                    double val = getValue(pcm2.buf, addr, td2, 0,pcm2);
+                    double val = GetValue(pcm2.buf, addr, td2, 0,pcm2);
                     if (val != tableValues[i])
                     {
                         match = false;
@@ -1454,7 +1450,7 @@ public class upatcher
             {
                 for (int r = 0; r < td2.Rows; r++)
                 {
-                    double val = getValue(pcm2.buf, addr, td2, 0, pcm2);
+                    double val = GetValue(pcm2.buf, addr, td2, 0, pcm2);
                     if (val != tableValues[i])
                     {
                         match = false;
@@ -1465,89 +1461,11 @@ public class upatcher
                 }
             }
         }
-
         return match;
     }
 
-    public static byte[] ReadBin(string FileName)
-    {
 
-        uint Length = (uint)new FileInfo(FileName).Length;
-        byte[] buf = new byte[Length];
-
-        long offset = 0;
-        long remaining = Length;
-
-        using (BinaryReader freader = new BinaryReader(File.Open(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
-        {
-            freader.BaseStream.Seek(0, 0);
-            while (remaining > 0)
-            {
-                int read = freader.Read(buf, (int)offset, (int)remaining);
-                if (read <= 0)
-                    throw new EndOfStreamException
-                        (String.Format("End of stream reached with {0} bytes left to read", remaining));
-                remaining -= read;
-                offset += read;
-            }
-            freader.Close();
-        }
-        return buf;
-    }
-
-
-    public static void WriteBinToFile(string FileName, byte[] Buf)
-    {
-
-        using (FileStream stream = new FileStream(FileName, FileMode.Create))
-        {
-            using (BinaryWriter writer = new BinaryWriter(stream))
-            {
-                writer.Write(Buf);
-                writer.Close();
-            }
-        }
-    }
-
-    public static void WriteSegmentToFile(string FileName, List<Block> Addr, byte[] Buf)
-    {
-
-        using (FileStream stream = new FileStream(FileName, FileMode.Create))
-        {
-            using (BinaryWriter writer = new BinaryWriter(stream))
-            {
-                for (int b=0;b<Addr.Count;b++)
-                {
-                    uint StartAddr = Addr[b].Start;
-                    uint Length = Addr[b].End - Addr[b].Start + 1;
-                    writer.Write(Buf, (int)StartAddr, (int)Length);
-                }
-                writer.Close();
-            }
-        }
-
-    }
-
-    public static string ReadTextFile(string fileName)
-    {
-        StreamReader sr = new StreamReader(fileName);
-        string fileContent = sr.ReadToEnd();
-        sr.Close();
-        return fileContent;
-    }
-
-    public static void WriteTextFile(string fileName, string fileContent)
-    {
-        using (StreamWriter writetext = new StreamWriter(fileName))
-        {
-            writetext.Write(fileContent);
-        }
-
-    }
-
-
-
-    public static void saveOBD2Codes()
+    public static void SaveOBD2Codes()
     {
         string OBD2CodeFile = Path.Combine(Application.StartupPath, "XML", "OBD2Codes.xml");
         Logger("Saving file " + OBD2CodeFile + "...", false);
@@ -1558,10 +1476,9 @@ public class upatcher
             stream.Close();
         }
         Logger(" [OK]");
-
     }
 
-    public static void loadOBD2Codes()
+    public static void LoadOBD2Codes()
     {
         string OBD2CodeFile = Path.Combine(Application.StartupPath, "XML", "OBD2Codes.xml");
         if (File.Exists(OBD2CodeFile))
@@ -1576,13 +1493,12 @@ public class upatcher
         {
             OBD2Codes = new List<OBD2Code>();
         }
-
     }
 
-    public static string autoDetect(PcmFile PCM)
+    public static string AutoDetect(PcmFile PCM)
     {
         AutoDetect autod = new AutoDetect();
-        return autod.autoDetect(PCM);
+        return autod.DetectPlatform(PCM);
     }
 
     public static UInt64 CalculateChecksum(bool MSB, byte[] Data, AddressData CSAddress, List<Block> CSBlocks,List<Block> ExcludeBlocks, CSMethod Method, short Complement, ushort Bytes, Boolean SwapB, bool dbg=true)
@@ -1610,7 +1526,7 @@ public class upatcher
 
                     for (uint a = bl.Start; a < bl.End; a += 2)
                     {
-                        uint val = readUint16(Data, a, MSB);
+                        uint val = ReadUint16(Data, a, MSB);
                         sum2 += val;
                         if (a < (CSAddress.Address - 1) || a > (CSAddress.Address + CSAddress.Bytes))
                             sum1 += val;
@@ -1724,14 +1640,14 @@ public class upatcher
                     case CSMethod.Wordsum:
                         for (uint i = 0; i < tmp.Length - 1; i += 2)
                         {
-                            sum += readUint16(tmp, i, MSB);
+                            sum += ReadUint16(tmp, i, MSB);
                         }
                         break;
 
                     case CSMethod.Dwordsum:
                         for (uint i = 0; i < tmp.Length - 3; i += 4)
                         {
-                            sum += readUint32(tmp, i, MSB);
+                            sum += ReadUint32(tmp, i, MSB);
                         }
                         break;
 
@@ -1834,8 +1750,8 @@ public class upatcher
             if (StartEnd[0].StartsWith("@"))
             {
                 uint tmpStart = B.Start;
-                B.Start = PCM.readUInt32(tmpStart);
-                B.End = PCM.readUInt32(tmpStart + 4);
+                B.Start = PCM.ReadUInt32(tmpStart);
+                B.End = PCM.ReadUInt32(tmpStart + 4);
                 tmpStart += 8;
             }
             else
@@ -1848,7 +1764,7 @@ public class upatcher
             if (StartEnd.Length > 1 && StartEnd[1].StartsWith("@"))
             {
                 //Read End address from bin at this address
-                B.End = PCM.readUInt32(B.End);
+                B.End = PCM.ReadUInt32(B.End);
             }
             if (StartEnd.Length > 1 && StartEnd[1].EndsWith("@"))
             {
@@ -1865,248 +1781,6 @@ public class upatcher
         foreach (Block B in Blocks)
             Debug.WriteLine("Address block: " + B.Start.ToString("X") + " - " + B.End.ToString("X"));
         return true;
-    }
-
-
-    public static List<string> SelectMultipleFiles(string Title = "Select files", string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*", string defaultFile = "")
-    {
-        List<string> fileList = new List<string>();
-
-        OpenFileDialog fdlg = new OpenFileDialog();
-        if (Filter.Contains("BIN"))
-        {
-            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
-            Filter = "BIN files (*.bin)|*.bin";
-            for (int f = 0; f < fileTypeList.Count; f++)
-            {
-                string newFilter = "|" + fileTypeList[f].Description + "|" + "*." + fileTypeList[f].Extension;
-                Filter += newFilter;
-            }
-            Filter += "|All files (*.*)|*.*";
-        }
-        else if (Filter.ToLower().Contains("xdf"))
-        {
-            fdlg.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
-        }
-        else if (defaultFile.Length > 0)
-        {
-
-            fdlg.FileName = Path.GetFileName(defaultFile);
-            fdlg.InitialDirectory = Path.GetDirectoryName(defaultFile);
-        }
-        else
-        {
-            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
-            if (Filter.Contains("PATCH") || Filter.Contains("TXT"))
-                fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
-        }
-
-        fdlg.Title = Title;
-        fdlg.Filter = Filter;
-        fdlg.FilterIndex = 1;
-        fdlg.RestoreDirectory = true;
-        fdlg.Multiselect = true;
-        if (fdlg.ShowDialog() == DialogResult.OK)
-        {
-            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
-            else if (Filter.Contains("BIN"))
-                UniversalPatcher.Properties.Settings.Default.LastBINfolder = Path.GetDirectoryName(fdlg.FileName);
-            else if (Filter.Contains("PATCH"))
-                UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.GetDirectoryName(fdlg.FileName);
-            UniversalPatcher.Properties.Settings.Default.Save();
-            foreach (string fName in fdlg.FileNames)
-                fileList.Add(fName);
-        }
-        return fileList;
-
-    }
-
-    private static string generateFilter()
-    {
-
-        string  Filter = "BIN files (*.bin)|*.bin";
-        int def = int.MaxValue;
-        for (int f = 0; f < fileTypeList.Count; f++)
-        {
-            if (fileTypeList[f].Default)
-                def = f;
-        }
-
-        if (def < int.MaxValue)
-        {
-            Filter = fileTypeList[def].Description + "|" +  fileTypeList[def].Extension;
-        }
-        for (int f = 0; f < fileTypeList.Count; f++)
-        {
-            if (f != def)
-            {
-                string newFilter = "|" + fileTypeList[f].Description + "|" + fileTypeList[f].Extension;
-                Filter += newFilter;
-            }
-        }
-        Filter += "|All files (*.*)|*.*";
-        return Filter;
-    }
-
-    public static string SelectFile(string Title = "Select file", string Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*", string defaultFile = "")
-    {
-        OpenFileDialog fdlg = new OpenFileDialog();
-        if (Filter.Contains("BIN"))
-        {
-            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
-            Filter = generateFilter();
-        }
-        else if (Filter.ToLower().Contains("xdf"))
-        {
-            fdlg.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
-        }
-        else if (defaultFile.Length > 0)
-        {
-
-            fdlg.FileName = Path.GetFileName(defaultFile);
-            fdlg.InitialDirectory = Path.GetDirectoryName(defaultFile);
-        }
-        else
-        {
-            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
-            if (Filter.Contains("PATCH") || Filter.Contains("TXT"))
-                fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
-        }
-
-        fdlg.Title = Title;
-        fdlg.Filter = Filter;
-        fdlg.FilterIndex = 1;
-        fdlg.RestoreDirectory = true;
-
-        if (fdlg.ShowDialog() == DialogResult.OK)
-        {
-            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
-            else if (Filter.Contains("BIN"))
-                UniversalPatcher.Properties.Settings.Default.LastBINfolder = Path.GetDirectoryName(fdlg.FileName);
-            else if (Filter.Contains("PATCH"))
-                UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.GetDirectoryName(fdlg.FileName);
-            UniversalPatcher.Properties.Settings.Default.Save();
-            return fdlg.FileName;
-        }
-        return "";
-
-    }
-    public static string SelectSaveFile(string Filter = "", string defaultFileName = "")
-    {
-        SaveFileDialog saveFileDialog = new SaveFileDialog();
-        //saveFileDialog.Filter = "BIN files (*.bin)|*.bin";
-        if (Filter == "" || Filter.Contains("BIN"))
-            //saveFileDialog.Filter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*";
-            saveFileDialog.Filter = generateFilter();
-        else
-            saveFileDialog.Filter = Filter;
-        saveFileDialog.RestoreDirectory = true;
-        saveFileDialog.Title = "Save to file";
-        if (defaultFileName.Length > 0)
-        {
-            saveFileDialog.FileName = Path.GetFileName(defaultFileName);
-            string defPath = Path.GetDirectoryName(defaultFileName);
-            if (defPath != "")
-            {
-                saveFileDialog.InitialDirectory = defPath;
-            }
-        }
-        else
-        {
-            if (Filter.Contains("PATCH"))
-                saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
-            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
-            else if (Filter.Contains("BIN"))
-                saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
-            else if (Filter.Contains("XDF"))
-                saveFileDialog.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
-        }
-
-        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-        {
-            if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.GetDirectoryName(saveFileDialog.FileName);
-            else if (Filter.Contains("BIN"))
-                UniversalPatcher.Properties.Settings.Default.LastBINfolder = Path.GetDirectoryName(saveFileDialog.FileName);
-            else if (Filter.Contains("PATCH"))
-                UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.GetDirectoryName(saveFileDialog.FileName);
-            UniversalPatcher.Properties.Settings.Default.Save();
-            return saveFileDialog.FileName;
-        }
-        else
-            return "";
-
-    }
-
-    public static string SelectFolder(string Title, string defaultFolder = "")
-    {
-        string folderPath = "";
-        OpenFileDialog folderBrowser = new OpenFileDialog();
-        // Set validate names and check file exists to false otherwise windows will
-        // not let you select "Folder Selection."
-        folderBrowser.ValidateNames = false;
-        folderBrowser.CheckFileExists = false;
-        folderBrowser.CheckPathExists = true;
-        if (defaultFolder.Length > 0)
-            folderBrowser.InitialDirectory = defaultFolder;
-        else
-            folderBrowser.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
-        // Always default to Folder Selection.
-        folderBrowser.Title = Title;
-        folderBrowser.FileName = "Folder Selection";
-        if (folderBrowser.ShowDialog() == DialogResult.OK)
-        {
-            folderPath = Path.GetDirectoryName(folderBrowser.FileName);
-            UniversalPatcher.Properties.Settings.Default.LastBINfolder = folderPath;
-            UniversalPatcher.Properties.Settings.Default.Save();
-        }
-        return folderPath;
-    }
-
-    [DllImport("shell32.dll", SetLastError = true)]
-    public static extern int SHOpenFolderAndSelectItems(IntPtr pidlFolder, uint cidl, [In, MarshalAs(UnmanagedType.LPArray)] IntPtr[] apidl, uint dwFlags);
-
-    [DllImport("shell32.dll", SetLastError = true)]
-    public static extern void SHParseDisplayName([MarshalAs(UnmanagedType.LPWStr)] string name, IntPtr bindingContext, [Out] out IntPtr pidl, uint sfgaoIn, [Out] out uint psfgaoOut);
-
-    public static void OpenFolderAndSelectItem(string folderPath, string file)
-    {
-        IntPtr nativeFolder;
-        uint psfgaoOut;
-        SHParseDisplayName(folderPath, IntPtr.Zero, out nativeFolder, 0, out psfgaoOut);
-
-        if (nativeFolder == IntPtr.Zero)
-        {
-            // Log error, can't find folder
-            return;
-        }
-
-        IntPtr nativeFile;
-        SHParseDisplayName(Path.Combine(folderPath, file), IntPtr.Zero, out nativeFile, 0, out psfgaoOut);
-
-        IntPtr[] fileArray;
-        if (nativeFile == IntPtr.Zero)
-        {
-            // Open the folder without the file selected if we can't find the file
-            fileArray = new IntPtr[0];
-        }
-        else
-        {
-            fileArray = new IntPtr[] { nativeFile };
-        }
-
-        SHOpenFolderAndSelectItems(nativeFolder, (uint)fileArray.Length, fileArray, 0);
-
-        Marshal.FreeCoTaskMem(nativeFolder);
-        if (nativeFile != IntPtr.Zero)
-        {
-            Marshal.FreeCoTaskMem(nativeFile);
-        }
     }
 
     public static string CheckStockCVN(string PN, string Ver, string SegNr, UInt64 cvnInt, bool AddToList, string XMLFile)
@@ -2166,7 +1840,7 @@ public class upatcher
                 cvnMismatch = true;    //Found from referencelist, match not found YET
                 if (!HexToUint(refString, out refC))
                 {
-                    LoggerBold("Can't convert from HEX: " + referenceCvnList[r].CVN);
+                    LoggerBold("Can't convert from HEX: " + refString);
                 }
                 if (refC == cvnInt)
                 {
@@ -2266,36 +1940,10 @@ public class upatcher
                 ListCVN.Add(newCvn);
             }
         }
-
         return retVal;
-    }
+   }
 
-    public static void loadReferenceCvn()
-    {
-        string FileName = Path.Combine(Application.StartupPath, "XML", "Reference-CVN.xml");
-        if (!File.Exists(FileName))
-            return;
-        referenceCvnList = new List<referenceCvn>();
-        System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<referenceCvn>));
-        System.IO.StreamReader file = new System.IO.StreamReader(FileName);
-        referenceCvnList = (List<referenceCvn>)reader.Deserialize(file);
-        file.Close();
-        foreach (referenceCvn refCvn in referenceCvnList)
-        {
-            for (int i = 0; i < StockCVN.Count; i++)
-            {
-                if (StockCVN[i].PN == refCvn.PN)
-                {
-                    CVN C1 = StockCVN[i];
-                    C1.ReferenceCvn = refCvn.CVN;
-                    StockCVN.RemoveAt(i);
-                    StockCVN.Insert(i, C1);
-                }
-            }
-        }
-    }
-
-    public static uint searchBytes(PcmFile PCM, string searchString, uint Start, uint End, ushort stopVal = 0)
+    public static uint SearchBytes(PcmFile PCM, string searchString, uint Start, uint End, ushort stopVal = 0)
     {
         uint addr;
         try
@@ -2314,7 +1962,7 @@ public class upatcher
             for (addr = Start; addr < End; addr++)
             {
                 bool match = true;
-                if (stopVal != 0 && PCM.readUInt16(addr) == stopVal)
+                if (stopVal != 0 && PCM.ReadUInt16(addr) == stopVal)
                 {
                     return uint.MaxValue;
                 }
@@ -2349,8 +1997,7 @@ public class upatcher
         return uint.MaxValue;
     }
 
-
-    public static SearchedAddress getAddrbySearchString(PcmFile PCM, string searchStr, ref uint startAddr, uint endAddr, bool conditionalOffset = false, bool signedOffset = false)
+    public static SearchedAddress GetAddrbySearchString(PcmFile PCM, string searchStr, ref uint startAddr, uint endAddr, bool conditionalOffset = false, bool signedOffset = false)
     {
         SearchedAddress retVal;
         retVal.Addr = uint.MaxValue;
@@ -2367,7 +2014,7 @@ public class upatcher
             if (modStr.EndsWith("#"))
                 modStr = modStr.Replace(" #", " *"); //# alone at end
             modStr = modStr.Replace("#", ""); //For example: #21 00 21
-            uint addr = searchBytes(PCM, modStr, startAddr, endAddr);
+            uint addr = SearchBytes(PCM, modStr, startAddr, endAddr);
             if (addr == uint.MaxValue)
             {
                 //Not found
@@ -2386,7 +2033,7 @@ public class upatcher
             else
             {
                 //Address is AFTER searchstring
-                retVal.Addr = PCM.readUInt32(addr + (uint)sParts.Length);
+                retVal.Addr = PCM.ReadUInt32(addr + (uint)sParts.Length);
             }
             for (int p = 0; p < sParts.Length; p++)
             {
@@ -2452,290 +2099,7 @@ public class upatcher
     }
 
 
-    public static uint searchWord(PcmFile PCM, ushort sWord, uint Start, uint End, ushort stopVal = 0)
-    {
-        for (uint addr = Start; addr < End; addr++)
-        {
-            if (stopVal != 0 && PCM.readUInt16(addr) == stopVal)
-            {
-                return uint.MaxValue;
-            }
-            if (PCM.readUInt16(addr) == sWord)
-            { 
-                return addr;
-            }
-        }
-        return uint.MaxValue;
-    }
-
-
-    public static bool HexToUint64(string Hex, out UInt64 x)
-    {
-        x = 0;
-        if (!UInt64.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
-            return false;
-        return true;
-    }
-
-    public static bool HexToUint(string Hex, out uint x)
-    {
-        x = 0;
-        if (!UInt32.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
-            return false;
-        return true;
-    }
-    public static bool HexToInt(string Hex, out int x)
-    {
-        x = 0;
-        if (!int.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
-            return false;
-        return true;
-    }
-
-    public static bool HexToUshort(string Hex, out ushort x)
-    {
-        x = 0;
-        if (!UInt16.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
-            return false;
-        return true;
-    }
-    public static bool HexToByte(string Hex, out byte x)
-    {
-        x = 0;
-        if (!byte.TryParse(Hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out x))
-            return false;
-        return true;
-    }
-
-    public static string ReadTextBlock(byte[] buf, int Address, int Bytes, bool numsLettersOnly = true)
-    {
-        string result = System.Text.Encoding.ASCII.GetString(buf, (int)Address, Bytes);
-        if (numsLettersOnly)
-            result = Regex.Replace(result, "[^a-zA-Z0-9]", "?");
-        else
-            result = Regex.Replace(result, @"[^\u0020-\u007E]", "?");
-        return result;
-    }
-
-    public static UInt64 readUint64(byte[] buf, uint offset, bool MSB)
-    {
-        byte[] tmp = new byte[8];
-        Array.Copy(buf, offset, tmp, 0, 8);
-        if (MSB)
-            Array.Reverse(tmp);
-        return BitConverter.ToUInt64(tmp,0);
-    }
-
-    public static Int64 readInt64(byte[] buf, uint offset, bool MSB)
-    {
-        byte[] tmp = new byte[8];
-        Array.Copy(buf, offset, tmp, 0, 8);
-        if (MSB)
-            Array.Reverse(tmp);
-        return BitConverter.ToInt64(tmp, 0);
-    }
-    public static Double readFloat64(byte[] buf, uint offset, bool MSB)
-    {
-        byte[] tmp = new byte[8];
-        Array.Copy(buf, offset, tmp, 0, 8);
-        if (MSB)
-            Array.Reverse(tmp);
-        return BitConverter.ToDouble(tmp, 0);
-    }
-    public static float readFloat32(byte[] buf, uint offset, bool MSB)
-    {
-        byte[] tmp = new byte[4];
-        Array.Copy(buf, offset, tmp, 0, 4);
-        if (MSB)
-            Array.Reverse(tmp);
-        return BitConverter.ToSingle(tmp, 0);
-    }
-
-    public static uint readUint32(byte[] buf, uint offset, bool MSB)
-    {
-        //Shift first byte 24 bits left, second 16bits left...
-        //return (uint)((buf[offset] << 24) | (buf[offset + 1] << 16) | (buf[offset + 2] << 8) | buf[offset + 3]);
-        byte[] tmp = new byte[4];
-        Array.Copy(buf, offset, tmp, 0, 4);
-        if (MSB)
-            Array.Reverse(tmp);
-        return BitConverter.ToUInt32(tmp, 0);
-    }
-
-    public static UInt16 readUint16(byte[] buf, uint offset, bool MSB)
-    {
-        if (MSB)
-            return (UInt16)((buf[offset] << 8) | buf[offset + 1]);
-        else
-            return (UInt16)((buf[offset + 1] << 8) | buf[offset]);
-    }
-
-    public static int readInt32(byte[] buf, uint offset, bool MSB)
-    {
-        //Shift first byte 24 bits left, second 16bits left...
-        //return (int)((buf[offset] << 24) | (buf[offset + 1] << 16) | (buf[offset + 2] << 8) | buf[offset + 3]);
-        byte[] tmp = new byte[4];
-        Array.Copy(buf, offset, tmp, 0, 4);
-        if (MSB)
-            Array.Reverse(tmp);
-        return BitConverter.ToInt32(tmp, 0);
-    }
-
-    public static Int16 readInt16(byte[] buf, uint offset, bool MSB)
-    {
-        if (MSB)
-            return (Int16)((buf[offset] << 8) | buf[offset + 1]);
-        else
-            return (Int16)((buf[offset + 1] << 8) | buf[offset]);
-    }
-    public static void SaveFloat32(byte[] buf, uint offset, Single data, bool MSB)
-    {
-        byte[] tmp = new byte[4];
-        tmp = BitConverter.GetBytes(data);
-        if (MSB)
-            Array.Reverse(tmp);
-        Array.Copy(tmp, 0, buf, offset, 4);
-    }
-    public static void SaveFloat64(byte[] buf, uint offset, double data, bool MSB)
-    {
-        byte[] tmp = new byte[8];
-        tmp = BitConverter.GetBytes(data);
-        if (MSB)
-            Array.Reverse(tmp);
-        Array.Copy(tmp, 0, buf, offset, 8);
-    }
-
-    public static void SaveUint64(byte[] buf, uint offset, UInt64 data, bool MSB)
-    {
-        byte[] tmp = new byte[8];
-        tmp = BitConverter.GetBytes(data);
-        if (MSB)
-            Array.Reverse(tmp);
-        Array.Copy(tmp,0,buf,offset,8);
-    }
-
-    public static void SaveInt64(byte[] buf, uint offset, Int64 data, bool MSB)
-    {
-        byte[] tmp = new byte[8];
-        tmp = BitConverter.GetBytes(data);
-        if (MSB)
-            Array.Reverse(tmp);
-        Array.Copy(tmp, 0, buf, offset, 8);
-    }
-    public static void SaveUint32(byte[] buf, uint offset, UInt32 data, bool MSB)
-    {
-        byte[] tmp = new byte[4];
-        tmp = BitConverter.GetBytes(data);
-        if (MSB)
-            Array.Reverse(tmp);
-        Array.Copy(tmp, 0, buf, offset, 4);
-    }
-    public static void SaveInt32(byte[] buf, uint offset, Int32 data, bool MSB)
-    {
-        byte[] tmp = new byte[4];
-        tmp = BitConverter.GetBytes(data);
-        if (MSB)
-            Array.Reverse(tmp);
-        Array.Copy(tmp, 0, buf, offset, 4);
-    }
-
-    public static void Save3Bytes(byte[] buf, uint offset, UInt32 data, bool MSB)
-    {
-        if (MSB)
-        {
-            buf[offset] = (byte)(data & 0xff);
-            buf[offset + 1] = (byte)((data >> 8) & 0xff);
-            buf[offset + 2] = (byte)((data >> 16) & 0xff);
-        }
-        else
-        {
-            buf[offset + 2] = (byte)(data & 0xff);
-            buf[offset + 1] = (byte)((data >> 8) & 0xff);
-            buf[offset] = (byte)((data >> 16) & 0xff);
-        }
-
-    }
-
-
-    public static void SaveUshort(byte[] buf, uint offset, ushort data, bool MSB)
-    {
-        byte[] tmp = new byte[2];
-        tmp = BitConverter.GetBytes(data);
-        if (MSB)
-        Array.Reverse(tmp);
-        Array.Copy(tmp, 0, buf, offset, 2);
-    }
-    public static void SaveShort(byte[] buf, uint offset, short data, bool MSB)
-    {
-        byte[] tmp = new byte[2];
-        tmp = BitConverter.GetBytes(data);
-        if (MSB)
-            Array.Reverse(tmp);
-        Array.Copy(tmp, 0, buf, offset, 2);
-    }
-
-/*    public static ushort SwapBytes(ushort x)
-    {
-        return (ushort)((ushort)((x & 0xff) << 8) | ((x >> 8) & 0xff));
-    }
-
-    public static uint SwapBytes(uint x)
-    {
-        return ((x & 0x000000ff) << 24) +
-               ((x & 0x0000ff00) << 8) +
-               ((x & 0x00ff0000) >> 8) +
-               ((x & 0xff000000) >> 24);
-    }
-*/
-    public static UInt64 SwapBytes(UInt64 data, int bytes)
-    {
-        byte[] tmp = new byte[8];
-        tmp = BitConverter.GetBytes(data);
-        byte[] tmp2 = new byte[bytes];
-        Array.Copy(tmp, 0, tmp2, 0, bytes);
-        Array.Reverse(tmp2);
-        tmp = BitConverter.GetBytes((UInt64)0);
-        Array.Copy(tmp2, tmp, bytes);
-        return BitConverter.ToUInt64(tmp, 0);
-    }
-
-    public static void UseComboBoxForEnums(DataGridView g)
-    {
-        try
-        {
-            g.Columns.Cast<DataGridViewColumn>()
-             .Where(x => x.ValueType.IsEnum && x.GetType() != typeof(DataGridViewComboBoxColumn))
-             .ToList().ForEach(x =>
-             {
-                 var index = x.Index;
-                 g.Columns.RemoveAt(index);
-                 var c = new DataGridViewComboBoxColumn();
-                 c.ValueType = x.ValueType;
-                 c.ValueMember = "Value";
-                 c.DisplayMember = "Name";
-                 c.DataPropertyName = x.DataPropertyName;
-                 c.HeaderText = x.HeaderText;
-                 c.Name = x.Name;
-                 if (x.ValueType.IsEnum)
-                 {
-                     c.DataSource = Enum.GetValues(x.ValueType).Cast<object>().Select(v => new
-                     {
-                         Value = (int)v,
-                         Name = Enum.GetName(x.ValueType, v) /* or any other logic to get text */
-                     }).ToList();
-                 }
-
-                 g.Columns.Insert(index, c);
-             });
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex.Message);
-        }
-    }
-
-
-    public static int findTableDataId(TableData refTd, List<TableData> tdList)
+    public static int FindTableDataId(TableData refTd, List<TableData> tdList)
     {
         int pos1 = refTd.TableName.IndexOf("*");
         if (pos1 < 0)
@@ -2773,7 +2137,7 @@ public class upatcher
         return -1;
     }
 
-    public static TableData findTableData(TableData refTd, List<TableData> tdList)
+    public static TableData FindTableData(TableData refTd, List<TableData> tdList)
     {
         int pos1 = refTd.TableName.IndexOf("*");
         if (pos1 < 0)
@@ -2833,6 +2197,7 @@ public class upatcher
             Debug.WriteLine(ex.InnerException);
         }
     }
+
     public static void LoggerBold(string LogText, Boolean NewLine = true)
     {
         try
@@ -2858,71 +2223,7 @@ public class upatcher
         }
     }
 
-    private static string GetNextBase26(string a)
-    {
-        return Base26Sequence().SkipWhile(x => x != a).Skip(1).First();
-    }
-
-    private static IEnumerable<string> Base26Sequence()
-    {
-        long i = 0L;
-        while (true)
-            yield return Base26Encode(i++);
-    }
-
-    private static char[] base26Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-    public static string Base26Encode(Int64 value)
-    {
-        string returnValue = null;
-        do
-        {
-            returnValue = base26Chars[value % 26] + returnValue;
-            value /= 26;
-        } while (value-- != 0);
-        return returnValue;
-    }
-
-    public static string GetShortcutTarget(string shortcutFilename)
-    {
-        try
-        {
-            string pathOnly = System.IO.Path.GetDirectoryName(shortcutFilename);
-            string filenameOnly = System.IO.Path.GetFileName(shortcutFilename);
-
-            Shell32.Shell shell = new Shell32.Shell();
-            Shell32.Folder folder = shell.NameSpace(pathOnly);
-            Shell32.FolderItem folderItem = folder.ParseName(filenameOnly);
-            if (folderItem != null)
-            {
-                Shell32.ShellLinkObject link = (Shell32.ShellLinkObject)folderItem.GetLink;
-                return link.Path;
-            }
-            return ""; // not found
-        }
-        catch
-        {
-            return "";
-        }
-    }
-
- 
-    public static void CreateShortcut(string DestinationFolder,string scName, string args)
-    {
-        object shDesktop = (object)"Desktop";
-    
-        IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
-        string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop);
-        if (DestinationFolder.Length > 0)
-            shortcutAddress = DestinationFolder;
-        shortcutAddress = Path.Combine(shortcutAddress, scName + ".lnk");
-        IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(shortcutAddress);
-        shortcut.Description = "UniversalPatcher";
-        shortcut.Arguments = args;
-        shortcut.TargetPath = Application.ExecutablePath;
-        shortcut.Save();
-    }
-
-    public static List<XmlPatch> loadPatchFile(string fileName)
+    public static List<XmlPatch> LoadPatchFile(string fileName)
     {
         System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));
         System.IO.StreamReader file = new System.IO.StreamReader(fileName);
@@ -2931,7 +2232,7 @@ public class upatcher
         return pList;
     }
 
-    public static List<TableData> filterTdList(IEnumerable<TableData> results, string filterTxt, string filterBy, bool caseSens)
+    public static List<TableData> FilterTdList(IEnumerable<TableData> results, string filterTxt, string filterBy, bool caseSens)
     {
         TableData tdTmp = new TableData();
         try

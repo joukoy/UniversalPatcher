@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using static upatcher;
+using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -338,7 +339,7 @@ namespace UniversalPatcher
             string[] Parts = address.Split(':');
             HexToUint(Parts[0].Replace("@", ""), out addr);
             if (address.StartsWith("@"))
-                addr = PCM.readUInt32(addr);
+                addr = PCM.ReadUInt32(addr);
             if (Parts[0].EndsWith("@"))
                 addr = (uint)PCM.buf.Length - addr;
 

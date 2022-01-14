@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static upatcher;
+using static Upatcher;
 
 namespace UniversalPatcher
 {

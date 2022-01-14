@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using static upatcher;
+using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -30,7 +31,7 @@ namespace UniversalPatcher
             labelConfigFile.Text = Path.GetFileName(tableSearchFile);
         }
 
-        private void saveFile(string FileName)
+        private void SaveFile(string FileName)
         {
             try
             {
@@ -50,7 +51,7 @@ namespace UniversalPatcher
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            saveFile(tableSearchFile);
+            SaveFile(tableSearchFile);
         }
 
         public void LoadFile(string FileName)
@@ -75,7 +76,7 @@ namespace UniversalPatcher
             string FileName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
             if (FileName.Length == 0)
                 return;
-            saveFile(FileName);
+            SaveFile(FileName);
             labelConfigFile.Text = Path.GetFileName(FileName);
             tableSearchFile = FileName;
         }

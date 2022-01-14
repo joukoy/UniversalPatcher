@@ -9,7 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using static UniversalPatcher.ExtensionMethods;
-using static upatcher;
+using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -75,7 +76,7 @@ namespace UniversalPatcher
             public TableData td2;
         }
 
-        public void findDifferences(bool showAsHex)
+        public void FindDifferences(bool showAsHex)
         {
             try
             {
@@ -88,8 +89,8 @@ namespace UniversalPatcher
                 {
                     TableData td = tdList[t];
                     TableData td2 = tdList2[t];
-                    uint step = (uint)getElementSize(td.DataType);
-                    uint step2 = (uint)getElementSize(td2.DataType);
+                    uint step = (uint)GetElementSize(td.DataType);
+                    uint step2 = (uint)GetElementSize(td2.DataType);
                     int count = td.Rows * td.Columns;
                     uint addr = (uint)(td.addrInt + td.Offset);
                     uint addr2 = (uint)(td2.addrInt + td2.Offset);
@@ -102,13 +103,13 @@ namespace UniversalPatcher
                     {
                         if (showAsHex)
                         {
-                            data1 += ((UInt64)getRawValue(pcm1.buf, addr, td, 0,pcm1.platformConfig.MSB)).ToString(formatStr) + " ";
-                            data2 += ((UInt64)getRawValue(pcm2.buf, addr2, td2, 0, pcm2.platformConfig.MSB)).ToString(formatStr) + " ";
+                            data1 += ((UInt64)GetRawValue(pcm1.buf, addr, td, 0,pcm1.platformConfig.MSB)).ToString(formatStr) + " ";
+                            data2 += ((UInt64)GetRawValue(pcm2.buf, addr2, td2, 0, pcm2.platformConfig.MSB)).ToString(formatStr) + " ";
                         }
                         else
                         {
-                            data1 += getValue(pcm1.buf, addr, td, 0, pcm1).ToString(formatStr) + " ";
-                            data2 += getValue(pcm2.buf, addr2, td2, 0, pcm2).ToString(formatStr) + " ";
+                            data1 += GetValue(pcm1.buf, addr, td, 0, pcm1).ToString(formatStr) + " ";
+                            data2 += GetValue(pcm2.buf, addr2, td2, 0, pcm2).ToString(formatStr) + " ";
                         }
                         addr += step;
                         addr2 += step2;
@@ -130,9 +131,9 @@ namespace UniversalPatcher
                 bindingSource.DataSource = tdiffList;
                 dataGridView1.CellMouseDoubleClick += DataGridView1_CellMouseDoubleClick;
                 dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
-                filterTables();
+                FilterTables();
                 tree1.SelectedNodes.Clear();
-                TreeParts.addNodes(tree1.Nodes, pcm1);
+                TreeParts.AddNodes(tree1.Nodes, pcm1);
                 tree1.AfterSelect += Tree1_AfterSelect;
                 tree1.ContextMenuStrip = contextMenuStrip1;
             }
@@ -149,12 +150,12 @@ namespace UniversalPatcher
 
         private void Tree1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            filterTables();
+            FilterTables();
             if (e.Node.Nodes.Count == 0 && e.Node.Name != "All" && e.Node.Parent != null)
-                TreeParts.addChildNodes(e.Node, pcm1);
+                TreeParts.AddChildNodes(e.Node, pcm1);
         }
 
-        private void filterTables()
+        private void FilterTables()
         {
             try
             {
@@ -249,7 +250,7 @@ namespace UniversalPatcher
                         {
                             foreach (TableDiff tDif in results)
                             {
-                                string tdValT = getValueType(tDif.td).ToString();
+                                string tdValT = GetTableValueType(tDif.td).ToString();
                                 if (tdValT == valT)
                                     newTDList.Add(tDif);
                             }
@@ -296,12 +297,12 @@ namespace UniversalPatcher
                 //saveGridLayout(); //Save before reorder!
                 sortBy = dataGridView1.Columns[e.ColumnIndex].Name;
                 sortIndex = e.ColumnIndex;
-                strSortOrder = getSortOrder(sortIndex);
-                filterTables();
+                strSortOrder = GetSortOrder(sortIndex);
+                FilterTables();
             }
         }
 
-        private SortOrder getSortOrder(int columnIndex)
+        private SortOrder GetSortOrder(int columnIndex)
         {
             try
             {
@@ -335,10 +336,10 @@ namespace UniversalPatcher
                     frmTableEditor frmT = new frmTableEditor();
                     List<TableData> tableIds = new List<TableData>();
                     tableIds.Add(td);
-                    frmT.prepareTable(pcm1, td, tableIds, "A");
-                    frmT.addCompareFiletoMenu(pcm2, null, "B:" + pcm2.FileName,"B");
+                    frmT.PrepareTable(pcm1, td, tableIds, "A");
+                    frmT.AddCompareFiletoMenu(pcm2, null, "B:" + pcm2.FileName,"B");
                     frmT.Show();
-                    frmT.loadTable();
+                    frmT.LoadTable();
                     frmT.radioSideBySide.Checked = true;
                 }
             }
@@ -357,7 +358,7 @@ namespace UniversalPatcher
         {
 
         }
-        private void saveCSV()
+        private void SaveCSV()
         {
             try
             {
@@ -404,12 +405,12 @@ namespace UniversalPatcher
 
         private void txtFilter_TextChanged(object sender, EventArgs e)
         {
-            filterTables();
+            FilterTables();
         }
 
         private void btnSaveCsv_Click(object sender, EventArgs e)
         {
-            saveCSV();
+            SaveCSV();
         }
 
         private void btnSaveTableList_Click(object sender, EventArgs e)
@@ -456,7 +457,7 @@ namespace UniversalPatcher
                 pcmNew2.tableDatas.Add(tdList2[i]);
 
             FrmTuner frmT = new FrmTuner(pcmNew,false);
-            frmT.addtoCurrentFileMenu(pcmNew2,false);
+            frmT.AddtoCurrentFileMenu(pcmNew2,false);
             frmT.Show();
         }
 
@@ -476,7 +477,7 @@ namespace UniversalPatcher
         {
             TreeNode tn = tree1.SelectedNode;
             foreach (TreeNode childTn in tn.Nodes)
-                TreeParts.addChildNodes(childTn, pcm1);
+                TreeParts.AddChildNodes(childTn, pcm1);
             tn.ExpandAll();
 
         }
@@ -486,19 +487,19 @@ namespace UniversalPatcher
             TreeNode tn = tree1.SelectedNode;
             foreach (TreeNode childTn in tn.Nodes)
             {
-                TreeParts.addChildNodes(childTn, pcm1);
+                TreeParts.AddChildNodes(childTn, pcm1);
                 foreach (TreeNode grandChild in childTn.Nodes)
-                    TreeParts.addChildNodes(grandChild,pcm1);
+                    TreeParts.AddChildNodes(grandChild,pcm1);
             }
             tn.ExpandAll();
         }
 
         private void btnCreatePatch_Click(object sender, EventArgs e)
         {
-            generateTablePatch();
+            GenerateTablePatch();
         }
 
-        private void generateTablePatch()
+        private void GenerateTablePatch()
         {
             try
             {
@@ -522,9 +523,9 @@ namespace UniversalPatcher
                     xpatch.Segment = pcm1.GetSegmentName(pTd.addrInt);
                     xpatch.Description = Description;
                     frmTableEditor frmTE = new frmTableEditor();
-                    frmTE.prepareTable(pcm1, pTd, null, "A");
-                    frmTE.loadTable();
-                    uint step = (uint)getElementSize(pTd.DataType);
+                    frmTE.PrepareTable(pcm1, pTd, null, "A");
+                    frmTE.LoadTable();
+                    uint step = (uint)GetElementSize(pTd.DataType);
                     uint addr = (uint)(pTd.addrInt + pTd.Offset);
                     if (pTd.RowMajor)
                     {
@@ -532,7 +533,7 @@ namespace UniversalPatcher
                         {
                             for (int c = 0; c < pTd.Columns; c++)
                             {
-                                xpatch.Data += getValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
+                                xpatch.Data += GetValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
                                 addr += step;
                             }
                         }
@@ -543,7 +544,7 @@ namespace UniversalPatcher
                         {
                             for (int r = 0; r < pTd.Rows; r++)
                             {
-                                xpatch.Data += getValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
+                                xpatch.Data += GetValue(pcm1.buf, addr, pTd, 0, pcm1).ToString().Replace(",", ".") + " ";
                                 addr += step;
                             }
                         }

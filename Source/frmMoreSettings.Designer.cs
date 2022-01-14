@@ -52,6 +52,12 @@ namespace UniversalPatcher
             this.label5 = new System.Windows.Forms.Label();
             this.numSplashTime = new System.Windows.Forms.NumericUpDown();
             this.chkXdfUseTableName = new System.Windows.Forms.CheckBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtFlashApp = new System.Windows.Forms.TextBox();
+            this.btnBrowseApp = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
+            this.txtFlashParams = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerTableMinEquivalency)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numKeypressWait)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerMinEqOther)).BeginInit();
@@ -60,6 +66,7 @@ namespace UniversalPatcher
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numSplashTime)).BeginInit();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // numTunerTableMinEquivalency
@@ -86,7 +93,7 @@ namespace UniversalPatcher
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(225, 353);
+            this.btnOK.Location = new System.Drawing.Point(225, 486);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 2;
@@ -265,7 +272,7 @@ namespace UniversalPatcher
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(14, 353);
+            this.label5.Location = new System.Drawing.Point(13, 347);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(135, 13);
             this.label5.TabIndex = 16;
@@ -273,7 +280,7 @@ namespace UniversalPatcher
             // 
             // numSplashTime
             // 
-            this.numSplashTime.Location = new System.Drawing.Point(162, 351);
+            this.numSplashTime.Location = new System.Drawing.Point(161, 345);
             this.numSplashTime.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -293,11 +300,69 @@ namespace UniversalPatcher
             this.chkXdfUseTableName.Text = "XDF import: Link using tablename, not guid";
             this.chkXdfUseTableName.UseVisualStyleBackColor = true;
             // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.txtFlashParams);
+            this.groupBox5.Controls.Add(this.label7);
+            this.groupBox5.Controls.Add(this.btnBrowseApp);
+            this.groupBox5.Controls.Add(this.txtFlashApp);
+            this.groupBox5.Controls.Add(this.label6);
+            this.groupBox5.Location = new System.Drawing.Point(11, 375);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(285, 105);
+            this.groupBox5.TabIndex = 19;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Flash program";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(12, 18);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(62, 13);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "Application:";
+            // 
+            // txtFlashApp
+            // 
+            this.txtFlashApp.Location = new System.Drawing.Point(6, 36);
+            this.txtFlashApp.Name = "txtFlashApp";
+            this.txtFlashApp.Size = new System.Drawing.Size(246, 20);
+            this.txtFlashApp.TabIndex = 1;
+            // 
+            // btnBrowseApp
+            // 
+            this.btnBrowseApp.Location = new System.Drawing.Point(255, 35);
+            this.btnBrowseApp.Name = "btnBrowseApp";
+            this.btnBrowseApp.Size = new System.Drawing.Size(29, 20);
+            this.btnBrowseApp.TabIndex = 2;
+            this.btnBrowseApp.Text = "...";
+            this.btnBrowseApp.UseVisualStyleBackColor = true;
+            this.btnBrowseApp.Click += new System.EventHandler(this.btnBrowseApp_Click);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(12, 59);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(63, 13);
+            this.label7.TabIndex = 3;
+            this.label7.Text = "Parameters:";
+            // 
+            // txtFlashParams
+            // 
+            this.txtFlashParams.Location = new System.Drawing.Point(5, 75);
+            this.txtFlashParams.Name = "txtFlashParams";
+            this.txtFlashParams.Size = new System.Drawing.Size(246, 20);
+            this.txtFlashParams.TabIndex = 4;
+            this.txtFlashParams.Text = "$file";
+            // 
             // frmMoreSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(307, 388);
+            this.ClientSize = new System.Drawing.Size(307, 521);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.chkXdfUseTableName);
             this.Controls.Add(this.numSplashTime);
             this.Controls.Add(this.label5);
@@ -326,6 +391,8 @@ namespace UniversalPatcher
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numSplashTime)).EndInit();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -355,5 +422,11 @@ namespace UniversalPatcher
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.NumericUpDown numSplashTime;
         private System.Windows.Forms.CheckBox chkXdfUseTableName;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.TextBox txtFlashParams;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button btnBrowseApp;
+        private System.Windows.Forms.TextBox txtFlashApp;
+        private System.Windows.Forms.Label label6;
     }
 }

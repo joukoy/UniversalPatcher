@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using static upatcher;
+using static Upatcher;
 
 namespace UniversalPatcher
 {
@@ -24,7 +24,7 @@ namespace UniversalPatcher
 
         public int codeIndex;
 
-        public void startMe(int code, PcmFile PCM, List<DtcCode> dtcCodes)
+        public void StartMe(int code, PcmFile PCM, List<DtcCode> dtcCodes)
         {
             codeIndex = code;
             comboDtcStatus.Items.Clear();

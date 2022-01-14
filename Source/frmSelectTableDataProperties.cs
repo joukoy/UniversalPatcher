@@ -22,7 +22,7 @@ namespace UniversalPatcher
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
-        public void loadProperties(TableData td, bool showValues=true)
+        public void LoadProperties(TableData td, bool showValues=true)
         {
             int top = 19;
             foreach (var prop in td.GetType().GetProperties())
@@ -48,7 +48,7 @@ namespace UniversalPatcher
             this.Height = top + 50;
         }
 
-        public void loadFiles(List<frmMassModifyTableData.TunerFile> tunerFiles, List<string> tableNames)
+        public void LoadFiles(List<frmMassModifyTableData.TunerFile> tunerFiles, List<string> tableNames)
         {
             //This is not in use, filelist needs scrollbars...
             chkBoxes = new List<CheckBox>();

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using static upatcher;
+using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -102,8 +103,8 @@ namespace UniversalPatcher
             EepromKey tmpKey;
 
             //Calculate key
-            tmpKey.Seed = readUint16(buf, VINAddr,true);
-            tmpKey.Key = readUint16(buf, VINAddr + 2,true);
+            tmpKey.Seed = ReadUint16(buf, VINAddr,true);
+            tmpKey.Key = ReadUint16(buf, VINAddr + 2,true);
 
             tmpKey.NewKey = (UInt16)(tmpKey.Seed + 0x5201);
             tmpKey.NewKey = (UInt16)(SwapBytes(tmpKey.NewKey,2) + 0x9738);
@@ -155,13 +156,13 @@ namespace UniversalPatcher
                 return "Eeprom_data unreadable" + Environment.NewLine;
             }
 
-            string PN = readUint32(buf, VINAddr + 4,true).ToString();
+            string PN = ReadUint32(buf, VINAddr + 4,true).ToString();
             Ver = ReadTextBlock(buf, (int)VINAddr + 0x1C, 4);
 
-            string Ret = " Hardware ".PadRight(20) + readUint32(buf, VINAddr + 4,true).ToString() + Environment.NewLine;
+            string Ret = " Hardware ".PadRight(20) + ReadUint32(buf, VINAddr + 4,true).ToString() + Environment.NewLine;
             Ret += " Serial ".PadRight(20) + ReadTextBlock(buf, (int)VINAddr + 8, 12,true) + Environment.NewLine;
-            Ret += " Id ".PadRight(20) + readUint32(buf, VINAddr + 0x14,true).ToString() + Environment.NewLine;
-            Ret += " Id2 ".PadRight(20) + readUint32(buf, VINAddr + 0x18,true).ToString() + Environment.NewLine;
+            Ret += " Id ".PadRight(20) + ReadUint32(buf, VINAddr + 0x14,true).ToString() + Environment.NewLine;
+            Ret += " Id2 ".PadRight(20) + ReadUint32(buf, VINAddr + 0x18,true).ToString() + Environment.NewLine;
             Ret += " Broadcast ".PadRight(20) + ReadTextBlock(buf, (int)VINAddr + 0x1C, 4) + Environment.NewLine;
             Ret += " PN ".PadRight(20) + PN + Environment.NewLine;
             Ret += " Ver ".PadRight(20) + Ver + Environment.NewLine;
@@ -169,7 +170,7 @@ namespace UniversalPatcher
             return Ret;
         }
 
-        public static string getVer(byte[] buf)
+        public static string GetVer(byte[] buf)
         {
             uint VINAddr = GetVINAddr(buf);
             if (VINAddr == 1) //Check word not found
@@ -177,22 +178,22 @@ namespace UniversalPatcher
             return ReadTextBlock(buf, (int)VINAddr + 0x1C, 4);
         }
 
-        public static string getPN(byte[] buf)
+        public static string GetPN(byte[] buf)
         {
             uint VINAddr = GetVINAddr(buf);
             if (VINAddr == 1) //Check word not found
                 return "?";
-            return readUint32(buf, VINAddr + 4,true).ToString();
+            return ReadUint32(buf, VINAddr + 4,true).ToString();
         }
 
         public static string GetExtraInfo(byte[] buf)
         {
             uint VINAddr = GetVINAddr(buf);
 
-            string Ret = " Hardware ".PadRight(20) + readUint32(buf, VINAddr + 4,true).ToString() + Environment.NewLine;
+            string Ret = " Hardware ".PadRight(20) + ReadUint32(buf, VINAddr + 4,true).ToString() + Environment.NewLine;
             Ret += " Serial ".PadRight(20) + ReadTextBlock(buf, (int)VINAddr + 8, 12) + Environment.NewLine;
-            Ret += " Id ".PadRight(20) + readUint32(buf, VINAddr + 0x14,true).ToString() + Environment.NewLine;
-            Ret += " Id2 ".PadRight(20) + readUint32(buf, VINAddr + 0x18,true).ToString() + Environment.NewLine;
+            Ret += " Id ".PadRight(20) + ReadUint32(buf, VINAddr + 0x14,true).ToString() + Environment.NewLine;
+            Ret += " Id2 ".PadRight(20) + ReadUint32(buf, VINAddr + 0x18,true).ToString() + Environment.NewLine;
             Ret += " Broadcast ".PadRight(20) + ReadTextBlock(buf, (int)VINAddr + 0x1C, 4) + Environment.NewLine;
             Ret += " VIN ".PadRight(20) + GetVIN(buf) + Environment.NewLine;
             return Ret;

@@ -4,8 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.IO;
-using static upatcher;
+using static Upatcher;
 using System.Windows.Forms;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -67,13 +68,13 @@ namespace UniversalPatcher
             public List<int> searchValues;
             public string searchString;
         }
-        public void parseAddresses(PcmFile PCM)
+        public void ParseAddresses(PcmFile PCM)
         {
             ParseAddress(searchRange, PCM, out searchBlocks);
             ParseAddress(tableRange, PCM, out tableBlocks);
 
         }
-        public List<SearchVariable> parseVariables(PcmFile PCM)
+        public List<SearchVariable> ParseVariables(PcmFile PCM)
         {
             List<SearchVariable> searchVariables = new List<SearchVariable>();
             string[] varlist = Variables.Split(',');
@@ -371,7 +372,7 @@ namespace UniversalPatcher
             }
         
 
-            private TableSearchResult parseMatch(PcmFile PCM, TableSearchConfig.ParsedTableSearchConfig parsedConfig, TableSearchConfig tableSearchConfig, uint addr)
+            private TableSearchResult ParseMatch(PcmFile PCM, TableSearchConfig.ParsedTableSearchConfig parsedConfig, TableSearchConfig tableSearchConfig, uint addr)
             {
                 TableSearchResult tsr = new TableSearchResult();
                 tsr.OS = PCM.OS;
@@ -410,7 +411,7 @@ namespace UniversalPatcher
 
                             if (itemParts[0].StartsWith("@"))
                             {
-                                tsr.AddressInt = PCM.readUInt32(location);
+                                tsr.AddressInt = PCM.ReadUInt32(location);
                             }
                             if (tsr.Data != null && tsr.Data.Length > 1)
                                 tsr.Data += "; ";
@@ -422,11 +423,11 @@ namespace UniversalPatcher
                             if (itemParts[2] == "1")
                                 tsr.Data += PCM.buf[location].ToString(formatString);
                             if (itemParts[2] == "2")
-                                tsr.Data += PCM.readUInt16(location).ToString(formatString);
+                                tsr.Data += PCM.ReadUInt16(location).ToString(formatString);
                             if (itemParts[2] == "4")
-                                tsr.Data += PCM.readUInt32(location).ToString(formatString);
+                                tsr.Data += PCM.ReadUInt32(location).ToString(formatString);
                             if (itemParts[2] == "8")
-                                tsr.Data += PCM.readUInt64(location).ToString(formatString);
+                                tsr.Data += PCM.ReadUInt64(location).ToString(formatString);
 
                         }
                         tsr.Segment = PCM.GetSegmentName(tsr.AddressInt);
@@ -462,7 +463,7 @@ namespace UniversalPatcher
                                 uint location = (uint)(addr + k);
                                 if (varParts[0].ToLower().StartsWith("@"))
                                 {
-                                    tsr.AddressInt = PCM.readUInt32(location);
+                                    tsr.AddressInt = PCM.ReadUInt32(location);
                                 }
                                 if (varParts[0].ToLower().StartsWith("row"))
                                 {
@@ -477,11 +478,11 @@ namespace UniversalPatcher
                                 if (varParts[1] == "1")
                                     tsr.Data += PCM.buf[location].ToString(formatString);
                                 if (varParts[1] == "2")
-                                    tsr.Data += PCM.readUInt16(location).ToString(formatString);
+                                    tsr.Data += PCM.ReadUInt16(location).ToString(formatString);
                                 if (varParts[1] == "4")
-                                    tsr.Data += PCM.readUInt32(location).ToString(formatString);
+                                    tsr.Data += PCM.ReadUInt32(location).ToString(formatString);
                                 if (varParts[1] == "8")
-                                    tsr.Data += PCM.readUInt64(location).ToString(formatString);
+                                    tsr.Data += PCM.ReadUInt64(location).ToString(formatString);
 
 
                             }
@@ -533,7 +534,7 @@ namespace UniversalPatcher
 
             }
         
-        public void searchTables(PcmFile PCM, bool crossSearch, string CustomSearch = "",int crossVariation=3)
+        public void SearchTables(PcmFile PCM, bool crossSearch, string CustomSearch = "",int crossVariation=3)
         {
 
             try
@@ -583,8 +584,8 @@ namespace UniversalPatcher
                         TableSearchConfig.ParsedTableSearchConfig parsedConfig = new TableSearchConfig.ParsedTableSearchConfig();
 
                         TableSearchConfig tsc = tableSearchConfig[i];
-                        tsc.parseAddresses(PCM);
-                        List <SearchVariable> tmpVariables = tsc.parseVariables(PCM);
+                        tsc.ParseAddresses(PCM);
+                        List <SearchVariable> tmpVariables = tsc.ParseVariables(PCM);
                         for (int var = 0; var < tmpVariables.Count; var++)
                             searchVariables.Add(tmpVariables[var]);
                         Debug.WriteLine("Original searchstring: " + searchTxt);
@@ -635,7 +636,7 @@ namespace UniversalPatcher
                                     }
                                     if (match)
                                     {
-                                        tsr = parseMatch(PCM, parsedConfigList[ss], tsc, addr);
+                                        tsr = ParseMatch(PCM, parsedConfigList[ss], tsc, addr);
                                         for (int tblock = 0; tblock < tsc.tableBlocks.Count; tblock++)
                                         {
                                             if (tsr.AddressInt >= tsc.tableBlocks[tblock].Start && tsr.AddressInt <= tsc.tableBlocks[tblock].End)
@@ -675,7 +676,7 @@ namespace UniversalPatcher
 
                 if (crossSearch)
                 {
-                    crossSearchTables(thisFileTables,PCM, crossVariation);
+                    CrossSearchTables(thisFileTables,PCM, crossVariation);
                 }
                 else
                 {
@@ -697,12 +698,8 @@ namespace UniversalPatcher
                 Debug.WriteLine("Tablesearch: " + line + ": " + ex.Message);
             }
         }
-        public string searchE38Tables(PcmFile PCM)
-        {
-            //Search 
-            return "";
-        }
-        private void crossSearchTables(List<TableSearchResult> thisFileTables, PcmFile PCM, int crossVariation)
+
+        private void CrossSearchTables(List<TableSearchResult> thisFileTables, PcmFile PCM, int crossVariation)
         {
             try
             {

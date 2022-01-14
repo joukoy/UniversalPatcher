@@ -9,7 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using static UniversalPatcher.ExtensionMethods;
-using static upatcher;
+using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -51,7 +52,7 @@ namespace UniversalPatcher
                     splitContainer1.SplitterDistance = Properties.Settings.Default.MassCompareSplitWidth;
             }
 
-            setupDataGrid();
+            SetupDataGrid();
         }
         private void FrmMassCompare_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
         {
@@ -74,19 +75,19 @@ namespace UniversalPatcher
 
         }
 
-        private string peekTableValues(TableData compTd, PcmFile peekPCM)
+        private string PeekTableValues(TableData compTd, PcmFile peekPCM)
         {
             string retVal = "";
             try
             {
                 if (compTd.Dimensions() == 1)
                 {
-                    double curVal = getValue(peekPCM.buf, (uint)(compTd.addrInt + compTd.Offset), compTd,0,peekPCM);
-                    UInt64 rawVal = (UInt64) getRawValue(peekPCM.buf,(uint)(compTd.addrInt + compTd.Offset), compTd,0,peekPCM.platformConfig.MSB);
+                    double curVal = GetValue(peekPCM.buf, (uint)(compTd.addrInt + compTd.Offset), compTd,0,peekPCM);
+                    UInt64 rawVal = (UInt64) GetRawValue(peekPCM.buf,(uint)(compTd.addrInt + compTd.Offset), compTd,0,peekPCM.platformConfig.MSB);
                     string valTxt = curVal.ToString();
                     string unitTxt = " " + compTd.Units;
                     string maskTxt = "";
-                    TableValueType vt = getValueType(compTd);
+                    TableValueType vt = GetTableValueType(compTd);
                     if (vt == TableValueType.bitmask)
                     {
                         unitTxt = "";
@@ -108,7 +109,7 @@ namespace UniversalPatcher
                         if (bit > -1)
                         {
                             string rawBinVal = Convert.ToString((Int64)rawVal, 2);
-                            rawBinVal = rawBinVal.PadLeft(getBits(compTd.DataType), '0');
+                            rawBinVal = rawBinVal.PadLeft(GetBits(compTd.DataType), '0');
                             maskTxt = " [" + rawBinVal + "], bit $" + bit.ToString();
                         }
                     }
@@ -122,13 +123,13 @@ namespace UniversalPatcher
                     }
                     else if (vt == TableValueType.selection)
                     {
-                        Dictionary<double, string> possibleVals = parseEnumHeaders(compTd.Values);
+                        Dictionary<double, string> possibleVals = ParseEnumHeaders(compTd.Values);
                         if (possibleVals.ContainsKey(curVal))
                             unitTxt = " (" + possibleVals[curVal] + ")";
                         else
                             unitTxt = " (Out of range)";
                     }
-                    string formatStr = "X" + (getElementSize(compTd.DataType) * 2).ToString();
+                    string formatStr = "X" + (GetElementSize(compTd.DataType) * 2).ToString();
                     string rawTxt = "";
                     switch (compTd.DataType)
                     {
@@ -180,8 +181,8 @@ namespace UniversalPatcher
                         {
                             for (int c = 0; c < compTd.Columns; c++)
                             {
-                                double curVal = getValue(peekPCM.buf, addr, compTd,0, peekPCM);
-                                addr += (uint)getElementSize(compTd.DataType);
+                                double curVal = GetValue(peekPCM.buf, addr, compTd,0, peekPCM);
+                                addr += (uint)GetElementSize(compTd.DataType);
                                 tblData += "[" + curVal.ToString("#0.0") + "]";
                             }
                             tblData += Environment.NewLine;
@@ -197,8 +198,8 @@ namespace UniversalPatcher
 
                             for (int r = 0; r < compTd.Rows; r++)
                             {
-                                double curVal = getValue(peekPCM.buf, addr, compTd,0, peekPCM);
-                                addr += (uint)getElementSize(compTd.DataType);
+                                double curVal = GetValue(peekPCM.buf, addr, compTd,0, peekPCM);
+                                addr += (uint)GetElementSize(compTd.DataType);
                                 tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
                             }
                         }
@@ -215,7 +216,7 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        private void setupDataGrid()
+        private void SetupDataGrid()
         {
             //dataGridView1.Columns.Add("File", "File");
             dataGridView1.Columns.Add("OS", "OS");
@@ -249,9 +250,9 @@ namespace UniversalPatcher
 
         }
 
-        private void compareTable(PcmFile cmpPCM)
+        private void CompareTable(PcmFile cmpPCM)
         {
-            TableData cmpTd = findTableData(td, cmpPCM.tableDatas);
+            TableData cmpTd = FindTableData(td, cmpPCM.tableDatas);
             if (cmpTd == null)
             {
                 Logger("Table not found");
@@ -270,16 +271,16 @@ namespace UniversalPatcher
             }
             dataGridView1.Rows[row].Cells["Table Name"].Value = cmpTd.TableName;
             dataGridView1.Rows[row].Cells["Table Address"].Value = cmpTd.Address;
-            dataGridView1.Rows[row].Cells["Current Value"].Value = peekTableValues(cmpTd, cmpPCM);
+            dataGridView1.Rows[row].Cells["Current Value"].Value = PeekTableValues(cmpTd, cmpPCM);
             //dataGridView1.Rows[row].Height = 50;
         }
 
 
-        private void loadConfigforPCM(PcmFile cmpPCM)
+        private void LoadConfigforPCM(PcmFile cmpPCM)
         {
             if (!Properties.Settings.Default.disableTunerAutoloadSettings)
             {
-                cmpPCM.autoLoadTunerConfig();
+                cmpPCM.AutoLoadTunerConfig();
                 if (cmpPCM.tunerFile.Length > 0)
                 {
                     bool haveDTC = false;
@@ -293,45 +294,45 @@ namespace UniversalPatcher
                     }
                     if (!haveDTC)
                     {
-                        importDTC(cmpPCM);
+                        ImportDTC(cmpPCM);
                     }
                 }
                 else
                 {
-                    importDTC(cmpPCM);
-                    importTableSeek(cmpPCM);
+                    ImportDTC(cmpPCM);
+                    ImportTableSeek(cmpPCM);
                 }
             }
 
         }
-        private void importTableSeek(PcmFile cmpPCM)
+        private void ImportTableSeek(PcmFile cmpPCM)
         {
             if (cmpPCM.foundTables.Count == 0)
             {
                 TableSeek TS = new TableSeek();
                 Logger("Seeking tables...", false);
-                Logger(TS.seekTables(cmpPCM));
+                Logger(TS.SeekTables(cmpPCM));
             }
             Logger("Importing TableSeek tables... ", false);
             for (int i = 0; i < cmpPCM.foundTables.Count; i++)
             {
                 TableData tableData = new TableData();
-                tableData.importFoundTable(i, cmpPCM);
+                tableData.ImportFoundTable(i, cmpPCM);
                 cmpPCM.tableDatas.Add(tableData);
             }
             Logger("OK");
         }
 
-        private void importDTC(PcmFile cmpPCM)
+        private void ImportDTC(PcmFile cmpPCM)
         {
             Logger("Importing DTC codes... ", false);
             TableData tdTmp = new TableData();
-            tdTmp.importDTC(cmpPCM, ref cmpPCM.tableDatas, true);
-            tdTmp.importDTC(cmpPCM, ref cmpPCM.tableDatas, false);
+            tdTmp.ImportDTC(cmpPCM, ref cmpPCM.tableDatas, true);
+            tdTmp.ImportDTC(cmpPCM, ref cmpPCM.tableDatas, false);
             Logger(" [OK]");
         }
 
-        private void compareAllTables(List<string> files)
+        private void CompareAllTables(List<string> files)
         {
             try
             {
@@ -343,7 +344,7 @@ namespace UniversalPatcher
                     string fName = files[i];
                     LoggerBold(fName);
                     PcmFile cmpPCM = new PcmFile(fName, true, "");
-                    loadConfigforPCM(cmpPCM);
+                    LoadConfigforPCM(cmpPCM);
                     pcmfiles.Add(cmpPCM);
                 }
                 Logger("Reading tables ", false);
@@ -357,11 +358,11 @@ namespace UniversalPatcher
                     for (int p = 0; p < pcmfiles.Count; p++)
                     {
                         PcmFile cmpPCM = pcmfiles[p];
-                        if (findTableData(td, cmpPCM.tableDatas) == null)
+                        if (FindTableData(td, cmpPCM.tableDatas) == null)
                         {
                             continue;
                         }
-                        compareTable(cmpPCM);
+                        CompareTable(cmpPCM);
                         dataGridViewTableList.Rows[row].Cells[2].Value = Convert.ToInt32(dataGridViewTableList.Rows[row].Cells[2].Value) + 1;
                     }
 
@@ -389,7 +390,7 @@ namespace UniversalPatcher
             }
         }
 
-        private void initCompareAll()
+        private void InitCompareAll()
         {
             dataGridViewTableList.Rows.Clear();
             dataGridViewTableList.Columns.Clear();
@@ -397,7 +398,7 @@ namespace UniversalPatcher
             dataGridViewTableList.Columns.Add("Category", "Category");
             dataGridViewTableList.Columns.Add("Hits", "Hits");
         }
-        public void selectCmpFiles()
+        public void SelectCmpFiles()
         {
             try
             {
@@ -420,8 +421,8 @@ namespace UniversalPatcher
                             string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                             files.Add(FileName);
                         }
-                        initCompareAll();
-                        compareAllTables(files);
+                        InitCompareAll();
+                        CompareAllTables(files);
                     }
                     else
                     {
@@ -430,8 +431,8 @@ namespace UniversalPatcher
                             string FileName = frmF.listFiles.CheckedItems[i].Tag.ToString();
                             PcmFile cmpPcm = new PcmFile(FileName, true, "");
                             LoggerBold(FileName);
-                            loadConfigforPCM(cmpPcm);
-                            compareTable(cmpPcm);
+                            LoadConfigforPCM(cmpPcm);
+                            CompareTable(cmpPcm);
                         }
                     }
 
@@ -453,7 +454,7 @@ namespace UniversalPatcher
 
         private void btnSelectFiles_Click(object sender, EventArgs e)
         {
-            selectCmpFiles();
+            SelectCmpFiles();
         }
         public void LoggerBold(string LogText, Boolean NewLine = true)
         {
@@ -472,7 +473,7 @@ namespace UniversalPatcher
                 txtResult.AppendText(Environment.NewLine);
             Application.DoEvents();
         }
-        private void saveCSV()
+        private void SaveCSV()
         {
             try
             {
@@ -515,7 +516,7 @@ namespace UniversalPatcher
 
         private void btnSaveCsv_Click(object sender, EventArgs e)
         {
-            saveCSV();
+            SaveCSV();
         }
 
         private void dataGridViewTableList_CellContentClick(object sender, DataGridViewCellEventArgs e)

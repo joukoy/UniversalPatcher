@@ -54,7 +54,7 @@
             this.btnSaveFileInfo = new System.Windows.Forms.Button();
             this.tabDebug = new System.Windows.Forms.TabPage();
             this.btnSaveDebug = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnDebugSearch = new System.Windows.Forms.Button();
             this.txtDebug = new System.Windows.Forms.RichTextBox();
             this.chkDebug = new System.Windows.Forms.CheckBox();
             this.tabPatch = new System.Windows.Forms.TabPage();
@@ -616,7 +616,7 @@
             // tabDebug
             // 
             this.tabDebug.Controls.Add(this.btnSaveDebug);
-            this.tabDebug.Controls.Add(this.button2);
+            this.tabDebug.Controls.Add(this.btnDebugSearch);
             this.tabDebug.Controls.Add(this.txtDebug);
             this.tabDebug.Controls.Add(this.chkDebug);
             this.tabDebug.Location = new System.Drawing.Point(4, 22);
@@ -638,15 +638,15 @@
             this.btnSaveDebug.UseVisualStyleBackColor = true;
             this.btnSaveDebug.Click += new System.EventHandler(this.btnSaveDebug_Click);
             // 
-            // button2
+            // btnDebugSearch
             // 
-            this.button2.Location = new System.Drawing.Point(92, 0);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 213;
-            this.button2.Text = "Search...";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btnDebugSearch.Location = new System.Drawing.Point(92, 0);
+            this.btnDebugSearch.Name = "btnDebugSearch";
+            this.btnDebugSearch.Size = new System.Drawing.Size(75, 23);
+            this.btnDebugSearch.TabIndex = 213;
+            this.btnDebugSearch.Text = "Search...";
+            this.btnDebugSearch.UseVisualStyleBackColor = true;
+            this.btnDebugSearch.Click += new System.EventHandler(this.btnDebugSearch_Click);
             // 
             // txtDebug
             // 
@@ -1395,7 +1395,6 @@
             this.label14.Size = new System.Drawing.Size(81, 13);
             this.label14.TabIndex = 8;
             this.label14.Text = "GM DTC codes";
-            this.label14.Click += new System.EventHandler(this.label14_Click);
             // 
             // btnClearDTC
             // 
@@ -3445,7 +3444,7 @@
         private System.Windows.Forms.CheckBox chkAutoRefreshBadChkFile;
         private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnDebugSearch;
         private System.Windows.Forms.Button btnSaveDebug;
         private System.Windows.Forms.ToolStripMenuItem editTableSearchToolStripMenuItem;
         private System.Windows.Forms.TabPage tabSearchedTables;

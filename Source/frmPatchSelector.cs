@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using static upatcher;
+using static Upatcher;
 
 namespace UniversalPatcher
 {
@@ -44,10 +44,10 @@ namespace UniversalPatcher
 
         private void DataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            selectPatch();
+            SelectPatch();
         }
 
-        private void refreshFileList()
+        private void RefreshFileList()
         {
             bindingSource.DataSource = null;
             bindingSource.DataSource = patchFileList;
@@ -55,24 +55,7 @@ namespace UniversalPatcher
             dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
         }
 
-/*        public void LoggerBold(string LogText, Boolean NewLine = true)
-        {
-            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Bold);
-            txtResult.AppendText(LogText);
-            txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
-            if (NewLine)
-                txtResult.AppendText(Environment.NewLine);
-        }
-
-        public void Logger(string LogText, Boolean NewLine = true)
-        {
-            txtResult.AppendText(LogText);
-            if (NewLine)
-                txtResult.AppendText(Environment.NewLine);
-            Application.DoEvents();
-        }
-*/
-        private void loadPatch(string fileName)
+        private void LoadPatch(string fileName)
         {
             try
             {
@@ -100,7 +83,7 @@ namespace UniversalPatcher
                 bool isCompatible = false;
                 for (int x = 0; x < newPatchList.Count; x++)
                 {
-                    if (checkPatchCompatibility(newPatchList[x], basefile) < uint.MaxValue)
+                    if (CheckPatchCompatibility(newPatchList[x], basefile) < uint.MaxValue)
                     {
                         isCompatible = true;
                         break;
@@ -123,7 +106,7 @@ namespace UniversalPatcher
             }
         }
 
-        public void loadPatches()
+        public void LoadPatches()
         {
             patchFileList = new List<PatchFile>();
 
@@ -133,12 +116,12 @@ namespace UniversalPatcher
 
             foreach (FileInfo file in Files)
             {
-                loadPatch(file.FullName);
+                LoadPatch(file.FullName);
             }
-            refreshFileList();
+            RefreshFileList();
         }
 
-        public void convertToXmlPatch(TableData td, PcmFile PCM)    //Not in use??
+        public void ConvertToXmlPatch(TableData td, PcmFile PCM)    //Not in use??
         {
             patchFileList = new List<PatchFile>();
             PatchFile pFile = new PatchFile();
@@ -147,15 +130,15 @@ namespace UniversalPatcher
             pFile.fullFileName = td.TableName;
             pFile.Platform = PCM.configFile ;
             patchFileList.Add(pFile);
-            refreshFileList();
+            RefreshFileList();
         }
 
         private void chkShowAll_CheckedChanged(object sender, EventArgs e)
         {
-            loadPatches();
+            LoadPatches();
         }
 
-        private void selectPatch()
+        private void SelectPatch()
         {
             if (patchFileList == null || patchFileList.Count == 0)
                 return;
@@ -170,13 +153,13 @@ namespace UniversalPatcher
             }
             else
             {
-                tunerForm.applyPatch(fName);
+                tunerForm.ApplyPatch(fName);
             }
 
         }
         private void btnSelect_Click(object sender, EventArgs e)
         {
-            selectPatch();
+            SelectPatch();
         }
 
 

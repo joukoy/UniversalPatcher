@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using static upatcher;
+using static Upatcher;
 
 namespace UniversalPatcher
 {
@@ -44,7 +44,7 @@ namespace UniversalPatcher
             if (td.DataType == InDataType.UWORD || td.DataType == InDataType.SWORD)
             {
                 ushort mask = Convert.ToUInt16(maskStr, 16);
-                if ((PCM.readUInt16(addr) & mask) == mask)
+                if ((PCM.ReadUInt16(addr) & mask) == mask)
                     chkFlag.Checked = true;
                 else
                     chkFlag.Checked = false;
@@ -52,7 +52,7 @@ namespace UniversalPatcher
             if (td.DataType == InDataType.INT32 || td.DataType == InDataType.UINT32)
             {
                 UInt32 mask = Convert.ToUInt32(maskStr, 16);
-                if ((PCM.readUInt32(addr) & mask) == mask)
+                if ((PCM.ReadUInt32(addr) & mask) == mask)
                     chkFlag.Checked = true;
                 else
                     chkFlag.Checked = false;
@@ -60,7 +60,7 @@ namespace UniversalPatcher
             if (td.DataType == InDataType.INT64 || td.DataType == InDataType.UINT64)
             {
                 UInt64 mask = Convert.ToUInt64(maskStr, 16);
-                if ((PCM.readUInt64(addr) & mask) == mask)
+                if ((PCM.ReadUInt64(addr) & mask) == mask)
                     chkFlag.Checked = true;
                 else
                     chkFlag.Checked = false;
@@ -88,7 +88,7 @@ namespace UniversalPatcher
             else if (td.DataType == InDataType.SWORD || td.DataType == InDataType.UWORD)
             {
                 ushort mask = Convert.ToUInt16(maskStr, 16);
-                ushort curVal = PCM.readUInt16(addr);
+                ushort curVal = PCM.ReadUInt16(addr);
                 ushort newVal;
                 if (chkFlag.Checked)
                 {
@@ -104,7 +104,7 @@ namespace UniversalPatcher
             else if (td.DataType == InDataType.INT32 || td.DataType == InDataType.UINT32)
             {
                 UInt32 mask = Convert.ToUInt32(maskStr, 16);
-                UInt32 curVal = PCM.readUInt32(addr);
+                UInt32 curVal = PCM.ReadUInt32(addr);
                 UInt32 newVal;
                 if (chkFlag.Checked)
                 {
@@ -120,7 +120,7 @@ namespace UniversalPatcher
             else if (td.DataType == InDataType.INT64 || td.DataType == InDataType.UINT64)
             {
                 UInt64 mask = Convert.ToUInt64(maskStr, 16);
-                UInt64 curVal = PCM.readUInt64(addr);
+                UInt64 curVal = PCM.ReadUInt64(addr);
                 UInt64 newVal;
                 if (chkFlag.Checked)
                 {

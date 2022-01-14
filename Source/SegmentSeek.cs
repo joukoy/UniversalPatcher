@@ -6,7 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using static upatcher;
+using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -53,7 +54,7 @@ namespace UniversalPatcher
             return (SegmentSeek)this.MemberwiseClone();
         }
 
-        private uint searchByteSequence(PcmFile PCM, string searchString, uint Start, uint End)
+        private uint SearchByteSequence(PcmFile PCM, string searchString, uint Start, uint End)
         {
             uint addr;
             try
@@ -79,7 +80,7 @@ namespace UniversalPatcher
                 if (ind < 0)
                 {
                     //This byte is not in list, use slower method:
-                    return upatcher.searchBytes(PCM, searchString, Start, End);
+                    return Upatcher.SearchBytes(PCM, searchString, Start, End);
                 }
 
                 foreach (uint a in starters[ind].addresses)
@@ -122,7 +123,7 @@ namespace UniversalPatcher
             return uint.MaxValue;
         }
 
-        private string generateValidationSearchString(uint addr, string origStr)
+        private string GenerateValidationSearchString(uint addr, string origStr)
         {
             string retVal = "";
             string validationAddr = (addr).ToString("X8");
@@ -144,7 +145,7 @@ namespace UniversalPatcher
             return retVal.Trim();
         }
 
-        private SearchedAddress searchAddrBySearchString(PcmFile PCM, string searchStr, ref uint startAddr, uint endAddr, SegmentSeek tSeek)
+        private SearchedAddress SearchAddrBySearchString(PcmFile PCM, string searchStr, ref uint startAddr, uint endAddr, SegmentSeek tSeek)
         {
             SearchedAddress retVal;
             retVal.Addr = uint.MaxValue;
@@ -161,7 +162,7 @@ namespace UniversalPatcher
                 if (modStr.EndsWith("#"))
                     modStr = modStr.Replace(" #", " *"); //# alone at end
                 modStr = modStr.Replace("#", ""); //For example: #21 00 21
-                uint addr = searchByteSequence(PCM, modStr, startAddr, endAddr);
+                uint addr = SearchByteSequence(PCM, modStr, startAddr, endAddr);
                 if (addr == uint.MaxValue)
                 {
                     //Not found
@@ -182,17 +183,17 @@ namespace UniversalPatcher
                         Debug.WriteLine("Validation string: " + vStr + ", Address: " + addr.ToString("X8"));
                         int vLen = vStr.Split('@').Length - 1;
                         if (vLen != 4) throw new Exception("Validation search needs four '@'");
-                        string newStr = generateValidationSearchString(addr, vStr);
+                        string newStr = GenerateValidationSearchString(addr, vStr);
                         Debug.WriteLine("Searching validationstring: " + newStr);
-                        if (searchByteSequence(PCM, newStr, 0, PCM.fsize) < uint.MaxValue)
+                        if (SearchByteSequence(PCM, newStr, 0, PCM.fsize) < uint.MaxValue)
                         {
                             validated = true;
                             break;
                         }
                         //Try with 0x10k offset:
-                        newStr = generateValidationSearchString(addr + 0x10000, vStr);
+                        newStr = GenerateValidationSearchString(addr + 0x10000, vStr);
                         Debug.WriteLine("Not found, using 10k offset and searching validationstring: " + newStr);
-                        if (searchByteSequence(PCM, newStr, 0, PCM.fsize) < uint.MaxValue)
+                        if (SearchByteSequence(PCM, newStr, 0, PCM.fsize) < uint.MaxValue)
                         {
                             validated = true;
                             break;
@@ -219,7 +220,7 @@ namespace UniversalPatcher
                 else
                 {
                     //Address is AFTER searchstring
-                    retVal.Addr = PCM.readUInt32(addr + (uint)sParts.Length);
+                    retVal.Addr = PCM.ReadUInt32(addr + (uint)sParts.Length);
                 }
                 for (int p = 0; p < sParts.Length; p++)
                 {
@@ -293,7 +294,7 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        public static List<SegmentSeek> loadSegmentSeekFile(string fName)
+        public static List<SegmentSeek> LoadSegmentSeekFile(string fName)
         {
             Logger(" (" + Path.GetFileName(fName) + ") ", false);
             System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentSeek>));
@@ -303,7 +304,7 @@ namespace UniversalPatcher
             return sSeeks;
         }
 
-        public string seekSegments(PcmFile PCM1)
+        public string SeekSegments(PcmFile PCM1)
         {
             PCM = PCM1;
             string retVal = "";
@@ -313,10 +314,10 @@ namespace UniversalPatcher
                 PCM.foundSegments = new List<FoundSegment>();
                 segmentSeeks = new List<SegmentSeek>();
 
-                string fileName = PCM.segmentSeekFile;
+                string fileName = PCM.SegmentSeekFile;
                 if (File.Exists(fileName))
                 {
-                    segmentSeeks = loadSegmentSeekFile(fileName);
+                    segmentSeeks = LoadSegmentSeekFile(fileName);
                 }
                 else
                 {
@@ -414,7 +415,7 @@ namespace UniversalPatcher
                         for (int y = 0; y < segStrings.Length; y++)
                         {
                             int segNr = 0;
-                            segNr = PCM.getSegmentByNr(segStrings[y]);
+                            segNr = PCM.GetSegmentByNr(segStrings[y]);
                             for (int b = 0; b < PCM.segmentAddressDatas[segNr].SegmentBlocks.Count; b++)
                                 addrList.Add(PCM.segmentAddressDatas[segNr].SegmentBlocks[b]);
                         }
@@ -462,7 +463,7 @@ namespace UniversalPatcher
                             wantedHit = wantedHitList[wHit];
                             string[] ssParts = segmentSeeks[s].SearchStr.Split('+');     //At end of string can be +D4 +1W6 etc, for reading next address from found addr
                             Debug.WriteLine("SegmentSeek: Searching: " + segmentSeeks[s].SearchStr + ", Start: " + startAddr.ToString("X") + ", end: " + endAddr.ToString("X"));
-                            sAddr = searchAddrBySearchString(PCM, ssParts[0], ref startAddr, endAddr, segmentSeeks[s]);
+                            sAddr = SearchAddrBySearchString(PCM, ssParts[0], ref startAddr, endAddr, segmentSeeks[s]);
                             for (int jump = 1; jump < ssParts.Length && sAddr.Addr < PCM.fsize; jump++)
                             {
                                 //Read table address from address we found by searchstring
@@ -471,9 +472,9 @@ namespace UniversalPatcher
                                 uint currentAddr = (uint)(sAddr.Addr + offset);
                                 Debug.WriteLine("seekTables: Reading new address from:" + currentAddr.ToString("X"));
                                 if (ssParts[jump].Contains("D"))
-                                    sAddr.Addr = (uint)(PCM.readUInt32(currentAddr));
+                                    sAddr.Addr = (uint)(PCM.ReadUInt32(currentAddr));
                                 else
-                                    sAddr.Addr = (uint)(PCM.readUInt16(currentAddr));
+                                    sAddr.Addr = (uint)(PCM.ReadUInt16(currentAddr));
                                 Debug.WriteLine("seekTables: New address:" + sAddr.Addr.ToString("X"));
                             }
 

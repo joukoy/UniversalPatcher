@@ -8,7 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using static upatcher;
+using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -22,7 +23,7 @@ namespace UniversalPatcher
         private void frmImportFile_Load(object sender, EventArgs e)
         {
             LogReceivers.Add(txtResult);
-            refreshData();
+            RefreshData();
             dataGridView1.CellEndEdit += DataGridView1_CellEndEdit;
         }
 
@@ -80,10 +81,10 @@ namespace UniversalPatcher
 
         private void DataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            calcFileSize();
+            CalcFileSize();
         }
 
-        private void calcFileSize()
+        private void CalcFileSize()
         {
             fSize = 0;
             for (int i = 0; i < rBlocks.Count; i++)
@@ -95,13 +96,13 @@ namespace UniversalPatcher
         }
 
 
-        private void refreshData()
+        private void RefreshData()
         {
             bindingSource.DataSource = null;
             dataGridView1.DataSource = null;
             bindingSource.DataSource = rBlocks;
             dataGridView1.DataSource = bindingSource;
-            calcFileSize();
+            CalcFileSize();
         }
 
         public void LoggerBold(string LogText, Boolean NewLine = true)
@@ -121,7 +122,7 @@ namespace UniversalPatcher
             Application.DoEvents();
         }
 
-        public void importMotorola(string fileName)
+        public void ImportMotorola(string fileName)
         {
             try
             {
@@ -162,7 +163,7 @@ namespace UniversalPatcher
                 }
 
                 //txtOffset.Text = rBlocks[0].dataStart.ToString("X");
-                addGaps();
+                AddGaps();
             }
             catch (Exception ex)
             {
@@ -176,7 +177,7 @@ namespace UniversalPatcher
 
         }
 
-        private void addGaps()
+        private void AddGaps()
         {
             if (rBlocks[0].segStart > 0)
             {
@@ -235,10 +236,10 @@ namespace UniversalPatcher
                     rBlocks[b].Name = "Gap-" + b.ToString();
             }
             Logger("Total data: " + totalData.ToString());
-            calcFileSize();
+            CalcFileSize();
         }
 
-        public void importIntel(string fileName)
+        public void ImportIntel(string fileName)
         {
             try
             {
@@ -277,7 +278,7 @@ namespace UniversalPatcher
                     }
                 }
 
-                addGaps();
+                AddGaps();
                 
             }
             catch (Exception ex)
@@ -346,7 +347,7 @@ namespace UniversalPatcher
 
 
 
-        public void importSGM(string fileName)
+        public void ImportSGM(string fileName)
         {
             try
             {
@@ -547,7 +548,7 @@ namespace UniversalPatcher
                         rBlocks[i].FileName = Path.GetFileNameWithoutExtension(baseFile) + "-" + i.ToString() + ".bin";
                 }
             }
-            refreshData();
+            RefreshData();
         }
     }
 }

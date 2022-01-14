@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Data.OleDb;
-using static upatcher;
+using static Upatcher;
 using System.Windows.Forms;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -37,7 +38,7 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        public string convertByHeader(string header, int count)
+        public string ConvertByHeader(string header, int count)
         {
             string retVal = "";
             string[] parts = header.Split(',');
@@ -54,7 +55,7 @@ namespace UniversalPatcher
             }
             return header;
         }
-        public string readTinyDB(PcmFile PCM)
+        public string ReadTinyDB(PcmFile PCM)
         {
             string connetionString = null;
             OleDbConnection cnn;
@@ -126,7 +127,7 @@ namespace UniversalPatcher
 
                     ushort elementSize = (ushort) (Convert.ToUInt16(row["ElementSize"]));
                     bool signed = Convert.ToBoolean(row["AllowNegative"]);
-                    ts.DataType = convertToDataType(elementSize, signed, true);
+                    ts.DataType = ConvertToDataType(elementSize, signed, true);
                     string colHeaders = row["ColumnHeaders"].ToString();
                     ts.ColHeaders = RemoveDuplicates(colHeaders);
                     ts.Columns = Convert.ToUInt16(row["ColumnCount"]);
@@ -138,7 +139,7 @@ namespace UniversalPatcher
                     ts.RowHeaders = row["RowHeaders"].ToString();
                     if (ts.RowHeaders.Contains(",by,"))
                     {
-                        ts.RowHeaders = convertByHeader(ts.RowHeaders,ts.Rows);
+                        ts.RowHeaders = ConvertByHeader(ts.RowHeaders,ts.Rows);
                     }
                     ts.SavingMath = "X/" + row["Factor"].ToString();
                     ts.Category = row["MainCategory"].ToString();
@@ -161,7 +162,7 @@ namespace UniversalPatcher
             }
             return "OK";
         }
-        public string readTinyDBtoTableData(PcmFile PCM, List<TableData> tdList)
+        public string ReadTinyDBtoTableData(PcmFile PCM, List<TableData> tdList)
         {
             if (PCM.OS == null || PCM.OS.Length == 0)
             {
@@ -238,7 +239,7 @@ namespace UniversalPatcher
 
                     int elementSize = (byte)(Convert.ToByte(row["ElementSize"]));
                     bool Signed = Convert.ToBoolean(row["AllowNegative"]);
-                    td.DataType = convertToDataType(elementSize, Signed, false);
+                    td.DataType = ConvertToDataType(elementSize, Signed, false);
                     string colHeaders = row["ColumnHeaders"].ToString();
                     td.ColumnHeaders = RemoveDuplicates(colHeaders);
                     //td.Floating = true;
@@ -250,7 +251,7 @@ namespace UniversalPatcher
                     td.RowHeaders = row["RowHeaders"].ToString();
                     if (td.RowHeaders.Contains(",by,"))
                     {
-                        td.RowHeaders = convertByHeader(td.RowHeaders, td.Rows);
+                        td.RowHeaders = ConvertByHeader(td.RowHeaders, td.Rows);
                     }
                     //if (row["Factor"].ToString().Length > 0)
                         //td.SavingMath = "X/" + row["Factor"].ToString();

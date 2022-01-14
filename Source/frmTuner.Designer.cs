@@ -32,6 +32,8 @@ namespace UniversalPatcher
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmTuner));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.txtSearchTableSeek = new System.Windows.Forms.TextBox();
@@ -117,12 +119,12 @@ namespace UniversalPatcher
             this.addTablesToExistingPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createPatchToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.editXaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editYaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openXaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openYaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editMathtableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openMathtableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editXaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editYaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editMathtableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.comboFilterBy = new System.Windows.Forms.ComboBox();
             this.txtResult = new System.Windows.Forms.RichTextBox();
@@ -168,6 +170,7 @@ namespace UniversalPatcher
             this.radioTreeMode = new System.Windows.Forms.RadioButton();
             this.btnCollapse = new System.Windows.Forms.Button();
             this.btnExpand = new System.Windows.Forms.Button();
+            this.btnFlash = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -195,7 +198,23 @@ namespace UniversalPatcher
             // dataGridView1
             // 
             this.dataGridView1.AllowUserToOrderColumns = true;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.Name = "dataGridView1";
@@ -880,22 +899,6 @@ namespace UniversalPatcher
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(227, 6);
             // 
-            // editXaxisTableToolStripMenuItem
-            // 
-            this.editXaxisTableToolStripMenuItem.Enabled = false;
-            this.editXaxisTableToolStripMenuItem.Name = "editXaxisTableToolStripMenuItem";
-            this.editXaxisTableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.editXaxisTableToolStripMenuItem.Text = "Edit X-axis table config";
-            this.editXaxisTableToolStripMenuItem.Click += new System.EventHandler(this.editXaxisTableToolStripMenuItem_Click);
-            // 
-            // editYaxisTableToolStripMenuItem
-            // 
-            this.editYaxisTableToolStripMenuItem.Enabled = false;
-            this.editYaxisTableToolStripMenuItem.Name = "editYaxisTableToolStripMenuItem";
-            this.editYaxisTableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.editYaxisTableToolStripMenuItem.Text = "Edit Y-axis table config";
-            this.editYaxisTableToolStripMenuItem.Click += new System.EventHandler(this.editYaxisTableToolStripMenuItem_Click);
-            // 
             // openXaxisTableToolStripMenuItem
             // 
             this.openXaxisTableToolStripMenuItem.Enabled = false;
@@ -912,14 +915,6 @@ namespace UniversalPatcher
             this.openYaxisTableToolStripMenuItem.Text = "Open Y-axis table";
             this.openYaxisTableToolStripMenuItem.Click += new System.EventHandler(this.openYaxisTableToolStripMenuItem_Click);
             // 
-            // editMathtableToolStripMenuItem
-            // 
-            this.editMathtableToolStripMenuItem.Enabled = false;
-            this.editMathtableToolStripMenuItem.Name = "editMathtableToolStripMenuItem";
-            this.editMathtableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.editMathtableToolStripMenuItem.Text = "Edit Math-table config";
-            this.editMathtableToolStripMenuItem.Click += new System.EventHandler(this.editMathtableToolStripMenuItem_Click);
-            // 
             // openMathtableToolStripMenuItem
             // 
             this.openMathtableToolStripMenuItem.Enabled = false;
@@ -927,6 +922,30 @@ namespace UniversalPatcher
             this.openMathtableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.openMathtableToolStripMenuItem.Text = "Open Math-table";
             this.openMathtableToolStripMenuItem.Click += new System.EventHandler(this.openMathtableToolStripMenuItem_Click);
+            // 
+            // editXaxisTableToolStripMenuItem
+            // 
+            this.editXaxisTableToolStripMenuItem.Enabled = false;
+            this.editXaxisTableToolStripMenuItem.Name = "editXaxisTableToolStripMenuItem";
+            this.editXaxisTableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.editXaxisTableToolStripMenuItem.Text = "Edit X-axis table config";
+            this.editXaxisTableToolStripMenuItem.Click += new System.EventHandler(this.editXaxisTableToolStripMenuItem_Click);
+            // 
+            // editYaxisTableToolStripMenuItem
+            // 
+            this.editYaxisTableToolStripMenuItem.Enabled = false;
+            this.editYaxisTableToolStripMenuItem.Name = "editYaxisTableToolStripMenuItem";
+            this.editYaxisTableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.editYaxisTableToolStripMenuItem.Text = "Edit Y-axis table config";
+            this.editYaxisTableToolStripMenuItem.Click += new System.EventHandler(this.editYaxisTableToolStripMenuItem_Click);
+            // 
+            // editMathtableToolStripMenuItem
+            // 
+            this.editMathtableToolStripMenuItem.Enabled = false;
+            this.editMathtableToolStripMenuItem.Name = "editMathtableToolStripMenuItem";
+            this.editMathtableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.editMathtableToolStripMenuItem.Text = "Edit Math-table config";
+            this.editMathtableToolStripMenuItem.Click += new System.EventHandler(this.editMathtableToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -966,7 +985,6 @@ namespace UniversalPatcher
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.txtResult);
-            this.splitContainer1.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel1_Paint);
             // 
             // splitContainer1.Panel2
             // 
@@ -1125,7 +1143,6 @@ namespace UniversalPatcher
             0,
             0,
             0});
-            this.numIconSize.ValueChanged += new System.EventHandler(this.numIconSize_ValueChanged);
             // 
             // tabPatches
             // 
@@ -1166,6 +1183,7 @@ namespace UniversalPatcher
             this.imageList3.Images.SetKeyName(5, "category.ico");
             this.imageList3.Images.SetKeyName(6, "modify.ico");
             this.imageList3.Images.SetKeyName(7, "info.ico");
+            this.imageList3.Images.SetKeyName(8, "flash.ico");
             // 
             // splitContainerListMode
             // 
@@ -1209,7 +1227,6 @@ namespace UniversalPatcher
             this.collapseToolStripMenuItem});
             this.contextMenuStripListTree.Name = "contextMenuStripListTree";
             this.contextMenuStripListTree.Size = new System.Drawing.Size(155, 92);
-            this.contextMenuStripListTree.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStripListTree_Opening);
             // 
             // expandAllToolStripMenuItem
             // 
@@ -1276,6 +1293,7 @@ namespace UniversalPatcher
             this.imageList1.Images.SetKeyName(30, "patch.ico");
             this.imageList1.Images.SetKeyName(31, "boolean.ico");
             this.imageList1.Images.SetKeyName(32, "bitmask.ico");
+            this.imageList1.Images.SetKeyName(33, "flash.ico");
             // 
             // contextMenuStrip2
             // 
@@ -1349,7 +1367,7 @@ namespace UniversalPatcher
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(487, 4);
+            this.label2.Location = new System.Drawing.Point(528, 4);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(37, 13);
             this.label2.TabIndex = 29;
@@ -1361,7 +1379,7 @@ namespace UniversalPatcher
             this.labelTableName.BackColor = System.Drawing.SystemColors.Window;
             this.labelTableName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.labelTableName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTableName.Location = new System.Drawing.Point(530, 2);
+            this.labelTableName.Location = new System.Drawing.Point(571, 2);
             this.labelTableName.Name = "labelTableName";
             this.labelTableName.Size = new System.Drawing.Size(74, 18);
             this.labelTableName.TabIndex = 30;
@@ -1404,7 +1422,6 @@ namespace UniversalPatcher
             this.sortByToolStripMenuItem.Name = "sortByToolStripMenuItem";
             this.sortByToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.sortByToolStripMenuItem.Text = "Sort by";
-            this.sortByToolStripMenuItem.Click += new System.EventHandler(this.sortByToolStripMenuItem_Click);
             // 
             // contextMenuStripPatch
             // 
@@ -1473,11 +1490,24 @@ namespace UniversalPatcher
             this.btnExpand.UseVisualStyleBackColor = true;
             this.btnExpand.Click += new System.EventHandler(this.btnExpand_Click);
             // 
+            // btnFlash
+            // 
+            this.btnFlash.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnFlash.ImageKey = "flash.ico";
+            this.btnFlash.ImageList = this.imageList3;
+            this.btnFlash.Location = new System.Drawing.Point(496, -1);
+            this.btnFlash.Name = "btnFlash";
+            this.btnFlash.Size = new System.Drawing.Size(26, 25);
+            this.btnFlash.TabIndex = 32;
+            this.btnFlash.UseVisualStyleBackColor = true;
+            this.btnFlash.Click += new System.EventHandler(this.btnFlash_Click);
+            // 
             // FrmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1021, 559);
+            this.Controls.Add(this.btnFlash);
             this.Controls.Add(this.radioListMode);
             this.Controls.Add(this.radioTreeMode);
             this.Controls.Add(this.labelBy);
@@ -1665,5 +1695,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem openYaxisTableToolStripMenuItem;
         private ToolStripMenuItem editMathtableToolStripMenuItem;
         private ToolStripMenuItem openMathtableToolStripMenuItem;
+        private Button btnFlash;
     }
 }

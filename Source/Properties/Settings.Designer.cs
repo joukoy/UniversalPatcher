@@ -1014,5 +1014,29 @@ namespace UniversalPatcher.Properties {
                 this["xdfImportUseTableName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FlashApp {
+            get {
+                return ((string)(this["FlashApp"]));
+            }
+            set {
+                this["FlashApp"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("$file")]
+        public string FLashParams {
+            get {
+                return ((string)(this["FLashParams"]));
+            }
+            set {
+                this["FLashParams"] = value;
+            }
+        }
     }
 }

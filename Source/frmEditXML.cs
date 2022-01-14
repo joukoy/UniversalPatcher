@@ -7,10 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using static upatcher;
+using static Upatcher;
 using UniversalPatcher.Properties;
 using System.Diagnostics;
 using static UniversalPatcher.ExtensionMethods;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -163,10 +164,10 @@ namespace UniversalPatcher
             this.Text = "Edit Table Seek config";
             currentObj = new TableSeek();
             if (fname.Length > 0 &&  File.Exists(fname))
-                tSeeks = TableSeek.loadtTableSeekFile(fname);
+                tSeeks = TableSeek.LoadTableSeekFile(fname);
             else
                 tSeeks = new List<TableSeek>();
-            refreshTableSeek();
+            RefreshTableSeek();
         }
 
         public void LoadSegmentSeek(string fname)
@@ -175,10 +176,10 @@ namespace UniversalPatcher
             this.Text = "Edit Segment Seek config";
             currentObj = new SegmentSeek();
             if (fname.Length > 0 &&  File.Exists(fname))
-                sSeeks = SegmentSeek.loadSegmentSeekFile(fname);
+                sSeeks = SegmentSeek.LoadSegmentSeekFile(fname);
             else
                 sSeeks = new List<SegmentSeek>();
-            refreshSegmentSeek();
+            RefreshSegmentSeek();
         }
 
         public void LoadTableData()
@@ -194,7 +195,7 @@ namespace UniversalPatcher
             UseComboBoxForEnums(dataGridView1);
         }
 
-        public void loadSegemtConfig(PcmFile PCM)
+        public void LoadSegemtConfig(PcmFile PCM)
         {
             this.PCM = PCM;
             segmentconfig = new List<SegmentConfig>();
@@ -256,15 +257,15 @@ namespace UniversalPatcher
             dataGridView1.DataSource = bindingSource;
         }
 
-        public void loadOBD2CodeList()
+        public void LoadOBD2CodeList()
         {
             this.Text = "Edit OBD2 Codes";
             currentObj = new OBD2Code();
-            loadOBD2Codes();
-            refreshOBD2Codes();
+            LoadOBD2Codes();
+            RefreshOBD2Codes();
         }
 
-        private void refreshdgrid()
+        private void Refreshdgrid()
         {
             object tmp = bindingSource.DataSource;
             bindingSource.DataSource = null;
@@ -274,7 +275,7 @@ namespace UniversalPatcher
         }
 
 
-        private void refreshOBD2Codes()
+        private void RefreshOBD2Codes()
         {
             bindingSource.DataSource = null;
             bindingSource.DataSource = OBD2Codes;
@@ -283,7 +284,7 @@ namespace UniversalPatcher
         }
 
 
-        private void refreshTableSeek()
+        private void RefreshTableSeek()
         {
             bindingSource.DataSource = null;
             bindingSource.DataSource = tSeeks;
@@ -296,7 +297,7 @@ namespace UniversalPatcher
             UseComboBoxForEnums(dataGridView1);
         }
 
-        private void refreshSegmentSeek()
+        private void RefreshSegmentSeek()
         {
             bindingSource.DataSource = null;
             bindingSource.DataSource = sSeeks;
@@ -309,7 +310,7 @@ namespace UniversalPatcher
             UseComboBoxForEnums(dataGridView1);
         }
 
-        private void saveThis(string fName)
+        private void SaveThis(string fName)
         {
             try
             {
@@ -373,7 +374,7 @@ namespace UniversalPatcher
                 }
                 else if (this.Text.Contains("OBD2"))
                 {
-                    saveOBD2Codes();
+                    SaveOBD2Codes();
                 }
                 else if (this.Text.ToLower().Contains("table seek"))
                 {
@@ -427,7 +428,7 @@ namespace UniversalPatcher
                         fName = PCM.segmentFile;
                     Logger("Saving file " + fName, false);
                     PCM.Segments = segmentconfig;
-                    PCM.saveConfigFile(fName);
+                    PCM.SaveConfigFile(fName);
                     Logger(" [OK]");
                 }
                 else
@@ -454,11 +455,11 @@ namespace UniversalPatcher
         }
         private void btnSave_Click(object sender, EventArgs e)
         {
-            saveThis(fileName);
+            SaveThis(fileName);
             this.Close();
         }
 
-        private void saveCSV()
+        private void SaveCSV()
         {
             string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
             if (FileName.Length == 0)
@@ -492,11 +493,11 @@ namespace UniversalPatcher
         }
         private void btnSaveCSV_Click(object sender, EventArgs e)
         {
-            saveCSV();
+            SaveCSV();
         }
 
 
-        private void importCSV()
+        private void ImportCSV()
         {
             //Example:
             //SPARK_ADVANCE;KA_PISTON_SLAP_SPARK_RETARD;00013D8E;81294;330;3C 0A 00 74 0B 20 7C @ @ @ @ 4E B9;2;;-05;80 FC 00 14 74 0B 20 7C @ @ @ @ 4E B9;1;;06-07
@@ -572,7 +573,7 @@ namespace UniversalPatcher
 
         private void txtResult_TextChanged(object sender, EventArgs e)
         {
-            importCSV();
+            ImportCSV();
         }
 
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
@@ -594,15 +595,15 @@ namespace UniversalPatcher
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveThis(fileName);
+            SaveThis(fileName);
         }
 
         private void saveCSVToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveCSV();
+            SaveCSV();
         }
 
-        private void importOBD2()
+        private void ImportOBD2()
         {
             string FileName = SelectFile("Select CSV file", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
             if (FileName.Length == 0)
@@ -644,11 +645,11 @@ namespace UniversalPatcher
         {
             if (this.Text.Contains("OBD2"))
             {
-                importOBD2();
+                ImportOBD2();
             }
             else
             {
-                importCSV();
+                ImportCSV();
             }
         }
 
@@ -657,7 +658,7 @@ namespace UniversalPatcher
             Debug.WriteLine(e.Exception);
         }
 
-        public void filterTables()
+        public void FilterTables()
         {
             try
             {
@@ -711,11 +712,11 @@ namespace UniversalPatcher
             {
                 sortBy = dataGridView1.Columns[e.ColumnIndex].Name;
                 sortIndex = e.ColumnIndex;
-                strSortOrder = getSortOrder(sortIndex);
-                filterTables();
+                strSortOrder = GetSortOrder(sortIndex);
+                FilterTables();
             }
         }
-        private SortOrder getSortOrder(int columnIndex)
+        private SortOrder GetSortOrder(int columnIndex)
         {
             try
             {
@@ -743,7 +744,7 @@ namespace UniversalPatcher
             string fName = SelectSaveFile("XML (*.xml)|*.xml|All (*.*)|*.*",fileName);
             if (fName.Length == 0)
                 return;
-            saveThis(fName);
+            SaveThis(fName);
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -755,10 +756,10 @@ namespace UniversalPatcher
         {
             frmPropertyEditor fpe = new frmPropertyEditor();
             object myObj = dataGridView1.CurrentRow.DataBoundItem;
-            fpe.loadObject(myObj);
+            fpe.LoadObject(myObj);
             if (fpe.ShowDialog() == DialogResult.OK)
             {
-                refreshdgrid();
+                Refreshdgrid();
             }
         }
 

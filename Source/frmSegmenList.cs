@@ -8,7 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
-using static upatcher;
+using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -83,13 +84,13 @@ namespace UniversalPatcher
             string FileName = SelectFile("Select XML file", "XML files (*.xml)|*.xml|All files (*.*)|*.*");
             if (FileName.Length < 1)
                 return;
-            PCM.loadConfigFile(FileName);
+            PCM.LoadConfigFile(FileName);
             LoadFile(FileName);
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            saveXML("");
+            SaveXML("");
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
@@ -114,7 +115,7 @@ namespace UniversalPatcher
 
         private void btnNewXML_Click(object sender, EventArgs e)
         {
-            PCM.setDefaultValues();
+            PCM.SetDefaultValues();
             listSegments.Items.Clear();
             txtVersion.Text = "1";
             labelXML.Text = "";
@@ -177,7 +178,7 @@ namespace UniversalPatcher
 
         }
 
-        private void saveXML(string fileName)
+        private void SaveXML(string fileName)
         {
             try
             {
@@ -195,7 +196,7 @@ namespace UniversalPatcher
                 Logger("Saving to file: " + Path.GetFileName(fileName), false);
                 Debug.WriteLine("Saving to file: " + Path.GetFileName(fileName));
 
-                PCM.saveConfigFile(fileName);
+                PCM.SaveConfigFile(fileName);
                 labelXML.Text = PCM.configFile;
                 frmpatcher.labelXML.Text = PCM.configFile + " (v " + txtVersion.Text + ")"; ;
                 Logger(" [OK]");
@@ -209,7 +210,7 @@ namespace UniversalPatcher
         private void btnOK_Click(object sender, EventArgs e)
         {
 
-            saveXML(PCM.configFileFullName);
+            SaveXML(PCM.configFileFullName);
             this.Close();
         }
 
@@ -220,7 +221,7 @@ namespace UniversalPatcher
 
         private void btnSaveOnly_Click(object sender, EventArgs e)
         {
-            saveXML(PCM.configFileFullName);
+            SaveXML(PCM.configFileFullName);
         }
 
         private void btnEditXML_Click(object sender, EventArgs e)
@@ -229,7 +230,7 @@ namespace UniversalPatcher
             {
                 frmEditXML fex = new frmEditXML();
                 fex.Show();
-                fex.loadSegemtConfig(PCM);
+                fex.LoadSegemtConfig(PCM);
             }
             catch (Exception ex)
             {

@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using static upatcher;
+using static Upatcher;
 
 namespace UniversalPatcher
 {
@@ -54,7 +54,7 @@ namespace UniversalPatcher
             }
         }
 
-        public void loadTd()
+        public void LoadTd()
         {
             int row = 0;
             dataGridView1.ColumnCount = 1;

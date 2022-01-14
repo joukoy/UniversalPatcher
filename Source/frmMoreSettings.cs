@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -30,6 +32,8 @@ namespace UniversalPatcher
             Properties.Settings.Default.TunerShowUnitsUndefined = chkDisplayUndefined.Checked;
             Properties.Settings.Default.SplashShowTime = (int)numSplashTime.Value;
             Properties.Settings.Default.xdfImportUseTableName = chkXdfUseTableName.Checked;
+            Properties.Settings.Default.FlashApp = txtFlashApp.Text;
+            Properties.Settings.Default.FLashParams = txtFlashParams.Text;
             //Properties.Settings.Default.startPatcher = chkStartPatcher.Checked;
             Properties.Settings.Default.Save();
             this.Close();
@@ -49,12 +53,22 @@ namespace UniversalPatcher
             chkDisplayUndefined.Checked = Properties.Settings.Default.TunerShowUnitsUndefined;
             numSplashTime.Value = Properties.Settings.Default.SplashShowTime;
             chkXdfUseTableName.Checked = Properties.Settings.Default.xdfImportUseTableName;
+            txtFlashApp.Text = Properties.Settings.Default.FlashApp;
+            txtFlashParams.Text = Properties.Settings.Default.FLashParams;
             //chkStartPatcher.Checked = Properties.Settings.Default.startPatcher;
         }
 
         private void numKeypressWait_ValueChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnBrowseApp_Click(object sender, EventArgs e)
+        {
+            string fName = SelectFile("Select fash application", "EXE (*.exe)|*.exe|All (*.*)|*.*");
+            if (fName.Length == 0)
+                return;
+            txtFlashApp.Text = fName;
         }
     }
 }

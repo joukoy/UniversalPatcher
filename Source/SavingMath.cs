@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static upatcher;
+using static Upatcher;
 using System.Diagnostics;
 
 namespace UniversalPatcher
@@ -10,11 +10,10 @@ namespace UniversalPatcher
     public class SavingMath
     {
         string mathString;
-        public double getSavingValue(string mathStr, TableData mathTd, double val)
+        public double GetSavingValue(string mathStr, TableData mathTd, double val)
         {
-
-            double minVal = getMinValue(mathTd.DataType);
-            double  maxVal = getMaxValue(mathTd.DataType);
+            double minVal = GetMinValue(mathTd.DataType);
+            double  maxVal = GetMaxValue(mathTd.DataType);
             mathString = parser.FormatString(mathStr);
 
             double retVal;

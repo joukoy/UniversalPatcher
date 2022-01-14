@@ -357,6 +357,7 @@
     <Compile Include="frmPatcher.Designer.cs">
       <DependentUpon>frmPatcher.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers.cs" />
     <Compile Include="IntelHex.cs" />
     <Compile Include="ListViewSorter.cs" />
     <Compile Include="PcmPlatform.cs" />

@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using static upatcher;
+using static Upatcher;
 
 namespace UniversalPatcher.Properties
 {
@@ -20,7 +20,7 @@ namespace UniversalPatcher.Properties
         private RichTextBox rtb;
         private List<int> found = null;
 
-        public void initMe(RichTextBox rt)
+        public void InitMe(RichTextBox rt)
         {
             rtb = rt;
             found = new List<int>();
@@ -29,7 +29,7 @@ namespace UniversalPatcher.Properties
         private void btnSearchNext_Click(object sender, EventArgs e)
         {
             if (found.Count == 0)
-                searchAll();
+                SearchAll();
             int pos = -1;
             for (int f = 0; f < found.Count; f++)
             { 
@@ -61,7 +61,7 @@ namespace UniversalPatcher.Properties
             rtb.Select(cursorPos, 0);
         }
 
-        private void searchAll()
+        private void SearchAll()
         {
             int cursorPos = rtb.SelectionStart;
             clearHighlights(rtb);
@@ -76,7 +76,7 @@ namespace UniversalPatcher.Properties
         private void btnSearchPrev_Click(object sender, EventArgs e)
         {
             if (found.Count == 0)
-                searchAll();
+                SearchAll();
             int pos = -1;
             for (int f = 0; f < found.Count; f++)
             { 

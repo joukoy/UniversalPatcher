@@ -9,7 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using static upatcher;
+using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -43,7 +44,7 @@ namespace UniversalPatcher
             dataModified = true;
         }
 
-        private void fillFilterBy()
+        private void FillFilterBy()
         {
             comboFilterBy.Items.Clear();
             comboFilterBy.Text = "pn";
@@ -62,7 +63,7 @@ namespace UniversalPatcher
 
         private void TxtFilter_KeyUp(object sender, KeyEventArgs e)
         {
-            filterRows();
+            FilterRows();
         }
 
         private void DataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -71,11 +72,11 @@ namespace UniversalPatcher
             {
                 sortBy = dataGridView1.Columns[e.ColumnIndex].Name;
                 sortIndex = e.ColumnIndex;
-                strSortOrder = getSortOrder(sortIndex);
-                filterRows();
+                strSortOrder = GetSortOrder(sortIndex);
+                FilterRows();
             }
         }
-        private SortOrder getSortOrder(int columnIndex)
+        private SortOrder GetSortOrder(int columnIndex)
         {
             try
             {
@@ -102,14 +103,14 @@ namespace UniversalPatcher
             return SortOrder.Ascending;
         }
 
-        private bool askCommit()
+        private bool AskCommit()
         {
             if (dataModified)
             {
                 DialogResult res = MessageBox.Show("Commit changes?\n\r If no, previous modifications will be lost", "Commit changes?", MessageBoxButtons.YesNoCancel);
                 if (res == DialogResult.Yes)
                 {
-                    commitDB();
+                    CommitDB();
                 }
                 else if (res == DialogResult.Cancel)
                     return false;
@@ -124,14 +125,14 @@ namespace UniversalPatcher
                 DialogResult res = MessageBox.Show("Save?", "Save?", MessageBoxButtons.YesNoCancel);
                 if (res == DialogResult.Yes)
                 {
-                    commitDB();
+                    CommitDB();
                 }
                 else if (res == DialogResult.Cancel)
                     e.Cancel = true;
             }
         }
 
-        private void filterRows()
+        private void FilterRows()
         {
             try
             {
@@ -160,13 +161,13 @@ namespace UniversalPatcher
             }
         }
 
-        public void loadDB(string[] tableNames)
+        public void LoadDB(string[] tableNames)
         {
             try
             {
                 dataGridView1.DataSource = cvnTable;
                 comboTable.DataSource = tableNames;
-                filterRows();
+                FilterRows();
                 labelStatus.Text = cvnTable.Rows.Count.ToString() + " Records";
             }
             catch (Exception ex)
@@ -181,12 +182,12 @@ namespace UniversalPatcher
             }
         }
 
-        private void reloadDB()
+        private void ReloadDB()
         {
             try
             {
                 dataGridView1.DataSource = null;
-                askCommit();
+                AskCommit();
                 if (comboTable.Text == "cvn")
                 {
                     cvnTable = cvnDB.stockCvn;
@@ -202,8 +203,8 @@ namespace UniversalPatcher
                     builder = new OleDbCommandBuilder(cvnDB.refAdapter);
                 }
                 dataGridView1.DataSource = cvnTable;
-                fillFilterBy();
-                filterRows();
+                FillFilterBy();
+                FilterRows();
                 labelStatus.Text = cvnTable.Rows.Count.ToString() + " Records";
             }
             catch (Exception ex)
@@ -221,10 +222,10 @@ namespace UniversalPatcher
 
         private void comboTable_SelectedIndexChanged(object sender, EventArgs e)
         {
-            reloadDB();
+            ReloadDB();
         }
 
-        private void commitDB()
+        private void CommitDB()
         {
             try
             {
@@ -268,7 +269,7 @@ namespace UniversalPatcher
         }
         private void btnApply_Click(object sender, EventArgs e)
         {
-            commitDB();
+            CommitDB();
         }
 
         private void btnRevert_Click(object sender, EventArgs e)
@@ -278,7 +279,7 @@ namespace UniversalPatcher
                 if (builder != null)
                     cvnDB.stockAdapter.Dispose();
                 builder = null;
-                reloadDB();
+                ReloadDB();
             }
             catch (Exception ex)
             {
@@ -353,22 +354,22 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    List<referenceCvn> refList = new List<referenceCvn>(); ;
+                    List<ReferenceCvn> refList = new List<ReferenceCvn>(); ;
                     string defFile = Path.Combine(Application.StartupPath, "XML", "reference-cvn.xml");
                     string refCVNFile = SelectFile("Select refrence CVN file", "XML (*.xml)|*.xml|ALL (*.*)|*.*", defFile);
                     if (refCVNFile.Length > 0 && File.Exists(refCVNFile))
                     {
                         Debug.WriteLine("Loading stockcvn.xml");
-                        System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<referenceCvn>));
+                        System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<ReferenceCvn>));
                         System.IO.StreamReader file = new System.IO.StreamReader(refCVNFile);
-                        refList = (List<referenceCvn>)reader.Deserialize(file);
+                        refList = (List<ReferenceCvn>)reader.Deserialize(file);
                         file.Close();
                     }
 
                     for (int i = 0; i < refList.Count; i++)
                     {
 
-                        referenceCvn cvn = refList[i];
+                        ReferenceCvn cvn = refList[i];
                         DataRow newRow = cvnTable.NewRow();
                         newRow["cvn"] = cvn.CVN;
                         newRow["PN"] = cvn.PN;
@@ -448,7 +449,7 @@ namespace UniversalPatcher
             }
         }
 
-        private void importCSV(string fileName)
+        private void ImportCSV(string fileName)
         {
             try
             {
@@ -540,7 +541,7 @@ namespace UniversalPatcher
             foreach (string newFile in fileList)
             {
                 if (newFile.Length == 0) return;
-                importCSV(newFile);
+                ImportCSV(newFile);
             }
 
 

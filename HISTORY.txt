@@ -331,3 +331,13 @@
 
 0.18.89
 - Fixed bug: xdfexport, xdfconstant template min/max value swapped
+
+0.19.00
+- Tuner: Support for external flash program
+- Tuner: Ask to save modifications before closing
+- Patcher: Ask to save modifications before closing
+- Function renaming multiple places 
+- Cleanup
+- Moved common functions to Helpers.cs from PatcherFunctions.cs
+
+

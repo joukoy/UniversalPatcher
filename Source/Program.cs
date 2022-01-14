@@ -40,7 +40,7 @@ namespace UniversalPatcher
                     Properties.Settings.Default.Save();
                 }
 
-                upatcher.StartupSettings();
+                Upatcher.StartupSettings();
 
 
                 if (args.Length > 1)

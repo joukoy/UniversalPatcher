@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.IO;
-using static upatcher;
+using static Upatcher;
 using System.Windows.Forms;
 using System.Diagnostics;
 
@@ -16,39 +16,39 @@ namespace UniversalPatcher.Properties
         {
             PCM = PCM1;
             uint step = 8;
-            loadPidList();
+            LoadPidList();
 
             if (PCM.platformConfig.PidSearchString != null && PCM.platformConfig.PidSearchString.Length > 0)
             {
-                startAddress = searchBytes(PCM, PCM.platformConfig.PidSearchString, 0, (uint)(PCM.fsize - PCM.platformConfig.PidSearchString.Length));
+                startAddress = SearchBytes(PCM, PCM.platformConfig.PidSearchString, 0, (uint)(PCM.fsize - PCM.platformConfig.PidSearchString.Length));
                 step = PCM.platformConfig.PidSearchStep;
                 if (startAddress < uint.MaxValue)
-                    searchPids(step, true);
+                    SearchPids(step, true);
                 return;
             }
 
             if (PCM.configFile.StartsWith("diesel01"))
             {
-                startAddress = searchBytes(PCM, "00 00 04 * * * * * * * 00 01 04 * * * * * * * 00 02 02", 0, PCM.fsize - 23);
+                startAddress = SearchBytes(PCM, "00 00 04 * * * * * * * 00 01 04 * * * * * * * 00 02 02", 0, PCM.fsize - 23);
                 step = 10;
                 if (startAddress < uint.MaxValue)
-                    searchPids(step,true);
+                    SearchPids(step,true);
                 return;
             }
             else if (PCM.configFile.StartsWith("p01"))
             {
                 step = 8;
-                startAddress = searchBytes(PCM, "00 01 02 00 * * * * 00 03 01 00 * * * * 00 04 00 00 * * * * 00 05 00 00", 0, PCM.fsize - 28);
+                startAddress = SearchBytes(PCM, "00 01 02 00 * * * * 00 03 01 00 * * * * 00 04 00 00 * * * * 00 05 00 00", 0, PCM.fsize - 28);
                 if (startAddress < uint.MaxValue)
-                    searchPids(step, false);
+                    SearchPids(step, false);
                 return;
             }
             else if (PCM.configFile.StartsWith("v6"))
             {
-                startAddress = searchBytes(PCM, "00 00 02 00 * * * * * * 00 01 02 00", 0, PCM.fsize - 14);
+                startAddress = SearchBytes(PCM, "00 00 02 00 * * * * * * 00 01 02 00", 0, PCM.fsize - 14);
                 step = 10;
                 if (startAddress < uint.MaxValue)
-                    searchPids(step, false);
+                    SearchPids(step, false);
                 return;
             }
             else
@@ -58,9 +58,9 @@ namespace UniversalPatcher.Properties
                 {
                     if (psc.XMLFile.ToLower() == cnfFile)
                     {
-                        startAddress = searchBytes(PCM, psc.SearchString, 0, (uint)(PCM.fsize - psc.SearchString.Length));
+                        startAddress = SearchBytes(PCM, psc.SearchString, 0, (uint)(PCM.fsize - psc.SearchString.Length));
                         if (startAddress < uint.MaxValue)
-                            searchPids(step, false);
+                            SearchPids(step, false);
                         return;
 
                     }
@@ -68,7 +68,7 @@ namespace UniversalPatcher.Properties
             }
             throw new Exception("PID search not implemented for this file type");
         }
-        public class pidName
+        public class PidInfo
         {
             public uint PidNumber { get; set; }
             public string PidName { get; set; }
@@ -89,9 +89,9 @@ namespace UniversalPatcher.Properties
         public uint startAddress { get; set; }
         private PcmFile PCM;
         public List<PID> pidList;
-        public List<pidName> pidNameList;
+        public List<PidInfo> pidNameList;
 
-        private void searchPids(uint step, bool diesel)
+        private void SearchPids(uint step, bool diesel)
         {
             pidList = new List<PID>();
             ushort prevPidNumber = 0;            
@@ -99,9 +99,9 @@ namespace UniversalPatcher.Properties
             {
                 PID pid;
                 if (diesel)
-                    pid = readPidDiesel(addr);
+                    pid = ReadPidDiesel(addr);
                 else
-                    pid = readPid(addr);
+                    pid = ReadPid(addr);
                 if (pid.pidNumberInt < prevPidNumber || pid.pidNumberInt == 0xFFFF)
                 {
                     break;
@@ -115,22 +115,22 @@ namespace UniversalPatcher.Properties
 
         }
 
-        private PID readPid(uint addr)
+        private PID ReadPid(uint addr)
         {
             PID pid = new PID();
-            pid.pidNumberInt = PCM.readUInt16(addr);
+            pid.pidNumberInt = PCM.ReadUInt16(addr);
             pid.PidNumber = pid.pidNumberInt.ToString("X4");
             pid.Bytes = (ushort)(PCM.buf[addr + 2] + 1);
             if (pid.Bytes == 3)
                 pid.Bytes = 4;
-            pid.SubroutineInt = PCM.readUInt32(addr + 4);
+            pid.SubroutineInt = PCM.ReadUInt32(addr + 4);
             pid.Subroutine = pid.SubroutineInt.ToString("X8");
-            uint ramStoreAddr = searchBytes(PCM, "10 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
+            uint ramStoreAddr = SearchBytes(PCM, "10 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
             if (ramStoreAddr == uint.MaxValue)
-                ramStoreAddr = searchBytes(PCM, "30 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
+                ramStoreAddr = SearchBytes(PCM, "30 38", pid.SubroutineInt, PCM.fsize, 0x4E75);
             if (ramStoreAddr < uint.MaxValue)
             {
-                pid.RamAddressInt = PCM.readUInt16(ramStoreAddr + 2);
+                pid.RamAddressInt = PCM.ReadUInt16(ramStoreAddr + 2);
                 pid.RamAddress = pid.RamAddressInt.ToString("X4");
             }
             for (int p=0; p< pidNameList.Count;p++)
@@ -144,17 +144,17 @@ namespace UniversalPatcher.Properties
             }
             return pid;
         }
-        private PID readPidDiesel(uint addr)
+        private PID ReadPidDiesel(uint addr)
         {
             PID pid = new PID();
-            pid.pidNumberInt = PCM.readUInt16(addr);
+            pid.pidNumberInt = PCM.ReadUInt16(addr);
             pid.PidNumber = pid.pidNumberInt.ToString("X4");
             pid.Bytes = (ushort)(PCM.buf[addr + 2]);
             if (pid.Bytes > 4)
                 pid.Bytes = 0;
-            pid.SubroutineInt = PCM.readUInt32(addr + 6);
+            pid.SubroutineInt = PCM.ReadUInt32(addr + 6);
             pid.Subroutine = pid.SubroutineInt.ToString("X8");
-            pid.RamAddressInt = searchRamAddressDiesel(pid.SubroutineInt);
+            pid.RamAddressInt = SearchRamAddressDiesel(pid.SubroutineInt);
             if (pid.RamAddressInt != uint.MaxValue)
                 pid.RamAddress = pid.RamAddressInt.ToString("X4");
             else
@@ -170,22 +170,22 @@ namespace UniversalPatcher.Properties
             }
             return pid;
         }
-        private uint searchRamAddressDiesel(uint startAddr)
+        private uint SearchRamAddressDiesel(uint startAddr)
         {
             uint addr = uint.MaxValue;
             uint ramAddress = uint.MaxValue;
             uint skipWord1 = 0xff8f0a;
             uint skipWord2 = 0xff8a7c;
 
-            addr = searchBytes(PCM, "10 39 * * * * 55 00 67 06", startAddr, PCM.fsize);
+            addr = SearchBytes(PCM, "10 39 * * * * 55 00 67 06", startAddr, PCM.fsize);
             if (addr != uint.MaxValue)
             {
-                skipWord1 = PCM.readUInt32(addr + 2);
+                skipWord1 = PCM.ReadUInt32(addr + 2);
             }
-            addr = searchBytes(PCM, "12 39 * * * * 41 EE FF", startAddr, PCM.fsize);
+            addr = SearchBytes(PCM, "12 39 * * * * 41 EE FF", startAddr, PCM.fsize);
             if (addr != uint.MaxValue)
             {
-                skipWord2 = PCM.readUInt32(addr + 2);
+                skipWord2 = PCM.ReadUInt32(addr + 2);
             }
 
             ushort[] wordList = { 0x1039, 0x3039, 0x1239, 0x3239, 0x1e39, 0x3e39, 0x20b9, 0x33f9 };
@@ -194,13 +194,13 @@ namespace UniversalPatcher.Properties
             {
                 for (addr = startAddr; addr < PCM.fsize-1; addr++)
                 {
-                    if (PCM.readUInt16(addr) == 0x4E75)   //End of subroutine
+                    if (PCM.ReadUInt16(addr) == 0x4E75)   //End of subroutine
                     {
                         break;
                     }
-                    if (PCM.readUInt16(addr) == wordList[s]) 
+                    if (PCM.ReadUInt16(addr) == wordList[s]) 
                     {
-                        ramAddress = PCM.readUInt32(addr + 2);
+                        ramAddress = PCM.ReadUInt32(addr + 2);
                         Debug.WriteLine("Searchword: " + wordList[s].ToString("X2") + " found in: " + addr.ToString("X") + " Data: " + ramAddress.ToString("X"));
                         if (ramAddress != skipWord1 && ramAddress != skipWord2)
                             return ramAddress;
@@ -211,15 +211,15 @@ namespace UniversalPatcher.Properties
             return uint.MaxValue;
         }
 
-        public void loadPidList()
+        public void LoadPidList()
         {
             string FileName = Path.Combine(Application.StartupPath, "XML", "pidlist.xml");
             if (!File.Exists(FileName))
                 return;
-            pidNameList = new List<pidName>();
-            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<pidName>));
+            pidNameList = new List<PidInfo>();
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<PidInfo>));
             System.IO.StreamReader file = new System.IO.StreamReader(FileName);
-            pidNameList = (List<pidName>)reader.Deserialize(file);
+            pidNameList = (List<PidInfo>)reader.Deserialize(file);
             file.Close();
         }
 

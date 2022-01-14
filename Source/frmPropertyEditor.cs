@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using static upatcher;
+using static Upatcher;
 
 namespace UniversalPatcher
 {
@@ -24,7 +24,7 @@ namespace UniversalPatcher
 
         }
 
-        public void loadObject(object myObj)
+        public void LoadObject(object myObj)
         {
             int row = 0;
             this.myObj = myObj;

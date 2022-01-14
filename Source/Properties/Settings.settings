@@ -251,5 +251,11 @@
     <Setting Name="xdfImportUseTableName" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="FlashApp" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FLashParams" Type="System.String" Scope="User">
+      <Value Profile="(Default)">$file</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

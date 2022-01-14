@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using static upatcher;
+using static Upatcher;
 
 namespace UniversalPatcher
 {
@@ -59,33 +59,33 @@ namespace UniversalPatcher
             return new string(r);
         }
 */
-        public void changeSelection(uint selectedByte)
+        public void ChangeSelection(uint selectedByte)
         {
             //int prevSelected = this.selectedTxt;
             this.selectedByte = selectedByte;
 
-            int elementSize = td.elementSize();
+            int elementSize = td.ElementSize();
             //Restore table to black
             richTableData.Select(bufTableStart, tableTxtSize);
             richTableData.SelectionColor = Color.Black;
             //New selection:
-            selectedTxt = (int)(bufTableStart + 3 * (selectedByte - td.startAddress()));
+            selectedTxt = (int)(bufTableStart + 3 * (selectedByte - td.StartAddress()));
             richTableData.Select(selectedTxt, elementSize * 3 - 1);
             richTableData.SelectionColor = Color.Red;
             richTableData.Select(selectedTxt, 0);
         }
 
-        public void updateTableValues(byte[] tableBuf)
+        public void UpdateTableValues(byte[] tableBuf)
         {
             //After speed optimization it is better to replace whole text
-            displayData(selectedByte, tableBuf);
+            DisplayData(selectedByte, tableBuf);
             return;
 
             try
             {
                 this.tableBuf = tableBuf;
                 uint tableStart = td.addrInt;
-                int elementSize = td.elementSize();
+                int elementSize = td.ElementSize();
 
                 StringBuilder sb = new StringBuilder();
                 int r = 0;
@@ -135,7 +135,7 @@ namespace UniversalPatcher
         }
 
 
-        public void displayData(uint selectedByte, byte[] tableBuf)
+        public void DisplayData(uint selectedByte, byte[] tableBuf)
         {
             try
             {
@@ -144,12 +144,12 @@ namespace UniversalPatcher
                 uint start = 0;
                 uint end = 0;
                 uint tableWithOffsetStart = td.addrInt;
-                uint tableStart = td.startAddress();
-                int tableSize = td.size();
-                uint tableEnd = td.endAddress();
+                uint tableStart = td.StartAddress();
+                int tableSize = td.Size();
+                uint tableEnd = td.EndAddress();
                 int tbHeaderStart = 0;
-                int elementSize = td.elementSize();
-                int elements = td.elements();
+                int elementSize = td.ElementSize();
+                int elements = td.Elements();
                 hexDatas = new List<HexData>();
 
                 int seg = PCM.GetSegmentNumber(td.addrInt);
@@ -166,8 +166,8 @@ namespace UniversalPatcher
                 }
                 else 
                 {
-                    start = PCM.segmentinfos[seg].getStartAddr();
-                    end = PCM.segmentinfos[seg].getEndAddr();
+                    start = PCM.segmentinfos[seg].GetStartAddr();
+                    end = PCM.segmentinfos[seg].GetEndAddr();
                 }
  
                 int bufTableEnd = 0;
@@ -199,13 +199,13 @@ namespace UniversalPatcher
                             {
                                 if (tmpTd.Offset > 0)
                                 {
-                                    hexDatas[hexAddr].prefix = tmpTd.TableName + ": " + tmpTd.Address + "+" + tmpTd.Offset.ToString("X") + " - " + tmpTd.endAddress().ToString("X8");
+                                    hexDatas[hexAddr].prefix = tmpTd.TableName + ": " + tmpTd.Address + "+" + tmpTd.Offset.ToString("X") + " - " + tmpTd.EndAddress().ToString("X8");
                                     hexDatas[hexAddr + tmpTd.Offset - 1].suffix = "[";
                                 }
                                 else
-                                    hexDatas[hexAddr].prefix = tmpTd.TableName + ": " + tmpTd.Address + " - " + tmpTd.endAddress().ToString("X8") + " [";
+                                    hexDatas[hexAddr].prefix = tmpTd.TableName + ": " + tmpTd.Address + " - " + tmpTd.EndAddress().ToString("X8") + " [";
                             }
-                            hexAddr = (int)(tmpTd.endAddress() - start);
+                            hexAddr = (int)(tmpTd.EndAddress() - start);
                             if (hexAddr > -1 && hexAddr < hexDatas.Count)
                                 hexDatas[hexAddr].suffix = "]"; // + PCM.tableDatas[t].TableName; 
                         }
@@ -303,7 +303,7 @@ namespace UniversalPatcher
                 richTableData.Select(selectedTxt, elementSize * 3 - 1);
                 richTableData.SelectionColor = Color.Red;
 
-                if (selectedByte - td.startAddress() < 100 && radioSegmentTBNames.Checked)
+                if (selectedByte - td.StartAddress() < 100 && radioSegmentTBNames.Checked)
                     richTableData.Select(tbHeaderStart, 0);
                 else
                     richTableData.Select(selectedTxt, 0);
@@ -316,27 +316,27 @@ namespace UniversalPatcher
 
         private void radioShowSegment_CheckedChanged(object sender, EventArgs e)
         {
-            displayData(selectedByte,tableBuf);
+            DisplayData(selectedByte,tableBuf);
         }
 
         private void radioShowBin_CheckedChanged(object sender, EventArgs e)
         {
-            displayData(selectedByte,tableBuf);
+            DisplayData(selectedByte,tableBuf);
         }
 
         private void numExtraBytes_ValueChanged(object sender, EventArgs e)
         {
-            displayData(selectedByte,tableBuf);
+            DisplayData(selectedByte,tableBuf);
         }
 
         private void numBytesPerRow_ValueChanged(object sender, EventArgs e)
         {
-            displayData(selectedByte, tableBuf);
+            DisplayData(selectedByte, tableBuf);
         }
 
         private void radioSegmentTBNames_CheckedChanged(object sender, EventArgs e)
         {
-            displayData(selectedByte, tableBuf);
+            DisplayData(selectedByte, tableBuf);
         }
     }
 }

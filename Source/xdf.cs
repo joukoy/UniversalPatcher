@@ -5,10 +5,11 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Globalization;
-using static upatcher;
+using static Upatcher;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -21,7 +22,7 @@ namespace UniversalPatcher
         private PcmFile PCM;
         private List<TableData> tdList;
 
-        private string convertMath(string math)
+        private string ConvertMath(string math)
         {
             string retVal = math.ToLower();
 
@@ -161,7 +162,7 @@ namespace UniversalPatcher
             Years = 80
         }
 
-        private TableData createTableFromAxis(XdfAxis ax)
+        private TableData CreateTableFromAxis(XdfAxis ax)
         {
             TableData td = new TableData();
             td.Address = ax.Addr;
@@ -206,7 +207,7 @@ namespace UniversalPatcher
             public List<TableLink> tableLinks = new List<TableLink>();
             public List<TableLink> tableTargets = new List<TableLink>();
 
-            public void convertAxis(XElement axle, ref List<TableData>tdList)
+            public void ConvertAxis(XElement axle, ref List<TableData>tdList)
             {
                 try
                 {
@@ -258,15 +259,15 @@ namespace UniversalPatcher
                         else
                             RowMajor = true;
                     }
-                    InputType = convertToDataType(elementSize, Signed, Floating);
+                    InputType = ConvertToDataType(elementSize, Signed, Floating);
                     if (axle.Element("min") != null)
                         Min = ParseDblValue(axle.Element("min").Value);
                     else
-                        Min = getMinValue(InputType);
+                        Min = GetMinValue(InputType);
                     if (axle.Element("max") != null)
                         Max = ParseDblValue(axle.Element("max").Value);
                     else
-                        Max = getMaxValue(InputType);
+                        Max = GetMaxValue(InputType);
 
                     if (axle.Element("embedinfo") != null && axle.Element("embedinfo").Attribute("linkobjid") != null)
                     {
@@ -316,7 +317,7 @@ namespace UniversalPatcher
                                             else
                                                 lsb = false;
                                         }
-                                        InDataType idt = convertToDataType(bits, isSigned, false);
+                                        InDataType idt = ConvertToDataType(bits, isSigned, false);
                                         string replaceStr = "raw:" + addrStr + ":" + idt.ToString();
                                         if (lsb)
                                             replaceStr += ":lsb ";
@@ -413,7 +414,7 @@ namespace UniversalPatcher
                     foreach (XElement axle in element.Elements("XDFAXIS"))
                     {
                         XdfAxis ax = new XdfAxis();
-                        ax.convertAxis(axle, ref tdList);
+                        ax.ConvertAxis(axle, ref tdList);
                         if (axle.Attribute("id").Value == "x")
                         {
                             xdf.Columns = ax.IndexCount;
@@ -424,7 +425,7 @@ namespace UniversalPatcher
                             }
                             else if (ax.Addr != null && ax.Addr.Length > 0)
                             {
-                                TableData tdNew = createTableFromAxis(ax);
+                                TableData tdNew = CreateTableFromAxis(ax);
                                 tdNew.TableName = xdf.TableName + "-X";
                                 tdList.Add(tdNew);
                                 xdf.ColumnHeaders = "Table: " + tdNew.TableName;
@@ -443,7 +444,7 @@ namespace UniversalPatcher
                             }
                             else if (ax.Addr != null && ax.Addr.Length > 0)
                             {
-                                TableData tdNew = createTableFromAxis(ax);
+                                TableData tdNew = CreateTableFromAxis(ax);
                                 tdNew.TableName = xdf.TableName + "-Y";
                                 tdList.Add(tdNew);
                                 xdf.RowHeaders = "Table: " + tdNew.TableName;
@@ -563,7 +564,7 @@ namespace UniversalPatcher
                     if (element.Element("description") != null)
                         xdf.TableDescription = element.Element("description").Value;
                     elementSize = (byte)(Convert.ToInt32(element.Element("EMBEDDEDDATA").Attribute("mmedelementsizebits").Value.Trim()) / 8);
-                    xdf.DataType = convertToDataType(elementSize, Signed, Floating);
+                    xdf.DataType = ConvertToDataType(elementSize, Signed, Floating);
                     if (element.Element("EMBEDDEDDATA").Attribute("mmedaddress") != null)
                         xdf.Address = element.Element("EMBEDDEDDATA").Attribute("mmedaddress").Value.Trim();
                     if (element.Element("CATEGORYMEM") != null && element.Element("CATEGORYMEM").Attribute("category") != null)
@@ -583,12 +584,12 @@ namespace UniversalPatcher
                     if (element.Element("rangelow") != null)
                         xdf.Min = ParseDblValue(element.Element("rangelow").Value);
                     else 
-                        xdf.Min = getMinValue(xdf.DataType);
+                        xdf.Min = GetMinValue(xdf.DataType);
 
                     if (element.Element("rangehigh") != null)
                         xdf.Max = ParseDblValue(element.Element("rangehigh").Value);
                     else
-                        xdf.Max = getMaxValue(xdf.DataType);
+                        xdf.Max = GetMaxValue(xdf.DataType);
 
                     xdf.Columns = 1;
                     xdf.Rows = 1;
@@ -632,7 +633,7 @@ namespace UniversalPatcher
                     }
                     if (element.Element("description") != null)
                         xdf.TableDescription = element.Element("description").Value;
-                    xdf.DataType = convertToDataType(elementSize, false, false);
+                    xdf.DataType = ConvertToDataType(elementSize, false, false);
                     tdList.Add(xdf);
 
 
@@ -748,7 +749,7 @@ namespace UniversalPatcher
 
         }
 
-        public void importXdf(PcmFile PCM1, List<TableData> tdList1)
+        public void ImportXdf(PcmFile PCM1, List<TableData> tdList1)
         {
             try
             {
@@ -776,7 +777,7 @@ namespace UniversalPatcher
             }
         }
 
-        private string linkConversionHeader(string HdrTxt, Dictionary<string, string> tableNameTPid)
+        private string LinkConversionHeader(string HdrTxt, Dictionary<string, string> tableNameTPid)
         {
             //Examples: Table: haderTable
             //Guid: headerTable
@@ -790,7 +791,7 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        private string linkConversionTable(string mathStr, Dictionary<string,string> tableNameTPid, out string linkTxt)
+        private string LinkConversionTable(string mathStr, Dictionary<string,string> tableNameTPid, out string linkTxt)
         {
             //Example: TABLE:'MAF Scalar #1'
             string retVal = mathStr;
@@ -808,7 +809,7 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        private string linkConversionGuid(string mathStr, Dictionary<string, string> tableNameTPid, out string linkTxt)
+        private string LinkConversionGuid(string mathStr, Dictionary<string, string> tableNameTPid, out string linkTxt)
         {
             //Example: TABLE:'MAF Scalar #1'
             string retVal = mathStr;
@@ -826,7 +827,7 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        private string linkConversionRaw(string mathStr, out string linkTxt)
+        private string LinkConversionRaw(string mathStr, out string linkTxt)
         {
             // Example: RAW:0x321:SWORD:MSB
             linkTxt = "";
@@ -840,7 +841,7 @@ namespace UniversalPatcher
                 throw new Exception("Unknown RAW definition in Math: " + mathStr);
             }
             InDataType idt = (InDataType)Enum.Parse(typeof(InDataType), rawParts[2].ToUpper());
-            int bits = getBits(idt);
+            int bits = GetBits(idt);
             string Address = rawParts[1];
             byte flags = 00;
             if (rawParts[2].Substring(0, 1) != "u")  //uint,ushort,ubyte
@@ -855,7 +856,7 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        public string exportXdf(PcmFile basefile, List<TableData> tdList1)
+        public string ExportXdf(PcmFile basefile, List<TableData> tdList1)
         {
             PCM = basefile;
             tdList = tdList1;
@@ -957,7 +958,7 @@ namespace UniversalPatcher
                         string mathTxt = td.Math.ToLower();
                         if (mathTxt.Contains("raw:"))
                         {
-                            mathTxt = linkConversionRaw(mathTxt, out linkTxt);
+                            mathTxt = LinkConversionRaw(mathTxt, out linkTxt);
                         }
                         tableText.Replace("REPLACE-LINKMATH", linkTxt);
                         tableText.Replace("REPLACE-MATH", mathTxt);
@@ -968,7 +969,7 @@ namespace UniversalPatcher
                             descr += ", " + td.Values;
                         descr = descr.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
                         tableText.Replace("REPLACE-TABLEDESCRIPTION", descr);
-                        tableText.Replace("REPLACE-BITS", getBits(td.DataType).ToString());
+                        tableText.Replace("REPLACE-BITS", GetBits(td.DataType).ToString());
                         tableText.Replace("REPLACE-MINVALUE", td.Min.ToString().Replace(",","."));
                         tableText.Replace("REPLACE-MAXVALUE", td.Max.ToString().Replace(",", "."));
                         xdfText.Append(tableText);       //Add generated table to end of xdfText
@@ -1017,11 +1018,11 @@ namespace UniversalPatcher
                         string linkTxt = "";
                         string mathTxt = td.Math.ToLower();
                         if (mathTxt.Contains("table:"))
-                            mathTxt = linkConversionTable(mathTxt, tableNameTPid, out linkTxt);
+                            mathTxt = LinkConversionTable(mathTxt, tableNameTPid, out linkTxt);
                         if (mathTxt.Contains("raw:"))
                         {
                             string tmpTxt = "";
-                            mathTxt = linkConversionRaw(mathTxt, out tmpTxt);
+                            mathTxt = LinkConversionRaw(mathTxt, out tmpTxt);
                             linkTxt += tmpTxt;
                         }
                         tableText.Replace("REPLACE-LINKMATH", linkTxt);
@@ -1031,7 +1032,7 @@ namespace UniversalPatcher
                         tableText.Replace("REPLACE-UNITS", td.Units);
                         tableText.Replace("REPLACE-ROWCOUNT", td.Rows.ToString());
                         tableText.Replace("REPLACE-COLCOUNT", td.Columns.ToString());
-                        tableText.Replace("REPLACE-BITS", getBits(td.DataType).ToString());
+                        tableText.Replace("REPLACE-BITS", GetBits(td.DataType).ToString());
                         tableText.Replace("REPLACE-DECIMALS", td.Decimals.ToString());
                         tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)td.OutputType).ToString());
                         tableText.Replace("REPLACE-TABLEADDRESS",((uint)(td.addrInt + td.Offset)).ToString("X"));
@@ -1043,7 +1044,7 @@ namespace UniversalPatcher
                         tableText.Replace("REPLACE-MINVALUE", td.Min.ToString().Replace(",", "."));
                         tableText.Replace("REPLACE-MAXVALUE", td.Max.ToString().Replace(",", "."));
                         int tableFlags = 0;
-                        if (getSigned(td.DataType))
+                        if (GetSigned(td.DataType))
                         {
                             tableFlags++;
                         }
@@ -1070,11 +1071,11 @@ namespace UniversalPatcher
                         }
                         else if (td.RowHeaders.ToLower().StartsWith("table:"))
                         {
-                            embedinfo = linkConversionHeader(td.RowHeaders, tableNameTPid);
+                            embedinfo = LinkConversionHeader(td.RowHeaders, tableNameTPid);
                         }
                         else if (td.RowHeaders.ToLower().StartsWith("guid:"))
                         {
-                            embedinfo = linkConversionHeader(td.RowHeaders, tableGuidTPid);
+                            embedinfo = LinkConversionHeader(td.RowHeaders, tableGuidTPid);
                         }
                         else
                         {
@@ -1101,11 +1102,11 @@ namespace UniversalPatcher
                         }
                         else if (td.ColumnHeaders.ToLower().StartsWith("table:"))
                         {
-                            embedinfo = linkConversionHeader(td.ColumnHeaders, tableNameTPid);
+                            embedinfo = LinkConversionHeader(td.ColumnHeaders, tableNameTPid);
                         }
                         else if (td.RowHeaders.ToLower().StartsWith("guid:"))
                         {
-                            embedinfo = linkConversionHeader(td.ColumnHeaders, tableGuidTPid);
+                            embedinfo = LinkConversionHeader(td.ColumnHeaders, tableGuidTPid);
                         }
                         else
                         {
@@ -1143,7 +1144,7 @@ namespace UniversalPatcher
                         tableText.Replace("REPLACE-TABLEID", tableGuidTPid[td.guid.ToString()]);
                         tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(td.addrInt + td.Offset)).ToString("X"));
                         tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
-                        tableText.Replace("REPLACE-BITS", getBits(td.DataType).ToString());
+                        tableText.Replace("REPLACE-BITS", GetBits(td.DataType).ToString());
                         tableText.Replace("REPLACE-MASK", td.BitMask);
                         xdfText.Append(tableText);       //Add generated table to end of xdfText
 

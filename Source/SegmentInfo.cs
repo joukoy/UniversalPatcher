@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using static upatcher;
+using static Upatcher;
+using static Helpers;
+
 namespace UniversalPatcher
 {
     public class SegmentInfo
@@ -55,10 +57,10 @@ namespace UniversalPatcher
             }
         }
 
-        public string Size { get { return getSize().ToString("X"); } }
-        public string SwapSize { get { return getSwapSize().ToString("X"); } }
+        public string Size { get { return GetSize().ToString("X"); } }
+        public string SwapSize { get { return GetSwapSize().ToString("X"); } }
 
-        public uint getSwapSize()
+        public uint GetSwapSize()
         {
             uint SSize = 0;
             try
@@ -79,12 +81,12 @@ namespace UniversalPatcher
                 if (PCM.Segments[seg].Eeprom)
                     return GmEeprom.GetKeyStatus(PCM.buf);
                 else
-                    return csToString(getCS1(), PCM.segmentAddressDatas[seg].CS1Address.Bytes, PCM.Segments[seg].Checksum1Method, PCM.platformConfig.MSB);
+                    return CsToString(GetCS1(), PCM.segmentAddressDatas[seg].CS1Address.Bytes, PCM.Segments[seg].Checksum1Method, PCM.platformConfig.MSB);
             }
         }
-        public string CS2 { get { return csToString(getCS2(), PCM.segmentAddressDatas[seg].CS2Address.Bytes, PCM.Segments[seg].Checksum2Method, PCM.platformConfig.MSB); } }
-        public string CS1Calc { get { return csToString(getCS1Calc(), PCM.segmentAddressDatas[seg].CS1Address.Bytes, PCM.Segments[seg].Checksum1Method, PCM.platformConfig.MSB); } }
-        public string CS2Calc { get { return csToString(getCS2Calc(), PCM.segmentAddressDatas[seg].CS1Address.Bytes, PCM.Segments[seg].Checksum1Method, PCM.platformConfig.MSB); } }
+        public string CS2 { get { return CsToString(GetCS2(), PCM.segmentAddressDatas[seg].CS2Address.Bytes, PCM.Segments[seg].Checksum2Method, PCM.platformConfig.MSB); } }
+        public string CS1Calc { get { return CsToString(GetCS1Calc(), PCM.segmentAddressDatas[seg].CS1Address.Bytes, PCM.Segments[seg].Checksum1Method, PCM.platformConfig.MSB); } }
+        public string CS2Calc { get { return CsToString(GetCS2Calc(), PCM.segmentAddressDatas[seg].CS1Address.Bytes, PCM.Segments[seg].Checksum1Method, PCM.platformConfig.MSB); } }
 
         public string cvn
         {
@@ -108,7 +110,7 @@ namespace UniversalPatcher
             {
                 if (PCM.Segments[seg].CVN == 0)
                     return "";
-                return CheckStockCVN(PN, Ver, SegNr, getCvn(), true, PCM.configFile + ".xml");
+                return CheckStockCVN(PN, Ver, SegNr, GetCvn(), true, PCM.configFile + ".xml");
             }
         }
 
@@ -117,7 +119,7 @@ namespace UniversalPatcher
             get
             {
                 if (PCM.Segments[seg].Eeprom)
-                    return GmEeprom.getPN(PCM.buf);
+                    return GmEeprom.GetPN(PCM.buf);
                 else
                     return PCM.ReadInfo(PCM.segmentAddressDatas[seg].PNaddr);
             }
@@ -128,16 +130,16 @@ namespace UniversalPatcher
             get
             {
                 if (PCM.Segments[seg].Eeprom)
-                    return GmEeprom.getVer(PCM.buf);
+                    return GmEeprom.GetVer(PCM.buf);
                 else
                     return PCM.ReadInfo(PCM.segmentAddressDatas[seg].VerAddr);
             }
         }
 
-        public UInt64 getCS1Calc() { return (UInt64)(PCM.calculateCS1(seg)); }
-        public UInt64 getCS2Calc() { return (UInt64)(PCM.calculateCS2(seg)); }
-        public UInt64 getCS1() { return (UInt64)(PCM.ReadValue(PCM.segmentAddressDatas[seg].CS1Address)); }
-        public UInt64 getCS2() { return (UInt64)(PCM.ReadValue(PCM.segmentAddressDatas[seg].CS2Address)); }
+        public UInt64 GetCS1Calc() { return (UInt64)(PCM.CalculateCS1(seg)); }
+        public UInt64 GetCS2Calc() { return (UInt64)(PCM.CalculateCS2(seg)); }
+        public UInt64 GetCS1() { return (UInt64)(PCM.ReadValue(PCM.segmentAddressDatas[seg].CS1Address)); }
+        public UInt64 GetCS2() { return (UInt64)(PCM.ReadValue(PCM.segmentAddressDatas[seg].CS2Address)); }
         public string SegNr { get { return PCM.ReadInfo(PCM.segmentAddressDatas[seg].SegNrAddr); } }
 
         public string ExtraInfo 
@@ -167,7 +169,7 @@ namespace UniversalPatcher
         }
 
 
-        public string getExtraData(int ind)
+        public string GetExtraData(int ind)
         {
             string retVal = "";
             if (PCM.segmentAddressDatas[seg].ExtraInfo != null && PCM.segmentAddressDatas[seg].ExtraInfo.Count > 0)
@@ -177,7 +179,7 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        public void setExtraData(int ind, string Data)
+        public void SetExtraData(int ind, string Data)
         {
             uint addr = PCM.segmentAddressDatas[seg].ExtraInfo[ind].Address;
             for (int i=0; i< Data.Length; i++)
@@ -187,7 +189,7 @@ namespace UniversalPatcher
             }
         }
 
-        public uint getSize()
+        public uint GetSize()
         {
             try
             {
@@ -211,20 +213,20 @@ namespace UniversalPatcher
             }
         }
 
-        public UInt64 getCvn()
+        public UInt64 GetCvn()
         {
             switch (PCM.Segments[seg].CVN)
             {
                 case 1:
-                    return getCS1Calc();
+                    return GetCS1Calc();
                 case 2:
-                    return getCS2Calc();
+                    return GetCS2Calc();
                 default:
                     return UInt64.MaxValue; ;
             }
         }
 
-        public static string csToString(UInt64 cs, int csBytes, CSMethod csMethod, bool MSB)
+        public static string CsToString(UInt64 cs, int csBytes, CSMethod csMethod, bool MSB)
         {
             string HexLength="X4";
             if (cs == UInt64.MaxValue)
@@ -255,12 +257,12 @@ namespace UniversalPatcher
             return cs.ToString(HexLength);
         }
 
-        public uint getStartAddr()
+        public uint GetStartAddr()
         {
             return PCM.segmentAddressDatas[seg].SegmentBlocks[0].Start;
         }
 
-        public uint getEndAddr()
+        public uint GetEndAddr()
         {
             return PCM.segmentAddressDatas[seg].SegmentBlocks[PCM.segmentAddressDatas[seg].SegmentBlocks.Count-1].End;
         }
