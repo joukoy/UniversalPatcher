@@ -22,7 +22,6 @@ namespace UniversalPatcher
         {
             try
             {
-
                 UInt64 data = 0;
                 uint addr = 0;
                 if (DR.address == "filesize")

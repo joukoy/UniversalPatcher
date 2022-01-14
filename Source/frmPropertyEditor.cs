@@ -63,7 +63,6 @@ namespace UniversalPatcher
             //dataGridView1.Columns[0].Width = 1000;
         }
 
-
         private void btnOK_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < dataGridView1.Rows.Count; i++)

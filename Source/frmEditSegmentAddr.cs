@@ -196,24 +196,5 @@ namespace UniversalPatcher
             }
         }
 
-        private void radioReadStart_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void numReadPairs_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void radioEndAbsolute_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void frmEditSegmentAddr_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }

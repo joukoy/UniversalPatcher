@@ -54,9 +54,7 @@ namespace UniversalPatcher
                     else if (Parts[2].ToLower().Contains("text") || Parts[2].ToLower().Contains("txt"))
                         radioText.Checked = true;
                 }
-
             }
-
         }
 
         private void btnOK_Click(object sender, EventArgs e)

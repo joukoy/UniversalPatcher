@@ -100,7 +100,6 @@ namespace UniversalPatcher
         {
             if (e.KeyCode == Keys.Enter)
                 LoadFiles(txtFolder.Text);
-
         }
 
         private void btnCustomdst_Click(object sender, EventArgs e)

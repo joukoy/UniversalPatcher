@@ -39,6 +39,7 @@ namespace UniversalPatcher
                     return tableInfo.compareFile.pcm.platformConfig.MSB; 
             } 
         }
+
         public TableCell ShallowCopy()
         {
             return (TableCell)this.MemberwiseClone();

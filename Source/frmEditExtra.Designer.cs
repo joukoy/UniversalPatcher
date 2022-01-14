@@ -122,7 +122,6 @@
             this.radioRelative.TabStop = true;
             this.radioRelative.Text = "From segment start";
             this.radioRelative.UseVisualStyleBackColor = true;
-            this.radioRelative.CheckedChanged += new System.EventHandler(this.radioRelative_CheckedChanged);
             // 
             // radioAbsolute
             // 
@@ -133,7 +132,6 @@
             this.radioAbsolute.TabIndex = 4;
             this.radioAbsolute.Text = "Absolute";
             this.radioAbsolute.UseVisualStyleBackColor = true;
-            this.radioAbsolute.CheckedChanged += new System.EventHandler(this.radioAbsolute_CheckedChanged);
             // 
             // numBytes
             // 

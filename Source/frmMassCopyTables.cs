@@ -119,7 +119,7 @@ namespace UniversalPatcher
             bindingSource.DataSource = null;
             bindingSource.DataSource = pcmList;
             dataGridView1.DataSource = bindingSource;
-            dataGridView1.DataBindingComplete += DataGridView1_DataBindingComplete;
+            //dataGridView1.DataBindingComplete += DataGridView1_DataBindingComplete;
             dataGridView1.CellMouseClick += DataGridView1_CellMouseClick;
             Application.DoEvents();
             
@@ -137,9 +137,6 @@ namespace UniversalPatcher
             }
         }
 
-        private void DataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
-        {
-        }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
@@ -163,8 +160,6 @@ namespace UniversalPatcher
                 txtResult.AppendText(Environment.NewLine);
             Application.DoEvents();
         }
-
-
 
         private void CopyTableData(TableData srcTd, TableData dstTd, ref PcmFile dstPCM)
         {

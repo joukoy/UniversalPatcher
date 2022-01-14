@@ -3119,7 +3119,6 @@ namespace UniversalPatcher
                     break;
                 }
             }
-
         }
 
         private void btnTuner_Click(object sender, EventArgs e)

@@ -38,7 +38,6 @@ public static class Helpers
         return buf;
     }
 
-
     public static void WriteBinToFile(string FileName, byte[] Buf)
     {
         using (FileStream stream = new FileStream(FileName, FileMode.Create))

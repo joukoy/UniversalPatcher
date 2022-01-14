@@ -39,7 +39,6 @@ namespace UniversalPatcher
             if (OldAddr.Contains("@:") || OldAddr.EndsWith("@"))
                 chkEndofFile.Checked = true;
             txtStart.Text = OldAddr.Replace("@", "");
-
         }
 
         private void btnOK_Click(object sender, EventArgs e)

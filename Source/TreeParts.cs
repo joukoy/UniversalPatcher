@@ -95,7 +95,6 @@ namespace UniversalPatcher
                 node.Nodes.Add(tn);
                 ind++;
             }
-
         }
 
         public static void AddChildNodes(TreeNode node, PcmFile pcm)

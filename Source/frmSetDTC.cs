@@ -44,9 +44,6 @@ namespace UniversalPatcher
             }
             else
             {
-                /*for (int i = 0; i < dtcStatus.Length; i++)
-                    comboDtcStatus.Items.Add(dtcStatus[i]);*/
-
                 comboMIL.Items.Add("Disabled");
                 comboMIL.Items.Add("Enabled");
                 comboMIL.SelectedIndex = dtcCodes[code].MilStatus;

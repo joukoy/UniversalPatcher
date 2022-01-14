@@ -446,10 +446,12 @@ namespace UniversalPatcher
             }
 
         }
+
         private void btnSaveBin_Click(object sender, EventArgs e)
         {
             SaveBin();
         }
+
         public void RefreshTablelist()
         {
             try

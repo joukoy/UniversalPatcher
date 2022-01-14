@@ -35,7 +35,6 @@ namespace UniversalPatcher
         public bool Hidden{ get; set; }
         public bool Missing { get; set; }
 
-
         public ushort CS1Method
         {
             get { return (ushort)Checksum1Method; }

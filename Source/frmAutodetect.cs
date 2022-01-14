@@ -163,7 +163,6 @@ namespace UniversalPatcher
             {
                 Logger(ex.Message);
             }
-
         }
 
 

@@ -112,10 +112,12 @@ namespace UniversalPatcher
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
+
         private void DataGridView1_DataError(object sender, System.Windows.Forms.DataGridViewDataErrorEventArgs e)
         {
             e.Cancel = true;
         }
+
         private void FrmTdEditor_ResizeEnd(object sender, System.EventArgs e)
         {
             dataGridView1.Columns[0].Width = this.Width - 200;

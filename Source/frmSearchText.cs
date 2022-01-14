@@ -129,4 +129,5 @@ namespace UniversalPatcher.Properties
             clearHighlights(rtb);
         }
     }
+
 }

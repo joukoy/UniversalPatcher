@@ -27,4 +27,5 @@ namespace UniversalPatcher
             this.Close();
         }
     }
+
 }

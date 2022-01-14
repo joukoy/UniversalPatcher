@@ -171,7 +171,6 @@ namespace UniversalPatcher
                     retVal += vParts[v] + " ";
                 }
             }
-
             return retVal.Trim();
         }
 

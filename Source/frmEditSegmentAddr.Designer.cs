@@ -94,7 +94,6 @@
             this.radioStartRead.TabStop = true;
             this.radioStartRead.Text = "Read address from (HEX): ";
             this.radioStartRead.UseVisualStyleBackColor = true;
-            this.radioStartRead.CheckedChanged += new System.EventHandler(this.radioReadStart_CheckedChanged);
             // 
             // label1
             // 
@@ -122,7 +121,6 @@
             0,
             0,
             0});
-            this.numReadPairs.ValueChanged += new System.EventHandler(this.numReadPairs_ValueChanged);
             // 
             // txtStart
             // 
@@ -155,7 +153,6 @@
             this.radioEndAbsolute.TabStop = true;
             this.radioEndAbsolute.Text = "Use Address (HEX):";
             this.radioEndAbsolute.UseVisualStyleBackColor = true;
-            this.radioEndAbsolute.CheckedChanged += new System.EventHandler(this.radioEndAbsolute_CheckedChanged);
             // 
             // radioReadEnd
             // 
@@ -323,7 +320,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmEditSegmentAddr";
             this.Text = "Edit Segment Address";
-            this.Load += new System.EventHandler(this.frmEditSegmentAddr_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numReadPairs)).EndInit();

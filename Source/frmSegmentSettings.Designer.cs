@@ -304,7 +304,6 @@
             this.label4.Size = new System.Drawing.Size(141, 13);
             this.label4.TabIndex = 7;
             this.label4.Text = "Checksum 1 Address (HEX):";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // txtCS1Address
             // 
@@ -710,7 +709,6 @@
             this.label10.Size = new System.Drawing.Size(69, 13);
             this.label10.TabIndex = 57;
             this.label10.Text = "Checkwords:";
-            this.label10.Click += new System.EventHandler(this.label10_Click);
             // 
             // btnCheckword
             // 

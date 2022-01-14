@@ -55,6 +55,7 @@ namespace UniversalPatcher
             }
             return header;
         }
+
         public string ReadTinyDB(PcmFile PCM)
         {
             string connetionString = null;

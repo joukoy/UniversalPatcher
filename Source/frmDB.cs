@@ -263,7 +263,6 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmDB line " + line + ": " + ex.Message);
-
             }
 
         }

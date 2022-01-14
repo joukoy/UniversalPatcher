@@ -53,7 +53,6 @@ namespace UniversalPatcher
 
                 Logger(" [OK]");
                 this.Close();
-
             }
             catch (Exception ex)
             {

@@ -303,8 +303,8 @@ namespace UniversalPatcher
                     ImportTableSeek(cmpPCM);
                 }
             }
-
         }
+
         private void ImportTableSeek(PcmFile cmpPCM)
         {
             if (cmpPCM.foundTables.Count == 0)

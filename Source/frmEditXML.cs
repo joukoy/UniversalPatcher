@@ -489,7 +489,6 @@ namespace UniversalPatcher
                 }
             }
             Logger(" [OK]");
-
         }
         private void btnSaveCSV_Click(object sender, EventArgs e)
         {

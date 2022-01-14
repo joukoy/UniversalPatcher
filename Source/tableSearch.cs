@@ -68,12 +68,13 @@ namespace UniversalPatcher
             public List<int> searchValues;
             public string searchString;
         }
+
         public void ParseAddresses(PcmFile PCM)
         {
             ParseAddress(searchRange, PCM, out searchBlocks);
             ParseAddress(tableRange, PCM, out tableBlocks);
-
         }
+
         public List<SearchVariable> ParseVariables(PcmFile PCM)
         {
             List<SearchVariable> searchVariables = new List<SearchVariable>();

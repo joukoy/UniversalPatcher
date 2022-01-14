@@ -443,7 +443,6 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmImport line " + line + ": " + ex.Message);
             }
-
         }
 
         private void btnSave_Click(object sender, EventArgs e)

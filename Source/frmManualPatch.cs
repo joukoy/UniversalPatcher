@@ -32,4 +32,5 @@ namespace UniversalPatcher
                 txtHelpFile.Text = Path.GetFileName(FileName);
         }
     }
+
 }

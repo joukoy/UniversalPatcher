@@ -60,7 +60,6 @@ namespace UniversalPatcher
                 else
                     dataGridView1.Rows[r].Cells["Select"].Value = false;
             }
-
         }
     }
 }

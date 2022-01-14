@@ -307,12 +307,6 @@ namespace UniversalPatcher
             txtCS2Block.Text = EditSegmentAddress(txtCS2Block.Text);
         }
 
-        private void label10_Click(object sender, EventArgs e)
-        {
-
-        }
-
-
         private void btnFindSegment_Click(object sender, EventArgs e)
         {
             frmSearchSegment frmSS = new frmSearchSegment();
@@ -329,11 +323,6 @@ namespace UniversalPatcher
             frmCw.InitMe(PCM, CurrentSegment);
             if (frmCw.ShowDialog(this) == DialogResult.OK)
                 txtCheckWords.Text = PCM.Segments[CurrentSegment].CheckWords;
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void btnEditSwapddr_Click(object sender, EventArgs e)

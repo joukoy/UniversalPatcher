@@ -81,16 +81,6 @@ namespace UniversalPatcher
             this.Close();
         }
 
-        private void radioRelative_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void radioAbsolute_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void radioCheckword_CheckedChanged(object sender, EventArgs e)
         {
             if (radioCheckword.Checked)

@@ -81,4 +81,5 @@ namespace UniversalPatcher
             tableSearchFile = FileName;
         }
     }
+
 }

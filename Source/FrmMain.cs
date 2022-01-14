@@ -101,7 +101,6 @@ namespace UniversalPatcher
             {
                 MessageBox.Show(ex.Message, "Error");
             }
-
         }
 
         private void btnAbout_Click(object sender, EventArgs e)

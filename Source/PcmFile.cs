@@ -51,13 +51,14 @@ namespace UniversalPatcher
             {
                 LoggerBold(ex.Message);
             }
-
         }
+
         public struct V6Table
         {
             public uint address;
             public ushort rows; 
         }
+
         public class osAddresses
         {
             public osAddresses()

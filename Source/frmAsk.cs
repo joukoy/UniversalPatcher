@@ -27,7 +27,5 @@ namespace UniversalPatcher
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
-
-
     }
 }

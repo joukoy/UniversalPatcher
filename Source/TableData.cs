@@ -138,7 +138,6 @@ namespace UniversalPatcher
                 return 2;
         }
 
-
         public uint StartAddress()
         {
             return (uint)(addrInt + Offset);
@@ -205,7 +204,6 @@ namespace UniversalPatcher
             DispUnits = tSeek.DispUnits;
             if (!PCM.tableCategories.Contains(Category))
                 PCM.tableCategories.Add(Category);
-
         }
 
         public void ImportDTC(PcmFile PCM, ref List<TableData> tdList, bool primary)

@@ -106,10 +106,8 @@ namespace UniversalPatcher
                         {
                             return addr;
                         }
-
                     }
                 }
-
             }
             catch (Exception ex)
             {

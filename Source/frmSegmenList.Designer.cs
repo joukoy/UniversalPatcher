@@ -75,7 +75,6 @@
             this.listSegments.Size = new System.Drawing.Size(461, 281);
             this.listSegments.TabIndex = 0;
             this.listSegments.UseCompatibleStateImageBehavior = false;
-            this.listSegments.SelectedIndexChanged += new System.EventHandler(this.listSegments_SelectedIndexChanged);
             // 
             // btnDelete
             // 

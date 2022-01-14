@@ -452,12 +452,6 @@ namespace UniversalPatcher
                 else if (fsize == PCM.fsize)
                 { 
                     PcmFile tmpPCM = new PcmFile(FileName,true,PCM.configFileFullName);
-                    //tmpPCM.GetSegmentAddresses();
-                    //tmpPCM.GetInfo();
-                    /*if (tmpPCM.OS != PCM.OS)
-                    {
-                        throw new Exception(Environment.NewLine +  "OS mismatch: " + PCM.OS + " <> " + tmpPCM.OS);
-                    }*/
                     SwapBuffer = new byte[TotalLength];
                     labelSelectedSegment.Text = "Selected: " + tmpPCM.segmentinfos[Seg].PN + tmpPCM.segmentinfos[Seg].Ver + "  (From file: " + Path.GetFileName(FileName) +")";
                     labelSelectedSegment.Tag = FileName;

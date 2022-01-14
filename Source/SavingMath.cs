@@ -54,10 +54,8 @@ namespace UniversalPatcher
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-            }
-            
+            }            
             return retVal;
         }
-
     }
 }

@@ -441,7 +441,6 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmHexDiff line " + line + ": " + ex.Message);
             }
-
         }
 
         private void btnShowInTuner_Click(object sender, EventArgs e)

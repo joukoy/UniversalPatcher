@@ -121,7 +121,6 @@ namespace UniversalPatcher
             0,
             0,
             0});
-            this.numKeypressWait.ValueChanged += new System.EventHandler(this.numKeypressWait_ValueChanged);
             // 
             // label4
             // 

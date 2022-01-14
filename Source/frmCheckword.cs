@@ -83,7 +83,6 @@ namespace UniversalPatcher
             if (listCheckwords.SelectedItems.Count == 0)
                 return;
             listCheckwords.SelectedItems[0].Remove();
-
         }
 
         private void btnOK_Click(object sender, EventArgs e)

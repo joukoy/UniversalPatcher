@@ -214,11 +214,6 @@ namespace UniversalPatcher
             this.Close();
         }
 
-        private void listSegments_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnSaveOnly_Click(object sender, EventArgs e)
         {
             SaveXML(PCM.configFileFullName);

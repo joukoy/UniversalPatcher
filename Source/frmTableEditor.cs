@@ -116,8 +116,6 @@ namespace UniversalPatcher
 
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
-            //dataGridView1.AutoResizeColumns();
-            //dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
             dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             if (Properties.Settings.Default.TableEditorFont == null)
                 dataFont = new Font("Consolas", 9);

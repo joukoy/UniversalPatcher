@@ -68,12 +68,14 @@ namespace UniversalPatcher.Properties
             }
             throw new Exception("PID search not implemented for this file type");
         }
+
         public class PidInfo
         {
             public uint PidNumber { get; set; }
             public string PidName { get; set; }
             public string ConversionFactor { get; set; }
         }
+
         public class PID
         {
             public string PidNumber { get; set; }
@@ -86,6 +88,7 @@ namespace UniversalPatcher.Properties
             public string Name { get; set; }
             public string ConversionFactor { get; set; }
         }
+
         public uint startAddress { get; set; }
         private PcmFile PCM;
         public List<PID> pidList;

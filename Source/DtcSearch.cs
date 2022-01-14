@@ -77,7 +77,6 @@ namespace UniversalPatcher
             {
                 return "P" + code;
             }
-
         }
 
         public string GetDtcDescription(string dtcCode)

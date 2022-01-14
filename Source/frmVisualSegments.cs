@@ -32,7 +32,6 @@ namespace UniversalPatcher
             chart1.Dock = DockStyle.Fill;
             uint minAddr = uint.MaxValue;
             uint maxAddr = 0;
-
             this.PCM = PCM;
 
             try

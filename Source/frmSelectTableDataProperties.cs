@@ -22,6 +22,7 @@ namespace UniversalPatcher
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
+
         public void LoadProperties(TableData td, bool showValues=true)
         {
             int top = 19;

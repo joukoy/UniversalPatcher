@@ -49,7 +49,6 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, cvnDB line " + line + ": " + ex.Message);
-
             }
         }
 

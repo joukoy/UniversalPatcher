@@ -27,8 +27,6 @@ namespace UniversalPatcher
             {
                 txtSearchAddresses.Text = PCM.Segments[SegmentNr].SearchAddresses;
                 txtSearchfor.Text = PCM.Segments[SegmentNr].Searchfor;
-                //txtSearchfrom.Text = PCM.Segments[SegmentNr].Searchfrom;
-                //chkNot.Checked = PCM.Segments[SegmentNr].SearchNot;
             }
         }
 

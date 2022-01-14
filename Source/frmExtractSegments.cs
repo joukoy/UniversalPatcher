@@ -195,7 +195,6 @@ namespace UniversalPatcher
                 else
                     listFiles.Items[i].Checked = false;
             }
-
         }
     }
 }

@@ -48,17 +48,6 @@ namespace UniversalPatcher
         {
         }
 
-/*        public static string ToHexString(byte data)
-        {
-            int i, j, k;
-            char[] r = new char[2];
-            k = data >> 4;
-            r[0] = (char)(k > 9 ? k + 0x37 : k + 0x30);
-            k = data & 15;
-            r[1] = (char)(k > 9 ? k + 0x37 : k + 0x30);
-            return new string(r);
-        }
-*/
         public void ChangeSelection(uint selectedByte)
         {
             //int prevSelected = this.selectedTxt;

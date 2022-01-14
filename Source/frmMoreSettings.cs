@@ -58,10 +58,6 @@ namespace UniversalPatcher
             //chkStartPatcher.Checked = Properties.Settings.Default.startPatcher;
         }
 
-        private void numKeypressWait_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private void btnBrowseApp_Click(object sender, EventArgs e)
         {

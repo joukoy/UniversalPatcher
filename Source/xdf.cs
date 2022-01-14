@@ -746,7 +746,6 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold ("XdfImport, line " + line + ": " + ex.Message + Environment.NewLine);
             }
-
         }
 
         public void ImportXdf(PcmFile PCM1, List<TableData> tdList1)
