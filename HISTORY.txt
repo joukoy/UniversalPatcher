@@ -339,5 +339,3 @@
 - Function renaming multiple places 
 - Cleanup
 - Moved common functions to Helpers.cs from PatcherFunctions.cs
-
-
