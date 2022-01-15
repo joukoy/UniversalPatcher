@@ -347,4 +347,6 @@
 - Fixed bug: Compatibility XML files not loaded
 - Tuner: Fixed bug: Saving Tablelist XML even the user click cancel in filename selection
 
+0.19.03
+- Bug fix: pidlist.xml in wrong format
 

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ArrayOfPidName xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<ArrayOfPidInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <PidInfo>
     <PidNumber>0</PidNumber>
     <PidInfo>PID'S SUPPORTED</PidInfo>
@@ -7849,4 +7849,4 @@
     <PidInfo>Linear Solenoid C Functional Test Result</PidInfo>
     <ConversionFactor />
   </PidInfo>
-</ArrayOfPidName>
+</ArrayOfPidInfo>
