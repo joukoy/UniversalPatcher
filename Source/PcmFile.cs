@@ -180,10 +180,11 @@ namespace UniversalPatcher
                     if (conFileSize < 255)
                     {
                         string compXml = ReadTextFile(tSeekFile).Split(new[] { '\r', '\n' }).FirstOrDefault();
+                        compXml = Path.Combine(Application.StartupPath, "XML", compXml);
                         if (File.Exists(compXml))
                         {
-                            tSeekFile = Path.Combine(Application.StartupPath, "XML", compXml);
-                            Logger("Using compatible file: " + compXml);
+                            tSeekFile = compXml;
+                            Logger("Using compatible file: " + Path.GetFileName(compXml));
                         }
                     }
                 }
@@ -214,10 +215,11 @@ namespace UniversalPatcher
                     if (conFileSize < 255)
                     {
                         string compXml = ReadTextFile(ssFile).Split(new[] { '\r', '\n' }).FirstOrDefault();
+                        compXml = Path.Combine(Application.StartupPath, "XML", compXml);
                         if (File.Exists(compXml))
                         {
-                            ssFile = Path.Combine(Application.StartupPath, "XML", compXml);
-                            Logger("Using compatible file: " + compXml);
+                            ssFile = compXml;
+                            Logger("Using compatible file: " + Path.GetFileName(compXml));
                         }
                     }
                 }
@@ -415,7 +417,7 @@ namespace UniversalPatcher
 
                     if (tFile.Length < 255)
                     {
-                        string tmpXml= ReadTextFile(tFile.FullName);
+                        string tmpXml= ReadTextFile(tFile.FullName).Split(new[] { '\r', '\n' }).FirstOrDefault(); ;
                         if (File.Exists(tmpXml))
                         {
                             compXml = tmpXml;
@@ -453,11 +455,12 @@ namespace UniversalPatcher
                 long conFileSize = new FileInfo(fName).Length;
                 if (conFileSize < 255)
                 {
-                    string compXml = ReadTextFile(fName);
+                    string compXml = ReadTextFile(fName).Split(new[] { '\r', '\n' }).FirstOrDefault();
+                    compXml = Path.Combine(Application.StartupPath,"Tuner",compXml);
                     if (File.Exists(compXml))
                     {
-                        Logger(Path.GetFileName(fName) + " => " + compXml);
-                        fName = Path.Combine(Path.GetDirectoryName(fName), compXml);
+                        Logger(Path.GetFileName(fName) + " => " + Path.GetFileName(compXml));
+                        fName = compXml;
                     }
                 }
                 Logger( "Loading tuner file: " + Path.GetFileName(fName), false);
@@ -561,6 +564,18 @@ namespace UniversalPatcher
             {
                 Segments.Clear();
                 Logger("Loading file: " + Path.GetFileName(fileName), false);
+                long conFileSize = new FileInfo(fileName).Length;
+                if (conFileSize < 255)
+                {
+                    string compXml = ReadTextFile(fileName).Split(new[] { '\r', '\n' }).FirstOrDefault();
+                    compXml = Path.Combine(Application.StartupPath, "XML", compXml);
+                    if (File.Exists(compXml))
+                    {
+                        fileName = compXml;
+                        Logger(", Using compatible file: " + Path.GetFileName(compXml));
+                    }
+                }
+
                 System.Xml.Serialization.XmlSerializer reader =
                     new System.Xml.Serialization.XmlSerializer(typeof(List<SegmentConfig>));
                 System.IO.StreamReader file = new System.IO.StreamReader(fileName);

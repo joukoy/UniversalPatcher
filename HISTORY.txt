@@ -342,3 +342,9 @@
 
 0.19.01
 - Cleanup
+
+0.19.02
+- Fixed bug: Compatibility XML files not loaded
+- Tuner: Fixed bug: Saving Tablelist XML even the user click cancel in filename selection
+
+

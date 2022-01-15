@@ -1942,6 +1942,8 @@ namespace UniversalPatcher
             string defName = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
             //string defName = PCM.OS + ".xml";
             string fName = SelectSaveFile("XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
+            if (string.IsNullOrEmpty(fName))
+                return;
             PCM.SaveTableList(fName);
         }
 
@@ -2988,7 +2990,7 @@ namespace UniversalPatcher
                 {
                     string defName = Path.Combine(Application.StartupPath, "Patches", "newpatch.xmlpatch");
                     patchFname = SelectSaveFile("PATCH files (*.xmlpatch)|*.xmlpatch|ALL files (*.*)|*.*", defName);
-                    if (patchFname.Length == 0)
+                    if (string.IsNullOrEmpty(patchFname))
                         return;
                     frmData frmD = new frmData();
                     frmD.Text = "Patch Description";
