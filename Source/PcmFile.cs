@@ -456,7 +456,7 @@ namespace UniversalPatcher
                 if (conFileSize < 255)
                 {
                     string compXml = ReadTextFile(fName).Split(new[] { '\r', '\n' }).FirstOrDefault();
-                    compXml = Path.Combine(Application.StartupPath,"Tuner",compXml);
+                    compXml = Path.Combine(Path.GetDirectoryName(fName),compXml);
                     if (File.Exists(compXml))
                     {
                         Logger(Path.GetFileName(fName) + " => " + Path.GetFileName(compXml));
@@ -568,7 +568,7 @@ namespace UniversalPatcher
                 if (conFileSize < 255)
                 {
                     string compXml = ReadTextFile(fileName).Split(new[] { '\r', '\n' }).FirstOrDefault();
-                    compXml = Path.Combine(Application.StartupPath, "XML", compXml);
+                    compXml = Path.Combine(Path.GetDirectoryName(fileName), compXml);
                     if (File.Exists(compXml))
                     {
                         fileName = compXml;
