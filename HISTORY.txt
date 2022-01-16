@@ -350,3 +350,7 @@
 0.19.03
 - Bug fix: pidlist.xml in wrong format
 
+0.19.04
+- XDF Export: Added units & decimals to constants
+- Fixed bug: Pid search using always "diesel" search if search configured in platformconfig
+- Bug fix: pidlist.xml in wrong format

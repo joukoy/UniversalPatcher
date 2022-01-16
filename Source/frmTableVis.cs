@@ -66,56 +66,10 @@ namespace UniversalPatcher
 
         public void UpdateTableValues(byte[] tableBuf)
         {
-            //After speed optimization it is better to replace whole text
-            DisplayData(selectedByte, tableBuf);
-            return;
-
             try
             {
-                this.tableBuf = tableBuf;
-                uint tableStart = td.addrInt;
-                int elementSize = td.ElementSize();
-
-                StringBuilder sb = new StringBuilder();
-                int r = 0;
-                if (!radioSegmentTBNames.Checked)
-                {
-                    for (int x=0; x < (numBytesPerRow.Value * 3); x++)
-                    {
-                        r++;
-                        if (x > bufTableStart || richTableData.Text[bufTableStart - x] == '\r')
-                            break;
-                    }
-                }
-                r /= 3;
-                if (r >= numBytesPerRow.Value)
-                {
-                    sb.Append(Environment.NewLine);
-                    r = 0;
-                }
-                for (int i=0;i< tableBuf.Length; i++)
-                {
-                    sb.Append(tableBuf[i].ToString("X2"));
-                    r++;
-                    if (r >= numBytesPerRow.Value)
-                    {
-                        sb.Append(Environment.NewLine);
-                        r = 0;
-                    }
-                    else
-                    {
-                        sb.Append(" ");
-                    }
-
-                }
-                richTableData.Select(bufTableStart, tableTxtSize);
-                richTableData.SelectedText = sb.ToString().Trim();
-
-                richTableData.SelectionColor = Color.Black;
-                richTableData.Select(selectedTxt, elementSize * 3 - 1);
-                richTableData.SelectionColor = Color.Red;
-
-                richTableData.Select(selectedTxt, 0);
+                DisplayData(selectedByte, tableBuf);
+                return;
             }
             catch (Exception ex)
             {

@@ -971,6 +971,8 @@ namespace UniversalPatcher
                         tableText.Replace("REPLACE-BITS", GetBits(td.DataType).ToString());
                         tableText.Replace("REPLACE-MINVALUE", td.Min.ToString().Replace(",","."));
                         tableText.Replace("REPLACE-MAXVALUE", td.Max.ToString().Replace(",", "."));
+                        tableText.Replace("REPLACE-UNITS", td.Units);
+                        tableText.Replace("REPLACE-DECIMALS", td.Decimals.ToString());
                         xdfText.Append(tableText);       //Add generated table to end of xdfText
                     }
                 }

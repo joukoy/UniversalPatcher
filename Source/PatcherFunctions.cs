@@ -1860,9 +1860,7 @@ public class Upatcher
                 else
                 {
                     Debug.WriteLine("Byte swapped CVN doesn't match: " + SwapBytes(refShort,4).ToString("X") + " <> " + cvnInt.ToString("X"));
-                }
-                break;
-                
+                }                
             }
 
             if (cvnMismatch) //Found from referencelist, have mismatch

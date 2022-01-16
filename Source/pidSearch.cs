@@ -23,7 +23,7 @@ namespace UniversalPatcher.Properties
                 startAddress = SearchBytes(PCM, PCM.platformConfig.PidSearchString, 0, (uint)(PCM.fsize - PCM.platformConfig.PidSearchString.Length));
                 step = PCM.platformConfig.PidSearchStep;
                 if (startAddress < uint.MaxValue)
-                    SearchPids(step, true);
+                    SearchPids(step, false);
                 return;
             }
 
@@ -136,14 +136,11 @@ namespace UniversalPatcher.Properties
                 pid.RamAddressInt = PCM.ReadUInt16(ramStoreAddr + 2);
                 pid.RamAddress = pid.RamAddressInt.ToString("X4");
             }
-            for (int p=0; p< pidNameList.Count;p++)
+            PidInfo pi = pidNameList.Where(x => x.PidNumber == pid.pidNumberInt).FirstOrDefault();
+            if (pi != null)
             {
-                if (pidNameList[p].PidNumber == pid.pidNumberInt)
-                {
-                    pid.Name = pidNameList[p].PidName;
-                    pid.ConversionFactor = pidNameList[p].ConversionFactor;
-                    break;
-                }
+                pid.Name = pi.PidName;
+                pid.ConversionFactor = pi.ConversionFactor;
             }
             return pid;
         }
@@ -162,14 +159,11 @@ namespace UniversalPatcher.Properties
                 pid.RamAddress = pid.RamAddressInt.ToString("X4");
             else
                 pid.RamAddress = "";
-            for (int p = 0; p < pidNameList.Count; p++)
+            PidInfo pi = pidNameList.Where(x => x.PidNumber == pid.pidNumberInt).FirstOrDefault();
+            if (pi != null)
             {
-                if (pidNameList[p].PidNumber == pid.pidNumberInt)
-                {
-                    pid.Name = pidNameList[p].PidName;
-                    pid.ConversionFactor = pidNameList[p].ConversionFactor;
-                    break;
-                }
+                pid.Name = pi.PidName;
+                pid.ConversionFactor = pi.ConversionFactor;
             }
             return pid;
         }

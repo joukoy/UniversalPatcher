@@ -575,7 +575,10 @@ namespace UniversalPatcher
                     }
                     //Debug.WriteLine("Column: " + c + ":, " + dataGridView1.Columns[c].HeaderText + ", index: ", dataGridView1.Columns[c].DisplayIndex.ToString());
                 }
-                dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
+                if (sortIndex > dataGridView1.Columns.Count)
+                {
+                    dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
+                }
 
             }
             catch (Exception ex)

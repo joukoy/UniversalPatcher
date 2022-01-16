@@ -3,6 +3,8 @@
     <description>REPLACE-TABLEDESCRIPTION</description>
     <CATEGORYMEM index="0" category="REPLACE-CATEGORY" />
     <EMBEDDEDDATA mmedaddress="0xREPLACE-TABLEADDRESS" mmedelementsizebits="REPLACE-BITS" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>REPLACE-UNITS</units>
+    <decimalpl>REPLACE-DECIMALS</decimalpl>
     <outputtype>2</outputtype>
     <rangehigh>REPLACE-MAXVALUE</rangehigh>
     <rangelow>REPLACE-MINVALUE</rangelow>

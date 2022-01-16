@@ -169,7 +169,6 @@ namespace UniversalPatcher
             {
 				case 1://End of file
 					return null;
-					break;
 				case 2: //Extended address
 					segmentAddress = (uint)(Convert.ToUInt16(recordBuff.Substring(IHEX_DATA_OFFSET, IHEX_ADDRESS_LEN), 16) * 16);
 					Debug.WriteLine("Segment address: " + segmentAddress.ToString("X"));
