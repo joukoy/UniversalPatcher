@@ -576,7 +576,7 @@ namespace UniversalPatcher
                     {
                         startAddr = addrList[b].Start;
                         endAddr = addrList[b].End;
-                        while (startAddr < PCM.fsize) 
+                        while (startAddr < PCM.fsize && wHit < wantedHitList.Count) 
                         {
                             wantedHit = wantedHitList[wHit];
                             string[] ssParts = tableSeeks[s].SearchStr.Split('+');     //At end of string can be +D4 +1W6 etc, for reading next address from found addr
@@ -628,7 +628,6 @@ namespace UniversalPatcher
                                 PCM.foundTables.Add(ft);
                                 wHit++;
                             }
-                            if (wHit >= wantedHitList.Count) break;
                         }
                     }
 

@@ -25,6 +25,7 @@ namespace UniversalPatcher
             //SavingMath = "X";
             Units = "";
             Category = "";
+            //ExtraCategories = "";
             ColumnHeaders = "";
             RowHeaders = "";
             TableDescription = "";

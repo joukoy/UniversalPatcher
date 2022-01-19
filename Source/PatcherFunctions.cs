@@ -2233,9 +2233,9 @@ public class Upatcher
         try
         {
             if (caseSens)
-                results = results.Where(t => typeof(TableData).GetProperty(filterBy).GetValue(t, null).ToString().Contains(filterTxt.Trim()));
+                results = results.Where(t => typeof(TableData).GetProperty(filterBy).GetValue(t, null) != null).Where(t => typeof(TableData).GetProperty(filterBy).GetValue(t, null).ToString().Contains(filterTxt.Trim()));
             else
-                results = results.Where(t => typeof(TableData).GetProperty(filterBy).GetValue(t, null).ToString().ToLower().Contains(filterTxt.ToLower().Trim()));
+                results = results.Where(t => typeof(TableData).GetProperty(filterBy).GetValue(t, null) != null).Where(t => typeof(TableData).GetProperty(filterBy).GetValue(t, null).ToString().ToLower().Contains(filterTxt.ToLower().Trim()));
         }
         catch (Exception ex)
         {

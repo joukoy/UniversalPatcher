@@ -710,10 +710,7 @@ namespace UniversalPatcher
                         {
                             foreach (string sStr in andStr)
                             {
-                                if (caseSensitiveFilteringToolStripMenuItem.Checked)
-                                    results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().Contains(sStr.Trim()));
-                                else
-                                    results = results.Where(t => typeof(TableData).GetProperty(comboFilterBy.Text).GetValue(t, null).ToString().ToLower().Contains(sStr.ToLower().Trim()));
+                                results = FilterTdList(results, sStr, comboFilterBy.Text, caseSensitiveFilteringToolStripMenuItem.Checked);
                             }
                         }
                     }

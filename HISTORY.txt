@@ -357,3 +357,7 @@
 
 0.19.05
 - Fixed bug: When opening XML file referenced in another XML, don't assume file is in default XML/Tuner folder, use original file's folder
+
+0.19.06
+- Tuner: Fixed bug: Filter by "All" not working
+- Fixed bug: Tableseek stop to error "Index was out of range"
