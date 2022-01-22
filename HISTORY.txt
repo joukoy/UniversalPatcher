@@ -365,3 +365,7 @@
 0.19.07
 - Fixed bug: TableEditor: Paste Special: Negative values not handled correctly (paste fails)
 - Added histogram support for existing CSV files
+
+0.19.08
+- Histogram: Show tablename
+- Histogram: Show selected cell info

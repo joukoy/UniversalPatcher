@@ -402,6 +402,8 @@ public class Upatcher
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Log"));
         if (!Directory.Exists(Path.Combine(Application.StartupPath, "Tuner")))
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Tuner"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Histogram")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Histogram"));
 
         if (UniversalPatcher.Properties.Settings.Default.LastXMLfolder == "")
             UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
