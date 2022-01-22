@@ -528,6 +528,8 @@ namespace UniversalPatcher
                     xdf.TableName = element.Element("title").Value.Replace(".", " ").Trim();
                     xdf.Math = element.Element("MATH").Attribute("equation").Value.Trim().Replace("*.", "*0.").Replace("/.", "/0.");
                     xdf.Math = xdf.Math.Replace("+ -", "-").Replace("+-", "-").Replace("++", "+").Replace("+ + ", "+");
+                    if (element.Element("outputtype") != null)
+                        xdf.OutputType = (OutDataType)Convert.ToUInt16(element.Element("outputtype").Value);
 
                     if (element.Attribute("uniqueid") != null)
                     {
@@ -755,7 +757,7 @@ namespace UniversalPatcher
                 PCM = PCM1;
                 tdList = tdList1;
                 XDocument doc;
-                string fname = SelectFile("Select XDF file", "xdf files (*.xdf)|*.xdf|ALL files (*.*| *.*");
+                string fname = SelectFile("Select XDF file", XdfFilter);
                 if (fname.Length == 0)
                     return ;
                 Logger("Importing file " + fname + "...",false);
@@ -973,6 +975,7 @@ namespace UniversalPatcher
                         tableText.Replace("REPLACE-MAXVALUE", td.Max.ToString().Replace(",", "."));
                         tableText.Replace("REPLACE-UNITS", td.Units);
                         tableText.Replace("REPLACE-DECIMALS", td.Decimals.ToString());
+                        tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)td.OutputType).ToString());
                         xdfText.Append(tableText);       //Add generated table to end of xdfText
                     }
                 }
@@ -1154,7 +1157,7 @@ namespace UniversalPatcher
 
                 xdfText.Append("</XDFFORMAT>" + Environment.NewLine);
                 string defFname = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions", basefile.OS + "-generated.xdf");
-                string fileName = SelectSaveFile("XDF Files(*.xdf)|*.xdf|ALL Files (*.*)|*.*",defFname);
+                string fileName = SelectSaveFile(XdfFilter,defFname);
                 if (fileName.Length == 0)
                     return "";
                 retVal += "Writing to file: " + Path.GetFileName(fileName);

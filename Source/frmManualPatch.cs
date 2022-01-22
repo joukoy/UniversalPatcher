@@ -27,7 +27,7 @@ namespace UniversalPatcher
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            string FileName = SelectFile("Select help-file", "TXT files (*.txt)|*.txt|All files (*.*)|*.*");
+            string FileName = SelectFile("Select help-file", TxtFilter);
             if (FileName.Length > 0)
                 txtHelpFile.Text = Path.GetFileName(FileName);
         }

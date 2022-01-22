@@ -335,7 +335,7 @@ namespace UniversalPatcher
                 if (pcmList[i].Selected)
                 {
                     string origFName = Path.GetFileName(pcmList[i].pcmFile.FileName);
-                    string newFname = SelectSaveFile("BIN files (*.bin)|*.bin", origFName);
+                    string newFname = SelectSaveFile(BinFilter, origFName);
                     if (newFname.Length > 0)
                     {
                         Logger("Saving file: " + newFname, false);

@@ -81,6 +81,7 @@ namespace UniversalPatcher
             this.radioMultiplier = new System.Windows.Forms.RadioButton();
             this.radioAbsolute = new System.Windows.Forms.RadioButton();
             this.chkRawHex = new System.Windows.Forms.CheckBox();
+            this.showHistogramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -227,7 +228,8 @@ namespace UniversalPatcher
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.saveToolStripMenuItem,
             this.exportCSVToolStripMenuItem1,
-            this.saveOBD2DescriptionsToolStripMenuItem});
+            this.saveOBD2DescriptionsToolStripMenuItem,
+            this.showHistogramToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -596,6 +598,13 @@ namespace UniversalPatcher
             this.chkRawHex.UseVisualStyleBackColor = true;
             this.chkRawHex.CheckedChanged += new System.EventHandler(this.chkRawHex_CheckedChanged);
             // 
+            // showHistogramToolStripMenuItem
+            // 
+            this.showHistogramToolStripMenuItem.Name = "showHistogramToolStripMenuItem";
+            this.showHistogramToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.showHistogramToolStripMenuItem.Text = "Show Histogram";
+            this.showHistogramToolStripMenuItem.Click += new System.EventHandler(this.showHistogramToolStripMenuItem_Click);
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -689,5 +698,6 @@ namespace UniversalPatcher
         private CheckBox chkRawHex;
         private ToolStripMenuItem pasteSpecialToolStripMenuItem;
         private ToolStripMenuItem showTableVisualizationToolStripMenuItem;
+        private ToolStripMenuItem showHistogramToolStripMenuItem;
     }
 }

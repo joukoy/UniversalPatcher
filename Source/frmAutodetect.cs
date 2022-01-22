@@ -74,7 +74,7 @@ namespace UniversalPatcher
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            string FileName = SelectFile("Select XML-file", "XML files (*.xml)|*.xml|All files (*.*)|*.*");
+            string FileName = SelectFile("Select XML-file", XmlFilter);
             if (FileName.Length < 1)
                 return;
             comboXML.Text = Path.GetFileName(FileName).ToLower();

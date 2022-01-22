@@ -1136,7 +1136,7 @@ namespace UniversalPatcher
                     Logger("Nothing to save");
                     return;
                 }
-                string fileName = SelectSaveFile("BIN files (*.bin)|*.bin|ALL files(*.*)|*.*",Path.GetFileName(txtBaseFile.Text));
+                string fileName = SelectSaveFile(BinFilter,Path.GetFileName(txtBaseFile.Text));
                 if (fileName.Length == 0)
                     return;
 
@@ -1594,7 +1594,7 @@ namespace UniversalPatcher
         {
             try
             {
-                string fileName = SelectFile("Select XML file", "XML files (*.xml)|*.xml|All files (*.*)|*.*");
+                string fileName = SelectFile("Select XML file", XmlFilter);
                 if (fileName.Length < 1)
                     return;
                 basefile.LoadConfigFile(fileName);
@@ -1865,7 +1865,7 @@ namespace UniversalPatcher
         {
             try
             { 
-                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                string FileName = SelectSaveFile(CsvFilter);
                 if (FileName.Length == 0)
                     return;
                 Logger("Writing to file: " + Path.GetFileName(FileName), false);
@@ -2279,7 +2279,7 @@ namespace UniversalPatcher
 
         private void btnSaveCSaddresses_Click(object sender, EventArgs e)
         {
-            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            string FileName = SelectSaveFile(CsvFilter);
             if (FileName.Length == 0)
                 return;
             Logger("Writing to file: " + Path.GetFileName(FileName), false);
@@ -2349,7 +2349,7 @@ namespace UniversalPatcher
         {
             try
             { 
-                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                string FileName = SelectSaveFile(CsvFilter);
                 if (FileName.Length == 0)
                     return;
                 Logger("Writing to file: " + Path.GetFileName(FileName), false);
@@ -2478,7 +2478,7 @@ namespace UniversalPatcher
         {
             try
             {
-                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                string FileName = SelectSaveFile(CsvFilter);
                 if (FileName.Length == 0)
                     return;
                 Logger("Writing to file: " + Path.GetFileName(FileName), false);
@@ -2551,7 +2551,7 @@ namespace UniversalPatcher
         {
             try
             { 
-                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                string FileName = SelectSaveFile(CsvFilter);
                 if (FileName.Length == 0)
                     return;
                 Logger("Writing to file: " + Path.GetFileName(FileName), false);
@@ -2758,7 +2758,7 @@ namespace UniversalPatcher
         {
             try
             {
-                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                string FileName = SelectSaveFile(CsvFilter);
                 if (FileName.Length == 0)
                     return;
                 Logger("Writing to file: " + Path.GetFileName(FileName), false);
@@ -2841,7 +2841,7 @@ namespace UniversalPatcher
         {
             try
             { 
-                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                string FileName = SelectSaveFile(CsvFilter);
                 if (FileName.Length == 0)
                     return;
                 Logger("Writing to file: " + Path.GetFileName(FileName), false);
@@ -3011,7 +3011,7 @@ namespace UniversalPatcher
             {
                 string fName;
                 if (basefile.configFileFullName.Length == 0)
-                    fName = SelectFile("Select tableseekfile", "XML (*.xml)|*.xml|All (*.*)|*.*");
+                    fName = SelectFile("Select tableseekfile", XmlFilter);
                 else
                      fName = basefile.TableSeekFile;
                 frmEditXML frmE = new frmEditXML();
@@ -3222,7 +3222,7 @@ namespace UniversalPatcher
             {
                 string fName;
                 if (basefile.configFileFullName.Length == 0)
-                    fName = SelectFile("Select segmentSeekfile", "XML (*.xml)|*.xml|All (*.*)|*.*");
+                    fName = SelectFile("Select segmentSeekfile", XmlFilter);
                 else
                     fName = basefile.SegmentSeekFile;
                 frmEditXML frmE = new frmEditXML();
@@ -3939,7 +3939,7 @@ namespace UniversalPatcher
             {
                 byte[] buf = new byte[1];
 
-                string scriptFname = SelectFile("Select script file", "CSV Files (*.csv)|*.csv|All FIles (*.*)|*.*");
+                string scriptFname = SelectFile("Select script file", CsvFilter);
                 if (scriptFname.Length == 0)
                     return;
 
@@ -4231,7 +4231,7 @@ namespace UniversalPatcher
                 {
                     string fName = basefile.PlatformConfigFile;
                     if (basefile.configFile.Length == 0)
-                        fName = SelectSaveFile("XML (*.xml)|*.xml|All (*.*)|*.*","new-platform.xml");
+                        fName = SelectSaveFile(XmlFilter,"new-platform.xml");
                     if (fName.Length == 0)
                         return;
                     Logger("Saving platform config: " + Path.GetFileName(fName), false);
@@ -4249,7 +4249,7 @@ namespace UniversalPatcher
 
         private void loadPlatformConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string fName = SelectFile("Select platform config", "XML (*.xml)|*.xml|ALL (*.*)|*.*");
+            string fName = SelectFile("Select platform config", XmlFilter);
             if (fName.Length == 0)
                 return;
             basefile.LoadPlatformConfig(fName);

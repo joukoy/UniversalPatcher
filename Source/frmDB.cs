@@ -308,7 +308,7 @@ namespace UniversalPatcher
                 {
                     List<CVN> stockList = new List<CVN>(); ;
                     string defFile = Path.Combine(Application.StartupPath, "XML", "stockcvn.xml");
-                    string StockCVNFile = SelectFile("Select Stock CVN file", "XML (*.xml)|*.xml|ALL (*.*)|*.*", defFile);
+                    string StockCVNFile = SelectFile("Select Stock CVN file", XmlFilter, defFile);
                     if (StockCVNFile.Length > 0 && File.Exists(StockCVNFile))
                     {
                         Debug.WriteLine("Loading stockcvn.xml");
@@ -355,7 +355,7 @@ namespace UniversalPatcher
                 {
                     List<ReferenceCvn> refList = new List<ReferenceCvn>(); ;
                     string defFile = Path.Combine(Application.StartupPath, "XML", "reference-cvn.xml");
-                    string refCVNFile = SelectFile("Select refrence CVN file", "XML (*.xml)|*.xml|ALL (*.*)|*.*", defFile);
+                    string refCVNFile = SelectFile("Select refrence CVN file", XmlFilter, defFile);
                     if (refCVNFile.Length > 0 && File.Exists(refCVNFile))
                     {
                         Debug.WriteLine("Loading stockcvn.xml");

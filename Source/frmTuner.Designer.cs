@@ -83,6 +83,7 @@ namespace UniversalPatcher
             this.massModifyTableListsSelectFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.applyPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.swapSegmentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.histogramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadTablelistxmlTableseekImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -110,6 +111,7 @@ namespace UniversalPatcher
             this.booleanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bitmaskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.numberToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showHistogramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.editRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.insertRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -119,12 +121,8 @@ namespace UniversalPatcher
             this.addTablesToExistingPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createPatchToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.axistablesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openXaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openYaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openMathtableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editXaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editYaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editMathtableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.comboFilterBy = new System.Windows.Forms.ComboBox();
             this.txtResult = new System.Windows.Forms.RichTextBox();
@@ -171,6 +169,11 @@ namespace UniversalPatcher
             this.btnCollapse = new System.Windows.Forms.Button();
             this.btnExpand = new System.Windows.Forms.Button();
             this.btnFlash = new System.Windows.Forms.Button();
+            this.openYaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openMathtableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editXaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editYaxisTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editMathtableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -431,7 +434,8 @@ namespace UniversalPatcher
             this.massModifyTableListsToolStripMenuItem,
             this.massModifyTableListsSelectFilesToolStripMenuItem,
             this.applyPatchToolStripMenuItem,
-            this.swapSegmentsToolStripMenuItem});
+            this.swapSegmentsToolStripMenuItem,
+            this.histogramToolStripMenuItem});
             this.utilitiesToolStripMenuItem.Name = "utilitiesToolStripMenuItem";
             this.utilitiesToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
             this.utilitiesToolStripMenuItem.Text = "Utilities";
@@ -613,6 +617,13 @@ namespace UniversalPatcher
             this.swapSegmentsToolStripMenuItem.Text = "Swap segments...";
             this.swapSegmentsToolStripMenuItem.Click += new System.EventHandler(this.swapSegmentsToolStripMenuItem_Click);
             // 
+            // histogramToolStripMenuItem
+            // 
+            this.histogramToolStripMenuItem.Name = "histogramToolStripMenuItem";
+            this.histogramToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.histogramToolStripMenuItem.Text = "Show Histogram";
+            this.histogramToolStripMenuItem.Click += new System.EventHandler(this.histogramToolStripMenuItem_Click);
+            // 
             // xmlToolStripMenuItem
             // 
             this.xmlToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -704,6 +715,7 @@ namespace UniversalPatcher
             this.compareSelectedTablesToolStripMenuItem,
             this.copySelectedTablesToToolStripMenuItem,
             this.selectToolStripMenuItem,
+            this.showHistogramToolStripMenuItem,
             this.toolStripSeparator1,
             this.editRowToolStripMenuItem,
             this.insertRowToolStripMenuItem,
@@ -713,14 +725,9 @@ namespace UniversalPatcher
             this.addTablesToExistingPatchToolStripMenuItem,
             this.createPatchToolStripMenuItem1,
             this.toolStripSeparator2,
-            this.openXaxisTableToolStripMenuItem,
-            this.openYaxisTableToolStripMenuItem,
-            this.openMathtableToolStripMenuItem,
-            this.editXaxisTableToolStripMenuItem,
-            this.editYaxisTableToolStripMenuItem,
-            this.editMathtableToolStripMenuItem});
+            this.axistablesToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 500);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 434);
             // 
             // cutToolStripMenuItem
             // 
@@ -836,6 +843,13 @@ namespace UniversalPatcher
             this.numberToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.numberToolStripMenuItem.Text = "number";
             // 
+            // showHistogramToolStripMenuItem
+            // 
+            this.showHistogramToolStripMenuItem.Name = "showHistogramToolStripMenuItem";
+            this.showHistogramToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.showHistogramToolStripMenuItem.Text = "Show Histogram";
+            this.showHistogramToolStripMenuItem.Click += new System.EventHandler(this.showHistogramToolStripMenuItem_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -899,53 +913,26 @@ namespace UniversalPatcher
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(227, 6);
             // 
+            // axistablesToolStripMenuItem
+            // 
+            this.axistablesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openXaxisTableToolStripMenuItem,
+            this.openYaxisTableToolStripMenuItem,
+            this.openMathtableToolStripMenuItem,
+            this.editXaxisTableToolStripMenuItem,
+            this.editYaxisTableToolStripMenuItem,
+            this.editMathtableToolStripMenuItem});
+            this.axistablesToolStripMenuItem.Name = "axistablesToolStripMenuItem";
+            this.axistablesToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.axistablesToolStripMenuItem.Text = "Axis-tables";
+            // 
             // openXaxisTableToolStripMenuItem
             // 
             this.openXaxisTableToolStripMenuItem.Enabled = false;
             this.openXaxisTableToolStripMenuItem.Name = "openXaxisTableToolStripMenuItem";
-            this.openXaxisTableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.openXaxisTableToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.openXaxisTableToolStripMenuItem.Text = "Open X-axis table";
             this.openXaxisTableToolStripMenuItem.Click += new System.EventHandler(this.openXaxisTableToolStripMenuItem_Click);
-            // 
-            // openYaxisTableToolStripMenuItem
-            // 
-            this.openYaxisTableToolStripMenuItem.Enabled = false;
-            this.openYaxisTableToolStripMenuItem.Name = "openYaxisTableToolStripMenuItem";
-            this.openYaxisTableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.openYaxisTableToolStripMenuItem.Text = "Open Y-axis table";
-            this.openYaxisTableToolStripMenuItem.Click += new System.EventHandler(this.openYaxisTableToolStripMenuItem_Click);
-            // 
-            // openMathtableToolStripMenuItem
-            // 
-            this.openMathtableToolStripMenuItem.Enabled = false;
-            this.openMathtableToolStripMenuItem.Name = "openMathtableToolStripMenuItem";
-            this.openMathtableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.openMathtableToolStripMenuItem.Text = "Open Math-table";
-            this.openMathtableToolStripMenuItem.Click += new System.EventHandler(this.openMathtableToolStripMenuItem_Click);
-            // 
-            // editXaxisTableToolStripMenuItem
-            // 
-            this.editXaxisTableToolStripMenuItem.Enabled = false;
-            this.editXaxisTableToolStripMenuItem.Name = "editXaxisTableToolStripMenuItem";
-            this.editXaxisTableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.editXaxisTableToolStripMenuItem.Text = "Edit X-axis table config";
-            this.editXaxisTableToolStripMenuItem.Click += new System.EventHandler(this.editXaxisTableToolStripMenuItem_Click);
-            // 
-            // editYaxisTableToolStripMenuItem
-            // 
-            this.editYaxisTableToolStripMenuItem.Enabled = false;
-            this.editYaxisTableToolStripMenuItem.Name = "editYaxisTableToolStripMenuItem";
-            this.editYaxisTableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.editYaxisTableToolStripMenuItem.Text = "Edit Y-axis table config";
-            this.editYaxisTableToolStripMenuItem.Click += new System.EventHandler(this.editYaxisTableToolStripMenuItem_Click);
-            // 
-            // editMathtableToolStripMenuItem
-            // 
-            this.editMathtableToolStripMenuItem.Enabled = false;
-            this.editMathtableToolStripMenuItem.Name = "editMathtableToolStripMenuItem";
-            this.editMathtableToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.editMathtableToolStripMenuItem.Text = "Edit Math-table config";
-            this.editMathtableToolStripMenuItem.Click += new System.EventHandler(this.editMathtableToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -1502,6 +1489,46 @@ namespace UniversalPatcher
             this.btnFlash.UseVisualStyleBackColor = true;
             this.btnFlash.Click += new System.EventHandler(this.btnFlash_Click);
             // 
+            // openYaxisTableToolStripMenuItem
+            // 
+            this.openYaxisTableToolStripMenuItem.Enabled = false;
+            this.openYaxisTableToolStripMenuItem.Name = "openYaxisTableToolStripMenuItem";
+            this.openYaxisTableToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.openYaxisTableToolStripMenuItem.Text = "Open Y-axis table";
+            this.openYaxisTableToolStripMenuItem.Click += new System.EventHandler(this.openYaxisTableToolStripMenuItem_Click);
+            // 
+            // openMathtableToolStripMenuItem
+            // 
+            this.openMathtableToolStripMenuItem.Enabled = false;
+            this.openMathtableToolStripMenuItem.Name = "openMathtableToolStripMenuItem";
+            this.openMathtableToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.openMathtableToolStripMenuItem.Text = "Open Math-table";
+            this.openMathtableToolStripMenuItem.Click += new System.EventHandler(this.openMathtableToolStripMenuItem_Click);
+            // 
+            // editXaxisTableToolStripMenuItem
+            // 
+            this.editXaxisTableToolStripMenuItem.Enabled = false;
+            this.editXaxisTableToolStripMenuItem.Name = "editXaxisTableToolStripMenuItem";
+            this.editXaxisTableToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.editXaxisTableToolStripMenuItem.Text = "Edit X-axis table config";
+            this.editXaxisTableToolStripMenuItem.Click += new System.EventHandler(this.editXaxisTableToolStripMenuItem_Click);
+            // 
+            // editYaxisTableToolStripMenuItem
+            // 
+            this.editYaxisTableToolStripMenuItem.Enabled = false;
+            this.editYaxisTableToolStripMenuItem.Name = "editYaxisTableToolStripMenuItem";
+            this.editYaxisTableToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.editYaxisTableToolStripMenuItem.Text = "Edit Y-axis table config";
+            this.editYaxisTableToolStripMenuItem.Click += new System.EventHandler(this.editYaxisTableToolStripMenuItem_Click);
+            // 
+            // editMathtableToolStripMenuItem
+            // 
+            this.editMathtableToolStripMenuItem.Enabled = false;
+            this.editMathtableToolStripMenuItem.Name = "editMathtableToolStripMenuItem";
+            this.editMathtableToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.editMathtableToolStripMenuItem.Text = "Edit Math-table config";
+            this.editMathtableToolStripMenuItem.Click += new System.EventHandler(this.editMathtableToolStripMenuItem_Click);
+            // 
             // FrmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1689,12 +1716,15 @@ namespace UniversalPatcher
         private ToolStripMenuItem createPatchToolStripMenuItem1;
         private ToolStripMenuItem sortByToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator2;
-        private ToolStripMenuItem editXaxisTableToolStripMenuItem;
-        private ToolStripMenuItem editYaxisTableToolStripMenuItem;
+        private Button btnFlash;
+        private ToolStripMenuItem histogramToolStripMenuItem;
+        private ToolStripMenuItem showHistogramToolStripMenuItem;
+        private ToolStripMenuItem axistablesToolStripMenuItem;
         private ToolStripMenuItem openXaxisTableToolStripMenuItem;
         private ToolStripMenuItem openYaxisTableToolStripMenuItem;
-        private ToolStripMenuItem editMathtableToolStripMenuItem;
         private ToolStripMenuItem openMathtableToolStripMenuItem;
-        private Button btnFlash;
+        private ToolStripMenuItem editXaxisTableToolStripMenuItem;
+        private ToolStripMenuItem editYaxisTableToolStripMenuItem;
+        private ToolStripMenuItem editMathtableToolStripMenuItem;
     }
 }

@@ -815,6 +815,46 @@ public class Upatcher
         return retVal;
     }
 
+    public static string[] LoadHeaderFromTable(TableData headerTd, int count, PcmFile pcm)
+    {
+        if (headerTd == null)
+            return null;
+
+        uint step = (uint)(GetBits(headerTd.DataType) / 8);
+        uint addr = (uint)(headerTd.addrInt + headerTd.Offset);
+        string[] retVal = new string[count];
+        for (int a = 0; a < count; a++)
+        {
+            string formatStr = "0.####";
+            if (headerTd.Units.Contains("%"))
+                formatStr = "0";
+            string header = "";
+            if (!string.IsNullOrEmpty(headerTd.Units))
+                header = headerTd.Units.Trim() + " ";
+            header += GetValue(pcm.buf, addr, headerTd, 0, pcm).ToString(formatStr).Replace(",", ".");
+            retVal[a] = header;
+            addr += step;
+        }
+        return retVal;
+    }
+
+    public static double[] LoadHeaderValuesFromTable(TableData headerTd, int count, PcmFile pcm)
+    {
+        if (headerTd == null)
+            return null;
+
+        uint step = (uint)(GetBits(headerTd.DataType) / 8);
+        uint addr = (uint)(headerTd.addrInt + headerTd.Offset);
+        double[] retVal = new double[count];
+        for (int a = 0; a < count; a++)
+        {
+            double val = GetValue(pcm.buf, addr, headerTd, 0, pcm);
+            retVal[a] = val;
+            addr += step;
+        }
+        return retVal;
+    }
+
     //
     //Get value from defined table, using defined math functions.
     //

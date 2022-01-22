@@ -448,7 +448,7 @@ namespace UniversalPatcher
                 string defName = Path.Combine(Application.StartupPath, "Tuner", OS + ".xml");
                 //string defName = PCM.OS + ".xml";
                 if (fName == "")
-                    fName = SelectFile("Select XML File", "XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
+                    fName = SelectFile("Select XML File", XmlFilter, defName);
                 if (fName.Length == 0)
                     return ;
                 List<TableData> tmpTableDatas = new List<TableData>();

@@ -12,6 +12,12 @@ using static Upatcher;
 
 public static class Helpers
 {
+    public static string BinFilter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*";
+    public static string CsvFilter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+    public static string XmlFilter = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
+    public static string TxtFilter = "TXT files (*.txt)|*.txt|All files (*.*)|*.*";
+    public static string XdfFilter = "XDF files (*.xdf)|*.xdf|All files (*.*)|*.*";
+
     public static byte[] ReadBin(string FileName)
     {
 

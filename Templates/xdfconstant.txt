@@ -5,7 +5,7 @@
     <EMBEDDEDDATA mmedaddress="0xREPLACE-TABLEADDRESS" mmedelementsizebits="REPLACE-BITS" mmedmajorstridebits="0" mmedminorstridebits="0" />
     <units>REPLACE-UNITS</units>
     <decimalpl>REPLACE-DECIMALS</decimalpl>
-    <outputtype>2</outputtype>
+    <outputtype>REPLACE-OUTPUTTYPE</outputtype>
     <rangehigh>REPLACE-MAXVALUE</rangehigh>
     <rangelow>REPLACE-MINVALUE</rangelow>
     <datatype>2</datatype>

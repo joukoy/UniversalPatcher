@@ -361,3 +361,7 @@
 0.19.06
 - Tuner: Fixed bug: Filter by "All" not working
 - Fixed bug: Tableseek stop to error "Index was out of range"
+
+0.19.07
+- Fixed bug: TableEditor: Paste Special: Negative values not handled correctly (paste fails)
+- Added histogram support for existing CSV files

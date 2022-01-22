@@ -324,14 +324,14 @@ namespace UniversalPatcher
                     if (tData.ColumnHeaders.ToLower().StartsWith("table:") || tData.ColumnHeaders.ToLower().StartsWith("guid:"))
                     {
                         TableData headerTd = pcm.GetTdbyHeader(tData.ColumnHeaders);
-                        cHeaders = LoadHeaderFromTable(headerTd, tData.Columns, pcm).Split(',');
+                        cHeaders = LoadHeaderFromTable(headerTd, tData.Columns, pcm);
                     }
 
                     string[] rHeaders = tData.RowHeaders.Split(',');
                     if (tData.RowHeaders.ToLower().StartsWith("table:") || tData.RowHeaders.ToLower().StartsWith("guid:"))
                     {
                         TableData headerTd = pcm.GetTdbyHeader(tData.RowHeaders);
-                        rHeaders = LoadHeaderFromTable(headerTd, tData.Rows, pcm).Split(',');
+                        rHeaders = LoadHeaderFromTable(headerTd, tData.Rows, pcm);
                     }
 
                     string RowPrefix = "";
@@ -1162,45 +1162,6 @@ namespace UniversalPatcher
             }
         }
 
-        private string LoadHeaderFromTable(TableData headerTd, int count, PcmFile pcm)
-        {
-            if (headerTd == null)
-                return "";
-            string headers = "" ;
-            uint step = (uint)(GetBits(headerTd.DataType) / 8);
-            uint addr = (uint)(headerTd.addrInt + headerTd.Offset);
-            for (int a = 0; a < count; a++ )
-            {
-                string formatStr = "0.####";
-                if (headerTd.Units.Contains("%"))
-                    formatStr = "0";
-                headers += headerTd.Units.Trim() + " " + GetValue(pcm.buf, addr, headerTd, 0, pcm).ToString(formatStr).Replace(",", ".") + ",";
-                addr += step;
-            }
-            headers = headers.Trim(',');
-            return headers;
-        }
-
-        private string LoadHeaderFromGuidTable(Guid tableGuid, int count, PcmFile pcm)
-        {
-            string headers = "";
-            TableData headerTd = pcm.tableDatas.Where(x => x.guid == tableGuid).First();
-            if (headerTd != null)
-            {
-                uint step = (uint)(GetBits(headerTd.DataType) / 8);
-                uint addr = (uint)(headerTd.addrInt + headerTd.Offset);
-                for (int a = 0; a < count; a++)
-                {
-                    string formatStr = "0.####";
-                    if (headerTd.Units.Contains("%"))
-                        formatStr = "0";
-                    headers += headerTd.Units.Trim() + " " + GetValue(pcm.buf, addr, headerTd, 0, pcm).ToString(formatStr).Replace(",", ".") + ",";
-                    addr += step;
-                }
-                headers = headers.Trim(',');
-            }
-            return headers;
-        }
 
         private int GetColumnByHeader(string hdrTxt)
         {
@@ -2132,7 +2093,7 @@ namespace UniversalPatcher
             try
             {
 
-                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                string FileName = SelectSaveFile(CsvFilter);
                 if (FileName.Length == 0)
                     return;
                 using (StreamWriter writetext = new StreamWriter(FileName))
@@ -2797,7 +2758,8 @@ namespace UniversalPatcher
                             //Copy to selected cells if 'chkPasteToSelectedCells' is checked
                             //if ((chkPasteToSelectedCells.Checked && cell.Selected) || (!chkPasteToSelectedCells.Checked))
                             double cbVal;
-                            if (Double.TryParse(cbValue[rowKey][cellKey].ToString(), out cbVal))
+                            Debug.WriteLine(cbValue[rowKey][cellKey].ToString(CultureInfo.InvariantCulture));
+                            if (Double.TryParse(cbValue[rowKey][cellKey].ToString(CultureInfo.InvariantCulture), NumberStyles.Any, CultureInfo.CurrentCulture, out cbVal))
                             {
                                 //double cbVal = Convert.ToDouble(cbValue[rowKey][cellKey], System.Globalization.CultureInfo.InvariantCulture, out cbVal);
                                 string mathTxt = "X";
@@ -2806,6 +2768,7 @@ namespace UniversalPatcher
                                 else
                                     mathTxt = cellNegMath.Replace("X", cell.Value.ToString());
                                 mathTxt = mathTxt.Replace("C", cbVal.ToString());
+                                mathTxt = mathTxt.Replace("+-", "-");
                                 Debug.WriteLine(mathTxt);
                                 cell.Value = parser.Parse(mathTxt);
                             }
@@ -2846,6 +2809,17 @@ namespace UniversalPatcher
             {
                 LoggerBold(ex.Message);
             }
+        }
+
+        private void showHistogramToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmHistogram fh = new frmHistogram();
+            fh.Show();
+            CompareFile selectedFile = compareFiles[currentFile];
+            PcmFile PCM = selectedFile.pcm;
+            TableData td = selectedFile.tableInfos[0].td;
+            fh.SetupTable(PCM, td);
+
         }
     }
 }

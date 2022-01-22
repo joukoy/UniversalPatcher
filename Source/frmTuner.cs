@@ -426,7 +426,7 @@ namespace UniversalPatcher
                     Logger("Nothing to save");
                     return;
                 }
-                string fileName = SelectSaveFile("BIN files (*.bin)|*.bin|ALL files(*.*)|*.*", PCM.FileName);
+                string fileName = SelectSaveFile(BinFilter, PCM.FileName);
                 if (fileName.Length == 0)
                     return;
 
@@ -1219,7 +1219,7 @@ namespace UniversalPatcher
         {
             try
             {
-                string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                string FileName = SelectSaveFile(CsvFilter);
                 if (FileName.Length == 0)
                     return;
                 Logger("Writing to file: " + Path.GetFileName(FileName), false);
@@ -1270,7 +1270,7 @@ namespace UniversalPatcher
             {
                 for (int i = 0; i < PCM.tableDatas.Count; i++)
                     PCM.tableDatas[i].addrInt = uint.MaxValue;
-                string fileName = SelectFile("Select CSV File", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                string fileName = SelectFile("Select CSV File", CsvFilter);
                 if (fileName.Length == 0)
                     return;
                 Logger("Loading file: " + fileName, false);
@@ -1399,7 +1399,7 @@ namespace UniversalPatcher
         {
             try
             {
-                string FileName = SelectFile("Select CSV File", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                string FileName = SelectFile("Select CSV File", CsvFilter);
                 if (FileName.Length == 0)
                     return;
 
@@ -1816,7 +1816,7 @@ namespace UniversalPatcher
         {
             try
             {
-                string fName = SelectSaveFile("CSV files (*.csv)|*.csv|ALL files|*.*");
+                string fName = SelectSaveFile(CsvFilter);
                 if (fName.Length == 0) return;
 
                 Logger("Generating CSV...");
@@ -1862,7 +1862,7 @@ namespace UniversalPatcher
 
                 LoggerBold("Supply CSV file in format: Category;Tablename;Size;OS1Address1;OS2Address2;...");
                 LoggerBold("OS versions in header, for example: Category;Tablename;Size;12587603;12582405;12587656;");
-                string fName = SelectFile("Select CSV file for XML generator", "CSV files (*.csv)|*.csv|ALL files|*.*");
+                string fName = SelectFile("Select CSV file for XML generator", CsvFilter);
                 if (fName.Length == 0) return;
                 Logger("Using file: " + PCM.tunerFile + " as template");
                 Logger("Reading file: " + fName, false);
@@ -1941,7 +1941,7 @@ namespace UniversalPatcher
             dataGridView1.EndEdit();
             string defName = Path.Combine(Application.StartupPath, "Tuner", PCM.OS + ".xml");
             //string defName = PCM.OS + ".xml";
-            string fName = SelectSaveFile("XML Files (*.xml)|*.xml|ALL Files (*.*)|*.*", defName);
+            string fName = SelectSaveFile(XmlFilter, defName);
             if (string.IsNullOrEmpty(fName))
                 return;
             PCM.SaveTableList(fName);
@@ -4469,7 +4469,7 @@ namespace UniversalPatcher
 
                 Logger("Done");
 
-                fileName = SelectSaveFile("BIN (*.bin)|*.bin|All(*.*)|*.*", "imported-file.bin");
+                fileName = SelectSaveFile(BinFilter, "imported-file.bin");
                 if (fileName.Length == 0)
                     return;
                 Logger("Saving to file: " + fileName, false);
@@ -4689,6 +4689,26 @@ namespace UniversalPatcher
                 LoggerBold(ex.Message);
             }
         }
+
+        private void ShowHistogram()
+        {
+            List<TableData> tds = GetSelectedTableTds();
+            if (tds == null || tds.Count == 0)
+                return;
+            frmHistogram fh = new frmHistogram();
+            fh.Show();
+            fh.SetupTable(PCM, tds[0]);
+        }
+        private void histogramToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowHistogram();
+        }
+
+        private void showHistogramToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowHistogram();
+        }
+
     }
 }
 

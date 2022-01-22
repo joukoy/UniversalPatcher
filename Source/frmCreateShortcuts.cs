@@ -49,7 +49,7 @@ namespace UniversalPatcher
                 if (chkTunerBasic.Checked)
                     CreateShortcut(dst, "Tuner-Basic", "basic tuner");
                 if (chkTunerAdvanced.Checked)
-                    CreateShortcut(dst, "Tuner-Advanced", "advanced patcher");
+                    CreateShortcut(dst, "Tuner-Advanced", "advanced tuner");
 
                 Logger(" [OK]");
                 this.Close();

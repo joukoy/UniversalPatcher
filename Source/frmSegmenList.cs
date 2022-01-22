@@ -81,7 +81,7 @@ namespace UniversalPatcher
 
         private void btnOpen_Click(object sender, EventArgs e)
         {
-            string FileName = SelectFile("Select XML file", "XML files (*.xml)|*.xml|All files (*.*)|*.*");
+            string FileName = SelectFile("Select XML file", XmlFilter);
             if (FileName.Length < 1)
                 return;
             PCM.LoadConfigFile(FileName);
@@ -183,7 +183,7 @@ namespace UniversalPatcher
             try
             {
                 if (fileName.Length == 0)
-                    fileName = SelectSaveFile("XML files (*.xml)|*.xml|All files (*.*)|*.*");
+                    fileName = SelectSaveFile(XmlFilter);
                 if (fileName.Length == 0)
                     return;
 

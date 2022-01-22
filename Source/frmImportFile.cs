@@ -472,7 +472,7 @@ namespace UniversalPatcher
                 else
                 {
                     string defName = Path.GetFileNameWithoutExtension(labelFileName.Text) + ".bin";
-                    outFileName = SelectSaveFile("BIN (*.bin)|*.bin|All(*.*)|*.*", defName);
+                    outFileName = SelectSaveFile(BinFilter, defName);
                     if (outFileName.Length == 0)
                         return;
                     Logger("Saving to file: " + outFileName);

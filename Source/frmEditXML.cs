@@ -379,7 +379,7 @@ namespace UniversalPatcher
                 else if (this.Text.ToLower().Contains("table seek"))
                 {
                     if (fName.Length == 0)
-                        fName = SelectSaveFile("XML (*.xml)|*.xml|All (*.*)|*.*","new-tableseek.xml");
+                        fName = SelectSaveFile(XmlFilter,"new-tableseek.xml");
                     if (fName.Length == 0)
                         return;
                     Logger("Saving file " + fName, false);
@@ -395,7 +395,7 @@ namespace UniversalPatcher
                 else if (this.Text.ToLower().Contains("segment seek"))
                 {
                     if (fName.Length == 0)
-                        fName = SelectSaveFile("XML (*.xml)|*.xml|All (*.*)|*.*", "new-segmentseek.xml");
+                        fName = SelectSaveFile(XmlFilter, "new-segmentseek.xml");
                     if (fName.Length == 0)
                         return;
                     Logger("Saving file " + fName, false);
@@ -461,7 +461,7 @@ namespace UniversalPatcher
 
         private void SaveCSV()
         {
-            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            string FileName = SelectSaveFile(CsvFilter);
             if (FileName.Length == 0)
                 return;
             Logger("Writing to file: " + Path.GetFileName(FileName), false);
@@ -503,7 +503,7 @@ namespace UniversalPatcher
             //06-07 is "extension", add *extension to tablename
             try
             {
-                string FileName = SelectFile("Select CSV file", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+                string FileName = SelectFile("Select CSV file", CsvFilter);
                 if (FileName.Length == 0)
                     return;
                 StreamReader sr = new StreamReader(FileName);
@@ -604,7 +604,7 @@ namespace UniversalPatcher
 
         private void ImportOBD2()
         {
-            string FileName = SelectFile("Select CSV file", "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            string FileName = SelectFile("Select CSV file", CsvFilter);
             if (FileName.Length == 0)
                 return;
             Logger("Importing file: " + FileName, false);
@@ -740,7 +740,7 @@ namespace UniversalPatcher
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string fName = SelectSaveFile("XML (*.xml)|*.xml|All (*.*)|*.*",fileName);
+            string fName = SelectSaveFile(XmlFilter,fileName);
             if (fName.Length == 0)
                 return;
             SaveThis(fName);

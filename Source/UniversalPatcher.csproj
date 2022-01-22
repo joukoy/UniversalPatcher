@@ -110,6 +110,12 @@
     <Compile Include="frmDB.Designer.cs">
       <DependentUpon>frmDB.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmHistogram.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmHistogram.Designer.cs">
+      <DependentUpon>frmHistogram.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmImportFile.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -358,6 +364,7 @@
       <DependentUpon>frmPatcher.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers.cs" />
+    <Compile Include="Histogram.cs" />
     <Compile Include="IntelHex.cs" />
     <Compile Include="ListViewSorter.cs" />
     <Compile Include="PcmPlatform.cs" />
@@ -412,6 +419,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmDB.resx">
       <DependentUpon>frmDB.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmHistogram.resx">
+      <DependentUpon>frmHistogram.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmImportFile.resx">
       <DependentUpon>frmImportFile.cs</DependentUpon>

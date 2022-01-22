@@ -535,7 +535,7 @@ namespace UniversalPatcher
 
         private void btnSavelist_Click(object sender, EventArgs e)
         {
-            string FileName = SelectSaveFile("CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+            string FileName = SelectSaveFile(CsvFilter);
             if (FileName.Length == 0)
                 return;
             Logger("Writing to file: " + Path.GetFileName(FileName), false);
