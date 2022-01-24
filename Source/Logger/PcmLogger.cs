@@ -8,11 +8,25 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using System.IO.Ports;
 
 namespace UniversalPatcher
 {
     public static class PcmLogger
     {
+        public static List<PidConfig> PidProfile { get; set; }
+        private static SerialPort Port;
+        public static OBDXProDevice obdx;
+        public static AvtDevice avt;
+        private static List<Slot> slotpids;
+        private static StreamWriter logwriter;
+        private static string logseparator = ";";
+        public static DeviceType Devicetype { get; set; }
+        /// <summary>
+        /// Queue of messages received from the VPW bus.
+        /// </summary>
+        public static Queue<byte[]> queue = new Queue<byte[]>();
+
         public class PidConfig
         {
             public PidConfig()
@@ -161,12 +175,11 @@ namespace UniversalPatcher
             public List<int> PidIndex { get; set; }
         }
 
-        public static List<PidConfig> PidProfile { get; set; }
-        public static OBDXProDevice obdx;
-        private static bool stop = true;
-        private static List<Slot> slotpids;
-        private static StreamWriter logwriter;
-        private static string logseparator = ";";
+        public enum DeviceType
+        {
+            Obdx = 1,
+            Avt = 2
+        }
 
         public static bool CreateLog(string path)
         {
@@ -303,12 +316,92 @@ namespace UniversalPatcher
             return retVal;
         }
 
+        private static bool SendMessage(byte[] message)
+        {
+            try
+            {
+                switch (Devicetype)
+                {
+                    case DeviceType.Obdx:
+                        obdx.SendData(message);
+                        break;
+
+                    case DeviceType.Avt:
+                        avt.SendData(message);
+                        break;
+
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, PcmLogger line " + line + ": " + ex.Message);
+            }
+
+            return false;
+        }
+
+        private static Response<byte[]> SendPacket(byte[] message, bool checkResponse = true)
+        {
+            try
+            {
+                switch (Devicetype)
+                {
+                    case DeviceType.Obdx:
+                        return obdx.SendDVIPacket(message, checkResponse);
+                    case DeviceType.Avt:
+                        return avt.SendAVTPacket(message);
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, PcmLogger line " + line + ": " + ex.Message);
+            }
+
+            return Response.Create(ResponseStatus.Error, new byte[1]);
+        }
+
+        public static byte[] ReadData()
+        {
+            try
+            {
+                switch (Devicetype)
+                {
+                    case DeviceType.Obdx:
+                        return obdx.ReadData();
+                    case DeviceType.Avt:
+                        return avt.ReadData();
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, PcmLogger line " + line + ": " + ex.Message);
+            }
+
+            return null;
+        }
+
         public static bool SetBusQuiet()
         {
             try
             {
                 byte[] quietMsg = { Priority.Physical0, DeviceId.Pcm, DeviceId.Tool, Mode.SilenceBus };
-                Response<byte[]> m = obdx.SendDVIPacket(quietMsg);
+                Response<byte[]> m = SendPacket(quietMsg);
                 if (m.Status == ResponseStatus.Success)
                 {
                     Debug.WriteLine("Bus set to quiet");
@@ -334,7 +427,7 @@ namespace UniversalPatcher
             try
             {
                 byte[] Msg = { Priority.Physical0, DeviceId.Pcm, DeviceId.Tool, 0x01, 0x01 };
-                Response<byte[]> m = obdx.SendDVIPacket(Msg);
+                Response<byte[]> m = SendPacket(Msg);
                 if (m.Status == ResponseStatus.Success)
                 {
                     Debug.WriteLine("Mode set to 1");
@@ -376,14 +469,14 @@ namespace UniversalPatcher
         private static bool SetHighSpeedMode()
         {
             byte[] msg = new byte[] { Priority.Physical0, DeviceId.Broadcast, DeviceId.Tool, Mode.HighSpeedPrepare };
-            Response<byte[]> resp = obdx.SendDVIPacket(msg);
+            Response<byte[]> resp = SendPacket(msg);
             if (resp.Status != ResponseStatus.Success)
             {
                 LoggerBold(resp.Status.ToString());
                 return false;
             }
             msg = new byte[] { Priority.Physical0, DeviceId.Pcm, DeviceId.Tool, Mode.HighSpeed };
-            resp = obdx.SendDVIPacket(msg);
+            resp = SendPacket(msg);
             if (resp.Status != ResponseStatus.Success)
             {
                 LoggerBold(resp.Status.ToString());
@@ -393,12 +486,53 @@ namespace UniversalPatcher
             return true;
         }
 
-        public static void StartLogging(OBDXProDevice obdxdev, bool set4x)
+        public static void InitalizeDevice(string comport, string devtype)
         {
             try
             {
-                stop = false;
-                obdx = obdxdev;
+                Devicetype = (DeviceType)Enum.Parse(typeof(DeviceType), devtype);
+                if (Port == null)
+                    Port = new SerialPort();
+                Port.BaudRate = 115200;
+                if (Port.IsOpen)
+                    Port.Close();
+                Port.PortName = comport;
+                switch (Devicetype)
+                {
+                    case DeviceType.Obdx:
+                        obdx = new OBDXProDevice(Port);
+                        if (!obdx.Initialize())
+                        {
+                            if (Port.IsOpen)
+                                Port.Close();
+                            obdx = null;
+                            return;
+                        }
+                        break;
+                    case DeviceType.Avt:
+                        avt = new AvtDevice(Port);
+                        if (!avt.Initialize())
+                        {
+                            if (Port.IsOpen)
+                                Port.Close();
+                            avt = null;
+                            return;
+                        }
+                        break;
+
+                }
+                Port.ReceivedBytesThreshold = 1;
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+        }
+
+        public static void StartLogging(bool set4x)
+        {
+            try
+            {
                 if (!SetBusQuiet())
                     return;
                 if (!SetMode1())
@@ -407,14 +541,22 @@ namespace UniversalPatcher
                 {
                     if (set4x)
                     {
-                        obdx.Set4xSpeed();
+                        switch (Devicetype)
+                        {
+                            case DeviceType.Obdx:
+                                obdx.Set4xSpeed();
+                                break;
+                            case DeviceType.Avt:
+                                avt.Set4xSpeed();
+                                break;
+                        }
                     }
                 }
                 List<byte[]> commands = CreatePidSetupMessages();
                 for (int c = 0; c < commands.Count; c++)
                 {
                     Debug.WriteLine("Setup pids:");
-                    Response<byte[]> resp = obdx.SendDVIPacket(commands[c]);
+                    Response<byte[]> resp = SendPacket(commands[c]);
                     if (resp.Status != ResponseStatus.Success)
                     {
                         LoggerBold(resp.Status.ToString());
@@ -425,14 +567,23 @@ namespace UniversalPatcher
                 for (int c = 0; c < commands.Count; c++)
                 {
                     Debug.WriteLine("Start message: " + BitConverter.ToString(commands[c]));
-                    Response<byte[]> resp = obdx.SendDVIPacket(commands[c]);
+                    Response<byte[]> resp = SendPacket(commands[c]);
                     if (resp.Status != ResponseStatus.Success)
                     {
                         LoggerBold(resp.Status.ToString());
                         return;
                     }
                 }
-                obdx.StartLogging();                
+                switch (Devicetype)
+                {
+                    case DeviceType.Obdx:
+                        obdx.StartLogging();
+                        break;
+                    case DeviceType.Avt:
+                        avt.StartLogging();
+                        break;
+                }
+
             }
             catch (Exception ex)
             {
@@ -449,8 +600,15 @@ namespace UniversalPatcher
         {
             try
             {
-                stop = true;
-                obdx.StopLogging();
+                switch (Devicetype)
+                {
+                    case DeviceType.Obdx:
+                        obdx.StopLogging();
+                        break;
+                    case DeviceType.Avt:
+                        avt.StopLogging();
+                        break;
+                }
                 if (logwriter.BaseStream != null)
                     logwriter.Close();
             }
@@ -467,7 +625,7 @@ namespace UniversalPatcher
             //presentMsg[presentMsg.Length - 1] = obdx.CalcChecksum(presentMsg);
             //obdx.SendData(presentMsg);
             Debug.WriteLine("Tester present");
-            obdx.SendDVIPacket(presentMsg, false);
+            SendPacket(presentMsg, false);
             return true;
         }
 

@@ -269,5 +269,8 @@
     <Setting Name="LoggerLogSeparator" Type="System.String" Scope="User">
       <Value Profile="(Default)">;</Value>
     </Setting>
+    <Setting Name="LoggerDeviceType" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

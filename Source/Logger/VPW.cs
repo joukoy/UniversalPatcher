@@ -7,6 +7,27 @@ using System.Threading.Tasks;
 namespace UniversalPatcher
 {
     /// <summary>
+    /// VPW can operate at two speeds. It is generally in standard (low speed) mode, but can switch to 4X (high speed).
+    /// </summary>
+    /// <remarks>
+    /// High speed is better whend reading the entire contents of the PCM.
+    /// Transitions to high speed must be negotiated, and any module that doesn't
+    /// want to switch can force the bus to stay at standard speed. Annoying.
+    /// </remarks>
+    public enum VpwSpeed
+    {
+        /// <summary>
+        /// 10.4 kpbs. This is the standard VPW speed.
+        /// </summary>
+        Standard,
+
+        /// <summary>
+        /// 41.2 kbps. This is the high VPW speed.
+        /// </summary>
+        FourX,
+    }
+
+    /// <summary>
     /// It is tempting to make this an enum, but if we need to change
     /// the Tool ID at run-time that will become a problem.
     /// </summary>

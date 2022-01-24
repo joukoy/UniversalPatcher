@@ -19,26 +19,6 @@ namespace UniversalPatcher
     /// 
     public class OBDXProDevice
     {
-        /// <summary>
-        /// VPW can operate at two speeds. It is generally in standard (low speed) mode, but can switch to 4X (high speed).
-        /// </summary>
-        /// <remarks>
-        /// High speed is better whend reading the entire contents of the PCM.
-        /// Transitions to high speed must be negotiated, and any module that doesn't
-        /// want to switch can force the bus to stay at standard speed. Annoying.
-        /// </remarks>
-        public enum VpwSpeed
-        {
-            /// <summary>
-            /// 10.4 kpbs. This is the standard VPW speed.
-            /// </summary>
-            Standard,
-
-            /// <summary>
-            /// 41.2 kbps. This is the high VPW speed.
-            /// </summary>
-            FourX,
-        }
 
         public const string DeviceType = "OBDX Pro";
         public bool TimeStampsEnabled = false;
@@ -46,10 +26,6 @@ namespace UniversalPatcher
         private SerialPort Port;
         private int Timeout;
 
-        /// <summary>
-        /// Queue of messages received from the VPW bus.
-        /// </summary>
-        private Queue<byte[]> queue = new Queue<byte[]>();
 
         // This default is probably excessive but it should always be
         // overwritten by a call to SetTimeout before use anyhow.
@@ -177,42 +153,6 @@ namespace UniversalPatcher
             return true;
         }
 
-        public void Set4xSpeed()
-        {
-            if (SetVpwSpeedInternal(VpwSpeed.FourX))
-            {
-                Logger("Speed set to 4x");
-            }
-            else
-            {
-                Logger("Unable to set speed 4x");
-            }
-
-        }
-
-        public void StartLogging()
-        {
-            Port.DataReceived += Port_DataReceived;
-        }
-        public void StopLogging()
-        {
-            Port.DataReceived -= Port_DataReceived;
-            if (Port.IsOpen)
-                Port.Close();
-        }
-
-
-        private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            /*
-            int bufLen = Port.BytesToRead;
-            byte[] buf = new byte[bufLen];
-            Port.Read(buf, 0, bufLen);
-            Enqueue(buf);
-            Debug.WriteLine("Read: " + BitConverter.ToString(buf));
-            */
-            ReadDVIPacket();
-        }
 
         /// <summary>
         /// This will process incoming messages for up to 250ms looking for a message
@@ -262,36 +202,21 @@ namespace UniversalPatcher
             return false;
         }
 
-        public byte[] ReadData_Old()
-        {
-            if (this.queue.Count == 0)
-                return null;
-            List<byte> retVal = new List<byte>();
-            while(this.queue.Count > 0)
-            {
-                lock (this.queue)
-                {
-                    retVal.AddRange(this.queue.Dequeue());
-                }
-            }
-            return retVal.ToArray();
-        }
-
         public byte[] ReadData()
         {
-            if (this.queue.Count == 0)
+            if (PcmLogger.queue.Count == 0)
                 return null;
-            lock (this.queue)
+            lock (PcmLogger.queue)
             {
-                return this.queue.Dequeue();
+                return PcmLogger.queue.Dequeue();
             }
         }
 
         protected void Enqueue(byte[] message)
         {
-            lock (this.queue)
+            lock (PcmLogger.queue)
             {
-                this.queue.Enqueue(message);
+                PcmLogger.queue.Enqueue(message);
             }
         }
 
@@ -946,6 +871,37 @@ namespace UniversalPatcher
             }
             Debug.WriteLine("Fault reported from scantool: " + ErrVal);
         }
+
+        public void Set4xSpeed()
+        {
+            if (SetVpwSpeedInternal(VpwSpeed.FourX))
+            {
+                Logger("Speed set to 4x");
+            }
+            else
+            {
+                Logger("Unable to set speed 4x");
+            }
+
+        }
+
+        public void StartLogging()
+        {
+            Port.DataReceived += Port_DataReceived;
+        }
+        public void StopLogging()
+        {
+            Port.DataReceived -= Port_DataReceived;
+            if (Port.IsOpen)
+                Port.Close();
+        }
+
+
+        private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            ReadDVIPacket();
+        }
+
 
     }
 }

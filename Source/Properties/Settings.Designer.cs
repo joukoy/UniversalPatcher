@@ -1086,5 +1086,17 @@ namespace UniversalPatcher.Properties {
                 this["LoggerLogSeparator"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LoggerDeviceType {
+            get {
+                return ((string)(this["LoggerDeviceType"]));
+            }
+            set {
+                this["LoggerDeviceType"] = value;
+            }
+        }
     }
 }

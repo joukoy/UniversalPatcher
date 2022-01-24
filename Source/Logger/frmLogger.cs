@@ -25,7 +25,6 @@ namespace UniversalPatcher
             InitializeComponent();
         }
 
-        OBDXProDevice obdx;
         private BindingSource bsLogProfile = new BindingSource();
         //private BindingSource bsPidNames = new BindingSource();
         private bool running = false;
@@ -75,6 +74,10 @@ namespace UniversalPatcher
                 txtLogFolder.Text = Path.Combine(Application.StartupPath, "Logger", "Log");
             }
             txtLogSeparator.Text = Properties.Settings.Default.LoggerLogSeparator;
+
+            comboDeviceType.DataSource = Enum.GetValues(typeof(PcmLogger.DeviceType));
+            if (string.IsNullOrEmpty(Properties.Settings.Default.LoggerDeviceType))
+                comboDeviceType.Text = Properties.Settings.Default.LoggerDeviceType;
 
             bsLogProfile.DataSource = PcmLogger.PidProfile;
             dataGridLogProfile.DataSource = bsLogProfile;
@@ -202,39 +205,9 @@ namespace UniversalPatcher
 
         private void frmLogger_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (serialPort1.IsOpen)
-                serialPort1.Close();
+            PcmLogger.StopLogging();
         }
 
-        private void InitalizeDevice()
-        {
-            try
-            {
-                Properties.Settings.Default.LoggerPort = comboSerialPort.Text;
-                Properties.Settings.Default.Save();
-                if (serialPort1.IsOpen)
-                    serialPort1.Close();
-                serialPort1.PortName = comboSerialPort.Text;
-                obdx = new OBDXProDevice(serialPort1);
-                if (!obdx.Initialize())
-                {
-                    if (serialPort1.IsOpen)
-                        serialPort1.Close();
-                    obdx = null;
-                    return;
-                }
-                serialPort1.ReceivedBytesThreshold = 1;
-                this.FormClosing += frmLogger_FormClosing;
-            }
-            catch (Exception ex)
-            {
-                Logger(ex.Message);
-            }
-        }
-        private void btnOpenPort_Click(object sender, EventArgs e)
-        {
-            InitalizeDevice();
-        }
 
         private void timerGetData_Tick(object sender, EventArgs e)
         {
@@ -243,7 +216,7 @@ namespace UniversalPatcher
                 bool first = true;
                 while (true)
                 {
-                    byte[] data = obdx.ReadData();
+                    byte[] data = PcmLogger.ReadData();
                     if (data == null)
                         return;
                     //Logger(BitConverter.ToString(data));
@@ -401,26 +374,30 @@ namespace UniversalPatcher
                     return;
                 }
                 btnStartStop.Text = "Stop";
+                Properties.Settings.Default.LoggerPort = comboSerialPort.Text;
+                Properties.Settings.Default.LoggerDeviceType = comboDeviceType.Text;
+
                 if (txtLogFolder.Text.Length > 0 )
                 {
                     Properties.Settings.Default.LoggerLogFolder = txtLogFolder.Text;
                     Properties.Settings.Default.LoggerLogSeparator = txtLogSeparator.Text;
-                    Properties.Settings.Default.Save();
                     logfilename = Path.Combine(txtLogFolder.Text, "log-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm") + ".csv");
                     if (chkWriteLog.Checked)
                     {
                         PcmLogger.CreateLog(logfilename);
                     }
                 }
+                Properties.Settings.Default.Save();
                 receivedPids = new List<int>();
                 readvalues = new List<ReadValue>();
                 SetupLogDataGrid();
                 Properties.Settings.Default.LoggerLastProfile = profileFile;
                 Properties.Settings.Default.Save();
-                InitalizeDevice();
-                PcmLogger.StartLogging(obdx, chk4XMode.Checked);
+                PcmLogger.InitalizeDevice(comboSerialPort.Text,comboDeviceType.Text);
+                PcmLogger.StartLogging(chk4XMode.Checked);
                 timerPresent.Enabled = true;
                 timerGetData.Enabled = true;
+                this.FormClosing += frmLogger_FormClosing;
             }
             running = !running;
         }

@@ -30,7 +30,6 @@ namespace UniversalPatcher
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.timerGetData = new System.Windows.Forms.Timer(this.components);
             this.timerPresent = new System.Windows.Forms.Timer(this.components);
             this.comboSerialPort = new System.Windows.Forms.ComboBox();
@@ -59,6 +58,8 @@ namespace UniversalPatcher
             this.label3 = new System.Windows.Forms.Label();
             this.txtLogSeparator = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.comboDeviceType = new System.Windows.Forms.ComboBox();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).BeginInit();
@@ -77,11 +78,6 @@ namespace UniversalPatcher
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // serialPort1
-            // 
-            this.serialPort1.BaudRate = 115200;
-            this.serialPort1.PortName = "COM9";
-            // 
             // timerGetData
             // 
             this.timerGetData.Tick += new System.EventHandler(this.timerGetData_Tick);
@@ -94,7 +90,7 @@ namespace UniversalPatcher
             // comboSerialPort
             // 
             this.comboSerialPort.FormattingEnabled = true;
-            this.comboSerialPort.Location = new System.Drawing.Point(45, 122);
+            this.comboSerialPort.Location = new System.Drawing.Point(88, 122);
             this.comboSerialPort.Name = "comboSerialPort";
             this.comboSerialPort.Size = new System.Drawing.Size(87, 21);
             this.comboSerialPort.TabIndex = 2;
@@ -113,6 +109,8 @@ namespace UniversalPatcher
             // 
             // tabLog
             // 
+            this.tabLog.Controls.Add(this.comboDeviceType);
+            this.tabLog.Controls.Add(this.label4);
             this.tabLog.Controls.Add(this.groupBox1);
             this.tabLog.Controls.Add(this.dataGridLogData);
             this.tabLog.Controls.Add(this.chk4XMode);
@@ -183,7 +181,7 @@ namespace UniversalPatcher
             this.chk4XMode.AutoSize = true;
             this.chk4XMode.Checked = true;
             this.chk4XMode.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chk4XMode.Location = new System.Drawing.Point(161, 125);
+            this.chk4XMode.Location = new System.Drawing.Point(232, 124);
             this.chk4XMode.Name = "chk4XMode";
             this.chk4XMode.Size = new System.Drawing.Size(67, 17);
             this.chk4XMode.TabIndex = 7;
@@ -371,6 +369,23 @@ namespace UniversalPatcher
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Logfile";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(10, 156);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(68, 13);
+            this.label4.TabIndex = 16;
+            this.label4.Text = "Device Type";
+            // 
+            // comboDeviceType
+            // 
+            this.comboDeviceType.FormattingEnabled = true;
+            this.comboDeviceType.Location = new System.Drawing.Point(88, 153);
+            this.comboDeviceType.Name = "comboDeviceType";
+            this.comboDeviceType.Size = new System.Drawing.Size(87, 21);
+            this.comboDeviceType.TabIndex = 17;
+            // 
             // frmLogger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -406,8 +421,6 @@ namespace UniversalPatcher
         }
 
         #endregion
-
-        private System.IO.Ports.SerialPort serialPort1;
         private System.Windows.Forms.Timer timerGetData;
         private System.Windows.Forms.Timer timerPresent;
         private System.Windows.Forms.ComboBox comboSerialPort;
@@ -436,6 +449,8 @@ namespace UniversalPatcher
         private System.Windows.Forms.TextBox txtLogSeparator;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.ComboBox comboDeviceType;
+        private System.Windows.Forms.Label label4;
     }
 }
 

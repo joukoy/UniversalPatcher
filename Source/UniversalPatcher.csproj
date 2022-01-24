@@ -367,6 +367,7 @@
     <Compile Include="Histogram.cs" />
     <Compile Include="IntelHex.cs" />
     <Compile Include="ListViewSorter.cs" />
+    <Compile Include="Logger\AvtDevice.cs" />
     <Compile Include="Logger\frmLogger.cs">
       <SubType>Form</SubType>
     </Compile>

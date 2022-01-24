@@ -372,3 +372,6 @@
 
 0.20.0
 - Added basic logging support, currently only standard pids with OBDX Pro supported
+
+0.20.1
+- Logger: Initial support for AVT devices
