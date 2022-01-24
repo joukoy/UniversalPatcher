@@ -369,3 +369,6 @@
 0.19.08
 - Histogram: Show tablename
 - Histogram: Show selected cell info
+
+0.20.0
+- Added basic logging support, currently only standard pids with OBDX Pro supported

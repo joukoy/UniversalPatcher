@@ -291,6 +291,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
+            this.btnLogger = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1644,6 +1645,7 @@
             // 
             // tabApply
             // 
+            this.tabApply.Controls.Add(this.btnLogger);
             this.tabApply.Controls.Add(this.btnTuner);
             this.tabApply.Controls.Add(this.btnFixFilesChecksum);
             this.tabApply.Controls.Add(this.btnSwapSegments);
@@ -3230,6 +3232,16 @@
             this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
             // 
+            // btnLogger
+            // 
+            this.btnLogger.Location = new System.Drawing.Point(349, 37);
+            this.btnLogger.Name = "btnLogger";
+            this.btnLogger.Size = new System.Drawing.Size(106, 24);
+            this.btnLogger.TabIndex = 190;
+            this.btnLogger.Text = "Logger";
+            this.btnLogger.UseVisualStyleBackColor = true;
+            this.btnLogger.Click += new System.EventHandler(this.btnLogger_Click);
+            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3601,5 +3613,6 @@
         private System.Windows.Forms.GroupBox groupBoxSortMode;
         private System.Windows.Forms.RadioButton radioSortMove;
         private System.Windows.Forms.RadioButton radioSortCopy;
+        private System.Windows.Forms.Button btnLogger;
     }
 }

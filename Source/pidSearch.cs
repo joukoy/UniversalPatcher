@@ -8,10 +8,14 @@ using static Upatcher;
 using System.Windows.Forms;
 using System.Diagnostics;
 
-namespace UniversalPatcher.Properties
+namespace UniversalPatcher
 {
     public class PidSearch
     {
+        public PidSearch()
+        {
+
+        }
         public PidSearch(PcmFile PCM1)
         {
             PCM = PCM1;
@@ -69,13 +73,6 @@ namespace UniversalPatcher.Properties
             throw new Exception("PID search not implemented for this file type");
         }
 
-        public class PidInfo
-        {
-            public uint PidNumber { get; set; }
-            public string PidName { get; set; }
-            public string ConversionFactor { get; set; }
-        }
-
         public class PID
         {
             public string PidNumber { get; set; }
@@ -92,7 +89,6 @@ namespace UniversalPatcher.Properties
         public uint startAddress { get; set; }
         private PcmFile PCM;
         public List<PID> pidList;
-        public List<PidInfo> pidNameList;
 
         private void SearchPids(uint step, bool diesel)
         {
@@ -207,19 +203,6 @@ namespace UniversalPatcher.Properties
             }
             return uint.MaxValue;
         }
-
-        public void LoadPidList()
-        {
-            string FileName = Path.Combine(Application.StartupPath, "XML", "pidlist.xml");
-            if (!File.Exists(FileName))
-                return;
-            pidNameList = new List<PidInfo>();
-            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<PidInfo>));
-            System.IO.StreamReader file = new System.IO.StreamReader(FileName);
-            pidNameList = (List<PidInfo>)reader.Deserialize(file);
-            file.Close();
-        }
-
     }
 
     public class PidSearchConfig

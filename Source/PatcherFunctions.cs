@@ -271,6 +271,13 @@ public class Upatcher
         }
     }
 
+    public class PidInfo
+    {
+        public uint PidNumber { get; set; }
+        public string PidName { get; set; }
+        public string ConversionFactor { get; set; }
+    }
+
     public struct SearchedAddress
     {
         public uint Addr;
@@ -322,6 +329,7 @@ public class Upatcher
     //public static List<TableData> XdfElements;
     public static List<Units> unitList;
     public static List<RichTextBox> LogReceivers;
+    public static List<PidInfo> pidNameList;
 
     public static string tableSearchFile;
     //public static string tableSeekFile = "";
@@ -404,6 +412,10 @@ public class Upatcher
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Tuner"));
         if (!Directory.Exists(Path.Combine(Application.StartupPath, "Histogram")))
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Histogram"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Log")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Log"));
 
         if (UniversalPatcher.Properties.Settings.Default.LastXMLfolder == "")
             UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
@@ -2216,7 +2228,7 @@ public class Upatcher
     {
         try
         {
-            frmpatcher.Logger(LogText, NewLine);
+            //frmpatcher.Logger(LogText, NewLine);
             for (int l = LogReceivers.Count - 1; l >= 0;  l--)
             {
                 if (LogReceivers[l].IsDisposed)
@@ -2239,7 +2251,7 @@ public class Upatcher
     {
         try
         {
-            frmpatcher.LoggerBold(LogText, NewLine);
+            //frmpatcher.LoggerBold(LogText, NewLine);
             for (int l = LogReceivers.Count - 1; l >= 0; l--)
             {
                 if (LogReceivers[l].IsDisposed)
@@ -2287,4 +2299,16 @@ public class Upatcher
         }
         return results.ToList();
     }
+    public static void LoadPidList()
+    {
+        string FileName = Path.Combine(Application.StartupPath, "XML", "pidlist.xml");
+        if (!File.Exists(FileName))
+            return;
+        pidNameList = new List<PidInfo>();
+        System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<PidInfo>));
+        System.IO.StreamReader file = new System.IO.StreamReader(FileName);
+        pidNameList = (List<PidInfo>)reader.Deserialize(file);
+        file.Close();
+    }
+
 }

@@ -367,6 +367,16 @@
     <Compile Include="Histogram.cs" />
     <Compile Include="IntelHex.cs" />
     <Compile Include="ListViewSorter.cs" />
+    <Compile Include="Logger\frmLogger.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Logger\frmLogger.Designer.cs">
+      <DependentUpon>frmLogger.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Logger\PcmLogger.cs" />
+    <Compile Include="Logger\OBDXProDevice.cs" />
+    <Compile Include="Logger\Response.cs" />
+    <Compile Include="Logger\VPW.cs" />
     <Compile Include="PcmPlatform.cs" />
     <Compile Include="RootFinding.cs" />
     <Compile Include="SavingMath.cs" />
@@ -542,6 +552,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmVisualSegments.resx">
       <DependentUpon>frmVisualSegments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Logger\frmLogger.resx">
+      <DependentUpon>frmLogger.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

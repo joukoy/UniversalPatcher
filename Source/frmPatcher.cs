@@ -67,7 +67,7 @@ namespace UniversalPatcher
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
             basefile = new PcmFile();
-            
+            LogReceivers.Add(txtResult);
             if (Properties.Settings.Default.MainWindowPersistence)
             {
                 rememberWindowSizeToolStripMenuItem.Checked = true;
@@ -4445,6 +4445,12 @@ namespace UniversalPatcher
                 LoggerBold("Sort files " + line + ": " + ex.Message);
             }
 
+        }
+
+        private void btnLogger_Click(object sender, EventArgs e)
+        {
+            frmLogger logger = new frmLogger();
+            logger.Show();
         }
     }
 }

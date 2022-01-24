@@ -52,6 +52,10 @@ namespace UniversalPatcher
                         PcmFile pcm = new PcmFile();
                         Application.Run(new FrmTuner(pcm));
                     }
+                    else if (args[1].ToLower().Contains("logger"))
+                    {
+                        Application.Run(new frmLogger());
+                    }
                     else
                     {
                         Application.Run(new FrmPatcher());

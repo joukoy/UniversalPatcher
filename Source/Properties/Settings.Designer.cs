@@ -1038,5 +1038,53 @@ namespace UniversalPatcher.Properties {
                 this["FLashParams"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LoggerPort {
+            get {
+                return ((string)(this["LoggerPort"]));
+            }
+            set {
+                this["LoggerPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LoggerLastProfile {
+            get {
+                return ((string)(this["LoggerLastProfile"]));
+            }
+            set {
+                this["LoggerLastProfile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LoggerLogFolder {
+            get {
+                return ((string)(this["LoggerLogFolder"]));
+            }
+            set {
+                this["LoggerLogFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(";")]
+        public string LoggerLogSeparator {
+            get {
+                return ((string)(this["LoggerLogSeparator"]));
+            }
+            set {
+                this["LoggerLogSeparator"] = value;
+            }
+        }
     }
 }

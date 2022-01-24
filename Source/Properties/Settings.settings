@@ -257,5 +257,17 @@
     <Setting Name="FLashParams" Type="System.String" Scope="User">
       <Value Profile="(Default)">$file</Value>
     </Setting>
+    <Setting Name="LoggerPort" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="LoggerLastProfile" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="LoggerLogFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="LoggerLogSeparator" Type="System.String" Scope="User">
+      <Value Profile="(Default)">;</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
