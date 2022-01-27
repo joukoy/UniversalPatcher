@@ -53,11 +53,15 @@ namespace UniversalPatcher
             this.numSplashTime = new System.Windows.Forms.NumericUpDown();
             this.chkXdfUseTableName = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.txtFlashApp = new System.Windows.Forms.TextBox();
-            this.btnBrowseApp = new System.Windows.Forms.Button();
-            this.label7 = new System.Windows.Forms.Label();
             this.txtFlashParams = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.btnBrowseApp = new System.Windows.Forms.Button();
+            this.txtFlashApp = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.chkUseIntegratedLogger = new System.Windows.Forms.CheckBox();
+            this.txtExternalLogger = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerTableMinEquivalency)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numKeypressWait)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTunerMinEqOther)).BeginInit();
@@ -67,6 +71,7 @@ namespace UniversalPatcher
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numSplashTime)).BeginInit();
             this.groupBox5.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
             // numTunerTableMinEquivalency
@@ -93,7 +98,7 @@ namespace UniversalPatcher
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(225, 486);
+            this.btnOK.Location = new System.Drawing.Point(528, 310);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 2;
@@ -271,7 +276,7 @@ namespace UniversalPatcher
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(13, 347);
+            this.label5.Location = new System.Drawing.Point(320, 237);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(135, 13);
             this.label5.TabIndex = 16;
@@ -279,7 +284,7 @@ namespace UniversalPatcher
             // 
             // numSplashTime
             // 
-            this.numSplashTime.Location = new System.Drawing.Point(161, 345);
+            this.numSplashTime.Location = new System.Drawing.Point(468, 235);
             this.numSplashTime.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -306,28 +311,28 @@ namespace UniversalPatcher
             this.groupBox5.Controls.Add(this.btnBrowseApp);
             this.groupBox5.Controls.Add(this.txtFlashApp);
             this.groupBox5.Controls.Add(this.label6);
-            this.groupBox5.Location = new System.Drawing.Point(11, 375);
+            this.groupBox5.Location = new System.Drawing.Point(318, 12);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(285, 105);
             this.groupBox5.TabIndex = 19;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Flash program";
             // 
-            // label6
+            // txtFlashParams
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 18);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(62, 13);
-            this.label6.TabIndex = 0;
-            this.label6.Text = "Application:";
+            this.txtFlashParams.Location = new System.Drawing.Point(5, 75);
+            this.txtFlashParams.Name = "txtFlashParams";
+            this.txtFlashParams.Size = new System.Drawing.Size(246, 20);
+            this.txtFlashParams.TabIndex = 4;
             // 
-            // txtFlashApp
+            // label7
             // 
-            this.txtFlashApp.Location = new System.Drawing.Point(6, 36);
-            this.txtFlashApp.Name = "txtFlashApp";
-            this.txtFlashApp.Size = new System.Drawing.Size(246, 20);
-            this.txtFlashApp.TabIndex = 1;
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(12, 59);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(63, 13);
+            this.label7.TabIndex = 3;
+            this.label7.Text = "Parameters:";
             // 
             // btnBrowseApp
             // 
@@ -339,28 +344,68 @@ namespace UniversalPatcher
             this.btnBrowseApp.UseVisualStyleBackColor = true;
             this.btnBrowseApp.Click += new System.EventHandler(this.btnBrowseApp_Click);
             // 
-            // label7
+            // txtFlashApp
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(12, 59);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(63, 13);
-            this.label7.TabIndex = 3;
-            this.label7.Text = "Parameters:";
+            this.txtFlashApp.Location = new System.Drawing.Point(6, 36);
+            this.txtFlashApp.Name = "txtFlashApp";
+            this.txtFlashApp.Size = new System.Drawing.Size(246, 20);
+            this.txtFlashApp.TabIndex = 1;
             // 
-            // txtFlashParams
+            // label6
             // 
-            this.txtFlashParams.Location = new System.Drawing.Point(5, 75);
-            this.txtFlashParams.Name = "txtFlashParams";
-            this.txtFlashParams.Size = new System.Drawing.Size(246, 20);
-            this.txtFlashParams.TabIndex = 4;
-            this.txtFlashParams.Text = "$file";
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(12, 18);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(62, 13);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "Application:";
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.label8);
+            this.groupBox6.Controls.Add(this.txtExternalLogger);
+            this.groupBox6.Controls.Add(this.chkUseIntegratedLogger);
+            this.groupBox6.Location = new System.Drawing.Point(318, 124);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(284, 92);
+            this.groupBox6.TabIndex = 20;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Logging program";
+            // 
+            // chkUseIntegratedLogger
+            // 
+            this.chkUseIntegratedLogger.AutoSize = true;
+            this.chkUseIntegratedLogger.Checked = true;
+            this.chkUseIntegratedLogger.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkUseIntegratedLogger.Location = new System.Drawing.Point(6, 19);
+            this.chkUseIntegratedLogger.Name = "chkUseIntegratedLogger";
+            this.chkUseIntegratedLogger.Size = new System.Drawing.Size(157, 17);
+            this.chkUseIntegratedLogger.TabIndex = 0;
+            this.chkUseIntegratedLogger.Text = "Use integrated PCM Logger";
+            this.chkUseIntegratedLogger.UseVisualStyleBackColor = true;
+            // 
+            // txtExternalLogger
+            // 
+            this.txtExternalLogger.Location = new System.Drawing.Point(5, 56);
+            this.txtExternalLogger.Name = "txtExternalLogger";
+            this.txtExternalLogger.Size = new System.Drawing.Size(244, 20);
+            this.txtExternalLogger.TabIndex = 1;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(9, 40);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(103, 13);
+            this.label8.TabIndex = 2;
+            this.label8.Text = "External Application:";
             // 
             // frmMoreSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(307, 521);
+            this.ClientSize = new System.Drawing.Size(610, 345);
+            this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.chkXdfUseTableName);
             this.Controls.Add(this.numSplashTime);
@@ -392,6 +437,8 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.numSplashTime)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -427,5 +474,9 @@ namespace UniversalPatcher
         private System.Windows.Forms.Button btnBrowseApp;
         private System.Windows.Forms.TextBox txtFlashApp;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox txtExternalLogger;
+        private System.Windows.Forms.CheckBox chkUseIntegratedLogger;
     }
 }

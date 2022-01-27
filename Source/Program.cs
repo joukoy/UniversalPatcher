@@ -59,12 +59,16 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        Application.Run(new FrmPatcher());
+                        //Application.Run(new FrmPatcher());
+                        PcmFile pcm = new PcmFile();
+                        Application.Run(new FrmTuner(pcm));
                     }
                 }
                 else
                 {
-                    Application.Run(new FrmPatcher());
+                    PcmFile pcm = new PcmFile();
+                    Application.Run(new FrmTuner(pcm));
+                    //Application.Run(new FrmPatcher());
                 }
 
             }

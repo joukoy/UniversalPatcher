@@ -138,8 +138,7 @@ namespace UniversalPatcher
 
         private void btnLogger_Click(object sender, EventArgs e)
         {
-            MainForm phl = new MainForm();
-            phl.Show();
+            StartLogger();
         }
     }
 }

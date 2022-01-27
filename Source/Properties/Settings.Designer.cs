@@ -887,7 +887,7 @@ namespace UniversalPatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int WorkingMode {
             get {
                 return ((int)(this["WorkingMode"]));
@@ -1017,7 +1017,7 @@ namespace UniversalPatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("PCMHammer\\pcmhammer.exe")]
         public string FlashApp {
             get {
                 return ((string)(this["FlashApp"]));
@@ -1029,7 +1029,7 @@ namespace UniversalPatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("$file")]
+        [global::System.Configuration.DefaultSettingValueAttribute("--writecalibration $file")]
         public string FLashParams {
             get {
                 return ((string)(this["FLashParams"]));
@@ -1041,61 +1041,25 @@ namespace UniversalPatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LoggerPort {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool LoggerUseIntegrated {
             get {
-                return ((string)(this["LoggerPort"]));
+                return ((bool)(this["LoggerUseIntegrated"]));
             }
             set {
-                this["LoggerPort"] = value;
+                this["LoggerUseIntegrated"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LoggerLastProfile {
+        public string LoggerExternalApp {
             get {
-                return ((string)(this["LoggerLastProfile"]));
+                return ((string)(this["LoggerExternalApp"]));
             }
             set {
-                this["LoggerLastProfile"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LoggerLogFolder {
-            get {
-                return ((string)(this["LoggerLogFolder"]));
-            }
-            set {
-                this["LoggerLogFolder"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(";")]
-        public string LoggerLogSeparator {
-            get {
-                return ((string)(this["LoggerLogSeparator"]));
-            }
-            set {
-                this["LoggerLogSeparator"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LoggerDeviceType {
-            get {
-                return ((string)(this["LoggerDeviceType"]));
-            }
-            set {
-                this["LoggerDeviceType"] = value;
+                this["LoggerExternalApp"] = value;
             }
         }
     }

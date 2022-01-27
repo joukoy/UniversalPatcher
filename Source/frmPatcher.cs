@@ -21,7 +21,7 @@ using System.Xml.Linq;
 using System.Globalization;
 using System.Xml;
 using static Helpers;
-using PcmHacking;
+//using PcmHacking;
 
 namespace UniversalPatcher
 {
@@ -4450,8 +4450,12 @@ namespace UniversalPatcher
 
         private void btnLogger_Click(object sender, EventArgs e)
         {
-            MainForm phl = new MainForm();
-            phl.Show();
+            StartLogger();
+        }
+
+        private void btnStartFlashApp_Click(object sender, EventArgs e)
+        {
+            StartFlashApp(null,false);
         }
     }
 }

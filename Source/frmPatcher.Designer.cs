@@ -142,6 +142,7 @@
             this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tabFunction = new System.Windows.Forms.TabControl();
             this.tabApply = new System.Windows.Forms.TabPage();
+            this.btnLogger = new System.Windows.Forms.Button();
             this.btnTuner = new System.Windows.Forms.Button();
             this.btnFixFilesChecksum = new System.Windows.Forms.Button();
             this.btnSwapSegments = new System.Windows.Forms.Button();
@@ -291,7 +292,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
-            this.btnLogger = new System.Windows.Forms.Button();
+            this.btnStartFlashApp = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -1645,6 +1646,7 @@
             // 
             // tabApply
             // 
+            this.tabApply.Controls.Add(this.btnStartFlashApp);
             this.tabApply.Controls.Add(this.btnLogger);
             this.tabApply.Controls.Add(this.btnTuner);
             this.tabApply.Controls.Add(this.btnFixFilesChecksum);
@@ -1660,6 +1662,16 @@
             this.tabApply.TabIndex = 1;
             this.tabApply.Text = "Modify bin";
             this.tabApply.UseVisualStyleBackColor = true;
+            // 
+            // btnLogger
+            // 
+            this.btnLogger.Location = new System.Drawing.Point(349, 37);
+            this.btnLogger.Name = "btnLogger";
+            this.btnLogger.Size = new System.Drawing.Size(106, 24);
+            this.btnLogger.TabIndex = 190;
+            this.btnLogger.Text = "Logger";
+            this.btnLogger.UseVisualStyleBackColor = true;
+            this.btnLogger.Click += new System.EventHandler(this.btnLogger_Click);
             // 
             // btnTuner
             // 
@@ -3232,15 +3244,15 @@
             this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
             // 
-            // btnLogger
+            // btnStartFlashApp
             // 
-            this.btnLogger.Location = new System.Drawing.Point(349, 37);
-            this.btnLogger.Name = "btnLogger";
-            this.btnLogger.Size = new System.Drawing.Size(106, 24);
-            this.btnLogger.TabIndex = 190;
-            this.btnLogger.Text = "Logger";
-            this.btnLogger.UseVisualStyleBackColor = true;
-            this.btnLogger.Click += new System.EventHandler(this.btnLogger_Click);
+            this.btnStartFlashApp.Location = new System.Drawing.Point(462, 6);
+            this.btnStartFlashApp.Name = "btnStartFlashApp";
+            this.btnStartFlashApp.Size = new System.Drawing.Size(106, 24);
+            this.btnStartFlashApp.TabIndex = 191;
+            this.btnStartFlashApp.Text = "Flasher";
+            this.btnStartFlashApp.UseVisualStyleBackColor = true;
+            this.btnStartFlashApp.Click += new System.EventHandler(this.btnStartFlashApp_Click);
             // 
             // FrmPatcher
             // 
@@ -3614,5 +3626,6 @@
         private System.Windows.Forms.RadioButton radioSortMove;
         private System.Windows.Forms.RadioButton radioSortCopy;
         private System.Windows.Forms.Button btnLogger;
+        private System.Windows.Forms.Button btnStartFlashApp;
     }
 }

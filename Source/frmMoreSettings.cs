@@ -34,6 +34,8 @@ namespace UniversalPatcher
             Properties.Settings.Default.xdfImportUseTableName = chkXdfUseTableName.Checked;
             Properties.Settings.Default.FlashApp = txtFlashApp.Text;
             Properties.Settings.Default.FLashParams = txtFlashParams.Text;
+            Properties.Settings.Default.LoggerUseIntegrated = chkUseIntegratedLogger.Checked;
+            Properties.Settings.Default.LoggerExternalApp = txtExternalLogger.Text;
             //Properties.Settings.Default.startPatcher = chkStartPatcher.Checked;
             Properties.Settings.Default.Save();
             this.Close();
@@ -55,6 +57,7 @@ namespace UniversalPatcher
             chkXdfUseTableName.Checked = Properties.Settings.Default.xdfImportUseTableName;
             txtFlashApp.Text = Properties.Settings.Default.FlashApp;
             txtFlashParams.Text = Properties.Settings.Default.FLashParams;
+            txtExternalLogger.Text = Properties.Settings.Default.LoggerExternalApp;
             //chkStartPatcher.Checked = Properties.Settings.Default.startPatcher;
         }
 

@@ -13,7 +13,7 @@ using System.Xml.Serialization;
 using static UniversalPatcher.ExtensionMethods;
 using static Upatcher;
 using static Helpers;
-using PcmHacking;
+//using PcmHacking;
 
 namespace UniversalPatcher
 {
@@ -60,7 +60,7 @@ namespace UniversalPatcher
         {
             
             selectedCompareBin = "";
-            SelectWorkingMode();
+            SetWorkingMode();
             disableConfigAutoloadToolStripMenuItem.Checked = Properties.Settings.Default.disableTunerAutoloadSettings;
             chkShowCategorySubfolder.Checked = Properties.Settings.Default.TableExplorerUseCategorySubfolder;
             chkAutoMulti1d.Checked = Properties.Settings.Default.TunerAutomulti1d;
@@ -92,6 +92,11 @@ namespace UniversalPatcher
                     splitContainerListMode.SplitterDistance = Properties.Settings.Default.TunerListModeTreeWidth;
 
             }
+
+            if (frmpatcher == null)
+                patcherToolStripMenuItem.Visible = true;
+            else
+                patcherToolStripMenuItem.Visible = false;
 
             comboFilterBy.Items.Clear();
             TableData tdTmp = new TableData();
@@ -3141,7 +3146,7 @@ namespace UniversalPatcher
             GenerateTablePatch(true);
         }
 
-        private void SelectWorkingMode()
+        private void SetWorkingMode()
         {
             int workingMode = Properties.Settings.Default.WorkingMode;
             if (workingMode == 0)   //Tourist mode
@@ -4660,35 +4665,7 @@ namespace UniversalPatcher
 
         private void btnFlash_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (Properties.Settings.Default.FlashApp.Length == 0)
-                {
-                    Logger("No flash application configured");
-                    return;
-                }
-                if (PCM.BufModified())
-                {
-                    DialogResult res = MessageBox.Show("File modified.\n\rSave before flashing?", "Save changes?", MessageBoxButtons.YesNoCancel);
-                    if (res == DialogResult.Cancel)
-                        return;
-                    if (res == DialogResult.Yes)
-                    {
-                        Logger("Saving to file: " + PCM.FileName);
-                        PCM.SaveBin(PCM.FileName);
-                        Logger("File saved");
-                    }
-                }
-                ProcessStartInfo psi = new ProcessStartInfo();
-                psi.FileName = Properties.Settings.Default.FlashApp;
-                psi.Arguments = Properties.Settings.Default.FLashParams.Replace("$file", "\"" + PCM.FileName +"\"");
-                Logger("Executing command: \"" + psi.FileName + " " + psi.Arguments);
-                Process.Start(psi);
-            }
-            catch (Exception ex)
-            {
-                LoggerBold(ex.Message);
-            }
+            StartFlashApp(PCM, true);
         }
 
         private void ShowHistogram()
@@ -4712,9 +4689,45 @@ namespace UniversalPatcher
 
         private void loggerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MainForm phl = new MainForm();
-            phl.Show();
+            StartLogger();
+        }
 
+        private void readWritePCMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            StartFlashApp(null, false);
+        }
+
+        private void patcherToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            frmpatcher = new FrmPatcher();
+            frmpatcher.Show();
+        }
+
+        private void touristToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.WorkingMode = 0;
+            Properties.Settings.Default.Save();
+            SetWorkingMode();
+        }
+
+        private void basicToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.WorkingMode = 1;
+            Properties.Settings.Default.Save();
+            SetWorkingMode();
+        }
+
+        private void advancedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.WorkingMode = 2;
+            Properties.Settings.Default.Save();
+            SetWorkingMode();
+        }
+
+        private void createProgramShortcutsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmCreateShortcuts fcs = new frmCreateShortcuts();
+            fcs.Show();
         }
     }
 }

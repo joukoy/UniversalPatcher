@@ -2311,4 +2311,72 @@ public class Upatcher
         file.Close();
     }
 
+    public static void StartLogger()
+    {
+        try
+        {
+            if (UniversalPatcher.Properties.Settings.Default.LoggerUseIntegrated)
+            {
+                PcmHacking.MainForm phl = new PcmHacking.MainForm();
+                phl.Show();
+            }
+            else if (string.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerExternalApp))
+            {
+                ProcessStartInfo psi = new ProcessStartInfo();
+                psi.FileName = UniversalPatcher.Properties.Settings.Default.LoggerExternalApp;
+                Logger("Executing command: \"" + psi.FileName);
+                Process.Start(psi);
+            }
+            else
+            {
+                LoggerBold("Integrated logger disabled, external logger not defined");
+            }
+        }
+        catch (Exception ex)
+        {
+            LoggerBold(ex.Message);
+        }
+    }
+
+    public static void StartFlashApp(PcmFile PCM, bool WriteCalibration)
+    {
+        try
+        {
+            if (UniversalPatcher.Properties.Settings.Default.FlashApp.Length == 0)
+            {
+                Logger("No flash application configured");
+                return;
+            }
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.FileName = UniversalPatcher.Properties.Settings.Default.FlashApp;
+            if (WriteCalibration)
+            {
+                if (PCM == null || !File.Exists(PCM.FileName))
+                {
+                    LoggerBold("No file loaded");
+                    return;
+                }
+                psi.Arguments = UniversalPatcher.Properties.Settings.Default.FLashParams.Replace("$file", "\"" + PCM.FileName + "\"");
+                if (PCM.BufModified())
+                {
+                    DialogResult res = MessageBox.Show("File modified.\n\rSave before flashing?", "Save changes?", MessageBoxButtons.YesNoCancel);
+                    if (res == DialogResult.Cancel)
+                        return;
+                    if (res == DialogResult.Yes)
+                    {
+                        Logger("Saving to file: " + PCM.FileName);
+                        PCM.SaveBin(PCM.FileName);
+                        Logger("File saved");
+                    }
+                }
+            }
+            Logger("Executing command: \"" + psi.FileName + " " + psi.Arguments);
+            Process.Start(psi);
+        }
+        catch (Exception ex)
+        {
+            LoggerBold(ex.Message);
+        }
+
+    }
 }
