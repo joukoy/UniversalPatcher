@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using static Upatcher;
+using PcmHacking;
 
 namespace UniversalPatcher
 {
@@ -133,6 +134,12 @@ namespace UniversalPatcher
         private void radioAdvanced_CheckedChanged(object sender, EventArgs e)
         {
             setWorkingMode();
+        }
+
+        private void btnLogger_Click(object sender, EventArgs e)
+        {
+            MainForm phl = new MainForm();
+            phl.Show();
         }
     }
 }

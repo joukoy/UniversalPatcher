@@ -2228,7 +2228,7 @@ public class Upatcher
     {
         try
         {
-            //frmpatcher.Logger(LogText, NewLine);
+            Debug.WriteLine(LogText);
             for (int l = LogReceivers.Count - 1; l >= 0;  l--)
             {
                 if (LogReceivers[l].IsDisposed)
@@ -2251,7 +2251,7 @@ public class Upatcher
     {
         try
         {
-            //frmpatcher.LoggerBold(LogText, NewLine);
+            Debug.WriteLine(LogText);
             for (int l = LogReceivers.Count - 1; l >= 0; l--)
             {
                 if (LogReceivers[l].IsDisposed)

@@ -13,6 +13,7 @@ using System.Xml.Serialization;
 using static UniversalPatcher.ExtensionMethods;
 using static Upatcher;
 using static Helpers;
+using PcmHacking;
 
 namespace UniversalPatcher
 {
@@ -4709,6 +4710,12 @@ namespace UniversalPatcher
             ShowHistogram();
         }
 
+        private void loggerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MainForm phl = new MainForm();
+            phl.Show();
+
+        }
     }
 }
 

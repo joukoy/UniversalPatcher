@@ -37,15 +37,16 @@
             this.radioAdvanced = new System.Windows.Forms.RadioButton();
             this.radioBasic = new System.Windows.Forms.RadioButton();
             this.radioTourist = new System.Windows.Forms.RadioButton();
+            this.btnLogger = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupMode.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnPatcher
             // 
-            this.btnPatcher.Location = new System.Drawing.Point(12, 139);
+            this.btnPatcher.Location = new System.Drawing.Point(12, 122);
             this.btnPatcher.Name = "btnPatcher";
-            this.btnPatcher.Size = new System.Drawing.Size(96, 40);
+            this.btnPatcher.Size = new System.Drawing.Size(96, 23);
             this.btnPatcher.TabIndex = 1;
             this.btnPatcher.Text = "Patcher";
             this.btnPatcher.UseVisualStyleBackColor = true;
@@ -64,7 +65,7 @@
             // 
             this.btnTuner.Location = new System.Drawing.Point(12, 93);
             this.btnTuner.Name = "btnTuner";
-            this.btnTuner.Size = new System.Drawing.Size(96, 40);
+            this.btnTuner.Size = new System.Drawing.Size(96, 23);
             this.btnTuner.TabIndex = 3;
             this.btnTuner.Text = "Tuner";
             this.btnTuner.UseVisualStyleBackColor = true;
@@ -74,7 +75,7 @@
             // 
             this.btnAbout.Location = new System.Drawing.Point(12, 185);
             this.btnAbout.Name = "btnAbout";
-            this.btnAbout.Size = new System.Drawing.Size(96, 40);
+            this.btnAbout.Size = new System.Drawing.Size(96, 23);
             this.btnAbout.TabIndex = 5;
             this.btnAbout.Text = "About";
             this.btnAbout.UseVisualStyleBackColor = true;
@@ -129,11 +130,22 @@
             this.radioTourist.UseVisualStyleBackColor = true;
             this.radioTourist.CheckedChanged += new System.EventHandler(this.radioTourist_CheckedChanged);
             // 
+            // btnLogger
+            // 
+            this.btnLogger.Location = new System.Drawing.Point(13, 154);
+            this.btnLogger.Name = "btnLogger";
+            this.btnLogger.Size = new System.Drawing.Size(96, 23);
+            this.btnLogger.TabIndex = 7;
+            this.btnLogger.Text = "Logger";
+            this.btnLogger.UseVisualStyleBackColor = true;
+            this.btnLogger.Click += new System.EventHandler(this.btnLogger_Click);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(443, 233);
+            this.Controls.Add(this.btnLogger);
             this.Controls.Add(this.groupMode);
             this.Controls.Add(this.btnAbout);
             this.Controls.Add(this.btnTuner);
@@ -159,5 +171,6 @@
         private System.Windows.Forms.RadioButton radioAdvanced;
         private System.Windows.Forms.RadioButton radioBasic;
         private System.Windows.Forms.RadioButton radioTourist;
+        private System.Windows.Forms.Button btnLogger;
     }
 }

@@ -30,8 +30,8 @@ namespace UniversalPatcher
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.radioDesktop = new System.Windows.Forms.RadioButton();
             this.radioCustom = new System.Windows.Forms.RadioButton();
+            this.radioDesktop = new System.Windows.Forms.RadioButton();
             this.chkPatcherTourist = new System.Windows.Forms.CheckBox();
             this.chkPatcherBasic = new System.Windows.Forms.CheckBox();
             this.chkPatcherAdvanced = new System.Windows.Forms.CheckBox();
@@ -39,6 +39,7 @@ namespace UniversalPatcher
             this.chkTunerBasic = new System.Windows.Forms.CheckBox();
             this.chkTunerAdvanced = new System.Windows.Forms.CheckBox();
             this.btnCreate = new System.Windows.Forms.Button();
+            this.chkLogger = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -55,18 +56,6 @@ namespace UniversalPatcher
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Location";
             // 
-            // radioDesktop
-            // 
-            this.radioDesktop.AutoSize = true;
-            this.radioDesktop.Checked = true;
-            this.radioDesktop.Location = new System.Drawing.Point(15, 16);
-            this.radioDesktop.Name = "radioDesktop";
-            this.radioDesktop.Size = new System.Drawing.Size(65, 17);
-            this.radioDesktop.TabIndex = 0;
-            this.radioDesktop.TabStop = true;
-            this.radioDesktop.Text = "Desktop";
-            this.radioDesktop.UseVisualStyleBackColor = true;
-            // 
             // radioCustom
             // 
             this.radioCustom.AutoSize = true;
@@ -78,6 +67,18 @@ namespace UniversalPatcher
             this.radioCustom.Text = "Other...";
             this.radioCustom.UseVisualStyleBackColor = true;
             this.radioCustom.CheckedChanged += new System.EventHandler(this.radioCustom_CheckedChanged);
+            // 
+            // radioDesktop
+            // 
+            this.radioDesktop.AutoSize = true;
+            this.radioDesktop.Checked = true;
+            this.radioDesktop.Location = new System.Drawing.Point(15, 16);
+            this.radioDesktop.Name = "radioDesktop";
+            this.radioDesktop.Size = new System.Drawing.Size(65, 17);
+            this.radioDesktop.TabIndex = 0;
+            this.radioDesktop.TabStop = true;
+            this.radioDesktop.Text = "Desktop";
+            this.radioDesktop.UseVisualStyleBackColor = true;
             // 
             // chkPatcherTourist
             // 
@@ -149,11 +150,22 @@ namespace UniversalPatcher
             this.btnCreate.UseVisualStyleBackColor = true;
             this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
             // 
+            // chkLogger
+            // 
+            this.chkLogger.AutoSize = true;
+            this.chkLogger.Location = new System.Drawing.Point(283, 80);
+            this.chkLogger.Name = "chkLogger";
+            this.chkLogger.Size = new System.Drawing.Size(59, 17);
+            this.chkLogger.TabIndex = 8;
+            this.chkLogger.Text = "Logger";
+            this.chkLogger.UseVisualStyleBackColor = true;
+            // 
             // frmCreateShortcuts
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(367, 156);
+            this.Controls.Add(this.chkLogger);
             this.Controls.Add(this.btnCreate);
             this.Controls.Add(this.chkTunerAdvanced);
             this.Controls.Add(this.chkTunerBasic);
@@ -183,5 +195,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.CheckBox chkTunerBasic;
         private System.Windows.Forms.CheckBox chkTunerAdvanced;
         private System.Windows.Forms.Button btnCreate;
+        private System.Windows.Forms.CheckBox chkLogger;
     }
 }

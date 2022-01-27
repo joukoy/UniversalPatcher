@@ -75,6 +75,9 @@
   <PropertyGroup>
     <ApplicationIcon>UniversalPatcher.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>UniversalPatcher.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -367,17 +370,110 @@
     <Compile Include="Histogram.cs" />
     <Compile Include="IntelHex.cs" />
     <Compile Include="ListViewSorter.cs" />
-    <Compile Include="Logger\AvtDevice.cs" />
-    <Compile Include="Logger\frmLogger.cs">
+    <Compile Include="PcmHacking\PcmLib\Devices\AllProDeviceImplementation.cs" />
+    <Compile Include="PcmHacking\PcmLib\Devices\AvtDevice.cs" />
+    <Compile Include="PcmHacking\PcmLib\Devices\Device.cs" />
+    <Compile Include="PcmHacking\PcmLib\Devices\ElmDevice.cs" />
+    <Compile Include="PcmHacking\PcmLib\Devices\ElmDeviceImplementation.cs" />
+    <Compile Include="PcmHacking\PcmLib\Devices\MockDevice.cs" />
+    <Compile Include="PcmHacking\PcmLib\Devices\OBDXProDevice.cs" />
+    <Compile Include="PcmHacking\PcmLib\Devices\ScanToolDeviceImplementation.cs" />
+    <Compile Include="PcmHacking\PcmLib\Devices\SerialDevice.cs" />
+    <Compile Include="PcmHacking\PcmLib\DpidConfiguration.cs" />
+    <Compile Include="PcmHacking\PcmLib\LogColumn.cs" />
+    <Compile Include="PcmHacking\PcmLib\LogFileWriter.cs" />
+    <Compile Include="PcmHacking\PcmLib\Logger.cs" />
+    <Compile Include="PcmHacking\PcmLib\LogProfile.cs" />
+    <Compile Include="PcmHacking\PcmLib\LogProfileReader.cs" />
+    <Compile Include="PcmHacking\PcmLib\LogProfileWriter.cs" />
+    <Compile Include="PcmHacking\PcmLib\LogRowParser.cs" />
+    <Compile Include="PcmHacking\PcmLib\MathValueProcessor.cs" />
+    <Compile Include="PcmHacking\PcmLib\Messages\BlockId.cs" />
+    <Compile Include="PcmHacking\PcmLib\Messages\Message.cs" />
+    <Compile Include="PcmHacking\PcmLib\Messages\Protocol.cs" />
+    <Compile Include="PcmHacking\PcmLib\Messages\Protocol.Kernel.cs" />
+    <Compile Include="PcmHacking\PcmLib\Messages\Protocol.Logging.cs" />
+    <Compile Include="PcmHacking\PcmLib\Messages\Protocol.Misc.cs" />
+    <Compile Include="PcmHacking\PcmLib\Messages\Protocol.Properties.cs" />
+    <Compile Include="PcmHacking\PcmLib\Messages\Protocol.ReadWrite.cs" />
+    <Compile Include="PcmHacking\PcmLib\Messages\Protocol.Security.cs" />
+    <Compile Include="PcmHacking\PcmLib\Messages\Protocol.Speed.cs" />
+    <Compile Include="PcmHacking\PcmLib\Messages\Protocol.Utility.cs" />
+    <Compile Include="PcmHacking\PcmLib\Messages\VPW.cs" />
+    <Compile Include="PcmHacking\PcmLib\Misc\AwayMode.cs" />
+    <Compile Include="PcmHacking\PcmLib\Misc\Crc.cs" />
+    <Compile Include="PcmHacking\PcmLib\Misc\Exceptions.cs" />
+    <Compile Include="PcmHacking\PcmLib\Misc\FileValidator.cs" />
+    <Compile Include="PcmHacking\PcmLib\Misc\FlashChip.cs" />
+    <Compile Include="PcmHacking\PcmLib\Misc\HttpServer.cs" />
+    <Compile Include="PcmHacking\PcmLib\Misc\ILogger.cs" />
+    <Compile Include="PcmHacking\PcmLib\Misc\KeyAlgorithm.cs" />
+    <Compile Include="PcmHacking\PcmLib\Misc\MockPcm.cs" />
+    <Compile Include="PcmHacking\PcmLib\Misc\PcmInfo.cs" />
+    <Compile Include="PcmHacking\PcmLib\Misc\Query.cs" />
+    <Compile Include="PcmHacking\PcmLib\Misc\Response.cs" />
+    <Compile Include="PcmHacking\PcmLib\Misc\ToolPresentNotifier.cs" />
+    <Compile Include="PcmHacking\PcmLib\Misc\Utility.cs" />
+    <Compile Include="PcmHacking\PcmLib\Parameter.cs" />
+    <Compile Include="PcmHacking\PcmLib\ParameterDatabase.cs" />
+    <Compile Include="PcmHacking\PcmLib\Ports\IPort.cs" />
+    <Compile Include="PcmHacking\PcmLib\Ports\MockAvt852.cs" />
+    <Compile Include="PcmHacking\PcmLib\Ports\MockPort.cs" />
+    <Compile Include="PcmHacking\PcmLib\Ports\StandardPort.cs" />
+    <Compile Include="PcmHacking\PcmLib\UnsignedHexValue.cs" />
+    <Compile Include="PcmHacking\PcmLib\Vehicle.cs" />
+    <Compile Include="PcmHacking\PcmLib\Vehicle.Kernel.cs" />
+    <Compile Include="PcmHacking\PcmLib\Vehicle.Logging.cs" />
+    <Compile Include="PcmHacking\PcmLib\Vehicle.Properties.cs" />
+    <Compile Include="PcmHacking\PcmLib\Vehicle.TestKernel.cs" />
+    <Compile Include="PcmHacking\Properties\Settings.Designer.cs" />
+    <Compile Include="PcmHacking\Properties\Settings1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="PcmHacking\PcmLogger\DeviceConfiguration.cs" />
+    <Compile Include="PcmHacking\PcmLogger\DeviceFactory.cs" />
+    <Compile Include="PcmHacking\PcmLogger\DialogBoxes\DevicePicker.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Logger\frmLogger.Designer.cs">
-      <DependentUpon>frmLogger.cs</DependentUpon>
+    <Compile Include="PcmHacking\PcmLogger\DialogBoxes\DevicePicker.Designer.cs">
+      <DependentUpon>DevicePicker.cs</DependentUpon>
     </Compile>
-    <Compile Include="Logger\PcmLogger.cs" />
-    <Compile Include="Logger\OBDXProDevice.cs" />
-    <Compile Include="Logger\Response.cs" />
-    <Compile Include="Logger\VPW.cs" />
+    <Compile Include="PcmHacking\PcmLogger\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PcmHacking\PcmLogger\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PcmHacking\PcmLogger\MainForm.LoggingThread.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PcmHacking\PcmLogger\MainForm.LogProfile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PcmHacking\PcmLogger\MainForm.ParameterGrid.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PcmHacking\PcmLogger\MainForm.ProfileList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PcmHacking\PcmLogger\MainFormBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PcmHacking\PcmLogger\MainFormBase.designer.cs">
+      <DependentUpon>MainFormBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PcmHacking\PcmLogger\PathDisplayAdapter.cs" />
+    <Compile Include="PcmHacking\PcmLogger\PortDiscovery.cs" />
+    <Compile Include="PcmHacking\PcmLogger\Program.cs" />
+    <Compile Include="PcmHacking\PcmLogger\Properties\Resources.Designer.cs" />
+    <Compile Include="PcmHacking\PcmLogger\Properties\Settings.Designer.cs" />
+    <Compile Include="PcmHacking\PcmLogger\Properties\Settings1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="PcmPlatform.cs" />
     <Compile Include="RootFinding.cs" />
     <Compile Include="SavingMath.cs" />
@@ -554,9 +650,16 @@
     <EmbeddedResource Include="frmVisualSegments.resx">
       <DependentUpon>frmVisualSegments.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Logger\frmLogger.resx">
-      <DependentUpon>frmLogger.cs</DependentUpon>
+    <EmbeddedResource Include="PcmHacking\PcmLogger\DialogBoxes\DevicePicker.resx">
+      <DependentUpon>DevicePicker.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="PcmHacking\PcmLogger\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PcmHacking\PcmLogger\MainFormBase.resx">
+      <DependentUpon>MainFormBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PcmHacking\PcmLogger\Properties\Resources.resx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -571,6 +674,31 @@
       <DependentUpon>frmSearchTables.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="PcmHacking\Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="PcmHacking\PcmLogger\3358.RamParameters.LogProfile" />
+    <None Include="PcmHacking\PcmLogger\App.config" />
+    <None Include="PcmHacking\PcmLogger\Basics.LogProfile" />
+    <None Include="PcmHacking\PcmLogger\Example1.xml.profile" />
+    <None Include="PcmHacking\PcmLogger\Example2.xml.profile" />
+    <None Include="PcmHacking\PcmLogger\Example3.xml.profile" />
+    <None Include="PcmHacking\PcmLogger\Failed.json" />
+    <None Include="PcmHacking\PcmLogger\FuelTrims.LogProfile" />
+    <None Include="PcmHacking\PcmLogger\General.json.profile" />
+    <None Include="PcmHacking\PcmLogger\General.xml.profile" />
+    <None Include="PcmHacking\PcmLogger\Idle.json.profile" />
+    <None Include="PcmHacking\PcmLogger\Idle.xml.profile" />
+    <None Include="PcmHacking\PcmLogger\IdleAir.xml.profile" />
+    <None Include="PcmHacking\PcmLogger\IdleDfco.xml.profile" />
+    <None Include="PcmHacking\PcmLogger\IdlePID.xml.profile" />
+    <None Include="PcmHacking\PcmLogger\IdleTrim.xml.profile" />
+    <None Include="PcmHacking\PcmLogger\Knock.xml.profile" />
+    <None Include="PcmHacking\PcmLogger\Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -618,6 +746,11 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="PcmHacking\PcmLogger\Parameters.12593358.xml" />
+    <Content Include="PcmHacking\PcmLogger\Parameters.DidNotWork.xml" />
+    <Content Include="PcmHacking\PcmLogger\Parameters.Math.xml" />
+    <Content Include="PcmHacking\PcmLogger\Parameters.RAM.xml" />
+    <Content Include="PcmHacking\PcmLogger\Parameters.Standard.xml" />
     <Content Include="UniversalPatcher.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

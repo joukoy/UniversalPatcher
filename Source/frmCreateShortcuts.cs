@@ -50,6 +50,8 @@ namespace UniversalPatcher
                     CreateShortcut(dst, "Tuner-Basic", "basic tuner");
                 if (chkTunerAdvanced.Checked)
                     CreateShortcut(dst, "Tuner-Advanced", "advanced tuner");
+                if (chkLogger.Checked)
+                    CreateShortcut(dst, "Logger", "logger");
 
                 Logger(" [OK]");
                 this.Close();

@@ -375,3 +375,6 @@
 
 0.20.1
 - Logger: Initial support for AVT devices
+
+0.20.2
+- Logger rewrite, modified copy of PCM Logger
