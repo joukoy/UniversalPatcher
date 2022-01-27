@@ -378,3 +378,8 @@
 
 0.20.2
 - Logger rewrite, modified copy of PCM Logger
+
+0.20.3
+- PCM Hammer included in ZIP package and setup as default Flash application
+- Tuner set as default window
+- User configurable logger application: internal pcmhammer or external app
