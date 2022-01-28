@@ -29,8 +29,8 @@ namespace PcmHacking
         private void InitializeComponent()
         {
             this.categories = new System.Windows.Forms.GroupBox();
-            this.serialRadioButton = new System.Windows.Forms.RadioButton();
             this.j2534RadioButton = new System.Windows.Forms.RadioButton();
+            this.serialRadioButton = new System.Windows.Forms.RadioButton();
             this.serialOptionsGroupBox = new System.Windows.Forms.GroupBox();
             this.serialDeviceList = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -42,15 +42,17 @@ namespace PcmHacking
             this.testButton = new System.Windows.Forms.Button();
             this.status = new System.Windows.Forms.Label();
             this.enable4xReadWriteCheckBox = new System.Windows.Forms.CheckBox();
-            this.optionsGroupBox = new System.Windows.Forms.GroupBox();
-            this.enablePassiveModeCheckBox = new System.Windows.Forms.CheckBox();
+            this.j2534OptionsGroupBox = new System.Windows.Forms.GroupBox();
+            this.j2534DeviceList = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.categories.SuspendLayout();
             this.serialOptionsGroupBox.SuspendLayout();
-            this.optionsGroupBox.SuspendLayout();
+            this.j2534OptionsGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // categories
             // 
+            this.categories.Controls.Add(this.j2534RadioButton);
             this.categories.Controls.Add(this.serialRadioButton);
             this.categories.Location = new System.Drawing.Point(12, 12);
             this.categories.Name = "categories";
@@ -58,6 +60,18 @@ namespace PcmHacking
             this.categories.TabIndex = 0;
             this.categories.TabStop = false;
             this.categories.Text = "Device &Category";
+            // 
+            // j2534RadioButton
+            // 
+            this.j2534RadioButton.AutoSize = true;
+            this.j2534RadioButton.Location = new System.Drawing.Point(138, 20);
+            this.j2534RadioButton.Name = "j2534RadioButton";
+            this.j2534RadioButton.Size = new System.Drawing.Size(91, 17);
+            this.j2534RadioButton.TabIndex = 2;
+            this.j2534RadioButton.TabStop = true;
+            this.j2534RadioButton.Text = "&J2534 Device";
+            this.j2534RadioButton.UseVisualStyleBackColor = true;
+            this.j2534RadioButton.CheckedChanged += new System.EventHandler(this.j2534RadioButton_CheckedChanged);
             // 
             // serialRadioButton
             // 
@@ -70,13 +84,6 @@ namespace PcmHacking
             this.serialRadioButton.Text = "&Serial Port Device";
             this.serialRadioButton.UseVisualStyleBackColor = true;
             this.serialRadioButton.CheckedChanged += new System.EventHandler(this.serialRadioButton_CheckedChanged);
-            // 
-            // j2534RadioButton
-            // 
-            this.j2534RadioButton.Location = new System.Drawing.Point(0, 0);
-            this.j2534RadioButton.Name = "j2534RadioButton";
-            this.j2534RadioButton.Size = new System.Drawing.Size(104, 24);
-            this.j2534RadioButton.TabIndex = 0;
             // 
             // serialOptionsGroupBox
             // 
@@ -132,7 +139,7 @@ namespace PcmHacking
             // autoDetectButton
             // 
             this.autoDetectButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.autoDetectButton.Location = new System.Drawing.Point(13, 286);
+            this.autoDetectButton.Location = new System.Drawing.Point(13, 308);
             this.autoDetectButton.Name = "autoDetectButton";
             this.autoDetectButton.Size = new System.Drawing.Size(94, 23);
             this.autoDetectButton.TabIndex = 3;
@@ -168,7 +175,7 @@ namespace PcmHacking
             // testButton
             // 
             this.testButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.testButton.Location = new System.Drawing.Point(201, 286);
+            this.testButton.Location = new System.Drawing.Point(201, 308);
             this.testButton.Name = "testButton";
             this.testButton.Size = new System.Drawing.Size(94, 23);
             this.testButton.TabIndex = 4;
@@ -187,7 +194,7 @@ namespace PcmHacking
             // enable4xReadWriteCheckBox
             // 
             this.enable4xReadWriteCheckBox.AutoSize = true;
-            this.enable4xReadWriteCheckBox.Location = new System.Drawing.Point(7, 19);
+            this.enable4xReadWriteCheckBox.Location = new System.Drawing.Point(19, 273);
             this.enable4xReadWriteCheckBox.Name = "enable4xReadWriteCheckBox";
             this.enable4xReadWriteCheckBox.Size = new System.Drawing.Size(148, 17);
             this.enable4xReadWriteCheckBox.TabIndex = 8;
@@ -195,37 +202,44 @@ namespace PcmHacking
             this.enable4xReadWriteCheckBox.UseVisualStyleBackColor = true;
             this.enable4xReadWriteCheckBox.CheckedChanged += new System.EventHandler(this.enable4xReadWriteCheckBox_CheckedChanged);
             // 
-            // optionsGroupBox
+            // j2534OptionsGroupBox
             // 
-            this.optionsGroupBox.Controls.Add(this.enablePassiveModeCheckBox);
-            this.optionsGroupBox.Controls.Add(this.enable4xReadWriteCheckBox);
-            this.optionsGroupBox.Location = new System.Drawing.Point(12, 196);
-            this.optionsGroupBox.Name = "optionsGroupBox";
-            this.optionsGroupBox.Size = new System.Drawing.Size(283, 72);
-            this.optionsGroupBox.TabIndex = 9;
-            this.optionsGroupBox.TabStop = false;
-            this.optionsGroupBox.Text = "Options";
+            this.j2534OptionsGroupBox.Controls.Add(this.j2534DeviceList);
+            this.j2534OptionsGroupBox.Controls.Add(this.label3);
+            this.j2534OptionsGroupBox.Location = new System.Drawing.Point(13, 196);
+            this.j2534OptionsGroupBox.Name = "j2534OptionsGroupBox";
+            this.j2534OptionsGroupBox.Size = new System.Drawing.Size(283, 72);
+            this.j2534OptionsGroupBox.TabIndex = 9;
+            this.j2534OptionsGroupBox.TabStop = false;
+            this.j2534OptionsGroupBox.Text = "J2534 Device Options";
             // 
-            // enablePassiveModeCheckBox
+            // j2534DeviceList
             // 
-            this.enablePassiveModeCheckBox.AutoSize = true;
-            this.enablePassiveModeCheckBox.Enabled = false;
-            this.enablePassiveModeCheckBox.Location = new System.Drawing.Point(7, 42);
-            this.enablePassiveModeCheckBox.Name = "enablePassiveModeCheckBox";
-            this.enablePassiveModeCheckBox.Size = new System.Drawing.Size(114, 17);
-            this.enablePassiveModeCheckBox.TabIndex = 9;
-            this.enablePassiveModeCheckBox.Text = "Use Passive mode";
-            this.enablePassiveModeCheckBox.UseVisualStyleBackColor = true;
-            this.enablePassiveModeCheckBox.Visible = false;
-            this.enablePassiveModeCheckBox.CheckedChanged += new System.EventHandler(this.enablePassiveModeCheckBox_CheckedChanged);
+            this.j2534DeviceList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.j2534DeviceList.FormattingEnabled = true;
+            this.j2534DeviceList.Location = new System.Drawing.Point(7, 37);
+            this.j2534DeviceList.Name = "j2534DeviceList";
+            this.j2534DeviceList.Size = new System.Drawing.Size(270, 21);
+            this.j2534DeviceList.TabIndex = 1;
+            this.j2534DeviceList.SelectedIndexChanged += new System.EventHandler(this.j2534DeviceList_SelectedIndexChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(8, 21);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(68, 13);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "&Device Type";
             // 
             // DevicePicker
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(407, 321);
-            this.Controls.Add(this.optionsGroupBox);
+            this.ClientSize = new System.Drawing.Size(407, 343);
+            this.Controls.Add(this.j2534OptionsGroupBox);
+            this.Controls.Add(this.enable4xReadWriteCheckBox);
             this.Controls.Add(this.status);
             this.Controls.Add(this.testButton);
             this.Controls.Add(this.cancelButton);
@@ -241,8 +255,8 @@ namespace PcmHacking
             this.categories.PerformLayout();
             this.serialOptionsGroupBox.ResumeLayout(false);
             this.serialOptionsGroupBox.PerformLayout();
-            this.optionsGroupBox.ResumeLayout(false);
-            this.optionsGroupBox.PerformLayout();
+            this.j2534OptionsGroupBox.ResumeLayout(false);
+            this.j2534OptionsGroupBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -264,7 +278,9 @@ namespace PcmHacking
         private System.Windows.Forms.Button testButton;
         private System.Windows.Forms.Label status;
         private System.Windows.Forms.CheckBox enable4xReadWriteCheckBox;
-        private System.Windows.Forms.GroupBox optionsGroupBox;
-        private System.Windows.Forms.CheckBox enablePassiveModeCheckBox;
+        private System.Windows.Forms.GroupBox j2534OptionsGroupBox;
+        private System.Windows.Forms.ComboBox j2534DeviceList;
+        private System.Windows.Forms.Label label3;
+        //private System.Windows.Forms.RadioButton j2534RadioButton;
     }
 }

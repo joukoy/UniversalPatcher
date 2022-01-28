@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+//using J2534;
+using J2534DotNet;
 
 namespace PcmHacking
 {
@@ -77,9 +79,15 @@ namespace PcmHacking
 
             this.FillSerialDeviceList();
 
-            if(this.serialDeviceList.Items.Count > 0)
+            this.FillJ2534DeviceList();
+
+            if (this.serialDeviceList.Items.Count > 0)
             {
                 this.serialRadioButton.Checked = true;
+            }
+            else if (this.j2534DeviceList.Items.Count > 0)
+            {
+                this.j2534RadioButton.Checked = true;
             }
             else
             {
@@ -97,9 +105,13 @@ namespace PcmHacking
                 x => x.ToString(),
                 DeviceConfiguration.Settings.SerialPortDeviceType);
 
+            SetDefault(
+                this.j2534DeviceList,
+                x => x.ToString(),
+                DeviceConfiguration.Settings.J2534DeviceType);
 
             this.Enable4xReadWrite = this.enable4xReadWriteCheckBox.Checked = DeviceConfiguration.Settings.Enable4xReadWrite;
-            this.EnablePassiveMode = this.enablePassiveModeCheckBox.Checked = DeviceConfiguration.Settings.EnablePassiveMode;
+            //this.EnablePassiveMode = this.enablePassiveModeCheckBox.Checked = DeviceConfiguration.Settings.EnablePassiveMode;
         }
 
         /// <summary>
@@ -165,6 +177,17 @@ namespace PcmHacking
         }
 
         /// <summary>
+        /// Fill the list of J2534 devices with the devices that the J2534 library has discovered.
+        /// </summary>
+        private void FillJ2534DeviceList()
+        {
+            foreach (J2534DotNet.J2534Device device in J2534DeviceFinder.FindInstalledJ2534DLLs(this.logger))
+            {
+                this.j2534DeviceList.Items.Add(device);
+            }
+        }
+
+        /// <summary>
         /// In theory we could probably guess correctly 99% of the time...
         /// </summary>
         private void autoDetectButton_Click(object sender, EventArgs e)
@@ -196,6 +219,7 @@ namespace PcmHacking
             if (this.serialRadioButton.Checked)
             {
                 serialOptionsGroupBox.Enabled = true;
+                j2534OptionsGroupBox.Enabled = false;
                 this.DeviceCategory = DeviceConfiguration.Constants.DeviceCategorySerial;
             }
         }
@@ -207,7 +231,8 @@ namespace PcmHacking
         private void serialPortList_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.SelectedSerialPort = this.serialPortList.Text;
-                //(this.serialPortList.SelectedItem as SerialPortInfo)?.PortName;
+            j2534OptionsGroupBox.Enabled = true;
+            //(this.serialPortList.SelectedItem as SerialPortInfo)?.PortName;
         }
 
         /// <summary>
@@ -243,6 +268,10 @@ namespace PcmHacking
             {
                 device = DeviceFactory.CreateSerialDevice(this.SelectedSerialPort, this.SerialPortDeviceType, this.logger);
             }
+            else if (this.DeviceCategory == DeviceConfiguration.Constants.DeviceCategoryJ2534)
+            {
+                device = DeviceFactory.CreateJ2534Device(this.J2534DeviceType, this.logger);
+            }
             else
             {
                 this.status.Text = "No device specified.";
@@ -270,9 +299,20 @@ namespace PcmHacking
             device.Dispose();
         }
 
-        private void enablePassiveModeCheckBox_CheckedChanged(object sender, EventArgs e)
+
+        private void j2534RadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            this.EnablePassiveMode = this.enablePassiveModeCheckBox.Checked;
+            if (this.j2534RadioButton.Checked)
+            {
+                serialOptionsGroupBox.Enabled = false;
+                j2534OptionsGroupBox.Enabled = true;
+                this.DeviceCategory = DeviceConfiguration.Constants.DeviceCategoryJ2534;
+            }
+        }
+
+        private void j2534DeviceList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.J2534DeviceType = this.j2534DeviceList.SelectedItem?.ToString();
         }
     }
 }

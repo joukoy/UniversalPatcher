@@ -383,3 +383,7 @@
 - PCM Hammer included in ZIP package and setup as default Flash application
 - Tuner set as default window
 - User configurable logger application: internal pcmhammer or external app
+
+0.20.4
+- Restored J2534 support to Logger using "J2534DotNet.dll" (Not tested)
+

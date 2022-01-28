@@ -18,8 +18,8 @@ namespace PcmHacking
                 case DeviceConfiguration.Constants.DeviceCategorySerial:
                     return CreateSerialDevice(DeviceConfiguration.Settings.SerialPort, DeviceConfiguration.Settings.SerialPortDeviceType, logger);
 
-                //case DeviceConfiguration.Constants.DeviceCategoryJ2534:
-                  //  return CreateJ2534Device(DeviceConfiguration.Settings.J2534DeviceType, logger);
+                case DeviceConfiguration.Constants.DeviceCategoryJ2534:
+                    return CreateJ2534Device(DeviceConfiguration.Settings.J2534DeviceType, logger);
 
                 default:
                     return null;
@@ -77,6 +77,18 @@ namespace PcmHacking
                 logger.AddDebugMessage(exception.ToString());
                 return null;
             }
+        }
+        public static Device CreateJ2534Device(string deviceType, ILogger logger)
+        {
+            foreach (var device in J2534DeviceFinder.FindInstalledJ2534DLLs(logger))
+            {
+                if (device.Name == deviceType)
+                {
+                    return new J2534Device(device, logger);
+                }
+            }
+
+            return null;
         }
 
     }

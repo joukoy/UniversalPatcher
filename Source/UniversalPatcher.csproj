@@ -39,6 +39,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -79,6 +80,9 @@
     <StartupObject>UniversalPatcher.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="J2534DotNet">
+      <HintPath>J2534DotNet\bin\Debug\J2534DotNet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -375,6 +379,8 @@
     <Compile Include="PcmHacking\PcmLib\Devices\Device.cs" />
     <Compile Include="PcmHacking\PcmLib\Devices\ElmDevice.cs" />
     <Compile Include="PcmHacking\PcmLib\Devices\ElmDeviceImplementation.cs" />
+    <Compile Include="PcmHacking\PcmLib\Devices\J2534Device.cs" />
+    <Compile Include="PcmHacking\PcmLib\Devices\J2534DeviceFinder.cs" />
     <Compile Include="PcmHacking\PcmLib\Devices\MockDevice.cs" />
     <Compile Include="PcmHacking\PcmLib\Devices\OBDXProDevice.cs" />
     <Compile Include="PcmHacking\PcmLib\Devices\ScanToolDeviceImplementation.cs" />
@@ -753,6 +759,7 @@
     <Content Include="PcmHacking\PcmLogger\Parameters.Standard.xml" />
     <Content Include="UniversalPatcher.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetPath) $(ProjectDir)..\
