@@ -1,6 +1,6 @@
 ﻿namespace PcmHacking
 {
-    partial class MainForm : MainFormBase
+    partial class MainForm : ILogger
     {
         /// <summary>
         /// Required designer variable.
@@ -14,13 +14,12 @@
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
+        protected void Dispose(bool disposing)
         {
             if (disposing && (components != null))
             {
                 components.Dispose();
             }
-            base.Dispose(disposing);
         }
 
         #region Windows Form Designer generated code
@@ -35,6 +34,8 @@
             this.loggerProgress = new System.Windows.Forms.ProgressBar();
             this.tabs = new System.Windows.Forms.TabControl();
             this.configurationTab = new System.Windows.Forms.TabPage();
+            this.editParameters = new System.Windows.Forms.Button();
+            this.disclaimerUniversalPatcher = new System.Windows.Forms.Label();
             this.enablePassiveModeCheckBox = new System.Windows.Forms.CheckBox();
             this.disclaimer = new System.Windows.Forms.Label();
             this.logFilePath = new System.Windows.Forms.Label();
@@ -62,7 +63,7 @@
             this.debugLog = new System.Windows.Forms.TextBox();
             this.dashboardTab = new System.Windows.Forms.TabPage();
             this.startStopSaving = new System.Windows.Forms.Button();
-            this.disclaimerUniversalPatcher = new System.Windows.Forms.Label();
+            this.editParametersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabs.SuspendLayout();
             this.configurationTab.SuspendLayout();
             this.profilesTab.SuspendLayout();
@@ -106,6 +107,7 @@
             // 
             // configurationTab
             // 
+            this.configurationTab.Controls.Add(this.editParameters);
             this.configurationTab.Controls.Add(this.disclaimerUniversalPatcher);
             this.configurationTab.Controls.Add(this.enablePassiveModeCheckBox);
             this.configurationTab.Controls.Add(this.disclaimer);
@@ -121,6 +123,26 @@
             this.configurationTab.TabIndex = 3;
             this.configurationTab.Text = "Configuration";
             this.configurationTab.UseVisualStyleBackColor = true;
+            // 
+            // editParameters
+            // 
+            this.editParameters.Location = new System.Drawing.Point(3, 122);
+            this.editParameters.Name = "editParameters";
+            this.editParameters.Size = new System.Drawing.Size(104, 23);
+            this.editParameters.TabIndex = 13;
+            this.editParameters.Text = "Edit Parameters";
+            this.editParameters.UseVisualStyleBackColor = true;
+            this.editParameters.Click += new System.EventHandler(this.editParameters_Click);
+            // 
+            // disclaimerUniversalPatcher
+            // 
+            this.disclaimerUniversalPatcher.Location = new System.Drawing.Point(4, 154);
+            this.disclaimerUniversalPatcher.Name = "disclaimerUniversalPatcher";
+            this.disclaimerUniversalPatcher.Size = new System.Drawing.Size(446, 41);
+            this.disclaimerUniversalPatcher.TabIndex = 12;
+            this.disclaimerUniversalPatcher.Text = "Logger-part of UniversalPatcher is modified copy of PCM Logger (Part of PCM Hamme" +
+    "r)  Please send thanks to nfsw@outlook.com, bug reports and questions to:  jouko" +
+    "y@gmail.com";
             // 
             // enablePassiveModeCheckBox
             // 
@@ -441,15 +463,11 @@
             this.startStopSaving.UseVisualStyleBackColor = true;
             this.startStopSaving.Click += new System.EventHandler(this.startStopSaving_Click);
             // 
-            // disclaimerUniversalPatcher
+            // editParametersToolStripMenuItem
             // 
-            this.disclaimerUniversalPatcher.Location = new System.Drawing.Point(4, 154);
-            this.disclaimerUniversalPatcher.Name = "disclaimerUniversalPatcher";
-            this.disclaimerUniversalPatcher.Size = new System.Drawing.Size(446, 41);
-            this.disclaimerUniversalPatcher.TabIndex = 12;
-            this.disclaimerUniversalPatcher.Text = "Logger-part of UniversalPatcher is modified copy of PCM Logger (Part of PCM Hamme" +
-    "r)  Please send thanks to nfsw@outlook.com, bug reports and questions to:  jouko" +
-    "y@gmail.com";
+            this.editParametersToolStripMenuItem.Name = "editParametersToolStripMenuItem";
+            this.editParametersToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.editParametersToolStripMenuItem.Text = "Edit parameters";
             // 
             // MainForm
             // 
@@ -512,6 +530,9 @@
         private System.Windows.Forms.CheckBox enablePassiveModeCheckBox;
         private System.Windows.Forms.CheckBox enableDebugCheckbox;
         private System.Windows.Forms.Label disclaimerUniversalPatcher;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem editParametersToolStripMenuItem;
+        private System.Windows.Forms.Button editParameters;
     }
 }
 

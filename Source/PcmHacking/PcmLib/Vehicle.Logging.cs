@@ -149,7 +149,7 @@ namespace PcmHacking
             }
             catch (Exception exception)
             {
-                Debug.WriteLine(exception.Message);
+                //Debug.WriteLine("RequestDpids: " + exception.Message);
                 return false;
             }
         }

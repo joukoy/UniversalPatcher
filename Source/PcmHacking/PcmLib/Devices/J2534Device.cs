@@ -358,6 +358,7 @@ namespace PcmHacking
                 //big problems, do something here
             }
             IsJ2534Open = false;
+            J2534Port.Functions.FreeLibrary();
             return Response.Create(ResponseStatus.Success, OBDError);
         }
 

@@ -217,100 +217,106 @@ namespace PcmHacking
         /// </remarks>
         public override bool SendMessage(Message message)
         {
-            byte[] messageBytes = message.GetBytes();
-
-            StringBuilder builder = new StringBuilder();
-            builder.Append("STPX H:");
-            builder.Append(messageBytes[0].ToString("X2"));
-            builder.Append(messageBytes[1].ToString("X2"));
-            builder.Append(messageBytes[2].ToString("X2"));
-
-            int responses;
-            switch (this.TimeoutScenario)
+            try
             {
-                case TimeoutScenario.DataLogging3:
-                    responses = 3;
-                    break;
+                byte[] messageBytes = message.GetBytes();
 
-                case TimeoutScenario.DataLogging2:
-                    responses = 2;
-                    break;
+                StringBuilder builder = new StringBuilder();
+                builder.Append("STPX H:");
+                builder.Append(messageBytes[0].ToString("X2"));
+                builder.Append(messageBytes[1].ToString("X2"));
+                builder.Append(messageBytes[2].ToString("X2"));
 
-                default:
-                    responses = 1;
-                    break;
-            }
-
-            // Special case for tool-present broadcast messages.
-            // TODO: Create a new TimeoutScenario value, maybe call it "TransmitOnly" or something like that.
-            if (Utility.CompareArrays(messageBytes, 0x8C, 0xFE, 0xF0, 0x3F))
-            {
-                responses = 0;
-            }
-
-            builder.AppendFormat(", R:{0}", responses);
-
-            if (messageBytes.Length < 200)
-            {
-                // Short messages can be sent with a single write to the ScanTool.
-                builder.Append(", D:");
-                for(int index = 3; index < messageBytes.Length; index++)
+                int responses;
+                switch (this.TimeoutScenario)
                 {
-                    builder.Append(messageBytes[index].ToString("X2"));
+                    case TimeoutScenario.DataLogging3:
+                        responses = 3;
+                        break;
+
+                    case TimeoutScenario.DataLogging2:
+                        responses = 2;
+                        break;
+
+                    default:
+                        responses = 1;
+                        break;
                 }
 
-                string dataResponse = this.SendRequest(builder.ToString());
-                if (!this.ProcessResponse(dataResponse, "STPX with data", allowEmpty: responses == 0))
+                // Special case for tool-present broadcast messages.
+                // TODO: Create a new TimeoutScenario value, maybe call it "TransmitOnly" or something like that.
+                if (Utility.CompareArrays(messageBytes, 0x8C, 0xFE, 0xF0, 0x3F))
                 {
-                    if (dataResponse == string.Empty || dataResponse == "STOPPED" || dataResponse == "?")
-                    {
-                        // These will happen if the bus is quiet, for example right after uploading the kernel.
-                        // They are traced during the SendRequest code. No need to repeat that message.
-                    }
-                    else
-                    {
-                        this.Logger.AddUserMessage("Unexpected response to STPX with data: " + dataResponse);
-                    }
-                    return false;
+                    responses = 0;
                 }
-            }
-            else
-            {
-                // Long messages need to be sent in two steps: first the STPX command, then the data payload.
-                builder.Append(", L:");
-                int dataLength = messageBytes.Length - 3;
-                builder.Append(dataLength.ToString());
 
-                string header = builder.ToString();
-                for (int attempt = 1; attempt <= 5; attempt++)
+                builder.AppendFormat(", R:{0}", responses);
+
+                if (messageBytes.Length < 200)
                 {
-                    string headerResponse = this.SendRequest(header);
-                    if (headerResponse != "DATA")
+                    // Short messages can be sent with a single write to the ScanTool.
+                    builder.Append(", D:");
+                    for (int index = 3; index < messageBytes.Length; index++)
                     {
-                        this.Logger.AddUserMessage("Unexpected response to STPX header: " + headerResponse);
-                        continue;
+                        builder.Append(messageBytes[index].ToString("X2"));
                     }
 
-                    break;
+                    string dataResponse = this.SendRequest(builder.ToString());
+                    if (!this.ProcessResponse(dataResponse, "STPX with data", allowEmpty: responses == 0))
+                    {
+                        if (dataResponse == string.Empty || dataResponse == "STOPPED" || dataResponse == "?")
+                        {
+                            // These will happen if the bus is quiet, for example right after uploading the kernel.
+                            // They are traced during the SendRequest code. No need to repeat that message.
+                        }
+                        else
+                        {
+                            this.Logger.AddUserMessage("Unexpected response to STPX with data: " + dataResponse);
+                        }
+                        return false;
+                    }
                 }
-
-                builder = new StringBuilder();
-                for (int index = 3; index < messageBytes.Length; index++)
+                else
                 {
-                    builder.Append(messageBytes[index].ToString("X2"));
-                }
+                    // Long messages need to be sent in two steps: first the STPX command, then the data payload.
+                    builder.Append(", L:");
+                    int dataLength = messageBytes.Length - 3;
+                    builder.Append(dataLength.ToString());
 
-                string data = builder.ToString();
-                string dataResponse = this.SendRequest(data);
+                    string header = builder.ToString();
+                    for (int attempt = 1; attempt <= 5; attempt++)
+                    {
+                        string headerResponse = this.SendRequest(header);
+                        if (headerResponse != "DATA")
+                        {
+                            this.Logger.AddUserMessage("Unexpected response to STPX header: " + headerResponse);
+                            continue;
+                        }
 
-                if (!this.ProcessResponse(dataResponse, "STPX payload", responses == 0))
-                {
-                    this.Logger.AddUserMessage("Unexpected response to STPX payload: " + dataResponse);
-                    return false;
+                        break;
+                    }
+
+                    builder = new StringBuilder();
+                    for (int index = 3; index < messageBytes.Length; index++)
+                    {
+                        builder.Append(messageBytes[index].ToString("X2"));
+                    }
+
+                    string data = builder.ToString();
+                    string dataResponse = this.SendRequest(data);
+
+                    if (!this.ProcessResponse(dataResponse, "STPX payload", responses == 0))
+                    {
+                        this.Logger.AddUserMessage("Unexpected response to STPX payload: " + dataResponse);
+                        return false;
+                    }
                 }
+                return true;
             }
-
-            return true;
+            catch 
+            {
+                return false;
+            }
         }
 
         /// <summary>

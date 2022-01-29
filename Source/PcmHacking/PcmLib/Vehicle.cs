@@ -233,6 +233,8 @@ namespace PcmHacking
 
         public bool SendMessage(Message message)
         {
+            if (this.device == null)
+                return false;
             return this.device.SendMessage(message);
         }
 

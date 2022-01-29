@@ -387,3 +387,8 @@
 0.20.4
 - Restored J2534 support to Logger using "J2534DotNet.dll" (Not tested)
 
+0.20.5
+- Logger: J2534DotNet.dll removed and functionality added to code
+- Logger: More error handling to COM -port functions
+- Logger: Added simple PID-parameter editor. No parameter adding or removing yet. Coming later...
+

@@ -116,9 +116,10 @@ namespace PcmHacking
 
         private void ProcessRow(Logger logger, LogFileWriter logFileWriter)
         {
-            IEnumerable<string> rowValues = logger.GetNextRow();
-            if (rowValues != null)
+            var rowVal = logger.GetNextRow();
+            if (rowVal != null)
             {
+                IEnumerable<string> rowValues = rowVal;
                 // Hand this data off to be written to disk and displayed in the UI.
                 this.logRowQueue.Enqueue(
                     new Tuple<Logger, LogFileWriter, IEnumerable<string>>(
@@ -339,6 +340,7 @@ namespace PcmHacking
                 {
                     this.AddUserMessage("Log writing halted. " + exception.Message);
                     this.AddDebugMessage(exception.ToString());
+/*
                     this.logValues.Invoke(
                             (MethodInvoker)
                             delegate ()
@@ -346,6 +348,7 @@ namespace PcmHacking
                                 this.logValues.Text = "Log writing halted. " + exception.Message;
                                 this.startStopSaving.Focus();
                             });
+*/
                 }
             }
             finally

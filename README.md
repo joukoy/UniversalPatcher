@@ -4,6 +4,9 @@
 - Extract / swap segments
 - Generate XDF files for Tunerpro
 - Modify calibrations (Tuner)
+With new parts from PCM Hammer:
+- Log data from PCM
+- Read/write calibrations
 
 Configurable for different engine controller binary files
  * Mostly for GM PCM 1997 ->
@@ -27,3 +30,5 @@ https://www.facebook.com/groups/universalpatcher.net
 (Previous Facebook group is offline)
 
 
+# PCM Hammer github page
+https://github.com/LegacyNsfw/PcmHacks

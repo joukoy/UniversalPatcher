@@ -32,7 +32,7 @@ namespace PcmHacking
             if (disposing)
             {
                 if (this.Port != null)
-                {
+                {                                        
                     this.Port.Dispose();
                 }
             }

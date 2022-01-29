@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
@@ -45,6 +46,11 @@ namespace PcmHacking
             // Clean up the existing SerialPort object, if we have one.
             if (this.port != null)
             {
+                if (this.port.IsOpen)
+                {
+                    Debug.WriteLine("Port still open, closing before Dispose!");
+                    this.port.Close();
+                }
                 this.port.Dispose();
             }
             SerialPortConfiguration config = configuration as SerialPortConfiguration;

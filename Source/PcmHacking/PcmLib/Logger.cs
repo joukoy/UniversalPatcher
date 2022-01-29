@@ -219,10 +219,9 @@ namespace PcmHacking
         /// Invoke this repeatedly to get each row of data from the PCM.
         /// </summary>
         /// <returns></returns>
-        public  IEnumerable<string> GetNextRow()
+        public IEnumerable<string> GetNextRow()
         {
             LogRowParser row = new LogRowParser(this.dpidConfiguration);
-
             try
             {
                 //#if FAST_LOGGING
@@ -240,11 +239,10 @@ namespace PcmHacking
                         return null;
                     }
                 }
-//#endif
+                //#endif
 
                 while (!row.IsComplete)
                 {
-
                     RawLogData rawData =  this.vehicle.ReadLogData();
                     if (rawData == null)
                     {
