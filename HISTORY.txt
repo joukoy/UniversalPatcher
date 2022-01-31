@@ -392,3 +392,5 @@
 - Logger: More error handling to COM -port functions
 - Logger: Added simple PID-parameter editor. No parameter adding or removing yet. Coming later...
 
+0.20.6
+- Logger: Revert back from PCM Logger code to own code, using only device code from PCM Logger

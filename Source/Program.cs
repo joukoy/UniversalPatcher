@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.IO;
-using PcmHacking;
 
 namespace UniversalPatcher
 {
@@ -55,7 +54,7 @@ namespace UniversalPatcher
                     }
                     else if (args[1].ToLower().Contains("logger"))
                     {
-                        Application.Run(new MainForm());
+                        Application.Run(new frmLogger());
                     }
                     else
                     {

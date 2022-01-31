@@ -26,6 +26,7 @@
 #endregion License
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace J2534DotNet
@@ -62,7 +63,15 @@ namespace J2534DotNet
 
         public J2534Err Close(int deviceId)
         {
-            return (J2534Err)m_wrapper.Close(deviceId);
+            try
+            {
+                return (J2534Err)m_wrapper.Close(deviceId);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return J2534Err.ERR_DEVICE_NOT_CONNECTED;
+            }
         }
 
         public J2534Err Connect(int deviceId, ProtocolID protocolId, ConnectFlag flags, BaudRate baudRate, ref int channelId)

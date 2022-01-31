@@ -2317,8 +2317,8 @@ public class Upatcher
         {
             if (UniversalPatcher.Properties.Settings.Default.LoggerUseIntegrated)
             {
-                PcmHacking.MainForm phl = new PcmHacking.MainForm();
-                phl.Show();
+                frmLogger fl = new frmLogger();
+                fl.Show();                
             }
             else if (string.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerExternalApp))
             {

@@ -8,7 +8,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using static Upatcher;
-using PcmHacking;
 
 namespace UniversalPatcher
 {

@@ -1,8 +1,0 @@
-    <Parameter
-        id="1179"
-        name="IAC Motor Position"
-        description=""	
-        byteCount="01"
-        bitMapped="False">
-        <Conversion units="Steps" expression="(x)" format="" />
-    </Parameter>
