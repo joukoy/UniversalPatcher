@@ -55,31 +55,30 @@ namespace UniversalPatcher
 
         }
 
-        public string DecodeDTC(string code)
+        public static string DecodeDTC(string code)
         {
-            if (code.StartsWith("5"))
+            switch (code[0])
             {
-                return "U0" + code.Substring(1);
-            }
-            else if (code.StartsWith("C"))
-            {
-                return "C0" + code.Substring(1);
-            }
-            else if (code.StartsWith("D"))
-            {
-                return "U1" + code.Substring(1);
-            }
-            else if (code.StartsWith("E"))
-            {
-                return "U2" + code.Substring(1);
-            }
-            else
-            {
-                return "P" + code;
+                case '5':
+                    return "U0" + code.Substring(1);
+                case '9':
+                    return "B1" + code.Substring(1);
+                case 'A':
+                    return "B2" + code.Substring(1);
+                case 'B':
+                    return "B3" + code.Substring(1);
+                case 'C':
+                    return "C0" + code.Substring(1);
+                case 'D':
+                    return "U1" + code.Substring(1);
+                case 'E':
+                    return "U2" + code.Substring(1);
+                default:
+                    return "P" + code;
             }
         }
 
-        public string GetDtcDescription(string dtcCode)
+        public static string GetDtcDescription(string dtcCode)
         {
             string retVal = "";
             for (int o = 0; o < OBD2Codes.Count; o++)

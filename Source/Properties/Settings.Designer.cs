@@ -1066,12 +1066,12 @@ namespace UniversalPatcher.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LoggerPort {
+        public string LoggerComPort {
             get {
-                return ((string)(this["LoggerPort"]));
+                return ((string)(this["LoggerComPort"]));
             }
             set {
-                this["LoggerPort"] = value;
+                this["LoggerComPort"] = value;
             }
         }
         
@@ -1114,12 +1114,12 @@ namespace UniversalPatcher.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string J2534Device {
+        public string LoggerJ2534Device {
             get {
-                return ((string)(this["J2534Device"]));
+                return ((string)(this["LoggerJ2534Device"]));
             }
             set {
-                this["J2534Device"] = value;
+                this["LoggerJ2534Device"] = value;
             }
         }
         
@@ -1168,6 +1168,114 @@ namespace UniversalPatcher.Properties {
             }
             set {
                 this["LoggerResponseMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LoggerUseFTDI {
+            get {
+                return ((bool)(this["LoggerUseFTDI"]));
+            }
+            set {
+                this["LoggerUseFTDI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LoggerShowAdvanced {
+            get {
+                return ((bool)(this["LoggerShowAdvanced"]));
+            }
+            set {
+                this["LoggerShowAdvanced"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LoggerFTDIPort {
+            get {
+                return ((string)(this["LoggerFTDIPort"]));
+            }
+            set {
+                this["LoggerFTDIPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("115200")]
+        public int LoggerBaudRate {
+            get {
+                return ((int)(this["LoggerBaudRate"]));
+            }
+            set {
+                this["LoggerBaudRate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LoggerUsePriority {
+            get {
+                return ((bool)(this["LoggerUsePriority"]));
+            }
+            set {
+                this["LoggerUsePriority"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LoggerUseFilters {
+            get {
+                return ((bool)(this["LoggerUseFilters"]));
+            }
+            set {
+                this["LoggerUseFilters"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size LoggerWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["LoggerWindowSize"]));
+            }
+            set {
+                this["LoggerWindowSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.Forms.FormWindowState LoggerWindowState {
+            get {
+                return ((global::System.Windows.Forms.FormWindowState)(this["LoggerWindowState"]));
+            }
+            set {
+                this["LoggerWindowState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point LoggerWindowPosition {
+            get {
+                return ((global::System.Drawing.Point)(this["LoggerWindowPosition"]));
+            }
+            set {
+                this["LoggerWindowPosition"] = value;
             }
         }
     }

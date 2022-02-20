@@ -54,26 +54,26 @@ namespace J2534DotNet
 
     internal class J2534DllWrapper
     {
-        private IntPtr m_pDll;
+        private IntPtr m_pDll = IntPtr.Zero;
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate int PassThruOpen(int nada, ref int deviceId);
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        public delegate int PassThruOpen(IntPtr pDeviceName, IntPtr deviceId);
         public PassThruOpen Open;
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate int PassThruClose(int deviceId);
         public PassThruClose Close;
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate int PassThruConnect(int deviceId, int protocolId, int flags, int baudRate, ref int channelId);
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        public delegate int PassThruConnect(int deviceId, int protocolId, int flags, int baudRate, IntPtr channelId);
         public PassThruConnect Connect;
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate int PassThruDisconnect(int channelId);
         public PassThruDisconnect Disconnect;
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate int PassThruReadMsgs(int channelId, IntPtr pMsgs, ref int numMsgs, int timeout);
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        public delegate int PassThruReadMsgs(int channelId, IntPtr pMsgs, IntPtr numMsgs, int timeout);
         public PassThruReadMsgs ReadMsgs;
         //extern “C” long WINAPI PassThruReadMsgs
         //(
@@ -83,8 +83,8 @@ namespace J2534DotNet
         //unsigned long Timeout
         //)
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate int PassThruWriteMsgs(int channelId, ref UnsafePassThruMsg msg, ref int numMsgs, int timeout);
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        public delegate int PassThruWriteMsgs(int channelId, IntPtr msg, IntPtr numMsgs, int timeout);
         public PassThruWriteMsgs WriteMsgs;
         //extern “C” long WINAPI PassThruWriteMsgs
         //(
@@ -94,8 +94,8 @@ namespace J2534DotNet
         //unsigned long Timeout
         //)
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate int PassThruStartPeriodicMsg(int channelId, ref UnsafePassThruMsg msg, ref int msgId, int timeInterval);
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        public delegate int PassThruStartPeriodicMsg(int channelId, UnsafePassThruMsg msg, int msgId, int timeInterval);
         public PassThruStartPeriodicMsg StartPeriodicMsg;
         //extern “C” long WINAPI PassThruStartPeriodicMsg
         //(
@@ -105,7 +105,7 @@ namespace J2534DotNet
         //unsigned long TimeInterval
         //)
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate int PassThruStopPeriodicMsg(int channelId, int msgId);
         public PassThruStopPeriodicMsg StopPeriodicMsg;
         //extern “C” long WINAPI PassThruStopPeriodicMsg
@@ -114,15 +114,16 @@ namespace J2534DotNet
         //unsigned long MsgID
         //)
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+//        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate int PassThruStartMsgFilter
         (
             int channelid,
             int filterType,
-            ref UnsafePassThruMsg maskMsg,
-            ref UnsafePassThruMsg patternMsg,
-            ref UnsafePassThruMsg flowControlMsg,
-            ref int filterId
+            IntPtr maskMsg,
+            IntPtr patternMsg,
+            IntPtr flowControlMsg,
+            IntPtr filterId
         );
         public PassThruStartMsgFilter StartMsgFilter;
         //extern “C” long WINAPI PassThruStartMsgFilter
@@ -135,19 +136,19 @@ namespace J2534DotNet
         //unsigned long *pFilterID
         //)
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate int PassThruStartPassBlockMsgFilter
         (
             int channelid,
             int filterType,
-            ref UnsafePassThruMsg uMaskMsg,
-            ref UnsafePassThruMsg uPatternMsg,
-            int nada,
-            ref int filterId
+            IntPtr uMaskMsg,
+            IntPtr uPatternMsg,
+            IntPtr FlowMsg,
+            IntPtr filterId
         );
         public PassThruStartPassBlockMsgFilter StartPassBlockMsgFilter;
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate int PassThruStopMsgFilter(int channelId, int filterId);
         public PassThruStopMsgFilter StopMsgFilter;
         //extern “C” long WINAPI PassThruStopMsgFilter
@@ -156,7 +157,7 @@ namespace J2534DotNet
         //unsigned long FilterID
         //)
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate int PassThruSetProgrammingVoltage(int deviceId, int pinNumber, int voltage);
         public PassThruSetProgrammingVoltage SetProgrammingVoltage;
         //extern “C” long WINAPI PassThruSetProgrammingVoltage
@@ -166,7 +167,7 @@ namespace J2534DotNet
         //unsigned long Voltage
         //)        
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate int PassThruReadVersion(int deviceId, IntPtr firmwareVersion, IntPtr dllVersion, IntPtr apiVersion);
         public PassThruReadVersion ReadVersion;
         //extern “C” long WINAPI PassThruReadVersion
@@ -177,11 +178,11 @@ namespace J2534DotNet
         //char *pApiVersion
         //)
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate int PassThruGetLastError(IntPtr errorDescription);
         public PassThruGetLastError GetLastError;
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate int PassThruIoctl(int channelId, int ioctlID, IntPtr input, IntPtr output);
         public PassThruIoctl Ioctl;
         //extern “C” long WINAPI PassThruIoctl
@@ -295,7 +296,17 @@ namespace J2534DotNet
 
         public bool FreeLibrary()
         {
-            return NativeMethods.FreeLibrary(m_pDll);
+            bool m = NativeMethods.FreeLibrary(m_pDll);
+            m_pDll = IntPtr.Zero;
+            return m;
+        }
+
+        public bool isDllLoaded()
+        {
+            if (m_pDll == IntPtr.Zero)
+                return false;
+            else
+                return true;
         }
     }
 }

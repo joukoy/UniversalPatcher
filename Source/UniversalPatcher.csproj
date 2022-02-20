@@ -83,6 +83,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
@@ -106,6 +107,7 @@
     <Compile Include="ComputeSimilarity.cs" />
     <Compile Include="Crc.cs" />
     <Compile Include="CvnDB.cs" />
+    <Compile Include="DataLogger\SlotHandler.cs" />
     <Compile Include="Debug.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="frmDB.cs">
@@ -377,30 +379,37 @@
     <Compile Include="J2534DotNet\J2534Device.cs" />
     <Compile Include="J2534DotNet\J2534DllWrapper.cs" />
     <Compile Include="ListViewSorter.cs" />
-    <Compile Include="PcmLogger\Devices\AllProDeviceImplementation.cs" />
-    <Compile Include="PcmLogger\Devices\AvtDevice.cs" />
-    <Compile Include="PcmLogger\Devices\Device.cs" />
-    <Compile Include="PcmLogger\Devices\ElmDevice.cs" />
-    <Compile Include="PcmLogger\Devices\ElmDeviceImplementation.cs" />
-    <Compile Include="PcmLogger\Devices\IPort.cs" />
-    <Compile Include="PcmLogger\Devices\J2534Device.cs" />
-    <Compile Include="PcmLogger\Devices\J2534DeviceFinder.cs" />
-    <Compile Include="PcmLogger\Devices\MockDevice.cs" />
-    <Compile Include="PcmLogger\Devices\OBDXProDevice.cs" />
-    <Compile Include="PcmLogger\Devices\ScanToolDeviceImplementation.cs" />
-    <Compile Include="PcmLogger\Devices\SerialDevice.cs" />
-    <Compile Include="PcmLogger\Devices\Rs232Port.cs" />
-    <Compile Include="PcmLogger\frmLogger.cs">
+    <Compile Include="DataLogger\Analyzer.cs" />
+    <Compile Include="DataLogger\Devices\AllProDeviceImplementation.cs" />
+    <Compile Include="DataLogger\Devices\AvtDevice.cs" />
+    <Compile Include="DataLogger\Devices\DetectPortChange.cs" />
+    <Compile Include="DataLogger\Devices\Device.cs" />
+    <Compile Include="DataLogger\Devices\ElmDevice.cs" />
+    <Compile Include="DataLogger\Devices\ElmDeviceImplementation.cs" />
+    <Compile Include="DataLogger\Devices\FTD2XX_NET.cs" />
+    <Compile Include="DataLogger\Devices\FTDIPort.cs" />
+    <Compile Include="DataLogger\Devices\FTDI_Finder.cs" />
+    <Compile Include="DataLogger\Devices\IPort.cs" />
+    <Compile Include="DataLogger\Devices\J2534Device.cs" />
+    <Compile Include="DataLogger\Devices\LegacyElmDeviceImplementation.cs" />
+    <Compile Include="DataLogger\Devices\MockDevice.cs" />
+    <Compile Include="DataLogger\Devices\OBDXProDevice.cs" />
+    <Compile Include="DataLogger\Devices\ScanToolDeviceImplementation.cs" />
+    <Compile Include="DataLogger\Devices\SerialDevice.cs" />
+    <Compile Include="DataLogger\Devices\Rs232Port.cs" />
+    <Compile Include="DataLogger\frmLogger.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PcmLogger\frmLogger.designer.cs">
+    <Compile Include="DataLogger\frmLogger.designer.cs">
       <DependentUpon>frmLogger.cs</DependentUpon>
     </Compile>
-    <Compile Include="PcmLogger\OBDMessage.cs" />
-    <Compile Include="PcmLogger\PcmLogger.cs" />
-    <Compile Include="PcmLogger\Response.cs" />
-    <Compile Include="PcmLogger\Utility.cs" />
-    <Compile Include="PcmLogger\VPW.cs" />
+    <Compile Include="DataLogger\LoggerUtils.cs" />
+    <Compile Include="DataLogger\OBDMessage.cs" />
+    <Compile Include="DataLogger\DataLogger.cs" />
+    <Compile Include="DataLogger\Response.cs" />
+    <Compile Include="DataLogger\SerialData.cs" />
+    <Compile Include="DataLogger\Utility.cs" />
+    <Compile Include="DataLogger\VPW.cs" />
     <Compile Include="PcmPlatform.cs" />
     <Compile Include="RootFinding.cs" />
     <Compile Include="SavingMath.cs" />
@@ -577,7 +586,7 @@
     <EmbeddedResource Include="frmVisualSegments.resx">
       <DependentUpon>frmVisualSegments.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PcmLogger\frmLogger.resx">
+    <EmbeddedResource Include="DataLogger\frmLogger.resx">
       <DependentUpon>frmLogger.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -594,9 +603,6 @@
       <DependentUpon>frmSearchTables.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="J2534DotNet\J2534DotNet.csproj" />
-    <None Include="J2534DotNet\obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
-    <None Include="J2534DotNet\obj\Debug\J2534DotNet.csproj.CoreCompileInputs.cache" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -644,24 +650,16 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="J2534DotNet\bin\Debug\J2534DotNet.dll" />
-    <Content Include="J2534DotNet\bin\Debug\J2534DotNet.pdb" />
-    <Content Include="J2534DotNet\obj\Debug\J2534DotNet.csproj.FileListAbsolute.txt" />
-    <Content Include="J2534DotNet\obj\Debug\J2534DotNet.dll" />
-    <Content Include="J2534DotNet\obj\Debug\J2534DotNet.pdb" />
     <Content Include="UniversalPatcher.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="J2534DotNet\Connected Services\" />
-    <Folder Include="J2534DotNet\obj\Debug\TempPE\" />
-    <Folder Include="J2534DotNet\Properties\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetPath) $(ProjectDir)..\
 
 copy $(TargetPath).config $(ProjectDir)..\
 
+copy $(TargetDir)$(TargetName).pdb $(ProjectDir)..\
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

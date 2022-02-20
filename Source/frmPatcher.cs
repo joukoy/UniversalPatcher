@@ -59,7 +59,7 @@ namespace UniversalPatcher
 
         private uint lastCustomSearchResult = 0;
         private string logFile;
-        StreamWriter logwriter;
+        StreamWriter logwriter;        
 
         private string cvnSortBy = "";
         private int cvnSortIndex = 0;
@@ -4457,6 +4457,7 @@ namespace UniversalPatcher
         {
             StartFlashApp(null,false);
         }
+
     }
 }
 

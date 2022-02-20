@@ -32,66 +32,66 @@ namespace J2534DotNet
         public string Name { get; set; }
         public string FunctionLibrary { get; set; }
         public string ConfigApplication { get; set; }
-        public int CAN { get; set; }
-        public int ISO15765 { get; set; }
-        public int J1850PWM { get; set; }
-        public int J1850VPW { get; set; }
-        public int ISO9141 { get; set; }
-        public int ISO14230 { get; set; }
-        public int SCI_A_ENGINE { get; set; }
-        public int SCI_A_TRANS { get; set; }
-        public int SCI_B_ENGINE { get; set; }
-        public int SCI_B_TRANS { get; set; }
+        public int CANChannels { get; set; }
+        public int ISO15765Channels { get; set; }
+        public int J1850PWMChannels { get; set; }
+        public int J1850VPWChannels { get; set; }
+        public int ISO9141Channels { get; set; }
+        public int ISO14230Channels { get; set; }
+        public int SCI_A_ENGINEChannels { get; set; }
+        public int SCI_A_TRANSChannels { get; set; }
+        public int SCI_B_ENGINEChannels { get; set; }
+        public int SCI_B_TRANSChannels { get; set; }
         public int DiCECompatible { get; set; }
 
         public bool IsCANSupported
         {
-            get { return (CAN > 0 ? true : false); }
+            get { return (CANChannels > 0 ? true : false); }
         }
 
         public bool IsISO15765Supported
         {
-            get { return (ISO15765 > 0 ? true : false); }
+            get { return (ISO15765Channels > 0 ? true : false); }
         }
 
         public bool IsJ1850PWMSupported
         {
-            get { return (J1850PWM > 0 ? true : false); }
+            get { return (J1850PWMChannels > 0 ? true : false); }
         }
 
         public bool IsJ1850VPWSupported
         {
-            get { return (J1850VPW > 0 ? true : false); }
+            get { return (J1850VPWChannels > 0 ? true : false); }
         }
 
         public bool IsISO9141Supported
         {
-            get { return (ISO9141 > 0 ? true : false); }
+            get { return (ISO9141Channels > 0 ? true : false); }
         }
 
         public bool IsISO14230Supported
         {
-            get { return (ISO14230 > 0 ? true : false); }
+            get { return (ISO14230Channels > 0 ? true : false); }
         }
 
         public bool IsSCI_A_ENGINESupported
         {
-            get { return (SCI_A_ENGINE > 0 ? true : false); }
+            get { return (SCI_A_ENGINEChannels > 0 ? true : false); }
         }
 
         public bool IsSCI_A_TRANSSupported
         {
-            get { return (SCI_A_TRANS > 0 ? true : false); }
+            get { return (SCI_A_TRANSChannels > 0 ? true : false); }
         }
 
         public bool IsSCI_B_ENGINESupported
         {
-            get { return (SCI_B_ENGINE > 0 ? true : false); }
+            get { return (SCI_B_ENGINEChannels > 0 ? true : false); }
         }
 
         public bool IsSCI_B_TRANSSupported
         {
-            get { return (SCI_B_TRANS > 0 ? true : false); }
+            get { return (SCI_B_TRANSChannels > 0 ? true : false); }
         }
 
         public bool IsDiCECompatible

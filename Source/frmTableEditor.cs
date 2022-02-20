@@ -1555,7 +1555,7 @@ namespace UniversalPatcher
                 dataGridView1.Columns.Insert(0, dgc);
                 for (int r = 0; r < dataGridView1.Rows.Count; r++)
                 {
-                    string descr = ds.GetDtcDescription(dataGridView1.Rows[r].HeaderCell.Value.ToString());
+                    string descr = DtcSearch.GetDtcDescription(dataGridView1.Rows[r].HeaderCell.Value.ToString());
                     dataGridView1.Rows[r].Cells["Description"].Value = descr;
                     if (dataGridView1.Rows[r].Cells[1].Tag != null)
                     {

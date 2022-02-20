@@ -35,19 +35,12 @@ namespace J2534DotNet
     {
         private J2534Device m_device;
         private J2534DllWrapper m_wrapper;
-        private bool loaded = false;
 
-        public bool IsLoaded { get { return loaded; } }
         public bool LoadLibrary(J2534Device device)
         {
             m_device = device;
             m_wrapper = new J2534DllWrapper();
-            if (m_wrapper.LoadJ2534Library(m_device.FunctionLibrary))
-            {
-                loaded = true;
-                return true;
-            }
-            return false;
+            return m_wrapper.LoadJ2534Library(m_device.FunctionLibrary);
         }
 
         public bool FreeLibrary()
@@ -55,33 +48,54 @@ namespace J2534DotNet
             return m_wrapper.FreeLibrary();
         }
 
+        public bool isDllLoaded()
+        {
+            if (m_wrapper == null)
+                return false;
+            return m_wrapper.isDllLoaded();
+        }
+
         public J2534Err Open(ref int deviceId)
         {
-            int nada = 0;
-            return (J2534Err)m_wrapper.Open(nada, ref deviceId);
+            IntPtr DeviceNamePtr = IntPtr.Zero;
+            IntPtr DeviceIDPtr = Marshal.AllocHGlobal(4);
+            J2534Err retVal = (J2534Err)m_wrapper.Open(DeviceNamePtr, DeviceIDPtr);
+            if (retVal == J2534Err.STATUS_NOERROR)
+            {
+                deviceId = Marshal.ReadInt32(DeviceIDPtr);
+            }
+            Marshal.FreeHGlobal(DeviceIDPtr); 
+            return retVal;            
         }
 
         public J2534Err Close(int deviceId)
         {
-            try
-            {
-                return (J2534Err)m_wrapper.Close(deviceId);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                return J2534Err.ERR_DEVICE_NOT_CONNECTED;
-            }
+            return (J2534Err)m_wrapper.Close(deviceId);
         }
 
         public J2534Err Connect(int deviceId, ProtocolID protocolId, ConnectFlag flags, BaudRate baudRate, ref int channelId)
         {
-            return (J2534Err)m_wrapper.Connect(deviceId, (int)protocolId, (int)flags, (int)baudRate, ref channelId);
+            IntPtr ChannelPtr = Marshal.AllocHGlobal(4);
+            J2534Err retVal =  (J2534Err)m_wrapper.Connect(deviceId, (int)protocolId, (int)flags, (int)baudRate, ChannelPtr);
+            if (retVal == J2534Err.STATUS_NOERROR)
+            {
+                channelId = Marshal.ReadInt32(ChannelPtr);
+            }
+            Marshal.FreeHGlobal(ChannelPtr);
+            return retVal;
         }
 
         public J2534Err Connect(int deviceId, ProtocolID protocolId, ConnectFlag flags, int baudRate, ref int channelId)
         {
-            return (J2534Err)m_wrapper.Connect(deviceId, (int)protocolId, (int)flags, baudRate, ref channelId);
+            IntPtr ChannelPtr = Marshal.AllocHGlobal(4);
+            Marshal.WriteInt32(ChannelPtr, channelId);
+            J2534Err retVal = (J2534Err)m_wrapper.Connect(deviceId, (int)protocolId, (int)flags, baudRate, ChannelPtr);
+            if (retVal == J2534Err.STATUS_NOERROR)
+            {
+                channelId = Marshal.ReadInt32(ChannelPtr);
+            }
+            Marshal.FreeHGlobal(ChannelPtr);
+            return retVal;
         }
 
         public J2534Err Disconnect(int channelId)
@@ -91,37 +105,53 @@ namespace J2534DotNet
 
         public J2534Err ReadMsgs(int channelId, ref List<PassThruMsg> msgs, ref int numMsgs, int timeout)
         {
-            IntPtr pMsg = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(UnsafePassThruMsg))*50);
+            IntPtr pMsg = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(UnsafePassThruMsg))*200);
             IntPtr pNextMsg = IntPtr.Zero;
-            IntPtr[] pMsgs = new IntPtr[50];
-            J2534Err returnValue = (J2534Err)m_wrapper.ReadMsgs(channelId, pMsg, ref numMsgs, timeout);
+            //IntPtr[] pMsgs = new IntPtr[50];
+            IntPtr MsgCount = Marshal.AllocHGlobal(4);
+            Marshal.WriteInt32(MsgCount, numMsgs);
+            J2534Err returnValue = (J2534Err)m_wrapper.ReadMsgs(channelId, pMsg,  MsgCount, timeout);
             
             if (returnValue == J2534Err.STATUS_NOERROR)
             {
+                //Debug.WriteLine("J2534 received messages: " + numMsgs);
+                pNextMsg = pMsg;
+                numMsgs = Marshal.ReadInt32(MsgCount);
                 for (int i = 0; i < numMsgs; i++)
                 {
-                    pNextMsg = (IntPtr)(Marshal.SizeOf(typeof(UnsafePassThruMsg))*i + (int)pMsg);
-                    UnsafePassThruMsg uMsg = (UnsafePassThruMsg)Marshal.PtrToStructure(pMsg, typeof(UnsafePassThruMsg));
+                    //pNextMsg = (IntPtr)(Marshal.SizeOf(typeof(UnsafePassThruMsg)) * i + (int)pMsg);
+                    UnsafePassThruMsg uMsg = (UnsafePassThruMsg)Marshal.PtrToStructure(pNextMsg, typeof(UnsafePassThruMsg));
                     msgs.Add(ConvertPassThruMsg(uMsg));
+                    pNextMsg += Marshal.SizeOf(typeof(UnsafePassThruMsg));
                 }
             }
-
             Marshal.FreeHGlobal(pMsg);
-
+            Marshal.FreeHGlobal(MsgCount);
             return returnValue;
         }
 
-        public J2534Err WriteMsgs(int channelId, ref PassThruMsg msg, ref int numMsgs, int timeout)
+        public J2534Err WriteMsgs(int channelId, PassThruMsg msg, ref int numMsgs, int timeout)
         {
             UnsafePassThruMsg uMsg = ConvertPassThruMsg(msg);
             // TODO: change function to accept a list? of PassThruMsg
-            return (J2534Err)m_wrapper.WriteMsgs(channelId, ref uMsg, ref numMsgs, timeout);
+            IntPtr MsgPtr = Marshal.AllocHGlobal(Marshal.SizeOf(uMsg));
+            Marshal.StructureToPtr(uMsg, MsgPtr, false);
+            IntPtr MsgCount = Marshal.AllocHGlobal(4);
+            Marshal.WriteInt32(MsgCount, 1);
+            J2534Err jErr = (J2534Err)m_wrapper.WriteMsgs(channelId, MsgPtr,  MsgCount, timeout);
+            if (jErr == J2534Err.STATUS_NOERROR)
+            {
+                numMsgs = Marshal.ReadInt32(MsgCount);
+            }
+            Marshal.FreeHGlobal(MsgPtr);
+            Marshal.FreeHGlobal(MsgCount);
+            return jErr;
         }
 
         public J2534Err StartPeriodicMsg(int channelId, ref PassThruMsg msg, ref int msgId, int timeInterval)
         {
             UnsafePassThruMsg uMsg = ConvertPassThruMsg(msg);
-            return (J2534Err)m_wrapper.StartPeriodicMsg(channelId, ref uMsg, ref msgId, timeInterval);
+            return (J2534Err)m_wrapper.StartPeriodicMsg(channelId,  uMsg,  msgId, timeInterval);
         }
 
         public J2534Err StopPeriodicMsg(int channelId, int msgId)
@@ -133,47 +163,84 @@ namespace J2534DotNet
         (
             int channelid,
             FilterType filterType,
-            ref PassThruMsg maskMsg,
-            ref PassThruMsg patternMsg,
-            ref PassThruMsg flowControlMsg,
+            PassThruMsg maskMsg,
+            PassThruMsg patternMsg,
+            PassThruMsg flowControlMsg,
             ref int filterId
         )
         {
             UnsafePassThruMsg uMaskMsg = ConvertPassThruMsg(maskMsg);
             UnsafePassThruMsg uPatternMsg = ConvertPassThruMsg(patternMsg);
             UnsafePassThruMsg uFlowControlMsg = ConvertPassThruMsg(flowControlMsg);
-            return (J2534Err)m_wrapper.StartMsgFilter
+
+            IntPtr uMaskPtr = Marshal.AllocHGlobal(Marshal.SizeOf(uMaskMsg));
+            Marshal.StructureToPtr(uMaskMsg, uMaskPtr, false);
+
+            IntPtr uPatternPtr = Marshal.AllocHGlobal(Marshal.SizeOf(uPatternMsg));
+            Marshal.StructureToPtr(uPatternMsg, uPatternPtr, false);
+
+            IntPtr uFlowControlPtr = Marshal.AllocHGlobal(Marshal.SizeOf(uFlowControlMsg));
+            Marshal.StructureToPtr(flowControlMsg, uFlowControlPtr, false);
+
+            IntPtr filterIdPtr = Marshal.AllocHGlobal(4);
+            J2534Err jErr = (J2534Err)m_wrapper.StartMsgFilter
                     (
                         channelid, 
                         (int)filterType,
-                        ref uMaskMsg,
-                        ref uPatternMsg,
-                        ref uFlowControlMsg, 
-                        ref filterId
+                        uMaskPtr,
+                        uPatternPtr,
+                        uFlowControlPtr, 
+                        filterIdPtr
                     );
+            if (jErr == J2534Err.STATUS_NOERROR)
+            {
+                filterId = Marshal.ReadInt32(filterIdPtr);
+            }
+            Marshal.FreeHGlobal(uMaskPtr);
+            Marshal.FreeHGlobal(uPatternPtr);
+            Marshal.FreeHGlobal(uFlowControlPtr);
+            Marshal.FreeHGlobal(filterIdPtr);
+            return jErr;
         }
 
         public J2534Err StartMsgFilter
         (
             int channelid,
             FilterType filterType,
-            ref PassThruMsg maskMsg,
-            ref PassThruMsg patternMsg,
+            PassThruMsg maskMsg,
+            PassThruMsg patternMsg,
             ref int filterId
         )
         {
-            int nada = 0;
+            IntPtr FlowMsg = IntPtr.Zero;
             UnsafePassThruMsg uMaskMsg = ConvertPassThruMsg(maskMsg);
             UnsafePassThruMsg uPatternMsg = ConvertPassThruMsg(patternMsg);
-            return (J2534Err)m_wrapper.StartPassBlockMsgFilter
+
+            IntPtr uMaskPtr = Marshal.AllocHGlobal(Marshal.SizeOf(uMaskMsg));
+            Marshal.StructureToPtr(uMaskMsg, uMaskPtr, false);
+
+            IntPtr uPatternPtr = Marshal.AllocHGlobal(Marshal.SizeOf(uPatternMsg));
+            Marshal.StructureToPtr(uPatternMsg, uPatternPtr, false);
+
+            IntPtr filterIdPtr = Marshal.AllocHGlobal(4);
+
+            J2534Err jErr = (J2534Err)m_wrapper.StartPassBlockMsgFilter
                     (
                         channelid,
                         (int)filterType,
-                        ref uMaskMsg,
-                        ref uPatternMsg,
-                        nada,
-                        ref filterId
+                        uMaskPtr,
+                        uPatternPtr,
+                        FlowMsg,
+                        filterIdPtr
                     );
+            if (jErr == J2534Err.STATUS_NOERROR)
+            {
+                filterId = Marshal.ReadInt32(filterIdPtr);
+            }
+            Marshal.FreeHGlobal(uMaskPtr);
+            Marshal.FreeHGlobal(uPatternPtr);
+            Marshal.FreeHGlobal(filterIdPtr);
+            return jErr;
         }
 
         public J2534Err StopMsgFilter(int channelId, int filterId)
@@ -223,9 +290,9 @@ namespace J2534DotNet
         public J2534Err GetConfig(int channelId, ref List<SConfig> config)
         {
             IntPtr input = IntPtr.Zero;
-            IntPtr output = IntPtr.Zero;
-
+            IntPtr output = Marshal.AllocHGlobal(8);
             return (J2534Err)m_wrapper.Ioctl(channelId, (int)Ioctl.GET_CONFIG, input, output);
+            //Not finished func...
         }
 
         public J2534Err SetConfig(int channelId, ref List<SConfig> config)
@@ -233,15 +300,16 @@ namespace J2534DotNet
             IntPtr input = IntPtr.Zero;
             IntPtr output = IntPtr.Zero;
 
+
             return (J2534Err)m_wrapper.Ioctl(channelId, (int)Ioctl.SET_CONFIG, input, output);
         }
 
-        public J2534Err ReadBatteryVoltage(int deviceId, ref int voltage)
+        public J2534Err ReadBatteryVoltage(int channelId, ref int voltage)
         {
             IntPtr input = IntPtr.Zero;
             IntPtr output = Marshal.AllocHGlobal(8);
 
-            J2534Err returnValue = (J2534Err)m_wrapper.Ioctl(deviceId, (int)Ioctl.READ_VBATT, input, output);
+            J2534Err returnValue = (J2534Err)m_wrapper.Ioctl(channelId, (int)Ioctl.READ_VBATT, input,output);
             if (returnValue == J2534Err.STATUS_NOERROR)
             {
                 voltage = Marshal.ReadInt32(output);

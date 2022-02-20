@@ -263,7 +263,7 @@
     <Setting Name="LoggerExternalApp" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="LoggerPort" Type="System.String" Scope="User">
+    <Setting Name="LoggerComPort" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="LoggerLastProfile" Type="System.String" Scope="User">
@@ -275,7 +275,7 @@
     <Setting Name="LoggerLogSeparator" Type="System.String" Scope="User">
       <Value Profile="(Default)">,</Value>
     </Setting>
-    <Setting Name="J2534Device" Type="System.String" Scope="User">
+    <Setting Name="LoggerJ2534Device" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="LoggerPassive" Type="System.Boolean" Scope="User">
@@ -289,6 +289,33 @@
     </Setting>
     <Setting Name="LoggerResponseMode" Type="System.String" Scope="User">
       <Value Profile="(Default)">SendOnce</Value>
+    </Setting>
+    <Setting Name="LoggerUseFTDI" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LoggerShowAdvanced" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LoggerFTDIPort" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="LoggerBaudRate" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">115200</Value>
+    </Setting>
+    <Setting Name="LoggerUsePriority" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LoggerUseFilters" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LoggerWindowSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">0, 0</Value>
+    </Setting>
+    <Setting Name="LoggerWindowState" Type="System.Windows.Forms.FormWindowState" Scope="User">
+      <Value Profile="(Default)">Normal</Value>
+    </Setting>
+    <Setting Name="LoggerWindowPosition" Type="System.Drawing.Point" Scope="User">
+      <Value Profile="(Default)">0, 0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

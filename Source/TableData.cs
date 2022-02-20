@@ -18,6 +18,7 @@ namespace UniversalPatcher
             //id = (uint)tableDatas.Count;
             OS = "";
             TableName = "";
+            ExtraTableName = "";
             //Address = "";
             addrInt = uint.MaxValue;
             DispUnits = DisplayUnits.Undefined;
@@ -43,6 +44,7 @@ namespace UniversalPatcher
         }
         //public uint id { get; set; }
         public string TableName { get; set; }
+        public string ExtraTableName { get; set; }
         public string Category { get; set; }
         private Guid _guid;
         public Guid guid

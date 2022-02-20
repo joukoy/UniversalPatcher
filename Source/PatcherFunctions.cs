@@ -306,6 +306,7 @@ public class Upatcher
         Unknown = 99
     }
 
+    public static bool J2534FunctionsIsLoaded = false;
     public static List<DetectRule> DetectRules;
     public static List<XmlPatch> PatchList;
     public static List<Patch> patches;
@@ -335,7 +336,6 @@ public class Upatcher
     //public static string tableSeekFile = "";
     public static MathParser parser = new MathParser();
     public static SavingMath savingMath = new SavingMath();
-
     public static FrmPatcher frmpatcher;
     private static frmSplashScreen frmSplash = new frmSplashScreen();
 
@@ -416,6 +416,8 @@ public class Upatcher
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger"));
         if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Log")))
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Log"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Profiles")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Profiles"));
 
         if (UniversalPatcher.Properties.Settings.Default.LastXMLfolder == "")
             UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
@@ -651,6 +653,14 @@ public class Upatcher
         if (dataType == InDataType.INT32 || dataType == InDataType.INT64 || dataType == InDataType.SBYTE || dataType == InDataType.SWORD)
             signed = true;
         return signed;
+    }
+
+    public enum PidDataType
+    {
+        uint8 = 1,
+        uint16 = 2,
+        int8,
+        int16
     }
 
     public static InDataType ConvertToDataType(string bitStr, bool signed, bool floating)
@@ -2236,9 +2246,13 @@ public class Upatcher
             }
             for (int l=0; l< LogReceivers.Count; l++)
             {
-                LogReceivers[l].AppendText(LogText);
-                if (NewLine)
-                    LogReceivers[l].AppendText(Environment.NewLine);
+                RichTextBox rtb = LogReceivers[l];
+                rtb.Parent.Invoke((MethodInvoker)delegate ()
+                {
+                    rtb.AppendText(LogText);
+                    if (NewLine)
+                        rtb.AppendText(Environment.NewLine);
+                });
             }
         }
         catch (Exception ex)
@@ -2259,11 +2273,15 @@ public class Upatcher
             }
             for (int l = 0; l < LogReceivers.Count; l++)
             {
-                LogReceivers[l].SelectionFont = new Font(LogReceivers[l].Font, FontStyle.Bold);
-                LogReceivers[l].AppendText(LogText);
-                LogReceivers[l].SelectionFont = new Font(LogReceivers[l].Font, FontStyle.Regular);
-                if (NewLine)
-                    LogReceivers[l].AppendText(Environment.NewLine);
+                RichTextBox rtb = LogReceivers[l];
+                rtb.Parent.Invoke((MethodInvoker)delegate ()
+                {
+                    rtb.SelectionFont = new Font(rtb.Font, FontStyle.Bold);
+                    rtb.AppendText(LogText);
+                    rtb.SelectionFont = new Font(rtb.Font, FontStyle.Regular);
+                    if (NewLine)
+                        rtb.AppendText(Environment.NewLine);
+                });
             }
         }
         catch (Exception ex)

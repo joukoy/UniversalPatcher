@@ -142,6 +142,7 @@
             this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tabFunction = new System.Windows.Forms.TabControl();
             this.tabApply = new System.Windows.Forms.TabPage();
+            this.btnStartFlashApp = new System.Windows.Forms.Button();
             this.btnLogger = new System.Windows.Forms.Button();
             this.btnTuner = new System.Windows.Forms.Button();
             this.btnFixFilesChecksum = new System.Windows.Forms.Button();
@@ -292,7 +293,6 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitPatcher = new System.Windows.Forms.SplitContainer();
-            this.btnStartFlashApp = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -642,7 +642,7 @@
             // 
             // btnDebugSearch
             // 
-            this.btnDebugSearch.Location = new System.Drawing.Point(92, 0);
+            this.btnDebugSearch.Location = new System.Drawing.Point(181, 1);
             this.btnDebugSearch.Name = "btnDebugSearch";
             this.btnDebugSearch.Size = new System.Drawing.Size(75, 23);
             this.btnDebugSearch.TabIndex = 213;
@@ -1662,6 +1662,16 @@
             this.tabApply.TabIndex = 1;
             this.tabApply.Text = "Modify bin";
             this.tabApply.UseVisualStyleBackColor = true;
+            // 
+            // btnStartFlashApp
+            // 
+            this.btnStartFlashApp.Location = new System.Drawing.Point(462, 6);
+            this.btnStartFlashApp.Name = "btnStartFlashApp";
+            this.btnStartFlashApp.Size = new System.Drawing.Size(106, 24);
+            this.btnStartFlashApp.TabIndex = 191;
+            this.btnStartFlashApp.Text = "Flasher";
+            this.btnStartFlashApp.UseVisualStyleBackColor = true;
+            this.btnStartFlashApp.Click += new System.EventHandler(this.btnStartFlashApp_Click);
             // 
             // btnLogger
             // 
@@ -3244,16 +3254,6 @@
             this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
             // 
-            // btnStartFlashApp
-            // 
-            this.btnStartFlashApp.Location = new System.Drawing.Point(462, 6);
-            this.btnStartFlashApp.Name = "btnStartFlashApp";
-            this.btnStartFlashApp.Size = new System.Drawing.Size(106, 24);
-            this.btnStartFlashApp.TabIndex = 191;
-            this.btnStartFlashApp.Text = "Flasher";
-            this.btnStartFlashApp.UseVisualStyleBackColor = true;
-            this.btnStartFlashApp.Click += new System.EventHandler(this.btnStartFlashApp_Click);
-            // 
             // FrmPatcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3409,7 +3409,6 @@
         private System.Windows.Forms.Label labelPatchname;
         private System.Windows.Forms.Button btnManualPatch;
         private System.Windows.Forms.Button btnBinLoadPatch;
-        private System.Windows.Forms.CheckBox chkDebug;
         private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.Button btnDown;
         private System.Windows.Forms.Button btnUp;
@@ -3627,5 +3626,6 @@
         private System.Windows.Forms.RadioButton radioSortCopy;
         private System.Windows.Forms.Button btnLogger;
         private System.Windows.Forms.Button btnStartFlashApp;
+        public System.Windows.Forms.CheckBox chkDebug;
     }
 }
