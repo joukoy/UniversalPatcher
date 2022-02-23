@@ -36,13 +36,6 @@ namespace UniversalPatcher
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabLog = new System.Windows.Forms.TabPage();
             this.groupLogSettings = new System.Windows.Forms.GroupBox();
-            this.groupAdvanced = new System.Windows.Forms.GroupBox();
-            this.chkBusFilters = new System.Windows.Forms.CheckBox();
-            this.chkPriority = new System.Windows.Forms.CheckBox();
-            this.chkRawValues = new System.Windows.Forms.CheckBox();
-            this.chkReverseSlotNumbers = new System.Windows.Forms.CheckBox();
-            this.labelResponseMode = new System.Windows.Forms.Label();
-            this.comboResponseMode = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chkWriteLog = new System.Windows.Forms.CheckBox();
             this.btnBrowsLogFolder = new System.Windows.Forms.Button();
@@ -76,19 +69,30 @@ namespace UniversalPatcher
             this.chkHideHeartBeat = new System.Windows.Forms.CheckBox();
             this.dataGridAnalyzer = new System.Windows.Forms.DataGridView();
             this.tabDTC = new System.Windows.Forms.TabPage();
+            this.groupDTC = new System.Windows.Forms.GroupBox();
+            this.btnHistoryDTC = new System.Windows.Forms.Button();
             this.btnGetVINCode = new System.Windows.Forms.Button();
+            this.btnCurrentDTC = new System.Windows.Forms.Button();
+            this.comboModule = new System.Windows.Forms.ComboBox();
+            this.chkDtcAllModules = new System.Windows.Forms.CheckBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.btnClearCodes = new System.Windows.Forms.Button();
             this.dataGridDtcCodes = new System.Windows.Forms.DataGridView();
             this.Module = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Code = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.chkDtcAllModules = new System.Windows.Forms.CheckBox();
-            this.btnClearCodes = new System.Windows.Forms.Button();
-            this.label8 = new System.Windows.Forms.Label();
-            this.comboModule = new System.Windows.Forms.ComboBox();
-            this.btnHistoryDTC = new System.Windows.Forms.Button();
-            this.btnCurrentDTC = new System.Windows.Forms.Button();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.btnConnect = new System.Windows.Forms.Button();
+            this.groupAdvanced = new System.Windows.Forms.GroupBox();
+            this.chkFilterParamsByOS = new System.Windows.Forms.CheckBox();
+            this.chkBusFilters = new System.Windows.Forms.CheckBox();
+            this.chkPriority = new System.Windows.Forms.CheckBox();
+            this.chkRawValues = new System.Windows.Forms.CheckBox();
+            this.chkReverseSlotNumbers = new System.Windows.Forms.CheckBox();
+            this.labelResponseMode = new System.Windows.Forms.Label();
+            this.comboResponseMode = new System.Windows.Forms.ComboBox();
             this.groupHWSettings = new System.Windows.Forms.GroupBox();
             this.categories = new System.Windows.Forms.GroupBox();
             this.j2534RadioButton = new System.Windows.Forms.RadioButton();
@@ -103,7 +107,7 @@ namespace UniversalPatcher
             this.comboSerialDeviceType = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.btnConnect = new System.Windows.Forms.Button();
+            this.txtSendBus = new System.Windows.Forms.TextBox();
             this.labelProgress = new System.Windows.Forms.Label();
             this.btnStartStop = new System.Windows.Forms.Button();
             this.txtResult = new System.Windows.Forms.RichTextBox();
@@ -120,11 +124,11 @@ namespace UniversalPatcher
             this.timerAnalyzer = new System.Windows.Forms.Timer(this.components);
             this.labelConnected = new System.Windows.Forms.Label();
             this.timerSearchParams = new System.Windows.Forms.Timer(this.components);
-            this.groupDTC = new System.Windows.Forms.GroupBox();
+            this.txtVPWmessages = new System.Windows.Forms.RichTextBox();
+            this.chkEnableConsole = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
-            this.groupAdvanced.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).BeginInit();
             this.tabProfile.SuspendLayout();
@@ -139,8 +143,14 @@ namespace UniversalPatcher
             this.tabAnalyzer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAnalyzer)).BeginInit();
             this.tabDTC.SuspendLayout();
+            this.groupDTC.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridDtcCodes)).BeginInit();
             this.tabSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
+            this.groupAdvanced.SuspendLayout();
             this.groupHWSettings.SuspendLayout();
             this.categories.SuspendLayout();
             this.j2534OptionsGroupBox.SuspendLayout();
@@ -150,7 +160,6 @@ namespace UniversalPatcher
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            this.groupDTC.SuspendLayout();
             this.SuspendLayout();
             // 
             // timerShowData
@@ -205,83 +214,6 @@ namespace UniversalPatcher
             this.groupLogSettings.Size = new System.Drawing.Size(438, 401);
             this.groupLogSettings.TabIndex = 31;
             this.groupLogSettings.TabStop = false;
-            // 
-            // groupAdvanced
-            // 
-            this.groupAdvanced.Controls.Add(this.chkBusFilters);
-            this.groupAdvanced.Controls.Add(this.chkPriority);
-            this.groupAdvanced.Controls.Add(this.chkRawValues);
-            this.groupAdvanced.Controls.Add(this.chkReverseSlotNumbers);
-            this.groupAdvanced.Controls.Add(this.labelResponseMode);
-            this.groupAdvanced.Controls.Add(this.comboResponseMode);
-            this.groupAdvanced.Location = new System.Drawing.Point(463, 10);
-            this.groupAdvanced.Name = "groupAdvanced";
-            this.groupAdvanced.Size = new System.Drawing.Size(353, 84);
-            this.groupAdvanced.TabIndex = 34;
-            this.groupAdvanced.TabStop = false;
-            this.groupAdvanced.Text = "Advanced";
-            // 
-            // chkBusFilters
-            // 
-            this.chkBusFilters.AutoSize = true;
-            this.chkBusFilters.Location = new System.Drawing.Point(10, 60);
-            this.chkBusFilters.Name = "chkBusFilters";
-            this.chkBusFilters.Size = new System.Drawing.Size(53, 17);
-            this.chkBusFilters.TabIndex = 35;
-            this.chkBusFilters.Text = "Filters";
-            this.chkBusFilters.UseVisualStyleBackColor = true;
-            this.chkBusFilters.CheckedChanged += new System.EventHandler(this.chkBusFilters_CheckedChanged);
-            // 
-            // chkPriority
-            // 
-            this.chkPriority.AutoSize = true;
-            this.chkPriority.Location = new System.Drawing.Point(191, 56);
-            this.chkPriority.Name = "chkPriority";
-            this.chkPriority.Size = new System.Drawing.Size(79, 17);
-            this.chkPriority.TabIndex = 34;
-            this.chkPriority.Text = "Use Priority";
-            this.chkPriority.UseVisualStyleBackColor = true;
-            this.chkPriority.CheckedChanged += new System.EventHandler(this.chkPriority_CheckedChanged);
-            // 
-            // chkRawValues
-            // 
-            this.chkRawValues.AutoSize = true;
-            this.chkRawValues.Location = new System.Drawing.Point(9, 19);
-            this.chkRawValues.Name = "chkRawValues";
-            this.chkRawValues.Size = new System.Drawing.Size(82, 17);
-            this.chkRawValues.TabIndex = 26;
-            this.chkRawValues.Text = "Raw values";
-            this.chkRawValues.UseVisualStyleBackColor = true;
-            // 
-            // chkReverseSlotNumbers
-            // 
-            this.chkReverseSlotNumbers.AutoSize = true;
-            this.chkReverseSlotNumbers.Checked = true;
-            this.chkReverseSlotNumbers.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkReverseSlotNumbers.Location = new System.Drawing.Point(9, 39);
-            this.chkReverseSlotNumbers.Name = "chkReverseSlotNumbers";
-            this.chkReverseSlotNumbers.Size = new System.Drawing.Size(149, 17);
-            this.chkReverseSlotNumbers.TabIndex = 27;
-            this.chkReverseSlotNumbers.Text = "Slot numbers start from FE";
-            this.chkReverseSlotNumbers.UseVisualStyleBackColor = true;
-            // 
-            // labelResponseMode
-            // 
-            this.labelResponseMode.AutoSize = true;
-            this.labelResponseMode.Location = new System.Drawing.Point(191, 15);
-            this.labelResponseMode.Name = "labelResponseMode";
-            this.labelResponseMode.Size = new System.Drawing.Size(88, 13);
-            this.labelResponseMode.TabIndex = 24;
-            this.labelResponseMode.Text = "Response Mode:";
-            // 
-            // comboResponseMode
-            // 
-            this.comboResponseMode.FormattingEnabled = true;
-            this.comboResponseMode.Location = new System.Drawing.Point(191, 29);
-            this.comboResponseMode.Name = "comboResponseMode";
-            this.comboResponseMode.Size = new System.Drawing.Size(149, 21);
-            this.comboResponseMode.TabIndex = 23;
-            this.comboResponseMode.SelectedIndexChanged += new System.EventHandler(this.comboResponseMode_SelectedIndexChanged);
             // 
             // groupBox1
             // 
@@ -638,6 +570,31 @@ namespace UniversalPatcher
             this.tabDTC.Text = "DTC";
             this.tabDTC.UseVisualStyleBackColor = true;
             // 
+            // groupDTC
+            // 
+            this.groupDTC.Controls.Add(this.btnHistoryDTC);
+            this.groupDTC.Controls.Add(this.btnGetVINCode);
+            this.groupDTC.Controls.Add(this.btnCurrentDTC);
+            this.groupDTC.Controls.Add(this.comboModule);
+            this.groupDTC.Controls.Add(this.chkDtcAllModules);
+            this.groupDTC.Controls.Add(this.label8);
+            this.groupDTC.Controls.Add(this.btnClearCodes);
+            this.groupDTC.Location = new System.Drawing.Point(3, 3);
+            this.groupDTC.Name = "groupDTC";
+            this.groupDTC.Size = new System.Drawing.Size(173, 202);
+            this.groupDTC.TabIndex = 9;
+            this.groupDTC.TabStop = false;
+            // 
+            // btnHistoryDTC
+            // 
+            this.btnHistoryDTC.Location = new System.Drawing.Point(6, 96);
+            this.btnHistoryDTC.Name = "btnHistoryDTC";
+            this.btnHistoryDTC.Size = new System.Drawing.Size(162, 29);
+            this.btnHistoryDTC.TabIndex = 1;
+            this.btnHistoryDTC.Text = "Get History DTC codes";
+            this.btnHistoryDTC.UseVisualStyleBackColor = true;
+            this.btnHistoryDTC.Click += new System.EventHandler(this.btnHistoryDTC_Click);
+            // 
             // btnGetVINCode
             // 
             this.btnGetVINCode.Location = new System.Drawing.Point(6, 166);
@@ -647,6 +604,54 @@ namespace UniversalPatcher
             this.btnGetVINCode.Text = "Get VIN Code";
             this.btnGetVINCode.UseVisualStyleBackColor = true;
             this.btnGetVINCode.Click += new System.EventHandler(this.btnGetVINCode_Click);
+            // 
+            // btnCurrentDTC
+            // 
+            this.btnCurrentDTC.Location = new System.Drawing.Point(6, 61);
+            this.btnCurrentDTC.Name = "btnCurrentDTC";
+            this.btnCurrentDTC.Size = new System.Drawing.Size(162, 29);
+            this.btnCurrentDTC.TabIndex = 0;
+            this.btnCurrentDTC.Text = "Get current DTC codes";
+            this.btnCurrentDTC.UseVisualStyleBackColor = true;
+            this.btnCurrentDTC.Click += new System.EventHandler(this.btnCurrentDTC_Click);
+            // 
+            // comboModule
+            // 
+            this.comboModule.FormattingEnabled = true;
+            this.comboModule.Location = new System.Drawing.Point(63, 34);
+            this.comboModule.Name = "comboModule";
+            this.comboModule.Size = new System.Drawing.Size(105, 21);
+            this.comboModule.TabIndex = 2;
+            // 
+            // chkDtcAllModules
+            // 
+            this.chkDtcAllModules.AutoSize = true;
+            this.chkDtcAllModules.Location = new System.Drawing.Point(63, 12);
+            this.chkDtcAllModules.Name = "chkDtcAllModules";
+            this.chkDtcAllModules.Size = new System.Drawing.Size(79, 17);
+            this.chkDtcAllModules.TabIndex = 6;
+            this.chkDtcAllModules.Text = "All modules";
+            this.chkDtcAllModules.UseVisualStyleBackColor = true;
+            this.chkDtcAllModules.CheckedChanged += new System.EventHandler(this.chkDtcAllModules_CheckedChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(6, 37);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(45, 13);
+            this.label8.TabIndex = 3;
+            this.label8.Text = "Module:";
+            // 
+            // btnClearCodes
+            // 
+            this.btnClearCodes.Location = new System.Drawing.Point(6, 131);
+            this.btnClearCodes.Name = "btnClearCodes";
+            this.btnClearCodes.Size = new System.Drawing.Size(162, 29);
+            this.btnClearCodes.TabIndex = 5;
+            this.btnClearCodes.Text = "Clear DTC codes";
+            this.btnClearCodes.UseVisualStyleBackColor = true;
+            this.btnClearCodes.Click += new System.EventHandler(this.btnClearCodes_Click);
             // 
             // dataGridDtcCodes
             // 
@@ -686,69 +691,9 @@ namespace UniversalPatcher
             this.Status.Name = "Status";
             this.Status.Width = 300;
             // 
-            // chkDtcAllModules
-            // 
-            this.chkDtcAllModules.AutoSize = true;
-            this.chkDtcAllModules.Location = new System.Drawing.Point(63, 12);
-            this.chkDtcAllModules.Name = "chkDtcAllModules";
-            this.chkDtcAllModules.Size = new System.Drawing.Size(79, 17);
-            this.chkDtcAllModules.TabIndex = 6;
-            this.chkDtcAllModules.Text = "All modules";
-            this.chkDtcAllModules.UseVisualStyleBackColor = true;
-            this.chkDtcAllModules.CheckedChanged += new System.EventHandler(this.chkDtcAllModules_CheckedChanged);
-            // 
-            // btnClearCodes
-            // 
-            this.btnClearCodes.Location = new System.Drawing.Point(6, 131);
-            this.btnClearCodes.Name = "btnClearCodes";
-            this.btnClearCodes.Size = new System.Drawing.Size(162, 29);
-            this.btnClearCodes.TabIndex = 5;
-            this.btnClearCodes.Text = "Clear DTC codes";
-            this.btnClearCodes.UseVisualStyleBackColor = true;
-            this.btnClearCodes.Click += new System.EventHandler(this.btnClearCodes_Click);
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(6, 37);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(45, 13);
-            this.label8.TabIndex = 3;
-            this.label8.Text = "Module:";
-            // 
-            // comboModule
-            // 
-            this.comboModule.FormattingEnabled = true;
-            this.comboModule.Location = new System.Drawing.Point(63, 34);
-            this.comboModule.Name = "comboModule";
-            this.comboModule.Size = new System.Drawing.Size(105, 21);
-            this.comboModule.TabIndex = 2;
-            // 
-            // btnHistoryDTC
-            // 
-            this.btnHistoryDTC.Location = new System.Drawing.Point(6, 96);
-            this.btnHistoryDTC.Name = "btnHistoryDTC";
-            this.btnHistoryDTC.Size = new System.Drawing.Size(162, 29);
-            this.btnHistoryDTC.TabIndex = 1;
-            this.btnHistoryDTC.Text = "Get History DTC codes";
-            this.btnHistoryDTC.UseVisualStyleBackColor = true;
-            this.btnHistoryDTC.Click += new System.EventHandler(this.btnHistoryDTC_Click);
-            // 
-            // btnCurrentDTC
-            // 
-            this.btnCurrentDTC.Location = new System.Drawing.Point(6, 61);
-            this.btnCurrentDTC.Name = "btnCurrentDTC";
-            this.btnCurrentDTC.Size = new System.Drawing.Size(162, 29);
-            this.btnCurrentDTC.TabIndex = 0;
-            this.btnCurrentDTC.Text = "Get current DTC codes";
-            this.btnCurrentDTC.UseVisualStyleBackColor = true;
-            this.btnCurrentDTC.Click += new System.EventHandler(this.btnCurrentDTC_Click);
-            // 
             // tabSettings
             // 
-            this.tabSettings.Controls.Add(this.groupAdvanced);
-            this.tabSettings.Controls.Add(this.groupHWSettings);
-            this.tabSettings.Controls.Add(this.btnConnect);
+            this.tabSettings.Controls.Add(this.splitContainer3);
             this.tabSettings.Location = new System.Drawing.Point(4, 22);
             this.tabSettings.Name = "tabSettings";
             this.tabSettings.Size = new System.Drawing.Size(904, 397);
@@ -756,14 +701,135 @@ namespace UniversalPatcher
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
             // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.btnConnect);
+            this.splitContainer3.Panel1.Controls.Add(this.groupAdvanced);
+            this.splitContainer3.Panel1.Controls.Add(this.groupHWSettings);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.txtVPWmessages);
+            this.splitContainer3.Panel2.Controls.Add(this.txtSendBus);
+            this.splitContainer3.Size = new System.Drawing.Size(904, 397);
+            this.splitContainer3.SplitterDistance = 457;
+            this.splitContainer3.TabIndex = 35;
+            // 
+            // btnConnect
+            // 
+            this.btnConnect.Location = new System.Drawing.Point(354, 262);
+            this.btnConnect.Name = "btnConnect";
+            this.btnConnect.Size = new System.Drawing.Size(90, 56);
+            this.btnConnect.TabIndex = 21;
+            this.btnConnect.Text = "Connect/ Disconnect";
+            this.btnConnect.UseVisualStyleBackColor = true;
+            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
+            // 
+            // groupAdvanced
+            // 
+            this.groupAdvanced.Controls.Add(this.chkEnableConsole);
+            this.groupAdvanced.Controls.Add(this.chkFilterParamsByOS);
+            this.groupAdvanced.Controls.Add(this.chkBusFilters);
+            this.groupAdvanced.Controls.Add(this.chkPriority);
+            this.groupAdvanced.Controls.Add(this.chkRawValues);
+            this.groupAdvanced.Controls.Add(this.chkReverseSlotNumbers);
+            this.groupAdvanced.Controls.Add(this.labelResponseMode);
+            this.groupAdvanced.Controls.Add(this.comboResponseMode);
+            this.groupAdvanced.Location = new System.Drawing.Point(3, 242);
+            this.groupAdvanced.Name = "groupAdvanced";
+            this.groupAdvanced.Size = new System.Drawing.Size(345, 102);
+            this.groupAdvanced.TabIndex = 34;
+            this.groupAdvanced.TabStop = false;
+            this.groupAdvanced.Text = "Advanced";
+            // 
+            // chkFilterParamsByOS
+            // 
+            this.chkFilterParamsByOS.AutoSize = true;
+            this.chkFilterParamsByOS.Checked = true;
+            this.chkFilterParamsByOS.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkFilterParamsByOS.Location = new System.Drawing.Point(9, 79);
+            this.chkFilterParamsByOS.Name = "chkFilterParamsByOS";
+            this.chkFilterParamsByOS.Size = new System.Drawing.Size(135, 17);
+            this.chkFilterParamsByOS.TabIndex = 36;
+            this.chkFilterParamsByOS.Text = "Filter parameters by OS";
+            this.chkFilterParamsByOS.UseVisualStyleBackColor = true;
+            // 
+            // chkBusFilters
+            // 
+            this.chkBusFilters.AutoSize = true;
+            this.chkBusFilters.Location = new System.Drawing.Point(9, 59);
+            this.chkBusFilters.Name = "chkBusFilters";
+            this.chkBusFilters.Size = new System.Drawing.Size(100, 17);
+            this.chkBusFilters.TabIndex = 35;
+            this.chkBusFilters.Text = "Use BUS Filters";
+            this.chkBusFilters.UseVisualStyleBackColor = true;
+            this.chkBusFilters.CheckedChanged += new System.EventHandler(this.chkBusFilters_CheckedChanged);
+            // 
+            // chkPriority
+            // 
+            this.chkPriority.AutoSize = true;
+            this.chkPriority.Location = new System.Drawing.Point(191, 56);
+            this.chkPriority.Name = "chkPriority";
+            this.chkPriority.Size = new System.Drawing.Size(79, 17);
+            this.chkPriority.TabIndex = 34;
+            this.chkPriority.Text = "Use Priority";
+            this.chkPriority.UseVisualStyleBackColor = true;
+            this.chkPriority.CheckedChanged += new System.EventHandler(this.chkPriority_CheckedChanged);
+            // 
+            // chkRawValues
+            // 
+            this.chkRawValues.AutoSize = true;
+            this.chkRawValues.Location = new System.Drawing.Point(9, 19);
+            this.chkRawValues.Name = "chkRawValues";
+            this.chkRawValues.Size = new System.Drawing.Size(82, 17);
+            this.chkRawValues.TabIndex = 26;
+            this.chkRawValues.Text = "Raw values";
+            this.chkRawValues.UseVisualStyleBackColor = true;
+            // 
+            // chkReverseSlotNumbers
+            // 
+            this.chkReverseSlotNumbers.AutoSize = true;
+            this.chkReverseSlotNumbers.Checked = true;
+            this.chkReverseSlotNumbers.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkReverseSlotNumbers.Location = new System.Drawing.Point(9, 39);
+            this.chkReverseSlotNumbers.Name = "chkReverseSlotNumbers";
+            this.chkReverseSlotNumbers.Size = new System.Drawing.Size(149, 17);
+            this.chkReverseSlotNumbers.TabIndex = 27;
+            this.chkReverseSlotNumbers.Text = "Slot numbers start from FE";
+            this.chkReverseSlotNumbers.UseVisualStyleBackColor = true;
+            // 
+            // labelResponseMode
+            // 
+            this.labelResponseMode.AutoSize = true;
+            this.labelResponseMode.Location = new System.Drawing.Point(191, 15);
+            this.labelResponseMode.Name = "labelResponseMode";
+            this.labelResponseMode.Size = new System.Drawing.Size(88, 13);
+            this.labelResponseMode.TabIndex = 24;
+            this.labelResponseMode.Text = "Response Mode:";
+            // 
+            // comboResponseMode
+            // 
+            this.comboResponseMode.FormattingEnabled = true;
+            this.comboResponseMode.Location = new System.Drawing.Point(191, 29);
+            this.comboResponseMode.Name = "comboResponseMode";
+            this.comboResponseMode.Size = new System.Drawing.Size(149, 21);
+            this.comboResponseMode.TabIndex = 23;
+            this.comboResponseMode.SelectedIndexChanged += new System.EventHandler(this.comboResponseMode_SelectedIndexChanged);
+            // 
             // groupHWSettings
             // 
             this.groupHWSettings.Controls.Add(this.categories);
             this.groupHWSettings.Controls.Add(this.j2534OptionsGroupBox);
             this.groupHWSettings.Controls.Add(this.serialOptionsGroupBox);
-            this.groupHWSettings.Location = new System.Drawing.Point(8, 3);
+            this.groupHWSettings.Location = new System.Drawing.Point(3, 3);
             this.groupHWSettings.Name = "groupHWSettings";
-            this.groupHWSettings.Size = new System.Drawing.Size(449, 248);
+            this.groupHWSettings.Size = new System.Drawing.Size(449, 233);
             this.groupHWSettings.TabIndex = 22;
             this.groupHWSettings.TabStop = false;
             // 
@@ -771,7 +837,7 @@ namespace UniversalPatcher
             // 
             this.categories.Controls.Add(this.j2534RadioButton);
             this.categories.Controls.Add(this.serialRadioButton);
-            this.categories.Location = new System.Drawing.Point(6, 19);
+            this.categories.Location = new System.Drawing.Point(6, 6);
             this.categories.Name = "categories";
             this.categories.Size = new System.Drawing.Size(174, 71);
             this.categories.TabIndex = 18;
@@ -806,7 +872,7 @@ namespace UniversalPatcher
             // 
             this.j2534OptionsGroupBox.Controls.Add(this.j2534DeviceList);
             this.j2534OptionsGroupBox.Controls.Add(this.label5);
-            this.j2534OptionsGroupBox.Location = new System.Drawing.Point(186, 19);
+            this.j2534OptionsGroupBox.Location = new System.Drawing.Point(185, 6);
             this.j2534OptionsGroupBox.Name = "j2534OptionsGroupBox";
             this.j2534OptionsGroupBox.Size = new System.Drawing.Size(258, 72);
             this.j2534OptionsGroupBox.TabIndex = 19;
@@ -841,7 +907,7 @@ namespace UniversalPatcher
             this.serialOptionsGroupBox.Controls.Add(this.label1);
             this.serialOptionsGroupBox.Controls.Add(this.comboSerialPort);
             this.serialOptionsGroupBox.Controls.Add(this.label4);
-            this.serialOptionsGroupBox.Location = new System.Drawing.Point(6, 99);
+            this.serialOptionsGroupBox.Location = new System.Drawing.Point(5, 83);
             this.serialOptionsGroupBox.Name = "serialOptionsGroupBox";
             this.serialOptionsGroupBox.Size = new System.Drawing.Size(438, 141);
             this.serialOptionsGroupBox.TabIndex = 20;
@@ -903,15 +969,14 @@ namespace UniversalPatcher
             this.label4.TabIndex = 16;
             this.label4.Text = "Device Type";
             // 
-            // btnConnect
+            // txtSendBus
             // 
-            this.btnConnect.Location = new System.Drawing.Point(329, 257);
-            this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(117, 30);
-            this.btnConnect.TabIndex = 21;
-            this.btnConnect.Text = "Connect/Disconnect";
-            this.btnConnect.UseVisualStyleBackColor = true;
-            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
+            this.txtSendBus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSendBus.Location = new System.Drawing.Point(2, 374);
+            this.txtSendBus.Name = "txtSendBus";
+            this.txtSendBus.Size = new System.Drawing.Size(436, 20);
+            this.txtSendBus.TabIndex = 1;
             // 
             // labelProgress
             // 
@@ -1056,20 +1121,28 @@ namespace UniversalPatcher
             // 
             this.timerSearchParams.Tick += new System.EventHandler(this.timerSearchParams_Tick);
             // 
-            // groupDTC
+            // txtVPWmessages
             // 
-            this.groupDTC.Controls.Add(this.btnHistoryDTC);
-            this.groupDTC.Controls.Add(this.btnGetVINCode);
-            this.groupDTC.Controls.Add(this.btnCurrentDTC);
-            this.groupDTC.Controls.Add(this.comboModule);
-            this.groupDTC.Controls.Add(this.chkDtcAllModules);
-            this.groupDTC.Controls.Add(this.label8);
-            this.groupDTC.Controls.Add(this.btnClearCodes);
-            this.groupDTC.Location = new System.Drawing.Point(3, 3);
-            this.groupDTC.Name = "groupDTC";
-            this.groupDTC.Size = new System.Drawing.Size(173, 202);
-            this.groupDTC.TabIndex = 9;
-            this.groupDTC.TabStop = false;
+            this.txtVPWmessages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtVPWmessages.HideSelection = false;
+            this.txtVPWmessages.Location = new System.Drawing.Point(2, 3);
+            this.txtVPWmessages.Name = "txtVPWmessages";
+            this.txtVPWmessages.Size = new System.Drawing.Size(435, 371);
+            this.txtVPWmessages.TabIndex = 2;
+            this.txtVPWmessages.Text = "";
+            // 
+            // chkEnableConsole
+            // 
+            this.chkEnableConsole.AutoSize = true;
+            this.chkEnableConsole.Location = new System.Drawing.Point(191, 79);
+            this.chkEnableConsole.Name = "chkEnableConsole";
+            this.chkEnableConsole.Size = new System.Drawing.Size(99, 17);
+            this.chkEnableConsole.TabIndex = 37;
+            this.chkEnableConsole.Text = "Enable console";
+            this.chkEnableConsole.UseVisualStyleBackColor = true;
+            this.chkEnableConsole.CheckedChanged += new System.EventHandler(this.chkEnableConsole_CheckedChanged);
             // 
             // frmLogger
             // 
@@ -1089,8 +1162,6 @@ namespace UniversalPatcher
             this.tabLog.ResumeLayout(false);
             this.groupLogSettings.ResumeLayout(false);
             this.groupLogSettings.PerformLayout();
-            this.groupAdvanced.ResumeLayout(false);
-            this.groupAdvanced.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).EndInit();
@@ -1108,8 +1179,17 @@ namespace UniversalPatcher
             this.tabAnalyzer.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAnalyzer)).EndInit();
             this.tabDTC.ResumeLayout(false);
+            this.groupDTC.ResumeLayout(false);
+            this.groupDTC.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridDtcCodes)).EndInit();
             this.tabSettings.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            this.splitContainer3.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
+            this.groupAdvanced.ResumeLayout(false);
+            this.groupAdvanced.PerformLayout();
             this.groupHWSettings.ResumeLayout(false);
             this.categories.ResumeLayout(false);
             this.categories.PerformLayout();
@@ -1123,8 +1203,6 @@ namespace UniversalPatcher
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            this.groupDTC.ResumeLayout(false);
-            this.groupDTC.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1221,6 +1299,11 @@ namespace UniversalPatcher
         private System.Windows.Forms.Timer timerSearchParams;
         private System.Windows.Forms.ToolStripMenuItem newProfileToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupDTC;
+        private System.Windows.Forms.CheckBox chkFilterParamsByOS;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.TextBox txtSendBus;
+        private System.Windows.Forms.RichTextBox txtVPWmessages;
+        private System.Windows.Forms.CheckBox chkEnableConsole;
     }
 }
 

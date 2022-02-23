@@ -2329,14 +2329,18 @@ public class Upatcher
         file.Close();
     }
 
-    public static void StartLogger()
+    public static void StartLogger(PcmFile PCM)
     {
         try
         {
             if (UniversalPatcher.Properties.Settings.Default.LoggerUseIntegrated)
             {
                 frmLogger fl = new frmLogger();
-                fl.Show();                
+                fl.Show();
+                if (PCM != null && !string.IsNullOrEmpty(PCM.OS))
+                {
+                    fl.FilterPidsByBin(PCM);
+                }
             }
             else if (string.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerExternalApp))
             {

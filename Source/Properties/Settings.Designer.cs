@@ -1278,5 +1278,17 @@ namespace UniversalPatcher.Properties {
                 this["LoggerWindowPosition"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LoggerEnableConsole {
+            get {
+                return ((bool)(this["LoggerEnableConsole"]));
+            }
+            set {
+                this["LoggerEnableConsole"] = value;
+            }
+        }
     }
 }

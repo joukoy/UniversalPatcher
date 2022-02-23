@@ -394,3 +394,13 @@
 
 0.20.6
 - Logger: Revert back from PCM Logger code to own code, using only device code from PCM Logger
+
+0.20.7
+- Heavily modified Logger
+
+0.20.8
+- Logger: Filtering by OS and testing pids improved.
+- Logger: Allow DTC functions during logging
+- Logger: VPW Console in settings-tab
+
+

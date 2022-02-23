@@ -27,6 +27,15 @@ namespace UniversalPatcher
         Maximum,
     }
 
+    public class MsgEventparameter: EventArgs
+    {
+        public MsgEventparameter(OBDMessage msg)
+        {
+            this.Msg = msg;
+        }
+        public OBDMessage Msg { get; internal set; }
+    }
+
     /// <summary>
     /// VPW can operate at two speeds. It is generally in standard (low speed) mode, but can switch to 4X (high speed).
     /// </summary>
@@ -210,6 +219,7 @@ namespace UniversalPatcher
         /// </summary>
         public void ClearMessageQueue()
         {
+            Debug.WriteLine("Clearing: {0} messages from queue", queue.Count);
             this.queue.Clear();
             ClearMessageBuffer();
         }
@@ -309,16 +319,17 @@ namespace UniversalPatcher
         /// </summary>
         protected void Enqueue(OBDMessage message)
         {
-            //Debug.WriteLine("Message: " + message.ToString());
-            if (DataLogger.CurrentMode == DataLogger.RunMode.LogRunning && 
-                ( message.ElmPrompt || ( message.Length > 4 && message.GetBytes()[3] == 0x6A)))
+            Debug.WriteLine("Message: " + message.ToString() +", elmprompt: " + message.ElmPrompt);
+            MsgEventparameter msg = new MsgEventparameter(message);
+            OnMsgReceived(msg);
+            if (message.ElmPrompt || ( message.Length > 4 && message.GetBytes()[3] == 0x6A))
             {
                 lock (this.logQueue)
                 {
                     this.logQueue.Enqueue(message);
                 }
             }
-            else
+            if (message.Length > 3)
             {
                 lock (this.queue)
                 {
@@ -395,7 +406,7 @@ namespace UniversalPatcher
                     break;
 
                 case TimeoutScenario.DataLogging4:
-                    packetSize = 90;
+                    packetSize = 4500;
                     break;
 
                 case TimeoutScenario.Maximum:
@@ -439,5 +450,38 @@ namespace UniversalPatcher
         public abstract bool RemoveFilters();
         public string CurrentFilter { get; set; }
         public DataLogger.LoggingDevType LogDeviceType { get; set; }
+
+
+        /// <summary>
+        /// Event for updating console when message received
+        /// </summary>
+        public event EventHandler<MsgEventparameter> MsgReceived;
+
+        protected virtual void OnMsgReceived(MsgEventparameter e)
+        {
+            MsgReceived?.Invoke(this, e);
+        }
+
+        public void MessageReceived(OBDMessage message)
+        {
+            MsgEventparameter msg = new MsgEventparameter(message);
+            OnMsgReceived(msg);
+        }
+
+        /// <summary>
+        /// Event for updating console when message sent
+        /// </summary>
+        public event EventHandler<MsgEventparameter> MsgSent;
+
+        protected virtual void OnMsgSent(MsgEventparameter e)
+        {
+            MsgSent?.Invoke(this, e);
+        }
+
+        public void MessageSent(OBDMessage message)
+        {
+            MsgEventparameter msg = new MsgEventparameter(message);
+            OnMsgSent(msg);
+        }
     }
 }

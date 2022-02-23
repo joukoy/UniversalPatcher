@@ -65,8 +65,8 @@ namespace UniversalPatcher
 
             try
             {
-                string apID = this.SendRequest("AT #1");                // Identify (AllPro)
-                if (apID == "?")
+                string apID = this.SendRequest("AT #1").Data;                // Identify (AllPro)
+                if (apID == "?" || string.IsNullOrEmpty(apID))
                 {
                     Debug.WriteLine("This is not an AllPro device.");
                     return false;
@@ -138,7 +138,7 @@ namespace UniversalPatcher
                         break;
 
                     case TimeoutScenario.DataLogging4:
-                        milliseconds = 80;
+                        milliseconds = 4500;
                         break;
 
                     case TimeoutScenario.Maximum:
@@ -194,7 +194,7 @@ namespace UniversalPatcher
                         break;
 
                     case TimeoutScenario.DataLogging4:
-                        milliseconds = 20;
+                        milliseconds = 4500;
                         break;
 
                     case TimeoutScenario.Maximum:
@@ -207,12 +207,12 @@ namespace UniversalPatcher
 
             return milliseconds;
         }
-            
+
         /// <summary>
         /// Send a message, do not expect a response.
         /// </summary>
         public override bool SendMessage(OBDMessage message, int responses)
-        {
+        {            
             byte[] messageBytes = message.GetBytes();
             string header;
             string payload;
@@ -220,17 +220,17 @@ namespace UniversalPatcher
 
             if (header != this.currentHeader)
             {
-                string setHeaderResponse = this.SendRequest("AT SH " + header);
-                Debug.WriteLine("Set header response: " + setHeaderResponse);
+                SerialString setHeaderResponse = this.SendRequest("AT SH " + header);
+                Debug.WriteLine("Set header response: " + setHeaderResponse.Data);
 
-                if(setHeaderResponse == "STOPPED")
+                if(setHeaderResponse.Data == "STOPPED")
                 {
                     // Does it help to retry once?
                     setHeaderResponse = this.SendRequest("AT SH " + header);
-                    Debug.WriteLine("Set header response: " + setHeaderResponse);
+                    Debug.WriteLine("Set header response: " + setHeaderResponse.Data);
                 }
 
-                if (!this.ProcessResponse(new SerialString(setHeaderResponse,0,false), "set-header command", false))
+                if (!this.ProcessResponse(setHeaderResponse, "set-header command", false))
                 {
                     return false;
                 }
@@ -240,12 +240,13 @@ namespace UniversalPatcher
 
             payload = payload.Replace(" ", "");
 
-            string sendMessageResponse = this.SendRequest(payload + " ");
-            if (!this.ProcessResponse(new SerialString(sendMessageResponse, DateTime.Now.Ticks,false), "message content", false))
+            DataLogger.LogDevice.MessageSent(message);
+
+            SerialString sendMessageResponse = this.SendRequest(payload + " ");
+            if (!this.ProcessResponse(sendMessageResponse, "message content", false))
             {
                 return false;
             }
-
             return true;
         }
 

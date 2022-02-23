@@ -96,7 +96,7 @@ namespace UniversalPatcher
         {
             Filters = new List<ulong>();
 
-            Debug.WriteLine("Initializing " + this.ToString());
+            Logger("Initializing " + this.ToString());
 
             Response<J2534Err> m; // hold returned messages for processing
             Response<bool> m2;
@@ -122,7 +122,7 @@ namespace UniversalPatcher
             m2 = LoadLibrary(J2534Port.LoadedDevice);
             if (m2.Status != ResponseStatus.Success)
             {
-                Debug.WriteLine("Unable to load the J2534 DLL.");
+                Logger("Unable to load the J2534 DLL.");
                 return false;
             }
             Debug.WriteLine("Loaded DLL");
@@ -130,13 +130,23 @@ namespace UniversalPatcher
             m = ConnectTool();
             if (m.Status != ResponseStatus.Success)
             {
-                Debug.WriteLine("Unable to connect to the device: " + m.Value);
+                Logger("Unable to connect to the device: " + m.Value);
                 return false;
             }
 
             Debug.WriteLine("Connected to the device.");
 
             //Optional.. read API,firmware version ect here
+            //read voltage
+            volts = ReadVoltage();
+            if (volts.Status != ResponseStatus.Success)
+            {
+                Logger("Unable to read battery voltage.");
+            }
+            else
+            {
+                Logger("Battery Voltage is: " + volts.Value.ToString());
+            }
 
 
             //Set Protocol
@@ -148,20 +158,10 @@ namespace UniversalPatcher
             }
             Debug.WriteLine("Protocol Set");
             J2534FunctionsIsLoaded = true;
-            //read voltage
-            volts = ReadVoltage();
-            if (volts.Status != ResponseStatus.Success)
-            {
-                Debug.WriteLine("Unable to read battery voltage.");
-            }
-            else
-            {
-                Debug.WriteLine("Battery Voltage is: " + volts.Value.ToString());
-            }
 
             SetLoggingFilter();
             //SetAnalyzerFilter();
-            Debug.WriteLine("Device initialization complete.");
+            Logger("Device initialization complete.");
             return true;
         }
 
@@ -225,6 +225,8 @@ namespace UniversalPatcher
             PassThruMsg TempMsg = new PassThruMsg(Protocol, TxFlag.NONE, message.GetBytes());
             int NumMsgs = 1;
 
+            DataLogger.LogDevice.MessageSent(message);
+
             OBDError = J2534Port.Functions.WriteMsgs((int)ChannelID, TempMsg, ref NumMsgs, WriteTimeout);
             if (OBDError != J2534Err.STATUS_NOERROR)
             {
@@ -235,7 +237,6 @@ namespace UniversalPatcher
                 return false;
             }
             //Debug.WriteLine("J2534 WriteMsgs sent: " + NumMsgs);
-
             return true;
         }
         
@@ -362,7 +363,7 @@ namespace UniversalPatcher
         {
             double Volts = 0;
             int VoltsAsInt = 0;
-            OBDError = J2534Port.Functions.ReadBatteryVoltage((int)ChannelID, ref VoltsAsInt);
+            OBDError = J2534Port.Functions.ReadBatteryVoltage((int)DeviceID, ref VoltsAsInt);
             if (OBDError != J2534Err.STATUS_NOERROR)
             {
                 return Response.Create(ResponseStatus.Error, Volts);

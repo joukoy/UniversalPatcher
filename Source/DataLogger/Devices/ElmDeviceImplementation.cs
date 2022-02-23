@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using static Upatcher;
 using static Helpers;
 using System.Diagnostics;
+using System.Threading;
 
 namespace UniversalPatcher
 {
@@ -31,10 +32,10 @@ namespace UniversalPatcher
 
         public DataLogger.LoggingDevType LogDeviceType { get; protected set; }
 
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    public ElmDeviceImplementation(
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public ElmDeviceImplementation(
             Action<OBDMessage> enqueue,
             Func<int> getRecievedMessageCount,
             IPort port)
@@ -66,7 +67,7 @@ namespace UniversalPatcher
             string response;
             // This is common across all ELM-based devices.
             this.SendRequest(""); // send a cr/lf to prevent the ATZ failing.
-            Debug.WriteLine(response = this.SendRequest("AT Z"));  // reset
+            Debug.WriteLine(response = this.SendRequest("AT Z").Data);  // reset
 
             if(string.IsNullOrWhiteSpace(response))
             {
@@ -74,14 +75,14 @@ namespace UniversalPatcher
                 return false;
             }
 
-            Debug.WriteLine(this.SendRequest("AT E0")); // disable echo
-            Debug.WriteLine(this.SendRequest("AT S0")); // no spaces on responses
+            Debug.WriteLine(this.SendRequest("AT E0").Data); // disable echo
+            Debug.WriteLine(this.SendRequest("AT S0").Data); // no spaces on responses
 
-            string voltage = this.SendRequest("AT RV");             // Get Voltage
+            string voltage = this.SendRequest("AT RV").Data;             // Get Voltage
             Logger("Voltage: " + voltage);
 
             // First we check for known-bad ELM clones.
-            string elmID = this.SendRequest("AT I");                // Identify (ELM)
+            string elmID = this.SendRequest("AT I").Data;                // Identify (ELM)
             if (elmID != "?")
             {
                 Logger("Elm ID: " + elmID);
@@ -140,7 +141,7 @@ namespace UniversalPatcher
         /// The API for this method (sending a string, returning a string) matches
         /// the way that we need to communicate with ELM and STN devices for setup
         /// </remarks>
-        public string SendRequest(string request, bool getresponse = true)
+        public SerialString SendRequest(string request, bool getresponse = true)
         {
             Debug.WriteLine("TX: " + request);
             try
@@ -149,17 +150,16 @@ namespace UniversalPatcher
                 this.Port.Send(Encoding.ASCII.GetBytes(request + " \r"));
                 if (getresponse)
                 {
-                    string response = ReadELMLine(true).Data;
-                    return response;
+                    return ReadELMLine(true);
                 }
                 else
                 {
-                    return "";
+                    return new SerialString("",0,false);
                 }
             }
             catch (TimeoutException)
             {
-                return "";
+                return new SerialString("", 0, false);
             }
         }
 
@@ -172,7 +172,7 @@ namespace UniversalPatcher
         /// </remarks>
         public  bool SendAndVerify(string message, string expectedResponse)
         {
-            string actualResponse = this.SendRequest(message);
+            string actualResponse = this.SendRequest(message).Data;
 
             if (string.Equals(actualResponse, expectedResponse))
             {
@@ -191,7 +191,7 @@ namespace UniversalPatcher
         /// <remarks>
         /// Strips Non Printable, >, and Line Feeds. Converts Carriage Return to Space. Strips leading and trailing whitespace.
         /// </remarks>
-        protected SerialString ReadELMLine(bool MultiLine)
+        public SerialString ReadELMLine(bool MultiLine)
         {
             // (MaxReceiveSize * 2) + 2 for Checksum + longest possible prompt. Minimum prompt 2 CR + 1 Prompt, +2 extra
             int maxPayload = (MaxReceiveSize * 2) + 7;
@@ -204,13 +204,14 @@ namespace UniversalPatcher
             // Use StringBuilder to collect the bytes.
             StringBuilder builtString = new StringBuilder();
 
-            for (int i = 0; i < maxPayload; i++)
+            //for (int i = 0; i < maxPayload; i++)
+            while (true)
             {
                 // Receive a single byte.
                 this.Port.Receive(buffer, 0, 1);
 
                 // Is it the prompt '>'.
-                if (buffer.Data[0] == '>')
+                if (buffer.Data[0] == '>') // || buffer.Data[0] == '?')
                 {
                     // Prompt found, we're done.
                     //Debug.WriteLine("Elm prompt: " + builtString.ToString());
@@ -227,7 +228,7 @@ namespace UniversalPatcher
                         // CR found, replace with space.
                         buffer.Data[0] = 32;
                     }
-                    else if (!string.IsNullOrWhiteSpace(builtString.ToString()))
+                    else if (!string.IsNullOrEmpty(builtString.ToString()) && !string.IsNullOrWhiteSpace(builtString.ToString()))
                     {
                         //Receiving multiple messages at once, message/row without prompt
                         break;
@@ -267,13 +268,15 @@ namespace UniversalPatcher
         /// <summary>
         /// Process responses from the ELM/ST devices.
         /// </summary>
-        protected bool ProcessResponse(SerialString rawResponse, string context, bool allowEmpty = false)
+        public bool ProcessResponse(SerialString rawResponse, string context, bool allowEmpty = false)
         {
-            if (rawResponse.Prompt || rawResponse.Data.Contains("STOPPED"))
+            if ((rawResponse.Prompt && rawResponse.Data.Length < 6) || rawResponse.Data.Contains("STOPPED"))
             {
                 //We have received prompt
-                //Debug.WriteLine("Processresponse: " + rawResponse.Data);
-                OBDMessage response = new OBDMessage(Encoding.ASCII.GetBytes(rawResponse.Data));
+                Debug.WriteLine("Processresponse: " + rawResponse.Data);
+                OBDMessage response = new OBDMessage(new byte[0]);
+                //if (rawResponse.Data.StartsWith("6C") || rawResponse.Data.StartsWith("8C"))
+                  //  response = new OBDMessage(rawResponse.Data.ToBytes());
                 response.TimeStamp = (ulong)rawResponse.TimeStamp;
                 response.ElmPrompt = true;
                 this.enqueue(response);
@@ -344,5 +347,7 @@ namespace UniversalPatcher
 
             return false;
         }
+
+
     }
 }

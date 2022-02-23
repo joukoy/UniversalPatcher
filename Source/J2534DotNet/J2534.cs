@@ -304,19 +304,17 @@ namespace J2534DotNet
             return (J2534Err)m_wrapper.Ioctl(channelId, (int)Ioctl.SET_CONFIG, input, output);
         }
 
-        public J2534Err ReadBatteryVoltage(int channelId, ref int voltage)
+        public J2534Err ReadBatteryVoltage(int DeviceID, ref int voltage)
         {
             IntPtr input = IntPtr.Zero;
             IntPtr output = Marshal.AllocHGlobal(8);
 
-            J2534Err returnValue = (J2534Err)m_wrapper.Ioctl(channelId, (int)Ioctl.READ_VBATT, input,output);
+            J2534Err returnValue = (J2534Err)m_wrapper.Ioctl(DeviceID, (int)Ioctl.READ_VBATT, input,output);
             if (returnValue == J2534Err.STATUS_NOERROR)
             {
                 voltage = Marshal.ReadInt32(output);
             }
-
             Marshal.FreeHGlobal(output);
-
             return returnValue;
         }
 

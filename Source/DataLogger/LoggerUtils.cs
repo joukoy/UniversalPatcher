@@ -5,9 +5,11 @@ using System.Text;
 using static Upatcher;
 using static Helpers;
 using static UniversalPatcher.DataLogger;
+using UniversalPatcher;
 
-    public static class LoggerUtils
+public static class LoggerUtils
     {
+
         public class Parameter
         {
             public Parameter()
@@ -197,15 +199,28 @@ using static UniversalPatcher.DataLogger;
                 get
                 {
                     if (addr < 0)
+                    {
                         return "-" + (-1 * addr).ToString("X4");
+                    }
                     else
+                    {
                         return addr.ToString("X4");
+                    }
                 }
                 set
                 {
                     HexToInt(value.Replace("0x", "").Replace("-", ""), out addr);
                     if (value.StartsWith("-"))
+                    {
                         addr = -1 * addr;
+                    }
+                    else
+                    {
+                        if (Type == DefineBy.Address)
+                        {
+                            addr |= 0xFF0000;
+                        }
+                    }
                 }
             }
             public string Address2
@@ -271,6 +286,18 @@ using static UniversalPatcher.DataLogger;
                 }
             }
         }
+
+    public static byte CreateConfigByte(byte position, byte bytes, byte defineBy)
+    {
+        byte dBy = defineBy;
+        if (dBy == 4) //Math
+            dBy = 1;
+        //byte pidbyte = 0b01000000; // 01xxxxxx = Pid
+        //byte pos = (byte)(0xFF & (position << 3)); // xxXXXxxx Position of pid in response
+        //return (byte)(pidbyte | pos | bytes);      //last 3 bits: data size (bytes)
+        return (byte)((dBy << 6) | (position << 3) | bytes);
+    }
+
     public static void initPcmResponses()
     {
         PcmResponses = new Dictionary<byte, string>();
@@ -310,6 +337,6 @@ using static UniversalPatcher.DataLogger;
         PcmResponses.Add(0x77, "Block Transfer Data Checksum Error");
         PcmResponses.Add(0x78, "Block Transfer Message Correctly Received");
         PcmResponses.Add(0x79, "Incorrect Byte Count During Block Transfer");
-
     }
+
 }

@@ -4689,7 +4689,7 @@ namespace UniversalPatcher
 
         private void loggerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            StartLogger();
+            StartLogger(PCM);
         }
 
         private void readWritePCMToolStripMenuItem_Click(object sender, EventArgs e)

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using static Upatcher;
 using static Helpers;
 using System.Diagnostics;
+using System.Threading;
 
 namespace UniversalPatcher
 {
@@ -19,7 +20,7 @@ namespace UniversalPatcher
         /// Device type for use in the Device Picker dialog box, and for internal comparisons.
         /// </summary>
         public const string DeviceType = "Elm327";
-        
+
         /// <summary>
         /// The device can cache the message header to speed up serial communications. 
         /// To use that properly, we need to keep track of the cached header.
@@ -66,7 +67,7 @@ namespace UniversalPatcher
             try
             {
                 //Logger("Elm self test result: " + this.SendRequest("AT #3"));  // self test
-                Logger("Elm firmware: " + this.SendRequest("AT @1"));          // firmware check
+                Logger("Elm firmware: " + this.SendRequest("AT @1").Data);          // firmware check
             }
             catch (Exception exception)
             {
@@ -130,7 +131,7 @@ namespace UniversalPatcher
                         break;
 
                     case TimeoutScenario.DataLogging4:
-                        milliseconds = 4500;
+                        milliseconds = 2000;
                         break;
 
                     case TimeoutScenario.Maximum:
@@ -186,7 +187,7 @@ namespace UniversalPatcher
                         break;
 
                     case TimeoutScenario.DataLogging4:
-                        milliseconds = 20;
+                        milliseconds = 2000;
                         break;
 
                     case TimeoutScenario.Maximum:
@@ -199,7 +200,7 @@ namespace UniversalPatcher
 
             return milliseconds;
         }
-            
+
         /// <summary>
         /// Send a message, do not expect a response.
         /// </summary>
@@ -216,17 +217,17 @@ namespace UniversalPatcher
             Port.DiscardBuffers();
             if (header != this.currentHeader)
             {
-                string setHeaderResponse = this.SendRequest("AT SH " + header, getResponse);
+                SerialString setHeaderResponse = this.SendRequest("AT SH " + header, getResponse);
                 Debug.WriteLine("Set header response: " + setHeaderResponse);
 
-/*                if(setHeaderResponse == "STOPPED")
+/*                if (setHeaderResponse.Data != "OK")
                 {
                     // Does it help to retry once?
                     setHeaderResponse = this.SendRequest("AT SH " + header);
                     Debug.WriteLine("Set header response: " + setHeaderResponse);
                 }
 */
-                if (!this.ProcessResponse(new SerialString(setHeaderResponse, 0,false), "set-header command", !getResponse))
+                if (!this.ProcessResponse(setHeaderResponse, "set-header command", !getResponse))
                 {
                     return false;
                 }
@@ -236,15 +237,14 @@ namespace UniversalPatcher
 
             payload = payload.Replace(" ", "");
             //Debug.WriteLine("TX: " + payload);
-            string sendMessageResponse = this.SendRequest(payload + " ",getResponse);
-            if (!this.ProcessResponse(new SerialString(sendMessageResponse, DateTime.Now.Ticks, false), "message content", !getResponse))
+            SerialString sendMessageResponse = this.SendRequest(payload + " ", getResponse);
+            if (!this.ProcessResponse(sendMessageResponse, "message content", !getResponse))
             {
                 return false;
             }
 
             return true;
         }
-
         /// <summary>
         /// Separate the message into header and payload.
         /// </summary>
@@ -282,5 +282,6 @@ namespace UniversalPatcher
                 Debug.WriteLine("Timeout during receive.");
             }
         }
+
     }
 }

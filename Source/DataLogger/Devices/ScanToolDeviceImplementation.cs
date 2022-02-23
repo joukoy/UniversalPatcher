@@ -67,8 +67,7 @@ namespace UniversalPatcher
             
             try
             {
-                bool Prompt;
-                string stID = this.SendRequest("ST I");                 // Identify (ScanTool.net)
+                string stID = this.SendRequest("ST I").Data;                 // Identify (ScanTool.net)
                 if (stID == "?" || string.IsNullOrEmpty(stID))
                 {
                     Debug.WriteLine("This is not a ScanTool device.");
@@ -93,7 +92,8 @@ namespace UniversalPatcher
                 // * With character echo off (ATE 0), 1 Mbps with character echo on (ATE 1)
 
                 // Here 1024 bytes = 2048 ASCII hex bytes, without spaces
-                if (stID.Contains("STN1110") || // SparkFun OBD-II UART
+                if (stID.Contains("STN1100") || // SparkFun OBD-II UART
+                    stID.Contains("STN1110") || // SX
                     stID.Contains("STN1130") || // SX
                     stID.Contains("STN1150") || // MX v1
                     stID.Contains("STN1151") || // MX v2
@@ -276,6 +276,8 @@ namespace UniversalPatcher
                 }
                 //builder.AppendFormat(", R:50");
 
+                DataLogger.LogDevice.MessageSent(message);
+
                 if (messageBytes.Length < 200)
                 {
                     // Short messages can be sent with a single write to the ScanTool.
@@ -285,20 +287,18 @@ namespace UniversalPatcher
                         builder.Append(messageBytes[index].ToString("X2"));
                     }
 
-                    string dataResponse = this.SendRequest(builder.ToString(), getResponse);
-/*                    if (getResponse)
-                        Debug.WriteLine("Elm response: " + dataResponse);
-*/
-                    if (!this.ProcessResponse(new SerialString(dataResponse, DateTime.Now.Ticks, false), "STPX with data", allowEmpty: responses == 0))
+                    SerialString dataResponse = this.SendRequest(builder.ToString(), getResponse);
+                    Debug.WriteLine("Dataresponse: " + dataResponse.Data);
+                    if (!this.ProcessResponse(dataResponse, "STPX with data", allowEmpty: responses == 0))
                     {
-                        if (dataResponse == string.Empty || dataResponse == "STOPPED" || dataResponse == "?")
+                        if (dataResponse.Data == string.Empty || dataResponse.Data == "STOPPED" || dataResponse.Data == "?")
                         {
                             // These will happen if the bus is quiet, for example right after uploading the kernel.
                             // They are traced during the SendRequest code. No need to repeat that message.
                         }
                         else
                         {
-                            Logger("Unexpected response to STPX with data: " + dataResponse);
+                            Logger("Unexpected response to STPX with data: " + dataResponse.Data);
                         }
                         return false;
                     }
@@ -312,8 +312,8 @@ namespace UniversalPatcher
                     string header = builder.ToString();
                     for (int attempt = 1; attempt <= 5; attempt++)
                     {
-                        string headerResponse = this.SendRequest(header);
-                        if (headerResponse != "DATA")
+                        SerialString headerResponse = this.SendRequest(header);
+                        if (headerResponse.Data != "DATA")
                         {
                             Logger("Unexpected response to STPX header: " + headerResponse);
                             continue;
@@ -329,11 +329,11 @@ namespace UniversalPatcher
                     }
 
                     string data = builder.ToString();
-                    string dataResponse = this.SendRequest(data);
+                    SerialString dataResponse = this.SendRequest(data);
 
-                    if (!this.ProcessResponse(new SerialString(dataResponse,DateTime.Now.Ticks, false) , "STPX payload", responses == 0))
+                    if (!this.ProcessResponse(dataResponse, "STPX payload", responses == 0))
                     {
-                        Logger("Unexpected response to STPX payload: " + dataResponse);
+                        Logger("Unexpected response to STPX payload: " + dataResponse.Data);
                         return false;
                     }
                 }
@@ -387,7 +387,7 @@ namespace UniversalPatcher
         {
             try
             {
-                SerialString monitorResponse = new SerialString(this.SendRequest("AT MA"), DateTime.Now.Ticks, false);
+                SerialString monitorResponse = this.SendRequest("AT MA");
                 Debug.WriteLine("Response to AT MA 1: " + monitorResponse);
 
                 if (monitorResponse.Data != ">?")
@@ -402,8 +402,8 @@ namespace UniversalPatcher
             }
             finally
             { 
-                string stopMonitorResponse = this.SendRequest("AT MA");
-                Debug.WriteLine("Response to AT MA 2: " + stopMonitorResponse);
+                SerialString stopMonitorResponse = this.SendRequest("AT MA");
+                Debug.WriteLine("Response to AT MA 2: " + stopMonitorResponse.Data);
             }
         }
     }

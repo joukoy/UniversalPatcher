@@ -72,17 +72,6 @@ namespace UniversalPatcher
             }
         }
 
-        public byte CreateConfigByte(byte position, byte bytes, byte defineBy)
-        {
-            byte dBy = defineBy;
-            if (dBy == 4) //Math
-                dBy = 1;
-            //byte pidbyte = 0b01000000; // 01xxxxxx = Pid
-            //byte pos = (byte)(0xFF & (position << 3)); // xxXXXxxx Position of pid in response
-            //return (byte)(pidbyte | pos | bytes);      //last 3 bits: data size (bytes)
-            return (byte)((dBy << 6) | (position << 3) | bytes);
-        }
-
         public string[] CalculatePidValues(double[] rawPidValues)
         {
             string[] calculatedvalues = new string[PidProfile.Count];

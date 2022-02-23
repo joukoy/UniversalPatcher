@@ -228,24 +228,11 @@ namespace UniversalPatcher
                 {
                     for (int i = 0; i < bytes; i++)
                     {
-/*                        if (rx[i] == '>')
-                            promptReceived = true;
-                        else if (rx[i] != '\r' && rx[i] != '\n')
-                            promptReceived = false;
-*/
                         SerialByte sb = new SerialByte(1);
                         sb.Data[0] = rx[i];
                         this.internalQueue.Enqueue(sb);
                     }
                 }
-                /*            if (rx.Length > 5)
-                            {
-                                Analyzer.VPWRow vrow = PcmLogger.analyzer.ProcessLine(rx);
-                                Analyzer.AnalyzerData msg = PcmLogger.analyzer.AnalyzeMsg(vrow);
-                                PcmLogger.analyzer.aData.Add(msg);
-                            }
-                */            //PcmLogger.receiver.ProcessRawData(rx);
-                              //Debug.WriteLine("RS3232 received: " + bytes + ", queue len: " + internalQueue.Count);
             }
             catch (Exception ex)
             {

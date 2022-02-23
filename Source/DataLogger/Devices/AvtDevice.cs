@@ -319,7 +319,7 @@ namespace UniversalPatcher
         /// <summary>
         /// Convert a Message to an AVT formatted transmit, and send to the interface
         /// </summary>
-        private Response<OBDMessage> SendAVTPacket(OBDMessage message)
+        private Response<OBDMessage> SendAVTPacket(OBDMessage message, int responses)
         {
             //Debug.WriteLine("Trace: SendAVTPacket");
 
@@ -349,7 +349,7 @@ namespace UniversalPatcher
 
             Debug.WriteLine("send: " + message.GetBytes().ToHex());
             this.Port.Send(message.GetBytes());
-            
+
             return Response.Create(ResponseStatus.Success, message);
         }
 
@@ -385,7 +385,8 @@ namespace UniversalPatcher
         {
             //Debug.WriteLine("Sendrequest called");
             Debug.WriteLine("TX: " + message.GetBytes().ToHex());
-            SendAVTPacket(message);
+            DataLogger.LogDevice.MessageSent(message);
+            SendAVTPacket(message, responses);
             return true;
         }
 

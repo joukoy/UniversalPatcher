@@ -183,7 +183,7 @@ namespace J2534DotNet
         public PassThruGetLastError GetLastError;
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        public delegate int PassThruIoctl(int channelId, int ioctlID, IntPtr input, IntPtr output);
+        public delegate int PassThruIoctl(int handleId, int ioctlID, IntPtr input, IntPtr output);
         public PassThruIoctl Ioctl;
         //extern “C” long WINAPI PassThruIoctl
         //(

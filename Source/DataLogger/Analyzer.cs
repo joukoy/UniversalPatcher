@@ -165,7 +165,7 @@ namespace UniversalPatcher
                 port.Receive(sBs, 0, 1);
 
                 // Is it the prompt '>'.
-                if (sBs.Data[0] == '>')
+                if (sBs.Data[0] == '>' || sBs.Data[0] == '?')
                 {
                     // Prompt found, we're done.
                     break;
@@ -229,22 +229,9 @@ namespace UniversalPatcher
                 else
                 {
                     isJDevice = false;
-                    if (DevType.ToLower().StartsWith("elm") || DevType.ToLower().StartsWith("obdx"))
+                    if (DevType.ToLower().StartsWith("elm") )
                     {
                         isElmBasedDevice = true;
-                        if (DevType.ToLower().StartsWith("obdx"))
-                        {
-                            ElmSupportST = false;   //No data with STMA
-                        }
-                        else
-                        {
-                            port.Send(Encoding.ASCII.GetBytes("STVR \r"));
-                            string line = ReadELMLine();
-                            if (line.Contains("?"))
-                                ElmSupportST = false;
-                            else
-                                ElmSupportST = true;
-                        }
                     }
                     else
                     {
@@ -392,6 +379,7 @@ namespace UniversalPatcher
         {
             LogDevice.ClearMessageBuffer();
             LogDevice.ClearMessageQueue();
+            bool waiting4x = false;
 
             if (LogDevice.ToString().ToLower().Contains("elm") || LogDevice.ToString().ToLower().Contains("obdlink") || LogDevice.ToString().ToLower().Contains("obdx"))
             {
@@ -406,41 +394,34 @@ namespace UniversalPatcher
                 try
                 {
                     byte[] byteArray = new byte[1];
-                    if (!isElmBasedDevice)
+                    OBDMessage rcv = LogDevice.ReceiveMessage();
+                    if (rcv == null)
                     {
-                        OBDMessage rcv = LogDevice.ReceiveMessage();
-                        if (rcv != null)
-                        {
-                            byte[] tmpArray = rcv.GetBytes();
-                            byteArray = new byte[tmpArray.Length + 1];
-                            Array.Copy(tmpArray, byteArray, tmpArray.Length);
-                        }
+                        continue;
                     }
-                    else
+                    byte[] tmpArray = rcv.GetBytes();
+                    byteArray = new byte[tmpArray.Length + 1];
+                    Array.Copy(tmpArray, byteArray, tmpArray.Length);
+                    if (isElmBasedDevice && rcv.ElmPrompt)
                     {
-                        string line = ReadELMLine();
-                        if (line.ToLower().Contains("buffer full") || line.ToLower().Contains("out of memory"))
-                        {
-                            if (ElmSupportST)
-                                port.Send(Encoding.ASCII.GetBytes("ATMA \r")); //Begin monitoring bus traffic
-                            else
-                                port.Send(Encoding.ASCII.GetBytes("STMA \r")); //Begin monitoring bus traffic
-                        }
-                        else
-                        {
-                            byteArray = line.ToBytes();
-                        }
+                        LogDevice.SetAnalyzerFilter();
                     }
-
                     if (byteArray.Length > 3)
                     {
-                        if (byteArray[1] == 0xfe && byteArray[3] == 0xa1)
+                        if (byteArray[1] == 0xfe && byteArray[3] == 0xa0)
                         {
-                            LogDevice.SetVpwSpeed(VpwSpeed.FourX);
+                            Debug.WriteLine("Received 0xFE, , 0xA0 - Ready to switch to 4x");
+                            waiting4x = true;
                         }
-                        else if (byteArray[1] == 0xfe && byteArray[3] == 0xa0)
+                        if (waiting4x && byteArray[1] == 0xfe && byteArray[3] == 0xa1)
                         {
-                            LogDevice.SetVpwSpeed(VpwSpeed.Standard);
+                            waiting4x = false;
+                            Debug.WriteLine("Received 0xFE, , 0xA1 - switching to 4x");
+                            LogDevice.Enable4xReadWrite = true;
+                            if (LogDevice.SetVpwSpeed(VpwSpeed.FourX))
+                                Debug.WriteLine("Switched to 4X");
+                            else
+                                Debug.WriteLine("Switch to 4X failed");
                         }
 
                     }
@@ -463,6 +444,7 @@ namespace UniversalPatcher
                             }
                         }
                     }
+                    
                 }
                 catch (Exception ex)
                 {
@@ -472,7 +454,7 @@ namespace UniversalPatcher
                     // Get the line number from the stack frame
                     var line = frame.GetFileLineNumber();
                     Debug.WriteLine("Error, analyzerloop line " + line + ": " + ex.Message);
-                    Thread.Sleep(100);
+                    //Thread.Sleep(100);
                 }
             }
             try

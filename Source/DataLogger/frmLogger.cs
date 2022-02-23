@@ -48,6 +48,10 @@ namespace UniversalPatcher
 
         private void frmLogger_Load(object sender, EventArgs e)
         {
+            if (!string.IsNullOrEmpty(OS))
+            {
+                labelConnected.Text = "Disconnected - OS: " + OS;
+            }
             LogReceivers.Add(txtResult);
             Application.DoEvents();
             comboBaudRate.DataSource = SupportedBaudRates;
@@ -59,6 +63,8 @@ namespace UniversalPatcher
             tabLog.Enter += TabLog_Enter;
             tabAnalyzer.Enter += TabAnalyzer_Enter;
             tabProfile.Enter += TabProfile_Enter;
+            tabSettings.Enter += TabSettings_Enter;
+            tabSettings.Leave += TabSettings_Leave;
             dataGridLogData.DataError += DataGridLogData_DataError;
             dataGridPidNames.CellContentDoubleClick += DataGridPidNames_CellContentDoubleClick;
             dataGridLogProfile.CellContentDoubleClick += DataGridLogProfile_CellContentDoubleClick;
@@ -73,8 +79,58 @@ namespace UniversalPatcher
             txtParamSearch.Enter += TxtParamSearch_Enter;
             txtParamSearch.Leave += TxtParamSearch_Leave;
             txtParamSearch.KeyPress += TxtParamSearch_KeyPress;
+            txtSendBus.KeyPress += TxtSendBus_KeyPress;
 
             CurrentMode = RunMode.NotRunning;
+        }
+
+        private void TabSettings_Leave(object sender, EventArgs e)
+        {
+        }
+
+        private void LogDevice_MsgReceived(object sender, MsgEventparameter e)
+        {
+            this.Invoke((MethodInvoker)delegate () {
+                txtVPWmessages.SelectionColor = Color.DarkGreen;
+                txtVPWmessages.AppendText(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
+            });
+        }
+        private void LogDevice_MsgSent(object sender, MsgEventparameter e)
+        {
+            this.Invoke((MethodInvoker)delegate () {
+                txtVPWmessages.SelectionColor = Color.Red;
+                txtVPWmessages.AppendText(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
+            });
+        }
+
+
+        private void TabSettings_Enter(object sender, EventArgs e)
+        {
+        }
+
+        private void TxtSendBus_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            try
+            {
+                if (e.KeyChar == '\r' && Connected)
+                {
+                    byte[] msg = Utility.ToBytes(txtSendBus.Text.Replace(" ", ""));
+                    OBDMessage oMsg = new OBDMessage(msg);
+                    if (!LogDevice.SendMessage(oMsg, 50))
+                    {
+                        LoggerBold("Error sending message");
+                        return;
+                    }
+                    OBDMessage rMsg = LogDevice.ReceiveMessage();
+                    while (rMsg != null)
+                        rMsg = LogDevice.ReceiveMessage();
+                    txtVPWmessages.AppendText(Environment.NewLine);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
         }
 
         private void TxtParamSearch_KeyPress(object sender, KeyPressEventArgs e)
@@ -105,9 +161,9 @@ namespace UniversalPatcher
 
         private void TabProfile_Enter(object sender, EventArgs e)
         {
-            AnalyzerActive = false;
             if (CurrentMode == RunMode.NotRunning)
             {
+                AnalyzerActive = false;
                 btnStartStop.Text = "Start Logging";
             }
         }
@@ -310,6 +366,7 @@ namespace UniversalPatcher
 
                 //chkAdvanced.Checked = Properties.Settings.Default.LoggerShowAdvanced;
                 chkBusFilters.Checked = Properties.Settings.Default.LoggerUseFilters;
+                chkEnableConsole.Checked = Properties.Settings.Default.LoggerEnableConsole;
 
                 if (!string.IsNullOrEmpty(Properties.Settings.Default.LoggerLogFolder))
                 {
@@ -322,18 +379,15 @@ namespace UniversalPatcher
 
                 comboResponseMode.DataSource = Enum.GetValues(typeof(ResponseTypes));
 
-                if (Properties.Settings.Default.LoggerShowAdvanced)
+                if (!string.IsNullOrEmpty(Properties.Settings.Default.LoggerLogSeparator))
+                    txtLogSeparator.Text = Properties.Settings.Default.LoggerLogSeparator;
+                else
+                    txtLogSeparator.Text = ",";
+                if (!string.IsNullOrEmpty(Properties.Settings.Default.LoggerResponseMode))
                 {
-                    if (!string.IsNullOrEmpty(Properties.Settings.Default.LoggerLogSeparator))
-                        txtLogSeparator.Text = Properties.Settings.Default.LoggerLogSeparator;
-                    else
-                        txtLogSeparator.Text = ",";
-                    if (!string.IsNullOrEmpty(Properties.Settings.Default.LoggerResponseMode))
-                    {
-                        comboResponseMode.Text = Properties.Settings.Default.LoggerResponseMode;
-                    }
-                    chkPriority.Checked = Properties.Settings.Default.LoggerUsePriority;
+                    comboResponseMode.Text = Properties.Settings.Default.LoggerResponseMode;
                 }
+                chkPriority.Checked = Properties.Settings.Default.LoggerUsePriority;
                 comboBaudRate.Text = Properties.Settings.Default.LoggerBaudRate.ToString();
 
 
@@ -381,6 +435,10 @@ namespace UniversalPatcher
         {
             try
             {
+                if (!chkFilterParamsByOS.Checked && !string.IsNullOrEmpty(OS) && SupportedPids != null && SupportedPids.Count > 0)
+                {
+                    Logger("Filtering parameters by OS: " + OS);
+                }
                 if (stdParameters == null || stdParameters.Count == 0)
                 {
                     string fName = Path.Combine(Application.StartupPath, "Logger", "Parameters.Standard.xml");
@@ -437,7 +495,7 @@ namespace UniversalPatcher
                 {
                     ushort pid;
                     HexToUshort(results[p].Id.Replace("0x", ""), out pid);
-                    if (SupportedPids == null || SupportedPids.Contains(pid))
+                    if (!chkFilterParamsByOS.Checked || SupportedPids == null || SupportedPids.Contains(pid))
                     {
                         int row = dataGridPidNames.Rows.Add();
                         foreach (var prop in tmpPar.GetType().GetProperties())
@@ -476,6 +534,16 @@ namespace UniversalPatcher
         {
             try
             {
+                if (chkFilterParamsByOS.Checked && !string.IsNullOrEmpty(OS))
+                {
+                    Logger("Filtering parameters by OS: " + OS);
+                }
+                else
+                {
+                    Logger("Tip: Connect PCM or load BIN; RAM parameters will be filtered by OS");
+                }
+
+
                 if (ramParameters == null || ramParameters.Count == 0)
                 {
                     string fName = Path.Combine(Application.StartupPath, "Logger", "Parameters.Ram.xml");
@@ -534,7 +602,7 @@ namespace UniversalPatcher
                 dataGridPidNames.Columns["index"].Visible = false;
                 for (int p = 0; p < results.Count; p++)
                 {
-                    if (!string.IsNullOrEmpty(OS))
+                    if (chkFilterParamsByOS.Checked && !string.IsNullOrEmpty(OS))
                     {
                         bool supported = false;
                         for (int l=0;l< results[p].Locations.Count;l++)
@@ -723,7 +791,7 @@ namespace UniversalPatcher
 
         private void DataGridLogProfile_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            Debug.WriteLine(e.Exception);
+            //Debug.WriteLine(e.Exception);
         }
 
         private void frmLogger_FormClosing(object sender, FormClosingEventArgs e)
@@ -875,6 +943,12 @@ namespace UniversalPatcher
             {
                 if (dataGridPidNames.SelectedRows.Count == 0)
                     return;
+                
+                if (!Connected)
+                {
+                    Logger("Not connected - adding pids without testing compatibility");
+                }
+
                 for (int selRow = 0; selRow < dataGridPidNames.SelectedRows.Count; selRow++)
                 {
                     DataGridViewRow dgr = dataGridPidNames.SelectedRows[selRow];
@@ -953,9 +1027,7 @@ namespace UniversalPatcher
                     bsLogProfile.DataSource = DataLogger.PidProfile;
                     if (Connected)
                     {
-                        if (!radioParamRam.Checked)
-                            QueryPid(pc);
-
+                        QueryPid(pc);
                     }
                     CheckMaxPids();
                 }
@@ -1032,6 +1104,7 @@ namespace UniversalPatcher
             //Properties.Settings.Default.LoggerShowAdvanced = chkAdvanced.Checked;
             Properties.Settings.Default.LoggerUsePriority = chkPriority.Checked;
             Properties.Settings.Default.LoggerUseFilters = chkBusFilters.Checked;
+            Properties.Settings.Default.LoggerEnableConsole = chkEnableConsole.Checked;
             Properties.Settings.Default.Save();
 
         }
@@ -1070,35 +1143,43 @@ namespace UniversalPatcher
                 if (sParts.Length > 1)
                     sPort = sParts[0].Trim();
                 LogDevice = CreateSerialDevice(sPort, comboSerialDeviceType.Text, chkFTDI.Checked);
-                if (!LogDevice.Initialize(Convert.ToInt32(comboBaudRate.Text)))
-                {
-                    port.Dispose();
-                    LogDevice.Dispose();
-                    return false;
-                }
             }
             else
             {
                 J2534DotNet.J2534Device dev = jDevList[j2534DeviceList.SelectedIndex];
                 //passThru.LoadLibrary(dev);
                 LogDevice = new J2534Device(dev);
-                if (!LogDevice.Initialize(0))
-                {
-                    LogDevice.Dispose();
-                    return false;
-                }
+            }
+            if (chkEnableConsole.Checked)
+            {
+                LogDevice.MsgSent += LogDevice_MsgSent;
+                LogDevice.MsgReceived += LogDevice_MsgReceived;
+            }
+            if (!LogDevice.Initialize(Convert.ToInt32(comboBaudRate.Text)))
+            {
+                port.Dispose();
+                LogDevice.Dispose();
+                return false;
             }
             string os = "";
             if (ShowOs)
             {
                 os = QueryPcmOS();
+                if (os == null)
+                {
+                    //return false;
+                }
             }
             if (!string.IsNullOrEmpty(os))
-                labelConnected.Text = "Connected, OS:" + os;
+                labelConnected.Text = "Connected - OS: " + os;
             else
                 labelConnected.Text = "Connected";
             Connected = true;
             SaveSettings();
+            if (radioParamRam.Checked)
+            {
+                LoadParameters();
+            }
             Application.DoEvents();
             groupHWSettings.Enabled = false;
             return true;
@@ -1142,7 +1223,10 @@ namespace UniversalPatcher
                     groupLogSettings.Enabled = false;
                     btnGetVINCode.Enabled = false;
                     CurrentMode = RunMode.LogRunning;
-                    groupDTC.Enabled = false;
+                    if (LogDevice.LogDeviceType != LoggingDevType.Other)
+                    {
+                        //groupDTC.Enabled = false;
+                    }
                 }
                 else
                 {
@@ -1405,23 +1489,35 @@ namespace UniversalPatcher
             }
         }
 
-        private void filterSupportedPidsToolStripMenuItem_Click(object sender, EventArgs e)
+        public void FilterPidsByBin(PcmFile PCM)
         {
-            string fName = SelectFile("Select BIN file");
-            if (fName.Length == 0)
-                return;
-            PcmFile PCM = new PcmFile(fName, true, "");
             OS = PCM.OS;
             PidSearch pidSearch = new PidSearch(PCM);
             if (pidSearch.pidList != null && pidSearch.pidList.Count > 0)
             {
                 SupportedPids = new List<ushort>();
-                for (int s=0; s < pidSearch.pidList.Count; s++)
+                for (int s = 0; s < pidSearch.pidList.Count; s++)
                 {
                     SupportedPids.Add(pidSearch.pidList[s].pidNumberInt);
                 }
                 LoadParameters();
             }
+            if (Connected)
+            {
+                labelConnected.Text = "Connected - OS: " + PCM.OS;
+            }
+            else
+            {
+                labelConnected.Text = "Disconnected - OS: " + PCM.OS;
+            }
+        }
+        private void filterSupportedPidsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fName = SelectFile("Select BIN file");
+            if (fName.Length == 0)
+                return;
+            PcmFile PCM = new PcmFile(fName, true, "");            
+            FilterPidsByBin(PCM);
         }
 
         private void comboResponseMode_SelectedIndexChanged(object sender, EventArgs e)
@@ -1446,8 +1542,6 @@ namespace UniversalPatcher
         {
             dataGridDtcCodes.Rows.Clear();
             Connect();
-            //if (!SetLoggingPaused())
-            //    return;
             List<DTCCodeStatus> codelist = new List<DTCCodeStatus>();
             if (chkDtcAllModules.Checked)
             {
@@ -1457,8 +1551,7 @@ namespace UniversalPatcher
             {
                 byte module = (byte)comboModule.SelectedValue;
                 codelist = RequestDTCCodes(module, mode); 
-            }            
-
+            }
             for (int i=0;i<codelist.Count; i++)
             {
                 int r = dataGridDtcCodes.Rows.Add();
@@ -1537,9 +1630,10 @@ namespace UniversalPatcher
 
         private void Disconnect()
         {
+            LogDevice.MsgReceived -= LogDevice_MsgReceived;
             LogDevice.Dispose();
             Connected = false;
-            labelConnected.Text = "Disconnected";
+            labelConnected.Text = "Disconnected - OS: " + OS;
             groupHWSettings.Enabled = true;
         }
 
@@ -1739,5 +1833,24 @@ namespace UniversalPatcher
             profileFile = "";
             this.Text = "Logger";
         }
+
+        private void chkEnableConsole_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Connected)
+            {
+                if (chkEnableConsole.Checked)
+                {
+                    LogDevice.MsgReceived += LogDevice_MsgReceived;
+                    LogDevice.MsgSent += LogDevice_MsgSent;
+                }
+                else
+                {
+                    LogDevice.MsgReceived -= LogDevice_MsgReceived;
+                    LogDevice.MsgSent -= LogDevice_MsgSent;
+
+                }
+            }
+        }
+
     }
 }

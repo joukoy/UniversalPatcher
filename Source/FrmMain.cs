@@ -137,7 +137,7 @@ namespace UniversalPatcher
 
         private void btnLogger_Click(object sender, EventArgs e)
         {
-            StartLogger();
+            StartLogger(null);
         }
     }
 }

@@ -28,6 +28,7 @@ namespace UniversalPatcher
         /// </summary>
         private ElmDeviceImplementation implementation = null;
 
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -99,6 +100,7 @@ namespace UniversalPatcher
                         if (legacyElmDevice.Initialize())
                         {
                             this.implementation = legacyElmDevice;
+                            Thread.Sleep(100); //Old, slow hw?
                         }
                         else
                         {
@@ -127,6 +129,7 @@ namespace UniversalPatcher
                 this.LogDeviceType = this.implementation.LogDeviceType;
 
                 SetLoggingFilter();
+
                 return true;
             }
             catch (Exception exception)
@@ -195,6 +198,7 @@ namespace UniversalPatcher
             return this.implementation.SendMessage(message, responses);
         }
 
+
         /// <summary>
         /// Try to read an incoming message from the device.
         /// </summary>
@@ -254,13 +258,14 @@ namespace UniversalPatcher
 
             // Use StringBuilder to collect the bytes.
             StringBuilder builtString = new StringBuilder();
-            for (int i = 0; i < maxPayload; i++)
+            //for (int i = 0; i < maxPayload; i++)
+            while (true)
             {
                 // Receive a single byte.
                 Port.Receive(b, 0, 1);
 
                 // Is it the prompt '>'.
-                if (b.Data[0] == '>')
+                if (b.Data[0] == '>' || b.Data[0] == '?')
                 {
                     // Prompt found, we're done.
                     Prompt = true;
@@ -304,6 +309,7 @@ namespace UniversalPatcher
                 DataLogger.port.Send(Encoding.ASCII.GetBytes(request + " \r"));
                 Thread.Sleep(100);                
                 SerialString response = ReadELMLine();
+                Debug.WriteLine("Elm response: " + response.Data);
                 return response.Data;
             }
             catch (TimeoutException)
@@ -331,8 +337,6 @@ namespace UniversalPatcher
         }
         public override bool SetAnalyzerFilter()
         {
-            if (this.CurrentFilter == "analyzer")
-                return true;
             Debug.WriteLine("Setting analyzer filter");
 
             this.implementation.SendAndVerify("AT L1", "OK"); //Enable new line characters between commands/messages
@@ -343,16 +347,17 @@ namespace UniversalPatcher
             ClearMessageBuffer();
             ClearMessageQueue();
             Thread.Sleep(100);
-            if (!this.implementation.SendRequest("ST VR").Contains("?"))
-            {
-                Debug.WriteLine("ST command supported");
-                Port.Send(Encoding.ASCII.GetBytes("STMA \r")); //Begin monitoring bus traffic
-            }
-            else
+            if (this.implementation.SendRequest("STI").Data.Contains("?"))
             {
                 Debug.WriteLine("ST command not supported");
                 Port.Send(Encoding.ASCII.GetBytes("ATMA \r")); //Begin monitoring bus traffic (STMA not supported);
             }
+            else
+            {
+                Debug.WriteLine("ST command supported");
+                Port.Send(Encoding.ASCII.GetBytes("STMA \r")); //Begin monitoring bus traffic
+            }
+
             this.CurrentFilter = "analyzer";
             return true;
         }

@@ -557,7 +557,8 @@ namespace UniversalPatcher
         public override bool SendMessage(OBDMessage message, int responses)
         {
             //Debug.WriteLine("Sendrequest called");
-            //  Debug.WriteLine("TX: " + message.GetBytes().ToHex());
+            //  Debug.WriteLine("TX: " + message.GetBytes().ToHex());            
+            DataLogger.LogDevice.MessageSent(message);
             Response<OBDMessage> m = SendDVIPacket(message, responses);
             if (m.Status != ResponseStatus.Success)
             {
@@ -770,6 +771,11 @@ namespace UniversalPatcher
             RespBytes[0] += (byte)0x10;
             RespBytes[RespBytes.Length - 1] = CalcChecksum(RespBytes);
             Response<OBDMessage> response = ReadDVIPacket();
+            if (response == null)
+            {
+                Debug.WriteLine("Null response to set filter, ignoring...");
+                return true;
+            }
             if (response.Status == ResponseStatus.Success )
             {
                 Debug.WriteLine("Filters removed");
@@ -1028,7 +1034,7 @@ namespace UniversalPatcher
                         break;
 
                     case TimeoutScenario.DataLogging4:
-                        result = 20;
+                        result = 4500;
                         break;
 
                     case TimeoutScenario.Maximum:
@@ -1065,7 +1071,7 @@ namespace UniversalPatcher
                 Port.Receive(b, 0, 1);
 
                 // Is it the prompt '>'.
-                if (b.Data[0] == '>')
+                if (b.Data[0] == '>' || b.Data[0] == '?')
                 {
                     // Prompt found, we're done.
                     break;
@@ -1121,7 +1127,8 @@ namespace UniversalPatcher
                 return true;
             Debug.WriteLine("Set logging filter");
 
-            Initialize(BaudRate);
+            //initialize(BaudRate);
+            SetToFilter(DeviceId.Tool);
 
             this.CurrentFilter = "logging";
             return true;
@@ -1132,7 +1139,10 @@ namespace UniversalPatcher
             if (this.CurrentFilter == "analyzer")
                 return true;
             Debug.WriteLine("Setting analyzer filter");
-            byte[] Msg = new byte[] { 37, 0x0, 218 }; //Reset back to ELM protocol
+
+            return RemoveToFilter();
+
+/*            byte[] Msg = new byte[] { 37, 0x0, 218 }; //Reset back to ELM protocol
             //byte[] Msg = OBDXProDevice.DVI_RESET.GetBytes();
             //Msg[Msg.Length - 1] = CalcChecksum(Msg);
             this.Port.Send(Msg);
@@ -1150,12 +1160,13 @@ namespace UniversalPatcher
             Debug.WriteLine(SendRequest("ATMA")); //Begin monitoring bus traffic
             this.CurrentFilter = "analyzer";
             return true;
+*/            
         }
 
         public override bool RemoveFilters()
         {
             Debug.WriteLine("Removing filters");
-            if (this.CurrentFilter == "analyzer")
+/*            if (this.CurrentFilter == "analyzer")
             {
                 Debug.WriteLine(SendRequest("AT L0")); //Disable new line characters between commands/messages
                 byte[] MsgDXDP = { (byte)'D', (byte)'X', (byte)'D', (byte)'P', (byte)'1', 0xD };
@@ -1164,6 +1175,7 @@ namespace UniversalPatcher
                 if (m.Status == ResponseStatus.Success && m.Value == "OK") Debug.WriteLine("Switched to DVI protocol");
                 else { Logger("Failed to switch to DVI protocol"); return false; }
             }
+*/
             RemoveToFilter();
             return true;
         }
