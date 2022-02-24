@@ -431,9 +431,12 @@ namespace UniversalPatcher
 
                 //Connect at new speed
                 ConnectToProtocol(ProtocolID.J1850VPW, BaudRate.J1850VPW_10400, ConnectFlag.NONE);
-
+                if (CurrentFilter == "analyzer")
+                    SetAnalyzerFilter();
+                else
+                    SetLoggingFilter();
                 //Set Filter
-                SetFilter(0xFEFFFF, 0x6CF010, 0, TxFlag.NONE, FilterType.PASS_FILTER);
+                //SetFilter(0xFEFFFF, 0x6CF010, 0, TxFlag.NONE, FilterType.PASS_FILTER);
                 //if (m.Status != ResponseStatus.Success)
                 //{
                 //    Debug.WriteLine("Failed to set filter, J2534 error code: 0x" + m.Value.ToString("X2"));
@@ -452,8 +455,11 @@ namespace UniversalPatcher
                 ConnectToProtocol(ProtocolID.J1850VPW, BaudRate.J1850VPW_41600, ConnectFlag.NONE);
 
                 //Set Filter
-                SetFilter(0xFEFFFF, 0x6CF010, 0, TxFlag.NONE, FilterType.PASS_FILTER);
-
+                //SetFilter(0xFEFFFF, 0x6CF010, 0, TxFlag.NONE, FilterType.PASS_FILTER);
+                if (CurrentFilter == "analyzer")
+                    SetAnalyzerFilter();
+                else
+                    SetLoggingFilter();
             }
 
             return true;
@@ -467,9 +473,7 @@ namespace UniversalPatcher
 
         public override bool SetLoggingFilter()
         {
-            if (this.CurrentFilter == "logging")
-                return true;
-            if (DataLogger.useBusFilters == false)
+            if (DataLogger.useVPWFilters == false)
             {
                 RemoveFilters();    
                 this.CurrentFilter = "logging";
@@ -501,8 +505,6 @@ namespace UniversalPatcher
 
         public override bool SetAnalyzerFilter()
         {
-            if (this.CurrentFilter == "analyzer")
-                return true;
             Debug.WriteLine("Setting analyzer filter");
 
             ClearFilters();

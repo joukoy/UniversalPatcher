@@ -4,8 +4,8 @@
 - Extract / swap segments
 - Generate XDF files for Tunerpro
 - Modify calibrations (Tuner)
-With new parts from PCM Hammer:
 - Log data from PCM
+* And using PCM Hammer:
 - Read/write calibrations
 
 Configurable for different engine controller binary files

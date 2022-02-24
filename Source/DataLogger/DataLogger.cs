@@ -49,7 +49,7 @@ namespace UniversalPatcher
         //Set these values before StartLogging()
         public static bool writelog;
         public static bool useRawValues;
-        public static bool useBusFilters;
+        public static bool useVPWFilters;
         public static bool reverseSlotNumbers;
         public static byte Responsetype;
         public static int maxSlotsPerRequest = 4;   //How many Slots before asking more
@@ -269,7 +269,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    WriteLog(slothandler.CalculatePidValues(ld.Values), DateTime.Now.ToString("yyyy-MM-dd-HH:mm:ss:FFFFF"));
+                    WriteLog(slothandler.CalculatePidValues(ld.Values), new DateTime((long)ld.TimeStamp).ToString("yyyy-MM-dd-HH:mm:ss:FFFFF"));
                 }
             }
             logwriter.Close();
@@ -670,7 +670,7 @@ namespace UniversalPatcher
                 bool m = LogDevice.SendMessage(new OBDMessage(queryMsg), 1);
                 if (!m)
                 {
-                    Logger("No respond to OS Query message");
+                    //Logger("No respond to OS Query message");
                     Debug.WriteLine("Expected " + string.Join(" ", Array.ConvertAll(queryMsg, b => b.ToString("X2"))));
                     return null;
                 }
@@ -678,7 +678,7 @@ namespace UniversalPatcher
                 OBDMessage resp = LogDevice.ReceiveMessage();
                 if (resp == null || resp.Length < 5)
                 {
-                    LoggerBold("Empty response");
+                    //LoggerBold("Empty response");
                     return null;
                 }
                 uint os = ReadUint32(resp.GetBytes(), 5, true);
@@ -688,7 +688,7 @@ namespace UniversalPatcher
             }
             catch(Exception ex)
             {
-                LoggerBold("QyeryPcmOS: " + ex.Message);
+                Debug.WriteLine("QyeryPcmOS: " + ex.Message);
                 return null;
             }
         }

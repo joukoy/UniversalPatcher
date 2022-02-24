@@ -16,13 +16,7 @@ namespace UniversalPatcher
     {
         public Dictionary<byte, string> FuncAddresses;
         public Dictionary<byte, string> PhysAddresses;
-        //private IPort port;
         public bool stoploop { get; set; }
-        private int MaxReceiveSize = 200;
-        //public List<AnalyzerData> aData { get; set; }
-        private bool isElmBasedDevice = false;
-        private bool ElmSupportST = false;
-        private bool isJDevice = false;
         private bool HideHeartBeat;
 
         public Analyzer()
@@ -32,6 +26,7 @@ namespace UniversalPatcher
 
         public class VPWRow
         {
+            public long Timestamp { get; set; }
             public string Hdr { get; set; }
             public byte Priority { get; set; }
             public string Mode { get; set; }
@@ -43,6 +38,7 @@ namespace UniversalPatcher
         public class AnalyzerData : EventArgs
         {
             //'Hdr', 'Prio', 'Mode', 'Type', 'TA', 'SA', 'Payload'
+            public long Timestamp { get; set; }
             public string Hdr { get; set; }
             public string Prio { get; set; }
             public string Mode { get; set; }
@@ -143,101 +139,14 @@ namespace UniversalPatcher
             RowAnalyzed?.Invoke(this, e);
         }
 
-        /// <summary>
-        /// Reads and filters a line from the device, returns it as a string
-        /// </summary>
-        /// <remarks>
-        /// Strips Non Printable, >, and Line Feeds. Converts Carriage Return to Space. Strips leading and trailing whitespace.
-        /// </remarks>
-        private string ReadELMLine()
-        {
-            // (MaxReceiveSize * 2) + 2 for Checksum + longest possible prompt. Minimum prompt 2 CR + 1 Prompt, +2 extra
-            int maxPayload = (MaxReceiveSize * 2) + 7;
-
-            // A buffer to receive a single byte.
-            SerialByte sBs = new SerialByte(1);
-
-            // Use StringBuilder to collect the bytes.
-            StringBuilder builtString = new StringBuilder();
-            for (int i = 0; i < maxPayload; i++)
-            {
-                // Receive a single byte.
-                port.Receive(sBs, 0, 1);
-
-                // Is it the prompt '>'.
-                if (sBs.Data[0] == '>' || sBs.Data[0] == '?')
-                {
-                    // Prompt found, we're done.
-                    break;
-                }
-
-                // Is it a CR
-                if (sBs.Data[0] == 13)
-                {
-                    // CR found, replace with space.
-                    break;
-                    //b[0] = 32;
-                }
-
-                // Printable characters only.
-                if (sBs.Data[0] > 32 && sBs.Data[0] <= 126)
-                {
-                    // Append it to builtString.
-                    builtString.Append((char)sBs.Data[0]);
-                }
-            }
-
-            // Convert to string, trim and return
-            return builtString.ToString().Trim();
-        }
-
-        /// <summary>
-        /// Send a request in string form, wait for a response (for init)
-        /// </summary>
-        /// <remarks>
-        /// The API for this method (sending a string, returning a string) matches
-        /// the way that we need to communicate with ELM and STN devices for setup
-        /// </remarks>
-        public string SendRequest(string request)
-        {
-            Debug.WriteLine("TX: " + request);
-
-            try
-            {
-                port.Send(Encoding.ASCII.GetBytes(request + " \r"));
-                Thread.Sleep(100);
-                string response = ReadELMLine();
-                return response;
-            }
-            catch (TimeoutException)
-            {
-                return string.Empty;
-            }
-        }
 
         public void StartAnalyzer(string DevType, bool hideHeartBeat)
         {
             try
             {
+                if (LoggerUtils.analyzerData == null)
+                    LoggerUtils.analyzerData = new List<OBDMessage>();
                 HideHeartBeat = hideHeartBeat;
-
-                if (DevType.ToLower().Contains("J2534"))
-                {
-                    isJDevice = true;
-                    isElmBasedDevice = false;
-                }
-                else
-                {
-                    isJDevice = false;
-                    if (DevType.ToLower().StartsWith("elm") )
-                    {
-                        isElmBasedDevice = true;
-                    }
-                    else
-                    {
-                        isElmBasedDevice = false;
-                    }
-                }
                 stoploop = false;
                 Logger("Waiting data...");
                 LogDevice.SetTimeout(TimeoutScenario.Maximum);
@@ -260,24 +169,24 @@ namespace UniversalPatcher
             stoploop = true;            
         }
 
-        public VPWRow ProcessLine(byte[] byteArray)
+        public VPWRow ProcessLine(OBDMessage msg)
         {
             VPWRow vRow = new VPWRow();
             try
             {
-                if (byteArray.Length < 4)
+                if (msg.Length < 3)
                     return null;
-                Debug.WriteLine("Analyzer processing: " + BitConverter.ToString(byteArray));
-                byte priority = (byte)(byteArray[2] >> 5);
+                Debug.WriteLine("Analyzer processing: " + msg.ToString());
+                byte priority = (byte)(msg[2] >> 5);
                 string mode = "F";
                 string modeType = "?";
-                if ((byteArray[0] & 0x04) != 0)
+                if ((msg[0] & 0x04) != 0)
                     mode = "P";
-                byte modeByte = (byte)(byteArray[0] & 0x0F);
+                byte modeByte = (byte)(msg[0] & 0x0F);
                 if (modeByte == 0x0C)
                     modeType = "N-N";
 
-                switch (byteArray[0] & 0x0F)
+                switch (msg[0] & 0x0F)
                 {
                     case 0x08:
                         modeType = "Func";
@@ -293,23 +202,23 @@ namespace UniversalPatcher
                         break;
                 }
 
-                if ((byteArray[0] & 0x10) == 0x10)
+                if ((msg[0] & 0x10) == 0x10)
                     mode = "?H";
-                if ((byteArray[0] & 0x08) == 0x00)
+                if ((msg[0] & 0x08) == 0x00)
                     mode = "?IFR";
 
                 // Check if is a heart beat
                 bool isHeartBeat = false;
-                if (byteArray[3] == 0xFF || byteArray[3] == 0xFE)
-                    if (byteArray.Length == 6 && byteArray[5] == 0x03)
+                if (msg[3] == 0xFF || msg[3] == 0xFE)
+                    if (msg.Length == 6 && msg[5] == 0x03)
                         isHeartBeat = true;
-
+                vRow.Timestamp = (long)msg.TimeStamp;
                 vRow.Priority = priority;
                 vRow.Mode = mode;
                 vRow.ModeType = modeType;
-                vRow.Message = byteArray;
+                vRow.Message = msg.GetBytes();
                 vRow.IsHeartBeat = isHeartBeat;
-                vRow.Hdr = byteArray[0].ToString("X");
+                vRow.Hdr = msg[0].ToString("X");
             }
             catch (Exception ex)
             {
@@ -352,10 +261,11 @@ namespace UniversalPatcher
                 else
                     azd.SA = addr.ToString("X2");
                 azd.Payload = "";
-                for (int p = 3; p < vRow.Message.Length - 1; p++)
+                for (int p = 3; p < vRow.Message.Length; p++)
                 {
                     azd.Payload += vRow.Message[p].ToString("X2") + " ";
                 }
+                azd.Timestamp = vRow.Timestamp;
                 azd.Payload = azd.Payload.Trim();
                 azd.Mode = vRow.Mode;
                 azd.Prio = vRow.Priority.ToString("X");
@@ -381,39 +291,27 @@ namespace UniversalPatcher
             LogDevice.ClearMessageQueue();
             bool waiting4x = false;
 
-            if (LogDevice.ToString().ToLower().Contains("elm") || LogDevice.ToString().ToLower().Contains("obdlink") || LogDevice.ToString().ToLower().Contains("obdx"))
-            {
-                isElmBasedDevice = true;
-            }
-            else
-            {
-                isElmBasedDevice = false;
-            }
             while (!stoploop)
             {
                 try
                 {
-                    byte[] byteArray = new byte[1];
                     OBDMessage rcv = LogDevice.ReceiveMessage();
                     if (rcv == null)
                     {
                         continue;
                     }
-                    byte[] tmpArray = rcv.GetBytes();
-                    byteArray = new byte[tmpArray.Length + 1];
-                    Array.Copy(tmpArray, byteArray, tmpArray.Length);
-                    if (isElmBasedDevice && rcv.ElmPrompt)
+                    if (LogDevice.LogDeviceType == LoggingDevType.Elm && rcv.ElmPrompt)
                     {
                         LogDevice.SetAnalyzerFilter();
                     }
-                    if (byteArray.Length > 3)
+                    if (rcv.Length > 3)
                     {
-                        if (byteArray[1] == 0xfe && byteArray[3] == 0xa0)
+                        if (rcv[1] == 0xfe && rcv[3] == 0xa0)
                         {
                             Debug.WriteLine("Received 0xFE, , 0xA0 - Ready to switch to 4x");
                             waiting4x = true;
                         }
-                        if (waiting4x && byteArray[1] == 0xfe && byteArray[3] == 0xa1)
+                        if (waiting4x && rcv[1] == 0xfe && rcv[3] == 0xa1)
                         {
                             waiting4x = false;
                             Debug.WriteLine("Received 0xFE, , 0xA1 - switching to 4x");
@@ -424,23 +322,19 @@ namespace UniversalPatcher
                                 Debug.WriteLine("Switch to 4X failed");
                         }
 
-                    }
-                    if (byteArray.Length> 4)
-                    {
-                        Debug.WriteLine("ByteArray: " + BitConverter.ToString(byteArray));
-                        VPWRow vRow = ProcessLine(byteArray);
+                        Debug.WriteLine("ByteArray: " + rcv.ToString());
+                        VPWRow vRow = ProcessLine(rcv);
                         if (vRow != null)
                         {
                             if (vRow.IsHeartBeat && HideHeartBeat)
                             {
-                                Debug.WriteLine("Hiding Heartbeat: " + BitConverter.ToString(byteArray));
+                                Debug.WriteLine("Hiding Heartbeat: " + rcv.ToString());
                             }
                             else
                             {
                                 AnalyzerData msg = AnalyzeMsg(vRow);
-                                //aData.Add(msg);
+                                LoggerUtils.analyzerData.Add(rcv);
                                 OnRowAnalyzed(msg);
-                                Debug.WriteLine(byteArray.ToHex());
                             }
                         }
                     }

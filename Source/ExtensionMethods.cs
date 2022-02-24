@@ -63,6 +63,9 @@ namespace UniversalPatcher
                 tsmiFont.Click += (sender, e) => TsmiFont_Click(sender, e, rtb);
                 cms.Items.Add(tsmiFont);
 
+                ToolStripMenuItem tsmiSavefile = new ToolStripMenuItem("Save...");
+                tsmiSavefile.Click += (sender, e) => TsmiSavefile_Click(sender, e, rtb);
+                cms.Items.Add(tsmiSavefile);
 
                 // When opening the menu, check if the condition is fulfilled 
                 // in order to enable the action
@@ -79,6 +82,14 @@ namespace UniversalPatcher
 
                 rtb.ContextMenuStrip = cms;
             }
+        }
+
+        private static void TsmiSavefile_Click(object sender, EventArgs e, RichTextBox rtb)
+        {
+            string fName = Helpers.SelectSaveFile(Helpers.RtfFilter);
+            if (fName.Length == 0)
+                return;
+            rtb.SaveFile(fName);
         }
 
         private static void TsmiFont_Click(object sender, EventArgs e,RichTextBox rtb)

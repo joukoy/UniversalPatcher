@@ -4729,6 +4729,12 @@ namespace UniversalPatcher
             frmCreateShortcuts fcs = new frmCreateShortcuts();
             fcs.Show();
         }
+
+        private void creditsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmCredits fc = new frmCredits();
+            fc.Show();
+        }
     }
 }
 

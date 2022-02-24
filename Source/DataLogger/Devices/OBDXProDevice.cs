@@ -724,7 +724,7 @@ namespace UniversalPatcher
 
         private bool SetToFilter(byte Val)
         {
-            if (DataLogger.useBusFilters == false)
+            if (DataLogger.useVPWFilters == false)
             {
                 return true;
             }

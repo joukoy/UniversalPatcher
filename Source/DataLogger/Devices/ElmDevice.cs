@@ -326,7 +326,7 @@ namespace UniversalPatcher
             //this.implementation.Initialize();
             this.implementation.SendAndVerify("AT L0", "OK"); //Disable new line characters between commands/messages
             this.CurrentFilter = "logging";
-            if (DataLogger.useBusFilters)
+            if (DataLogger.useVPWFilters)
             {
                 return this.implementation.SendAndVerify("AT SR " + DeviceId.Tool.ToString("X2"), "OK");
             }

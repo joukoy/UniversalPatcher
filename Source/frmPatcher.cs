@@ -4458,6 +4458,11 @@ namespace UniversalPatcher
             StartFlashApp(null,false);
         }
 
+        private void creditsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmCredits fc = new frmCredits();
+            fc.Show();
+        }
     }
 }
 

@@ -215,6 +215,7 @@ namespace UniversalPatcher
                 getResponse = false;
 
             Port.DiscardBuffers();
+            DataLogger.LogDevice.MessageSent(message);
             if (header != this.currentHeader)
             {
                 SerialString setHeaderResponse = this.SendRequest("AT SH " + header, getResponse);

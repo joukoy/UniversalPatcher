@@ -17,6 +17,7 @@ public static class Helpers
     public static string XmlFilter = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
     public static string TxtFilter = "TXT files (*.txt)|*.txt|All files (*.*)|*.*";
     public static string XdfFilter = "XDF files (*.xdf)|*.xdf|All files (*.*)|*.*";
+    public static string RtfFilter = "RTF files (*.rtf)|*.rtf|All files (*.*)|*.*";
 
     public static byte[] ReadBin(string FileName)
     {

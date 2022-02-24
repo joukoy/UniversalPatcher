@@ -80,7 +80,7 @@ namespace UniversalPatcher
             txtParamSearch.Leave += TxtParamSearch_Leave;
             txtParamSearch.KeyPress += TxtParamSearch_KeyPress;
             txtSendBus.KeyPress += TxtSendBus_KeyPress;
-
+            txtVPWmessages.EnableContextMenu();
             CurrentMode = RunMode.NotRunning;
         }
 
@@ -92,6 +92,8 @@ namespace UniversalPatcher
         {
             this.Invoke((MethodInvoker)delegate () {
                 txtVPWmessages.SelectionColor = Color.DarkGreen;
+                if (chkConsoleTimestamps.Checked)
+                    txtVPWmessages.AppendText("[" + new DateTime((long)e.Msg.TimeStamp).ToString("yyyy-MM-dd-HH:mm:ss:FFFFF") + "] ");
                 txtVPWmessages.AppendText(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
             });
         }
@@ -99,6 +101,8 @@ namespace UniversalPatcher
         {
             this.Invoke((MethodInvoker)delegate () {
                 txtVPWmessages.SelectionColor = Color.Red;
+                if (chkConsoleTimestamps.Checked)
+                    txtVPWmessages.AppendText("[" + new DateTime((long)e.Msg.TimeStamp).ToString("yyyy-MM-dd-HH:mm:ss:FFFFF") + "] ");
                 txtVPWmessages.AppendText(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
             });
         }
@@ -365,8 +369,13 @@ namespace UniversalPatcher
                 LoadPorts(true);
 
                 //chkAdvanced.Checked = Properties.Settings.Default.LoggerShowAdvanced;
-                chkBusFilters.Checked = Properties.Settings.Default.LoggerUseFilters;
+                chkVPWFilters.Checked = Properties.Settings.Default.LoggerUseFilters;
                 chkEnableConsole.Checked = Properties.Settings.Default.LoggerEnableConsole;
+                chkConsoleTimestamps.Checked = Properties.Settings.Default.LoggerConsoleTimestamps;
+                if (Properties.Settings.Default.LoggerConsoleFont != null)
+                {
+                    txtVPWmessages.Font = Properties.Settings.Default.LoggerConsoleFont;
+                }
 
                 if (!string.IsNullOrEmpty(Properties.Settings.Default.LoggerLogFolder))
                 {
@@ -1103,8 +1112,10 @@ namespace UniversalPatcher
             Properties.Settings.Default.LoggerUseFTDI = chkFTDI.Checked;
             //Properties.Settings.Default.LoggerShowAdvanced = chkAdvanced.Checked;
             Properties.Settings.Default.LoggerUsePriority = chkPriority.Checked;
-            Properties.Settings.Default.LoggerUseFilters = chkBusFilters.Checked;
+            Properties.Settings.Default.LoggerUseFilters = chkVPWFilters.Checked;
             Properties.Settings.Default.LoggerEnableConsole = chkEnableConsole.Checked;
+            Properties.Settings.Default.LoggerConsoleTimestamps = chkConsoleTimestamps.Checked;
+            Properties.Settings.Default.LoggerConsoleFont = txtVPWmessages.Font;
             Properties.Settings.Default.Save();
 
         }
@@ -1129,60 +1140,68 @@ namespace UniversalPatcher
 
         private bool Connect(bool ShowOs = true)
         {
-            useBusFilters = chkBusFilters.Checked;
-            if (Connected)
+            try
             {
+                useVPWFilters = chkVPWFilters.Checked;
+                if (Connected)
+                {
+                    return true;
+                }
+                Logger("Connecting...");
+                Application.DoEvents();
+                if (serialRadioButton.Checked)
+                {
+                    string sPort = comboSerialPort.Text;
+                    string[] sParts = sPort.Split(':');
+                    if (sParts.Length > 1)
+                        sPort = sParts[0].Trim();
+                    LogDevice = CreateSerialDevice(sPort, comboSerialDeviceType.Text, chkFTDI.Checked);
+                }
+                else
+                {
+                    J2534DotNet.J2534Device dev = jDevList[j2534DeviceList.SelectedIndex];
+                    //passThru.LoadLibrary(dev);
+                    LogDevice = new J2534Device(dev);
+                }
+                if (chkEnableConsole.Checked)
+                {
+                    LogDevice.MsgSent += LogDevice_MsgSent;
+                    LogDevice.MsgReceived += LogDevice_MsgReceived;
+                }
+                if (!LogDevice.Initialize(Convert.ToInt32(comboBaudRate.Text)))
+                {
+                    port.Dispose();
+                    LogDevice.Dispose();
+                    return false;
+                }
+                string os = "";
+                if (ShowOs)
+                {
+                    os = QueryPcmOS();
+                    if (os == null)
+                    {
+                        //return false;
+                    }
+                }
+                if (!string.IsNullOrEmpty(os))
+                    labelConnected.Text = "Connected - OS: " + os;
+                else
+                    labelConnected.Text = "Connected";
+                Connected = true;
+                SaveSettings();
+                if (radioParamRam.Checked)
+                {
+                    LoadParameters();
+                }
+                Application.DoEvents();
+                groupHWSettings.Enabled = false;
                 return true;
             }
-            Logger("Connecting...");
-            Application.DoEvents();
-            if (serialRadioButton.Checked)
+            catch (Exception ex)
             {
-                string sPort = comboSerialPort.Text;
-                string[] sParts = sPort.Split(':');
-                if (sParts.Length > 1)
-                    sPort = sParts[0].Trim();
-                LogDevice = CreateSerialDevice(sPort, comboSerialDeviceType.Text, chkFTDI.Checked);
-            }
-            else
-            {
-                J2534DotNet.J2534Device dev = jDevList[j2534DeviceList.SelectedIndex];
-                //passThru.LoadLibrary(dev);
-                LogDevice = new J2534Device(dev);
-            }
-            if (chkEnableConsole.Checked)
-            {
-                LogDevice.MsgSent += LogDevice_MsgSent;
-                LogDevice.MsgReceived += LogDevice_MsgReceived;
-            }
-            if (!LogDevice.Initialize(Convert.ToInt32(comboBaudRate.Text)))
-            {
-                port.Dispose();
-                LogDevice.Dispose();
+                LoggerBold("Connection failed. Check settings");
                 return false;
             }
-            string os = "";
-            if (ShowOs)
-            {
-                os = QueryPcmOS();
-                if (os == null)
-                {
-                    //return false;
-                }
-            }
-            if (!string.IsNullOrEmpty(os))
-                labelConnected.Text = "Connected - OS: " + os;
-            else
-                labelConnected.Text = "Connected";
-            Connected = true;
-            SaveSettings();
-            if (radioParamRam.Checked)
-            {
-                LoadParameters();
-            }
-            Application.DoEvents();
-            groupHWSettings.Enabled = false;
-            return true;
         }
 
 
@@ -1439,7 +1458,14 @@ namespace UniversalPatcher
                 int r = dataGridAnalyzer.Rows.Add();
                 foreach (var prop in e.GetType().GetProperties())
                 {
-                    dataGridAnalyzer.Rows[r].Cells[prop.Name].Value = prop.GetValue(e, null);
+                    if (prop.Name == "Timestamp")
+                    {
+                        dataGridAnalyzer.Rows[r].Cells[prop.Name].Value = new DateTime(Convert.ToInt64(prop.GetValue(e, null))).ToString("yyyy-MM-dd-HH:mm:ss:FFFFF");
+                    }
+                    else
+                    {
+                        dataGridAnalyzer.Rows[r].Cells[prop.Name].Value = prop.GetValue(e, null);
+                    }
                 }
                 dataGridAnalyzer.CurrentCell = dataGridAnalyzer.Rows[r].Cells[0];
                 //AddAnalyzerRowToGrid(e); 
@@ -1682,6 +1708,7 @@ namespace UniversalPatcher
         private void btnClearAnalyzerGrid_Click(object sender, EventArgs e)
         {
             dataGridAnalyzer.Rows.Clear();
+            analyzerData.Clear();
         }
 
         private void btnAnalyzerSaveCsv_Click(object sender, EventArgs e)
@@ -1751,7 +1778,7 @@ namespace UniversalPatcher
         {
             if (Connected)
             {
-                if (chkBusFilters.Checked)
+                if (chkVPWFilters.Checked)
                 {
                     LogDevice.SetLoggingFilter();
                 }
@@ -1852,5 +1879,55 @@ namespace UniversalPatcher
             }
         }
 
+        private void homepageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string url = "https://universalpatcher.net/";
+                System.Diagnostics.Process.Start(url);
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AboutBox1 aboutBox = new AboutBox1();
+            aboutBox.Show();
+
+        }
+
+        private void creditsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmCredits fc = new frmCredits();
+            fc.Show();
+        }
+
+        private void btnSaveAnalyzerMsgs_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string fName = SelectSaveFile(TxtFilter);
+                if (fName.Length == 0)
+                    return;
+                for (int a = 0; a < analyzerData.Count; a++)
+                {
+                    OBDMessage msg = analyzerData[a];
+                    Logger("Writing to file: " + Path.GetFileName(fName), false);
+                    using (StreamWriter writetext = new StreamWriter(fName))
+                    {
+                        string line = "[" + new DateTime((long)msg.TimeStamp).ToString("yyyy-MM-dd-HH:mm:ss:FFFFF") + "] " + msg.ToString();
+                        writetext.WriteLine(line);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+        }
     }
 }

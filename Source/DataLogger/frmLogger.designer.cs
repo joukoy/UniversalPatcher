@@ -86,8 +86,9 @@ namespace UniversalPatcher
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.btnConnect = new System.Windows.Forms.Button();
             this.groupAdvanced = new System.Windows.Forms.GroupBox();
+            this.chkEnableConsole = new System.Windows.Forms.CheckBox();
             this.chkFilterParamsByOS = new System.Windows.Forms.CheckBox();
-            this.chkBusFilters = new System.Windows.Forms.CheckBox();
+            this.chkVPWFilters = new System.Windows.Forms.CheckBox();
             this.chkPriority = new System.Windows.Forms.CheckBox();
             this.chkRawValues = new System.Windows.Forms.CheckBox();
             this.chkReverseSlotNumbers = new System.Windows.Forms.CheckBox();
@@ -107,6 +108,7 @@ namespace UniversalPatcher
             this.comboSerialDeviceType = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.txtVPWmessages = new System.Windows.Forms.RichTextBox();
             this.txtSendBus = new System.Windows.Forms.TextBox();
             this.labelProgress = new System.Windows.Forms.Label();
             this.btnStartStop = new System.Windows.Forms.Button();
@@ -124,8 +126,13 @@ namespace UniversalPatcher
             this.timerAnalyzer = new System.Windows.Forms.Timer(this.components);
             this.labelConnected = new System.Windows.Forms.Label();
             this.timerSearchParams = new System.Windows.Forms.Timer(this.components);
-            this.txtVPWmessages = new System.Windows.Forms.RichTextBox();
-            this.chkEnableConsole = new System.Windows.Forms.CheckBox();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnSaveAnalyzerMsgs = new System.Windows.Forms.Button();
+            this.chkConsoleTimestamps = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -501,6 +508,7 @@ namespace UniversalPatcher
             // 
             // tabAnalyzer
             // 
+            this.tabAnalyzer.Controls.Add(this.btnSaveAnalyzerMsgs);
             this.tabAnalyzer.Controls.Add(this.btnAnalyzerSaveCsv);
             this.tabAnalyzer.Controls.Add(this.btnClearAnalyzerGrid);
             this.tabAnalyzer.Controls.Add(this.chkHideHeartBeat);
@@ -715,6 +723,7 @@ namespace UniversalPatcher
             // 
             // splitContainer3.Panel2
             // 
+            this.splitContainer3.Panel2.Controls.Add(this.label6);
             this.splitContainer3.Panel2.Controls.Add(this.txtVPWmessages);
             this.splitContainer3.Panel2.Controls.Add(this.txtSendBus);
             this.splitContainer3.Size = new System.Drawing.Size(904, 397);
@@ -733,9 +742,10 @@ namespace UniversalPatcher
             // 
             // groupAdvanced
             // 
+            this.groupAdvanced.Controls.Add(this.chkConsoleTimestamps);
             this.groupAdvanced.Controls.Add(this.chkEnableConsole);
             this.groupAdvanced.Controls.Add(this.chkFilterParamsByOS);
-            this.groupAdvanced.Controls.Add(this.chkBusFilters);
+            this.groupAdvanced.Controls.Add(this.chkVPWFilters);
             this.groupAdvanced.Controls.Add(this.chkPriority);
             this.groupAdvanced.Controls.Add(this.chkRawValues);
             this.groupAdvanced.Controls.Add(this.chkReverseSlotNumbers);
@@ -743,10 +753,21 @@ namespace UniversalPatcher
             this.groupAdvanced.Controls.Add(this.comboResponseMode);
             this.groupAdvanced.Location = new System.Drawing.Point(3, 242);
             this.groupAdvanced.Name = "groupAdvanced";
-            this.groupAdvanced.Size = new System.Drawing.Size(345, 102);
+            this.groupAdvanced.Size = new System.Drawing.Size(345, 126);
             this.groupAdvanced.TabIndex = 34;
             this.groupAdvanced.TabStop = false;
             this.groupAdvanced.Text = "Advanced";
+            // 
+            // chkEnableConsole
+            // 
+            this.chkEnableConsole.AutoSize = true;
+            this.chkEnableConsole.Location = new System.Drawing.Point(191, 79);
+            this.chkEnableConsole.Name = "chkEnableConsole";
+            this.chkEnableConsole.Size = new System.Drawing.Size(127, 17);
+            this.chkEnableConsole.TabIndex = 37;
+            this.chkEnableConsole.Text = "Enable VPW console";
+            this.chkEnableConsole.UseVisualStyleBackColor = true;
+            this.chkEnableConsole.CheckedChanged += new System.EventHandler(this.chkEnableConsole_CheckedChanged);
             // 
             // chkFilterParamsByOS
             // 
@@ -762,19 +783,19 @@ namespace UniversalPatcher
             // 
             // chkBusFilters
             // 
-            this.chkBusFilters.AutoSize = true;
-            this.chkBusFilters.Location = new System.Drawing.Point(9, 59);
-            this.chkBusFilters.Name = "chkBusFilters";
-            this.chkBusFilters.Size = new System.Drawing.Size(100, 17);
-            this.chkBusFilters.TabIndex = 35;
-            this.chkBusFilters.Text = "Use BUS Filters";
-            this.chkBusFilters.UseVisualStyleBackColor = true;
-            this.chkBusFilters.CheckedChanged += new System.EventHandler(this.chkBusFilters_CheckedChanged);
+            this.chkVPWFilters.AutoSize = true;
+            this.chkVPWFilters.Location = new System.Drawing.Point(9, 59);
+            this.chkVPWFilters.Name = "chkBusFilters";
+            this.chkVPWFilters.Size = new System.Drawing.Size(103, 17);
+            this.chkVPWFilters.TabIndex = 35;
+            this.chkVPWFilters.Text = "Use VPW Filters";
+            this.chkVPWFilters.UseVisualStyleBackColor = true;
+            this.chkVPWFilters.CheckedChanged += new System.EventHandler(this.chkBusFilters_CheckedChanged);
             // 
             // chkPriority
             // 
             this.chkPriority.AutoSize = true;
-            this.chkPriority.Location = new System.Drawing.Point(191, 56);
+            this.chkPriority.Location = new System.Drawing.Point(191, 59);
             this.chkPriority.Name = "chkPriority";
             this.chkPriority.Size = new System.Drawing.Size(79, 17);
             this.chkPriority.TabIndex = 34;
@@ -925,7 +946,7 @@ namespace UniversalPatcher
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(4, 114);
+            this.label7.Location = new System.Drawing.Point(7, 115);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(53, 13);
             this.label7.TabIndex = 19;
@@ -969,6 +990,20 @@ namespace UniversalPatcher
             this.label4.TabIndex = 16;
             this.label4.Text = "Device Type";
             // 
+            // txtVPWmessages
+            // 
+            this.txtVPWmessages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtVPWmessages.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtVPWmessages.HideSelection = false;
+            this.txtVPWmessages.Location = new System.Drawing.Point(2, 29);
+            this.txtVPWmessages.Name = "txtVPWmessages";
+            this.txtVPWmessages.Size = new System.Drawing.Size(435, 339);
+            this.txtVPWmessages.TabIndex = 2;
+            this.txtVPWmessages.Text = "";
+            this.txtVPWmessages.WordWrap = false;
+            // 
             // txtSendBus
             // 
             this.txtSendBus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -984,9 +1019,9 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labelProgress.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.labelProgress.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelProgress.Location = new System.Drawing.Point(437, 26);
+            this.labelProgress.Location = new System.Drawing.Point(467, 26);
             this.labelProgress.Name = "labelProgress";
-            this.labelProgress.Size = new System.Drawing.Size(468, 57);
+            this.labelProgress.Size = new System.Drawing.Size(438, 57);
             this.labelProgress.TabIndex = 22;
             this.labelProgress.Text = "idle";
             // 
@@ -994,7 +1029,7 @@ namespace UniversalPatcher
             // 
             this.btnStartStop.Location = new System.Drawing.Point(4, 26);
             this.btnStartStop.Name = "btnStartStop";
-            this.btnStartStop.Size = new System.Drawing.Size(421, 32);
+            this.btnStartStop.Size = new System.Drawing.Size(444, 32);
             this.btnStartStop.TabIndex = 5;
             this.btnStartStop.Text = "Start";
             this.btnStartStop.UseVisualStyleBackColor = true;
@@ -1014,7 +1049,8 @@ namespace UniversalPatcher
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.actionToolStripMenuItem});
+            this.actionToolStripMenuItem,
+            this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(912, 24);
@@ -1035,28 +1071,28 @@ namespace UniversalPatcher
             // loadProfileToolStripMenuItem
             // 
             this.loadProfileToolStripMenuItem.Name = "loadProfileToolStripMenuItem";
-            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadProfileToolStripMenuItem.Text = "Load profile";
             this.loadProfileToolStripMenuItem.Click += new System.EventHandler(this.loadProfileToolStripMenuItem_Click);
             // 
             // saveProfileToolStripMenuItem
             // 
             this.saveProfileToolStripMenuItem.Name = "saveProfileToolStripMenuItem";
-            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveProfileToolStripMenuItem.Text = "Save profile";
             this.saveProfileToolStripMenuItem.Click += new System.EventHandler(this.saveProfileToolStripMenuItem_Click);
             // 
             // saveProfileAsToolStripMenuItem
             // 
             this.saveProfileAsToolStripMenuItem.Name = "saveProfileAsToolStripMenuItem";
-            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveProfileAsToolStripMenuItem.Text = "Save profile as...";
             this.saveProfileAsToolStripMenuItem.Click += new System.EventHandler(this.saveProfileAsToolStripMenuItem_Click);
             // 
             // newProfileToolStripMenuItem
             // 
             this.newProfileToolStripMenuItem.Name = "newProfileToolStripMenuItem";
-            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newProfileToolStripMenuItem.Text = "New profile";
             this.newProfileToolStripMenuItem.Click += new System.EventHandler(this.newProfileToolStripMenuItem_Click);
             // 
@@ -1121,28 +1157,66 @@ namespace UniversalPatcher
             // 
             this.timerSearchParams.Tick += new System.EventHandler(this.timerSearchParams_Tick);
             // 
-            // txtVPWmessages
+            // helpToolStripMenuItem
             // 
-            this.txtVPWmessages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtVPWmessages.HideSelection = false;
-            this.txtVPWmessages.Location = new System.Drawing.Point(2, 3);
-            this.txtVPWmessages.Name = "txtVPWmessages";
-            this.txtVPWmessages.Size = new System.Drawing.Size(435, 371);
-            this.txtVPWmessages.TabIndex = 2;
-            this.txtVPWmessages.Text = "";
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aboutToolStripMenuItem,
+            this.creditsToolStripMenuItem,
+            this.homepageToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "Help";
             // 
-            // chkEnableConsole
+            // creditsToolStripMenuItem
             // 
-            this.chkEnableConsole.AutoSize = true;
-            this.chkEnableConsole.Location = new System.Drawing.Point(191, 79);
-            this.chkEnableConsole.Name = "chkEnableConsole";
-            this.chkEnableConsole.Size = new System.Drawing.Size(99, 17);
-            this.chkEnableConsole.TabIndex = 37;
-            this.chkEnableConsole.Text = "Enable console";
-            this.chkEnableConsole.UseVisualStyleBackColor = true;
-            this.chkEnableConsole.CheckedChanged += new System.EventHandler(this.chkEnableConsole_CheckedChanged);
+            this.creditsToolStripMenuItem.Name = "creditsToolStripMenuItem";
+            this.creditsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.creditsToolStripMenuItem.Text = "Credits";
+            this.creditsToolStripMenuItem.Click += new System.EventHandler(this.creditsToolStripMenuItem_Click);
+            // 
+            // homepageToolStripMenuItem
+            // 
+            this.homepageToolStripMenuItem.Name = "homepageToolStripMenuItem";
+            this.homepageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.homepageToolStripMenuItem.Text = "Homepage";
+            this.homepageToolStripMenuItem.Click += new System.EventHandler(this.homepageToolStripMenuItem_Click);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // btnSaveAnalyzerMsgs
+            // 
+            this.btnSaveAnalyzerMsgs.Location = new System.Drawing.Point(279, 3);
+            this.btnSaveAnalyzerMsgs.Name = "btnSaveAnalyzerMsgs";
+            this.btnSaveAnalyzerMsgs.Size = new System.Drawing.Size(106, 22);
+            this.btnSaveAnalyzerMsgs.TabIndex = 7;
+            this.btnSaveAnalyzerMsgs.Text = "Save messages";
+            this.btnSaveAnalyzerMsgs.UseVisualStyleBackColor = true;
+            this.btnSaveAnalyzerMsgs.Click += new System.EventHandler(this.btnSaveAnalyzerMsgs_Click);
+            // 
+            // chkConsoleTimestamps
+            // 
+            this.chkConsoleTimestamps.AutoSize = true;
+            this.chkConsoleTimestamps.Location = new System.Drawing.Point(209, 98);
+            this.chkConsoleTimestamps.Name = "chkConsoleTimestamps";
+            this.chkConsoleTimestamps.Size = new System.Drawing.Size(82, 17);
+            this.chkConsoleTimestamps.TabIndex = 38;
+            this.chkConsoleTimestamps.Text = "Timestamps";
+            this.chkConsoleTimestamps.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.label6.Location = new System.Drawing.Point(187, 9);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(75, 15);
+            this.label6.TabIndex = 3;
+            this.label6.Text = "VPW Console";
             // 
             // frmLogger
             // 
@@ -1288,7 +1362,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.RadioButton radioParamMath;
         private System.Windows.Forms.RadioButton radioParamRam;
         private System.Windows.Forms.RadioButton radioParamStd;
-        private System.Windows.Forms.CheckBox chkBusFilters;
+        private System.Windows.Forms.CheckBox chkVPWFilters;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveProfileAsToolStripMenuItem;
@@ -1304,6 +1378,13 @@ namespace UniversalPatcher
         private System.Windows.Forms.TextBox txtSendBus;
         private System.Windows.Forms.RichTextBox txtVPWmessages;
         private System.Windows.Forms.CheckBox chkEnableConsole;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem creditsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem homepageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.Button btnSaveAnalyzerMsgs;
+        private System.Windows.Forms.CheckBox chkConsoleTimestamps;
+        private System.Windows.Forms.Label label6;
     }
 }
 

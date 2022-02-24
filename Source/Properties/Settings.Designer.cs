@@ -1290,5 +1290,28 @@ namespace UniversalPatcher.Properties {
                 this["LoggerEnableConsole"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LoggerConsoleTimestamps {
+            get {
+                return ((bool)(this["LoggerConsoleTimestamps"]));
+            }
+            set {
+                this["LoggerConsoleTimestamps"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Font LoggerConsoleFont {
+            get {
+                return ((global::System.Drawing.Font)(this["LoggerConsoleFont"]));
+            }
+            set {
+                this["LoggerConsoleFont"] = value;
+            }
+        }
     }
 }

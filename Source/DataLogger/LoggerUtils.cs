@@ -9,6 +9,7 @@ using UniversalPatcher;
 
 public static class LoggerUtils
     {
+        public static List<OBDMessage> analyzerData { get; set; }
 
         public class Parameter
         {

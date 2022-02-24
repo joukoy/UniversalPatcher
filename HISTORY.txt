@@ -403,4 +403,12 @@
 - Logger: Allow DTC functions during logging
 - Logger: VPW Console in settings-tab
 
+0.20.9
+- Added Credits to Help-menu
+- VPW Console: Added right-click menu (edit, font, save...)
+- Analyzer: added Timestamps
+- Analyzer: added "Save messages"
+- Logger: Use packet arrival timestamp, not log writing time
+- Logger: disable wordwrap in console (enable horizontal scrollbar)
+- Logger: Timestamps to VPW Console
 
