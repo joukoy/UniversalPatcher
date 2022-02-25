@@ -276,7 +276,7 @@ namespace UniversalPatcher
                 }
                 //builder.AppendFormat(", R:50");
 
-                DataLogger.LogDevice.MessageSent(message);
+                datalogger.LogDevice.MessageSent(message);
 
                 if (messageBytes.Length < 200)
                 {

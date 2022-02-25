@@ -338,6 +338,8 @@ public class Upatcher
     public static SavingMath savingMath = new SavingMath();
     public static FrmPatcher frmpatcher;
     private static frmSplashScreen frmSplash = new frmSplashScreen();
+    public static DataLogger datalogger;
+    public static Analyzer analyzer;
 
     public static CvnDB cvnDB;
     //public static string[] dtcStatusCombined = { "MIL and reporting off", "Type A/no MIL", "Type B/no MIL", "Type C/no MIL", "Not reported/MIL", "Type A/MIL", "Type B/MIL", "Type C/MIL" };
@@ -2234,7 +2236,7 @@ public class Upatcher
         return null;
     }
 
-    public static void Logger(string LogText, Boolean NewLine = true)
+/*    public static void Logger(string LogText, Boolean NewLine = true)
     {
         try
         {
@@ -2289,7 +2291,7 @@ public class Upatcher
             Debug.WriteLine(ex.InnerException);
         }
     }
-
+*/
     public static List<XmlPatch> LoadPatchFile(string fileName)
     {
         System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<XmlPatch>));

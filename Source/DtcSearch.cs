@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.Remoting.Messaging;
 using System.Management.Instrumentation;
+using static Helpers;
 
 namespace UniversalPatcher
 {

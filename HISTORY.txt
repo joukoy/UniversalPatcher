@@ -412,3 +412,11 @@
 - Logger: disable wordwrap in console (enable horizontal scrollbar)
 - Logger: Timestamps to VPW Console
 
+0.20.10
+- Log & Debug display modified to use Events instead of direct write (Thread safe)
+- Logger: J2534 device: implemented lock, no concurrent use from different threads
+- Logger: Write system time (second resolution) and interface timestamp to logfile. J2534 have internal timestamp, other tools use system timestamps for both
+- Logger: Moved Advanced setting & VPW Console to Adnvanced-tab
+- Logger: Script upload to VPW Console
+
+

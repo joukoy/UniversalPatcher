@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.IO;
+using System.Diagnostics;
 
 namespace UniversalPatcher
 {
@@ -20,7 +21,7 @@ namespace UniversalPatcher
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-
+                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
                 if (args.Length > 0)
                 {
                     if (args[0] == "-") ;
@@ -80,6 +81,25 @@ namespace UniversalPatcher
                 MessageBox.Show(ex.Message, "Error");
             }
         }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = (Exception)e.ExceptionObject;
+            string errorMsg = "An application error occurred. Please contact joukoy@gmail.com " +
+                "with the following information:\n\n";
+
+            // Since we can't prevent the app from terminating, log this to the event log.
+            if (!EventLog.SourceExists("ThreadException"))
+            {
+                EventLog.CreateEventSource("ThreadException", "Application");
+            }
+
+            // Create an EventLog instance and assign its source.
+            EventLog myLog = new EventLog();
+            myLog.Source = "ThreadException";
+            myLog.WriteEntry(errorMsg + ex.Message + "\n\nStack Trace:\n" + ex.StackTrace);
+        }
+
         static void MyHandler(object sender, UnhandledExceptionEventArgs args)
         {
             Exception e = (Exception)args.ExceptionObject;

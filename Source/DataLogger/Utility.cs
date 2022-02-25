@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MathParserTK;
 using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {

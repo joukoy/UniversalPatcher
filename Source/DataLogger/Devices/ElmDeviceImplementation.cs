@@ -259,6 +259,7 @@ namespace UniversalPatcher
             byte[] message = response.Data.ToBytes();
             OBDMessage rMsg = new OBDMessage(message);
             rMsg.TimeStamp = (ulong)response.TimeStamp;
+            rMsg.SysTimeStamp = (ulong)response.TimeStamp;
             rMsg.ElmPrompt = response.Prompt;
             return Response.Create(ResponseStatus.Success, rMsg);
 
@@ -278,6 +279,7 @@ namespace UniversalPatcher
                 //if (rawResponse.Data.StartsWith("6C") || rawResponse.Data.StartsWith("8C"))
                   //  response = new OBDMessage(rawResponse.Data.ToBytes());
                 response.TimeStamp = (ulong)rawResponse.TimeStamp;
+                response.SysTimeStamp = (ulong)rawResponse.TimeStamp;
                 response.ElmPrompt = true;
                 this.enqueue(response);
                 return true;

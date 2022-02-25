@@ -58,7 +58,7 @@ namespace UniversalPatcher
 
         private void frmTuner_Load(object sender, EventArgs e)
         {
-            
+            uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
             selectedCompareBin = "";
             SetWorkingMode();
             disableConfigAutoloadToolStripMenuItem.Checked = Properties.Settings.Default.disableTunerAutoloadSettings;
@@ -69,7 +69,7 @@ namespace UniversalPatcher
             radioListMode.Checked = !Properties.Settings.Default.TunerTreeMode;
             SelectDispMode();
 
-            LogReceivers.Add(txtResult);
+            //LogReceivers.Add(txtResult);
 
             if (Properties.Settings.Default.MainWindowPersistence)
             {
@@ -137,6 +137,12 @@ namespace UniversalPatcher
             this.DragEnter += FrmTuner_DragEnter;
             this.DragDrop += FrmTuner_DragDrop;
         }
+
+        private void UPLogger_UpLogUpdated(object sender, UPLogger.UPLogString e)
+        {
+            uPLogger.DisplayText(e.LogText, e.Bold, txtResult);
+        }
+
 
         private void SortItem_Click(object sender, EventArgs e)
         {
@@ -4735,6 +4741,7 @@ namespace UniversalPatcher
             frmCredits fc = new frmCredits();
             fc.Show();
         }
+
     }
 }
 

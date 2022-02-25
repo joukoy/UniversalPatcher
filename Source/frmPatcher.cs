@@ -56,10 +56,9 @@ namespace UniversalPatcher
         private BindingList<FoundTable> filteredCategories = new BindingList<FoundTable>();
         private BindingSource categoryBindingSource = new BindingSource();
 
+        private RichTextBoxTraceListener DebugListener;
 
         private uint lastCustomSearchResult = 0;
-        private string logFile;
-        StreamWriter logwriter;        
 
         private string cvnSortBy = "";
         private int cvnSortIndex = 0;
@@ -68,7 +67,8 @@ namespace UniversalPatcher
         private void FrmPatcher_Load(object sender, EventArgs e)
         {
             basefile = new PcmFile();
-            LogReceivers.Add(txtResult);
+            uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
+            //LogReceivers.Add(txtResult);
             if (Properties.Settings.Default.MainWindowPersistence)
             {
                 rememberWindowSizeToolStripMenuItem.Checked = true;
@@ -130,7 +130,6 @@ namespace UniversalPatcher
             numSuppress.Value = Properties.Settings.Default.SuppressAfter;
             if (numSuppress.Value == 0)
                 numSuppress.Value = 10;
-            logFile = Path.Combine(Application.StartupPath, "Log", "universalpatcher" + DateTime.Now.ToString("_yyyyMMdd_hhmm") + ".rtf");
 
             chkDebug.Checked = Properties.Settings.Default.DebugOn;
             checkAutorefreshCVNlist.Checked = Properties.Settings.Default.AutorefreshCVNlist;
@@ -163,6 +162,12 @@ namespace UniversalPatcher
             this.DragDrop += FrmPatcher_DragDrop;
 
         }
+
+        private void UPLogger_UpLogUpdated(object sender, UPLogger.UPLogString e)
+        {
+            uPLogger.DisplayText(e.LogText, e.Bold, txtResult);
+        }
+
 
         private void FrmPatcher_DragDrop(object sender, DragEventArgs e)
         {
@@ -1158,41 +1163,6 @@ namespace UniversalPatcher
             SaveBin();
         }
 
-        public void LoggerBold(string LogText, Boolean NewLine = true)
-        {
-            if (chkLogtoFile.Checked)
-            {
-                logwriter.Write("\\b " + LogText +" \\b0");
-                if (NewLine)
-                    logwriter.Write("\\par" + Environment.NewLine);
-            }
-            if (chkLogtodisplay.Checked)
-            {
-                txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Bold);
-                txtResult.AppendText(LogText);
-                txtResult.SelectionFont = new Font(txtResult.Font, FontStyle.Regular);
-                if (NewLine)
-                    txtResult.AppendText(Environment.NewLine);
-            }
-        }
-
-        public void Logger(string LogText, Boolean NewLine = true)
-        {
-            if (chkLogtoFile.Checked)
-            {
-                logwriter.Write(LogText.Replace("\\","\\\\"));
-                if (NewLine)
-                    logwriter.Write("\\par" + Environment.NewLine);
-            }
-            if (chkLogtodisplay.Checked)
-            { 
-                txtResult.AppendText(LogText);
-                if (NewLine)
-                    txtResult.AppendText(Environment.NewLine);
-            }
-            Application.DoEvents();
-        }
-
         private void btnCheckSums_Click(object sender, EventArgs e)
         {
             if (basefile.Segments != null && basefile.Segments.Count > 0)
@@ -1477,16 +1447,16 @@ namespace UniversalPatcher
         {
             Properties.Settings.Default.DebugOn = chkDebug.Checked;
             Properties.Settings.Default.Save();
+            timerDebug.Enabled = chkDebug.Checked;
             if (chkDebug.Checked)
             {
-                RichTextBoxTraceListener tbtl = new RichTextBoxTraceListener(txtDebug);
-                Debug.Listeners.Add(tbtl);
+                DebugListener = new RichTextBoxTraceListener(txtDebug);
+                Debug.Listeners.Add(DebugListener);
             }
             else
             {
                 Debug.Listeners.Clear();
             }
-
         }
 
         public void EditPatchRow()
@@ -2255,25 +2225,16 @@ namespace UniversalPatcher
 
          private void chkLogtoFile_CheckedChanged(object sender, EventArgs e)
         {
+
             if (chkLogtoFile.Checked)
             {
-                if (!File.Exists(logFile))
-                {
-                    logwriter = new StreamWriter(logFile);
-                    logwriter.WriteLine(@"{\rtf1\ansi\deff0\nouicompat{\fonttbl{\f0\fnil\fcharset0 Lucida Console;}{\f1\fnil\fcharset0 Lucida Console;}}" + Environment.NewLine);
-                    logwriter.WriteLine(@"{\*\generator Riched20 10.0.18362}\viewkind4\uc1" + Environment.NewLine);
-                    logwriter.WriteLine(@"\pard\sa200\sl276\slmult1\f0\fs16\lang11" + Environment.NewLine);
-                }
-                else
-                {
-                    logwriter = new StreamWriter(logFile, true);
-                }
+                string logFile = Path.Combine(Application.StartupPath, "Log", "universalpatcher" + DateTime.Now.ToString("_yyyyMMdd_hhmm") + ".rtf");
                 txtResult.AppendText("Logging to file: " + logFile + Environment.NewLine);
+                uPLogger.EnableLogFile(logFile);
             }
             else
             {
-                logwriter.WriteLine("}");
-                logwriter.Close();
+                uPLogger.DisableLogFile();
                 txtResult.AppendText("Logfile closed" + Environment.NewLine);
             }
         }
@@ -4462,6 +4423,23 @@ namespace UniversalPatcher
         {
             frmCredits fc = new frmCredits();
             fc.Show();
+        }
+
+        private void timerDebug_Tick(object sender, EventArgs e)
+        {
+            DebugListener.ShowLogtext();
+        }
+
+        private void chkLogtodisplay_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkLogtodisplay.Checked)
+            {
+                uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
+            }
+            else
+            {
+                uPLogger.UpLogUpdated -= UPLogger_UpLogUpdated;
+            }
         }
     }
 }

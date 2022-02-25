@@ -101,6 +101,7 @@ namespace UniversalPatcher
             this.clearTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -182,7 +183,6 @@ namespace UniversalPatcher
             this.btnCollapse = new System.Windows.Forms.Button();
             this.btnExpand = new System.Windows.Forms.Button();
             this.btnFlash = new System.Windows.Forms.Button();
-            this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -765,14 +765,21 @@ namespace UniversalPatcher
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.aboutToolStripMenuItem.Text = "&About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // creditsToolStripMenuItem
+            // 
+            this.creditsToolStripMenuItem.Name = "creditsToolStripMenuItem";
+            this.creditsToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.creditsToolStripMenuItem.Text = "Credits";
+            this.creditsToolStripMenuItem.Click += new System.EventHandler(this.creditsToolStripMenuItem_Click);
             // 
             // homepageToolStripMenuItem
             // 
             this.homepageToolStripMenuItem.Name = "homepageToolStripMenuItem";
-            this.homepageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.homepageToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.homepageToolStripMenuItem.Text = "Homepage";
             this.homepageToolStripMenuItem.Click += new System.EventHandler(this.homepageToolStripMenuItem_Click);
             // 
@@ -1602,13 +1609,6 @@ namespace UniversalPatcher
             this.btnFlash.TabIndex = 32;
             this.btnFlash.UseVisualStyleBackColor = true;
             this.btnFlash.Click += new System.EventHandler(this.btnFlash_Click);
-            // 
-            // creditsToolStripMenuItem
-            // 
-            this.creditsToolStripMenuItem.Name = "creditsToolStripMenuItem";
-            this.creditsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.creditsToolStripMenuItem.Text = "Credits";
-            this.creditsToolStripMenuItem.Click += new System.EventHandler(this.creditsToolStripMenuItem_Click);
             // 
             // FrmTuner
             // 

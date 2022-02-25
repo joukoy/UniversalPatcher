@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {

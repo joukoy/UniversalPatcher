@@ -22,9 +22,14 @@ namespace UniversalPatcher
         private byte[] message;
 
         /// <summary>
-        /// When the message was created.
+        /// When the message was created (Tool timestamp if available).
         /// </summary>
         private ulong timestamp;
+
+        /// <summary>
+        /// When the message was created (System time).
+        /// </summary>
+        private ulong systimestamp;
 
         /// <summary>
         /// Error code, if applicable.
@@ -60,8 +65,9 @@ namespace UniversalPatcher
         {
             this.message = message;
             this.timestamp = (ulong)DateTime.Now.Ticks;
+            this.systimestamp = (ulong)DateTime.Now.Ticks;
         }
-         
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -69,16 +75,26 @@ namespace UniversalPatcher
         {
             this.message = message;
             this.timestamp = timestamp;
+            this.systimestamp = (ulong)DateTime.Now.Ticks;
             this.error = error;
         }
 
         /// <summary>
-        /// When the message was created or recevied.
+        /// When the message was created or recevied (tool time).
         /// </summary>
         public ulong TimeStamp
         {
             get { return this.timestamp; }
             set { this.timestamp = value; }
+        }
+
+        /// <summary>
+        /// When the message was created or recevied (System time).
+        /// </summary>
+        public ulong SysTimeStamp
+        {
+            get { return this.systimestamp; }
+            set { this.systimestamp = value; }
         }
 
         /// <summary>

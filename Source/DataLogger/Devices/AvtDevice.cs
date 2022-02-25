@@ -283,6 +283,7 @@ namespace UniversalPatcher
             //Debug.WriteLine("Total Length=" + length + " RX: " + packet.ToHex());
             OBDMessage rMsg = new OBDMessage(packet);
             rMsg.TimeStamp = (ulong)rx.TimeStamp;
+            rMsg.SysTimeStamp = rMsg.TimeStamp;
             return Response.Create(ResponseStatus.Success, rMsg);
 
             //return Response.Create(ResponseStatus.Success, new OBDMessage(packet));
@@ -385,7 +386,7 @@ namespace UniversalPatcher
         {
             //Debug.WriteLine("Sendrequest called");
             Debug.WriteLine("TX: " + message.GetBytes().ToHex());
-            DataLogger.LogDevice.MessageSent(message);
+            datalogger.LogDevice.MessageSent(message);
             SendAVTPacket(message, responses);
             return true;
         }
@@ -438,7 +439,7 @@ namespace UniversalPatcher
 
         public override bool SetLoggingFilter()
         {
-            if (this.CurrentFilter == "logging" || DataLogger.useVPWFilters == false)
+            if (this.CurrentFilter == "logging" || datalogger.useVPWFilters == false)
                 return true;
             Debug.WriteLine("Configure AVT filter");
             this.Port.Send(AVT_FILTER_DEST.GetBytes());

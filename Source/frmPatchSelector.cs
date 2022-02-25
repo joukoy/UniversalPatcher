@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {
@@ -39,7 +40,13 @@ namespace UniversalPatcher
             dataGridView1.CellContentDoubleClick += DataGridView1_CellContentDoubleClick;
             if (tunerForm != null)
                 btnSelect.Text = "Apply selected patch";
-            LogReceivers.Add(txtResult);
+            //LogReceivers.Add(txtResult);
+            uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
+        }
+
+        private void UPLogger_UpLogUpdated(object sender, UPLogger.UPLogString e)
+        {
+            uPLogger.DisplayText(e.LogText, e.Bold, txtResult);
         }
 
         private void DataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -161,5 +168,6 @@ namespace UniversalPatcher
         {
             SelectPatch();
         }
+
     }
 }

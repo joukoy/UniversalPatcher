@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using static Upatcher;
+using static Helpers;
 
 namespace UniversalPatcher
 {

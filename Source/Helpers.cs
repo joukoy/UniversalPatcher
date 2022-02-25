@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -18,6 +19,18 @@ public static class Helpers
     public static string TxtFilter = "TXT files (*.txt)|*.txt|All files (*.*)|*.*";
     public static string XdfFilter = "XDF files (*.xdf)|*.xdf|All files (*.*)|*.*";
     public static string RtfFilter = "RTF files (*.rtf)|*.rtf|All files (*.*)|*.*";
+
+    public static UPLogger uPLogger = new UPLogger();
+
+    public static void Logger(string LogText, Boolean NewLine = true, bool Bold= false)
+    {
+        uPLogger.Add(LogText, NewLine, Bold);
+    }
+    public static void LoggerBold(string LogText, Boolean NewLine = true)
+    {
+        Logger(LogText, NewLine, true);
+    }
+
 
     public static byte[] ReadBin(string FileName)
     {
@@ -82,9 +95,9 @@ public static class Helpers
         return fileContent;
     }
 
-    public static void WriteTextFile(string fileName, string fileContent)
+    public static void WriteTextFile(string fileName, string fileContent, bool append = false)
     {
-        using (StreamWriter writetext = new StreamWriter(fileName))
+        using (StreamWriter writetext = new StreamWriter(fileName, append))
         {
             writetext.Write(fileContent);
         }

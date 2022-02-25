@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static Upatcher;
 
 namespace UniversalPatcher
 {
@@ -183,7 +184,7 @@ namespace UniversalPatcher
                     buffer.Data[pos] = internalQueue.Dequeue().Data[0];
                     pos++;
                     rCount++;
-                    DataLogger.ReceivedBytes++;
+                    datalogger.ReceivedBytes++;
                 }
             }
             return rCount;

@@ -14,47 +14,43 @@ using System.Threading.Tasks;
 
 namespace UniversalPatcher
 {
-    public static class DataLogger
+    public class DataLogger
     {
-        public static Task logTask;
-        private static Task logWriterTask;
-        public static IPort port;
-        public static Analyzer analyzer;
-        public static bool Connected = false;
-        public static List<PidConfig> PidProfile { get; set; }
-        public static List<J2534DotNet.J2534Device> jDevList;
-        private static StreamWriter logwriter;
-        private static string logseparator = ";";
-        public static Device LogDevice;
-        public static int ReceivedBytes = 0;
-        public static string OS;
-        public static SlotHandler slothandler;
+        public Task logTask;
+        private Task logWriterTask;
+        public IPort port;
+        public  bool Connected = false;
+        public  List<PidConfig> PidProfile { get; set; }
+        private  StreamWriter logwriter;
+        private  string logseparator = ";";
+        public  Device LogDevice;
+        public  int ReceivedBytes = 0;
+        public  string OS;
+        public  SlotHandler slothandler;        
 
-        public static Dictionary<byte, string> PcmResponses;
+        private  bool AllSlotsRequested = false;
+        public  RunMode CurrentMode;
+        private  bool passive;
+        public  int maxPassiveSlotsPerMsg = 50;
+        public  bool stopLogLoop;
+        public  byte priority = Priority.Physical0;
+        private  DateTime lastPresent = DateTime.Now;
+        private  DateTime lastElmStop = DateTime.Now;
 
-        private static bool AllSlotsRequested = false;
-        public static RunMode CurrentMode;
-        private static bool passive;
-        public static int maxPassiveSlotsPerMsg = 50;
-        public static bool stopLogLoop;
-        private static EventWaitHandle delayedMsgHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
-        private static EventWaitHandle pauseWaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
-        public static byte priority = Priority.Physical0;
-        private static DateTime lastPresent = DateTime.Now;
-        private static DateTime lastElmStop = DateTime.Now;
+        private  readonly object pauselock = new object();
 
-        public static Queue<Analyzer.AnalyzerData> analyzerq = new Queue<Analyzer.AnalyzerData>();
-        public static Queue<LogData> LogFileQueue = new Queue<LogData>();
+        public  Queue<Analyzer.AnalyzerData> analyzerq = new Queue<Analyzer.AnalyzerData>();
+        public  Queue<LogData> LogFileQueue = new Queue<LogData>();
 
         //Set these values before StartLogging()
-        public static bool writelog;
-        public static bool useRawValues;
-        public static bool useVPWFilters;
-        public static bool reverseSlotNumbers;
-        public static byte Responsetype;
-        public static int maxSlotsPerRequest = 4;   //How many Slots before asking more
-        public static int maxSlotsPerMessage = 4;   //How many Slots in one Slot request message
-        public static bool HighPriority = false;
+        public  bool writelog;
+        public  bool useRawValues;
+        public  bool useVPWFilters;
+        public  bool reverseSlotNumbers;
+        public  byte Responsetype;
+        public  int maxSlotsPerRequest = 4;   //How many Slots before asking more
+        public  int maxSlotsPerMessage = 4;   //How many Slots in one Slot request message
+        public  bool HighPriority = false;
 
         public enum RunMode
         {
@@ -78,6 +74,7 @@ namespace UniversalPatcher
             }
             public double[] Values { get; set; }
             public ulong TimeStamp { get; set; }
+            public ulong SysTimeStamp { get; set; }
         }
 
         public class ReadValue
@@ -89,6 +86,7 @@ namespace UniversalPatcher
             public double PidValue { get; set; }
             public int PidNr { get; set; }
             public ulong TimeStamp { get; set; }
+            public ulong SysTimeStamp { get; set; }
         }
 
 
@@ -100,24 +98,25 @@ namespace UniversalPatcher
             public string Status { get; set; }
         }
 
-        public static readonly List<string> SupportedBaudRates = new List<string>
+        public void UploadScript(string FileName)
         {
-            "300",
-            "600",
-            "1200",
-            "2400",
-            "4800",
-            "9600",
-            "19200",
-            "38400",
-            "57600",
-            "115200",
-            "230400",
-            "460800",
-            "921600"
-        };
-
-        public static Device CreateSerialDevice(string serialPortName, string serialPortDeviceType, bool ftdi)
+            try
+            {                
+                StreamReader sr = new StreamReader(FileName);
+                string Line;
+                while ((Line = sr.ReadLine()) != null)
+                {
+                    byte[] msg = Line.Replace(" ", "").ToBytes();
+                    OBDMessage oMsg = new OBDMessage(msg);
+                    LogDevice.SendMessage(oMsg, 1);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+        }
+        public  Device CreateSerialDevice(string serialPortName, string serialPortDeviceType, bool ftdi)
         {
             try
             {
@@ -165,7 +164,7 @@ namespace UniversalPatcher
             }
         }
 
-        public static bool CreateLog(string path)
+        public  bool CreateLog(string path)
         {
             try
             {
@@ -214,7 +213,7 @@ namespace UniversalPatcher
             return false;
         }
 
-        public static void WriteLog(string[] logvalues, string timestamp)
+        public  void WriteLog(string[] logvalues, string timestamp)
         {
             try
             {
@@ -237,7 +236,7 @@ namespace UniversalPatcher
         }
 
 
-        private static void LogWriterLoop()
+        private  void LogWriterLoop()
         {
             Thread.CurrentThread.IsBackground = true;
             while (!stopLogLoop)
@@ -269,14 +268,16 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    WriteLog(slothandler.CalculatePidValues(ld.Values), new DateTime((long)ld.TimeStamp).ToString("yyyy-MM-dd-HH:mm:ss:FFFFF"));
+                    string tStamp = new DateTime((long)ld.SysTimeStamp).ToString("yyyy-MM-dd-HH:mm:ss");
+                    tStamp += " [" + ld.TimeStamp.ToString() + "]";
+                    WriteLog(slothandler.CalculatePidValues(ld.Values), tStamp );
                 }
             }
             logwriter.Close();
             logwriter = null;
         }
 
-        public static void LoadProfile(string FileName)
+        public  void LoadProfile(string FileName)
         {            
             try
             {
@@ -298,7 +299,7 @@ namespace UniversalPatcher
             }            
         }
 
-        public static void SaveProfile(string FileName)
+        public  void SaveProfile(string FileName)
         {
             try
             {
@@ -323,7 +324,7 @@ namespace UniversalPatcher
         }
 
 
-        public static ReadValue QuerySinglePidValue(int addr, ProfileDataType dataType)
+        public  ReadValue QuerySinglePidValue(int addr, ProfileDataType dataType)
         {
             ReadValue rv = new ReadValue();
             try
@@ -389,7 +390,7 @@ namespace UniversalPatcher
         }
 
 
-        public static bool SetBusQuiet()
+        public  bool SetBusQuiet()
         {
             try
             {
@@ -406,7 +407,7 @@ namespace UniversalPatcher
                     Debug.WriteLine("Expected " + string.Join(" ", Array.ConvertAll(quietMsg, b => b.ToString("X2"))));
                     return false;
                 }
-                Thread.Sleep(10);
+                //Thread.Sleep(10);
                 return true;
             }
             catch (Exception ex)
@@ -416,7 +417,7 @@ namespace UniversalPatcher
             }
         }
 
-        public static Response<List<byte>> QueryDevicesOnBus(bool waitanswer)
+        public  Response<List<byte>> QueryDevicesOnBus(bool waitanswer)
         {
             List<byte> retVal = new List<byte>();
             try
@@ -458,7 +459,7 @@ namespace UniversalPatcher
             return new Response<List<byte>>(ResponseStatus.Error, retVal);
         }
 
-        public static void ClearTroubleCodes(byte module)
+        public  void ClearTroubleCodes(byte module)
         {
             try
             {
@@ -478,7 +479,7 @@ namespace UniversalPatcher
         }
 
         
-        public static bool SetMode1()
+        public  bool SetMode1()
         {
             try
             {
@@ -507,47 +508,54 @@ namespace UniversalPatcher
         }
 
 
-/*
-        public static bool InitalizeDevice(string comport, string devtype, bool ftdi, int BaudRate)
-        {
-            try
-            {                
-                PcmDevice = CreateSerialDevice(comport, devtype, ftdi);
-                if (PcmDevice.Initialize(BaudRate))
+        /*
+                public  bool InitalizeDevice(string comport, string devtype, bool ftdi, int BaudRate)
                 {
-                    return true;
+                    try
+                    {                
+                        PcmDevice = CreateSerialDevice(comport, devtype, ftdi);
+                        if (PcmDevice.Initialize(BaudRate))
+                        {
+                            return true;
+                        }
+                        Thread.Sleep(50);
+                    }
+                    catch (Exception ex)
+                    {
+                        LoggerBold(ex.Message);
+                    }
+                    if (PcmDevice != null)
+                    {
+                        PcmDevice.Dispose();
+                    }
+                    return false;
                 }
-                Thread.Sleep(50);
-            }
-            catch (Exception ex)
-            {
-                LoggerBold(ex.Message);
-            }
-            if (PcmDevice != null)
-            {
-                PcmDevice.Dispose();
-            }
-            return false;
+
+        */
+        /*        public  bool InitalizeJDevice(string devtype)
+                {
+                    try
+                    {
+                        J2534DotNet.J2534Device dev = J2534DeviceFinder.FindInstalledJ2534DLLs().Where(x => x.Name == devtype).FirstOrDefault();
+                        PcmDevice = new J2534Device(dev);
+                        if (PcmDevice.Initialize(0))
+                            return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        LoggerBold(ex.Message);
+                    }
+                    return false;
+                }
+        */
+        public  void StopLogging()
+        {
+            stopLogLoop = true;
+            logTask.LogExceptions();
+            logWriterTask.LogExceptions();
         }
 
-*/
-/*        public static bool InitalizeJDevice(string devtype)
-        {
-            try
-            {
-                J2534DotNet.J2534Device dev = J2534DeviceFinder.FindInstalledJ2534DLLs().Where(x => x.Name == devtype).FirstOrDefault();
-                PcmDevice = new J2534Device(dev);
-                if (PcmDevice.Initialize(0))
-                    return true;
-            }
-            catch (Exception ex)
-            {
-                LoggerBold(ex.Message);
-            }
-            return false;
-        }
-*/
-        public static bool StartLogging()
+        public  bool StartLogging()
         {
             try
             {
@@ -625,7 +633,6 @@ namespace UniversalPatcher
                 //Thread.Sleep(10);
 
                 stopLogLoop = false;
-                pauseWaitHandle.Set();
                 logTask = Task.Factory.StartNew(() => DataLoggingLoop());
                 logWriterTask = Task.Factory.StartNew(() => LogWriterLoop());
                 return true;
@@ -644,7 +651,7 @@ namespace UniversalPatcher
             }
         }
 
-        public static bool RequestNextSlots()
+        public  bool RequestNextSlots()
         {
             OBDMessage msg;
             byte[] rq = slothandler.CreateNextSlotRequestMessage();
@@ -654,12 +661,8 @@ namespace UniversalPatcher
             return resp;
         }
 
-        public static void StopLogging()
-        {
-            stopLogLoop = true;
-        }
 
-        public static string QueryPcmOS()
+        public  string QueryPcmOS()
         {
             try
             {
@@ -693,7 +696,7 @@ namespace UniversalPatcher
             }
         }
 
-        public static ReadValue QueryRAM(int address, ProfileDataType dataType)
+        public  ReadValue QueryRAM(int address, ProfileDataType dataType)
         {
             ReadValue rv = new ReadValue();
             try
@@ -730,7 +733,7 @@ namespace UniversalPatcher
             return rv;
         }
 
-        public static string QueryVIN()
+        public  string QueryVIN()
         {
             string vin = "";
             try
@@ -763,7 +766,7 @@ namespace UniversalPatcher
             return vin.ToString();
         }
 
-        private static DTCCodeStatus DecodeDTCstatus(byte[] msg)
+        private  DTCCodeStatus DecodeDTCstatus(byte[] msg)
         {
             DTCCodeStatus dcs = new DTCCodeStatus();
             ushort dtc = ReadUint16(msg, 4, true);
@@ -820,7 +823,7 @@ namespace UniversalPatcher
             return dcs;
         }
 
-        public static List<DTCCodeStatus> RequestDTCCodes(byte module, byte mode)
+        public  List<DTCCodeStatus> RequestDTCCodes(byte module, byte mode)
         {
             List<DTCCodeStatus> retVal = new List<DTCCodeStatus>();
             try
@@ -833,34 +836,55 @@ namespace UniversalPatcher
                 if (analyzer.PhysAddresses.ContainsKey(module))
                     moduleStr = analyzer.PhysAddresses[module];
                 Logger("Requesting DTC codes for " + moduleStr);
-                if (CurrentMode != RunMode.NotRunning && LogDevice.LogDeviceType != LoggingDevType.Other)
-                    Logger("Log running, may result to empty list");
                 if (OBD2Codes == null || OBD2Codes.Count == 0)
                     LoadOBD2Codes();
                 //SetLoggingPaused(true);
-                OBDMessage msg = new OBDMessage(new byte[] { Priority.Physical0, module, DeviceId.Tool, 0x19, mode, 0xFF, 0x00 });
-                bool m = LogDevice.SendMessage(msg, -50);
-                if (!m)
+                OBDMessage resp = null;
+                Debug.WriteLine("Pause start");
+                Application.DoEvents();
+                lock (pauselock)
                 {
-                    LoggerBold("Error sending request");
-                    return retVal;
-                }
-                //byte[] endframe = new byte[] { Priority.Physical0, DeviceId.Tool, module, 0x59, 0x00, 0x00, 0xFF };
-                Thread.Sleep(10);
-                OBDMessage resp = LogDevice.ReceiveMessage();
-                //Logger("Received:" + resp.ToString());
-                while (resp != null) // & !Utility.CompareArraysPart(resp.GetBytes(), endframe))
-                {
-                    Debug.WriteLine(resp.ToString());
-                    if (resp.Length > 5 && resp.GetBytes()[1] == DeviceId.Tool && resp.GetBytes()[3] == 0x59)
+                    SetBusQuiet();
+
+                    OBDMessage msg = new OBDMessage(new byte[] { Priority.Physical0, module, DeviceId.Tool, 0x19, mode, 0xFF, 0x00 });
+                    bool m = LogDevice.SendMessage(msg, -50);
+                    if (!m)
                     {
-                        DTCCodeStatus dcs = DecodeDTCstatus(resp.GetBytes());
-                        if (!string.IsNullOrEmpty(dcs.Module))
+                        LoggerBold("Error sending request");
+                        return retVal;
+                    }
+                    //byte[] endframe = new byte[] { Priority.Physical0, DeviceId.Tool, module, 0x59, 0x00, 0x00, 0xFF };
+                    Thread.Sleep(10);
+                    resp = LogDevice.ReceiveMessage();
+                    //Logger("Received:" + resp.ToString());
+                }
+                Debug.WriteLine("Pause end");
+                for (int x=0; x<1000; x++) // & !Utility.CompareArraysPart(resp.GetBytes(), endframe))
+                {
+                    if (resp != null)
+                    {
+                        Debug.WriteLine(resp.ToString());
+                        if (resp.Length > 5 && resp.GetBytes()[1] == DeviceId.Tool && resp.GetBytes()[3] == 0x59)
                         {
-                            retVal.Add(dcs);
+                            DTCCodeStatus dcs = DecodeDTCstatus(resp.GetBytes());
+                            if (!string.IsNullOrEmpty(dcs.Module))
+                            {
+                                retVal.Add(dcs);
+                            }
+                            if (resp[4] == 0 && resp[5] == 0 && resp[6] == 0xFF)
+                            {
+                                Debug.WriteLine("End frame received after {0} attempt", x);
+                                break;
+                            }
                         }
                     }
                     resp = LogDevice.ReceiveMessage();
+                }
+                
+                if (CurrentMode == RunMode.LogRunning && passive)
+                {
+                    maxSlotsPerMessage = 4;
+                    RequestPassiveModeSlots();
                 }
                 Logger("Done");
             }
@@ -877,7 +901,7 @@ namespace UniversalPatcher
         }
 
 
-        public static bool SendTesterPresent(bool force)
+        public  bool SendTesterPresent(bool force)
         {
             try
             {
@@ -900,7 +924,7 @@ namespace UniversalPatcher
             return true;
         }
 
-        public static ReadValue ParseSinglePidMessage(OBDMessage msg, ProfileDataType datatype)
+        public  ReadValue ParseSinglePidMessage(OBDMessage msg, ProfileDataType datatype)
         {
             ReadValue retVal = new ReadValue();
             try
@@ -958,7 +982,7 @@ namespace UniversalPatcher
             return retVal;
         }
 
-/*        public static bool SetLoggingPaused(bool Pause)
+/*        public  bool SetLoggingPaused(bool Pause)
         {
             if (CurrentMode == RunMode.NotRunning)
             {
@@ -991,7 +1015,7 @@ namespace UniversalPatcher
             }
         }
 */        
-        private static bool RequestPassiveModeSlots()
+        private  bool RequestPassiveModeSlots()
         {
             lastPresent = DateTime.Now;
             if (!RequestNextSlots())
@@ -1012,7 +1036,7 @@ namespace UniversalPatcher
             return true;
         }
 
-        public static void ELMPromptReceived()
+        public  void ELMPromptReceived()
         {
             Debug.WriteLine("Elm prompt received");
 
@@ -1050,7 +1074,7 @@ namespace UniversalPatcher
 
         }
 
-        private static void StopElmReceive()
+        private  void StopElmReceive()
         {
             if (LogDevice.LogDeviceType != LoggingDevType.Other)
             {
@@ -1065,7 +1089,7 @@ namespace UniversalPatcher
             }
         }
 
-        private static bool ValidateMessage(OBDMessage oMsg, ref int SlotCount)
+        private  bool ValidateMessage(OBDMessage oMsg, ref int SlotCount)
         {
             byte lastSlot = slothandler.Slots.Last().Id;
             if (!Utility.CompareArraysPart(oMsg.GetBytes(), new byte[] { priority, DeviceId.Tool, DeviceId.Pcm }))
@@ -1098,7 +1122,7 @@ namespace UniversalPatcher
             return true;
         }
                
-        public static void DataLoggingLoop()
+        public  void DataLoggingLoop()
         {
             Thread.CurrentThread.IsBackground = true;
             int totalSlots = 0;
@@ -1116,9 +1140,16 @@ namespace UniversalPatcher
                     int SlotCount = 0;
                     while ( SlotCount < maxSlotsPerRequest && !stopLogLoop) //Loop there until requested Slots are handled
                     {
-                        pauseWaitHandle.WaitOne();  //If asked to pause, wait here
+                        if (LogDevice == null || !Connected)
+                        {
+                            break;
+                        }
 
-                        OBDMessage oMsg = LogDevice.ReceiveLogMessage();
+                        OBDMessage oMsg = null;
+                        lock (pauselock) //Pause, if other operation
+                        {     
+                            oMsg = LogDevice.ReceiveLogMessage();
+                        }
                         if (oMsg == null)
                         {
                             continue;
@@ -1183,13 +1214,20 @@ namespace UniversalPatcher
                     // Get the line number from the stack frame
                     var line = frame.GetFileLineNumber();
                     Debug.WriteLine("Error, logLoop line " + line + ": " + ex.Message);
+                    if (LogDevice == null || !Connected)
+                    {
+                        return;
+                    }
                 }
             } //Logloop
-            SetBusQuiet();
             Logger("Logging stopped");
+            if (LogDevice != null && Connected)
+            { 
+                SetBusQuiet();
+                SetBusQuiet();
+                LogDevice.SetTimeout(TimeoutScenario.Maximum);
+            }
             CurrentMode = RunMode.NotRunning;
-            SetBusQuiet();
-            LogDevice.SetTimeout(TimeoutScenario.Maximum);
             return;
         }
 

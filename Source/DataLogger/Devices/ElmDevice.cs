@@ -306,7 +306,7 @@ namespace UniversalPatcher
             Prompt = false;
             try
             {
-                DataLogger.port.Send(Encoding.ASCII.GetBytes(request + " \r"));
+                Port.Send(Encoding.ASCII.GetBytes(request + " \r"));
                 Thread.Sleep(100);                
                 SerialString response = ReadELMLine();
                 Debug.WriteLine("Elm response: " + response.Data);
@@ -326,7 +326,7 @@ namespace UniversalPatcher
             //this.implementation.Initialize();
             this.implementation.SendAndVerify("AT L0", "OK"); //Disable new line characters between commands/messages
             this.CurrentFilter = "logging";
-            if (DataLogger.useVPWFilters)
+            if (datalogger.useVPWFilters)
             {
                 return this.implementation.SendAndVerify("AT SR " + DeviceId.Tool.ToString("X2"), "OK");
             }

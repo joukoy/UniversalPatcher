@@ -45,14 +45,18 @@ namespace UniversalPatcher
         private List<ushort> SupportedPids;
         private PidConfig ClipBrd;
         private int keyDelayCounter = 0;
+        public List<J2534DotNet.J2534Device> jDevList;
+        private SelectedTab selectedtab = SelectedTab.Logger;
 
         private void frmLogger_Load(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(OS))
+            datalogger = new DataLogger();
+            uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
+            if (!string.IsNullOrEmpty(datalogger.OS))
             {
-                labelConnected.Text = "Disconnected - OS: " + OS;
+                labelConnected.Text = "Disconnected - OS: " + datalogger.OS;
             }
-            LogReceivers.Add(txtResult);
+            //LogReceivers.Add(txtResult);
             Application.DoEvents();
             comboBaudRate.DataSource = SupportedBaudRates;
             LoadSettings();
@@ -65,6 +69,9 @@ namespace UniversalPatcher
             tabProfile.Enter += TabProfile_Enter;
             tabSettings.Enter += TabSettings_Enter;
             tabSettings.Leave += TabSettings_Leave;
+            tabDTC.Enter += TabDTC_Enter;
+            tabAdvanced.Enter += TabAdvanced_Enter;
+
             dataGridLogData.DataError += DataGridLogData_DataError;
             dataGridPidNames.CellContentDoubleClick += DataGridPidNames_CellContentDoubleClick;
             dataGridLogProfile.CellContentDoubleClick += DataGridLogProfile_CellContentDoubleClick;
@@ -81,7 +88,32 @@ namespace UniversalPatcher
             txtParamSearch.KeyPress += TxtParamSearch_KeyPress;
             txtSendBus.KeyPress += TxtSendBus_KeyPress;
             txtVPWmessages.EnableContextMenu();
-            CurrentMode = RunMode.NotRunning;
+            datalogger.CurrentMode = RunMode.NotRunning;
+        }
+
+        private void TabAdvanced_Enter(object sender, EventArgs e)
+        {
+            selectedtab = SelectedTab.Advanced;
+        }
+
+        private void TabDTC_Enter(object sender, EventArgs e)
+        {
+            selectedtab = SelectedTab.Dtc;
+        }
+
+        private void UPLogger_UpLogUpdated(object sender, UPLogger.UPLogString e)
+        {
+            uPLogger.DisplayText(e.LogText, e.Bold, txtResult);
+        }
+
+        private enum SelectedTab
+        {
+            Logger,
+            Profile,
+            Analyzer,
+            Dtc,
+            Settings,
+            Advanced
         }
 
         private void TabSettings_Leave(object sender, EventArgs e)
@@ -90,44 +122,68 @@ namespace UniversalPatcher
 
         private void LogDevice_MsgReceived(object sender, MsgEventparameter e)
         {
-            this.Invoke((MethodInvoker)delegate () {
-                txtVPWmessages.SelectionColor = Color.DarkGreen;
-                if (chkConsoleTimestamps.Checked)
-                    txtVPWmessages.AppendText("[" + new DateTime((long)e.Msg.TimeStamp).ToString("yyyy-MM-dd-HH:mm:ss:FFFFF") + "] ");
-                txtVPWmessages.AppendText(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
-            });
+            try
+            {
+                this.Invoke((MethodInvoker)delegate ()
+                {
+                    txtVPWmessages.SelectionColor = Color.DarkGreen;
+                    if (chkConsoleTimestamps.Checked)
+                    {
+                        string tStamp = new DateTime((long)e.Msg.SysTimeStamp).ToString("yyyy-MM-dd-HH:mm:ss");
+                        tStamp += " [" + e.Msg.TimeStamp.ToString() + "] ";
+                        txtVPWmessages.AppendText(tStamp);
+                    }
+                    txtVPWmessages.AppendText(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
         private void LogDevice_MsgSent(object sender, MsgEventparameter e)
         {
+            try
+            {
             this.Invoke((MethodInvoker)delegate () {
                 txtVPWmessages.SelectionColor = Color.Red;
                 if (chkConsoleTimestamps.Checked)
-                    txtVPWmessages.AppendText("[" + new DateTime((long)e.Msg.TimeStamp).ToString("yyyy-MM-dd-HH:mm:ss:FFFFF") + "] ");
+                {
+                    string tStamp = new DateTime((long)e.Msg.SysTimeStamp).ToString("yyyy-MM-dd-HH:mm:ss");
+                    tStamp += " [" + e.Msg.TimeStamp.ToString() + "] ";
+                    txtVPWmessages.AppendText(tStamp);
+                }
                 txtVPWmessages.AppendText(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
             });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
 
         private void TabSettings_Enter(object sender, EventArgs e)
         {
+            selectedtab = SelectedTab.Settings;
         }
 
         private void TxtSendBus_KeyPress(object sender, KeyPressEventArgs e)
         {
             try
             {
-                if (e.KeyChar == '\r' && Connected)
+                if (e.KeyChar == '\r' && datalogger.Connected)
                 {
                     byte[] msg = Utility.ToBytes(txtSendBus.Text.Replace(" ", ""));
                     OBDMessage oMsg = new OBDMessage(msg);
-                    if (!LogDevice.SendMessage(oMsg, 50))
+                    if (!datalogger.LogDevice.SendMessage(oMsg, 50))
                     {
                         LoggerBold("Error sending message");
                         return;
                     }
-                    OBDMessage rMsg = LogDevice.ReceiveMessage();
+                    OBDMessage rMsg = datalogger.LogDevice.ReceiveMessage();
                     while (rMsg != null)
-                        rMsg = LogDevice.ReceiveMessage();
+                        rMsg = datalogger.LogDevice.ReceiveMessage();
                     txtVPWmessages.AppendText(Environment.NewLine);
                 }
             }
@@ -165,7 +221,8 @@ namespace UniversalPatcher
 
         private void TabProfile_Enter(object sender, EventArgs e)
         {
-            if (CurrentMode == RunMode.NotRunning)
+            selectedtab = SelectedTab.Profile;
+            if (datalogger.CurrentMode == RunMode.NotRunning)
             {
                 AnalyzerActive = false;
                 btnStartStop.Text = "Start Logging";
@@ -174,8 +231,9 @@ namespace UniversalPatcher
 
         private void TabAnalyzer_Enter(object sender, EventArgs e)
         {
+            selectedtab = SelectedTab.Analyzer;
             AnalyzerActive = true;
-            if (CurrentMode == RunMode.NotRunning)
+            if (datalogger.CurrentMode == RunMode.NotRunning)
             {
                 btnStartStop.Text = "Start Analyzer";
             }
@@ -187,7 +245,7 @@ namespace UniversalPatcher
 
         private void ListProfiles_MouseClick(object sender, MouseEventArgs e)
         {
-            if (listProfiles.SelectedItems.Count == 0 || CurrentMode != RunMode.NotRunning)
+            if (listProfiles.SelectedItems.Count == 0 || datalogger.CurrentMode != RunMode.NotRunning)
                 return;
             if (ProfileDirty)
             {
@@ -252,9 +310,10 @@ namespace UniversalPatcher
 
         private void TabLog_Enter(object sender, EventArgs e)
         {
+            selectedtab = SelectedTab.Logger;
             SetupLogDataGrid();
             AnalyzerActive = false;
-            if (CurrentMode == RunMode.NotRunning)
+            if (datalogger.CurrentMode == RunMode.NotRunning)
             {
                 btnStartStop.Text = "Start Logging";
             }
@@ -400,15 +459,15 @@ namespace UniversalPatcher
                 comboBaudRate.Text = Properties.Settings.Default.LoggerBaudRate.ToString();
 
 
-                DataLogger.PidProfile = new List<LoggerUtils.PidConfig>();
+                datalogger.PidProfile = new List<LoggerUtils.PidConfig>();
                 if (!string.IsNullOrEmpty(Properties.Settings.Default.LoggerLastProfile) && File.Exists(Properties.Settings.Default.LoggerLastProfile))
                 {
                     profileFile = Properties.Settings.Default.LoggerLastProfile;
-                    DataLogger.LoadProfile(profileFile);
+                    datalogger.LoadProfile(profileFile);
                     this.Text = "Logger - " + profileFile;
                     CheckMaxPids();
                 }
-                bsLogProfile.DataSource = DataLogger.PidProfile;
+                bsLogProfile.DataSource = datalogger.PidProfile;
                 dataGridLogProfile.DataSource = bsLogProfile;
 
                 analyzer = new Analyzer();
@@ -444,9 +503,9 @@ namespace UniversalPatcher
         {
             try
             {
-                if (!chkFilterParamsByOS.Checked && !string.IsNullOrEmpty(OS) && SupportedPids != null && SupportedPids.Count > 0)
+                if (!chkFilterParamsByOS.Checked && !string.IsNullOrEmpty(datalogger.OS) && SupportedPids != null && SupportedPids.Count > 0)
                 {
-                    Logger("Filtering parameters by OS: " + OS);
+                    Logger("Filtering parameters by OS: " + datalogger.OS);
                 }
                 if (stdParameters == null || stdParameters.Count == 0)
                 {
@@ -543,9 +602,9 @@ namespace UniversalPatcher
         {
             try
             {
-                if (chkFilterParamsByOS.Checked && !string.IsNullOrEmpty(OS))
+                if (chkFilterParamsByOS.Checked && !string.IsNullOrEmpty(datalogger.OS))
                 {
-                    Logger("Filtering parameters by OS: " + OS);
+                    Logger("Filtering parameters by OS: " + datalogger.OS);
                 }
                 else
                 {
@@ -611,12 +670,12 @@ namespace UniversalPatcher
                 dataGridPidNames.Columns["index"].Visible = false;
                 for (int p = 0; p < results.Count; p++)
                 {
-                    if (chkFilterParamsByOS.Checked && !string.IsNullOrEmpty(OS))
+                    if (chkFilterParamsByOS.Checked && !string.IsNullOrEmpty(datalogger.OS))
                     {
                         bool supported = false;
                         for (int l=0;l< results[p].Locations.Count;l++)
                         {
-                            if (results[p].Locations[l].os == OS)
+                            if (results[p].Locations[l].os == datalogger.OS)
                             {
                                 supported = true;
                                 break;
@@ -651,9 +710,9 @@ namespace UniversalPatcher
                             dgc.DisplayMember = "os";
                             dataGridPidNames.Rows[row].Cells[prop.Name] = dgc;
                             Application.DoEvents();
-                            if (!string.IsNullOrWhiteSpace(OS))
+                            if (!string.IsNullOrWhiteSpace(datalogger.OS))
                             {
-                                Location l = results[p].Locations.Where(x => x.os == OS).FirstOrDefault();
+                                Location l = results[p].Locations.Where(x => x.os == datalogger.OS).FirstOrDefault();
                                 if (l != null)
                                 {
                                     dataGridPidNames.Rows[row].Cells[prop.Name].Value = l.address;
@@ -805,7 +864,8 @@ namespace UniversalPatcher
 
         private void frmLogger_FormClosing(object sender, FormClosingEventArgs e)
         {
-            DataLogger.stopLogLoop = true;
+            Debug.WriteLine("Closing frmLogger");
+            datalogger.stopLogLoop = true;
             if (ProfileDirty)
             {
                 DialogResult dialogResult = MessageBox.Show("Save profile modifications?", "Save profile", MessageBoxButtons.YesNo);
@@ -840,31 +900,31 @@ namespace UniversalPatcher
                 string[] LastCalcValues;
                 if (chkRawValues.Checked)
                 {
-                    LastCalcValues = new string[slothandler.LastPidValues.Length];
+                    LastCalcValues = new string[datalogger.slothandler.LastPidValues.Length];
                     for (int c = 0; c < LastCalcValues.Length; c++)
-                        LastCalcValues[c] = slothandler.LastPidValues[c].ToString(); ;
+                        LastCalcValues[c] = datalogger.slothandler.LastPidValues[c].ToString(); ;
                 }
                 else
                 {
-                    LastCalcValues = slothandler.CalculatePidValues(slothandler.LastPidValues);
+                    LastCalcValues = datalogger.slothandler.CalculatePidValues(datalogger.slothandler.LastPidValues);
                 }
                 for (int row=0; row< LastCalcValues.Length;row++)
                 {
                     dataGridLogData.Rows[row].Cells["Value"].Value = LastCalcValues[row];
                 }
                 TimeSpan elapsed = DateTime.Now.Subtract(LogStartTime);
-                int speed = (int)(slothandler.ReceivedHPRows / elapsed.TotalSeconds);
-                int lpSpeed = (int)(slothandler.ReceivedLPRows / elapsed.TotalSeconds);
+                int speed = (int)(datalogger.slothandler.ReceivedHPRows / elapsed.TotalSeconds);
+                int lpSpeed = (int)(datalogger.slothandler.ReceivedLPRows / elapsed.TotalSeconds);
                 string elapsedStr = elapsed.Hours.ToString() + ":" + elapsed.Minutes.ToString() + ":" + elapsed.Seconds.ToString();
                 if (chkPriority.Checked)
                 {
                     labelProgress.Text = "Elapsed: " + elapsedStr + ", Received:" +Environment.NewLine +  
-                        "High Priority: " + slothandler.ReceivedHPRows.ToString() + " rows (" + speed.ToString() + " /s)" + Environment.NewLine +
-                        "Low priority: " + slothandler.ReceivedLPRows.ToString() +" rows (" + lpSpeed.ToString() + " /s)";
+                        "High Priority: " + datalogger.slothandler.ReceivedHPRows.ToString() + " rows (" + speed.ToString() + " /s)" + Environment.NewLine +
+                        "Low priority: " + datalogger.slothandler.ReceivedLPRows.ToString() +" rows (" + lpSpeed.ToString() + " /s)";
                 }
                 else
                 {
-                    labelProgress.Text = "Elapsed: " + elapsedStr + ", Received: " + slothandler.ReceivedHPRows.ToString() + " rows (" + speed.ToString() + " /s)";
+                    labelProgress.Text = "Elapsed: " + elapsedStr + ", Received: " + datalogger.slothandler.ReceivedHPRows.ToString() + " rows (" + speed.ToString() + " /s)";
                 }
                 //(" + ReceivedBytes.ToString() +")";
             }
@@ -892,8 +952,8 @@ namespace UniversalPatcher
                 return;
             profileFile = fname;
             this.Text = "Logger - " + profileFile;
-            DataLogger.LoadProfile(fname);
-            bsLogProfile.DataSource = DataLogger.PidProfile;
+            datalogger.LoadProfile(fname);
+            bsLogProfile.DataSource = datalogger.PidProfile;
             dataGridLogProfile.DataSource = bsLogProfile;
             dataGridLogData.Rows.Clear();
             SetupLogDataGrid();
@@ -912,7 +972,7 @@ namespace UniversalPatcher
                 return;
             profileFile = fname;
             this.Text = "Logger - " + profileFile;
-            DataLogger.SaveProfile(fname);
+            datalogger.SaveProfile(fname);
             ProfileDirty = false;
             LoadProfileList();
         }
@@ -931,12 +991,12 @@ namespace UniversalPatcher
         {
             List<int> pids = new List<int>();
             int bytesTotal = 0;
-            for (int i=0; i<PidProfile.Count; i++)
+            for (int i=0; i< datalogger.PidProfile.Count; i++)
             {
-                if (!pids.Contains(PidProfile[i].addr))
+                if (!pids.Contains(datalogger.PidProfile[i].addr))
                 {
-                    pids.Add(PidProfile[i].addr);
-                    bytesTotal += GetElementSize((InDataType)PidProfile[i].DataType);
+                    pids.Add(datalogger.PidProfile[i].addr);
+                    bytesTotal += GetElementSize((InDataType)datalogger.PidProfile[i].DataType);
                 }
             }
             labelProgress.Text = "Profile size: " + bytesTotal.ToString() + " bytes, Maximum: 48";
@@ -953,7 +1013,7 @@ namespace UniversalPatcher
                 if (dataGridPidNames.SelectedRows.Count == 0)
                     return;
                 
-                if (!Connected)
+                if (!datalogger.Connected)
                 {
                     Logger("Not connected - adding pids without testing compatibility");
                 }
@@ -990,12 +1050,12 @@ namespace UniversalPatcher
                         pc.DataType = ConvertToDataType(pd);
                         if (string.IsNullOrEmpty(dgr.Cells["Locations"].FormattedValue.ToString()))
                         {
-                            if (Connected && !string.IsNullOrEmpty(OS))
+                            if (datalogger.Connected && !string.IsNullOrEmpty(datalogger.OS))
                             {
                                 List<Location> locations = rp.Locations;
                                 if (locations != null)
                                 {
-                                    Location l = locations.Where(x => x.os == OS).FirstOrDefault();
+                                    Location l = locations.Where(x => x.os == datalogger.OS).FirstOrDefault();
                                     if (l != null)
                                     {
                                         pc.Address = l.address;
@@ -1030,11 +1090,11 @@ namespace UniversalPatcher
                     }
                     pc.Units = dgr.Cells["Conversions"].FormattedValue.ToString();
 
-                    DataLogger.PidProfile.Add(pc);
+                    datalogger.PidProfile.Add(pc);
                     ProfileDirty = true;
                     bsLogProfile.DataSource = null;
-                    bsLogProfile.DataSource = DataLogger.PidProfile;
-                    if (Connected)
+                    bsLogProfile.DataSource = datalogger.PidProfile;
+                    if (datalogger.Connected)
                     {
                         QueryPid(pc);
                     }
@@ -1054,21 +1114,21 @@ namespace UniversalPatcher
 
         private void SetupLogDataGrid()
         {
-            if (CurrentMode != RunMode.NotRunning)
+            if (datalogger.CurrentMode != RunMode.NotRunning)
                 return; //Dont change settings while logging
             dataGridLogData.Columns.Clear();
             dataGridLogData.Columns.Add("Value", "Value");
             if (!chkRawValues.Checked)
                 dataGridLogData.Columns.Add("Units", "Units");
             dataGridLogData.Columns[0].ReadOnly = true;
-            for (int r=0;r<DataLogger.PidProfile.Count; r++)
+            for (int r=0;r< datalogger.PidProfile.Count; r++)
             {
                 if (chkRawValues.Checked)
                 {
                     bool exist = false;
                     for (int row = 0; row < dataGridLogData.Rows.Count - 1; row++)
                     {
-                        if (dataGridLogData.Rows[row].HeaderCell.Value.ToString() == PidProfile[r].Address)
+                        if (dataGridLogData.Rows[row].HeaderCell.Value.ToString() == datalogger.PidProfile[r].Address)
                         {
                             exist = true;
                             break;
@@ -1077,14 +1137,14 @@ namespace UniversalPatcher
                     if (!exist)
                     {
                         int ind = dataGridLogData.Rows.Add();
-                        dataGridLogData.Rows[ind].HeaderCell.Value = PidProfile[r].Address;
+                        dataGridLogData.Rows[ind].HeaderCell.Value = datalogger.PidProfile[r].Address;
                     }
                 }
                 else
                 {
                     int ind = dataGridLogData.Rows.Add();
-                    dataGridLogData.Rows[ind].HeaderCell.Value = PidProfile[r].PidName;
-                    dataGridLogData.Rows[ind].Cells["Units"].Value = PidProfile[r].Units;
+                    dataGridLogData.Rows[ind].HeaderCell.Value = datalogger.PidProfile[r].PidName;
+                    dataGridLogData.Rows[ind].Cells["Units"].Value = datalogger.PidProfile[r].Units;
                 }
             }
             dataGridLogData.AutoResizeColumns();
@@ -1125,8 +1185,11 @@ namespace UniversalPatcher
             {
                 Logger("Stopping, wait...");
                 Application.DoEvents();
-                DataLogger.StopLogging();
-                btnStartStop.Text = "Start Logging";
+                datalogger.StopLogging();
+                if (selectedtab == SelectedTab.Analyzer)
+                    btnStartStop.Text = "Start Analyzer";
+                else
+                    btnStartStop.Text = "Start Logging";
                 timerShowData.Enabled = false;
                 groupLogSettings.Enabled = true;
                 groupDTC.Enabled = true;
@@ -1142,8 +1205,8 @@ namespace UniversalPatcher
         {
             try
             {
-                useVPWFilters = chkVPWFilters.Checked;
-                if (Connected)
+                datalogger.useVPWFilters = chkVPWFilters.Checked;
+                if (datalogger.Connected)
                 {
                     return true;
                 }
@@ -1155,29 +1218,29 @@ namespace UniversalPatcher
                     string[] sParts = sPort.Split(':');
                     if (sParts.Length > 1)
                         sPort = sParts[0].Trim();
-                    LogDevice = CreateSerialDevice(sPort, comboSerialDeviceType.Text, chkFTDI.Checked);
+                    datalogger.LogDevice = datalogger.CreateSerialDevice(sPort, comboSerialDeviceType.Text, chkFTDI.Checked);
                 }
                 else
                 {
                     J2534DotNet.J2534Device dev = jDevList[j2534DeviceList.SelectedIndex];
                     //passThru.LoadLibrary(dev);
-                    LogDevice = new J2534Device(dev);
+                    datalogger.LogDevice = new J2534Device(dev);
                 }
                 if (chkEnableConsole.Checked)
                 {
-                    LogDevice.MsgSent += LogDevice_MsgSent;
-                    LogDevice.MsgReceived += LogDevice_MsgReceived;
+                    datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
+                    datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
                 }
-                if (!LogDevice.Initialize(Convert.ToInt32(comboBaudRate.Text)))
+                if (!datalogger.LogDevice.Initialize(Convert.ToInt32(comboBaudRate.Text)))
                 {
-                    port.Dispose();
-                    LogDevice.Dispose();
+                    datalogger.port.Dispose();
+                    datalogger.LogDevice.Dispose();
                     return false;
                 }
                 string os = "";
                 if (ShowOs)
                 {
-                    os = QueryPcmOS();
+                    os = datalogger.QueryPcmOS();
                     if (os == null)
                     {
                         //return false;
@@ -1187,7 +1250,7 @@ namespace UniversalPatcher
                     labelConnected.Text = "Connected - OS: " + os;
                 else
                     labelConnected.Text = "Connected";
-                Connected = true;
+                datalogger.Connected = true;
                 SaveSettings();
                 if (radioParamRam.Checked)
                 {
@@ -1210,7 +1273,7 @@ namespace UniversalPatcher
             try
             {
                 labelProgress.Text = "";
-                if (DataLogger.PidProfile.Count == 0)
+                if (datalogger.PidProfile.Count == 0)
                 {
                     Logger("No profile configured");
                     return;
@@ -1221,35 +1284,35 @@ namespace UniversalPatcher
                 }
                 SetupLogDataGrid();
                 LogStartTime = DateTime.Now;
-                DataLogger.Responsetype = Convert.ToByte(Enum.Parse(typeof(ResponseTypes), comboResponseMode.Text));
-                DataLogger.writelog = chkWriteLog.Checked;
-                DataLogger.useRawValues = chkRawValues.Checked;
-                DataLogger.reverseSlotNumbers = chkReverseSlotNumbers.Checked;
-                DataLogger.HighPriority = chkPriority.Checked;
+                datalogger.Responsetype = Convert.ToByte(Enum.Parse(typeof(ResponseTypes), comboResponseMode.Text));
+                datalogger.writelog = chkWriteLog.Checked;
+                datalogger.useRawValues = chkRawValues.Checked;
+                datalogger.reverseSlotNumbers = chkReverseSlotNumbers.Checked;
+                datalogger.HighPriority = chkPriority.Checked;
                 //PcmLogger.HighPriorityWeight = (int)numHighPriorityWeight.Value;
                 if (chkWriteLog.Checked)
                 {
                     logfilename = Path.Combine(txtLogFolder.Text, "log-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm.ss") + ".csv");
-                    if (!DataLogger.CreateLog(logfilename))
+                    if (!datalogger.CreateLog(logfilename))
                     {
                         return;
                     }
                 }
-                if (DataLogger.StartLogging())
+                if (datalogger.StartLogging())
                 {
                     timerShowData.Enabled = true;
                     btnStartStop.Text = "Stop Logging";
                     groupLogSettings.Enabled = false;
                     btnGetVINCode.Enabled = false;
-                    CurrentMode = RunMode.LogRunning;
-                    if (LogDevice.LogDeviceType != LoggingDevType.Other)
+                    datalogger.CurrentMode = RunMode.LogRunning;
+                    if (datalogger.LogDevice.LogDeviceType != LoggingDevType.Other)
                     {
                         //groupDTC.Enabled = false;
                     }
                 }
                 else
                 {
-                    CurrentMode = RunMode.NotRunning;
+                    datalogger.CurrentMode = RunMode.NotRunning;
                     groupLogSettings.Enabled = true;
                 }
 
@@ -1262,11 +1325,11 @@ namespace UniversalPatcher
 
         private void btnStartStop_Click(object sender, EventArgs e)
         {
-            if (CurrentMode == RunMode.LogRunning)
+            if (datalogger.CurrentMode == RunMode.LogRunning)
             {
                 StopLogging();
             }
-            else if (CurrentMode == RunMode.AnalyzeRunning)
+            else if (datalogger.CurrentMode == RunMode.AnalyzeRunning)
             {
                 StopAnalyzer();
             }
@@ -1320,11 +1383,11 @@ namespace UniversalPatcher
                 removeInd.Reverse();
                 for (int i = 0; i < removeInd.Count; i++)
                 {
-                    DataLogger.PidProfile.RemoveAt(removeInd[i]);
+                    datalogger.PidProfile.RemoveAt(removeInd[i]);
                 }
                 ProfileDirty = true;
                 bsLogProfile.DataSource = null;
-                bsLogProfile.DataSource = DataLogger.PidProfile;
+                bsLogProfile.DataSource = datalogger.PidProfile;
                 CheckMaxPids();
             }
             catch(Exception ex)
@@ -1443,7 +1506,7 @@ namespace UniversalPatcher
                     devtype = "J2534 Device";
                 analyzer.StartAnalyzer(devtype, chkHideHeartBeat.Checked);
                 btnStartStop.Text = "Stop Analyzer";
-                CurrentMode = RunMode.AnalyzeRunning;
+                datalogger.CurrentMode = RunMode.AnalyzeRunning;
             }
             catch (Exception ex)
             {
@@ -1478,8 +1541,11 @@ namespace UniversalPatcher
             {
                 timerAnalyzer.Enabled = false;
                 analyzer.StopAnalyzer();
-                btnStartStop.Text = "Start Analyzer";
-                CurrentMode = RunMode.NotRunning;
+                if (selectedtab == SelectedTab.Analyzer)
+                    btnStartStop.Text = "Start Analyzer";
+                else
+                    btnStartStop.Text = "Start Logging";
+                datalogger.CurrentMode = RunMode.NotRunning;
             }
             catch (Exception ex)
             {
@@ -1517,7 +1583,7 @@ namespace UniversalPatcher
 
         public void FilterPidsByBin(PcmFile PCM)
         {
-            OS = PCM.OS;
+            datalogger.OS = PCM.OS;
             PidSearch pidSearch = new PidSearch(PCM);
             if (pidSearch.pidList != null && pidSearch.pidList.Count > 0)
             {
@@ -1528,7 +1594,7 @@ namespace UniversalPatcher
                 }
                 LoadParameters();
             }
-            if (Connected)
+            if (datalogger.Connected)
             {
                 labelConnected.Text = "Connected - OS: " + PCM.OS;
             }
@@ -1571,12 +1637,12 @@ namespace UniversalPatcher
             List<DTCCodeStatus> codelist = new List<DTCCodeStatus>();
             if (chkDtcAllModules.Checked)
             {
-                codelist = RequestDTCCodes(DeviceId.Broadcast, mode);
+                codelist = datalogger.RequestDTCCodes(DeviceId.Broadcast, mode);
             }
             else
             {
                 byte module = (byte)comboModule.SelectedValue;
-                codelist = RequestDTCCodes(module, mode); 
+                codelist = datalogger.RequestDTCCodes(module, mode); 
             }
             for (int i=0;i<codelist.Count; i++)
             {
@@ -1604,12 +1670,12 @@ namespace UniversalPatcher
 
             if (chkDtcAllModules.Checked)
             {
-                ClearTroubleCodes(DeviceId.Broadcast);
+                datalogger.ClearTroubleCodes(DeviceId.Broadcast);
             }
             else
             {
                 byte module = (byte)comboModule.SelectedValue;
-                ClearTroubleCodes(module);
+                datalogger.ClearTroubleCodes(module);
             }
         }
 
@@ -1630,10 +1696,10 @@ namespace UniversalPatcher
                 ReadValue rv;
                 ReadValue rv2 = new ReadValue();
                 //rv = QueryRAM(pc.addr, pc.DataType);
-                rv = QuerySinglePidValue(pc.addr, pc.DataType);
+                rv = datalogger.QuerySinglePidValue(pc.addr, pc.DataType);
                 if (pc.addr2 > 0)
                 {
-                    rv2 = QuerySinglePidValue(pc.addr2, pc.Pid2DataType);
+                    rv2 = datalogger.QuerySinglePidValue(pc.addr2, pc.Pid2DataType);
                 }
                 if (rv.PidValue > double.MinValue)
                 {
@@ -1656,16 +1722,26 @@ namespace UniversalPatcher
 
         private void Disconnect()
         {
-            LogDevice.MsgReceived -= LogDevice_MsgReceived;
-            LogDevice.Dispose();
-            Connected = false;
-            labelConnected.Text = "Disconnected - OS: " + OS;
+            datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
+            if (datalogger.CurrentMode == RunMode.LogRunning)
+            {
+                StopLogging();
+                Thread.Sleep(300);
+            }
+            else if (datalogger.CurrentMode == RunMode.AnalyzeRunning)
+            {
+                StopAnalyzer();
+                Thread.Sleep(300);
+            }
+            datalogger.LogDevice.Dispose();
+            datalogger.Connected = false;
+            labelConnected.Text = "Disconnected - OS: " + datalogger.OS;
             groupHWSettings.Enabled = true;
         }
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
-            if (Connected)
+            if (datalogger.Connected)
             {
                 Disconnect();
             }
@@ -1685,7 +1761,7 @@ namespace UniversalPatcher
 
         private void connectDisconnectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Connected)
+            if (datalogger.Connected)
             {
                 Disconnect();
             }
@@ -1698,7 +1774,7 @@ namespace UniversalPatcher
         private void btnGetVINCode_Click(object sender, EventArgs e)
         {
             Connect();
-            string vin = QueryVIN();
+            string vin = datalogger.QueryVIN();
             if (vin.Length > 0)
             {
                 Logger("VIN Code:" + vin);
@@ -1776,15 +1852,15 @@ namespace UniversalPatcher
 
         private void chkBusFilters_CheckedChanged(object sender, EventArgs e)
         {
-            if (Connected)
+            if (datalogger.Connected)
             {
                 if (chkVPWFilters.Checked)
                 {
-                    LogDevice.SetLoggingFilter();
+                    datalogger.LogDevice.SetLoggingFilter();
                 }
                 else
                 {
-                    LogDevice.RemoveFilters();
+                    datalogger.LogDevice.RemoveFilters();
                 }
             }
         }
@@ -1796,7 +1872,7 @@ namespace UniversalPatcher
             if (fpe.ShowDialog() == DialogResult.OK)
             {
                 bsLogProfile.DataSource = null;
-                bsLogProfile.DataSource = PidProfile;
+                bsLogProfile.DataSource = datalogger.PidProfile;
             }
         }
 
@@ -1808,10 +1884,10 @@ namespace UniversalPatcher
         private void cutRowToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int i = dataGridLogProfile.CurrentRow.Index;
-            ClipBrd = PidProfile[i];
-            PidProfile.RemoveAt(i);
+            ClipBrd = datalogger.PidProfile[i];
+            datalogger.PidProfile.RemoveAt(i);
             bsLogProfile.DataSource = null;
-            bsLogProfile.DataSource = PidProfile;
+            bsLogProfile.DataSource = datalogger.PidProfile;
             ProfileDirty = true;
         }
 
@@ -1820,16 +1896,16 @@ namespace UniversalPatcher
             if (ClipBrd == null)
                 return;
             int i = dataGridLogProfile.CurrentRow.Index;
-            PidProfile.Insert(i, ClipBrd);
+            datalogger.PidProfile.Insert(i, ClipBrd);
             bsLogProfile.DataSource = null;
-            bsLogProfile.DataSource = PidProfile;
+            bsLogProfile.DataSource = datalogger.PidProfile;
             ProfileDirty = true;
         }
 
         private void copyRowToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int i = dataGridLogProfile.CurrentRow.Index;
-            ClipBrd = PidProfile[i];
+            ClipBrd = datalogger.PidProfile[i];
         }
 
         private void LoadParameters()
@@ -1854,26 +1930,26 @@ namespace UniversalPatcher
 
         private void newProfileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PidProfile = new List<PidConfig>();
+            datalogger.PidProfile = new List<PidConfig>();
             bsLogProfile.DataSource = null;
-            bsLogProfile.DataSource = PidProfile;
+            bsLogProfile.DataSource = datalogger.PidProfile;
             profileFile = "";
             this.Text = "Logger";
         }
 
         private void chkEnableConsole_CheckedChanged(object sender, EventArgs e)
         {
-            if (Connected)
+            if (datalogger.Connected)
             {
                 if (chkEnableConsole.Checked)
                 {
-                    LogDevice.MsgReceived += LogDevice_MsgReceived;
-                    LogDevice.MsgSent += LogDevice_MsgSent;
+                    datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
+                    datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
                 }
                 else
                 {
-                    LogDevice.MsgReceived -= LogDevice_MsgReceived;
-                    LogDevice.MsgSent -= LogDevice_MsgSent;
+                    datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
+                    datalogger.LogDevice.MsgSent -= LogDevice_MsgSent;
 
                 }
             }
@@ -1928,6 +2004,22 @@ namespace UniversalPatcher
             {
                 LoggerBold(ex.Message);
             }
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void btnConsoleLoadScript_Click(object sender, EventArgs e)
+        {
+            string fName = SelectFile("Select script file", TxtFilter);
+            if (fName.Length == 0)
+                return;
+            Logger("Sending file: " + fName);
+            Connect();
+            datalogger.UploadScript(fName);
+            Logger("Done");
         }
     }
 }

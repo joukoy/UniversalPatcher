@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FTD2XX_NET;
+using static Upatcher;
 
 namespace UniversalPatcher
 {
@@ -119,38 +120,45 @@ namespace UniversalPatcher
         //private void DataReceived(object threadContext)
         private void DataReceiver()
         {
-            Thread.CurrentThread.IsBackground = true;
-            Debug.WriteLine("FTDI loop started");
-            while (true)
+            try
             {
-                waitHandle.WaitOne();
+                Thread.CurrentThread.IsBackground = true;
+                Debug.WriteLine("FTDI loop started");
+                while (true)
+                {
+                    waitHandle.WaitOne();
 
-                if (port == null)
-                {
-                    Debug.WriteLine("Port closed, exit FTDI loop");
-                    return;
-                }
-                uint bytes = 0;
-                FTDI.FT_STATUS ftst = this.port.GetRxBytesAvailable(ref bytes);
-                if (ftst != FTDI.FT_STATUS.FT_OK)
-                {
-                    Debug.WriteLine("FTDI error: " + ftst.ToString());
-                    continue;
-                }
-                byte[] rx = new byte[bytes];
-
-                uint numBytesRead = 0;
-                port.Read(rx, bytes, ref numBytesRead);
-                lock (this.internalQueue)
-                {
-                    for (int i = 0; i < bytes; i++)
+                    if (port == null)
                     {
-                        SerialByte sb = new SerialByte(1);
-                        sb.Data[0] = rx[i];
-                        this.internalQueue.Enqueue(sb);
+                        Debug.WriteLine("Port closed, exit FTDI loop");
+                        return;
                     }
+                    uint bytes = 0;
+                    FTDI.FT_STATUS ftst = this.port.GetRxBytesAvailable(ref bytes);
+                    if (ftst != FTDI.FT_STATUS.FT_OK)
+                    {
+                        Debug.WriteLine("FTDI error: " + ftst.ToString());
+                        continue;
+                    }
+                    byte[] rx = new byte[bytes];
+
+                    uint numBytesRead = 0;
+                    port.Read(rx, bytes, ref numBytesRead);
+                    lock (this.internalQueue)
+                    {
+                        for (int i = 0; i < bytes; i++)
+                        {
+                            SerialByte sb = new SerialByte(1);
+                            sb.Data[0] = rx[i];
+                            this.internalQueue.Enqueue(sb);
+                        }
+                    }
+                    //Debug.WriteLine("Receiving FTDI data, bytes: " + BitConverter.ToString(rx));
                 }
-                //Debug.WriteLine("Receiving FTDI data, bytes: " + BitConverter.ToString(rx));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("FTDI error: " + ex.Message);
             }
         }
 
@@ -222,7 +230,7 @@ namespace UniversalPatcher
                     buffer.Data[pos] = internalQueue.Dequeue().Data[0];
                     pos++;
                     rCount++;
-                    DataLogger.ReceivedBytes++;
+                    datalogger.ReceivedBytes++;
                 }
             }
             //Debug.WriteLine("FTDI RX: " + BitConverter.ToString(buffer.Data));

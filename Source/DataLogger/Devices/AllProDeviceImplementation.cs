@@ -240,7 +240,7 @@ namespace UniversalPatcher
 
             payload = payload.Replace(" ", "");
 
-            DataLogger.LogDevice.MessageSent(message);
+            datalogger.LogDevice.MessageSent(message);
 
             SerialString sendMessageResponse = this.SendRequest(payload + " ");
             if (!this.ProcessResponse(sendMessageResponse, "message content", false))

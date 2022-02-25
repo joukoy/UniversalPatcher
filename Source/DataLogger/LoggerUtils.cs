@@ -6,11 +6,13 @@ using static Upatcher;
 using static Helpers;
 using static UniversalPatcher.DataLogger;
 using UniversalPatcher;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 public static class LoggerUtils
     {
         public static List<OBDMessage> analyzerData { get; set; }
-
+        public static Dictionary<byte, string> PcmResponses;
         public class Parameter
         {
             public Parameter()
@@ -72,6 +74,24 @@ public static class LoggerUtils
         Proprietary = 3,
         Math = 4
     }
+
+    public static readonly List<string> SupportedBaudRates = new List<string>
+        {
+            "300",
+            "600",
+            "1200",
+            "2400",
+            "4800",
+            "9600",
+            "19200",
+            "38400",
+            "57600",
+            "115200",
+            "230400",
+            "460800",
+            "921600"
+        };
+
     public class Conversion
         {
             public string Units { get; private set; }
@@ -297,6 +317,17 @@ public static class LoggerUtils
         //byte pos = (byte)(0xFF & (position << 3)); // xxXXXxxx Position of pid in response
         //return (byte)(pidbyte | pos | bytes);      //last 3 bits: data size (bytes)
         return (byte)((dBy << 6) | (position << 3) | bytes);
+    }
+
+    public static void LogExceptions(this Task task)
+    {
+        task.ContinueWith(t =>
+        {
+            var aggException = t.Exception.Flatten();
+            foreach (var exception in aggException.InnerExceptions)
+                Debug.WriteLine(exception);
+        },
+        TaskContinuationOptions.OnlyOnFaulted);
     }
 
     public static void initPcmResponses()

@@ -361,9 +361,15 @@ namespace UniversalPatcher
                 byte[] StrippedFrame = new byte[Length];
                 Buffer.BlockCopy(receive.Data, 2 + offset, StrippedFrame, 0, Length);
                 //Debug.WriteLine("RX: " + StrippedFrame.ToHex());
-                if (!TimeStampsEnabled)
+                //if (!TimeStampsEnabled)
+
+                OBDMessage rMsg = new OBDMessage(StrippedFrame, (ulong)rx.TimeStamp, 0);
+                rMsg.SysTimeStamp = (ulong)rx.TimeStamp;
+                this.Enqueue(rMsg);
+/*                if (!TimeStampsEnabled)
                     timestampmicro = (ulong)rx.TimeStamp;
                 this.Enqueue(new OBDMessage(StrippedFrame, timestampmicro, 0));
+*/
                 return null;
             }
             else
@@ -558,7 +564,7 @@ namespace UniversalPatcher
         {
             //Debug.WriteLine("Sendrequest called");
             //  Debug.WriteLine("TX: " + message.GetBytes().ToHex());            
-            DataLogger.LogDevice.MessageSent(message);
+            datalogger.LogDevice.MessageSent(message);
             Response<OBDMessage> m = SendDVIPacket(message, responses);
             if (m.Status != ResponseStatus.Success)
             {
@@ -724,7 +730,7 @@ namespace UniversalPatcher
 
         private bool SetToFilter(byte Val)
         {
-            if (DataLogger.useVPWFilters == false)
+            if (datalogger.useVPWFilters == false)
             {
                 return true;
             }
@@ -1110,7 +1116,7 @@ namespace UniversalPatcher
 
             try
             {
-                DataLogger.port.Send(Encoding.ASCII.GetBytes(request + " \r"));
+                Port.Send(Encoding.ASCII.GetBytes(request + " \r"));
                 Thread.Sleep(100);
                 string response = ReadELMLine();
                 return response;

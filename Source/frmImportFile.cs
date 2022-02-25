@@ -22,9 +22,15 @@ namespace UniversalPatcher
 
         private void frmImportFile_Load(object sender, EventArgs e)
         {
-            LogReceivers.Add(txtResult);
+            //LogReceivers.Add(txtResult);
+            uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
             RefreshData();
             dataGridView1.CellEndEdit += DataGridView1_CellEndEdit;
+        }
+
+        private void UPLogger_UpLogUpdated(object sender, UPLogger.UPLogString e)
+        {
+            uPLogger.DisplayText(e.LogText, e.Bold, txtResult);
         }
 
 
@@ -549,5 +555,6 @@ namespace UniversalPatcher
             }
             RefreshData();
         }
+
     }
 }

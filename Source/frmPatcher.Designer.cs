@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPatcher));
             this.btnOrgFile = new System.Windows.Forms.Button();
             this.btnModFile = new System.Windows.Forms.Button();
@@ -292,8 +293,9 @@
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.homepageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.splitPatcher = new System.Windows.Forms.SplitContainer();
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.splitPatcher = new System.Windows.Forms.SplitContainer();
+            this.timerDebug = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numSuppress)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInfo.SuspendLayout();
@@ -580,6 +582,7 @@
             this.chkLogtodisplay.TabIndex = 204;
             this.chkLogtodisplay.Text = "Log to display";
             this.chkLogtodisplay.UseVisualStyleBackColor = true;
+            this.chkLogtodisplay.CheckedChanged += new System.EventHandler(this.chkLogtodisplay_CheckedChanged);
             // 
             // chkLogtoFile
             // 
@@ -3225,16 +3228,23 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // homepageToolStripMenuItem
             // 
             this.homepageToolStripMenuItem.Name = "homepageToolStripMenuItem";
-            this.homepageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.homepageToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.homepageToolStripMenuItem.Text = "&Homepage";
             this.homepageToolStripMenuItem.Click += new System.EventHandler(this.homepageToolStripMenuItem_Click);
+            // 
+            // creditsToolStripMenuItem
+            // 
+            this.creditsToolStripMenuItem.Name = "creditsToolStripMenuItem";
+            this.creditsToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.creditsToolStripMenuItem.Text = "Credits";
+            this.creditsToolStripMenuItem.Click += new System.EventHandler(this.creditsToolStripMenuItem_Click);
             // 
             // splitPatcher
             // 
@@ -3256,12 +3266,9 @@
             this.splitPatcher.SplitterDistance = 144;
             this.splitPatcher.TabIndex = 201;
             // 
-            // creditsToolStripMenuItem
+            // timerDebug
             // 
-            this.creditsToolStripMenuItem.Name = "creditsToolStripMenuItem";
-            this.creditsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.creditsToolStripMenuItem.Text = "Credits";
-            this.creditsToolStripMenuItem.Click += new System.EventHandler(this.creditsToolStripMenuItem_Click);
+            this.timerDebug.Tick += new System.EventHandler(this.timerDebug_Tick);
             // 
             // FrmPatcher
             // 
@@ -3637,5 +3644,6 @@
         private System.Windows.Forms.Button btnStartFlashApp;
         public System.Windows.Forms.CheckBox chkDebug;
         private System.Windows.Forms.ToolStripMenuItem creditsToolStripMenuItem;
+        private System.Windows.Forms.Timer timerDebug;
     }
 }

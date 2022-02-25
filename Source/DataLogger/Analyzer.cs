@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
 using System.IO.Ports;
+using System.Threading.Tasks;
 
 namespace UniversalPatcher
 {
@@ -18,6 +19,7 @@ namespace UniversalPatcher
         public Dictionary<byte, string> PhysAddresses;
         public bool stoploop { get; set; }
         private bool HideHeartBeat;
+        private Task analyzerTask;
 
         public Analyzer()
         {
@@ -149,9 +151,9 @@ namespace UniversalPatcher
                 HideHeartBeat = hideHeartBeat;
                 stoploop = false;
                 Logger("Waiting data...");
-                LogDevice.SetTimeout(TimeoutScenario.Maximum);
-                LogDevice.SetAnalyzerFilter();
-                ThreadPool.QueueUserWorkItem(new WaitCallback(analyzerloop), null);
+                datalogger.LogDevice.SetTimeout(TimeoutScenario.Maximum);
+                datalogger.LogDevice.SetAnalyzerFilter();
+                analyzerTask = Task.Factory.StartNew(() => analyzerloop());
             }
             catch (Exception ex)
             {
@@ -166,7 +168,8 @@ namespace UniversalPatcher
 
         public void StopAnalyzer()
         {
-            stoploop = true;            
+            stoploop = true;
+            analyzerTask.LogExceptions();
         }
 
         public VPWRow ProcessLine(OBDMessage msg)
@@ -285,24 +288,24 @@ namespace UniversalPatcher
             return azd;
         }
 
-        private void analyzerloop(object threadContext)
+        private void analyzerloop()
         {
-            LogDevice.ClearMessageBuffer();
-            LogDevice.ClearMessageQueue();
+            datalogger.LogDevice.ClearMessageBuffer();
+            datalogger.LogDevice.ClearMessageQueue();
             bool waiting4x = false;
 
             while (!stoploop)
             {
                 try
                 {
-                    OBDMessage rcv = LogDevice.ReceiveMessage();
+                    OBDMessage rcv = datalogger.LogDevice.ReceiveMessage();
                     if (rcv == null)
                     {
                         continue;
                     }
-                    if (LogDevice.LogDeviceType == LoggingDevType.Elm && rcv.ElmPrompt)
+                    if (datalogger.LogDevice.LogDeviceType == LoggingDevType.Elm && rcv.ElmPrompt)
                     {
-                        LogDevice.SetAnalyzerFilter();
+                        datalogger.LogDevice.SetAnalyzerFilter();
                     }
                     if (rcv.Length > 3)
                     {
@@ -315,8 +318,8 @@ namespace UniversalPatcher
                         {
                             waiting4x = false;
                             Debug.WriteLine("Received 0xFE, , 0xA1 - switching to 4x");
-                            LogDevice.Enable4xReadWrite = true;
-                            if (LogDevice.SetVpwSpeed(VpwSpeed.FourX))
+                            datalogger.LogDevice.Enable4xReadWrite = true;
+                            if (datalogger.LogDevice.SetVpwSpeed(VpwSpeed.FourX))
                                 Debug.WriteLine("Switched to 4X");
                             else
                                 Debug.WriteLine("Switch to 4X failed");
@@ -354,7 +357,8 @@ namespace UniversalPatcher
             try
             {
                 Debug.WriteLine("Exit from analyzer loop");
-                LogDevice.SetLoggingFilter();
+                Logger("Analyzer stopped");
+                datalogger.LogDevice.SetLoggingFilter();
             }
             catch (Exception ex)
             {
