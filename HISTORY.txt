@@ -425,4 +425,6 @@
 - Logger: Concurrent logging & Analyzer possible
 - Analyzer: separate start/stop button for analyzer
 
+0.20.12
+- Fixes to Logger
 
