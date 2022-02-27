@@ -1281,8 +1281,6 @@ namespace UniversalPatcher
                 if (chkConsoleAutorefresh.Checked)
                 {
                     datalogger.StartReceiveLoop();
-                    datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
-                    datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
                 }
                 Application.DoEvents();
                 groupHWSettings.Enabled = false;
@@ -2147,7 +2145,7 @@ namespace UniversalPatcher
             {
                 if (!datalogger.Connected)
                 {
-                    Logger("Not conneted");
+                    Logger("Not connected");
                     return;
                 }
                 datalogger.LogDevice.SetVpwSpeed(VpwSpeed.FourX);
@@ -2162,7 +2160,7 @@ namespace UniversalPatcher
         {
             if (chkConsoleAutorefresh.Checked)
             {
-                if (!Connect())
+                if (!datalogger.Connected)
                 {
                     return;
                 }

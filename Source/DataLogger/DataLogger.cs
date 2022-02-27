@@ -25,7 +25,7 @@ namespace UniversalPatcher
         private CancellationToken logToken;
         private CancellationToken receiverToken;
         private CancellationToken logWriterToken;
-        private bool loggingpaused = false;
+        private bool ReceiverPaused = false;
         public Task logTask;
         private Task logWriterTask;
         private Task ReceiverTask;
@@ -1168,14 +1168,14 @@ namespace UniversalPatcher
                     return true;
                 }
                 Logger("Pausing receiver...");
-                loggingpaused = true;
+                ReceiverPaused = true;
                 StopReceiveLoop();
                 Application.DoEvents();
                 return true;
             }
             else
             {
-                if (loggingpaused)
+                if (ReceiverPaused)
                 {
                     Logger("Continue receiving");
                     StartReceiveLoop();
