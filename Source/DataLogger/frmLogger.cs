@@ -40,8 +40,7 @@ namespace UniversalPatcher
         private string logfilename;
         private DateTime LogStartTime;
         private bool ProfileDirty = false;
-        private BindingSource AnalyzeBS = new BindingSource();
-        private bool AnalyzerActive = false;        
+        //private BindingSource AnalyzeBS = new BindingSource();
         private List<ushort> SupportedPids;
         private PidConfig ClipBrd;
         private int keyDelayCounter = 0;
@@ -88,7 +87,6 @@ namespace UniversalPatcher
             txtParamSearch.KeyPress += TxtParamSearch_KeyPress;
             txtSendBus.KeyPress += TxtSendBus_KeyPress;
             txtVPWmessages.EnableContextMenu();
-            datalogger.CurrentMode = RunMode.NotRunning;
         }
 
         private void TabAdvanced_Enter(object sender, EventArgs e)
@@ -129,8 +127,11 @@ namespace UniversalPatcher
                     txtVPWmessages.SelectionColor = Color.DarkGreen;
                     if (chkConsoleTimestamps.Checked)
                     {
-                        string tStamp = new DateTime((long)e.Msg.SysTimeStamp).ToString("yyyy-MM-dd-HH:mm:ss");
-                        tStamp += " [" + e.Msg.TimeStamp.ToString() + "] ";
+                        string tStamp = "[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ";
+                        if (chkConsoleUseJ2534Timestamps.Checked)
+                        {
+                            tStamp += "[" + e.Msg.TimeStamp.ToString() + "] ";
+                        }
                         txtVPWmessages.AppendText(tStamp);
                     }
                     txtVPWmessages.AppendText(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
@@ -149,8 +150,11 @@ namespace UniversalPatcher
                 txtVPWmessages.SelectionColor = Color.Red;
                 if (chkConsoleTimestamps.Checked)
                 {
-                    string tStamp = new DateTime((long)e.Msg.SysTimeStamp).ToString("yyyy-MM-dd-HH:mm:ss");
-                    tStamp += " [" + e.Msg.TimeStamp.ToString() + "] ";
+                    string tStamp = "[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ";
+                    if (chkConsoleUseJ2534Timestamps.Checked)
+                    {
+                        tStamp += "[" + e.Msg.TimeStamp.ToString() + "] ";
+                    }
                     txtVPWmessages.AppendText(tStamp);
                 }
                 txtVPWmessages.AppendText(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
@@ -172,18 +176,30 @@ namespace UniversalPatcher
         {
             try
             {
-                if (e.KeyChar == '\r' && datalogger.Connected)
+                if (e.KeyChar == '\r')
                 {
-                    byte[] msg = Utility.ToBytes(txtSendBus.Text.Replace(" ", ""));
-                    OBDMessage oMsg = new OBDMessage(msg);
-                    if (!datalogger.LogDevice.SendMessage(oMsg, 50))
+                    if (!Connect())
                     {
-                        LoggerBold("Error sending message");
                         return;
                     }
-                    OBDMessage rMsg = datalogger.LogDevice.ReceiveMessage();
-                    while (rMsg != null)
-                        rMsg = datalogger.LogDevice.ReceiveMessage();
+                    e.Handled = true;
+                    byte[] msg = Utility.ToBytes(txtSendBus.Text.Replace(" ", ""));
+                    OBDMessage oMsg = new OBDMessage(msg);
+                    if (datalogger.LogRunning)
+                    {
+                        datalogger.QueueCustomCmd(oMsg);
+                    }
+                    else
+                    {
+                        if (!datalogger.LogDevice.SendMessage(oMsg, -50))
+                        {
+                            LoggerBold("Error sending message");
+                            return;
+                        }
+                        OBDMessage rMsg = datalogger.LogDevice.ReceiveMessage();
+                        while (rMsg != null)
+                            rMsg = datalogger.LogDevice.ReceiveMessage();
+                    }
                     txtVPWmessages.AppendText(Environment.NewLine);
                 }
             }
@@ -222,21 +238,11 @@ namespace UniversalPatcher
         private void TabProfile_Enter(object sender, EventArgs e)
         {
             selectedtab = SelectedTab.Profile;
-            if (datalogger.CurrentMode == RunMode.NotRunning)
-            {
-                AnalyzerActive = false;
-                btnStartStop.Text = "Start Logging";
-            }
         }
 
         private void TabAnalyzer_Enter(object sender, EventArgs e)
         {
             selectedtab = SelectedTab.Analyzer;
-            AnalyzerActive = true;
-            if (datalogger.CurrentMode == RunMode.NotRunning)
-            {
-                btnStartStop.Text = "Start Analyzer";
-            }
         }
 
         private void DataGridAnalyzer_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -245,7 +251,7 @@ namespace UniversalPatcher
 
         private void ListProfiles_MouseClick(object sender, MouseEventArgs e)
         {
-            if (listProfiles.SelectedItems.Count == 0 || datalogger.CurrentMode != RunMode.NotRunning)
+            if (datalogger.LogRunning)
                 return;
             if (ProfileDirty)
             {
@@ -312,11 +318,6 @@ namespace UniversalPatcher
         {
             selectedtab = SelectedTab.Logger;
             SetupLogDataGrid();
-            AnalyzerActive = false;
-            if (datalogger.CurrentMode == RunMode.NotRunning)
-            {
-                btnStartStop.Text = "Start Logging";
-            }
         }
 
         private void LoadPorts(bool LoadDefaults)
@@ -431,6 +432,9 @@ namespace UniversalPatcher
                 chkVPWFilters.Checked = Properties.Settings.Default.LoggerUseFilters;
                 chkEnableConsole.Checked = Properties.Settings.Default.LoggerEnableConsole;
                 chkConsoleTimestamps.Checked = Properties.Settings.Default.LoggerConsoleTimestamps;
+                chkConsoleUseJ2534Timestamps.Checked = Properties.Settings.Default.LoggerConsoleJ2534Timestamps;
+                numConsoleScriptDelay.Value = Properties.Settings.Default.LoggerScriptDelay;
+
                 if (Properties.Settings.Default.LoggerConsoleFont != null)
                 {
                     txtVPWmessages.Font = Properties.Settings.Default.LoggerConsoleFont;
@@ -1114,7 +1118,7 @@ namespace UniversalPatcher
 
         private void SetupLogDataGrid()
         {
-            if (datalogger.CurrentMode != RunMode.NotRunning)
+            if (datalogger.LogRunning)
                 return; //Dont change settings while logging
             dataGridLogData.Columns.Clear();
             dataGridLogData.Columns.Add("Value", "Value");
@@ -1175,7 +1179,9 @@ namespace UniversalPatcher
             Properties.Settings.Default.LoggerUseFilters = chkVPWFilters.Checked;
             Properties.Settings.Default.LoggerEnableConsole = chkEnableConsole.Checked;
             Properties.Settings.Default.LoggerConsoleTimestamps = chkConsoleTimestamps.Checked;
+            Properties.Settings.Default.LoggerConsoleJ2534Timestamps = chkConsoleUseJ2534Timestamps.Checked;
             Properties.Settings.Default.LoggerConsoleFont = txtVPWmessages.Font;
+            Properties.Settings.Default.LoggerScriptDelay = (int) numConsoleScriptDelay.Value;
             Properties.Settings.Default.Save();
 
         }
@@ -1186,14 +1192,15 @@ namespace UniversalPatcher
                 Logger("Stopping, wait...");
                 Application.DoEvents();
                 datalogger.StopLogging();
-                if (selectedtab == SelectedTab.Analyzer)
-                    btnStartStop.Text = "Start Analyzer";
-                else
-                    btnStartStop.Text = "Start Logging";
+                btnStartStop.Text = "Start Logging";
                 timerShowData.Enabled = false;
                 groupLogSettings.Enabled = true;
                 groupDTC.Enabled = true;
-                btnGetVINCode.Enabled = true;
+                //btnGetVINCode.Enabled = true;
+                if (chkEnableConsole.Checked)
+                {
+                    datalogger.StartReceiveLoop();
+                }
             }
             catch (Exception ex)
             {
@@ -1226,6 +1233,7 @@ namespace UniversalPatcher
                     //passThru.LoadLibrary(dev);
                     datalogger.LogDevice = new J2534Device(dev);
                 }
+                datalogger.LogDevice.MsgReceived += LogDevice_DTC_MsgReceived;
                 if (chkEnableConsole.Checked)
                 {
                     datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
@@ -1237,6 +1245,8 @@ namespace UniversalPatcher
                     datalogger.LogDevice.Dispose();
                     return false;
                 }
+                datalogger.LogDevice.Enable4xReadWrite = true;
+
                 string os = "";
                 if (ShowOs)
                 {
@@ -1255,6 +1265,12 @@ namespace UniversalPatcher
                 if (radioParamRam.Checked)
                 {
                     LoadParameters();
+                }
+                if (chkEnableConsole.Checked)
+                {
+                    datalogger.StartReceiveLoop();
+                    datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
+                    datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
                 }
                 Application.DoEvents();
                 groupHWSettings.Enabled = false;
@@ -1303,16 +1319,16 @@ namespace UniversalPatcher
                     timerShowData.Enabled = true;
                     btnStartStop.Text = "Stop Logging";
                     groupLogSettings.Enabled = false;
-                    btnGetVINCode.Enabled = false;
-                    datalogger.CurrentMode = RunMode.LogRunning;
-                    if (datalogger.LogDevice.LogDeviceType != LoggingDevType.Other)
+                    //btnGetVINCode.Enabled = false;
+                    datalogger.LogRunning = true;
+                    if (datalogger.LogDevice.LogDeviceType == LoggingDevType.Elm)
                     {
-                        //groupDTC.Enabled = false;
+                        groupDTC.Enabled = false;
                     }
                 }
                 else
                 {
-                    datalogger.CurrentMode = RunMode.NotRunning;
+                    datalogger.LogRunning = false;
                     groupLogSettings.Enabled = true;
                 }
 
@@ -1325,17 +1341,9 @@ namespace UniversalPatcher
 
         private void btnStartStop_Click(object sender, EventArgs e)
         {
-            if (datalogger.CurrentMode == RunMode.LogRunning)
+            if (datalogger.LogRunning)
             {
                 StopLogging();
-            }
-            else if (datalogger.CurrentMode == RunMode.AnalyzeRunning)
-            {
-                StopAnalyzer();
-            }
-            else if (AnalyzerActive)
-            {
-                StartAnalyzer();
             }
             else
             {
@@ -1499,14 +1507,16 @@ namespace UniversalPatcher
                 {
                     return;
                 }
+                datalogger.StopReceiveLoop();
                 analyzer = new Analyzer();
                 analyzer.RowAnalyzed += Analyzer_RowAnalyzed;
                 string devtype = comboSerialDeviceType.Text;
                 if (j2534RadioButton.Checked)
                     devtype = "J2534 Device";
                 analyzer.StartAnalyzer(devtype, chkHideHeartBeat.Checked);
-                btnStartStop.Text = "Stop Analyzer";
-                datalogger.CurrentMode = RunMode.AnalyzeRunning;
+                btnStartStopAnalyzer.Text = "Stop Analyzer";
+                datalogger.AnalyzerRunning = true;
+                groupDTC.Enabled = false;
             }
             catch (Exception ex)
             {
@@ -1523,7 +1533,7 @@ namespace UniversalPatcher
                 {
                     if (prop.Name == "Timestamp")
                     {
-                        dataGridAnalyzer.Rows[r].Cells[prop.Name].Value = new DateTime(Convert.ToInt64(prop.GetValue(e, null))).ToString("yyyy-MM-dd-HH:mm:ss:FFFFF");
+                        dataGridAnalyzer.Rows[r].Cells[prop.Name].Value = new DateTime(Convert.ToInt64(prop.GetValue(e, null))).ToString("HH:mm:ss:fff");
                     }
                     else
                     {
@@ -1539,45 +1549,18 @@ namespace UniversalPatcher
         {
             try
             {
-                timerAnalyzer.Enabled = false;
                 analyzer.StopAnalyzer();
-                if (selectedtab == SelectedTab.Analyzer)
-                    btnStartStop.Text = "Start Analyzer";
-                else
-                    btnStartStop.Text = "Start Logging";
-                datalogger.CurrentMode = RunMode.NotRunning;
+                btnStartStopAnalyzer.Text = "Start Analyzer";
+                datalogger.AnalyzerRunning = false;
+                groupDTC.Enabled = true;
+                if (chkEnableConsole.Checked)
+                {
+                    datalogger.StartReceiveLoop();
+                }
             }
             catch (Exception ex)
             {
                 LoggerBold(ex.Message);
-            }
-        }
-
-        private void timerAnalyzer_Tick(object sender, EventArgs e)
-        {
-            try
-            {
-/*                if (prevACount < analyzer.aData.Count)
-                {
-                    //AnalyzeBS.DataSource = analyzer.aData;
-                    for (int a = prevACount; a < analyzer.aData.Count; a++)
-                    {
-                        Analyzer.AnalyzerData ad = analyzer.aData[a];
-                        int r = dataGridAnalyzer.Rows.Add();
-                        foreach (var prop in ad.GetType().GetProperties())
-                        {
-                            dataGridAnalyzer.Rows[r].Cells[prop.Name].Value = prop.GetValue(ad, null);
-                        }
-                        dataGridAnalyzer.CurrentCell = dataGridAnalyzer.Rows[r].Cells[0];
-                    }
-                    prevACount = analyzer.aData.Count;
-                    Application.DoEvents();
-                }
-*/
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
             }
         }
 
@@ -1632,28 +1615,61 @@ namespace UniversalPatcher
 
         private void getDtcCodes(byte mode)
         {
+            byte module;
             dataGridDtcCodes.Rows.Clear();
             Connect();
-            List<DTCCodeStatus> codelist = new List<DTCCodeStatus>();
+            //List<DTCCodeStatus> codelist = new List<DTCCodeStatus>();
             if (chkDtcAllModules.Checked)
             {
-                codelist = datalogger.RequestDTCCodes(DeviceId.Broadcast, mode);
+                module = DeviceId.Broadcast;
+                //codelist = datalogger.RequestDTCCodes(module, mode);
             }
             else
             {
-                byte module = (byte)comboModule.SelectedValue;
-                codelist = datalogger.RequestDTCCodes(module, mode); 
+                module = (byte)comboModule.SelectedValue;
+                //codelist = datalogger.RequestDTCCodes(module, mode); 
             }
-            for (int i=0;i<codelist.Count; i++)
+            if (datalogger.LogRunning)
             {
-                int r = dataGridDtcCodes.Rows.Add();
-                dataGridDtcCodes.Rows[r].Cells[0].Value = codelist[i].Module;
-                dataGridDtcCodes.Rows[r].Cells[1].Value = codelist[i].Code;
-                dataGridDtcCodes.Rows[r].Cells[2].Value = codelist[i].Description;
-                dataGridDtcCodes.Rows[r].Cells[3].Value = codelist[i].Status;
+                datalogger.QueueDtcRequest(module, mode);
             }
-
+            else
+            {
+                datalogger.RequestDTCCodes(module, mode);
+            }
         }
+
+        private void LogDevice_DTC_MsgReceived(object sender, MsgEventparameter e)
+        {
+            try
+            {
+                if (e.Msg.Length > 5 && e.Msg.GetBytes()[1] == DeviceId.Tool && e.Msg.GetBytes()[3] == 0x59)
+                {
+                    DTCCodeStatus dcs = datalogger.DecodeDTCstatus(e.Msg.GetBytes());
+                    if (!string.IsNullOrEmpty(dcs.Module))
+                    {
+                        this.Invoke((MethodInvoker)delegate ()
+                        {
+                            int r = dataGridDtcCodes.Rows.Add();
+                            dataGridDtcCodes.Rows[r].Cells[0].Value = dcs.Module;
+                            dataGridDtcCodes.Rows[r].Cells[1].Value = dcs.Code;
+                            dataGridDtcCodes.Rows[r].Cells[2].Value = dcs.Description;
+                            dataGridDtcCodes.Rows[r].Cells[3].Value = dcs.Status;
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, LogDevice_DTC_MsgReceived line " + line + ": " + ex.Message);
+            }
+        }
+
         private void btnCurrentDTC_Click(object sender, EventArgs e)
         {
             getDtcCodes(2);//2 = Current data
@@ -1723,15 +1739,23 @@ namespace UniversalPatcher
         private void Disconnect()
         {
             datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
-            if (datalogger.CurrentMode == RunMode.LogRunning)
+            datalogger.LogDevice.MsgReceived -= LogDevice_DTC_MsgReceived;
+
+            if (chkEnableConsole.Checked || datalogger.ReceiveLoopRunning)
+            {
+                datalogger.StopReceiveLoop();
+                datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
+                datalogger.LogDevice.MsgSent -= LogDevice_MsgSent;
+            }
+            if (datalogger.LogRunning)
             {
                 StopLogging();
-                Thread.Sleep(300);
+                Thread.Sleep(500);
             }
-            else if (datalogger.CurrentMode == RunMode.AnalyzeRunning)
+            if (datalogger.AnalyzerRunning)
             {
                 StopAnalyzer();
-                Thread.Sleep(300);
+                Thread.Sleep(500);
             }
             datalogger.LogDevice.Dispose();
             datalogger.Connected = false;
@@ -1774,11 +1798,15 @@ namespace UniversalPatcher
         private void btnGetVINCode_Click(object sender, EventArgs e)
         {
             Connect();
-            string vin = datalogger.QueryVIN();
-            if (vin.Length > 0)
+            if (datalogger.LogRunning)
             {
-                Logger("VIN Code:" + vin);
+                datalogger.QueryVIN();
             }
+            else
+            {
+                datalogger.QueueVINRequest();
+            }
+
         }
 
         private void btnClearAnalyzerGrid_Click(object sender, EventArgs e)
@@ -1943,14 +1971,15 @@ namespace UniversalPatcher
             {
                 if (chkEnableConsole.Checked)
                 {
+                    datalogger.StartReceiveLoop();
                     datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
                     datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
                 }
                 else
                 {
+                    datalogger.StopReceiveLoop();
                     datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
                     datalogger.LogDevice.MsgSent -= LogDevice_MsgSent;
-
                 }
             }
         }
@@ -2016,10 +2045,99 @@ namespace UniversalPatcher
             string fName = SelectFile("Select script file", TxtFilter);
             if (fName.Length == 0)
                 return;
+            if (!Connect())
+            {
+                return;
+            }
             Logger("Sending file: " + fName);
-            Connect();
             datalogger.UploadScript(fName);
             Logger("Done");
         }
+
+        private void btnDtcCustom_Click(object sender, EventArgs e)
+        {
+            byte mode;
+            byte module = (byte)comboModule.SelectedValue; 
+            if (txtDtcCustomModule.Text.Length > 0)
+            {
+                HexToByte(txtDtcCustomModule.Text, out module);
+            }
+            if (!HexToByte(txtDtcCustomMode.Text,out mode))
+            {
+                LoggerBold("Unknown HEX number: " + txtDtcCustomMode.Text);
+                return;
+            }
+
+            dataGridDtcCodes.Rows.Clear();
+            Connect();
+            if (datalogger.LogRunning)
+            {
+                datalogger.QueueDtcRequest(module, mode);
+            }
+            else
+            {
+                datalogger.RequestDTCCodes(module, mode);
+            }
+        }
+
+        private void btnStartStopAnalyzer_Click(object sender, EventArgs e)
+        {
+            if (datalogger.AnalyzerRunning)
+            {
+                StopAnalyzer();
+            }
+            else 
+            {
+                StartAnalyzer();
+            }
+        }
+
+        private void btnConnect2_Click(object sender, EventArgs e)
+        {
+            if (datalogger.Connected)
+            {
+                Disconnect();
+            }
+            else
+            {
+                Connect();
+            }
+
+        }
+
+        private void txtSendBus_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnConsoleRefresh_Click(object sender, EventArgs e)
+        {
+            if (datalogger.Connected)
+            {
+                datalogger.LogDevice.Receive();
+            }
+            else
+            {
+                Logger("Not connected");
+            }
+        }
+
+        private void chkConsole4x_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkConsole4x.Checked)
+            {
+                if (!datalogger.Connected)
+                {
+                    Logger("Not conneted");
+                    return;
+                }
+                datalogger.LogDevice.SetVpwSpeed(VpwSpeed.FourX);
+            }
+            else if (datalogger.Connected)
+            {
+                datalogger.LogDevice.SetVpwSpeed(VpwSpeed.Standard);
+            }
+        }
+
     }
 }

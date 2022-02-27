@@ -219,166 +219,179 @@ namespace UniversalPatcher
         /// </summary>
         private Response<OBDMessage> ReadDVIPacket(int timeout = 0)
         {
-            UInt16 Length = 0;
-
-            byte offset = 0;
-            SerialByte rx = new SerialByte(3); // we dont read more than 3 bytes at a time
-            SerialByte timestampbuf = new SerialByte(3);
-            ulong timestampmicro = 0;
-            // First Byte is command
-            //Second is length, third also for long frame
-            //Data
-            //Checksum
-            bool Chk = false;
             try
             {
-                Chk = (WaitForSerial(1, timeout));
-                if (Chk == false)
+                UInt16 Length = 0;
+
+                byte offset = 0;
+                SerialByte rx = new SerialByte(3); // we dont read more than 3 bytes at a time
+                SerialByte timestampbuf = new SerialByte(3);
+                ulong timestampmicro = 0;
+                // First Byte is command
+                //Second is length, third also for long frame
+                //Data
+                //Checksum
+                bool Chk = false;
+                try
                 {
-                    Debug.WriteLine("Timeout.. no data present A");
+                    Chk = (WaitForSerial(1, timeout));
+                    if (Chk == false)
+                    {
+                        Debug.WriteLine("Timeout.. no data present A");
+                        return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
+                    }
+
+                    //get first byte for command
+                    this.Port.Receive(rx, 0, 1);
+                }
+                catch (Exception) // timeout exception - log no data, return error.
+                {
+                    Debug.WriteLine("No Data");
                     return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
                 }
 
-                //get first byte for command
-                this.Port.Receive(rx, 0, 1);
-            }
-            catch (Exception) // timeout exception - log no data, return error.
-            {
-                Debug.WriteLine("No Data");
-                return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
-            }
 
-
-            if (rx.Data[0] == 0x8 || rx.Data[0] == 0x9) //for network frames
-            {
-                //check if timestamps enabled
-                if (TimeStampsEnabled)
+                if (rx.Data[0] == 0x8 || rx.Data[0] == 0x9) //for network frames
                 {
-                    //next 4 bytes will be timestamp in microseconds
-                    for (byte i = 0; i < 4; i++)
+                    //check if timestamps enabled
+                    if (TimeStampsEnabled)
+                    {
+                        //next 4 bytes will be timestamp in microseconds
+                        for (byte i = 0; i < 4; i++)
+                        {
+                            Chk = (WaitForSerial(1));
+                            if (Chk == false)
+                            {
+                                Debug.WriteLine("Timeout.. no data present B");
+                                return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
+                            }
+                            this.Port.Receive(timestampbuf, i, 1);
+                        }
+                        timestampmicro = (ulong)((ulong)timestampbuf.Data[0] * 0x100 ^ 3) + (ulong)((ulong)timestampbuf.Data[1] * 0x100 ^ 2) + (ulong)((ulong)timestampbuf.Data[0] * 0x100) + (ulong)timestampbuf.Data[0];
+                    }
+                    if (rx.Data[0] == 0x8) //if short, only get one byte for length
                     {
                         Chk = (WaitForSerial(1));
                         if (Chk == false)
                         {
-                            Debug.WriteLine("Timeout.. no data present B");
+                            Debug.WriteLine("Timeout.. no data present C");
                             return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
                         }
-                        this.Port.Receive(timestampbuf, i, 1);
+                        this.Port.Receive(rx, 1, 1);
+                        Length = rx.Data[1];
                     }
-                    timestampmicro = (ulong)((ulong)timestampbuf.Data[0] * 0x100 ^ 3) + (ulong)((ulong)timestampbuf.Data[1] * 0x100 ^ 2) + (ulong)((ulong)timestampbuf.Data[0] * 0x100) + (ulong)timestampbuf.Data[0];
+                    else //if long, get two bytes for length
+                    {
+                        offset += 1;
+                        Chk = (WaitForSerial(2));
+                        if (Chk == false)
+                        {
+                            Debug.WriteLine("Timeout.. no data present D");
+                            return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
+                        }
+                        this.Port.Receive(rx, 1, 2);
+                        Length = (ushort)((ushort)(rx.Data[1] * 0x100) + rx.Data[2]);
+                    }
+
                 }
-                if (rx.Data[0] == 0x8) //if short, only get one byte for length
+                else //for all other received frames
                 {
                     Chk = (WaitForSerial(1));
                     if (Chk == false)
                     {
-                        Debug.WriteLine("Timeout.. no data present C");
+                        Debug.WriteLine("Timeout.. no data present E");
                         return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
                     }
                     this.Port.Receive(rx, 1, 1);
                     Length = rx.Data[1];
                 }
-                else //if long, get two bytes for length
-                {
-                    offset += 1;
-                    Chk = (WaitForSerial(2));
-                    if (Chk == false)
-                    {
-                        Debug.WriteLine("Timeout.. no data present D");
-                        return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
-                    }
-                    this.Port.Receive(rx, 1, 2);
-                    Length = (ushort)((ushort)(rx.Data[1] * 0x100) + rx.Data[2]);
-                }
 
-            }
-            else //for all other received frames
-            {
-                Chk = (WaitForSerial(1));
+                SerialByte receive = new SerialByte(Length + 3 + offset);
+                Chk = (WaitForSerial((ushort)(Length + 1)));
                 if (Chk == false)
                 {
-                    Debug.WriteLine("Timeout.. no data present E");
+                    Debug.WriteLine("Timeout.. no data present F");
                     return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
                 }
-                this.Port.Receive(rx, 1, 1);
-                Length = rx.Data[1];
-            }
 
-            SerialByte receive = new SerialByte(Length + 3 + offset);
-            Chk = (WaitForSerial((ushort)(Length + 1)));
-            if (Chk == false)
-            {
-                Debug.WriteLine("Timeout.. no data present F");
-                return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
-            }
-
-            int bytes;
-            receive.Data[0] = rx.Data[0];//Command
-            receive.Data[1] = rx.Data[1];//length
-            if (rx.Data[0] == 0x09) receive.Data[2] = rx.Data[2];//length long frame
-            bytes = this.Port.Receive(receive, 2 + offset, Length + 1);//get rest of frame
-            if (bytes <= 0)
-            {
-                Debug.WriteLine("Failed reading " + Length + " byte packet");
-                return Response.Create(ResponseStatus.Error, (OBDMessage)null);
-            }
-            //should have entire frame now
-            //verify checksum correct
-            byte CalcChksm = 0;
-            for (ushort i = 0; i < (receive.Data.Length - 1); i++) CalcChksm += receive.Data[i];
-            if (rx.Data[0] == 0x08 || rx.Data[0] == 0x09)
-            {
-                if (TimeStampsEnabled)
+                int bytes;
+                receive.Data[0] = rx.Data[0];//Command
+                receive.Data[1] = rx.Data[1];//length
+                if (rx.Data[0] == 0x09) receive.Data[2] = rx.Data[2];//length long frame
+                bytes = this.Port.Receive(receive, 2 + offset, Length + 1);//get rest of frame
+                if (bytes <= 0)
                 {
-                    CalcChksm += timestampbuf.Data[0];
-                    CalcChksm += timestampbuf.Data[1];
-                    CalcChksm += timestampbuf.Data[2];
-                    CalcChksm += timestampbuf.Data[3];
+                    Debug.WriteLine("Failed reading " + Length + " byte packet");
+                    return Response.Create(ResponseStatus.Error, (OBDMessage)null);
+                }
+                //should have entire frame now
+                //verify checksum correct
+                byte CalcChksm = 0;
+                for (ushort i = 0; i < (receive.Data.Length - 1); i++) CalcChksm += receive.Data[i];
+                if (rx.Data[0] == 0x08 || rx.Data[0] == 0x09)
+                {
+                    if (TimeStampsEnabled)
+                    {
+                        CalcChksm += timestampbuf.Data[0];
+                        CalcChksm += timestampbuf.Data[1];
+                        CalcChksm += timestampbuf.Data[2];
+                        CalcChksm += timestampbuf.Data[3];
+                    }
+                }
+                CalcChksm = (byte)~CalcChksm;
+
+                if (receive.Data[receive.Data.Length - 1] != CalcChksm)
+                {
+                    Debug.WriteLine("Total Length Data=" + Length + " RX: " + receive.Data.ToHex());
+                    Debug.WriteLine("Checksum error on received message.");
+                    return null;
+                }
+
+                //Debug.WriteLine("Total Length Data=" + Length + " RX: " + receive.ToHex());
+
+                /* if (receive.Data.Length > 5 && receive.Data[5] == 0x7F)
+                 {
+                     // Error from the device
+                     OBDMessage result = new OBDMessage(receive.Data);
+                     Debug.WriteLine("XPro Error: " + result.ToString());
+                     return Response.Create(ResponseStatus.Error, result);
+                 }
+                 else*/
+                if (receive.Data[0] == 0x8 || receive.Data[0] == 0x9)
+                {
+                    //network frames //Strip header and checksum
+                    byte[] StrippedFrame = new byte[Length];
+                    Buffer.BlockCopy(receive.Data, 2 + offset, StrippedFrame, 0, Length);
+                    //Debug.WriteLine("RX: " + StrippedFrame.ToHex());
+                    //if (!TimeStampsEnabled)
+
+                    OBDMessage rMsg = new OBDMessage(StrippedFrame, (ulong)rx.TimeStamp, 0);
+                    rMsg.SysTimeStamp = (ulong)rx.TimeStamp;
+                    this.Enqueue(rMsg);
+                    /*                if (!TimeStampsEnabled)
+                                        timestampmicro = (ulong)rx.TimeStamp;
+                                    this.Enqueue(new OBDMessage(StrippedFrame, timestampmicro, 0));
+                    */
+                    return null;
+                }
+                else
+                {
+                    // Valid message from the device
+                    //Debug.WriteLine("XPro: " + receive.ToHex());
+                    OBDMessage rMsg = new OBDMessage(receive.Data);
+                    rMsg.TimeStamp = (ulong)rx.TimeStamp;
+                    return Response.Create(ResponseStatus.Success, rMsg);
                 }
             }
-            CalcChksm = (byte)~CalcChksm;
-
-            if (receive.Data[receive.Data.Length - 1] != CalcChksm)
+            catch (Exception ex)
             {
-                Debug.WriteLine("Total Length Data=" + Length + " RX: " + receive.Data.ToHex());
-                Debug.WriteLine("Checksum error on received message.");
-                return null;
-            }
-
-            //Debug.WriteLine("Total Length Data=" + Length + " RX: " + receive.ToHex());
-
-           /* if (receive.Data.Length > 5 && receive.Data[5] == 0x7F)
-            {
-                // Error from the device
-                OBDMessage result = new OBDMessage(receive.Data);
-                Debug.WriteLine("XPro Error: " + result.ToString());
-                return Response.Create(ResponseStatus.Error, result);
-            }
-            else*/
-           if (receive.Data[0] == 0x8 || receive.Data[0] == 0x9)
-            {
-                //network frames //Strip header and checksum
-                byte[] StrippedFrame = new byte[Length];
-                Buffer.BlockCopy(receive.Data, 2 + offset, StrippedFrame, 0, Length);
-                //Debug.WriteLine("RX: " + StrippedFrame.ToHex());
-                //if (!TimeStampsEnabled)
-
-                OBDMessage rMsg = new OBDMessage(StrippedFrame, (ulong)rx.TimeStamp, 0);
-                rMsg.SysTimeStamp = (ulong)rx.TimeStamp;
-                this.Enqueue(rMsg);
-/*                if (!TimeStampsEnabled)
-                    timestampmicro = (ulong)rx.TimeStamp;
-                this.Enqueue(new OBDMessage(StrippedFrame, timestampmicro, 0));
-*/
-                return null;
-            }
-            else
-            {
-                // Valid message from the device
-                //Debug.WriteLine("XPro: " + receive.ToHex());
-                OBDMessage rMsg = new OBDMessage(receive.Data);
-                rMsg.TimeStamp = (ulong)rx.TimeStamp;
-                return Response.Create(ResponseStatus.Success, rMsg);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, ReadDVIPacket line " + line + ": " + ex.Message);
+                return Response.Create(ResponseStatus.Error, (OBDMessage)null);
             }
         }
 
@@ -465,82 +478,95 @@ namespace UniversalPatcher
         /// </summary>
         private Response<OBDMessage> SendDVIPacket(OBDMessage message, int responses)
         {
-            int length = message.GetBytes().Length;
-            byte[] RawPacket = message.GetBytes();
-            byte[] SendPacket = new byte[length + 3];
-
-            if (length > 0xFF)
+            try
             {
-                System.Array.Resize(ref SendPacket, SendPacket.Length + 1);
-                SendPacket[0] = 0x11;
-                SendPacket[1] = (byte)(length >> 8);
-                SendPacket[2] = (byte)length;
-                Buffer.BlockCopy(RawPacket, 0, SendPacket, 3, length);
-            }
-            else
-            {
-                SendPacket[0] = 0x10;
-                SendPacket[1] = (byte)length;
-                Buffer.BlockCopy(RawPacket, 0, SendPacket, 2, length);
-            }
+                int length = message.GetBytes().Length;
+                byte[] RawPacket = message.GetBytes();
+                byte[] SendPacket = new byte[length + 3];
 
-            //Add checksum
-            SendPacket[SendPacket.Length - 1] = CalcChecksum(SendPacket);
-
-            //Send frame
-            this.Port.Send(SendPacket);
-            Debug.WriteLine("TX: " + message.ToString());
-
-            // Wait for confirmation of successful send
-            Response<OBDMessage> m = null;
-
-            if (responses < 1)
-            {
-                return Response.Create(ResponseStatus.Success, new OBDMessage(new byte[0]));
-            }
-            for (int attempt = 0; attempt < 10; attempt++)
-            {
-                m = ReadDVIPacket(500);
-                if (m != null)
+                if (length > 0xFF)
                 {
-                    if (m.Status == ResponseStatus.Timeout)
-                    {
-                        continue;
-                    }
-                    break;
-                }
-            }            
-
-            if (m == null)
-            {
-                // This should never happen, but just in case...
-                Logger("No response to send attempt. " + message.ToString());
-                return Response.Create(ResponseStatus.Error, new OBDMessage(new byte[0]));
-            }
-
-            Debug.WriteLine("RX: " + m.ToString());
-            if (m.Status == ResponseStatus.Success)
-            {
-                byte[] Val = m.Value.GetBytes();
-                if (Val[0] == 0x20 && Val[2] == 0x00)
-                {
-                    //Debug.WriteLine("TX: " + message.ToString());
-                    return Response.Create(ResponseStatus.Success, message);
-                }
-                else if (Val[0] == 0x21 && Val[2] == 0x00)
-                {
-                    //Debug.WriteLine("TX: " + message.ToString());
-                    return Response.Create(ResponseStatus.Success, message);
+                    System.Array.Resize(ref SendPacket, SendPacket.Length + 1);
+                    SendPacket[0] = 0x11;
+                    SendPacket[1] = (byte)(length >> 8);
+                    SendPacket[2] = (byte)length;
+                    Buffer.BlockCopy(RawPacket, 0, SendPacket, 3, length);
                 }
                 else
                 {
-                    Logger("Unable to transmit, odd response from device: " + message.ToString());
+                    SendPacket[0] = 0x10;
+                    SendPacket[1] = (byte)length;
+                    Buffer.BlockCopy(RawPacket, 0, SendPacket, 2, length);
+                }
+
+                //Add checksum
+                SendPacket[SendPacket.Length - 1] = CalcChecksum(SendPacket);
+
+                //Send frame
+                this.Port.Send(SendPacket);
+                Debug.WriteLine("TX: " + message.ToString());
+
+                // Wait for confirmation of successful send
+                Response<OBDMessage> m = null;
+
+                if (responses < 1)
+                {
+                    return Response.Create(ResponseStatus.Success, new OBDMessage(new byte[0]));
+                }
+                for (int attempt = 0; attempt < 10; attempt++)
+                {
+                    m = ReadDVIPacket(500);
+                    if (m != null)
+                    {
+                        if (m.Status == ResponseStatus.Timeout)
+                        {
+                            continue;
+                        }
+                        break;
+                    }
+                }
+
+                if (m == null)
+                {
+                    // This should never happen, but just in case...
+                    Logger("No response to send attempt. " + message.ToString());
+                    return Response.Create(ResponseStatus.Error, new OBDMessage(new byte[0]));
+                }
+
+                Debug.WriteLine("RX: " + m.ToString());
+                if (m.Status == ResponseStatus.Success)
+                {
+                    byte[] Val = m.Value.GetBytes();
+                    if (Val[0] == 0x20 && Val[2] == 0x00)
+                    {
+                        //Debug.WriteLine("TX: " + message.ToString());
+                        return Response.Create(ResponseStatus.Success, message);
+                    }
+                    else if (Val[0] == 0x21 && Val[2] == 0x00)
+                    {
+                        //Debug.WriteLine("TX: " + message.ToString());
+                        return Response.Create(ResponseStatus.Success, message);
+                    }
+                    else
+                    {
+                        Logger("Unable to transmit, odd response from device: " + message.ToString());
+                        return Response.Create(ResponseStatus.Error, message);
+                    }
+                }
+                else
+                {
+                    Logger("Unable to transmit, " + m.Status + ": " + message.ToString());
                     return Response.Create(ResponseStatus.Error, message);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                Logger("Unable to transmit, " + m.Status + ": " + message.ToString());
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, SendDVIPacket line " + line + ": " + ex.Message);
                 return Response.Create(ResponseStatus.Error, message);
             }
         }
@@ -562,16 +588,29 @@ namespace UniversalPatcher
         /// </summary>
         public override bool SendMessage(OBDMessage message, int responses)
         {
-            //Debug.WriteLine("Sendrequest called");
-            //  Debug.WriteLine("TX: " + message.GetBytes().ToHex());            
-            datalogger.LogDevice.MessageSent(message);
-            Response<OBDMessage> m = SendDVIPacket(message, responses);
-            if (m.Status != ResponseStatus.Success)
+            try
             {
-                Debug.WriteLine(m.ToString());
+                //Debug.WriteLine("Sendrequest called");
+                //  Debug.WriteLine("TX: " + message.GetBytes().ToHex());            
+                datalogger.LogDevice.MessageSent(message);
+                Response<OBDMessage> m = SendDVIPacket(message, responses);
+                if (m.Status != ResponseStatus.Success)
+                {
+                    Debug.WriteLine(m.ToString());
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, SendMessage line " + line + ": " + ex.Message);
                 return false;
             }
-            return true;
         }
 
         /// <summary>

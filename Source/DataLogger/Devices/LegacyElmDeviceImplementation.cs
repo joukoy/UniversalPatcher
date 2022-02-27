@@ -219,7 +219,7 @@ namespace UniversalPatcher
             if (header != this.currentHeader)
             {
                 SerialString setHeaderResponse = this.SendRequest("AT SH " + header, getResponse);
-                Debug.WriteLine("Set header response: " + setHeaderResponse);
+                Debug.WriteLine("Set header response: " + setHeaderResponse.Data);
 
 /*                if (setHeaderResponse.Data != "OK")
                 {

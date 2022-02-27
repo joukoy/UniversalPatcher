@@ -319,22 +319,34 @@ namespace UniversalPatcher
         /// </summary>
         protected void Enqueue(OBDMessage message)
         {
-            Debug.WriteLine("Message: " + message.ToString() +", elmprompt: " + message.ElmPrompt);
-            MsgEventparameter msg = new MsgEventparameter(message);
-            OnMsgReceived(msg);
-            if (message.ElmPrompt || ( message.Length > 4 && message.GetBytes()[3] == 0x6A))
+            try
             {
-                lock (this.logQueue)
+                //Debug.WriteLine("Message: " + message.ToString() +", elmprompt: " + message.ElmPrompt);
+                MsgEventparameter msg = new MsgEventparameter(message);
+                OnMsgReceived(msg);
+                if (message.ElmPrompt || ( message.Length > 4 && message.GetBytes()[3] == 0x6A))
                 {
-                    this.logQueue.Enqueue(message);
+                    lock (this.logQueue)
+                    {
+                        this.logQueue.Enqueue(message);
+                    }
+                }
+                if (message.Length > 3)
+                {
+                    lock (this.queue)
+                    {
+                        this.queue.Enqueue(message);
+                    }
                 }
             }
-            if (message.Length > 3)
+            catch (Exception ex)
             {
-                lock (this.queue)
-                {
-                    this.queue.Enqueue(message);
-                }
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, Device.Enqueue line " + line + ": " + ex.Message);
             }
         }
 

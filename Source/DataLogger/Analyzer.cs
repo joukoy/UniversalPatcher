@@ -20,6 +20,8 @@ namespace UniversalPatcher
         public bool stoploop { get; set; }
         private bool HideHeartBeat;
         private Task analyzerTask;
+        private bool waiting4x = false;
+        private bool EventMode = false;
 
         public Analyzer()
         {
@@ -145,15 +147,26 @@ namespace UniversalPatcher
         public void StartAnalyzer(string DevType, bool hideHeartBeat)
         {
             try
-            {
+            {                
                 if (LoggerUtils.analyzerData == null)
                     LoggerUtils.analyzerData = new List<OBDMessage>();
                 HideHeartBeat = hideHeartBeat;
                 stoploop = false;
                 Logger("Waiting data...");
                 datalogger.LogDevice.SetTimeout(TimeoutScenario.Maximum);
-                datalogger.LogDevice.SetAnalyzerFilter();
-                analyzerTask = Task.Factory.StartNew(() => analyzerloop());
+                if (datalogger.LogRunning)
+                {
+                    EventMode = true;
+                    datalogger.LogDevice.RemoveFilters();
+                    datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
+                    datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
+                }
+                else
+                {
+                    EventMode = false;
+                    datalogger.LogDevice.SetAnalyzerFilter();
+                    analyzerTask = Task.Factory.StartNew(() => analyzerloop());
+                }
             }
             catch (Exception ex)
             {
@@ -166,10 +179,50 @@ namespace UniversalPatcher
             }
         }
 
+        private void LogDevice_MsgSent(object sender, MsgEventparameter e)
+        {
+            HandleMessage(e.Msg);
+        }
+
+        private void LogDevice_MsgReceived(object sender, MsgEventparameter e)
+        {
+            HandleMessage(e.Msg);
+        }
+
         public void StopAnalyzer()
         {
+            if (EventMode)
+            {
+                datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
+                datalogger.LogDevice.MsgSent -= LogDevice_MsgSent;
+            }
+            else
+            {
+                stoploop = true;
+                analyzerTask.LogExceptions();
+            }
+        }
+
+        public void SwitchtoEventMode()
+        {
             stoploop = true;
-            analyzerTask.LogExceptions();
+            //analyzerTask.LogExceptions();
+            Thread.Sleep(1000);
+            EventMode = true;
+            datalogger.LogDevice.RemoveFilters();
+            datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
+            datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
+        }
+
+        public void SwitchtoLoopMode()
+        {
+            stoploop = false;
+            EventMode = false;
+            datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
+            datalogger.LogDevice.MsgSent -= LogDevice_MsgSent;
+            Thread.Sleep(500);
+            datalogger.LogDevice.SetAnalyzerFilter();
+            analyzerTask = Task.Factory.StartNew(() => analyzerloop());
         }
 
         public VPWRow ProcessLine(OBDMessage msg)
@@ -288,11 +341,52 @@ namespace UniversalPatcher
             return azd;
         }
 
-        private void analyzerloop()
+        private void HandleMessage(OBDMessage rcv)
+        {
+            if (!datalogger.LogRunning && datalogger.LogDevice.LogDeviceType == LoggingDevType.Elm && rcv.ElmPrompt)
+            {
+                datalogger.LogDevice.SetAnalyzerFilter();
+            }
+            if (rcv.Length > 3)
+            {
+                if (rcv[1] == 0xfe && rcv[3] == 0xa0)
+                {
+                    Debug.WriteLine("Received 0xFE, , 0xA0 - Ready to switch to 4x");
+                    waiting4x = true;
+                }
+                if (waiting4x && rcv[1] == 0xfe && rcv[3] == 0xa1)
+                {
+                    waiting4x = false;
+                    Debug.WriteLine("Received 0xFE, , 0xA1 - switching to 4x");
+                    if (datalogger.LogDevice.SetVpwSpeed(VpwSpeed.FourX))
+                        Debug.WriteLine("Switched to 4X");
+                    else
+                        Debug.WriteLine("Switch to 4X failed");
+                }
+
+                Debug.WriteLine("ByteArray: " + rcv.ToString());
+                VPWRow vRow = ProcessLine(rcv);
+                if (vRow != null)
+                {
+                    if (vRow.IsHeartBeat && HideHeartBeat)
+                    {
+                        Debug.WriteLine("Hiding Heartbeat: " + rcv.ToString());
+                    }
+                    else
+                    {
+                        AnalyzerData msg = AnalyzeMsg(vRow);
+                        LoggerUtils.analyzerData.Add(rcv);
+                        OnRowAnalyzed(msg);
+                    }
+                }
+            }
+
+        }
+
+        private void analyzerloop() 
         {
             datalogger.LogDevice.ClearMessageBuffer();
             datalogger.LogDevice.ClearMessageQueue();
-            bool waiting4x = false;
 
             while (!stoploop)
             {
@@ -303,45 +397,7 @@ namespace UniversalPatcher
                     {
                         continue;
                     }
-                    if (datalogger.LogDevice.LogDeviceType == LoggingDevType.Elm && rcv.ElmPrompt)
-                    {
-                        datalogger.LogDevice.SetAnalyzerFilter();
-                    }
-                    if (rcv.Length > 3)
-                    {
-                        if (rcv[1] == 0xfe && rcv[3] == 0xa0)
-                        {
-                            Debug.WriteLine("Received 0xFE, , 0xA0 - Ready to switch to 4x");
-                            waiting4x = true;
-                        }
-                        if (waiting4x && rcv[1] == 0xfe && rcv[3] == 0xa1)
-                        {
-                            waiting4x = false;
-                            Debug.WriteLine("Received 0xFE, , 0xA1 - switching to 4x");
-                            datalogger.LogDevice.Enable4xReadWrite = true;
-                            if (datalogger.LogDevice.SetVpwSpeed(VpwSpeed.FourX))
-                                Debug.WriteLine("Switched to 4X");
-                            else
-                                Debug.WriteLine("Switch to 4X failed");
-                        }
-
-                        Debug.WriteLine("ByteArray: " + rcv.ToString());
-                        VPWRow vRow = ProcessLine(rcv);
-                        if (vRow != null)
-                        {
-                            if (vRow.IsHeartBeat && HideHeartBeat)
-                            {
-                                Debug.WriteLine("Hiding Heartbeat: " + rcv.ToString());
-                            }
-                            else
-                            {
-                                AnalyzerData msg = AnalyzeMsg(vRow);
-                                LoggerUtils.analyzerData.Add(rcv);
-                                OnRowAnalyzed(msg);
-                            }
-                        }
-                    }
-                    
+                    HandleMessage(rcv);
                 }
                 catch (Exception ex)
                 {
@@ -358,7 +414,10 @@ namespace UniversalPatcher
             {
                 Debug.WriteLine("Exit from analyzer loop");
                 Logger("Analyzer stopped");
-                datalogger.LogDevice.SetLoggingFilter();
+                if (!datalogger.LogRunning)
+                {
+                    datalogger.LogDevice.SetLoggingFilter();
+                }
             }
             catch (Exception ex)
             {

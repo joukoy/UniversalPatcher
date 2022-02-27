@@ -26,6 +26,10 @@ namespace UniversalPatcher
                 lock (dbgq)
                 {
                     string msg = dbgq.Dequeue();
+                    if (msg.Contains(Environment.NewLine))
+                    {
+                        msg = "[" + DateTime.Now.ToString("HH:mm:ss.fff") + "] " + msg;
+                    }
                     rtBox.AppendText(msg);
                 }
             }

@@ -18,6 +18,7 @@ namespace UniversalPatcher
     {
         public Task logTask;
         private Task logWriterTask;
+        private Task ConsoleTask;
         public IPort port;
         public  bool Connected = false;
         public  List<PidConfig> PidProfile { get; set; }
@@ -26,10 +27,12 @@ namespace UniversalPatcher
         public  Device LogDevice;
         public  int ReceivedBytes = 0;
         public  string OS;
-        public  SlotHandler slothandler;        
+        public  SlotHandler slothandler;
 
+        public bool LogRunning = false;
+        public bool AnalyzerRunning = false;
+        public bool ReceiveLoopRunning = false;
         private  bool AllSlotsRequested = false;
-        public  RunMode CurrentMode;
         private  bool passive;
         public  int maxPassiveSlotsPerMsg = 50;
         public  bool stopLogLoop;
@@ -39,8 +42,9 @@ namespace UniversalPatcher
 
         private  readonly object pauselock = new object();
 
-        public  Queue<Analyzer.AnalyzerData> analyzerq = new Queue<Analyzer.AnalyzerData>();
+        //public  Queue<Analyzer.AnalyzerData> analyzerq = new Queue<Analyzer.AnalyzerData>();
         public  Queue<LogData> LogFileQueue = new Queue<LogData>();
+        private Queue<QueuedCommand> queuedCommands = new Queue<QueuedCommand>();
 
         //Set these values before StartLogging()
         public  bool writelog;
@@ -52,11 +56,18 @@ namespace UniversalPatcher
         public  int maxSlotsPerMessage = 4;   //How many Slots in one Slot request message
         public  bool HighPriority = false;
 
-        public enum RunMode
+        private enum QueueCmd
         {
-            NotRunning = 0,
-            LogRunning = 1,
-            AnalyzeRunning = 2,
+            Getdtc,
+            GetVin,
+            Custom
+        }
+        private class QueuedCommand
+        {
+            public QueueCmd Cmd { get; set; }
+            public byte param1 { get; set; }
+            public byte param2 { get; set; }
+            public OBDMessage CustomMsg { get; set; }
         }
 
         public enum LoggingDevType
@@ -101,22 +112,93 @@ namespace UniversalPatcher
         public void UploadScript(string FileName)
         {
             try
-            {                
+            {
+                LogDevice.ClearMessageQueue();
                 StreamReader sr = new StreamReader(FileName);
                 string Line;
                 while ((Line = sr.ReadLine()) != null)
                 {
-                    byte[] msg = Line.Replace(" ", "").ToBytes();
-                    OBDMessage oMsg = new OBDMessage(msg);
-                    LogDevice.SendMessage(oMsg, 1);
+                    if (Line.Length > 1)
+                    {
+                        if (Line.ToLower().StartsWith("t:"))
+                        {
+                            int delay = 0;
+                            if (int.TryParse(Line.Substring(2), out delay))
+                            {
+                                Debug.WriteLine("Delay: {0} ms ", delay);
+                                Thread.Sleep(delay);
+                            }
+                        }
+                        else
+                        {
+                            byte[] msg = Line.Replace(" ", "").ToBytes();
+                            Debug.WriteLine("Sending data: " + BitConverter.ToString(msg));
+                            OBDMessage oMsg = new OBDMessage(msg);
+                            if (LogRunning)
+                            {
+                                QueueCustomCmd(oMsg);
+                            }
+                            else
+                            {
+                                LogDevice.SendMessage(oMsg, 1);
+                            }
+                            Thread.Sleep(Properties.Settings.Default.LoggerScriptDelay);
+                        }
+                    }
                 }
+                sr.Close();
             }
             catch (Exception ex)
             {
                 LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, UploadScript line " + line + ": " + ex.Message);
             }
         }
-        public  Device CreateSerialDevice(string serialPortName, string serialPortDeviceType, bool ftdi)
+
+        public void StartReceiveLoop()
+        {
+            if (AnalyzerRunning || LogRunning || ReceiveLoopRunning)
+            {
+                return;
+            }
+            ReceiveLoopRunning = true;
+            ConsoleTask = Task.Factory.StartNew(() => ReceiveLoop());
+        }
+
+        public void StopReceiveLoop()
+        {
+            if (ReceiveLoopRunning)
+            {
+                ReceiveLoopRunning = false;
+                Thread.Sleep(500);
+                Application.DoEvents();
+            }
+        }
+
+        private void ReceiveLoop()
+        {
+/*            Debug.WriteLine("Starting receive loop (for console)");
+            while (Connected && ReceiveLoopRunning)
+            {
+                try
+                {
+                    Thread.Sleep(500);
+                    LogDevice.ReceiveMessage();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Consoleloop: " + ex.Message);
+                }
+            }
+            Debug.WriteLine("Receive loop end");
+*/        }
+
+        public Device CreateSerialDevice(string serialPortName, string serialPortDeviceType, bool ftdi)
         {
             try
             {
@@ -268,8 +350,8 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    string tStamp = new DateTime((long)ld.SysTimeStamp).ToString("yyyy-MM-dd-HH:mm:ss");
-                    tStamp += " [" + ld.TimeStamp.ToString() + "]";
+                    string tStamp = new DateTime((long)ld.SysTimeStamp).ToString("HH:mm:ss.fff");
+                    //tStamp += " [" + ld.TimeStamp.ToString() + "]";
                     WriteLog(slothandler.CalculatePidValues(ld.Values), tStamp );
                 }
             }
@@ -551,8 +633,10 @@ namespace UniversalPatcher
         public  void StopLogging()
         {
             stopLogLoop = true;
-            logTask.LogExceptions();
-            logWriterTask.LogExceptions();
+            if (AnalyzerRunning)
+            {
+                analyzer.SwitchtoLoopMode();
+            }
         }
 
         public  bool StartLogging()
@@ -585,6 +669,15 @@ namespace UniversalPatcher
                     return false;
                 }
 
+                if (AnalyzerRunning)
+                {
+                    analyzer.SwitchtoEventMode();
+                }
+                if (ReceiveLoopRunning)
+                {
+                    StopReceiveLoop();
+                }
+
                 LogDevice.SetTimeout(TimeoutScenario.DataLogging1);
 
                 if (QueryDevicesOnBus(false).Status != ResponseStatus.Success)
@@ -593,8 +686,11 @@ namespace UniversalPatcher
                     return false;
                 if (!SetBusQuiet())
                     return false;
-                if (!LogDevice.SetLoggingFilter())
-                    return false;
+                if (!AnalyzerRunning)
+                {
+                    if (!LogDevice.SetLoggingFilter())
+                        return false;
+                }
                 //if (!SetMode1())
                 //  return false;
                 //SetHighSpeedMode(); //Not for logging!
@@ -733,7 +829,7 @@ namespace UniversalPatcher
             return rv;
         }
 
-        public  string QueryVIN()
+        public void QueryVIN()
         {
             string vin = "";
             try
@@ -750,7 +846,7 @@ namespace UniversalPatcher
                     {
                         Logger("No respond to VIN Query message");
                         Debug.WriteLine("Expected " + string.Join(" ", Array.ConvertAll(queryMsg, b => b.ToString("X2"))));
-                        return "";
+                        return;
                     }
                     Thread.Sleep(100);
                     OBDMessage resp = LogDevice.ReceiveMessage();
@@ -758,74 +854,122 @@ namespace UniversalPatcher
                     Debug.WriteLine("Response: " + resp.ToString());
                 }
                 vin = Encoding.ASCII.GetString(vinbytes, 1, 17);
+                Logger("VIN Code:" + vin);
+
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("QueryVIN: " + ex.Message);
             }
-            return vin.ToString();
         }
 
-        private  DTCCodeStatus DecodeDTCstatus(byte[] msg)
+        public DTCCodeStatus DecodeDTCstatus(byte[] msg)
         {
             DTCCodeStatus dcs = new DTCCodeStatus();
-            ushort dtc = ReadUint16(msg, 4, true);
-            byte stat = msg[6];
-            if (stat > 0)
+            try
             {
-                string code = DtcSearch.DecodeDTC(dtc.ToString("X4"));
-                dcs.Code = code;
-                byte module = msg[2];
-                dcs.Module = module.ToString("X2");
-                if (analyzer.PhysAddresses.ContainsKey(module))
-                    dcs.Module = analyzer.PhysAddresses[module];
-                OBD2Code descr = OBD2Codes.Where(x => x.Code == code).FirstOrDefault();
-                if (descr != null)
-                    dcs.Description = descr.Description ;
-                dcs.Status = "";
-                if (stat != 0xFF)
+                ushort dtc = ReadUint16(msg, 4, true);
+                byte stat = msg[6];
+                if (stat > 0)
                 {
-                    if ((stat & 0x80) == 0x80)
+                    string code = DtcSearch.DecodeDTC(dtc.ToString("X4"));
+                    dcs.Code = code;
+                    byte module = msg[2];
+                    dcs.Module = module.ToString("X2");
+                    if (analyzer.PhysAddresses.ContainsKey(module))
+                        dcs.Module = analyzer.PhysAddresses[module];
+                    OBD2Code descr = OBD2Codes.Where(x => x.Code == code).FirstOrDefault();
+                    if (descr != null)
+                        dcs.Description = descr.Description;
+                    dcs.Status = "";
+                    if (stat != 0xFF)
                     {
-                        dcs.Status += "MIL ILLUMINATED,";
+                        if ((stat & 0x80) == 0x80)
+                        {
+                            dcs.Status += "MIL ILLUMINATED,";
+                        }
+                        if ((stat & 0x40) == 0x80)
+                        {
+                            dcs.Status += "MIL PENDING,";
+                        }
+                        if ((stat & 0x20) == 0x80)
+                        {
+                            dcs.Status += "MIL PREVIOUSLY ILLUMINATED -OLD CODE,";
+                        }
+                        if ((stat & 0x10) == 0x80)
+                        {
+                            dcs.Status += "STORED TROUBLE CODE (FREEZE FRAMD DATA AVAILABLE),";
+                        }
+                        if ((stat & 0x08) == 0x80)
+                        {
+                            dcs.Status += "GM SPECIFIC STATUS 1,";
+                        }
+                        if ((stat & 0x80) == 0x04)
+                        {
+                            dcs.Status += "GM SPECIFIC STATUS 0,";
+                        }
+                        if ((stat & 0x80) == 0x02)
+                        {
+                            dcs.Status += "CURRENT DTC CODE,";
+                        }
+                        if ((stat & 0x80) == 0x01)
+                        {
+                            dcs.Status += "IMMATURE DTC CODE,";
+                        }
+                        dcs.Status = dcs.Status.Trim(',');
                     }
-                    if ((stat & 0x40) == 0x80)
-                    {
-                        dcs.Status += "MIL PENDING,";
-                    }
-                    if ((stat & 0x20) == 0x80)
-                    {
-                        dcs.Status += "MIL PREVIOUSLY ILLUMINATED -OLD CODE,";
-                    }
-                    if ((stat & 0x10) == 0x80)
-                    {
-                        dcs.Status += "STORED TROUBLE CODE (FREEZE FRAMD DATA AVAILABLE),";
-                    }
-                    if ((stat & 0x08) == 0x80)
-                    {
-                        dcs.Status += "GM SPECIFIC STATUS 1,";
-                    }
-                    if ((stat & 0x80) == 0x04)
-                    {
-                        dcs.Status += "GM SPECIFIC STATUS 0,";
-                    }
-                    if ((stat & 0x80) == 0x02)
-                    {
-                        dcs.Status += "CURRENT DTC CODE,";
-                    }
-                    if ((stat & 0x80) == 0x01)
-                    {
-                        dcs.Status += "IMMATURE DTC CODE,";
-                    }
-                    dcs.Status = dcs.Status.Trim(',');
                 }
             }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, DecodeDTCstatus line " + line + ": " + ex.Message);
+            }
+
             return dcs;
         }
 
-        public  List<DTCCodeStatus> RequestDTCCodes(byte module, byte mode)
+        public void QueueCustomCmd(OBDMessage Msg)
         {
-            List<DTCCodeStatus> retVal = new List<DTCCodeStatus>();
+            Logger("Adding message to queue");
+            QueuedCommand command = new QueuedCommand();
+            command.Cmd = QueueCmd.Custom;
+            command.CustomMsg = Msg;
+            lock (queuedCommands)
+            {
+                queuedCommands.Enqueue(command);
+            }
+        }
+
+        public void QueueDtcRequest(byte module, byte mode)
+        {
+            Logger("Adding DTC request to queue");
+            QueuedCommand command = new QueuedCommand();
+            command.Cmd = QueueCmd.Getdtc;
+            command.param1 = module;
+            command.param2 = mode;
+            lock(queuedCommands)
+            {
+                queuedCommands.Enqueue(command);
+            }
+        }
+        public void QueueVINRequest()
+        {
+            Logger("Adding VIN request to queue");
+            QueuedCommand command = new QueuedCommand();
+            command.Cmd = QueueCmd.GetVin;
+            lock (queuedCommands)
+            {
+                queuedCommands.Enqueue(command);
+            }
+        }
+
+        public bool RequestDTCCodes(byte module, byte mode)
+        {
             try
             {
                 string moduleStr = module.ToString("X2");
@@ -836,56 +980,30 @@ namespace UniversalPatcher
                 if (analyzer.PhysAddresses.ContainsKey(module))
                     moduleStr = analyzer.PhysAddresses[module];
                 Logger("Requesting DTC codes for " + moduleStr);
-                if (OBD2Codes == null || OBD2Codes.Count == 0)
-                    LoadOBD2Codes();
-                //SetLoggingPaused(true);
-                OBDMessage resp = null;
-                Debug.WriteLine("Pause start");
-                Application.DoEvents();
-                lock (pauselock)
+                OBDMessage msg = new OBDMessage(new byte[] { Priority.Physical0, module, DeviceId.Tool, 0x19, mode, 0xFF, 0x00 });
+                bool m = LogDevice.SendMessage(msg, -50);
+                if (!m)
                 {
-                    SetBusQuiet();
-
-                    OBDMessage msg = new OBDMessage(new byte[] { Priority.Physical0, module, DeviceId.Tool, 0x19, mode, 0xFF, 0x00 });
-                    bool m = LogDevice.SendMessage(msg, -50);
-                    if (!m)
-                    {
-                        LoggerBold("Error sending request");
-                        return retVal;
-                    }
-                    //byte[] endframe = new byte[] { Priority.Physical0, DeviceId.Tool, module, 0x59, 0x00, 0x00, 0xFF };
-                    Thread.Sleep(10);
-                    resp = LogDevice.ReceiveMessage();
-                    //Logger("Received:" + resp.ToString());
+                    LoggerBold("Error sending request");
+                    return false;
                 }
-                Debug.WriteLine("Pause end");
-                for (int x=0; x<1000; x++) // & !Utility.CompareArraysPart(resp.GetBytes(), endframe))
+
+                //byte[] endframe = new byte[] { Priority.Physical0, DeviceId.Tool, module, 0x59, 0x00, 0x00, 0xFF };
+                Thread.Sleep(100);
+/*                if (datalogger.CurrentMode != RunMode.NotRunning)
                 {
-                    if (resp != null)
-                    {
-                        Debug.WriteLine(resp.ToString());
-                        if (resp.Length > 5 && resp.GetBytes()[1] == DeviceId.Tool && resp.GetBytes()[3] == 0x59)
-                        {
-                            DTCCodeStatus dcs = DecodeDTCstatus(resp.GetBytes());
-                            if (!string.IsNullOrEmpty(dcs.Module))
-                            {
-                                retVal.Add(dcs);
-                            }
-                            if (resp[4] == 0 && resp[5] == 0 && resp[6] == 0xFF)
-                            {
-                                Debug.WriteLine("End frame received after {0} attempt", x);
-                                break;
-                            }
-                        }
-                    }
+                    return true;
+                }
+*/
+                Debug.WriteLine("Receiving DTC codes...");
+                OBDMessage resp = LogDevice.ReceiveMessage();
+                //Logger("Received:" + resp.ToString());
+                while (resp != null) // & !Utility.CompareArraysPart(resp.GetBytes(), endframe))
+                {
+                    Debug.WriteLine(resp.ToString());
                     resp = LogDevice.ReceiveMessage();
                 }
                 
-                if (CurrentMode == RunMode.LogRunning && passive)
-                {
-                    maxSlotsPerMessage = 4;
-                    RequestPassiveModeSlots();
-                }
                 Logger("Done");
             }
             catch (Exception ex)
@@ -895,9 +1013,10 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                LoggerBold("Error, RequestDTCCodes line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, RequestDTCCodes line " + line + ": " + ex.Message);
+                return false;
             }
-            return retVal;
+            return true;
         }
 
 
@@ -1046,6 +1165,8 @@ namespace UniversalPatcher
                 return;
             }
 
+            SendQueuedCommand();
+
             if (passive)
             {
                 //if (DateTime.Now.Subtract(lastPresent) < TimeSpan.FromMilliseconds(4500) &&  DateTime.Now.Subtract(lastElmPrompt) < TimeSpan.FromSeconds(1))
@@ -1122,7 +1243,60 @@ namespace UniversalPatcher
             return true;
         }
                
-        public  void DataLoggingLoop()
+        private bool SendQueuedCommand()
+        {
+            if (queuedCommands.Count == 0)
+            {
+                return true;
+            }
+            QueuedCommand command;
+            lock (queuedCommands)
+            {
+                command = queuedCommands.Dequeue();
+            }
+
+            Application.DoEvents();
+            SetBusQuiet();
+            Thread.Sleep(10);
+            datalogger.LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
+            Thread.Sleep(10);
+            SetBusQuiet();
+            OBDMessage resp = LogDevice.ReceiveMessage();
+            while (resp != null)
+            {
+                resp = LogDevice.ReceiveMessage();
+            }
+            switch (command.Cmd)
+            {
+                case QueueCmd.Getdtc:
+                    RequestDTCCodes(command.param1, command.param2);
+                    break;
+                case QueueCmd.GetVin:
+                    QueryVIN();
+                    break;
+                case QueueCmd.Custom:
+                    LogDevice.SendMessage(command.CustomMsg, 1);
+                    break;
+            }
+            if (passive)
+            {
+                maxSlotsPerMessage = 4;
+                LogDevice.SetTimeout(TimeoutScenario.DataLogging4);
+                AllSlotsRequested = false;
+                RequestPassiveModeSlots();
+            }
+            else
+            {
+                if (LogDevice.LogDeviceType != LoggingDevType.Obdlink)
+                {
+                    LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
+                }
+
+            }
+            return true;
+        }
+
+        public void DataLoggingLoop()
         {
             Thread.CurrentThread.IsBackground = true;
             int totalSlots = 0;
@@ -1145,11 +1319,7 @@ namespace UniversalPatcher
                             break;
                         }
 
-                        OBDMessage oMsg = null;
-                        lock (pauselock) //Pause, if other operation
-                        {     
-                            oMsg = LogDevice.ReceiveLogMessage();
-                        }
+                        OBDMessage oMsg = LogDevice.ReceiveLogMessage();
                         if (oMsg == null)
                         {
                             continue;
@@ -1184,7 +1354,13 @@ namespace UniversalPatcher
                         slothandler.HandleSlotMessage(oMsg);
                     } //Inner logloop
 
-
+                    if (LogDevice.LogDeviceType == LoggingDevType.Other)
+                    {
+                        if (!SendQueuedCommand())
+                        {
+                            return;     //If receieved Stop-command, return
+                        }
+                    }
                     Application.DoEvents();
                     if (passive)
                     {
@@ -1227,7 +1403,7 @@ namespace UniversalPatcher
                 SetBusQuiet();
                 LogDevice.SetTimeout(TimeoutScenario.Maximum);
             }
-            CurrentMode = RunMode.NotRunning;
+            LogRunning = false;
             return;
         }
 

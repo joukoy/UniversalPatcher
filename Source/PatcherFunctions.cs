@@ -553,6 +553,11 @@ public class Upatcher
 
         }
 
+        Logger(",OBD2 Codes", false);
+        ShowSplash("OBD2 Codes");
+        Application.DoEvents();
+        LoadOBD2Codes();
+
         /*
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();

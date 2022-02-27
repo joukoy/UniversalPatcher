@@ -419,4 +419,10 @@
 - Logger: Moved Advanced setting & VPW Console to Adnvanced-tab
 - Logger: Script upload to VPW Console
 
+0.20.11
+- Logger: Better timestamps
+- Logger: Upload script: delay between commands, custom delay with row: T:<delay in ms>
+- Logger: Concurrent logging & Analyzer possible
+- Analyzer: separate start/stop button for analyzer
+
 

@@ -1313,5 +1313,29 @@ namespace UniversalPatcher.Properties {
                 this["LoggerConsoleFont"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LoggerConsoleJ2534Timestamps {
+            get {
+                return ((bool)(this["LoggerConsoleJ2534Timestamps"]));
+            }
+            set {
+                this["LoggerConsoleJ2534Timestamps"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("200")]
+        public int LoggerScriptDelay {
+            get {
+                return ((int)(this["LoggerScriptDelay"]));
+            }
+            set {
+                this["LoggerScriptDelay"] = value;
+            }
+        }
     }
 }
