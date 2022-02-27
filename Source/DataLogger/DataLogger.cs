@@ -16,9 +16,19 @@ namespace UniversalPatcher
 {
     public class DataLogger
     {
+        public DataLogger()
+        {
+        }
+        private CancellationTokenSource logTokenSource = new CancellationTokenSource();
+        private CancellationTokenSource receiverTokenSource = new CancellationTokenSource();
+        private CancellationTokenSource logWriterTokenSource = new CancellationTokenSource();
+        private CancellationToken logToken;
+        private CancellationToken receiverToken;
+        private CancellationToken logWriterToken;
+        private bool loggingpaused = false;
         public Task logTask;
         private Task logWriterTask;
-        private Task ConsoleTask;
+        private Task ReceiverTask;
         public IPort port;
         public  bool Connected = false;
         public  List<PidConfig> PidProfile { get; set; }
@@ -116,11 +126,29 @@ namespace UniversalPatcher
                 LogDevice.ClearMessageQueue();
                 StreamReader sr = new StreamReader(FileName);
                 string Line;
+                SetReceiverPaused(true);
                 while ((Line = sr.ReadLine()) != null)
                 {
                     if (Line.Length > 1)
                     {
-                        if (Line.ToLower().StartsWith("t:"))
+                        if (Line.ToLower().StartsWith("setspeed:"))
+                        {
+                            if (Line.Contains("4x"))
+                            {
+                                Debug.WriteLine("Setting VPW speed to 4x");
+                                LogDevice.SetVpwSpeed(VpwSpeed.FourX);
+                            }
+                            else if (Line.Contains("1x"))
+                            {
+                                Debug.WriteLine("Setting VPW speed to 1x");
+                                LogDevice.SetVpwSpeed(VpwSpeed.Standard);
+                            }
+                            else
+                            {
+                                Logger("Unknown speed: " + Line.Substring(9));
+                            }
+                        }
+                        else if (Line.ToLower().StartsWith("t:"))
                         {
                             int delay = 0;
                             if (int.TryParse(Line.Substring(2), out delay))
@@ -141,15 +169,18 @@ namespace UniversalPatcher
                             else
                             {
                                 LogDevice.SendMessage(oMsg, 1);
+                                LogDevice.ReceiveMessage();
                             }
                             Thread.Sleep(Properties.Settings.Default.LoggerScriptDelay);
                         }
                     }
                 }
                 sr.Close();
+                SetReceiverPaused(false);
             }
             catch (Exception ex)
             {
+                SetReceiverPaused(false);
                 LoggerBold(ex.Message);
                 var st = new StackTrace(ex, true);
                 // Get the top stack frame
@@ -162,41 +193,71 @@ namespace UniversalPatcher
 
         public void StartReceiveLoop()
         {
-            if (AnalyzerRunning || LogRunning || ReceiveLoopRunning)
+            try
             {
-                return;
+                if (LogRunning || ReceiveLoopRunning)
+                {
+                    return;
+                }
+                receiverTokenSource = new CancellationTokenSource();
+                receiverToken = receiverTokenSource.Token;
+                ReceiverTask = Task.Factory.StartNew(() => ReceiveLoop(), receiverToken);
             }
-            ReceiveLoopRunning = true;
-            ConsoleTask = Task.Factory.StartNew(() => ReceiveLoop());
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, StartReceiveLoop line " + line + ": " + ex.Message);
+            }
         }
 
         public void StopReceiveLoop()
         {
-            if (ReceiveLoopRunning)
+            try
             {
-                ReceiveLoopRunning = false;
-                Thread.Sleep(500);
-                Application.DoEvents();
+                if (ReceiveLoopRunning)
+                {
+                    ReceiveLoopRunning = false;
+                    receiverTokenSource.Cancel();
+                    ReceiverTask.Wait(300);
+                    Application.DoEvents();
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, StopReceiveLoop line " + line + ": " + ex.Message);
             }
         }
 
         private void ReceiveLoop()
         {
-/*            Debug.WriteLine("Starting receive loop (for console)");
-            while (Connected && ReceiveLoopRunning)
+            ReceiveLoopRunning = true;
+            Debug.WriteLine("Starting receive loop");
+            //while (Connected && ReceiveLoopRunning)
+            while (!receiverToken.IsCancellationRequested)
             {
                 try
                 {
-                    Thread.Sleep(500);
                     LogDevice.ReceiveMessage();
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("Consoleloop: " + ex.Message);
+                    Debug.WriteLine("Receiveloop: " + ex.Message);
                 }
             }
             Debug.WriteLine("Receive loop end");
-*/        }
+            ReceiveLoopRunning = false;
+        }
 
         public Device CreateSerialDevice(string serialPortName, string serialPortDeviceType, bool ftdi)
         {
@@ -321,7 +382,8 @@ namespace UniversalPatcher
         private  void LogWriterLoop()
         {
             Thread.CurrentThread.IsBackground = true;
-            while (!stopLogLoop)
+            //while (!stopLogLoop)
+            while (!logWriterToken.IsCancellationRequested)
             {
                 while (LogFileQueue.Count == 0)
                 {
@@ -545,6 +607,7 @@ namespace UniversalPatcher
         {
             try
             {
+                SetReceiverPaused(true);
                 string moduleStr = module.ToString("X2");
                 if (analyzer.PhysAddresses.ContainsKey(module))
                     moduleStr = analyzer.PhysAddresses[module];
@@ -558,9 +621,10 @@ namespace UniversalPatcher
             {
                 LoggerBold("ClearTroubleCodes:" + ex.Message);
             }
+            SetReceiverPaused(false);
         }
 
-        
+
         public  bool SetMode1()
         {
             try
@@ -630,13 +694,11 @@ namespace UniversalPatcher
                     return false;
                 }
         */
-        public  void StopLogging()
+        public void StopLogging()
         {
+            logTokenSource.Cancel();
             stopLogLoop = true;
-            if (AnalyzerRunning)
-            {
-                analyzer.SwitchtoLoopMode();
-            }
+            logTask.Wait(300);
         }
 
         public  bool StartLogging()
@@ -669,10 +731,6 @@ namespace UniversalPatcher
                     return false;
                 }
 
-                if (AnalyzerRunning)
-                {
-                    analyzer.SwitchtoEventMode();
-                }
                 if (ReceiveLoopRunning)
                 {
                     StopReceiveLoop();
@@ -729,8 +787,12 @@ namespace UniversalPatcher
                 //Thread.Sleep(10);
 
                 stopLogLoop = false;
-                logTask = Task.Factory.StartNew(() => DataLoggingLoop());
-                logWriterTask = Task.Factory.StartNew(() => LogWriterLoop());
+                logTokenSource = new CancellationTokenSource();
+                logToken = logTokenSource.Token;
+                logTask = Task.Factory.StartNew(() => DataLoggingLoop(), logToken);
+                logWriterTokenSource = new CancellationTokenSource();
+                logWriterToken = logWriterTokenSource.Token;
+                logWriterTask = Task.Factory.StartNew(() => LogWriterLoop(), logWriterToken);
                 return true;
             }
             catch (Exception ex)
@@ -835,6 +897,7 @@ namespace UniversalPatcher
             try
             {
                 Debug.WriteLine("VIN?");
+                SetReceiverPaused(true);
                 LogDevice.ClearMessageBuffer();
                 LogDevice.ClearMessageQueue();
                 byte[] vinbytes = new byte[3*6];
@@ -861,6 +924,8 @@ namespace UniversalPatcher
             {
                 Debug.WriteLine("QueryVIN: " + ex.Message);
             }
+            SetReceiverPaused(false);
+
         }
 
         public DTCCodeStatus DecodeDTCstatus(byte[] msg)
@@ -980,30 +1045,22 @@ namespace UniversalPatcher
                 if (analyzer.PhysAddresses.ContainsKey(module))
                     moduleStr = analyzer.PhysAddresses[module];
                 Logger("Requesting DTC codes for " + moduleStr);
+                SetReceiverPaused(true);
                 OBDMessage msg = new OBDMessage(new byte[] { Priority.Physical0, module, DeviceId.Tool, 0x19, mode, 0xFF, 0x00 });
-                bool m = LogDevice.SendMessage(msg, -50);
+                bool m = LogDevice.SendMessage(msg, 1);
                 if (!m)
                 {
                     LoggerBold("Error sending request");
                     return false;
                 }
-
-                //byte[] endframe = new byte[] { Priority.Physical0, DeviceId.Tool, module, 0x59, 0x00, 0x00, 0xFF };
-                Thread.Sleep(100);
-/*                if (datalogger.CurrentMode != RunMode.NotRunning)
-                {
-                    return true;
-                }
-*/
                 Debug.WriteLine("Receiving DTC codes...");
                 OBDMessage resp = LogDevice.ReceiveMessage();
-                //Logger("Received:" + resp.ToString());
                 while (resp != null) // & !Utility.CompareArraysPart(resp.GetBytes(), endframe))
                 {
                     Debug.WriteLine(resp.ToString());
                     resp = LogDevice.ReceiveMessage();
                 }
-                
+                SetReceiverPaused(false);
                 Logger("Done");
             }
             catch (Exception ex)
@@ -1014,6 +1071,7 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, RequestDTCCodes line " + line + ": " + ex.Message);
+                SetReceiverPaused(false);
                 return false;
             }
             return true;
@@ -1101,39 +1159,31 @@ namespace UniversalPatcher
             return retVal;
         }
 
-/*        public  bool SetLoggingPaused(bool Pause)
+        public bool SetReceiverPaused(bool Pause)
         {
-            if (CurrentMode == RunMode.NotRunning)
-            {
-                return true;
-            }
             if (Pause)
             {
-                Logger("Pausing log...");
-                pauseWaitHandle.Reset();
-                Application.DoEvents();
-                if (LogDevice.LogDeviceType != LoggingDevType.Other)
+                if (!ReceiveLoopRunning)
                 {
-                    StopElmReceive(true);
-                    Thread.Sleep(50);
-                    OBDMessage msg = null;
-                    while (msg == null || msg.ElmPrompt == false)
-                    {
-                        msg = LogDevice.ReceiveMessage();
-                    }
-                    
+                    return true;
                 }
+                Logger("Pausing receiver...");
+                loggingpaused = true;
+                StopReceiveLoop();
+                Application.DoEvents();
                 return true;
             }
             else
             {
-                Thread.Sleep(50);
-                pauseWaitHandle.Set();
-                Logger("Continue logging");
+                if (loggingpaused)
+                {
+                    Logger("Continue receiving");
+                    StartReceiveLoop();
+                }
                 return true;
             }
         }
-*/        
+        
         private  bool RequestPassiveModeSlots()
         {
             lastPresent = DateTime.Now;
@@ -1307,7 +1357,10 @@ namespace UniversalPatcher
             Logger("Logging started");
             //PcmDevice.ClearMessageBuffer();
             //PcmDevice.ClearMessageQueue();
-            while (!stopLogLoop)
+            
+            //while (!stopLogLoop)
+            
+            while (!logToken.IsCancellationRequested)
             {
                 try
                 {

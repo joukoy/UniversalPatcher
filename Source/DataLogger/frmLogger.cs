@@ -191,6 +191,7 @@ namespace UniversalPatcher
                     }
                     else
                     {
+                        datalogger.SetReceiverPaused(true);
                         if (!datalogger.LogDevice.SendMessage(oMsg, -50))
                         {
                             LoggerBold("Error sending message");
@@ -198,7 +199,10 @@ namespace UniversalPatcher
                         }
                         OBDMessage rMsg = datalogger.LogDevice.ReceiveMessage();
                         while (rMsg != null)
+                        {
                             rMsg = datalogger.LogDevice.ReceiveMessage();
+                        }
+                        datalogger.SetReceiverPaused(false);
                     }
                     txtVPWmessages.AppendText(Environment.NewLine);
                 }
@@ -206,6 +210,10 @@ namespace UniversalPatcher
             catch (Exception ex)
             {
                 LoggerBold(ex.Message);
+                if (!datalogger.LogRunning)
+                {
+                    datalogger.SetReceiverPaused(false);
+                }
             }
         }
 
@@ -1185,7 +1193,8 @@ namespace UniversalPatcher
             Properties.Settings.Default.Save();
 
         }
-        private void StopLogging()
+
+        private void StopLogging(bool disconnect)
         {
             try
             {
@@ -1197,10 +1206,13 @@ namespace UniversalPatcher
                 groupLogSettings.Enabled = true;
                 groupDTC.Enabled = true;
                 //btnGetVINCode.Enabled = true;
-                if (chkEnableConsole.Checked)
+                if (!disconnect)
                 {
-                    datalogger.StartReceiveLoop();
-                }
+                    if (datalogger.AnalyzerRunning || chkConsoleAutorefresh.Checked)
+                    { 
+                        datalogger.StartReceiveLoop();
+                    }
+                }               
             }
             catch (Exception ex)
             {
@@ -1266,7 +1278,7 @@ namespace UniversalPatcher
                 {
                     LoadParameters();
                 }
-                if (chkEnableConsole.Checked)
+                if (chkConsoleAutorefresh.Checked)
                 {
                     datalogger.StartReceiveLoop();
                     datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
@@ -1343,7 +1355,7 @@ namespace UniversalPatcher
         {
             if (datalogger.LogRunning)
             {
-                StopLogging();
+                StopLogging(false);
             }
             else
             {
@@ -1507,7 +1519,6 @@ namespace UniversalPatcher
                 {
                     return;
                 }
-                datalogger.StopReceiveLoop();
                 analyzer = new Analyzer();
                 analyzer.RowAnalyzed += Analyzer_RowAnalyzed;
                 string devtype = comboSerialDeviceType.Text;
@@ -1516,6 +1527,10 @@ namespace UniversalPatcher
                 analyzer.StartAnalyzer(devtype, chkHideHeartBeat.Checked);
                 btnStartStopAnalyzer.Text = "Stop Analyzer";
                 datalogger.AnalyzerRunning = true;
+                if (!datalogger.ReceiveLoopRunning)
+                {
+                    datalogger.StartReceiveLoop();
+                }
                 groupDTC.Enabled = false;
             }
             catch (Exception ex)
@@ -1545,7 +1560,7 @@ namespace UniversalPatcher
             });
         }
 
-        private void StopAnalyzer()
+        private void StopAnalyzer(bool disconnect)
         {
             try
             {
@@ -1553,9 +1568,9 @@ namespace UniversalPatcher
                 btnStartStopAnalyzer.Text = "Start Analyzer";
                 datalogger.AnalyzerRunning = false;
                 groupDTC.Enabled = true;
-                if (chkEnableConsole.Checked)
+                if (disconnect || !chkConsoleAutorefresh.Checked)
                 {
-                    datalogger.StartReceiveLoop();
+                    datalogger.StopReceiveLoop();
                 }
             }
             catch (Exception ex)
@@ -1617,7 +1632,10 @@ namespace UniversalPatcher
         {
             byte module;
             dataGridDtcCodes.Rows.Clear();
-            Connect();
+            if (!Connect())
+            {
+                return;
+            }
             //List<DTCCodeStatus> codelist = new List<DTCCodeStatus>();
             if (chkDtcAllModules.Checked)
             {
@@ -1749,13 +1767,11 @@ namespace UniversalPatcher
             }
             if (datalogger.LogRunning)
             {
-                StopLogging();
-                Thread.Sleep(500);
+                StopLogging(true);
             }
             if (datalogger.AnalyzerRunning)
             {
-                StopAnalyzer();
-                Thread.Sleep(500);
+                StopAnalyzer(true);
             }
             datalogger.LogDevice.Dispose();
             datalogger.Connected = false;
@@ -1800,11 +1816,11 @@ namespace UniversalPatcher
             Connect();
             if (datalogger.LogRunning)
             {
-                datalogger.QueryVIN();
+                datalogger.QueueVINRequest();
             }
             else
-            {
-                datalogger.QueueVINRequest();
+            {                
+                datalogger.QueryVIN();
             }
 
         }
@@ -1971,7 +1987,10 @@ namespace UniversalPatcher
             {
                 if (chkEnableConsole.Checked)
                 {
-                    datalogger.StartReceiveLoop();
+                    if (chkConsoleAutorefresh.Checked)
+                    {
+                        datalogger.StartReceiveLoop();
+                    }
                     datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
                     datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
                 }
@@ -2084,7 +2103,7 @@ namespace UniversalPatcher
         {
             if (datalogger.AnalyzerRunning)
             {
-                StopAnalyzer();
+                StopAnalyzer(false);
             }
             else 
             {
@@ -2139,5 +2158,20 @@ namespace UniversalPatcher
             }
         }
 
+        private void chkConsoleAutorefresh_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkConsoleAutorefresh.Checked)
+            {
+                if (!Connect())
+                {
+                    return;
+                }
+                datalogger.StartReceiveLoop();
+            }
+            else
+            {
+                datalogger.StopReceiveLoop();
+            }
+        }
     }
 }

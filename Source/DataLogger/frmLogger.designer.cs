@@ -109,6 +109,7 @@ namespace UniversalPatcher
             this.tabAdvanced = new System.Windows.Forms.TabPage();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnConsoleRefresh = new System.Windows.Forms.Button();
             this.chkConsole4x = new System.Windows.Forms.CheckBox();
             this.label9 = new System.Windows.Forms.Label();
             this.numConsoleScriptDelay = new System.Windows.Forms.NumericUpDown();
@@ -146,7 +147,7 @@ namespace UniversalPatcher
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.labelConnected = new System.Windows.Forms.Label();
             this.timerSearchParams = new System.Windows.Forms.Timer(this.components);
-            this.btnConsoleRefresh = new System.Windows.Forms.Button();
+            this.chkConsoleAutorefresh = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -1006,6 +1007,7 @@ namespace UniversalPatcher
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.chkConsoleAutorefresh);
             this.groupBox3.Controls.Add(this.btnConsoleRefresh);
             this.groupBox3.Controls.Add(this.chkConsole4x);
             this.groupBox3.Controls.Add(this.label9);
@@ -1014,17 +1016,27 @@ namespace UniversalPatcher
             this.groupBox3.Controls.Add(this.chkEnableConsole);
             this.groupBox3.Controls.Add(this.chkConsoleTimestamps);
             this.groupBox3.Controls.Add(this.btnConsoleLoadScript);
-            this.groupBox3.Location = new System.Drawing.Point(8, 194);
+            this.groupBox3.Location = new System.Drawing.Point(8, 163);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(188, 198);
+            this.groupBox3.Size = new System.Drawing.Size(188, 229);
             this.groupBox3.TabIndex = 35;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "VPW Console";
             // 
+            // btnConsoleRefresh
+            // 
+            this.btnConsoleRefresh.Location = new System.Drawing.Point(9, 188);
+            this.btnConsoleRefresh.Name = "btnConsoleRefresh";
+            this.btnConsoleRefresh.Size = new System.Drawing.Size(149, 31);
+            this.btnConsoleRefresh.TabIndex = 43;
+            this.btnConsoleRefresh.Text = "Refresh";
+            this.btnConsoleRefresh.UseVisualStyleBackColor = true;
+            this.btnConsoleRefresh.Click += new System.EventHandler(this.btnConsoleRefresh_Click);
+            // 
             // chkConsole4x
             // 
             this.chkConsole4x.AutoSize = true;
-            this.chkConsole4x.Location = new System.Drawing.Point(6, 83);
+            this.chkConsole4x.Location = new System.Drawing.Point(6, 65);
             this.chkConsole4x.Name = "chkConsole4x";
             this.chkConsole4x.Size = new System.Drawing.Size(66, 17);
             this.chkConsole4x.TabIndex = 42;
@@ -1035,7 +1047,7 @@ namespace UniversalPatcher
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 103);
+            this.label9.Location = new System.Drawing.Point(6, 128);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(62, 13);
             this.label9.TabIndex = 41;
@@ -1043,7 +1055,7 @@ namespace UniversalPatcher
             // 
             // numConsoleScriptDelay
             // 
-            this.numConsoleScriptDelay.Location = new System.Drawing.Point(92, 101);
+            this.numConsoleScriptDelay.Location = new System.Drawing.Point(92, 128);
             this.numConsoleScriptDelay.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -1056,7 +1068,7 @@ namespace UniversalPatcher
             // chkConsoleUseJ2534Timestamps
             // 
             this.chkConsoleUseJ2534Timestamps.AutoSize = true;
-            this.chkConsoleUseJ2534Timestamps.Location = new System.Drawing.Point(6, 60);
+            this.chkConsoleUseJ2534Timestamps.Location = new System.Drawing.Point(6, 50);
             this.chkConsoleUseJ2534Timestamps.Name = "chkConsoleUseJ2534Timestamps";
             this.chkConsoleUseJ2534Timestamps.Size = new System.Drawing.Size(114, 17);
             this.chkConsoleUseJ2534Timestamps.TabIndex = 39;
@@ -1077,7 +1089,7 @@ namespace UniversalPatcher
             // chkConsoleTimestamps
             // 
             this.chkConsoleTimestamps.AutoSize = true;
-            this.chkConsoleTimestamps.Location = new System.Drawing.Point(6, 37);
+            this.chkConsoleTimestamps.Location = new System.Drawing.Point(6, 35);
             this.chkConsoleTimestamps.Name = "chkConsoleTimestamps";
             this.chkConsoleTimestamps.Size = new System.Drawing.Size(82, 17);
             this.chkConsoleTimestamps.TabIndex = 38;
@@ -1086,7 +1098,7 @@ namespace UniversalPatcher
             // 
             // btnConsoleLoadScript
             // 
-            this.btnConsoleLoadScript.Location = new System.Drawing.Point(9, 127);
+            this.btnConsoleLoadScript.Location = new System.Drawing.Point(9, 154);
             this.btnConsoleLoadScript.Name = "btnConsoleLoadScript";
             this.btnConsoleLoadScript.Size = new System.Drawing.Size(149, 31);
             this.btnConsoleLoadScript.TabIndex = 0;
@@ -1115,7 +1127,7 @@ namespace UniversalPatcher
             this.groupAdvanced.Controls.Add(this.comboResponseMode);
             this.groupAdvanced.Location = new System.Drawing.Point(8, 3);
             this.groupAdvanced.Name = "groupAdvanced";
-            this.groupAdvanced.Size = new System.Drawing.Size(189, 185);
+            this.groupAdvanced.Size = new System.Drawing.Size(189, 154);
             this.groupAdvanced.TabIndex = 34;
             this.groupAdvanced.TabStop = false;
             this.groupAdvanced.Text = "Advanced settings";
@@ -1125,7 +1137,7 @@ namespace UniversalPatcher
             this.chkFilterParamsByOS.AutoSize = true;
             this.chkFilterParamsByOS.Checked = true;
             this.chkFilterParamsByOS.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkFilterParamsByOS.Location = new System.Drawing.Point(9, 79);
+            this.chkFilterParamsByOS.Location = new System.Drawing.Point(9, 71);
             this.chkFilterParamsByOS.Name = "chkFilterParamsByOS";
             this.chkFilterParamsByOS.Size = new System.Drawing.Size(135, 17);
             this.chkFilterParamsByOS.TabIndex = 36;
@@ -1135,7 +1147,7 @@ namespace UniversalPatcher
             // chkVPWFilters
             // 
             this.chkVPWFilters.AutoSize = true;
-            this.chkVPWFilters.Location = new System.Drawing.Point(9, 59);
+            this.chkVPWFilters.Location = new System.Drawing.Point(9, 53);
             this.chkVPWFilters.Name = "chkVPWFilters";
             this.chkVPWFilters.Size = new System.Drawing.Size(103, 17);
             this.chkVPWFilters.TabIndex = 35;
@@ -1146,7 +1158,7 @@ namespace UniversalPatcher
             // chkPriority
             // 
             this.chkPriority.AutoSize = true;
-            this.chkPriority.Location = new System.Drawing.Point(9, 102);
+            this.chkPriority.Location = new System.Drawing.Point(9, 89);
             this.chkPriority.Name = "chkPriority";
             this.chkPriority.Size = new System.Drawing.Size(79, 17);
             this.chkPriority.TabIndex = 34;
@@ -1169,7 +1181,7 @@ namespace UniversalPatcher
             this.chkReverseSlotNumbers.AutoSize = true;
             this.chkReverseSlotNumbers.Checked = true;
             this.chkReverseSlotNumbers.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkReverseSlotNumbers.Location = new System.Drawing.Point(9, 39);
+            this.chkReverseSlotNumbers.Location = new System.Drawing.Point(9, 36);
             this.chkReverseSlotNumbers.Name = "chkReverseSlotNumbers";
             this.chkReverseSlotNumbers.Size = new System.Drawing.Size(149, 17);
             this.chkReverseSlotNumbers.TabIndex = 27;
@@ -1179,7 +1191,7 @@ namespace UniversalPatcher
             // labelResponseMode
             // 
             this.labelResponseMode.AutoSize = true;
-            this.labelResponseMode.Location = new System.Drawing.Point(6, 130);
+            this.labelResponseMode.Location = new System.Drawing.Point(6, 106);
             this.labelResponseMode.Name = "labelResponseMode";
             this.labelResponseMode.Size = new System.Drawing.Size(88, 13);
             this.labelResponseMode.TabIndex = 24;
@@ -1188,7 +1200,7 @@ namespace UniversalPatcher
             // comboResponseMode
             // 
             this.comboResponseMode.FormattingEnabled = true;
-            this.comboResponseMode.Location = new System.Drawing.Point(6, 146);
+            this.comboResponseMode.Location = new System.Drawing.Point(6, 122);
             this.comboResponseMode.Name = "comboResponseMode";
             this.comboResponseMode.Size = new System.Drawing.Size(149, 21);
             this.comboResponseMode.TabIndex = 23;
@@ -1390,15 +1402,16 @@ namespace UniversalPatcher
             // 
             this.timerSearchParams.Tick += new System.EventHandler(this.timerSearchParams_Tick);
             // 
-            // btnConsoleRefresh
+            // chkConsoleAutorefresh
             // 
-            this.btnConsoleRefresh.Location = new System.Drawing.Point(9, 161);
-            this.btnConsoleRefresh.Name = "btnConsoleRefresh";
-            this.btnConsoleRefresh.Size = new System.Drawing.Size(149, 31);
-            this.btnConsoleRefresh.TabIndex = 43;
-            this.btnConsoleRefresh.Text = "Refresh";
-            this.btnConsoleRefresh.UseVisualStyleBackColor = true;
-            this.btnConsoleRefresh.Click += new System.EventHandler(this.btnConsoleRefresh_Click);
+            this.chkConsoleAutorefresh.AutoSize = true;
+            this.chkConsoleAutorefresh.Location = new System.Drawing.Point(6, 82);
+            this.chkConsoleAutorefresh.Name = "chkConsoleAutorefresh";
+            this.chkConsoleAutorefresh.Size = new System.Drawing.Size(83, 17);
+            this.chkConsoleAutorefresh.TabIndex = 44;
+            this.chkConsoleAutorefresh.Text = "Auto refresh";
+            this.chkConsoleAutorefresh.UseVisualStyleBackColor = true;
+            this.chkConsoleAutorefresh.CheckedChanged += new System.EventHandler(this.chkConsoleAutorefresh_CheckedChanged);
             // 
             // frmLogger
             // 
@@ -1588,6 +1601,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.CheckBox chkConsole4x;
         private System.Windows.Forms.Button btnConsoleRefresh;
+        private System.Windows.Forms.CheckBox chkConsoleAutorefresh;
     }
 }
 

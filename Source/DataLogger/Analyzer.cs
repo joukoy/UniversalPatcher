@@ -17,11 +17,9 @@ namespace UniversalPatcher
     {
         public Dictionary<byte, string> FuncAddresses;
         public Dictionary<byte, string> PhysAddresses;
-        public bool stoploop { get; set; }
         private bool HideHeartBeat;
-        private Task analyzerTask;
         private bool waiting4x = false;
-        private bool EventMode = false;
+
 
         public Analyzer()
         {
@@ -151,22 +149,19 @@ namespace UniversalPatcher
                 if (LoggerUtils.analyzerData == null)
                     LoggerUtils.analyzerData = new List<OBDMessage>();
                 HideHeartBeat = hideHeartBeat;
-                stoploop = false;
                 Logger("Waiting data...");
                 datalogger.LogDevice.SetTimeout(TimeoutScenario.Maximum);
                 if (datalogger.LogRunning)
                 {
-                    EventMode = true;
                     datalogger.LogDevice.RemoveFilters();
-                    datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
-                    datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
                 }
                 else
                 {
-                    EventMode = false;
                     datalogger.LogDevice.SetAnalyzerFilter();
-                    analyzerTask = Task.Factory.StartNew(() => analyzerloop());
                 }
+                datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
+                datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
+                
             }
             catch (Exception ex)
             {
@@ -191,38 +186,8 @@ namespace UniversalPatcher
 
         public void StopAnalyzer()
         {
-            if (EventMode)
-            {
-                datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
-                datalogger.LogDevice.MsgSent -= LogDevice_MsgSent;
-            }
-            else
-            {
-                stoploop = true;
-                analyzerTask.LogExceptions();
-            }
-        }
-
-        public void SwitchtoEventMode()
-        {
-            stoploop = true;
-            //analyzerTask.LogExceptions();
-            Thread.Sleep(1000);
-            EventMode = true;
-            datalogger.LogDevice.RemoveFilters();
-            datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
-            datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
-        }
-
-        public void SwitchtoLoopMode()
-        {
-            stoploop = false;
-            EventMode = false;
             datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
             datalogger.LogDevice.MsgSent -= LogDevice_MsgSent;
-            Thread.Sleep(500);
-            datalogger.LogDevice.SetAnalyzerFilter();
-            analyzerTask = Task.Factory.StartNew(() => analyzerloop());
         }
 
         public VPWRow ProcessLine(OBDMessage msg)
@@ -381,53 +346,6 @@ namespace UniversalPatcher
                 }
             }
 
-        }
-
-        private void analyzerloop() 
-        {
-            datalogger.LogDevice.ClearMessageBuffer();
-            datalogger.LogDevice.ClearMessageQueue();
-
-            while (!stoploop)
-            {
-                try
-                {
-                    OBDMessage rcv = datalogger.LogDevice.ReceiveMessage();
-                    if (rcv == null)
-                    {
-                        continue;
-                    }
-                    HandleMessage(rcv);
-                }
-                catch (Exception ex)
-                {
-                    var st = new StackTrace(ex, true);
-                    // Get the top stack frame
-                    var frame = st.GetFrame(st.FrameCount - 1);
-                    // Get the line number from the stack frame
-                    var line = frame.GetFileLineNumber();
-                    Debug.WriteLine("Error, analyzerloop line " + line + ": " + ex.Message);
-                    //Thread.Sleep(100);
-                }
-            }
-            try
-            {
-                Debug.WriteLine("Exit from analyzer loop");
-                Logger("Analyzer stopped");
-                if (!datalogger.LogRunning)
-                {
-                    datalogger.LogDevice.SetLoggingFilter();
-                }
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, analyzerloop line " + line + ": " + ex.Message);
-            }
         }
 
     }
