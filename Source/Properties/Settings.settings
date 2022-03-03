@@ -330,7 +330,10 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="LoggerScriptDelay" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">200</Value>
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="LoggerJ2534SettingsFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

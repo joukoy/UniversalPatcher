@@ -18,17 +18,14 @@ namespace UniversalPatcher
     {
         public DataLogger()
         {
+            Receiver = new MessageReceiver();
         }
         private CancellationTokenSource logTokenSource = new CancellationTokenSource();
-        private CancellationTokenSource receiverTokenSource = new CancellationTokenSource();
         private CancellationTokenSource logWriterTokenSource = new CancellationTokenSource();
         private CancellationToken logToken;
-        private CancellationToken receiverToken;
         private CancellationToken logWriterToken;
-        private bool ReceiverPaused = false;
         public Task logTask;
         private Task logWriterTask;
-        private Task ReceiverTask;
         public IPort port;
         public  bool Connected = false;
         public  List<PidConfig> PidProfile { get; set; }
@@ -38,10 +35,10 @@ namespace UniversalPatcher
         public  int ReceivedBytes = 0;
         public  string OS;
         public  SlotHandler slothandler;
+        public MessageReceiver Receiver;
 
         public bool LogRunning = false;
         public bool AnalyzerRunning = false;
-        public bool ReceiveLoopRunning = false;
         private  bool AllSlotsRequested = false;
         private  bool passive;
         public  int maxPassiveSlotsPerMsg = 50;
@@ -49,8 +46,6 @@ namespace UniversalPatcher
         public  byte priority = Priority.Physical0;
         private  DateTime lastPresent = DateTime.Now;
         private  DateTime lastElmStop = DateTime.Now;
-
-        private  readonly object pauselock = new object();
 
         //public  Queue<Analyzer.AnalyzerData> analyzerq = new Queue<Analyzer.AnalyzerData>();
         public  Queue<LogData> LogFileQueue = new Queue<LogData>();
@@ -126,7 +121,7 @@ namespace UniversalPatcher
                 LogDevice.ClearMessageQueue();
                 StreamReader sr = new StreamReader(FileName);
                 string Line;
-                SetReceiverPaused(true);
+                Receiver.SetReceiverPaused(true);
                 while ((Line = sr.ReadLine()) != null)
                 {
                     if (Line.Length > 1)
@@ -169,18 +164,20 @@ namespace UniversalPatcher
                             else
                             {
                                 LogDevice.SendMessage(oMsg, 1);
-                                LogDevice.ReceiveMessage();
+                                while (LogDevice.ReceiveMessage() != null)
+                                {
+                                    Thread.Sleep(Properties.Settings.Default.LoggerScriptDelay);
+                                }
                             }
-                            Thread.Sleep(Properties.Settings.Default.LoggerScriptDelay);
                         }
                     }
                 }
                 sr.Close();
-                SetReceiverPaused(false);
+                Receiver.SetReceiverPaused(false);
             }
             catch (Exception ex)
             {
-                SetReceiverPaused(false);
+                Receiver.SetReceiverPaused(false);
                 LoggerBold(ex.Message);
                 var st = new StackTrace(ex, true);
                 // Get the top stack frame
@@ -191,73 +188,6 @@ namespace UniversalPatcher
             }
         }
 
-        public void StartReceiveLoop()
-        {
-            try
-            {
-                if (LogRunning || ReceiveLoopRunning)
-                {
-                    return;
-                }
-                receiverTokenSource = new CancellationTokenSource();
-                receiverToken = receiverTokenSource.Token;
-                ReceiverTask = Task.Factory.StartNew(() => ReceiveLoop(), receiverToken);
-            }
-            catch (Exception ex)
-            {
-                LoggerBold(ex.Message);
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, StartReceiveLoop line " + line + ": " + ex.Message);
-            }
-        }
-
-        public void StopReceiveLoop()
-        {
-            try
-            {
-                if (ReceiveLoopRunning)
-                {
-                    ReceiveLoopRunning = false;
-                    receiverTokenSource.Cancel();
-                    ReceiverTask.Wait(300);
-                    Application.DoEvents();
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggerBold(ex.Message);
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, StopReceiveLoop line " + line + ": " + ex.Message);
-            }
-        }
-
-        private void ReceiveLoop()
-        {
-            ReceiveLoopRunning = true;
-            Debug.WriteLine("Starting receive loop");
-            //while (Connected && ReceiveLoopRunning)
-            while (!receiverToken.IsCancellationRequested)
-            {
-                try
-                {
-                    LogDevice.ReceiveMessage();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("Receiveloop: " + ex.Message);
-                }
-            }
-            Debug.WriteLine("Receive loop end");
-            ReceiveLoopRunning = false;
-        }
 
         public Device CreateSerialDevice(string serialPortName, string serialPortDeviceType, bool ftdi)
         {
@@ -607,7 +537,7 @@ namespace UniversalPatcher
         {
             try
             {
-                SetReceiverPaused(true);
+                Receiver.SetReceiverPaused(true);
                 string moduleStr = module.ToString("X2");
                 if (analyzer.PhysAddresses.ContainsKey(module))
                     moduleStr = analyzer.PhysAddresses[module];
@@ -621,7 +551,7 @@ namespace UniversalPatcher
             {
                 LoggerBold("ClearTroubleCodes:" + ex.Message);
             }
-            SetReceiverPaused(false);
+            Receiver.SetReceiverPaused(false);
         }
 
 
@@ -731,9 +661,9 @@ namespace UniversalPatcher
                     return false;
                 }
 
-                if (ReceiveLoopRunning)
+                if (Receiver.ReceiveLoopRunning)
                 {
-                    StopReceiveLoop();
+                    Receiver.StopReceiveLoop();
                 }
 
                 LogDevice.SetTimeout(TimeoutScenario.DataLogging1);
@@ -897,7 +827,7 @@ namespace UniversalPatcher
             try
             {
                 Debug.WriteLine("VIN?");
-                SetReceiverPaused(true);
+                Receiver.SetReceiverPaused(true);
                 LogDevice.ClearMessageBuffer();
                 LogDevice.ClearMessageQueue();
                 byte[] vinbytes = new byte[3*6];
@@ -924,7 +854,7 @@ namespace UniversalPatcher
             {
                 Debug.WriteLine("QueryVIN: " + ex.Message);
             }
-            SetReceiverPaused(false);
+            Receiver.SetReceiverPaused(false);
 
         }
 
@@ -1045,7 +975,7 @@ namespace UniversalPatcher
                 if (analyzer.PhysAddresses.ContainsKey(module))
                     moduleStr = analyzer.PhysAddresses[module];
                 Logger("Requesting DTC codes for " + moduleStr);
-                SetReceiverPaused(true);
+                Receiver.SetReceiverPaused(true);
                 OBDMessage msg = new OBDMessage(new byte[] { Priority.Physical0, module, DeviceId.Tool, 0x19, mode, 0xFF, 0x00 });
                 bool m = LogDevice.SendMessage(msg, 1);
                 if (!m)
@@ -1060,7 +990,7 @@ namespace UniversalPatcher
                     Debug.WriteLine(resp.ToString());
                     resp = LogDevice.ReceiveMessage();
                 }
-                SetReceiverPaused(false);
+                Receiver.SetReceiverPaused(false);
                 Logger("Done");
             }
             catch (Exception ex)
@@ -1071,7 +1001,7 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, RequestDTCCodes line " + line + ": " + ex.Message);
-                SetReceiverPaused(false);
+                Receiver.SetReceiverPaused(false);
                 return false;
             }
             return true;
@@ -1159,30 +1089,6 @@ namespace UniversalPatcher
             return retVal;
         }
 
-        public bool SetReceiverPaused(bool Pause)
-        {
-            if (Pause)
-            {
-                if (!ReceiveLoopRunning)
-                {
-                    return true;
-                }
-                Logger("Pausing receiver...");
-                ReceiverPaused = true;
-                StopReceiveLoop();
-                Application.DoEvents();
-                return true;
-            }
-            else
-            {
-                if (ReceiverPaused)
-                {
-                    Logger("Continue receiving");
-                    StartReceiveLoop();
-                }
-                return true;
-            }
-        }
         
         private  bool RequestPassiveModeSlots()
         {

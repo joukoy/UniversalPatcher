@@ -52,7 +52,7 @@ namespace UniversalPatcher
             return DeviceType;
         }
 
-        public override bool Initialize(int BaudRate)
+        public override bool Initialize(int BaudRate, LoggerUtils.J2534InitParameters j2534Init)
         {
             Debug.WriteLine("Initializing " + this.ToString());
 
@@ -435,6 +435,16 @@ namespace UniversalPatcher
         {
             this.Port.DiscardBuffers();
             System.Threading.Thread.Sleep(50);
+        }
+
+        public override bool SetProtocol(int Protocol, int BaudRate, int ConnectFlag)
+        {
+            return false;
+        }
+
+        public override bool SetConfig(J2534DotNet.SConfig[] sc)
+        {
+            return false;
         }
 
         public override bool SetLoggingFilter()

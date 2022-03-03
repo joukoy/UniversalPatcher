@@ -431,3 +431,7 @@
 0.20.13
 - Logger: no automatic connect when enabling VPW console autorefresh
 - Logger: fix duplicate rows in VPW Console
+
+0.20.14
+- Logger: Improvements to VPW Console, multiple protocols etc.
+

@@ -55,18 +55,27 @@ namespace J2534DotNet
                 tempDevice.Name = (string)deviceKey.GetValue("Name","");
                 tempDevice.ConfigApplication = (string)deviceKey.GetValue("ConfigApplication", "");
                 tempDevice.FunctionLibrary = (string)deviceKey.GetValue("FunctionLibrary", "");
-                
-                tempDevice.CANChannels = (int)deviceKey.GetValue("CAN",0);
-                tempDevice.ISO15765Channels = (int)deviceKey.GetValue("ISO15765",0);
-                tempDevice.J1850PWMChannels = (int)deviceKey.GetValue("J1850PWM",0);
-                tempDevice.J1850VPWChannels = (int)deviceKey.GetValue("J1850VPW", 0);
-                tempDevice.ISO9141Channels = (int)deviceKey.GetValue("ISO9141", 0);
-                tempDevice.ISO14230Channels = (int)deviceKey.GetValue("ISO14230", 0);
-                tempDevice.SCI_A_ENGINEChannels = (int)deviceKey.GetValue("SCI_A_ENGINE", 0);
-                tempDevice.SCI_A_TRANSChannels = (int)deviceKey.GetValue("SCI_A_TRANS", 0);
-                tempDevice.SCI_B_ENGINEChannels = (int)deviceKey.GetValue("SCI_B_ENGINE", 0);
-                tempDevice.SCI_B_TRANSChannels = (int)deviceKey.GetValue("SCI_B_TRANS", 0);
-                tempDevice.DiCECompatible = (int)deviceKey.GetValue("DiCECompatible", 0);
+
+                foreach (string item in System.Enum.GetNames(typeof(J2534DotNet.ProtocolID)))
+                {
+                    if ((int)deviceKey.GetValue(item, 0) > 0)
+                    {
+                        tempDevice.Protocols.Add(item);
+                    }
+                }
+
+                    /*                tempDevice.CANChannels = (int)deviceKey.GetValue("CAN",0);
+                                    tempDevice.ISO15765Channels = (int)deviceKey.GetValue("ISO15765",0);
+                                    tempDevice.J1850PWMChannels = (int)deviceKey.GetValue("J1850PWM",0);
+                                    tempDevice.J1850VPWChannels = (int)deviceKey.GetValue("J1850VPW", 0);
+                                    tempDevice.ISO9141Channels = (int)deviceKey.GetValue("ISO9141", 0);
+                                    tempDevice.ISO14230Channels = (int)deviceKey.GetValue("ISO14230", 0);
+                                    tempDevice.SCI_A_ENGINEChannels = (int)deviceKey.GetValue("SCI_A_ENGINE", 0);
+                                    tempDevice.SCI_A_TRANSChannels = (int)deviceKey.GetValue("SCI_A_TRANS", 0);
+                                    tempDevice.SCI_B_ENGINEChannels = (int)deviceKey.GetValue("SCI_B_ENGINE", 0);
+                                    tempDevice.SCI_B_TRANSChannels = (int)deviceKey.GetValue("SCI_B_TRANS", 0);
+                    */
+                    tempDevice.DiCECompatible = (int)deviceKey.GetValue("DiCECompatible", 0);
 
                 j2534Devices.Add(tempDevice);
             }

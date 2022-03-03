@@ -8,6 +8,8 @@ using static UniversalPatcher.DataLogger;
 using UniversalPatcher;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using J2534DotNet;
+using System.IO;
 
 public static class LoggerUtils
     {
@@ -76,21 +78,53 @@ public static class LoggerUtils
     }
 
     public static readonly List<string> SupportedBaudRates = new List<string>
+    {
+        "300",
+        "600",
+        "1200",
+        "2400",
+        "4800",
+        "9600",
+        "19200",
+        "38400",
+        "57600",
+        "115200",
+        "230400",
+        "460800",
+        "921600"
+    };
+
+    public enum KInit
+    {
+        None,
+        FastInit_GMDelco,
+        FastInit_J1979,
+        FiveBaudInit_J1979, 
+    }
+
+    [Serializable]
+    public class J2534InitParameters
+    {
+        public J2534InitParameters()
         {
-            "300",
-            "600",
-            "1200",
-            "2400",
-            "4800",
-            "9600",
-            "19200",
-            "38400",
-            "57600",
-            "115200",
-            "230400",
-            "460800",
-            "921600"
-        };
+            this.VPWLogger = false;
+            this.Kinit = KInit.None;
+        }
+        public J2534InitParameters(bool VpwLogger)
+        {
+            this.VPWLogger = VpwLogger;
+        }
+        public bool VPWLogger { get; set; }
+        public ProtocolID Protocol { get; set; }
+        public BaudRate Baudrate { get; set; }
+        public ConfigParameter SconfigParameter { get; set; }
+        public int SconfigValue { get; set; }
+        public KInit Kinit { get; set; }
+        public string InitBytes { get; set; }
+        public ConnectFlag Connectflag { get; set; }
+        public string PerodicMsg { get; set; }
+        public int PriodicInterval { get; set; }
+    }
 
     public class Conversion
         {
@@ -328,6 +362,54 @@ public static class LoggerUtils
                 Debug.WriteLine(exception);
         },
         TaskContinuationOptions.OnlyOnFaulted);
+    }
+
+    public static J2534InitParameters LoadJ2534Settings(string FileName)
+    {
+        try
+        {
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(J2534InitParameters));
+            System.IO.StreamReader file = new System.IO.StreamReader(FileName);
+            J2534InitParameters JSettings = (J2534InitParameters)reader.Deserialize(file);
+            file.Close();
+            UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile = FileName;
+            UniversalPatcher.Properties.Settings.Default.Save();
+            return JSettings;
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("Error, LoadProfile line " + line + ": " + ex.Message);
+            return null;
+        }
+    }
+
+    public static void SaveJ2534Settings(string FileName, J2534InitParameters JSettings)
+    {
+        try
+        {
+            using (FileStream stream = new FileStream(FileName, FileMode.Create))
+            {
+                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(J2534InitParameters));
+                writer.Serialize(stream, JSettings);
+                stream.Close();
+            }
+            UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile = FileName;
+            UniversalPatcher.Properties.Settings.Default.Save();
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            LoggerBold("Error, SaveProfile line " + line + ": " + ex.Message +", " + ex.InnerException);
+        }
     }
 
     public static void initPcmResponses()

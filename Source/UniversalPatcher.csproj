@@ -106,6 +106,7 @@
     <Compile Include="AutoDetect.cs" />
     <Compile Include="ComputeSimilarity.cs" />
     <Compile Include="Crc.cs" />
+    <Compile Include="DataLogger\MessageReceiver.cs" />
     <Compile Include="frmCredits.cs">
       <SubType>Form</SubType>
     </Compile>

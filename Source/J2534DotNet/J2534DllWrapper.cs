@@ -95,7 +95,7 @@ namespace J2534DotNet
         //)
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        public delegate int PassThruStartPeriodicMsg(int channelId, UnsafePassThruMsg msg, int msgId, int timeInterval);
+        public delegate int PassThruStartPeriodicMsg(int channelId, IntPtr pMsg, IntPtr MsgID, int timeInterval);
         public PassThruStartPeriodicMsg StartPeriodicMsg;
         //extern “C” long WINAPI PassThruStartPeriodicMsg
         //(

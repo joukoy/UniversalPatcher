@@ -17,6 +17,7 @@ using System.IO;
 using System.Xml.Linq;
 using static UniversalPatcher.DataLogger;
 using System.Management;
+using J2534DotNet;
 
 //using FTD2XX_NET;
 //using SAE.J2534;
@@ -69,7 +70,7 @@ namespace UniversalPatcher
             tabSettings.Enter += TabSettings_Enter;
             tabSettings.Leave += TabSettings_Leave;
             tabDTC.Enter += TabDTC_Enter;
-            tabAdvanced.Enter += TabAdvanced_Enter;
+            tabVPWConsole.Enter += TabAdvanced_Enter;
 
             dataGridLogData.DataError += DataGridLogData_DataError;
             dataGridPidNames.CellContentDoubleClick += DataGridPidNames_CellContentDoubleClick;
@@ -87,6 +88,14 @@ namespace UniversalPatcher
             txtParamSearch.KeyPress += TxtParamSearch_KeyPress;
             txtSendBus.KeyPress += TxtSendBus_KeyPress;
             txtVPWmessages.EnableContextMenu();
+            txtJ2534SetPins.Enter += TxtJ2534SetPins_Enter;
+        }
+
+        private void TxtJ2534SetPins_Enter(object sender, EventArgs e)
+        {
+            ToolTip tt = new ToolTip();
+            string ttTxt = "Enter HEX value 0000XXYY, where\rXX=main pin\rYY=secondary pin";
+            tt.Show(ttTxt, txtJ2534SetPins, 3000);
         }
 
         private void TabAdvanced_Enter(object sender, EventArgs e)
@@ -191,7 +200,7 @@ namespace UniversalPatcher
                     }
                     else
                     {
-                        datalogger.SetReceiverPaused(true);
+                        datalogger.Receiver.SetReceiverPaused(true);
                         if (!datalogger.LogDevice.SendMessage(oMsg, -50))
                         {
                             LoggerBold("Error sending message");
@@ -202,7 +211,7 @@ namespace UniversalPatcher
                         {
                             rMsg = datalogger.LogDevice.ReceiveMessage();
                         }
-                        datalogger.SetReceiverPaused(false);
+                        datalogger.Receiver.SetReceiverPaused(false);
                     }
                     txtVPWmessages.AppendText(Environment.NewLine);
                 }
@@ -212,7 +221,7 @@ namespace UniversalPatcher
                 LoggerBold(ex.Message);
                 if (!datalogger.LogRunning)
                 {
-                    datalogger.SetReceiverPaused(false);
+                    datalogger.Receiver.SetReceiverPaused(false);
                 }
             }
         }
@@ -386,6 +395,7 @@ namespace UniversalPatcher
                 foreach (J2534DotNet.J2534Device device in jDevList)
                 {
                     this.j2534DeviceList.Items.Add(device.Name);
+                    comboJ2534DLL.Items.Add(device.Name);
                 }
 
                 if (LoadDefaults)
@@ -393,18 +403,69 @@ namespace UniversalPatcher
                     if (!string.IsNullOrEmpty(Properties.Settings.Default.LoggerJ2534Device))
                     {
                         j2534DeviceList.Text = Properties.Settings.Default.LoggerJ2534Device;
+                        comboJ2534DLL.Text = Properties.Settings.Default.LoggerJ2534Device;
                     }
                     else if (jDevList.Count > 0)
                     {
                         j2534DeviceList.Text = jDevList.FirstOrDefault().Name;
+                        comboJ2534DLL.Text = jDevList.FirstOrDefault().Name;
                     }
                     j2534RadioButton.Checked = Properties.Settings.Default.LoggerUseJ2534;
+                }
+                LoadJ2534Protocols();
+                comboJ2534Connectflag.DataSource = Enum.GetValues(typeof(J2534DotNet.ConnectFlag));
+                //comboJ2534Connectflag.SelectedIndex = 0;
+                if (!String.IsNullOrEmpty(Properties.Settings.Default.LoggerJ2534SettingsFile))
+                {
+                    J2534InitParameters JSettings = LoadJ2534Settings(Properties.Settings.Default.LoggerJ2534SettingsFile);
+                    LoadJ2534InitParameters(JSettings);
                 }
             }
             catch (Exception ex)
             {
                 LoggerBold(ex.Message);
             }
+        }
+
+        private void LoadJ2534Protocols()
+        {
+            //comboJ2534Protocol.Items.Clear();
+            J2534DotNet.J2534Device dev = jDevList[j2534DeviceList.SelectedIndex];
+            comboJ2534Protocol.DataSource = dev.Protocols;
+            comboJ2534Protocol.SelectedIndex = 0;
+            comboJ2534Init.Items.Clear();
+            foreach(string item in Enum.GetNames(typeof(LoggerUtils.KInit)))
+                comboJ2534Init.Items.Add(item);
+        }
+
+        private void LoadJ2534Baudrates()
+        {
+            comboJ2534Baudrate.Items.Clear();
+            foreach (string item in Enum.GetNames(typeof(J2534DotNet.BaudRate)))
+            {
+                if (item.StartsWith(comboJ2534Protocol.Text.Replace("_PS","")))
+                {
+                    comboJ2534Baudrate.Items.Add(item);
+                }
+            }
+            if (comboJ2534Baudrate.Items.Count > 0)
+            {
+                comboJ2534Baudrate.SelectedIndex = 0;
+            }
+            else
+            {
+                comboJ2534Baudrate.Text = "";
+            }
+/*            if (comboJ2534Protocol.Text.Contains("ISO14230"))
+            {
+                comboJ2534Init.Enabled = true;
+            }
+            else
+            {
+                comboJ2534Init.Enabled = false;
+                comboJ2534Init.Text = "";
+            }
+*/
         }
 
         private void LoadSettings()
@@ -1210,7 +1271,7 @@ namespace UniversalPatcher
                 {
                     if (datalogger.AnalyzerRunning || chkConsoleAutorefresh.Checked)
                     { 
-                        datalogger.StartReceiveLoop();
+                        datalogger.Receiver.StartReceiveLoop();
                     }
                 }               
             }
@@ -1251,7 +1312,7 @@ namespace UniversalPatcher
                     datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
                     datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
                 }
-                if (!datalogger.LogDevice.Initialize(Convert.ToInt32(comboBaudRate.Text)))
+                if (!datalogger.LogDevice.Initialize(Convert.ToInt32(comboBaudRate.Text), new J2534InitParameters(true)))
                 {
                     datalogger.port.Dispose();
                     datalogger.LogDevice.Dispose();
@@ -1280,10 +1341,11 @@ namespace UniversalPatcher
                 }
                 if (chkConsoleAutorefresh.Checked)
                 {
-                    datalogger.StartReceiveLoop();
+                    datalogger.Receiver.StartReceiveLoop();
                 }
                 Application.DoEvents();
                 groupHWSettings.Enabled = false;
+                groupJ2534Options.Enabled = false;
                 return true;
             }
             catch (Exception ex)
@@ -1293,6 +1355,110 @@ namespace UniversalPatcher
             }
         }
 
+        private J2534InitParameters CreateJ2534InitParameters()
+        {
+            J2534InitParameters initParameters = new J2534InitParameters(false);
+            if (comboJ2534Init.Text.Length > 0)
+            {
+                initParameters.Kinit = (KInit)Enum.Parse(typeof(KInit), comboJ2534Init.Text);
+                if (txtJ2534InitBytes.Text.Length > 1)
+                {
+                    initParameters.InitBytes = txtJ2534InitBytes.Text;
+                }
+            }
+            int pins;
+            if (txtJ2534SetPins.Text.Length > 0)
+            {
+                if (HexToInt(txtJ2534SetPins.Text, out pins))
+                {
+                    //datalogger.LogDevice.SetConfig((int)J2534DotNet.ConfigParameter.J1962_PINS, ref pins);
+                    //initParameters.Sconfig = new SConfig(ConfigParameter.J1962_PINS, pins);
+                    initParameters.SconfigParameter = ConfigParameter.J1962_PINS;
+                    initParameters.SconfigValue = pins;
+                }
+            }
+            initParameters.Protocol = (ProtocolID)Enum.Parse(typeof(ProtocolID), comboJ2534Protocol.Text);
+            initParameters.Baudrate = (BaudRate)Enum.Parse(typeof(BaudRate), comboJ2534Baudrate.Text);
+            initParameters.Connectflag = (ConnectFlag)Enum.Parse(typeof(ConnectFlag), comboJ2534Connectflag.Text);
+            initParameters.PerodicMsg = txtJ2534PeriodicMsg.Text;
+            initParameters.PriodicInterval = (int)numJ2534PeriodicMsgInterval.Value;
+            return initParameters;
+        }
+
+        private void LoadJ2534InitParameters(J2534InitParameters initParameters)
+        {
+            comboJ2534Init.Text = initParameters.Kinit.ToString();
+            if (initParameters.SconfigParameter != ConfigParameter.NONE)
+            {
+                txtJ2534SetPins.Text = initParameters.SconfigValue.ToString("X");
+            }
+            comboJ2534Protocol.Text = initParameters.Protocol.ToString();
+            comboJ2534Baudrate.Text = initParameters.Baudrate.ToString();
+            comboJ2534Connectflag.Text = initParameters.Connectflag.ToString();
+            txtJ2534InitBytes.Text = initParameters.InitBytes;
+            txtJ2534PeriodicMsg.Text = initParameters.PerodicMsg;
+            numJ2534PeriodicMsgInterval.Value = initParameters.PriodicInterval;
+        }
+
+        private bool ConnectAnalyzer()
+        {
+            try
+            {
+                datalogger.useVPWFilters = chkVPWFilters.Checked;
+                if (datalogger.Connected)
+                {
+                    return true;
+                }
+                Logger("Connecting...");
+                Application.DoEvents();
+                J2534InitParameters initParameters = new J2534InitParameters(false);
+                if (serialRadioButton.Checked)
+                {
+                    string sPort = comboSerialPort.Text;
+                    string[] sParts = sPort.Split(':');
+                    if (sParts.Length > 1)
+                        sPort = sParts[0].Trim();
+                    datalogger.LogDevice = datalogger.CreateSerialDevice(sPort, comboSerialDeviceType.Text, chkFTDI.Checked);
+                }
+                else
+                {
+                    initParameters = CreateJ2534InitParameters();
+                    J2534DotNet.J2534Device dev = jDevList[j2534DeviceList.SelectedIndex];
+                    datalogger.LogDevice = new J2534Device(dev);
+                    //datalogger.LogDevice.SetProtocol(protocol, baudrate, flag);
+                }
+                datalogger.LogDevice.MsgReceived += LogDevice_DTC_MsgReceived;
+                if (chkEnableConsole.Checked)
+                {
+                    datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
+                    datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
+                }
+                if (!datalogger.LogDevice.Initialize(Convert.ToInt32(comboBaudRate.Text), initParameters))
+                {
+                    datalogger.port.Dispose();
+                    datalogger.LogDevice.Dispose();
+                    return false;
+                }
+                datalogger.LogDevice.Enable4xReadWrite = true;
+
+                labelConnected.Text = "Connected";
+                datalogger.Connected = true;
+                SaveSettings();
+                if (chkConsoleAutorefresh.Checked)
+                {
+                    datalogger.Receiver.StartReceiveLoop();
+                }
+                Application.DoEvents();
+                groupHWSettings.Enabled = false;
+                groupJ2534Options.Enabled = false;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LoggerBold("Connection failed. Check settings");
+                return false;
+            }
+        }
 
         private void StartLogging()
         {
@@ -1441,7 +1607,8 @@ namespace UniversalPatcher
             if (serialRadioButton.Checked)
             {
                 serialOptionsGroupBox.Enabled = true;
-                j2534OptionsGroupBox.Enabled = false;                
+                j2534OptionsGroupBox.Enabled = false;
+                groupJ2534Options.Enabled = false;
             }
         }
 
@@ -1451,6 +1618,7 @@ namespace UniversalPatcher
             {
                 serialOptionsGroupBox.Enabled = false;
                 j2534OptionsGroupBox.Enabled = true;
+                groupJ2534Options.Enabled = true;
             }
 
         }
@@ -1498,7 +1666,7 @@ namespace UniversalPatcher
 */
         private void j2534DeviceList_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            comboJ2534DLL.Text = j2534DeviceList.Text;
         }
 
         private void txtLogSeparator_TextChanged(object sender, EventArgs e)
@@ -1525,9 +1693,9 @@ namespace UniversalPatcher
                 analyzer.StartAnalyzer(devtype, chkHideHeartBeat.Checked);
                 btnStartStopAnalyzer.Text = "Stop Analyzer";
                 datalogger.AnalyzerRunning = true;
-                if (!datalogger.ReceiveLoopRunning)
+                if (!datalogger.Receiver.ReceiveLoopRunning)
                 {
-                    datalogger.StartReceiveLoop();
+                    datalogger.Receiver.StartReceiveLoop();
                 }
                 groupDTC.Enabled = false;
             }
@@ -1568,7 +1736,7 @@ namespace UniversalPatcher
                 groupDTC.Enabled = true;
                 if (disconnect || !chkConsoleAutorefresh.Checked)
                 {
-                    datalogger.StopReceiveLoop();
+                    datalogger.Receiver.StopReceiveLoop();
                 }
             }
             catch (Exception ex)
@@ -1757,9 +1925,9 @@ namespace UniversalPatcher
             datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
             datalogger.LogDevice.MsgReceived -= LogDevice_DTC_MsgReceived;
 
-            if (chkEnableConsole.Checked || datalogger.ReceiveLoopRunning)
+            if (chkEnableConsole.Checked || datalogger.Receiver.ReceiveLoopRunning)
             {
-                datalogger.StopReceiveLoop();
+                datalogger.Receiver.StopReceiveLoop();
                 datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
                 datalogger.LogDevice.MsgSent -= LogDevice_MsgSent;
             }
@@ -1775,6 +1943,10 @@ namespace UniversalPatcher
             datalogger.Connected = false;
             labelConnected.Text = "Disconnected - OS: " + datalogger.OS;
             groupHWSettings.Enabled = true;
+            if (j2534RadioButton.Checked)
+            {
+                groupJ2534Options.Enabled = true;
+            }
         }
 
         private void btnConnect_Click(object sender, EventArgs e)
@@ -1785,7 +1957,7 @@ namespace UniversalPatcher
             }
             else
             {
-                Connect();
+                ConnectAnalyzer();
             }
         }
 
@@ -1987,14 +2159,14 @@ namespace UniversalPatcher
                 {
                     if (chkConsoleAutorefresh.Checked)
                     {
-                        datalogger.StartReceiveLoop();
+                        datalogger.Receiver.StartReceiveLoop();
                     }
                     datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
                     datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
                 }
                 else
                 {
-                    datalogger.StopReceiveLoop();
+                    datalogger.Receiver.StopReceiveLoop();
                     datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
                     datalogger.LogDevice.MsgSent -= LogDevice_MsgSent;
                 }
@@ -2164,12 +2336,70 @@ namespace UniversalPatcher
                 {
                     return;
                 }
-                datalogger.StartReceiveLoop();
+                datalogger.Receiver.StartReceiveLoop();
             }
             else
             {
-                datalogger.StopReceiveLoop();
+                datalogger.Receiver.StopReceiveLoop();
             }
+        }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboJ2534DLL_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            j2534DeviceList.Text = comboJ2534DLL.Text;
+            LoadJ2534Protocols();
+        }
+
+        private void comboJ2534Protocol_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadJ2534Baudrates();
+        }
+
+        private void comboJ2534Init_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboJ2534Init.Text  == LoggerUtils.KInit.FastInit_J1979.ToString())
+            {
+                txtJ2534InitBytes.Text = "C1 33 F1 81";
+            }
+            else if (comboJ2534Init.Text == LoggerUtils.KInit.FastInit_GMDelco.ToString())
+            {
+                txtJ2534InitBytes.Text = "81 11 F1 81";
+                txtJ2534PeriodicMsg.Text = "80 11 F1 01 3E";
+                //0x80, 0x11, 0xF1, 0x01, 0x3E
+            }
+            else
+            {
+                txtJ2534InitBytes.Text = "";
+            }
+        }
+
+        private void btnJ2534SettingsSaveAs_Click(object sender, EventArgs e)
+        {
+            string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles","profile.xml");
+            string FileName = SelectSaveFile(XmlFilter,defName);
+            if (FileName.Length == 0)
+                return;
+            Logger("Saving file: " + FileName);
+            J2534InitParameters JSettings = CreateJ2534InitParameters();
+            LoggerUtils.SaveJ2534Settings(FileName, JSettings);
+            Logger("[OK]");
+        }
+
+        private void btnJ2534SettingsLoad_Click(object sender, EventArgs e)
+        {
+            string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile.xml");
+            string FileName = SelectFile("Select J2534 settings", XmlFilter,defName);
+            if (FileName.Length == 0)
+                return;
+            Logger("Loading file: " + FileName);
+            J2534InitParameters JSettings = LoadJ2534Settings(FileName);
+            LoadJ2534InitParameters(JSettings);
+            Logger("[OK]");
         }
     }
 }

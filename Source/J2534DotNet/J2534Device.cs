@@ -28,11 +28,16 @@ namespace J2534DotNet
 {
     public class J2534Device
     {
+        public J2534Device()
+        {
+            Protocols = new System.Collections.Generic.List<string>();
+        }
         public string Vendor { get; set; }
         public string Name { get; set; }
         public string FunctionLibrary { get; set; }
         public string ConfigApplication { get; set; }
-        public int CANChannels { get; set; }
+        public System.Collections.Generic.List<string> Protocols { get; set; }
+/*        public int CANChannels { get; set; }
         public int ISO15765Channels { get; set; }
         public int J1850PWMChannels { get; set; }
         public int J1850VPWChannels { get; set; }
@@ -42,9 +47,10 @@ namespace J2534DotNet
         public int SCI_A_TRANSChannels { get; set; }
         public int SCI_B_ENGINEChannels { get; set; }
         public int SCI_B_TRANSChannels { get; set; }
+*/
         public int DiCECompatible { get; set; }
 
-        public bool IsCANSupported
+/*        public bool IsCANSupported
         {
             get { return (CANChannels > 0 ? true : false); }
         }
@@ -98,7 +104,7 @@ namespace J2534DotNet
         {
             get { return (DiCECompatible > 0 ? true : false);  }
         }
-
+*/
         public override string ToString()
         {
             return Name;

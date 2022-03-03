@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using static Upatcher;
 using static Helpers;
 using System.Diagnostics;
+using static LoggerUtils;
 
 namespace UniversalPatcher
 {
@@ -202,7 +203,7 @@ namespace UniversalPatcher
         /// <summary>
         /// Make the device ready to communicate with the VPW bus.
         /// </summary>
-        public abstract bool Initialize(int BaudRate);
+        public abstract bool Initialize(int BaudRate, J2534InitParameters j2534Init);
 
         /// <summary>
         /// Set the timeout period to wait for responses to incoming messages.
@@ -460,6 +461,8 @@ namespace UniversalPatcher
         public abstract bool SetLoggingFilter();
         public abstract bool SetAnalyzerFilter();
         public abstract bool RemoveFilters();
+        public abstract bool SetProtocol( int Protocol, int BaudRate, int ConnectFlag);
+        public abstract bool SetConfig(J2534DotNet.SConfig[] sc);
         public string CurrentFilter { get; set; }
         public DataLogger.LoggingDevType LogDeviceType { get; set; }
 

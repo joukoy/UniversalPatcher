@@ -41,7 +41,7 @@ namespace UniversalPatcher
         /// <summary>
         /// Initialize the device. It's just a no-op for this device type.
         /// </summary>
-        public override bool Initialize(int Baudrate)
+        public override bool Initialize(int Baudrate, LoggerUtils.J2534InitParameters j2534Init)
         {
             return true;
         }
@@ -110,6 +110,14 @@ namespace UniversalPatcher
         public override void ClearMessageBuffer()
         {
             this.port.DiscardBuffers();
+        }
+        public override bool SetProtocol(int Protocol, int BaudRate, int ConnectFlag)
+        {
+            return false;
+        }
+        public override bool SetConfig(J2534DotNet.SConfig[] sc)
+        {
+            return false;
         }
         public override bool SetLoggingFilter()
         {

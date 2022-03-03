@@ -1328,13 +1328,25 @@ namespace UniversalPatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("200")]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
         public int LoggerScriptDelay {
             get {
                 return ((int)(this["LoggerScriptDelay"]));
             }
             set {
                 this["LoggerScriptDelay"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LoggerJ2534SettingsFile {
+            get {
+                return ((string)(this["LoggerJ2534SettingsFile"]));
+            }
+            set {
+                this["LoggerJ2534SettingsFile"] = value;
             }
         }
     }

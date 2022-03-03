@@ -39,7 +39,7 @@ namespace UniversalPatcher
         public bool IsProtocolOpen;
         private const string PortName = "J2534";
         public string ToolName = "";
-
+        private int periodigMsgId;
 
         /// <summary>
         /// global error variable for reading/writing. (Could be done on the fly)
@@ -86,14 +86,14 @@ namespace UniversalPatcher
         // This needs to return Task<bool> for consistency with the Device base class.
         // However it doesn't do anything asynchronous, so to make the code more readable
         // it just wraps a private method that does the real work and returns a bool.
-        public override bool Initialize(int BaudRate) //Baudrate not really used
+        public override bool Initialize(int BaudRate, LoggerUtils.J2534InitParameters j2534Init) //Baudrate not really used
         {
-            return this.InitializeInternal();
+            return this.InitializeInternal(j2534Init);
         }
 
         // This returns 'bool' for the sake of readability. That bool needs to be
         // wrapped in a Task object for the public Initialize method.
-        private bool InitializeInternal()
+        private bool InitializeInternal(LoggerUtils.J2534InitParameters j2534Init)
         {
             try
             {
@@ -151,13 +151,61 @@ namespace UniversalPatcher
                     Logger("Battery Voltage is: " + volts.Value.ToString());
                 }
 
-
                 //Set Protocol
-                m = ConnectToProtocol(ProtocolID.J1850VPW, BaudRate.J1850VPW_10400, ConnectFlag.NONE);
-                if (m.Status != ResponseStatus.Success)
+                if (j2534Init.VPWLogger)
                 {
-                    Logger("Failed to set protocol, J2534 error code: 0x" + m.Value.ToString("X"));
-                    return false;
+                    m = ConnectToProtocol(ProtocolID.J1850VPW, BaudRate.J1850VPW_10400, ConnectFlag.NONE);
+                    if (m.Status != ResponseStatus.Success)
+                    {
+                        Logger("Failed to set protocol, J2534 error code: 0x" + m.Value.ToString("X"));
+                        return false;
+                    }
+                }
+                else
+                {
+                    m = ConnectToProtocol(j2534Init.Protocol, j2534Init.Baudrate, j2534Init.Connectflag);
+                    if (m.Status != ResponseStatus.Success)
+                    {
+                        Logger("Failed to set protocol, J2534 error code: 0x" + m.Value.ToString("X"));
+                        return false;
+                    }
+                    if (j2534Init.SconfigParameter != ConfigParameter.NONE)
+                    {
+                        SConfig sconfig = new SConfig(j2534Init.SconfigParameter, j2534Init.SconfigValue);
+                        SConfig[] sc = new SConfig[1];
+                        sc[0] = sconfig;
+                        SetConfig(sc);
+                    }
+                    if (j2534Init.Kinit == LoggerUtils.KInit.FastInit_J1979 || j2534Init.Kinit == LoggerUtils.KInit.FastInit_GMDelco)
+                    {
+                        //byte[] data = { 0xC1,0x33,0xF1,0x81 };
+                        PassThruMsg txMsg = new PassThruMsg(ProtocolID.ISO14230, 0, j2534Init.InitBytes.Replace(" ", "").ToBytes());
+                        PassThruMsg rxMsg = new PassThruMsg();
+                        J2534Err jErr = J2534Port.Functions.FastInit(ChannelID,txMsg, ref rxMsg);
+                        if (jErr != J2534Err.STATUS_NOERROR)
+                        {
+                            Logger("Fastinit error: " + jErr.ToString());
+                            //return false;
+                        }
+                    }
+                    else if (j2534Init.Kinit == LoggerUtils.KInit.FiveBaudInit_J1979)
+                    {
+                        byte k1 = 0;
+                        byte k2 = 0;
+                        J2534Port.Functions.FiveBaudInit(ChannelID, 0x33, ref k1 , ref k2);
+                    }
+                    if (!string.IsNullOrEmpty(j2534Init.PerodicMsg))
+                    {
+                        byte[] data = j2534Init.PerodicMsg.Replace(" ","").ToBytes();
+                        PassThruMsg txMsg = new PassThruMsg(j2534Init.Protocol, 0, data);
+                        J2534Err jErr = J2534Port.Functions.StartPeriodicMsg(ChannelID, txMsg, ref periodigMsgId, j2534Init.PriodicInterval);
+                        if (jErr != J2534Err.STATUS_NOERROR)
+                        {
+                            Logger("Periodic message error: " + jErr.ToString());
+                            //return false;
+                        }
+                    }
+
                 }
                 Debug.WriteLine("Protocol Set");
                 J2534FunctionsIsLoaded = true;
@@ -586,6 +634,30 @@ namespace UniversalPatcher
                 Debug.WriteLine(ex.Message);
             }
 
+        }
+
+        public override bool SetProtocol( int Protocol, int BaudRate, int ConnectFlag)
+        {
+            Response<J2534Err> m = ConnectToProtocol((ProtocolID)Protocol,(BaudRate)BaudRate,(ConnectFlag)ConnectFlag);
+            if (m.Status != ResponseStatus.Success)
+            {
+                LoggerBold("Error setting protocol");
+                return false;
+            }
+            RemoveFilters();
+            return true;
+        }
+
+        public override bool SetConfig(SConfig[] sc)
+        {
+            //SConfig sc = new SConfig((ConfigParameter)Parameter,Value);
+            J2534Err m = J2534Port.Functions.SetConfig(ChannelID, ref sc);
+            if (m != J2534Err.STATUS_NOERROR)
+            {
+                LoggerBold("Error setting config");
+                return false;
+            }
+            return true;
         }
 
         public override bool SetLoggingFilter()

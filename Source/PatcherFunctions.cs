@@ -420,6 +420,8 @@ public class Upatcher
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Log"));
         if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Profiles")))
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Profiles"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles"));
 
         if (UniversalPatcher.Properties.Settings.Default.LastXMLfolder == "")
             UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
