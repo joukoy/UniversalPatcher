@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using J2534DotNet;
 using System.IO;
+using System.Threading;
 
 public static class LoggerUtils
     {
@@ -452,5 +453,6 @@ public static class LoggerUtils
         PcmResponses.Add(0x78, "Block Transfer Message Correctly Received");
         PcmResponses.Add(0x79, "Incorrect Byte Count During Block Transfer");
     }
+
 
 }

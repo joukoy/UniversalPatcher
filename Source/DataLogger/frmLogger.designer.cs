@@ -90,7 +90,6 @@ namespace UniversalPatcher
             this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabSettings = new System.Windows.Forms.TabPage();
-            this.btnConnect2 = new System.Windows.Forms.Button();
             this.groupHWSettings = new System.Windows.Forms.GroupBox();
             this.categories = new System.Windows.Forms.GroupBox();
             this.j2534RadioButton = new System.Windows.Forms.RadioButton();
@@ -105,6 +104,7 @@ namespace UniversalPatcher
             this.comboSerialDeviceType = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.btnConnect2 = new System.Windows.Forms.Button();
             this.groupAdvanced = new System.Windows.Forms.GroupBox();
             this.chkFilterParamsByOS = new System.Windows.Forms.CheckBox();
             this.chkVPWFilters = new System.Windows.Forms.CheckBox();
@@ -114,8 +114,30 @@ namespace UniversalPatcher
             this.labelResponseMode = new System.Windows.Forms.Label();
             this.comboResponseMode = new System.Windows.Forms.ComboBox();
             this.tabVPWConsole = new System.Windows.Forms.TabPage();
-            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnConsoleRefresh = new System.Windows.Forms.Button();
+            this.btnConnect = new System.Windows.Forms.Button();
+            this.btnConsoleLoadScript = new System.Windows.Forms.Button();
+            this.chkConsoleAutorefresh = new System.Windows.Forms.CheckBox();
+            this.numConsoleScriptDelay = new System.Windows.Forms.NumericUpDown();
+            this.chkConsole4x = new System.Windows.Forms.CheckBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.chkEnableConsole = new System.Windows.Forms.CheckBox();
+            this.chkConsoleTimestamps = new System.Windows.Forms.CheckBox();
+            this.richVPWmessages = new System.Windows.Forms.RichTextBox();
+            this.txtSendBus = new System.Windows.Forms.TextBox();
+            this.tabJConsole = new System.Windows.Forms.TabPage();
+            this.richJConsole = new System.Windows.Forms.RichTextBox();
+            this.txtJConsoleSend = new System.Windows.Forms.TextBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.btnJConsoleRefresh = new System.Windows.Forms.Button();
+            this.btnJConsoleUploadScript = new System.Windows.Forms.Button();
+            this.chkJconsoleAutoRefresh = new System.Windows.Forms.CheckBox();
+            this.numJConsoleScriptDelay = new System.Windows.Forms.NumericUpDown();
+            this.chkJConsole4x = new System.Windows.Forms.CheckBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.chkJConsoleTimestamps = new System.Windows.Forms.CheckBox();
+            this.btnJConsoleConnect = new System.Windows.Forms.Button();
             this.groupJ2534Options = new System.Windows.Forms.GroupBox();
             this.numJ2534PeriodicMsgInterval = new System.Windows.Forms.NumericUpDown();
             this.label19 = new System.Windows.Forms.Label();
@@ -124,6 +146,7 @@ namespace UniversalPatcher
             this.btnJ2534SettingsLoad = new System.Windows.Forms.Button();
             this.btnJ2534SettingsSaveAs = new System.Windows.Forms.Button();
             this.txtJ2534InitBytes = new System.Windows.Forms.TextBox();
+            this.chkConsoleUseJ2534Timestamps = new System.Windows.Forms.CheckBox();
             this.label17 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.comboJ2534Init = new System.Windows.Forms.ComboBox();
@@ -137,19 +160,6 @@ namespace UniversalPatcher
             this.comboJ2534Baudrate = new System.Windows.Forms.ComboBox();
             this.comboJ2534Protocol = new System.Windows.Forms.ComboBox();
             this.label12 = new System.Windows.Forms.Label();
-            this.btnConnect = new System.Windows.Forms.Button();
-            this.chkConsoleAutorefresh = new System.Windows.Forms.CheckBox();
-            this.btnConsoleRefresh = new System.Windows.Forms.Button();
-            this.chkConsole4x = new System.Windows.Forms.CheckBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.numConsoleScriptDelay = new System.Windows.Forms.NumericUpDown();
-            this.chkConsoleUseJ2534Timestamps = new System.Windows.Forms.CheckBox();
-            this.chkEnableConsole = new System.Windows.Forms.CheckBox();
-            this.chkConsoleTimestamps = new System.Windows.Forms.CheckBox();
-            this.btnConsoleLoadScript = new System.Windows.Forms.Button();
-            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.txtVPWmessages = new System.Windows.Forms.RichTextBox();
-            this.txtSendBus = new System.Windows.Forms.TextBox();
             this.labelProgress = new System.Windows.Forms.Label();
             this.btnStartStop = new System.Windows.Forms.Button();
             this.txtResult = new System.Windows.Forms.RichTextBox();
@@ -169,6 +179,7 @@ namespace UniversalPatcher
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.labelConnected = new System.Windows.Forms.Label();
             this.timerSearchParams = new System.Windows.Forms.Timer(this.components);
+            this.labelJconsoleConnected = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -195,18 +206,13 @@ namespace UniversalPatcher
             this.serialOptionsGroupBox.SuspendLayout();
             this.groupAdvanced.SuspendLayout();
             this.tabVPWConsole.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
-            this.splitContainer4.Panel1.SuspendLayout();
-            this.splitContainer4.Panel2.SuspendLayout();
-            this.splitContainer4.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numConsoleScriptDelay)).BeginInit();
+            this.tabJConsole.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numJConsoleScriptDelay)).BeginInit();
             this.groupJ2534Options.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numJ2534PeriodicMsgInterval)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numConsoleScriptDelay)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
-            this.splitContainer3.Panel1.SuspendLayout();
-            this.splitContainer3.Panel2.SuspendLayout();
-            this.splitContainer3.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -222,7 +228,7 @@ namespace UniversalPatcher
             // comboSerialPort
             // 
             this.comboSerialPort.FormattingEnabled = true;
-            this.comboSerialPort.Location = new System.Drawing.Point(108, 62);
+            this.comboSerialPort.Location = new System.Drawing.Point(107, 46);
             this.comboSerialPort.Margin = new System.Windows.Forms.Padding(4);
             this.comboSerialPort.Name = "comboSerialPort";
             this.comboSerialPort.Size = new System.Drawing.Size(339, 24);
@@ -237,12 +243,13 @@ namespace UniversalPatcher
             this.tabControl1.Controls.Add(this.tabDTC);
             this.tabControl1.Controls.Add(this.tabSettings);
             this.tabControl1.Controls.Add(this.tabVPWConsole);
+            this.tabControl1.Controls.Add(this.tabJConsole);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1216, 520);
+            this.tabControl1.Size = new System.Drawing.Size(1208, 521);
             this.tabControl1.TabIndex = 3;
             // 
             // tabLog
@@ -253,7 +260,7 @@ namespace UniversalPatcher
             this.tabLog.Margin = new System.Windows.Forms.Padding(4);
             this.tabLog.Name = "tabLog";
             this.tabLog.Padding = new System.Windows.Forms.Padding(4);
-            this.tabLog.Size = new System.Drawing.Size(1208, 491);
+            this.tabLog.Size = new System.Drawing.Size(1208, 493);
             this.tabLog.TabIndex = 0;
             this.tabLog.Text = "Log";
             this.tabLog.UseVisualStyleBackColor = true;
@@ -269,7 +276,7 @@ namespace UniversalPatcher
             this.groupLogSettings.Margin = new System.Windows.Forms.Padding(4);
             this.groupLogSettings.Name = "groupLogSettings";
             this.groupLogSettings.Padding = new System.Windows.Forms.Padding(4);
-            this.groupLogSettings.Size = new System.Drawing.Size(584, 489);
+            this.groupLogSettings.Size = new System.Drawing.Size(584, 491);
             this.groupLogSettings.TabIndex = 31;
             this.groupLogSettings.TabStop = false;
             // 
@@ -365,7 +372,7 @@ namespace UniversalPatcher
             this.listProfiles.Location = new System.Drawing.Point(12, 167);
             this.listProfiles.Margin = new System.Windows.Forms.Padding(4);
             this.listProfiles.Name = "listProfiles";
-            this.listProfiles.Size = new System.Drawing.Size(563, 276);
+            this.listProfiles.Size = new System.Drawing.Size(563, 260);
             this.listProfiles.TabIndex = 29;
             // 
             // label3
@@ -387,7 +394,7 @@ namespace UniversalPatcher
             this.dataGridLogData.Location = new System.Drawing.Point(591, 4);
             this.dataGridLogData.Margin = new System.Windows.Forms.Padding(4);
             this.dataGridLogData.Name = "dataGridLogData";
-            this.dataGridLogData.Size = new System.Drawing.Size(611, 477);
+            this.dataGridLogData.Size = new System.Drawing.Size(611, 479);
             this.dataGridLogData.TabIndex = 8;
             // 
             // tabProfile
@@ -396,7 +403,7 @@ namespace UniversalPatcher
             this.tabProfile.Location = new System.Drawing.Point(4, 25);
             this.tabProfile.Margin = new System.Windows.Forms.Padding(4);
             this.tabProfile.Name = "tabProfile";
-            this.tabProfile.Size = new System.Drawing.Size(1208, 491);
+            this.tabProfile.Size = new System.Drawing.Size(1208, 493);
             this.tabProfile.TabIndex = 2;
             this.tabProfile.Text = "Profile";
             this.tabProfile.UseVisualStyleBackColor = true;
@@ -419,7 +426,7 @@ namespace UniversalPatcher
             this.splitContainer1.Panel2.Controls.Add(this.btnAdd);
             this.splitContainer1.Panel2.Controls.Add(this.dataGridLogProfile);
             this.splitContainer1.Panel2.Controls.Add(this.btnRemove);
-            this.splitContainer1.Size = new System.Drawing.Size(1208, 491);
+            this.splitContainer1.Size = new System.Drawing.Size(1208, 493);
             this.splitContainer1.SplitterDistance = 491;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 4;
@@ -496,7 +503,7 @@ namespace UniversalPatcher
             this.dataGridPidNames.Margin = new System.Windows.Forms.Padding(4);
             this.dataGridPidNames.Name = "dataGridPidNames";
             this.dataGridPidNames.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridPidNames.Size = new System.Drawing.Size(491, 449);
+            this.dataGridPidNames.Size = new System.Drawing.Size(491, 451);
             this.dataGridPidNames.TabIndex = 1;
             // 
             // btnQueryPid
@@ -531,7 +538,7 @@ namespace UniversalPatcher
             this.dataGridLogProfile.Location = new System.Drawing.Point(49, 0);
             this.dataGridLogProfile.Margin = new System.Windows.Forms.Padding(4);
             this.dataGridLogProfile.Name = "dataGridLogProfile";
-            this.dataGridLogProfile.Size = new System.Drawing.Size(658, 487);
+            this.dataGridLogProfile.Size = new System.Drawing.Size(657, 489);
             this.dataGridLogProfile.TabIndex = 0;
             // 
             // contextMenuStrip1
@@ -594,7 +601,7 @@ namespace UniversalPatcher
             this.tabAnalyzer.Location = new System.Drawing.Point(4, 25);
             this.tabAnalyzer.Margin = new System.Windows.Forms.Padding(4);
             this.tabAnalyzer.Name = "tabAnalyzer";
-            this.tabAnalyzer.Size = new System.Drawing.Size(1208, 491);
+            this.tabAnalyzer.Size = new System.Drawing.Size(1208, 493);
             this.tabAnalyzer.TabIndex = 4;
             this.tabAnalyzer.Text = "Analyzer";
             this.tabAnalyzer.UseVisualStyleBackColor = true;
@@ -670,7 +677,7 @@ namespace UniversalPatcher
             this.dataGridAnalyzer.Location = new System.Drawing.Point(0, 34);
             this.dataGridAnalyzer.Margin = new System.Windows.Forms.Padding(4);
             this.dataGridAnalyzer.Name = "dataGridAnalyzer";
-            this.dataGridAnalyzer.Size = new System.Drawing.Size(1203, 449);
+            this.dataGridAnalyzer.Size = new System.Drawing.Size(1203, 451);
             this.dataGridAnalyzer.TabIndex = 3;
             // 
             // tabDTC
@@ -680,7 +687,7 @@ namespace UniversalPatcher
             this.tabDTC.Location = new System.Drawing.Point(4, 25);
             this.tabDTC.Margin = new System.Windows.Forms.Padding(4);
             this.tabDTC.Name = "tabDTC";
-            this.tabDTC.Size = new System.Drawing.Size(1208, 491);
+            this.tabDTC.Size = new System.Drawing.Size(1208, 493);
             this.tabDTC.TabIndex = 5;
             this.tabDTC.Text = "DTC";
             this.tabDTC.UseVisualStyleBackColor = true;
@@ -847,7 +854,7 @@ namespace UniversalPatcher
             this.dataGridDtcCodes.Location = new System.Drawing.Point(277, 0);
             this.dataGridDtcCodes.Margin = new System.Windows.Forms.Padding(4);
             this.dataGridDtcCodes.Name = "dataGridDtcCodes";
-            this.dataGridDtcCodes.Size = new System.Drawing.Size(923, 483);
+            this.dataGridDtcCodes.Size = new System.Drawing.Size(923, 485);
             this.dataGridDtcCodes.TabIndex = 7;
             // 
             // Module
@@ -874,27 +881,16 @@ namespace UniversalPatcher
             // 
             // tabSettings
             // 
-            this.tabSettings.Controls.Add(this.btnConnect2);
             this.tabSettings.Controls.Add(this.groupHWSettings);
+            this.tabSettings.Controls.Add(this.btnConnect2);
             this.tabSettings.Controls.Add(this.groupAdvanced);
             this.tabSettings.Location = new System.Drawing.Point(4, 25);
             this.tabSettings.Margin = new System.Windows.Forms.Padding(4);
             this.tabSettings.Name = "tabSettings";
-            this.tabSettings.Size = new System.Drawing.Size(1208, 491);
+            this.tabSettings.Size = new System.Drawing.Size(1208, 493);
             this.tabSettings.TabIndex = 3;
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
-            // 
-            // btnConnect2
-            // 
-            this.btnConnect2.Location = new System.Drawing.Point(512, 235);
-            this.btnConnect2.Margin = new System.Windows.Forms.Padding(4);
-            this.btnConnect2.Name = "btnConnect2";
-            this.btnConnect2.Size = new System.Drawing.Size(219, 44);
-            this.btnConnect2.TabIndex = 23;
-            this.btnConnect2.Text = "Connect/ Disconnect";
-            this.btnConnect2.UseVisualStyleBackColor = true;
-            this.btnConnect2.Click += new System.EventHandler(this.btnConnect2_Click);
             // 
             // groupHWSettings
             // 
@@ -905,7 +901,7 @@ namespace UniversalPatcher
             this.groupHWSettings.Margin = new System.Windows.Forms.Padding(4);
             this.groupHWSettings.Name = "groupHWSettings";
             this.groupHWSettings.Padding = new System.Windows.Forms.Padding(4);
-            this.groupHWSettings.Size = new System.Drawing.Size(481, 297);
+            this.groupHWSettings.Size = new System.Drawing.Size(481, 276);
             this.groupHWSettings.TabIndex = 22;
             this.groupHWSettings.TabStop = false;
             // 
@@ -994,7 +990,7 @@ namespace UniversalPatcher
             this.serialOptionsGroupBox.Margin = new System.Windows.Forms.Padding(4);
             this.serialOptionsGroupBox.Name = "serialOptionsGroupBox";
             this.serialOptionsGroupBox.Padding = new System.Windows.Forms.Padding(4);
-            this.serialOptionsGroupBox.Size = new System.Drawing.Size(464, 174);
+            this.serialOptionsGroupBox.Size = new System.Drawing.Size(464, 148);
             this.serialOptionsGroupBox.TabIndex = 20;
             this.serialOptionsGroupBox.TabStop = false;
             this.serialOptionsGroupBox.Text = "Serialport options";
@@ -1002,7 +998,7 @@ namespace UniversalPatcher
             // comboBaudRate
             // 
             this.comboBaudRate.FormattingEnabled = true;
-            this.comboBaudRate.Location = new System.Drawing.Point(107, 132);
+            this.comboBaudRate.Location = new System.Drawing.Point(106, 110);
             this.comboBaudRate.Margin = new System.Windows.Forms.Padding(4);
             this.comboBaudRate.Name = "comboBaudRate";
             this.comboBaudRate.Size = new System.Drawing.Size(340, 24);
@@ -1011,7 +1007,7 @@ namespace UniversalPatcher
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(9, 142);
+            this.label7.Location = new System.Drawing.Point(10, 113);
             this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(66, 16);
@@ -1033,7 +1029,7 @@ namespace UniversalPatcher
             // comboSerialDeviceType
             // 
             this.comboSerialDeviceType.FormattingEnabled = true;
-            this.comboSerialDeviceType.Location = new System.Drawing.Point(108, 96);
+            this.comboSerialDeviceType.Location = new System.Drawing.Point(108, 78);
             this.comboSerialDeviceType.Margin = new System.Windows.Forms.Padding(4);
             this.comboSerialDeviceType.Name = "comboSerialDeviceType";
             this.comboSerialDeviceType.Size = new System.Drawing.Size(339, 24);
@@ -1043,7 +1039,7 @@ namespace UniversalPatcher
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 65);
+            this.label1.Location = new System.Drawing.Point(10, 49);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(35, 16);
@@ -1053,12 +1049,23 @@ namespace UniversalPatcher
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 103);
+            this.label4.Location = new System.Drawing.Point(10, 81);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(86, 16);
             this.label4.TabIndex = 16;
             this.label4.Text = "Device Type";
+            // 
+            // btnConnect2
+            // 
+            this.btnConnect2.Location = new System.Drawing.Point(161, 288);
+            this.btnConnect2.Margin = new System.Windows.Forms.Padding(4);
+            this.btnConnect2.Name = "btnConnect2";
+            this.btnConnect2.Size = new System.Drawing.Size(189, 36);
+            this.btnConnect2.TabIndex = 23;
+            this.btnConnect2.Text = "Connect/ Disconnect";
+            this.btnConnect2.UseVisualStyleBackColor = true;
+            this.btnConnect2.Click += new System.EventHandler(this.btnConnect2_Click);
             // 
             // groupAdvanced
             // 
@@ -1069,11 +1076,11 @@ namespace UniversalPatcher
             this.groupAdvanced.Controls.Add(this.chkReverseSlotNumbers);
             this.groupAdvanced.Controls.Add(this.labelResponseMode);
             this.groupAdvanced.Controls.Add(this.comboResponseMode);
-            this.groupAdvanced.Location = new System.Drawing.Point(500, 14);
+            this.groupAdvanced.Location = new System.Drawing.Point(500, 5);
             this.groupAdvanced.Margin = new System.Windows.Forms.Padding(4);
             this.groupAdvanced.Name = "groupAdvanced";
             this.groupAdvanced.Padding = new System.Windows.Forms.Padding(4);
-            this.groupAdvanced.Size = new System.Drawing.Size(252, 190);
+            this.groupAdvanced.Size = new System.Drawing.Size(464, 142);
             this.groupAdvanced.TabIndex = 34;
             this.groupAdvanced.TabStop = false;
             this.groupAdvanced.Text = "Advanced settings";
@@ -1083,7 +1090,7 @@ namespace UniversalPatcher
             this.chkFilterParamsByOS.AutoSize = true;
             this.chkFilterParamsByOS.Checked = true;
             this.chkFilterParamsByOS.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkFilterParamsByOS.Location = new System.Drawing.Point(12, 87);
+            this.chkFilterParamsByOS.Location = new System.Drawing.Point(221, 23);
             this.chkFilterParamsByOS.Margin = new System.Windows.Forms.Padding(4);
             this.chkFilterParamsByOS.Name = "chkFilterParamsByOS";
             this.chkFilterParamsByOS.Size = new System.Drawing.Size(168, 20);
@@ -1106,7 +1113,7 @@ namespace UniversalPatcher
             // chkPriority
             // 
             this.chkPriority.AutoSize = true;
-            this.chkPriority.Location = new System.Drawing.Point(12, 110);
+            this.chkPriority.Location = new System.Drawing.Point(221, 46);
             this.chkPriority.Margin = new System.Windows.Forms.Padding(4);
             this.chkPriority.Name = "chkPriority";
             this.chkPriority.Size = new System.Drawing.Size(96, 20);
@@ -1142,7 +1149,7 @@ namespace UniversalPatcher
             // labelResponseMode
             // 
             this.labelResponseMode.AutoSize = true;
-            this.labelResponseMode.Location = new System.Drawing.Point(8, 130);
+            this.labelResponseMode.Location = new System.Drawing.Point(9, 89);
             this.labelResponseMode.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelResponseMode.Name = "labelResponseMode";
             this.labelResponseMode.Size = new System.Drawing.Size(112, 16);
@@ -1152,7 +1159,7 @@ namespace UniversalPatcher
             // comboResponseMode
             // 
             this.comboResponseMode.FormattingEnabled = true;
-            this.comboResponseMode.Location = new System.Drawing.Point(8, 150);
+            this.comboResponseMode.Location = new System.Drawing.Point(9, 109);
             this.comboResponseMode.Margin = new System.Windows.Forms.Padding(4);
             this.comboResponseMode.Name = "comboResponseMode";
             this.comboResponseMode.Size = new System.Drawing.Size(221, 24);
@@ -1161,56 +1168,312 @@ namespace UniversalPatcher
             // 
             // tabVPWConsole
             // 
-            this.tabVPWConsole.Controls.Add(this.splitContainer4);
+            this.tabVPWConsole.Controls.Add(this.txtSendBus);
+            this.tabVPWConsole.Controls.Add(this.groupBox3);
+            this.tabVPWConsole.Controls.Add(this.richVPWmessages);
             this.tabVPWConsole.Location = new System.Drawing.Point(4, 25);
             this.tabVPWConsole.Margin = new System.Windows.Forms.Padding(4);
             this.tabVPWConsole.Name = "tabVPWConsole";
-            this.tabVPWConsole.Size = new System.Drawing.Size(1208, 491);
+            this.tabVPWConsole.Size = new System.Drawing.Size(1200, 492);
             this.tabVPWConsole.TabIndex = 6;
             this.tabVPWConsole.Text = "VPW Console";
             this.tabVPWConsole.UseVisualStyleBackColor = true;
             // 
-            // splitContainer4
-            // 
-            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer4.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer4.Margin = new System.Windows.Forms.Padding(4);
-            this.splitContainer4.Name = "splitContainer4";
-            // 
-            // splitContainer4.Panel1
-            // 
-            this.splitContainer4.Panel1.Controls.Add(this.groupBox3);
-            // 
-            // splitContainer4.Panel2
-            // 
-            this.splitContainer4.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer4.Size = new System.Drawing.Size(1208, 491);
-            this.splitContainer4.SplitterDistance = 483;
-            this.splitContainer4.SplitterWidth = 5;
-            this.splitContainer4.TabIndex = 0;
-            // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.groupJ2534Options);
-            this.groupBox3.Controls.Add(this.btnConnect);
-            this.groupBox3.Controls.Add(this.chkConsoleAutorefresh);
             this.groupBox3.Controls.Add(this.btnConsoleRefresh);
+            this.groupBox3.Controls.Add(this.btnConnect);
+            this.groupBox3.Controls.Add(this.btnConsoleLoadScript);
+            this.groupBox3.Controls.Add(this.chkConsoleAutorefresh);
+            this.groupBox3.Controls.Add(this.numConsoleScriptDelay);
             this.groupBox3.Controls.Add(this.chkConsole4x);
             this.groupBox3.Controls.Add(this.label9);
-            this.groupBox3.Controls.Add(this.numConsoleScriptDelay);
-            this.groupBox3.Controls.Add(this.chkConsoleUseJ2534Timestamps);
             this.groupBox3.Controls.Add(this.chkEnableConsole);
             this.groupBox3.Controls.Add(this.chkConsoleTimestamps);
-            this.groupBox3.Controls.Add(this.btnConsoleLoadScript);
-            this.groupBox3.Location = new System.Drawing.Point(11, 18);
+            this.groupBox3.Location = new System.Drawing.Point(4, 4);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox3.Size = new System.Drawing.Size(468, 464);
+            this.groupBox3.Size = new System.Drawing.Size(187, 436);
             this.groupBox3.TabIndex = 35;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "VPW Console";
             this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
+            // 
+            // btnConsoleRefresh
+            // 
+            this.btnConsoleRefresh.Location = new System.Drawing.Point(8, 108);
+            this.btnConsoleRefresh.Margin = new System.Windows.Forms.Padding(4);
+            this.btnConsoleRefresh.Name = "btnConsoleRefresh";
+            this.btnConsoleRefresh.Size = new System.Drawing.Size(120, 26);
+            this.btnConsoleRefresh.TabIndex = 43;
+            this.btnConsoleRefresh.Text = "Refresh";
+            this.btnConsoleRefresh.UseVisualStyleBackColor = true;
+            this.btnConsoleRefresh.Click += new System.EventHandler(this.btnConsoleRefresh_Click);
+            // 
+            // btnConnect
+            // 
+            this.btnConnect.Location = new System.Drawing.Point(8, 389);
+            this.btnConnect.Margin = new System.Windows.Forms.Padding(4);
+            this.btnConnect.Name = "btnConnect";
+            this.btnConnect.Size = new System.Drawing.Size(167, 30);
+            this.btnConnect.TabIndex = 21;
+            this.btnConnect.Text = "Connect/ Disconnect";
+            this.btnConnect.UseVisualStyleBackColor = true;
+            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
+            // 
+            // btnConsoleLoadScript
+            // 
+            this.btnConsoleLoadScript.Location = new System.Drawing.Point(8, 257);
+            this.btnConsoleLoadScript.Margin = new System.Windows.Forms.Padding(4);
+            this.btnConsoleLoadScript.Name = "btnConsoleLoadScript";
+            this.btnConsoleLoadScript.Size = new System.Drawing.Size(120, 30);
+            this.btnConsoleLoadScript.TabIndex = 0;
+            this.btnConsoleLoadScript.Text = "Upload script";
+            this.btnConsoleLoadScript.UseVisualStyleBackColor = true;
+            this.btnConsoleLoadScript.Click += new System.EventHandler(this.btnConsoleLoadScript_Click);
+            // 
+            // chkConsoleAutorefresh
+            // 
+            this.chkConsoleAutorefresh.AutoSize = true;
+            this.chkConsoleAutorefresh.Location = new System.Drawing.Point(8, 80);
+            this.chkConsoleAutorefresh.Margin = new System.Windows.Forms.Padding(4);
+            this.chkConsoleAutorefresh.Name = "chkConsoleAutorefresh";
+            this.chkConsoleAutorefresh.Size = new System.Drawing.Size(98, 20);
+            this.chkConsoleAutorefresh.TabIndex = 44;
+            this.chkConsoleAutorefresh.Text = "Auto refresh";
+            this.chkConsoleAutorefresh.UseVisualStyleBackColor = true;
+            this.chkConsoleAutorefresh.CheckedChanged += new System.EventHandler(this.chkConsoleAutorefresh_CheckedChanged);
+            // 
+            // numConsoleScriptDelay
+            // 
+            this.numConsoleScriptDelay.Location = new System.Drawing.Point(8, 227);
+            this.numConsoleScriptDelay.Margin = new System.Windows.Forms.Padding(4);
+            this.numConsoleScriptDelay.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numConsoleScriptDelay.Name = "numConsoleScriptDelay";
+            this.numConsoleScriptDelay.Size = new System.Drawing.Size(68, 22);
+            this.numConsoleScriptDelay.TabIndex = 40;
+            // 
+            // chkConsole4x
+            // 
+            this.chkConsole4x.AutoSize = true;
+            this.chkConsole4x.Location = new System.Drawing.Point(8, 59);
+            this.chkConsole4x.Margin = new System.Windows.Forms.Padding(4);
+            this.chkConsole4x.Name = "chkConsole4x";
+            this.chkConsole4x.Size = new System.Drawing.Size(78, 20);
+            this.chkConsole4x.TabIndex = 42;
+            this.chkConsole4x.Text = "4x mode";
+            this.chkConsole4x.UseVisualStyleBackColor = true;
+            this.chkConsole4x.CheckedChanged += new System.EventHandler(this.chkConsole4x_CheckedChanged);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(5, 207);
+            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(108, 16);
+            this.label9.TabIndex = 41;
+            this.label9.Text = "Script delay (ms)";
+            // 
+            // chkEnableConsole
+            // 
+            this.chkEnableConsole.AutoSize = true;
+            this.chkEnableConsole.Location = new System.Drawing.Point(8, 17);
+            this.chkEnableConsole.Margin = new System.Windows.Forms.Padding(4);
+            this.chkEnableConsole.Name = "chkEnableConsole";
+            this.chkEnableConsole.Size = new System.Drawing.Size(155, 20);
+            this.chkEnableConsole.TabIndex = 37;
+            this.chkEnableConsole.Text = "Enable VPW console";
+            this.chkEnableConsole.UseVisualStyleBackColor = true;
+            this.chkEnableConsole.CheckedChanged += new System.EventHandler(this.chkEnableConsole_CheckedChanged);
+            // 
+            // chkConsoleTimestamps
+            // 
+            this.chkConsoleTimestamps.AutoSize = true;
+            this.chkConsoleTimestamps.Location = new System.Drawing.Point(8, 37);
+            this.chkConsoleTimestamps.Margin = new System.Windows.Forms.Padding(4);
+            this.chkConsoleTimestamps.Name = "chkConsoleTimestamps";
+            this.chkConsoleTimestamps.Size = new System.Drawing.Size(102, 20);
+            this.chkConsoleTimestamps.TabIndex = 38;
+            this.chkConsoleTimestamps.Text = "Timestamps";
+            this.chkConsoleTimestamps.UseVisualStyleBackColor = true;
+            // 
+            // txtVPWmessages
+            // 
+            this.richVPWmessages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richVPWmessages.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richVPWmessages.HideSelection = false;
+            this.richVPWmessages.Location = new System.Drawing.Point(199, 6);
+            this.richVPWmessages.Margin = new System.Windows.Forms.Padding(4);
+            this.richVPWmessages.Name = "txtVPWmessages";
+            this.richVPWmessages.Size = new System.Drawing.Size(991, 440);
+            this.richVPWmessages.TabIndex = 2;
+            this.richVPWmessages.Text = "";
+            this.richVPWmessages.WordWrap = false;
+            // 
+            // txtSendBus
+            // 
+            this.txtSendBus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSendBus.Location = new System.Drawing.Point(199, 454);
+            this.txtSendBus.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSendBus.Name = "txtSendBus";
+            this.txtSendBus.Size = new System.Drawing.Size(991, 22);
+            this.txtSendBus.TabIndex = 1;
+            this.txtSendBus.TextChanged += new System.EventHandler(this.txtSendBus_TextChanged);
+            // 
+            // tabJConsole
+            // 
+            this.tabJConsole.Controls.Add(this.txtJConsoleSend);
+            this.tabJConsole.Controls.Add(this.richJConsole);
+            this.tabJConsole.Controls.Add(this.groupBox4);
+            this.tabJConsole.Controls.Add(this.btnJConsoleConnect);
+            this.tabJConsole.Controls.Add(this.groupJ2534Options);
+            this.tabJConsole.Location = new System.Drawing.Point(4, 25);
+            this.tabJConsole.Name = "tabJConsole";
+            this.tabJConsole.Size = new System.Drawing.Size(1200, 492);
+            this.tabJConsole.TabIndex = 7;
+            this.tabJConsole.Text = "J-Console";
+            this.tabJConsole.UseVisualStyleBackColor = true;
+            // 
+            // richJConsole
+            // 
+            this.richJConsole.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richJConsole.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richJConsole.HideSelection = false;
+            this.richJConsole.Location = new System.Drawing.Point(437, 6);
+            this.richJConsole.Margin = new System.Windows.Forms.Padding(4);
+            this.richJConsole.Name = "richJConsole";
+            this.richJConsole.Size = new System.Drawing.Size(758, 454);
+            this.richJConsole.TabIndex = 3;
+            this.richJConsole.Text = "";
+            this.richJConsole.WordWrap = false;
+            // 
+            // txtJConsoleSend
+            // 
+            this.txtJConsoleSend.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtJConsoleSend.Location = new System.Drawing.Point(437, 467);
+            this.txtJConsoleSend.Name = "txtJConsoleSend";
+            this.txtJConsoleSend.Size = new System.Drawing.Size(759, 22);
+            this.txtJConsoleSend.TabIndex = 0;
+            this.txtJConsoleSend.TextChanged += new System.EventHandler(this.txtJConsoleSend_TextChanged);
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.labelJconsoleConnected);
+            this.groupBox4.Controls.Add(this.btnJConsoleRefresh);
+            this.groupBox4.Controls.Add(this.btnJConsoleUploadScript);
+            this.groupBox4.Controls.Add(this.chkJconsoleAutoRefresh);
+            this.groupBox4.Controls.Add(this.numJConsoleScriptDelay);
+            this.groupBox4.Controls.Add(this.chkJConsole4x);
+            this.groupBox4.Controls.Add(this.label20);
+            this.groupBox4.Controls.Add(this.chkJConsoleTimestamps);
+            this.groupBox4.Location = new System.Drawing.Point(292, 4);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(4);
+            this.groupBox4.Size = new System.Drawing.Size(142, 354);
+            this.groupBox4.TabIndex = 51;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "J-Console";
+            // 
+            // btnJConsoleRefresh
+            // 
+            this.btnJConsoleRefresh.Location = new System.Drawing.Point(8, 137);
+            this.btnJConsoleRefresh.Margin = new System.Windows.Forms.Padding(4);
+            this.btnJConsoleRefresh.Name = "btnJConsoleRefresh";
+            this.btnJConsoleRefresh.Size = new System.Drawing.Size(120, 26);
+            this.btnJConsoleRefresh.TabIndex = 43;
+            this.btnJConsoleRefresh.Text = "Refresh";
+            this.btnJConsoleRefresh.UseVisualStyleBackColor = true;
+            // 
+            // btnJConsoleUploadScript
+            // 
+            this.btnJConsoleUploadScript.Location = new System.Drawing.Point(8, 257);
+            this.btnJConsoleUploadScript.Margin = new System.Windows.Forms.Padding(4);
+            this.btnJConsoleUploadScript.Name = "btnJConsoleUploadScript";
+            this.btnJConsoleUploadScript.Size = new System.Drawing.Size(120, 30);
+            this.btnJConsoleUploadScript.TabIndex = 0;
+            this.btnJConsoleUploadScript.Text = "Upload script";
+            this.btnJConsoleUploadScript.UseVisualStyleBackColor = true;
+            this.btnJConsoleUploadScript.Click += new System.EventHandler(this.btnJConsoleUploadScript_Click);
+            // 
+            // chkJconsoleAutoRefresh
+            // 
+            this.chkJconsoleAutoRefresh.AutoSize = true;
+            this.chkJconsoleAutoRefresh.Location = new System.Drawing.Point(8, 109);
+            this.chkJconsoleAutoRefresh.Margin = new System.Windows.Forms.Padding(4);
+            this.chkJconsoleAutoRefresh.Name = "chkJconsoleAutoRefresh";
+            this.chkJconsoleAutoRefresh.Size = new System.Drawing.Size(98, 20);
+            this.chkJconsoleAutoRefresh.TabIndex = 44;
+            this.chkJconsoleAutoRefresh.Text = "Auto refresh";
+            this.chkJconsoleAutoRefresh.UseVisualStyleBackColor = true;
+            // 
+            // numJConsoleScriptDelay
+            // 
+            this.numJConsoleScriptDelay.Location = new System.Drawing.Point(8, 227);
+            this.numJConsoleScriptDelay.Margin = new System.Windows.Forms.Padding(4);
+            this.numJConsoleScriptDelay.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numJConsoleScriptDelay.Name = "numJConsoleScriptDelay";
+            this.numJConsoleScriptDelay.Size = new System.Drawing.Size(68, 22);
+            this.numJConsoleScriptDelay.TabIndex = 40;
+            // 
+            // chkJConsole4x
+            // 
+            this.chkJConsole4x.AutoSize = true;
+            this.chkJConsole4x.Location = new System.Drawing.Point(8, 88);
+            this.chkJConsole4x.Margin = new System.Windows.Forms.Padding(4);
+            this.chkJConsole4x.Name = "chkJConsole4x";
+            this.chkJConsole4x.Size = new System.Drawing.Size(78, 20);
+            this.chkJConsole4x.TabIndex = 42;
+            this.chkJConsole4x.Text = "4x mode";
+            this.chkJConsole4x.UseVisualStyleBackColor = true;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(5, 207);
+            this.label20.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(108, 16);
+            this.label20.TabIndex = 41;
+            this.label20.Text = "Script delay (ms)";
+            // 
+            // chkJConsoleTimestamps
+            // 
+            this.chkJConsoleTimestamps.AutoSize = true;
+            this.chkJConsoleTimestamps.Location = new System.Drawing.Point(8, 66);
+            this.chkJConsoleTimestamps.Margin = new System.Windows.Forms.Padding(4);
+            this.chkJConsoleTimestamps.Name = "chkJConsoleTimestamps";
+            this.chkJConsoleTimestamps.Size = new System.Drawing.Size(102, 20);
+            this.chkJConsoleTimestamps.TabIndex = 38;
+            this.chkJConsoleTimestamps.Text = "Timestamps";
+            this.chkJConsoleTimestamps.UseVisualStyleBackColor = true;
+            // 
+            // btnJConsoleConnect
+            // 
+            this.btnJConsoleConnect.Location = new System.Drawing.Point(40, 395);
+            this.btnJConsoleConnect.Margin = new System.Windows.Forms.Padding(4);
+            this.btnJConsoleConnect.Name = "btnJConsoleConnect";
+            this.btnJConsoleConnect.Size = new System.Drawing.Size(167, 30);
+            this.btnJConsoleConnect.TabIndex = 21;
+            this.btnJConsoleConnect.Text = "Connect/ Disconnect";
+            this.btnJConsoleConnect.UseVisualStyleBackColor = true;
+            this.btnJConsoleConnect.Click += new System.EventHandler(this.btnJConsoleConnect_Click);
             // 
             // groupJ2534Options
             // 
@@ -1221,6 +1484,7 @@ namespace UniversalPatcher
             this.groupJ2534Options.Controls.Add(this.btnJ2534SettingsLoad);
             this.groupJ2534Options.Controls.Add(this.btnJ2534SettingsSaveAs);
             this.groupJ2534Options.Controls.Add(this.txtJ2534InitBytes);
+            this.groupJ2534Options.Controls.Add(this.chkConsoleUseJ2534Timestamps);
             this.groupJ2534Options.Controls.Add(this.label17);
             this.groupJ2534Options.Controls.Add(this.label16);
             this.groupJ2534Options.Controls.Add(this.comboJ2534Init);
@@ -1234,8 +1498,7 @@ namespace UniversalPatcher
             this.groupJ2534Options.Controls.Add(this.comboJ2534Baudrate);
             this.groupJ2534Options.Controls.Add(this.comboJ2534Protocol);
             this.groupJ2534Options.Controls.Add(this.label12);
-            this.groupJ2534Options.Enabled = false;
-            this.groupJ2534Options.Location = new System.Drawing.Point(185, 12);
+            this.groupJ2534Options.Location = new System.Drawing.Point(9, 4);
             this.groupJ2534Options.Margin = new System.Windows.Forms.Padding(4);
             this.groupJ2534Options.Name = "groupJ2534Options";
             this.groupJ2534Options.Padding = new System.Windows.Forms.Padding(4);
@@ -1288,7 +1551,7 @@ namespace UniversalPatcher
             // 
             // btnJ2534SettingsLoad
             // 
-            this.btnJ2534SettingsLoad.Location = new System.Drawing.Point(158, 304);
+            this.btnJ2534SettingsLoad.Location = new System.Drawing.Point(157, 322);
             this.btnJ2534SettingsLoad.Name = "btnJ2534SettingsLoad";
             this.btnJ2534SettingsLoad.Size = new System.Drawing.Size(105, 26);
             this.btnJ2534SettingsLoad.TabIndex = 60;
@@ -1298,7 +1561,7 @@ namespace UniversalPatcher
             // 
             // btnJ2534SettingsSaveAs
             // 
-            this.btnJ2534SettingsSaveAs.Location = new System.Drawing.Point(11, 304);
+            this.btnJ2534SettingsSaveAs.Location = new System.Drawing.Point(7, 321);
             this.btnJ2534SettingsSaveAs.Name = "btnJ2534SettingsSaveAs";
             this.btnJ2534SettingsSaveAs.Size = new System.Drawing.Size(105, 26);
             this.btnJ2534SettingsSaveAs.TabIndex = 59;
@@ -1313,6 +1576,18 @@ namespace UniversalPatcher
             this.txtJ2534InitBytes.Name = "txtJ2534InitBytes";
             this.txtJ2534InitBytes.Size = new System.Drawing.Size(152, 22);
             this.txtJ2534InitBytes.TabIndex = 58;
+            // 
+            // chkConsoleUseJ2534Timestamps
+            // 
+            this.chkConsoleUseJ2534Timestamps.AutoSize = true;
+            this.chkConsoleUseJ2534Timestamps.Location = new System.Drawing.Point(122, 290);
+            this.chkConsoleUseJ2534Timestamps.Margin = new System.Windows.Forms.Padding(4);
+            this.chkConsoleUseJ2534Timestamps.Name = "chkConsoleUseJ2534Timestamps";
+            this.chkConsoleUseJ2534Timestamps.Size = new System.Drawing.Size(140, 20);
+            this.chkConsoleUseJ2534Timestamps.TabIndex = 39;
+            this.chkConsoleUseJ2534Timestamps.Text = "J2534 Timestamps";
+            this.chkConsoleUseJ2534Timestamps.UseVisualStyleBackColor = true;
+            this.chkConsoleUseJ2534Timestamps.CheckedChanged += new System.EventHandler(this.chkConsoleUseJ2534Timestamps_CheckedChanged);
             // 
             // label17
             // 
@@ -1346,10 +1621,10 @@ namespace UniversalPatcher
             // 
             // txtJ2534SetPins
             // 
-            this.txtJ2534SetPins.Location = new System.Drawing.Point(111, 144);
+            this.txtJ2534SetPins.Location = new System.Drawing.Point(110, 144);
             this.txtJ2534SetPins.Margin = new System.Windows.Forms.Padding(4);
             this.txtJ2534SetPins.Name = "txtJ2534SetPins";
-            this.txtJ2534SetPins.Size = new System.Drawing.Size(152, 22);
+            this.txtJ2534SetPins.Size = new System.Drawing.Size(153, 22);
             this.txtJ2534SetPins.TabIndex = 54;
             // 
             // label15
@@ -1440,177 +1715,22 @@ namespace UniversalPatcher
             this.label12.TabIndex = 47;
             this.label12.Text = "Baudrate:";
             // 
-            // btnConnect
-            // 
-            this.btnConnect.Location = new System.Drawing.Point(15, 146);
-            this.btnConnect.Margin = new System.Windows.Forms.Padding(4);
-            this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(148, 42);
-            this.btnConnect.TabIndex = 21;
-            this.btnConnect.Text = "Connect/ Disconnect";
-            this.btnConnect.UseVisualStyleBackColor = true;
-            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
-            // 
-            // chkConsoleAutorefresh
-            // 
-            this.chkConsoleAutorefresh.AutoSize = true;
-            this.chkConsoleAutorefresh.Location = new System.Drawing.Point(8, 101);
-            this.chkConsoleAutorefresh.Margin = new System.Windows.Forms.Padding(4);
-            this.chkConsoleAutorefresh.Name = "chkConsoleAutorefresh";
-            this.chkConsoleAutorefresh.Size = new System.Drawing.Size(98, 20);
-            this.chkConsoleAutorefresh.TabIndex = 44;
-            this.chkConsoleAutorefresh.Text = "Auto refresh";
-            this.chkConsoleAutorefresh.UseVisualStyleBackColor = true;
-            this.chkConsoleAutorefresh.CheckedChanged += new System.EventHandler(this.chkConsoleAutorefresh_CheckedChanged);
-            // 
-            // btnConsoleRefresh
-            // 
-            this.btnConsoleRefresh.Location = new System.Drawing.Point(269, 396);
-            this.btnConsoleRefresh.Margin = new System.Windows.Forms.Padding(4);
-            this.btnConsoleRefresh.Name = "btnConsoleRefresh";
-            this.btnConsoleRefresh.Size = new System.Drawing.Size(180, 38);
-            this.btnConsoleRefresh.TabIndex = 43;
-            this.btnConsoleRefresh.Text = "Refresh";
-            this.btnConsoleRefresh.UseVisualStyleBackColor = true;
-            this.btnConsoleRefresh.Click += new System.EventHandler(this.btnConsoleRefresh_Click);
-            // 
-            // chkConsole4x
-            // 
-            this.chkConsole4x.AutoSize = true;
-            this.chkConsole4x.Location = new System.Drawing.Point(8, 80);
-            this.chkConsole4x.Margin = new System.Windows.Forms.Padding(4);
-            this.chkConsole4x.Name = "chkConsole4x";
-            this.chkConsole4x.Size = new System.Drawing.Size(78, 20);
-            this.chkConsole4x.TabIndex = 42;
-            this.chkConsole4x.Text = "4x mode";
-            this.chkConsole4x.UseVisualStyleBackColor = true;
-            this.chkConsole4x.CheckedChanged += new System.EventHandler(this.chkConsole4x_CheckedChanged);
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(12, 344);
-            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(108, 16);
-            this.label9.TabIndex = 41;
-            this.label9.Text = "Script delay (ms)";
-            // 
-            // numConsoleScriptDelay
-            // 
-            this.numConsoleScriptDelay.Location = new System.Drawing.Point(15, 364);
-            this.numConsoleScriptDelay.Margin = new System.Windows.Forms.Padding(4);
-            this.numConsoleScriptDelay.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.numConsoleScriptDelay.Name = "numConsoleScriptDelay";
-            this.numConsoleScriptDelay.Size = new System.Drawing.Size(68, 22);
-            this.numConsoleScriptDelay.TabIndex = 40;
-            // 
-            // chkConsoleUseJ2534Timestamps
-            // 
-            this.chkConsoleUseJ2534Timestamps.AutoSize = true;
-            this.chkConsoleUseJ2534Timestamps.Location = new System.Drawing.Point(8, 62);
-            this.chkConsoleUseJ2534Timestamps.Margin = new System.Windows.Forms.Padding(4);
-            this.chkConsoleUseJ2534Timestamps.Name = "chkConsoleUseJ2534Timestamps";
-            this.chkConsoleUseJ2534Timestamps.Size = new System.Drawing.Size(140, 20);
-            this.chkConsoleUseJ2534Timestamps.TabIndex = 39;
-            this.chkConsoleUseJ2534Timestamps.Text = "J2534 Timestamps";
-            this.chkConsoleUseJ2534Timestamps.UseVisualStyleBackColor = true;
-            // 
-            // chkEnableConsole
-            // 
-            this.chkEnableConsole.AutoSize = true;
-            this.chkEnableConsole.Location = new System.Drawing.Point(8, 23);
-            this.chkEnableConsole.Margin = new System.Windows.Forms.Padding(4);
-            this.chkEnableConsole.Name = "chkEnableConsole";
-            this.chkEnableConsole.Size = new System.Drawing.Size(155, 20);
-            this.chkEnableConsole.TabIndex = 37;
-            this.chkEnableConsole.Text = "Enable VPW console";
-            this.chkEnableConsole.UseVisualStyleBackColor = true;
-            this.chkEnableConsole.CheckedChanged += new System.EventHandler(this.chkEnableConsole_CheckedChanged);
-            // 
-            // chkConsoleTimestamps
-            // 
-            this.chkConsoleTimestamps.AutoSize = true;
-            this.chkConsoleTimestamps.Location = new System.Drawing.Point(8, 43);
-            this.chkConsoleTimestamps.Margin = new System.Windows.Forms.Padding(4);
-            this.chkConsoleTimestamps.Name = "chkConsoleTimestamps";
-            this.chkConsoleTimestamps.Size = new System.Drawing.Size(102, 20);
-            this.chkConsoleTimestamps.TabIndex = 38;
-            this.chkConsoleTimestamps.Text = "Timestamps";
-            this.chkConsoleTimestamps.UseVisualStyleBackColor = true;
-            // 
-            // btnConsoleLoadScript
-            // 
-            this.btnConsoleLoadScript.Location = new System.Drawing.Point(15, 394);
-            this.btnConsoleLoadScript.Margin = new System.Windows.Forms.Padding(4);
-            this.btnConsoleLoadScript.Name = "btnConsoleLoadScript";
-            this.btnConsoleLoadScript.Size = new System.Drawing.Size(148, 38);
-            this.btnConsoleLoadScript.TabIndex = 0;
-            this.btnConsoleLoadScript.Text = "Upload script";
-            this.btnConsoleLoadScript.UseVisualStyleBackColor = true;
-            this.btnConsoleLoadScript.Click += new System.EventHandler(this.btnConsoleLoadScript_Click);
-            // 
-            // splitContainer3
-            // 
-            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer3.Name = "splitContainer3";
-            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer3.Panel1
-            // 
-            this.splitContainer3.Panel1.Controls.Add(this.txtVPWmessages);
-            // 
-            // splitContainer3.Panel2
-            // 
-            this.splitContainer3.Panel2.Controls.Add(this.txtSendBus);
-            this.splitContainer3.Size = new System.Drawing.Size(720, 491);
-            this.splitContainer3.SplitterDistance = 457;
-            this.splitContainer3.TabIndex = 3;
-            // 
-            // txtVPWmessages
-            // 
-            this.txtVPWmessages.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtVPWmessages.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtVPWmessages.HideSelection = false;
-            this.txtVPWmessages.Location = new System.Drawing.Point(0, 0);
-            this.txtVPWmessages.Margin = new System.Windows.Forms.Padding(4);
-            this.txtVPWmessages.Name = "txtVPWmessages";
-            this.txtVPWmessages.Size = new System.Drawing.Size(720, 457);
-            this.txtVPWmessages.TabIndex = 2;
-            this.txtVPWmessages.Text = "";
-            this.txtVPWmessages.WordWrap = false;
-            // 
-            // txtSendBus
-            // 
-            this.txtSendBus.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.txtSendBus.Location = new System.Drawing.Point(0, 8);
-            this.txtSendBus.Margin = new System.Windows.Forms.Padding(4);
-            this.txtSendBus.Name = "txtSendBus";
-            this.txtSendBus.Size = new System.Drawing.Size(720, 22);
-            this.txtSendBus.TabIndex = 1;
-            this.txtSendBus.TextChanged += new System.EventHandler(this.txtSendBus_TextChanged);
-            // 
             // labelProgress
             // 
             this.labelProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labelProgress.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.labelProgress.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelProgress.Location = new System.Drawing.Point(623, 32);
+            this.labelProgress.Location = new System.Drawing.Point(604, 32);
             this.labelProgress.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelProgress.Name = "labelProgress";
-            this.labelProgress.Size = new System.Drawing.Size(583, 70);
+            this.labelProgress.Size = new System.Drawing.Size(608, 70);
             this.labelProgress.TabIndex = 22;
             this.labelProgress.Text = "idle";
             // 
             // btnStartStop
             // 
-            this.btnStartStop.Location = new System.Drawing.Point(5, 32);
+            this.btnStartStop.Location = new System.Drawing.Point(4, 29);
             this.btnStartStop.Margin = new System.Windows.Forms.Padding(4);
             this.btnStartStop.Name = "btnStartStop";
             this.btnStartStop.Size = new System.Drawing.Size(592, 39);
@@ -1626,7 +1746,7 @@ namespace UniversalPatcher
             this.txtResult.Location = new System.Drawing.Point(0, 0);
             this.txtResult.Margin = new System.Windows.Forms.Padding(4);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(1216, 132);
+            this.txtResult.Size = new System.Drawing.Size(1208, 133);
             this.txtResult.TabIndex = 6;
             this.txtResult.Text = "";
             // 
@@ -1742,7 +1862,7 @@ namespace UniversalPatcher
             this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer2.Location = new System.Drawing.Point(0, 79);
+            this.splitContainer2.Location = new System.Drawing.Point(4, 76);
             this.splitContainer2.Margin = new System.Windows.Forms.Padding(4);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -1754,8 +1874,8 @@ namespace UniversalPatcher
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.txtResult);
-            this.splitContainer2.Size = new System.Drawing.Size(1216, 657);
-            this.splitContainer2.SplitterDistance = 520;
+            this.splitContainer2.Size = new System.Drawing.Size(1208, 659);
+            this.splitContainer2.SplitterDistance = 521;
             this.splitContainer2.SplitterWidth = 5;
             this.splitContainer2.TabIndex = 5;
             // 
@@ -1773,6 +1893,16 @@ namespace UniversalPatcher
             // timerSearchParams
             // 
             this.timerSearchParams.Tick += new System.EventHandler(this.timerSearchParams_Tick);
+            // 
+            // labelJconsoleConnected
+            // 
+            this.labelJconsoleConnected.AutoSize = true;
+            this.labelJconsoleConnected.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.labelJconsoleConnected.Location = new System.Drawing.Point(16, 31);
+            this.labelJconsoleConnected.Name = "labelJconsoleConnected";
+            this.labelJconsoleConnected.Size = new System.Drawing.Size(93, 18);
+            this.labelJconsoleConnected.TabIndex = 45;
+            this.labelJconsoleConnected.Text = "Disconnected";
             // 
             // frmLogger
             // 
@@ -1824,21 +1954,18 @@ namespace UniversalPatcher
             this.groupAdvanced.ResumeLayout(false);
             this.groupAdvanced.PerformLayout();
             this.tabVPWConsole.ResumeLayout(false);
-            this.splitContainer4.Panel1.ResumeLayout(false);
-            this.splitContainer4.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
-            this.splitContainer4.ResumeLayout(false);
+            this.tabVPWConsole.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numConsoleScriptDelay)).EndInit();
+            this.tabJConsole.ResumeLayout(false);
+            this.tabJConsole.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numJConsoleScriptDelay)).EndInit();
             this.groupJ2534Options.ResumeLayout(false);
             this.groupJ2534Options.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numJ2534PeriodicMsgInterval)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numConsoleScriptDelay)).EndInit();
-            this.splitContainer3.Panel1.ResumeLayout(false);
-            this.splitContainer3.Panel2.ResumeLayout(false);
-            this.splitContainer3.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
-            this.splitContainer3.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
@@ -1942,7 +2069,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.GroupBox groupDTC;
         private System.Windows.Forms.CheckBox chkFilterParamsByOS;
         private System.Windows.Forms.TextBox txtSendBus;
-        private System.Windows.Forms.RichTextBox txtVPWmessages;
+        private System.Windows.Forms.RichTextBox richVPWmessages;
         private System.Windows.Forms.CheckBox chkEnableConsole;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem creditsToolStripMenuItem;
@@ -1951,7 +2078,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.Button btnSaveAnalyzerMsgs;
         private System.Windows.Forms.CheckBox chkConsoleTimestamps;
         private System.Windows.Forms.TabPage tabVPWConsole;
-        private System.Windows.Forms.SplitContainer splitContainer4;
         private System.Windows.Forms.Button btnConsoleLoadScript;
         private System.Windows.Forms.Button btnDtcCustom;
         private System.Windows.Forms.Label label6;
@@ -1988,7 +2114,19 @@ namespace UniversalPatcher
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.TextBox txtJ2534PeriodicMsg;
         private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.TabPage tabJConsole;
+        private System.Windows.Forms.RichTextBox richJConsole;
+        private System.Windows.Forms.TextBox txtJConsoleSend;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Button btnJConsoleRefresh;
+        private System.Windows.Forms.Button btnJConsoleUploadScript;
+        private System.Windows.Forms.CheckBox chkJconsoleAutoRefresh;
+        private System.Windows.Forms.NumericUpDown numJConsoleScriptDelay;
+        private System.Windows.Forms.CheckBox chkJConsole4x;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.CheckBox chkJConsoleTimestamps;
+        private System.Windows.Forms.Button btnJConsoleConnect;
+        private System.Windows.Forms.Label labelJconsoleConnected;
     }
 }
 

@@ -114,81 +114,6 @@ namespace UniversalPatcher
             public string Status { get; set; }
         }
 
-        public void UploadScript(string FileName)
-        {
-            try
-            {
-                LogDevice.ClearMessageQueue();
-                StreamReader sr = new StreamReader(FileName);
-                string Line;
-                Receiver.SetReceiverPaused(true);
-                while ((Line = sr.ReadLine()) != null)
-                {
-                    if (Line.Length > 1)
-                    {
-                        if (Line.ToLower().StartsWith("setspeed:"))
-                        {
-                            if (Line.Contains("4x"))
-                            {
-                                Debug.WriteLine("Setting VPW speed to 4x");
-                                LogDevice.SetVpwSpeed(VpwSpeed.FourX);
-                            }
-                            else if (Line.Contains("1x"))
-                            {
-                                Debug.WriteLine("Setting VPW speed to 1x");
-                                LogDevice.SetVpwSpeed(VpwSpeed.Standard);
-                            }
-                            else
-                            {
-                                Logger("Unknown speed: " + Line.Substring(9));
-                            }
-                        }
-                        else if (Line.ToLower().StartsWith("t:"))
-                        {
-                            int delay = 0;
-                            if (int.TryParse(Line.Substring(2), out delay))
-                            {
-                                Debug.WriteLine("Delay: {0} ms ", delay);
-                                Thread.Sleep(delay);
-                            }
-                        }
-                        else
-                        {
-                            byte[] msg = Line.Replace(" ", "").ToBytes();
-                            Debug.WriteLine("Sending data: " + BitConverter.ToString(msg));
-                            OBDMessage oMsg = new OBDMessage(msg);
-                            if (LogRunning)
-                            {
-                                QueueCustomCmd(oMsg);
-                            }
-                            else
-                            {
-                                LogDevice.SendMessage(oMsg, 1);
-                                while (LogDevice.ReceiveMessage() != null)
-                                {
-                                    Thread.Sleep(Properties.Settings.Default.LoggerScriptDelay);
-                                }
-                            }
-                        }
-                    }
-                }
-                sr.Close();
-                Receiver.SetReceiverPaused(false);
-            }
-            catch (Exception ex)
-            {
-                Receiver.SetReceiverPaused(false);
-                LoggerBold(ex.Message);
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                Debug.WriteLine("Error, UploadScript line " + line + ": " + ex.Message);
-            }
-        }
-
-
         public Device CreateSerialDevice(string serialPortName, string serialPortDeviceType, bool ftdi)
         {
             try
@@ -837,12 +762,18 @@ namespace UniversalPatcher
                     bool m = LogDevice.SendMessage(new OBDMessage(queryMsg),1);
                     if (!m)
                     {
-                        Logger("No respond to VIN Query message");
+                        Logger("No response to VIN Query message");
                         Debug.WriteLine("Expected " + string.Join(" ", Array.ConvertAll(queryMsg, b => b.ToString("X2"))));
                         return;
                     }
                     Thread.Sleep(100);
                     OBDMessage resp = LogDevice.ReceiveMessage();
+                    if (resp == null)
+                    {
+                        Logger("No response to VIN Query message");
+                        Debug.WriteLine("Expected " + string.Join(" ", Array.ConvertAll(queryMsg, b => b.ToString("X2"))));
+                        return;
+                    }
                     Array.Copy(resp.GetBytes(), 5, vinbytes, v * 6, 6);
                     Debug.WriteLine("Response: " + resp.ToString());
                 }
@@ -1283,7 +1214,7 @@ namespace UniversalPatcher
                         {
                             continue;
                         }
-                        //Debug.WriteLine("Received: " + oMsg.ToString() +", Elmprompt: " + oMsg.ElmPrompt);
+                        Debug.WriteLine("Received: " + oMsg.ToString() +", Elmprompt: " + oMsg.ElmPrompt);
                         if (oMsg.ElmPrompt)
                         {
                             ELMPromptReceived();

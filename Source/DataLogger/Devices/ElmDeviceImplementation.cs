@@ -28,6 +28,8 @@ namespace UniversalPatcher
 
         protected readonly Action<OBDMessage> enqueue;
 
+        protected readonly Action<OBDMessage> MessageSent;
+
         protected readonly Func<int> getRecievedMessageCount;
 
         public DataLogger.LoggingDevType LogDeviceType { get; protected set; }
@@ -38,12 +40,13 @@ namespace UniversalPatcher
         public ElmDeviceImplementation(
             Action<OBDMessage> enqueue,
             Func<int> getRecievedMessageCount,
-            IPort port)
+            IPort port,
+            Action<OBDMessage> MessageSent)
         {
             this.enqueue = enqueue;
             this.getRecievedMessageCount = getRecievedMessageCount;
             this.Port = port;
-
+            this.MessageSent = MessageSent;
             // These are only relevant for device initialization.
             // After that, configuration from the derived classes will be used instead.
             this.MaxReceiveSize = 200;

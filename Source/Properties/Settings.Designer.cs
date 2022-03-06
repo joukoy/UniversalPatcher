@@ -1349,5 +1349,41 @@ namespace UniversalPatcher.Properties {
                 this["LoggerJ2534SettingsFile"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string JConsoleDevice {
+            get {
+                return ((string)(this["JConsoleDevice"]));
+            }
+            set {
+                this["JConsoleDevice"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool JConsoleTimestamps {
+            get {
+                return ((bool)(this["JConsoleTimestamps"]));
+            }
+            set {
+                this["JConsoleTimestamps"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool JConsole4x {
+            get {
+                return ((bool)(this["JConsole4x"]));
+            }
+            set {
+                this["JConsole4x"] = value;
+            }
+        }
     }
 }

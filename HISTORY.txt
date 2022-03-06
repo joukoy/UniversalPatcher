@@ -435,3 +435,7 @@
 0.20.14
 - Logger: Improvements to VPW Console, multiple protocols etc.
 
+0.20.15
+- Logger: Added J-Console; multi-protocol console for J2534 adapters. 
+  Can be used concurrently with serial port adapter (VPW Console, logging, VPW Analyzer)
+- Logger: Improvements to script upload.

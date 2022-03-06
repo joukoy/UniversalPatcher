@@ -26,8 +26,9 @@ namespace UniversalPatcher
         public ScanToolDeviceImplementation(
             Action<OBDMessage> enqueue,
             Func<int> getRecievedMessageCount,
-            IPort port) : 
-            base(enqueue, getRecievedMessageCount, port)
+            IPort port,
+            Action<OBDMessage> MessageSent) : 
+            base(enqueue, getRecievedMessageCount, port, MessageSent)
         {
             // Both of these numbers could be slightly larger, but round numbers are easier to work with,
             // and these are only used with the Scantool SX interface anyhow. If we detect an AllPro
@@ -276,7 +277,7 @@ namespace UniversalPatcher
                 }
                 //builder.AppendFormat(", R:50");
 
-                datalogger.LogDevice.MessageSent(message);
+                this.MessageSent(message);
 
                 if (messageBytes.Length < 200)
                 {

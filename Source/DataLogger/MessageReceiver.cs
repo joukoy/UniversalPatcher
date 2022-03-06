@@ -18,12 +18,14 @@ namespace UniversalPatcher
         private bool ReceiverPaused = false;
         public bool ReceiveLoopRunning = false;
         private Task ReceiverTask;
+        private Device device;
 
-        public void StartReceiveLoop()
+        public void StartReceiveLoop(Device dev)
         {
             try
             {
-                if (datalogger.LogRunning || ReceiveLoopRunning)
+                this.device = dev;
+                if ( ReceiveLoopRunning)
                 {
                     return;
                 }
@@ -86,7 +88,7 @@ namespace UniversalPatcher
                 if (ReceiverPaused)
                 {
                     Logger("Continue receiving");
-                    StartReceiveLoop();
+                    StartReceiveLoop(datalogger.LogDevice);
                     ReceiverPaused = false;
                 }
                 return true;
@@ -103,7 +105,7 @@ namespace UniversalPatcher
             {
                 try
                 {
-                    datalogger.LogDevice.ReceiveMessage();
+                    device.ReceiveMessage();
                 }
                 catch (Exception ex)
                 {

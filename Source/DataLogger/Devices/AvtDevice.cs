@@ -386,7 +386,7 @@ namespace UniversalPatcher
         {
             //Debug.WriteLine("Sendrequest called");
             Debug.WriteLine("TX: " + message.GetBytes().ToHex());
-            datalogger.LogDevice.MessageSent(message);
+            this.MessageSent(message);
             SendAVTPacket(message, responses);
             return true;
         }

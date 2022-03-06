@@ -74,7 +74,7 @@ namespace UniversalPatcher
                 AllProDeviceImplementation allProDevice = new AllProDeviceImplementation(
                     this.Enqueue, 
                     () => this.ReceivedMessageCount,
-                    this.Port);
+                    this.Port, this.MessageSent);
 
                 if (allProDevice.Initialize())
                 {
@@ -85,7 +85,8 @@ namespace UniversalPatcher
                     ScanToolDeviceImplementation scanToolDevice = new ScanToolDeviceImplementation(
                         this.Enqueue,
                         () => this.ReceivedMessageCount,
-                        this.Port);
+                        this.Port,
+                        this.MessageSent);
 
                     if (scanToolDevice.Initialize())
                     {
@@ -96,7 +97,8 @@ namespace UniversalPatcher
                         LegacyElmDeviceImplementation legacyElmDevice = new LegacyElmDeviceImplementation(
                         this.Enqueue,
                         () => this.ReceivedMessageCount,
-                        this.Port);
+                        this.Port,
+                        this.MessageSent);
                         if (legacyElmDevice.Initialize())
                         {
                             this.implementation = legacyElmDevice;
@@ -143,7 +145,7 @@ namespace UniversalPatcher
         private bool SharedInitialization()
         {
             // This will only be used for device-independent initialization.
-            ElmDeviceImplementation sharedImplementation = new ElmDeviceImplementation(null, null, this.Port);
+            ElmDeviceImplementation sharedImplementation = new ElmDeviceImplementation(null, null, this.Port, this.MessageSent);
             return sharedImplementation.Initialize();
         }
 

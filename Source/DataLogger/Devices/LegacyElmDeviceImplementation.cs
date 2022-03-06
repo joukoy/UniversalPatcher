@@ -33,8 +33,9 @@ namespace UniversalPatcher
         public LegacyElmDeviceImplementation(
             Action<OBDMessage> enqueue,
             Func<int> getRecievedMessageCount,
-            IPort port) :
-            base(enqueue, getRecievedMessageCount, port)
+            IPort port,
+            Action<OBDMessage> MessageSent) :
+            base(enqueue, getRecievedMessageCount, port, MessageSent)
         {
             // Please keep the left side easy to read in hex. Then add 12 bytes for VPW overhead.
             this.MaxSendSize = 1024 + 12;
@@ -215,7 +216,7 @@ namespace UniversalPatcher
                 getResponse = false;
 
             Port.DiscardBuffers();
-            datalogger.LogDevice.MessageSent(message);
+            this.MessageSent(message);
             if (header != this.currentHeader)
             {
                 SerialString setHeaderResponse = this.SendRequest("AT SH " + header, getResponse);

@@ -194,6 +194,14 @@ namespace UniversalPatcher
                         byte k2 = 0;
                         J2534Port.Functions.FiveBaudInit(ChannelID, 0x33, ref k1 , ref k2);
                     }
+                    else if (!string.IsNullOrEmpty(j2534Init.InitBytes))
+                    {
+                        OBDMessage txMsg = new OBDMessage(j2534Init.InitBytes.Replace(" ", "").ToBytes());
+                        if (!SendMessage(txMsg,1))
+                        {
+                            Logger("Error sending init bytes");
+                        }
+                    }
                     if (!string.IsNullOrEmpty(j2534Init.PerodicMsg))
                     {
                         byte[] data = j2534Init.PerodicMsg.Replace(" ","").ToBytes();
@@ -293,7 +301,7 @@ namespace UniversalPatcher
                 PassThruMsg TempMsg = new PassThruMsg(Protocol, TxFlag.NONE, message.GetBytes());
                 int NumMsgs = 1;
 
-                datalogger.LogDevice.MessageSent(message);
+                this.MessageSent(message);
                 Application.DoEvents();
                 OBDError = J2534Port.Functions.WriteMsgs((int)ChannelID, TempMsg, ref NumMsgs, WriteTimeout);
                 if (OBDError != J2534Err.STATUS_NOERROR)

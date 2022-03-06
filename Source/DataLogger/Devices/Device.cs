@@ -477,7 +477,7 @@ namespace UniversalPatcher
             MsgReceived?.Invoke(this, e);
         }
 
-        public void MessageReceived(OBDMessage message)
+        protected void MessageReceived(OBDMessage message)
         {
             MsgEventparameter msg = new MsgEventparameter(message);
             OnMsgReceived(msg);
@@ -493,7 +493,7 @@ namespace UniversalPatcher
             MsgSent?.Invoke(this, e);
         }
 
-        public void MessageSent(OBDMessage message)
+        protected void MessageSent(OBDMessage message)
         {
             MsgEventparameter msg = new MsgEventparameter(message);
             OnMsgSent(msg);

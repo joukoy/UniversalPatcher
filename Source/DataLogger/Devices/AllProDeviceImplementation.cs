@@ -33,8 +33,9 @@ namespace UniversalPatcher
         public AllProDeviceImplementation(
             Action<OBDMessage> enqueue,
             Func<int> getRecievedMessageCount,
-            IPort port) :
-            base(enqueue, getRecievedMessageCount, port)
+            IPort port,
+            Action<OBDMessage> MessageSent) :
+            base(enqueue, getRecievedMessageCount, port, MessageSent)
         {
             // Please keep the left side easy to read in hex. Then add 12 bytes for VPW overhead.
             this.MaxSendSize = 1024 + 12;
@@ -240,7 +241,7 @@ namespace UniversalPatcher
 
             payload = payload.Replace(" ", "");
 
-            datalogger.LogDevice.MessageSent(message);
+            this.MessageSent(message);
 
             SerialString sendMessageResponse = this.SendRequest(payload + " ");
             if (!this.ProcessResponse(sendMessageResponse, "message content", false))
