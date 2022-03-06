@@ -1,0 +1,16 @@
+6C FE F1 20
+6C FE F1 28 00
+
+#Loop 4 cycles:
+loop:4 
+8c fe f0 3f
+endloop
+
+#Create variable, name: var1, size 3 bytes, value 0C
+variable:var1:3:0C
+loop:10
+#Replace var1 by value of var1(first cycle: 00 00 0C)
+6c 10 f0 35 00 10 00 var1
+#Increment variable every cycle by A0:
+variable:var1:3:+A0
+endloop
