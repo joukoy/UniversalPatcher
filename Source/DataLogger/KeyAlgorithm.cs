@@ -16,6 +16,8 @@ namespace UniversalPatcher
         /// Updated with correct keygenerator that will support all algos.
         /// Updated January 10, 2020 - Gampy <pcmhacking.net>
         ///   Added algorithm index bounds checking, removed GetKey_?() hacks and removed unused elements.
+        ///   Modified March 2022 - joukoy@gmail.com
+        ///   Almost complete rewrite 
         /// </remarks>
         public static UInt16 GetKey(int algo, UInt16 seed)
         {
