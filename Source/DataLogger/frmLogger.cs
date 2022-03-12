@@ -50,6 +50,7 @@ namespace UniversalPatcher
         bool waiting4x = false;
         bool jConsoleWaiting4x = false;
         JConsole jConsole;
+        OBDScript oscript;
 
         private void frmLogger_Load(object sender, EventArgs e)
         {
@@ -1474,6 +1475,7 @@ namespace UniversalPatcher
                 }
                 Application.DoEvents();
                 groupHWSettings.Enabled = false;
+                j2534OptionsGroupBox.Enabled = false;
                 return true;
             }
             catch (Exception ex)
@@ -1608,7 +1610,7 @@ namespace UniversalPatcher
                     datalogger.LogRunning = true;
                     if (datalogger.LogDevice.LogDeviceType == LoggingDevType.Elm)
                     {
-                        groupDTC.Enabled = false;
+                        //groupDTC.Enabled = false;
                     }
                 }
                 else
@@ -1716,8 +1718,8 @@ namespace UniversalPatcher
             if (serialRadioButton.Checked)
             {
                 serialOptionsGroupBox.Enabled = true;
-                j2534OptionsGroupBox.Enabled = false;
-                groupJ2534Options.Visible = false;
+                j2534OptionsGroupBox.Enabled = false;                
+                //groupJ2534Options.Visible = false;
             }
         }
 
@@ -1727,7 +1729,7 @@ namespace UniversalPatcher
             {
                 serialOptionsGroupBox.Enabled = false;
                 j2534OptionsGroupBox.Enabled = true;
-                groupJ2534Options.Visible = true;
+                //groupJ2534Options.Visible = true;
             }
 
         }
@@ -1805,7 +1807,7 @@ namespace UniversalPatcher
                 {
                     datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice);
                 }
-                groupDTC.Enabled = false;
+                //groupDTC.Enabled = false;
             }
             catch (Exception ex)
             {
@@ -1935,7 +1937,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (e.Msg.Length > 5 && e.Msg.GetBytes()[1] == DeviceId.Tool && e.Msg.GetBytes()[3] == 0x59)
+                if (e.Msg.Length > 6 && e.Msg.GetBytes()[1] == DeviceId.Tool && e.Msg.GetBytes()[3] == 0x59)
                 {
                     DTCCodeStatus dcs = datalogger.DecodeDTCstatus(e.Msg.GetBytes());
                     if (!string.IsNullOrEmpty(dcs.Module))
@@ -1976,13 +1978,18 @@ namespace UniversalPatcher
         {
             Connect();
 
+            byte module = (byte)comboModule.SelectedValue;
             if (chkDtcAllModules.Checked)
             {
-                datalogger.ClearTroubleCodes(DeviceId.Broadcast);
+                module = DeviceId.Broadcast;
+            }
+            if (datalogger.LogRunning && datalogger.LogDevice.LogDeviceType == LoggingDevType.Elm)
+            {
+                OBDMessage msg = new OBDMessage(new byte[] { Priority.Physical0, module, DeviceId.Tool, 0x10, 0x00 });
+                datalogger.QueueCustomCmd(msg, "Clear DTC codes");
             }
             else
             {
-                byte module = (byte)comboModule.SelectedValue;
                 datalogger.ClearTroubleCodes(module);
             }
         }
@@ -2051,6 +2058,7 @@ namespace UniversalPatcher
             datalogger.Connected = false;
             labelConnected.Text = "Disconnected - OS: " + datalogger.OS;
             groupHWSettings.Enabled = true;
+            j2534OptionsGroupBox.Enabled = true;
         }
 
         private void DisconnectJConsole()
@@ -2357,8 +2365,10 @@ namespace UniversalPatcher
                 return;
             }
             Logger("Sending file: " + fName);
-            OBDScript oscript = new OBDScript();
+            oscript = new OBDScript();
+            btnStopScript.Enabled = true;
             oscript.UploadScript(fName, datalogger.LogDevice,datalogger.Receiver);
+            btnStopScript.Enabled = false;
             Logger("Done");
         }
 
@@ -2538,15 +2548,154 @@ namespace UniversalPatcher
             string fName = SelectFile("Select script file", TxtFilter);
             if (fName.Length == 0)
                 return;
-            if (!Connect())
+            if (!ConnectJConsole())
             {
                 return;
             }
             Logger("Sending file: " + fName);
-            OBDScript oscript = new OBDScript();
+            oscript = new OBDScript();
+            btnJconsoleStopScript.Enabled = true;
             oscript.UploadScript(fName, jConsole.JDevice, jConsole.Receiver);
+            btnJconsoleStopScript.Enabled = false;
             Logger("Done");
 
         }
+
+        private void numJConsoleScriptDelay_ValueChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.LoggerScriptDelay = (int)numConsoleScriptDelay.Value;
+        }
+
+        private void numConsoleScriptDelay_ValueChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.LoggerScriptDelay = (int)numConsoleScriptDelay.Value;
+        }
+
+        private void btnStopScript_Click(object sender, EventArgs e)
+        {
+            Logger("Stopping script");
+            oscript.stopscript = true;
+        }
+
+        private void btnStopScript_Click_1(object sender, EventArgs e)
+        {
+            Logger("Stopping script");
+            oscript.stopscript = true;
+
+        }
+
+        private void btnGenerateAlgo_Click(object sender, EventArgs e)
+        {
+            string fName = SelectFile();
+            byte[] seedData = ReadBin(fName);
+            int a = 0;
+            StringBuilder sb = new StringBuilder();
+            while (a < seedData.Length)
+            {
+                sb.Append("new byte[]{");
+                for (int i = 0; i < 13 && a<seedData.Length; i++)
+                {
+                    sb.Append("0x" + seedData[a].ToString("X2") );
+                    if (i<12)
+                    {
+                        sb.Append(",");
+                    }
+                    a++;
+                }
+                sb.Append("}," + Environment.NewLine);
+            }
+            fName = fName.Replace("bin", "txt");
+            WriteTextFile(fName, sb.ToString());
+        }
+
+        private void btnAlgoTest_Click(object sender, EventArgs e)
+        {
+            int algo;
+            ushort seed;
+            bool found = false;
+            if (!HexToUshort(txtSeed.Text, out seed))
+            {
+                Logger("Hex to int? " + txtSeed.Text);
+                return;
+            }
+            txtAlgoTest.AppendText("Calculating..." + Environment.NewLine);
+            if (radioFindKey.Checked)
+            {
+                if (!HexToInt(txtAlgo.Text, out algo))
+                {
+                    Logger("Hex to int? " + txtAlgo.Text);
+                    return;
+                }
+                ushort key = KeyAlgorithm.GetKey(algo, seed);
+                txtAlgoTest.AppendText("Algo: " + algo.ToString("X4") + ", seed: " + seed.ToString("X4") + ", key: " + key.ToString("X4") + Environment.NewLine);
+                found = true;
+            }
+            else if (radioFindAllKeys.Checked)
+            {
+                for (algo = 0; algo < 0x300; algo++)
+                {
+                    ushort key = KeyAlgorithm.GetKey(algo, seed);
+                    txtAlgoTest.AppendText("Algo: " + algo.ToString("X4") + ", seed: " + seed.ToString("X4") + ", key: " + key.ToString("X4") + Environment.NewLine);
+                }
+                found = true;
+            }
+            else
+            {
+                ushort targetKey;
+                if (!HexToUshort(txtAlgo.Text, out targetKey))
+                {
+                    Logger("Hex to ushort? " + txtAlgo.Text);
+                    return;
+                }
+                for (algo = 0; algo < 0x300; algo++)
+                {
+                    ushort key = KeyAlgorithm.GetKey(algo, seed);
+                    if (key == targetKey)
+                    {
+                        found = true;
+                        txtAlgoTest.AppendText("seed: " + seed.ToString("X4") + ", key: " + key.ToString("X4") + ", algo: " + algo.ToString("X4") + Environment.NewLine);
+                    }
+                }
+            }
+            if (found)
+            {
+                txtAlgoTest.AppendText("[OK]" + Environment.NewLine);
+            }
+            else
+            {
+                txtAlgoTest.AppendText("Not found" + Environment.NewLine);
+            }
+        }
+
+        private void radioFindKey_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioFindKey.Checked)
+            {
+                labelAlgo.Text = "Algo:";
+                labelSeed.Text = "Seed:";
+                txtAlgo.Enabled = true;
+            }
+        }
+
+        private void radioFindAllKeys_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioFindAllKeys.Checked)
+            {
+                labelAlgo.Text = "Algo:";
+                labelSeed.Text = "Seed:";
+                txtAlgo.Enabled = false;
+            }
+        }
+
+        private void radioFindAlgo_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioFindAlgo.Checked)
+            {
+                labelAlgo.Text = "Key:";
+                labelSeed.Text = "Seed:";
+                txtAlgo.Enabled = true;
+            }
+        }
+
     }
 }

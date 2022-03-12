@@ -228,6 +228,8 @@ namespace UniversalPatcher
         {
             try
             {
+                Port.DiscardBuffers();
+
                 byte[] messageBytes = message.GetBytes();
 
                 StringBuilder builder = new StringBuilder();
@@ -292,7 +294,7 @@ namespace UniversalPatcher
                     Debug.WriteLine("Dataresponse: " + dataResponse.Data);
                     if (!this.ProcessResponse(dataResponse, "STPX with data", allowEmpty: responses == 0))
                     {
-                        if (dataResponse.Data == string.Empty || dataResponse.Data == "STOPPED" || dataResponse.Data == "?")
+                        if (dataResponse.Data == string.Empty || dataResponse.Data.Contains("STOPPED") || dataResponse.Data.Contains("?"))
                         {
                             // These will happen if the bus is quiet, for example right after uploading the kernel.
                             // They are traced during the SendRequest code. No need to repeat that message.

@@ -205,7 +205,7 @@ public static class Helpers
         {
             if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
                 fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
-            if (Filter.Contains("PATCH") || Filter.Contains("TXT"))
+            if (Filter.Contains("PATCH") )
                 fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
         }
 

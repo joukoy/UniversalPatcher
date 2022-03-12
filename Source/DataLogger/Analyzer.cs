@@ -308,10 +308,11 @@ namespace UniversalPatcher
 
         private void HandleMessage(OBDMessage rcv)
         {
-            if (!datalogger.LogRunning && datalogger.LogDevice.LogDeviceType == LoggingDevType.Elm && rcv.ElmPrompt)
+/*            if (!datalogger.LogRunning && datalogger.LogDevice.LogDeviceType == LoggingDevType.Elm && rcv.ElmPrompt)
             {
                 datalogger.LogDevice.SetAnalyzerFilter();
             }
+*/
             if (rcv.Length > 3)
             {
                 if (rcv[1] == 0xfe && rcv[3] == 0xa0)

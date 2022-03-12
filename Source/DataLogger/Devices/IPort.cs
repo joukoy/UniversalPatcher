@@ -49,6 +49,11 @@ namespace UniversalPatcher
         void SetTimeout(int milliseconds);
 
         /// <summary>
+        /// Sets the timeout for sending messages;
+        /// </summary>
+        void SetWriteTimeout(int milliseconds);
+
+        /// <summary>
         /// Sets the timeout for incoming messages;
         /// </summary>
         // bool PromptReceived();

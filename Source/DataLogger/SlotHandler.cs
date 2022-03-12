@@ -239,14 +239,22 @@ namespace UniversalPatcher
                             return false;
                         }
                         OBDMessage rMsg = datalogger.LogDevice.ReceiveMessage();
-                        if (rMsg != null)
+                        while (rMsg != null)
                         {
-                            Debug.WriteLine("Response: " + rMsg.ToString());
-                            if (rMsg.GetBytes()[3] == 0x7f)
+                            if (rMsg.Length > 4)
                             {
-                                LoggerBold("Pid " + Slots[s].Pids[pidIndex].ToString("X4") + " Error: " + PcmResponses[rMsg.GetBytes().Last()]);
-                                return false;
+                                Debug.WriteLine("Response: " + rMsg.ToString());
+                                if (rMsg[3] == 0x7f)
+                                {
+                                    LoggerBold("Pid " + Slots[s].Pids[pidIndex].ToString("X4") + " Error: " + PcmResponses[rMsg.GetBytes().Last()]);
+                                    return false;
+                                }
+                                if (rMsg[3] == 0x6C)
+                                {
+                                    break;
+                                }
                             }
+                            rMsg = datalogger.LogDevice.ReceiveMessage();
                         }
                         pidIndex++;
                         position += bytes;

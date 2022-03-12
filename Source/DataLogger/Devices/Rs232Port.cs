@@ -20,6 +20,7 @@ namespace UniversalPatcher
         private SerialPort port;
         private bool promptReceived = false;
         private Queue<SerialByte> internalQueue = new Queue<SerialByte>();
+        private readonly object devLock = new object();
 
         public bool PromptReceived()
         {
@@ -84,9 +85,8 @@ namespace UniversalPatcher
             this.port.WriteTimeout = config.Timeout;
             //For event handling:
             this.port.ReceivedBytesThreshold = 1;
-            //this.port.RtsEnable = false;
+            this.port.RtsEnable = true;
             RTimeout = config.Timeout;
-
 
             this.port.Open();
 
@@ -100,6 +100,7 @@ namespace UniversalPatcher
             this.port.WriteTimeout = 500;
             this.port.ErrorReceived += Port_ErrorReceived;
             this.port.DataReceived += DataReceived;
+            //Task receiveTask = Task.Factory.StartNew(() => DataReceiverLoop());
         }
 
         private void Port_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
@@ -135,7 +136,7 @@ namespace UniversalPatcher
                 return;
             }
             //this.port.DataReceived -= DataReceived;
-            lock (this.internalQueue)
+            lock (devLock)
             {
                 this.port.BaseStream.Write(buffer, 0, buffer.Length); //.AwaitWithTimeout(TimeSpan.FromSeconds(5));
             }
@@ -209,8 +210,56 @@ namespace UniversalPatcher
         public void SetTimeout(int milliseconds)
         {
             this.port.ReadTimeout = milliseconds;
-            this.port.WriteTimeout = 500;
             RTimeout = milliseconds;
+        }
+
+        /// <summary>
+        /// Sets the write timeout.
+        /// </summary>
+        public void SetWriteTimeout(int milliseconds)
+        {
+            this.port.WriteTimeout = milliseconds;
+        }
+
+        /// <summary>
+        /// Serial data loop
+        /// </summary>
+        private void DataReceiverLoop()
+        {
+                while (true)
+                {
+                    try
+                    {
+                        if (port == null)
+                        {
+                            Debug.WriteLine("Port closed, exit RS232 loop");
+                            return;
+                        }
+
+                        int bytes = this.port.BytesToRead;
+                        if (bytes > 0)
+                        {
+                            byte[] rx = new byte[bytes];
+
+                            int received = this.port.Read(rx, 0, bytes);
+                            //Debug.WriteLine("RS232: " + Encoding.ASCII.GetString(rx));
+                            lock (this.internalQueue)
+                            {
+                                for (int i = 0; i < bytes; i++)
+                                {
+                                    SerialByte sb = new SerialByte(1);
+                                    sb.Data[0] = rx[i];
+                                    this.internalQueue.Enqueue(sb);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("RS232 Receive: " + ex.Message);
+                    }
+            
+                }
         }
 
         /// <summary>
@@ -220,18 +269,27 @@ namespace UniversalPatcher
         {
             try
             {
+                List<SerialByte> rBytes = new List<SerialByte>();
                 int bytes = this.port.BytesToRead;
-                byte[] rx = new byte[bytes];
 
-                int received = this.port.Read(rx, 0, bytes);
-                //Debug.WriteLine("RS232: " + Encoding.ASCII.GetString(rx));
-                lock (this.internalQueue)
+                while (bytes > 0)
                 {
+                    byte[] rx = new byte[bytes];
+                    int received = this.port.Read(rx, 0, bytes);
                     for (int i = 0; i < bytes; i++)
                     {
                         SerialByte sb = new SerialByte(1);
                         sb.Data[0] = rx[i];
-                        this.internalQueue.Enqueue(sb);
+                        rBytes.Add(sb);
+                    }
+                    bytes = this.port.BytesToRead;
+                }
+                //Debug.WriteLine("RS232: " + Encoding.ASCII.GetString(rx));
+                lock (this.internalQueue)
+                {
+                    for (int i = 0; i < rBytes.Count; i++)
+                    {
+                        this.internalQueue.Enqueue(rBytes[i]);
                     }
                 }
             }

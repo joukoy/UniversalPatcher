@@ -29,6 +29,11 @@ namespace UniversalPatcher
                 {
                     return;
                 }
+                if (dev.LogDeviceType != DataLogger.LoggingDevType.Other)
+                {
+                    dev.SetTimeout(TimeoutScenario.DataLogging2);
+                    dev.SetAnalyzerFilter();
+                }
                 receiverTokenSource = new CancellationTokenSource();
                 receiverToken = receiverTokenSource.Token;
                 ReceiverTask = Task.Factory.StartNew(() => ReceiveLoop(), receiverToken);
@@ -53,7 +58,12 @@ namespace UniversalPatcher
                 {
                     ReceiveLoopRunning = false;
                     receiverTokenSource.Cancel();
-                    ReceiverTask.Wait(300);
+                    Application.DoEvents();
+                    ReceiverTask.Wait(5000);
+                    if (device.LogDeviceType != DataLogger.LoggingDevType.Other)
+                    {
+                        datalogger.StopElmReceive();
+                    }
                     Application.DoEvents();
                 }
             }
@@ -88,7 +98,7 @@ namespace UniversalPatcher
                 if (ReceiverPaused)
                 {
                     Logger("Continue receiving");
-                    StartReceiveLoop(datalogger.LogDevice);
+                    StartReceiveLoop(device);
                     ReceiverPaused = false;
                 }
                 return true;
@@ -101,11 +111,17 @@ namespace UniversalPatcher
             ReceiveLoopRunning = true;
             Debug.WriteLine("Starting receive loop");
             //while (Connected && ReceiveLoopRunning)
+            OBDMessage msg = device.ReceiveMessage();
             while (!receiverToken.IsCancellationRequested)
             {
                 try
                 {
-                    device.ReceiveMessage();
+                    if (msg != null && msg.ElmPrompt)
+                    {
+                        Debug.WriteLine("Resetting analyzer filter");
+                        device.SetAnalyzerFilter();
+                    }
+                    msg = device.ReceiveMessage();
                 }
                 catch (Exception ex)
                 {

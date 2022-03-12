@@ -20,10 +20,12 @@ namespace UniversalPatcher
         private string name;
         private FTDI port;
         private Queue<SerialByte> internalQueue = new Queue<SerialByte>();
-        private int RTimeout;
+        private int RTimeout = 500;
+        private int WTimeout = 500;
         private static EventWaitHandle waitHandle;
         private bool promptReceived = false;
         private Task receiveTask;
+        private readonly object devLock = new object();
 
         public bool PromptReceived()
         {
@@ -189,7 +191,7 @@ namespace UniversalPatcher
                 return;
             }
             uint bytes = 0;
-            lock (internalQueue)
+            lock (devLock)
             {
                 FTDI.FT_STATUS ftStatus = port.Write(buffer, buffer.Length, ref bytes);
                 if (ftStatus != FTDI.FT_STATUS.FT_OK)
@@ -250,8 +252,16 @@ namespace UniversalPatcher
         /// </summary>
         public void SetTimeout(int milliseconds)
         {
-            this.port.SetTimeouts((uint)milliseconds,500);
+            this.port.SetTimeouts((uint)milliseconds,(uint)WTimeout);
             RTimeout = milliseconds;
+        }
+
+        /// <summary>
+        /// Sets the write timeout.
+        /// </summary>
+        public void SetWriteTimeout(int milliseconds)
+        {
+            this.port.SetTimeouts((uint)RTimeout, (uint)milliseconds);
         }
 
         /// <summary>

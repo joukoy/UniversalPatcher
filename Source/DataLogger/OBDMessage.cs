@@ -128,5 +128,6 @@ namespace UniversalPatcher
         }
 
         public bool ElmPrompt { get; set; }
+        public string ElmLine { get; set; }
     }
 }

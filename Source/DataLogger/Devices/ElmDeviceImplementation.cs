@@ -274,11 +274,12 @@ namespace UniversalPatcher
         /// </summary>
         public bool ProcessResponse(SerialString rawResponse, string context, bool allowEmpty = false)
         {
-            if ((rawResponse.Prompt && rawResponse.Data.Length < 6) || rawResponse.Data.Contains("STOPPED"))
+            if (rawResponse.Prompt && rawResponse.Data.Length < 8) 
             {
                 //We have received prompt
-                Debug.WriteLine("Processresponse: " + rawResponse.Data);
+                Debug.WriteLine("Processresponse with prompt: " + rawResponse.Data);
                 OBDMessage response = new OBDMessage(new byte[0]);
+                response.ElmLine = rawResponse.Data;
                 //if (rawResponse.Data.StartsWith("6C") || rawResponse.Data.StartsWith("8C"))
                   //  response = new OBDMessage(rawResponse.Data.ToBytes());
                 response.TimeStamp = (ulong)rawResponse.TimeStamp;
@@ -313,7 +314,7 @@ namespace UniversalPatcher
                 return true;
             }
 
-            string[] segments = rawResponse.Data.Split('<');
+            string[] segments = rawResponse.Data.Replace("BUFFER FULL", "").Replace("OUT OF MEMORY", "").Split('<');
             foreach (string segment in segments)
             {
                 if (segment.IsHex())
@@ -326,10 +327,10 @@ namespace UniversalPatcher
                         {
                             Array.Resize(ref deviceResponseBytes, deviceResponseBytes.Length - 1); // remove checksum byte
                         }
-
-                        //Debug.WriteLine("RX: " + deviceResponseBytes.ToHex());
-
+                        Debug.WriteLine("RX: " + deviceResponseBytes.ToHex());
                         OBDMessage response = new OBDMessage(deviceResponseBytes);
+                        response.ElmPrompt = rawResponse.Prompt;
+
                         response.TimeStamp = (ulong)rawResponse.TimeStamp;
                         this.enqueue(response);
                     }

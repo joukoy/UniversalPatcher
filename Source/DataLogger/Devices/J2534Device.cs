@@ -238,6 +238,11 @@ namespace UniversalPatcher
             return this.currentTimeoutScenario;
         }
 
+        public override void SetWriteTimeout(int timeout)
+        {
+            WriteTimeout = timeout;
+        }
+
         /// <summary>
         /// This will process incoming messages for up to 500ms looking for a message
         /// </summary>

@@ -149,6 +149,17 @@ namespace UniversalPatcher
             return sharedImplementation.Initialize();
         }
 
+        public override void SetWriteTimeout(int timeout)
+        {
+            if (timeout > 1020)
+            {
+                Debug.WriteLine("Elm timeout maximum is 1020 ms");
+                timeout = 1020;
+            }
+            Port.SetWriteTimeout(timeout + 1000);
+            Port.SetTimeout(timeout + 1000);
+            this.implementation.SetTimeoutMilliseconds(timeout);
+        }
 
         /// <summary>
         /// Set the amount of time that we'll wait for a message to arrive.

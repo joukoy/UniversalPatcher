@@ -211,6 +211,11 @@ namespace UniversalPatcher
         public abstract TimeoutScenario SetTimeout(TimeoutScenario scenario);
 
         /// <summary>
+        /// Set the timeout period to wait for responses to sending messages.
+        /// </summary>
+        public abstract void SetWriteTimeout(int timeout);
+
+        /// <summary>
         /// Send a message.
         /// </summary>
         public abstract bool SendMessage(OBDMessage message, int responses);
@@ -332,7 +337,7 @@ namespace UniversalPatcher
                         this.logQueue.Enqueue(message);
                     }
                 }
-                if (message.Length > 3)
+                //if (message.Length > 3)
                 {
                     lock (this.queue)
                     {

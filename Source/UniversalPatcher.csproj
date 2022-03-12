@@ -107,6 +107,7 @@
     <Compile Include="ComputeSimilarity.cs" />
     <Compile Include="Crc.cs" />
     <Compile Include="DataLogger\JConsole.cs" />
+    <Compile Include="DataLogger\KeyAlgorithm.cs" />
     <Compile Include="DataLogger\MessageReceiver.cs" />
     <Compile Include="DataLogger\OBDScript.cs" />
     <Compile Include="frmCredits.cs">

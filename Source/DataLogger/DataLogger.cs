@@ -73,6 +73,7 @@ namespace UniversalPatcher
             public byte param1 { get; set; }
             public byte param2 { get; set; }
             public OBDMessage CustomMsg { get; set; }
+            public string Description { get; set; }
         }
 
         public enum LoggingDevType
@@ -351,7 +352,7 @@ namespace UniversalPatcher
 
                     while (resp != null)
                     {
-                        if (resp.GetBytes()[3] == 0x7f)
+                        if (resp.Length > 3 && resp[3] == 0x7f)
                         {
                             string errStr = "Unknown error";
                             int p = resp.Length - 1;
@@ -768,14 +769,16 @@ namespace UniversalPatcher
                     }
                     Thread.Sleep(100);
                     OBDMessage resp = LogDevice.ReceiveMessage();
-                    if (resp == null)
+                    while (resp != null)
                     {
-                        Logger("No response to VIN Query message");
-                        Debug.WriteLine("Expected " + string.Join(" ", Array.ConvertAll(queryMsg, b => b.ToString("X2"))));
-                        return;
+                        if (resp.Length > 10 && resp[3] == 0x7C)
+                        {
+                            Array.Copy(resp.GetBytes(), 5, vinbytes, v * 6, 6);
+                            Debug.WriteLine("Response: " + resp.ToString());
+                            break;
+                        }
+                        resp = LogDevice.ReceiveMessage();
                     }
-                    Array.Copy(resp.GetBytes(), 5, vinbytes, v * 6, 6);
-                    Debug.WriteLine("Response: " + resp.ToString());
                 }
                 vin = Encoding.ASCII.GetString(vinbytes, 1, 17);
                 Logger("VIN Code:" + vin);
@@ -859,12 +862,13 @@ namespace UniversalPatcher
             return dcs;
         }
 
-        public void QueueCustomCmd(OBDMessage Msg)
+        public void QueueCustomCmd(OBDMessage Msg, string Description)
         {
             Logger("Adding message to queue");
             QueuedCommand command = new QueuedCommand();
             command.Cmd = QueueCmd.Custom;
             command.CustomMsg = Msg;
+            command.Description = Description;
             lock (queuedCommands)
             {
                 queuedCommands.Enqueue(command);
@@ -908,17 +912,18 @@ namespace UniversalPatcher
                 Logger("Requesting DTC codes for " + moduleStr);
                 Receiver.SetReceiverPaused(true);
                 OBDMessage msg = new OBDMessage(new byte[] { Priority.Physical0, module, DeviceId.Tool, 0x19, mode, 0xFF, 0x00 });
-                bool m = LogDevice.SendMessage(msg, 1);
+                bool m = LogDevice.SendMessage(msg, -50);
                 if (!m)
                 {
-                    LoggerBold("Error sending request");
-                    return false;
+                    Debug.WriteLine("Error sending request, continue anyway");
+                    //return false;
                 }
+                Thread.Sleep(100);
                 Debug.WriteLine("Receiving DTC codes...");
                 OBDMessage resp = LogDevice.ReceiveMessage();
                 while (resp != null) // & !Utility.CompareArraysPart(resp.GetBytes(), endframe))
                 {
-                    Debug.WriteLine(resp.ToString());
+                    Debug.WriteLine("DTC received message: " + resp.ToString());
                     resp = LogDevice.ReceiveMessage();
                 }
                 Receiver.SetReceiverPaused(false);
@@ -1082,18 +1087,38 @@ namespace UniversalPatcher
 
         }
 
-        private  void StopElmReceive()
+        public void StopElmReceive()
         {
-            if (LogDevice.LogDeviceType != LoggingDevType.Other)
+            try
             {
-                Debug.WriteLine("Time (ms) since last elmStop: " + DateTime.Now.Subtract(lastElmStop).TotalMilliseconds);
-                //if (force || DateTime.Now.Subtract(lastPresent) >= TimeSpan.FromMilliseconds(4500) || DateTime.Now.Subtract(lastElmStop) >= TimeSpan.FromMilliseconds(elmStopTreshold))
+                if (LogDevice.LogDeviceType != LoggingDevType.Other)
                 {
-                    //Stop current receive
-                    Debug.WriteLine("Stop elm receive");
-                    port.Send(Encoding.ASCII.GetBytes("X \r"));
-                    lastElmStop = DateTime.Now;
+                    Debug.WriteLine("Time (ms) since last elmStop: " + DateTime.Now.Subtract(lastElmStop).TotalMilliseconds);
+                    //if (force || DateTime.Now.Subtract(lastPresent) >= TimeSpan.FromMilliseconds(4500) || DateTime.Now.Subtract(lastElmStop) >= TimeSpan.FromMilliseconds(elmStopTreshold))
+                    {
+                        //Stop current receive
+                        Debug.WriteLine("Stop elm receive");
+                        port.Send(Encoding.ASCII.GetBytes("X \r"));
+                        Thread.Sleep(25);
+                        //SendTesterPresent(true);
+                        //SetBusQuiet();
+                        //Query devices on bus:
+                        byte[] queryMsg = { Priority.Physical0, 0x3, DeviceId.Tool, 0x3f };
+                        LogDevice.SendMessage(new OBDMessage(queryMsg), 1);
+                        //Thread.Sleep(50);
+                        if (LogDevice.LogDeviceType == LoggingDevType.Obdlink)
+                        {
+                            Thread.Sleep(100);
+                            LogDevice.SendMessage(new OBDMessage(queryMsg), 1);
+                        }
+                        //LogDevice.ReceiveMessage();
+                        lastElmStop = DateTime.Now;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("StopElmReceive: " + ex.Message);
             }
         }
 
@@ -1148,11 +1173,12 @@ namespace UniversalPatcher
             datalogger.LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
             Thread.Sleep(10);
             SetBusQuiet();
-            OBDMessage resp = LogDevice.ReceiveMessage();
+/*            OBDMessage resp = LogDevice.ReceiveMessage();
             while (resp != null)
             {
                 resp = LogDevice.ReceiveMessage();
             }
+*/
             switch (command.Cmd)
             {
                 case QueueCmd.Getdtc:
@@ -1162,7 +1188,9 @@ namespace UniversalPatcher
                     QueryVIN();
                     break;
                 case QueueCmd.Custom:
+                    Logger("Sending queued command: " + command.Description);
                     LogDevice.SendMessage(command.CustomMsg, 1);
+                    LogDevice.ReceiveMessage();
                     break;
             }
             if (passive)

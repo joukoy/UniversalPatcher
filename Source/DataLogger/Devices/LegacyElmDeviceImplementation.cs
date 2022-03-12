@@ -220,15 +220,15 @@ namespace UniversalPatcher
             if (header != this.currentHeader)
             {
                 SerialString setHeaderResponse = this.SendRequest("AT SH " + header, getResponse);
-                Debug.WriteLine("Set header response: " + setHeaderResponse.Data);
+                Debug.WriteLine("Set header response (1): " + setHeaderResponse.Data);
 
-/*                if (setHeaderResponse.Data != "OK")
+                if (setHeaderResponse.Data != "OK")
                 {
                     // Does it help to retry once?
                     setHeaderResponse = this.SendRequest("AT SH " + header);
-                    Debug.WriteLine("Set header response: " + setHeaderResponse);
+                    Debug.WriteLine("Set header response (2): " + setHeaderResponse.Data);
                 }
-*/
+
                 if (!this.ProcessResponse(setHeaderResponse, "set-header command", !getResponse))
                 {
                     return false;
@@ -276,7 +276,7 @@ namespace UniversalPatcher
             try
             {
                 SerialString response = this.ReadELMLine(false);
-                //Debug.WriteLine("Elm line: " + response + ", Prompt: " + Prompt);
+                Debug.WriteLine("Elm line: " + response.Data );
                 this.ProcessResponse(response, "receive");
             }
             catch (TimeoutException)

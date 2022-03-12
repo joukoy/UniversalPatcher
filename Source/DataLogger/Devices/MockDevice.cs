@@ -54,6 +54,10 @@ namespace UniversalPatcher
             return this.currentTimeoutScenario;
         }
 
+        public override void SetWriteTimeout(int timeout)
+        {
+        }
+
         /// <summary>
         /// Send a message, do not expect a response.
         /// </summary>

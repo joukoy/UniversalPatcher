@@ -164,6 +164,11 @@ namespace UniversalPatcher
             return previousScenario;
         }
 
+        public override void SetWriteTimeout(int timeout)
+        {
+            Port.SetWriteTimeout(timeout);
+        }
+
         /// <summary>
         /// This will process incoming messages for up to 250ms looking for a message
         /// </summary>
@@ -591,7 +596,7 @@ namespace UniversalPatcher
             try
             {
                 //Debug.WriteLine("Sendrequest called");
-                //  Debug.WriteLine("TX: " + message.GetBytes().ToHex());            
+                //  Debug.WriteLine("TX: " + message.GetBytes().ToHex());                  
                 this.MessageSent(message);
                 Response<OBDMessage> m = SendDVIPacket(message, responses);
                 if (m.Status != ResponseStatus.Success)
