@@ -446,3 +446,5 @@
 0.20.17
 - Logger: fixes to console
 - Logger: Added tool for testing seed/key algo
+- Logger: Added tool for converting Console log data to bin
+
