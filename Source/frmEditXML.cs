@@ -39,6 +39,7 @@ namespace UniversalPatcher
         private List<FileType> fileTypes;
         private List<DetectRule> detectrules;
         private List<SegmentConfig> segmentconfig;
+        public List<ObdEmu.OBDResponse> obdresponses;
         private object currentObj;
 
         private void frmEditXML_Load(object sender, EventArgs e)
@@ -182,6 +183,18 @@ namespace UniversalPatcher
             RefreshSegmentSeek();
         }
 
+        public void LoadObdResponses(string fname)
+        {
+            fileName = fname;
+            this.Text = "Edit OBD Responses";
+            currentObj = new ObdEmu.OBDResponse();
+            if (fname.Length > 0 && File.Exists(fname))
+                obdresponses = ObdEmu.LoadObdResponseFile(fname);
+            else
+                obdresponses = new List<ObdEmu.OBDResponse>();
+            RefreshObdResponses();
+        }
+
         public void LoadTableData()
         {
             this.Text = "Table data";
@@ -310,6 +323,15 @@ namespace UniversalPatcher
             UseComboBoxForEnums(dataGridView1);
         }
 
+        private void RefreshObdResponses()
+        {
+            bindingSource.DataSource = null;
+            bindingSource.DataSource = obdresponses;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = bindingSource;
+            //UseComboBoxForEnums(dataGridView1);
+        }
+
         private void SaveThis(string fName)
         {
             try
@@ -370,6 +392,19 @@ namespace UniversalPatcher
                         stream.Close();
                     }
                     pidSearchConfigs = pidSC;
+                    Logger(" [OK]");
+                }
+                else if (this.Text.Contains("Responses"))
+                {
+                    Logger("Saving file " + fName, false);
+                    if (fName.Length == 0)
+                        fName = Path.Combine(Application.StartupPath, "Logger", "Responses.xml");
+                    using (FileStream stream = new FileStream(fName, FileMode.Create))
+                    {
+                        System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<ObdEmu.OBDResponse>));
+                        writer.Serialize(stream, obdresponses);
+                        stream.Close();
+                    }
                     Logger(" [OK]");
                 }
                 else if (this.Text.Contains("OBD2"))
@@ -457,6 +492,7 @@ namespace UniversalPatcher
         {
             SaveThis(fileName);
             this.Close();
+            this.DialogResult = DialogResult.OK;
         }
 
         private void SaveCSV()

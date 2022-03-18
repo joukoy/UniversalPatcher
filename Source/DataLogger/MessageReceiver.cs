@@ -19,19 +19,21 @@ namespace UniversalPatcher
         public bool ReceiveLoopRunning = false;
         private Task ReceiverTask;
         private Device device;
+        private IPort port;
 
-        public void StartReceiveLoop(Device dev)
+        public void StartReceiveLoop(Device dev, IPort port)
         {
             try
             {
                 this.device = dev;
+                this.port = port;
                 if ( ReceiveLoopRunning)
                 {
                     return;
                 }
                 if (dev.LogDeviceType != DataLogger.LoggingDevType.Other)
                 {
-                    dev.SetTimeout(TimeoutScenario.DataLogging2);
+                    dev.SetTimeout(TimeoutScenario.DataLogging3);
                     dev.SetAnalyzerFilter();
                 }
                 receiverTokenSource = new CancellationTokenSource();
@@ -57,13 +59,22 @@ namespace UniversalPatcher
                 if (ReceiveLoopRunning)
                 {
                     ReceiveLoopRunning = false;
-                    receiverTokenSource.Cancel();
+                    receiverTokenSource.Cancel();                    
                     Application.DoEvents();
-                    ReceiverTask.Wait(5000);
-                    if (device.LogDeviceType != DataLogger.LoggingDevType.Other)
+                    if (port != null)
+                    {
+                        port.CancelReceive();
+                    }
+                    if (device.LogDeviceType == DataLogger.LoggingDevType.Other)
+                    {
+                        //ReceiverTask.Wait(100);
+                    }
+                    else
                     {
                         datalogger.StopElmReceive();
+                        //ReceiverTask.Wait(5000);
                     }
+                    ReceiverTask.Wait(100);
                     Application.DoEvents();
                 }
             }
@@ -91,6 +102,10 @@ namespace UniversalPatcher
                 ReceiverPaused = true;
                 StopReceiveLoop();
                 Application.DoEvents();
+                if (port != null)  //Not for J-tools
+                {
+                    device.SetReadTimeout(500);
+                }
                 return true;
             }
             else
@@ -98,13 +113,16 @@ namespace UniversalPatcher
                 if (ReceiverPaused)
                 {
                     Logger("Continue receiving");
-                    StartReceiveLoop(device);
+                    if (port != null)
+                    {
+                        device.SetReadTimeout(2000);
+                    }
+                    StartReceiveLoop(device, port);
                     ReceiverPaused = false;
                 }
                 return true;
             }
         }
-
 
         private void ReceiveLoop()
         {

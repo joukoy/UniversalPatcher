@@ -40,7 +40,7 @@ namespace UniversalPatcher
         private const string PortName = "J2534";
         public string ToolName = "";
         private int periodigMsgId;
-
+        public const string DeviceType = "J2534";
         /// <summary>
         /// global error variable for reading/writing. (Could be done on the fly)
         /// TODO, keep record of all errors for debug
@@ -240,8 +240,16 @@ namespace UniversalPatcher
 
         public override void SetWriteTimeout(int timeout)
         {
+            Debug.WriteLine("Setting write timeout to: " + timeout.ToString());
             WriteTimeout = timeout;
         }
+
+        public override void SetReadTimeout(int timeout)
+        {
+            Debug.WriteLine("Setting read timeout to: " + timeout.ToString());
+            ReadTimeout = timeout;
+        }
+
 
         /// <summary>
         /// This will process incoming messages for up to 500ms looking for a message

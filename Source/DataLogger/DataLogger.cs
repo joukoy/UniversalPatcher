@@ -329,7 +329,7 @@ namespace UniversalPatcher
             ReadValue rv = new ReadValue();
             try
             {
-                LogDevice.ClearMessageQueue();
+                Receiver.SetReceiverPaused(true);
                 OBDMessage request = null;
                 if (addr > ushort.MaxValue) //RAM
                 {
@@ -347,6 +347,7 @@ namespace UniversalPatcher
                     if (resp == null)
                     {
                         LoggerBold("Pid: " + addr.ToString("X4") + " Error, null response");
+                        Receiver.SetReceiverPaused(false);
                         return rv;
                     }
 
@@ -359,14 +360,14 @@ namespace UniversalPatcher
                             if (PcmResponses.ContainsKey(resp[p]))
                                 errStr = PcmResponses[resp[p]];
                             LoggerBold("Pid: " + addr.ToString("X4") + " Error: " + errStr);
-                            return rv;
+                            break;
                         }
                         else
                         {
                             rv = ParseSinglePidMessage(resp, dataType);
                             if (rv.PidNr == addr)
                             {
-                                return rv;
+                                break;
                             }
                             else
                             {
@@ -386,6 +387,7 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, QuerySinglePidValue line " + line + ": " + ex.Message);
             }
+            Receiver.SetReceiverPaused(false);
             return rv;
         }
 
@@ -593,6 +595,7 @@ namespace UniversalPatcher
                 }
 
                 LogDevice.SetTimeout(TimeoutScenario.DataLogging1);
+                LogDevice.SetReadTimeout(100);
 
                 if (QueryDevicesOnBus(false).Status != ResponseStatus.Success)
                     return false;
@@ -634,7 +637,11 @@ namespace UniversalPatcher
                 else
                 {
                     //elmStopTreshold = 50;
-                    if (LogDevice.LogDeviceType != LoggingDevType.Obdlink)
+                    if (LogDevice.LogDeviceType == LoggingDevType.Obdlink)
+                    {
+                        LogDevice.SetTimeout(TimeoutScenario.Minimum);
+                    }
+                    else
                     {
                         LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
                     }
@@ -716,11 +723,11 @@ namespace UniversalPatcher
             try
             {                
                 Debug.WriteLine("RAM? Address: " + address);
-                LogDevice.ClearMessageBuffer();
-                LogDevice.ClearMessageQueue();
                 byte byte1 = (byte)(address >> 16);
                 byte byte2 = (byte)(address >> 8);
                 byte byte3 = (byte)address;
+
+                Receiver.SetReceiverPaused(true);
 
                 byte[] queryMsg = { Priority.Physical0, DeviceId.Pcm, DeviceId.Tool, Mode.ReadBlock,0x89, byte1, byte2, byte3, 0xFF }; //6C 10 F0 3C 0A
                 Debug.WriteLine("RAM query: " + BitConverter.ToString(queryMsg));
@@ -729,6 +736,7 @@ namespace UniversalPatcher
                 {
                     Logger("No respond to RAM Query message");
                     Debug.WriteLine("Expected " + string.Join(" ", Array.ConvertAll(queryMsg, b => b.ToString("X2"))));
+                    Receiver.SetReceiverPaused(false);
                     return null;
                 }
                 Thread.Sleep(30);
@@ -736,6 +744,7 @@ namespace UniversalPatcher
                 if (resp == null || resp.GetBytes()[3] == 0x7f)
                 {
                     LoggerBold("Address: " + address.ToString("X8") + " not supported, or other error");
+                    Receiver.SetReceiverPaused(false);
                     return rv;
                 }
                 rv = ParseSinglePidMessage(resp, dataType);
@@ -744,6 +753,7 @@ namespace UniversalPatcher
             {
                 LoggerBold("QyeryRAM: " + ex.Message);
             }
+            Receiver.SetReceiverPaused(false);
             return rv;
         }
 
@@ -765,6 +775,7 @@ namespace UniversalPatcher
                     {
                         Logger("No response to VIN Query message");
                         Debug.WriteLine("Expected " + string.Join(" ", Array.ConvertAll(queryMsg, b => b.ToString("X2"))));
+                        Receiver.SetReceiverPaused(false);
                         return;
                     }
                     Thread.Sleep(100);
@@ -789,7 +800,6 @@ namespace UniversalPatcher
                 Debug.WriteLine("QueryVIN: " + ex.Message);
             }
             Receiver.SetReceiverPaused(false);
-
         }
 
         public DTCCodeStatus DecodeDTCstatus(byte[] msg)
@@ -920,13 +930,13 @@ namespace UniversalPatcher
                 }
                 Thread.Sleep(100);
                 Debug.WriteLine("Receiving DTC codes...");
+                //byte[] endframe = new byte[] { Priority.Physical0, DeviceId.Tool, module, 0x59, 0x00, 0x00, 0xFF };
                 OBDMessage resp = LogDevice.ReceiveMessage();
-                while (resp != null) // & !Utility.CompareArraysPart(resp.GetBytes(), endframe))
+                while (resp != null) // && !Utility.CompareArraysPart(resp.GetBytes(), endframe))
                 {
                     Debug.WriteLine("DTC received message: " + resp.ToString());
                     resp = LogDevice.ReceiveMessage();
                 }
-                Receiver.SetReceiverPaused(false);
                 Logger("Done");
             }
             catch (Exception ex)
@@ -937,9 +947,9 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, RequestDTCCodes line " + line + ": " + ex.Message);
-                Receiver.SetReceiverPaused(false);
                 return false;
             }
+            Receiver.SetReceiverPaused(false);
             return true;
         }
 
@@ -1099,19 +1109,20 @@ namespace UniversalPatcher
                         //Stop current receive
                         Debug.WriteLine("Stop elm receive");
                         port.Send(Encoding.ASCII.GetBytes("X \r"));
-                        Thread.Sleep(25);
-                        //SendTesterPresent(true);
-                        //SetBusQuiet();
-                        //Query devices on bus:
-                        byte[] queryMsg = { Priority.Physical0, 0x3, DeviceId.Tool, 0x3f };
-                        LogDevice.SendMessage(new OBDMessage(queryMsg), 1);
-                        //Thread.Sleep(50);
-                        if (LogDevice.LogDeviceType == LoggingDevType.Obdlink)
+                        if (LogDevice.LogDeviceType == LoggingDevType.Elm)
                         {
-                            Thread.Sleep(100);
+                            Thread.Sleep(50);
+                            byte[] queryMsg = { Priority.Physical0, 0x3, DeviceId.Tool, 0x3f };
                             LogDevice.SendMessage(new OBDMessage(queryMsg), 1);
                         }
-                        //LogDevice.ReceiveMessage();
+                        Thread.Sleep(200);
+                        //Thread.Sleep(50);
+                        OBDMessage msg = LogDevice.ReceiveMessage();
+                        while (msg != null && !msg.ElmPrompt)
+                        {
+                            Debug.WriteLine("Elm stop received msg: " + msg.ToString() + ", ElmPrompt: " + msg.ElmPrompt);
+                            msg = LogDevice.ReceiveMessage();
+                        }
                         lastElmStop = DateTime.Now;
                     }
                 }

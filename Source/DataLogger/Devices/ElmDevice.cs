@@ -151,13 +151,15 @@ namespace UniversalPatcher
 
         public override void SetWriteTimeout(int timeout)
         {
-            if (timeout > 1020)
-            {
-                Debug.WriteLine("Elm timeout maximum is 1020 ms");
-                timeout = 1020;
-            }
             Port.SetWriteTimeout(timeout + 1000);
+            //Port.SetTimeout(timeout + 1000);
+            //this.implementation.SetTimeoutMilliseconds(timeout);
+        }
+
+        public override void SetReadTimeout(int timeout)
+        {
             Port.SetTimeout(timeout + 1000);
+            //Port.SetTimeout(timeout + 1000);
             this.implementation.SetTimeoutMilliseconds(timeout);
         }
 
@@ -369,16 +371,7 @@ namespace UniversalPatcher
             ClearMessageBuffer();
             ClearMessageQueue();
             Thread.Sleep(100);
-            if (this.implementation.SendRequest("STI").Data.Contains("?"))
-            {
-                Debug.WriteLine("ST command not supported");
-                Port.Send(Encoding.ASCII.GetBytes("ATMA \r")); //Begin monitoring bus traffic (STMA not supported);
-            }
-            else
-            {
-                Debug.WriteLine("ST command supported");
-                Port.Send(Encoding.ASCII.GetBytes("STMA \r")); //Begin monitoring bus traffic
-            }
+            Port.Send(Encoding.ASCII.GetBytes("ATMA \r")); //Begin monitoring bus traffic 
 
             this.CurrentFilter = "analyzer";
             return true;

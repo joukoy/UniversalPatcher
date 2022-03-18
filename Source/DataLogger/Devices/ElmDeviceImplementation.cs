@@ -274,7 +274,7 @@ namespace UniversalPatcher
         /// </summary>
         public bool ProcessResponse(SerialString rawResponse, string context, bool allowEmpty = false)
         {
-            if (rawResponse.Prompt && rawResponse.Data.Length < 8) 
+            if (rawResponse.Prompt && (rawResponse.Data.Length < 5 || rawResponse.Data.Contains("STOPPED")) ) 
             {
                 //We have received prompt
                 Debug.WriteLine("Processresponse with prompt: " + rawResponse.Data);

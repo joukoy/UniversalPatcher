@@ -21,6 +21,7 @@ namespace UniversalPatcher
         public bool TimeStampsEnabled = false;
         public bool CRCInReceivedFrame = false;
         private int BaudRate;
+        private int ReadTimeout;
 
         // This default is probably excessive but it should always be
         // overwritten by a call to SetTimeout before use anyhow.
@@ -169,6 +170,13 @@ namespace UniversalPatcher
             Port.SetWriteTimeout(timeout);
         }
 
+        public override void SetReadTimeout(int timeout)
+        {
+            Port.SetReadTimeout(timeout);
+            ReadTimeout = timeout;
+            //Port.SetTimeout(timeout + 1000);
+        }
+
         /// <summary>
         /// This will process incoming messages for up to 250ms looking for a message
         /// </summary>
@@ -187,34 +195,6 @@ namespace UniversalPatcher
             }
 
             return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
-        }
-
-        /// <summary>
-        /// Wait for serial bytes to be availble. False if timeout.
-        /// </summary>
-        private bool WaitForSerial(ushort NumBytes, int timeout = 0)
-        {
-            if (timeout == 0)
-            {
-                timeout = 500;
-            }
-
-            int TempCount = 0;
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-
-            // Wait for bytes to arrive...
-            while (sw.ElapsedMilliseconds < timeout)
-            {
-                if (this.Port.GetReceiveQueueSize() > TempCount)
-                {
-                    TempCount = this.Port.GetReceiveQueueSize();
-                    sw.Restart();
-                }
-                if (this.Port.GetReceiveQueueSize() >= NumBytes) { return true; }
-                Thread.Sleep(10);
-            }
-            return false;
         }
 
         /// <summary>
@@ -239,14 +219,6 @@ namespace UniversalPatcher
                 bool Chk = false;
                 try
                 {
-                    Chk = (WaitForSerial(1, timeout));
-                    if (Chk == false)
-                    {
-                        Debug.WriteLine("Timeout.. no data present A");
-                        return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
-                    }
-
-                    //get first byte for command
                     this.Port.Receive(rx, 0, 1);
                 }
                 catch (Exception) // timeout exception - log no data, return error.
@@ -264,36 +236,18 @@ namespace UniversalPatcher
                         //next 4 bytes will be timestamp in microseconds
                         for (byte i = 0; i < 4; i++)
                         {
-                            Chk = (WaitForSerial(1));
-                            if (Chk == false)
-                            {
-                                Debug.WriteLine("Timeout.. no data present B");
-                                return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
-                            }
                             this.Port.Receive(timestampbuf, i, 1);
                         }
                         timestampmicro = (ulong)((ulong)timestampbuf.Data[0] * 0x100 ^ 3) + (ulong)((ulong)timestampbuf.Data[1] * 0x100 ^ 2) + (ulong)((ulong)timestampbuf.Data[0] * 0x100) + (ulong)timestampbuf.Data[0];
                     }
                     if (rx.Data[0] == 0x8) //if short, only get one byte for length
                     {
-                        Chk = (WaitForSerial(1));
-                        if (Chk == false)
-                        {
-                            Debug.WriteLine("Timeout.. no data present C");
-                            return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
-                        }
                         this.Port.Receive(rx, 1, 1);
                         Length = rx.Data[1];
                     }
                     else //if long, get two bytes for length
                     {
                         offset += 1;
-                        Chk = (WaitForSerial(2));
-                        if (Chk == false)
-                        {
-                            Debug.WriteLine("Timeout.. no data present D");
-                            return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
-                        }
                         this.Port.Receive(rx, 1, 2);
                         Length = (ushort)((ushort)(rx.Data[1] * 0x100) + rx.Data[2]);
                     }
@@ -301,24 +255,11 @@ namespace UniversalPatcher
                 }
                 else //for all other received frames
                 {
-                    Chk = (WaitForSerial(1));
-                    if (Chk == false)
-                    {
-                        Debug.WriteLine("Timeout.. no data present E");
-                        return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
-                    }
                     this.Port.Receive(rx, 1, 1);
                     Length = rx.Data[1];
                 }
 
                 SerialByte receive = new SerialByte(Length + 3 + offset);
-                Chk = (WaitForSerial((ushort)(Length + 1)));
-                if (Chk == false)
-                {
-                    Debug.WriteLine("Timeout.. no data present F");
-                    return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
-                }
-
                 int bytes;
                 receive.Data[0] = rx.Data[0];//Command
                 receive.Data[1] = rx.Data[1];//length
@@ -414,12 +355,6 @@ namespace UniversalPatcher
             {
                 while (framefound == false)
                 {
-                    Chk = (WaitForSerial(1));
-                    if (Chk == false)
-                    {
-                        Debug.WriteLine("Timeout.. no data present");
-                        return Response.Create(ResponseStatus.Timeout, "");
-                    }
 
                     this.Port.Receive(rx, 0, 1);
                     if (rx.Data[0] == 0xD) //carriage return
@@ -440,12 +375,6 @@ namespace UniversalPatcher
                 framefound = false;
                 while (framefound == false)
                 {
-                    Chk = (WaitForSerial(1));
-                    if (Chk == false)
-                    {
-                        Debug.WriteLine("ELM Idle frame not detected");
-                        return Response.Create(ResponseStatus.Timeout, "");
-                    }
                     this.Port.Receive(rx, 0, 1);
                     if (rx.Data[0] == '>')
                     {
@@ -598,6 +527,7 @@ namespace UniversalPatcher
                 //Debug.WriteLine("Sendrequest called");
                 //  Debug.WriteLine("TX: " + message.GetBytes().ToHex());                  
                 this.MessageSent(message);
+                this.ClearMessageQueue();
                 Response<OBDMessage> m = SendDVIPacket(message, responses);
                 if (m.Status != ResponseStatus.Success)
                 {
@@ -627,7 +557,7 @@ namespace UniversalPatcher
         /// </remarks>
         public override void Receive()
         {
-            ReadDVIPacket();
+            ReadDVIPacket(ReadTimeout);
         }
 
         private bool ResetDevice()

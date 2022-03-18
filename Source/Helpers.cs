@@ -19,6 +19,7 @@ public static class Helpers
     public static string TxtFilter = "TXT files (*.txt)|*.txt|All files (*.*)|*.*";
     public static string XdfFilter = "XDF files (*.xdf)|*.xdf|All files (*.*)|*.*";
     public static string RtfFilter = "RTF files (*.rtf)|*.rtf|All files (*.*)|*.*";
+    public static string RtfFTxtilter = "RTF or TXT (*.rtf;*.txt)|*.rtf;*.txt|All files (*.*)|*.*";
 
     public static UPLogger uPLogger = new UPLogger();
 

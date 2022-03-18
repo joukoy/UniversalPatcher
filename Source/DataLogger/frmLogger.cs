@@ -51,6 +51,8 @@ namespace UniversalPatcher
         bool jConsoleWaiting4x = false;
         JConsole jConsole;
         OBDScript oscript;
+        OBDScript joscript;
+        ObdEmu oresp;
 
         private void frmLogger_Load(object sender, EventArgs e)
         {
@@ -95,29 +97,38 @@ namespace UniversalPatcher
             richJConsole.EnableContextMenu();
             txtJ2534SetPins.Enter += TxtJ2534SetPins_Enter;
             txtJConsoleSend.KeyPress += TxtJConsoleSend_KeyPress;
+            chkConsole4x.Enter += ChkConsole4x_Enter;
+            chkJConsole4x.Enter += ChkConsole4x_Enter;
         }
 
-        private void HandleConsoleCommand(Device device, MessageReceiver receiver, string cmd)
+        private void ChkConsole4x_Enter(object sender, EventArgs e)
         {
-            string[] parts = cmd.Split(':');
-            byte[] msg = Utility.ToBytes(parts[0].Replace(" ", ""));
-            OBDMessage oMsg = new OBDMessage(msg);
-            int responses = 1;
-            if (parts.Length > 1)
+            ToolTip tt = new ToolTip();
+            string ttTxt = "If enabled, tool will automatically switch to 4x mode in listen mode, or by script command";
+            CheckBox chk = (CheckBox)sender;
+            tt.Show(ttTxt, chk, 3000);
+
+        }
+
+        private void HandleConsoleCommand(Device device, MessageReceiver receiver, string cmd, OBDScript script)
+        {
+            try
             {
-                int.TryParse(parts[1], out responses);
-            }
-            receiver.SetReceiverPaused(true);
-            if (!device.SendMessage(oMsg, responses))
-            {
-                LoggerBold("Error sending message");
+                bool brk = false;
+                receiver.SetReceiverPaused(true);
+                script.HandleLine(cmd, "", ref brk);
+                receiver.SetReceiverPaused(false);
                 return;
             }
-            for (int r=0; r < Math.Abs(responses); r++)
+            catch (Exception ex)
             {
-                OBDMessage rMsg = device.ReceiveMessage();
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, HandleConsoleCommand line " + line + ": " + ex.Message);
             }
-            receiver.SetReceiverPaused(false);
         }
 
         private void TxtJConsoleSend_KeyPress(object sender, KeyPressEventArgs e)
@@ -130,7 +141,7 @@ namespace UniversalPatcher
                     {
                         return;
                     }
-                    HandleConsoleCommand(jConsole.JDevice, jConsole.Receiver, txtJConsoleSend.Text);
+                    HandleConsoleCommand(jConsole.JDevice, jConsole.Receiver, txtJConsoleSend.Text, joscript);
                     e.Handled = true;
                     richJConsole.AppendText(Environment.NewLine);
                 }
@@ -138,7 +149,6 @@ namespace UniversalPatcher
             catch (Exception ex)
             {
                 LoggerBold(ex.Message);
-                jConsole.Receiver.SetReceiverPaused(false);
             }
         }
 
@@ -212,6 +222,15 @@ namespace UniversalPatcher
                                 Debug.WriteLine("Switched to 4X");
                             else
                                 Debug.WriteLine("Switch to 4X failed");
+                        }
+                    }
+
+                    if (ChkEmulatorResponseMode.Checked)
+                    {
+                        List<string> resps = oresp.GetResponses(e.Msg);
+                        for (int i=0; i< resps.Count;i++)
+                        {
+                            HandleConsoleCommand(datalogger.LogDevice, datalogger.Receiver, resps[i], oscript);
                         }
                     }
                 });
@@ -330,7 +349,7 @@ namespace UniversalPatcher
                     {
                         return;
                     }
-                    HandleConsoleCommand(datalogger.LogDevice, datalogger.Receiver, txtSendBus.Text);
+                    HandleConsoleCommand(datalogger.LogDevice, datalogger.Receiver, txtSendBus.Text, oscript);
                     e.Handled = true;
                     richVPWmessages.AppendText(Environment.NewLine);
                 }
@@ -554,42 +573,56 @@ namespace UniversalPatcher
         private void LoadJ2534Protocols()
         {
             //comboJ2534Protocol.Items.Clear();
-            J2534DotNet.J2534Device dev = jDevList[j2534DeviceList.SelectedIndex];
-            comboJ2534Protocol.DataSource = dev.Protocols;
-            comboJ2534Protocol.SelectedIndex = 0;
-            comboJ2534Init.Items.Clear();
-            foreach(string item in Enum.GetNames(typeof(LoggerUtils.KInit)))
-                comboJ2534Init.Items.Add(item);
+            try
+            {
+                J2534DotNet.J2534Device dev = jDevList[j2534DeviceList.SelectedIndex];
+                comboJ2534Protocol.DataSource = dev.Protocols;
+                comboJ2534Protocol.SelectedIndex = 0;
+                comboJ2534Init.Items.Clear();
+                foreach (string item in Enum.GetNames(typeof(LoggerUtils.KInit)))
+                    comboJ2534Init.Items.Add(item);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, LoadJ2534Protocols line " + line + ": " + ex.Message);
+            }
         }
 
         private void LoadJ2534Baudrates()
         {
-            comboJ2534Baudrate.Items.Clear();
-            foreach (string item in Enum.GetNames(typeof(J2534DotNet.BaudRate)))
+            try
             {
-                if (item.StartsWith(comboJ2534Protocol.Text.Replace("_PS","")))
+                comboJ2534Baudrate.Items.Clear();
+                foreach (string item in Enum.GetNames(typeof(J2534DotNet.BaudRate)))
                 {
-                    comboJ2534Baudrate.Items.Add(item);
+                    if (item.StartsWith(comboJ2534Protocol.Text.Replace("_PS", "")))
+                    {
+                        comboJ2534Baudrate.Items.Add(item);
+                    }
+                }
+                if (comboJ2534Baudrate.Items.Count > 0)
+                {
+                    comboJ2534Baudrate.SelectedIndex = 0;
+                }
+                else
+                {
+                    comboJ2534Baudrate.Text = "";
                 }
             }
-            if (comboJ2534Baudrate.Items.Count > 0)
+            catch (Exception ex)
             {
-                comboJ2534Baudrate.SelectedIndex = 0;
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, LoadJ2534Baudrates line " + line + ": " + ex.Message);
             }
-            else
-            {
-                comboJ2534Baudrate.Text = "";
-            }
-/*            if (comboJ2534Protocol.Text.Contains("ISO14230"))
-            {
-                comboJ2534Init.Enabled = true;
-            }
-            else
-            {
-                comboJ2534Init.Enabled = false;
-                comboJ2534Init.Text = "";
-            }
-*/
         }
 
         private void LoadSettings()
@@ -628,6 +661,7 @@ namespace UniversalPatcher
                 chkConsoleUseJ2534Timestamps.Checked = Properties.Settings.Default.LoggerConsoleJ2534Timestamps;
                 chkJConsoleTimestamps.Checked = Properties.Settings.Default.JConsoleTimestamps;
                 chkJConsole4x.Checked = Properties.Settings.Default.JConsole4x;
+                chkConsole4x.Checked = Properties.Settings.Default.LoggerConsole4x;
                 comboJ2534DLL.Text = Properties.Settings.Default.JConsoleDevice;
                 numConsoleScriptDelay.Value = Properties.Settings.Default.LoggerScriptDelay;
 
@@ -1064,33 +1098,53 @@ namespace UniversalPatcher
 
         private void frmLogger_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Debug.WriteLine("Closing frmLogger");
-            datalogger.stopLogLoop = true;
-            if (ProfileDirty)
+            try
             {
-                DialogResult dialogResult = MessageBox.Show("Save profile modifications?", "Save profile", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.Yes)
+                Debug.WriteLine("Closing frmLogger");
+                if (datalogger != null && datalogger.LogDevice != null)
                 {
-                    SelectSaveProfile();
+                    if (datalogger.Receiver != null)
+                    {
+                        datalogger.Receiver.StopReceiveLoop();
+                    }
+                    if (datalogger.LogRunning)
+                    {
+                        datalogger.StopLogging();
+                    }
+                    Disconnect();
                 }
-            }
-            if (Properties.Settings.Default.MainWindowPersistence)
-            {
-                Properties.Settings.Default.LoggerWindowState = this.WindowState;
-                if (this.WindowState == FormWindowState.Normal)
+                if (jConsole != null && jConsole.JDevice != null && jConsole.Connected)
                 {
-                    Properties.Settings.Default.LoggerWindowPosition = this.Location;
-                    Properties.Settings.Default.LoggerWindowSize = this.Size;
+                    DisconnectJConsole();
                 }
-                else
+                datalogger.stopLogLoop = true;
+                if (ProfileDirty)
                 {
-                    Properties.Settings.Default.LoggerWindowPosition = this.RestoreBounds.Location;
-                    Properties.Settings.Default.LoggerWindowSize = this.RestoreBounds.Size;
+                    DialogResult dialogResult = MessageBox.Show("Save profile modifications?", "Save profile", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        SelectSaveProfile();
+                    }
                 }
-                Properties.Settings.Default.Save();
-            }
+                if (Properties.Settings.Default.MainWindowPersistence)
+                {
+                    Properties.Settings.Default.LoggerWindowState = this.WindowState;
+                    if (this.WindowState == FormWindowState.Normal)
+                    {
+                        Properties.Settings.Default.LoggerWindowPosition = this.Location;
+                        Properties.Settings.Default.LoggerWindowSize = this.Size;
+                    }
+                    else
+                    {
+                        Properties.Settings.Default.LoggerWindowPosition = this.RestoreBounds.Location;
+                        Properties.Settings.Default.LoggerWindowSize = this.RestoreBounds.Size;
+                    }
+                    Properties.Settings.Default.Save();
+                }
 
-            Thread.Sleep(100);
+                Thread.Sleep(100);
+            }
+            catch { }
         }
 
         private void timerShowData_Tick(object sender, EventArgs e)
@@ -1378,6 +1432,7 @@ namespace UniversalPatcher
             Properties.Settings.Default.LoggerConsoleJ2534Timestamps = chkConsoleUseJ2534Timestamps.Checked;
             Properties.Settings.Default.LoggerConsoleFont = richVPWmessages.Font;
             Properties.Settings.Default.LoggerScriptDelay = (int) numConsoleScriptDelay.Value;
+            Properties.Settings.Default.LoggerConsole4x = chkConsole4x.Checked;
             Properties.Settings.Default.JConsole4x = chkJConsole4x.Checked;
             Properties.Settings.Default.JConsoleTimestamps = chkJConsoleTimestamps.Checked;
             Properties.Settings.Default.JConsoleDevice = comboJ2534DLL.Text;
@@ -1401,7 +1456,7 @@ namespace UniversalPatcher
                 {
                     if (datalogger.AnalyzerRunning || chkConsoleAutorefresh.Checked)
                     { 
-                        datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice);
+                        datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port);
                     }
                 }               
             }
@@ -1435,6 +1490,7 @@ namespace UniversalPatcher
                     J2534DotNet.J2534Device dev = jDevList[j2534DeviceList.SelectedIndex];
                     //passThru.LoadLibrary(dev);
                     datalogger.LogDevice = new J2534Device(dev);
+                    datalogger.LogDevice.SetReadTimeout(100);
                 }
                 datalogger.LogDevice.MsgReceived += LogDevice_DTC_MsgReceived;
                 if (chkEnableConsole.Checked)
@@ -1448,8 +1504,14 @@ namespace UniversalPatcher
                     datalogger.LogDevice.Dispose();
                     return false;
                 }
-                datalogger.LogDevice.Enable4xReadWrite = true;
+                oscript = new OBDScript(datalogger.LogDevice, datalogger.Receiver);
+                datalogger.LogDevice.Enable4xReadWrite = chkConsole4x.Checked;
 
+                if (serialRadioButton.Checked)
+                {
+                    datalogger.LogDevice.SetTimeout(TimeoutScenario.DataLogging3);
+                    datalogger.LogDevice.SetReadTimeout(2000);
+                }
                 string os = "";
                 if (ShowOs)
                 {
@@ -1471,7 +1533,7 @@ namespace UniversalPatcher
                 }
                 if (chkConsoleAutorefresh.Checked)
                 {
-                    datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice);
+                    datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port);
                 }
                 Application.DoEvents();
                 groupHWSettings.Enabled = false;
@@ -1554,12 +1616,13 @@ namespace UniversalPatcher
                     jConsole.JDevice.Dispose();
                     return false;
                 }
-                jConsole.JDevice.Enable4xReadWrite = chkConsole4x.Checked;
-
+                jConsole.JDevice.Enable4xReadWrite = chkJConsole4x.Checked;
+                jConsole.JDevice.SetReadTimeout(100);
                 labelJconsoleConnected.Text = "Connected";
                 jConsole.Connected = true;
                 SaveSettings();
-                jConsole.Receiver.StartReceiveLoop(jConsole.JDevice);
+                jConsole.Receiver.StartReceiveLoop(jConsole.JDevice, null);
+                joscript = new OBDScript(jConsole.JDevice, jConsole.Receiver);
                 Application.DoEvents();
                 groupJ2534Options.Enabled = false;
                 return true;
@@ -1805,7 +1868,7 @@ namespace UniversalPatcher
                 datalogger.AnalyzerRunning = true;
                 if (!datalogger.Receiver.ReceiveLoopRunning)
                 {
-                    datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice);
+                    datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port);
                 }
                 //groupDTC.Enabled = false;
             }
@@ -2070,6 +2133,7 @@ namespace UniversalPatcher
             jConsole.JDevice.MsgReceived -= LogDevice_MsgReceived;
             jConsole.JDevice.MsgSent -= LogDevice_MsgSent;
             jConsole.JDevice.Dispose();
+            jConsole.JDevice = null;
             jConsole.Connected = false;
             labelJconsoleConnected.Text = "Disconnected";
             groupJ2534Options.Enabled = true;
@@ -2285,7 +2349,7 @@ namespace UniversalPatcher
                 {
                     if (chkConsoleAutorefresh.Checked)
                     {
-                        datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice);
+                        datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port);
                     }
                     datalogger.LogDevice.MsgReceived += LogDevice_MsgReceived;
                     datalogger.LogDevice.MsgSent += LogDevice_MsgSent;
@@ -2365,9 +2429,9 @@ namespace UniversalPatcher
                 return;
             }
             Logger("Sending file: " + fName);
-            oscript = new OBDScript();
+            oscript = new OBDScript(datalogger.LogDevice, datalogger.Receiver);
             btnStopScript.Enabled = true;
-            oscript.UploadScript(fName, datalogger.LogDevice,datalogger.Receiver);
+            oscript.UploadScript(fName);
             btnStopScript.Enabled = false;
             Logger("Done");
         }
@@ -2442,7 +2506,7 @@ namespace UniversalPatcher
 
         private void chkConsole4x_CheckedChanged(object sender, EventArgs e)
         {
-            if (datalogger.Connected)
+            if (datalogger != null && datalogger.Connected)
             {
                 datalogger.LogDevice.Enable4xReadWrite = chkConsole4x.Checked;
             }
@@ -2456,7 +2520,7 @@ namespace UniversalPatcher
                 {
                     return;
                 }
-                datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice);
+                datalogger.Receiver.StartReceiveLoop(datalogger.LogDevice, datalogger.port);
             }
             else
             {
@@ -2553,9 +2617,9 @@ namespace UniversalPatcher
                 return;
             }
             Logger("Sending file: " + fName);
-            oscript = new OBDScript();
+            joscript = new OBDScript(jConsole.JDevice, jConsole.Receiver);
             btnJconsoleStopScript.Enabled = true;
-            oscript.UploadScript(fName, jConsole.JDevice, jConsole.Receiver);
+            joscript.UploadScript(fName);
             btnJconsoleStopScript.Enabled = false;
             Logger("Done");
 
@@ -2571,10 +2635,10 @@ namespace UniversalPatcher
             Properties.Settings.Default.LoggerScriptDelay = (int)numConsoleScriptDelay.Value;
         }
 
-        private void btnStopScript_Click(object sender, EventArgs e)
+        private void btnStopJScript_Click(object sender, EventArgs e)
         {
             Logger("Stopping script");
-            oscript.stopscript = true;
+            joscript.stopscript = true;
         }
 
         private void btnStopScript_Click_1(object sender, EventArgs e)
@@ -2697,5 +2761,70 @@ namespace UniversalPatcher
             }
         }
 
+        private void chkJConsole4x_CheckedChanged(object sender, EventArgs e)
+        {
+            if (jConsole != null && jConsole.Connected)
+            {
+                jConsole.JDevice.Enable4xReadWrite = chkJConsole4x.Checked;
+            }
+        }
+
+        private void parseLogfileToBinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fName = SelectFile("Select log file", RtfFTxtilter);
+            if (fName.Length == 0)
+                return;
+            LogToBin ltb = new LogToBin();
+            ltb.ConvertFile(fName);
+        }
+
+        private void btnConsoleEditResponses_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string fName = SelectFile("Select response file", XmlFilter);
+                frmEditXML frmE = new frmEditXML();
+                frmE.LoadObdResponses(fName);
+                if (frmE.ShowDialog() == DialogResult.OK)
+                {
+                    oresp.Responses = frmE.obdresponses;
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+
+        }
+
+        private void OpenEmu()
+        {
+            if (ChkEmulatorResponseMode.Checked && oresp == null)
+            {
+                byte id;
+                if (!HexToByte(txtEmulatorId.Text, out id))
+                {
+                    LoggerBold("Can't convert from hex: " + txtEmulatorId.Text);
+                    return;
+                }
+                oresp = new ObdEmu(id);
+            }
+        }
+
+        private void btnConsoleLoadResponses_Click(object sender, EventArgs e)
+        {
+            string fName = SelectFile("Select response file", XmlFilter);
+            if (fName.Length == 0)
+            {
+                return;
+            }
+            OpenEmu();
+            oresp.Responses = ObdEmu.LoadObdResponseFile(fName);
+        }
+
+        private void ChkConsoleResponseMode_CheckedChanged(object sender, EventArgs e)
+        {
+            OpenEmu();
+        }
     }
 }

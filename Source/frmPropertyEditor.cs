@@ -27,39 +27,46 @@ namespace UniversalPatcher
 
         public void LoadObject(object myObj)
         {
-            int row = 0;
-            this.myObj = myObj;
-            dataGridView1.ColumnCount = 1;
-            dataGridView1.RowHeadersWidth = 150;
-            foreach (var prop in myObj.GetType().GetProperties())
+            try
             {
-                dataGridView1.Rows.Add();
-                dataGridView1.Rows[row].HeaderCell.Value = prop.Name;
-                if (prop.PropertyType.IsEnum)
+                int row = 0;
+                this.myObj = myObj;
+                dataGridView1.ColumnCount = 1;
+                dataGridView1.RowHeadersWidth = 150;
+                foreach (var prop in myObj.GetType().GetProperties())
                 {
-                    DataGridViewComboBoxCell c = new DataGridViewComboBoxCell();
-                    c.ValueType = prop.PropertyType;
-                    c.ValueMember = "Value";
-                    c.DisplayMember = "Name";
-                    c.DataSource = Enum.GetValues(prop.PropertyType).Cast<object>().Select(v => new
+                    dataGridView1.Rows.Add();
+                    dataGridView1.Rows[row].HeaderCell.Value = prop.Name;
+                    if (prop.PropertyType.IsEnum)
                     {
-                        Value = (int)v,
-                        Name = Enum.GetName(prop.PropertyType, v) /* or any other logic to get text */
-                    }).ToList();
-                    c.Value = (int)prop.GetValue(myObj, null);
-                    dataGridView1.Rows[row].Cells[0] = c;
+                        DataGridViewComboBoxCell c = new DataGridViewComboBoxCell();
+                        c.ValueType = prop.PropertyType;
+                        c.ValueMember = "Value";
+                        c.DisplayMember = "Name";
+                        c.DataSource = Enum.GetValues(prop.PropertyType).Cast<object>().Select(v => new
+                        {
+                            Value = (int)v,
+                            Name = Enum.GetName(prop.PropertyType, v) /* or any other logic to get text */
+                        }).ToList();
+                        c.Value = (int)prop.GetValue(myObj, null);
+                        dataGridView1.Rows[row].Cells[0] = c;
+                    }
+                    else if (prop.PropertyType == typeof(System.Boolean))
+                    {
+                        DataGridViewCheckBoxCell c = new DataGridViewCheckBoxCell();
+                        dataGridView1.Rows[row].Cells[0] = c;
+                        c.Value = prop.GetValue(myObj, null);
+                    }
+                    else
+                    {
+                        dataGridView1.Rows[row].Cells[0].Value = prop.GetValue(myObj, null);
+                    }
+                    row++;
                 }
-                else if (prop.PropertyType == typeof(System.Boolean))
-                {
-                    DataGridViewCheckBoxCell c = new DataGridViewCheckBoxCell();
-                    dataGridView1.Rows[row].Cells[0] = c;
-                    c.Value = prop.GetValue(myObj, null);
-                }
-                else
-                {
-                    dataGridView1.Rows[row].Cells[0].Value = prop.GetValue(myObj, null);
-                }
-                row++;
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
             }
             //dataGridView1.Columns[0].Width = 1000;
         }

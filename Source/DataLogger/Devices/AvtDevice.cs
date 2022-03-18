@@ -150,6 +150,11 @@ namespace UniversalPatcher
             Port.SetWriteTimeout(timeout);
         }
 
+        public override void SetReadTimeout(int timeout)
+        {
+            Port.SetReadTimeout(timeout);
+        }
+
         /// <summary>
         /// This will process incoming messages for up to 500ms looking for a message
         /// </summary>
@@ -184,16 +189,8 @@ namespace UniversalPatcher
             SerialByte rx = new SerialByte(2); // we dont read more than 2 bytes at a time
             // Get the first packet byte.
 
-            bool Chk = false;
             try
             {
-                Chk = (WaitForSerial(1, 1000));
-                if (Chk == false)
-                {
-                    Debug.WriteLine("Timeout.. no data present A");
-                    return Response.Create(ResponseStatus.Timeout, (OBDMessage)null);
-                }
-
                 //get first byte for command
                 this.Port.Receive(rx, 0, 1);
             }
@@ -294,33 +291,6 @@ namespace UniversalPatcher
             //return Response.Create(ResponseStatus.Success, new OBDMessage(packet));
         }
 
-        /// <summary>
-        /// Wait for serial bytes to be availble. False if timeout.
-        /// </summary>
-        private bool WaitForSerial(ushort NumBytes, int timeout = 0)
-        {
-            if (timeout == 0)
-            {
-                timeout = 500;
-            }
-
-            int TempCount = 0;
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-
-            // Wait for bytes to arrive...
-            while (sw.ElapsedMilliseconds < timeout)
-            {
-                if (this.Port.GetReceiveQueueSize() > TempCount)
-                {
-                    TempCount = this.Port.GetReceiveQueueSize();
-                    sw.Restart();
-                }
-                if (this.Port.GetReceiveQueueSize() >= NumBytes) { return true; }
-                Thread.Sleep(10);
-            }
-            return false;
-        }
 
         /// <summary>
         /// Convert a Message to an AVT formatted transmit, and send to the interface

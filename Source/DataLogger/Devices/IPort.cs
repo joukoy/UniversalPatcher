@@ -54,6 +54,16 @@ namespace UniversalPatcher
         void SetWriteTimeout(int milliseconds);
 
         /// <summary>
+        /// Sets the timeout for reading messages;
+        /// </summary>
+        void SetReadTimeout(int milliseconds);
+
+        /// <summary>
+        /// Cancel current receive;
+        /// </summary>
+        void CancelReceive();
+
+        /// <summary>
         /// Sets the timeout for incoming messages;
         /// </summary>
         // bool PromptReceived();

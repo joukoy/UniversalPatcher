@@ -100,7 +100,7 @@ namespace UniversalPatcher
             }
             catch (Exception exception)
             {
-                throw new ArgumentException("Unable to convert \"" + hex + "\" to from hexadecimal to bytes", exception);
+                throw new ArgumentException("Unable to convert \"" + hex + "\" from hexadecimal to bytes", exception);
             }
         }
 

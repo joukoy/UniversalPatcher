@@ -11,8 +11,15 @@ using System.Windows.Forms;
 
 namespace UniversalPatcher
 {
-    class OBDScript
+    public class OBDScript
     {
+        public OBDScript(Device device, MessageReceiver receiver)
+        {
+            this.device = device;
+            this.receiver = receiver;
+        }
+
+
         public class Variable
         {
             public string Name { get; set; }
@@ -31,7 +38,7 @@ namespace UniversalPatcher
         List<string> scriptrows;
         int currentrow = 0;
 
-        private bool HandleLine(string Line, string Line2, ref bool breakloop)
+        public bool HandleLine(string Line, string Line2, ref bool breakloop)
         {
             if (stopscript)
             {
@@ -115,6 +122,26 @@ namespace UniversalPatcher
                     {
                         Debug.WriteLine("Delay: {0} ms ", delay);
                         Thread.Sleep(delay);
+                    }
+                }
+                else if (Line.ToLower().StartsWith("t:") || Line.ToLower().StartsWith("readtimeout:"))
+                {
+                    int tout = 0;
+                    string[] parts = Line.Split(':');
+                    if (int.TryParse(parts[1], out tout))
+                    {
+                        Debug.WriteLine("Setting timeout to: {0} ms ", tout);
+                        device.SetReadTimeout(tout);
+                    }
+                }
+                else if (Line.ToLower().StartsWith("t:") || Line.ToLower().StartsWith("writetimeout:"))
+                {
+                    int tout = 0;
+                    string[] parts = Line.Split(':');
+                    if (int.TryParse(parts[1], out tout))
+                    {
+                        Debug.WriteLine("Setting write timeout to: {0} ms ", tout);
+                        device.SetWriteTimeout(tout);
                     }
                 }
                 else if (Line.ToLower().StartsWith("variable"))
@@ -389,12 +416,10 @@ namespace UniversalPatcher
             return key;
         }
 
-        public void UploadScript(string FileName, Device device, MessageReceiver receiver)
+        public void UploadScript(string FileName)
         {
             try
             {
-                this.device = device;
-                this.receiver = receiver;
                 stopscript = false;
                 string Line;
 

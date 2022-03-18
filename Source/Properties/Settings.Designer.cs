@@ -1376,13 +1376,25 @@ namespace UniversalPatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool JConsole4x {
             get {
                 return ((bool)(this["JConsole4x"]));
             }
             set {
                 this["JConsole4x"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool LoggerConsole4x {
+            get {
+                return ((bool)(this["LoggerConsole4x"]));
+            }
+            set {
+                this["LoggerConsole4x"] = value;
             }
         }
     }

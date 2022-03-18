@@ -22,6 +22,9 @@ namespace UniversalPatcher
         private Queue<SerialByte> internalQueue = new Queue<SerialByte>();
         private readonly object devLock = new object();
 
+        private CancellationTokenSource receiverTokenSource = new CancellationTokenSource();
+        private CancellationToken receiverToken;
+
         public bool PromptReceived()
         {
             return this.promptReceived;
@@ -96,6 +99,10 @@ namespace UniversalPatcher
             // However, even after setting the BaseStream.ReadTimout property, calls to
             // BaseStream.ReadAsync will hang indefinitely. It turns out that you have 
             // to implement the timeout yourself if you use the async approach.
+
+            receiverTokenSource = new CancellationTokenSource();
+            receiverToken = receiverTokenSource.Token;
+
             this.port.BaseStream.ReadTimeout = this.port.ReadTimeout;
             this.port.WriteTimeout = 500;
             this.port.ErrorReceived += Port_ErrorReceived;
@@ -154,6 +161,14 @@ namespace UniversalPatcher
         }
 
         /// <summary>
+        /// Cancel current receive task
+        /// </summary>
+        void IPort.CancelReceive()
+        {
+            receiverTokenSource.Cancel();
+        }
+
+        /// <summary>
         /// Receive a sequence of bytes over the serial port.
         /// </summary>
         int IPort.Receive(SerialByte buffer, int offset, int count)
@@ -163,6 +178,8 @@ namespace UniversalPatcher
             int rCount = 0;
             int pos = offset;
             DateTime startTime = DateTime.Now;
+            receiverTokenSource = new CancellationTokenSource();
+            receiverToken = receiverTokenSource.Token;
             //Debug.WriteLine("RS232 reading: " + count + ", available: " + this.internalQueue.Count);
             while (this.internalQueue.Count < count)
             {
@@ -170,6 +187,11 @@ namespace UniversalPatcher
                 if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(RTimeout))
                 {
                     //Debug.WriteLine("RS232 waiting for: " + count + ", available: " + this.internalQueue.Count);
+                    throw new TimeoutException();
+                }
+                if (receiverToken.IsCancellationRequested)
+                {
+                    Debug.WriteLine("Receive cancelled");
                     throw new TimeoutException();
                 }
             }
@@ -210,7 +232,7 @@ namespace UniversalPatcher
         public void SetTimeout(int milliseconds)
         {
             this.port.ReadTimeout = milliseconds;
-            RTimeout = milliseconds;
+            //RTimeout = milliseconds;
         }
 
         /// <summary>
@@ -218,7 +240,17 @@ namespace UniversalPatcher
         /// </summary>
         public void SetWriteTimeout(int milliseconds)
         {
+            Debug.WriteLine("Setting write timeout to: " + milliseconds.ToString());
             this.port.WriteTimeout = milliseconds;
+        }
+
+        /// <summary>
+        /// Sets the Read timeout.
+        /// </summary>
+        public void SetReadTimeout(int milliseconds)
+        {
+            Debug.WriteLine("Setting read timeout to: " + milliseconds.ToString());
+            RTimeout = milliseconds;
         }
 
         /// <summary>

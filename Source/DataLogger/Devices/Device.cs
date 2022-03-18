@@ -216,6 +216,11 @@ namespace UniversalPatcher
         public abstract void SetWriteTimeout(int timeout);
 
         /// <summary>
+        /// Set the timeout period to wait for responses to sending messages.
+        /// </summary>
+        public abstract void SetReadTimeout(int timeout);
+
+        /// <summary>
         /// Send a message.
         /// </summary>
         public abstract bool SendMessage(OBDMessage message, int responses);
@@ -296,11 +301,11 @@ namespace UniversalPatcher
         /// </summary>
         public bool SetVpwSpeed(VpwSpeed newSpeed)
         {
-            if (this.Speed == newSpeed)
+/*            if (this.Speed == newSpeed)
             {
                 return true;
             }
-
+*/
             if (((newSpeed == VpwSpeed.FourX) && !this.Enable4xReadWrite) || (!this.SetVpwSpeedInternal(newSpeed)))
             {
                 return false;

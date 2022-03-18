@@ -26,6 +26,8 @@ namespace UniversalPatcher
         private bool promptReceived = false;
         private Task receiveTask;
         private readonly object devLock = new object();
+        private CancellationTokenSource receiverTokenSource = new CancellationTokenSource();
+        private CancellationToken receiverToken;
 
         public bool PromptReceived()
         {
@@ -115,6 +117,9 @@ namespace UniversalPatcher
             {
                 throw new Exception("Failed to set FTDI event handler (error " + ftStatus.ToString() + ")");
             }
+            receiverTokenSource = new CancellationTokenSource();
+            receiverToken = receiverTokenSource.Token;
+
             //ThreadPool.QueueUserWorkItem(new WaitCallback(DataReceived), null);
             receiveTask = Task.Factory.StartNew(() => DataReceiver());
         }
@@ -202,6 +207,14 @@ namespace UniversalPatcher
         }
 
         /// <summary>
+        /// Cancel current receive task
+        /// </summary>
+        void IPort.CancelReceive()
+        {
+            receiverTokenSource.Cancel();
+        }
+
+        /// <summary>
         /// Receive a sequence of bytes over the serial port.
         /// </summary>
         int IPort.Receive(SerialByte buffer, int offset, int count)
@@ -211,12 +224,20 @@ namespace UniversalPatcher
             int rCount = 0;
             int pos = offset;
             DateTime startTime = DateTime.Now;
+            receiverTokenSource = new CancellationTokenSource();
+            receiverToken = receiverTokenSource.Token;
+
             while (this.internalQueue.Count < count)
             {
                 Thread.Sleep(1);
                 if (DateTime.Now.Subtract(startTime) > TimeSpan.FromMilliseconds(RTimeout))
                 {
                     Debug.WriteLine("FTDI waiting for: " + count + ", received: " + this.internalQueue.Count);
+                    throw new TimeoutException();
+                }
+                if (receiverToken.IsCancellationRequested)
+                {
+                    Debug.WriteLine("Receive cancelled");
                     throw new TimeoutException();
                 }
             }
@@ -253,7 +274,7 @@ namespace UniversalPatcher
         public void SetTimeout(int milliseconds)
         {
             this.port.SetTimeouts((uint)milliseconds,(uint)WTimeout);
-            RTimeout = milliseconds;
+            //RTimeout = milliseconds;
         }
 
         /// <summary>
@@ -262,6 +283,15 @@ namespace UniversalPatcher
         public void SetWriteTimeout(int milliseconds)
         {
             this.port.SetTimeouts((uint)RTimeout, (uint)milliseconds);
+            WTimeout = milliseconds;
+        }
+
+        /// <summary>
+        /// Sets the Read timeout.
+        /// </summary>
+        public void SetReadTimeout(int milliseconds)
+        {
+            RTimeout = milliseconds;
         }
 
         /// <summary>

@@ -114,6 +114,12 @@ namespace UniversalPatcher
             this.labelResponseMode = new System.Windows.Forms.Label();
             this.comboResponseMode = new System.Windows.Forms.ComboBox();
             this.tabVPWConsole = new System.Windows.Forms.TabPage();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.txtEmulatorId = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.btnEmulatorEditResponses = new System.Windows.Forms.Button();
+            this.btnEmulatorLoadResponses = new System.Windows.Forms.Button();
+            this.ChkEmulatorResponseMode = new System.Windows.Forms.CheckBox();
             this.txtSendBus = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.btnStopScript = new System.Windows.Forms.Button();
@@ -165,11 +171,11 @@ namespace UniversalPatcher
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.radioFindAlgo = new System.Windows.Forms.RadioButton();
             this.btnAlgoTest = new System.Windows.Forms.Button();
+            this.txtAlgo = new System.Windows.Forms.TextBox();
+            this.labelAlgo = new System.Windows.Forms.Label();
             this.radioFindAllKeys = new System.Windows.Forms.RadioButton();
             this.txtSeed = new System.Windows.Forms.TextBox();
             this.radioFindKey = new System.Windows.Forms.RadioButton();
-            this.txtAlgo = new System.Windows.Forms.TextBox();
-            this.labelAlgo = new System.Windows.Forms.Label();
             this.labelSeed = new System.Windows.Forms.Label();
             this.txtAlgoTest = new System.Windows.Forms.TextBox();
             this.labelProgress = new System.Windows.Forms.Label();
@@ -184,6 +190,7 @@ namespace UniversalPatcher
             this.actionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filterSupportedPidsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectDisconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parseLogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -217,6 +224,7 @@ namespace UniversalPatcher
             this.serialOptionsGroupBox.SuspendLayout();
             this.groupAdvanced.SuspendLayout();
             this.tabVPWConsole.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numConsoleScriptDelay)).BeginInit();
             this.tabJConsole.SuspendLayout();
@@ -1100,6 +1108,7 @@ namespace UniversalPatcher
             // 
             // tabVPWConsole
             // 
+            this.tabVPWConsole.Controls.Add(this.groupBox6);
             this.tabVPWConsole.Controls.Add(this.txtSendBus);
             this.tabVPWConsole.Controls.Add(this.groupBox3);
             this.tabVPWConsole.Controls.Add(this.richVPWmessages);
@@ -1110,13 +1119,76 @@ namespace UniversalPatcher
             this.tabVPWConsole.Text = "VPW Console";
             this.tabVPWConsole.UseVisualStyleBackColor = true;
             // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.txtEmulatorId);
+            this.groupBox6.Controls.Add(this.label21);
+            this.groupBox6.Controls.Add(this.btnEmulatorEditResponses);
+            this.groupBox6.Controls.Add(this.btnEmulatorLoadResponses);
+            this.groupBox6.Controls.Add(this.ChkEmulatorResponseMode);
+            this.groupBox6.Location = new System.Drawing.Point(150, 8);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(140, 381);
+            this.groupBox6.TabIndex = 36;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Emulator";
+            this.groupBox6.Visible = false;
+            // 
+            // txtEmulatorId
+            // 
+            this.txtEmulatorId.Location = new System.Drawing.Point(38, 41);
+            this.txtEmulatorId.Name = "txtEmulatorId";
+            this.txtEmulatorId.Size = new System.Drawing.Size(92, 20);
+            this.txtEmulatorId.TabIndex = 52;
+            this.txtEmulatorId.Text = "10";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(6, 44);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(21, 13);
+            this.label21.TabIndex = 51;
+            this.label21.Text = "ID:";
+            // 
+            // btnEmulatorEditResponses
+            // 
+            this.btnEmulatorEditResponses.Location = new System.Drawing.Point(6, 222);
+            this.btnEmulatorEditResponses.Name = "btnEmulatorEditResponses";
+            this.btnEmulatorEditResponses.Size = new System.Drawing.Size(124, 24);
+            this.btnEmulatorEditResponses.TabIndex = 50;
+            this.btnEmulatorEditResponses.Text = "Edit Responses";
+            this.btnEmulatorEditResponses.UseVisualStyleBackColor = true;
+            this.btnEmulatorEditResponses.Click += new System.EventHandler(this.btnConsoleEditResponses_Click);
+            // 
+            // btnEmulatorLoadResponses
+            // 
+            this.btnEmulatorLoadResponses.Location = new System.Drawing.Point(6, 196);
+            this.btnEmulatorLoadResponses.Name = "btnEmulatorLoadResponses";
+            this.btnEmulatorLoadResponses.Size = new System.Drawing.Size(125, 25);
+            this.btnEmulatorLoadResponses.TabIndex = 49;
+            this.btnEmulatorLoadResponses.Text = "Load Responses";
+            this.btnEmulatorLoadResponses.UseVisualStyleBackColor = true;
+            this.btnEmulatorLoadResponses.Click += new System.EventHandler(this.btnConsoleLoadResponses_Click);
+            // 
+            // ChkEmulatorResponseMode
+            // 
+            this.ChkEmulatorResponseMode.AutoSize = true;
+            this.ChkEmulatorResponseMode.Location = new System.Drawing.Point(6, 20);
+            this.ChkEmulatorResponseMode.Name = "ChkEmulatorResponseMode";
+            this.ChkEmulatorResponseMode.Size = new System.Drawing.Size(103, 17);
+            this.ChkEmulatorResponseMode.TabIndex = 48;
+            this.ChkEmulatorResponseMode.Text = "Response mode";
+            this.ChkEmulatorResponseMode.UseVisualStyleBackColor = true;
+            this.ChkEmulatorResponseMode.CheckedChanged += new System.EventHandler(this.ChkConsoleResponseMode_CheckedChanged);
+            // 
             // txtSendBus
             // 
             this.txtSendBus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSendBus.Location = new System.Drawing.Point(149, 370);
+            this.txtSendBus.Location = new System.Drawing.Point(304, 370);
             this.txtSendBus.Name = "txtSendBus";
-            this.txtSendBus.Size = new System.Drawing.Size(744, 20);
+            this.txtSendBus.Size = new System.Drawing.Size(589, 20);
             this.txtSendBus.TabIndex = 1;
             this.txtSendBus.TextChanged += new System.EventHandler(this.txtSendBus_TextChanged);
             // 
@@ -1134,7 +1206,7 @@ namespace UniversalPatcher
             this.groupBox3.Controls.Add(this.chkConsoleTimestamps);
             this.groupBox3.Location = new System.Drawing.Point(3, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(140, 354);
+            this.groupBox3.Size = new System.Drawing.Size(140, 387);
             this.groupBox3.TabIndex = 35;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "VPW Console";
@@ -1143,7 +1215,7 @@ namespace UniversalPatcher
             // btnStopScript
             // 
             this.btnStopScript.Enabled = false;
-            this.btnStopScript.Location = new System.Drawing.Point(6, 239);
+            this.btnStopScript.Location = new System.Drawing.Point(6, 201);
             this.btnStopScript.Name = "btnStopScript";
             this.btnStopScript.Size = new System.Drawing.Size(90, 23);
             this.btnStopScript.TabIndex = 47;
@@ -1153,7 +1225,7 @@ namespace UniversalPatcher
             // 
             // btnConsoleRefresh
             // 
-            this.btnConsoleRefresh.Location = new System.Drawing.Point(6, 88);
+            this.btnConsoleRefresh.Location = new System.Drawing.Point(2, 102);
             this.btnConsoleRefresh.Name = "btnConsoleRefresh";
             this.btnConsoleRefresh.Size = new System.Drawing.Size(90, 21);
             this.btnConsoleRefresh.TabIndex = 43;
@@ -1163,7 +1235,7 @@ namespace UniversalPatcher
             // 
             // btnConnect
             // 
-            this.btnConnect.Location = new System.Drawing.Point(6, 316);
+            this.btnConnect.Location = new System.Drawing.Point(6, 322);
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Size = new System.Drawing.Size(125, 24);
             this.btnConnect.TabIndex = 21;
@@ -1173,7 +1245,7 @@ namespace UniversalPatcher
             // 
             // btnConsoleLoadScript
             // 
-            this.btnConsoleLoadScript.Location = new System.Drawing.Point(6, 209);
+            this.btnConsoleLoadScript.Location = new System.Drawing.Point(6, 171);
             this.btnConsoleLoadScript.Name = "btnConsoleLoadScript";
             this.btnConsoleLoadScript.Size = new System.Drawing.Size(90, 24);
             this.btnConsoleLoadScript.TabIndex = 0;
@@ -1194,7 +1266,7 @@ namespace UniversalPatcher
             // 
             // numConsoleScriptDelay
             // 
-            this.numConsoleScriptDelay.Location = new System.Drawing.Point(6, 184);
+            this.numConsoleScriptDelay.Location = new System.Drawing.Point(6, 146);
             this.numConsoleScriptDelay.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -1208,18 +1280,20 @@ namespace UniversalPatcher
             // chkConsole4x
             // 
             this.chkConsole4x.AutoSize = true;
+            this.chkConsole4x.Checked = true;
+            this.chkConsole4x.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkConsole4x.Location = new System.Drawing.Point(6, 48);
             this.chkConsole4x.Name = "chkConsole4x";
-            this.chkConsole4x.Size = new System.Drawing.Size(66, 17);
+            this.chkConsole4x.Size = new System.Drawing.Size(73, 17);
             this.chkConsole4x.TabIndex = 42;
-            this.chkConsole4x.Text = "4x mode";
+            this.chkConsole4x.Text = "Enable 4x";
             this.chkConsole4x.UseVisualStyleBackColor = true;
             this.chkConsole4x.CheckedChanged += new System.EventHandler(this.chkConsole4x_CheckedChanged);
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(4, 168);
+            this.label9.Location = new System.Drawing.Point(4, 130);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(84, 13);
             this.label9.TabIndex = 41;
@@ -1253,9 +1327,9 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Right)));
             this.richVPWmessages.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richVPWmessages.HideSelection = false;
-            this.richVPWmessages.Location = new System.Drawing.Point(149, 5);
+            this.richVPWmessages.Location = new System.Drawing.Point(304, 5);
             this.richVPWmessages.Name = "richVPWmessages";
-            this.richVPWmessages.Size = new System.Drawing.Size(744, 360);
+            this.richVPWmessages.Size = new System.Drawing.Size(589, 360);
             this.richVPWmessages.TabIndex = 2;
             this.richVPWmessages.Text = "";
             this.richVPWmessages.WordWrap = false;
@@ -1325,7 +1399,7 @@ namespace UniversalPatcher
             this.btnJconsoleStopScript.TabIndex = 46;
             this.btnJconsoleStopScript.Text = "Stop Script";
             this.btnJconsoleStopScript.UseVisualStyleBackColor = true;
-            this.btnJconsoleStopScript.Click += new System.EventHandler(this.btnStopScript_Click);
+            this.btnJconsoleStopScript.Click += new System.EventHandler(this.btnStopJScript_Click);
             // 
             // labelJconsoleConnected
             // 
@@ -1364,12 +1438,15 @@ namespace UniversalPatcher
             // chkJConsole4x
             // 
             this.chkJConsole4x.AutoSize = true;
+            this.chkJConsole4x.Checked = true;
+            this.chkJConsole4x.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkJConsole4x.Location = new System.Drawing.Point(6, 72);
             this.chkJConsole4x.Name = "chkJConsole4x";
-            this.chkJConsole4x.Size = new System.Drawing.Size(66, 17);
+            this.chkJConsole4x.Size = new System.Drawing.Size(73, 17);
             this.chkJConsole4x.TabIndex = 42;
-            this.chkJConsole4x.Text = "4x mode";
+            this.chkJConsole4x.Text = "Enable 4x";
             this.chkJConsole4x.UseVisualStyleBackColor = true;
+            this.chkJConsole4x.CheckedChanged += new System.EventHandler(this.chkJConsole4x_CheckedChanged);
             // 
             // label20
             // 
@@ -1677,6 +1754,22 @@ namespace UniversalPatcher
             this.btnAlgoTest.UseVisualStyleBackColor = true;
             this.btnAlgoTest.Click += new System.EventHandler(this.btnAlgoTest_Click);
             // 
+            // txtAlgo
+            // 
+            this.txtAlgo.Location = new System.Drawing.Point(53, 114);
+            this.txtAlgo.Name = "txtAlgo";
+            this.txtAlgo.Size = new System.Drawing.Size(100, 20);
+            this.txtAlgo.TabIndex = 2;
+            // 
+            // labelAlgo
+            // 
+            this.labelAlgo.AutoSize = true;
+            this.labelAlgo.Location = new System.Drawing.Point(3, 117);
+            this.labelAlgo.Name = "labelAlgo";
+            this.labelAlgo.Size = new System.Drawing.Size(31, 13);
+            this.labelAlgo.TabIndex = 0;
+            this.labelAlgo.Text = "Algo:";
+            // 
             // radioFindAllKeys
             // 
             this.radioFindAllKeys.AutoSize = true;
@@ -1707,22 +1800,6 @@ namespace UniversalPatcher
             this.radioFindKey.Text = "Find Key";
             this.radioFindKey.UseVisualStyleBackColor = true;
             this.radioFindKey.CheckedChanged += new System.EventHandler(this.radioFindKey_CheckedChanged);
-            // 
-            // txtAlgo
-            // 
-            this.txtAlgo.Location = new System.Drawing.Point(53, 114);
-            this.txtAlgo.Name = "txtAlgo";
-            this.txtAlgo.Size = new System.Drawing.Size(100, 20);
-            this.txtAlgo.TabIndex = 2;
-            // 
-            // labelAlgo
-            // 
-            this.labelAlgo.AutoSize = true;
-            this.labelAlgo.Location = new System.Drawing.Point(3, 117);
-            this.labelAlgo.Name = "labelAlgo";
-            this.labelAlgo.Size = new System.Drawing.Size(31, 13);
-            this.labelAlgo.TabIndex = 0;
-            this.labelAlgo.Text = "Algo:";
             // 
             // labelSeed
             // 
@@ -1805,28 +1882,28 @@ namespace UniversalPatcher
             // loadProfileToolStripMenuItem
             // 
             this.loadProfileToolStripMenuItem.Name = "loadProfileToolStripMenuItem";
-            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadProfileToolStripMenuItem.Text = "Load profile";
             this.loadProfileToolStripMenuItem.Click += new System.EventHandler(this.loadProfileToolStripMenuItem_Click);
             // 
             // saveProfileToolStripMenuItem
             // 
             this.saveProfileToolStripMenuItem.Name = "saveProfileToolStripMenuItem";
-            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveProfileToolStripMenuItem.Text = "Save profile";
             this.saveProfileToolStripMenuItem.Click += new System.EventHandler(this.saveProfileToolStripMenuItem_Click);
             // 
             // saveProfileAsToolStripMenuItem
             // 
             this.saveProfileAsToolStripMenuItem.Name = "saveProfileAsToolStripMenuItem";
-            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveProfileAsToolStripMenuItem.Text = "Save profile as...";
             this.saveProfileAsToolStripMenuItem.Click += new System.EventHandler(this.saveProfileAsToolStripMenuItem_Click);
             // 
             // newProfileToolStripMenuItem
             // 
             this.newProfileToolStripMenuItem.Name = "newProfileToolStripMenuItem";
-            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newProfileToolStripMenuItem.Text = "New profile";
             this.newProfileToolStripMenuItem.Click += new System.EventHandler(this.newProfileToolStripMenuItem_Click);
             // 
@@ -1834,7 +1911,8 @@ namespace UniversalPatcher
             // 
             this.actionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.filterSupportedPidsToolStripMenuItem,
-            this.connectDisconnectToolStripMenuItem});
+            this.connectDisconnectToolStripMenuItem,
+            this.parseLogfileToBinToolStripMenuItem});
             this.actionToolStripMenuItem.Name = "actionToolStripMenuItem";
             this.actionToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
             this.actionToolStripMenuItem.Text = "Action";
@@ -1853,6 +1931,13 @@ namespace UniversalPatcher
             this.connectDisconnectToolStripMenuItem.Text = "Connect/Disconnect";
             this.connectDisconnectToolStripMenuItem.Click += new System.EventHandler(this.connectDisconnectToolStripMenuItem_Click);
             // 
+            // parseLogfileToBinToolStripMenuItem
+            // 
+            this.parseLogfileToBinToolStripMenuItem.Name = "parseLogfileToBinToolStripMenuItem";
+            this.parseLogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.parseLogfileToBinToolStripMenuItem.Text = "Parse logfile to bin";
+            this.parseLogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseLogfileToBinToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1866,21 +1951,21 @@ namespace UniversalPatcher
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // creditsToolStripMenuItem
             // 
             this.creditsToolStripMenuItem.Name = "creditsToolStripMenuItem";
-            this.creditsToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.creditsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.creditsToolStripMenuItem.Text = "Credits";
             this.creditsToolStripMenuItem.Click += new System.EventHandler(this.creditsToolStripMenuItem_Click);
             // 
             // homepageToolStripMenuItem
             // 
             this.homepageToolStripMenuItem.Name = "homepageToolStripMenuItem";
-            this.homepageToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.homepageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.homepageToolStripMenuItem.Text = "Homepage";
             this.homepageToolStripMenuItem.Click += new System.EventHandler(this.homepageToolStripMenuItem_Click);
             // 
@@ -1968,6 +2053,8 @@ namespace UniversalPatcher
             this.groupAdvanced.PerformLayout();
             this.tabVPWConsole.ResumeLayout(false);
             this.tabVPWConsole.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numConsoleScriptDelay)).EndInit();
@@ -2155,6 +2242,13 @@ namespace UniversalPatcher
         private System.Windows.Forms.RadioButton radioFindAlgo;
         private System.Windows.Forms.RadioButton radioFindAllKeys;
         private System.Windows.Forms.RadioButton radioFindKey;
+        private System.Windows.Forms.ToolStripMenuItem parseLogfileToBinToolStripMenuItem;
+        private System.Windows.Forms.Button btnEmulatorLoadResponses;
+        private System.Windows.Forms.CheckBox ChkEmulatorResponseMode;
+        private System.Windows.Forms.Button btnEmulatorEditResponses;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.TextBox txtEmulatorId;
+        private System.Windows.Forms.Label label21;
     }
 }
 

@@ -342,7 +342,10 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="JConsole4x" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="LoggerConsole4x" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

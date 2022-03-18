@@ -58,6 +58,10 @@ namespace UniversalPatcher
         {
         }
 
+        public override void SetReadTimeout(int timeout)
+        {
+        }
+
         /// <summary>
         /// Send a message, do not expect a response.
         /// </summary>
