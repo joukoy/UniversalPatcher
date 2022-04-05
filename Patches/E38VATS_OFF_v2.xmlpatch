@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<ArrayOfXmlPatch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <XmlPatch>
+    <Description>Disable VATS on e38 PCM</Description>
+    <XmlFile>e38</XmlFile>
+    <Segment>System</Segment>
+    <CompatibleOS>Table:KeIMOG_b_ImmobFtnEnbld,columns:1,rows:1</CompatibleOS>
+    <Data>0</Data>
+  </XmlPatch>
+  <XmlPatch>
+    <Description>Disable VATS on e38 PCM</Description>
+    <XmlFile>e38</XmlFile>
+    <Segment>System</Segment>
+    <CompatibleOS>Table:KeIMOG_e_ImmobFtnSelection,columns:1,rows:1</CompatibleOS>
+    <Data>0</Data>
+  </XmlPatch>
+  <XmlPatch>
+    <Description>Disable  VATS OS fix</Description>
+    <XmlFile>e38</XmlFile>
+    <Segment>OS</Segment>
+    <CompatibleOS>search:00 01 * * 00 * 2C 1F 00 02 41 82 00 2C 3D 80 * * 89 8C * * 2C 0C 00 00 41 82 00 0C 2C 1E 00 00 41 82 00 0C 2C 1E 00 00 41 82 00 0C 48 00 * * 48 00 * * 48 00 * *</CompatibleOS>
+    <Data>00 01 * * 00 * 2C 1F 00 02 41 82 00 2C 3D 80 * * 89 8C * * 2C 0C 00 00 41 82 00 1C 2C 1E 00 00 41 82 00 0C 2C 1E 00 00 41 82 00 0C 48 00 * * 48 00 * * 48 00 * *</Data>
+    <PostMessage>FULL flash OS+CAL is needed</PostMessage>
+  </XmlPatch>
+</ArrayOfXmlPatch>

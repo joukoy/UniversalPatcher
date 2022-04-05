@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<ArrayOfXmlPatch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <XmlPatch>
+    <Description>INstall stock lean cruise tables on your bin</Description>
+    <XmlFile>p01-p59,p01-p59-cng</XmlFile>
+    <Segment>EngineCal</Segment>
+    <CompatibleOS>Table:LC_Fuel_Delta,columns:21,rows:15</CompatibleOS>
+    <Data>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.052734375 0.076171875 0.076171875 0.052734375 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1005859375 0.115234375 0.076171875 0.064453125 0.064453125 0.076171875 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1005859375 0.12890625 0.08984375 0.142578125 0.1025390625 0.076171875 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1796875 0.1796875 0.1796875 0.171875 0.099609375 0.076171875 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08984375 0.08984375 0.08984375 0.08984375 0.044921875 0.1025390625 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 </Data>
+  </XmlPatch>
+  <XmlPatch>
+    <Description>INstall stock lean cruise tables on your bin</Description>
+    <XmlFile>p01-p59,p01-p59-cng</XmlFile>
+    <Segment>EngineCal</Segment>
+    <CompatibleOS>Table:LC_Vehicle_Speed_Hyst_High*01-,columns:1,rows:1</CompatibleOS>
+    <Data>47 </Data>
+  </XmlPatch>
+  <XmlPatch>
+    <Description>INstall stock lean cruise tables on your bin</Description>
+    <XmlFile>p01-p59,p01-p59-cng</XmlFile>
+    <Segment>EngineCal</Segment>
+    <CompatibleOS>Table:LC_Vehicle_Speed_Hyst_Low*01-,columns:1,rows:1</CompatibleOS>
+    <Data>40 </Data>
+  </XmlPatch>
+  <XmlPatch>
+    <Description>INstall stock lean cruise tables on your bin</Description>
+    <XmlFile>p01-p59,p01-p59-cng</XmlFile>
+    <Segment>EngineCal</Segment>
+    <CompatibleOS>Table:LC_EQ_Step_Size*01-,columns:1,rows:1</CompatibleOS>
+    <Data>0.0009765625 </Data>
+  </XmlPatch>
+  <XmlPatch>
+    <Description>INstall stock lean cruise tables on your bin</Description>
+    <XmlFile>p01-p59,p01-p59-cng</XmlFile>
+    <Segment>EngineCal</Segment>
+    <CompatibleOS>Table:LC_Engine_Run_Time*01-,columns:1,rows:1</CompatibleOS>
+    <Data>150 </Data>
+  </XmlPatch>
+  <XmlPatch>
+    <Description>INstall stock lean cruise tables on your bin</Description>
+    <XmlFile>p01-p59,p01-p59-cng</XmlFile>
+    <Segment>EngineCal</Segment>
+    <CompatibleOS>Table:LC_Time_Since_Idle*01-,columns:1,rows:1</CompatibleOS>
+    <Data>150 </Data>
+  </XmlPatch>
+  <XmlPatch>
+    <Description>INstall stock lean cruise tables on your bin</Description>
+    <XmlFile>p01-p59,p01-p59-cng</XmlFile>
+    <Segment>EngineCal</Segment>
+    <CompatibleOS>Table:LC_Coolant_Multiplier*01-,columns:1,rows:19</CompatibleOS>
+    <Data>0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 0.5 0 0 0 </Data>
+  </XmlPatch>
+</ArrayOfXmlPatch>

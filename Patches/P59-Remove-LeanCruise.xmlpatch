@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<ArrayOfXmlPatch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <XmlPatch>
+    <Description>REMOVE Lean cruise P59 2001 -&gt; </Description>
+    <XmlFile>p01-p59.xml</XmlFile>
+    <Segment>OS</Segment>
+    <CompatibleOS>search:72 02 b2 39 * * * * 4e 71 4e b9</CompatibleOS>
+    <Data>72 02 b2 39 * * * * 66 06 4e b9</Data>
+    <HelpFile />
+  </XmlPatch>
+</ArrayOfXmlPatch>
