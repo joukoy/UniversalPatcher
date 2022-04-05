@@ -99,6 +99,16 @@ namespace UniversalPatcher
             txtJConsoleSend.KeyPress += TxtJConsoleSend_KeyPress;
             chkConsole4x.Enter += ChkConsole4x_Enter;
             chkJConsole4x.Enter += ChkConsole4x_Enter;
+            txtJConsolePassFilters.Enter += TxtPassFilters_Enter;
+            txtJConsolePassFilters2.Enter += TxtPassFilters_Enter;
+        }
+
+        private void TxtPassFilters_Enter(object sender, EventArgs e)
+        {
+            ToolTip tt = new ToolTip();
+            string ttTxt = "Usage: mask:pattern | mask:pattern";
+            TextBox txt = (TextBox)sender;
+            tt.Show(ttTxt, txt, 3000);
         }
 
         private void ChkConsole4x_Enter(object sender, EventArgs e)
@@ -107,7 +117,6 @@ namespace UniversalPatcher
             string ttTxt = "If enabled, tool will automatically switch to 4x mode in listen mode, or by script command";
             CheckBox chk = (CheckBox)sender;
             tt.Show(ttTxt, chk, 3000);
-
         }
 
         private void HandleConsoleCommand(Device device, MessageReceiver receiver, string cmd, OBDScript script)
@@ -141,7 +150,13 @@ namespace UniversalPatcher
                     {
                         return;
                     }
-                    HandleConsoleCommand(jConsole.JDevice, jConsole.Receiver, txtJConsoleSend.Text, joscript);
+                    MessageReceiver receiver = jConsole.Receiver;
+                    if (radioJConsoleProto2.Checked)
+                    {
+                        receiver = jConsole.Receiver2;
+                        joscript.SecondaryProtocol = true;
+                    }
+                    HandleConsoleCommand(jConsole.JDevice, receiver, txtJConsoleSend.Text, joscript);
                     e.Handled = true;
                     richJConsole.AppendText(Environment.NewLine);
                 }
@@ -247,7 +262,14 @@ namespace UniversalPatcher
             {
                 this.Invoke((MethodInvoker)delegate ()
                 {
-                    richJConsole.SelectionColor = Color.DarkGreen;
+                    if (e.Msg.SecondaryProtocol)
+                    {
+                        richJConsole.SelectionColor = Color.Aquamarine;
+                    }
+                    else
+                    {
+                        richJConsole.SelectionColor = Color.DarkGreen;
+                    }
                     if (chkJConsoleTimestamps.Checked)
                     {
                         string tStamp = "[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ";
@@ -314,7 +336,14 @@ namespace UniversalPatcher
             try
             {
                 this.Invoke((MethodInvoker)delegate () {
-                    richJConsole.SelectionColor = Color.Red;
+                    if (e.Msg.SecondaryProtocol)
+                    {
+                        richJConsole.SelectionColor = Color.Purple;
+                    }
+                    else
+                    {
+                        richJConsole.SelectionColor = Color.Red;
+                    }
                     if (chkJConsoleTimestamps.Checked)
                     {
                         string tStamp = "[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ";
@@ -536,6 +565,13 @@ namespace UniversalPatcher
                     comboJ2534DLL.Items.Add(device.Name);
                 }
 
+                comboJConsoleConfig.Items.Clear();
+                comboJConsoleConfig2.Items.Clear();
+                foreach (string cfg in Enum.GetNames(typeof(ConfigParameter)))
+                {
+                    comboJConsoleConfig.Items.Add(cfg);
+                    comboJConsoleConfig2.Items.Add(cfg);
+                }
                 if (LoadDefaults)
                 {
                     if (!string.IsNullOrEmpty(Properties.Settings.Default.LoggerJ2534Device))
@@ -551,12 +587,24 @@ namespace UniversalPatcher
                     j2534RadioButton.Checked = Properties.Settings.Default.LoggerUseJ2534;
                 }
                 LoadJ2534Protocols();
-                comboJ2534Connectflag.DataSource = Enum.GetValues(typeof(J2534DotNet.ConnectFlag));
+                //comboJ2534Connectflag.DataSource = Enum.GetValues(typeof(J2534DotNet.ConnectFlag));
+                comboJ2534Connectflag.Items.Clear();
+                comboJ2534Connectflag2.Items.Clear();
+                foreach(string item in Enum.GetNames(typeof(J2534DotNet.ConnectFlag)))
+                {
+                    comboJ2534Connectflag.Items.Add(item);
+                    comboJ2534Connectflag2.Items.Add(item);
+                }
                 //comboJ2534Connectflag.SelectedIndex = 0;
                 if (!String.IsNullOrEmpty(Properties.Settings.Default.LoggerJ2534SettingsFile))
                 {
                     J2534InitParameters JSettings = LoadJ2534Settings(Properties.Settings.Default.LoggerJ2534SettingsFile);
                     LoadJ2534InitParameters(JSettings);
+                }
+                if (!String.IsNullOrEmpty(Properties.Settings.Default.LoggerJ2534SettingsFile2))
+                {
+                    J2534InitParameters JSettings = LoadJ2534Settings(Properties.Settings.Default.LoggerJ2534SettingsFile2);
+                    LoadJ2534InitParameters2(JSettings);
                 }
             }
             catch (Exception ex)
@@ -575,12 +623,23 @@ namespace UniversalPatcher
             //comboJ2534Protocol.Items.Clear();
             try
             {
-                J2534DotNet.J2534Device dev = jDevList[j2534DeviceList.SelectedIndex];
-                comboJ2534Protocol.DataSource = dev.Protocols;
-                comboJ2534Protocol.SelectedIndex = 0;
+                J2534DotNet.J2534Device dev = jDevList[comboJ2534DLL.SelectedIndex];
+
+                comboJ2534Protocol.Items.Clear();
+                comboJ2534Protocol2.Items.Clear();
+                foreach (string item in dev.Protocols)
+                {
+                    comboJ2534Protocol.Items.Add(item);
+                    comboJ2534Protocol2.Items.Add(item);
+                }
+
                 comboJ2534Init.Items.Clear();
+                comboJ2534Init2.Items.Clear();
                 foreach (string item in Enum.GetNames(typeof(LoggerUtils.KInit)))
+                {
                     comboJ2534Init.Items.Add(item);
+                    comboJ2534Init2.Items.Add(item);
+                }
             }
             catch (Exception ex)
             {
@@ -600,7 +659,7 @@ namespace UniversalPatcher
                 comboJ2534Baudrate.Items.Clear();
                 foreach (string item in Enum.GetNames(typeof(J2534DotNet.BaudRate)))
                 {
-                    if (item.StartsWith(comboJ2534Protocol.Text.Replace("_PS", "")))
+                    if (item.StartsWith(comboJ2534Protocol.Text.Replace("_PS", "").Replace("SW_","")))
                     {
                         comboJ2534Baudrate.Items.Add(item);
                     }
@@ -612,7 +671,7 @@ namespace UniversalPatcher
                 else
                 {
                     comboJ2534Baudrate.Text = "";
-                }
+                }                
             }
             catch (Exception ex)
             {
@@ -622,6 +681,38 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, LoadJ2534Baudrates line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void LoadJ2534Baudrates2()
+        {
+            try
+            {
+                comboJ2534Baudrate2.Items.Clear();
+                foreach (string item in Enum.GetNames(typeof(J2534DotNet.BaudRate)))
+                {
+                    if (item.StartsWith(comboJ2534Protocol2.Text.Replace("_PS", "").Replace("SW_", "")))
+                    {
+                        comboJ2534Baudrate2.Items.Add(item);
+                    }
+                }
+                if (comboJ2534Baudrate2.Items.Count > 0)
+                {
+                    comboJ2534Baudrate2.SelectedIndex = 0;
+                }
+                else
+                {
+                    comboJ2534Baudrate2.Text = "";
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, LoadJ2534Baudrates2 line " + line + ": " + ex.Message);
             }
         }
 
@@ -1558,38 +1649,101 @@ namespace UniversalPatcher
                     initParameters.InitBytes = txtJ2534InitBytes.Text;
                 }
             }
-            int pins;
             if (txtJ2534SetPins.Text.Length > 0)
             {
-                if (HexToInt(txtJ2534SetPins.Text, out pins))
+                initParameters.Sconfigs = "J1962_PINS = " + txtJ2534SetPins.Text;
+            }
+            if (txtJConsoleConfigs.Text.Length > 0)
+            {
+                if (!string.IsNullOrEmpty(initParameters.Sconfigs))
                 {
-                    //datalogger.LogDevice.SetConfig((int)J2534DotNet.ConfigParameter.J1962_PINS, ref pins);
-                    //initParameters.Sconfig = new SConfig(ConfigParameter.J1962_PINS, pins);
-                    initParameters.SconfigParameter = ConfigParameter.J1962_PINS;
-                    initParameters.SconfigValue = pins;
+                    initParameters.Sconfigs += " | ";
                 }
+                initParameters.Sconfigs += txtJConsoleConfigs.Text;
             }
             initParameters.Protocol = (ProtocolID)Enum.Parse(typeof(ProtocolID), comboJ2534Protocol.Text);
-            initParameters.Baudrate = (BaudRate)Enum.Parse(typeof(BaudRate), comboJ2534Baudrate.Text);
-            initParameters.Connectflag = (ConnectFlag)Enum.Parse(typeof(ConnectFlag), comboJ2534Connectflag.Text);
+            initParameters.Baudrate = comboJ2534Baudrate.Text;
+            if (comboJ2534Connectflag.Text.Length > 0)
+            {
+                initParameters.Connectflag = (ConnectFlag)Enum.Parse(typeof(ConnectFlag), comboJ2534Connectflag.Text);
+            }
             initParameters.PerodicMsg = txtJ2534PeriodicMsg.Text;
             initParameters.PriodicInterval = (int)numJ2534PeriodicMsgInterval.Value;
+            initParameters.PassFilters = txtJConsolePassFilters.Text;
+            return initParameters;
+        }
+
+        private J2534InitParameters CreateJ2534InitParameters2()
+        {
+            J2534InitParameters initParameters = new J2534InitParameters(false);
+            if (comboJ2534Init2.Text.Length > 0)
+            {
+                initParameters.Kinit = (KInit)Enum.Parse(typeof(KInit), comboJ2534Init2.Text);
+                if (txtJ2534InitBytes2.Text.Length > 1)
+                {
+                    initParameters.InitBytes = txtJ2534InitBytes2.Text;
+                }
+            }
+            if (txtJ2534SetPins2.Text.Length > 0)
+            {
+                initParameters.Sconfigs = "J1962_PINS = " + txtJ2534SetPins2.Text;
+            }
+            if (txtJConsoleConfigs2.Text.Length > 0)
+            {
+                if (!string.IsNullOrEmpty(initParameters.Sconfigs))
+                {
+                    initParameters.Sconfigs += " | ";
+                }
+                initParameters.Sconfigs += txtJConsoleConfigs2.Text;
+            }
+            initParameters.Protocol = (ProtocolID)Enum.Parse(typeof(ProtocolID), comboJ2534Protocol2.Text);
+            initParameters.Baudrate = comboJ2534Baudrate2.Text;
+            if (comboJ2534Connectflag2.Text.Length > 0)
+            {
+                initParameters.Connectflag = (ConnectFlag)Enum.Parse(typeof(ConnectFlag), comboJ2534Connectflag2.Text);
+            }
+            initParameters.PerodicMsg = txtJ2534PeriodicMsg2.Text;
+            initParameters.PriodicInterval = (int)numJ2534PeriodicMsgInterval2.Value;
+            initParameters.PassFilters = txtJConsolePassFilters2.Text;
             return initParameters;
         }
 
         private void LoadJ2534InitParameters(J2534InitParameters initParameters)
         {
-            comboJ2534Init.Text = initParameters.Kinit.ToString();
-            if (initParameters.SconfigParameter != ConfigParameter.NONE)
+            if (initParameters == null)
             {
-                txtJ2534SetPins.Text = initParameters.SconfigValue.ToString("X");
+                initParameters = new J2534InitParameters();
             }
             comboJ2534Protocol.Text = initParameters.Protocol.ToString();
-            comboJ2534Baudrate.Text = initParameters.Baudrate.ToString();
+            Application.DoEvents();
+            txtJ2534SetPins.Text = "";
+            comboJ2534Init.Text = initParameters.Kinit.ToString();
+            txtJConsoleConfigs.Text = initParameters.Sconfigs;
+            comboJ2534Baudrate.Text = initParameters.Baudrate;
             comboJ2534Connectflag.Text = initParameters.Connectflag.ToString();
             txtJ2534InitBytes.Text = initParameters.InitBytes;
             txtJ2534PeriodicMsg.Text = initParameters.PerodicMsg;
             numJ2534PeriodicMsgInterval.Value = initParameters.PriodicInterval;
+            txtJConsolePassFilters.Text = initParameters.PassFilters;
+        }
+
+        private void LoadJ2534InitParameters2(J2534InitParameters initParameters)
+        {
+            if (initParameters == null)
+            {
+                initParameters = new J2534InitParameters();
+            }
+            txtJ2534SetPins2.Text = "";
+            comboJ2534Protocol2.Text = initParameters.Protocol.ToString();
+            Application.DoEvents();
+            comboJ2534Init2.Text = initParameters.Kinit.ToString();
+            txtJConsoleConfigs2.Text = initParameters.Sconfigs;
+            comboJ2534Baudrate2.Text = initParameters.Baudrate;
+            comboJ2534Connectflag2.Text = initParameters.Connectflag.ToString();
+            txtJ2534InitBytes2.Text = initParameters.InitBytes;
+            txtJ2534PeriodicMsg2.Text = initParameters.PerodicMsg;
+            numJ2534PeriodicMsgInterval2.Value = initParameters.PriodicInterval;
+            txtJConsolePassFilters2.Text = initParameters.PassFilters;
         }
 
         private bool ConnectJConsole()
@@ -1624,12 +1778,14 @@ namespace UniversalPatcher
                 jConsole.Receiver.StartReceiveLoop(jConsole.JDevice, null);
                 joscript = new OBDScript(jConsole.JDevice, jConsole.Receiver);
                 Application.DoEvents();
-                groupJ2534Options.Enabled = false;
+                //groupJ2534Options.Enabled = false;
+                btnJConsoleConnectSecondProtocol.Enabled = true;
                 return true;
             }
             catch (Exception ex)
             {
                 LoggerBold("Connection failed. Check settings");
+                Debug.WriteLine(ex.Message);
                 return false;
             }
         }
@@ -2100,6 +2256,7 @@ namespace UniversalPatcher
 
         private void Disconnect()
         {
+            oscript.stopscript = true;
             datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
             datalogger.LogDevice.MsgReceived -= LogDevice_DTC_MsgReceived;
 
@@ -2126,9 +2283,10 @@ namespace UniversalPatcher
 
         private void DisconnectJConsole()
         {
+            joscript.stopscript = true;
             jConsole.JDevice.MsgReceived -= LogDevice_MsgReceived;
             jConsole.JDevice.MsgReceived -= LogDevice_DTC_MsgReceived;
-
+            DisconnectSecondaryProto();
             jConsole.Receiver.StopReceiveLoop();
             jConsole.JDevice.MsgReceived -= LogDevice_MsgReceived;
             jConsole.JDevice.MsgSent -= LogDevice_MsgSent;
@@ -2136,7 +2294,10 @@ namespace UniversalPatcher
             jConsole.JDevice = null;
             jConsole.Connected = false;
             labelJconsoleConnected.Text = "Disconnected";
+            Logger("Disconnected");
             groupJ2534Options.Enabled = true;
+            groupJConsoleProto.Enabled = false;
+            btnJConsoleConnectSecondProtocol.Enabled = false;
         }
 
         private void btnConnect_Click(object sender, EventArgs e)
@@ -2555,6 +2716,12 @@ namespace UniversalPatcher
                 txtJ2534PeriodicMsg.Text = "80 11 F1 01 3E";
                 //0x80, 0x11, 0xF1, 0x01, 0x3E
             }
+            else if (comboJ2534Init.Text == LoggerUtils.KInit.FastInit_ME7_5.ToString())
+            {
+                txtJ2534InitBytes.Text = "81 01 F1 81";
+                txtJ2534PeriodicMsg.Text = "02 3E 01";
+                //0x80, 0x11, 0xF1, 0x01, 0x3E
+            }
             else
             {
                 txtJ2534InitBytes.Text = "";
@@ -2570,6 +2737,8 @@ namespace UniversalPatcher
             Logger("Saving file: " + FileName);
             J2534InitParameters JSettings = CreateJ2534InitParameters();
             LoggerUtils.SaveJ2534Settings(FileName, JSettings);
+            UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile = FileName;
+            UniversalPatcher.Properties.Settings.Default.Save();
             Logger("[OK]");
         }
 
@@ -2582,6 +2751,8 @@ namespace UniversalPatcher
             Logger("Loading file: " + FileName);
             J2534InitParameters JSettings = LoadJ2534Settings(FileName);
             LoadJ2534InitParameters(JSettings);
+            UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile = FileName;
+            UniversalPatcher.Properties.Settings.Default.Save();
             Logger("[OK]");
         }
 
@@ -2618,6 +2789,7 @@ namespace UniversalPatcher
             }
             Logger("Sending file: " + fName);
             joscript = new OBDScript(jConsole.JDevice, jConsole.Receiver);
+            joscript.SecondaryProtocol = radioJConsoleProto2.Checked;
             btnJconsoleStopScript.Enabled = true;
             joscript.UploadScript(fName);
             btnJconsoleStopScript.Enabled = false;
@@ -2825,6 +2997,139 @@ namespace UniversalPatcher
         private void ChkConsoleResponseMode_CheckedChanged(object sender, EventArgs e)
         {
             OpenEmu();
+        }
+
+
+        private void btnJConsoleConnectSecondProtocol_Click(object sender, EventArgs e)
+        {
+            if (jConsole.Connected2)
+            {
+                return;
+            }
+            J2534InitParameters JSettings = CreateJ2534InitParameters2();
+            if (jConsole.JDevice.ConnectSecondaryProtocol(JSettings))
+            {
+                groupJConsoleProto.Enabled = true;
+                jConsole.Connected2 = true;
+                jConsole.Receiver2 = new MessageReceiver();
+                jConsole.Receiver2.SecondaryProtocol = true;
+                jConsole.Receiver2.StartReceiveLoop(jConsole.JDevice,jConsole.port);
+                btnJConsoleConnectSecondProtocol.Enabled = false;
+            }
+        }
+
+        private void btnJConsoleAddConfig_Click(object sender, EventArgs e)
+        {
+            if (txtJConsoleConfigs.Text.Length> 0)
+            {
+                txtJConsoleConfigs.AppendText(" | ");
+            }
+            txtJConsoleConfigs.AppendText(comboJConsoleConfig.Text + " = 1");
+        }
+
+
+
+        private void parseBinfileToScriptToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmBinToScript fbts = new frmBinToScript();
+            fbts.Show();
+        }
+
+        private void btnJ2534SettingsSaveAs2_Click(object sender, EventArgs e)
+        {
+            string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile2.xml");
+            string FileName = SelectSaveFile(XmlFilter, defName);
+            if (FileName.Length == 0)
+                return;
+            Logger("Saving file: " + FileName);
+            J2534InitParameters JSettings = CreateJ2534InitParameters2();
+            LoggerUtils.SaveJ2534Settings(FileName, JSettings);
+            UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile2 = FileName;
+            UniversalPatcher.Properties.Settings.Default.Save();
+            Logger("[OK]");
+        }
+
+        private void btnJ2534SettingsLoad2_Click(object sender, EventArgs e)
+        {
+            string defName = Path.Combine(Application.StartupPath, "Logger", "J2534Profiles", "profile2.xml");
+            string FileName = SelectFile("Select J2534 settings", XmlFilter, defName);
+            if (FileName.Length == 0)
+                return;
+            Logger("Loading file: " + FileName);
+            J2534InitParameters JSettings = LoadJ2534Settings(FileName);
+            LoadJ2534InitParameters2(JSettings);
+            UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile2 = FileName;
+            UniversalPatcher.Properties.Settings.Default.Save();
+            Logger("[OK]");
+        }
+
+        private void comboJ2534Protocol2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadJ2534Baudrates2();
+        }
+
+        private void comboJ2534Init2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboJ2534Init2.Text == LoggerUtils.KInit.FastInit_J1979.ToString())
+            {
+                txtJ2534InitBytes2.Text = "C1 33 F1 81";
+            }
+            else if (comboJ2534Init2.Text == LoggerUtils.KInit.FastInit_GMDelco.ToString())
+            {
+                txtJ2534InitBytes2.Text = "81 11 F1 81";
+                txtJ2534PeriodicMsg2.Text = "80 11 F1 01 3E";
+            }
+            else if (comboJ2534Init2.Text == LoggerUtils.KInit.FastInit_ME7_5.ToString())
+            {
+                txtJ2534InitBytes2.Text = "81 01 F1 81";
+                txtJ2534PeriodicMsg2.Text = "02 3E 01";
+            }
+            else
+            {
+                txtJ2534InitBytes2.Text = "";
+            }
+
+        }
+
+        private void label25_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnJConsoleReset_Click(object sender, EventArgs e)
+        {
+            LoadJ2534InitParameters(null);
+        }
+
+        private void btnJConsoleReset2_Click(object sender, EventArgs e)
+        {
+            LoadJ2534InitParameters2(null);
+        }
+
+        private void btnJConsoleAddConfig2_Click(object sender, EventArgs e)
+        {
+            if (txtJConsoleConfigs2.Text.Length > 0)
+            {
+                txtJConsoleConfigs2.AppendText(" | ");
+            }
+            txtJConsoleConfigs2.AppendText(comboJConsoleConfig2.Text + " = 1");
+
+        }
+        private void DisconnectSecondaryProto()
+        {
+            if (jConsole.Connected2)
+            {
+                Logger("Disconnecting secondary protocol");
+                jConsole.Receiver2.StopReceiveLoop();
+                jConsole.JDevice.DisConnectSecondaryProtocol();
+                jConsole.Connected2 = false;
+                btnJConsoleConnectSecondProtocol.Enabled = true;
+                Logger("Done");
+            }
+        }
+        private void btnJconsoleSecProtoDisconnect_Click(object sender, EventArgs e)
+        {
+            DisconnectSecondaryProto();
         }
     }
 }

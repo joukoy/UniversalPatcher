@@ -1397,5 +1397,17 @@ namespace UniversalPatcher.Properties {
                 this["LoggerConsole4x"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LoggerJ2534SettingsFile2 {
+            get {
+                return ((string)(this["LoggerJ2534SettingsFile2"]));
+            }
+            set {
+                this["LoggerJ2534SettingsFile2"] = value;
+            }
+        }
     }
 }

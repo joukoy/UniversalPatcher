@@ -1,10 +1,12 @@
-﻿using System;
+﻿using J2534DotNet;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static LoggerUtils;
 
 namespace UniversalPatcher
 {
@@ -119,14 +121,7 @@ namespace UniversalPatcher
         {
             this.port.DiscardBuffers();
         }
-        public override bool SetProtocol(int Protocol, int BaudRate, int ConnectFlag)
-        {
-            return false;
-        }
-        public override bool SetConfig(J2534DotNet.SConfig[] sc)
-        {
-            return false;
-        }
+
         public override bool SetLoggingFilter()
         {
             return true;

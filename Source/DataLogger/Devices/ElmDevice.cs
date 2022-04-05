@@ -8,6 +8,8 @@ using static Upatcher;
 using static Helpers;
 using System.Diagnostics;
 using System.Threading;
+using J2534DotNet;
+using static LoggerUtils;
 
 namespace UniversalPatcher
 {
@@ -331,15 +333,6 @@ namespace UniversalPatcher
             {
                 return string.Empty;
             }
-        }
-
-        public override bool SetProtocol(int Protocol, int BaudRate, int ConnectFlag)
-        {
-            return false;
-        }
-        public override bool SetConfig(J2534DotNet.SConfig[] sc)
-        {
-            return false;
         }
 
         public override bool SetLoggingFilter()

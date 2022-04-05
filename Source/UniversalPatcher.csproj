@@ -106,6 +106,12 @@
     <Compile Include="AutoDetect.cs" />
     <Compile Include="ComputeSimilarity.cs" />
     <Compile Include="Crc.cs" />
+    <Compile Include="DataLogger\frmBinToScript.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataLogger\frmBinToScript.Designer.cs">
+      <DependentUpon>frmBinToScript.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataLogger\JConsole.cs" />
     <Compile Include="DataLogger\KeyAlgorithm.cs" />
     <Compile Include="DataLogger\LogToBin.cs" />
@@ -466,6 +472,9 @@
     <Compile Include="xdf.cs" />
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataLogger\frmBinToScript.resx">
+      <DependentUpon>frmBinToScript.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmCredits.resx">
       <DependentUpon>frmCredits.cs</DependentUpon>

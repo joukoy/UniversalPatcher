@@ -47,3 +47,6 @@ loop:10
 break!:2:3C
 6C 10 F0 3C 0A
 endloop
+
+#Add block checksum:
+6C 10 F0 36 00 00 FF 04 7C 7F 44 60 0A 7A 01 11 C5 91 5D 11 C5 blchk:2:1500

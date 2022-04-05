@@ -184,7 +184,7 @@ namespace J2534DotNet
                 IntPtr MsgCount = Marshal.AllocHGlobal(8);
                 Marshal.WriteInt64(MsgCount, numMsgs);
                 J2534Err returnValue;
-                lock (devLock)
+                //lock (devLock)
                 {
                     returnValue = (J2534Err)m_wrapper.ReadMsgs(channelId, pMsg, MsgCount, timeout);
                 }

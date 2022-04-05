@@ -20,6 +20,7 @@ namespace UniversalPatcher
         private Task ReceiverTask;
         private Device device;
         private IPort port;
+        public bool SecondaryProtocol { get; set; }
 
         public void StartReceiveLoop(Device dev, IPort port)
         {
@@ -98,7 +99,7 @@ namespace UniversalPatcher
                 {
                     return true;
                 }
-                Logger("Pausing receiver...");
+                Debug.WriteLine("Pausing receiver...");
                 ReceiverPaused = true;
                 StopReceiveLoop();
                 Application.DoEvents();
@@ -112,7 +113,7 @@ namespace UniversalPatcher
             {
                 if (ReceiverPaused)
                 {
-                    Logger("Continue receiving");
+                    Debug.WriteLine("Continue receiving");
                     if (port != null)
                     {
                         device.SetReadTimeout(2000);
@@ -127,7 +128,14 @@ namespace UniversalPatcher
         private void ReceiveLoop()
         {
             ReceiveLoopRunning = true;
-            Debug.WriteLine("Starting receive loop");
+            if (SecondaryProtocol)
+            {
+                Debug.WriteLine("Starting receive loop for secondary protocol");
+            }
+            else
+            {
+                Debug.WriteLine("Starting receive loop");
+            }
             //while (Connected && ReceiveLoopRunning)
             OBDMessage msg = device.ReceiveMessage();
             while (!receiverToken.IsCancellationRequested)
@@ -139,7 +147,14 @@ namespace UniversalPatcher
                         Debug.WriteLine("Resetting analyzer filter");
                         device.SetAnalyzerFilter();
                     }
-                    msg = device.ReceiveMessage();
+                    if (SecondaryProtocol)
+                    {
+                        device.Receive2();
+                    }
+                    else
+                    {
+                        msg = device.ReceiveMessage();
+                    }
                 }
                 catch (Exception ex)
                 {

@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using static Upatcher;
 using static Helpers;
+using J2534DotNet;
+using static LoggerUtils;
 
 namespace UniversalPatcher
 {
@@ -410,16 +412,6 @@ namespace UniversalPatcher
         {
             this.Port.DiscardBuffers();
             System.Threading.Thread.Sleep(50);
-        }
-
-        public override bool SetProtocol(int Protocol, int BaudRate, int ConnectFlag)
-        {
-            return false;
-        }
-
-        public override bool SetConfig(J2534DotNet.SConfig[] sc)
-        {
-            return false;
         }
 
         public override bool SetLoggingFilter()

@@ -17,8 +17,8 @@ namespace UniversalPatcher
         {
             this.device = device;
             this.receiver = receiver;
+            SecondaryProtocol = false;
         }
-
 
         public class Variable
         {
@@ -37,6 +37,21 @@ namespace UniversalPatcher
         public bool stopscript { get; set; }
         List<string> scriptrows;
         int currentrow = 0;
+        public bool SecondaryProtocol { get; set; }
+
+        /// <summary>
+        /// Calc checksum for byte array for all messages to/from device
+        /// </summary>
+        private ushort CalcChecksum(byte[] MyArr)
+        {
+            ushort CalcChksm = 0;
+            for (ushort i = 0; i < MyArr.Length; i++)
+            {
+                //CalcChksm += (ushort)(MyArr[i] << 8 | MyArr[i+1]);
+                CalcChksm += (ushort)MyArr[i];
+            }
+            return CalcChksm;
+        }
 
         public bool HandleLine(string Line, string Line2, ref bool breakloop)
         {
@@ -207,9 +222,29 @@ namespace UniversalPatcher
                             string xformat = "X" + (variables[x].Size * 2).ToString("X");
                             msgTxt = msgTxt.Replace(variables[x].Name, variables[x].Value.ToString(xformat));
                         }
-                    }
+                    }                    
                     msgTxt = msgTxt.Replace("key", key.ToString("X4"));
+
+                    bool addChecksum = false;
+                    if (msgTxt.ToLower().Contains("blchk"))
+                    {
+                        addChecksum = true;
+                        msgTxt = msgTxt.Replace("blchk", "");
+                    }
+
                     byte[] msg = msgTxt.ToBytes();
+
+                    if (addChecksum)
+                    {
+                        byte[] datablock = new byte[msg.Length - 4];
+                        Array.Copy(msg, 4, datablock, 0, msg.Length - 4);
+                        ushort chk = CalcChecksum(datablock);
+                        byte[] newMsg = new byte[msg.Length + 2];
+                        Array.Copy(msg, newMsg, msg.Length);
+                        newMsg[newMsg.Length - 2] = (byte)(chk >> 8);
+                        newMsg[newMsg.Length - 1] = (byte)(chk);
+                        msg = newMsg;
+                    }
                     int responses = 1;
                     if (msg.Length > 3 && msg[3] == 0x3f)
                     {
@@ -230,6 +265,7 @@ namespace UniversalPatcher
                     }
                     Debug.WriteLine("Sending data: " + BitConverter.ToString(msg));
                     OBDMessage oMsg = new OBDMessage(msg);
+                    oMsg.SecondaryProtocol = SecondaryProtocol;
                     device.ClearMessageQueue();
                     device.SendMessage(oMsg, responses);
                     Thread.Sleep(globaldelay);
@@ -237,7 +273,7 @@ namespace UniversalPatcher
                     for (int r = 0; r < responses;)
                     {
                         OBDMessage rMsg = device.ReceiveMessage();
-                        if (rMsg != null)
+                        if (rMsg != null && rMsg.Length > 3 && rMsg[0] == oMsg[0] && rMsg[1] == oMsg[2] && rMsg[2] == oMsg[1])
                         {
                             starttime = DateTime.Now;   //Message received, reset timer
                             r++;
@@ -319,6 +355,7 @@ namespace UniversalPatcher
             byte[] msg = Line2.Replace(" ", "").ToBytes();
             Debug.WriteLine("Sending data: " + BitConverter.ToString(msg));
             OBDMessage oMsg = new OBDMessage(msg);
+            oMsg.SecondaryProtocol = SecondaryProtocol;
             device.SendMessage(oMsg, 1);
             Thread.Sleep(globaldelay);
             OBDMessage rMsg = null;
@@ -391,6 +428,7 @@ namespace UniversalPatcher
             byte[] msg = Line2.Replace(" ", "").ToBytes();
             Debug.WriteLine("Sending data: " + BitConverter.ToString(msg));
             OBDMessage oMsg = new OBDMessage(msg);
+            oMsg.SecondaryProtocol = SecondaryProtocol;
             device.SendMessage(oMsg, 1);
             //Thread.Sleep(globaldelay);
             OBDMessage rMsg = null;

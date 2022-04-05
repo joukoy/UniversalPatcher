@@ -66,6 +66,7 @@ namespace UniversalPatcher
             this.message = message;
             this.timestamp = (ulong)DateTime.Now.Ticks;
             this.systimestamp = (ulong)DateTime.Now.Ticks;
+            SecondaryProtocol = false;
         }
 
         /// <summary>
@@ -77,6 +78,7 @@ namespace UniversalPatcher
             this.timestamp = timestamp;
             this.systimestamp = (ulong)DateTime.Now.Ticks;
             this.error = error;
+            SecondaryProtocol = false;
         }
 
         /// <summary>
@@ -129,5 +131,6 @@ namespace UniversalPatcher
 
         public bool ElmPrompt { get; set; }
         public string ElmLine { get; set; }
+        public bool SecondaryProtocol { get; set; }
     }
 }

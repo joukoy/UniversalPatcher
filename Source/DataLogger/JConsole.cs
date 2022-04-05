@@ -14,7 +14,8 @@ namespace UniversalPatcher
         public Device JDevice;
         public IPort port;
         public bool Connected = false;
+        public bool Connected2 = false;
         public MessageReceiver Receiver;
-
+        public MessageReceiver Receiver2;
     }
 }

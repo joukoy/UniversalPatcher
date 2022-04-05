@@ -5,6 +5,7 @@ using static Upatcher;
 using static Helpers;
 using System.Diagnostics;
 using static LoggerUtils;
+using J2534DotNet;
 
 namespace UniversalPatcher
 {
@@ -301,11 +302,11 @@ namespace UniversalPatcher
         /// </summary>
         public bool SetVpwSpeed(VpwSpeed newSpeed)
         {
-/*            if (this.Speed == newSpeed)
-            {
-                return true;
-            }
-*/
+            /*            if (this.Speed == newSpeed)
+                        {
+                            return true;
+                        }
+            */
             if (((newSpeed == VpwSpeed.FourX) && !this.Enable4xReadWrite) || (!this.SetVpwSpeedInternal(newSpeed)))
             {
                 return false;
@@ -335,7 +336,7 @@ namespace UniversalPatcher
                 //Debug.WriteLine("Message: " + message.ToString() +", elmprompt: " + message.ElmPrompt);
                 MsgEventparameter msg = new MsgEventparameter(message);
                 OnMsgReceived(msg);
-                if (message.ElmPrompt || ( message.Length > 4 && message.GetBytes()[3] == 0x6A))
+                if (message.ElmPrompt || (message.Length > 4 && message.GetBytes()[3] == 0x6A))
                 {
                     lock (this.logQueue)
                     {
@@ -361,11 +362,18 @@ namespace UniversalPatcher
             }
         }
 
-
         /// <summary>
         /// List for an incoming message of the VPW bus.
         /// </summary>
         public abstract void Receive();
+
+        /// <summary>
+        /// List for an incoming message of the VPW bus, protocol 2.
+        /// </summary>
+        public virtual void Receive2()
+        {
+            throw new Exception("Receive2 must be implemented in device");
+        }
 
         /// <summary>
         /// Start a loop or set event receiver for listening packets
@@ -406,7 +414,7 @@ namespace UniversalPatcher
 
                     // Not sure why this is necessary, but AllPro 2k reads won't work without it.
                     //packetSize = (int) (packetSize * 1.1);
-                    packetSize = (int) (packetSize * 2.5);
+                    packetSize = (int)(packetSize * 2.5);
                     break;
 
                 case TimeoutScenario.SendKernel:
@@ -433,7 +441,7 @@ namespace UniversalPatcher
                     break;
 
                 case TimeoutScenario.Maximum:
-                    return 0xFF * 4; 
+                    return 0xFF * 4;
 
                 default:
                     throw new NotImplementedException("Unknown timeout scenario " + scenario);
@@ -471,8 +479,15 @@ namespace UniversalPatcher
         public abstract bool SetLoggingFilter();
         public abstract bool SetAnalyzerFilter();
         public abstract bool RemoveFilters();
-        public abstract bool SetProtocol( int Protocol, int BaudRate, int ConnectFlag);
-        public abstract bool SetConfig(J2534DotNet.SConfig[] sc);
+        public virtual bool ConnectSecondaryProtocol(J2534InitParameters j2534Init)
+        {
+            return false;
+        }
+        public virtual bool DisConnectSecondaryProtocol()
+        {
+            return false;
+        }
+        //public abstract bool SetConfig(J2534DotNet.SConfig[] sc);
         public string CurrentFilter { get; set; }
         public DataLogger.LoggingDevType LogDeviceType { get; set; }
 

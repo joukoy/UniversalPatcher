@@ -99,8 +99,9 @@ public static class LoggerUtils
     {
         None,
         FastInit_GMDelco,
+        FastInit_ME7_5,
         FastInit_J1979,
-        FiveBaudInit_J1979, 
+        FiveBaudInit_J1979
     }
 
     [Serializable]
@@ -117,14 +118,14 @@ public static class LoggerUtils
         }
         public bool VPWLogger { get; set; }
         public ProtocolID Protocol { get; set; }
-        public BaudRate Baudrate { get; set; }
-        public ConfigParameter SconfigParameter { get; set; }
-        public int SconfigValue { get; set; }
+        public string Baudrate { get; set; }
+        public string Sconfigs { get; set; }
         public KInit Kinit { get; set; }
         public string InitBytes { get; set; }
         public ConnectFlag Connectflag { get; set; }
         public string PerodicMsg { get; set; }
         public int PriodicInterval { get; set; }
+        public string PassFilters { get; set; }
     }
 
     public class Conversion
@@ -369,12 +370,12 @@ public static class LoggerUtils
     {
         try
         {
+            Logger("Loading J2534 settings from file: " + FileName);
             System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(J2534InitParameters));
             System.IO.StreamReader file = new System.IO.StreamReader(FileName);
             J2534InitParameters JSettings = (J2534InitParameters)reader.Deserialize(file);
             file.Close();
-            UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile = FileName;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            Logger("[OK]");
             return JSettings;
         }
         catch (Exception ex)
@@ -399,8 +400,6 @@ public static class LoggerUtils
                 writer.Serialize(stream, JSettings);
                 stream.Close();
             }
-            UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile = FileName;
-            UniversalPatcher.Properties.Settings.Default.Save();
         }
         catch (Exception ex)
         {
