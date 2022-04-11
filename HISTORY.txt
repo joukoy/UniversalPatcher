@@ -452,5 +452,5 @@
 - Logger: Fixes to J-Console
 
 0.20.19
-- Logger: J-Console: Select log destination: Screen, file
+- Logger: J-Console: Select log destination: Screen/file
 - Tuner: Fix negative offsets in Tableseek ( -D<offset> after searchstring)
