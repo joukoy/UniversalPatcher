@@ -579,7 +579,12 @@ namespace UniversalPatcher
                         while (startAddr < PCM.fsize && wHit < wantedHitList.Count) 
                         {
                             wantedHit = wantedHitList[wHit];
-                            string[] ssParts = tableSeeks[s].SearchStr.Split('+');     //At end of string can be +D4 +1W6 etc, for reading next address from found addr
+                            char splitChr = '+';
+                            if (!tableSeeks[s].SearchStr.Contains("+") && tableSeeks[s].SearchStr.Contains("-"))
+                            {
+                                splitChr = '-';
+                            }
+                            string[] ssParts = tableSeeks[s].SearchStr.Split(splitChr);     //At end of string can be +D4 +1W6 etc, for reading next address from found addr
                             Debug.WriteLine("TableSeek: Searching: " + tableSeeks[s].SearchStr + ", Start: " + startAddr.ToString("X") + ", end: " + endAddr.ToString("X"));                            
                             sAddr = SearchAddrBySearchString(PCM, ssParts[0], ref startAddr, endAddr, tableSeeks[s]);
                             for (int jump = 1; jump < ssParts.Length && (sAddr.Addr + tableSeeks[s].Offset) < PCM.fsize; jump++)
@@ -587,6 +592,10 @@ namespace UniversalPatcher
                                 //Read table address from address we found by searchstring
                                 string numOnly = ssParts[jump].Replace("+", "").Replace("D", "").Replace("W", "");
                                 int offset = Convert.ToInt32(numOnly);  //For first jump, use tableseek offset, for other jumps use searchstring offset
+                                if (splitChr == '-')
+                                {
+                                    offset = offset * -1;
+                                }
                                 uint currentAddr = (uint)(sAddr.Addr + offset);
                                 Debug.WriteLine("seekTables: Reading new address from:" + currentAddr.ToString("X"));
                                 if (ssParts[jump].Contains("D"))

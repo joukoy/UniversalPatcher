@@ -136,6 +136,7 @@ namespace UniversalPatcher
             this.tabJConsole = new System.Windows.Forms.TabPage();
             this.labelJconsoleConnected = new System.Windows.Forms.Label();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.btnJconsoleSecProtoDisconnect = new System.Windows.Forms.Button();
             this.btnJConsoleReset2 = new System.Windows.Forms.Button();
             this.txtJConsolePassFilters2 = new System.Windows.Forms.TextBox();
             this.label35 = new System.Windows.Forms.Label();
@@ -238,7 +239,9 @@ namespace UniversalPatcher
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.labelConnected = new System.Windows.Forms.Label();
             this.timerSearchParams = new System.Windows.Forms.Timer(this.components);
-            this.btnJconsoleSecProtoDisconnect = new System.Windows.Forms.Button();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.chkJconsoleToScreen = new System.Windows.Forms.CheckBox();
+            this.chkJConsoleToFile = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -283,6 +286,7 @@ namespace UniversalPatcher
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.groupBox8.SuspendLayout();
             this.SuspendLayout();
             // 
             // timerShowData
@@ -1380,6 +1384,7 @@ namespace UniversalPatcher
             // 
             // tabJConsole
             // 
+            this.tabJConsole.Controls.Add(this.groupBox8);
             this.tabJConsole.Controls.Add(this.labelJconsoleConnected);
             this.tabJConsole.Controls.Add(this.groupBox7);
             this.tabJConsole.Controls.Add(this.groupJ2534Options);
@@ -1404,7 +1409,7 @@ namespace UniversalPatcher
             this.labelJconsoleConnected.AutoSize = true;
             this.labelJconsoleConnected.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.labelJconsoleConnected.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelJconsoleConnected.Location = new System.Drawing.Point(317, 27);
+            this.labelJconsoleConnected.Location = new System.Drawing.Point(317, 10);
             this.labelJconsoleConnected.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelJconsoleConnected.Name = "labelJconsoleConnected";
             this.labelJconsoleConnected.Size = new System.Drawing.Size(109, 22);
@@ -1447,6 +1452,16 @@ namespace UniversalPatcher
             this.groupBox7.TabIndex = 52;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Protocol 2";
+            // 
+            // btnJconsoleSecProtoDisconnect
+            // 
+            this.btnJconsoleSecProtoDisconnect.Location = new System.Drawing.Point(74, 317);
+            this.btnJconsoleSecProtoDisconnect.Name = "btnJconsoleSecProtoDisconnect";
+            this.btnJconsoleSecProtoDisconnect.Size = new System.Drawing.Size(73, 23);
+            this.btnJconsoleSecProtoDisconnect.TabIndex = 75;
+            this.btnJconsoleSecProtoDisconnect.Text = "Disconnect";
+            this.btnJconsoleSecProtoDisconnect.UseVisualStyleBackColor = true;
+            this.btnJconsoleSecProtoDisconnect.Click += new System.EventHandler(this.btnJconsoleSecProtoDisconnect_Click);
             // 
             // btnJConsoleReset2
             // 
@@ -2462,15 +2477,39 @@ namespace UniversalPatcher
             // 
             this.timerSearchParams.Tick += new System.EventHandler(this.timerSearchParams_Tick);
             // 
-            // btnJconsoleSecProtoDisconnect
+            // groupBox8
             // 
-            this.btnJconsoleSecProtoDisconnect.Location = new System.Drawing.Point(74, 317);
-            this.btnJconsoleSecProtoDisconnect.Name = "btnJconsoleSecProtoDisconnect";
-            this.btnJconsoleSecProtoDisconnect.Size = new System.Drawing.Size(73, 23);
-            this.btnJconsoleSecProtoDisconnect.TabIndex = 75;
-            this.btnJconsoleSecProtoDisconnect.Text = "Disconnect";
-            this.btnJconsoleSecProtoDisconnect.UseVisualStyleBackColor = true;
-            this.btnJconsoleSecProtoDisconnect.Click += new System.EventHandler(this.btnJconsoleSecProtoDisconnect_Click);
+            this.groupBox8.Controls.Add(this.chkJConsoleToFile);
+            this.groupBox8.Controls.Add(this.chkJconsoleToScreen);
+            this.groupBox8.Location = new System.Drawing.Point(308, 35);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(128, 44);
+            this.groupBox8.TabIndex = 53;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Destination";
+            // 
+            // chkJconsoleToScreen
+            // 
+            this.chkJconsoleToScreen.AutoSize = true;
+            this.chkJconsoleToScreen.Checked = true;
+            this.chkJconsoleToScreen.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkJconsoleToScreen.Location = new System.Drawing.Point(11, 16);
+            this.chkJconsoleToScreen.Name = "chkJconsoleToScreen";
+            this.chkJconsoleToScreen.Size = new System.Drawing.Size(60, 17);
+            this.chkJconsoleToScreen.TabIndex = 0;
+            this.chkJconsoleToScreen.Text = "Screen";
+            this.chkJconsoleToScreen.UseVisualStyleBackColor = true;
+            // 
+            // chkJConsoleToFile
+            // 
+            this.chkJConsoleToFile.AutoSize = true;
+            this.chkJConsoleToFile.Location = new System.Drawing.Point(76, 16);
+            this.chkJConsoleToFile.Name = "chkJConsoleToFile";
+            this.chkJConsoleToFile.Size = new System.Drawing.Size(42, 17);
+            this.chkJConsoleToFile.TabIndex = 1;
+            this.chkJConsoleToFile.Text = "File";
+            this.chkJConsoleToFile.UseVisualStyleBackColor = true;
+            this.chkJConsoleToFile.CheckedChanged += new System.EventHandler(this.chkJConsoleToFile_CheckedChanged);
             // 
             // frmLogger
             // 
@@ -2550,6 +2589,8 @@ namespace UniversalPatcher
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.groupBox8.ResumeLayout(false);
+            this.groupBox8.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2764,6 +2805,9 @@ namespace UniversalPatcher
         private System.Windows.Forms.Button btnJConsoleReset;
         private System.Windows.Forms.Button btnJConsoleReset2;
         private System.Windows.Forms.Button btnJconsoleSecProtoDisconnect;
+        private System.Windows.Forms.GroupBox groupBox8;
+        private System.Windows.Forms.CheckBox chkJConsoleToFile;
+        private System.Windows.Forms.CheckBox chkJconsoleToScreen;
     }
 }
 

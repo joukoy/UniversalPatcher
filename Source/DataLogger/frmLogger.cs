@@ -53,6 +53,8 @@ namespace UniversalPatcher
         OBDScript oscript;
         OBDScript joscript;
         ObdEmu oresp;
+        private string jConsoleLogFile;
+        StreamWriter jConsoleStream;
 
         private void frmLogger_Load(object sender, EventArgs e)
         {
@@ -262,25 +264,39 @@ namespace UniversalPatcher
             {
                 this.Invoke((MethodInvoker)delegate ()
                 {
-                    if (e.Msg.SecondaryProtocol)
-                    {
-                        richJConsole.SelectionColor = Color.Aquamarine;
-                    }
-                    else
-                    {
-                        richJConsole.SelectionColor = Color.DarkGreen;
-                    }
+                    string logTxt = "";
                     if (chkJConsoleTimestamps.Checked)
                     {
-                        string tStamp = "[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ";
-                        if (chkConsoleUseJ2534Timestamps.Checked)
-                        {
-                            tStamp += "[" + e.Msg.TimeStamp.ToString() + "] ";
-                        }
-                        richJConsole.AppendText(tStamp);
+                        logTxt = "[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ";
                     }
-                    richJConsole.AppendText(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
-
+                    if (chkConsoleUseJ2534Timestamps.Checked)
+                    {
+                        logTxt += "[" + e.Msg.TimeStamp.ToString() + "] ";
+                    }
+                    logTxt += BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine;
+                    if (chkJconsoleToScreen.Checked)
+                    {
+                        if (e.Msg.SecondaryProtocol)
+                        {
+                            richJConsole.SelectionColor = Color.Aquamarine;
+                        }
+                        else
+                        {
+                            richJConsole.SelectionColor = Color.DarkGreen;
+                        }
+                        richJConsole.AppendText(logTxt);
+                    }
+                    if (chkJConsoleToFile.Checked)
+                    {
+                        if (e.Msg.SecondaryProtocol)
+                        {
+                            jConsoleStream.WriteLine("\\cf1 " + logTxt +"\\par");
+                        }
+                        else
+                        {
+                            jConsoleStream.WriteLine("\\cf2 " + logTxt + "\\par");
+                        }
+                    }
                     if (e.Msg.Length > 3 &&  comboJ2534Protocol.Text.Contains("VPW"))
                     {
                         byte[] rcv = e.Msg.GetBytes();
@@ -336,24 +352,40 @@ namespace UniversalPatcher
             try
             {
                 this.Invoke((MethodInvoker)delegate () {
-                    if (e.Msg.SecondaryProtocol)
-                    {
-                        richJConsole.SelectionColor = Color.Purple;
-                    }
-                    else
-                    {
-                        richJConsole.SelectionColor = Color.Red;
-                    }
+                    string logTxt = "";
                     if (chkJConsoleTimestamps.Checked)
                     {
-                        string tStamp = "[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ";
-                        if (chkConsoleUseJ2534Timestamps.Checked)
-                        {
-                            tStamp += "[" + e.Msg.TimeStamp.ToString() + "] ";
-                        }
-                        richJConsole.AppendText(tStamp);
+                        logTxt = "[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ";
                     }
-                    richJConsole.AppendText(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
+                    if (chkConsoleUseJ2534Timestamps.Checked)
+                    {
+                        logTxt += "[" + e.Msg.TimeStamp.ToString() + "] ";
+                    }
+                    logTxt += BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine;
+                    if (chkJconsoleToScreen.Checked)
+                    {
+                        if (e.Msg.SecondaryProtocol)
+                        {
+                            richJConsole.SelectionColor = Color.Purple;
+                        }
+                        else
+                        {
+                            richJConsole.SelectionColor = Color.Red;
+                        }
+                        richJConsole.AppendText(logTxt);
+                    }
+                    if (chkJConsoleToFile.Checked)
+                    {
+                        if (e.Msg.SecondaryProtocol)
+                        {
+                            jConsoleStream.WriteLine("\\cf4 " + logTxt + "\\par");
+                        }
+                        else
+                        {
+                            jConsoleStream.WriteLine("\\cf3 " + logTxt + "\\par");
+                        }
+                    }
+
                 });
             }
             catch (Exception ex)
@@ -2283,6 +2315,7 @@ namespace UniversalPatcher
 
         private void DisconnectJConsole()
         {
+            chkJConsoleToFile.Checked = false;
             joscript.stopscript = true;
             jConsole.JDevice.MsgReceived -= LogDevice_MsgReceived;
             jConsole.JDevice.MsgReceived -= LogDevice_DTC_MsgReceived;
@@ -3124,12 +3157,62 @@ namespace UniversalPatcher
                 jConsole.JDevice.DisConnectSecondaryProtocol();
                 jConsole.Connected2 = false;
                 btnJConsoleConnectSecondProtocol.Enabled = true;
+                radioJConsoleProto1.Checked = true;
+                groupJConsoleProto.Enabled = false;
                 Logger("Done");
             }
         }
         private void btnJconsoleSecProtoDisconnect_Click(object sender, EventArgs e)
         {
             DisconnectSecondaryProto();
+        }
+
+        private void chkJConsoleToFile_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!chkJConsoleToFile.Checked)
+                {
+                    if (jConsoleStream != null)
+                    {
+                        jConsoleStream.WriteLine("}");
+                        jConsoleStream.Close();
+                        jConsoleStream = null;
+                    }
+                    return;
+                }
+                string fName = SelectSaveFile(RtfFilter);
+                if (fName.Length == 0)
+                {
+                    chkJConsoleToFile.Checked = false;
+                    return;
+                }
+                jConsoleLogFile = fName;
+                jConsoleStream = new StreamWriter(fName);
+                jConsoleStream.WriteLine("{\\rtf1\\ansi\\ansicpg1252\\deff0\\deflang1035{\\fonttbl{\\f0\\fnil\\fcharset0 Courier New;}}");
+                jConsoleStream.WriteLine("{\\colortbl ;\\red127\\green255\\blue212;\\red0\\green100\\blue0;\\red255\\green0\\blue0;\\red128\\green0\\blue128;}");
+                //jConsoleStream.WriteLine("viewkind4\\uc1\\pard\\f0\\fs17");
+                Logger("Writing to file: " + fName);
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            richJConsole.AppendText("Default" + Environment.NewLine);
+            richJConsole.SelectionColor = Color.Aquamarine;
+            richJConsole.AppendText("Aquamarine" + Environment.NewLine);
+            richJConsole.SelectionColor = Color.DarkGreen;
+            richJConsole.AppendText("DarkGreen" + Environment.NewLine);
+
+            richJConsole.SelectionColor = Color.Red;
+            richJConsole.AppendText("Red" + Environment.NewLine);
+            richJConsole.SelectionColor = Color.Purple;
+            richJConsole.AppendText("Purple" + Environment.NewLine);
+
         }
     }
 }
