@@ -108,7 +108,7 @@ namespace UniversalPatcher
         private void TxtPassFilters_Enter(object sender, EventArgs e)
         {
             ToolTip tt = new ToolTip();
-            string ttTxt = "Usage: mask:pattern | mask:pattern";
+            string ttTxt = "Usage: mask:pattern:type | mask:pattern:type\r\nType: Pass | Block | Flow";
             TextBox txt = (TextBox)sender;
             tt.Show(ttTxt, txt, 3000);
         }
@@ -3213,6 +3213,24 @@ namespace UniversalPatcher
             richJConsole.SelectionColor = Color.Purple;
             richJConsole.AppendText("Purple" + Environment.NewLine);
 
+        }
+
+        private void btnJconsoleConfigFilters_Click(object sender, EventArgs e)
+        {
+            if (jConsole == null || jConsole.JDevice == null)
+            {
+                return;
+            }
+            jConsole.JDevice.SetupFilters(txtJConsolePassFilters.Text, false);
+        }
+
+        private void btnJconsoleConfigFilters2_Click(object sender, EventArgs e)
+        {
+            if (jConsole == null || jConsole.JDevice == null)
+            {
+                return;
+            }
+            jConsole.JDevice.SetupFilters(txtJConsolePassFilters2.Text, true);
         }
     }
 }

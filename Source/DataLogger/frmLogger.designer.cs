@@ -134,6 +134,9 @@ namespace UniversalPatcher
             this.chkConsoleTimestamps = new System.Windows.Forms.CheckBox();
             this.richVPWmessages = new System.Windows.Forms.RichTextBox();
             this.tabJConsole = new System.Windows.Forms.TabPage();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.chkJConsoleToFile = new System.Windows.Forms.CheckBox();
+            this.chkJconsoleToScreen = new System.Windows.Forms.CheckBox();
             this.labelJconsoleConnected = new System.Windows.Forms.Label();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.btnJconsoleSecProtoDisconnect = new System.Windows.Forms.Button();
@@ -239,9 +242,8 @@ namespace UniversalPatcher
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.labelConnected = new System.Windows.Forms.Label();
             this.timerSearchParams = new System.Windows.Forms.Timer(this.components);
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
-            this.chkJconsoleToScreen = new System.Windows.Forms.CheckBox();
-            this.chkJConsoleToFile = new System.Windows.Forms.CheckBox();
+            this.btnJconsoleConfigFilters = new System.Windows.Forms.Button();
+            this.btnJconsoleConfigFilters2 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -272,6 +274,7 @@ namespace UniversalPatcher
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numConsoleScriptDelay)).BeginInit();
             this.tabJConsole.SuspendLayout();
+            this.groupBox8.SuspendLayout();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numJ2534PeriodicMsgInterval2)).BeginInit();
             this.groupJ2534Options.SuspendLayout();
@@ -286,7 +289,6 @@ namespace UniversalPatcher
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            this.groupBox8.SuspendLayout();
             this.SuspendLayout();
             // 
             // timerShowData
@@ -1404,6 +1406,40 @@ namespace UniversalPatcher
             this.tabJConsole.Text = "J-Console";
             this.tabJConsole.UseVisualStyleBackColor = true;
             // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.chkJConsoleToFile);
+            this.groupBox8.Controls.Add(this.chkJconsoleToScreen);
+            this.groupBox8.Location = new System.Drawing.Point(308, 35);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(128, 44);
+            this.groupBox8.TabIndex = 53;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Destination";
+            // 
+            // chkJConsoleToFile
+            // 
+            this.chkJConsoleToFile.AutoSize = true;
+            this.chkJConsoleToFile.Location = new System.Drawing.Point(76, 16);
+            this.chkJConsoleToFile.Name = "chkJConsoleToFile";
+            this.chkJConsoleToFile.Size = new System.Drawing.Size(42, 17);
+            this.chkJConsoleToFile.TabIndex = 1;
+            this.chkJConsoleToFile.Text = "File";
+            this.chkJConsoleToFile.UseVisualStyleBackColor = true;
+            this.chkJConsoleToFile.CheckedChanged += new System.EventHandler(this.chkJConsoleToFile_CheckedChanged);
+            // 
+            // chkJconsoleToScreen
+            // 
+            this.chkJconsoleToScreen.AutoSize = true;
+            this.chkJconsoleToScreen.Checked = true;
+            this.chkJconsoleToScreen.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkJconsoleToScreen.Location = new System.Drawing.Point(11, 16);
+            this.chkJconsoleToScreen.Name = "chkJconsoleToScreen";
+            this.chkJconsoleToScreen.Size = new System.Drawing.Size(60, 17);
+            this.chkJconsoleToScreen.TabIndex = 0;
+            this.chkJconsoleToScreen.Text = "Screen";
+            this.chkJconsoleToScreen.UseVisualStyleBackColor = true;
+            // 
             // labelJconsoleConnected
             // 
             this.labelJconsoleConnected.AutoSize = true;
@@ -1418,6 +1454,7 @@ namespace UniversalPatcher
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.btnJconsoleConfigFilters2);
             this.groupBox7.Controls.Add(this.btnJconsoleSecProtoDisconnect);
             this.groupBox7.Controls.Add(this.btnJConsoleReset2);
             this.groupBox7.Controls.Add(this.txtJConsolePassFilters2);
@@ -1485,9 +1522,9 @@ namespace UniversalPatcher
             this.label35.AutoSize = true;
             this.label35.Location = new System.Drawing.Point(7, 214);
             this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(60, 13);
+            this.label35.Size = new System.Drawing.Size(37, 13);
             this.label35.TabIndex = 72;
-            this.label35.Text = "Pass filters:";
+            this.label35.Text = "Filters:";
             // 
             // btnJConsoleAddConfig2
             // 
@@ -1716,6 +1753,7 @@ namespace UniversalPatcher
             // 
             // groupJ2534Options
             // 
+            this.groupJ2534Options.Controls.Add(this.btnJconsoleConfigFilters);
             this.groupJ2534Options.Controls.Add(this.btnJConsoleReset);
             this.groupJ2534Options.Controls.Add(this.txtJConsolePassFilters);
             this.groupJ2534Options.Controls.Add(this.label34);
@@ -1772,9 +1810,9 @@ namespace UniversalPatcher
             this.label34.AutoSize = true;
             this.label34.Location = new System.Drawing.Point(7, 218);
             this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(60, 13);
+            this.label34.Size = new System.Drawing.Size(37, 13);
             this.label34.TabIndex = 70;
-            this.label34.Text = "Pass filters:";
+            this.label34.Text = "Filters:";
             // 
             // btnJConsoleAddConfig
             // 
@@ -2477,39 +2515,25 @@ namespace UniversalPatcher
             // 
             this.timerSearchParams.Tick += new System.EventHandler(this.timerSearchParams_Tick);
             // 
-            // groupBox8
+            // btnJconsoleConfigFilters
             // 
-            this.groupBox8.Controls.Add(this.chkJConsoleToFile);
-            this.groupBox8.Controls.Add(this.chkJconsoleToScreen);
-            this.groupBox8.Location = new System.Drawing.Point(308, 35);
-            this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(128, 44);
-            this.groupBox8.TabIndex = 53;
-            this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Destination";
+            this.btnJconsoleConfigFilters.Location = new System.Drawing.Point(54, 214);
+            this.btnJconsoleConfigFilters.Name = "btnJconsoleConfigFilters";
+            this.btnJconsoleConfigFilters.Size = new System.Drawing.Size(25, 21);
+            this.btnJconsoleConfigFilters.TabIndex = 73;
+            this.btnJconsoleConfigFilters.Text = "!";
+            this.btnJconsoleConfigFilters.UseVisualStyleBackColor = true;
+            this.btnJconsoleConfigFilters.Click += new System.EventHandler(this.btnJconsoleConfigFilters_Click);
             // 
-            // chkJconsoleToScreen
+            // btnJconsoleConfigFilters2
             // 
-            this.chkJconsoleToScreen.AutoSize = true;
-            this.chkJconsoleToScreen.Checked = true;
-            this.chkJconsoleToScreen.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkJconsoleToScreen.Location = new System.Drawing.Point(11, 16);
-            this.chkJconsoleToScreen.Name = "chkJconsoleToScreen";
-            this.chkJconsoleToScreen.Size = new System.Drawing.Size(60, 17);
-            this.chkJconsoleToScreen.TabIndex = 0;
-            this.chkJconsoleToScreen.Text = "Screen";
-            this.chkJconsoleToScreen.UseVisualStyleBackColor = true;
-            // 
-            // chkJConsoleToFile
-            // 
-            this.chkJConsoleToFile.AutoSize = true;
-            this.chkJConsoleToFile.Location = new System.Drawing.Point(76, 16);
-            this.chkJConsoleToFile.Name = "chkJConsoleToFile";
-            this.chkJConsoleToFile.Size = new System.Drawing.Size(42, 17);
-            this.chkJConsoleToFile.TabIndex = 1;
-            this.chkJConsoleToFile.Text = "File";
-            this.chkJConsoleToFile.UseVisualStyleBackColor = true;
-            this.chkJConsoleToFile.CheckedChanged += new System.EventHandler(this.chkJConsoleToFile_CheckedChanged);
+            this.btnJconsoleConfigFilters2.Location = new System.Drawing.Point(53, 210);
+            this.btnJconsoleConfigFilters2.Name = "btnJconsoleConfigFilters2";
+            this.btnJconsoleConfigFilters2.Size = new System.Drawing.Size(25, 21);
+            this.btnJconsoleConfigFilters2.TabIndex = 76;
+            this.btnJconsoleConfigFilters2.Text = "!";
+            this.btnJconsoleConfigFilters2.UseVisualStyleBackColor = true;
+            this.btnJconsoleConfigFilters2.Click += new System.EventHandler(this.btnJconsoleConfigFilters2_Click);
             // 
             // frmLogger
             // 
@@ -2568,6 +2592,8 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.numConsoleScriptDelay)).EndInit();
             this.tabJConsole.ResumeLayout(false);
             this.tabJConsole.PerformLayout();
+            this.groupBox8.ResumeLayout(false);
+            this.groupBox8.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numJ2534PeriodicMsgInterval2)).EndInit();
@@ -2589,8 +2615,6 @@ namespace UniversalPatcher
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            this.groupBox8.ResumeLayout(false);
-            this.groupBox8.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2808,6 +2832,8 @@ namespace UniversalPatcher
         private System.Windows.Forms.GroupBox groupBox8;
         private System.Windows.Forms.CheckBox chkJConsoleToFile;
         private System.Windows.Forms.CheckBox chkJconsoleToScreen;
+        private System.Windows.Forms.Button btnJconsoleConfigFilters;
+        private System.Windows.Forms.Button btnJconsoleConfigFilters2;
     }
 }
 

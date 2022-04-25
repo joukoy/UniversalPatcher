@@ -294,11 +294,20 @@ namespace UniversalPatcher
                     foreach(string filter in filters)
                     {
                         string[] fParts = filter.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (fParts.Length == 2)
+                        if (fParts.Length == 2 || fParts.Length == 3)
                         {
+                            FilterType ftype = FilterType.PASS_FILTER;
+                            if (fParts.Length == 3)
+                            {
+                                if (fParts[2].ToLower().Contains("block"))
+                                    ftype = FilterType.BLOCK_FILTER;
+                                else if (fParts[2].ToLower().Contains("flow"))
+                                    ftype = FilterType.FLOW_CONTROL_FILTER;
+
+                            }
                             byte[] mask = fParts[0].Replace(" ","").ToBytes();
                             byte[] pattern = fParts[1].Replace(" ", "").ToBytes();
-                            Response<J2534Err> m = SetFilter(mask, pattern, 0, TxFlag.NONE, FilterType.PASS_FILTER, ChID, j2534Init.Protocol);
+                            Response<J2534Err> m = SetFilter(mask, pattern, 0, TxFlag.NONE, ftype, ChID, j2534Init.Protocol);
                             if (m.Status != ResponseStatus.Success)
                             {
                                 LoggerBold("Failed to set filter, J2534 error: " + m.ToString());
@@ -681,6 +690,56 @@ namespace UniversalPatcher
         }
 
         /// <summary>
+        /// Disconnect from Second protocol
+        /// </summary>
+        public override bool SetupFilters(string Filters, bool Secondary)
+        {
+            try
+            {
+                int ChID = ChannelID;
+                ProtocolID Proto = Protocol;
+                if (Secondary)
+                {
+                    ChID = ChannelID2;
+                    Proto = Protocol2;
+                }
+                J2534Port.Functions.ClearMsgFilters(ChID);
+                string[] filters = Filters.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string filter in filters)
+                {
+                    string[] fParts = filter.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (fParts.Length == 2 || fParts.Length == 3)
+                    {
+                        FilterType ftype = FilterType.PASS_FILTER;
+                        if (fParts.Length == 3)
+                        {
+                            if (fParts[2].ToLower().Contains("block"))
+                                ftype = FilterType.BLOCK_FILTER;
+                            else if (fParts[2].ToLower().Contains("flow"))
+                                ftype = FilterType.FLOW_CONTROL_FILTER;
+
+                        }
+                        byte[] mask = fParts[0].Replace(" ", "").ToBytes();
+                        byte[] pattern = fParts[1].Replace(" ", "").ToBytes();
+                        Response<J2534Err> m = SetFilter(mask, pattern, 0, TxFlag.NONE, ftype, ChID, Proto);
+                        if (m.Status != ResponseStatus.Success)
+                        {
+                            LoggerBold("Failed to set filter, J2534 error: " + m.ToString());
+                            return false;
+                        }
+                        Debug.WriteLine("Filter set");
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Read battery voltage
         /// </summary>
         public Response<double> ReadVoltage()
@@ -722,7 +781,7 @@ namespace UniversalPatcher
                 //PassThruMsg patternMsg = new PassThruMsg(proto, txflag, new Byte[] { (byte)(0xFF & (Pattern >> 24)), (byte)(0xFF & (Pattern >> 16)), (byte)(0xFF & (Pattern >> 8)), (byte)(0xFF & Pattern) });
 
                 int tempfilter = 0;
-                Debug.WriteLine("Setting filter, Mask: {0}, Pattern: {1}", BitConverter.ToString(Mask), BitConverter.ToString(Pattern));
+                Debug.WriteLine("Setting filter, Mask: " + BitConverter.ToString(Mask) + ", Pattern: " + BitConverter.ToString(Pattern));
                 //OBDError = J2534Port.Functions.StartMsgFilter((int)ChannelID, Filtertype, ref maskMsg, ref patternMsg, ref FlowMsg, ref tempfilter);
                 OBDError = J2534Port.Functions.StartMsgFilter(ChID, Filtertype, maskMsg, patternMsg, ref tempfilter);
 

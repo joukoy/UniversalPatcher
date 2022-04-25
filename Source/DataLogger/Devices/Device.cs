@@ -487,6 +487,11 @@ namespace UniversalPatcher
         {
             return false;
         }
+        public virtual bool SetupFilters(string Filters, bool Secondary)
+        {
+            return false;
+        }
+
         //public abstract bool SetConfig(J2534DotNet.SConfig[] sc);
         public string CurrentFilter { get; set; }
         public DataLogger.LoggingDevType LogDeviceType { get; set; }

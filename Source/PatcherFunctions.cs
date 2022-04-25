@@ -2129,17 +2129,29 @@ public class Upatcher
                 return retVal;
             }
 
-            //We are here, so we must have @ @ @ @  in searchsting
-            if (l < 4)
+            //We are here, so we must have @ @  or @ @ @ @  in searchsting
+            if (l == 2)
             {
-                Logger("Less than 4 @ in searchstring, address need 4 bytes! (" + searchStr + ")");
+                if (PCM.platformConfig.MSB)
+                    retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 8 | PCM.buf[addr + locations[1]]);
+                else
+                    retVal.Addr = (uint)(PCM.buf[addr + locations[1]] << 8 | PCM.buf[addr + locations[0]]);
+
+            }
+            else if (l == 4)
+            {
+                if (PCM.platformConfig.MSB)
+                    retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 24 | PCM.buf[addr + locations[1]] << 16 | PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
+                else
+                    retVal.Addr = (uint)(PCM.buf[addr + locations[3]] << 24 | PCM.buf[addr + locations[2]] << 16 | PCM.buf[addr + locations[1]] << 8 | PCM.buf[addr + locations[0]]);
+
+            }
+            else
+            {
+                Logger("!= 2 or 4 @ in searchstring, address need 4 bytes! (" + searchStr + ")");
                 retVal.Addr = uint.MaxValue;
             }
 
-            if (PCM.platformConfig.MSB)
-                retVal.Addr = (uint)(PCM.buf[addr + locations[0]] << 24 | PCM.buf[addr + locations[1]] << 16 | PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);
-            else
-                retVal.Addr = (uint)(PCM.buf[addr + locations[3]] << 24 | PCM.buf[addr + locations[2]] << 16 | PCM.buf[addr + locations[1]] << 8 | PCM.buf[addr + locations[0]]);
             if (conditionalOffset)
             {
                 ushort addrWord = (ushort)(PCM.buf[addr + locations[2]] << 8 | PCM.buf[addr + locations[3]]);

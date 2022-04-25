@@ -454,3 +454,7 @@
 0.20.19
 - Logger: J-Console: Select log destination: Screen/file
 - Tuner: Fix negative offsets in Tableseek ( -D<offset> after searchstring)
+
+0.20.20
+- Logger: J-Console: Support for Pass, Block & Flow filters
+- Logger: J-Console: Button for filter setup without reconnect
