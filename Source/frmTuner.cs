@@ -2958,7 +2958,7 @@ namespace UniversalPatcher
                     foreach (TreeNode tn in tv.SelectedNodes)
                         if (tn.Tag != null)
                             tableTds.Add((TableData)tn.Tag);
-                    if (tableTds.Count == 0)
+                    if (tableTds.Count == 0 && lastSelectTd != null)
                         tableTds.Add(lastSelectTd);
                 }
                 else
@@ -4678,7 +4678,10 @@ namespace UniversalPatcher
         {
             List<TableData> tds = GetSelectedTableTds();
             if (tds == null || tds.Count == 0)
+            {
+                Logger("Select table as template for histogram");
                 return;
+            }
             frmHistogram fh = new frmHistogram();
             fh.Show();
             fh.SetupTable(PCM, tds[0]);

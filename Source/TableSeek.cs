@@ -68,6 +68,10 @@ namespace UniversalPatcher
         public string Description { get; set; }
         public bool MSB { get; set; }
         public DisplayUnits DispUnits { get; set; }
+        public string RefAddress { get; set; }
+        public string ExtraTableName { get; set; }
+        public string ExtraDescription { get; set; }
+        public string ExtraCategory { get; set; }
 
         private PcmFile PCM;
 

@@ -555,6 +555,15 @@ namespace UniversalPatcher
                             TableSeek ts = new TableSeek();
                             ts.Category = lineparts[0];
                             ts.Name = lineparts[1];
+                            if (ts.Name.ToLower().StartsWith("k_dyna_air_coefficient"))
+                            {
+                                ts.RefAddress = lineparts[3];
+
+                            }
+                            else
+                            {
+                                ts.RefAddress = lineparts[2];
+                            }
                             ts.SearchStr = lineparts[i];
                             string xtension = "";
                             if (lineparts.Length >= i + 1)
@@ -574,6 +583,7 @@ namespace UniversalPatcher
                                     tsNew.SearchStr = ts.SearchStr;
                                     tsNew.UseHit = ts.UseHit;
                                     tsNew.Offset = ts.Offset;
+                                    tsNew.RefAddress = ts.RefAddress;
                                     if (xtension.Length > 0)
                                         tsNew.Name += "*" + xtension;
                                     tSeeks.Add(tsNew);

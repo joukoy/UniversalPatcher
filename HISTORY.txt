@@ -458,3 +458,6 @@
 0.20.20
 - Logger: J-Console: Support for Pass, Block & Flow filters
 - Logger: J-Console: Button for filter setup without reconnect
+
+0.20.21
+- Tuner: Histogram: Inform user to select table before opening histogram
