@@ -294,7 +294,7 @@ namespace UniversalPatcher
                 TableData last = sizeList[sizeList.Count - 1];
                 int elementSize = GetElementSize(last.DataType);
                 int singleTableSize = last.Rows * last.Columns * elementSize;
-                uint bufSize = (uint)(last.addrInt - first.addrInt + last.Offset + singleTableSize);
+                uint bufSize = (uint)(last.addrInt - first.addrInt   + singleTableSize);
                 cmpFile.buf = new byte[bufSize];
                 Array.Copy(pcm.buf, first.addrInt, cmpFile.buf, 0, bufSize);
                 cmpFile.tableBufferOffset = first.addrInt;
@@ -394,7 +394,7 @@ namespace UniversalPatcher
                             rowHeaders.Add(RowPrefix + rHdr);
                     }
 
-                    uint addr = (uint)(tData.addrInt + tData.Offset);
+                    uint addr = (uint)(tData.addrInt + tData.Offset + tData.ExtraOffset);
                     int step = GetElementSize(tData.DataType);
                     if (tData.RowMajor)
                     {
@@ -495,19 +495,20 @@ namespace UniversalPatcher
                 if (tableTds.Count > 1)
                 {
                     multiSelect = true;
-                    PrepareMultiTable(orgFile, td, tableTds);
+                    PrepareMultiTable(orgFile, td, tableTds, td.ExtraOffset);
                     return;
                 }
                 if (!disableMultiTable)
                 {
                     if (td.TableName.ToLower().EndsWith(".xval") || td.TableName.ToLower().EndsWith(".yval"))
                     {
+                        int ExtraOffset = td.ExtraOffset;
                         for (int x = 0; x < pcm.tableDatas.Count; x++)
                         {
                             if (pcm.tableDatas[x].TableName.ToLower() == td.TableName.ToLower().Replace(".yval", ".data").Replace(".xval", ".data"))
                             {
                                 td = pcm.tableDatas[x];
-                                PrepareMultiTable(orgFile, td, null);
+                                PrepareMultiTable(orgFile, td, null, ExtraOffset);
                                 return;
                             }
                         }
@@ -531,7 +532,7 @@ namespace UniversalPatcher
                                 if (pcm.tableDatas[t].Category == td.Category && pcm.tableDatas[t].TableName.StartsWith(mtn.TableName) && pcm.tableDatas[t].TableName != td.TableName)
                                 {
                                     //It is multitable
-                                    PrepareMultiTable(orgFile, pcm.tableDatas[t], null);
+                                    PrepareMultiTable(orgFile, pcm.tableDatas[t], null, td.ExtraOffset);
                                     return;
                                 }
                             }
@@ -561,7 +562,7 @@ namespace UniversalPatcher
         }
 
 
-        private void PrepareMultiTable(CompareFile cmpFile, TableData tData, List<TableData> tableTds)
+        private void PrepareMultiTable(CompareFile cmpFile, TableData tData, List<TableData> tableTds, int ExtraOffset)
         {
             try
             {
@@ -585,6 +586,7 @@ namespace UniversalPatcher
                     for (int i = 0; i < tableTds.Count; i++)
                     {
                         TableData mTd =tableTds[i];
+                        mTd.ExtraOffset = ExtraOffset;
                         if (tableNameList.Contains(mTd.TableName))
                         {
                             duplicateTableName = true;
@@ -602,6 +604,7 @@ namespace UniversalPatcher
                     {
                         cmpFile.filteredTables.Add(tableTds[i]);
                         cmpFile.tableIds.Add(tableTds[i].guid);
+
                     }
                     rows = tableTds.Count;
                     cols = maxCols;
@@ -622,6 +625,7 @@ namespace UniversalPatcher
                     {
                         tableTds.Add(cmpFile.filteredTables[i]);
                         cmpFile.tableIds.Add(tableTds[i].guid);
+                        tableTds[i].ExtraOffset = ExtraOffset;
                     }
                 }
 
@@ -1522,6 +1526,17 @@ namespace UniversalPatcher
                 }
                 stopwatch.Stop();
                 Debug.WriteLine("LoadTable time Taken: " + stopwatch.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
+                if (ftv != null && ftv.Visible)
+                {
+                    uint addr = 0;
+                    if (dataGridView1.SelectedCells.Count > 0)
+                    {
+                        TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
+                        addr = tCell.addr;
+                    }
+
+                    ftv.DisplayData(addr, compareFiles[currentFile].buf);
+                }
 
             }
             catch (Exception ex)
@@ -1589,7 +1604,7 @@ namespace UniversalPatcher
                     if (pcm.tableDatas[y].TableName == yTbName)
                     {
                         TableData ytb = pcm.tableDatas[y];
-                        uint xaddr = (uint)(ytb.addrInt + ytb.Offset);
+                        uint xaddr = (uint)(ytb.addrInt + ytb.Offset + ytb.ExtraOffset);
                         cols = (int)GetValue(pcm.buf, xaddr, ytb, 0, pcm);
                         break;
                     }
@@ -1617,7 +1632,7 @@ namespace UniversalPatcher
                 {
                     if (pcm.tableDatas[x].TableName == tData.TableName.Replace(".Data", ".Size") || pcm.tableDatas[x].TableName == tData.TableName.Replace(".Data", ".yVal"))
                     {
-                        uint addr = (uint)(pcm.tableDatas[x].addrInt + pcm.tableDatas[x].Offset);
+                        uint addr = (uint)(pcm.tableDatas[x].addrInt + pcm.tableDatas[x].Offset + pcm.tableDatas[x].ExtraOffset);
                         rows = (int)GetValue(pcm.buf, addr, pcm.tableDatas[x], 0, pcm);
                         break;
                     }
@@ -2803,7 +2818,7 @@ namespace UniversalPatcher
                     addr = tCell.addr;
                 }
 
-                ftv.DisplayData(addr, compareFiles[0].buf);
+                ftv.DisplayData(addr, compareFiles[currentFile].buf);
             }
             catch (Exception ex)
             {

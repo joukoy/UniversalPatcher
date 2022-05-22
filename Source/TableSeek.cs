@@ -71,7 +71,7 @@ namespace UniversalPatcher
         public string RefAddress { get; set; }
         public string ExtraTableName { get; set; }
         public string ExtraDescription { get; set; }
-        public string ExtraCategory { get; set; }
+        public string ExtraCategories { get; set; }
 
         private PcmFile PCM;
 

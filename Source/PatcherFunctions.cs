@@ -813,7 +813,7 @@ public class Upatcher
         TableData conversionTd = FindTableData(tmpTd, PCM.tableDatas);
         if (conversionTd != null)
         {
-            double conversionVal = GetValue(PCM.buf, (uint)(conversionTd.addrInt + conversionTd.Offset), conversionTd, 0, PCM);
+            double conversionVal = GetValue(PCM.buf, (uint)(conversionTd.addrInt + conversionTd.Offset + conversionTd.ExtraOffset), conversionTd, 0, PCM);
             retVal = mathStr.Replace("table:" + conversionTable, conversionVal.ToString());
             Debug.WriteLine("Using conversion table: " + conversionTd.TableName);
         }
@@ -854,7 +854,7 @@ public class Upatcher
             return null;
 
         uint step = (uint)(GetBits(headerTd.DataType) / 8);
-        uint addr = (uint)(headerTd.addrInt + headerTd.Offset);
+        uint addr = (uint)(headerTd.addrInt + headerTd.Offset + headerTd.ExtraOffset);
         string[] retVal = new string[count];
         for (int a = 0; a < count; a++)
         {
@@ -877,7 +877,7 @@ public class Upatcher
             return null;
 
         uint step = (uint)(GetBits(headerTd.DataType) / 8);
-        uint addr = (uint)(headerTd.addrInt + headerTd.Offset);
+        uint addr = (uint)(headerTd.addrInt + headerTd.Offset + headerTd.ExtraOffset);
         double[] retVal = new double[count];
         for (int a = 0; a < count; a++)
         {
@@ -891,7 +891,7 @@ public class Upatcher
     //
     //Get value from defined table, using defined math functions.
     //
-    public static double GetValue(byte[] myBuffer, uint addr, TableData mathTd, uint offset, PcmFile PCM)
+    public static double GetValue(byte[] myBuffer, uint addr, TableData mathTd, int offset, PcmFile PCM)
     {
         double retVal = 0;
         try
@@ -912,7 +912,7 @@ public class Upatcher
                     return 0;
             }
 
-            UInt32 bufAddr = addr - offset;
+            UInt32 bufAddr = (UInt32)(addr - offset);
 
             if (mathTd.DataType == InDataType.SBYTE)
                 retVal = (sbyte)myBuffer[bufAddr];
@@ -956,15 +956,15 @@ public class Upatcher
             var frame = st.GetFrame(st.FrameCount - 1);
             // Get the line number from the stack frame
             var line = frame.GetFileLineNumber();
-            LoggerBold("Patcherfunctions error, line " + line + ": " + ex.Message);
+            Debug.WriteLine("Patcherfunctions error, line " + line + ": " + ex.Message);
         }
 
         return retVal;
     }
 
-    public static double GetRawValue(byte[] myBuffer, UInt32 addr, TableData mathTd, uint offset, bool platformMsb)
+    public static double GetRawValue(byte[] myBuffer, UInt32 addr, TableData mathTd, int offset, bool platformMsb)
     {
-        UInt32 bufAddr = addr - offset;
+        UInt32 bufAddr = (uint)(addr - offset);
         double retVal = 0;
         try
         {
@@ -1211,7 +1211,7 @@ public class Upatcher
         TableData pTd = basefile.tableDatas[tdId];
         frmTE.PrepareTable(basefile, pTd, null, "A");
         //frmTE.loadTable();
-        uint addr = (uint)(pTd.addrInt + pTd.Offset);
+        uint addr = (uint)(pTd.addrInt + pTd.Offset + pTd.ExtraOffset );
         uint step = (uint)GetElementSize(pTd.DataType);
         try
         {
@@ -1467,7 +1467,7 @@ public class Upatcher
         if ((td1.Rows * td1.Columns) != (td2.Rows * td2.Columns))
             return false;
         List<double> tableValues = new List<double>();
-        uint addr = (uint)(td1.addrInt + td1.Offset);
+        uint addr = (uint)(td1.addrInt + td1.Offset + td1.ExtraOffset);
         uint step = (uint)GetElementSize(td1.DataType);
         if (td1.RowMajor)
         {
@@ -1494,7 +1494,7 @@ public class Upatcher
             }
         }
 
-        addr = (uint)(td2.addrInt + td2.Offset);
+        addr = (uint)(td2.addrInt + td2.Offset + td2.ExtraOffset);
         step = (uint)GetElementSize(td2.DataType);
         int i = 0;
         if (td2.RowMajor)

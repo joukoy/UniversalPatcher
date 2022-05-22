@@ -61,6 +61,10 @@ namespace UniversalPatcher
             this.disableConfigAutoloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.caseSensitiveFilteringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moreSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.extraOffsetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearPreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.appendToPreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.appendFocusToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.currentFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -121,9 +125,12 @@ namespace UniversalPatcher
             this.bitmaskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.numberToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showHistogramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testExtraOffsetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addressRelativeDiffToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.editRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.insertRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addressRelativeDiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.duplicateTableConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -183,6 +190,16 @@ namespace UniversalPatcher
             this.btnCollapse = new System.Windows.Forms.Button();
             this.btnExpand = new System.Windows.Forms.Button();
             this.btnFlash = new System.Windows.Forms.Button();
+            this.btnExecute = new System.Windows.Forms.Button();
+            this.txtMath = new System.Windows.Forms.TextBox();
+            this.groupExtraOffset = new System.Windows.Forms.GroupBox();
+            this.btnExtraOffsetTestApply = new System.Windows.Forms.Button();
+            this.numExtraOffsetTest = new System.Windows.Forms.NumericUpDown();
+            this.btnExtraOffsetTest = new System.Windows.Forms.Button();
+            this.numExtraOffset = new System.Windows.Forms.NumericUpDown();
+            this.btnExtraOffsetPrev = new System.Windows.Forms.Button();
+            this.btnExtraOffsetNext = new System.Windows.Forms.Button();
+            this.addNewTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -205,6 +222,9 @@ namespace UniversalPatcher
             this.contextMenuStripListTree.SuspendLayout();
             this.contextMenuStripTree.SuspendLayout();
             this.contextMenuStripPatch.SuspendLayout();
+            this.groupExtraOffset.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numExtraOffsetTest)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numExtraOffset)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -398,7 +418,8 @@ namespace UniversalPatcher
             this.resetTunerModeColumnsToolStripMenuItem,
             this.disableConfigAutoloadToolStripMenuItem,
             this.caseSensitiveFilteringToolStripMenuItem,
-            this.moreSettingsToolStripMenuItem});
+            this.moreSettingsToolStripMenuItem,
+            this.extraOffsetToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "&Settings";
@@ -452,6 +473,39 @@ namespace UniversalPatcher
             this.moreSettingsToolStripMenuItem.Text = "More settings...";
             this.moreSettingsToolStripMenuItem.Click += new System.EventHandler(this.moreSettingsToolStripMenuItem_Click);
             // 
+            // extraOffsetToolStripMenuItem
+            // 
+            this.extraOffsetToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.clearPreviewToolStripMenuItem,
+            this.appendToPreviewToolStripMenuItem,
+            this.appendFocusToolStripMenuItem});
+            this.extraOffsetToolStripMenuItem.Name = "extraOffsetToolStripMenuItem";
+            this.extraOffsetToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.extraOffsetToolStripMenuItem.Text = "Extra offset +/-";
+            // 
+            // clearPreviewToolStripMenuItem
+            // 
+            this.clearPreviewToolStripMenuItem.Checked = true;
+            this.clearPreviewToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.clearPreviewToolStripMenuItem.Name = "clearPreviewToolStripMenuItem";
+            this.clearPreviewToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.clearPreviewToolStripMenuItem.Text = "Clear preview";
+            this.clearPreviewToolStripMenuItem.Click += new System.EventHandler(this.clearPreviewToolStripMenuItem_Click);
+            // 
+            // appendToPreviewToolStripMenuItem
+            // 
+            this.appendToPreviewToolStripMenuItem.Name = "appendToPreviewToolStripMenuItem";
+            this.appendToPreviewToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.appendToPreviewToolStripMenuItem.Text = "Append to preview";
+            this.appendToPreviewToolStripMenuItem.Click += new System.EventHandler(this.appendToPreviewToolStripMenuItem_Click);
+            // 
+            // appendFocusToolStripMenuItem
+            // 
+            this.appendFocusToolStripMenuItem.Name = "appendFocusToolStripMenuItem";
+            this.appendFocusToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.appendFocusToolStripMenuItem.Text = "Append + focus";
+            this.appendFocusToolStripMenuItem.Click += new System.EventHandler(this.appendFocusToolStripMenuItem_Click);
+            // 
             // currentFileToolStripMenuItem
             // 
             this.currentFileToolStripMenuItem.Name = "currentFileToolStripMenuItem";
@@ -469,7 +523,7 @@ namespace UniversalPatcher
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newToolStripMenuItem.Text = "New...";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -705,7 +759,8 @@ namespace UniversalPatcher
             this.loadTablelistnewToolStripMenuItem,
             this.saveXMLToolStripMenuItem,
             this.saveXMLAsToolStripMenuItem,
-            this.clearTableToolStripMenuItem});
+            this.clearTableToolStripMenuItem,
+            this.addNewTableToolStripMenuItem});
             this.xmlToolStripMenuItem.Name = "xmlToolStripMenuItem";
             this.xmlToolStripMenuItem.Size = new System.Drawing.Size(40, 20);
             this.xmlToolStripMenuItem.Text = "Xml";
@@ -797,9 +852,12 @@ namespace UniversalPatcher
             this.copySelectedTablesToToolStripMenuItem,
             this.selectToolStripMenuItem,
             this.showHistogramToolStripMenuItem,
+            this.testExtraOffsetToolStripMenuItem,
+            this.addressRelativeDiffToolStripMenuItem1,
             this.toolStripSeparator1,
             this.editRowToolStripMenuItem,
             this.insertRowToolStripMenuItem,
+            this.addressRelativeDiffToolStripMenuItem,
             this.deleteRowToolStripMenuItem,
             this.duplicateTableConfigToolStripMenuItem,
             this.createPatchToolStripMenuItem,
@@ -808,7 +866,7 @@ namespace UniversalPatcher
             this.toolStripSeparator2,
             this.axistablesToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 412);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 478);
             // 
             // cutToolStripMenuItem
             // 
@@ -931,6 +989,20 @@ namespace UniversalPatcher
             this.showHistogramToolStripMenuItem.Text = "Show Histogram";
             this.showHistogramToolStripMenuItem.Click += new System.EventHandler(this.showHistogramToolStripMenuItem_Click);
             // 
+            // testExtraOffsetToolStripMenuItem
+            // 
+            this.testExtraOffsetToolStripMenuItem.Name = "testExtraOffsetToolStripMenuItem";
+            this.testExtraOffsetToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.testExtraOffsetToolStripMenuItem.Text = "Test extra offset";
+            this.testExtraOffsetToolStripMenuItem.Click += new System.EventHandler(this.testExtraOffsetToolStripMenuItem_Click);
+            // 
+            // addressRelativeDiffToolStripMenuItem1
+            // 
+            this.addressRelativeDiffToolStripMenuItem1.Name = "addressRelativeDiffToolStripMenuItem1";
+            this.addressRelativeDiffToolStripMenuItem1.Size = new System.Drawing.Size(230, 22);
+            this.addressRelativeDiffToolStripMenuItem1.Text = "Segment address diff";
+            this.addressRelativeDiffToolStripMenuItem1.Click += new System.EventHandler(this.addressRelativeDiffToolStripMenuItem1_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -951,6 +1023,12 @@ namespace UniversalPatcher
             this.insertRowToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.insertRowToolStripMenuItem.Text = "Insert table config";
             this.insertRowToolStripMenuItem.Click += new System.EventHandler(this.insertRowToolStripMenuItem_Click);
+            // 
+            // addressRelativeDiffToolStripMenuItem
+            // 
+            this.addressRelativeDiffToolStripMenuItem.Name = "addressRelativeDiffToolStripMenuItem";
+            this.addressRelativeDiffToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.addressRelativeDiffToolStripMenuItem.Text = "Address relative diff";
             // 
             // deleteRowToolStripMenuItem
             // 
@@ -1610,11 +1688,129 @@ namespace UniversalPatcher
             this.btnFlash.UseVisualStyleBackColor = true;
             this.btnFlash.Click += new System.EventHandler(this.btnFlash_Click);
             // 
+            // btnExecute
+            // 
+            this.btnExecute.Location = new System.Drawing.Point(659, 31);
+            this.btnExecute.Name = "btnExecute";
+            this.btnExecute.Size = new System.Drawing.Size(54, 21);
+            this.btnExecute.TabIndex = 34;
+            this.btnExecute.Text = "Execute";
+            this.btnExecute.UseVisualStyleBackColor = true;
+            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
+            // 
+            // txtMath
+            // 
+            this.txtMath.Location = new System.Drawing.Point(571, 31);
+            this.txtMath.Name = "txtMath";
+            this.txtMath.Size = new System.Drawing.Size(82, 20);
+            this.txtMath.TabIndex = 33;
+            this.txtMath.Text = "X*1";
+            // 
+            // groupExtraOffset
+            // 
+            this.groupExtraOffset.Controls.Add(this.btnExtraOffsetTestApply);
+            this.groupExtraOffset.Controls.Add(this.numExtraOffsetTest);
+            this.groupExtraOffset.Controls.Add(this.btnExtraOffsetTest);
+            this.groupExtraOffset.Controls.Add(this.numExtraOffset);
+            this.groupExtraOffset.Controls.Add(this.btnExtraOffsetPrev);
+            this.groupExtraOffset.Controls.Add(this.btnExtraOffsetNext);
+            this.groupExtraOffset.Location = new System.Drawing.Point(719, 21);
+            this.groupExtraOffset.Name = "groupExtraOffset";
+            this.groupExtraOffset.Size = new System.Drawing.Size(290, 33);
+            this.groupExtraOffset.TabIndex = 35;
+            this.groupExtraOffset.TabStop = false;
+            this.groupExtraOffset.Text = "Extra offset";
+            // 
+            // btnExtraOffsetTestApply
+            // 
+            this.btnExtraOffsetTestApply.Location = new System.Drawing.Point(238, 9);
+            this.btnExtraOffsetTestApply.Name = "btnExtraOffsetTestApply";
+            this.btnExtraOffsetTestApply.Size = new System.Drawing.Size(45, 22);
+            this.btnExtraOffsetTestApply.TabIndex = 8;
+            this.btnExtraOffsetTestApply.Text = "Apply";
+            this.btnExtraOffsetTestApply.UseVisualStyleBackColor = true;
+            this.btnExtraOffsetTestApply.Click += new System.EventHandler(this.btnExtraOffsetTestApply_Click);
+            // 
+            // numExtraOffsetTest
+            // 
+            this.numExtraOffsetTest.Location = new System.Drawing.Point(131, 9);
+            this.numExtraOffsetTest.Maximum = new decimal(new int[] {
+            99999999,
+            0,
+            0,
+            0});
+            this.numExtraOffsetTest.Minimum = new decimal(new int[] {
+            999999999,
+            0,
+            0,
+            -2147483648});
+            this.numExtraOffsetTest.Name = "numExtraOffsetTest";
+            this.numExtraOffsetTest.Size = new System.Drawing.Size(55, 20);
+            this.numExtraOffsetTest.TabIndex = 7;
+            // 
+            // btnExtraOffsetTest
+            // 
+            this.btnExtraOffsetTest.Location = new System.Drawing.Point(192, 8);
+            this.btnExtraOffsetTest.Name = "btnExtraOffsetTest";
+            this.btnExtraOffsetTest.Size = new System.Drawing.Size(40, 23);
+            this.btnExtraOffsetTest.TabIndex = 6;
+            this.btnExtraOffsetTest.Text = "Test";
+            this.btnExtraOffsetTest.UseVisualStyleBackColor = true;
+            this.btnExtraOffsetTest.Click += new System.EventHandler(this.btnExtraOffsetTest_Click);
+            // 
+            // numExtraOffset
+            // 
+            this.numExtraOffset.Location = new System.Drawing.Point(70, 10);
+            this.numExtraOffset.Maximum = new decimal(new int[] {
+            1410065407,
+            2,
+            0,
+            0});
+            this.numExtraOffset.Minimum = new decimal(new int[] {
+            1410065407,
+            2,
+            0,
+            -2147483648});
+            this.numExtraOffset.Name = "numExtraOffset";
+            this.numExtraOffset.Size = new System.Drawing.Size(55, 20);
+            this.numExtraOffset.TabIndex = 3;
+            this.numExtraOffset.ValueChanged += new System.EventHandler(this.numExtraOffset_ValueChanged);
+            // 
+            // btnExtraOffsetPrev
+            // 
+            this.btnExtraOffsetPrev.Location = new System.Drawing.Point(6, 13);
+            this.btnExtraOffsetPrev.Name = "btnExtraOffsetPrev";
+            this.btnExtraOffsetPrev.Size = new System.Drawing.Size(25, 20);
+            this.btnExtraOffsetPrev.TabIndex = 4;
+            this.btnExtraOffsetPrev.Text = "<-";
+            this.btnExtraOffsetPrev.UseVisualStyleBackColor = true;
+            this.btnExtraOffsetPrev.Click += new System.EventHandler(this.btnExtraOffsetPrev_Click);
+            // 
+            // btnExtraOffsetNext
+            // 
+            this.btnExtraOffsetNext.Location = new System.Drawing.Point(39, 13);
+            this.btnExtraOffsetNext.Name = "btnExtraOffsetNext";
+            this.btnExtraOffsetNext.Size = new System.Drawing.Size(25, 20);
+            this.btnExtraOffsetNext.TabIndex = 2;
+            this.btnExtraOffsetNext.Text = "->";
+            this.btnExtraOffsetNext.UseVisualStyleBackColor = true;
+            this.btnExtraOffsetNext.Click += new System.EventHandler(this.btnExtraOffsetNext_Click);
+            // 
+            // addNewTableToolStripMenuItem
+            // 
+            this.addNewTableToolStripMenuItem.Name = "addNewTableToolStripMenuItem";
+            this.addNewTableToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
+            this.addNewTableToolStripMenuItem.Text = "Add new table";
+            this.addNewTableToolStripMenuItem.Click += new System.EventHandler(this.addNewTableToolStripMenuItem_Click);
+            // 
             // FrmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1021, 559);
+            this.Controls.Add(this.groupExtraOffset);
+            this.Controls.Add(this.btnExecute);
+            this.Controls.Add(this.txtMath);
             this.Controls.Add(this.btnFlash);
             this.Controls.Add(this.radioListMode);
             this.Controls.Add(this.radioTreeMode);
@@ -1660,6 +1856,9 @@ namespace UniversalPatcher
             this.contextMenuStripListTree.ResumeLayout(false);
             this.contextMenuStripTree.ResumeLayout(false);
             this.contextMenuStripPatch.ResumeLayout(false);
+            this.groupExtraOffset.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numExtraOffsetTest)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numExtraOffset)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1816,5 +2015,22 @@ namespace UniversalPatcher
         private ToolStripMenuItem advancedToolStripMenuItem;
         private ToolStripMenuItem createProgramShortcutsToolStripMenuItem;
         private ToolStripMenuItem creditsToolStripMenuItem;
+        private Button btnExecute;
+        private TextBox txtMath;
+        private ToolStripMenuItem testExtraOffsetToolStripMenuItem;
+        private GroupBox groupExtraOffset;
+        private Button btnExtraOffsetNext;
+        private NumericUpDown numExtraOffset;
+        private Button btnExtraOffsetPrev;
+        private ToolStripMenuItem extraOffsetToolStripMenuItem;
+        private ToolStripMenuItem clearPreviewToolStripMenuItem;
+        private ToolStripMenuItem appendToPreviewToolStripMenuItem;
+        private ToolStripMenuItem appendFocusToolStripMenuItem;
+        private ToolStripMenuItem addressRelativeDiffToolStripMenuItem1;
+        private ToolStripMenuItem addressRelativeDiffToolStripMenuItem;
+        private Button btnExtraOffsetTest;
+        private Button btnExtraOffsetTestApply;
+        private NumericUpDown numExtraOffsetTest;
+        private ToolStripMenuItem addNewTableToolStripMenuItem;
     }
 }

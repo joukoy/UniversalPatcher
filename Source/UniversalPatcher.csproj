@@ -134,6 +134,12 @@
     <Compile Include="frmDB.Designer.cs">
       <DependentUpon>frmDB.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmExtraOffset.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmExtraOffset.Designer.cs">
+      <DependentUpon>frmExtraOffset.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmHistogram.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -487,6 +493,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmDB.resx">
       <DependentUpon>frmDB.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmExtraOffset.resx">
+      <DependentUpon>frmExtraOffset.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmHistogram.resx">
       <DependentUpon>frmHistogram.cs</DependentUpon>

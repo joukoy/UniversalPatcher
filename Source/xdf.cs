@@ -964,7 +964,7 @@ namespace UniversalPatcher
                         tableText.Replace("REPLACE-LINKMATH", linkTxt);
                         tableText.Replace("REPLACE-MATH", mathTxt);
 
-                        tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(td.addrInt + td.Offset)).ToString("X"));
+                        tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(td.addrInt + td.Offset + td.ExtraOffset)).ToString("X"));
                         string descr = td.TableDescription;
                         if (td.Values.ToLower().StartsWith("enum:"))
                             descr += ", " + td.Values;
@@ -1039,7 +1039,7 @@ namespace UniversalPatcher
                         tableText.Replace("REPLACE-BITS", GetBits(td.DataType).ToString());
                         tableText.Replace("REPLACE-DECIMALS", td.Decimals.ToString());
                         tableText.Replace("REPLACE-OUTPUTTYPE", ((ushort)td.OutputType).ToString());
-                        tableText.Replace("REPLACE-TABLEADDRESS",((uint)(td.addrInt + td.Offset)).ToString("X"));
+                        tableText.Replace("REPLACE-TABLEADDRESS",((uint)(td.addrInt + td.Offset + td.ExtraOffset)).ToString("X"));
                         string descr = td.TableDescription;
                         if (td.Values.ToLower().StartsWith("enum:"))
                             descr += ", " + td.Values;
@@ -1146,12 +1146,11 @@ namespace UniversalPatcher
                         if (s == -1) s = lastCategory;
                         tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
                         tableText.Replace("REPLACE-TABLEID", tableGuidTPid[td.guid.ToString()]);
-                        tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(td.addrInt + td.Offset)).ToString("X"));
+                        tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(td.addrInt + td.Offset + td.ExtraOffset)).ToString("X"));
                         tableText.Replace("REPLACE-TABLEDESCRIPTION", "");
                         tableText.Replace("REPLACE-BITS", GetBits(td.DataType).ToString());
                         tableText.Replace("REPLACE-MASK", td.BitMask);
                         xdfText.Append(tableText);       //Add generated table to end of xdfText
-
                     }
                 }
 

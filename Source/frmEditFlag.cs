@@ -26,7 +26,7 @@ namespace UniversalPatcher
         {
             PCM = PCM1;
             td = td1;
-            uint addr = (uint)(td.addrInt + td.Offset);
+            uint addr = (uint)(td.addrInt + td.Offset + td.ExtraOffset);
             if (td.TableDescription.Length > 1)
                 labelDescription.Text = td.TableDescription;
             else
@@ -70,7 +70,7 @@ namespace UniversalPatcher
         private void btnSave_Click(object sender, EventArgs e)
         {
             string maskStr = td.BitMask;
-            uint addr = (uint)(td.addrInt + td.Offset);
+            uint addr = (uint)(td.addrInt + td.Offset + td.ExtraOffset);
             if (td.DataType == InDataType.UBYTE || td.DataType == InDataType.SBYTE)
             {
                 byte mask = Convert.ToByte(maskStr, 16);

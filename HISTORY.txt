@@ -461,3 +461,11 @@
 
 0.20.21
 - Tuner: Histogram: Inform user to select table before opening histogram
+
+0.20.22
+- Tuner: Added "Execute" for mass modifying table definitions
+- Tuner: Added "Extra offset" for testing offset
+- Fix: negative offset in table definition
+- Tuner: New menu item: Add new table
+- Tuner: fixed bug in sort by column
+

@@ -55,6 +55,7 @@ namespace UniversalPatcher
         int iconSize;
         bool treeMode;
         string currentBin = "A";
+        bool ExtraOffsetFirstTry = true;
 
         private void frmTuner_Load(object sender, EventArgs e)
         {
@@ -136,6 +137,33 @@ namespace UniversalPatcher
             this.AllowDrop = true;
             this.DragEnter += FrmTuner_DragEnter;
             this.DragDrop += FrmTuner_DragDrop;
+
+            dataGridView1.EditingControlShowing += new DataGridViewEditingControlShowingEventHandler(dataGridView1_EditingControlShowing);
+        }
+
+        private void dataGridView1_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            e.Control.KeyPress += new KeyPressEventHandler(Control_KeyPress);
+        }
+
+        private void Control_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (dataGridView1.SelectedCells.Count == 0)
+            {
+                return;
+            }
+            int col = dataGridView1.SelectedCells[0].ColumnIndex;
+            if (dataGridView1.Columns[col].Name == "ExtraOffset") 
+            {
+                if (e.KeyChar == (char)Keys.Space)
+                {
+                    dataGridView1.EndEdit();
+                    TableData selTd = (TableData)dataGridView1.CurrentRow.DataBoundItem;
+                    ShowTableDescription(PCM, selTd);
+                    numExtraOffset.Value = selTd.ExtraOffset;
+                    e.Handled = true;
+                }
+            }
         }
 
         private void UPLogger_UpLogUpdated(object sender, UPLogger.UPLogString e)
@@ -400,6 +428,8 @@ namespace UniversalPatcher
                 }
                 frmT.Show();
                 frmT.LoadTable();
+                dataGridView1.Update();
+                dataGridView1.Refresh();
             }
             catch (Exception ex)
             {
@@ -587,7 +617,7 @@ namespace UniversalPatcher
                     }
                     //Debug.WriteLine("Column: " + c + ":, " + dataGridView1.Columns[c].HeaderText + ", index: ", dataGridView1.Columns[c].DisplayIndex.ToString());
                 }
-                if (sortIndex > dataGridView1.Columns.Count)
+                if (sortIndex < dataGridView1.Columns.Count)
                 {
                     dataGridView1.Columns[sortIndex].HeaderCell.SortGlyphDirection = strSortOrder;
                 }
@@ -1571,10 +1601,11 @@ namespace UniversalPatcher
                 }
                 for (int r = 0; r < dataGridView1.SelectedRows.Count; r++)
                 {
-                    int row = dataGridView1.SelectedRows[r].Index;
-                    int id = Convert.ToInt32(dataGridView1.Rows[row].Cells["id"].Value);
-                    PCM.tableDatas.RemoveAt(id);
-                    FilterTables();
+                    TableData rTd = (TableData)dataGridView1.SelectedRows[r].DataBoundItem;
+                    PCM.tableDatas.Remove(rTd);
+                    dataGridView1.Update();
+                    dataGridView1.Refresh();
+                    //FilterTables();
                 }
             }
             catch (Exception ex)
@@ -1595,7 +1626,7 @@ namespace UniversalPatcher
 
         private void PeekTableValuesWithCompare(TableData shTd)
         {
-            PeekTableValues(shTd, PCM); //Show values from current file 
+            PeekTableValues(shTd, PCM,true, Color.Blue); //Show values from current file 
             foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
             {
                 PcmFile peekPCM = (PcmFile)mi.Tag;
@@ -1605,13 +1636,13 @@ namespace UniversalPatcher
                     if (compTd != null)
                     {
                         txtDescription.AppendText(peekPCM.FileName + ": [" + shTd.TableName + "]" + Environment.NewLine);
-                        PeekTableValues(compTd, peekPCM);
+                        PeekTableValues(compTd, peekPCM,true, Color.Blue);
                     }
                 }
             }
         }
 
-        private void PeekTableValues(TableData shTd, PcmFile peekPCM)
+        private void PeekTableValues(TableData shTd, PcmFile peekPCM, bool ShowMinMax, Color color)
         {
             try
             {
@@ -1621,7 +1652,7 @@ namespace UniversalPatcher
                     return;
                 }
                 txtDescription.SelectionFont = new Font(txtDescription.Font, FontStyle.Regular);
-                txtDescription.SelectionColor = Color.Blue;
+                txtDescription.SelectionColor = color;
                 string minMax = " [";
                 if (shTd.Min > double.MinValue)
                     minMax += " Min: " + shTd.Min.ToString();
@@ -1631,10 +1662,14 @@ namespace UniversalPatcher
                     minMax = "";
                 else
                     minMax += "] ";
+                if (!ShowMinMax)
+                {
+                    minMax = "";
+                }
                 if (shTd.Dimensions() == 1)
                 {
-                    double curVal = GetValue(peekPCM.buf, (uint)(shTd.addrInt + shTd.Offset), shTd, 0, peekPCM);
-                    UInt64 rawVal = (UInt64)GetRawValue(peekPCM.buf, (uint)(shTd.addrInt + shTd.Offset), shTd, 0, peekPCM.platformConfig.MSB);
+                    double curVal = GetValue(peekPCM.buf, (uint)(shTd.addrInt + shTd.Offset + shTd.ExtraOffset), shTd, 0, peekPCM);
+                    UInt64 rawVal = (UInt64)GetRawValue(peekPCM.buf, (uint)(shTd.addrInt + shTd.Offset + shTd.ExtraOffset), shTd, 0, peekPCM.platformConfig.MSB);
                     string valTxt = curVal.ToString();
                     string unitTxt = " " + shTd.Units;
                     string maskTxt = "";
@@ -1726,7 +1761,8 @@ namespace UniversalPatcher
                 {
                     //string tblData = "Current values: " + minMax + Environment.NewLine;
                     StringBuilder tblData = new StringBuilder("Current values: " + minMax + Environment.NewLine);
-                    uint addr = (uint)(shTd.addrInt + shTd.Offset);
+                    uint addr = (uint)(shTd.addrInt + shTd.Offset + shTd.ExtraOffset);
+                    double firstVal = GetValue(peekPCM.buf, addr, shTd, 0, peekPCM);
                     if (shTd.RowMajor)
                     {
                         for (int r = 0; r < shTd.Rows; r++)
@@ -1736,6 +1772,14 @@ namespace UniversalPatcher
                                 double curVal = GetValue(peekPCM.buf, addr, shTd, 0, peekPCM);
                                 addr += (uint)GetElementSize(shTd.DataType);
                                 tblData.Append("[" + curVal.ToString("#0.0") + "]");
+                                if (!ShowMinMax)
+                                {
+                                    if (curVal > shTd.Max || curVal < shTd.Min)
+                                    {
+                                        Debug.WriteLine("Value out of range: " + curVal.ToString());
+                                        return;
+                                    }
+                                }
                             }
                             tblData.Append(Environment.NewLine);
                         }
@@ -1752,6 +1796,14 @@ namespace UniversalPatcher
                                 double curVal = GetValue(peekPCM.buf, addr, shTd, 0, peekPCM);
                                 addr += (uint)GetElementSize(shTd.DataType);
                                 tblRows[r] += "[" + curVal.ToString("#0.0") + "]";
+                                if (!ShowMinMax)
+                                {
+                                    if (curVal > shTd.Max || curVal < shTd.Min)
+                                    {
+                                        Debug.WriteLine("Value out of range: " + curVal.ToString());
+                                        return;
+                                    }
+                                }
                             }
                         }
                         for (int r = 0; r < shTd.Rows; r++)
@@ -1803,6 +1855,8 @@ namespace UniversalPatcher
                 }
                 TableData selTd = (TableData)dataGridView1.CurrentRow.DataBoundItem;
                 ShowTableDescription(PCM,selTd);
+                numExtraOffset.Value = selTd.ExtraOffset;
+                ExtraOffsetFirstTry = true;
             }
             catch (Exception ex)
             {
@@ -2101,7 +2155,11 @@ namespace UniversalPatcher
             dataGridView1.Columns[menuItem.Name].Visible = menuItem.Checked;
             columnsModified = true;
             if (Properties.Settings.Default.WorkingMode != 2)
-                FilterTables();
+            {
+                dataGridView1.Update();
+                dataGridView1.Refresh();
+                //FilterTables();
+            }
         }
 
         private void resetTunerModeColumnsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2109,7 +2167,9 @@ namespace UniversalPatcher
             Properties.Settings.Default.TunerModeColumns = "id,TableName,Category,Units,Columns,Rows,TableDescription";
             Properties.Settings.Default.TunerModeColumnWidth = "35,100,237,135,100,100,100,100,100,114,100,100,100,100,60,46,100,100,100,100,100,493,100,";
             Properties.Settings.Default.Save();
-            FilterTables();
+            dataGridView1.Update();
+            dataGridView1.Refresh();
+            //FilterTables();
         }
 
         private void OpenNewBinFile(bool asCompare, List<string> fileList = null)
@@ -2278,8 +2338,8 @@ namespace UniversalPatcher
                 if (td1.BitMask != null && td1.BitMask.Length > 0)
                 {
                     //Check only bit
-                    double orgVal = GetValue(pcm1.buf, td1.addrInt, td1, (uint)td1.Offset, pcm1);
-                    double compVal = GetValue(pcm2.buf, td2.addrInt, td2, (uint)td2.Offset, pcm2);
+                    double orgVal = GetValue(pcm1.buf, td1.addrInt, td1, (int)(td1.Offset + td1.ExtraOffset), pcm1);
+                    double compVal = GetValue(pcm2.buf, td2.addrInt, td2, (int)(td2.Offset + td2.ExtraOffset), pcm2);
                     if (orgVal == compVal)
                         return null;
                     else
@@ -2287,8 +2347,8 @@ namespace UniversalPatcher
                 }
                 byte[] buff1 = new byte[tbSize];
                 byte[] buff2 = new byte[tbSize];
-                Array.Copy(pcm1.buf, td1.addrInt + td1.Offset, buff1, 0, tbSize);
-                Array.Copy(pcm2.buf, td2.addrInt + td2.Offset, buff2, 0, tbSize);
+                Array.Copy(pcm1.buf, td1.addrInt + td1.Offset + td1.ExtraOffset, buff1, 0, tbSize);
+                Array.Copy(pcm2.buf, td2.addrInt + td2.Offset + td2.ExtraOffset, buff2, 0, tbSize);
                 if (buff1.SequenceEqual(buff2))
                     return null;
                 else
@@ -2369,7 +2429,7 @@ namespace UniversalPatcher
                     {
                         TableData tData = PCM.tableDatas[t1];
                         uint start = tData.addrInt;
-                        uint end = (uint)(start + GetElementSize(tData.DataType) * tData.Rows * tData.Columns + tData.Offset);
+                        uint end = (uint)(start + GetElementSize(tData.DataType) * tData.Rows * tData.Columns + tData.Offset + tData.ExtraOffset);
                         for (uint b = start; b < end; b++)
                             buf[b] = 1;
                     }
@@ -2571,7 +2631,9 @@ namespace UniversalPatcher
                         if (PCM.tableDatas[id].guid == lastSelectTd.guid)
                         {
                             PCM.tableDatas.Insert(id, fte.td);
-                            FilterTables();
+                            dataGridView1.Update();
+                            dataGridView1.Refresh();
+                            //FilterTables();
                             break;
                         }
                     }
@@ -2605,7 +2667,9 @@ namespace UniversalPatcher
                         if (PCM.tableDatas[id].guid == lastSelectTd.guid)
                         {
                             PCM.tableDatas[id] = fte.td;
-                            FilterTables();
+                            dataGridView1.Update();
+                            dataGridView1.Refresh();
+                            //FilterTables();
                             break;
                         }
                     }
@@ -2627,7 +2691,9 @@ namespace UniversalPatcher
         private void deleteRowToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PCM.tableDatas.Remove(lastSelectTd);
-            FilterTables();
+            dataGridView1.Update();
+            dataGridView1.Refresh();
+            //FilterTables();
         }
 
         private void duplicateTableConfigToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2638,7 +2704,9 @@ namespace UniversalPatcher
                 if (PCM.tableDatas[id].guid == lastSelectTd.guid)
                 {
                     PCM.tableDatas.Insert(id, newTd);
-                    FilterTables();
+                    dataGridView1.Update();
+                    dataGridView1.Refresh();
+                    //FilterTables();
                     break;
                 }
             }
@@ -3032,7 +3100,7 @@ namespace UniversalPatcher
                     frmTE.PrepareTable(PCM, pTd, null, "A");
                     frmTE.LoadTable();
                     uint step = (uint)GetElementSize(pTd.DataType);
-                    uint addr = (uint)(pTd.addrInt + pTd.Offset);
+                    uint addr = (uint)(pTd.addrInt + pTd.Offset + pTd.ExtraOffset);
                     if (pTd.RowMajor)
                     {
                         for (int r = 0; r < pTd.Rows; r++)
@@ -3106,7 +3174,7 @@ namespace UniversalPatcher
                     frmTE.PrepareTable(PCM, srcTd, null, "A");
                     frmTE.LoadTable();
                     uint step = (uint)GetElementSize(srcTd.DataType);
-                    uint addr = (uint)(srcTd.addrInt + srcTd.Offset);
+                    uint addr = (uint)(srcTd.addrInt + srcTd.Offset + srcTd.ExtraOffset);
                     patchTd.Values = "TablePatch: ";
                     if (srcTd.RowMajor)
                     {
@@ -3212,6 +3280,7 @@ namespace UniversalPatcher
                 showTablesWithEmptyAddressToolStripMenuItem.Visible = true;
                 unitsToolStripMenuItem.Visible = true;
                 resetTunerModeColumnsToolStripMenuItem.Visible = false;
+                groupExtraOffset.Visible = true;
                 btnFlash.Visible = true;
 
             }
@@ -3240,6 +3309,7 @@ namespace UniversalPatcher
                 showTablesWithEmptyAddressToolStripMenuItem.Visible = false;
                 unitsToolStripMenuItem.Visible = false;
                 resetTunerModeColumnsToolStripMenuItem.Visible = false;
+                groupExtraOffset.Visible = false;
                 btnFlash.Visible = false;
             }
         }
@@ -3287,6 +3357,8 @@ namespace UniversalPatcher
             labelCategory.Visible = false;
             comboTableCategory.Visible = false;
             comboTableCategory.Text = "_All";
+            btnExecute.Visible = false;
+            txtMath.Visible = false;
         }
 
         private void UpdateFileInfoTab()
@@ -3362,6 +3434,8 @@ namespace UniversalPatcher
             comboFilterBy.Visible = true;
             labelCategory.Visible = true;
             comboTableCategory.Visible = true;
+            btnExecute.Visible = true;
+            txtMath.Visible = true;
         }
 
         private void TreeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -4745,6 +4819,446 @@ namespace UniversalPatcher
             fc.Show();
         }
 
+        private void btnExecute_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+                foreach (DataGridViewCell cell in dataGridView1.SelectedCells)
+                {
+                    string mathStr = txtMath.Text.ToLower().Replace("x", cell.Value.ToString());
+                    double newvalue = parser.Parse(mathStr);
+                    cell.Value = newvalue;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error");
+            }
+
+        }
+
+        private void TestExtraOffset(string Range, bool FilterOutOfRange, bool ColorCoding, bool OffsetBytes)
+        {
+            try
+            {
+                string[] parts = Range.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length != 2)
+                {
+                    LoggerBold("Supply range in format: Start - End");
+                    return;
+                }
+                int Start;
+                int End;
+                if (!int.TryParse(parts[0], out Start))
+                {
+                    LoggerBold("Can't convert from hex: " + parts[0]);
+                    return;
+                }
+                if (!int.TryParse(parts[1], out End))
+                {
+                    LoggerBold("Can't convert to integer: " + parts[1]);
+                    return;
+                }
+
+                TableData tdTmp = ((TableData)dataGridView1.CurrentRow.DataBoundItem).ShallowCopy(false);
+
+                List<byte> targetBytes = new List<byte>();
+                PcmFile peekPCM = null;
+                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                {
+                    peekPCM = (PcmFile)mi.Tag;
+                    if (peekPCM.FileName != PCM.FileName)
+                    {
+                        if (tdTmp.Offset > 0)
+                        {
+                            for (int o=0;o<tdTmp.Offset;o++)
+                            {
+                                targetBytes.Add(peekPCM.buf[tdTmp.addrInt + o]);
+                            }
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        peekPCM = null;
+                    }
+                }
+
+                if (peekPCM == null)
+                {
+                    ColorCoding = false;
+                }
+                txtDescription.AppendText(Environment.NewLine);
+                int OrigEO = tdTmp.ExtraOffset;
+                for (int eo = Start; eo<=End; eo++)
+                {
+                    tdTmp.ExtraOffset = OrigEO + eo;
+                    uint addr = tdTmp.StartAddress();
+                    Color color = Color.Blue;
+                    //double val = GetValue(PCM.buf, addr, tdTmp, 0, PCM);
+                    bool offRange = false;
+                    if (targetBytes.Count > 0 && OffsetBytes)
+                    {
+                        for (int o=0; o< tdTmp.Offset;o++)
+                        {
+                            if (PCM.buf[tdTmp.addrInt + tdTmp.ExtraOffset + o] != targetBytes[o])
+                            {
+                                offRange = true;    //Display only matches
+                                break;
+                            }
+                        }
+                    }
+                    if (!offRange)
+                    {
+                        if (ColorCoding || FilterOutOfRange)
+                        {
+                            uint addrA = tdTmp.StartAddress();
+                            uint addrB = (uint)(tdTmp.addrInt + tdTmp.Offset);
+                            double maxVariation = 0;
+                            for (int i = 0; i < tdTmp.Elements(); i++)
+                            {
+                                double valA = GetValue(PCM.buf, addrA, tdTmp, 0, PCM);
+                                double valB = GetValue(peekPCM.buf, addrB, tdTmp, 0, PCM);
+                                if (FilterOutOfRange && (valB > tdTmp.Max || valB < tdTmp.Min))
+                                {
+                                    Debug.WriteLine("Value out of range: " + valB.ToString());
+                                    offRange = true;
+                                    break;
+                                }
+                                double variation = Math.Abs((valA - valB) / valB);
+                                if (variation > maxVariation)
+                                {
+                                    maxVariation = variation;
+                                }
+                                addrA += (uint)tdTmp.ElementSize();
+                                addrB += (uint)tdTmp.ElementSize();
+                            }
+                            if (maxVariation == 0)
+                            {
+                                color = Color.Red;
+                            }
+                            else if (maxVariation <= 0.1)
+                            {
+                                color = Color.Green;
+                            }
+                            else
+                            {
+                                color = Color.Blue;
+                            }
+                        }
+                    }
+                    if (!offRange)
+                    {
+                        txtDescription.AppendText("Extra Offset: " + tdTmp.ExtraOffset.ToString() + " [" + addr.ToString("X") + "]" + Environment.NewLine);
+                        PeekTableValues(tdTmp, PCM, false, color);
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner testExtraOffset, line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void testExtraOffsetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmExtraOffset feo = new frmExtraOffset();
+            feo.Text = "Offset range";
+            feo.TextBox1.Text = "-10,10";
+            feo.chkFilterOutOfRange.Visible = true;
+            if (feo.ShowDialog() == DialogResult.OK)
+            {
+                TestExtraOffset(feo.TextBox1.Text, feo.chkFilterOutOfRange.Checked, feo.chkColorCoding.Checked, feo.chkOffsetBytes.Checked);
+            }
+            feo.Dispose();
+        }
+
+        private void FindExtraOffset(bool Fwd)
+        {
+            try
+            {
+                TableData tdTmp = ((TableData)dataGridView1.CurrentRow.DataBoundItem).ShallowCopy(false);
+
+                double target = double.MaxValue;
+                UInt64 Target3D = UInt64.MaxValue;
+                PcmFile peekPCM = null;
+                TableData compTd = null;
+                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                {
+                    peekPCM = (PcmFile)mi.Tag;
+                    if (peekPCM.FileName != PCM.FileName)
+                    {
+                        //compTd = FindTableData(tdTmp, peekPCM.tableDatas);
+                        compTd = tdTmp.ShallowCopy(true);
+                        if (compTd != null)
+                        {
+                            target = GetValue(peekPCM.buf, compTd.addrInt, compTd, compTd.Offset, peekPCM);
+                            if (compTd.Offset == 4)
+                            {
+                                //Special case
+                                Target3D = ReadUint32(peekPCM.buf, compTd.addrInt, peekPCM.platformConfig.MSB);
+                            }
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        peekPCM = null;
+                    }
+                }
+                if (peekPCM == null)
+                {
+                    LoggerBold("Compare file not loaded");
+                    return;
+                }
+
+                txtDescription.AppendText(Environment.NewLine);
+                int step = 1;
+                if (!Fwd)
+                {
+                    step = -1;
+                }
+                bool found = false;
+                Logger("Searching... ", false);
+                if (ExtraOffsetFirstTry)
+                {
+                    ExtraOffsetFirstTry = false;
+                }
+                else
+                {
+                    tdTmp.ExtraOffset += step;
+                }                
+                for (int eo = tdTmp.ExtraOffset; (tdTmp.addrInt + tdTmp.Offset + eo) < PCM.fsize && (tdTmp.addrInt + tdTmp.Offset + eo) > 0; eo += step)
+                {
+                    int hits = 0;
+                    if ((tdTmp.addrInt + tdTmp.Offset + tdTmp.ExtraOffset + tdTmp.Size()) > PCM.fsize)
+                    {
+                        hits = 0;
+                        break;
+                    }
+                    tdTmp.ExtraOffset = eo;
+                    uint cmpAddr = (uint)(compTd.addrInt + compTd.Offset);
+                    uint addr = (uint)(tdTmp.addrInt + tdTmp.Offset + eo);
+                    for (int r=0; r<tdTmp.Elements(); r++)
+                    {
+                        if ((addr + tdTmp.ElementSize()) > PCM.fsize || addr <= 0)
+                        {
+                            hits=0;
+                            break;
+                        }
+                        if (GetRawValue(peekPCM.buf, cmpAddr, compTd, 0, peekPCM.platformConfig.MSB) == GetRawValue(PCM.buf, addr, tdTmp, 0, PCM.platformConfig.MSB))
+                        {
+                            hits++;
+                        }
+                        else
+                        {
+                            hits = 0;
+                            break;
+                        }
+                        addr += (uint)tdTmp.ElementSize();
+                        cmpAddr += (uint)compTd.ElementSize();
+                    }
+                    if (hits == tdTmp.Elements())
+                    {
+                        txtDescription.AppendText("Extra Offset: " + eo.ToString() + " [" + (tdTmp.addrInt + tdTmp.Offset + tdTmp.ExtraOffset).ToString("X") + "]" + Environment.NewLine);
+                        PeekTableValues(tdTmp, PCM, false, Color.Red);
+                        dataGridView1.CurrentRow.Cells["ExtraOffset"].Value = eo;
+                        numExtraOffset.Value = eo;
+                        dataGridView1.EndEdit();
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    Logger(" Match not found");
+                }
+                else
+                {
+                    Logger(" [OK]");
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner testExtraOffset, line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void btnExtraOffsetNext_Click(object sender, EventArgs e)
+        {
+            FindExtraOffset(true);
+        }
+
+        private void radioExtraOffsetMinus_CheckedChanged(object sender, EventArgs e)
+        {
+            ExtraOffsetFirstTry = true;
+        }
+
+        private void numExtraOffset_ValueChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                TableData tdTmp = (TableData)dataGridView1.CurrentRow.DataBoundItem;
+                tdTmp.ExtraOffset = (int)numExtraOffset.Value;
+                dataGridView1.CurrentRow.Cells["ExtraOffset"].Value = tdTmp.ExtraOffset;
+                //dataGridView1.EndEdit();
+                if (clearPreviewToolStripMenuItem.Checked)
+                {
+                    TableData selTd = (TableData)dataGridView1.CurrentRow.DataBoundItem;
+                    ShowTableDescription(PCM, selTd);
+                }
+                else
+                {
+                    PeekTableValues(tdTmp, PCM, false, Color.Blue);
+                    if (appendFocusToolStripMenuItem.Checked)
+                    {
+                        txtDescription.SelectionStart = txtDescription.Text.Length;
+                        txtDescription.ScrollToCaret();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTuner numExtraOffset_ValueChanged, line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void btnExtraOffsetPrev_Click(object sender, EventArgs e)
+        {
+            FindExtraOffset(false);
+        }
+
+        private void appendToPreviewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            appendToPreviewToolStripMenuItem.Checked = true;
+            clearPreviewToolStripMenuItem.Checked = false;
+            appendFocusToolStripMenuItem.Checked = false;
+        }
+
+        private void clearPreviewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            appendToPreviewToolStripMenuItem.Checked = false;
+            clearPreviewToolStripMenuItem.Checked = true;
+            appendFocusToolStripMenuItem.Checked = false;
+
+        }
+
+        private void appendFocusToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            appendToPreviewToolStripMenuItem.Checked = false;
+            clearPreviewToolStripMenuItem.Checked = false;
+            appendFocusToolStripMenuItem.Checked = true;
+        }
+
+        private void addressRelativeDiffToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                TableData selTd = (TableData)dataGridView1.CurrentRow.DataBoundItem;
+                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                {
+                    PcmFile peekPCM = (PcmFile)mi.Tag;
+                    if (peekPCM.FileName != PCM.FileName)
+                    {
+                        int seg = peekPCM.GetSegmentNumber((uint)(selTd.addrInt + selTd.Offset));
+                        int diff = (int)PCM.segmentAddressDatas[seg].SegmentBlocks[0].Start - (int)peekPCM.segmentAddressDatas[seg].SegmentBlocks[0].Start;
+                        Logger("Segment address difference: " + diff.ToString());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTuner addressRelativeDiffToolStripMenuItem1_Click, line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void btnExtraOffsetTest_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                TableData tdTmp = ((TableData)dataGridView1.CurrentRow.DataBoundItem).ShallowCopy(true);
+                tdTmp.ExtraOffset = (int)numExtraOffsetTest.Value;
+                ShowTableDescription(PCM, tdTmp);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTuner btnExtraOffsetTest_Click, line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void btnExtraOffsetTestApply_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                TableData tdTmp = (TableData)dataGridView1.CurrentRow.DataBoundItem;
+                tdTmp.ExtraOffset = (int)numExtraOffsetTest.Value;
+                dataGridView1.CurrentRow.Cells["ExtraOffset"].Value = tdTmp.ExtraOffset;
+                ShowTableDescription(PCM, tdTmp);
+                numExtraOffset.Value = tdTmp.ExtraOffset;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTuner btnExtraOffsetTestApply_Click, line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void addNewTableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                TableData newTd = new TableData();
+                frmTdEditor fte = new frmTdEditor();
+                fte.td = newTd;
+                fte.LoadTd();
+                if (fte.ShowDialog() == DialogResult.OK)
+                {
+                    PCM.tableDatas.Add(fte.td);
+                    FilterTables();
+                }
+                fte.Dispose();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
+            }
+        }
     }
 }
 

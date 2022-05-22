@@ -89,6 +89,7 @@ namespace UniversalPatcher
             }         
         }
         public int Offset { get; set; }
+        public int ExtraOffset { get; set; }
         public InDataType DataType { get; set; }
         //public byte ElementSize;
         public string Math { get; set; }
@@ -143,12 +144,12 @@ namespace UniversalPatcher
 
         public uint StartAddress()
         {
-            return (uint)(addrInt + Offset);
+            return (uint)(addrInt + Offset + ExtraOffset);
         }
 
         public uint EndAddress()
         {
-            return (uint)(addrInt + Offset + Size());
+            return (uint)(addrInt + Offset + ExtraOffset + Size());
         }
 
         public int Size()
@@ -205,6 +206,10 @@ namespace UniversalPatcher
             Min = tSeek.Min;
             Max = tSeek.Max;
             DispUnits = tSeek.DispUnits;
+            ExtraCategories = tSeek.ExtraCategories;
+            ExtraDescription = tSeek.ExtraDescription;
+            ExtraTableName = tSeek.ExtraTableName;
+
             if (!PCM.tableCategories.Contains(Category))
                 PCM.tableCategories.Add(Category);
         }
