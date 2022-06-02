@@ -4441,6 +4441,7 @@ namespace UniversalPatcher
                 uPLogger.UpLogUpdated -= UPLogger_UpLogUpdated;
             }
         }
+
     }
 }
 

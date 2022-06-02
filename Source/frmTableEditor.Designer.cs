@@ -51,6 +51,7 @@ namespace UniversalPatcher
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportCSVToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.saveOBD2DescriptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showHistogramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoResizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.swapXyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -60,6 +61,7 @@ namespace UniversalPatcher
             this.graphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showGraphicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showTableVisualizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.offsetVisualizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkSwapXY = new System.Windows.Forms.CheckBox();
             this.numColumn = new System.Windows.Forms.NumericUpDown();
@@ -81,7 +83,6 @@ namespace UniversalPatcher
             this.radioMultiplier = new System.Windows.Forms.RadioButton();
             this.radioAbsolute = new System.Windows.Forms.RadioButton();
             this.chkRawHex = new System.Windows.Forms.CheckBox();
-            this.showHistogramToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -255,6 +256,13 @@ namespace UniversalPatcher
             this.saveOBD2DescriptionsToolStripMenuItem.Text = "Save OBD2 Descriptions";
             this.saveOBD2DescriptionsToolStripMenuItem.Click += new System.EventHandler(this.saveOBD2DescriptionsToolStripMenuItem_Click);
             // 
+            // showHistogramToolStripMenuItem
+            // 
+            this.showHistogramToolStripMenuItem.Name = "showHistogramToolStripMenuItem";
+            this.showHistogramToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.showHistogramToolStripMenuItem.Text = "Show Histogram";
+            this.showHistogramToolStripMenuItem.Click += new System.EventHandler(this.showHistogramToolStripMenuItem_Click);
+            // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -306,24 +314,32 @@ namespace UniversalPatcher
             // 
             this.graphToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showGraphicToolStripMenuItem,
-            this.showTableVisualizationToolStripMenuItem});
+            this.showTableVisualizationToolStripMenuItem,
+            this.offsetVisualizerToolStripMenuItem});
             this.graphToolStripMenuItem.Name = "graphToolStripMenuItem";
-            this.graphToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
-            this.graphToolStripMenuItem.Text = "Graph";
+            this.graphToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.graphToolStripMenuItem.Text = "View";
             // 
             // showGraphicToolStripMenuItem
             // 
             this.showGraphicToolStripMenuItem.Name = "showGraphicToolStripMenuItem";
-            this.showGraphicToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.showGraphicToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showGraphicToolStripMenuItem.Text = "Show graphic";
             this.showGraphicToolStripMenuItem.Click += new System.EventHandler(this.showGraphicToolStripMenuItem_Click);
             // 
             // showTableVisualizationToolStripMenuItem
             // 
             this.showTableVisualizationToolStripMenuItem.Name = "showTableVisualizationToolStripMenuItem";
-            this.showTableVisualizationToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.showTableVisualizationToolStripMenuItem.Text = "Show table visualization";
+            this.showTableVisualizationToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showTableVisualizationToolStripMenuItem.Text = "Table visualizer";
             this.showTableVisualizationToolStripMenuItem.Click += new System.EventHandler(this.showTableVisualizationToolStripMenuItem_Click);
+            // 
+            // offsetVisualizerToolStripMenuItem
+            // 
+            this.offsetVisualizerToolStripMenuItem.Name = "offsetVisualizerToolStripMenuItem";
+            this.offsetVisualizerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.offsetVisualizerToolStripMenuItem.Text = "Offset visualizer";
+            this.offsetVisualizerToolStripMenuItem.Click += new System.EventHandler(this.offsetVisualizerToolStripMenuItem_Click);
             // 
             // compareToolStripMenuItem
             // 
@@ -598,13 +614,6 @@ namespace UniversalPatcher
             this.chkRawHex.UseVisualStyleBackColor = true;
             this.chkRawHex.CheckedChanged += new System.EventHandler(this.chkRawHex_CheckedChanged);
             // 
-            // showHistogramToolStripMenuItem
-            // 
-            this.showHistogramToolStripMenuItem.Name = "showHistogramToolStripMenuItem";
-            this.showHistogramToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
-            this.showHistogramToolStripMenuItem.Text = "Show Histogram";
-            this.showHistogramToolStripMenuItem.Click += new System.EventHandler(this.showHistogramToolStripMenuItem_Click);
-            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -699,5 +708,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem pasteSpecialToolStripMenuItem;
         private ToolStripMenuItem showTableVisualizationToolStripMenuItem;
         private ToolStripMenuItem showHistogramToolStripMenuItem;
+        private ToolStripMenuItem offsetVisualizerToolStripMenuItem;
     }
 }

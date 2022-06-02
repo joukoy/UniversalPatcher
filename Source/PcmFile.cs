@@ -1703,8 +1703,16 @@ namespace UniversalPatcher
                     string[] StartEnd = Part.Split('-');
                     Block B = new Block();
                     int Offset = 0;
+                    int EndOffset = 0;
                     bool isWord = false;
                     ushort Multiple = 1;
+
+                    bool useLength = false;
+                    if (StartEnd.Length > 1 && StartEnd[1].StartsWith("L"))
+                    {
+                        useLength = true;
+                        StartEnd[1] = StartEnd[1].Replace("L", "");
+                    }
 
                     if (StartEnd[0].ToLower().StartsWith("seek:"))
                     {
@@ -1739,7 +1747,7 @@ namespace UniversalPatcher
                         uint x;
                         if (!HexToUint(SO[1], out x))
                             throw new Exception("Can't decode from HEX: " + SO[1] + " (" + Line + ")");
-                        Offset = ~(int)x;
+                        Offset = (int)(-1 * x);
                     }
 
 
@@ -1800,8 +1808,28 @@ namespace UniversalPatcher
                             }
                         }
                     }
-                    else if (!StartEnd[1].Contains("seek"))
+                    
+                    if (StartEnd.Length > 1 && !StartEnd[1].Contains("seek"))
                     {
+                        if (StartEnd[1].Contains(">"))
+                        {
+                            string[] SO = StartEnd[1].Split('>');
+                            StartEnd[1] = SO[0];
+                            uint x;
+                            if (!HexToUint(SO[1], out x))
+                                throw new Exception("Can't decode from HEX: " + SO[1] + " (" + Line + ")");
+                            EndOffset = (int)x;
+                        }
+                        if (StartEnd[1].Contains("<"))
+                        {
+                            string[] SO = StartEnd[1].Split('<');
+                            StartEnd[1] = SO[0];
+                            uint x;
+                            if (!HexToUint(SO[1], out x))
+                                throw new Exception("Can't decode from HEX: " + SO[1] + " (" + Line + ")");
+                            EndOffset = (int)(-1 * x);
+                        }
+
                         if (!HexToUint(StartEnd[1].Replace("@", ""), out B.End))
                             throw new Exception("Can't decode from HEX: " + StartEnd[1].Replace("@", "") + " (" + Line + ")");
                         if (B.End >= buf.Length)    //Make 1MB config work with 512kB bin
@@ -1822,8 +1850,15 @@ namespace UniversalPatcher
                             if (HexToUint(StartEnd[1].Replace("@", ""), out end))
                                 B.End = (uint)buf.Length - end - 1;
                         }
-                        B.Start += (uint)Offset;
-                        B.End += (uint)Offset;
+                        B.Start = (uint)(B.Start + Offset);
+                        if (EndOffset != 0)
+                            B.End = (uint)(B.End + EndOffset);
+                        else
+                            B.End = (uint)(B.End + Offset + EndOffset);
+                        if (useLength)
+                        {
+                            B.End = B.Start -1 + B.End;
+                        }
                         Blocks.Add(B);
                     }
                     i++;

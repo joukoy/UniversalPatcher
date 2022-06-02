@@ -159,7 +159,7 @@ namespace UniversalPatcher
             if (listSegments.SelectedItems.Count == 0)
                 return;
             int CurrentSel = (int)listSegments.SelectedItems[0].Tag;
-            SegmentConfig S = PCM.Segments[CurrentSel];
+            SegmentConfig S = PCM.Segments[CurrentSel].ShallowCopy();
             PCM.Segments.Add(S);
             frmSegmentSettings frmSS = new frmSegmentSettings();
             frmSS.EditSegment(PCM, PCM.Segments.Count - 1);

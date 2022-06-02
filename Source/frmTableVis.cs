@@ -20,6 +20,7 @@ namespace UniversalPatcher
             this.PCM = PCM;
             this.td = td;
             this.Text = "Table data visualizer [" + td.TableName +"]";
+            richTableData.EnableContextMenu();
         }
 
         private PcmFile PCM;

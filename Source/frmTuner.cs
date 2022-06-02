@@ -390,7 +390,7 @@ namespace UniversalPatcher
                     if (PCM.FileName != comparePCM.FileName)
                     {
                         Logger("Adding file: " + Path.GetFileName(comparePCM.FileName) + " to compare menu... ", false);
-                        if (PCM.OS == comparePCM.OS)
+/*                        if (PCM.OS == comparePCM.OS)
                         {
                             PcmFile tmpPcm = comparePCM.ShallowCopy(); //Don't mess with original
                             tmpPcm.tableDatas = PCM.tableDatas;
@@ -398,7 +398,7 @@ namespace UniversalPatcher
                             Logger("[OK]");
                         }
                         else
-                        {
+*/                        {
                             TableData xTd = null;
                             for (int y = 0; y < tableTds.Count; y++)
                             {

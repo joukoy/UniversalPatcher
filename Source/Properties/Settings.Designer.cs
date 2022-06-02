@@ -1409,5 +1409,53 @@ namespace UniversalPatcher.Properties {
                 this["LoggerJ2534SettingsFile2"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int PasteSpecialMode {
+            get {
+                return ((int)(this["PasteSpecialMode"]));
+            }
+            set {
+                this["PasteSpecialMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PasteSpecialPositiveFormula {
+            get {
+                return ((string)(this["PasteSpecialPositiveFormula"]));
+            }
+            set {
+                this["PasteSpecialPositiveFormula"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PasteSpecialNegativeFormula {
+            get {
+                return ((string)(this["PasteSpecialNegativeFormula"]));
+            }
+            set {
+                this["PasteSpecialNegativeFormula"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PasteSpecialTarget {
+            get {
+                return ((string)(this["PasteSpecialTarget"]));
+            }
+            set {
+                this["PasteSpecialTarget"] = value;
+            }
+        }
     }
 }

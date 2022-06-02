@@ -1812,6 +1812,12 @@ public class Upatcher
                 Offset = ~(int)x;
             }
 
+            bool useLength = false;
+            if (StartEnd.Length > 1 && StartEnd[1].StartsWith("L"))
+            {
+                useLength = true;
+                StartEnd[1] = StartEnd[1].Replace("L", "");
+            }
 
             if (!HexToUint(StartEnd[0].Replace("@", ""), out B.Start))
             {
@@ -1843,6 +1849,12 @@ public class Upatcher
                 if (HexToUint(StartEnd[1].Replace("@", ""), out end))
                     B.End = (uint)PCM.buf.Length - end - 1;
             }
+
+            if (useLength)
+            {
+                B.End = B.Start - 1 + B.End;
+            }
+
             B.Start += (uint)Offset;
             B.End += (uint)Offset;
             Blocks.Add(B);

@@ -30,18 +30,18 @@ namespace UniversalPatcher
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.radioAdd = new System.Windows.Forms.RadioButton();
-            this.radioMultiply = new System.Windows.Forms.RadioButton();
-            this.radioPercent = new System.Windows.Forms.RadioButton();
-            this.radioTarget = new System.Windows.Forms.RadioButton();
-            this.txtTarget = new System.Windows.Forms.TextBox();
-            this.radioCustom = new System.Windows.Forms.RadioButton();
-            this.label1 = new System.Windows.Forms.Label();
-            this.txtCustomPositive = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.txtCustomNegative = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtCustomNegative = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtCustomPositive = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.radioCustom = new System.Windows.Forms.RadioButton();
+            this.txtTarget = new System.Windows.Forms.TextBox();
+            this.radioTarget = new System.Windows.Forms.RadioButton();
+            this.radioPercent = new System.Windows.Forms.RadioButton();
+            this.radioMultiply = new System.Windows.Forms.RadioButton();
+            this.radioAdd = new System.Windows.Forms.RadioButton();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
@@ -67,55 +67,55 @@ namespace UniversalPatcher
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
-            // radioAdd
+            // label4
             // 
-            this.radioAdd.AutoSize = true;
-            this.radioAdd.Checked = true;
-            this.radioAdd.Location = new System.Drawing.Point(12, 17);
-            this.radioAdd.Name = "radioAdd";
-            this.radioAdd.Size = new System.Drawing.Size(44, 17);
-            this.radioAdd.TabIndex = 0;
-            this.radioAdd.TabStop = true;
-            this.radioAdd.Text = "Add";
-            this.radioAdd.UseVisualStyleBackColor = true;
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(9, 241);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(104, 13);
+            this.label4.TabIndex = 11;
+            this.label4.Text = "Example: C * 0.5 + X";
             // 
-            // radioMultiply
+            // label3
             // 
-            this.radioMultiply.AutoSize = true;
-            this.radioMultiply.Location = new System.Drawing.Point(12, 40);
-            this.radioMultiply.Name = "radioMultiply";
-            this.radioMultiply.Size = new System.Drawing.Size(60, 17);
-            this.radioMultiply.TabIndex = 1;
-            this.radioMultiply.Text = "Multiply";
-            this.radioMultiply.UseVisualStyleBackColor = true;
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(8, 218);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(180, 13);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "Table value = X, Clipboard value = C";
             // 
-            // radioPercent
+            // txtCustomNegative
             // 
-            this.radioPercent.AutoSize = true;
-            this.radioPercent.Location = new System.Drawing.Point(12, 63);
-            this.radioPercent.Name = "radioPercent";
-            this.radioPercent.Size = new System.Drawing.Size(94, 17);
-            this.radioPercent.TabIndex = 2;
-            this.radioPercent.Text = "Multiply % (+/-)";
-            this.radioPercent.UseVisualStyleBackColor = true;
+            this.txtCustomNegative.Location = new System.Drawing.Point(12, 189);
+            this.txtCustomNegative.Name = "txtCustomNegative";
+            this.txtCustomNegative.Size = new System.Drawing.Size(228, 20);
+            this.txtCustomNegative.TabIndex = 9;
             // 
-            // radioTarget
+            // label2
             // 
-            this.radioTarget.AutoSize = true;
-            this.radioTarget.Location = new System.Drawing.Point(12, 86);
-            this.radioTarget.Name = "radioTarget";
-            this.radioTarget.Size = new System.Drawing.Size(59, 17);
-            this.radioTarget.TabIndex = 3;
-            this.radioTarget.Text = "Target:";
-            this.radioTarget.UseVisualStyleBackColor = true;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(9, 173);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(145, 13);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "If clipboard value is negative:";
             // 
-            // txtTarget
+            // txtCustomPositive
             // 
-            this.txtTarget.Location = new System.Drawing.Point(77, 86);
-            this.txtTarget.Name = "txtTarget";
-            this.txtTarget.Size = new System.Drawing.Size(60, 20);
-            this.txtTarget.TabIndex = 4;
-            this.txtTarget.Text = "14.7";
+            this.txtCustomPositive.Location = new System.Drawing.Point(11, 150);
+            this.txtCustomPositive.Name = "txtCustomPositive";
+            this.txtCustomPositive.Size = new System.Drawing.Size(229, 20);
+            this.txtCustomPositive.TabIndex = 7;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(9, 129);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(140, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "If clipboard value is positive:";
             // 
             // radioCustom
             // 
@@ -127,55 +127,55 @@ namespace UniversalPatcher
             this.radioCustom.Text = "Custom:";
             this.radioCustom.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // txtTarget
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 129);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(140, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "If clipboard value is positive:";
+            this.txtTarget.Location = new System.Drawing.Point(77, 86);
+            this.txtTarget.Name = "txtTarget";
+            this.txtTarget.Size = new System.Drawing.Size(60, 20);
+            this.txtTarget.TabIndex = 4;
+            this.txtTarget.Text = "14.7";
             // 
-            // txtCustomPositive
+            // radioTarget
             // 
-            this.txtCustomPositive.Location = new System.Drawing.Point(11, 150);
-            this.txtCustomPositive.Name = "txtCustomPositive";
-            this.txtCustomPositive.Size = new System.Drawing.Size(229, 20);
-            this.txtCustomPositive.TabIndex = 7;
+            this.radioTarget.AutoSize = true;
+            this.radioTarget.Location = new System.Drawing.Point(12, 86);
+            this.radioTarget.Name = "radioTarget";
+            this.radioTarget.Size = new System.Drawing.Size(59, 17);
+            this.radioTarget.TabIndex = 3;
+            this.radioTarget.Text = "Target:";
+            this.radioTarget.UseVisualStyleBackColor = true;
             // 
-            // label2
+            // radioPercent
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(9, 173);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(145, 13);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "If clipboard value is negative:";
+            this.radioPercent.AutoSize = true;
+            this.radioPercent.Location = new System.Drawing.Point(12, 63);
+            this.radioPercent.Name = "radioPercent";
+            this.radioPercent.Size = new System.Drawing.Size(94, 17);
+            this.radioPercent.TabIndex = 2;
+            this.radioPercent.Text = "Multiply % (+/-)";
+            this.radioPercent.UseVisualStyleBackColor = true;
             // 
-            // txtCustomNegative
+            // radioMultiply
             // 
-            this.txtCustomNegative.Location = new System.Drawing.Point(12, 189);
-            this.txtCustomNegative.Name = "txtCustomNegative";
-            this.txtCustomNegative.Size = new System.Drawing.Size(228, 20);
-            this.txtCustomNegative.TabIndex = 9;
+            this.radioMultiply.AutoSize = true;
+            this.radioMultiply.Location = new System.Drawing.Point(12, 40);
+            this.radioMultiply.Name = "radioMultiply";
+            this.radioMultiply.Size = new System.Drawing.Size(60, 17);
+            this.radioMultiply.TabIndex = 1;
+            this.radioMultiply.Text = "Multiply";
+            this.radioMultiply.UseVisualStyleBackColor = true;
             // 
-            // label3
+            // radioAdd
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 218);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(180, 13);
-            this.label3.TabIndex = 10;
-            this.label3.Text = "Table value = X, Clipboard value = C";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 241);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(104, 13);
-            this.label4.TabIndex = 11;
-            this.label4.Text = "Example: C * 0.5 + X";
+            this.radioAdd.AutoSize = true;
+            this.radioAdd.Checked = true;
+            this.radioAdd.Location = new System.Drawing.Point(12, 17);
+            this.radioAdd.Name = "radioAdd";
+            this.radioAdd.Size = new System.Drawing.Size(44, 17);
+            this.radioAdd.TabIndex = 0;
+            this.radioAdd.TabStop = true;
+            this.radioAdd.Text = "Add";
+            this.radioAdd.UseVisualStyleBackColor = true;
             // 
             // btnCancel
             // 
@@ -209,6 +209,7 @@ namespace UniversalPatcher
             this.Controls.Add(this.groupBox1);
             this.Name = "frmPasteSpecial";
             this.Text = "Paste as:";
+            this.Load += new System.EventHandler(this.frmPasteSpecial_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);

@@ -50,6 +50,8 @@
             this.labelOf = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.numBytes = new System.Windows.Forms.NumericUpDown();
+            this.radioSize = new System.Windows.Forms.RadioButton();
+            this.radioReadSize = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numReadPairs)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -131,6 +133,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.radioReadSize);
+            this.groupBox2.Controls.Add(this.radioSize);
             this.groupBox2.Controls.Add(this.radioEndAbsolute);
             this.groupBox2.Controls.Add(this.radioReadEnd);
             this.groupBox2.Controls.Add(this.radioUseStart);
@@ -138,7 +142,7 @@
             this.groupBox2.Controls.Add(this.chkEnd);
             this.groupBox2.Location = new System.Drawing.Point(4, 127);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(296, 100);
+            this.groupBox2.Size = new System.Drawing.Size(296, 137);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "End address";
@@ -153,6 +157,7 @@
             this.radioEndAbsolute.TabStop = true;
             this.radioEndAbsolute.Text = "Use Address (HEX):";
             this.radioEndAbsolute.UseVisualStyleBackColor = true;
+            this.radioEndAbsolute.CheckedChanged += new System.EventHandler(this.radioEndAbsolute_CheckedChanged);
             // 
             // radioReadEnd
             // 
@@ -164,6 +169,7 @@
             this.radioReadEnd.TabStop = true;
             this.radioReadEnd.Text = "Read address from (HEX):";
             this.radioReadEnd.UseVisualStyleBackColor = true;
+            this.radioReadEnd.CheckedChanged += new System.EventHandler(this.radioReadEnd_CheckedChanged);
             // 
             // radioUseStart
             // 
@@ -200,7 +206,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(102, 236);
+            this.label2.Location = new System.Drawing.Point(102, 273);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 13);
             this.label2.TabIndex = 7;
@@ -208,7 +214,7 @@
             // 
             // txtOffset
             // 
-            this.txtOffset.Location = new System.Drawing.Point(173, 233);
+            this.txtOffset.Location = new System.Drawing.Point(173, 270);
             this.txtOffset.Name = "txtOffset";
             this.txtOffset.Size = new System.Drawing.Size(127, 20);
             this.txtOffset.TabIndex = 11;
@@ -301,11 +307,34 @@
             0,
             0});
             // 
+            // radioSize
+            // 
+            this.radioSize.AutoSize = true;
+            this.radioSize.Location = new System.Drawing.Point(10, 88);
+            this.radioSize.Name = "radioSize";
+            this.radioSize.Size = new System.Drawing.Size(122, 17);
+            this.radioSize.TabIndex = 11;
+            this.radioSize.TabStop = true;
+            this.radioSize.Text = "Segment size (HEX):";
+            this.radioSize.UseVisualStyleBackColor = true;
+            this.radioSize.CheckedChanged += new System.EventHandler(this.radioSize_CheckedChanged);
+            // 
+            // radioReadSize
+            // 
+            this.radioReadSize.AutoSize = true;
+            this.radioReadSize.Location = new System.Drawing.Point(10, 111);
+            this.radioReadSize.Name = "radioReadSize";
+            this.radioReadSize.Size = new System.Drawing.Size(129, 17);
+            this.radioReadSize.TabIndex = 12;
+            this.radioReadSize.TabStop = true;
+            this.radioReadSize.Text = "Read size from (HEX):";
+            this.radioReadSize.UseVisualStyleBackColor = true;
+            // 
             // frmEditSegmentAddr
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(412, 267);
+            this.ClientSize = new System.Drawing.Size(412, 302);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.numBytes);
             this.Controls.Add(this.labelOf);
@@ -355,5 +384,7 @@
         private System.Windows.Forms.Label labelOf;
         private System.Windows.Forms.Label label4;
         public System.Windows.Forms.NumericUpDown numBytes;
+        private System.Windows.Forms.RadioButton radioReadSize;
+        private System.Windows.Forms.RadioButton radioSize;
     }
 }

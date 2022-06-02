@@ -76,6 +76,10 @@ namespace UniversalPatcher
                 }
                 if (Parts[1].StartsWith("@"))
                     radioReadEnd.Checked = true;
+                else if (Parts[1].StartsWith("L@"))
+                    radioReadSize.Checked = true;
+                else if (Parts[1].StartsWith(""))
+                    radioSize.Checked = true;
                 else
                     radioEndAbsolute.Checked = true;
                 if (Parts[1].EndsWith("@"))
@@ -83,7 +87,7 @@ namespace UniversalPatcher
                 else
                     chkEnd.Checked = false;
 
-                txtEnd.Text = Parts[1].Replace("@", "");
+                txtEnd.Text = Parts[1].Replace("@", "").Replace("L","");
             }
         }
 
@@ -116,6 +120,12 @@ namespace UniversalPatcher
 
             if (chkEnd.Checked)
                 BlockText += "@";
+
+            if (radioSize.Checked)
+                BlockText += "-L" + txtEnd.Text;
+
+            if (radioReadSize.Checked)
+                BlockText += "-L@" + txtEnd.Text;
 
             if (txtOffset.Text.Length > 0)
             {
@@ -177,24 +187,45 @@ namespace UniversalPatcher
                 numReadPairs.Enabled = true;
         }
 
-        private void radioUseStart_CheckedChanged(object sender, EventArgs e)
+        private void ShowEndAddress()
         {
             if (radioUseStart.Checked)
-            { 
+            {
                 txtEnd.Enabled = false;
-                chkEnd.Enabled = false;
+            }
+            else
+            {
+                txtEnd.Enabled = true;
             }
             if (radioEndAbsolute.Checked)
             {
-                txtEnd.Enabled = true;
                 chkEnd.Enabled = true;
             }
-            if (radioReadEnd.Checked)
-            { 
-                txtEnd.Enabled = true;
-                chkEnd.Enabled = true;
+            else
+            {
+                chkEnd.Enabled = false;
             }
         }
 
+        private void radioUseStart_CheckedChanged(object sender, EventArgs e)
+        {
+            ShowEndAddress();
+        }
+
+        private void radioEndAbsolute_CheckedChanged(object sender, EventArgs e)
+        {
+            ShowEndAddress();
+
+        }
+
+        private void radioReadEnd_CheckedChanged(object sender, EventArgs e)
+        {
+            ShowEndAddress();
+        }
+
+        private void radioSize_CheckedChanged(object sender, EventArgs e)
+        {
+            ShowEndAddress();
+        }
     }
 }

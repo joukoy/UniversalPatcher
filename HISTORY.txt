@@ -469,3 +469,8 @@
 - Tuner: New menu item: Add new table
 - Tuner: fixed bug in sort by column
 
+0.20.23
+- TableEditor: Offset visualizer: Show table from 2 files side by side
+- Segment config: End of segment can be configured as Length: FF-L500, or Length read from bin: FF-L@500
+- Tuner: Paste special: remember last settings
+

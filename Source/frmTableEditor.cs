@@ -105,6 +105,7 @@ namespace UniversalPatcher
         int decimals = 0;
 
         frmTableVis ftv;
+        frmTableVisDouble ftvd;
 
         private Dictionary<string, int> dgColumnHeaders;
         private Dictionary<string, int> dgRowHeaders;
@@ -265,7 +266,9 @@ namespace UniversalPatcher
                 labelInfo.Text = minMaxTxt + valTxt + " Address: " + tCell.addr.ToString("X");
                 if (ftv != null && ftv.Visible)
                     ftv.ChangeSelection(tCell.addr);
-                    //ftv.displayData(tCell.addr, compareFiles[0].buf);
+                if (ftvd != null && ftvd.Visible)
+                    ftvd.ChangeSelection(tCell.addr);
+                //ftv.displayData(tCell.addr, compareFiles[0].buf);
 
             }
             catch (Exception ex)
@@ -727,7 +730,7 @@ namespace UniversalPatcher
                 {
 
                     TableData origTd = compareFiles[0].tableInfos[i].td;
-                    if (cmpFile.pcm.OS == compareFiles[0].pcm.OS)
+/*                    if (cmpFile.pcm.OS == compareFiles[0].pcm.OS)
                     {
                         if (cmpTd == null)
                         {
@@ -744,7 +747,7 @@ namespace UniversalPatcher
                         }
                     }
                     else
-                    {
+*/                    {
                         cmpTd = FindTableData(compareFiles[0].tableInfos[i].td, cmpFile.pcm.tableDatas);
                         if (cmpTd != null)
                         {
@@ -1536,6 +1539,17 @@ namespace UniversalPatcher
                     }
 
                     ftv.DisplayData(addr, compareFiles[currentFile].buf);
+                }
+                else if (ftvd != null && ftvd.Visible)
+                {
+                    uint addr = 0;
+                    if (dataGridView1.SelectedCells.Count > 0)
+                    {
+                        TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
+                        addr = tCell.addr;
+                    }
+                    ftvd.DisplayData(addr, false);
+                    ftvd.DisplayData(addr, true);
                 }
 
             }
@@ -2834,6 +2848,36 @@ namespace UniversalPatcher
             PcmFile PCM = selectedFile.pcm;
             TableData td = selectedFile.tableInfos[0].td;
             fh.SetupTable(PCM, td);
+
+        }
+
+        private void offsetVisualizerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (compareFiles.Count == 1)
+                {
+                    Logger("Please open another file");
+                    return;
+                }
+                else
+                {
+                    ftvd = new frmTableVisDouble(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, compareFiles[currentCmpFile].pcm, compareFiles[currentCmpFile].tableInfos[0].td);
+                    ftvd.Show();
+                    uint addr = 0;
+                    if (dataGridView1.SelectedCells.Count > 0)
+                    {
+                        TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
+                        addr = tCell.addr;
+                    }
+                    ftvd.DisplayData(addr,  false);
+                    ftvd.DisplayData(addr,  true);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
 
         }
     }
