@@ -103,6 +103,7 @@ namespace UniversalPatcher
             this.saveXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveXMLAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addNewTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -165,7 +166,6 @@ namespace UniversalPatcher
             this.tabControlFileInfo = new System.Windows.Forms.TabControl();
             this.imageList3 = new System.Windows.Forms.ImageList(this.components);
             this.splitContainerListMode = new System.Windows.Forms.SplitContainer();
-            this.treeView1 = new UniversalPatcher.TreeViewMS();
             this.contextMenuStripListTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expand2LevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -199,7 +199,8 @@ namespace UniversalPatcher
             this.numExtraOffset = new System.Windows.Forms.NumericUpDown();
             this.btnExtraOffsetPrev = new System.Windows.Forms.Button();
             this.btnExtraOffsetNext = new System.Windows.Forms.Button();
-            this.addNewTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.treeView1 = new UniversalPatcher.TreeViewMS();
+            this.showOffsetVisualizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -541,7 +542,8 @@ namespace UniversalPatcher
             this.histogramToolStripMenuItem,
             this.readWritePCMToolStripMenuItem,
             this.loggerToolStripMenuItem,
-            this.patcherToolStripMenuItem});
+            this.patcherToolStripMenuItem,
+            this.showOffsetVisualizerToolStripMenuItem});
             this.utilitiesToolStripMenuItem.Name = "utilitiesToolStripMenuItem";
             this.utilitiesToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
             this.utilitiesToolStripMenuItem.Text = "Utilities";
@@ -806,6 +808,13 @@ namespace UniversalPatcher
             this.clearTableToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
             this.clearTableToolStripMenuItem.Text = "&Clear Tablelist";
             this.clearTableToolStripMenuItem.Click += new System.EventHandler(this.clearTableToolStripMenuItem_Click);
+            // 
+            // addNewTableToolStripMenuItem
+            // 
+            this.addNewTableToolStripMenuItem.Name = "addNewTableToolStripMenuItem";
+            this.addNewTableToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
+            this.addNewTableToolStripMenuItem.Text = "Add new table";
+            this.addNewTableToolStripMenuItem.Click += new System.EventHandler(this.addNewTableToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -1388,22 +1397,6 @@ namespace UniversalPatcher
             this.splitContainerListMode.SplitterDistance = 340;
             this.splitContainerListMode.TabIndex = 3;
             // 
-            // treeView1
-            // 
-            this.treeView1.ContextMenuStrip = this.contextMenuStripListTree;
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.HideSelection = false;
-            this.treeView1.ImageIndex = 0;
-            this.treeView1.ImageList = this.imageList1;
-            this.treeView1.Indent = 20;
-            this.treeView1.ItemHeight = 18;
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.SelectedImageIndex = 0;
-            this.treeView1.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("treeView1.SelectedNodes")));
-            this.treeView1.Size = new System.Drawing.Size(340, 409);
-            this.treeView1.TabIndex = 2;
-            // 
             // contextMenuStripListTree
             // 
             this.contextMenuStripListTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1796,12 +1789,28 @@ namespace UniversalPatcher
             this.btnExtraOffsetNext.UseVisualStyleBackColor = true;
             this.btnExtraOffsetNext.Click += new System.EventHandler(this.btnExtraOffsetNext_Click);
             // 
-            // addNewTableToolStripMenuItem
+            // treeView1
             // 
-            this.addNewTableToolStripMenuItem.Name = "addNewTableToolStripMenuItem";
-            this.addNewTableToolStripMenuItem.Size = new System.Drawing.Size(269, 22);
-            this.addNewTableToolStripMenuItem.Text = "Add new table";
-            this.addNewTableToolStripMenuItem.Click += new System.EventHandler(this.addNewTableToolStripMenuItem_Click);
+            this.treeView1.ContextMenuStrip = this.contextMenuStripListTree;
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.HideSelection = false;
+            this.treeView1.ImageIndex = 0;
+            this.treeView1.ImageList = this.imageList1;
+            this.treeView1.Indent = 20;
+            this.treeView1.ItemHeight = 18;
+            this.treeView1.Location = new System.Drawing.Point(0, 0);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.SelectedImageIndex = 0;
+            this.treeView1.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("treeView1.SelectedNodes")));
+            this.treeView1.Size = new System.Drawing.Size(340, 409);
+            this.treeView1.TabIndex = 2;
+            // 
+            // showOffsetVisualizerToolStripMenuItem
+            // 
+            this.showOffsetVisualizerToolStripMenuItem.Name = "showOffsetVisualizerToolStripMenuItem";
+            this.showOffsetVisualizerToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.showOffsetVisualizerToolStripMenuItem.Text = "Show offset visualizer";
+            this.showOffsetVisualizerToolStripMenuItem.Click += new System.EventHandler(this.showOffsetVisualizerToolStripMenuItem_Click);
             // 
             // FrmTuner
             // 
@@ -2032,5 +2041,6 @@ namespace UniversalPatcher
         private Button btnExtraOffsetTestApply;
         private NumericUpDown numExtraOffsetTest;
         private ToolStripMenuItem addNewTableToolStripMenuItem;
+        private ToolStripMenuItem showOffsetVisualizerToolStripMenuItem;
     }
 }

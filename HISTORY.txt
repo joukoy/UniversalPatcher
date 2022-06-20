@@ -474,3 +474,7 @@
 - Segment config: End of segment can be configured as Length: FF-L500, or Length read from bin: FF-L@500
 - Tuner: Paste special: remember last settings
 
+0.20.24
+- Logger: User selectable timestamp format
+- Logger: Automatic reconnect if connection lost
+- Offset visualizer & Table data visualizer combined & improved

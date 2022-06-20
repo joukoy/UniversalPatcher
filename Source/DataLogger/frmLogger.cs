@@ -55,6 +55,8 @@ namespace UniversalPatcher
         ObdEmu oresp;
         private string jConsoleLogFile;
         StreamWriter jConsoleStream;
+        int prevSlotCount = 0;
+        int failCount = 0;
 
         private void frmLogger_Load(object sender, EventArgs e)
         {
@@ -767,6 +769,7 @@ namespace UniversalPatcher
 
                 }
 
+                txtTstampFormat.Text = Properties.Settings.Default.LoggerTimestampFormat;
                 chkFTDI.Checked = Properties.Settings.Default.LoggerUseFTDI;
                 comboSerialDeviceType.Items.Add(AvtDevice.DeviceType);
                 //comboSerialDeviceType.Items.Add(AvtLegacyDevice.DeviceType);
@@ -1303,6 +1306,23 @@ namespace UniversalPatcher
                 {
                     labelProgress.Text = "Elapsed: " + elapsedStr + ", Received: " + datalogger.slothandler.ReceivedHPRows.ToString() + " rows (" + speed.ToString() + " /s)";
                 }
+                if (prevSlotCount == datalogger.slothandler.ReceivedHPRows)
+                {
+                    failCount++;  
+                    if (failCount > 2)
+                    {
+                        timerShowData.Enabled = false;
+                        StopLogging(true);
+                        StartLogging(true);
+                        failCount = 0;
+                        timerShowData.Enabled = true;
+                    }
+                }
+                else
+                {
+                    failCount = 0;
+                }
+                prevSlotCount = datalogger.slothandler.ReceivedHPRows;
                 //(" + ReceivedBytes.ToString() +")";
             }
             catch (Exception ex)
@@ -1568,10 +1588,10 @@ namespace UniversalPatcher
             try
             {
                 Logger("Stopping, wait...");
+                timerShowData.Enabled = false;
                 Application.DoEvents();
                 datalogger.StopLogging();
                 btnStartStop.Text = "Start Logging";
-                timerShowData.Enabled = false;
                 groupLogSettings.Enabled = true;
                 groupDTC.Enabled = true;
                 //btnGetVINCode.Enabled = true;
@@ -1822,10 +1842,12 @@ namespace UniversalPatcher
             }
         }
 
-        private void StartLogging()
+        private void StartLogging(bool ReConnect)
         {
             try
             {
+                Properties.Settings.Default.LoggerTimestampFormat = txtTstampFormat.Text;
+                Properties.Settings.Default.Save();
                 labelProgress.Text = "";
                 if (datalogger.PidProfile.Count == 0)
                 {
@@ -1844,7 +1866,7 @@ namespace UniversalPatcher
                 datalogger.reverseSlotNumbers = chkReverseSlotNumbers.Checked;
                 datalogger.HighPriority = chkPriority.Checked;
                 //PcmLogger.HighPriorityWeight = (int)numHighPriorityWeight.Value;
-                if (chkWriteLog.Checked)
+                if (chkWriteLog.Checked && !ReConnect)
                 {
                     logfilename = Path.Combine(txtLogFolder.Text, "log-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm.ss") + ".csv");
                     if (!datalogger.CreateLog(logfilename))
@@ -1885,7 +1907,7 @@ namespace UniversalPatcher
             }
             else
             {
-                StartLogging();
+                StartLogging(false);
             }
         }
 

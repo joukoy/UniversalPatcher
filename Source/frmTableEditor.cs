@@ -104,7 +104,7 @@ namespace UniversalPatcher
         int multiplierDecimals = 3;
         int decimals = 0;
 
-        frmTableVis ftv;
+        //frmTableVis ftv;
         frmTableVisDouble ftvd;
 
         private Dictionary<string, int> dgColumnHeaders;
@@ -193,8 +193,8 @@ namespace UniversalPatcher
                         this.DialogResult = DialogResult.Cancel;
                     }
                 }
-                if (ftv != null && ftv.Visible)
-                    ftv.Dispose();
+                if (ftvd != null && ftvd.Visible)
+                    ftvd.Dispose();
             }
             catch (Exception ex)
             {
@@ -264,8 +264,6 @@ namespace UniversalPatcher
                 }
                 string valTxt = " Last value " + Convert.ToDouble(tCell.lastValue).ToString(formatStr) + " Saved value " + Convert.ToDouble(tCell.origValue).ToString(formatStr);
                 labelInfo.Text = minMaxTxt + valTxt + " Address: " + tCell.addr.ToString("X");
-                if (ftv != null && ftv.Visible)
-                    ftv.ChangeSelection(tCell.addr);
                 if (ftvd != null && ftvd.Visible)
                     ftvd.ChangeSelection(tCell.addr);
                 //ftv.displayData(tCell.addr, compareFiles[0].buf);
@@ -1529,27 +1527,9 @@ namespace UniversalPatcher
                 }
                 stopwatch.Stop();
                 Debug.WriteLine("LoadTable time Taken: " + stopwatch.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
-                if (ftv != null && ftv.Visible)
+                if (ftvd != null && ftvd.Visible)
                 {
-                    uint addr = 0;
-                    if (dataGridView1.SelectedCells.Count > 0)
-                    {
-                        TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
-                        addr = tCell.addr;
-                    }
-
-                    ftv.DisplayData(addr, compareFiles[currentFile].buf);
-                }
-                else if (ftvd != null && ftvd.Visible)
-                {
-                    uint addr = 0;
-                    if (dataGridView1.SelectedCells.Count > 0)
-                    {
-                        TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
-                        addr = tCell.addr;
-                    }
-                    ftvd.DisplayData(addr, false);
-                    ftvd.DisplayData(addr, true);
+                    ftvd.UpdateDisplay();
                 }
 
             }
@@ -1798,8 +1778,8 @@ namespace UniversalPatcher
                         SetCellColor(e.RowIndex, e.ColumnIndex, tc);
                     }
                 }
-                if (ftv != null && ftv.Visible)
-                    ftv.UpdateTableValues(compareFiles[0].buf);
+                if (ftvd != null && ftvd.Visible)
+                    ftvd.UpdateDisplay();
             }
             catch (Exception ex)
             {
@@ -2823,16 +2803,17 @@ namespace UniversalPatcher
         {
             try
             {
-                ftv = new frmTableVis(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td);
-                ftv.Show();
+                //ftv = new frmTableVis(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td);
+                //ftv.Show();
                 uint addr = 0;
                 if (dataGridView1.SelectedCells.Count > 0)
                 {
                     TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
                     addr = tCell.addr;
                 }
-
-                ftv.DisplayData(addr, compareFiles[currentFile].buf);
+                ftvd = new frmTableVisDouble(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td,null,null,addr);
+                ftvd.Show();
+                //ftv.DisplayData(addr, compareFiles[currentFile].buf);
             }
             catch (Exception ex)
             {
@@ -2862,16 +2843,15 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    ftvd = new frmTableVisDouble(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, compareFiles[currentCmpFile].pcm, compareFiles[currentCmpFile].tableInfos[0].td);
-                    ftvd.Show();
                     uint addr = 0;
                     if (dataGridView1.SelectedCells.Count > 0)
                     {
                         TableCell tCell = (TableCell)dataGridView1.SelectedCells[0].Tag;
                         addr = tCell.addr;
                     }
-                    ftvd.DisplayData(addr,  false);
-                    ftvd.DisplayData(addr,  true);
+                    ftvd = new frmTableVisDouble(compareFiles[currentFile].pcm, compareFiles[currentFile].tableInfos[0].td, compareFiles[currentCmpFile].pcm, compareFiles[currentCmpFile].tableInfos[0].td, addr);
+                    ftvd.Show();
+                    ftvd.tuner = tuner;
                 }
             }
             catch (Exception ex)

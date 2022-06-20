@@ -37,6 +37,8 @@ namespace UniversalPatcher
             this.tabLog = new System.Windows.Forms.TabPage();
             this.groupLogSettings = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtTstampFormat = new System.Windows.Forms.TextBox();
+            this.label36 = new System.Windows.Forms.Label();
             this.chkWriteLog = new System.Windows.Forms.CheckBox();
             this.btnBrowsLogFolder = new System.Windows.Forms.Button();
             this.txtLogSeparator = new System.Windows.Forms.TextBox();
@@ -139,6 +141,7 @@ namespace UniversalPatcher
             this.chkJconsoleToScreen = new System.Windows.Forms.CheckBox();
             this.labelJconsoleConnected = new System.Windows.Forms.Label();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.btnJconsoleConfigFilters2 = new System.Windows.Forms.Button();
             this.btnJconsoleSecProtoDisconnect = new System.Windows.Forms.Button();
             this.btnJConsoleReset2 = new System.Windows.Forms.Button();
             this.txtJConsolePassFilters2 = new System.Windows.Forms.TextBox();
@@ -168,6 +171,7 @@ namespace UniversalPatcher
             this.comboJ2534Protocol2 = new System.Windows.Forms.ComboBox();
             this.label33 = new System.Windows.Forms.Label();
             this.groupJ2534Options = new System.Windows.Forms.GroupBox();
+            this.btnJconsoleConfigFilters = new System.Windows.Forms.Button();
             this.btnJConsoleReset = new System.Windows.Forms.Button();
             this.txtJConsolePassFilters = new System.Windows.Forms.TextBox();
             this.label34 = new System.Windows.Forms.Label();
@@ -242,8 +246,6 @@ namespace UniversalPatcher
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.labelConnected = new System.Windows.Forms.Label();
             this.timerSearchParams = new System.Windows.Forms.Timer(this.components);
-            this.btnJconsoleConfigFilters = new System.Windows.Forms.Button();
-            this.btnJconsoleConfigFilters2 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -349,6 +351,8 @@ namespace UniversalPatcher
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtTstampFormat);
+            this.groupBox1.Controls.Add(this.label36);
             this.groupBox1.Controls.Add(this.chkWriteLog);
             this.groupBox1.Controls.Add(this.btnBrowsLogFolder);
             this.groupBox1.Controls.Add(this.txtLogSeparator);
@@ -361,6 +365,22 @@ namespace UniversalPatcher
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Logfile";
+            // 
+            // txtTstampFormat
+            // 
+            this.txtTstampFormat.Location = new System.Drawing.Point(286, 71);
+            this.txtTstampFormat.Name = "txtTstampFormat";
+            this.txtTstampFormat.Size = new System.Drawing.Size(90, 20);
+            this.txtTstampFormat.TabIndex = 16;
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(187, 75);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(93, 13);
+            this.label36.TabIndex = 15;
+            this.label36.Text = "Timestamp format:";
             // 
             // chkWriteLog
             // 
@@ -1490,6 +1510,16 @@ namespace UniversalPatcher
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Protocol 2";
             // 
+            // btnJconsoleConfigFilters2
+            // 
+            this.btnJconsoleConfigFilters2.Location = new System.Drawing.Point(53, 210);
+            this.btnJconsoleConfigFilters2.Name = "btnJconsoleConfigFilters2";
+            this.btnJconsoleConfigFilters2.Size = new System.Drawing.Size(25, 21);
+            this.btnJconsoleConfigFilters2.TabIndex = 76;
+            this.btnJconsoleConfigFilters2.Text = "!";
+            this.btnJconsoleConfigFilters2.UseVisualStyleBackColor = true;
+            this.btnJconsoleConfigFilters2.Click += new System.EventHandler(this.btnJconsoleConfigFilters2_Click);
+            // 
             // btnJconsoleSecProtoDisconnect
             // 
             this.btnJconsoleSecProtoDisconnect.Location = new System.Drawing.Point(74, 317);
@@ -1787,6 +1817,16 @@ namespace UniversalPatcher
             this.groupJ2534Options.TabIndex = 50;
             this.groupJ2534Options.TabStop = false;
             this.groupJ2534Options.Text = "Protocol 1";
+            // 
+            // btnJconsoleConfigFilters
+            // 
+            this.btnJconsoleConfigFilters.Location = new System.Drawing.Point(54, 214);
+            this.btnJconsoleConfigFilters.Name = "btnJconsoleConfigFilters";
+            this.btnJconsoleConfigFilters.Size = new System.Drawing.Size(25, 21);
+            this.btnJconsoleConfigFilters.TabIndex = 73;
+            this.btnJconsoleConfigFilters.Text = "!";
+            this.btnJconsoleConfigFilters.UseVisualStyleBackColor = true;
+            this.btnJconsoleConfigFilters.Click += new System.EventHandler(this.btnJconsoleConfigFilters_Click);
             // 
             // btnJConsoleReset
             // 
@@ -2515,26 +2555,6 @@ namespace UniversalPatcher
             // 
             this.timerSearchParams.Tick += new System.EventHandler(this.timerSearchParams_Tick);
             // 
-            // btnJconsoleConfigFilters
-            // 
-            this.btnJconsoleConfigFilters.Location = new System.Drawing.Point(54, 214);
-            this.btnJconsoleConfigFilters.Name = "btnJconsoleConfigFilters";
-            this.btnJconsoleConfigFilters.Size = new System.Drawing.Size(25, 21);
-            this.btnJconsoleConfigFilters.TabIndex = 73;
-            this.btnJconsoleConfigFilters.Text = "!";
-            this.btnJconsoleConfigFilters.UseVisualStyleBackColor = true;
-            this.btnJconsoleConfigFilters.Click += new System.EventHandler(this.btnJconsoleConfigFilters_Click);
-            // 
-            // btnJconsoleConfigFilters2
-            // 
-            this.btnJconsoleConfigFilters2.Location = new System.Drawing.Point(53, 210);
-            this.btnJconsoleConfigFilters2.Name = "btnJconsoleConfigFilters2";
-            this.btnJconsoleConfigFilters2.Size = new System.Drawing.Size(25, 21);
-            this.btnJconsoleConfigFilters2.TabIndex = 76;
-            this.btnJconsoleConfigFilters2.Text = "!";
-            this.btnJconsoleConfigFilters2.UseVisualStyleBackColor = true;
-            this.btnJconsoleConfigFilters2.Click += new System.EventHandler(this.btnJconsoleConfigFilters2_Click);
-            // 
             // frmLogger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2834,6 +2854,8 @@ namespace UniversalPatcher
         private System.Windows.Forms.CheckBox chkJconsoleToScreen;
         private System.Windows.Forms.Button btnJconsoleConfigFilters;
         private System.Windows.Forms.Button btnJconsoleConfigFilters2;
+        private System.Windows.Forms.TextBox txtTstampFormat;
+        private System.Windows.Forms.Label label36;
     }
 }
 

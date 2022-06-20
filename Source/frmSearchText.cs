@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using static Upatcher;
 
-namespace UniversalPatcher.Properties
+namespace UniversalPatcher
 {
     public partial class frmSearchText : Form
     {

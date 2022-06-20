@@ -65,9 +65,12 @@ namespace UniversalPatcher
             uint SSize = 0;
             try
             {
-                for (int s = 0; s < PCM.segmentAddressDatas[seg].SwapBlocks.Count; s++)
+                if (PCM.segmentAddressDatas[seg].SwapBlocks != null)
                 {
-                    SSize += PCM.segmentAddressDatas[seg].SwapBlocks[s].End - PCM.segmentAddressDatas[seg].SwapBlocks[s].Start + 1;
+                    for (int s = 0; s < PCM.segmentAddressDatas[seg].SwapBlocks.Count; s++)
+                    {
+                        SSize += PCM.segmentAddressDatas[seg].SwapBlocks[s].End - PCM.segmentAddressDatas[seg].SwapBlocks[s].Start + 1;
+                    }
                 }
             }
             catch { }

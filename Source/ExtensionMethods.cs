@@ -67,6 +67,10 @@ namespace UniversalPatcher
                 tsmiSavefile.Click += (sender, e) => TsmiSavefile_Click(sender, e, rtb);
                 cms.Items.Add(tsmiSavefile);
 
+                ToolStripMenuItem tsmiSearch = new ToolStripMenuItem("Search...");
+                tsmiSearch.Click += (sender, e) => TsmiSearch_Click(sender, e, rtb);
+                cms.Items.Add(tsmiSearch);
+
                 // When opening the menu, check if the condition is fulfilled 
                 // in order to enable the action
                 cms.Opening += (sender, e) =>
@@ -82,6 +86,13 @@ namespace UniversalPatcher
 
                 rtb.ContextMenuStrip = cms;
             }
+        }
+
+        private static void TsmiSearch_Click(object sender, EventArgs e, RichTextBox rtb)
+        {
+            frmSearchText frmS = new frmSearchText();
+            frmS.Show();
+            frmS.InitMe(rtb);
         }
 
         private static void TsmiSavefile_Click(object sender, EventArgs e, RichTextBox rtb)

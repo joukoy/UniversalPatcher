@@ -235,6 +235,7 @@ namespace UniversalPatcher
         {            
             _configFileFullName = "";
             Segments = new List<SegmentConfig>();
+            SwapSegments = new List<SwapSegment>();
             //dtcCodes = new List<DtcCode>();
             //dtcCodes2 = new List<DtcCode>();
             tableDatas = new List<TableData>();

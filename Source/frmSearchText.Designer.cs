@@ -1,4 +1,4 @@
-﻿namespace UniversalPatcher.Properties
+﻿namespace UniversalPatcher
 {
     partial class frmSearchText
     {
@@ -56,7 +56,7 @@
             // 
             // txtSearch
             // 
-            this.txtSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearch.Location = new System.Drawing.Point(12, 12);
             this.txtSearch.Name = "txtSearch";

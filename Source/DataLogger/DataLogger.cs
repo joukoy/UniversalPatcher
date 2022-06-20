@@ -212,16 +212,19 @@ namespace UniversalPatcher
             return false;
         }
 
-        public  void WriteLog(string[] logvalues, string timestamp)
+        public void WriteLog(string[] logvalues, string timestamp)
         {
             try
             {
-                StringBuilder sb = new StringBuilder(timestamp + logseparator);
-                for (int c = 0; c < logvalues.Length; c++)
+                if (logwriter != null)
                 {
-                    sb.Append(logvalues[c].Replace(",", ".") + logseparator);
+                    StringBuilder sb = new StringBuilder(timestamp + logseparator);
+                    for (int c = 0; c < logvalues.Length; c++)
+                    {
+                        sb.Append(logvalues[c].Replace(",", ".") + logseparator);
+                    }
+                    logwriter.WriteLine(sb.ToString().Trim(logseparator[0]));
                 }
-                logwriter.WriteLine(sb.ToString().Trim(logseparator[0]));
             }
             catch (Exception ex)
             {
@@ -268,7 +271,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    string tStamp = new DateTime((long)ld.SysTimeStamp).ToString("HH:mm:ss.fff");
+                    string tStamp = new DateTime((long)ld.SysTimeStamp).ToString(Properties.Settings.Default.LoggerTimestampFormat);
                     //tStamp += " [" + ld.TimeStamp.ToString() + "]";
                     WriteLog(slothandler.CalculatePidValues(ld.Values), tStamp );
                 }
@@ -405,7 +408,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    Logger("Unable to set bus quiet");
+                    Debug.WriteLine("Unable to set bus quiet");
                     Debug.WriteLine("Expected " + string.Join(" ", Array.ConvertAll(quietMsg, b => b.ToString("X2"))));
                     return false;
                 }

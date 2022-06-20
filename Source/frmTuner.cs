@@ -56,6 +56,7 @@ namespace UniversalPatcher
         bool treeMode;
         string currentBin = "A";
         bool ExtraOffsetFirstTry = true;
+        private frmTableVisDouble ftvd;
 
         private void frmTuner_Load(object sender, EventArgs e)
         {
@@ -1640,6 +1641,23 @@ namespace UniversalPatcher
                     }
                 }
             }
+            if (ftvd != null && ftvd.Visible)
+            {
+                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                {
+                    PcmFile peekPCM = (PcmFile)mi.Tag;
+                    if (peekPCM.FileName != PCM.FileName)
+                    {
+                        TableData compTd = FindTableData(shTd, peekPCM.tableDatas);
+                        if (compTd != null)
+                        {
+                            ftvd.ShowTables(PCM, shTd, peekPCM, compTd, 0);
+                            break;
+                        }
+                    }
+                }
+            }
+
         }
 
         private void PeekTableValues(TableData shTd, PcmFile peekPCM, bool ShowMinMax, Color color)
@@ -5258,6 +5276,46 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmTuner reorderColumns, line " + line + ": " + ex.Message);
             }
+        }
+
+        private void showOffsetVisualizerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                TableData compTd = null;
+                PcmFile peekPCM = null;
+                List<TableData> tds = GetSelectedTableTds();
+                TableData selTd = tds[0];
+                foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                {
+                    peekPCM = (PcmFile)mi.Tag;
+                    if (peekPCM.FileName != PCM.FileName)
+                    {
+                        compTd = FindTableData(selTd, peekPCM.tableDatas);
+                        if (compTd != null)
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                if (compTd == null)
+                {
+                    Logger("Please open another file");
+                    return;
+                }
+
+                if (ftvd == null || !ftvd.Visible)
+                {
+                    ftvd = new frmTableVisDouble(PCM, selTd, peekPCM, compTd, 0);
+                    ftvd.tuner = this;
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+
         }
     }
 }

@@ -1457,5 +1457,17 @@ namespace UniversalPatcher.Properties {
                 this["PasteSpecialTarget"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("HH:mm:ss.fff")]
+        public string LoggerTimestampFormat {
+            get {
+                return ((string)(this["LoggerTimestampFormat"]));
+            }
+            set {
+                this["LoggerTimestampFormat"] = value;
+            }
+        }
     }
 }
