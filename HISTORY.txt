@@ -478,3 +478,6 @@
 - Logger: User selectable timestamp format
 - Logger: Automatic reconnect if connection lost
 - Offset visualizer & Table data visualizer combined & improved
+
+0.20.25
+- Logger: fixed bugs in automatic reconnect

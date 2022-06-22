@@ -170,8 +170,12 @@ namespace UniversalPatcher
                 Logger("Writing to logfile: " + path);
                 logseparator = Properties.Settings.Default.LoggerLogSeparator;
                 LogFileQueue.Clear();
-                if (File.Exists(path))
+                if (logwriter != null && logwriter.BaseStream != null)
                 {
+                    logwriter.Close();
+                }
+                if (File.Exists(path))
+                {                    
                     logwriter = new StreamWriter(path, true);
                 }
                 else

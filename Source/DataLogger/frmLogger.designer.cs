@@ -246,6 +246,7 @@ namespace UniversalPatcher
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.labelConnected = new System.Windows.Forms.Label();
             this.timerSearchParams = new System.Windows.Forms.Timer(this.components);
+            this.btnDateTimeHelp = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -351,6 +352,7 @@ namespace UniversalPatcher
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnDateTimeHelp);
             this.groupBox1.Controls.Add(this.txtTstampFormat);
             this.groupBox1.Controls.Add(this.label36);
             this.groupBox1.Controls.Add(this.chkWriteLog);
@@ -2555,6 +2557,16 @@ namespace UniversalPatcher
             // 
             this.timerSearchParams.Tick += new System.EventHandler(this.timerSearchParams_Tick);
             // 
+            // btnDateTimeHelp
+            // 
+            this.btnDateTimeHelp.Location = new System.Drawing.Point(384, 69);
+            this.btnDateTimeHelp.Name = "btnDateTimeHelp";
+            this.btnDateTimeHelp.Size = new System.Drawing.Size(30, 21);
+            this.btnDateTimeHelp.TabIndex = 17;
+            this.btnDateTimeHelp.Text = "?";
+            this.btnDateTimeHelp.UseVisualStyleBackColor = true;
+            this.btnDateTimeHelp.Click += new System.EventHandler(this.btnDateTimeHelp_Click);
+            // 
             // frmLogger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2856,6 +2868,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.Button btnJconsoleConfigFilters2;
         private System.Windows.Forms.TextBox txtTstampFormat;
         private System.Windows.Forms.Label label36;
+        private System.Windows.Forms.Button btnDateTimeHelp;
     }
 }
 

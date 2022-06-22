@@ -1309,7 +1309,7 @@ namespace UniversalPatcher
                 if (prevSlotCount == datalogger.slothandler.ReceivedHPRows)
                 {
                     failCount++;  
-                    if (failCount > 2)
+                    if (failCount > 15)
                     {
                         timerShowData.Enabled = false;
                         StopLogging(true);
@@ -1866,9 +1866,12 @@ namespace UniversalPatcher
                 datalogger.reverseSlotNumbers = chkReverseSlotNumbers.Checked;
                 datalogger.HighPriority = chkPriority.Checked;
                 //PcmLogger.HighPriorityWeight = (int)numHighPriorityWeight.Value;
-                if (chkWriteLog.Checked && !ReConnect)
+                if (chkWriteLog.Checked)
                 {
-                    logfilename = Path.Combine(txtLogFolder.Text, "log-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm.ss") + ".csv");
+                    if (!ReConnect)
+                    {
+                        logfilename = Path.Combine(txtLogFolder.Text, "log-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm.ss") + ".csv");
+                    }
                     if (!datalogger.CreateLog(logfilename))
                     {
                         return;
@@ -3253,6 +3256,12 @@ namespace UniversalPatcher
                 return;
             }
             jConsole.JDevice.SetupFilters(txtJConsolePassFilters2.Text, true);
+        }
+
+        private void btnDateTimeHelp_Click(object sender, EventArgs e)
+        {            
+            string url = "https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings";
+            System.Diagnostics.Process.Start(url);
         }
     }
 }
