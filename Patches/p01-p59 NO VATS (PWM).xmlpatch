@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<ArrayOfXmlPatch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <XmlPatch>
+    <Description>Disable VATS</Description>
+    <XmlFile>p01-p59</XmlFile>
+    <Segment>System</Segment>
+    <CompatibleOS>Table:VTD_Configuration-PWM,columns:1,rows:1</CompatibleOS>
+    <Data>2 </Data>
+  </XmlPatch>
+</ArrayOfXmlPatch>
