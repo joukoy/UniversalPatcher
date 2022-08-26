@@ -39,7 +39,6 @@ namespace UniversalPatcher
         private List<MathParameter> mathParameters = new List<MathParameter>();
         private string profileFile;
         private string logfilename;
-        private DateTime LogStartTime;
         private bool ProfileDirty = false;
         //private BindingSource AnalyzeBS = new BindingSource();
         private List<ushort> SupportedPids;
@@ -811,6 +810,10 @@ namespace UniversalPatcher
                     txtLogSeparator.Text = Properties.Settings.Default.LoggerLogSeparator;
                 else
                     txtLogSeparator.Text = ",";
+                if (!string.IsNullOrEmpty(Properties.Settings.Default.LoggerDecimalSeparator))
+                    txtDecimalSeparator.Text = Properties.Settings.Default.LoggerDecimalSeparator;
+                else
+                    txtDecimalSeparator.Text = Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator;
                 if (!string.IsNullOrEmpty(Properties.Settings.Default.LoggerResponseMode))
                 {
                     comboResponseMode.Text = Properties.Settings.Default.LoggerResponseMode;
@@ -1292,7 +1295,7 @@ namespace UniversalPatcher
                 {
                     dataGridLogData.Rows[row].Cells["Value"].Value = LastCalcValues[row];
                 }
-                TimeSpan elapsed = DateTime.Now.Subtract(LogStartTime);
+                TimeSpan elapsed = DateTime.Now.Subtract(datalogger.LogStartTime);
                 int speed = (int)(datalogger.slothandler.ReceivedHPRows / elapsed.TotalSeconds);
                 int lpSpeed = (int)(datalogger.slothandler.ReceivedLPRows / elapsed.TotalSeconds);
                 string elapsedStr = elapsed.Hours.ToString() + ":" + elapsed.Minutes.ToString() + ":" + elapsed.Seconds.ToString();
@@ -1847,6 +1850,7 @@ namespace UniversalPatcher
             try
             {
                 Properties.Settings.Default.LoggerTimestampFormat = txtTstampFormat.Text;
+                Properties.Settings.Default.LoggerDecimalSeparator = txtDecimalSeparator.Text;
                 Properties.Settings.Default.Save();
                 labelProgress.Text = "";
                 if (datalogger.PidProfile.Count == 0)
@@ -1859,7 +1863,6 @@ namespace UniversalPatcher
                     return;
                 }
                 SetupLogDataGrid();
-                LogStartTime = DateTime.Now;
                 datalogger.Responsetype = Convert.ToByte(Enum.Parse(typeof(ResponseTypes), comboResponseMode.Text));
                 datalogger.writelog = chkWriteLog.Checked;
                 datalogger.useRawValues = chkRawValues.Checked;
@@ -1870,6 +1873,7 @@ namespace UniversalPatcher
                 {
                     if (!ReConnect)
                     {
+                        datalogger.LogStartTime = DateTime.Now;
                         logfilename = Path.Combine(txtLogFolder.Text, "log-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm.ss") + ".csv");
                     }
                     if (!datalogger.CreateLog(logfilename))
@@ -2057,10 +2061,11 @@ namespace UniversalPatcher
 
         private void txtLogSeparator_TextChanged(object sender, EventArgs e)
         {
-            if (txtLogSeparator.Text.Length > 1)
+/*            if (txtLogSeparator.Text.Length > 1)
             {
                 txtLogSeparator.Text = txtLogSeparator.Text.Substring(0, 1);
             }
+*/        
         }
 
         private void StartAnalyzer()
@@ -2905,8 +2910,18 @@ namespace UniversalPatcher
         private void btnAlgoTest_Click(object sender, EventArgs e)
         {
             int algo;
-            ushort seed;
+            ushort seed = 0;
             bool found = false;
+            int algoFrom = 0;
+            int algoTo = 0x300;
+
+            if (txtAlgoRange.Text.Contains("-"))
+            {
+                string[] parts = txtAlgoRange.Text.Split('-');
+                HexToInt(parts[0].Trim(), out algoFrom);
+                HexToInt(parts[1].Trim(), out algoTo);
+            }
+
             if (!HexToUshort(txtSeed.Text, out seed))
             {
                 Logger("Hex to int? " + txtSeed.Text);
@@ -2926,7 +2941,7 @@ namespace UniversalPatcher
             }
             else if (radioFindAllKeys.Checked)
             {
-                for (algo = 0; algo < 0x300; algo++)
+                for (algo = algoFrom; algo < algoTo; algo++)
                 {
                     ushort key = KeyAlgorithm.GetKey(algo, seed);
                     txtAlgoTest.AppendText("Algo: " + algo.ToString("X4") + ", seed: " + seed.ToString("X4") + ", key: " + key.ToString("X4") + Environment.NewLine);
@@ -2941,7 +2956,7 @@ namespace UniversalPatcher
                     Logger("Hex to ushort? " + txtAlgo.Text);
                     return;
                 }
-                for (algo = 0; algo < 0x300; algo++)
+                for (algo = algoFrom; algo < algoTo; algo++)
                 {
                     ushort key = KeyAlgorithm.GetKey(algo, seed);
                     if (key == targetKey)
@@ -2968,6 +2983,7 @@ namespace UniversalPatcher
                 labelAlgo.Text = "Algo:";
                 labelSeed.Text = "Seed:";
                 txtAlgo.Enabled = true;
+                txtAlgoRange.Enabled = false;
             }
         }
 
@@ -2978,6 +2994,7 @@ namespace UniversalPatcher
                 labelAlgo.Text = "Algo:";
                 labelSeed.Text = "Seed:";
                 txtAlgo.Enabled = false;
+                txtAlgoRange.Enabled = true;
             }
         }
 
@@ -2988,6 +3005,7 @@ namespace UniversalPatcher
                 labelAlgo.Text = "Key:";
                 labelSeed.Text = "Seed:";
                 txtAlgo.Enabled = true;
+                txtAlgoRange.Enabled = true;
             }
         }
 
@@ -3262,6 +3280,11 @@ namespace UniversalPatcher
         {            
             string url = "https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings";
             System.Diagnostics.Process.Start(url);
+        }
+
+        private void groupBox5_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }

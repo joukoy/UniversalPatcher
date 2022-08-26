@@ -24,6 +24,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>hi oct spark08-11</Name>
@@ -49,6 +50,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>hi oct spark12-15</Name>
@@ -74,6 +76,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>hi oct spark</Name>
@@ -100,6 +103,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>low oct spark</Name>
@@ -126,6 +130,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>IAT spark corr</Name>
@@ -152,6 +157,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>Base idle spark</Name>
@@ -178,6 +184,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>coast down spark</Name>
@@ -203,6 +210,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>Flex fuel spark</Name>
@@ -228,6 +236,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>Dfco min spark,egr, misfire limit</Name>
@@ -253,6 +262,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>HalfCylBaseHiOctane Spark</Name>
@@ -278,6 +288,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>HalfCylBaseLowOctane</Name>
@@ -303,6 +314,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>EGR SPARK</Name>
@@ -328,6 +340,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>Cam phaser spark table</Name>
@@ -353,6 +366,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>EGR dod spark</Name>
@@ -378,6 +392,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>Coolant spark correction</Name>
@@ -403,6 +418,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>Clutch Fuel Cut Off rpm/GmCyl</Name>
@@ -428,6 +444,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>IdlePN_CatLightBase</Name>
@@ -454,6 +471,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description>Base catalyst light off spark table when in Park or Neutral during idle</Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>IdleDR_CatLightBase</Name>
@@ -480,6 +498,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description>Base catalyst light off spark table when in Drive or Reverse during idle</Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>CatLightBase SPARK</Name>
@@ -506,6 +525,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description> Base catalyst light off spark table</Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>SpeedLoadOffset</Name>
@@ -532,6 +552,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description>Calibration which determines the temperature contribution as a function of engine speed and airflow.</Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>EGR_Max</Name>
@@ -558,6 +579,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description>The maximum percent EGR that can be tolerated without misfire under ideal conditions for a given speed-load point.</Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>EGR_MaxDOD</Name>
@@ -584,6 +606,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description>The maximum percent EGR that can be tolerated without misfire under ideal conditions for a given speed-load point while in \"displacement in demand\" (Cylinder deactivation) mode.</Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>EGRNomChargeTemp</Name>
@@ -610,6 +633,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description>Nominal charge temperature for a given speed-load point used to offset the current charge temperature for the cha</Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>EQ_R_OL_Flow</Name>
@@ -636,6 +660,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description> The equivalence ratio gain used when open loop operation is in effect. This gain allows adjustment based on MAP and RPM</Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>EQ_R_K_AIR</Name>
@@ -662,6 +687,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description>Base open equivalence ratio gain applied when AIR pump is requesting fuel enrichment. </Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>EQ_R_K_AIR_AirflowMult</Name>
@@ -688,6 +714,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description>Equivalence ratio gain applied when the AIR pump is requesting fuel enrichment. The gain is a function of engine airflow and IVT. </Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>EQ_R_eqr_IVT_OpenLoopDriveE0</Name>
@@ -714,6 +741,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description> Base open loop equivalence ratio applied when in drive with zero percent ethanol fuel</Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>EQ_R_eqr_IVT_OpenLoopPNE0</Name>
@@ -740,6 +768,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description>Base open loop equivalence ratio applied when in Park or Neutral with zero percent of ethanol fuel</Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>EQ_R_eqr_IVT_OpenLoopDriveE80</Name>
@@ -766,6 +795,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>EQ_R_eqr_IVT_OpenLoopPNE80</Name>
@@ -792,6 +822,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>EQR_K_AIR_Enrich</Name>
@@ -818,6 +849,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description>AIR enrichment factor which is applied to the corrected fuel mass when AIR is active.</Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>PistonSlapBase</Name>
@@ -844,6 +876,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description>Base piston slap spark retard</Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>11/21-14</Name>
@@ -870,6 +903,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description>Base dwell, a f(RPM,Ignvolt)</Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>11/21-15</Name>
@@ -896,6 +930,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>11/21-16</Name>
@@ -922,6 +957,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>EQ_R_OL_IVT_MAP</Name>
@@ -948,6 +984,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>21/21word-2</Name>
@@ -974,6 +1011,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>21/21word-3</Name>
@@ -1000,6 +1038,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>21/21word-4</Name>
@@ -1026,6 +1065,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>21/21word-5</Name>
@@ -1052,6 +1092,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>21/21word--6</Name>
@@ -1078,6 +1119,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>21/21word-7</Name>
@@ -1104,6 +1146,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>21/21word--8</Name>
@@ -1130,6 +1173,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>DodSwitch*06-11</Name>
@@ -1156,6 +1200,7 @@
     <Values>BOOLEAN</Values>
     <RowMajor>true</RowMajor>
     <Description> Boolean to disable or enable cylinder deactivation functionality. Cylinder Deactivation Functionality is disabled whenever this calibration is set to TRUE. </Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>DodSwitch*12-15</Name>
@@ -1182,6 +1227,7 @@
     <Values>BOOLEAN</Values>
     <RowMajor>true</RowMajor>
     <Description> Boolean to disable or enable cylinder deactivation functionality. Cylinder Deactivation Functionality is disabled whenever this calibration is set to TRUE. </Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>Dwell temp multiplier</Name>
@@ -1207,6 +1253,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description />
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>DwellMain*06-07</Name>
@@ -1232,6 +1279,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description>Base dwell, a f(RPM,Ignvolt)</Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>DwellMain*08-11</Name>
@@ -1257,6 +1305,7 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description>Base dwell, a f(RPM,Ignvolt)</Description>
+    <MSB>true</MSB>
   </TableSeek>
   <TableSeek>
     <Name>DwellMain*12-</Name>
@@ -1282,5 +1331,58 @@
     <Values />
     <RowMajor>true</RowMajor>
     <Description>Base dwell, a f(RPM,Ignvolt)</Description>
+    <MSB>true</MSB>
+  </TableSeek>
+  <TableSeek>
+    <Name>KeIMOG_e_ImmobFtnSelection</Name>
+    <SearchStr>01 00 0C 3C 60 @ @ A8 63 @ @ 2C 03 00 02 40 82 00 14</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>enum</ColHeaders>
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <DataType>SWORD</DataType>
+    <Decimals>2</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Units>enum</Units>
+    <Values>Enum: 0:CeIMOR_e_NAO_TheftAlg,1:CeIMOR_e_PPEI3_ImmobAlg,2:CeIMOR_e_GMIO_ImmobAlg</Values>
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
+  </TableSeek>
+  <TableSeek>
+    <Name>KeIMOG_b_ImmobFtnEnbld</Name>
+    <SearchStr>00 01 * * 00 * 2C 1F 00 02 41 82 00 2C 3D 80 @ @ 89 8C @ @ 2C 0C 00 00</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders>enum</ColHeaders>
+    <Math>X</Math>
+    <SavingMath>X</SavingMath>
+    <Offset>0</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>true</SignedOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+    <Range />
+    <Segments />
+    <Units>enum</Units>
+    <Values>Enum: 0:OFF,1:ON</Values>
+    <RowMajor>true</RowMajor>
+    <Description />
+    <MSB>true</MSB>
   </TableSeek>
 </ArrayOfTableSeek>

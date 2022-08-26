@@ -82,16 +82,16 @@ namespace UniversalPatcher
         public List<CsvData> LogDatas { get; set; }
         public List<HitData> HitDatas { get; set; }
         public int CsvColumns { get; set; }
-        private char CsvSeparator { get; set; }
+        private string CsvSeparator { get; set; }
         public string[] Parameters { get; set; }
         private double[] columnHeader { get; set; } //eg RPM
         private double[] rowHeader { get; set; } //   eg MAP
         public ushort Decimals;
 
-        public string[] ParseCsvHeader(string headerRow, char separator)
+        public string[] ParseCsvHeader(string headerRow, string separator)
         {
             CsvSeparator = separator;
-            Parameters = headerRow.Split(separator);
+            Parameters = System.Text.RegularExpressions.Regex.Split(headerRow, System.Text.RegularExpressions.Regex.Escape(separator));
             CsvColumns = Parameters.Length;
             return Parameters;
         }
@@ -107,7 +107,8 @@ namespace UniversalPatcher
                 while ((line = sr.ReadLine()) != null)
                 {
                     CsvData hd = new CsvData(CsvColumns);
-                    string[] rParts = line.Split(CsvSeparator);
+                    //string[] rParts = line.Split(CsvSeparator);
+                    string[] rParts = System.Text.RegularExpressions.Regex.Split(line, System.Text.RegularExpressions.Regex.Escape(CsvSeparator));
                     for (int p = 0; p < rParts.Length && p < CsvColumns; p++)
                     {
                         double val;

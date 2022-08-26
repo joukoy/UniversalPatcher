@@ -41,6 +41,9 @@ namespace UniversalPatcher
             this.numExtraBytes = new System.Windows.Forms.NumericUpDown();
             this.radioShowTable = new System.Windows.Forms.RadioButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnScrollToSelected1 = new System.Windows.Forms.Button();
+            this.btnCloneColors1 = new System.Windows.Forms.Button();
+            this.btnApplytoRight = new System.Windows.Forms.Button();
             this.btnSelEnd1 = new System.Windows.Forms.Button();
             this.btnSelStart1 = new System.Windows.Forms.Button();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
@@ -50,6 +53,9 @@ namespace UniversalPatcher
             this.numExtraOffset1 = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.labelFileName1 = new System.Windows.Forms.Label();
+            this.btnScrollToSelected2 = new System.Windows.Forms.Button();
+            this.btnCloneColors2 = new System.Windows.Forms.Button();
+            this.btnApplytoLeft = new System.Windows.Forms.Button();
             this.btnSelEnd2 = new System.Windows.Forms.Button();
             this.btnSelStart2 = new System.Windows.Forms.Button();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
@@ -60,6 +66,8 @@ namespace UniversalPatcher
             this.numExtraOffset2 = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.labelFileName2 = new System.Windows.Forms.Label();
+            this.btnCreateTable1 = new System.Windows.Forms.Button();
+            this.btnCreateTable2 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numBytesPerRow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numExtraBytes)).BeginInit();
@@ -88,7 +96,7 @@ namespace UniversalPatcher
             this.richTableData1.Name = "richTableData1";
             this.richTableData1.ReadOnly = true;
             this.richTableData1.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.richTableData1.Size = new System.Drawing.Size(534, 337);
+            this.richTableData1.Size = new System.Drawing.Size(559, 337);
             this.richTableData1.TabIndex = 0;
             this.richTableData1.Text = "";
             // 
@@ -107,7 +115,7 @@ namespace UniversalPatcher
             this.groupBox1.Controls.Add(this.radioShowTable);
             this.groupBox1.Location = new System.Drawing.Point(6, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1081, 73);
+            this.groupBox1.Size = new System.Drawing.Size(1134, 35);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Show";
@@ -116,7 +124,7 @@ namespace UniversalPatcher
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(10, 46);
+            this.label4.Location = new System.Drawing.Point(129, 14);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(37, 13);
             this.label4.TabIndex = 6;
@@ -124,7 +132,7 @@ namespace UniversalPatcher
             // 
             // btnNextTable
             // 
-            this.btnNextTable.Location = new System.Drawing.Point(91, 41);
+            this.btnNextTable.Location = new System.Drawing.Point(210, 9);
             this.btnNextTable.Name = "btnNextTable";
             this.btnNextTable.Size = new System.Drawing.Size(32, 23);
             this.btnNextTable.TabIndex = 5;
@@ -134,7 +142,7 @@ namespace UniversalPatcher
             // 
             // btnPrevTable
             // 
-            this.btnPrevTable.Location = new System.Drawing.Point(53, 41);
+            this.btnPrevTable.Location = new System.Drawing.Point(172, 9);
             this.btnPrevTable.Name = "btnPrevTable";
             this.btnPrevTable.Size = new System.Drawing.Size(32, 23);
             this.btnPrevTable.TabIndex = 4;
@@ -145,7 +153,7 @@ namespace UniversalPatcher
             // radioSegmentTBNames
             // 
             this.radioSegmentTBNames.AutoSize = true;
-            this.radioSegmentTBNames.Location = new System.Drawing.Point(152, 32);
+            this.radioSegmentTBNames.Location = new System.Drawing.Point(445, 12);
             this.radioSegmentTBNames.Name = "radioSegmentTBNames";
             this.radioSegmentTBNames.Size = new System.Drawing.Size(133, 17);
             this.radioSegmentTBNames.TabIndex = 3;
@@ -157,7 +165,7 @@ namespace UniversalPatcher
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 19);
+            this.label1.Location = new System.Drawing.Point(10, 17);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(55, 13);
             this.label1.TabIndex = 3;
@@ -166,7 +174,7 @@ namespace UniversalPatcher
             // radioShowSegment
             // 
             this.radioShowSegment.AutoSize = true;
-            this.radioShowSegment.Location = new System.Drawing.Point(152, 51);
+            this.radioShowSegment.Location = new System.Drawing.Point(587, 12);
             this.radioShowSegment.Name = "radioShowSegment";
             this.radioShowSegment.Size = new System.Drawing.Size(67, 17);
             this.radioShowSegment.TabIndex = 2;
@@ -177,7 +185,7 @@ namespace UniversalPatcher
             // 
             // numBytesPerRow
             // 
-            this.numBytesPerRow.Location = new System.Drawing.Point(70, 15);
+            this.numBytesPerRow.Location = new System.Drawing.Point(70, 10);
             this.numBytesPerRow.Name = "numBytesPerRow";
             this.numBytesPerRow.Size = new System.Drawing.Size(53, 20);
             this.numBytesPerRow.TabIndex = 2;
@@ -190,14 +198,14 @@ namespace UniversalPatcher
             // 
             // numExtraBytes
             // 
-            this.numExtraBytes.Location = new System.Drawing.Point(259, 12);
+            this.numExtraBytes.Location = new System.Drawing.Point(362, 9);
             this.numExtraBytes.Maximum = new decimal(new int[] {
-            1000,
+            1000000,
             0,
             0,
             0});
             this.numExtraBytes.Name = "numExtraBytes";
-            this.numExtraBytes.Size = new System.Drawing.Size(51, 20);
+            this.numExtraBytes.Size = new System.Drawing.Size(77, 20);
             this.numExtraBytes.TabIndex = 1;
             this.numExtraBytes.Value = new decimal(new int[] {
             4,
@@ -210,7 +218,7 @@ namespace UniversalPatcher
             // 
             this.radioShowTable.AutoSize = true;
             this.radioShowTable.Checked = true;
-            this.radioShowTable.Location = new System.Drawing.Point(152, 13);
+            this.radioShowTable.Location = new System.Drawing.Point(255, 13);
             this.radioShowTable.Name = "radioShowTable";
             this.radioShowTable.Size = new System.Drawing.Size(103, 17);
             this.radioShowTable.TabIndex = 0;
@@ -224,11 +232,15 @@ namespace UniversalPatcher
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(0, 74);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 45);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnCreateTable1);
+            this.splitContainer1.Panel1.Controls.Add(this.btnScrollToSelected1);
+            this.splitContainer1.Panel1.Controls.Add(this.btnCloneColors1);
+            this.splitContainer1.Panel1.Controls.Add(this.btnApplytoRight);
             this.splitContainer1.Panel1.Controls.Add(this.btnSelEnd1);
             this.splitContainer1.Panel1.Controls.Add(this.btnSelStart1);
             this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
@@ -240,6 +252,10 @@ namespace UniversalPatcher
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.btnCreateTable2);
+            this.splitContainer1.Panel2.Controls.Add(this.btnScrollToSelected2);
+            this.splitContainer1.Panel2.Controls.Add(this.btnCloneColors2);
+            this.splitContainer1.Panel2.Controls.Add(this.btnApplytoLeft);
             this.splitContainer1.Panel2.Controls.Add(this.btnSelEnd2);
             this.splitContainer1.Panel2.Controls.Add(this.btnSelStart2);
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer3);
@@ -248,27 +264,57 @@ namespace UniversalPatcher
             this.splitContainer1.Panel2.Controls.Add(this.numExtraOffset2);
             this.splitContainer1.Panel2.Controls.Add(this.label3);
             this.splitContainer1.Panel2.Controls.Add(this.labelFileName2);
-            this.splitContainer1.Size = new System.Drawing.Size(1087, 459);
-            this.splitContainer1.SplitterDistance = 542;
+            this.splitContainer1.Size = new System.Drawing.Size(1140, 488);
+            this.splitContainer1.SplitterDistance = 567;
             this.splitContainer1.TabIndex = 4;
+            // 
+            // btnScrollToSelected1
+            // 
+            this.btnScrollToSelected1.Location = new System.Drawing.Point(365, 48);
+            this.btnScrollToSelected1.Name = "btnScrollToSelected1";
+            this.btnScrollToSelected1.Size = new System.Drawing.Size(145, 22);
+            this.btnScrollToSelected1.TabIndex = 12;
+            this.btnScrollToSelected1.Text = "Scroll to selected table";
+            this.btnScrollToSelected1.UseVisualStyleBackColor = true;
+            this.btnScrollToSelected1.Click += new System.EventHandler(this.btnScrollToSelected_Click);
+            // 
+            // btnCloneColors1
+            // 
+            this.btnCloneColors1.Location = new System.Drawing.Point(203, 47);
+            this.btnCloneColors1.Name = "btnCloneColors1";
+            this.btnCloneColors1.Size = new System.Drawing.Size(156, 22);
+            this.btnCloneColors1.TabIndex = 11;
+            this.btnCloneColors1.Text = "Copy colors and brackets";
+            this.btnCloneColors1.UseVisualStyleBackColor = true;
+            this.btnCloneColors1.Click += new System.EventHandler(this.btnCloneColors_Click);
+            // 
+            // btnApplytoRight
+            // 
+            this.btnApplytoRight.Location = new System.Drawing.Point(315, 18);
+            this.btnApplytoRight.Name = "btnApplytoRight";
+            this.btnApplytoRight.Size = new System.Drawing.Size(145, 22);
+            this.btnApplytoRight.TabIndex = 10;
+            this.btnApplytoRight.Text = "Match selected tables >>";
+            this.btnApplytoRight.UseVisualStyleBackColor = true;
+            this.btnApplytoRight.Click += new System.EventHandler(this.btnApplytoRight_Click);
             // 
             // btnSelEnd1
             // 
-            this.btnSelEnd1.Location = new System.Drawing.Point(446, 20);
+            this.btnSelEnd1.Location = new System.Drawing.Point(106, 47);
             this.btnSelEnd1.Name = "btnSelEnd1";
-            this.btnSelEnd1.Size = new System.Drawing.Size(53, 22);
+            this.btnSelEnd1.Size = new System.Drawing.Size(91, 22);
             this.btnSelEnd1.TabIndex = 9;
-            this.btnSelEnd1.Text = "SelEnd";
+            this.btnSelEnd1.Text = "Selection End";
             this.btnSelEnd1.UseVisualStyleBackColor = true;
             this.btnSelEnd1.Click += new System.EventHandler(this.btnSelEnd1_Click);
             // 
             // btnSelStart1
             // 
-            this.btnSelStart1.Location = new System.Drawing.Point(387, 20);
+            this.btnSelStart1.Location = new System.Drawing.Point(9, 47);
             this.btnSelStart1.Name = "btnSelStart1";
-            this.btnSelStart1.Size = new System.Drawing.Size(53, 22);
+            this.btnSelStart1.Size = new System.Drawing.Size(91, 22);
             this.btnSelStart1.TabIndex = 8;
-            this.btnSelStart1.Text = "SelStart";
+            this.btnSelStart1.Text = "Selection Start";
             this.btnSelStart1.UseVisualStyleBackColor = true;
             this.btnSelStart1.Click += new System.EventHandler(this.btnSelStart1_Click);
             // 
@@ -277,7 +323,7 @@ namespace UniversalPatcher
             this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer2.Location = new System.Drawing.Point(3, 47);
+            this.splitContainer2.Location = new System.Drawing.Point(3, 75);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -288,7 +334,7 @@ namespace UniversalPatcher
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.txtInfo1);
-            this.splitContainer2.Size = new System.Drawing.Size(534, 409);
+            this.splitContainer2.Size = new System.Drawing.Size(559, 410);
             this.splitContainer2.SplitterDistance = 337;
             this.splitContainer2.TabIndex = 7;
             // 
@@ -299,14 +345,14 @@ namespace UniversalPatcher
             this.txtInfo1.Multiline = true;
             this.txtInfo1.Name = "txtInfo1";
             this.txtInfo1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtInfo1.Size = new System.Drawing.Size(534, 68);
+            this.txtInfo1.Size = new System.Drawing.Size(559, 69);
             this.txtInfo1.TabIndex = 6;
             // 
             // btnApplyToSelection1
             // 
-            this.btnApplyToSelection1.Location = new System.Drawing.Point(274, 21);
+            this.btnApplyToSelection1.Location = new System.Drawing.Point(204, 18);
             this.btnApplyToSelection1.Name = "btnApplyToSelection1";
-            this.btnApplyToSelection1.Size = new System.Drawing.Size(107, 22);
+            this.btnApplyToSelection1.Size = new System.Drawing.Size(105, 22);
             this.btnApplyToSelection1.TabIndex = 5;
             this.btnApplyToSelection1.Text = "Apply to selection";
             this.btnApplyToSelection1.UseVisualStyleBackColor = true;
@@ -314,9 +360,9 @@ namespace UniversalPatcher
             // 
             // btnApplyPrimary
             // 
-            this.btnApplyPrimary.Location = new System.Drawing.Point(204, 21);
+            this.btnApplyPrimary.Location = new System.Drawing.Point(157, 18);
             this.btnApplyPrimary.Name = "btnApplyPrimary";
-            this.btnApplyPrimary.Size = new System.Drawing.Size(64, 22);
+            this.btnApplyPrimary.Size = new System.Drawing.Size(45, 22);
             this.btnApplyPrimary.TabIndex = 4;
             this.btnApplyPrimary.Text = "Apply";
             this.btnApplyPrimary.UseVisualStyleBackColor = true;
@@ -336,7 +382,7 @@ namespace UniversalPatcher
             0,
             -2147483648});
             this.numExtraOffset1.Name = "numExtraOffset1";
-            this.numExtraOffset1.Size = new System.Drawing.Size(120, 20);
+            this.numExtraOffset1.Size = new System.Drawing.Size(73, 20);
             this.numExtraOffset1.TabIndex = 3;
             // 
             // label2
@@ -357,23 +403,53 @@ namespace UniversalPatcher
             this.labelFileName1.TabIndex = 1;
             this.labelFileName1.Text = "labelFileName1";
             // 
+            // btnScrollToSelected2
+            // 
+            this.btnScrollToSelected2.Location = new System.Drawing.Point(383, 48);
+            this.btnScrollToSelected2.Name = "btnScrollToSelected2";
+            this.btnScrollToSelected2.Size = new System.Drawing.Size(145, 22);
+            this.btnScrollToSelected2.TabIndex = 14;
+            this.btnScrollToSelected2.Text = "Scroll to selected table";
+            this.btnScrollToSelected2.UseVisualStyleBackColor = true;
+            this.btnScrollToSelected2.Click += new System.EventHandler(this.btnScrollToSelected2_Click);
+            // 
+            // btnCloneColors2
+            // 
+            this.btnCloneColors2.Location = new System.Drawing.Point(200, 48);
+            this.btnCloneColors2.Name = "btnCloneColors2";
+            this.btnCloneColors2.Size = new System.Drawing.Size(177, 22);
+            this.btnCloneColors2.TabIndex = 13;
+            this.btnCloneColors2.Text = "Copy colors and brackets";
+            this.btnCloneColors2.UseVisualStyleBackColor = true;
+            this.btnCloneColors2.Click += new System.EventHandler(this.btnCloneColors2_Click);
+            // 
+            // btnApplytoLeft
+            // 
+            this.btnApplytoLeft.Location = new System.Drawing.Point(334, 22);
+            this.btnApplytoLeft.Name = "btnApplytoLeft";
+            this.btnApplytoLeft.Size = new System.Drawing.Size(145, 22);
+            this.btnApplytoLeft.TabIndex = 12;
+            this.btnApplytoLeft.Text = "<< Match selected tables";
+            this.btnApplytoLeft.UseVisualStyleBackColor = true;
+            this.btnApplytoLeft.Click += new System.EventHandler(this.btnApplytoLeft_Click);
+            // 
             // btnSelEnd2
             // 
-            this.btnSelEnd2.Location = new System.Drawing.Point(442, 21);
+            this.btnSelEnd2.Location = new System.Drawing.Point(103, 48);
             this.btnSelEnd2.Name = "btnSelEnd2";
-            this.btnSelEnd2.Size = new System.Drawing.Size(53, 22);
+            this.btnSelEnd2.Size = new System.Drawing.Size(91, 22);
             this.btnSelEnd2.TabIndex = 11;
-            this.btnSelEnd2.Text = "SelEnd";
+            this.btnSelEnd2.Text = "Selection End";
             this.btnSelEnd2.UseVisualStyleBackColor = true;
             this.btnSelEnd2.Click += new System.EventHandler(this.btnSelEnd2_Click);
             // 
             // btnSelStart2
             // 
-            this.btnSelStart2.Location = new System.Drawing.Point(383, 21);
+            this.btnSelStart2.Location = new System.Drawing.Point(6, 48);
             this.btnSelStart2.Name = "btnSelStart2";
-            this.btnSelStart2.Size = new System.Drawing.Size(53, 22);
+            this.btnSelStart2.Size = new System.Drawing.Size(91, 22);
             this.btnSelStart2.TabIndex = 10;
-            this.btnSelStart2.Text = "SelStart";
+            this.btnSelStart2.Text = "Selection Start";
             this.btnSelStart2.UseVisualStyleBackColor = true;
             this.btnSelStart2.Click += new System.EventHandler(this.btnSelStart2_Click);
             // 
@@ -382,7 +458,7 @@ namespace UniversalPatcher
             this.splitContainer3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer3.Location = new System.Drawing.Point(-1, 47);
+            this.splitContainer3.Location = new System.Drawing.Point(-1, 75);
             this.splitContainer3.Name = "splitContainer3";
             this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -393,7 +469,7 @@ namespace UniversalPatcher
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.txtInfo2);
-            this.splitContainer3.Size = new System.Drawing.Size(538, 412);
+            this.splitContainer3.Size = new System.Drawing.Size(566, 413);
             this.splitContainer3.SplitterDistance = 335;
             this.splitContainer3.TabIndex = 7;
             // 
@@ -406,7 +482,7 @@ namespace UniversalPatcher
             this.richTableData2.Name = "richTableData2";
             this.richTableData2.ReadOnly = true;
             this.richTableData2.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.richTableData2.Size = new System.Drawing.Size(538, 335);
+            this.richTableData2.Size = new System.Drawing.Size(566, 335);
             this.richTableData2.TabIndex = 1;
             this.richTableData2.Text = "";
             // 
@@ -417,12 +493,12 @@ namespace UniversalPatcher
             this.txtInfo2.Multiline = true;
             this.txtInfo2.Name = "txtInfo2";
             this.txtInfo2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtInfo2.Size = new System.Drawing.Size(538, 73);
+            this.txtInfo2.Size = new System.Drawing.Size(566, 74);
             this.txtInfo2.TabIndex = 0;
             // 
             // btnApplyToSelection2
             // 
-            this.btnApplyToSelection2.Location = new System.Drawing.Point(270, 21);
+            this.btnApplyToSelection2.Location = new System.Drawing.Point(221, 22);
             this.btnApplyToSelection2.Name = "btnApplyToSelection2";
             this.btnApplyToSelection2.Size = new System.Drawing.Size(107, 22);
             this.btnApplyToSelection2.TabIndex = 6;
@@ -432,7 +508,7 @@ namespace UniversalPatcher
             // 
             // btnApplySecondary
             // 
-            this.btnApplySecondary.Location = new System.Drawing.Point(200, 21);
+            this.btnApplySecondary.Location = new System.Drawing.Point(151, 22);
             this.btnApplySecondary.Name = "btnApplySecondary";
             this.btnApplySecondary.Size = new System.Drawing.Size(64, 22);
             this.btnApplySecondary.TabIndex = 5;
@@ -442,7 +518,7 @@ namespace UniversalPatcher
             // 
             // numExtraOffset2
             // 
-            this.numExtraOffset2.Location = new System.Drawing.Point(74, 21);
+            this.numExtraOffset2.Location = new System.Drawing.Point(72, 22);
             this.numExtraOffset2.Maximum = new decimal(new int[] {
             1410065407,
             2,
@@ -454,13 +530,13 @@ namespace UniversalPatcher
             0,
             -2147483648});
             this.numExtraOffset2.Name = "numExtraOffset2";
-            this.numExtraOffset2.Size = new System.Drawing.Size(120, 20);
+            this.numExtraOffset2.Size = new System.Drawing.Size(73, 20);
             this.numExtraOffset2.TabIndex = 4;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(5, 23);
+            this.label3.Location = new System.Drawing.Point(3, 25);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(63, 13);
             this.label3.TabIndex = 3;
@@ -475,11 +551,31 @@ namespace UniversalPatcher
             this.labelFileName2.TabIndex = 2;
             this.labelFileName2.Text = "labelFileName2";
             // 
+            // btnCreateTable1
+            // 
+            this.btnCreateTable1.Location = new System.Drawing.Point(466, 18);
+            this.btnCreateTable1.Name = "btnCreateTable1";
+            this.btnCreateTable1.Size = new System.Drawing.Size(80, 22);
+            this.btnCreateTable1.TabIndex = 13;
+            this.btnCreateTable1.Text = "Create table";
+            this.btnCreateTable1.UseVisualStyleBackColor = true;
+            this.btnCreateTable1.Click += new System.EventHandler(this.btnCreateTable1_Click);
+            // 
+            // btnCreateTable2
+            // 
+            this.btnCreateTable2.Location = new System.Drawing.Point(485, 22);
+            this.btnCreateTable2.Name = "btnCreateTable2";
+            this.btnCreateTable2.Size = new System.Drawing.Size(80, 22);
+            this.btnCreateTable2.TabIndex = 15;
+            this.btnCreateTable2.Text = "Create table";
+            this.btnCreateTable2.UseVisualStyleBackColor = true;
+            this.btnCreateTable2.Click += new System.EventHandler(this.btnCreateTable2_Click);
+            // 
             // frmTableVisDouble
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1090, 534);
+            this.ClientSize = new System.Drawing.Size(1143, 534);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.groupBox1);
             this.Name = "frmTableVisDouble";
@@ -544,5 +640,13 @@ namespace UniversalPatcher
         private System.Windows.Forms.Button btnSelStart1;
         private System.Windows.Forms.Button btnSelEnd2;
         private System.Windows.Forms.Button btnSelStart2;
+        private System.Windows.Forms.Button btnApplytoRight;
+        private System.Windows.Forms.Button btnApplytoLeft;
+        private System.Windows.Forms.Button btnCloneColors1;
+        private System.Windows.Forms.Button btnCloneColors2;
+        private System.Windows.Forms.Button btnScrollToSelected1;
+        private System.Windows.Forms.Button btnScrollToSelected2;
+        private System.Windows.Forms.Button btnCreateTable1;
+        private System.Windows.Forms.Button btnCreateTable2;
     }
 }

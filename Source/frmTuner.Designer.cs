@@ -96,6 +96,7 @@ namespace UniversalPatcher
             this.readWritePCMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loggerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.patcherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showOffsetVisualizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadTablelistxmlTableseekImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -166,6 +167,7 @@ namespace UniversalPatcher
             this.tabControlFileInfo = new System.Windows.Forms.TabControl();
             this.imageList3 = new System.Windows.Forms.ImageList(this.components);
             this.splitContainerListMode = new System.Windows.Forms.SplitContainer();
+            this.treeView1 = new UniversalPatcher.TreeViewMS();
             this.contextMenuStripListTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expand2LevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -199,8 +201,7 @@ namespace UniversalPatcher
             this.numExtraOffset = new System.Windows.Forms.NumericUpDown();
             this.btnExtraOffsetPrev = new System.Windows.Forms.Button();
             this.btnExtraOffsetNext = new System.Windows.Forms.Button();
-            this.treeView1 = new UniversalPatcher.TreeViewMS();
-            this.showOffsetVisualizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mirrorSegmentsFromCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -420,7 +421,8 @@ namespace UniversalPatcher
             this.disableConfigAutoloadToolStripMenuItem,
             this.caseSensitiveFilteringToolStripMenuItem,
             this.moreSettingsToolStripMenuItem,
-            this.extraOffsetToolStripMenuItem});
+            this.extraOffsetToolStripMenuItem,
+            this.mirrorSegmentsFromCompareToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "&Settings";
@@ -524,7 +526,7 @@ namespace UniversalPatcher
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.newToolStripMenuItem.Text = "New...";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -752,6 +754,13 @@ namespace UniversalPatcher
             this.patcherToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
             this.patcherToolStripMenuItem.Text = "Patcher";
             this.patcherToolStripMenuItem.Click += new System.EventHandler(this.patcherToolStripMenuItem_Click_1);
+            // 
+            // showOffsetVisualizerToolStripMenuItem
+            // 
+            this.showOffsetVisualizerToolStripMenuItem.Name = "showOffsetVisualizerToolStripMenuItem";
+            this.showOffsetVisualizerToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.showOffsetVisualizerToolStripMenuItem.Text = "Show offset visualizer";
+            this.showOffsetVisualizerToolStripMenuItem.Click += new System.EventHandler(this.showOffsetVisualizerToolStripMenuItem_Click);
             // 
             // xmlToolStripMenuItem
             // 
@@ -1397,6 +1406,22 @@ namespace UniversalPatcher
             this.splitContainerListMode.SplitterDistance = 340;
             this.splitContainerListMode.TabIndex = 3;
             // 
+            // treeView1
+            // 
+            this.treeView1.ContextMenuStrip = this.contextMenuStripListTree;
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.HideSelection = false;
+            this.treeView1.ImageIndex = 0;
+            this.treeView1.ImageList = this.imageList1;
+            this.treeView1.Indent = 20;
+            this.treeView1.ItemHeight = 18;
+            this.treeView1.Location = new System.Drawing.Point(0, 0);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.SelectedImageIndex = 0;
+            this.treeView1.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("treeView1.SelectedNodes")));
+            this.treeView1.Size = new System.Drawing.Size(340, 409);
+            this.treeView1.TabIndex = 2;
+            // 
             // contextMenuStripListTree
             // 
             this.contextMenuStripListTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1789,28 +1814,12 @@ namespace UniversalPatcher
             this.btnExtraOffsetNext.UseVisualStyleBackColor = true;
             this.btnExtraOffsetNext.Click += new System.EventHandler(this.btnExtraOffsetNext_Click);
             // 
-            // treeView1
+            // mirrorSegmentsFromCompareToolStripMenuItem
             // 
-            this.treeView1.ContextMenuStrip = this.contextMenuStripListTree;
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.HideSelection = false;
-            this.treeView1.ImageIndex = 0;
-            this.treeView1.ImageList = this.imageList1;
-            this.treeView1.Indent = 20;
-            this.treeView1.ItemHeight = 18;
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.SelectedImageIndex = 0;
-            this.treeView1.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("treeView1.SelectedNodes")));
-            this.treeView1.Size = new System.Drawing.Size(340, 409);
-            this.treeView1.TabIndex = 2;
-            // 
-            // showOffsetVisualizerToolStripMenuItem
-            // 
-            this.showOffsetVisualizerToolStripMenuItem.Name = "showOffsetVisualizerToolStripMenuItem";
-            this.showOffsetVisualizerToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.showOffsetVisualizerToolStripMenuItem.Text = "Show offset visualizer";
-            this.showOffsetVisualizerToolStripMenuItem.Click += new System.EventHandler(this.showOffsetVisualizerToolStripMenuItem_Click);
+            this.mirrorSegmentsFromCompareToolStripMenuItem.Name = "mirrorSegmentsFromCompareToolStripMenuItem";
+            this.mirrorSegmentsFromCompareToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.mirrorSegmentsFromCompareToolStripMenuItem.Text = "Mirror segments from compare";
+            this.mirrorSegmentsFromCompareToolStripMenuItem.Click += new System.EventHandler(this.mirrorSegmentsFromCompareToolStripMenuItem_Click);
             // 
             // FrmTuner
             // 
@@ -2042,5 +2051,6 @@ namespace UniversalPatcher
         private NumericUpDown numExtraOffsetTest;
         private ToolStripMenuItem addNewTableToolStripMenuItem;
         private ToolStripMenuItem showOffsetVisualizerToolStripMenuItem;
+        private ToolStripMenuItem mirrorSegmentsFromCompareToolStripMenuItem;
     }
 }

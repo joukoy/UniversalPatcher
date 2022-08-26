@@ -30,6 +30,16 @@ namespace UniversalPatcher
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmLogger));
             this.timerShowData = new System.Windows.Forms.Timer(this.components);
             this.comboSerialPort = new System.Windows.Forms.ComboBox();
@@ -37,6 +47,9 @@ namespace UniversalPatcher
             this.tabLog = new System.Windows.Forms.TabPage();
             this.groupLogSettings = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtDecimalSeparator = new System.Windows.Forms.TextBox();
+            this.label37 = new System.Windows.Forms.Label();
+            this.btnDateTimeHelp = new System.Windows.Forms.Button();
             this.txtTstampFormat = new System.Windows.Forms.TextBox();
             this.label36 = new System.Windows.Forms.Label();
             this.chkWriteLog = new System.Windows.Forms.CheckBox();
@@ -216,6 +229,8 @@ namespace UniversalPatcher
             this.radioJConsoleProto1 = new System.Windows.Forms.RadioButton();
             this.tabAlgoTest = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.txtAlgoRange = new System.Windows.Forms.TextBox();
+            this.label38 = new System.Windows.Forms.Label();
             this.radioFindAlgo = new System.Windows.Forms.RadioButton();
             this.btnAlgoTest = new System.Windows.Forms.Button();
             this.txtAlgo = new System.Windows.Forms.TextBox();
@@ -246,7 +261,6 @@ namespace UniversalPatcher
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.labelConnected = new System.Windows.Forms.Label();
             this.timerSearchParams = new System.Windows.Forms.Timer(this.components);
-            this.btnDateTimeHelp = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -352,6 +366,8 @@ namespace UniversalPatcher
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtDecimalSeparator);
+            this.groupBox1.Controls.Add(this.label37);
             this.groupBox1.Controls.Add(this.btnDateTimeHelp);
             this.groupBox1.Controls.Add(this.txtTstampFormat);
             this.groupBox1.Controls.Add(this.label36);
@@ -367,6 +383,33 @@ namespace UniversalPatcher
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Logfile";
+            // 
+            // txtDecimalSeparator
+            // 
+            this.txtDecimalSeparator.Location = new System.Drawing.Point(57, 71);
+            this.txtDecimalSeparator.Name = "txtDecimalSeparator";
+            this.txtDecimalSeparator.Size = new System.Drawing.Size(30, 20);
+            this.txtDecimalSeparator.TabIndex = 31;
+            this.txtDecimalSeparator.Text = ";";
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(6, 74);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(48, 13);
+            this.label37.TabIndex = 18;
+            this.label37.Text = "Decimal:";
+            // 
+            // btnDateTimeHelp
+            // 
+            this.btnDateTimeHelp.Location = new System.Drawing.Point(384, 69);
+            this.btnDateTimeHelp.Name = "btnDateTimeHelp";
+            this.btnDateTimeHelp.Size = new System.Drawing.Size(30, 21);
+            this.btnDateTimeHelp.TabIndex = 17;
+            this.btnDateTimeHelp.Text = "?";
+            this.btnDateTimeHelp.UseVisualStyleBackColor = true;
+            this.btnDateTimeHelp.Click += new System.EventHandler(this.btnDateTimeHelp_Click);
             // 
             // txtTstampFormat
             // 
@@ -386,10 +429,11 @@ namespace UniversalPatcher
             // 
             // chkWriteLog
             // 
+            this.chkWriteLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkWriteLog.AutoSize = true;
             this.chkWriteLog.Checked = true;
             this.chkWriteLog.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkWriteLog.Location = new System.Drawing.Point(9, 73);
+            this.chkWriteLog.Location = new System.Drawing.Point(346, 17);
             this.chkWriteLog.Name = "chkWriteLog";
             this.chkWriteLog.Size = new System.Drawing.Size(68, 17);
             this.chkWriteLog.TabIndex = 9;
@@ -428,11 +472,11 @@ namespace UniversalPatcher
             // labelSeparator
             // 
             this.labelSeparator.AutoSize = true;
-            this.labelSeparator.Location = new System.Drawing.Point(82, 74);
+            this.labelSeparator.Location = new System.Drawing.Point(93, 74);
             this.labelSeparator.Name = "labelSeparator";
-            this.labelSeparator.Size = new System.Drawing.Size(56, 13);
+            this.labelSeparator.Size = new System.Drawing.Size(45, 13);
             this.labelSeparator.TabIndex = 13;
-            this.labelSeparator.Text = "Separator:";
+            this.labelSeparator.Text = "Column:";
             // 
             // txtLogFolder
             // 
@@ -468,7 +512,23 @@ namespace UniversalPatcher
             this.dataGridLogData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridLogData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridLogData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridLogData.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridLogData.Location = new System.Drawing.Point(443, 3);
             this.dataGridLogData.Name = "dataGridLogData";
             this.dataGridLogData.Size = new System.Drawing.Size(452, 429);
@@ -825,7 +885,23 @@ namespace UniversalPatcher
             this.dataGridPidNames.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridPidNames.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridPidNames.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridPidNames.DefaultCellStyle = dataGridViewCellStyle4;
             this.dataGridPidNames.Location = new System.Drawing.Point(0, 35);
             this.dataGridPidNames.Name = "dataGridPidNames";
             this.dataGridPidNames.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -857,8 +933,24 @@ namespace UniversalPatcher
             this.dataGridLogProfile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridLogProfile.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.dataGridLogProfile.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridLogProfile.ContextMenuStrip = this.contextMenuStrip1;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridLogProfile.DefaultCellStyle = dataGridViewCellStyle6;
             this.dataGridLogProfile.Location = new System.Drawing.Point(37, 0);
             this.dataGridLogProfile.Name = "dataGridLogProfile";
             this.dataGridLogProfile.Size = new System.Drawing.Size(488, 432);
@@ -866,6 +958,7 @@ namespace UniversalPatcher
             // 
             // contextMenuStrip1
             // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.editToolStripMenuItem,
             this.cutRowToolStripMenuItem,
@@ -988,7 +1081,23 @@ namespace UniversalPatcher
             this.dataGridAnalyzer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridAnalyzer.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.dataGridAnalyzer.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridAnalyzer.DefaultCellStyle = dataGridViewCellStyle8;
             this.dataGridAnalyzer.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dataGridAnalyzer.Location = new System.Drawing.Point(0, 28);
             this.dataGridAnalyzer.Name = "dataGridAnalyzer";
@@ -1145,12 +1254,28 @@ namespace UniversalPatcher
             this.dataGridDtcCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridDtcCodes.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle9;
             this.dataGridDtcCodes.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridDtcCodes.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Module,
             this.Code,
             this.Description,
             this.Status});
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridDtcCodes.DefaultCellStyle = dataGridViewCellStyle10;
             this.dataGridDtcCodes.Location = new System.Drawing.Point(208, 0);
             this.dataGridDtcCodes.Name = "dataGridDtcCodes";
             this.dataGridDtcCodes.Size = new System.Drawing.Size(686, 434);
@@ -2265,6 +2390,8 @@ namespace UniversalPatcher
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.txtAlgoRange);
+            this.groupBox5.Controls.Add(this.label38);
             this.groupBox5.Controls.Add(this.radioFindAlgo);
             this.groupBox5.Controls.Add(this.btnAlgoTest);
             this.groupBox5.Controls.Add(this.txtAlgo);
@@ -2275,9 +2402,28 @@ namespace UniversalPatcher
             this.groupBox5.Controls.Add(this.labelSeed);
             this.groupBox5.Location = new System.Drawing.Point(3, 3);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(167, 179);
+            this.groupBox5.Size = new System.Drawing.Size(167, 209);
             this.groupBox5.TabIndex = 9;
             this.groupBox5.TabStop = false;
+            this.groupBox5.Enter += new System.EventHandler(this.groupBox5_Enter);
+            // 
+            // txtAlgoRange
+            // 
+            this.txtAlgoRange.Enabled = false;
+            this.txtAlgoRange.Location = new System.Drawing.Point(75, 93);
+            this.txtAlgoRange.Name = "txtAlgoRange";
+            this.txtAlgoRange.Size = new System.Drawing.Size(84, 20);
+            this.txtAlgoRange.TabIndex = 7;
+            this.txtAlgoRange.Text = "0-300";
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(8, 95);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(61, 13);
+            this.label38.TabIndex = 6;
+            this.label38.Text = "Algo range:";
             // 
             // radioFindAlgo
             // 
@@ -2292,9 +2438,9 @@ namespace UniversalPatcher
             // 
             // btnAlgoTest
             // 
-            this.btnAlgoTest.Location = new System.Drawing.Point(52, 139);
+            this.btnAlgoTest.Location = new System.Drawing.Point(75, 170);
             this.btnAlgoTest.Name = "btnAlgoTest";
-            this.btnAlgoTest.Size = new System.Drawing.Size(101, 24);
+            this.btnAlgoTest.Size = new System.Drawing.Size(82, 24);
             this.btnAlgoTest.TabIndex = 5;
             this.btnAlgoTest.Text = "Go";
             this.btnAlgoTest.UseVisualStyleBackColor = true;
@@ -2302,15 +2448,15 @@ namespace UniversalPatcher
             // 
             // txtAlgo
             // 
-            this.txtAlgo.Location = new System.Drawing.Point(53, 114);
+            this.txtAlgo.Location = new System.Drawing.Point(75, 145);
             this.txtAlgo.Name = "txtAlgo";
-            this.txtAlgo.Size = new System.Drawing.Size(100, 20);
+            this.txtAlgo.Size = new System.Drawing.Size(82, 20);
             this.txtAlgo.TabIndex = 2;
             // 
             // labelAlgo
             // 
             this.labelAlgo.AutoSize = true;
-            this.labelAlgo.Location = new System.Drawing.Point(3, 117);
+            this.labelAlgo.Location = new System.Drawing.Point(7, 148);
             this.labelAlgo.Name = "labelAlgo";
             this.labelAlgo.Size = new System.Drawing.Size(31, 13);
             this.labelAlgo.TabIndex = 0;
@@ -2329,9 +2475,9 @@ namespace UniversalPatcher
             // 
             // txtSeed
             // 
-            this.txtSeed.Location = new System.Drawing.Point(53, 88);
+            this.txtSeed.Location = new System.Drawing.Point(75, 119);
             this.txtSeed.Name = "txtSeed";
-            this.txtSeed.Size = new System.Drawing.Size(100, 20);
+            this.txtSeed.Size = new System.Drawing.Size(82, 20);
             this.txtSeed.TabIndex = 3;
             // 
             // radioFindKey
@@ -2350,7 +2496,7 @@ namespace UniversalPatcher
             // labelSeed
             // 
             this.labelSeed.AutoSize = true;
-            this.labelSeed.Location = new System.Drawing.Point(4, 91);
+            this.labelSeed.Location = new System.Drawing.Point(8, 122);
             this.labelSeed.Name = "labelSeed";
             this.labelSeed.Size = new System.Drawing.Size(35, 13);
             this.labelSeed.TabIndex = 1;
@@ -2403,6 +2549,7 @@ namespace UniversalPatcher
             // 
             // menuStrip1
             // 
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.actionToolStripMenuItem,
@@ -2556,16 +2703,6 @@ namespace UniversalPatcher
             // timerSearchParams
             // 
             this.timerSearchParams.Tick += new System.EventHandler(this.timerSearchParams_Tick);
-            // 
-            // btnDateTimeHelp
-            // 
-            this.btnDateTimeHelp.Location = new System.Drawing.Point(384, 69);
-            this.btnDateTimeHelp.Name = "btnDateTimeHelp";
-            this.btnDateTimeHelp.Size = new System.Drawing.Size(30, 21);
-            this.btnDateTimeHelp.TabIndex = 17;
-            this.btnDateTimeHelp.Text = "?";
-            this.btnDateTimeHelp.UseVisualStyleBackColor = true;
-            this.btnDateTimeHelp.Click += new System.EventHandler(this.btnDateTimeHelp_Click);
             // 
             // frmLogger
             // 
@@ -2869,6 +3006,10 @@ namespace UniversalPatcher
         private System.Windows.Forms.TextBox txtTstampFormat;
         private System.Windows.Forms.Label label36;
         private System.Windows.Forms.Button btnDateTimeHelp;
+        private System.Windows.Forms.TextBox txtDecimalSeparator;
+        private System.Windows.Forms.Label label37;
+        private System.Windows.Forms.TextBox txtAlgoRange;
+        private System.Windows.Forms.Label label38;
     }
 }
 

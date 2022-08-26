@@ -365,5 +365,8 @@
     <Setting Name="LoggerTimestampFormat" Type="System.String" Scope="User">
       <Value Profile="(Default)">HH:mm:ss.fff</Value>
     </Setting>
+    <Setting Name="LoggerDecimalSeparator" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

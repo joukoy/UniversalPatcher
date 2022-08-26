@@ -52,7 +52,8 @@ namespace UniversalPatcher
         private Queue<QueuedCommand> queuedCommands = new Queue<QueuedCommand>();
 
         //Set these values before StartLogging()
-        public  bool writelog;
+        public DateTime LogStartTime;
+        public bool writelog;
         public  bool useRawValues;
         public  bool useVPWFilters;
         public  bool reverseSlotNumbers;
@@ -180,7 +181,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    StringBuilder sb = new StringBuilder("Time" + logseparator);
+                    StringBuilder sb = new StringBuilder("Time" + logseparator + "Elapsed time" + logseparator);
                     if (useRawValues)
                     {
                         List<string> pids = new List<string>();
@@ -191,19 +192,24 @@ namespace UniversalPatcher
                                 pids.Add(PidProfile[c].Address);
                             }
                         }
-                        foreach (string s in pids)
+                        for (int c=0; c < pids.Count; c++)
                         {
-                            sb.Append(s + logseparator);
+                            string s = pids[c];
+                            sb.Append(s);
+                            if (c<pids.Count-1)
+                                 sb.Append(logseparator);
                         }
                     }
                     else
                     {
                         for (int c = 0; c < PidProfile.Count; c++)
                         {
-                            sb.Append(PidProfile[c].PidName + logseparator);
+                            sb.Append(PidProfile[c].PidName);
+                            if (c < PidProfile.Count - 1)
+                                sb.Append(logseparator);
                         }
                     }
-                    string header = sb.ToString().Trim(logseparator[0]);
+                    string header = sb.ToString();
                     logwriter = new StreamWriter(path);
                     logwriter.WriteLine(header);
                 }
@@ -222,12 +228,16 @@ namespace UniversalPatcher
             {
                 if (logwriter != null)
                 {
-                    StringBuilder sb = new StringBuilder(timestamp + logseparator);
+                    string CultureDecim = Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                    string Decim = Properties.Settings.Default.LoggerDecimalSeparator;
+                    StringBuilder sb = new StringBuilder(timestamp + logseparator + DateTime.Now.Subtract(LogStartTime).ToString() + logseparator);
                     for (int c = 0; c < logvalues.Length; c++)
                     {
-                        sb.Append(logvalues[c].Replace(",", ".") + logseparator);
+                        sb.Append(logvalues[c].Replace(CultureDecim, Decim));
+                        if (c < (logvalues.Length - 1))
+                            sb.Append(logseparator);
                     }
-                    logwriter.WriteLine(sb.ToString().Trim(logseparator[0]));
+                    logwriter.WriteLine(sb.ToString());
                 }
             }
             catch (Exception ex)

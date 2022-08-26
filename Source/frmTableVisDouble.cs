@@ -20,7 +20,9 @@ namespace UniversalPatcher
             InitializeComponent();
             richTableData1.MouseWheel += RichTableData_MouseWheel;
             richTableData2.SelectionChanged += RichTableData2_SelectionChanged;
-            richTableData1.SelectionChanged += RichTableData_SelectionChanged;
+            richTableData1.SelectionChanged += RichTableData1_SelectionChanged;
+            richTableData1.SelectionChanged += RichTableData1_SelectionChangedMirror;
+            richTableData2.SelectionChanged += RichTableData2_SelectionChangedMirror;
             if (td2 != null)
             {
                 richTableData1.VScroll += RichTableData_VScroll;
@@ -71,6 +73,9 @@ namespace UniversalPatcher
         private int EndPoint1;
         private int StartPoint2;
         private int EndPoint2;
+        private int offset = 0;
+        private int ScrollPos1 = -1;
+        private int ScrollPos2 = -1;
 
         [DllImport("user32.dll")]
         static extern int SetScrollPos(IntPtr hWnd, int nBar, int nPos, bool bRedraw);
@@ -223,11 +228,102 @@ namespace UniversalPatcher
             UpdateDisplay();
         }
 
-        private void RichTableData2_SelectionChanged(object sender, EventArgs e)
+        private List<TableData> GetSelectedTables(bool Secondary)
+        {
+            int Start = -1;
+            int End = -1;
+            RichTextBox richBox = richTableData1;
+            Dictionary<int, int> SelectionToAddr = SelectionToAddress1;
+            TextBox txtInfo = txtInfo1;
+            List<TableData> SortedTds = SortedTds1;
+            List<TableData> selTables = new List<TableData>();
+            if (Secondary)
+            {
+                richBox = richTableData2;
+                SelectionToAddr = SelectionToAddress2;
+                txtInfo = txtInfo2;
+                SortedTds = SortedTds2;
+            }
+
+            for (int s = richBox.SelectionStart; s < (richBox.SelectionStart + richBox.SelectionLength); s++)
+            {
+                if (SelectionToAddr.ContainsKey(s))
+                {
+                    Start = SelectionToAddr[s];
+                    break;
+                }
+            }
+            for (int s = richBox.SelectionStart + richBox.SelectionLength; s >= richBox.SelectionStart; s--)
+            {
+                if (SelectionToAddr.ContainsKey(s))
+                {
+                    End = SelectionToAddr[s];
+                    break;
+                }
+            }
+
+            if (Start < 0 || End < 0)
+            {
+                txtInfo.Text = "";
+                return selTables;
+            }
+            txtInfo.Text = "Selection range: " + Start.ToString("X") + " - " + End.ToString("X") + Environment.NewLine;
+            txtInfo.AppendText("Tables: ");
+
+            int TStart = 0;
+            int TEnd = 0;
+            for (int t = 0; t < SortedTds.Count; t++)
+            {
+                if (SortedTds[t].StartAddress() >= Start)
+                {
+                    TStart = t;
+                    break;
+                }
+            }
+            for (int t = TStart; t < SortedTds.Count; t++)
+            {
+                if (SortedTds[t].EndAddress() > End)
+                {
+                    break;
+                }
+                else
+                {
+                    TEnd = t;
+                }
+            }
+            txtInfo.AppendText(Environment.NewLine);
+            for (int t = TStart; t <= TEnd; t++)
+            {
+                txtInfo.AppendText(SortedTds[t].TableName + " [" + SortedTds[t].StartAddress().ToString("X") + "] ("
+                    + SortedTds[t].addrInt.ToString("X") + " + " + SortedTds[t].Offset.ToString()
+                    + " + " + SortedTds[t].ExtraOffset.ToString() + ")" + Environment.NewLine);
+                selTables.Add(SortedTds[t]);
+            }
+            return selTables;
+        }
+
+        private void RichTableData2_SelectionChangedMirror(object sender, EventArgs e)
         {
             if (!radioSegmentTBNames.Checked)
+            {
+                richTableData1.SelectionChanged -= RichTableData1_SelectionChangedMirror;
                 richTableData1.Select(richTableData2.SelectionStart, richTableData2.SelectionLength);
+                richTableData1.SelectionChanged += RichTableData1_SelectionChangedMirror;
+            }
+        }
 
+        private void RichTableData1_SelectionChangedMirror(object sender, EventArgs e)
+        {
+            if (td2 != null && !radioSegmentTBNames.Checked)
+            {
+                richTableData2.SelectionChanged -= RichTableData2_SelectionChangedMirror;
+                richTableData2.Select(richTableData1.SelectionStart, richTableData1.SelectionLength);
+                richTableData2.SelectionChanged += RichTableData2_SelectionChangedMirror;
+            }
+        }
+
+        private void RichTableData2_SelectionChanged(object sender, EventArgs e)
+        {
             if (SelectionToAddress2 == null)
                 return;
 
@@ -236,69 +332,11 @@ namespace UniversalPatcher
             if (richTableData1.SelectionStart == 0 && richTableData1.SelectionLength == richTableData1.TextLength)
                 return;
 
-            int Start = -1;
-            int End = -1;
-
-
-            for (int s = richTableData2.SelectionStart; s < (richTableData2.SelectionStart + richTableData2.SelectionLength); s++)
-            {
-                if (SelectionToAddress2.ContainsKey(s))
-                {
-                    Start = SelectionToAddress2[s];
-                    break;
-                }
-            }
-            for (int s = richTableData2.SelectionStart + richTableData2.SelectionLength; s >= richTableData2.SelectionStart; s--)
-            {
-                if (SelectionToAddress2.ContainsKey(s))
-                {
-                    End = SelectionToAddress2[s];
-                    break;
-                }
-            }
-
-            if (Start < 0 || End < 0)
-            {
-                txtInfo2.Text = "";
-                return;
-            }
-            txtInfo2.Text = "Selection range: " + Start.ToString("X") + " - " + End.ToString("X") + Environment.NewLine;
-            txtInfo2.AppendText("Tables: ");
-
-            int TStart = 0;
-            int TEnd = 0;
-            for (int t = 0; t < SortedTds2.Count; t++)
-            {
-                if (SortedTds2[t].StartAddress() >= Start)
-                {
-                    TStart = t;
-                    break;
-                }
-            }
-            for (int t = TStart; t < SortedTds2.Count; t++)
-            {
-                if (SortedTds2[t].EndAddress() > End)
-                {
-                    break;
-                }
-                else
-                {
-                    TEnd = t;
-                }
-            }
-            for (int t = TStart; t <= TEnd; t++)
-            {
-                txtInfo2.AppendText(SortedTds2[t].TableName + "[" + SortedTds2[t].StartAddress().ToString("X") + "],");
-            }
-            txtInfo2.Text.Trim(',');
+            GetSelectedTables(true);
         }
 
-        private void RichTableData_SelectionChanged(object sender, EventArgs e)
+        private void RichTableData1_SelectionChanged(object sender, EventArgs e)
         {
-            if (td2 != null && !radioSegmentTBNames.Checked)
-            {
-                richTableData2.Select(richTableData1.SelectionStart, richTableData1.SelectionLength);
-            }
 
             if (SelectionToAddress1 == null)
                 return;
@@ -307,59 +345,7 @@ namespace UniversalPatcher
                 return;
             if (richTableData2.SelectionStart == 0 && richTableData2.SelectionLength == richTableData2.TextLength)
                 return;
-
-            int Start = -1;
-            int End = -1;
-            for (int s = richTableData1.SelectionStart; s < (richTableData1.SelectionStart + richTableData1.SelectionLength); s++)
-            {
-                if (SelectionToAddress1.ContainsKey(s))
-                {
-                    Start = SelectionToAddress1[s];
-                    break;
-                }
-            }
-            for (int s = richTableData1.SelectionStart + richTableData1.SelectionLength; s >= richTableData1.SelectionStart; s--)
-            {
-                if (SelectionToAddress1.ContainsKey(s))
-                {
-                    End = SelectionToAddress1[s];
-                    break;
-                }
-            }
-
-            if (Start < 0 || End < 0)
-            {
-                txtInfo1.Text = "";
-                return;
-            }
-            txtInfo1.Text = "Selection range: " + Start.ToString("X") + " - " + End.ToString("X") + Environment.NewLine;
-            txtInfo1.AppendText("Tables: ");
-            int TStart = 0;
-            int TEnd = 0;
-            for (int t = 0; t < SortedTds1.Count; t++)
-            {
-                if (SortedTds1[t].StartAddress() >= Start)
-                {
-                    TStart = t;
-                    break;
-                }
-            }
-            for (int t = TStart; t < SortedTds1.Count; t++)
-            {
-                if (SortedTds1[t].EndAddress() > End)
-                {
-                    break;
-                }
-                else
-                {
-                    TEnd = t;
-                }
-            }
-            for (int t = TStart; t <= TEnd; t++)
-            {
-                txtInfo1.AppendText(SortedTds1[t].TableName + "[" + SortedTds1[t].StartAddress().ToString("X") + "],");
-            }
-            txtInfo1.Text.Trim(',');
+            GetSelectedTables(false);
         }
 
         public void ScrollTo(IntPtr hWnd, int Position)
@@ -522,11 +508,9 @@ namespace UniversalPatcher
                 }
                 Point pt = new Point();
                 SendMessage(richTableData2.Handle, EM_GETSCROLLPOS, 0, ref pt);
-                //int pos = GetRtbPos(richTableData2);
-                //Debug.WriteLine("Rich2 pos: " + pos.ToString());
+                //Debug.WriteLine("Rich2 pos: " + pt.Y.ToString());
                 SendMessage(richTableData1.Handle, EM_SETSCROLLPOS, 0, ref pt);
                 ScrollTo(richTableData1.Handle, pt.Y);
-                //Debug.WriteLine("Rich2: " + pt.Y.ToString() + Environment.NewLine);
             }
             catch (Exception ex)
             {
@@ -625,6 +609,11 @@ namespace UniversalPatcher
                 richTableData1.Select(richTableData1.TextLength, 0);
                 richTableData1.Select(pos1, 0);
             }
+            Application.DoEvents();
+            SendMessage(richTableData1.Handle, EM_GETSCROLLPOS, 0, ref pt1);
+            ScrollPos1 = pt1.Y;
+            SendMessage(richTableData2.Handle, EM_GETSCROLLPOS, 0, ref pt2);
+            ScrollPos2 = pt2.Y;
         }
 
         public void DisplayData(uint selectedByte, bool Secondary)
@@ -647,7 +636,6 @@ namespace UniversalPatcher
                 int end = 0;
                 int end1 = 0;
                 int end2 = 0;
-                int offset = 0; 
                 int segmentstart = 0;
                 int segmentend = (int)pcm.fsize;
 
@@ -961,7 +949,8 @@ namespace UniversalPatcher
             td1Org.ExtraOffset = (int)numExtraOffset1.Value;
             if (tuner != null)
             {
-                tuner.RefreshTablelist();
+                //tuner.RefreshTablelist();
+                tuner.RefreshFast();
             }
         }
 
@@ -970,7 +959,8 @@ namespace UniversalPatcher
             td2Org.ExtraOffset = (int)numExtraOffset2.Value;
             if (tuner != null)
             {
-                tuner.RefreshTablelist();
+                //tuner.RefreshTablelist();
+                tuner.RefreshFast();
             }
 
         }
@@ -1013,36 +1003,16 @@ namespace UniversalPatcher
         {
             try
             {
-                int Start = -1;
-                int End = -1;
-
-                for (int s = richTableData1.SelectionStart; s < (richTableData1.SelectionStart + richTableData1.SelectionLength); s++)
+                List<TableData> selTables = GetSelectedTables(false);
+                for (int t = 0; t < selTables.Count; t++)
                 {
-                    if (SelectionToAddress1.ContainsKey(s))
-                    {
-                        End = SelectionToAddress1[s];
-                        if (Start < 0)
-                            Start = SelectionToAddress1[s];
-                    }
+                    Logger("Updating table: " + selTables[t].TableName);
+                    selTables[t].ExtraOffset = (int)numExtraOffset1.Value;
                 }
-
-                if (Start < 0 || End < 0)
-                {
-                    LoggerBold("No data selected");
-                    return;
-                }
-                for (int t = 0; t < PCM1.tableDatas.Count; t++)
-                {
-                    if (PCM1.tableDatas[t].StartAddress() >= Start && PCM1.tableDatas[t].EndAddress() <= End)
-                    {
-                        Logger("Updating table: " + PCM1.tableDatas[t].TableName);
-                        PCM1.tableDatas[t].ExtraOffset = (int)numExtraOffset1.Value;
-                    }
-                }
-                CreateHexData(PCM1, ref hexDatas1, td1, SortedTds1);
+                //CreateHexData(PCM1, ref hexDatas1, td1, SortedTds1);
                 if (tuner != null)
                 {
-                    tuner.RefreshTablelist();
+                    tuner.RefreshFast();
                 }
                 ShowTables(PCM1,td1Org,PCM2,td2Org,selectedByte);
             }
@@ -1056,37 +1026,17 @@ namespace UniversalPatcher
         {
             try
             {
-                int Start = -1;
-                int End = -1;
 
-                for (int s = richTableData2.SelectionStart; s < (richTableData2.SelectionStart + richTableData2.SelectionLength); s++)
+                List<TableData> selTables = GetSelectedTables(true);
+                for (int t = 0; t < selTables.Count; t++)
                 {
-                    if (SelectionToAddress2.ContainsKey(s))
-                    {
-                        End = SelectionToAddress2[s];
-                        if (Start < 0)
-                            Start = SelectionToAddress2[s];
-                    }
+                    Logger("Updating table: " + selTables[t].TableName);
+                    selTables[t].ExtraOffset = (int)numExtraOffset2.Value;
                 }
-
-                if (Start < 0 || End < 0)
-                {
-                    LoggerBold("No data selected");
-                    return;
-                }
-
-                for (int t = 0; t < PCM2.tableDatas.Count; t++)
-                {
-                    if (PCM2.tableDatas[t].StartAddress() >= Start && PCM2.tableDatas[t].EndAddress() <= End)
-                    {
-                        Logger("Updating table: " + PCM2.tableDatas[t].TableName);
-                        PCM2.tableDatas[t].ExtraOffset = (int)numExtraOffset2.Value;
-                    }
-                }
-                CreateHexData(PCM2, ref hexDatas2, td2, SortedTds2);
+                //CreateHexData(PCM2, ref hexDatas2, td2, SortedTds2);
                 if (tuner != null)
                 {
-                    tuner.RefreshTablelist();
+                    tuner.RefreshFast();
                 }
                 ShowTables(PCM1, td1Org, PCM2, td2Org, selectedByte);
             }
@@ -1131,6 +1081,202 @@ namespace UniversalPatcher
             {
                 richTableData1.Select(StartPoint2, EndPoint2 - StartPoint2);
             }
+        }
+
+        private void btnApplytoRight_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                List<TableData> selTables = GetSelectedTables(false);
+                for (int t = 0; t < selTables.Count; t++)
+                {
+                    TableData tdR = FindTableData(selTables[t], SortedTds2);
+                    if (tdR != null)
+                    {
+                        Logger("Applying offset: " + offset.ToString() + " to table: " + tdR.TableName);
+                        tdR.ExtraOffset = offset;
+                    }
+                }
+                if (tuner != null)
+                {
+                    tuner.RefreshFast();
+                }
+                ShowTables(PCM1, td1Org, PCM2, td2Org, selectedByte);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, Applytoright, line " + line + ": " + ex.Message);
+
+            }
+        }
+
+        private void btnApplytoLeft_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                List<TableData> selTables = GetSelectedTables(true);
+                for (int t = 0; t < selTables.Count; t++)
+                {
+                    TableData tdL = FindTableData(selTables[t], SortedTds1);
+                    if (tdL != null)
+                    {
+                        Logger("Applying offset: " + (-1 * offset).ToString() + " to table: " + tdL.TableName);
+                        tdL.ExtraOffset = -1 * offset;
+                    }
+                }
+                if (tuner != null)
+                {
+                    tuner.RefreshFast();
+                }
+                ShowTables(PCM1, td1Org, PCM2, td2Org, selectedByte);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, Applytoleft, line " + line + ": " + ex.Message);
+
+            }
+
+        }
+
+        private void btnCloneColors_Click(object sender, EventArgs e)
+        {
+            for (int i=0;i<hexDatas1.Length;i++)
+            {
+                if ((i+offset) > 0 && (i+offset)< PCM2.fsize)
+                    hexDatas2[i+offset] = hexDatas1[i];
+            }
+            UpdateDisplay();
+        }
+
+        private void btnCloneColors2_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < hexDatas2.Length; i++)
+            {
+                if ((i - offset) > 0 && (i - offset) < PCM1.fsize)
+                    hexDatas1[i - offset] = hexDatas2[i];
+            }
+            UpdateDisplay();
+
+        }
+
+        private void btnScrollToSelected_Click(object sender, EventArgs e)
+        {
+            if (radioSegmentTBNames.Checked)
+            {
+                Point pt1 = new Point(0, ScrollPos1);
+                SendMessage(richTableData1.Handle, EM_SETSCROLLPOS, 0, ref pt1);
+                ScrollTo(richTableData1.Handle, ScrollPos1);
+            }
+            else
+            {
+                Point pt2 = new Point(0, ScrollPos2);
+                SendMessage(richTableData2.Handle, EM_SETSCROLLPOS, 0, ref pt2);
+                ScrollTo(richTableData2.Handle, ScrollPos2);
+            }
+        }
+
+        private void btnScrollToSelected2_Click(object sender, EventArgs e)
+        {
+            Point pt2 = new Point(0, ScrollPos2);
+            SendMessage(richTableData2.Handle, EM_SETSCROLLPOS, 0, ref pt2);
+            ScrollTo(richTableData2.Handle, ScrollPos2);
+        }
+
+        private void btnCreateTable1_Click(object sender, EventArgs e)
+        {
+            int Start = -1;
+            int End = -1;
+            for (int s = richTableData1.SelectionStart; s < (richTableData1.SelectionStart + richTableData1.SelectionLength); s++)
+            {
+                if (SelectionToAddress1.ContainsKey(s))
+                {
+                    Start = SelectionToAddress1[s];
+                    break;
+                }
+            }
+            if (Start < 0)
+            {
+                return;
+            }
+            for (int s = richTableData1.SelectionStart + richTableData1.SelectionLength; s >= richTableData1.SelectionStart; s--)
+            {
+                if (SelectionToAddress1.ContainsKey(s))
+                {
+                    End = SelectionToAddress1[s];
+                    break;
+                }
+            }
+
+            TableData newTd = new TableData();
+            newTd.addrInt = (uint)Start;
+            if (End - Start > 0)
+                newTd.Rows = (ushort)(End - Start);
+            else
+                newTd.Rows = 1;
+            newTd.Columns = 1;
+            frmTdEditor fte = new frmTdEditor();
+            fte.td = newTd;
+            fte.LoadTd();
+            if (fte.ShowDialog() == DialogResult.OK)
+            {
+                PCM1.tableDatas.Add(newTd);
+                ShowTables(PCM1, td1, PCM2, td2, selectedByte);
+            }
+            fte.Dispose();
+        }
+
+        private void btnCreateTable2_Click(object sender, EventArgs e)
+        {
+            int Start = -1;
+            int End = -1;
+            for (int s = richTableData2.SelectionStart; s < (richTableData2.SelectionStart + richTableData2.SelectionLength); s++)
+            {
+                if (SelectionToAddress2.ContainsKey(s))
+                {
+                    Start = SelectionToAddress2[s];
+                    break;
+                }
+            }
+            if (Start < 0)
+            {
+                return;
+            }
+            for (int s = richTableData2.SelectionStart + richTableData2.SelectionLength; s >= richTableData2.SelectionStart; s--)
+            {
+                if (SelectionToAddress2.ContainsKey(s))
+                {
+                    End = SelectionToAddress2[s];
+                    break;
+                }
+            }
+
+            TableData newTd = new TableData();
+            newTd.addrInt = (uint)Start;
+            if (End - Start > 0)
+                newTd.Rows = (ushort)(End - Start);
+            else
+                newTd.Rows = 1;
+            newTd.Columns = 1;
+            frmTdEditor fte = new frmTdEditor();
+            fte.td = newTd;
+            fte.LoadTd();
+            if (fte.ShowDialog() == DialogResult.OK)
+            {
+                PCM2.tableDatas.Add(newTd);
+                ShowTables(PCM1, td1, PCM2, td2, selectedByte);
+            }
+            fte.Dispose();
+
         }
     }
 }

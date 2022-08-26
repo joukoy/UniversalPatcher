@@ -495,6 +495,13 @@ namespace UniversalPatcher
             SaveBin();
         }
 
+        public void RefreshFast()
+        {
+            bindingsource.DataSource = filteredTableDatas;
+            dataGridView1.Update();
+            dataGridView1.Refresh();
+        }
+
         public void RefreshTablelist()
         {
             try
@@ -830,17 +837,52 @@ namespace UniversalPatcher
                     if (selectedSegs.Count > 0)
                     {
                         List<TableData> newTDList = new List<TableData>();
-                        foreach (string seg in selectedSegs)
+                        if (mirrorSegmentsFromCompareToolStripMenuItem.Checked)
                         {
-                            int segNr = 0;
-                            for (int s = 0; s < PCM.segmentinfos.Length; s++)
-                                if (PCM.segmentinfos[s].Name == seg)
-                                    segNr = s;
-                            uint addrStart = PCM.segmentAddressDatas[segNr].SegmentBlocks[0].Start;
-                            uint addrEnd = PCM.segmentAddressDatas[segNr].SegmentBlocks[PCM.segmentAddressDatas[segNr].SegmentBlocks.Count - 1].End;
-                            var newResults = results.Where(t => t.addrInt >= addrStart && t.addrInt <= addrEnd);
-                            foreach (TableData nTd in newResults)
-                                newTDList.Add(nTd);
+                            PcmFile cmpPCM = null;
+                            foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
+                            {
+                                cmpPCM = (PcmFile)mi.Tag;
+                                if (cmpPCM.FileName != PCM.FileName)
+                                    break;
+                                else
+                                    cmpPCM = null;
+                            }
+
+                            if (cmpPCM != null)
+                            {
+                                foreach (string seg in selectedSegs)
+                                {
+                                    int segNr = 0;
+
+                                    for (int s = 0; s < cmpPCM.segmentinfos.Length; s++)
+                                        if (cmpPCM.segmentinfos[s].Name == seg)
+                                            segNr = s;
+                                    uint addrStart = cmpPCM.segmentAddressDatas[segNr].SegmentBlocks[0].Start;
+                                    uint addrEnd = cmpPCM.segmentAddressDatas[segNr].SegmentBlocks.Last().End;
+                                    var newResults = cmpPCM.tableDatas.Where(t => t.addrInt >= addrStart && t.addrInt <= addrEnd);
+                                    foreach (TableData cmpTd in newResults)
+                                    {
+                                        TableData nTd = FindTableData(cmpTd, results.ToList());
+                                        if (nTd != null)
+                                            newTDList.Add(cmpTd);
+                                    }
+                                }
+                            }
+                        }
+                        {
+                            foreach (string seg in selectedSegs)
+                            {
+                                int segNr = 0;
+                                for (int s = 0; s < PCM.segmentinfos.Length; s++)
+                                    if (PCM.segmentinfos[s].Name == seg)
+                                        segNr = s;
+                                uint addrStart = PCM.segmentAddressDatas[segNr].SegmentBlocks[0].Start;
+                                uint addrEnd = PCM.segmentAddressDatas[segNr].SegmentBlocks.Last().End;
+                                var newResults = results.Where(t => t.addrInt >= addrStart && t.addrInt <= addrEnd);
+                                foreach (TableData nTd in newResults)
+                                    newTDList.Add(nTd);
+                            }
                         }
                         results = newTDList;
                     }
@@ -5316,6 +5358,12 @@ namespace UniversalPatcher
                 LoggerBold(ex.Message);
             }
 
+        }
+
+        private void mirrorSegmentsFromCompareToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mirrorSegmentsFromCompareToolStripMenuItem.Checked = !mirrorSegmentsFromCompareToolStripMenuItem.Checked;
+            FilterTables();
         }
     }
 }

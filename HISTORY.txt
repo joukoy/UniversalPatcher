@@ -481,3 +481,10 @@
 
 0.20.25
 - Logger: fixed bugs in automatic reconnect
+
+0.20.26
+- Offset visualizer: Bug fixes & improvements (Unfinished)
+- Included PCM Hammer updated to version 21 
+- Logger: User selectable decimal separator
+- Logger: AlgoTest: Added "Algo range"
+

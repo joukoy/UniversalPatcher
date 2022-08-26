@@ -242,7 +242,7 @@ namespace UniversalPatcher
                 StreamReader sr = new StreamReader(txtLogFile.Text);
                 string line;
                 line = sr.ReadLine();
-                histogram.ParseCsvHeader(line, txtColumnSeparator.Text[0]);
+                histogram.ParseCsvHeader(line, txtColumnSeparator.Text);
                 sr.Close();
 
                 comboXparam.Items.Clear();
