@@ -869,10 +869,10 @@
   </DtcSearchConfig>
   <DtcSearchConfig>
     <XMLFile>p08-03-05-l6</XMLFile>
-    <CodeSearch>84 60 CA 43 F8 @ @ 42 84 18 38</CodeSearch>
-    <MilTable>opcode</MilTable>
-    <CodeOffset>0</CodeOffset>
-    <CodeSteps>2</CodeSteps>
+    <CodeSearch>47 f8 @ @ 45 f9 * * * * 42 44</CodeSearch>
+    <StatusSearch>47 f8 * * 45 f9 @ @ @ @ 42 44</StatusSearch>
+    <CodeOffset>2</CodeOffset>
+    <CodeSteps>4</CodeSteps>
     <StatusOffset>1</StatusOffset>
     <MilOffset>1</MilOffset>
     <StatusSteps>1</StatusSteps>
@@ -880,5 +880,6 @@
     <ConditionalOffset />
     <Linear>false</Linear>
     <CodesPerStatus>1</CodesPerStatus>
+    <StatusMath>p10</StatusMath>
   </DtcSearchConfig>
 </ArrayOfDtcSearchConfig>
