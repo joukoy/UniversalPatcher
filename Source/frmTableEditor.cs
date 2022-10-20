@@ -263,7 +263,9 @@ namespace UniversalPatcher
                     minMaxTxt = "Min " + min.ToString(formatStr) + " Max " + max.ToString(formatStr);
                 }
                 string valTxt = " Last value " + Convert.ToDouble(tCell.lastValue).ToString(formatStr) + " Saved value " + Convert.ToDouble(tCell.origValue).ToString(formatStr);
-                labelInfo.Text = minMaxTxt + valTxt + " Address: " + tCell.addr.ToString("X");
+                labelInfo.Text = minMaxTxt + valTxt;
+                if (!tData.Math.StartsWith("DTC"))
+                    labelInfo.Text += " Address: " + tCell.addr.ToString("X");
                 if (ftvd != null && ftvd.Visible)
                     ftvd.ChangeSelection(tCell.addr);
                 //ftv.displayData(tCell.addr, compareFiles[0].buf);
@@ -300,6 +302,7 @@ namespace UniversalPatcher
                 Array.Copy(pcm.buf, first.addrInt, cmpFile.buf, 0, bufSize);
                 cmpFile.tableBufferOffset = first.addrInt;
 
+
                 for (int tId = 0; tId < cmpFile.tableIds.Count; tId++)
                 {
                     TableData tData = cmpFile.filteredTables[tId];
@@ -308,6 +311,7 @@ namespace UniversalPatcher
 
                     int rowCount = tData.Rows;
                     int colCount = tData.Columns;
+
 
                     /*                int elementSize = getBits(tData.DataType) / 8;
                                     int bufSize = (int)(tData.Rows * tData.Columns * elementSize + tData.Offset);

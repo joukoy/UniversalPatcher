@@ -42,6 +42,7 @@ namespace UniversalPatcher
         public string Values { get; set; }
         public bool Linear { get; set; }
         public int CodesPerStatus { get; set; }
+        public string StatusMath { get; set; }
 
         public DtcSearchConfig ShallowCopy()
         {
@@ -93,6 +94,123 @@ namespace UniversalPatcher
             return retVal;
         }
 
+        private List<DtcCode> SearchP10Dtc(PcmFile PCM, DtcSearchConfig dConfig, uint codeAddr)
+        {
+            List<DtcCode> retVal = new List<DtcCode>();
+            try
+            {
+                byte prevMask = 0xFF;
+                string header = "";
+                ushort tableLen = 0;
+                ushort lastStatusByte = 0;
+                uint[] StatusTables = new uint[4];
+
+                string searchStr = "14 30 41 b0 @ @ @ @ c4 13 67";
+                //uint addr1 = SearchBytes(PCM, searchStr, 0, PCM.fsize) + 11;
+                uint startAddr = 0;
+                uint endAddr = PCM.fsize;
+                uint addr1;  //GetAddrbySearchString(PCM, searchStr, ref startAddr, endAddr).Addr;
+                for (int t = 0; t < 3; t++)
+                {
+                    //addr1 = SearchBytes(PCM, searchStr, addr1, PCM.fsize) + 11;
+                    addr1 = GetAddrbySearchString(PCM, searchStr, ref startAddr, endAddr).Addr;
+                    StatusTables[t] = addr1;
+                }
+                searchStr = "14 30 41 b0 @ @ @ @ c4 13 66";
+                //addr1 = SearchBytes(PCM, searchStr, 0, PCM.fsize);
+                startAddr = 0;
+                addr1 = GetAddrbySearchString(PCM, searchStr, ref startAddr, endAddr).Addr;
+                if (addr1 == uint.MaxValue)
+                {
+                    searchStr = "76 * 45 F9 @ @ @ @ 47 F8 * * 16";
+                    startAddr = 0;
+                    endAddr = PCM.fsize;
+                    addr1 = GetAddrbySearchString(PCM, searchStr, ref startAddr, endAddr).Addr;
+                    //addr1 = SearchBytes(PCM, searchStr, addr1, PCM.fsize) + 11;
+                }
+                if (addr1 < uint.MaxValue)
+                {
+                    StatusTables[3] = addr1;
+                }
+
+                //Status tables:
+                // 0 & 2 = Enable / Disable Mil
+                // 1 = TypeA/TypeB
+                // 3 =  Enable/Disable DTC
+                // 0 = status1, 1 = status2, 2 = status4, 3 = status3 (PCM internal handling?)
+
+                //for (uint addr = (uint)(codeAddr + dConfig.CodeOffset); addr < PCM.fsize; addr += (uint)dConfig.CodeSteps)
+                for (uint addr = codeAddr; addr < PCM.fsize; addr += (uint)dConfig.CodeSteps)
+                {
+                    DtcCode dtc = new DtcCode();
+                    dtc.P10 = true;
+                    dtc.codeAddrInt = addr;
+                    dtc.Values = dConfig.Values;
+                    dtc.StatusMath = "X";
+                    dtc.codeInt = PCM.ReadUInt16(addr);
+                    string codeTmp = dtc.codeInt.ToString("X4");
+                    dtc.Code = DecodeDTC(codeTmp);
+                    dtc.Description = GetDtcDescription(dtc.Code);
+                    dtc.Values = "Enum: 0:Enabled, 1: Disabled";
+                    dtc.StatusByte = PCM.buf[addr - 1];
+                    dtc.StatusMask = PCM.buf[addr - 2];
+
+                    dtc.milAddrInt = StatusTables[0] + dtc.StatusByte;
+                    dtc.TypeAddrInt = StatusTables[1] + dtc.StatusByte;
+                    dtc.milAddrInt2 = StatusTables[2] + dtc.StatusByte;
+                    dtc.statusAddrInt = StatusTables[3] + dtc.StatusByte;
+
+                    if (dtc.StatusByte > lastStatusByte)
+                    {
+                        lastStatusByte = dtc.StatusByte;
+                    }
+                    if (prevMask != 0xFF && dtc.StatusMask != 1)
+                    {
+                        if ((prevMask << 1) != dtc.StatusMask)
+                        {
+                            Debug.WriteLine("Mask not increasing");
+                            break;
+                        }
+                    }
+                    prevMask = dtc.StatusMask;
+                    header += dtc.Code + ",";
+                    if ((PCM.buf[StatusTables[0] + dtc.StatusByte] & dtc.StatusMask) == 0)
+                        dtc.MilStatus = 0;
+                    else
+                        dtc.MilStatus = 1;
+
+                    if ((PCM.buf[StatusTables[1] + dtc.StatusByte] & dtc.StatusMask) == 0)
+                        dtc.Type = 0;
+                    else
+                        dtc.Type =1;
+
+                    if ((PCM.buf[StatusTables[3] + dtc.StatusByte] & dtc.StatusMask) == 0)
+                    {
+                        dtc.Status = 1;
+                        dtc.StatusTxt = "Enabled";
+                    }
+                    else
+                    {
+                        dtc.Status = 0;
+                        dtc.StatusTxt = "Disabled";
+                    }
+                    retVal.Add(dtc);
+                    tableLen++;
+                }
+                header = header.Trim(',');
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("DTC search, line " + line + ": " + ex.Message);
+            }
+            return retVal;
+        }
+
         public List<DtcCode> SearchDtc(PcmFile PCM, bool primary)
         {
             List<DtcCode> retVal = new List<DtcCode>();
@@ -122,16 +240,18 @@ namespace UniversalPatcher
 
                 for (configIndex = 0; configIndex < dtcSearchConfigs.Count; configIndex++)
                 {
-                    linear = dtcSearchConfigs[configIndex].Linear;
-                    if (dtcSearchConfigs[configIndex].CodesPerStatus > 0)
-                        codePerStatus = dtcSearchConfigs[configIndex].CodesPerStatus;
+                    DtcSearchConfig dConfig = dtcSearchConfigs[configIndex];
+                    linear = dConfig.Linear;
+                    if (dConfig.CodesPerStatus > 0)
+                        codePerStatus = dConfig.CodesPerStatus;
 
-                    if (dtcSearchConfigs[configIndex].XMLFile != null && cnfFile == dtcSearchConfigs[configIndex].XMLFile.ToLower())
+                    if (dConfig.XMLFile != null && cnfFile == dConfig.XMLFile.ToLower())
                     {
-                        searchStr = dtcSearchConfigs[configIndex].CodeSearch;
+                        searchStr = dConfig.CodeSearch;
                         startAddr = 0;
                         condOffsetCode = false;
-                        string[] condParts = dtcSearchConfigs[configIndex].ConditionalOffset.Trim().Split(',');
+
+                        string[] condParts = dConfig.ConditionalOffset.Trim().Split(',');
                         foreach (string conPart in condParts)
                         {
                             switch(conPart.Trim())
@@ -160,15 +280,23 @@ namespace UniversalPatcher
                         codeAddr = GetAddrbySearchString(PCM, searchStr,ref startAddr,PCM.fsize, condOffsetCode, signedOffsetCode).Addr;
                         //Check if we found status table, too:
                         startAddr = 0;
-                        statusAddr = GetAddrbySearchString(PCM, dtcSearchConfigs[configIndex].StatusSearch, ref startAddr,PCM.fsize, condOffsetStatus, signedOffsetStatus).Addr;
+                        statusAddr = GetAddrbySearchString(PCM, dConfig.StatusSearch, ref startAddr,PCM.fsize, condOffsetStatus, signedOffsetStatus).Addr;
                         if (codeAddr < uint.MaxValue) //If found
-                            codeAddr = (uint)(codeAddr + dtcSearchConfigs[configIndex].CodeOffset);
+                            codeAddr = (uint)(codeAddr + dConfig.CodeOffset);
                         if (statusAddr < uint.MaxValue)
-                            statusAddr = (uint)(statusAddr + dtcSearchConfigs[configIndex].StatusOffset);
+                            statusAddr = (uint)(statusAddr + dConfig.StatusOffset);
                         if (codeAddr < PCM.fsize && statusAddr < PCM.fsize)
                         {
                             Debug.WriteLine("Code search string: " + searchStr);
                             Debug.WriteLine("DTC code table address: " + codeAddr.ToString("X"));
+
+                            if (!string.IsNullOrEmpty(dConfig.StatusMath) && dConfig.StatusMath.ToLower().Contains("p10"))
+                            {
+                                PCM.dtcValues = ParseDtcValues("0:Enabled,1:Disabled");
+                                retVal = SearchP10Dtc(PCM, dConfig, codeAddr);
+                                return retVal;
+                            }
+
                             if (condOffsetStatus)
                             {
                                 uint a = codeAddr;
@@ -176,7 +304,7 @@ namespace UniversalPatcher
                                 for (int x = 0; x < 30; x++)
                                 {
                                     //Check if codes (30 first) are increasing
-                                    a += (uint)dtcSearchConfigs[configIndex].CodeSteps;
+                                    a += (uint)dConfig.CodeSteps;
                                     int nextCode = PCM.ReadUInt16(a);
                                     if (nextCode <= prevCode)
                                     {
@@ -218,6 +346,21 @@ namespace UniversalPatcher
                     }
                 }
 
+                string values;
+                if (!string.IsNullOrEmpty(dtcSearchConfigs[configIndex].Values))
+                {
+                    values = dtcSearchConfigs[configIndex].Values;
+                }
+                else if (dtcSearchConfigs[configIndex].MilTable == "combined")
+                {
+                    values = "Enum: 0:MIL and reporting off,1:Type A/no MIL,2:Type B/no MIL,3:Type C/no MIL,4:Not reported/MIL,5:Type A/MIL,6:Type B/MIL,7:Type C/MIL";
+                }
+                else
+                {
+                    values = "Enum: 0:1 Trip/immediately,1:2 Trips,2:Store only,3:Disabled"; ;
+                }
+                PCM.dtcValues = ParseDtcValues(values);
+
                 //Read codes:
                 bool dCodes = false;
                 for (uint addr = codeAddr; addr < PCM.fsize; addr += (uint)dtcSearchConfigs[configIndex].CodeSteps)
@@ -225,9 +368,9 @@ namespace UniversalPatcher
                     DtcCode dtc = new DtcCode();
                     dtc.codeAddrInt = addr;
                     dtc.Values = dtcSearchConfigs[configIndex].Values;
+                    dtc.StatusMath = dtcSearchConfigs[configIndex].StatusMath;
                     dtc.CodeAddr = addr.ToString("X8");
                     dtc.codeInt = PCM.ReadUInt16(addr);
-
                     string codeTmp = dtc.codeInt.ToString("X");
                     if (dtc.codeInt < 10 && retVal.Count > 10 && linear)
                             break;
@@ -238,8 +381,8 @@ namespace UniversalPatcher
                             break;
                     }
                     codeTmp = dtc.codeInt.ToString("X4");
-                    if ( codeTmp.StartsWith("6") || codeTmp.StartsWith("7") || codeTmp.StartsWith("8")
-                        || codeTmp.StartsWith("9")  || codeTmp.StartsWith("B") || codeTmp.StartsWith("F"))
+                    if (codeTmp.StartsWith("6") || codeTmp.StartsWith("7") || codeTmp.StartsWith("8")
+                        || codeTmp.StartsWith("9") || codeTmp.StartsWith("B") || codeTmp.StartsWith("F"))
                     {
                         Debug.WriteLine("DTC Code out of range: " + codeTmp);
                         break;
@@ -317,31 +460,18 @@ namespace UniversalPatcher
                 Debug.WriteLine("MIL: " + milAddr.ToString("X"));
                 if (milAddr >= PCM.fsize)
                 {
-                   LoggerBold( "DTC search: MIL table address out of address range:" + milAddr.ToString("X8"));
+                    LoggerBold( "DTC search: MIL table address out of address range:" + milAddr.ToString("X8"));
                     return null;
                 }
 
                 //Read DTC status bytes:
-                string values;
-                if (dtcSearchConfigs[configIndex].Values != null && dtcSearchConfigs[configIndex].Values.Length > 0)
-                {
-                    values = dtcSearchConfigs[configIndex].Values;
-                }
-                else if (PCM.dtcCombined)
-                {
-                    values = "Enum: 0:MIL and reporting off,1:Type A/no MIL,2:Type B/no MIL,3:Type C/no MIL,4:Not reported/MIL,5:Type A/MIL,6:Type B/MIL,7:Type C/MIL";
-                }
-                else
-                {
-                    values = "Enum: 0:1 Trip/immediately,1:2 Trips,2:Store only,3:Disabled"; ;
-                }
-                PCM.dtcValues = ParseDtcValues(values);
                 int dtcNr = 0;
                 uint addr2 = statusAddr;
                 uint addr3 = milAddr;
                 uint codePerStatusaddr = statusAddr;
                 uint codePerStatusCounter = 0;
-                for (; dtcNr < retVal.Count; addr2+= (uint)dtcSearchConfigs[configIndex].StatusSteps, addr3+= (uint)dtcSearchConfigs[configIndex].MilSteps)
+
+                for (; dtcNr < retVal.Count; addr2 += (uint)dtcSearchConfigs[configIndex].StatusSteps, addr3 += (uint)dtcSearchConfigs[configIndex].MilSteps)
                 {
 
                     /*if (PCM.buf[addr2] > 7)
@@ -363,7 +493,20 @@ namespace UniversalPatcher
                     byte statusByte;
                     dtc.statusAddrInt = codePerStatusaddr;
                     statusByte = PCM.buf[codePerStatusaddr];
-                    dtc.Status = statusByte;
+
+                    if (!string.IsNullOrEmpty(dtcSearchConfigs[configIndex].StatusMath) && dtcSearchConfigs[configIndex].StatusMath.Contains("&"))
+                    {
+                        string[] sParts = dtcSearchConfigs[configIndex].StatusMath.Split('&');
+                        if (sParts.Length == 2)
+                        {
+                            byte mask = byte.Parse(sParts[1]);
+                            dtc.Status = (byte)(statusByte & mask);
+                        }
+                    }
+                    else
+                    {
+                        dtc.Status = statusByte;
+                    }
                     codePerStatusCounter++;
                     if (codePerStatusCounter >= codePerStatus)
                     {
@@ -403,7 +546,6 @@ namespace UniversalPatcher
                     for (int x = retVal.Count - 1; x >= dtcNr; x--)
                         retVal.RemoveAt(x);
                 }
-
             }
             catch (Exception ex)
             {

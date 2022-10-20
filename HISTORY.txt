@@ -488,3 +488,10 @@
 - Logger: User selectable decimal separator
 - Logger: AlgoTest: Added "Algo range"
 
+0.20.27
+- Logger: Added "Parse CAN logfile to bin"
+- Fixed bug in segment handling (crash with empty values)
+- MathParser: support for bitwise AND & OR
+- DTC Search: support for bitcoded status bytes, added "StatusMath" parameter (For P12 PCM)
+- Added support for P10 DTC codes (3 bitcoded tables)
+- Tuner: Added support for "virtual DTC table" for P10 DTC

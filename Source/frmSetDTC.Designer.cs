@@ -37,6 +37,8 @@
             this.labelDescription = new System.Windows.Forms.Label();
             this.labelMil = new System.Windows.Forms.Label();
             this.comboMIL = new System.Windows.Forms.ComboBox();
+            this.comboType = new System.Windows.Forms.ComboBox();
+            this.labelType = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // comboDtcStatus
@@ -67,7 +69,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(314, 79);
+            this.btnOK.Location = new System.Drawing.Point(314, 106);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 3;
@@ -77,7 +79,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(12, 79);
+            this.btnCancel.Location = new System.Drawing.Point(12, 106);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 1;
@@ -111,11 +113,30 @@
             this.comboMIL.Size = new System.Drawing.Size(313, 21);
             this.comboMIL.TabIndex = 7;
             // 
+            // comboType
+            // 
+            this.comboType.FormattingEnabled = true;
+            this.comboType.Location = new System.Drawing.Point(76, 79);
+            this.comboType.Name = "comboType";
+            this.comboType.Size = new System.Drawing.Size(313, 21);
+            this.comboType.TabIndex = 9;
+            // 
+            // labelType
+            // 
+            this.labelType.AutoSize = true;
+            this.labelType.Location = new System.Drawing.Point(10, 79);
+            this.labelType.Name = "labelType";
+            this.labelType.Size = new System.Drawing.Size(34, 13);
+            this.labelType.TabIndex = 8;
+            this.labelType.Text = "Type:";
+            // 
             // frmSetDTC
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(401, 109);
+            this.ClientSize = new System.Drawing.Size(401, 137);
+            this.Controls.Add(this.comboType);
+            this.Controls.Add(this.labelType);
             this.Controls.Add(this.comboMIL);
             this.Controls.Add(this.labelMil);
             this.Controls.Add(this.labelDescription);
@@ -142,5 +163,7 @@
         public System.Windows.Forms.Label labelDescription;
         private System.Windows.Forms.Label labelMil;
         public System.Windows.Forms.ComboBox comboMIL;
+        public System.Windows.Forms.ComboBox comboType;
+        private System.Windows.Forms.Label labelType;
     }
 }

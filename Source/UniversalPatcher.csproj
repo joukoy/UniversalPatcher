@@ -106,6 +106,8 @@
     <Compile Include="AutoDetect.cs" />
     <Compile Include="ComputeSimilarity.cs" />
     <Compile Include="Crc.cs" />
+    <Compile Include="DataLogger\CanLogToBin.cs" />
+    <Compile Include="DataLogger\CANQuery.cs" />
     <Compile Include="DataLogger\frmBinToScript.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -607,6 +609,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmTableDescription.resx">
       <DependentUpon>frmTableDescription.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmTableEditor.resx">
       <DependentUpon>frmTableEditor.cs</DependentUpon>
@@ -631,6 +634,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataLogger\frmLogger.resx">
       <DependentUpon>frmLogger.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

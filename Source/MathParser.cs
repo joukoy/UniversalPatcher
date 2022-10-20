@@ -82,6 +82,8 @@ namespace MathParserTK
         private const string Degree = OperatorMarker + "^";
         private const string LeftParent = OperatorMarker + "(";
         private const string RightParent = OperatorMarker + ")";
+        private const string And = OperatorMarker + "&";
+        private const string Or = OperatorMarker + "|";
         private const string Sqrt = FunctionMarker + "sqrt";
         private const string Sin = FunctionMarker + "sin";
         private const string Cos = FunctionMarker + "cos";
@@ -113,7 +115,9 @@ namespace MathParserTK
                 { "/", Divide },
                 { "^", Degree },
                 { "(", LeftParent },
-                { ")", RightParent }
+                { ")", RightParent },
+                { "&", And },
+                { "|", Or }
             };
 
         /// <summary>
@@ -523,6 +527,8 @@ namespace MathParserTK
                 case UnPlus:
                 case UnMinus:
                     return 6;
+                case And:
+                case Or:
                 case Multiply:
                 case Divide:
                     return 4;
@@ -701,6 +707,12 @@ namespace MathParserTK
                     case Log:
                         rst = Math.Log(arg2, arg1);
                         break;
+                    case And:
+                        rst = (byte)arg1 & (byte)arg2;
+                        break;
+                    case Or:
+                        rst = (byte)arg1 | (byte)arg2;
+                        break;
                     default:
                         throw new ArgumentException("Unknown operator");
                 }
@@ -754,6 +766,8 @@ namespace MathParserTK
                 case Divide:
                 case Degree:
                 case Log:
+                case And:
+                case Or:
                     return 2;
                 default:
                     throw new ArgumentException("Unknown operator");

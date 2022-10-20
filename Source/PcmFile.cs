@@ -112,7 +112,7 @@ namespace UniversalPatcher
         {
             get
             {
-                if (platformConfig.SegmentFile != null && platformConfig.SegmentFile.Length > 0)
+                if (!string.IsNullOrEmpty(platformConfig.SegmentFile))
                     return Path.Combine(Application.StartupPath, "XML", platformConfig.SegmentFile);
                 else if (configFile.Length > 0)
                     return Path.Combine(Application.StartupPath, "XML", configFile + ".xml");
@@ -171,7 +171,7 @@ namespace UniversalPatcher
                 }
 
                 string tSeekFile = Path.Combine(Application.StartupPath, "XML", "TableSeek-" + cnfFile + ".xml");
-                if (platformConfig.TableSeekFile != null && platformConfig.TableSeekFile.Length > 0)
+                if (!string.IsNullOrEmpty(platformConfig.TableSeekFile))
                     tSeekFile = Path.Combine(Application.StartupPath, "XML", platformConfig.TableSeekFile);
 
                 if (File.Exists(tSeekFile))
@@ -206,7 +206,7 @@ namespace UniversalPatcher
                 }
 
                 string ssFile = Path.Combine(Application.StartupPath, "XML", "SegmentSeek-" + cnfFile + ".xml");
-                if (platformConfig.SegmentSeekFile != null && platformConfig.SegmentSeekFile.Length > 0)
+                if (!string.IsNullOrEmpty(platformConfig.SegmentSeekFile))
                     ssFile = Path.Combine(Application.StartupPath, "XML", platformConfig.SegmentSeekFile);
 
                 if (File.Exists(ssFile))
@@ -797,7 +797,7 @@ namespace UniversalPatcher
                     B.Add(eeblock);
                     segmentAddressDatas[i].SegmentBlocks = B;
                 }
-                else if (S.SearchAddresses != null)
+                else if (!string.IsNullOrEmpty(S.SearchAddresses))
                 {
                     if (!FindSegment(S, i))
                         return;
@@ -811,7 +811,7 @@ namespace UniversalPatcher
                     }
                     segmentAddressDatas[i].SegmentBlocks = B;
                 }
-                if (S.SwapAddress != null && S.SwapAddress.Length > 1)
+                if (!string.IsNullOrEmpty(S.SwapAddress) && S.SwapAddress.Length > 1)
                 { 
                     if (!ParseSegmentAddresses(S.SwapAddress, S, out B))
                         return;
@@ -825,7 +825,7 @@ namespace UniversalPatcher
                     segmentAddressDatas[i].CS2Blocks = B;
                     segmentAddressDatas[i].CS1Address = ParseAddress(S.CS1Address, i);
                     segmentAddressDatas[i].CS2Address = ParseAddress(S.CS2Address, i);
-                    if (S.CheckWords != null && S.CheckWords != "")
+                    if (!string.IsNullOrEmpty(S.CheckWords))
                         FindCheckwordData(buf, S, ref segmentAddressDatas[i]);
 
                     if (segmentAddressDatas[i].PNaddr.Bytes == 0)  //if not searched

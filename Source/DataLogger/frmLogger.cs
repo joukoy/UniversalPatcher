@@ -56,6 +56,11 @@ namespace UniversalPatcher
         StreamWriter jConsoleStream;
         int prevSlotCount = 0;
         int failCount = 0;
+        int CANqueryCounter;
+        int canQuietResponses;
+        int canDeviceResponses;
+        DateTime lastResponseTime;
+        List <CANDevice> canDevs;
 
         private void frmLogger_Load(object sender, EventArgs e)
         {
@@ -314,6 +319,33 @@ namespace UniversalPatcher
                                 Debug.WriteLine("Switched to 4X");
                             else
                                 Debug.WriteLine("Switch to 4X failed");
+                        }
+                    }
+                    if (timerKeepBusQuiet.Enabled && comboJ2534Protocol.Text.Contains("CAN"))
+                    {
+                        byte[] rcv = e.Msg.GetBytes();
+                        if (rcv.Length == 12)
+                        {
+                            if (canDeviceResponses < 0)
+                            {
+                                lastResponseTime = DateTime.Now;
+                                //Still waiting for quiet responses
+                                canQuietResponses++;
+                                Debug.WriteLine("Quiet message count: " + canQuietResponses.ToString());
+                            }
+                            else
+                            {
+                                if (rcv[5] == 0x5A && rcv[6] == 0xB0)
+                                {
+                                    lastResponseTime = DateTime.Now;
+                                    CANDevice cDev = CANQuery.DecodeMsg(rcv);
+                                    if (cDev != null)
+                                    {
+                                        canDevs.Add(cDev);
+                                        richJConsole.AppendText(cDev.ToString() + Environment.NewLine);
+                                    }
+                                }
+                            }
                         }
                     }
                 });
@@ -2857,7 +2889,6 @@ namespace UniversalPatcher
             joscript.UploadScript(fName);
             btnJconsoleStopScript.Enabled = false;
             Logger("Done");
-
         }
 
         private void numJConsoleScriptDelay_ValueChanged(object sender, EventArgs e)
@@ -3285,6 +3316,57 @@ namespace UniversalPatcher
         private void groupBox5_Enter(object sender, EventArgs e)
         {
 
+        }
+
+        private void parseCANLogfileToBinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fName = SelectFile("Select log file", RtfFTxtilter);
+            if (fName.Length == 0)
+                return;
+            CanLogToBin cltb = new CanLogToBin();
+            cltb.ConvertFile(fName);
+
+        }
+
+        private void queryCANDevicesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CANqueryCounter = 0;
+            canQuietResponses = 0;
+            canDeviceResponses = -1;
+            lastResponseTime = DateTime.Now;
+            timerKeepBusQuiet.Enabled = true;
+            timerWaitCANQuery.Enabled = true;
+            canDevs = new List<CANDevice>();
+            dataGridCANDevices.DataSource = null;
+            jConsole.SetCANBusQuiet();
+        }
+
+        private void timerKeepBusQuiet_Tick(object sender, EventArgs e)
+        {
+            jConsole.KeepCANBusQuiet();
+        }
+
+        private void timerWaitCANQuery_Tick(object sender, EventArgs e)
+        {
+            TimeSpan elapsed = DateTime.Now.Subtract(lastResponseTime);
+            if (elapsed.TotalMilliseconds > 200)
+            {
+                if (canDeviceResponses < 0)
+                {
+                    canDeviceResponses = 0;
+                    CANQuery.Query(jConsole.JDevice,jConsole.Receiver);
+                }
+                else
+                {
+                    timerWaitCANQuery.Enabled = false;
+                    timerKeepBusQuiet.Enabled = false;
+                    dataGridCANDevices.DataSource = canDevs;
+                    dataGridCANDevices.Columns[0].DefaultCellStyle.Format = "X4";
+                    dataGridCANDevices.Columns[1].DefaultCellStyle.Format = "X4";
+                    dataGridCANDevices.Columns[2].DefaultCellStyle.Format = "X4";
+                    dataGridCANDevices.Columns[3].DefaultCellStyle.Format = "X2";
+                }
+            }
         }
     }
 }

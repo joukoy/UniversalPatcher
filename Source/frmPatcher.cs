@@ -692,7 +692,7 @@ namespace UniversalPatcher
                         Logger("[" + PCM.segmentinfos[i].Address + "]", false);
                     if (chkSize.Checked)
                         Logger(", Size: " + PCM.segmentinfos[i].Size.ToString(), false);
-                    if (PCM.segmentinfos[i].ExtraInfo != null && PCM.segmentinfos[i].ExtraInfo.Length > 0)
+                    if (!string.IsNullOrEmpty(PCM.segmentinfos[i].ExtraInfo))
                         Logger(Environment.NewLine + PCM.segmentinfos[i].ExtraInfo, false);
 
                     if (!txtResult.Text.EndsWith(Environment.NewLine) || chkLogtoFile.Checked)
@@ -1034,9 +1034,9 @@ namespace UniversalPatcher
                         {
                             for (int p = 0; p < basefile.segmentAddressDatas[Snr].SegmentBlocks.Count; p++)
                             {
-                                if (basefile.Segments[Snr].CS1Address != null && basefile.Segments[Snr].CS1Address != "")
+                                if (!string.IsNullOrEmpty(basefile.Segments[Snr].CS1Address))
                                     SkipList.Add(basefile.segmentAddressDatas[Snr].CS1Address);
-                                if (basefile.Segments[Snr].CS2Address != null && basefile.Segments[Snr].CS2Address != "")
+                                if (!string.IsNullOrEmpty(basefile.Segments[Snr].CS2Address))
                                     SkipList.Add(basefile.segmentAddressDatas[Snr].CS2Address);
                             }
                         }
@@ -1393,7 +1393,7 @@ namespace UniversalPatcher
                     frmM.txtCompOS.Text = txtOS.Text + ":";
                 else
                     frmM.txtCompOS.Text = "ALL:";
-                if (basefile.configFileFullName != null && basefile.configFileFullName.Length > 0)
+                if (!string.IsNullOrEmpty(basefile.configFileFullName))
                     frmM.txtXML.Text = Path.GetFileName(basefile.configFileFullName);
             }
             
@@ -2424,7 +2424,7 @@ namespace UniversalPatcher
             {
             frmSearchTables frmST = new frmSearchTables();
             frmST.Show(this);
-            if (tableSearchFile != null && tableSearchFile.Length > 0)
+            if (!string.IsNullOrEmpty(tableSearchFile))
                 frmST.LoadFile(tableSearchFile);
             else
                 frmST.LoadConfig();
@@ -2856,28 +2856,29 @@ namespace UniversalPatcher
 
                     byte dtcVal = ((KeyValuePair<byte, string>)frmS.comboDtcStatus.SelectedItem).Key;
                     dtcCodes[codeIndex].Status = dtcVal;
-                    
-                    basefile.buf[dtcCodes[codeIndex].statusAddrInt] = dtcCodes[codeIndex].Status;
-                    if (basefile.dtcCombined)
-                    {
-                        dtcCodes[codeIndex].StatusTxt = basefile.dtcValues[dtcCodes[codeIndex].Status].ToString();
-                        dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = dtcCodes[codeIndex].StatusTxt;
 
-                        if (dtcCodes[codeIndex].Status > 3)
-                            dtcCodes[codeIndex].MilStatus = 1;
-                        else
-                            dtcCodes[codeIndex].MilStatus = 0;
+                    if (dtcCodes[codeIndex].P10)
+                    {
+                        dtcCodes[codeIndex].MilStatus = (byte)frmS.comboMIL.SelectedIndex;
+                        dtcCodes[codeIndex].Type = (byte)frmS.comboType.SelectedIndex;
+                        dtcCodes[codeIndex].StatusTxt = basefile.dtcValues[dtcCodes[codeIndex].Status].ToString();
                     }
                     else
                     {
-                        dtcCodes[codeIndex].MilStatus = (byte)frmS.comboMIL.SelectedIndex;
-                        dtcCodes[codeIndex].StatusTxt = basefile.dtcValues[dtcCodes[codeIndex].Status].ToString();
-                        basefile.buf[dtcCodes[codeIndex].milAddrInt] = dtcCodes[codeIndex].MilStatus;
-                        dataGridDTC.Rows[codeIndex].Cells["StatusTxt"].Value = dtcCodes[codeIndex].StatusTxt;
+                        if (basefile.dtcCombined)
+                        {
+                            if (dtcCodes[codeIndex].Status > 3)
+                                dtcCodes[codeIndex].MilStatus = 1;
+                            else
+                                dtcCodes[codeIndex].MilStatus = 0;
+                        }
+                        else
+                        {
+                            dtcCodes[codeIndex].MilStatus = (byte)frmS.comboMIL.SelectedIndex;
+                        }
                     }
-                    dataGridDTC.Rows[codeIndex].Cells["Status"].Value = dtcCodes[codeIndex].Status;
-                
-
+                    SetDtcCode(ref basefile.buf, 0, codeIndex, dtcCodes[codeIndex], basefile);
+                    RefreshDtcList();
                     tabFunction.SelectedTab = tabApply;
                     Logger("DTC modified, you can now save bin");
                 }

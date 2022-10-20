@@ -409,7 +409,7 @@ namespace UniversalPatcher
         }
 
 
-        public  bool SetBusQuiet()
+        public bool SetBusQuiet()
         {
             try
             {
@@ -436,7 +436,9 @@ namespace UniversalPatcher
             }
         }
 
-        public  Response<List<byte>> QueryDevicesOnBus(bool waitanswer)
+
+
+        public Response<List<byte>> QueryDevicesOnBus(bool waitanswer)
         {
             List<byte> retVal = new List<byte>();
             try

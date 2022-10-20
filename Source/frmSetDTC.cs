@@ -51,6 +51,17 @@ namespace UniversalPatcher
                 labelCode.Text = dtcCodes[code].Code;
                 labelDescription.Text = dtcCodes[code].Description;
             }
+            if (dtcCodes[code].TypeTxt == "")
+            {
+                labelType.Visible = false;
+                comboType.Visible = false;
+            }
+            else
+            {
+                comboType.Items.Add("TypeA");
+                comboType.Items.Add("TypeB");
+                comboType.Text = dtcCodes[code].TypeTxt.ToString();
+            }
         }
 
         private void btnOK_Click(object sender, EventArgs e)

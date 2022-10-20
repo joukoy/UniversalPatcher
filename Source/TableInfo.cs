@@ -76,9 +76,30 @@ namespace UniversalPatcher
             bool retVal = false;    //Return true if value modified
             try
             {
+                byte[] tableBuffer = tableInfo.compareFile.buf;
                 UInt32 bufAddr = addr - tableInfo.compareFile.tableBufferOffset;
-
-                if (td.OutputType == OutDataType.Flag && td.BitMask != "")
+                if (td.Math.StartsWith("DTC"))
+                {
+                    int codeIndex = (int)(addr - td.addrInt);
+                    switch (td.Math.Substring(4))
+                    {
+                        case "DTC_Enable":
+                            tableInfo.pcm.dtcCodes[codeIndex].Status = (byte)val;
+                            break;
+                        case "MIL_Enable":
+                            tableInfo.pcm.dtcCodes[codeIndex].MilStatus = (byte)val;
+                            break;
+                        case "Type":
+                            tableInfo.pcm.dtcCodes[codeIndex].Type = (byte)val;
+                            break;
+                        default:
+                            throw new Exception("Unknown Math: " + td.Math);
+                    }
+                    SetDtcCode(ref tableBuffer, tableInfo.compareFile.tableBufferOffset, codeIndex, tableInfo.pcm.dtcCodes[codeIndex], tableInfo.pcm);
+                    lastValue = val;
+                    return true;
+                }
+                if (td.OutputType == OutDataType.Flag && !string.IsNullOrEmpty(td.BitMask))
                 {
                     bool flag = Convert.ToBoolean(val);
                     SaveFlag(bufAddr, flag);
@@ -101,7 +122,37 @@ namespace UniversalPatcher
                         mathStr = ReadConversionRaw(mathStr, tableInfo.pcm);
                     }
 
-                    newRawValue = savingMath.GetSavingValue(mathStr, td, val);
+                    if (mathStr.Contains("&"))
+                    {
+                        string[] mParts = mathStr.Split('&');
+                        if (mParts.Length == 2)
+                        {
+                            UInt64 mask = UInt64.Parse(mParts[1]);
+                            newRawValue = ((UInt64)origRawValue & ~mask) + val;
+                        }
+                        else
+                        {
+                            throw new Exception("Only simple 'x & y' bitmask AND supported");
+                        }
+                    }
+                    else if (mathStr.Contains("|"))
+                    {
+                        string[] mParts = mathStr.Split('|');
+                        if (mParts.Length == 2)
+                        {
+                            UInt64 mask = UInt64.Parse(mParts[1]);
+                            newRawValue = ((UInt64)origRawValue & ~mask) + val;
+                        }
+                        else
+                        {
+                            throw new Exception("Only simple 'x | y' bitmask OR supported");
+                        }
+                    }
+
+                    else
+                    {
+                        newRawValue = savingMath.GetSavingValue(mathStr, td, val);
+                    }
                     Debug.WriteLine("Calculated raw value: " + newRawValue);
                 }
                 if (td.DataType != InDataType.FLOAT32 && td.DataType != InDataType.FLOAT64)
@@ -120,7 +171,6 @@ namespace UniversalPatcher
                     newRawValue = maxRawVal;
                     Debug.WriteLine("Too big value entered");
                 }
-                byte[] tableBuffer = tableInfo.compareFile.buf;
                 if (td.DataType == InDataType.UBYTE || td.DataType == InDataType.SBYTE)
                     tableBuffer[bufAddr] = (byte)newRawValue;
                 if (td.DataType == InDataType.SWORD)

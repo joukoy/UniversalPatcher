@@ -122,7 +122,13 @@ public class Upatcher
         public List<AddressData> ExtraInfo;
     }
 
-
+/*    public enum DtcType
+    {
+        TypeA = 0,
+        TypeB = 1,
+        Unknown = 99
+    }
+*/
     public class DtcCode
     {
         public DtcCode()
@@ -131,14 +137,18 @@ public class Upatcher
             codeAddrInt = uint.MaxValue;
             //CodeAddr = "";
             statusAddrInt = uint.MaxValue;
+            TypeAddrInt = uint.MaxValue;
             //StatusAddr = "";
             Description = "";
             Status = 99;
             MilStatus = 99;
-            MilAddr = "";
-            milAddrInt = 0;
+            milAddrInt = uint.MaxValue;
             StatusTxt = "";
+            StatusMath = "X";
+            Type = 0xFF;
+            P10 = false;
         }
+        public bool P10;
         public UInt16 codeInt;
         public string Code { get; set; }
         public byte Status { get; set; }
@@ -196,7 +206,94 @@ public class Upatcher
             }
         }
         public uint milAddrInt;
-        public string MilAddr { get; set; }
+        public string MilAddr
+        {
+            get
+            {
+                if (milAddrInt == uint.MaxValue)
+                    return "";
+                else
+                    return milAddrInt.ToString("X8");
+            }
+            set
+            {
+                if (value.Length > 0)
+                {
+                    UInt32 prevVal = milAddrInt;
+                    if (!HexToUint(value, out milAddrInt))
+                        milAddrInt = prevVal;
+                }
+                else
+                {
+                    milAddrInt = uint.MaxValue;
+                }
+            }
+        }
+
+        public uint TypeAddrInt;
+        public string TypeAddr
+        {
+            get
+            {
+                if (TypeAddrInt == uint.MaxValue)
+                    return "";
+                else
+                    return TypeAddrInt.ToString("X8");
+            }
+            set
+            {
+                if (value.Length > 0)
+                {
+                    UInt32 prevVal = TypeAddrInt;
+                    if (!HexToUint(value, out TypeAddrInt))
+                        TypeAddrInt = prevVal;
+                }
+                else
+                {
+                    TypeAddrInt = uint.MaxValue;
+                }
+            }
+        }
+        public uint milAddrInt2;
+        public string MilAddr2
+        {
+            get
+            {
+                if (milAddrInt2 == uint.MaxValue)
+                    return "";
+                else
+                    return milAddrInt2.ToString("X8");
+            }
+            set
+            {
+                if (value.Length > 0)
+                {
+                    UInt32 prevVal = milAddrInt2;
+                    if (!HexToUint(value, out milAddrInt2))
+                        milAddrInt2 = prevVal;
+                }
+                else
+                {
+                    milAddrInt2 = uint.MaxValue;
+                }
+            }
+        }
+        public string StatusMath;
+        public byte Type;
+        public string TypeTxt
+        {
+            get
+            {
+                if (Type == 0)
+                    return "TypeA";
+                else if (Type == 1)
+                    return "TypeB";
+                else
+                    return "";
+            }
+        }
+        public byte StatusByte { get; set; }
+        public byte StatusMask { get; set; }
     }
 
     public class OBD2Code
@@ -902,10 +999,27 @@ public class Upatcher
             else if (mathTd.ByteOrder == Byte_Order.LSB)
                 msb = false;
 
-            if (mathTd.OutputType == OutDataType.Flag && mathTd.BitMask != null && mathTd.BitMask.Length > 0)
+            if (mathTd.Math.StartsWith("DTC"))
             {
-                UInt64 rawVal = (UInt64)GetRawValue(myBuffer, addr, mathTd, offset,msb);
-                UInt64 mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
+                int codeIndex = (int)(addr - mathTd.addrInt);
+                switch(mathTd.Math.Substring(4))
+                {
+                    case "DTC_Enable":
+                        return PCM.dtcCodes[codeIndex].Status;
+                    case "MIL_Enable":
+                        return PCM.dtcCodes[codeIndex].MilStatus;
+                    case "Type":
+                        return PCM.dtcCodes[codeIndex].Type;
+                    default:
+                        throw new Exception("Unknown Math: " + mathTd.Math);
+                }
+            }
+
+            if (mathTd.OutputType == OutDataType.Flag && !string.IsNullOrEmpty(mathTd.BitMask))
+            {
+                UInt64 mask;
+                mask = Convert.ToUInt64(mathTd.BitMask.Replace("0x", ""), 16);
+                UInt64 rawVal = (UInt64)GetRawValue(myBuffer, addr, mathTd, offset, msb);
                 if (((UInt64) rawVal & mask) == mask)
                     return 1;
                 else
@@ -935,7 +1049,7 @@ public class Upatcher
             if (mathTd.DataType == InDataType.FLOAT64)
                 retVal = ReadFloat64(myBuffer, bufAddr, msb);
 
-            if (mathTd.Math == null || mathTd.Math.Length == 0)
+            if (string.IsNullOrEmpty(mathTd.Math))
                 mathTd.Math = "X";
             string mathStr = mathTd.Math.ToLower().Replace("x", retVal.ToString());
             if (mathStr.Contains("table:"))
@@ -2432,6 +2546,60 @@ public class Upatcher
         {
             LoggerBold(ex.Message);
         }
+
+    }
+
+    public static void SetDtcCode(ref byte[] buffer, uint bufferOffset, int codeIndex, DtcCode dtc, PcmFile PCM)
+    {
+        if (dtc.P10)
+        {
+            if (dtc.Status == 0) //Inverted
+            {
+                buffer[dtc.statusAddrInt - bufferOffset] = (byte)(buffer[dtc.statusAddrInt - bufferOffset] | dtc.StatusMask);
+                dtc.StatusTxt = "Enabled";
+            }
+            else
+            {
+                buffer[dtc.statusAddrInt - bufferOffset] = (byte)(buffer[dtc.statusAddrInt - bufferOffset] & ~dtc.StatusMask);
+                dtc.StatusTxt = "Disabled";
+            }
+
+            if (dtc.MilStatus > 0)
+            {
+                buffer[dtc.milAddrInt - bufferOffset] = (byte)(buffer[dtc.milAddrInt - bufferOffset] | dtc.StatusMask);
+                buffer[dtc.milAddrInt2 - bufferOffset] = (byte)(buffer[dtc.milAddrInt2 - bufferOffset] | dtc.StatusMask);
+            }
+            else
+            {
+                buffer[dtc.milAddrInt - bufferOffset] = (byte)(buffer[dtc.milAddrInt - bufferOffset] & ~dtc.StatusMask);
+                buffer[dtc.milAddrInt2 - bufferOffset] = (byte)(buffer[dtc.milAddrInt2 - bufferOffset] & ~dtc.StatusMask);
+            }
+
+
+            if (dtc.TypeTxt == "TypeB")
+                buffer[dtc.TypeAddrInt - bufferOffset] = (byte)(buffer[dtc.TypeAddrInt - bufferOffset] | dtc.StatusMask);
+            else
+                buffer[dtc.TypeAddrInt - bufferOffset] = (byte)(buffer[dtc.TypeAddrInt - bufferOffset] & ~dtc.StatusMask);
+        }
+        else
+        {
+            buffer[dtc.milAddrInt - bufferOffset] = dtc.Status;
+            if (PCM.dtcCombined)
+            {
+                PCM.dtcCodes[codeIndex].StatusTxt = PCM.dtcValues[dtc.Status].ToString();
+
+                if (dtc.Status > 3)
+                    dtc.MilStatus = 1;
+                else
+                    dtc.MilStatus = 0;
+            }
+            else
+            {
+                PCM.dtcCodes[codeIndex].StatusTxt = PCM.dtcValues[dtc.Status].ToString();
+                buffer[dtc.milAddrInt - bufferOffset] = dtc.MilStatus;
+            }
+        }
+
 
     }
 }
