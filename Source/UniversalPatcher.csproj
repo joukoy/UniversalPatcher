@@ -114,6 +114,12 @@
     <Compile Include="DataLogger\frmBinToScript.Designer.cs">
       <DependentUpon>frmBinToScript.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataLogger\frmLoggerGraphics.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataLogger\frmLoggerGraphics.Designer.cs">
+      <DependentUpon>frmLoggerGraphics.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataLogger\JConsole.cs" />
     <Compile Include="DataLogger\KeyAlgorithm.cs" />
     <Compile Include="DataLogger\LogToBin.cs" />
@@ -490,6 +496,9 @@
     <EmbeddedResource Include="DataLogger\frmBinToScript.resx">
       <DependentUpon>frmBinToScript.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DataLogger\frmLoggerGraphics.resx">
+      <DependentUpon>frmLoggerGraphics.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmCredits.resx">
       <DependentUpon>frmCredits.cs</DependentUpon>
     </EmbeddedResource>
@@ -697,6 +706,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\system.ico" />
+    <None Include="Resources\Dimensions.ico" />
     <Content Include="UniversalPatcher.ico" />
   </ItemGroup>
   <ItemGroup />

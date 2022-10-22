@@ -102,6 +102,50 @@ namespace UniversalPatcher
             }
             return calculatedvalues;
         }
+
+        public double[] CalculatePidDoubleValues(double[] rawPidValues)
+        {
+            double[] calculatedvalues = new double[datalogger.PidProfile.Count];
+            try
+            {
+                for (int pp = 0; pp < datalogger.PidProfile.Count; pp++)
+                {
+                    calculatedvalues[pp] = double.MaxValue;
+                    PidConfig pc = datalogger.PidProfile[pp];
+                    int ind = ReceivingPids.IndexOf(pc.addr);
+                    if (ind > -1)
+                    {
+                        if (rawPidValues[ind] > double.MinValue)
+                        {
+                            double val1 = rawPidValues[ind];
+                            double val2 = double.MinValue;
+                            if (pc.addr2 > -1)
+                            {
+                                int ind2 = ReceivingPids.IndexOf(pc.addr2);
+                                if (ind2 > -1)
+                                    val2 = rawPidValues[ind2];
+                            }
+                            calculatedvalues[pp] = pc.GetCalculatedDoubleValue(val1, val2);
+                        }
+                    }
+                    else
+                    {
+                        //Debug.WriteLine("Pid not found: " + PidProfile[pp].PidName);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, CalculatePidDoubleValues line " + line + ": " + ex.Message);
+            }
+            return calculatedvalues;
+        }
+
         public bool CreatePidSetupMessages()
         {
             try

@@ -30,16 +30,16 @@ namespace UniversalPatcher
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle35 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle36 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle37 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle38 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle39 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle40 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle31 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle32 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle41 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle42 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmLogger));
             this.timerShowData = new System.Windows.Forms.Timer(this.components);
             this.comboSerialPort = new System.Windows.Forms.ComboBox();
@@ -240,6 +240,8 @@ namespace UniversalPatcher
             this.radioFindKey = new System.Windows.Forms.RadioButton();
             this.labelSeed = new System.Windows.Forms.Label();
             this.txtAlgoTest = new System.Windows.Forms.TextBox();
+            this.tabCANdevices = new System.Windows.Forms.TabPage();
+            this.dataGridCANDevices = new System.Windows.Forms.DataGridView();
             this.labelProgress = new System.Windows.Forms.Label();
             this.btnStartStop = new System.Windows.Forms.Button();
             this.txtResult = new System.Windows.Forms.RichTextBox();
@@ -256,6 +258,7 @@ namespace UniversalPatcher
             this.parseBinfileToScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.parseCANLogfileToBinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.queryCANDevicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showSavedLogGraphicsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.creditsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -265,8 +268,7 @@ namespace UniversalPatcher
             this.timerSearchParams = new System.Windows.Forms.Timer(this.components);
             this.timerKeepBusQuiet = new System.Windows.Forms.Timer(this.components);
             this.timerWaitCANQuery = new System.Windows.Forms.Timer(this.components);
-            this.tabCANdevices = new System.Windows.Forms.TabPage();
-            this.dataGridCANDevices = new System.Windows.Forms.DataGridView();
+            this.btnShowGraphics = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -307,13 +309,13 @@ namespace UniversalPatcher
             this.groupJConsoleProto.SuspendLayout();
             this.tabAlgoTest.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.tabCANdevices.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridCANDevices)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            this.tabCANdevices.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridCANDevices)).BeginInit();
             this.SuspendLayout();
             // 
             // timerShowData
@@ -350,6 +352,7 @@ namespace UniversalPatcher
             // 
             // tabLog
             // 
+            this.tabLog.Controls.Add(this.btnShowGraphics);
             this.tabLog.Controls.Add(this.groupLogSettings);
             this.tabLog.Controls.Add(this.dataGridLogData);
             this.tabLog.Location = new System.Drawing.Point(4, 22);
@@ -367,9 +370,9 @@ namespace UniversalPatcher
             this.groupLogSettings.Controls.Add(this.groupBox1);
             this.groupLogSettings.Controls.Add(this.listProfiles);
             this.groupLogSettings.Controls.Add(this.label3);
-            this.groupLogSettings.Location = new System.Drawing.Point(-1, 0);
+            this.groupLogSettings.Location = new System.Drawing.Point(-1, 26);
             this.groupLogSettings.Name = "groupLogSettings";
-            this.groupLogSettings.Size = new System.Drawing.Size(438, 439);
+            this.groupLogSettings.Size = new System.Drawing.Size(438, 413);
             this.groupLogSettings.TabIndex = 31;
             this.groupLogSettings.TabStop = false;
             // 
@@ -386,7 +389,7 @@ namespace UniversalPatcher
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.labelSeparator);
             this.groupBox1.Controls.Add(this.txtLogFolder);
-            this.groupBox1.Location = new System.Drawing.Point(9, 14);
+            this.groupBox1.Location = new System.Drawing.Point(6, 8);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(421, 102);
             this.groupBox1.TabIndex = 15;
@@ -502,15 +505,16 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listProfiles.FormattingEnabled = true;
-            this.listProfiles.Location = new System.Drawing.Point(9, 136);
+            this.listProfiles.Location = new System.Drawing.Point(6, 130);
             this.listProfiles.Name = "listProfiles";
-            this.listProfiles.Size = new System.Drawing.Size(423, 225);
+            this.listProfiles.Size = new System.Drawing.Size(423, 199);
             this.listProfiles.TabIndex = 29;
+            this.listProfiles.SelectedIndexChanged += new System.EventHandler(this.listProfiles_SelectedIndexChanged);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(9, 119);
+            this.label3.Location = new System.Drawing.Point(6, 113);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(39, 13);
             this.label3.TabIndex = 30;
@@ -521,23 +525,23 @@ namespace UniversalPatcher
             this.dataGridLogData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle35.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle35.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle35.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle35.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle35.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle35.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle35.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridLogData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle35;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridLogData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridLogData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle36.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle36.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle36.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle36.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle36.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle36.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle36.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridLogData.DefaultCellStyle = dataGridViewCellStyle36;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridLogData.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridLogData.Location = new System.Drawing.Point(443, 3);
             this.dataGridLogData.Name = "dataGridLogData";
             this.dataGridLogData.Size = new System.Drawing.Size(452, 429);
@@ -894,23 +898,23 @@ namespace UniversalPatcher
             this.dataGridPidNames.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle37.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle37.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle37.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle37.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle37.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle37.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle37.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridPidNames.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle37;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridPidNames.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridPidNames.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle38.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle38.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle38.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle38.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle38.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle38.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle38.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridPidNames.DefaultCellStyle = dataGridViewCellStyle38;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridPidNames.DefaultCellStyle = dataGridViewCellStyle4;
             this.dataGridPidNames.Location = new System.Drawing.Point(0, 35);
             this.dataGridPidNames.Name = "dataGridPidNames";
             this.dataGridPidNames.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -942,24 +946,24 @@ namespace UniversalPatcher
             this.dataGridLogProfile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle39.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle39.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle39.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle39.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle39.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle39.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle39.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridLogProfile.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle39;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridLogProfile.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.dataGridLogProfile.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridLogProfile.ContextMenuStrip = this.contextMenuStrip1;
-            dataGridViewCellStyle40.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle40.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle40.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle40.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle40.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle40.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle40.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridLogProfile.DefaultCellStyle = dataGridViewCellStyle40;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridLogProfile.DefaultCellStyle = dataGridViewCellStyle6;
             this.dataGridLogProfile.Location = new System.Drawing.Point(37, 0);
             this.dataGridLogProfile.Name = "dataGridLogProfile";
             this.dataGridLogProfile.Size = new System.Drawing.Size(488, 432);
@@ -1090,23 +1094,23 @@ namespace UniversalPatcher
             this.dataGridAnalyzer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle31.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle31.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle31.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle31.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle31.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle31.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle31.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridAnalyzer.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle31;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridAnalyzer.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.dataGridAnalyzer.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle32.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle32.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle32.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle32.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle32.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle32.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle32.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridAnalyzer.DefaultCellStyle = dataGridViewCellStyle32;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridAnalyzer.DefaultCellStyle = dataGridViewCellStyle8;
             this.dataGridAnalyzer.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dataGridAnalyzer.Location = new System.Drawing.Point(0, 28);
             this.dataGridAnalyzer.Name = "dataGridAnalyzer";
@@ -1263,28 +1267,28 @@ namespace UniversalPatcher
             this.dataGridDtcCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle41.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle41.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle41.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle41.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle41.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle41.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle41.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridDtcCodes.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle41;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridDtcCodes.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle9;
             this.dataGridDtcCodes.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridDtcCodes.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Module,
             this.Code,
             this.Description,
             this.Status});
-            dataGridViewCellStyle42.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle42.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle42.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle42.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle42.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle42.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle42.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridDtcCodes.DefaultCellStyle = dataGridViewCellStyle42;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridDtcCodes.DefaultCellStyle = dataGridViewCellStyle10;
             this.dataGridDtcCodes.Location = new System.Drawing.Point(208, 0);
             this.dataGridDtcCodes.Name = "dataGridDtcCodes";
             this.dataGridDtcCodes.Size = new System.Drawing.Size(686, 434);
@@ -2524,6 +2528,25 @@ namespace UniversalPatcher
             this.txtAlgoTest.Size = new System.Drawing.Size(719, 432);
             this.txtAlgoTest.TabIndex = 4;
             // 
+            // tabCANdevices
+            // 
+            this.tabCANdevices.Controls.Add(this.dataGridCANDevices);
+            this.tabCANdevices.Location = new System.Drawing.Point(4, 22);
+            this.tabCANdevices.Name = "tabCANdevices";
+            this.tabCANdevices.Size = new System.Drawing.Size(898, 435);
+            this.tabCANdevices.TabIndex = 9;
+            this.tabCANdevices.Text = "CAN devices";
+            this.tabCANdevices.UseVisualStyleBackColor = true;
+            // 
+            // dataGridCANDevices
+            // 
+            this.dataGridCANDevices.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridCANDevices.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridCANDevices.Location = new System.Drawing.Point(0, 0);
+            this.dataGridCANDevices.Name = "dataGridCANDevices";
+            this.dataGridCANDevices.Size = new System.Drawing.Size(898, 435);
+            this.dataGridCANDevices.TabIndex = 0;
+            // 
             // labelProgress
             // 
             this.labelProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -2617,7 +2640,8 @@ namespace UniversalPatcher
             this.parseLogfileToBinToolStripMenuItem,
             this.parseBinfileToScriptToolStripMenuItem,
             this.parseCANLogfileToBinToolStripMenuItem,
-            this.queryCANDevicesToolStripMenuItem});
+            this.queryCANDevicesToolStripMenuItem,
+            this.showSavedLogGraphicsToolStripMenuItem});
             this.actionToolStripMenuItem.Name = "actionToolStripMenuItem";
             this.actionToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
             this.actionToolStripMenuItem.Text = "Action";
@@ -2625,44 +2649,51 @@ namespace UniversalPatcher
             // filterSupportedPidsToolStripMenuItem
             // 
             this.filterSupportedPidsToolStripMenuItem.Name = "filterSupportedPidsToolStripMenuItem";
-            this.filterSupportedPidsToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.filterSupportedPidsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.filterSupportedPidsToolStripMenuItem.Text = "Filter pids by BIN file";
             this.filterSupportedPidsToolStripMenuItem.Click += new System.EventHandler(this.filterSupportedPidsToolStripMenuItem_Click);
             // 
             // connectDisconnectToolStripMenuItem
             // 
             this.connectDisconnectToolStripMenuItem.Name = "connectDisconnectToolStripMenuItem";
-            this.connectDisconnectToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.connectDisconnectToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.connectDisconnectToolStripMenuItem.Text = "Connect/Disconnect";
             this.connectDisconnectToolStripMenuItem.Click += new System.EventHandler(this.connectDisconnectToolStripMenuItem_Click);
             // 
             // parseLogfileToBinToolStripMenuItem
             // 
             this.parseLogfileToBinToolStripMenuItem.Name = "parseLogfileToBinToolStripMenuItem";
-            this.parseLogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.parseLogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.parseLogfileToBinToolStripMenuItem.Text = "Parse logfile to bin";
             this.parseLogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseLogfileToBinToolStripMenuItem_Click);
             // 
             // parseBinfileToScriptToolStripMenuItem
             // 
             this.parseBinfileToScriptToolStripMenuItem.Name = "parseBinfileToScriptToolStripMenuItem";
-            this.parseBinfileToScriptToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.parseBinfileToScriptToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.parseBinfileToScriptToolStripMenuItem.Text = "Parse binfile to script";
             this.parseBinfileToScriptToolStripMenuItem.Click += new System.EventHandler(this.parseBinfileToScriptToolStripMenuItem_Click);
             // 
             // parseCANLogfileToBinToolStripMenuItem
             // 
             this.parseCANLogfileToBinToolStripMenuItem.Name = "parseCANLogfileToBinToolStripMenuItem";
-            this.parseCANLogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.parseCANLogfileToBinToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.parseCANLogfileToBinToolStripMenuItem.Text = "Parse CAN logfile to bin";
             this.parseCANLogfileToBinToolStripMenuItem.Click += new System.EventHandler(this.parseCANLogfileToBinToolStripMenuItem_Click);
             // 
             // queryCANDevicesToolStripMenuItem
             // 
             this.queryCANDevicesToolStripMenuItem.Name = "queryCANDevicesToolStripMenuItem";
-            this.queryCANDevicesToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.queryCANDevicesToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
             this.queryCANDevicesToolStripMenuItem.Text = "Query CAN Devices";
             this.queryCANDevicesToolStripMenuItem.Click += new System.EventHandler(this.queryCANDevicesToolStripMenuItem_Click);
+            // 
+            // showSavedLogGraphicsToolStripMenuItem
+            // 
+            this.showSavedLogGraphicsToolStripMenuItem.Name = "showSavedLogGraphicsToolStripMenuItem";
+            this.showSavedLogGraphicsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.showSavedLogGraphicsToolStripMenuItem.Text = "Show saved log graphics";
+            this.showSavedLogGraphicsToolStripMenuItem.Click += new System.EventHandler(this.showSavedLogGraphicsToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -2738,24 +2769,15 @@ namespace UniversalPatcher
             // 
             this.timerWaitCANQuery.Tick += new System.EventHandler(this.timerWaitCANQuery_Tick);
             // 
-            // tabCANdevices
+            // btnShowGraphics
             // 
-            this.tabCANdevices.Controls.Add(this.dataGridCANDevices);
-            this.tabCANdevices.Location = new System.Drawing.Point(4, 22);
-            this.tabCANdevices.Name = "tabCANdevices";
-            this.tabCANdevices.Size = new System.Drawing.Size(898, 435);
-            this.tabCANdevices.TabIndex = 9;
-            this.tabCANdevices.Text = "CAN devices";
-            this.tabCANdevices.UseVisualStyleBackColor = true;
-            // 
-            // dataGridCANDevices
-            // 
-            this.dataGridCANDevices.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridCANDevices.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridCANDevices.Location = new System.Drawing.Point(0, 0);
-            this.dataGridCANDevices.Name = "dataGridCANDevices";
-            this.dataGridCANDevices.Size = new System.Drawing.Size(898, 435);
-            this.dataGridCANDevices.TabIndex = 0;
+            this.btnShowGraphics.Location = new System.Drawing.Point(5, 6);
+            this.btnShowGraphics.Name = "btnShowGraphics";
+            this.btnShowGraphics.Size = new System.Drawing.Size(112, 22);
+            this.btnShowGraphics.TabIndex = 32;
+            this.btnShowGraphics.Text = "Show Graphics";
+            this.btnShowGraphics.UseVisualStyleBackColor = true;
+            this.btnShowGraphics.Click += new System.EventHandler(this.btnShowGraphics_Click);
             // 
             // frmLogger
             // 
@@ -2831,14 +2853,14 @@ namespace UniversalPatcher
             this.tabAlgoTest.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
+            this.tabCANdevices.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridCANDevices)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            this.tabCANdevices.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridCANDevices)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -3071,6 +3093,8 @@ namespace UniversalPatcher
         private System.Windows.Forms.Timer timerWaitCANQuery;
         private System.Windows.Forms.TabPage tabCANdevices;
         private System.Windows.Forms.DataGridView dataGridCANDevices;
+        private System.Windows.Forms.ToolStripMenuItem showSavedLogGraphicsToolStripMenuItem;
+        private System.Windows.Forms.Button btnShowGraphics;
     }
 }
 

@@ -18,6 +18,7 @@ using System.Xml.Linq;
 using static UniversalPatcher.DataLogger;
 using System.Management;
 using J2534DotNet;
+using System.Windows.Forms.DataVisualization.Charting;
 
 //using FTD2XX_NET;
 //using SAE.J2534;
@@ -61,6 +62,7 @@ namespace UniversalPatcher
         int canDeviceResponses;
         DateTime lastResponseTime;
         List <CANDevice> canDevs;
+        private frmLoggerGraphics GraphicsForm;
 
         private void frmLogger_Load(object sender, EventArgs e)
         {
@@ -1326,6 +1328,19 @@ namespace UniversalPatcher
                 for (int row=0; row< LastCalcValues.Length;row++)
                 {
                     dataGridLogData.Rows[row].Cells["Value"].Value = LastCalcValues[row];
+                    if (GraphicsForm != null)
+                    {
+                        double[] lastDoubleValues; 
+                        if (chkRawValues.Checked)
+                        {
+                            lastDoubleValues = datalogger.slothandler.CalculatePidDoubleValues(datalogger.slothandler.LastPidValues);
+                        }
+                        else
+                        {
+                            lastDoubleValues = datalogger.slothandler.LastPidValues;
+                        }
+                        GraphicsForm.QueueliveData(lastDoubleValues);
+                    }
                 }
                 TimeSpan elapsed = DateTime.Now.Subtract(datalogger.LogStartTime);
                 int speed = (int)(datalogger.slothandler.ReceivedHPRows / elapsed.TotalSeconds);
@@ -1385,6 +1400,10 @@ namespace UniversalPatcher
             profileFile = fname;
             this.Text = "Logger - " + profileFile;
             datalogger.LoadProfile(fname);
+            if (GraphicsForm != null && GraphicsForm.Visible)
+            {
+                GraphicsForm.SetupLiveGraphics();
+            }
             bsLogProfile.DataSource = datalogger.PidProfile;
             dataGridLogProfile.DataSource = bsLogProfile;
             dataGridLogData.Rows.Clear();
@@ -3367,6 +3386,45 @@ namespace UniversalPatcher
                     dataGridCANDevices.Columns[3].DefaultCellStyle.Format = "X2";
                 }
             }
+        }
+
+        private void SetupLiveGraphics()
+        {
+            try
+            {
+                GraphicsForm = new frmLoggerGraphics();
+                GraphicsForm.Text = "Logger Graphics";
+                GraphicsForm.Show();
+                GraphicsForm.SetupLiveGraphics();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        private void showSavedLogGraphicsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                frmLoggerGraphics frmLG = new frmLoggerGraphics();
+                frmLG.Text = "Logger Graphics";
+                frmLG.Show();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        private void listProfiles_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnShowGraphics_Click(object sender, EventArgs e)
+        {
+            SetupLiveGraphics();
         }
     }
 }

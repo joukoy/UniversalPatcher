@@ -495,3 +495,6 @@
 - DTC Search: support for bitcoded status bytes, added "StatusMath" parameter (For P12 PCM)
 - Added support for P10 DTC codes (3 bitcoded tables)
 - Tuner: Added support for "virtual DTC table" for P10 DTC
+
+0.21.0
+- Logger: Added Graphics

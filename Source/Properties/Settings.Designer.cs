@@ -1481,5 +1481,53 @@ namespace UniversalPatcher.Properties {
                 this["LoggerDecimalSeparator"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LoggerGraphicsLiveLastProfileFile {
+            get {
+                return ((string)(this["LoggerGraphicsLiveLastProfileFile"]));
+            }
+            set {
+                this["LoggerGraphicsLiveLastProfileFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LoggerGraphicsLogLastProfileFile {
+            get {
+                return ((string)(this["LoggerGraphicsLogLastProfileFile"]));
+            }
+            set {
+                this["LoggerGraphicsLogLastProfileFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int LoggerGraphicsInterval {
+            get {
+                return ((int)(this["LoggerGraphicsInterval"]));
+            }
+            set {
+                this["LoggerGraphicsInterval"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int LoggerGraphicsShowMaxTime {
+            get {
+                return ((int)(this["LoggerGraphicsShowMaxTime"]));
+            }
+            set {
+                this["LoggerGraphicsShowMaxTime"] = value;
+            }
+        }
     }
 }

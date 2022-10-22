@@ -307,6 +307,7 @@ public static class LoggerUtils
             public int BitIndex { get; set; }
             public int addr;
             public int addr2;
+
             public string GetBitmappedValue(double value)
             {
                 string trueVal = "On";
@@ -327,22 +328,52 @@ public static class LoggerUtils
                 return retVal;
             }
 
-            public string GetCalculatedValue(double value1, double value2)
+        public bool GetBitmappedBoolValue(double value)
+        {
+            string[] vals = Math.Split(',');
+            int bits = (int)value;
+            bits = bits >> BitIndex;
+            bool flag = (bits & 1) != 0;
+            return flag;
+        }
+
+        public string GetCalculatedValue(double value1, double value2)
+        {
+            if (IsBitMapped)
             {
-                if (IsBitMapped)
-                {
-                    return GetBitmappedValue(value1);
-                }
-                else
-                {
-                    string math = Math.ToLower().Replace("x", value1.ToString());
-                    if (Math.Contains("y") && value2 > double.MinValue)
-                        math = Math.ToLower().Replace("y", value2.ToString());
-                    double calcVal = parser.Parse(math);
-                    return calcVal.ToString();
-                }
+                return GetBitmappedValue(value1);
+            }
+            else
+            {
+                string math = Math.ToLower().Replace("x", value1.ToString());
+                if (Math.Contains("y") && value2 > double.MinValue)
+                    math = Math.ToLower().Replace("y", value2.ToString());
+                double calcVal = parser.Parse(math);
+                return calcVal.ToString();
             }
         }
+
+        public double GetCalculatedDoubleValue(double value1, double value2)
+        {
+            if (IsBitMapped)
+            {
+                bool val = GetBitmappedBoolValue(value1);
+                if (val)
+                    return 1;
+                else
+                    return 0;
+            }
+            else
+            {
+                string math = Math.ToLower().Replace("x", value1.ToString());
+                if (Math.Contains("y") && value2 > double.MinValue)
+                    math = Math.ToLower().Replace("y", value2.ToString());
+                double calcVal = parser.Parse(math);
+                return calcVal;
+            }
+        }
+
+    }
 
     public static byte CreateConfigByte(byte position, byte bytes, byte defineBy)
     {

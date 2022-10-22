@@ -517,6 +517,8 @@ public class Upatcher
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Log"));
         if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Profiles")))
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Profiles"));
+        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles")))
+            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles"));
         if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles")))
             Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles"));
 
