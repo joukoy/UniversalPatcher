@@ -1529,5 +1529,29 @@ namespace UniversalPatcher.Properties {
                 this["LoggerGraphicsShowMaxTime"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LoggerGraphicsShowPoints {
+            get {
+                return ((bool)(this["LoggerGraphicsShowPoints"]));
+            }
+            set {
+                this["LoggerGraphicsShowPoints"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LoggerLastLogfile {
+            get {
+                return ((string)(this["LoggerLastLogfile"]));
+            }
+            set {
+                this["LoggerLastLogfile"] = value;
+            }
+        }
     }
 }

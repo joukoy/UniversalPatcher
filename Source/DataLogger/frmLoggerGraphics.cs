@@ -59,6 +59,7 @@ namespace UniversalPatcher
         private Queue<QueuePoint> PointQ = new Queue<QueuePoint>();
         private string ProfileFile;
         private string Title;
+        public string LastLiveLogFile;
 
         private void frmLoggerGraphics_Load(object sender, EventArgs e)
         {
@@ -79,8 +80,11 @@ namespace UniversalPatcher
             }
 
             this.FormClosing += FrmLoggerGraphics_FormClosing;
+            uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
             numDisplayInterval.Value = Properties.Settings.Default.LoggerGraphicsInterval;
             numShowMax.Value = Properties.Settings.Default.LoggerGraphicsShowMaxTime;
+            chkShowPoints.Checked = Properties.Settings.Default.LoggerGraphicsShowPoints;
+            SetUpDoubleBuffer(this);
         }
 
         private void FrmLoggerGraphics_FormClosing(object sender, FormClosingEventArgs e)
@@ -88,6 +92,21 @@ namespace UniversalPatcher
             SaveProfile();
             Properties.Settings.Default.LoggerGraphicsInterval = (int)numDisplayInterval.Value;
             Properties.Settings.Default.LoggerGraphicsShowMaxTime = (int)numShowMax.Value;
+            Properties.Settings.Default.LoggerGraphicsShowPoints = chkShowPoints.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void UPLogger_UpLogUpdated(object sender, UPLogger.UPLogString e)
+        {
+            uPLogger.DisplayText(e.LogText, e.Bold, txtResult);
+        }
+
+        public static void SetUpDoubleBuffer(System.Windows.Forms.Control chartControlForm)
+        {
+
+            System.Reflection.PropertyInfo formProp =
+            typeof(System.Windows.Forms.Control).GetProperty("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            formProp.SetValue(chartControlForm, true, null);
         }
 
         private void DataGridValues_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -118,17 +137,20 @@ namespace UniversalPatcher
             }
             dataGridValues.DataSource = pidScalars;
             dataGridValues.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-            btnShowData.Text = "Apply";
+            //btnApply.Text = "Apply";
             //dataGridValues.CellValueChanged += DataGridValues_CellValueChanged;
             LiveData = true;
-            timerDisplayData.Enabled = true;
-            labelShowMax.Enabled = true;
-            numShowMax.Enabled = true;            
+            groupLiveSeconds.Enabled = true;
             if (File.Exists(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile))))
             {
                 ProfileFile = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles",Path.GetFileName( Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile));
                 LoadProfile();
             }
+            ChartArea CA = chart1.ChartAreas[0];  // quick reference
+            CA.AxisX.ScaleView.Zoomable = true;
+            CA.CursorX.AutoScroll = true;
+            CA.CursorX.IsUserSelectionEnabled = true;
+            CA.AxisX.ScrollBar.ButtonStyle = ScrollBarButtonStyles.All;
         }
 
         public void UpdateLiveGraphics()
@@ -179,6 +201,10 @@ namespace UniversalPatcher
                         point.SetValueXY(dNow, val);
                         point.ToolTip = string.Format("[{0}] {1}: {2}", dNow, pidScalars[p].Pid, orgVal);
                         point.Tag = DateTime.Now;
+                        if (chkShowPoints.Checked)
+                            point.MarkerStyle = MarkerStyle.Circle;
+                        else
+                            point.MarkerStyle = MarkerStyle.None;
                         QueuePoint qp = new QueuePoint(point,p);
                         lock (PointQ)
                         {
@@ -206,17 +232,33 @@ namespace UniversalPatcher
             this.Title = Title;
             chart1.Series.Clear();
             chart1.ChartAreas[0].Area3DStyle.Enable3D = false;
-            if (header[1].Contains("]"))
+            chart1.ChartAreas[0].CursorX.AutoScroll = true;
+            TStamps = 0;
+            for (int i = 0; i < header.Length; i++)
             {
-                TStamps = 2;
+                if (header[i].ToLower().Contains("time"))
+                {
+                    TStamps++;
+                }
+                else
+                {
+                    break;
+                }
             }
-            else
+            Logger("Using column: '" + header[0] + "' as X (time)");
+            if (TStamps > 1 )
             {
-                TStamps = 1;
+                string cols = "";
+                for (int i=1;i<TStamps;i++)
+                {
+                    cols += "'" + header[i] + "',";
+                }
+                cols = cols.Trim(',');
+                Logger("Skipping columns: " + cols);
             }
             for (int r = 0; r < header.Length-TStamps; r++)
             {
-                PidScalar ps = new PidScalar(header[r + 1]);
+                PidScalar ps = new PidScalar(header[r + TStamps]);
                 pidScalars.Add(ps);
                 chart1.Series.Add(new Series());
                 chart1.Series[r].ChartType = SeriesChartType.Line;
@@ -229,16 +271,23 @@ namespace UniversalPatcher
             //dataGridValues.CellValueChanged += DataGridValues_CellValueChanged;
             LiveData = false;
             timerDisplayData.Enabled = false;
-            labelShowMax.Enabled = false;
-            numShowMax.Enabled = false;
-            btnShowData.Text = "Show data";
+            groupLiveSeconds.Enabled = false;
+            //btnApply.Text = "Show data";
             if (File.Exists(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Properties.Settings.Default.LoggerGraphicsLogLastProfileFile)))
             {
                 ProfileFile = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Properties.Settings.Default.LoggerGraphicsLogLastProfileFile);
                 //LoadProfile();
                 this.Text += " [" + Path.GetFileName(ProfileFile) + "]";
             }
+            LoadProfile();
+            //UpdateScalars();
+            ChartArea CA = chart1.ChartAreas[0];  // quick reference
+            CA.AxisX.ScaleView.Zoomable = true;
+            CA.CursorX.AutoScroll = true;
+            CA.CursorX.IsUserSelectionEnabled = true;
+            CA.AxisX.ScrollBar.ButtonStyle = ScrollBarButtonStyles.All;
         }
+
 
         private void UpdateLogGraphics()
         {
@@ -270,35 +319,52 @@ namespace UniversalPatcher
                 {
                     return;
                 }
+                Logger("Loading logfile: " + logFile, false);
                 StreamReader sr = new StreamReader(logFile);
                 string hdrLine = sr.ReadLine();
                 for (int s = 0; s < chart1.Series.Count; s++)
                     chart1.Series[s].Points.Clear();
                 string logLine;
+                int row = 0;
                 while ((logLine = sr.ReadLine()) != null)
                 {
                     //Custom handling: read OS:Segmentaddress pairs from file
-                    string[] lParts = logLine.Split(txtLogSeparator.Text[0]);
+                    row++;
+                    if (row % 1000 == 0)
+                    {
+                        Logger(".", false);
+                        Application.DoEvents();
+                    }
+                    if (row > 1000 && !chart1.ChartAreas[0].AxisX.ScaleView.IsZoomed)
+                    {
+                        chart1.ChartAreas[0].AxisX.ScaleView.Zoom(0, 1000);
+                    }
+                    string[] lParts = logLine.Split(new string[] { txtLogSeparator.Text }, StringSplitOptions.None);
                     string tStamp = lParts[0];
                     for (int r = TStamps; r < lParts.Length; r++)
                     {
                         if (pidScalars[r - TStamps].On)
                         {
                             double origVal;
-                            if (double.TryParse(lParts[r], NumberStyles.Any, CultureInfo.InvariantCulture, out origVal))
+                            string valStr = lParts[r].Replace(",", ".");
+                            if (double.TryParse(valStr, NumberStyles.Any, CultureInfo.InvariantCulture, out origVal))
                             {
                                 double val = origVal * pidScalars[r - TStamps].Scalar;
                                 //chart1.Series[r - 1].Points.AddXY(tStamp, val);
                                 DataPoint point = new DataPoint();
                                 point.SetValueXY(tStamp, val);
                                 point.ToolTip = string.Format("[{0}] {1}: {2}", tStamp, pidScalars[r-TStamps].Pid, origVal);
-                                //point.MarkerStyle = MarkerStyle.Circle;
-                                chart1.Series[r-1].Points.Add(point);
+                                if (chkShowPoints.Checked)
+                                    point.MarkerStyle = MarkerStyle.Circle;
+                                else
+                                    point.MarkerStyle = MarkerStyle.None;
+                                chart1.Series[r- TStamps].Points.Add(point);
                             }
                         }
                     }
                 }
                 sr.Close();
+                Logger(" [OK]");
             }
             catch (Exception ex)
             {
@@ -311,6 +377,29 @@ namespace UniversalPatcher
             }
         }
 
+        private void LoadLogFile()
+        {
+            try
+            {
+                this.Text = Title + " [" + Path.GetFileName(ProfileFile) + "]";
+                LiveData = false;
+                StreamReader sr = new StreamReader(logFile);
+                string hdrLine = sr.ReadLine();
+                sr.Close();
+                string[] hdrArray = hdrLine.Split(new string[] { txtLogSeparator.Text }, StringSplitOptions.None);
+                SetupLogGraphics(hdrArray, Path.GetFileName(logFile));
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, LoadLogFile line " + line + ": " + ex.Message);
+            }
+        }
+
         private void loadLogfileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -320,14 +409,7 @@ namespace UniversalPatcher
                     return;
                 logFile = fName;
                 Title = fName;
-                this.Text = Title + " [" + Path.GetFileName(ProfileFile) + "]";
-                LiveData = false;
-                btnShowData.Visible = true;
-                StreamReader sr = new StreamReader(logFile);
-                string hdrLine = sr.ReadLine();
-                sr.Close();
-                string[] hdrArray = hdrLine.Split(txtLogSeparator.Text[0]);
-                SetupLogGraphics(hdrArray, Path.GetFileName(logFile));
+                LoadLogFile();
             }
             catch (Exception ex)
             {
@@ -431,12 +513,14 @@ namespace UniversalPatcher
                 {
                     return;
                 }
+                Logger("Saving profile: " + ProfileFile + "... ", false);
                 using (FileStream stream = new FileStream(ProfileFile, FileMode.Create))
                 {
                     System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<PidScalar>));
                     writer.Serialize(stream, pidScalars);
                     stream.Close();
                 }
+                Logger(" [OK]");
                 if (LiveData)
                     Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile = Path.GetFileName(ProfileFile);
                 else
@@ -460,15 +544,33 @@ namespace UniversalPatcher
         {
             try
             {
+                if (string.IsNullOrEmpty(ProfileFile))
+                {
+                    UpdateScalars();
+                    return;
+                }
+                Logger("Loading profile: " + ProfileFile +"... ", false);
                 System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(List<PidScalar>));
                 System.IO.StreamReader file = new System.IO.StreamReader(ProfileFile);
-                pidScalars = (List<PidScalar>)reader.Deserialize(file);
+                List<PidScalar>  tmpScalars = (List<PidScalar>)reader.Deserialize(file);
                 file.Close();
-                if (LiveData)
-                    Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile = Path.GetFileName(ProfileFile);
+
+                if (tmpScalars.Count != pidScalars.Count)
+                {
+                    LoggerBold(" Profile not compatible");
+                    ProfileFile = "";
+                }
                 else
-                    Properties.Settings.Default.LoggerGraphicsLogLastProfileFile = Path.GetFileName(ProfileFile);
-                Properties.Settings.Default.Save();
+                {
+                    Logger(" [OK]");
+                    pidScalars = tmpScalars;
+
+                    if (LiveData)
+                        Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile = Path.GetFileName(ProfileFile);
+                    else
+                        Properties.Settings.Default.LoggerGraphicsLogLastProfileFile = Path.GetFileName(ProfileFile);
+                    Properties.Settings.Default.Save();
+                }
                 UpdateScalars();
                 this.Text = Title + " [" + Path.GetFileName(ProfileFile) + "]";
             }
@@ -486,7 +588,10 @@ namespace UniversalPatcher
 
         private void saveProfileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveProfile();
+            if (string.IsNullOrEmpty(ProfileFile))
+                SaveProfileAs();
+            else
+                SaveProfile();
         }
 
         private void loadProfileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -499,13 +604,35 @@ namespace UniversalPatcher
             LoadProfile();
         }
 
-        private void saveProfileAsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveProfileAs()
         {
             string def = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile));
             string fName = SelectSaveFile(XmlFilter, def);
             if (string.IsNullOrEmpty(fName))
                 return;
+            ProfileFile = fName;
             SaveProfile();
+        }
+
+        private void saveProfileAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveProfileAs();
+        }
+
+        private void loadLastLogfileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            logFile = LastLiveLogFile;
+            Title = LastLiveLogFile;
+            LoadLogFile();
+        }
+
+        public void StopLiveUpdate()
+        {
+            timerDisplayData.Enabled = false;
+        }
+        public void StartLiveUpdate()
+        {
+            timerDisplayData.Enabled = true;
         }
     }
 }

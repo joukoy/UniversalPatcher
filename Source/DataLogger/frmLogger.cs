@@ -1642,6 +1642,10 @@ namespace UniversalPatcher
             try
             {
                 Logger("Stopping, wait...");
+                if (GraphicsForm != null && GraphicsForm.Visible)
+                {
+                    GraphicsForm.StopLiveUpdate();
+                }
                 timerShowData.Enabled = false;
                 Application.DoEvents();
                 datalogger.StopLogging();
@@ -1913,6 +1917,10 @@ namespace UniversalPatcher
                 {
                     return;
                 }
+                if (GraphicsForm != null && GraphicsForm.Visible)
+                {
+                    GraphicsForm.StartLiveUpdate();
+                }
                 SetupLogDataGrid();
                 datalogger.Responsetype = Convert.ToByte(Enum.Parse(typeof(ResponseTypes), comboResponseMode.Text));
                 datalogger.writelog = chkWriteLog.Checked;
@@ -1926,6 +1934,8 @@ namespace UniversalPatcher
                     {
                         datalogger.LogStartTime = DateTime.Now;
                         logfilename = Path.Combine(txtLogFolder.Text, "log-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm.ss") + ".csv");
+                        Properties.Settings.Default.LoggerLastLogfile = logfilename;
+                        Properties.Settings.Default.Save();
                     }
                     if (!datalogger.CreateLog(logfilename))
                     {
@@ -3394,8 +3404,13 @@ namespace UniversalPatcher
             {
                 GraphicsForm = new frmLoggerGraphics();
                 GraphicsForm.Text = "Logger Graphics";
+                GraphicsForm.LastLiveLogFile = Properties.Settings.Default.LoggerLastLogfile;
                 GraphicsForm.Show();
                 GraphicsForm.SetupLiveGraphics();
+                if (datalogger.LogRunning)
+                {
+                    GraphicsForm.StartLiveUpdate();
+                }
             }
             catch (Exception ex)
             {

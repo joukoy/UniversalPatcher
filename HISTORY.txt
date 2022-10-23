@@ -498,3 +498,7 @@
 
 0.21.0
 - Logger: Added Graphics
+
+0.21.1
+- Logger Graphics: Added Zoom & log window
+- Logger Graphics: Support for multichar separators + other bug fixes & improvements
