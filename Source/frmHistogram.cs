@@ -34,6 +34,16 @@ namespace UniversalPatcher
         private void frmHistogram_Load(object sender, EventArgs e)
         {
             tabHistogram.Enter += TabHistogram_Enter;
+            this.FormClosing += FrmHistogram_FormClosing;
+        }
+
+        private void FrmHistogram_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try 
+            {
+                LoggerDataEvents.LogDataAdded -= LogEvents_LogDataAdded;
+            }
+            catch { }
         }
 
         private void DataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -44,6 +54,21 @@ namespace UniversalPatcher
         private void TabHistogram_Enter(object sender, EventArgs e)
         {
             dataGridView1.Refresh();
+        }
+
+        public void AddTunerToTab()
+        {
+            if (PCM == null)
+            {
+                PCM = new PcmFile();
+            }
+            FrmTuner frmT = new FrmTuner(PCM);
+            frmT.Dock = DockStyle.Fill;
+            frmT.FormBorderStyle = FormBorderStyle.None;
+            frmT.TopLevel = false;
+            tabSelectTable.Controls.Add(frmT);
+            frmT.Histogram = this;
+            frmT.Show();
         }
 
         private int GetColumnByHeader(string hdrTxt)
@@ -86,7 +111,9 @@ namespace UniversalPatcher
 
             try
             {
+                dataGridView1.Columns.Clear();
                 this.Text = "Histogram: " + tData.TableName;
+                Logger("Loading table: " + tData.TableName + " as template");
                 dgColumnHeaders = new Dictionary<string, int>();
                 dgRowHeaders = new Dictionary<string, int>();
 
@@ -157,6 +184,8 @@ namespace UniversalPatcher
                 dataGridView1.AutoResizeColumns();
                 dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
                 AutoResize();
+                labelSelectTable.Visible = false;
+                Logger("Select parameters in Settings-tab");
             }
             catch (Exception ex)
             {
@@ -184,7 +213,10 @@ namespace UniversalPatcher
             try
             {
                 dataGridView1.SelectionChanged -= DataGridView1_SelectionChanged;
-                histogram.ParseCsvRow(txtLogFile.Text);
+                if (!string.IsNullOrEmpty(txtLogFile.Text))
+                    histogram.ParseCsvRow(txtLogFile.Text);
+                else
+                    histogram.LogDatas = new List<Histogram.CsvData>();
                 histogram.CountHits(comboXparam.Text, comboYparam.Text, comboValueparam.Text, comboSkipParam.Text, (double)numSkipValue.Value, tData.Decimals);
                 GetHistogramSettings();
                 for (int i = 0; i < histogram.HitDatas.Count; i++)
@@ -222,16 +254,34 @@ namespace UniversalPatcher
 
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedCells.Count == 0 || dataGridView1.SelectedCells[0].Tag == null)
-                return;
-            Histogram.HitData hd = (Histogram.HitData)dataGridView1.SelectedCells[0].Tag;
-            labelCellinfo.Text = "Min: " + hd.Values.Min().ToString() + ", Max: " + hd.Values.Max().ToString() + ", Hits: " + hd.Values.Count.ToString();
+            ShowCellInfo();
         }
 
         private void btnReadCsv_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(comboXparam.Text) || string.IsNullOrEmpty(comboValueparam.Text))
+            {
+                LoggerBold("Select histogram parameters first!");
+                return;
+            }
             LoadHistogram();
             tabHistogram.Select();
+        }
+
+        private void SetupParameterLists()
+        {
+            comboXparam.Items.Clear();
+            comboYparam.Items.Clear();
+            comboValueparam.Items.Clear();
+            comboSkipParam.Items.Clear();
+            for (int i = 0; i < histogram.Parameters.Length; i++)
+            {
+                string par = histogram.Parameters[i];
+                comboXparam.Items.Add(par);
+                comboYparam.Items.Add(par);
+                comboValueparam.Items.Add(par);
+                comboSkipParam.Items.Add(par);
+            }
         }
 
         private void GetParameters()
@@ -244,25 +294,20 @@ namespace UniversalPatcher
                 line = sr.ReadLine();
                 histogram.ParseCsvHeader(line, txtColumnSeparator.Text);
                 sr.Close();
-
-                comboXparam.Items.Clear();
-                comboYparam.Items.Clear();
-                comboValueparam.Items.Clear();
-                comboSkipParam.Items.Clear();
-                for (int i=0; i< histogram.Parameters.Length; i++)
-                {
-                    string par = histogram.Parameters[i];
-                    comboXparam.Items.Add(par);
-                    comboYparam.Items.Add(par);
-                    comboValueparam.Items.Add(par);
-                    comboSkipParam.Items.Add(par);
-                }
+                SetupParameterLists();
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
             }
 
+        }
+
+        public void SetupLiveParameters(string[] Pids)
+        {
+            histogram = new Histogram(ColumnHeaders, RowHeaders);
+            histogram.Parameters = Pids;
+            SetupParameterLists();
         }
 
         private void txtCsvFile_TextChanged(object sender, EventArgs e)
@@ -444,6 +489,83 @@ namespace UniversalPatcher
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CopyToClipboard();
+        }
+
+        private void AddLogData(double[] logdata)
+        {
+            if (hSetup == null)
+            {
+                if (string.IsNullOrEmpty(comboXparam.Text) || string.IsNullOrEmpty(comboValueparam.Text))
+                {
+                    LoggerBold("Select histogram parameters first!");
+                    return;
+                }
+                LoadHistogram();
+            }
+            histogram.AddData(logdata);
+            histogram.CountHits(comboXparam.Text, comboYparam.Text, comboValueparam.Text, comboSkipParam.Text, (double)numSkipValue.Value, tData.Decimals);
+            for (int i = 0; i < histogram.HitDatas.Count; i++)
+            {
+                Histogram.HitData hd = histogram.HitDatas[i];
+                if (hd.Values.Count > 0)
+                {
+                    double cellValue = hd.Average;
+                    dataGridView1.Rows[hd.Row].Cells[hd.Column].Value = cellValue;
+                    if (cellValue > hSetup.HighValue)
+                        dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.HighColor);
+                    else if (cellValue < hSetup.LowValue)
+                        dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.LowColor);
+                    else
+                        dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.MidColor);
+                    string tipTxt = "Min: " + hd.Values.Min().ToString() + ", Max: " + hd.Values.Max().ToString() + ", Hits: " + hd.Values.Count.ToString();
+                    dataGridView1.Rows[hd.Row].Cells[hd.Column].ToolTipText = tipTxt;
+                    dataGridView1.Rows[hd.Row].Cells[hd.Column].Tag = hd;
+                }
+            }
+            ShowCellInfo();
+        }
+
+        private void ShowCellInfo()
+        {
+            if (dataGridView1.SelectedCells.Count > 0 && dataGridView1.SelectedCells[0].Tag != null)
+            {
+                Histogram.HitData hd = (Histogram.HitData)dataGridView1.SelectedCells[0].Tag;
+                labelCellinfo.Text = "Min: " + hd.Values.Min().ToString() + ", Max: " + hd.Values.Max().ToString() + ", Hits: " + hd.Values.Count.ToString();
+            }
+            else
+            {
+                labelCellinfo.Text = "";
+            }
+        }
+
+        private void chkGetLiveData_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkGetLiveData.Checked)
+                LoggerDataEvents.LogDataAdded += LogEvents_LogDataAdded;
+            else
+                LoggerDataEvents.LogDataAdded -= LogEvents_LogDataAdded;
+        }
+
+        private void LogEvents_LogDataAdded(object sender, DataLogger.LogDataEvents.LogDataEvent e)
+        {
+            try
+            {
+                double[] lastDoubleValues = datalogger.slothandler.CalculatePidDoubleValues(e.Data.Values);
+                this.Invoke((MethodInvoker)delegate () //Event handler, can't directly handle UI
+                {
+                    AddLogData(lastDoubleValues);
+                });
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmHistogram line " + line + ": " + ex.Message);
+            }
+
         }
     }
 }

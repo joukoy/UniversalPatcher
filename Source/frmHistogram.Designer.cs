@@ -32,8 +32,11 @@ namespace UniversalPatcher
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmHistogram));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabHistogram = new System.Windows.Forms.TabPage();
+            this.labelCellinfo = new System.Windows.Forms.Label();
             this.tabSettings = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnColorLow = new System.Windows.Forms.Button();
@@ -64,10 +67,11 @@ namespace UniversalPatcher
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.labelCellinfo = new System.Windows.Forms.Label();
+            this.tabSelectTable = new System.Windows.Forms.TabPage();
+            this.labelSelectTable = new System.Windows.Forms.Label();
+            this.chkGetLiveData = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabHistogram.SuspendLayout();
             this.tabSettings.SuspendLayout();
@@ -76,7 +80,6 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.numRangeMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSkipValue)).BeginInit();
             this.menuStrip1.SuspendLayout();
-            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -91,9 +94,24 @@ namespace UniversalPatcher
             this.dataGridView1.Size = new System.Drawing.Size(786, 377);
             this.dataGridView1.TabIndex = 0;
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(103, 26);
+            // 
+            // copyToolStripMenuItem
+            // 
+            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
+            this.copyToolStripMenuItem.Text = "Copy";
+            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
+            // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabHistogram);
+            this.tabControl1.Controls.Add(this.tabSelectTable);
             this.tabControl1.Controls.Add(this.tabSettings);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 24);
@@ -104,6 +122,7 @@ namespace UniversalPatcher
             // 
             // tabHistogram
             // 
+            this.tabHistogram.Controls.Add(this.labelSelectTable);
             this.tabHistogram.Controls.Add(this.labelCellinfo);
             this.tabHistogram.Controls.Add(this.dataGridView1);
             this.tabHistogram.Location = new System.Drawing.Point(4, 22);
@@ -113,6 +132,17 @@ namespace UniversalPatcher
             this.tabHistogram.TabIndex = 0;
             this.tabHistogram.Text = "Histogram";
             this.tabHistogram.UseVisualStyleBackColor = true;
+            // 
+            // labelCellinfo
+            // 
+            this.labelCellinfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelCellinfo.AutoSize = true;
+            this.labelCellinfo.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.labelCellinfo.Location = new System.Drawing.Point(0, 383);
+            this.labelCellinfo.Name = "labelCellinfo";
+            this.labelCellinfo.Size = new System.Drawing.Size(43, 15);
+            this.labelCellinfo.TabIndex = 1;
+            this.labelCellinfo.Text = "Cellinfo";
             // 
             // tabSettings
             // 
@@ -439,36 +469,42 @@ namespace UniversalPatcher
             this.saveSettingsToolStripMenuItem.Text = "Save Settings";
             this.saveSettingsToolStripMenuItem.Click += new System.EventHandler(this.saveSettingsToolStripMenuItem_Click);
             // 
-            // contextMenuStrip1
+            // tabSelectTable
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.copyToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(103, 26);
+            this.tabSelectTable.Location = new System.Drawing.Point(4, 22);
+            this.tabSelectTable.Name = "tabSelectTable";
+            this.tabSelectTable.Size = new System.Drawing.Size(792, 400);
+            this.tabSelectTable.TabIndex = 2;
+            this.tabSelectTable.Text = "Table selection";
+            this.tabSelectTable.UseVisualStyleBackColor = true;
             // 
-            // copyToolStripMenuItem
+            // labelSelectTable
             // 
-            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
-            this.copyToolStripMenuItem.Text = "Copy";
-            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
+            this.labelSelectTable.AutoSize = true;
+            this.labelSelectTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelSelectTable.Location = new System.Drawing.Point(237, 153);
+            this.labelSelectTable.Name = "labelSelectTable";
+            this.labelSelectTable.Size = new System.Drawing.Size(207, 24);
+            this.labelSelectTable.TabIndex = 2;
+            this.labelSelectTable.Text = "Select table as template";
             // 
-            // labelCellinfo
+            // chkGetLiveData
             // 
-            this.labelCellinfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelCellinfo.AutoSize = true;
-            this.labelCellinfo.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.labelCellinfo.Location = new System.Drawing.Point(0, 383);
-            this.labelCellinfo.Name = "labelCellinfo";
-            this.labelCellinfo.Size = new System.Drawing.Size(43, 15);
-            this.labelCellinfo.TabIndex = 1;
-            this.labelCellinfo.Text = "Cellinfo";
+            this.chkGetLiveData.AutoSize = true;
+            this.chkGetLiveData.Location = new System.Drawing.Point(144, 5);
+            this.chkGetLiveData.Name = "chkGetLiveData";
+            this.chkGetLiveData.Size = new System.Drawing.Size(149, 17);
+            this.chkGetLiveData.TabIndex = 17;
+            this.chkGetLiveData.Text = "Receive data from Logger";
+            this.chkGetLiveData.UseVisualStyleBackColor = true;
+            this.chkGetLiveData.CheckedChanged += new System.EventHandler(this.chkGetLiveData_CheckedChanged);
             // 
             // frmHistogram
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.chkGetLiveData);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -476,6 +512,7 @@ namespace UniversalPatcher
             this.Text = "Histogram";
             this.Load += new System.EventHandler(this.frmHistogram_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabHistogram.ResumeLayout(false);
             this.tabHistogram.PerformLayout();
@@ -488,7 +525,6 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.numSkipValue)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -532,5 +568,8 @@ namespace UniversalPatcher
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
         private System.Windows.Forms.Label labelCellinfo;
+        private System.Windows.Forms.TabPage tabSelectTable;
+        private System.Windows.Forms.Label labelSelectTable;
+        private System.Windows.Forms.CheckBox chkGetLiveData;
     }
 }

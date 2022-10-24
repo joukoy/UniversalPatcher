@@ -63,6 +63,7 @@ namespace UniversalPatcher
         DateTime lastResponseTime;
         List <CANDevice> canDevs;
         private frmLoggerGraphics GraphicsForm;
+        private frmHistogram HstForm;
 
         private void frmLogger_Load(object sender, EventArgs e)
         {
@@ -1328,20 +1329,25 @@ namespace UniversalPatcher
                 for (int row=0; row< LastCalcValues.Length;row++)
                 {
                     dataGridLogData.Rows[row].Cells["Value"].Value = LastCalcValues[row];
-                    if (GraphicsForm != null)
-                    {
-                        double[] lastDoubleValues; 
-                        if (chkRawValues.Checked)
-                        {
-                            lastDoubleValues = datalogger.slothandler.CalculatePidDoubleValues(datalogger.slothandler.LastPidValues);
-                        }
-                        else
-                        {
-                            lastDoubleValues = datalogger.slothandler.LastPidValues;
-                        }
-                        GraphicsForm.QueueliveData(lastDoubleValues);
-                    }
                 }
+/*                double[] lastDoubleValues;
+                if (chkRawValues.Checked)
+                {
+                    lastDoubleValues = datalogger.slothandler.LastPidValues;
+                }
+                else
+                {
+                    lastDoubleValues = datalogger.slothandler.CalculatePidDoubleValues(datalogger.slothandler.LastPidValues);
+                }
+                if (GraphicsForm != null && GraphicsForm.Visible)
+                {
+                    GraphicsForm.QueueliveData(lastDoubleValues);
+                }
+                if (HstForm != null && HstForm.Visible)
+                {
+                    HstForm.AddLogData(lastDoubleValues);
+                }
+*/
                 TimeSpan elapsed = DateTime.Now.Subtract(datalogger.LogStartTime);
                 int speed = (int)(datalogger.slothandler.ReceivedHPRows / elapsed.TotalSeconds);
                 int lpSpeed = (int)(datalogger.slothandler.ReceivedLPRows / elapsed.TotalSeconds);
@@ -3440,6 +3446,20 @@ namespace UniversalPatcher
         private void btnShowGraphics_Click(object sender, EventArgs e)
         {
             SetupLiveGraphics();
+        }
+
+        private void btnShowHistogram_Click(object sender, EventArgs e)
+        {
+            HstForm = new frmHistogram();
+            HstForm.Show();
+            HstForm.AddTunerToTab();
+            List<string> pids = new List<string>();
+            foreach (PidConfig p in datalogger.PidProfile)
+            {
+                pids.Add(p.PidName);
+            }
+            HstForm.SetupLiveParameters(pids.ToArray());
+            //fh.SetupTable(PCM, td);
         }
     }
 }

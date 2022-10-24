@@ -57,6 +57,7 @@ namespace UniversalPatcher
         string currentBin = "A";
         bool ExtraOffsetFirstTry = true;
         private frmTableVisDouble ftvd;
+        public frmHistogram Histogram;
 
         private void frmTuner_Load(object sender, EventArgs e)
         {
@@ -1914,9 +1915,16 @@ namespace UniversalPatcher
                         return;
                 }
                 TableData selTd = (TableData)dataGridView1.CurrentRow.DataBoundItem;
-                ShowTableDescription(PCM,selTd);
-                numExtraOffset.Value = selTd.ExtraOffset;
-                ExtraOffsetFirstTry = true;
+                if (Histogram != null)
+                {
+                    Histogram.SetupTable(PCM, selTd);
+                }
+                else
+                {
+                    ShowTableDescription(PCM, selTd);
+                    numExtraOffset.Value = selTd.ExtraOffset;
+                    ExtraOffsetFirstTry = true;
+                }
             }
             catch (Exception ex)
             {
@@ -3672,8 +3680,15 @@ namespace UniversalPatcher
             foreach (TreeNode tn in tms.SelectedNodes)
                 if (tn.Tag != null)
                     tableTds.Add((TableData)tn.Tag);
-           // showTableDescription(PCM, tableIds[0]);
-            OpenTableEditor(tableTds);
+            // showTableDescription(PCM, tableIds[0]);
+            if (Histogram != null)
+            {
+                Histogram.SetupTable(PCM, tableTds[0]);
+            }
+            else
+            {
+                OpenTableEditor(tableTds);
+            }
         }
 
 

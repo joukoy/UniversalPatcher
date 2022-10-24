@@ -22,6 +22,7 @@ public static class Helpers
     public static string RtfFTxtilter = "RTF or TXT (*.rtf;*.txt)|*.rtf;*.txt|All files (*.*)|*.*";
 
     public static UPLogger uPLogger = new UPLogger();
+    public static DataLogger.LogDataEvents LoggerDataEvents = new DataLogger.LogDataEvents();
 
     public static void Logger(string LogText, Boolean NewLine = true, bool Bold= false)
     {

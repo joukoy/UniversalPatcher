@@ -110,7 +110,7 @@ namespace UniversalPatcher
             {
                 for (int pp = 0; pp < datalogger.PidProfile.Count; pp++)
                 {
-                    calculatedvalues[pp] = double.MaxValue;
+                    calculatedvalues[pp] = double.MinValue;
                     PidConfig pc = datalogger.PidProfile[pp];
                     int ind = ReceivingPids.IndexOf(pc.addr);
                     if (ind > -1)

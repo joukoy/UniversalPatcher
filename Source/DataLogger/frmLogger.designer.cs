@@ -269,6 +269,7 @@ namespace UniversalPatcher
             this.timerKeepBusQuiet = new System.Windows.Forms.Timer(this.components);
             this.timerWaitCANQuery = new System.Windows.Forms.Timer(this.components);
             this.btnShowGraphics = new System.Windows.Forms.Button();
+            this.btnShowHistogram = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
@@ -352,6 +353,7 @@ namespace UniversalPatcher
             // 
             // tabLog
             // 
+            this.tabLog.Controls.Add(this.btnShowHistogram);
             this.tabLog.Controls.Add(this.btnShowGraphics);
             this.tabLog.Controls.Add(this.groupLogSettings);
             this.tabLog.Controls.Add(this.dataGridLogData);
@@ -2779,6 +2781,16 @@ namespace UniversalPatcher
             this.btnShowGraphics.UseVisualStyleBackColor = true;
             this.btnShowGraphics.Click += new System.EventHandler(this.btnShowGraphics_Click);
             // 
+            // btnShowHistogram
+            // 
+            this.btnShowHistogram.Location = new System.Drawing.Point(123, 6);
+            this.btnShowHistogram.Name = "btnShowHistogram";
+            this.btnShowHistogram.Size = new System.Drawing.Size(112, 22);
+            this.btnShowHistogram.TabIndex = 33;
+            this.btnShowHistogram.Text = "Show histogram";
+            this.btnShowHistogram.UseVisualStyleBackColor = true;
+            this.btnShowHistogram.Click += new System.EventHandler(this.btnShowHistogram_Click);
+            // 
             // frmLogger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3095,6 +3107,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.DataGridView dataGridCANDevices;
         private System.Windows.Forms.ToolStripMenuItem showSavedLogGraphicsToolStripMenuItem;
         private System.Windows.Forms.Button btnShowGraphics;
+        private System.Windows.Forms.Button btnShowHistogram;
     }
 }
 

@@ -134,6 +134,32 @@ namespace UniversalPatcher
 
         }
 
+        public void AddData(double[] data)
+        {
+            try 
+            { 
+                CsvData hd = new CsvData(data.Length);
+                for (int p = 0; p < data.Length; p++)
+                {
+                    if (data[p] > double.MinValue && data[p] < double.MaxValue)
+                        hd.Values[p] = data[p];
+                    else
+                        hd.Values[p] = 0;
+                    //hd.Values[p] = Convert.ToDouble(rParts[p].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                }
+                LogDatas.Add(hd);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, Histogram line " + line + ": " + ex.Message);
+            }
+        }
+
         public void CountHits(string ColParam, string RowParam, string ValueParam, string SkipParam, double SkipValue, ushort Decimals)
         {
             try

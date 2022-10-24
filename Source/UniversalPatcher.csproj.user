@@ -12,6 +12,6 @@
     <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>advanced logger fakecvn</StartArguments>
+    <StartArguments>advanced tuner fakecvn</StartArguments>
   </PropertyGroup>
 </Project>

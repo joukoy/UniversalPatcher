@@ -502,3 +502,7 @@
 0.21.1
 - Logger Graphics: Added Zoom & log window
 - Logger Graphics: Support for multichar separators + other bug fixes & improvements
+
+0.21.2
+- Logger Graphics: Fixed bug, data points added multiple times while logging
+- Logger: Added histogram 

@@ -51,6 +51,7 @@ namespace UniversalPatcher
         public  Queue<LogData> LogFileQueue = new Queue<LogData>();
         private Queue<QueuedCommand> queuedCommands = new Queue<QueuedCommand>();
 
+
         //Set these values before StartLogging()
         public DateTime LogStartTime;
         public bool writelog;
@@ -107,13 +108,38 @@ namespace UniversalPatcher
             public ulong SysTimeStamp { get; set; }
         }
 
-
         public class DTCCodeStatus
         {
             public string Module { get; set; }
             public string Code { get; set; }
             public string Description { get; set; }
             public string Status { get; set; }
+        }
+
+        public class LogDataEvents
+        {
+            public class LogDataEvent : EventArgs
+            {
+                public LogDataEvent(LogData data)
+                {
+                    this.Data = data;
+                }
+                public LogData Data { get; internal set; }
+            }
+
+            public event EventHandler<LogDataEvent> LogDataAdded;
+
+            protected virtual void OnLogUpdated(LogDataEvent e)
+            {
+                LogDataAdded?.Invoke(this, e);
+            }
+
+            public void Add(LogData data)
+            {
+                LogDataEvent lde = new LogDataEvent(data);
+                OnLogUpdated(lde);
+            }
+
         }
 
         public Device CreateSerialDevice(string serialPortName, string serialPortDeviceType, bool ftdi)
@@ -282,6 +308,7 @@ namespace UniversalPatcher
                     for (int l = 0; l < ld.Values.Length; l++)
                         ldvalues[l] = ld.Values[l].ToString();
                     WriteLog(ldvalues, ld.TimeStamp.ToString());
+
                 }
                 else
                 {
@@ -289,6 +316,8 @@ namespace UniversalPatcher
                     //tStamp += " [" + ld.TimeStamp.ToString() + "]";
                     WriteLog(slothandler.CalculatePidValues(ld.Values), tStamp );
                 }
+                //Data for Histogram & Graphics:
+                LoggerDataEvents.Add(ld);
             }
             logwriter.Close();
             logwriter = null;

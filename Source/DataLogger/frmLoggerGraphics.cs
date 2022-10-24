@@ -151,6 +151,13 @@ namespace UniversalPatcher
             CA.CursorX.AutoScroll = true;
             CA.CursorX.IsUserSelectionEnabled = true;
             CA.AxisX.ScrollBar.ButtonStyle = ScrollBarButtonStyles.All;
+            LoggerDataEvents.LogDataAdded += LogEvents_LogDataAdded;
+        }
+
+        private void LogEvents_LogDataAdded(object sender, DataLogger.LogDataEvents.LogDataEvent e)
+        {
+            double[] lastDoubleValues = datalogger.slothandler.CalculatePidDoubleValues(e.Data.Values);
+            QueueliveData(lastDoubleValues, e.Data.TimeStamp);
         }
 
         public void UpdateLiveGraphics()
@@ -178,13 +185,14 @@ namespace UniversalPatcher
             dataGridValues.DataSource = pidScalars;
             dataGridValues.Update();
             dataGridValues.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+            LoggerDataEvents.LogDataAdded -= LogEvents_LogDataAdded;
         }
 
-        public void QueueliveData(double[] LastCalcValues)
+        private void QueueliveData(double[] LastCalcValues, ulong TStamp)
         {
             try
             {
-                string dNow = DateTime.Now.ToString("HH:mm:ss");
+                string dNow = new DateTime((long)TStamp).ToString("HH:mm:ss.fff");
                 for (int p = 0; p < LastCalcValues.Length; p++)
                 {
                     if (pidScalars[p].On)
@@ -486,18 +494,29 @@ namespace UniversalPatcher
 
         private void timerDisplayData_Tick(object sender, EventArgs e)
         {
-            CleanOldPoints();
-            QueuePoint qp;
-            //labelQueueLen.Text = "Queue length: " + PointQ.Count.ToString();
-            while (PointQ.Count > 0)
+            try
             {
-
-                lock (PointQ)
+                CleanOldPoints();
+                QueuePoint qp;
+                while (PointQ.Count > 0)
                 {
-                    qp = PointQ.Dequeue();
+
+                    lock (PointQ)
+                    {
+                        qp = PointQ.Dequeue();
+                    }
+                    chart1.Series[qp.Serie].Points.Add(qp.Point);
                 }
-                chart1.Series[qp.Serie].Points.Add(qp.Point);
-            }        
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, LoggerGraphics line " + line + ": " + ex.Message);
+            }
         }
 
         private void numDisplayInterval_ValueChanged(object sender, EventArgs e)
