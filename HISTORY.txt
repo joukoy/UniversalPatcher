@@ -506,3 +506,7 @@
 0.21.2
 - Logger Graphics: Fixed bug, data points added multiple times while logging
 - Logger: Added histogram 
+
+0.21.3
+- Logger Graphics: Bug fixes, speed improvements
+- Logger: Fixed bug in profile editor => show current value (? -button)
