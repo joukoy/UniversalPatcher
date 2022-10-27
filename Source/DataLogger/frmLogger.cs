@@ -558,7 +558,7 @@ namespace UniversalPatcher
 
         private void DataGridPidNames_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            AddToProfile();
+            AddSelectedPidsToProfile();
         }
 
         private void DataGridLogData_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -1463,110 +1463,44 @@ namespace UniversalPatcher
             }
         }
 
-        private void AddToProfile()
+        private void AddToProfile(PidConfig pc)
         {
             try
             {
-                if (dataGridPidNames.SelectedRows.Count == 0)
-                    return;
-                
-                if (!datalogger.Connected)
+                if (datalogger.Connected)
                 {
-                    Logger("Not connected - adding pids without testing compatibility");
+                    QueryPid(pc);
                 }
-
-                for (int selRow = 0; selRow < dataGridPidNames.SelectedRows.Count; selRow++)
-                {
-                    DataGridViewRow dgr = dataGridPidNames.SelectedRows[selRow];
-                    int idx = Convert.ToInt32(dgr.Cells["index"].Value);
-                    PidConfig pc = new PidConfig();
-                    pc.PidName = dgr.Cells["Name"].Value.ToString();
-                    ushort pidNr;
-                    ushort pid2Nr;
-                    if (radioParamMath.Checked)
-                    {
-                        MathParameter mp = mathParameters[idx];
-                        pc.Type = DefineBy.Math;
-                        pc.Math = dgr.Cells["Conversions"].Value.ToString();
-                        if (HexToUshort(mp.xParameterId, out pidNr))
-                            pc.addr = pidNr;
-                        if (HexToUshort(mp.yParameterId, out pid2Nr))
-                            pc.addr2 = pid2Nr;
-                        PidDataType xpd = (PidDataType)Enum.Parse(typeof(PidDataType), mp.xDataType);
-                        pc.DataType = ConvertToDataType(xpd);
-                        PidDataType ypd = (PidDataType)Enum.Parse(typeof(PidDataType), mp.yDataType);
-                        pc.Pid2DataType = ConvertToDataType(ypd);
-                    }
-                    else if (radioParamRam.Checked)
-                    {
-                        RamParameter rp = ramParameters[idx];
-                        pc.addr = -1;
-                        pc.Type = DefineBy.Address;
-                        pc.Math = dgr.Cells["Conversions"].Value.ToString();
-                        PidDataType pd = (PidDataType)Enum.Parse(typeof(PidDataType), rp.DataType);
-                        pc.DataType = ConvertToDataType(pd);
-                        if (string.IsNullOrEmpty(dgr.Cells["Locations"].FormattedValue.ToString()))
-                        {
-                            if (datalogger.Connected && !string.IsNullOrEmpty(datalogger.OS))
-                            {
-                                List<Location> locations = rp.Locations;
-                                if (locations != null)
-                                {
-                                    Location l = locations.Where(x => x.os == datalogger.OS).FirstOrDefault();
-                                    if (l != null)
-                                    {
-                                        pc.Address = l.address;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            pc.Address = dgr.Cells["Locations"].Value.ToString();
-                        }
-                    }
-                    else if (radioParamStd.Checked)
-                    {
-                        Parameter sp = stdParameters[idx];
-                        pc.Type = DefineBy.Pid;
-                        if (HexToUshort(sp.Id, out pidNr))
-                            pc.addr = pidNr;
-                        PidDataType pd = (PidDataType)Enum.Parse(typeof(PidDataType), sp.DataType);
-                        pc.DataType = ConvertToDataType(pd);
-                        List<Conversion> conversions = sp.Conversions;
-                        pc.IsBitMapped = conversions[0].IsBitMapped;
-                        pc.BitIndex = conversions[0].BitIndex;
-                        if (pc.IsBitMapped)
-                        {
-                            pc.Math = conversions[0].TrueValue + "," + conversions[0].FalseValue;
-                        }
-                        else
-                        {
-                            pc.Math = dgr.Cells["Conversions"].Value.ToString();
-                        }
-                    }
-                    pc.Units = dgr.Cells["Conversions"].FormattedValue.ToString();
-
-                    datalogger.PidProfile.Add(pc);
-                    ProfileDirty = true;
-                    bsLogProfile.DataSource = null;
-                    bsLogProfile.DataSource = datalogger.PidProfile;
-                    if (datalogger.Connected)
-                    {
-                        QueryPid(pc);
-                    }
-                    CheckMaxPids();
-                }
+                CheckMaxPids();
+                datalogger.PidProfile.Add(pc);
+                ProfileDirty = true;
+                bsLogProfile.DataSource = null;
+                bsLogProfile.DataSource = datalogger.PidProfile;
             }
             catch (Exception ex)
             {
                 LoggerBold(ex.Message);
             }
+        }
+
+        private void AddSelectedPidsToProfile()
+        {
+            if (!datalogger.Connected)
+            {
+                Logger("Not connected - adding pids without testing compatibility");
+            }
+
+            List<PidConfig> pds = ConvertSelectedPidConfigs();
+            foreach (PidConfig pc in pds)
+            {
+                AddToProfile(pc);
+            }
 
         }
+
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            AddToProfile();
+            AddSelectedPidsToProfile();
         }
 
         private void SetupLogDataGrid()
@@ -2342,18 +2276,105 @@ namespace UniversalPatcher
             }
         }
 
+        private List<PidConfig> ConvertSelectedPidConfigs()
+        {
+            List<PidConfig> retVal = new List<PidConfig>();
+            try
+            {
+                if (dataGridPidNames.SelectedRows.Count == 0)
+                    return null;
+
+                if (!datalogger.Connected)
+                {
+                    Logger("Not connected - adding pids without testing compatibility");
+                }
+
+                for (int selRow = 0; selRow < dataGridPidNames.SelectedRows.Count; selRow++)
+                {
+                    DataGridViewRow dgr = dataGridPidNames.SelectedRows[selRow];
+                    int idx = Convert.ToInt32(dgr.Cells["index"].Value);
+                    PidConfig pc = new PidConfig();
+                    pc.PidName = dgr.Cells["Name"].Value.ToString();
+                    ushort pidNr;
+                    ushort pid2Nr;
+                    if (radioParamMath.Checked)
+                    {
+                        MathParameter mp = mathParameters[idx];
+                        pc.Type = DefineBy.Math;
+                        pc.Math = dgr.Cells["Conversions"].Value.ToString();
+                        if (HexToUshort(mp.xParameterId, out pidNr))
+                            pc.addr = pidNr;
+                        if (HexToUshort(mp.yParameterId, out pid2Nr))
+                            pc.addr2 = pid2Nr;
+                        PidDataType xpd = (PidDataType)Enum.Parse(typeof(PidDataType), mp.xDataType);
+                        pc.DataType = ConvertToDataType(xpd);
+                        PidDataType ypd = (PidDataType)Enum.Parse(typeof(PidDataType), mp.yDataType);
+                        pc.Pid2DataType = ConvertToDataType(ypd);
+                    }
+                    else if (radioParamRam.Checked)
+                    {
+                        RamParameter rp = ramParameters[idx];
+                        pc.addr = -1;
+                        pc.Type = DefineBy.Address;
+                        pc.Math = dgr.Cells["Conversions"].Value.ToString();
+                        PidDataType pd = (PidDataType)Enum.Parse(typeof(PidDataType), rp.DataType);
+                        pc.DataType = ConvertToDataType(pd);
+                        if (string.IsNullOrEmpty(dgr.Cells["Locations"].FormattedValue.ToString()))
+                        {
+                            if (datalogger.Connected && !string.IsNullOrEmpty(datalogger.OS))
+                            {
+                                List<Location> locations = rp.Locations;
+                                if (locations != null)
+                                {
+                                    Location l = locations.Where(x => x.os == datalogger.OS).FirstOrDefault();
+                                    if (l != null)
+                                    {
+                                        pc.Address = l.address;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            pc.Address = dgr.Cells["Locations"].Value.ToString();
+                        }
+                    }
+                    else if (radioParamStd.Checked)
+                    {
+                        Parameter sp = stdParameters[idx];
+                        pc.Type = DefineBy.Pid;
+                        if (HexToUshort(sp.Id, out pidNr))
+                            pc.addr = pidNr;
+                        PidDataType pd = (PidDataType)Enum.Parse(typeof(PidDataType), sp.DataType);
+                        pc.DataType = ConvertToDataType(pd);
+                        List<Conversion> conversions = sp.Conversions;
+                        pc.IsBitMapped = conversions[0].IsBitMapped;
+                        pc.BitIndex = conversions[0].BitIndex;
+                        if (pc.IsBitMapped)
+                        {
+                            pc.Math = conversions[0].TrueValue + "," + conversions[0].FalseValue;
+                        }
+                        else
+                        {
+                            pc.Math = dgr.Cells["Conversions"].Value.ToString();
+                        }
+                    }
+                    pc.Units = dgr.Cells["Conversions"].FormattedValue.ToString();
+
+                    retVal.Add(pc);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+            return retVal;
+        }
+
         private void QueryPid(PidConfig pc)
         {
             try
             {
-                if (pc == null)
-                {
-                    int r = dataGridLogProfile.CurrentCell.RowIndex;
-                    if (r < 0)
-                        return;
-                    pc = (PidConfig)dataGridLogProfile.Rows[r].DataBoundItem;
-                }
-
                 Connect();
 
                 ReadValue rv;
@@ -2380,7 +2401,11 @@ namespace UniversalPatcher
         private void btnQueryPid_Click(object sender, EventArgs e)
         {
             Connect();
-            QueryPid(null);
+            List<PidConfig> pds = ConvertSelectedPidConfigs();
+            foreach (PidConfig pc in pds)
+            {
+                QueryPid(pc);
+            }
         }
 
         private void Disconnect()
@@ -3409,8 +3434,7 @@ namespace UniversalPatcher
             try
             {
                 GraphicsForm = new frmLoggerGraphics();
-                GraphicsForm.Text = "Logger Graphics";
-                GraphicsForm.LastLiveLogFile = Properties.Settings.Default.LoggerLastLogfile;
+                GraphicsForm.Text = "Logger Graph";
                 GraphicsForm.Show();
                 GraphicsForm.SetupLiveGraphics();
                 if (datalogger.LogRunning)

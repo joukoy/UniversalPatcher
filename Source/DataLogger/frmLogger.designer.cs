@@ -2777,7 +2777,7 @@ namespace UniversalPatcher
             this.btnShowGraphics.Name = "btnShowGraphics";
             this.btnShowGraphics.Size = new System.Drawing.Size(112, 22);
             this.btnShowGraphics.TabIndex = 32;
-            this.btnShowGraphics.Text = "Show Graphics";
+            this.btnShowGraphics.Text = "Show Graph";
             this.btnShowGraphics.UseVisualStyleBackColor = true;
             this.btnShowGraphics.Click += new System.EventHandler(this.btnShowGraphics_Click);
             // 

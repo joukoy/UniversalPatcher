@@ -597,8 +597,10 @@ namespace UniversalPatcher
                         dataGridView1.Columns[c].Visible = true;
                         int order = Array.IndexOf(configColumns, dataGridView1.Columns[c].HeaderText.ToLower());
                         if (order > -1 && order < dataGridView1.Columns.Count)
+                        {
                             dataGridView1.Columns[c].DisplayIndex = order;
-                        dataGridView1.Columns[c].Width = Convert.ToInt32(configWidth[c]);
+                            dataGridView1.Columns[c].Width = Convert.ToInt32(configWidth[c]);
+                        }
                     }
                     else
                     {

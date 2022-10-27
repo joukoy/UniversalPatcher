@@ -36,6 +36,8 @@ namespace UniversalPatcher
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmLoggerGraphics));
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.label3 = new System.Windows.Forms.Label();
+            this.ScrollPointsPerScreen = new System.Windows.Forms.HScrollBar();
             this.chkShowPoints = new System.Windows.Forms.CheckBox();
             this.groupLiveSeconds = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -46,17 +48,20 @@ namespace UniversalPatcher
             this.dataGridValues = new System.Windows.Forms.DataGridView();
             this.txtLogSeparator = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.ScrollStartPoint = new System.Windows.Forms.HScrollBar();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadLogfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadLastLogfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.loadProfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveProfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveProfileAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timerDisplayData = new System.Windows.Forms.Timer(this.components);
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.loadLastLogfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.txtResult = new System.Windows.Forms.RichTextBox();
+            this.labelDataValues = new System.Windows.Forms.Label();
+            this.chkGetLiveData = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -91,7 +96,7 @@ namespace UniversalPatcher
             series1.Name = "Series1";
             series1.YValuesPerPoint = 2;
             this.chart1.Series.Add(series1);
-            this.chart1.Size = new System.Drawing.Size(947, 573);
+            this.chart1.Size = new System.Drawing.Size(947, 551);
             this.chart1.TabIndex = 1;
             this.chart1.Text = "chart1";
             // 
@@ -103,6 +108,8 @@ namespace UniversalPatcher
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.label3);
+            this.splitContainer1.Panel1.Controls.Add(this.ScrollPointsPerScreen);
             this.splitContainer1.Panel1.Controls.Add(this.chkShowPoints);
             this.splitContainer1.Panel1.Controls.Add(this.groupLiveSeconds);
             this.splitContainer1.Panel1.Controls.Add(this.btnApply);
@@ -112,21 +119,46 @@ namespace UniversalPatcher
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.ScrollStartPoint);
             this.splitContainer1.Panel2.Controls.Add(this.chart1);
-            this.splitContainer1.Size = new System.Drawing.Size(1199, 573);
+            this.splitContainer1.Size = new System.Drawing.Size(1199, 551);
             this.splitContainer1.SplitterDistance = 248;
             this.splitContainer1.TabIndex = 2;
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(10, 446);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(34, 13);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "Zoom";
+            // 
+            // ScrollPointsPerScreen
+            // 
+            this.ScrollPointsPerScreen.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ScrollPointsPerScreen.Location = new System.Drawing.Point(3, 464);
+            this.ScrollPointsPerScreen.Minimum = 10;
+            this.ScrollPointsPerScreen.Name = "ScrollPointsPerScreen";
+            this.ScrollPointsPerScreen.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.ScrollPointsPerScreen.Size = new System.Drawing.Size(242, 20);
+            this.ScrollPointsPerScreen.TabIndex = 0;
+            this.ScrollPointsPerScreen.Value = 10;
+            this.ScrollPointsPerScreen.Scroll += new System.Windows.Forms.ScrollEventHandler(this.ScrollPointsPerScreen_Scroll);
             // 
             // chkShowPoints
             // 
             this.chkShowPoints.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkShowPoints.AutoSize = true;
-            this.chkShowPoints.Location = new System.Drawing.Point(12, 454);
+            this.chkShowPoints.Location = new System.Drawing.Point(147, 442);
             this.chkShowPoints.Name = "chkShowPoints";
             this.chkShowPoints.Size = new System.Drawing.Size(84, 17);
             this.chkShowPoints.TabIndex = 11;
             this.chkShowPoints.Text = "Show points";
             this.chkShowPoints.UseVisualStyleBackColor = true;
+            this.chkShowPoints.CheckedChanged += new System.EventHandler(this.chkShowPoints_CheckedChanged);
             // 
             // groupLiveSeconds
             // 
@@ -136,7 +168,7 @@ namespace UniversalPatcher
             this.groupLiveSeconds.Controls.Add(this.numShowMax);
             this.groupLiveSeconds.Controls.Add(this.numDisplayInterval);
             this.groupLiveSeconds.Controls.Add(this.labelShowMax);
-            this.groupLiveSeconds.Location = new System.Drawing.Point(3, 504);
+            this.groupLiveSeconds.Location = new System.Drawing.Point(3, 482);
             this.groupLiveSeconds.Name = "groupLiveSeconds";
             this.groupLiveSeconds.Size = new System.Drawing.Size(243, 66);
             this.groupLiveSeconds.TabIndex = 8;
@@ -201,8 +233,8 @@ namespace UniversalPatcher
             // 
             // btnApply
             // 
-            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnApply.Location = new System.Drawing.Point(12, 477);
+            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnApply.Location = new System.Drawing.Point(156, 412);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(75, 23);
             this.btnApply.TabIndex = 3;
@@ -218,13 +250,13 @@ namespace UniversalPatcher
             this.dataGridValues.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridValues.Location = new System.Drawing.Point(3, 3);
             this.dataGridValues.Name = "dataGridValues";
-            this.dataGridValues.Size = new System.Drawing.Size(242, 442);
+            this.dataGridValues.Size = new System.Drawing.Size(242, 403);
             this.dataGridValues.TabIndex = 2;
             // 
             // txtLogSeparator
             // 
             this.txtLogSeparator.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtLogSeparator.Location = new System.Drawing.Point(192, 451);
+            this.txtLogSeparator.Location = new System.Drawing.Point(91, 414);
             this.txtLogSeparator.Name = "txtLogSeparator";
             this.txtLogSeparator.Size = new System.Drawing.Size(39, 20);
             this.txtLogSeparator.TabIndex = 1;
@@ -233,11 +265,22 @@ namespace UniversalPatcher
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(111, 454);
+            this.label1.Location = new System.Drawing.Point(10, 417);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Log separator:";
+            // 
+            // ScrollStartPoint
+            // 
+            this.ScrollStartPoint.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ScrollStartPoint.Location = new System.Drawing.Point(0, 531);
+            this.ScrollStartPoint.Maximum = 1000;
+            this.ScrollStartPoint.Name = "ScrollStartPoint";
+            this.ScrollStartPoint.Size = new System.Drawing.Size(938, 20);
+            this.ScrollStartPoint.TabIndex = 3;
+            this.ScrollStartPoint.Scroll += new System.Windows.Forms.ScrollEventHandler(this.ScrollStartPoint_Scroll);
             // 
             // menuStrip1
             // 
@@ -266,28 +309,40 @@ namespace UniversalPatcher
             // loadLogfileToolStripMenuItem
             // 
             this.loadLogfileToolStripMenuItem.Name = "loadLogfileToolStripMenuItem";
-            this.loadLogfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadLogfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.loadLogfileToolStripMenuItem.Text = "Load logfile";
             this.loadLogfileToolStripMenuItem.Click += new System.EventHandler(this.loadLogfileToolStripMenuItem_Click);
+            // 
+            // loadLastLogfileToolStripMenuItem
+            // 
+            this.loadLastLogfileToolStripMenuItem.Name = "loadLastLogfileToolStripMenuItem";
+            this.loadLastLogfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.loadLastLogfileToolStripMenuItem.Text = "Load last logfile";
+            this.loadLastLogfileToolStripMenuItem.Click += new System.EventHandler(this.loadLastLogfileToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(155, 6);
             // 
             // loadProfileToolStripMenuItem
             // 
             this.loadProfileToolStripMenuItem.Name = "loadProfileToolStripMenuItem";
-            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.loadProfileToolStripMenuItem.Text = "Load profile";
             this.loadProfileToolStripMenuItem.Click += new System.EventHandler(this.loadProfileToolStripMenuItem_Click);
             // 
             // saveProfileToolStripMenuItem
             // 
             this.saveProfileToolStripMenuItem.Name = "saveProfileToolStripMenuItem";
-            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.saveProfileToolStripMenuItem.Text = "Save profile";
             this.saveProfileToolStripMenuItem.Click += new System.EventHandler(this.saveProfileToolStripMenuItem_Click);
             // 
             // saveProfileAsToolStripMenuItem
             // 
             this.saveProfileAsToolStripMenuItem.Name = "saveProfileAsToolStripMenuItem";
-            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.saveProfileAsToolStripMenuItem.Text = "Save profile as...";
             this.saveProfileAsToolStripMenuItem.Click += new System.EventHandler(this.saveProfileAsToolStripMenuItem_Click);
             // 
@@ -296,22 +351,12 @@ namespace UniversalPatcher
             this.timerDisplayData.Interval = 3000;
             this.timerDisplayData.Tick += new System.EventHandler(this.timerDisplayData_Tick);
             // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
-            // 
-            // loadLastLogfileToolStripMenuItem
-            // 
-            this.loadLastLogfileToolStripMenuItem.Name = "loadLastLogfileToolStripMenuItem";
-            this.loadLastLogfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.loadLastLogfileToolStripMenuItem.Text = "Load last logfile";
-            this.loadLastLogfileToolStripMenuItem.Click += new System.EventHandler(this.loadLastLogfileToolStripMenuItem_Click);
-            // 
             // splitContainer2
             // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 24);
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer2.Location = new System.Drawing.Point(0, 27);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -322,8 +367,8 @@ namespace UniversalPatcher
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.txtResult);
-            this.splitContainer2.Size = new System.Drawing.Size(1199, 665);
-            this.splitContainer2.SplitterDistance = 573;
+            this.splitContainer2.Size = new System.Drawing.Size(1199, 640);
+            this.splitContainer2.SplitterDistance = 551;
             this.splitContainer2.TabIndex = 4;
             // 
             // txtResult
@@ -332,15 +377,39 @@ namespace UniversalPatcher
             this.txtResult.HideSelection = false;
             this.txtResult.Location = new System.Drawing.Point(0, 0);
             this.txtResult.Name = "txtResult";
-            this.txtResult.Size = new System.Drawing.Size(1199, 88);
+            this.txtResult.Size = new System.Drawing.Size(1199, 85);
             this.txtResult.TabIndex = 0;
             this.txtResult.Text = "";
+            // 
+            // labelDataValues
+            // 
+            this.labelDataValues.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelDataValues.AutoSize = true;
+            this.labelDataValues.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.labelDataValues.Location = new System.Drawing.Point(0, 670);
+            this.labelDataValues.Name = "labelDataValues";
+            this.labelDataValues.Size = new System.Drawing.Size(156, 15);
+            this.labelDataValues.TabIndex = 5;
+            this.labelDataValues.Text = "Click data point to show values";
+            // 
+            // chkGetLiveData
+            // 
+            this.chkGetLiveData.AutoSize = true;
+            this.chkGetLiveData.Location = new System.Drawing.Point(81, 4);
+            this.chkGetLiveData.Name = "chkGetLiveData";
+            this.chkGetLiveData.Size = new System.Drawing.Size(149, 17);
+            this.chkGetLiveData.TabIndex = 18;
+            this.chkGetLiveData.Text = "Receive data from Logger";
+            this.chkGetLiveData.UseVisualStyleBackColor = true;
+            this.chkGetLiveData.CheckedChanged += new System.EventHandler(this.chkGetLiveData_CheckedChanged);
             // 
             // frmLoggerGraphics
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1199, 689);
+            this.Controls.Add(this.chkGetLiveData);
+            this.Controls.Add(this.labelDataValues);
             this.Controls.Add(this.splitContainer2);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -395,5 +464,10 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.RichTextBox txtResult;
+        private System.Windows.Forms.Label labelDataValues;
+        private System.Windows.Forms.CheckBox chkGetLiveData;
+        private System.Windows.Forms.HScrollBar ScrollStartPoint;
+        private System.Windows.Forms.HScrollBar ScrollPointsPerScreen;
+        private System.Windows.Forms.Label label3;
     }
 }

@@ -90,8 +90,10 @@ namespace UniversalPatcher
             public LogData(int Size)
             {
                 Values = new double[Size];
+                CalculatedValues = new double[Size];
             }
             public double[] Values { get; set; }
+            public double[] CalculatedValues { get; set; }
             public ulong TimeStamp { get; set; }
             public ulong SysTimeStamp { get; set; }
         }
@@ -302,6 +304,7 @@ namespace UniversalPatcher
                 {
                     ld = LogFileQueue.Dequeue();
                 }
+                ld.CalculatedValues = slothandler.CalculatePidDoubleValues(ld.Values);
                 if (useRawValues)
                 {
                     string[] ldvalues = new string[ld.Values.Length];

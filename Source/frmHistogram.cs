@@ -493,36 +493,48 @@ namespace UniversalPatcher
 
         private void AddLogData(double[] logdata)
         {
-            if (hSetup == null)
+            try
             {
-                if (string.IsNullOrEmpty(comboXparam.Text) || string.IsNullOrEmpty(comboValueparam.Text))
+                if (hSetup == null)
                 {
-                    LoggerBold("Select histogram parameters first!");
-                    return;
+                    if (string.IsNullOrEmpty(comboXparam.Text) || string.IsNullOrEmpty(comboValueparam.Text))
+                    {
+                        LoggerBold("Select histogram parameters first!");
+                        return;
+                    }
+                    LoadHistogram();
                 }
-                LoadHistogram();
+                histogram.AddData(logdata);
+                histogram.CountHits(comboXparam.Text, comboYparam.Text, comboValueparam.Text, comboSkipParam.Text, (double)numSkipValue.Value, tData.Decimals);
+                for (int i = 0; i < histogram.HitDatas.Count; i++)
+                {
+                    Histogram.HitData hd = histogram.HitDatas[i];
+                    if (hd.Values.Count > 0)
+                    {
+                        double cellValue = hd.Average;
+                        dataGridView1.Rows[hd.Row].Cells[hd.Column].Value = cellValue;
+                        if (cellValue > hSetup.HighValue)
+                            dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.HighColor);
+                        else if (cellValue < hSetup.LowValue)
+                            dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.LowColor);
+                        else
+                            dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.MidColor);
+                        string tipTxt = "Min: " + hd.Values.Min().ToString() + ", Max: " + hd.Values.Max().ToString() + ", Hits: " + hd.Values.Count.ToString();
+                        dataGridView1.Rows[hd.Row].Cells[hd.Column].ToolTipText = tipTxt;
+                        dataGridView1.Rows[hd.Row].Cells[hd.Column].Tag = hd;
+                    }
+                }
+                ShowCellInfo();
             }
-            histogram.AddData(logdata);
-            histogram.CountHits(comboXparam.Text, comboYparam.Text, comboValueparam.Text, comboSkipParam.Text, (double)numSkipValue.Value, tData.Decimals);
-            for (int i = 0; i < histogram.HitDatas.Count; i++)
+            catch (Exception ex)
             {
-                Histogram.HitData hd = histogram.HitDatas[i];
-                if (hd.Values.Count > 0)
-                {
-                    double cellValue = hd.Average;
-                    dataGridView1.Rows[hd.Row].Cells[hd.Column].Value = cellValue;
-                    if (cellValue > hSetup.HighValue)
-                        dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.HighColor);
-                    else if (cellValue < hSetup.LowValue)
-                        dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.LowColor);
-                    else
-                        dataGridView1.Rows[hd.Row].Cells[hd.Column].Style.BackColor = Color.FromArgb(hSetup.MidColor);
-                    string tipTxt = "Min: " + hd.Values.Min().ToString() + ", Max: " + hd.Values.Max().ToString() + ", Hits: " + hd.Values.Count.ToString();
-                    dataGridView1.Rows[hd.Row].Cells[hd.Column].ToolTipText = tipTxt;
-                    dataGridView1.Rows[hd.Row].Cells[hd.Column].Tag = hd;
-                }
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmHistogram line " + line + ": " + ex.Message);
             }
-            ShowCellInfo();
         }
 
         private void ShowCellInfo()
@@ -565,7 +577,6 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, frmHistogram line " + line + ": " + ex.Message);
             }
-
         }
     }
 }

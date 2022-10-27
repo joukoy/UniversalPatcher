@@ -11,6 +11,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using static Helpers;
+using static UniversalPatcher.DataLogger;
 using static Upatcher;
 
 namespace UniversalPatcher
@@ -52,6 +53,30 @@ namespace UniversalPatcher
             public int Serie { get; set; }
         }
 
+        private class PointData
+        {
+            public PointData(string Pid, ulong TStamp, double Val, double ScaledVal)
+            {
+                PidName = Pid;
+                TimeStamp = TStamp;
+                Value = Val;
+                ScaledValue = ScaledVal;
+            }
+            public string PidName { get; set; }
+            public ulong TimeStamp { get; set; }
+            public double Value { get; set; }
+            public double ScaledValue { get; set; }
+        }
+
+        private class PointDataGroup
+        {
+            public PointDataGroup(int count)
+            {
+                pointDatas = new PointData[count];
+            }
+            public PointData[] pointDatas { get; set; }
+        }
+
         private List<PidScalar> pidScalars;
         private string logFile;
         private bool LiveData;
@@ -59,7 +84,9 @@ namespace UniversalPatcher
         private Queue<QueuePoint> PointQ = new Queue<QueuePoint>();
         private string ProfileFile;
         private string Title;
-        public string LastLiveLogFile;
+        private List<PointDataGroup> pointDatas = new List<PointDataGroup>();
+        ToolTip ScrollTip = new ToolTip();
+        //public string LastLiveLogFile;
 
         private void frmLoggerGraphics_Load(object sender, EventArgs e)
         {
@@ -85,6 +112,49 @@ namespace UniversalPatcher
             numShowMax.Value = Properties.Settings.Default.LoggerGraphicsShowMaxTime;
             chkShowPoints.Checked = Properties.Settings.Default.LoggerGraphicsShowPoints;
             SetUpDoubleBuffer(this);
+            chart1.MouseClick += Chart1_MouseClick;
+        }
+
+        private void Chart1_MouseClick(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                var pos = e.Location;
+                var results = chart1.HitTest(pos.X, pos.Y, false, ChartElementType.DataPoint);
+                foreach (var result in results)
+                {
+                    if (result.ChartElementType == ChartElementType.DataPoint)
+                    {
+                        DataPoint prop = result.Object as DataPoint;
+                        if (prop != null)
+                        {
+                            PointData pd = (PointData)prop.Tag;
+                            DateTime dt = new DateTime((long)pd.TimeStamp);
+                            StringBuilder sb = new StringBuilder("[" + dt.ToString("HH:mm:ss.ffff") + "] ");
+                            for (int s = 0; s < chart1.Series.Count; s++)
+                            {
+                                DataPoint[] points = chart1.Series[s].Points.Where(X => ((PointData)X.Tag).TimeStamp == pd.TimeStamp).ToArray();
+                                foreach (DataPoint point in points)
+                                {
+                                    PointData pData = (PointData)point.Tag;
+                                    Debug.WriteLine(pData.PidName + ": " + pData.Value.ToString("0.00"));
+                                    sb.Append(" " + pData.PidName + ": " + pData.Value.ToString("0.00") + ",");
+                                }
+                            }
+                            labelDataValues.Text = sb.ToString().Trim(',');
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmLoggerGraphics line " + line + ": " + ex.Message);
+            }
         }
 
         private void FrmLoggerGraphics_FormClosing(object sender, FormClosingEventArgs e)
@@ -119,7 +189,7 @@ namespace UniversalPatcher
 
         public void SetupLiveGraphics()
         {
-            Title = "Logger Graphics";
+            Title = "Logger Graph";
             pidScalars = new List<PidScalar>();
             chart1.Series.Clear();
             chart1.BackGradientStyle = GradientStyle.None;
@@ -130,7 +200,7 @@ namespace UniversalPatcher
                 pidScalars.Add(ps);
                 chart1.Series.Add(new Series());
                 chart1.Series[p].ChartType = SeriesChartType.Line;
-                //chart1.Series[r].XValueType = ChartValueType.DateTime;
+                //chart1.Series[p].XValueType = ChartValueType.DateTime;
                 if (datalogger.PidProfile[p].PidName != null)
                     chart1.Series[p].Name = datalogger.PidProfile[p].PidName;
                 chart1.Series[p].ToolTip = "[#SERIESNAME][#VALX]: #VAL";
@@ -151,13 +221,19 @@ namespace UniversalPatcher
             CA.CursorX.AutoScroll = true;
             CA.CursorX.IsUserSelectionEnabled = true;
             CA.AxisX.ScrollBar.ButtonStyle = ScrollBarButtonStyles.All;
+            CA.AxisY.MajorGrid.Enabled = false;
+            CA.AxisY.MinorTickMark.Enabled = false;
+            CA.AxisY.Crossing = 0;
+            chkGetLiveData.Checked = true;
             LoggerDataEvents.LogDataAdded += LogEvents_LogDataAdded;
+            ScrollStartPoint.Visible = false;
+            ScrollPointsPerScreen.Enabled = false;
+
         }
 
         private void LogEvents_LogDataAdded(object sender, DataLogger.LogDataEvents.LogDataEvent e)
         {
-            double[] lastDoubleValues = datalogger.slothandler.CalculatePidDoubleValues(e.Data.Values);
-            QueueliveData(lastDoubleValues, e.Data.TimeStamp);
+            QueueliveData(e.Data);
         }
 
         public void UpdateLiveGraphics()
@@ -185,30 +261,32 @@ namespace UniversalPatcher
             dataGridValues.DataSource = pidScalars;
             dataGridValues.Update();
             dataGridValues.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-            LoggerDataEvents.LogDataAdded -= LogEvents_LogDataAdded;
         }
 
-        private void QueueliveData(double[] LastCalcValues, ulong TStamp)
+        private void QueueliveData(LogData ld)
         {
             try
             {
-                string dNow = new DateTime((long)TStamp).ToString("HH:mm:ss.fff");
-                for (int p = 0; p < LastCalcValues.Length; p++)
+                string dNowStr = new DateTime((long)ld.TimeStamp).ToString("HH:mm:ss.ffff");
+                DateTime dNow = new DateTime((long)ld.TimeStamp);
+                for (int p = 0; p < ld.Values.Length; p++)
                 {
                     if (pidScalars[p].On)
                     {
-                        double orgVal = LastCalcValues[p];
+                        double orgVal = ld.CalculatedValues[p];
                         if (orgVal == double.MinValue || orgVal == double.MaxValue)
                         {
                             orgVal = 0;
                         }
-                        double val = orgVal * pidScalars[p].Scalar;
+                        double scaledVal = orgVal * pidScalars[p].Scalar;
                         //Debug.WriteLine(dNow + " - " + val.ToString());
                         //chart1.Series[p].Points.AddXY(DateTime.Now.ToString("HH:mm:ss"), val);
                         DataPoint point = new DataPoint();
-                        point.SetValueXY(dNow, val);
-                        point.ToolTip = string.Format("[{0}] {1}: {2}", dNow, pidScalars[p].Pid, orgVal);
-                        point.Tag = DateTime.Now;
+                        point.SetValueXY(dNowStr, scaledVal);
+                        point.ToolTip = string.Format("[{0}] {1}: {2}", dNowStr, pidScalars[p].Pid, orgVal);
+                        //point.Name = pidScalars[p].Pid + "$" + dNowStr;
+                        PointData pd = new PointData(pidScalars[p].Pid, ld.TimeStamp, orgVal, scaledVal);
+                        point.Tag = pd;
                         if (chkShowPoints.Checked)
                             point.MarkerStyle = MarkerStyle.Circle;
                         else
@@ -232,12 +310,12 @@ namespace UniversalPatcher
             }
         }
 
-        private void SetupLogGraphics(string[] header, string Title)
+        private void SetupLogGraphics(string[] header, string FileName)
         {
             pidScalars = new List<PidScalar>();
             //pidScalars.Add(new PidScalar("TimeStamp"));  
-            this.Text = Title;
-            this.Title = Title;
+            this.Text = "Logger Graph - " + FileName;
+            Title = this.Text;
             chart1.Series.Clear();
             chart1.ChartAreas[0].Area3DStyle.Enable3D = false;
             chart1.ChartAreas[0].CursorX.AutoScroll = true;
@@ -270,7 +348,7 @@ namespace UniversalPatcher
                 pidScalars.Add(ps);
                 chart1.Series.Add(new Series());
                 chart1.Series[r].ChartType = SeriesChartType.Line;
-                chart1.Series[r].XValueType = ChartValueType.DateTime;
+                //chart1.Series[r].XValueType = ChartValueType.DateTime;
                 chart1.Series[r].Name = header[r + TStamps];
                 chart1.Series[r].ToolTip = "[#SERIESNAME][#VALX]: #VAL";
             }
@@ -290,10 +368,17 @@ namespace UniversalPatcher
             LoadProfile();
             //UpdateScalars();
             ChartArea CA = chart1.ChartAreas[0];  // quick reference
-            CA.AxisX.ScaleView.Zoomable = true;
+            CA.AxisX.ScaleView.Zoomable = false;
             CA.CursorX.AutoScroll = true;
             CA.CursorX.IsUserSelectionEnabled = true;
-            CA.AxisX.ScrollBar.ButtonStyle = ScrollBarButtonStyles.All;
+            CA.AxisX.ScrollBar.ButtonStyle = ScrollBarButtonStyles.None;
+            CA.AxisY.MajorGrid.Enabled = false;
+            CA.AxisY.MinorTickMark.Enabled = false;
+            CA.AxisY.Crossing = 0;
+            chkGetLiveData.Checked = false;
+            LoggerDataEvents.LogDataAdded -= LogEvents_LogDataAdded;
+            ScrollStartPoint.Visible = true;
+            ScrollPointsPerScreen.Enabled = true;
         }
 
 
@@ -334,6 +419,7 @@ namespace UniversalPatcher
                     chart1.Series[s].Points.Clear();
                 string logLine;
                 int row = 0;
+                pointDatas = new List<PointDataGroup>();
                 while ((logLine = sr.ReadLine()) != null)
                 {
                     //Custom handling: read OS:Segmentaddress pairs from file
@@ -343,12 +429,17 @@ namespace UniversalPatcher
                         Logger(".", false);
                         Application.DoEvents();
                     }
-                    if (row > 1000 && !chart1.ChartAreas[0].AxisX.ScaleView.IsZoomed)
+/*                    if (row > 1000 && !chart1.ChartAreas[0].AxisX.ScaleView.IsZoomed)
                     {
                         chart1.ChartAreas[0].AxisX.ScaleView.Zoom(0, 1000);
                     }
+*/
                     string[] lParts = logLine.Split(new string[] { txtLogSeparator.Text }, StringSplitOptions.None);
-                    string tStamp = lParts[0];
+                    PointDataGroup pdg = new PointDataGroup(lParts.Length - TStamps);
+                    string tStampStr = lParts[0];
+                    DateTime tStamp = Convert.ToDateTime(lParts[0]);
+                    //LogData ld = new LogData(lParts.Length - TStamps);
+                    ulong TimeStamp = (ulong)tStamp.Ticks;
                     for (int r = TStamps; r < lParts.Length; r++)
                     {
                         if (pidScalars[r - TStamps].On)
@@ -357,21 +448,30 @@ namespace UniversalPatcher
                             string valStr = lParts[r].Replace(",", ".");
                             if (double.TryParse(valStr, NumberStyles.Any, CultureInfo.InvariantCulture, out origVal))
                             {
-                                double val = origVal * pidScalars[r - TStamps].Scalar;
+                                double scaledVal = origVal * pidScalars[r - TStamps].Scalar;
                                 //chart1.Series[r - 1].Points.AddXY(tStamp, val);
                                 DataPoint point = new DataPoint();
-                                point.SetValueXY(tStamp, val);
-                                point.ToolTip = string.Format("[{0}] {1}: {2}", tStamp, pidScalars[r-TStamps].Pid, origVal);
+                                PointData pd = new PointData(pidScalars[r - TStamps].Pid, TimeStamp, origVal, scaledVal);
+                                pdg.pointDatas[r-TStamps] = pd;
+/*                                point.Tag = pd;
+                                point.SetValueXY(tStampStr, scaledVal);
+                                point.ToolTip = string.Format("[{0}] {1}: {2}", tStampStr, pidScalars[r-TStamps].Pid, origVal);
+                                point.Name = pidScalars[r - TStamps].Pid + "$" + tStamp;
                                 if (chkShowPoints.Checked)
                                     point.MarkerStyle = MarkerStyle.Circle;
                                 else
                                     point.MarkerStyle = MarkerStyle.None;
                                 chart1.Series[r- TStamps].Points.Add(point);
+*/
                             }
                         }
                     }
+                    pointDatas.Add(pdg);
                 }
                 sr.Close();
+                ScrollStartPoint.Maximum = pointDatas.Count;
+                ScrollPointsPerScreen.Maximum = pointDatas.Count;
+                ShowSelectedRange();
                 Logger(" [OK]");
             }
             catch (Exception ex)
@@ -382,6 +482,43 @@ namespace UniversalPatcher
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, ReadDataFromFile line " + line + ": " + ex.Message);
+            }
+        }
+
+        private void ShowSelectedRange()
+        {
+            if (pointDatas.Count == 0)
+            {
+                return;
+            }
+            for (int s = 0; s < chart1.Series.Count; s++)
+            {
+                chart1.Series[s].Points.Clear();
+            }
+            int startP = ScrollStartPoint.Value;
+            if ((ScrollStartPoint.Value + ScrollPointsPerScreen.Value) > pointDatas.Count)
+            {
+                startP = pointDatas.Count - ScrollPointsPerScreen.Value;
+            }
+            for (int x = startP; x < (ScrollStartPoint.Value + ScrollPointsPerScreen.Value) && x < pointDatas.Count; x++)
+            {
+                PointDataGroup pdg = pointDatas[x];
+                for (int r = 0; r < pdg.pointDatas.Length; r++)
+                {
+                    PointData pd = pdg.pointDatas[r];
+                    DataPoint point = new DataPoint();
+                    point.Tag = pd;
+                    DateTime tStamp = new DateTime((long)pd.TimeStamp);
+                    string tStampStr = tStamp.ToString("HH:mm:ss.ffff");
+                    point.SetValueXY(tStampStr, pd.ScaledValue);
+                    point.ToolTip = string.Format("[{0}] {1}: {2}", tStampStr,pd.PidName, pd.Value);
+                    //point.Name = pd.PidName + "$" + tStamp;
+                    if (chkShowPoints.Checked)
+                        point.MarkerStyle = MarkerStyle.Circle;
+                    else
+                        point.MarkerStyle = MarkerStyle.None;
+                    chart1.Series[r].Points.Add(point);
+                }
             }
         }
 
@@ -416,7 +553,7 @@ namespace UniversalPatcher
                 if (string.IsNullOrEmpty(fName))
                     return;
                 logFile = fName;
-                Title = fName;
+                Title = "Logger Graph - " + fName;
                 LoadLogFile();
             }
             catch (Exception ex)
@@ -463,14 +600,18 @@ namespace UniversalPatcher
                 int maxAge = (int)numShowMax.Value;
                 for (; ; )
                 {
-                    int pointAge = (int)DateTime.Now.Subtract((DateTime)chart1.Series[0].Points[0].Tag).TotalSeconds;
+                    PointData pd1 = (PointData)chart1.Series[0].Points[0].Tag;
+                    DateTime dt1 = new DateTime((long)pd1.TimeStamp);
+                    int pointAge = (int)DateTime.Now.Subtract(dt1).TotalSeconds;
                     if (pointAge > maxAge)
                     {
                         for (int p = 0; p < chart1.Series.Count; p++)
                         {
                             if (chart1.Series[p].Points.Count > 0)
                             {
-                                pointAge = (int)DateTime.Now.Subtract((DateTime)chart1.Series[p].Points[0].Tag).TotalSeconds;
+                                PointData pt = (PointData)chart1.Series[p].Points[0].Tag;
+                                DateTime dt = new DateTime((long)pt.TimeStamp);
+                                pointAge = (int)DateTime.Now.Subtract(dt).TotalSeconds;
                                 if (pointAge > maxAge)
                                 {
                                     chart1.Series[p].Points.RemoveAt(0);
@@ -640,8 +781,8 @@ namespace UniversalPatcher
 
         private void loadLastLogfileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            logFile = LastLiveLogFile;
-            Title = LastLiveLogFile;
+            logFile = Properties.Settings.Default.LoggerLastLogfile;
+            Title = "Logger Graph - " + Properties.Settings.Default.LoggerLastLogfile;
             LoadLogFile();
         }
 
@@ -652,6 +793,46 @@ namespace UniversalPatcher
         public void StartLiveUpdate()
         {
             timerDisplayData.Enabled = true;
+        }
+
+        private void chkGetLiveData_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkGetLiveData.Checked && !LiveData)
+            {
+                SetupLiveGraphics();
+            }
+            if (!chkGetLiveData.Checked && LiveData)
+            {
+                LiveData = false;
+                LoggerDataEvents.LogDataAdded -= LogEvents_LogDataAdded;
+            }
+        }
+
+        private void ScrollPointsPerScreen_Scroll(object sender, ScrollEventArgs e)
+        {
+            ShowSelectedRange();
+            ShowToolTip(ScrollPointsPerScreen.Value.ToString() + " pt/screen");
+        }
+
+        private void ScrollStartPoint_Scroll(object sender, ScrollEventArgs e)
+        {
+            ShowSelectedRange();
+            DateTime dt = new DateTime((long)pointDatas[ScrollStartPoint.Value].pointDatas[0].TimeStamp);
+            ShowToolTip(dt.ToString("HH:mm:ss.ffff"));
+        }
+
+        private void chkShowPoints_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!LiveData)
+            {
+                ShowSelectedRange();
+            }
+        }
+
+        private void ShowToolTip(string message)
+        {
+            ScrollTip.Show(message, this, System.Windows.Forms.Cursor.Position.X - this.Location.X, System.Windows.Forms.Cursor.Position.Y - this.Location.Y - 20, 2000);
+            //ScrollTip.Show(message, this,this.Location.X, this.Location.Y, 1000);
         }
     }
 }
