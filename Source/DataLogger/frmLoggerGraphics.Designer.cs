@@ -62,6 +62,7 @@ namespace UniversalPatcher
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.labelDataValues = new System.Windows.Forms.Label();
             this.chkGetLiveData = new System.Windows.Forms.CheckBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -108,6 +109,7 @@ namespace UniversalPatcher
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.comboBox1);
             this.splitContainer1.Panel1.Controls.Add(this.label3);
             this.splitContainer1.Panel1.Controls.Add(this.ScrollPointsPerScreen);
             this.splitContainer1.Panel1.Controls.Add(this.chkShowPoints);
@@ -248,9 +250,10 @@ namespace UniversalPatcher
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridValues.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridValues.Location = new System.Drawing.Point(3, 3);
+            this.dataGridValues.Location = new System.Drawing.Point(3, 20);
             this.dataGridValues.Name = "dataGridValues";
-            this.dataGridValues.Size = new System.Drawing.Size(242, 403);
+            this.dataGridValues.RowHeadersWidth = 5;
+            this.dataGridValues.Size = new System.Drawing.Size(242, 386);
             this.dataGridValues.TabIndex = 2;
             // 
             // txtLogSeparator
@@ -403,6 +406,16 @@ namespace UniversalPatcher
             this.chkGetLiveData.UseVisualStyleBackColor = true;
             this.chkGetLiveData.CheckedChanged += new System.EventHandler(this.chkGetLiveData_CheckedChanged);
             // 
+            // comboBox1
+            // 
+            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(3, 3);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(242, 21);
+            this.comboBox1.TabIndex = 13;
+            // 
             // frmLoggerGraphics
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -469,5 +482,6 @@ namespace UniversalPatcher
         private System.Windows.Forms.HScrollBar ScrollStartPoint;
         private System.Windows.Forms.HScrollBar ScrollPointsPerScreen;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Resources;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -55,17 +56,19 @@ namespace UniversalPatcher
 
         private class PointData
         {
-            public PointData(string Pid, ulong TStamp, double Val, double ScaledVal)
+            public PointData(string Pid, ulong TStamp, double Val, double ScaledVal, int row)
             {
                 PidName = Pid;
                 TimeStamp = TStamp;
                 Value = Val;
                 ScaledValue = ScaledVal;
+                Row = row;
             }
             public string PidName { get; set; }
             public ulong TimeStamp { get; set; }
             public double Value { get; set; }
             public double ScaledValue { get; set; }
+            public int Row { get; set; }
         }
 
         private class PointDataGroup
@@ -87,6 +90,9 @@ namespace UniversalPatcher
         private List<PointDataGroup> pointDatas = new List<PointDataGroup>();
         ToolTip ScrollTip = new ToolTip();
         //public string LastLiveLogFile;
+        private List<string> dataSourceNames = new List<string>();
+        private List<Bitmap> dataSourceImage = new List<Bitmap>();
+        private SeriesChartType ChartType = SeriesChartType.Line;
 
         private void frmLoggerGraphics_Load(object sender, EventArgs e)
         {
@@ -113,6 +119,7 @@ namespace UniversalPatcher
             chkShowPoints.Checked = Properties.Settings.Default.LoggerGraphicsShowPoints;
             SetUpDoubleBuffer(this);
             chart1.MouseClick += Chart1_MouseClick;
+            loadCombobox1();
         }
 
         private void Chart1_MouseClick(object sender, MouseEventArgs e)
@@ -128,12 +135,16 @@ namespace UniversalPatcher
                         DataPoint prop = result.Object as DataPoint;
                         if (prop != null)
                         {
-                            PointData pd = (PointData)prop.Tag;
+                            PointData pd = (PointData)prop.Tag;                           
                             DateTime dt = new DateTime((long)pd.TimeStamp);
                             StringBuilder sb = new StringBuilder("[" + dt.ToString("HH:mm:ss.ffff") + "] ");
+                            DataPoint[] points;
                             for (int s = 0; s < chart1.Series.Count; s++)
                             {
-                                DataPoint[] points = chart1.Series[s].Points.Where(X => ((PointData)X.Tag).TimeStamp == pd.TimeStamp).ToArray();
+                                if (LiveData)
+                                    points = chart1.Series[s].Points.Where(X => ((PointData)X.Tag).TimeStamp == pd.TimeStamp).ToArray();
+                                else
+                                    points = chart1.Series[s].Points.Where(X => ((PointData)X.Tag).Row == pd.Row).ToArray();
                                 foreach (DataPoint point in points)
                                 {
                                     PointData pData = (PointData)point.Tag;
@@ -199,7 +210,8 @@ namespace UniversalPatcher
                 PidScalar ps = new PidScalar(datalogger.PidProfile[p].PidName);
                 pidScalars.Add(ps);
                 chart1.Series.Add(new Series());
-                chart1.Series[p].ChartType = SeriesChartType.Line;
+                chart1.Series[p].ChartType = ChartType;
+                //chart1.Series[p].ChartType = SeriesChartType.Line;
                 //chart1.Series[p].XValueType = ChartValueType.DateTime;
                 if (datalogger.PidProfile[p].PidName != null)
                     chart1.Series[p].Name = datalogger.PidProfile[p].PidName;
@@ -207,6 +219,7 @@ namespace UniversalPatcher
             }
             dataGridValues.DataSource = pidScalars;
             dataGridValues.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+            dataGridValues.Columns["On"].Width = 30;
             //btnApply.Text = "Apply";
             //dataGridValues.CellValueChanged += DataGridValues_CellValueChanged;
             LiveData = true;
@@ -246,7 +259,7 @@ namespace UniversalPatcher
                 chart1.Series.Add(new Series());
                 if (pidScalars[p].On)
                 {
-                    chart1.Series[p].ChartType = SeriesChartType.Line;
+                    chart1.Series[p].ChartType = ChartType;
                     //chart1.Series[r].XValueType = ChartValueType.DateTime;
                     if (datalogger.PidProfile[p].PidName != null)
                         chart1.Series[p].Name = datalogger.PidProfile[p].PidName;
@@ -285,7 +298,7 @@ namespace UniversalPatcher
                         point.SetValueXY(dNowStr, scaledVal);
                         point.ToolTip = string.Format("[{0}] {1}: {2}", dNowStr, pidScalars[p].Pid, orgVal);
                         //point.Name = pidScalars[p].Pid + "$" + dNowStr;
-                        PointData pd = new PointData(pidScalars[p].Pid, ld.TimeStamp, orgVal, scaledVal);
+                        PointData pd = new PointData(pidScalars[p].Pid, ld.TimeStamp, orgVal, scaledVal,0);
                         point.Tag = pd;
                         if (chkShowPoints.Checked)
                             point.MarkerStyle = MarkerStyle.Circle;
@@ -342,18 +355,20 @@ namespace UniversalPatcher
                 cols = cols.Trim(',');
                 Logger("Skipping columns: " + cols);
             }
+            SeriesChartType ct = (SeriesChartType)Enum.Parse(typeof(SeriesChartType), comboBox1.Text);
             for (int r = 0; r < header.Length-TStamps; r++)
             {
                 PidScalar ps = new PidScalar(header[r + TStamps]);
                 pidScalars.Add(ps);
                 chart1.Series.Add(new Series());
-                chart1.Series[r].ChartType = SeriesChartType.Line;
+                chart1.Series[r].ChartType = ChartType;
                 //chart1.Series[r].XValueType = ChartValueType.DateTime;
                 chart1.Series[r].Name = header[r + TStamps];
                 chart1.Series[r].ToolTip = "[#SERIESNAME][#VALX]: #VAL";
             }
             dataGridValues.DataSource = pidScalars;
             dataGridValues.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+            dataGridValues.Columns["On"].Width = 30;
             //dataGridValues.CellValueChanged += DataGridValues_CellValueChanged;
             LiveData = false;
             timerDisplayData.Enabled = false;
@@ -379,6 +394,7 @@ namespace UniversalPatcher
             LoggerDataEvents.LogDataAdded -= LogEvents_LogDataAdded;
             ScrollStartPoint.Visible = true;
             ScrollPointsPerScreen.Enabled = true;
+            ScrollStartPoint.Value = 0;
         }
 
 
@@ -390,7 +406,7 @@ namespace UniversalPatcher
                 chart1.Series.Add(new Series());
                 if (pidScalars[p].On)
                 {
-                    chart1.Series[p].ChartType = SeriesChartType.Line;
+                    chart1.Series[p].ChartType = ChartType;
                     chart1.Series[p].XValueType = ChartValueType.DateTime;
                     chart1.Series[p].Name = pidScalars[p].Pid;
                     chart1.Series[p].ToolTip = "[#SERIESNAME][#VALX]: #VAL";
@@ -422,25 +438,19 @@ namespace UniversalPatcher
                 pointDatas = new List<PointDataGroup>();
                 while ((logLine = sr.ReadLine()) != null)
                 {
-                    //Custom handling: read OS:Segmentaddress pairs from file
                     row++;
                     if (row % 1000 == 0)
                     {
                         Logger(".", false);
                         Application.DoEvents();
                     }
-/*                    if (row > 1000 && !chart1.ChartAreas[0].AxisX.ScaleView.IsZoomed)
-                    {
-                        chart1.ChartAreas[0].AxisX.ScaleView.Zoom(0, 1000);
-                    }
-*/
                     string[] lParts = logLine.Split(new string[] { txtLogSeparator.Text }, StringSplitOptions.None);
                     PointDataGroup pdg = new PointDataGroup(lParts.Length - TStamps);
                     string tStampStr = lParts[0];
                     DateTime tStamp = Convert.ToDateTime(lParts[0]);
                     //LogData ld = new LogData(lParts.Length - TStamps);
                     ulong TimeStamp = (ulong)tStamp.Ticks;
-                    for (int r = TStamps; r < lParts.Length; r++)
+                    for (int r = TStamps; r < lParts.Length && (r - TStamps) < pidScalars.Count; r++)
                     {
                         if (pidScalars[r - TStamps].On)
                         {
@@ -451,18 +461,8 @@ namespace UniversalPatcher
                                 double scaledVal = origVal * pidScalars[r - TStamps].Scalar;
                                 //chart1.Series[r - 1].Points.AddXY(tStamp, val);
                                 DataPoint point = new DataPoint();
-                                PointData pd = new PointData(pidScalars[r - TStamps].Pid, TimeStamp, origVal, scaledVal);
+                                PointData pd = new PointData(pidScalars[r - TStamps].Pid, TimeStamp, origVal, scaledVal,row);
                                 pdg.pointDatas[r-TStamps] = pd;
-/*                                point.Tag = pd;
-                                point.SetValueXY(tStampStr, scaledVal);
-                                point.ToolTip = string.Format("[{0}] {1}: {2}", tStampStr, pidScalars[r-TStamps].Pid, origVal);
-                                point.Name = pidScalars[r - TStamps].Pid + "$" + tStamp;
-                                if (chkShowPoints.Checked)
-                                    point.MarkerStyle = MarkerStyle.Circle;
-                                else
-                                    point.MarkerStyle = MarkerStyle.None;
-                                chart1.Series[r- TStamps].Points.Add(point);
-*/
                             }
                         }
                     }
@@ -487,6 +487,8 @@ namespace UniversalPatcher
 
         private void ShowSelectedRange()
         {
+            try
+            {
             if (pointDatas.Count == 0)
             {
                 return;
@@ -506,19 +508,32 @@ namespace UniversalPatcher
                 for (int r = 0; r < pdg.pointDatas.Length; r++)
                 {
                     PointData pd = pdg.pointDatas[r];
-                    DataPoint point = new DataPoint();
-                    point.Tag = pd;
-                    DateTime tStamp = new DateTime((long)pd.TimeStamp);
-                    string tStampStr = tStamp.ToString("HH:mm:ss.ffff");
-                    point.SetValueXY(tStampStr, pd.ScaledValue);
-                    point.ToolTip = string.Format("[{0}] {1}: {2}", tStampStr,pd.PidName, pd.Value);
-                    //point.Name = pd.PidName + "$" + tStamp;
-                    if (chkShowPoints.Checked)
-                        point.MarkerStyle = MarkerStyle.Circle;
-                    else
-                        point.MarkerStyle = MarkerStyle.None;
-                    chart1.Series[r].Points.Add(point);
+                    if (pd != null)
+                    {
+                        DataPoint point = new DataPoint();
+                        point.Tag = pd;
+                        DateTime tStamp = new DateTime((long)pd.TimeStamp);
+                        string tStampStr = tStamp.ToString("HH:mm:ss.ffff");
+                        point.SetValueXY(tStampStr, pd.ScaledValue);
+                        point.ToolTip = string.Format("[{0}] {1}: {2}", tStampStr, pd.PidName, pd.Value);
+                        //point.Name = pd.PidName + "$" + tStamp;
+                        if (chkShowPoints.Checked)
+                            point.MarkerStyle = MarkerStyle.Circle;
+                        else
+                            point.MarkerStyle = MarkerStyle.None;
+                        chart1.Series[r].Points.Add(point);
+                    }
                 }
+            }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, frmLoggerGraphics line " + line + ": " + ex.Message);
             }
         }
 
@@ -833,6 +848,81 @@ namespace UniversalPatcher
         {
             ScrollTip.Show(message, this, System.Windows.Forms.Cursor.Position.X - this.Location.X, System.Windows.Forms.Cursor.Position.Y - this.Location.Y - 20, 2000);
             //ScrollTip.Show(message, this,this.Location.X, this.Location.Y, 1000);
+        }
+
+
+
+        private void loadCombobox1()
+        {
+            // Get ChartTypes and Images 
+            var resourceStream = typeof(Chart).Assembly
+                    .GetManifestResourceStream("System.Windows.Forms.DataVisualization.Charting.Design.resources");
+            //List<string> usableTypes = new List<string>() {"Area", "StepLine", "Line","FastLine", "Bubble", "Spline", "Column", "Point", "FastPoint"};
+            List<string> usableTypes = new List<string>() { "Area", "StepLine", "Line", "FastLine", "Spline", "Column", "Point", "FastPoint" };
+            using (System.Resources.ResourceReader resReader = new ResourceReader(resourceStream))
+            {
+                var dictEnumerator = resReader.GetEnumerator();
+
+                while (dictEnumerator.MoveNext())
+                {
+                    var ent = dictEnumerator.Entry;
+                    string typeStr = ent.Key.ToString().Replace("ChartType", "");
+                    if (usableTypes.Contains(typeStr))
+                    {
+                        dataSourceNames.Add(typeStr);
+                        dataSourceImage.Add(ent.Value as Bitmap);
+                    }
+                }
+            }
+
+            //Load ChartType Into combobox
+            comboBox1.DataSource = dataSourceNames;
+            comboBox1.MaxDropDownItems = 10;
+            comboBox1.IntegralHeight = false;
+            comboBox1.DrawMode = DrawMode.OwnerDrawFixed;
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox1.DrawItem += comboBox1_DrawItem;
+            comboBox1.Text = "Line";
+            comboBox1.SelectedIndexChanged += ComboBox1_SelectedIndexChanged;
+        }
+
+        private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                ChartType = (SeriesChartType)Enum.Parse(typeof(SeriesChartType), comboBox1.Text);
+                for (int s = 0; s < chart1.Series.Count; s++)
+                {
+                    chart1.Series[s].ChartType = ChartType;
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+        }
+
+        private void comboBox1_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            e.DrawBackground();
+            if (e.Index >= 0)
+            {
+                // Get text string
+                var txt = comboBox1.GetItemText(comboBox1.Items[e.Index]);
+
+                // Specify points for drawing
+                var r1 = new Rectangle(e.Bounds.Left + 1, e.Bounds.Top + 1,
+                        2 * (e.Bounds.Height - 2), e.Bounds.Height - 2);
+
+                var r2 = Rectangle.FromLTRB(r1.Right + 2, e.Bounds.Top,
+                        e.Bounds.Right, e.Bounds.Bottom);
+
+                //Draw Image from list
+                e.Graphics.DrawImage(dataSourceImage[e.Index], r1);
+                e.Graphics.DrawRectangle(Pens.Black, r1);
+                TextRenderer.DrawText(e.Graphics, txt, comboBox1.Font, r2,
+                        comboBox1.ForeColor, TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
+            }
         }
     }
 }

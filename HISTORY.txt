@@ -510,3 +510,7 @@
 0.21.3
 - Logger Graphics: Bug fixes, speed improvements
 - Logger: Fixed bug in profile editor => show current value (? -button)
+
+0.21.4
+- Logger Graphics: Bug fix: Allow unselect pids
+- Logger Graphics: User selectable graph style
