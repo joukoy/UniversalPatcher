@@ -77,6 +77,10 @@ namespace UniversalPatcher
             public int LowColor { get; set; }
             public double HighValue { get; set; }
             public double LowValue { get; set; }
+            public string ColumnHeaders { get; set; }
+            public string RowHeaders { get; set; }
+            public bool ManualHeaders { get; set; }
+            public ushort Decimals { get; set; }
         }
 
         public List<CsvData> LogDatas { get; set; }
@@ -96,7 +100,7 @@ namespace UniversalPatcher
             return Parameters;
         }
 
-        public void ParseCsvRow(string fName)
+        public void ParseCsvFile(string fName)
         {
             try
             {

@@ -617,7 +617,7 @@ namespace UniversalPatcher
                 {
                     //Debug.WriteLine("All HP pids received");
                     //All High priority pids received
-                    if (datalogger.writelog)
+                    //if (datalogger.writelog) //Always add data to logging queue, for graph & histogram
                     {
                         LogData ld = new LogData(LastPidValues.Length);
                         //ld.TimeStamp = newReadValues[0].TimeStamp;
@@ -658,7 +658,7 @@ namespace UniversalPatcher
                 if (!newPidValues.Contains(double.MinValue))
                 {
                     //All pids received
-                    if (datalogger.writelog)
+                    //if (datalogger.writelog) //Always add data to logging queue, for graph & histogram
                     {
                         LogData ld = new LogData(newPidValues.Length);
                         ld.TimeStamp = newReadValues[0].TimeStamp;

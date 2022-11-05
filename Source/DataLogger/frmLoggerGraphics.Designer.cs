@@ -36,6 +36,7 @@ namespace UniversalPatcher
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmLoggerGraphics));
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.ScrollPointsPerScreen = new System.Windows.Forms.HScrollBar();
             this.chkShowPoints = new System.Windows.Forms.CheckBox();
@@ -62,7 +63,6 @@ namespace UniversalPatcher
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.labelDataValues = new System.Windows.Forms.Label();
             this.chkGetLiveData = new System.Windows.Forms.CheckBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -126,6 +126,16 @@ namespace UniversalPatcher
             this.splitContainer1.Size = new System.Drawing.Size(1199, 551);
             this.splitContainer1.SplitterDistance = 248;
             this.splitContainer1.TabIndex = 2;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(3, 3);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(242, 21);
+            this.comboBox1.TabIndex = 13;
             // 
             // label3
             // 
@@ -213,6 +223,11 @@ namespace UniversalPatcher
             // 
             this.numDisplayInterval.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.numDisplayInterval.Location = new System.Drawing.Point(188, 40);
+            this.numDisplayInterval.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numDisplayInterval.Name = "numDisplayInterval";
             this.numDisplayInterval.Size = new System.Drawing.Size(39, 20);
             this.numDisplayInterval.TabIndex = 7;
@@ -405,16 +420,6 @@ namespace UniversalPatcher
             this.chkGetLiveData.Text = "Receive data from Logger";
             this.chkGetLiveData.UseVisualStyleBackColor = true;
             this.chkGetLiveData.CheckedChanged += new System.EventHandler(this.chkGetLiveData_CheckedChanged);
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(3, 3);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(242, 21);
-            this.comboBox1.TabIndex = 13;
             // 
             // frmLoggerGraphics
             // 

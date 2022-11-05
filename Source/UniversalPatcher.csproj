@@ -346,6 +346,12 @@
     <Compile Include="frmTableEditor.Designer.cs">
       <DependentUpon>frmTableEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmTableHeaders.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmTableHeaders.Designer.cs">
+      <DependentUpon>frmTableHeaders.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmTableVis.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -622,6 +628,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmTableEditor.resx">
       <DependentUpon>frmTableEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmTableHeaders.resx">
+      <DependentUpon>frmTableHeaders.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmTableVis.resx">
       <DependentUpon>frmTableVis.cs</DependentUpon>

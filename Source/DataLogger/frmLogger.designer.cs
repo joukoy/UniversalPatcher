@@ -45,7 +45,15 @@ namespace UniversalPatcher
             this.comboSerialPort = new System.Windows.Forms.ComboBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabLog = new System.Windows.Forms.TabPage();
+            this.btnShowHistogram = new System.Windows.Forms.Button();
+            this.btnShowGraphics = new System.Windows.Forms.Button();
             this.groupLogSettings = new System.Windows.Forms.GroupBox();
+            this.groupPlayback = new System.Windows.Forms.GroupBox();
+            this.label39 = new System.Windows.Forms.Label();
+            this.numPlaybackSpeed = new System.Windows.Forms.NumericUpDown();
+            this.hScrollPlayback = new System.Windows.Forms.HScrollBar();
+            this.btnPlay = new System.Windows.Forms.Button();
+            this.btnPause = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txtDecimalSeparator = new System.Windows.Forms.TextBox();
             this.label37 = new System.Windows.Forms.Label();
@@ -251,6 +259,8 @@ namespace UniversalPatcher
             this.saveProfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveProfileAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newProfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.playbackLogfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filterSupportedPidsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectDisconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -268,11 +278,12 @@ namespace UniversalPatcher
             this.timerSearchParams = new System.Windows.Forms.Timer(this.components);
             this.timerKeepBusQuiet = new System.Windows.Forms.Timer(this.components);
             this.timerWaitCANQuery = new System.Windows.Forms.Timer(this.components);
-            this.btnShowGraphics = new System.Windows.Forms.Button();
-            this.btnShowHistogram = new System.Windows.Forms.Button();
+            this.timerPlayback = new System.Windows.Forms.Timer(this.components);
             this.tabControl1.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.groupLogSettings.SuspendLayout();
+            this.groupPlayback.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numPlaybackSpeed)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).BeginInit();
             this.tabSettings.SuspendLayout();
@@ -365,10 +376,31 @@ namespace UniversalPatcher
             this.tabLog.Text = "Log";
             this.tabLog.UseVisualStyleBackColor = true;
             // 
+            // btnShowHistogram
+            // 
+            this.btnShowHistogram.Location = new System.Drawing.Point(123, 6);
+            this.btnShowHistogram.Name = "btnShowHistogram";
+            this.btnShowHistogram.Size = new System.Drawing.Size(112, 22);
+            this.btnShowHistogram.TabIndex = 33;
+            this.btnShowHistogram.Text = "Show histogram";
+            this.btnShowHistogram.UseVisualStyleBackColor = true;
+            this.btnShowHistogram.Click += new System.EventHandler(this.btnShowHistogram_Click);
+            // 
+            // btnShowGraphics
+            // 
+            this.btnShowGraphics.Location = new System.Drawing.Point(5, 6);
+            this.btnShowGraphics.Name = "btnShowGraphics";
+            this.btnShowGraphics.Size = new System.Drawing.Size(112, 22);
+            this.btnShowGraphics.TabIndex = 32;
+            this.btnShowGraphics.Text = "Show Graph";
+            this.btnShowGraphics.UseVisualStyleBackColor = true;
+            this.btnShowGraphics.Click += new System.EventHandler(this.btnShowGraphics_Click);
+            // 
             // groupLogSettings
             // 
             this.groupLogSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupLogSettings.Controls.Add(this.groupPlayback);
             this.groupLogSettings.Controls.Add(this.groupBox1);
             this.groupLogSettings.Controls.Add(this.listProfiles);
             this.groupLogSettings.Controls.Add(this.label3);
@@ -377,6 +409,85 @@ namespace UniversalPatcher
             this.groupLogSettings.Size = new System.Drawing.Size(438, 413);
             this.groupLogSettings.TabIndex = 31;
             this.groupLogSettings.TabStop = false;
+            // 
+            // groupPlayback
+            // 
+            this.groupPlayback.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupPlayback.Controls.Add(this.label39);
+            this.groupPlayback.Controls.Add(this.numPlaybackSpeed);
+            this.groupPlayback.Controls.Add(this.hScrollPlayback);
+            this.groupPlayback.Controls.Add(this.btnPlay);
+            this.groupPlayback.Controls.Add(this.btnPause);
+            this.groupPlayback.Location = new System.Drawing.Point(10, 320);
+            this.groupPlayback.Name = "groupPlayback";
+            this.groupPlayback.Size = new System.Drawing.Size(417, 83);
+            this.groupPlayback.TabIndex = 31;
+            this.groupPlayback.TabStop = false;
+            this.groupPlayback.Text = "Playback";
+            // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.Location = new System.Drawing.Point(129, 26);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(41, 13);
+            this.label39.TabIndex = 4;
+            this.label39.Text = "Speed:";
+            // 
+            // numPlaybackSpeed
+            // 
+            this.numPlaybackSpeed.DecimalPlaces = 2;
+            this.numPlaybackSpeed.Location = new System.Drawing.Point(176, 24);
+            this.numPlaybackSpeed.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.numPlaybackSpeed.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.numPlaybackSpeed.Name = "numPlaybackSpeed";
+            this.numPlaybackSpeed.Size = new System.Drawing.Size(72, 20);
+            this.numPlaybackSpeed.TabIndex = 3;
+            this.numPlaybackSpeed.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numPlaybackSpeed.ValueChanged += new System.EventHandler(this.numPlaybackSpeed_ValueChanged);
+            // 
+            // hScrollPlayback
+            // 
+            this.hScrollPlayback.Location = new System.Drawing.Point(6, 50);
+            this.hScrollPlayback.Name = "hScrollPlayback";
+            this.hScrollPlayback.Size = new System.Drawing.Size(404, 24);
+            this.hScrollPlayback.TabIndex = 2;
+            this.hScrollPlayback.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollPlayback_Scroll);
+            // 
+            // btnPlay
+            // 
+            this.btnPlay.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPlay.Location = new System.Drawing.Point(54, 21);
+            this.btnPlay.Name = "btnPlay";
+            this.btnPlay.Size = new System.Drawing.Size(40, 26);
+            this.btnPlay.TabIndex = 1;
+            this.btnPlay.Text = ">";
+            this.btnPlay.UseVisualStyleBackColor = true;
+            this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
+            // 
+            // btnPause
+            // 
+            this.btnPause.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPause.Location = new System.Drawing.Point(8, 21);
+            this.btnPause.Name = "btnPause";
+            this.btnPause.Size = new System.Drawing.Size(40, 26);
+            this.btnPause.TabIndex = 0;
+            this.btnPause.Text = "| |";
+            this.btnPause.UseVisualStyleBackColor = true;
+            this.btnPause.Click += new System.EventHandler(this.btnPause_Click);
             // 
             // groupBox1
             // 
@@ -509,7 +620,7 @@ namespace UniversalPatcher
             this.listProfiles.FormattingEnabled = true;
             this.listProfiles.Location = new System.Drawing.Point(6, 130);
             this.listProfiles.Name = "listProfiles";
-            this.listProfiles.Size = new System.Drawing.Size(423, 199);
+            this.listProfiles.Size = new System.Drawing.Size(423, 186);
             this.listProfiles.TabIndex = 29;
             this.listProfiles.SelectedIndexChanged += new System.EventHandler(this.listProfiles_SelectedIndexChanged);
             // 
@@ -2601,7 +2712,9 @@ namespace UniversalPatcher
             this.loadProfileToolStripMenuItem,
             this.saveProfileToolStripMenuItem,
             this.saveProfileAsToolStripMenuItem,
-            this.newProfileToolStripMenuItem});
+            this.newProfileToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.playbackLogfileToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "&File";
@@ -2609,30 +2722,42 @@ namespace UniversalPatcher
             // loadProfileToolStripMenuItem
             // 
             this.loadProfileToolStripMenuItem.Name = "loadProfileToolStripMenuItem";
-            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadProfileToolStripMenuItem.Text = "Load profile";
             this.loadProfileToolStripMenuItem.Click += new System.EventHandler(this.loadProfileToolStripMenuItem_Click);
             // 
             // saveProfileToolStripMenuItem
             // 
             this.saveProfileToolStripMenuItem.Name = "saveProfileToolStripMenuItem";
-            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveProfileToolStripMenuItem.Text = "Save profile";
             this.saveProfileToolStripMenuItem.Click += new System.EventHandler(this.saveProfileToolStripMenuItem_Click);
             // 
             // saveProfileAsToolStripMenuItem
             // 
             this.saveProfileAsToolStripMenuItem.Name = "saveProfileAsToolStripMenuItem";
-            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveProfileAsToolStripMenuItem.Text = "Save profile as...";
             this.saveProfileAsToolStripMenuItem.Click += new System.EventHandler(this.saveProfileAsToolStripMenuItem_Click);
             // 
             // newProfileToolStripMenuItem
             // 
             this.newProfileToolStripMenuItem.Name = "newProfileToolStripMenuItem";
-            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newProfileToolStripMenuItem.Text = "New profile";
             this.newProfileToolStripMenuItem.Click += new System.EventHandler(this.newProfileToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            // 
+            // playbackLogfileToolStripMenuItem
+            // 
+            this.playbackLogfileToolStripMenuItem.Name = "playbackLogfileToolStripMenuItem";
+            this.playbackLogfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.playbackLogfileToolStripMenuItem.Text = "Playback logfile";
+            this.playbackLogfileToolStripMenuItem.Click += new System.EventHandler(this.playbackLogfileToolStripMenuItem_Click);
             // 
             // actionToolStripMenuItem
             // 
@@ -2771,25 +2896,9 @@ namespace UniversalPatcher
             // 
             this.timerWaitCANQuery.Tick += new System.EventHandler(this.timerWaitCANQuery_Tick);
             // 
-            // btnShowGraphics
+            // timerPlayback
             // 
-            this.btnShowGraphics.Location = new System.Drawing.Point(5, 6);
-            this.btnShowGraphics.Name = "btnShowGraphics";
-            this.btnShowGraphics.Size = new System.Drawing.Size(112, 22);
-            this.btnShowGraphics.TabIndex = 32;
-            this.btnShowGraphics.Text = "Show Graph";
-            this.btnShowGraphics.UseVisualStyleBackColor = true;
-            this.btnShowGraphics.Click += new System.EventHandler(this.btnShowGraphics_Click);
-            // 
-            // btnShowHistogram
-            // 
-            this.btnShowHistogram.Location = new System.Drawing.Point(123, 6);
-            this.btnShowHistogram.Name = "btnShowHistogram";
-            this.btnShowHistogram.Size = new System.Drawing.Size(112, 22);
-            this.btnShowHistogram.TabIndex = 33;
-            this.btnShowHistogram.Text = "Show histogram";
-            this.btnShowHistogram.UseVisualStyleBackColor = true;
-            this.btnShowHistogram.Click += new System.EventHandler(this.btnShowHistogram_Click);
+            this.timerPlayback.Tick += new System.EventHandler(this.timerPlayback_Tick);
             // 
             // frmLogger
             // 
@@ -2809,6 +2918,9 @@ namespace UniversalPatcher
             this.tabLog.ResumeLayout(false);
             this.groupLogSettings.ResumeLayout(false);
             this.groupLogSettings.PerformLayout();
+            this.groupPlayback.ResumeLayout(false);
+            this.groupPlayback.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numPlaybackSpeed)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridLogData)).EndInit();
@@ -3108,6 +3220,15 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem showSavedLogGraphicsToolStripMenuItem;
         private System.Windows.Forms.Button btnShowGraphics;
         private System.Windows.Forms.Button btnShowHistogram;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem playbackLogfileToolStripMenuItem;
+        private System.Windows.Forms.GroupBox groupPlayback;
+        private System.Windows.Forms.Label label39;
+        private System.Windows.Forms.NumericUpDown numPlaybackSpeed;
+        private System.Windows.Forms.HScrollBar hScrollPlayback;
+        private System.Windows.Forms.Button btnPlay;
+        private System.Windows.Forms.Button btnPause;
+        private System.Windows.Forms.Timer timerPlayback;
     }
 }
 

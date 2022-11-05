@@ -27,14 +27,14 @@ namespace UniversalPatcher
         public Task logTask;
         private Task logWriterTask;
         public IPort port;
-        public  bool Connected = false;
-        public  List<PidConfig> PidProfile { get; set; }
-        private  StreamWriter logwriter;
-        private  string logseparator = ";";
-        public  Device LogDevice;
-        public  int ReceivedBytes = 0;
-        public  string OS;
-        public  SlotHandler slothandler;
+        public bool Connected = false;
+        public List<PidConfig> PidProfile { get; set; }
+        private StreamWriter logwriter;
+        private string logseparator = ";";
+        public Device LogDevice;
+        public int ReceivedBytes = 0;
+        public string OS;
+        public SlotHandler slothandler;
         public MessageReceiver Receiver;
 
         public bool LogRunning = false;
@@ -51,6 +51,7 @@ namespace UniversalPatcher
         public  Queue<LogData> LogFileQueue = new Queue<LogData>();
         private Queue<QueuedCommand> queuedCommands = new Queue<QueuedCommand>();
 
+        public List<LogData> LogDataBuffer;
 
         //Set these values before StartLogging()
         public DateTime LogStartTime;
@@ -254,7 +255,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (logwriter != null)
+                if (logwriter != null && writelog)
                 {
                     string CultureDecim = Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator;
                     string Decim = Properties.Settings.Default.LoggerDecimalSeparator;
@@ -321,12 +322,13 @@ namespace UniversalPatcher
                 }
                 //Data for Histogram & Graphics:
                 LoggerDataEvents.Add(ld);
+                LogDataBuffer.Add(ld);
             }
             logwriter.Close();
             logwriter = null;
         }
 
-        public  void LoadProfile(string FileName)
+        public void LoadProfile(string FileName)
         {            
             try
             {
@@ -348,7 +350,51 @@ namespace UniversalPatcher
             }            
         }
 
-        public  void SaveProfile(string FileName)
+        public int LoadProfileFromCsv(string FileName)
+        {
+            int tStamps = 0;
+            try
+            {
+                StreamReader sr = new StreamReader(FileName);
+                string hdrLine = sr.ReadLine();
+                sr.Close();
+                string[] hdrArray = hdrLine.Split(new string[] { Properties.Settings.Default.LoggerLogSeparator }, StringSplitOptions.None);
+                for (int i = 0; i < hdrArray.Length; i++)
+                {
+                    if (hdrArray[i].ToLower().Contains("time"))
+                    {
+                        tStamps++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                PidProfile = new List<PidConfig>();
+                for (int p=tStamps; p< hdrArray.Length;p++)
+                {
+                    PidConfig pc = new PidConfig();
+                    pc.PidName = hdrArray[p];
+                    pc.addr = 0xffffff;
+                    pc.Math = "X";
+                    PidProfile.Add(pc);
+                }
+                slothandler = new SlotHandler();
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, LoadProfile line " + line + ": " + ex.Message);
+            }
+            return tStamps;
+        }
+
+        public void SaveProfile(string FileName)
         {
             try
             {
@@ -703,6 +749,7 @@ namespace UniversalPatcher
                 stopLogLoop = false;
                 logTokenSource = new CancellationTokenSource();
                 logToken = logTokenSource.Token;
+                LogDataBuffer = new List<LogData>();
                 logTask = Task.Factory.StartNew(() => DataLoggingLoop(), logToken);
                 logWriterTokenSource = new CancellationTokenSource();
                 logWriterToken = logWriterTokenSource.Token;

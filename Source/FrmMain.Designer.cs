@@ -151,6 +151,7 @@
             this.Controls.Add(this.btnTuner);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.btnPatcher);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmMain";
             this.Text = "Universal Patcher";

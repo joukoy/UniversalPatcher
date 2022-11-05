@@ -36,7 +36,9 @@ namespace UniversalPatcher
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabHistogram = new System.Windows.Forms.TabPage();
+            this.labelSelectTable = new System.Windows.Forms.Label();
             this.labelCellinfo = new System.Windows.Forms.Label();
+            this.tabSelectTable = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnColorLow = new System.Windows.Forms.Button();
@@ -67,9 +69,19 @@ namespace UniversalPatcher
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabSelectTable = new System.Windows.Forms.TabPage();
-            this.labelSelectTable = new System.Windows.Forms.Label();
             this.chkGetLiveData = new System.Windows.Forms.CheckBox();
+            this.groupTemplate = new System.Windows.Forms.GroupBox();
+            this.radioTemplateUseTable = new System.Windows.Forms.RadioButton();
+            this.radioTemplateManual = new System.Windows.Forms.RadioButton();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.txtColHeaders = new System.Windows.Forms.TextBox();
+            this.txtRowHeaders = new System.Windows.Forms.TextBox();
+            this.btnApplyTemplate = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
+            this.numDecimals = new System.Windows.Forms.NumericUpDown();
+            this.btnGenColHeaders = new System.Windows.Forms.Button();
+            this.btnGenRowHeaders = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -80,6 +92,8 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.numRangeMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSkipValue)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            this.groupTemplate.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -133,6 +147,16 @@ namespace UniversalPatcher
             this.tabHistogram.Text = "Histogram";
             this.tabHistogram.UseVisualStyleBackColor = true;
             // 
+            // labelSelectTable
+            // 
+            this.labelSelectTable.AutoSize = true;
+            this.labelSelectTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelSelectTable.Location = new System.Drawing.Point(99, 156);
+            this.labelSelectTable.Name = "labelSelectTable";
+            this.labelSelectTable.Size = new System.Drawing.Size(524, 24);
+            this.labelSelectTable.TabIndex = 2;
+            this.labelSelectTable.Text = "Select table as template, or setup columns and rows manually";
+            // 
             // labelCellinfo
             // 
             this.labelCellinfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -144,8 +168,18 @@ namespace UniversalPatcher
             this.labelCellinfo.TabIndex = 1;
             this.labelCellinfo.Text = "Cellinfo";
             // 
+            // tabSelectTable
+            // 
+            this.tabSelectTable.Location = new System.Drawing.Point(4, 22);
+            this.tabSelectTable.Name = "tabSelectTable";
+            this.tabSelectTable.Size = new System.Drawing.Size(792, 400);
+            this.tabSelectTable.TabIndex = 2;
+            this.tabSelectTable.Text = "Table selection";
+            this.tabSelectTable.UseVisualStyleBackColor = true;
+            // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.groupTemplate);
             this.tabSettings.Controls.Add(this.groupBox1);
             this.tabSettings.Controls.Add(this.numSkipValue);
             this.tabSettings.Controls.Add(this.label7);
@@ -183,7 +217,7 @@ namespace UniversalPatcher
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Location = new System.Drawing.Point(12, 126);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(221, 128);
+            this.groupBox1.Size = new System.Drawing.Size(221, 137);
             this.groupBox1.TabIndex = 16;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Shading";
@@ -469,25 +503,6 @@ namespace UniversalPatcher
             this.saveSettingsToolStripMenuItem.Text = "Save Settings";
             this.saveSettingsToolStripMenuItem.Click += new System.EventHandler(this.saveSettingsToolStripMenuItem_Click);
             // 
-            // tabSelectTable
-            // 
-            this.tabSelectTable.Location = new System.Drawing.Point(4, 22);
-            this.tabSelectTable.Name = "tabSelectTable";
-            this.tabSelectTable.Size = new System.Drawing.Size(792, 400);
-            this.tabSelectTable.TabIndex = 2;
-            this.tabSelectTable.Text = "Table selection";
-            this.tabSelectTable.UseVisualStyleBackColor = true;
-            // 
-            // labelSelectTable
-            // 
-            this.labelSelectTable.AutoSize = true;
-            this.labelSelectTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelSelectTable.Location = new System.Drawing.Point(237, 153);
-            this.labelSelectTable.Name = "labelSelectTable";
-            this.labelSelectTable.Size = new System.Drawing.Size(207, 24);
-            this.labelSelectTable.TabIndex = 2;
-            this.labelSelectTable.Text = "Select table as template";
-            // 
             // chkGetLiveData
             // 
             this.chkGetLiveData.AutoSize = true;
@@ -498,6 +513,148 @@ namespace UniversalPatcher
             this.chkGetLiveData.Text = "Receive data from Logger";
             this.chkGetLiveData.UseVisualStyleBackColor = true;
             this.chkGetLiveData.CheckedChanged += new System.EventHandler(this.chkGetLiveData_CheckedChanged);
+            // 
+            // groupTemplate
+            // 
+            this.groupTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupTemplate.Controls.Add(this.btnGenRowHeaders);
+            this.groupTemplate.Controls.Add(this.btnGenColHeaders);
+            this.groupTemplate.Controls.Add(this.numDecimals);
+            this.groupTemplate.Controls.Add(this.label13);
+            this.groupTemplate.Controls.Add(this.btnApplyTemplate);
+            this.groupTemplate.Controls.Add(this.txtRowHeaders);
+            this.groupTemplate.Controls.Add(this.txtColHeaders);
+            this.groupTemplate.Controls.Add(this.label12);
+            this.groupTemplate.Controls.Add(this.label11);
+            this.groupTemplate.Controls.Add(this.radioTemplateManual);
+            this.groupTemplate.Controls.Add(this.radioTemplateUseTable);
+            this.groupTemplate.Location = new System.Drawing.Point(260, 135);
+            this.groupTemplate.Name = "groupTemplate";
+            this.groupTemplate.Size = new System.Drawing.Size(524, 128);
+            this.groupTemplate.TabIndex = 17;
+            this.groupTemplate.TabStop = false;
+            this.groupTemplate.Text = "Template";
+            // 
+            // radioTemplateUseTable
+            // 
+            this.radioTemplateUseTable.AutoSize = true;
+            this.radioTemplateUseTable.Checked = true;
+            this.radioTemplateUseTable.Location = new System.Drawing.Point(19, 18);
+            this.radioTemplateUseTable.Name = "radioTemplateUseTable";
+            this.radioTemplateUseTable.Size = new System.Drawing.Size(74, 17);
+            this.radioTemplateUseTable.TabIndex = 0;
+            this.radioTemplateUseTable.TabStop = true;
+            this.radioTemplateUseTable.Text = "Use Table";
+            this.radioTemplateUseTable.UseVisualStyleBackColor = true;
+            // 
+            // radioTemplateManual
+            // 
+            this.radioTemplateManual.AutoSize = true;
+            this.radioTemplateManual.Location = new System.Drawing.Point(111, 19);
+            this.radioTemplateManual.Name = "radioTemplateManual";
+            this.radioTemplateManual.Size = new System.Drawing.Size(122, 17);
+            this.radioTemplateManual.TabIndex = 1;
+            this.radioTemplateManual.TabStop = true;
+            this.radioTemplateManual.Text = "Use manual headers";
+            this.radioTemplateManual.UseVisualStyleBackColor = true;
+            this.radioTemplateManual.CheckedChanged += new System.EventHandler(this.radioTemplateManual_CheckedChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(16, 43);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(86, 13);
+            this.label11.TabIndex = 2;
+            this.label11.Text = "Column headers:";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(16, 72);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(73, 13);
+            this.label12.TabIndex = 3;
+            this.label12.Text = "Row headers:";
+            // 
+            // txtColHeaders
+            // 
+            this.txtColHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtColHeaders.Location = new System.Drawing.Point(124, 40);
+            this.txtColHeaders.Name = "txtColHeaders";
+            this.txtColHeaders.Size = new System.Drawing.Size(369, 20);
+            this.txtColHeaders.TabIndex = 4;
+            // 
+            // txtRowHeaders
+            // 
+            this.txtRowHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtRowHeaders.Location = new System.Drawing.Point(124, 71);
+            this.txtRowHeaders.Name = "txtRowHeaders";
+            this.txtRowHeaders.Size = new System.Drawing.Size(369, 20);
+            this.txtRowHeaders.TabIndex = 5;
+            // 
+            // btnApplyTemplate
+            // 
+            this.btnApplyTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnApplyTemplate.Enabled = false;
+            this.btnApplyTemplate.Location = new System.Drawing.Point(432, 97);
+            this.btnApplyTemplate.Name = "btnApplyTemplate";
+            this.btnApplyTemplate.Size = new System.Drawing.Size(86, 23);
+            this.btnApplyTemplate.TabIndex = 6;
+            this.btnApplyTemplate.Text = "Apply";
+            this.btnApplyTemplate.UseVisualStyleBackColor = true;
+            this.btnApplyTemplate.Click += new System.EventHandler(this.btnApplyTemplate_Click);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(16, 97);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(50, 13);
+            this.label13.TabIndex = 7;
+            this.label13.Text = "Decimals";
+            // 
+            // numDecimals
+            // 
+            this.numDecimals.Location = new System.Drawing.Point(124, 95);
+            this.numDecimals.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numDecimals.Name = "numDecimals";
+            this.numDecimals.Size = new System.Drawing.Size(57, 20);
+            this.numDecimals.TabIndex = 8;
+            this.numDecimals.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // btnGenColHeaders
+            // 
+            this.btnGenColHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnGenColHeaders.Location = new System.Drawing.Point(497, 38);
+            this.btnGenColHeaders.Name = "btnGenColHeaders";
+            this.btnGenColHeaders.Size = new System.Drawing.Size(20, 24);
+            this.btnGenColHeaders.TabIndex = 9;
+            this.btnGenColHeaders.Text = ">";
+            this.btnGenColHeaders.UseVisualStyleBackColor = true;
+            this.btnGenColHeaders.Click += new System.EventHandler(this.btnGenColHeaders_Click);
+            // 
+            // btnGenRowHeaders
+            // 
+            this.btnGenRowHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnGenRowHeaders.Location = new System.Drawing.Point(497, 68);
+            this.btnGenRowHeaders.Name = "btnGenRowHeaders";
+            this.btnGenRowHeaders.Size = new System.Drawing.Size(20, 24);
+            this.btnGenRowHeaders.TabIndex = 10;
+            this.btnGenRowHeaders.Text = ">";
+            this.btnGenRowHeaders.UseVisualStyleBackColor = true;
+            this.btnGenRowHeaders.Click += new System.EventHandler(this.btnGenRowHeaders_Click);
             // 
             // frmHistogram
             // 
@@ -525,6 +682,9 @@ namespace UniversalPatcher
             ((System.ComponentModel.ISupportInitialize)(this.numSkipValue)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.groupTemplate.ResumeLayout(false);
+            this.groupTemplate.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numDecimals)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -571,5 +731,17 @@ namespace UniversalPatcher
         private System.Windows.Forms.TabPage tabSelectTable;
         private System.Windows.Forms.Label labelSelectTable;
         private System.Windows.Forms.CheckBox chkGetLiveData;
+        private System.Windows.Forms.GroupBox groupTemplate;
+        private System.Windows.Forms.TextBox txtRowHeaders;
+        private System.Windows.Forms.TextBox txtColHeaders;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.RadioButton radioTemplateManual;
+        private System.Windows.Forms.RadioButton radioTemplateUseTable;
+        private System.Windows.Forms.Button btnApplyTemplate;
+        private System.Windows.Forms.NumericUpDown numDecimals;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Button btnGenRowHeaders;
+        private System.Windows.Forms.Button btnGenColHeaders;
     }
 }

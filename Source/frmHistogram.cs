@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using static Upatcher;
 using static Helpers;
 using System.IO;
+using static LoggerUtils;
 
 namespace UniversalPatcher
 {
@@ -30,6 +31,15 @@ namespace UniversalPatcher
         private Histogram histogram;
         private string FileName;
         private Histogram.HistogramSetup hSetup;
+
+        //For remembering last values:
+        private decimal colMin;
+        private decimal colMax;
+        private decimal colStep;
+        private decimal rowMin;
+        private decimal rowMax;
+        private decimal rowStep;
+        private bool liveData = false;
 
         private void frmHistogram_Load(object sender, EventArgs e)
         {
@@ -116,6 +126,7 @@ namespace UniversalPatcher
                 Logger("Loading table: " + tData.TableName + " as template");
                 dgColumnHeaders = new Dictionary<string, int>();
                 dgRowHeaders = new Dictionary<string, int>();
+                numDecimals.Value = tData.Decimals;
 
                 dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
                 dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
@@ -181,10 +192,25 @@ namespace UniversalPatcher
                     dgRowHeaders.Add(hdrTxt, ind);
                 }
 
+                StringBuilder colBuilder = new StringBuilder();
+                for (int c=0; c<ColumnHeaders.Length; c++)
+                {
+                    colBuilder.Append(ColumnHeaders[c].ToString() + ",");
+                }
+                txtColHeaders.Text = colBuilder.ToString().Trim(',');
+
+                StringBuilder rowBuilder = new StringBuilder();
+                for (int r=0;r < RowHeaders.Length; r++)
+                {
+                    rowBuilder.Append(RowHeaders[r].ToString() + ",");
+                }
+                txtRowHeaders.Text = rowBuilder.ToString().Trim(',');
+
                 dataGridView1.AutoResizeColumns();
                 dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
                 AutoResize();
                 labelSelectTable.Visible = false;
+                radioTemplateUseTable.Checked = true;
                 Logger("Select parameters in Settings-tab");
             }
             catch (Exception ex)
@@ -213,11 +239,24 @@ namespace UniversalPatcher
             try
             {
                 dataGridView1.SelectionChanged -= DataGridView1_SelectionChanged;
+                for (int r=0;r<dataGridView1.Rows.Count;r++)
+                {
+                    for (int c=0; c < dataGridView1.Columns.Count;c++)
+                    {
+                        dataGridView1.Rows[r].Cells[c].Value = null;
+                    }
+                }
                 if (!string.IsNullOrEmpty(txtLogFile.Text))
-                    histogram.ParseCsvRow(txtLogFile.Text);
+                {
+                    liveData = false;
+                    histogram.ParseCsvFile(txtLogFile.Text);
+                }
                 else
-                    histogram.LogDatas = new List<Histogram.CsvData>();
-                histogram.CountHits(comboXparam.Text, comboYparam.Text, comboValueparam.Text, comboSkipParam.Text, (double)numSkipValue.Value, tData.Decimals);
+                {
+                    return;
+                }
+                    //histogram.LogDatas = new List<Histogram.CsvData>();
+                histogram.CountHits(comboXparam.Text, comboYparam.Text, comboValueparam.Text, comboSkipParam.Text, (double)numSkipValue.Value, (ushort)numDecimals.Value);
                 GetHistogramSettings();
                 for (int i = 0; i < histogram.HitDatas.Count; i++)
                 {
@@ -303,11 +342,18 @@ namespace UniversalPatcher
 
         }
 
-        public void SetupLiveParameters(string[] Pids)
+        public void SetupLiveParameters()
         {
+            liveData = true;
             histogram = new Histogram(ColumnHeaders, RowHeaders);
-            histogram.Parameters = Pids;
+            List<string> pids = new List<string>();
+            foreach (PidConfig p in datalogger.PidProfile)
+            {
+                pids.Add(p.PidName);
+            }
+            histogram.Parameters = pids.ToArray();
             SetupParameterLists();
+            GetHistogramSettings();
         }
 
         private void txtCsvFile_TextChanged(object sender, EventArgs e)
@@ -353,7 +399,16 @@ namespace UniversalPatcher
         {
             try
             {
-                string defName = Path.Combine(Application.StartupPath, "Histogram", tData.TableName + ".xml");
+                string defName = Path.Combine(Application.StartupPath, "Histogram", "settings.xml");
+                if (tData != null && !string.IsNullOrEmpty(tData.TableName))
+                {
+                    defName = Path.Combine(Application.StartupPath, "Histogram", tData.TableName + ".xml");
+                }
+                else
+                {
+                    tData = new TableData();
+                    tData.Decimals = (ushort)numDecimals.Value;
+                }
                 string fName = SelectFile("Select Historgram setup", XmlFilter,defName);
                 if (fName.Length == 0)
                     return;
@@ -374,6 +429,15 @@ namespace UniversalPatcher
                 btnColorLow.BackColor = Color.FromArgb(hSetup.LowColor);
                 numRangeMax.Value = (decimal)hSetup.HighValue;
                 numRangeMin.Value = (decimal)hSetup.LowValue;
+                txtColHeaders.Text = hSetup.ColumnHeaders;
+                txtRowHeaders.Text = hSetup.RowHeaders;
+                radioTemplateManual.Checked = hSetup.ManualHeaders;
+                numDecimals.Value = hSetup.Decimals;
+
+                if (!string.IsNullOrEmpty(txtColHeaders.Text) && !string.IsNullOrEmpty(txtRowHeaders.Text))
+                {
+                    SetupManualTemplate();
+                }
 
                 if (!string.IsNullOrEmpty(hSetup.LogFile) && txtLogFile.Text.Length == 0)
                 {
@@ -410,6 +474,10 @@ namespace UniversalPatcher
             hSetup.LowColor = btnColorLow.BackColor.ToArgb();
             hSetup.HighValue = (double)numRangeMax.Value;
             hSetup.LowValue = (double)numRangeMin.Value;
+            hSetup.ColumnHeaders = txtColHeaders.Text;
+            hSetup.RowHeaders = txtRowHeaders.Text;
+            hSetup.ManualHeaders = radioTemplateManual.Checked;
+            hSetup.Decimals = (ushort)numDecimals.Value;
         }
 
         private void saveSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -505,7 +573,7 @@ namespace UniversalPatcher
                     LoadHistogram();
                 }
                 histogram.AddData(logdata);
-                histogram.CountHits(comboXparam.Text, comboYparam.Text, comboValueparam.Text, comboSkipParam.Text, (double)numSkipValue.Value, tData.Decimals);
+                histogram.CountHits(comboXparam.Text, comboYparam.Text, comboValueparam.Text, comboSkipParam.Text, (double)numSkipValue.Value, (ushort)numDecimals.Value);
                 for (int i = 0; i < histogram.HitDatas.Count; i++)
                 {
                     Histogram.HitData hd = histogram.HitDatas[i];
@@ -553,19 +621,24 @@ namespace UniversalPatcher
         private void chkGetLiveData_CheckedChanged(object sender, EventArgs e)
         {
             if (chkGetLiveData.Checked)
+            {
+                GetHistogramSettings();
                 LoggerDataEvents.LogDataAdded += LogEvents_LogDataAdded;
+            }
             else
+            {
                 LoggerDataEvents.LogDataAdded -= LogEvents_LogDataAdded;
+            }
         }
 
         private void LogEvents_LogDataAdded(object sender, DataLogger.LogDataEvents.LogDataEvent e)
         {
             try
             {
-                double[] lastDoubleValues = datalogger.slothandler.CalculatePidDoubleValues(e.Data.Values);
+                //double[] lastDoubleValues = datalogger.slothandler.CalculatePidDoubleValues(e.Data.Values);
                 this.Invoke((MethodInvoker)delegate () //Event handler, can't directly handle UI
                 {
-                    AddLogData(lastDoubleValues);
+                    AddLogData(e.Data.CalculatedValues);
                 });
             }
             catch (Exception ex)
@@ -577,6 +650,110 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 Debug.WriteLine("Error, frmHistogram line " + line + ": " + ex.Message);
             }
+        }
+
+        private void SetupManualTemplate()
+        {
+            try
+            {
+                string[] cols = txtColHeaders.Text.Split(',');
+                string[] rows = txtRowHeaders.Text.Split(',');
+
+                if (tData == null)
+                {
+                    this.tData = new TableData();
+                    tData.Decimals = (ushort)numDecimals.Value;
+                }
+                dgColumnHeaders = new Dictionary<string, int>();
+                dgRowHeaders = new Dictionary<string, int>();
+                ColumnHeaders = new double[cols.Length];
+                RowHeaders = new double[rows.Length];
+
+                dataGridView1.Columns.Clear();
+                for (int c = 0; c < cols.Length; c++)
+                {
+                    string col = cols[c];
+                    dataGridView1.Columns.Add(col, col);
+                    dgColumnHeaders.Add(col, c);
+                    ColumnHeaders[c] = Convert.ToDouble(col, System.Globalization.CultureInfo.InvariantCulture);
+                }
+
+                for (int r=0;r < rows.Length; r++)
+                {
+                    string row = rows[r];
+                    dataGridView1.Rows.Add();
+                    dataGridView1.Rows[r].HeaderCell.Value = row;
+                    dgRowHeaders.Add(row, r);
+                    RowHeaders[r] = Convert.ToDouble(row, System.Globalization.CultureInfo.InvariantCulture);
+                }
+                dataGridView1.AutoResizeColumns();
+                dataGridView1.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
+                AutoResize();
+                labelSelectTable.Visible = false;
+                if (liveData)
+                    SetupLiveParameters();
+                else
+                    LoadHistogram();
+                //GetParameters();
+
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmHistogram line " + line + ": " + ex.Message);
+            }
+
+        }
+
+        private void btnApplyTemplate_Click(object sender, EventArgs e)
+        {
+            SetupManualTemplate();
+        }
+
+        private void radioTemplateManual_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioTemplateManual.Checked)
+                btnApplyTemplate.Enabled = true;
+            else
+                btnApplyTemplate.Enabled = false;
+        }
+
+        private void btnGenColHeaders_Click(object sender, EventArgs e)
+        {
+            frmTableHeaders fth = new frmTableHeaders();
+            fth.numMin.Value = colMin;
+            fth.numMax.Value = colMax;
+            fth.numStep.Value = colStep;
+            if (fth.ShowDialog() == DialogResult.OK)
+            {
+                radioTemplateManual.Checked = true;
+                txtColHeaders.Text = fth.HeaderStr;
+                colMin = fth.numMin.Value;
+                colMax = fth.numMax.Value;
+                colStep = fth.numStep.Value;
+            }
+            fth.Dispose();
+        }
+
+        private void btnGenRowHeaders_Click(object sender, EventArgs e)
+        {
+            frmTableHeaders fth = new frmTableHeaders();
+            fth.numMin.Value = rowMin;
+            fth.numMax.Value = rowMax;
+            fth.numStep.Value = rowStep;
+            if (fth.ShowDialog() == DialogResult.OK)
+            {
+                radioTemplateManual.Checked = true;
+                txtRowHeaders.Text = fth.HeaderStr;
+                rowMin = fth.numMin.Value;
+                rowMax = fth.numMax.Value;
+                rowStep = fth.numStep.Value;
+            }
+            fth.Dispose();
         }
     }
 }

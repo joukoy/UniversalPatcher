@@ -145,8 +145,10 @@ namespace UniversalPatcher
                                     points = chart1.Series[s].Points.Where(X => ((PointData)X.Tag).TimeStamp == pd.TimeStamp).ToArray();
                                 else
                                     points = chart1.Series[s].Points.Where(X => ((PointData)X.Tag).Row == pd.Row).ToArray();
-                                foreach (DataPoint point in points)
+                                //foreach (DataPoint point in points)
+                                if (points != null && points.Length > 0)
                                 {
+                                    DataPoint point = points[0];
                                     PointData pData = (PointData)point.Tag;
                                     Debug.WriteLine(pData.PidName + ": " + pData.Value.ToString("0.00"));
                                     sb.Append(" " + pData.PidName + ": " + pData.Value.ToString("0.00") + ",");
@@ -617,7 +619,9 @@ namespace UniversalPatcher
                 {
                     PointData pd1 = (PointData)chart1.Series[0].Points[0].Tag;
                     DateTime dt1 = new DateTime((long)pd1.TimeStamp);
-                    int pointAge = (int)DateTime.Now.Subtract(dt1).TotalSeconds;
+                    PointData pd2 = (PointData)chart1.Series[0].Points.Last().Tag ;
+                    DateTime dt2 = new DateTime((long)pd2.TimeStamp);
+                    int pointAge = (int)dt2.Subtract(dt1).TotalSeconds;
                     if (pointAge > maxAge)
                     {
                         for (int p = 0; p < chart1.Series.Count; p++)
@@ -626,7 +630,7 @@ namespace UniversalPatcher
                             {
                                 PointData pt = (PointData)chart1.Series[p].Points[0].Tag;
                                 DateTime dt = new DateTime((long)pt.TimeStamp);
-                                pointAge = (int)DateTime.Now.Subtract(dt).TotalSeconds;
+                                pointAge = (int)dt2.Subtract(dt).TotalSeconds;
                                 if (pointAge > maxAge)
                                 {
                                     chart1.Series[p].Points.RemoveAt(0);
@@ -849,8 +853,6 @@ namespace UniversalPatcher
             ScrollTip.Show(message, this, System.Windows.Forms.Cursor.Position.X - this.Location.X, System.Windows.Forms.Cursor.Position.Y - this.Location.Y - 20, 2000);
             //ScrollTip.Show(message, this,this.Location.X, this.Location.Y, 1000);
         }
-
-
 
         private void loadCombobox1()
         {
