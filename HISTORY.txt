@@ -518,3 +518,8 @@
 0.21.5
 - Histogram: support for manual columns & rows
 - Logger: Data playback
+
+0.21.6
+- Logger graph: Show selected point values in datagridview
+- Logger graph: Resample data if zoom level > 2000 pt/screen
+- Logger graph: Re-enable zoom with mouse dragging

@@ -37,7 +37,7 @@ namespace UniversalPatcher
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.labelZoom = new System.Windows.Forms.Label();
             this.ScrollPointsPerScreen = new System.Windows.Forms.HScrollBar();
             this.chkShowPoints = new System.Windows.Forms.CheckBox();
             this.groupLiveSeconds = new System.Windows.Forms.GroupBox();
@@ -46,7 +46,7 @@ namespace UniversalPatcher
             this.numDisplayInterval = new System.Windows.Forms.NumericUpDown();
             this.labelShowMax = new System.Windows.Forms.Label();
             this.btnApply = new System.Windows.Forms.Button();
-            this.dataGridValues = new System.Windows.Forms.DataGridView();
+            this.dataGridSettings = new System.Windows.Forms.DataGridView();
             this.txtLogSeparator = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.ScrollStartPoint = new System.Windows.Forms.HScrollBar();
@@ -63,6 +63,10 @@ namespace UniversalPatcher
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.labelDataValues = new System.Windows.Forms.Label();
             this.chkGetLiveData = new System.Windows.Forms.CheckBox();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabSettings = new System.Windows.Forms.TabPage();
+            this.tabPointValues = new System.Windows.Forms.TabPage();
+            this.dataGridPointValues = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -71,25 +75,31 @@ namespace UniversalPatcher
             this.groupLiveSeconds.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numShowMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDisplayInterval)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridValues)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridSettings)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabSettings.SuspendLayout();
+            this.tabPointValues.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridPointValues)).BeginInit();
             this.SuspendLayout();
             // 
             // chart1
             // 
+            this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             chartArea1.Area3DStyle.Enable3D = true;
             chartArea1.AxisX.IsLabelAutoFit = false;
             chartArea1.Name = "ChartArea1";
             chartArea1.ShadowColor = System.Drawing.Color.White;
             this.chart1.ChartAreas.Add(chartArea1);
-            this.chart1.Dock = System.Windows.Forms.DockStyle.Fill;
             legend1.Name = "Legend1";
             this.chart1.Legends.Add(legend1);
-            this.chart1.Location = new System.Drawing.Point(0, 0);
+            this.chart1.Location = new System.Drawing.Point(3, 0);
             this.chart1.Name = "chart1";
             series1.ChartArea = "ChartArea1";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
@@ -97,7 +107,7 @@ namespace UniversalPatcher
             series1.Name = "Series1";
             series1.YValuesPerPoint = 2;
             this.chart1.Series.Add(series1);
-            this.chart1.Size = new System.Drawing.Size(947, 551);
+            this.chart1.Size = new System.Drawing.Size(941, 528);
             this.chart1.TabIndex = 1;
             this.chart1.Text = "chart1";
             // 
@@ -109,15 +119,11 @@ namespace UniversalPatcher
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.comboBox1);
-            this.splitContainer1.Panel1.Controls.Add(this.label3);
+            this.splitContainer1.Panel1.Controls.Add(this.tabControl1);
+            this.splitContainer1.Panel1.Controls.Add(this.labelZoom);
             this.splitContainer1.Panel1.Controls.Add(this.ScrollPointsPerScreen);
             this.splitContainer1.Panel1.Controls.Add(this.chkShowPoints);
             this.splitContainer1.Panel1.Controls.Add(this.groupLiveSeconds);
-            this.splitContainer1.Panel1.Controls.Add(this.btnApply);
-            this.splitContainer1.Panel1.Controls.Add(this.dataGridValues);
-            this.splitContainer1.Panel1.Controls.Add(this.txtLogSeparator);
-            this.splitContainer1.Panel1.Controls.Add(this.label1);
             // 
             // splitContainer1.Panel2
             // 
@@ -132,20 +138,20 @@ namespace UniversalPatcher
             this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(3, 3);
+            this.comboBox1.Location = new System.Drawing.Point(3, 6);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(242, 21);
+            this.comboBox1.Size = new System.Drawing.Size(228, 21);
             this.comboBox1.TabIndex = 13;
             // 
-            // label3
+            // labelZoom
             // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 446);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(34, 13);
-            this.label3.TabIndex = 12;
-            this.label3.Text = "Zoom";
+            this.labelZoom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelZoom.AutoSize = true;
+            this.labelZoom.Location = new System.Drawing.Point(10, 446);
+            this.labelZoom.Name = "labelZoom";
+            this.labelZoom.Size = new System.Drawing.Size(34, 13);
+            this.labelZoom.TabIndex = 12;
+            this.labelZoom.Text = "Zoom";
             // 
             // ScrollPointsPerScreen
             // 
@@ -251,7 +257,7 @@ namespace UniversalPatcher
             // btnApply
             // 
             this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApply.Location = new System.Drawing.Point(156, 412);
+            this.btnApply.Location = new System.Drawing.Point(148, 383);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(75, 23);
             this.btnApply.TabIndex = 3;
@@ -259,22 +265,22 @@ namespace UniversalPatcher
             this.btnApply.UseVisualStyleBackColor = true;
             this.btnApply.Click += new System.EventHandler(this.btnShowData_Click);
             // 
-            // dataGridValues
+            // dataGridSettings
             // 
-            this.dataGridValues.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.dataGridSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridValues.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridValues.Location = new System.Drawing.Point(3, 20);
-            this.dataGridValues.Name = "dataGridValues";
-            this.dataGridValues.RowHeadersWidth = 5;
-            this.dataGridValues.Size = new System.Drawing.Size(242, 386);
-            this.dataGridValues.TabIndex = 2;
+            this.dataGridSettings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridSettings.Location = new System.Drawing.Point(3, 33);
+            this.dataGridSettings.Name = "dataGridSettings";
+            this.dataGridSettings.RowHeadersWidth = 5;
+            this.dataGridSettings.Size = new System.Drawing.Size(231, 345);
+            this.dataGridSettings.TabIndex = 2;
             // 
             // txtLogSeparator
             // 
             this.txtLogSeparator.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtLogSeparator.Location = new System.Drawing.Point(91, 414);
+            this.txtLogSeparator.Location = new System.Drawing.Point(87, 384);
             this.txtLogSeparator.Name = "txtLogSeparator";
             this.txtLogSeparator.Size = new System.Drawing.Size(39, 20);
             this.txtLogSeparator.TabIndex = 1;
@@ -283,7 +289,7 @@ namespace UniversalPatcher
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 417);
+            this.label1.Location = new System.Drawing.Point(6, 390);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 13);
             this.label1.TabIndex = 0;
@@ -421,6 +427,54 @@ namespace UniversalPatcher
             this.chkGetLiveData.UseVisualStyleBackColor = true;
             this.chkGetLiveData.CheckedChanged += new System.EventHandler(this.chkGetLiveData_CheckedChanged);
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.tabSettings);
+            this.tabControl1.Controls.Add(this.tabPointValues);
+            this.tabControl1.Location = new System.Drawing.Point(3, 0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(242, 436);
+            this.tabControl1.TabIndex = 14;
+            // 
+            // tabSettings
+            // 
+            this.tabSettings.Controls.Add(this.dataGridSettings);
+            this.tabSettings.Controls.Add(this.comboBox1);
+            this.tabSettings.Controls.Add(this.label1);
+            this.tabSettings.Controls.Add(this.txtLogSeparator);
+            this.tabSettings.Controls.Add(this.btnApply);
+            this.tabSettings.Location = new System.Drawing.Point(4, 22);
+            this.tabSettings.Name = "tabSettings";
+            this.tabSettings.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSettings.Size = new System.Drawing.Size(234, 410);
+            this.tabSettings.TabIndex = 0;
+            this.tabSettings.Text = "Settings";
+            this.tabSettings.UseVisualStyleBackColor = true;
+            // 
+            // tabPointValues
+            // 
+            this.tabPointValues.Controls.Add(this.dataGridPointValues);
+            this.tabPointValues.Location = new System.Drawing.Point(4, 22);
+            this.tabPointValues.Name = "tabPointValues";
+            this.tabPointValues.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPointValues.Size = new System.Drawing.Size(234, 410);
+            this.tabPointValues.TabIndex = 1;
+            this.tabPointValues.Text = "Values";
+            this.tabPointValues.UseVisualStyleBackColor = true;
+            // 
+            // dataGridPointValues
+            // 
+            this.dataGridPointValues.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridPointValues.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridPointValues.Location = new System.Drawing.Point(3, 3);
+            this.dataGridPointValues.Name = "dataGridPointValues";
+            this.dataGridPointValues.Size = new System.Drawing.Size(228, 404);
+            this.dataGridPointValues.TabIndex = 0;
+            // 
             // frmLoggerGraphics
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -445,13 +499,18 @@ namespace UniversalPatcher
             this.groupLiveSeconds.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numShowMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDisplayInterval)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridValues)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridSettings)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabSettings.ResumeLayout(false);
+            this.tabSettings.PerformLayout();
+            this.tabPointValues.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridPointValues)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -466,7 +525,7 @@ namespace UniversalPatcher
         private System.Windows.Forms.ToolStripMenuItem loadLogfileToolStripMenuItem;
         private System.Windows.Forms.TextBox txtLogSeparator;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DataGridView dataGridValues;
+        private System.Windows.Forms.DataGridView dataGridSettings;
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.NumericUpDown numShowMax;
         private System.Windows.Forms.Label labelShowMax;
@@ -486,7 +545,11 @@ namespace UniversalPatcher
         private System.Windows.Forms.CheckBox chkGetLiveData;
         private System.Windows.Forms.HScrollBar ScrollStartPoint;
         private System.Windows.Forms.HScrollBar ScrollPointsPerScreen;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label labelZoom;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabSettings;
+        private System.Windows.Forms.TabPage tabPointValues;
+        private System.Windows.Forms.DataGridView dataGridPointValues;
     }
 }

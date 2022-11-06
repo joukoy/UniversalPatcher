@@ -1553,5 +1553,17 @@ namespace UniversalPatcher.Properties {
                 this["LoggerLastLogfile"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(", ")]
+        public string LoggerGraphicsLogSeparator {
+            get {
+                return ((string)(this["LoggerGraphicsLogSeparator"]));
+            }
+            set {
+                this["LoggerGraphicsLogSeparator"] = value;
+            }
+        }
     }
 }

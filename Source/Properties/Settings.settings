@@ -386,5 +386,8 @@
     <Setting Name="LoggerLastLogfile" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="LoggerGraphicsLogSeparator" Type="System.String" Scope="User">
+      <Value Profile="(Default)">, </Value>
+    </Setting>
   </Settings>
 </SettingsFile>
