@@ -11,6 +11,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace UniversalPatcher
 {
@@ -1432,6 +1433,100 @@ namespace UniversalPatcher
             }
             LogRunning = false;
             return;
+        }
+
+        public void LoadLogFile(string LogFile)
+        {
+            try
+            {
+                LogDataBuffer = new List<LogData>();
+                DateTime startTime = DateTime.MinValue;
+                DateTime prevTStamp = DateTime.Now;
+                StreamReader sr = new StreamReader(LogFile);
+                string logLine = sr.ReadLine();
+                int tStamps = LoadProfileFromCsv(LogFile);
+                int elapsedIndex = -1;
+                string[] hdrArray = logLine.Split(new string[] { Properties.Settings.Default.LoggerLogSeparator }, StringSplitOptions.None);
+                for (int x = 0; x < hdrArray.Length; x++)
+                {
+                    if (hdrArray[x].ToLower().Contains("elapsed time"))
+                    {
+                        elapsedIndex = x;
+                        break;
+                    }
+                }
+                bool faketimestamp = false;
+                int row = 0;
+                while ((logLine = sr.ReadLine()) != null)
+                {
+                    string[] lParts = logLine.Split(new string[] { Properties.Settings.Default.LoggerLogSeparator }, StringSplitOptions.None);
+                    if (row < 2 && lParts.Length != hdrArray.Length)
+                    {
+                        throw new Exception(Environment.NewLine + "Column count don't match header. Check Log separator!");
+                    }
+                    double val;
+                    LogData ld = new LogData(lParts.Length - tStamps);
+                    DateTime tStamp = Convert.ToDateTime(lParts[0]);
+                    if (startTime == DateTime.MinValue)
+                    {
+                        startTime = tStamp;
+                    }
+                    else if (elapsedIndex > -1)
+                    {
+                        string elapsedStr = lParts[elapsedIndex];
+                        TimeSpan elapsed = TimeSpan.Parse(elapsedStr);
+                        tStamp = startTime.Add(elapsed);
+                    }
+                    else if (prevTStamp >= tStamp)
+                    {
+                        tStamp = prevTStamp.AddMilliseconds(1);
+                        faketimestamp = true;
+                    }
+                    prevTStamp = tStamp;
+                    ld.TimeStamp = (ulong)tStamp.Ticks;
+                    for (int r = tStamps; r < lParts.Length; r++)
+                    {
+                        if (string.IsNullOrEmpty(lParts[r]))
+                        {
+                            ld.Values[r - tStamps] = double.MinValue;
+                        }
+                        else
+                        {
+                            string valStr = lParts[r].Replace(",", ".");
+                            if (OffStrings.Contains(valStr.ToLower()))
+                                valStr = "0";
+                            else if (OnStrings.Contains(valStr.ToLower()))
+                                valStr = "1";
+
+                            if (double.TryParse(valStr, NumberStyles.Any, CultureInfo.InvariantCulture, out val))
+                            {
+                                ld.Values[r - tStamps] = val;
+                            }
+                            else
+                            {
+                                ld.Values[r - tStamps] = double.MinValue;
+                            }
+                        }
+                    }
+                    ld.CalculatedValues = ld.Values;
+                    LogDataBuffer.Add(ld);
+                    row++;
+                }
+                sr.Close();
+                if (faketimestamp)
+                {
+                    LoggerBold(Environment.NewLine + "Using fake timestamp, timing is not accurate");
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, LoadLogFile line " + line + ": " + ex.Message);
+            }
         }
 
     }

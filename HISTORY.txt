@@ -523,3 +523,16 @@
 - Logger graph: Show selected point values in datagridview
 - Logger graph: Resample data if zoom level > 2000 pt/screen
 - Logger graph: Re-enable zoom with mouse dragging
+
+0.21.7
+- Logger graph: Bug fix to "show values with mouse click"
+- Logger graph: Added autoscaling
+- Logger graph: User selectable mouse function: cursor/zoom
+- Logger graph: Bug fixes in timestamp handling
+- Logger graph: Move cursor by keyboard. If cursor not in use, move starttime/zoom
+- Logger graph: Added playback, lot of internal modifications
+- Logger graph: Zoom by mousewheel, hysteresis in zoom by mousedrag, reset zoom with right-click
+- Logger graph: Remember mouse settings (zoom, cursor, wheel)
+- Logger graph: Skip empty values
+- Logger graph: Show selected values as percentage bars
+

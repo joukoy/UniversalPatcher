@@ -1101,18 +1101,6 @@ namespace UniversalPatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(",")]
-        public string LoggerLogSeparator {
-            get {
-                return ((string)(this["LoggerLogSeparator"]));
-            }
-            set {
-                this["LoggerLogSeparator"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string LoggerJ2534Device {
             get {
@@ -1460,30 +1448,6 @@ namespace UniversalPatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("HH:mm:ss.fff")]
-        public string LoggerTimestampFormat {
-            get {
-                return ((string)(this["LoggerTimestampFormat"]));
-            }
-            set {
-                this["LoggerTimestampFormat"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LoggerDecimalSeparator {
-            get {
-                return ((string)(this["LoggerDecimalSeparator"]));
-            }
-            set {
-                this["LoggerDecimalSeparator"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string LoggerGraphicsLiveLastProfileFile {
             get {
@@ -1556,13 +1520,73 @@ namespace UniversalPatcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(", ")]
-        public string LoggerGraphicsLogSeparator {
+        [global::System.Configuration.DefaultSettingValueAttribute("HH:mm:ss.ffff")]
+        public string LoggerTimestampFormat {
             get {
-                return ((string)(this["LoggerGraphicsLogSeparator"]));
+                return ((string)(this["LoggerTimestampFormat"]));
             }
             set {
-                this["LoggerGraphicsLogSeparator"] = value;
+                this["LoggerTimestampFormat"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(",")]
+        public string LoggerLogSeparator {
+            get {
+                return ((string)(this["LoggerLogSeparator"]));
+            }
+            set {
+                this["LoggerLogSeparator"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".")]
+        public string LoggerDecimalSeparator {
+            get {
+                return ((string)(this["LoggerDecimalSeparator"]));
+            }
+            set {
+                this["LoggerDecimalSeparator"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LoggerGraphicsMouseZoom {
+            get {
+                return ((int)(this["LoggerGraphicsMouseZoom"]));
+            }
+            set {
+                this["LoggerGraphicsMouseZoom"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LoggerGraphicsMouseWheel {
+            get {
+                return ((int)(this["LoggerGraphicsMouseWheel"]));
+            }
+            set {
+                this["LoggerGraphicsMouseWheel"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LoggerGraphicsMouseCursor {
+            get {
+                return ((int)(this["LoggerGraphicsMouseCursor"]));
+            }
+            set {
+                this["LoggerGraphicsMouseCursor"] = value;
             }
         }
     }

@@ -493,6 +493,9 @@
     </Compile>
     <Compile Include="Units.cs" />
     <Compile Include="UPLogger.cs" />
+    <Compile Include="VerticalProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="win32.cs" />
     <Compile Include="TableData.cs" />
     <Compile Include="xdf.cs" />

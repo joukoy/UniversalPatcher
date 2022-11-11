@@ -21,6 +21,9 @@ public static class Helpers
     public static string RtfFilter = "RTF files (*.rtf)|*.rtf|All files (*.*)|*.*";
     public static string RtfFTxtilter = "RTF or TXT (*.rtf;*.txt)|*.rtf;*.txt|All files (*.*)|*.*";
 
+    public static string[] OnStrings = { "on", "enabled", "enable", "reduced","low", "active", "set", "open", "yes", "good", "presed", "pressed", "true"};
+    public static string[] OffStrings = { "off", "disabled", "disable", "normal", "inactive", "not set", "closed", "no", "bad", "released", "false"};
+
     public static UPLogger uPLogger = new UPLogger();
     public static DataLogger.LogDataEvents LoggerDataEvents = new DataLogger.LogDataEvents();
 

@@ -1835,7 +1835,7 @@ namespace UniversalPatcher
                 Properties.Settings.Default.LoggerLogSeparator = txtLogSeparator.Text;
                 Properties.Settings.Default.Save();
                 labelProgress.Text = "";
-                if (datalogger.PidProfile.Count == 0)
+                if (datalogger.PidProfile.Count == 0 || datalogger.PidProfile[0].addr == 0xffffff)
                 {
                     Logger("No profile configured");
                     return;
@@ -1846,7 +1846,7 @@ namespace UniversalPatcher
                 }
                 if (GraphicsForm != null && GraphicsForm.Visible)
                 {
-                    GraphicsForm.StartLiveUpdate();
+                    GraphicsForm.StartLiveUpdate(false);
                 }
                 SetupLogDataGrid();
                 datalogger.Responsetype = Convert.ToByte(Enum.Parse(typeof(ResponseTypes), comboResponseMode.Text));
@@ -3426,7 +3426,7 @@ namespace UniversalPatcher
                 GraphicsForm.SetupLiveGraphics();
                 if (datalogger.LogRunning || timerPlayback.Enabled)
                 {
-                    GraphicsForm.StartLiveUpdate();
+                    GraphicsForm.StartLiveUpdate(timerPlayback.Enabled);
                 }
             }
             catch (Exception ex)
@@ -3467,74 +3467,6 @@ namespace UniversalPatcher
             HstForm.SetupLiveParameters();
         }
 
-        private void LoadLogFile(string LogFile)
-        {
-            try
-            {
-                Properties.Settings.Default.LoggerTimestampFormat = txtTstampFormat.Text;
-                Properties.Settings.Default.LoggerDecimalSeparator = txtDecimalSeparator.Text;
-                Properties.Settings.Default.LoggerLogSeparator = txtLogSeparator.Text;
-                Properties.Settings.Default.Save();
-
-                datalogger.LogDataBuffer = new List<LogData>();
-                int tStamps = datalogger.LoadProfileFromCsv(LogFile);
-                SetupLogDataGrid();
-
-                DateTime startTime = DateTime.MinValue;
-                StreamReader sr = new StreamReader(LogFile);
-                string logLine = sr.ReadLine();
-                int elapsedIndex = -1;
-                string[] hdrArray = logLine.Split(new string[] { Properties.Settings.Default.LoggerLogSeparator }, StringSplitOptions.None);
-                for (int x=0; x<hdrArray.Length;x++)
-                {
-                    if (hdrArray[x].ToLower().Contains("elapsed time"))
-                    {
-                        elapsedIndex = x;
-                        break;
-                    }
-                }
-                while ((logLine = sr.ReadLine()) != null)
-                {
-                    string[] lParts = logLine.Split(new string[] { txtLogSeparator.Text }, StringSplitOptions.None);
-                    double val;
-                    LogData ld = new LogData(lParts.Length-tStamps);
-                    DateTime TStamp = Convert.ToDateTime(lParts[0]);
-                    if (startTime == DateTime.MinValue)
-                    {
-                        startTime = TStamp;
-                    }
-                    else if (elapsedIndex > -1 )
-                    {
-                        TStamp = startTime.AddTicks(Convert.ToDateTime(lParts[elapsedIndex]).Ticks);
-                    }
-                    ld.TimeStamp = (ulong)TStamp.Ticks;
-                    for (int r = tStamps; r < lParts.Length ; r++)
-                    {
-                        if (double.TryParse(lParts[r].Replace(",","."), NumberStyles.Any, CultureInfo.InvariantCulture, out val))
-                        {
-                            ld.Values[r-tStamps] = val;
-                        }
-                        else
-                        {
-                            ld.Values[r-tStamps] = double.MinValue;
-                        }
-                    }
-                    ld.CalculatedValues = ld.Values;
-                    datalogger.LogDataBuffer.Add(ld);
-                }
-                hScrollPlayback.Maximum = datalogger.LogDataBuffer.Count;
-                sr.Close();
-            }
-            catch (Exception ex)
-            {
-                var st = new StackTrace(ex, true);
-                // Get the top stack frame
-                var frame = st.GetFrame(st.FrameCount - 1);
-                // Get the line number from the stack frame
-                var line = frame.GetFileLineNumber();
-                LoggerBold("Error, LoadLogFile line " + line + ": " + ex.Message);
-            }
-        }
 
         private void playbackLogfileToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -3543,7 +3475,14 @@ namespace UniversalPatcher
                 string fName = SelectFile("Select Log file", CsvFilter);
                 if (string.IsNullOrEmpty(fName))
                     return;
-                LoadLogFile(fName);
+                Properties.Settings.Default.LoggerTimestampFormat = txtTstampFormat.Text;
+                Properties.Settings.Default.LoggerDecimalSeparator = txtDecimalSeparator.Text;
+                Properties.Settings.Default.LoggerLogSeparator = txtLogSeparator.Text;
+                Properties.Settings.Default.Save();
+                datalogger.LoadLogFile(fName);
+                SetupLogDataGrid();
+                hScrollPlayback.Maximum = datalogger.LogDataBuffer.Count;
+
             }
             catch (Exception ex)
             {
@@ -3574,13 +3513,19 @@ namespace UniversalPatcher
 
         private void btnPlay_Click(object sender, EventArgs e)
         {
+            if (datalogger.LogDataBuffer == null || datalogger.LogDataBuffer.Count == 0)
+            {
+                Logger("Empty buffer");
+                return;
+            }
             hScrollPlayback.Maximum = datalogger.LogDataBuffer.Count;
             SetPlaybackSpeed();
             timerPlayback.Enabled = true;
             if (GraphicsForm != null && GraphicsForm.Visible)
             {
-                GraphicsForm.SetupLiveGraphics();
-                GraphicsForm.StartLiveUpdate();
+                GraphicsForm.SetupPlayBack();
+                //GraphicsForm.SetupLiveGraphics();
+                GraphicsForm.StartLiveUpdate(true);
             }
         }
 
@@ -3632,7 +3577,10 @@ namespace UniversalPatcher
             for (int row=0; row<ld.Values.Length && row < dataGridLogData.Rows.Count; row++)
             {
                 dataGridLogData.Rows[row].Cells["Value"].Value = ld.CalculatedValues[row].ToString();
-
+            }
+            if (GraphicsForm != null && GraphicsForm.Visible)
+            {
+                GraphicsForm.PlayBackStep(hScrollPlayback.Value);
             }
         }
 
@@ -3642,7 +3590,7 @@ namespace UniversalPatcher
             {
                 if (GraphicsForm != null && GraphicsForm.Visible)
                 {
-                    GraphicsForm.UpdateLiveGraphics();
+                    GraphicsForm.UpdateLogGraphics();
                 }
                 PlayBack();
                 DateTime dt = new DateTime((long)datalogger.LogDataBuffer[hScrollPlayback.Value].TimeStamp);

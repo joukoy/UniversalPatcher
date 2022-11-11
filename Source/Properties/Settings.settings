@@ -272,9 +272,6 @@
     <Setting Name="LoggerLogFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="LoggerLogSeparator" Type="System.String" Scope="User">
-      <Value Profile="(Default)">,</Value>
-    </Setting>
     <Setting Name="LoggerJ2534Device" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -362,12 +359,6 @@
     <Setting Name="PasteSpecialTarget" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="LoggerTimestampFormat" Type="System.String" Scope="User">
-      <Value Profile="(Default)">HH:mm:ss.fff</Value>
-    </Setting>
-    <Setting Name="LoggerDecimalSeparator" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="LoggerGraphicsLiveLastProfileFile" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -386,8 +377,23 @@
     <Setting Name="LoggerLastLogfile" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="LoggerGraphicsLogSeparator" Type="System.String" Scope="User">
-      <Value Profile="(Default)">, </Value>
+    <Setting Name="LoggerTimestampFormat" Type="System.String" Scope="User">
+      <Value Profile="(Default)">HH:mm:ss.ffff</Value>
+    </Setting>
+    <Setting Name="LoggerLogSeparator" Type="System.String" Scope="User">
+      <Value Profile="(Default)">,</Value>
+    </Setting>
+    <Setting Name="LoggerDecimalSeparator" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.</Value>
+    </Setting>
+    <Setting Name="LoggerGraphicsMouseZoom" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="LoggerGraphicsMouseWheel" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="LoggerGraphicsMouseCursor" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>
