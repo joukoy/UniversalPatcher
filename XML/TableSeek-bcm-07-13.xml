@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<ArrayOfTableSeek xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TableSeek>
+    <Name>Remote Start Time Limit</Name>
+    <SearchStr>45 9B 3C * * 15 C4 9B FC @ @ 06 C0 9B 01 27 10 AB 10 B7 54</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/6</Math>
+    <SavingMath>x*6</SavingMath>
+    <Offset>983040</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+	<Segments>1</Segments>
+    <Units></Units>
+    <Values></Values>
+    <RowMajor>true</RowMajor>
+    <Description> Remote Start Time Limit. </Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>Remote Start Enable</Name>
+    <SearchStr>05 50 05 C1 AA 10 FA 02 C0 14 C0 04 97 20 17 08 9B FC @ @ 06 C0 9B 38</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/1</Math>
+    <SavingMath>x*1</SavingMath>
+    <Offset>983040</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+	<Segments>1</Segments>
+    <Units>BOOLEAN</Units>
+    <Values>BOOLEAN</Values>
+    <RowMajor>true</RowMajor>
+    <Description> Boolean to disable or enable remote start functionality. Remote Start is enabled whenever this calibration is set to TRUE. </Description>
+  </TableSeek>
+ <TableSeek>
+    <Name>Remote Start Count Limit #1</Name>
+    <SearchStr>97 1C 9B FC @ @ 06 C4 9B</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/1</Math>
+    <SavingMath>x*1</SavingMath>
+    <Offset>983040</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+	<Segments>1</Segments>
+    <Units></Units>
+    <Values></Values>
+    <RowMajor>true</RowMajor>
+    <Description> Remote Start Counter #1, Must Match Counter # 2. </Description>
+  </TableSeek>
+   <TableSeek>
+    <Name>Remote Start Count Limit #2</Name>
+    <SearchStr>88 80 E2 * 9B FC @ @ 06 C4 9B</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/1</Math>
+    <SavingMath>x*1</SavingMath>
+    <Offset>983040</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+	<Segments>1</Segments>
+    <Units></Units>
+    <Values></Values>
+    <RowMajor>true</RowMajor>
+    <Description> Remote Start Counter #2, Must Match Counter # 2. </Description>
+  </TableSeek>
+  <TableSeek>
+    <Name>Hood Switch DTC#1</Name>
+    <SearchStr>01 80 B0 9B FC @ @ 8B 40 06 C1 C0</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/1</Math>
+    <SavingMath>x*1</SavingMath>
+    <Offset>983040</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+	<Segments>1</Segments>
+    <Units>BOOLEAN</Units>
+    <Values>BOOLEAN</Values>
+    <RowMajor>true</RowMajor>
+    <Description> Enable Hood Switch DTC #1.Need this for RVS operation.Set to True. </Description>
+  </TableSeek>
+   <TableSeek>
+    <Name>Hood Switch DTC#2</Name>
+    <SearchStr>06 C0 9B FC @ @ 7F D0 8B E0 06 C1</SearchStr>
+    <Rows>1</Rows>
+    <Columns>1</Columns>
+    <RowHeaders />
+    <ColHeaders />
+    <Math>x/1</Math>
+    <SavingMath>x*1</SavingMath>
+    <Offset>983040</Offset>
+    <ConditionalOffset>false</ConditionalOffset>
+    <SignedOffset>false</SignedOffset>
+    <DataType>UBYTE</DataType>
+    <Decimals>0</Decimals>
+    <OutputType>Float</OutputType>
+    <Min>0</Min>
+    <Max>255</Max>
+    <UseHit>1</UseHit>
+	<Segments>1</Segments>
+    <Units>BOOLEAN</Units>
+    <Values>BOOLEAN</Values>
+    <RowMajor>true</RowMajor>
+    <Description> Enable Hood Switch DTC #2.Need this for RVS operation.Set to True. </Description>
+  </TableSeek>
+</ArrayOfTableSeek>

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<PcmPlatform xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <MSB>true</MSB>
+  <SegmentFile>bcm-Equinox.13 .xml</SegmentFile>
+  <TableSeekFile>TableSeek-bcm-Equinox.xml</TableSeekFile>
+  <SegmentSeekFile>SegmentSeek-bcm-Equinox.xml</SegmentSeekFile>
+  <PidSearchStep>0</PidSearchStep>
+</PcmPlatform>

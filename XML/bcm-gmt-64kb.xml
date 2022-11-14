@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+<ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SegmentConfig>
+    <Name>Boot-pn</Name>
+    <Version>1</Version>
+    <Addresses>1ff4-1fff</Addresses>
+    <SwapAddress>1ff4-1fff</SwapAddress>
+    <CS1Address>1ff4:2:hex</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>1ff4-1fff</CS1Blocks>
+    <CS2Blocks>1ff4-1fff</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>1ff6:4:int</PNAddr>
+    <VerAddr>1ffa:2:text</VerAddr>
+    <SegNrAddr />
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>OS</Name>
+    <Version>1</Version>
+    <Addresses>0-17ff,2000-0@</Addresses>
+    <SwapAddress>0-17ff,2000-0@</SwapAddress>
+    <CS1Address>2000:2:hex</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>0-17ff,2000-0@</CS1Blocks>
+    <CS2Blocks>0-17ff,2000-0@</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>2004:4:int</PNAddr>
+    <VerAddr>2008:2:text</VerAddr>
+    <SegNrAddr>2003:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>System</Name>
+    <Addresses>1800-193f</Addresses>
+    <SwapAddress>1800-193f</SwapAddress>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>1800-193f</CS1Blocks>
+    <CS2Blocks>1800-193f</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:4:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Lights</Name>
+    <Addresses>1940-1a7f</Addresses>
+    <SwapAddress>1940-1a7f</SwapAddress>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>1940-1a7f</CS1Blocks>
+    <CS2Blocks>1940-1a7f</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:4:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Theft</Name>
+    <Addresses>1a80-1bbf</Addresses>
+    <SwapAddress>1a80-1bbf</SwapAddress>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>1a80-1bbf</CS1Blocks>
+    <CS2Blocks>1a80-1bbf</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:4:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Locking</Name>
+    <Addresses>1bc0-1cff</Addresses>
+    <SwapAddress>1bc0-1cff</SwapAddress>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>1bc0-1cff</CS1Blocks>
+    <CS2Blocks>1bc0-1cff</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:4:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>Accessory</Name>
+    <Addresses>1d00-1fbf</Addresses>
+    <SwapAddress>1d00-1fbf</SwapAddress>
+    <CS1Address>#0:2:hex</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>1d00-1fbf</CS1Blocks>
+    <CS2Blocks>1d00-1fbf</CS2Blocks>
+    <CS1Complement>2</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>true</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#4:4:int</PNAddr>
+    <VerAddr>#8:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+</ArrayOfSegmentConfig>

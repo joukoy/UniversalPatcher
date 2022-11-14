@@ -1,0 +1,544 @@
+<?xml version="1.0"?>
+<ArrayOfSegmentConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SegmentConfig>
+    <Name>OS</Name>
+    <Version>1</Version>
+    <Addresses>@8018-L@801C</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@8018-L@801C</CS1Blocks>
+    <CS2Blocks>@8018-L@801C</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>SYSTEM</Name>
+    <Addresses>@8036-L@803A</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@8036-L@803A</CS1Blocks>
+    <CS2Blocks>@8036-L@803A</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>CHASSIS</Name>
+    <Addresses>@8042-L@8046</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@8042-L@8046</CS1Blocks>
+    <CS2Blocks>@8042-L@8046</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>CHARGING</Name>
+    <Addresses>@804E-L@8052</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@804E-L@8052</CS1Blocks>
+    <CS2Blocks>@804E-L@8052</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>IP DISPLAY</Name>
+    <Addresses>@805A-L@805E</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@805A-L@805E</CS1Blocks>
+    <CS2Blocks>@805A-L@805E</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>A EXT LAMPS</Name>
+    <Addresses>@8066-L@806A</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@8066-L@806A</CS1Blocks>
+    <CS2Blocks>@8066-L@806A</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>M EXT LAMPS</Name>
+    <Addresses>@8072-L@8076</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@8072-L@8076</CS1Blocks>
+    <CS2Blocks>@8072-L@8076</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>INT LAMPS</Name>
+    <Addresses>@807E-L@8082</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@807E-L@8082</CS1Blocks>
+    <CS2Blocks>@807E-L@8082</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>POWERTRAIN</Name>
+    <Addresses>@808A-L@808E</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@808A-L@808E</CS1Blocks>
+    <CS2Blocks>@808A-L@808E</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>THEFT</Name>
+    <Addresses>@8096-L@809A</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@8096-L@809A</CS1Blocks>
+    <CS2Blocks>@8096-L@809A</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>LOCKING</Name>
+    <Addresses>@80A2-L@80A6</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@80A2-L@80A6</CS1Blocks>
+    <CS2Blocks>@8002-L@80A6</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>WIPER</Name>
+    <Addresses>@80AE-L@80B2</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@80AE-L@80B2</CS1Blocks>
+    <CS2Blocks>@80AE-L@80B2</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>AUX ALARM</Name>
+    <Addresses>@80BA-L@80BE</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@80BA-L@80BE</CS1Blocks>
+    <CS2Blocks>@80BA-L@80BE</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>LF WINDOW</Name>
+    <Addresses>@80C6-L@80CA</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@80C6-L@80CA</CS1Blocks>
+    <CS2Blocks>@80C6-L@80CA</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>RF WINDOW</Name>
+    <Addresses>@80D2-L@80D6</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@80D2-L@80D6</CS1Blocks>
+    <CS2Blocks>@80D2-L@80D6</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>LR WINDOW</Name>
+    <Addresses>@80De-L@80E2</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@80DE-L@80E2</CS1Blocks>
+    <CS2Blocks>@80DE-L@80E2</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>RR WINDOW</Name>
+    <Addresses>@80EA-L@80EE</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@80EA-L@80EE</CS1Blocks>
+    <CS2Blocks>@80EA-L@80EE</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>SUNSHADE</Name>
+    <Addresses>@80F6-L@80FA</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@80F6-L@80FA</CS1Blocks>
+    <CS2Blocks>@80F6-L@80FA</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>SUNROOF</Name>
+    <Addresses>@8102-L@8106</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@8102-L@8106</CS1Blocks>
+    <CS2Blocks>@8102-L@8106</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+  <SegmentConfig>
+    <Name>HVAC</Name>
+    <Addresses>@810E-L@8112</Addresses>
+    <SwapAddress />
+    <CS1Address>#0:2</CS1Address>
+    <CS2Address />
+    <Checksum1Method>Wordsum</Checksum1Method>
+    <Checksum2Method>crc16</Checksum2Method>
+    <CS1Blocks>@810e-L@8112</CS1Blocks>
+    <CS2Blocks>@810e-L@8112</CS2Blocks>
+    <CS1Complement>1</CS1Complement>
+    <CS2Complement>0</CS2Complement>
+    <CS1SwapBytes>false</CS1SwapBytes>
+    <CS2SwapBytes>false</CS2SwapBytes>
+    <CVN>2</CVN>
+    <Eeprom>false</Eeprom>
+    <PNAddr>#6:4:int</PNAddr>
+    <VerAddr>#A:2:text</VerAddr>
+    <SegNrAddr>#3:1:int</SegNrAddr>
+    <ExtraInfo />
+    <Comment />
+    <CheckWords />
+    <Hidden>false</Hidden>
+    <Missing>false</Missing>
+    <CS1Method>4</CS1Method>
+    <CS2Method>1</CS2Method>
+  </SegmentConfig>
+</ArrayOfSegmentConfig>

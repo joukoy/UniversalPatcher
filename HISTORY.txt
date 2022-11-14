@@ -536,3 +536,7 @@
 - Logger graph: Skip empty values
 - Logger graph: Show selected values as percentage bars
 
+0.21.8
+- Dtcsearch: Bug fix to code decoding
+- XML files & patches updated, support for new platforms
+
