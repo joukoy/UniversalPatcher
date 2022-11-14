@@ -1385,4 +1385,58 @@
     <Description />
     <MSB>true</MSB>
   </TableSeek>
+<TableSeek>
+<Name>Remote Start Timer #1</Name>
+<SearchStr>30 00 * * 00 10 3D 80 @ @ A1 8C @ @ 48 00 00 0C 3D</SearchStr>
+<Rows>1</Rows>
+<Columns>1</Columns>
+<RowHeaders />
+<ColHeaders />
+<Math>x/1200</Math>
+<SavingMath>x*1200</SavingMath>
+<Offset>0</Offset>
+<ConditionalOffset>false</ConditionalOffset>
+<SignedOffset>false</SignedOffset>
+<DataType>UWORD</DataType>
+<Decimals>0</Decimals>
+<OutputType>Float</OutputType>
+<Min>0</Min>
+<Max>64354</Max>
+<UseHit>1</UseHit>
+<Range />
+<Segments>1</Segments>
+<Units />
+<Values />
+<RowMajor>true</RowMajor>
+<Description>Remote Start Timer #1. </Description>
+<MSB>true</MSB>
+<DispUnits>Undefined</DispUnits>
+</TableSeek>
+<TableSeek>
+<Name>Remote Start Timer #2</Name>
+<SearchStr>48 00 00 0c 3d 80 @ @ a1 8c @ @ b1 * * * 2c 06 00 00 41 81 00 0c 38 c0 00 00 48 00 00 08</SearchStr>
+<Rows>1</Rows>
+<Columns>1</Columns>
+<RowHeaders />
+<ColHeaders />
+<Math>x/1200</Math>
+<SavingMath>x*1200</SavingMath>
+<Offset>0</Offset>
+<ConditionalOffset>false</ConditionalOffset>
+<SignedOffset>false</SignedOffset>
+<DataType>UWORD</DataType>
+<Decimals>0</Decimals>
+<OutputType>Float</OutputType>
+<Min>0</Min>
+<Max>64354</Max>
+<UseHit>1</UseHit>
+<Range />
+<Segments>1</Segments>
+<Units />
+<Values />
+<RowMajor>true</RowMajor>
+<Description>Remote Start Timer #2. </Description>
+<MSB>true</MSB>
+<DispUnits>Undefined</DispUnits>
+</TableSeek>
 </ArrayOfTableSeek>

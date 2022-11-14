@@ -91,7 +91,7 @@ namespace UniversalPatcher
         private List<Bitmap> dataSourceImage = new List<Bitmap>();
         private SeriesChartType ChartType = SeriesChartType.Line;
         private Point ChartMouseDownLocation;
-        private List<VerticalProgressBar> vbars = new List<VerticalProgressBar>();
+        private List<BarGraph> vbars = new List<BarGraph>();
         private List<Label> vbarLabels = new List<Label>();
         private List<Label> vbarLabels2 = new List<Label>();
 
@@ -721,8 +721,8 @@ namespace UniversalPatcher
                         {
                             percentval = 0;
                         }
-                        vbars[v].Value = percentval;
-                        vbarLabels2[v].Text = value.ToString("0.00");
+                        vbars[v].SetValue( percentval);
+                        vbarLabels2[v].Text = value.ToString("0.##");
                         break;
                     }
                 }
@@ -746,25 +746,26 @@ namespace UniversalPatcher
                 vbarLabels[v].Dispose();
                 vbarLabels2[v].Dispose();
             }
-            vbars = new List<VerticalProgressBar>();
+            vbars = new List<BarGraph>();
             vbarLabels = new List<Label>();
             vbarLabels2 = new List<Label>();
             int left = 10;
+            int barWidth = 60;
             splitContainer3.Panel1Collapsed = false;
             splitContainer3.Panel1.Show();
             for (int p = 0; p < pidScalars.Count; p++)
             {
                 if (pidScalars[p].Bar)
                 {
-                    VerticalProgressBar vbar = new VerticalProgressBar();
+                    BarGraph vbar = new BarGraph();
                     vbar.Left = left;
-                    vbar.Top = 15;
-                    vbar.Width = 60;
-                    vbar.Height = splitContainer3.Panel1.Height - 10;
+                    vbar.Top = 20;
+                    vbar.Width = barWidth;
+                    vbar.Height = splitContainer3.Panel1.Height - 25;
                     vbar.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
                     vbar.ForeColor = Color.Red;
                     vbar.Tag = p;
-                    vbar.MarqueeAnimationSpeed = 1;
+                    //vbar.MarqueeAnimationSpeed = 1;
                     splitContainer3.Panel1.Controls.Add(vbar);
                     vbars.Add(vbar);
                     vbar.Show();
@@ -779,17 +780,18 @@ namespace UniversalPatcher
 
                     Label lb2 = new Label();
                     lb2.Text = "";
-                    lb2.Left = left + 5;
+                    lb2.Left = left + 10;
                     lb2.Top = (int)(splitContainer3.Panel1.Height /2);
                     lb2.AutoSize = true;
+                    lb2.BackColor = Color.White;
                     splitContainer3.Panel1.Controls.Add(lb2);
                     lb2.BringToFront();
                     vbarLabels2.Add(lb2);
 
-                    if (lb.Width > 60)
+                    if (lb.Width > barWidth)
                         left += lb.Width + 5;
                     else
-                        left += 65;
+                        left += barWidth + 5;
                 }
             }
             if (vbarLabels.Count == 0)

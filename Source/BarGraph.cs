@@ -40,7 +40,7 @@ namespace UniversalPatcher
             panel2.Margin = new Padding(0);
 
             panel1.BackColor = System.Drawing.Color.White;
-            panel2.BackColor = System.Drawing.Color.Blue;
+            panel2.BackColor = System.Drawing.Color.Green;
 
             table.Controls.Add(panel1, 0, 0);
             table.Controls.Add(panel2, 0, 1);

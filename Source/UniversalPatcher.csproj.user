@@ -12,6 +12,6 @@
     <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>advanced tuner</StartArguments>
+    <StartArguments>advanced patcher</StartArguments>
   </PropertyGroup>
 </Project>

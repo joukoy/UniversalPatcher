@@ -104,6 +104,9 @@
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </Compile>
     <Compile Include="AutoDetect.cs" />
+    <Compile Include="BarGraph.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ComputeSimilarity.cs" />
     <Compile Include="Crc.cs" />
     <Compile Include="DataLogger\CanLogToBin.cs" />

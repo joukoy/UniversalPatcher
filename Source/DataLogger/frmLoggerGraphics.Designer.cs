@@ -319,7 +319,7 @@ namespace UniversalPatcher
             this.tabPointValues.Location = new System.Drawing.Point(4, 22);
             this.tabPointValues.Name = "tabPointValues";
             this.tabPointValues.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPointValues.Size = new System.Drawing.Size(234, 359);
+            this.tabPointValues.Size = new System.Drawing.Size(382, 359);
             this.tabPointValues.TabIndex = 1;
             this.tabPointValues.Text = "Values";
             this.tabPointValues.UseVisualStyleBackColor = true;
@@ -330,7 +330,7 @@ namespace UniversalPatcher
             this.dataGridPointValues.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridPointValues.Location = new System.Drawing.Point(3, 3);
             this.dataGridPointValues.Name = "dataGridPointValues";
-            this.dataGridPointValues.Size = new System.Drawing.Size(228, 353);
+            this.dataGridPointValues.Size = new System.Drawing.Size(376, 353);
             this.dataGridPointValues.TabIndex = 0;
             // 
             // labelZoom
@@ -473,40 +473,40 @@ namespace UniversalPatcher
             // loadLogfileToolStripMenuItem
             // 
             this.loadLogfileToolStripMenuItem.Name = "loadLogfileToolStripMenuItem";
-            this.loadLogfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadLogfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.loadLogfileToolStripMenuItem.Text = "Load logfile";
             this.loadLogfileToolStripMenuItem.Click += new System.EventHandler(this.loadLogfileToolStripMenuItem_Click);
             // 
             // loadLastLogfileToolStripMenuItem
             // 
             this.loadLastLogfileToolStripMenuItem.Name = "loadLastLogfileToolStripMenuItem";
-            this.loadLastLogfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadLastLogfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.loadLastLogfileToolStripMenuItem.Text = "Load last logfile";
             this.loadLastLogfileToolStripMenuItem.Click += new System.EventHandler(this.loadLastLogfileToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(155, 6);
             // 
             // loadProfileToolStripMenuItem
             // 
             this.loadProfileToolStripMenuItem.Name = "loadProfileToolStripMenuItem";
-            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.loadProfileToolStripMenuItem.Text = "Load profile";
             this.loadProfileToolStripMenuItem.Click += new System.EventHandler(this.loadProfileToolStripMenuItem_Click);
             // 
             // saveProfileToolStripMenuItem
             // 
             this.saveProfileToolStripMenuItem.Name = "saveProfileToolStripMenuItem";
-            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.saveProfileToolStripMenuItem.Text = "Save profile";
             this.saveProfileToolStripMenuItem.Click += new System.EventHandler(this.saveProfileToolStripMenuItem_Click);
             // 
             // saveProfileAsToolStripMenuItem
             // 
             this.saveProfileAsToolStripMenuItem.Name = "saveProfileAsToolStripMenuItem";
-            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.saveProfileAsToolStripMenuItem.Text = "Save profile as...";
             this.saveProfileAsToolStripMenuItem.Click += new System.EventHandler(this.saveProfileAsToolStripMenuItem_Click);
             // 
@@ -525,14 +525,14 @@ namespace UniversalPatcher
             // showPointsToolStripMenuItem
             // 
             this.showPointsToolStripMenuItem.Name = "showPointsToolStripMenuItem";
-            this.showPointsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showPointsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.showPointsToolStripMenuItem.Text = "Show points";
             this.showPointsToolStripMenuItem.Click += new System.EventHandler(this.showPointsToolStripMenuItem_Click);
             // 
             // autoscaleToolStripMenuItem
             // 
             this.autoscaleToolStripMenuItem.Name = "autoscaleToolStripMenuItem";
-            this.autoscaleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.autoscaleToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.autoscaleToolStripMenuItem.Text = "Autoscale";
             this.autoscaleToolStripMenuItem.Click += new System.EventHandler(this.autoscaleToolStripMenuItem_Click);
             // 
@@ -549,7 +549,7 @@ namespace UniversalPatcher
             this.cursorXYToolStripMenuItem,
             this.noCursorToolStripMenuItem});
             this.mouseFunctionToolStripMenuItem.Name = "mouseFunctionToolStripMenuItem";
-            this.mouseFunctionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.mouseFunctionToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.mouseFunctionToolStripMenuItem.Text = "Mouse function";
             // 
             // zoomXToolStripMenuItem
@@ -621,7 +621,7 @@ namespace UniversalPatcher
             this.wheelZoomXYToolStripMenuItem1,
             this.noWheelZoomToolStripMenuItem1});
             this.mouseWheelToolStripMenuItem.Name = "mouseWheelToolStripMenuItem";
-            this.mouseWheelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.mouseWheelToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.mouseWheelToolStripMenuItem.Text = "Mouse wheel";
             // 
             // wheelZoomXToolStripMenuItem1
@@ -655,7 +655,7 @@ namespace UniversalPatcher
             // resetZoomToolStripMenuItem
             // 
             this.resetZoomToolStripMenuItem.Name = "resetZoomToolStripMenuItem";
-            this.resetZoomToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.resetZoomToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.resetZoomToolStripMenuItem.Text = "Reset zoom";
             this.resetZoomToolStripMenuItem.Click += new System.EventHandler(this.resetZoomToolStripMenuItem_Click);
             // 

@@ -61,8 +61,24 @@ namespace UniversalPatcher
         {
             switch (code[0])
             {
+                case '0':
+                    return "P0" + code.Substring(1);
+                case '1':
+                    return "P1" + code.Substring(1);
+                case '2':
+                    return "P2" + code.Substring(1);
+                case '3':
+                    return "P3" + code.Substring(1);
+                case '4':
+                    return "C0" + code.Substring(1);
                 case '5':
-                    return "U0" + code.Substring(1);
+                    return "C1" + code.Substring(1);
+                case '6':
+                    return "C2" + code.Substring(1);
+                case '7':
+                    return "C3" + code.Substring(1);
+                case '8':
+                    return "B0" + code.Substring(1);
                 case '9':
                     return "B1" + code.Substring(1);
                 case 'A':
@@ -70,11 +86,13 @@ namespace UniversalPatcher
                 case 'B':
                     return "B3" + code.Substring(1);
                 case 'C':
-                    return "C0" + code.Substring(1);
+                    return "U0" + code.Substring(1);
                 case 'D':
                     return "U1" + code.Substring(1);
                 case 'E':
                     return "U2" + code.Substring(1);
+                case 'F':
+                    return "U3" + code.Substring(1);
                 default:
                     return "P" + code;
             }
@@ -222,7 +240,6 @@ namespace UniversalPatcher
                 string searchStr;
                 int configIndex = 0;
                 uint startAddr = 0;
-                PCM.dtcCombined = false;
                 bool condOffsetCode = false;
                 bool condOffsetStatus = false;
                 bool condOffsetMil = false;
@@ -235,7 +252,9 @@ namespace UniversalPatcher
                 int codePerStatus = 1;
 
                 string cnfFile = PCM.configFile;
-                if (!primary)
+                if (primary)
+                    PCM.dtcCombined = false;
+                else
                     cnfFile += "-dtc2";
 
                 for (configIndex = 0; configIndex < dtcSearchConfigs.Count; configIndex++)
@@ -381,12 +400,13 @@ namespace UniversalPatcher
                             break;
                     }
                     codeTmp = dtc.codeInt.ToString("X4");
-                    if (codeTmp.StartsWith("6") || codeTmp.StartsWith("7") || codeTmp.StartsWith("8")
+/*                    if (codeTmp.StartsWith("6") || codeTmp.StartsWith("7") || codeTmp.StartsWith("8")
                         || codeTmp.StartsWith("9") || codeTmp.StartsWith("B") || codeTmp.StartsWith("F"))
                     {
                         Debug.WriteLine("DTC Code out of range: " + codeTmp);
                         break;
                     }
+*/
                     dtc.Code = DecodeDTC(codeTmp);
                     if (codeTmp.StartsWith("D")) 
                         dCodes = true;
