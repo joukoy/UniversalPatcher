@@ -8,6 +8,7 @@ using System.Globalization;
 using static Upatcher;
 using System.Diagnostics;
 using static Helpers;
+using System.ComponentModel;
 
 namespace UniversalPatcher
 {
@@ -42,6 +43,7 @@ namespace UniversalPatcher
             BitMask = "";
             ByteOrder = Byte_Order.PlatformOrder;
         }
+
         //public uint id { get; set; }
         public string TableName { get; set; }
         public string ExtraTableName { get; set; }

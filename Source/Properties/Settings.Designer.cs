@@ -1589,5 +1589,17 @@ namespace UniversalPatcher.Properties {
                 this["LoggerGraphicsMouseCursor"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TableEditorRememberCompare {
+            get {
+                return ((bool)(this["TableEditorRememberCompare"]));
+            }
+            set {
+                this["TableEditorRememberCompare"] = value;
+            }
+        }
     }
 }

@@ -99,23 +99,23 @@ namespace UniversalPatcher
         {
             try
             {
-                if (!string.IsNullOrEmpty(Properties.Settings.Default.LoggerLogSeparator))
-                    txtLogSeparator.Text = Properties.Settings.Default.LoggerLogSeparator;
+                if (!string.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerLogSeparator))
+                    txtLogSeparator.Text = UniversalPatcher.Properties.Settings.Default.LoggerLogSeparator;
                 else
                     txtLogSeparator.Text = ",";
                 chart1.Legends[0].Docking = Docking.Top;
-                if (string.IsNullOrEmpty(Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile))
+                if (string.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile))
                 {
-                    Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(Properties.Settings.Default.LoggerLastProfile));
-                    Properties.Settings.Default.Save();
+                    UniversalPatcher.Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(UniversalPatcher.Properties.Settings.Default.LoggerLastProfile));
+                    UniversalPatcher.Properties.Settings.Default.Save();
                 }
-                if (string.IsNullOrEmpty(Properties.Settings.Default.LoggerGraphicsLogLastProfileFile))
+                if (string.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerGraphicsLogLastProfileFile))
                 {
-                    Properties.Settings.Default.LoggerGraphicsLogLastProfileFile = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(Properties.Settings.Default.LoggerLastProfile));
-                    Properties.Settings.Default.Save();
+                    UniversalPatcher.Properties.Settings.Default.LoggerGraphicsLogLastProfileFile = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(UniversalPatcher.Properties.Settings.Default.LoggerLastProfile));
+                    UniversalPatcher.Properties.Settings.Default.Save();
                 }
 
-                switch (Properties.Settings.Default.LoggerGraphicsMouseCursor)
+                switch (UniversalPatcher.Properties.Settings.Default.LoggerGraphicsMouseCursor)
                 {
                     case 0:
                         cursorXToolStripMenuItem.Checked = true;
@@ -130,7 +130,7 @@ namespace UniversalPatcher
                         noCursorToolStripMenuItem.Checked = true;
                         break;
                 }
-                switch (Properties.Settings.Default.LoggerGraphicsMouseZoom)
+                switch (UniversalPatcher.Properties.Settings.Default.LoggerGraphicsMouseZoom)
                 {
                     case 0:
                         zoomXToolStripMenuItem.Checked = true;
@@ -145,7 +145,7 @@ namespace UniversalPatcher
                         noZoomToolStripMenuItem.Checked = true;
                         break;
                 }
-                switch (Properties.Settings.Default.LoggerGraphicsMouseWheel)
+                switch (UniversalPatcher.Properties.Settings.Default.LoggerGraphicsMouseWheel)
                 {
                     case 0:
                         wheelZoomXToolStripMenuItem1.Checked = true;
@@ -165,14 +165,14 @@ namespace UniversalPatcher
                 chart1.MouseDown += Chart1_MouseDown;
                 chart1.MouseUp += Chart1_MouseUp;
                 chart1.MouseWheel += Chart1_MouseWheel;
-                showPointsToolStripMenuItem.Checked = Properties.Settings.Default.LoggerGraphicsShowPoints;
+                showPointsToolStripMenuItem.Checked = UniversalPatcher.Properties.Settings.Default.LoggerGraphicsShowPoints;
                 //SetUpDoubleBuffer(this);
                 chart1.MouseClick += Chart1_MouseClick;
                 loadCombobox1();
                 dataGridPointValues.Columns.Add("Pid", "Pid");
                 dataGridPointValues.Columns.Add("Value", "Value");
-                numDisplayInterval.Value = Properties.Settings.Default.LoggerGraphicsInterval;
-                numShowMax.Value = Properties.Settings.Default.LoggerGraphicsShowMaxTime;
+                numDisplayInterval.Value = UniversalPatcher.Properties.Settings.Default.LoggerGraphicsInterval;
+                numShowMax.Value = UniversalPatcher.Properties.Settings.Default.LoggerGraphicsShowMaxTime;
             }
             catch (Exception ex)
             {
@@ -454,38 +454,38 @@ namespace UniversalPatcher
         private void FrmLoggerGraphics_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveProfile();
-            Properties.Settings.Default.LoggerGraphicsInterval = (int)numDisplayInterval.Value;
-            Properties.Settings.Default.LoggerGraphicsShowMaxTime = (int)numShowMax.Value;
-            Properties.Settings.Default.LoggerGraphicsShowPoints = showPointsToolStripMenuItem.Checked;
+            UniversalPatcher.Properties.Settings.Default.LoggerGraphicsInterval = (int)numDisplayInterval.Value;
+            UniversalPatcher.Properties.Settings.Default.LoggerGraphicsShowMaxTime = (int)numShowMax.Value;
+            UniversalPatcher.Properties.Settings.Default.LoggerGraphicsShowPoints = showPointsToolStripMenuItem.Checked;
             if (cursorXToolStripMenuItem.Checked)
-                Properties.Settings.Default.LoggerGraphicsMouseCursor = 0;
+                UniversalPatcher.Properties.Settings.Default.LoggerGraphicsMouseCursor = 0;
             if (cursorYToolStripMenuItem.Checked)
-                Properties.Settings.Default.LoggerGraphicsMouseCursor = 1;
+                UniversalPatcher.Properties.Settings.Default.LoggerGraphicsMouseCursor = 1;
             if (cursorXYToolStripMenuItem.Checked)
-                Properties.Settings.Default.LoggerGraphicsMouseCursor = 2;
+                UniversalPatcher.Properties.Settings.Default.LoggerGraphicsMouseCursor = 2;
             if (noCursorToolStripMenuItem.Checked)
-                Properties.Settings.Default.LoggerGraphicsMouseCursor = 3;
+                UniversalPatcher.Properties.Settings.Default.LoggerGraphicsMouseCursor = 3;
 
             if(zoomXToolStripMenuItem.Checked)
-                Properties.Settings.Default.LoggerGraphicsMouseZoom = 0;
+                UniversalPatcher.Properties.Settings.Default.LoggerGraphicsMouseZoom = 0;
             if(zoomYToolStripMenuItem.Checked)
-                Properties.Settings.Default.LoggerGraphicsMouseZoom = 1;
+                UniversalPatcher.Properties.Settings.Default.LoggerGraphicsMouseZoom = 1;
             if(zoomXYToolStripMenuItem.Checked)
-                Properties.Settings.Default.LoggerGraphicsMouseZoom = 2;
+                UniversalPatcher.Properties.Settings.Default.LoggerGraphicsMouseZoom = 2;
             if(noZoomToolStripMenuItem.Checked)
-                Properties.Settings.Default.LoggerGraphicsMouseZoom = 3;
+                UniversalPatcher.Properties.Settings.Default.LoggerGraphicsMouseZoom = 3;
 
 
             if(wheelZoomXToolStripMenuItem1.Checked)
-                Properties.Settings.Default.LoggerGraphicsMouseWheel = 0;
+                UniversalPatcher.Properties.Settings.Default.LoggerGraphicsMouseWheel = 0;
             if(wheelZoomYToolStripMenuItem1.Checked)
-                Properties.Settings.Default.LoggerGraphicsMouseWheel = 1;
+                UniversalPatcher.Properties.Settings.Default.LoggerGraphicsMouseWheel = 1;
             if(wheelZoomXYToolStripMenuItem1.Checked)
-                Properties.Settings.Default.LoggerGraphicsMouseWheel = 2;
+                UniversalPatcher.Properties.Settings.Default.LoggerGraphicsMouseWheel = 2;
             if(noWheelZoomToolStripMenuItem1.Checked)
-                Properties.Settings.Default.LoggerGraphicsMouseWheel = 3;
+                UniversalPatcher.Properties.Settings.Default.LoggerGraphicsMouseWheel = 3;
 
-            Properties.Settings.Default.Save();
+            UniversalPatcher.Properties.Settings.Default.Save();
         }
 
         private void UPLogger_UpLogUpdated(object sender, UPLogger.UPLogString e)
@@ -609,9 +609,9 @@ namespace UniversalPatcher
             SetupGraphProperties();
             LiveData = true;
             groupLiveSeconds.Enabled = true;
-            if (File.Exists(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile))))
+            if (File.Exists(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(UniversalPatcher.Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile))))
             {
-                ProfileFile = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile));
+                ProfileFile = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(UniversalPatcher.Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile));
                 LoadProfile();
             }
             chkGetLiveData.Checked = true;
@@ -689,9 +689,9 @@ namespace UniversalPatcher
             LiveData = false;
             timerDisplayData.Enabled = false;
             //groupLiveSeconds.Enabled = false;
-            if (File.Exists(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Properties.Settings.Default.LoggerGraphicsLogLastProfileFile)))
+            if (File.Exists(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", UniversalPatcher.Properties.Settings.Default.LoggerGraphicsLogLastProfileFile)))
             {
-                ProfileFile = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Properties.Settings.Default.LoggerGraphicsLogLastProfileFile);
+                ProfileFile = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", UniversalPatcher.Properties.Settings.Default.LoggerGraphicsLogLastProfileFile);
                 //LoadProfile();
                 this.Text += " [" + Path.GetFileName(ProfileFile) + "]";
             }
@@ -994,8 +994,8 @@ namespace UniversalPatcher
                 StreamReader sr = new StreamReader(logFile);
                 string hdrLine = sr.ReadLine();
                 sr.Close();
-                Properties.Settings.Default.LoggerLogSeparator = txtLogSeparator.Text;
-                Properties.Settings.Default.Save();
+                UniversalPatcher.Properties.Settings.Default.LoggerLogSeparator = txtLogSeparator.Text;
+                UniversalPatcher.Properties.Settings.Default.Save();
                 string[] hdrArray = hdrLine.Split(new string[] { txtLogSeparator.Text }, StringSplitOptions.None);
                 SetupLogGraphics(hdrArray, Path.GetFileName(logFile));
                 groupPlayback.Enabled = true;
@@ -1093,10 +1093,10 @@ namespace UniversalPatcher
                 }
                 Logger(" [OK]");
                 if (LiveData)
-                    Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile = Path.GetFileName(ProfileFile);
+                    UniversalPatcher.Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile = Path.GetFileName(ProfileFile);
                 else
-                    Properties.Settings.Default.LoggerGraphicsLogLastProfileFile = Path.GetFileName(ProfileFile);
-                Properties.Settings.Default.Save();
+                    UniversalPatcher.Properties.Settings.Default.LoggerGraphicsLogLastProfileFile = Path.GetFileName(ProfileFile);
+                UniversalPatcher.Properties.Settings.Default.Save();
                 this.Text = Title + " [" + Path.GetFileName(ProfileFile) + "]";
             }
             catch (Exception ex)
@@ -1146,10 +1146,10 @@ namespace UniversalPatcher
                     pidScalars = tmpScalars;
 
                     if (LiveData)
-                        Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile = Path.GetFileName(ProfileFile);
+                        UniversalPatcher.Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile = Path.GetFileName(ProfileFile);
                     else
-                        Properties.Settings.Default.LoggerGraphicsLogLastProfileFile = Path.GetFileName(ProfileFile);
-                    Properties.Settings.Default.Save();
+                        UniversalPatcher.Properties.Settings.Default.LoggerGraphicsLogLastProfileFile = Path.GetFileName(ProfileFile);
+                    UniversalPatcher.Properties.Settings.Default.Save();
                 }
                 UpdateScalars();
                 this.Text = Title + " [" + Path.GetFileName(ProfileFile) + "]";
@@ -1175,7 +1175,7 @@ namespace UniversalPatcher
 
         private void loadProfileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string def = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile));
+            string def = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(UniversalPatcher.Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile));
             string fName = SelectFile("Select profilefile", XmlFilter, def);
             if (string.IsNullOrEmpty(fName))
                 return;
@@ -1185,7 +1185,7 @@ namespace UniversalPatcher
 
         private void SaveProfileAs()
         {
-            string def = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile));
+            string def = Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles", Path.GetFileName(UniversalPatcher.Properties.Settings.Default.LoggerGraphicsLiveLastProfileFile));
             string fName = SelectSaveFile(XmlFilter, def);
             if (string.IsNullOrEmpty(fName))
                 return;
@@ -1200,8 +1200,8 @@ namespace UniversalPatcher
 
         private void loadLastLogfileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            logFile = Properties.Settings.Default.LoggerLastLogfile;
-            Title = "Logger Graph - " + Properties.Settings.Default.LoggerLastLogfile;
+            logFile = UniversalPatcher.Properties.Settings.Default.LoggerLastLogfile;
+            Title = "Logger Graph - " + UniversalPatcher.Properties.Settings.Default.LoggerLastLogfile;
             LoadLogFile();
         }
 

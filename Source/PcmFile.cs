@@ -383,7 +383,7 @@ namespace UniversalPatcher
 
         public void AutoLoadTunerConfig()
         {
-            if (!Properties.Settings.Default.disableTunerAutoloadSettings)
+            if (!UniversalPatcher.Properties.Settings.Default.disableTunerAutoloadSettings)
             {
                 DirectoryInfo d = new DirectoryInfo(Path.Combine(Application.StartupPath, "Tuner"));
                // FileInfo[] Files = d.GetFiles("*.*", SearchOption.AllDirectories);
@@ -620,7 +620,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (Properties.Settings.Default.DisableAutoFixChecksum)
+                if (UniversalPatcher.Properties.Settings.Default.DisableAutoFixChecksum)
                     LoggerBold("Warning! Automatic checksum fix is disabled");
                 else
                     FixCheckSums();

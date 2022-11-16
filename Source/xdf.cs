@@ -710,7 +710,7 @@ namespace UniversalPatcher
                             {
                                 if (tdList[t].guid == TpIdGuid[id])
                                 {
-                                    if (Properties.Settings.Default.xdfImportUseTableName)
+                                    if (UniversalPatcher.Properties.Settings.Default.xdfImportUseTableName)
                                         td.ColumnHeaders = td.ColumnHeaders.Replace("TunerPro: ", "Table: ").Replace(id, tdList[t].TableName);
                                     else
                                         td.ColumnHeaders = td.ColumnHeaders.Replace("TunerPro: ", "guid: ").Replace(id, tdList[t].guid.ToString());
@@ -728,7 +728,7 @@ namespace UniversalPatcher
                             {
                                 if (tdList[t].guid == TpIdGuid[id])
                                 {
-                                    if (Properties.Settings.Default.xdfImportUseTableName)
+                                    if (UniversalPatcher.Properties.Settings.Default.xdfImportUseTableName)
                                         td.RowHeaders = td.RowHeaders.Replace("TunerPro: ", "Table: ").Replace(id, tdList[t].TableName);
                                     else
                                         td.RowHeaders = td.RowHeaders.Replace("TunerPro: ", "guid: ").Replace(id, tdList[t].guid.ToString());

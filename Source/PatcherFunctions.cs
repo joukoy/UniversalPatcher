@@ -443,6 +443,7 @@ public class Upatcher
     //public static string[] dtcStatus = { "1 Trip/immediately", "2 Trips", "Store only", "Disabled" };
     public static string selectedCompareBin;
 
+
     public enum AddressDataType
     {
         Float = 1,
@@ -494,49 +495,78 @@ public class Upatcher
         LSB
     }
 
-    public static void StartupSettings()
+    public static void StartupSettings(string[] args)
     {
-        LogReceivers = new List<RichTextBox>();
-        tableSeeks = new List<TableSeek>();
-        segmentSeeks = new List<SegmentSeek>();
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Patches")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Segments")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Segments"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Log")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Log"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Tuner")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Tuner"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Histogram")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Histogram"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Log")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Log"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Profiles")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Profiles"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles"));
-        if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles")))
-            Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles"));
+        try
+        {
+            if (args.Length > 0)
+            {
+                if (args[0] == "-")
+                    Debug.WriteLine("Remember previous settings");
+                else if (args[0].ToLower().Contains("tourist"))
+                    UniversalPatcher.Properties.Settings.Default.WorkingMode = 0;
+                else if (args[0].ToLower().Contains("basic"))
+                    UniversalPatcher.Properties.Settings.Default.WorkingMode = 1;
+                else if (args[0].ToLower().Contains("advanced"))
+                    UniversalPatcher.Properties.Settings.Default.WorkingMode = 2;
+                else
+                {
+                    throw new Exception("Usage: " + Path.GetFileName(Application.ExecutablePath) + " [tourist | basic | advanced] [launcher | tuner]");
+                }
+                UniversalPatcher.Properties.Settings.Default.Save();
+            }
 
-        if (UniversalPatcher.Properties.Settings.Default.LastXMLfolder == "")
-            UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
-        if (UniversalPatcher.Properties.Settings.Default.LastPATCHfolder == "")
-            UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
+            LogReceivers = new List<RichTextBox>();
+            tableSeeks = new List<TableSeek>();
+            segmentSeeks = new List<SegmentSeek>();
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Patches")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Patches"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "XML")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "XML"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Segments")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Segments"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Log")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Log"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Tuner")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Tuner"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Histogram")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Histogram"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Log")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Log"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "Profiles")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "Profiles"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "DisplayProfiles"));
+            if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles")))
+                Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles"));
 
-        if (UniversalPatcher.Properties.Settings.Default.SplashShowTime > 0)
-            frmSplash.Show();
-        //System.Drawing.Point xy = new Point((int)(this.Location.X + 300), (int)(this.Location.Y + 150));
-        Screen myScreen = Screen.FromPoint(Control.MousePosition);
-        System.Drawing.Rectangle area = myScreen.WorkingArea;
-        Point xy = new Point(area.Width / 2 - 115, area.Height / 2 - 130);
-        frmSplash.moveMe(xy);
-        frmSplash.labelProgress.Text = "";
-        LoadSettingFiles();
-        //frmSplash.Dispose();
+            if (UniversalPatcher.Properties.Settings.Default.LastXMLfolder == "")
+                UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
+            if (UniversalPatcher.Properties.Settings.Default.LastPATCHfolder == "")
+                UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
+
+            if (UniversalPatcher.Properties.Settings.Default.SplashShowTime > 0)
+                frmSplash.Show();
+            //System.Drawing.Point xy = new Point((int)(this.Location.X + 300), (int)(this.Location.Y + 150));
+            Screen myScreen = Screen.FromPoint(Control.MousePosition);
+            System.Drawing.Rectangle area = myScreen.WorkingArea;
+            Point xy = new Point(area.Width / 2 - 115, area.Height / 2 - 130);
+            frmSplash.moveMe(xy);
+            frmSplash.labelProgress.Text = "";
+            LoadSettingFiles();
+            //frmSplash.Dispose();
+        }
+        catch (Exception ex)
+        {
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            Debug.WriteLine("Patcherfunctions error, line " + line + ": " + ex.Message);
+        }
     }
 
     private static void ShowSplash(string txt, bool newLine = true)

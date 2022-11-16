@@ -47,45 +47,45 @@ namespace UniversalPatcher
         private void frmMassCopyTables_Load(object sender, EventArgs e)
         {
             bindingSource = new BindingSource();
-            if (Properties.Settings.Default.MainWindowPersistence)
+            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
             {
-                if (Properties.Settings.Default.MassCopyTableWindowSize.Width > 0 || Properties.Settings.Default.MassCopyTableWindowSize.Height > 0)
+                if (UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowSize.Height > 0)
                 {
-                    this.WindowState = Properties.Settings.Default.MassCopyTableWindowState;
+                    this.WindowState = UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowState;
                     if (this.WindowState == FormWindowState.Minimized)
                     {
                         this.WindowState = FormWindowState.Normal;
                     }
-                    this.Location = Properties.Settings.Default.MassCopyTableWindowLocation;
-                    this.Size = Properties.Settings.Default.MassCopyTableWindowSize;
+                    this.Location = UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowLocation;
+                    this.Size = UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowSize;
                 }
-                if (Properties.Settings.Default.MassCopyTableWindowSize.Width > 0 || Properties.Settings.Default.MassCopyTableWindowSize.Height > 0)
+                if (UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowSize.Height > 0)
                 {
-                    this.splitContainer1.SplitterDistance = Properties.Settings.Default.MassCopyTableSplitHeight;
+                    this.splitContainer1.SplitterDistance = UniversalPatcher.Properties.Settings.Default.MassCopyTableSplitHeight;
                 }
             }
-            txtFnameExtension.Text = Properties.Settings.Default.MassCopyTableFilenameExtra;
+            txtFnameExtension.Text = UniversalPatcher.Properties.Settings.Default.MassCopyTableFilenameExtra;
             this.FormClosing += FrmMassCopyTables_FormClosing;
         }
 
         private void FrmMassCopyTables_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (Properties.Settings.Default.MainWindowPersistence)
+            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
             {
-                Properties.Settings.Default.MassCopyTableWindowState = this.WindowState;
+                UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowState = this.WindowState;
                 if (this.WindowState == FormWindowState.Normal)
                 {
-                    Properties.Settings.Default.MassCopyTableWindowLocation = this.Location;
-                    Properties.Settings.Default.MassCopyTableWindowSize = this.Size;
+                    UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowLocation = this.Location;
+                    UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowSize = this.Size;
                 }
                 else
                 {
-                    Properties.Settings.Default.MassCopyTableWindowLocation = this.RestoreBounds.Location;
-                    Properties.Settings.Default.MassCopyTableWindowSize = this.RestoreBounds.Size;
+                    UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowLocation = this.RestoreBounds.Location;
+                    UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowSize = this.RestoreBounds.Size;
                 }
-                Properties.Settings.Default.MassCopyTableSplitHeight = this.splitContainer1.SplitterDistance;
+                UniversalPatcher.Properties.Settings.Default.MassCopyTableSplitHeight = this.splitContainer1.SplitterDistance;
             }
-            Properties.Settings.Default.MassCopyTableFilenameExtra = txtFnameExtension.Text;
+            UniversalPatcher.Properties.Settings.Default.MassCopyTableFilenameExtra = txtFnameExtension.Text;
         }
 
         private void btnOK_Click(object sender, EventArgs e)

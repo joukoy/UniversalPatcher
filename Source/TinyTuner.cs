@@ -241,6 +241,8 @@ namespace UniversalPatcher
                     int elementSize = (byte)(Convert.ToByte(row["ElementSize"]));
                     bool Signed = Convert.ToBoolean(row["AllowNegative"]);
                     td.DataType = ConvertToDataType(elementSize, Signed, false);
+                    td.Max = GetMaxValue(td.DataType);
+                    td.Min = GetMinValue(td.DataType);
                     string colHeaders = row["ColumnHeaders"].ToString();
                     td.ColumnHeaders = RemoveDuplicates(colHeaders);
                     //td.Floating = true;

@@ -49,7 +49,7 @@ namespace UniversalPatcher
             public MultiTableName(string fullName, int columnPos)
             {
                 RowName = "";
-                string[] separators = Properties.Settings.Default.MulitableChars.Split(' ');
+                string[] separators = UniversalPatcher.Properties.Settings.Default.MulitableChars.Split(' ');
                 string[] nParts = fullName.Split(separators, StringSplitOptions.RemoveEmptyEntries);
                 //string[] nParts = fullName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
                 TableName = nParts[0];
@@ -118,31 +118,72 @@ namespace UniversalPatcher
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
             dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            if (Properties.Settings.Default.TableEditorFont == null)
+            if (UniversalPatcher.Properties.Settings.Default.TableEditorFont == null)
                 dataFont = new Font("Consolas", 9);
             else
-                dataFont = Properties.Settings.Default.TableEditorFont;
+                dataFont = UniversalPatcher.Properties.Settings.Default.TableEditorFont;
 
             numTuneValue.Tag = numTuneValue.Value;
-            autoResizeToolStripMenuItem.Checked = Properties.Settings.Default.TableEditorAutoResize;
-            if (Properties.Settings.Default.TableEditorAutoResize)
+            autoResizeToolStripMenuItem.Checked = UniversalPatcher.Properties.Settings.Default.TableEditorAutoResize;
+            if (UniversalPatcher.Properties.Settings.Default.TableEditorAutoResize)
             {
                 AutoResize();
             }
-            else if (Properties.Settings.Default.MainWindowPersistence)
+            else if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
             {
-                if (Properties.Settings.Default.TableEditorWindowSize.Width > 0 || Properties.Settings.Default.TableEditorWindowSize.Height > 0)
+                if (UniversalPatcher.Properties.Settings.Default.TableEditorWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.TableEditorWindowSize.Height > 0)
                 {
-                    this.WindowState = Properties.Settings.Default.TableEditorWindowState;
+                    this.WindowState = UniversalPatcher.Properties.Settings.Default.TableEditorWindowState;
                     if (this.WindowState == FormWindowState.Minimized)
                     {
                         this.WindowState = FormWindowState.Normal;
                     }
-                    this.Location = Properties.Settings.Default.TableEditorWindowLocation;
-                    this.Size = Properties.Settings.Default.TableEditorWindowSize;
+                    this.Location = UniversalPatcher.Properties.Settings.Default.TableEditorWindowLocation;
+                    this.Size = UniversalPatcher.Properties.Settings.Default.TableEditorWindowSize;
                 }
             }
             disableTooltipsToolStripMenuItem.Checked = false;
+            rememberCompareSelectionToolStripMenuItem.Checked = UniversalPatcher.Properties.Settings.Default.TableEditorRememberCompare;
+            if (UniversalPatcher.Properties.Settings.Default.TableEditorRememberCompare)
+            {
+                switch(tuner.CompareSelection)
+                {
+                    case 0:
+                        radioOriginal.Checked = true;
+                        break;
+                    case 1:
+                        radioCompareFile.Checked = true;
+                        break;
+                    case 2:
+                        radioSideBySide.Checked = true;
+                        break;
+                    case 3:
+                        radioSideBySideText.Checked = true;
+                        break;
+                    case 4:
+                        radioCompareAll.Checked = true;
+                        break;
+                    case 5:
+                        radioDifference.Checked = true;
+                        break;
+                    case 6:
+                        radioDifference2.Checked = true;
+                        break;
+
+                }
+                switch (tuner.CompareType)
+                {
+                    case 0:
+                        radioAbsolute.Checked = true;
+                        break;
+                    case 1:
+                        radioMultiplier.Checked = true;
+                        break;
+                    case 2:
+                        radioPercent.Checked = true;
+                        break;
+                }
+            }
             dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
             dataGridView1.RowHeaderMouseClick += DataGridView1_RowHeaderMouseClick;
             dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
@@ -153,21 +194,21 @@ namespace UniversalPatcher
         {
             try
             {
-                if (Properties.Settings.Default.MainWindowPersistence)
+                if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
                 {
-                    Properties.Settings.Default.TableEditorWindowState = this.WindowState;
+                    UniversalPatcher.Properties.Settings.Default.TableEditorWindowState = this.WindowState;
                     if (this.WindowState == FormWindowState.Normal)
                     {
-                        Properties.Settings.Default.TableEditorWindowLocation = this.Location;
-                        Properties.Settings.Default.TableEditorWindowSize = this.Size;
+                        UniversalPatcher.Properties.Settings.Default.TableEditorWindowLocation = this.Location;
+                        UniversalPatcher.Properties.Settings.Default.TableEditorWindowSize = this.Size;
                     }
                     else
                     {
-                        Properties.Settings.Default.TableEditorWindowLocation = this.RestoreBounds.Location;
-                        Properties.Settings.Default.TableEditorWindowSize = this.RestoreBounds.Size;
+                        UniversalPatcher.Properties.Settings.Default.TableEditorWindowLocation = this.RestoreBounds.Location;
+                        UniversalPatcher.Properties.Settings.Default.TableEditorWindowSize = this.RestoreBounds.Size;
                     }
-                    Properties.Settings.Default.Save();
                 }
+                UniversalPatcher.Properties.Settings.Default.Save();
 
                 bool tableModified = false;
                 uint addr = compareFiles[0].tableBufferOffset;
@@ -518,7 +559,7 @@ namespace UniversalPatcher
                             }
                         }
                     }
-                    string[] separators = Properties.Settings.Default.MulitableChars.Split(' ');
+                    string[] separators = UniversalPatcher.Properties.Settings.Default.MulitableChars.Split(' ');
                     //if (td.TableName.Contains("[") || td.TableName.Contains("."))
                     if (separators.Any(td.TableName.Contains))
                     {
@@ -1854,9 +1895,12 @@ namespace UniversalPatcher
                         && dataGridView1.Rows[r].Cells[c].GetType() != typeof(DataGridViewComboBoxCell))
                     {
                         if (newValue > mathTd.Max)
-                            newValue = mathTd.Max;
+                            //  newValue = mathTd.Max;
+                            Logger("Waring: Value " + newValue.ToString() + " > Max value (" + mathTd.Max.ToString() + ")");
                         if (newValue < mathTd.Min)
-                            newValue = mathTd.Min;
+                            //newValue = mathTd.Min;
+                            Logger("Waring: Value " + newValue.ToString() + " < Max value (" + mathTd.Min.ToString() + ")");
+
                     }
                     //string mathStr = mathTd.SavingMath.ToLower();
                     //newValue = parser.Parse(mathStr, true);
@@ -1954,8 +1998,8 @@ namespace UniversalPatcher
 
         private void chkAutoResize_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.TableEditorAutoResize = autoResizeToolStripMenuItem.Checked;
-            Properties.Settings.Default.Save();
+            UniversalPatcher.Properties.Settings.Default.TableEditorAutoResize = autoResizeToolStripMenuItem.Checked;
+            UniversalPatcher.Properties.Settings.Default.Save();
             if (autoResizeToolStripMenuItem.Checked)
             {
                 AutoResize();
@@ -2166,8 +2210,8 @@ namespace UniversalPatcher
                 autoResizeToolStripMenuItem.Checked = false;
             else
                 autoResizeToolStripMenuItem.Checked = true;
-            Properties.Settings.Default.TableEditorAutoResize = autoResizeToolStripMenuItem.Checked;
-            Properties.Settings.Default.Save();
+            UniversalPatcher.Properties.Settings.Default.TableEditorAutoResize = autoResizeToolStripMenuItem.Checked;
+            UniversalPatcher.Properties.Settings.Default.Save();
             if (autoResizeToolStripMenuItem.Checked)
             {
                 AutoResize();
@@ -2317,6 +2361,7 @@ namespace UniversalPatcher
         {
             if (radioCompareFile.Checked)
             {
+                tuner.CompareSelection = 1;
                 showMode = ShowMode.compare;
                 SelectFile(radioCompareFile.Text);
                 dataGridView1.BackgroundColor = Color.Red;
@@ -2329,7 +2374,10 @@ namespace UniversalPatcher
         private void radioDifference_CheckedChanged(object sender, EventArgs e)
         {
             if (radioDifference.Checked)
+            {
+                tuner.CompareSelection = 5;
                 showMode = ShowMode.diff;
+            }
 
             if (radioDifference.Checked || radioDifference2.Checked)
             {
@@ -2359,6 +2407,7 @@ namespace UniversalPatcher
         {
             if (radioSideBySide.Checked)
             {
+                tuner.CompareSelection = 2;
                 showMode = ShowMode.sideBySide;
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
@@ -2374,6 +2423,7 @@ namespace UniversalPatcher
         {
             if (radioOriginal.Checked)
             {
+                tuner.CompareSelection = 0;
                 showMode = ShowMode.normal;
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Gray;
@@ -2423,8 +2473,8 @@ namespace UniversalPatcher
             if (fontDlg.ShowDialog() != DialogResult.Cancel)
             {
                 dataFont = fontDlg.Font;
-                Properties.Settings.Default.TableEditorFont = dataFont;
-                Properties.Settings.Default.Save();
+                UniversalPatcher.Properties.Settings.Default.TableEditorFont = dataFont;
+                UniversalPatcher.Properties.Settings.Default.Save();
             }
             fontDlg.Dispose();
             LoadTable();
@@ -2494,6 +2544,7 @@ namespace UniversalPatcher
         {
             if (radioSideBySideText.Checked)
             {
+                tuner.CompareSelection = 3;
                 showMode = ShowMode.sideBySideTxt;
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
@@ -2538,6 +2589,7 @@ namespace UniversalPatcher
         {
             if (radioCompareAll.Checked)
             {
+                tuner.CompareSelection = 4;
                 showMode = ShowMode.compareAll;
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
@@ -2603,6 +2655,7 @@ namespace UniversalPatcher
         {
             if (radioAbsolute.Checked)
             {
+                tuner.CompareType = 0;
                 disableSaving = false;
                 LoadTable();
             }
@@ -2612,6 +2665,7 @@ namespace UniversalPatcher
         {
             if (radioMultiplier.Checked)
             {
+                tuner.CompareType = 1;
                 numDecimals.Value = multiplierDecimals;
                 disableSaving = false;
                 LoadTable();
@@ -2626,6 +2680,7 @@ namespace UniversalPatcher
         {
             if (radioPercent.Checked)
             {
+                tuner.CompareType = 2;
                 //disableSaving = true;
                 LoadTable();
             }
@@ -2634,7 +2689,10 @@ namespace UniversalPatcher
         private void radioDifference2_CheckedChanged(object sender, EventArgs e)
         {
             if (radioDifference2.Checked)
+            {
+                tuner.CompareSelection = 6;
                 showMode = ShowMode.diff2;
+            }
 
             if (radioDifference.Checked || radioDifference2.Checked)
             {
@@ -2868,6 +2926,13 @@ namespace UniversalPatcher
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
 
+        }
+
+        private void rememberCompareSelectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rememberCompareSelectionToolStripMenuItem.Checked = !rememberCompareSelectionToolStripMenuItem.Checked;
+            UniversalPatcher.Properties.Settings.Default.TableEditorRememberCompare = rememberCompareSelectionToolStripMenuItem.Checked;
+            UniversalPatcher.Properties.Settings.Default.Save();
         }
     }
 }

@@ -540,3 +540,9 @@
 - Dtcsearch: Bug fix to code decoding
 - XML files & patches updated, support for new platforms
 
+0.21.9
+- TinyTuner: Use hardlimits as Min/max values instead of 0
+- TableEditor: Use Min/Max only as warning
+- Tuner: Update tablelist automatically after editing table config
+- TableEditor: Remember compare selection, if enabled in Settings
+

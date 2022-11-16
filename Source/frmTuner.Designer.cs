@@ -65,6 +65,7 @@ namespace UniversalPatcher
             this.clearPreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.appendToPreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.appendFocusToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mirrorSegmentsFromCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.currentFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -201,7 +202,6 @@ namespace UniversalPatcher
             this.numExtraOffset = new System.Windows.Forms.NumericUpDown();
             this.btnExtraOffsetPrev = new System.Windows.Forms.Button();
             this.btnExtraOffsetNext = new System.Windows.Forms.Button();
-            this.mirrorSegmentsFromCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -508,6 +508,13 @@ namespace UniversalPatcher
             this.appendFocusToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.appendFocusToolStripMenuItem.Text = "Append + focus";
             this.appendFocusToolStripMenuItem.Click += new System.EventHandler(this.appendFocusToolStripMenuItem_Click);
+            // 
+            // mirrorSegmentsFromCompareToolStripMenuItem
+            // 
+            this.mirrorSegmentsFromCompareToolStripMenuItem.Name = "mirrorSegmentsFromCompareToolStripMenuItem";
+            this.mirrorSegmentsFromCompareToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.mirrorSegmentsFromCompareToolStripMenuItem.Text = "Mirror segments from compare";
+            this.mirrorSegmentsFromCompareToolStripMenuItem.Click += new System.EventHandler(this.mirrorSegmentsFromCompareToolStripMenuItem_Click);
             // 
             // currentFileToolStripMenuItem
             // 
@@ -1503,7 +1510,8 @@ namespace UniversalPatcher
             // 
             this.contextMenuStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
+            this.contextMenuStrip2.Size = new System.Drawing.Size(181, 26);
+            this.contextMenuStrip2.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip2_Opening);
             // 
             // timerFilter
             // 
@@ -1813,13 +1821,6 @@ namespace UniversalPatcher
             this.btnExtraOffsetNext.Text = "->";
             this.btnExtraOffsetNext.UseVisualStyleBackColor = true;
             this.btnExtraOffsetNext.Click += new System.EventHandler(this.btnExtraOffsetNext_Click);
-            // 
-            // mirrorSegmentsFromCompareToolStripMenuItem
-            // 
-            this.mirrorSegmentsFromCompareToolStripMenuItem.Name = "mirrorSegmentsFromCompareToolStripMenuItem";
-            this.mirrorSegmentsFromCompareToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
-            this.mirrorSegmentsFromCompareToolStripMenuItem.Text = "Mirror segments from compare";
-            this.mirrorSegmentsFromCompareToolStripMenuItem.Click += new System.EventHandler(this.mirrorSegmentsFromCompareToolStripMenuItem_Click);
             // 
             // FrmTuner
             // 

@@ -41,6 +41,7 @@ namespace UniversalPatcher
         private bool columnsModified = false;
         BindingSource bindingsource = new BindingSource();
         BindingSource categoryBindingSource = new BindingSource();
+        //private BindingList<TableData> bindingsource = new BindingList<TableData>();
         private BindingList<TableData> filteredTableDatas = new BindingList<TableData>();
         SortOrder strSortOrder = SortOrder.Ascending;
         private TableData lastSelectTd;        
@@ -58,41 +59,42 @@ namespace UniversalPatcher
         bool ExtraOffsetFirstTry = true;
         private frmTableVisDouble ftvd;
         public frmHistogram Histogram;
+        public int CompareSelection = 0;
+        public int CompareType = 0;
 
         private void frmTuner_Load(object sender, EventArgs e)
         {
-            uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
             selectedCompareBin = "";
             SetWorkingMode();
-            disableConfigAutoloadToolStripMenuItem.Checked = Properties.Settings.Default.disableTunerAutoloadSettings;
-            chkShowCategorySubfolder.Checked = Properties.Settings.Default.TableExplorerUseCategorySubfolder;
-            chkAutoMulti1d.Checked = Properties.Settings.Default.TunerAutomulti1d;
+            disableConfigAutoloadToolStripMenuItem.Checked = UniversalPatcher.Properties.Settings.Default.disableTunerAutoloadSettings;
+            chkShowCategorySubfolder.Checked = UniversalPatcher.Properties.Settings.Default.TableExplorerUseCategorySubfolder;
+            chkAutoMulti1d.Checked = UniversalPatcher.Properties.Settings.Default.TunerAutomulti1d;
 
-            radioTreeMode.Checked = Properties.Settings.Default.TunerTreeMode;
-            radioListMode.Checked = !Properties.Settings.Default.TunerTreeMode;
+            radioTreeMode.Checked = UniversalPatcher.Properties.Settings.Default.TunerTreeMode;
+            radioListMode.Checked = !UniversalPatcher.Properties.Settings.Default.TunerTreeMode;
             SelectDispMode();
 
             //LogReceivers.Add(txtResult);
 
-            if (Properties.Settings.Default.MainWindowPersistence)
+            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
             {
-                if (Properties.Settings.Default.TunerWindowSize.Width > 0 || Properties.Settings.Default.TunerWindowSize.Height > 0)
+                if (UniversalPatcher.Properties.Settings.Default.TunerWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.TunerWindowSize.Height > 0)
                 {
-                    this.WindowState = Properties.Settings.Default.TunerWindowState;
+                    this.WindowState = UniversalPatcher.Properties.Settings.Default.TunerWindowState;
                     if (this.WindowState == FormWindowState.Minimized)
                     {
                         this.WindowState = FormWindowState.Normal;
                     }
-                    this.Location = Properties.Settings.Default.TunerWindowLocation;
-                    this.Size = Properties.Settings.Default.TunerWindowSize;
+                    this.Location = UniversalPatcher.Properties.Settings.Default.TunerWindowLocation;
+                    this.Size = UniversalPatcher.Properties.Settings.Default.TunerWindowSize;
                 }
-                if (Properties.Settings.Default.TunerLogWindowSize.Width > 0 || Properties.Settings.Default.TunerLogWindowSize.Height > 0)
+                if (UniversalPatcher.Properties.Settings.Default.TunerLogWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.TunerLogWindowSize.Height > 0)
                 {
-                    this.splitContainer2.SplitterDistance = Properties.Settings.Default.TunerLogWindowSize.Width;
-                    this.splitContainer1.SplitterDistance = Properties.Settings.Default.TunerLogWindowSize.Height;
+                    this.splitContainer2.SplitterDistance = UniversalPatcher.Properties.Settings.Default.TunerLogWindowSize.Width;
+                    this.splitContainer1.SplitterDistance = UniversalPatcher.Properties.Settings.Default.TunerLogWindowSize.Height;
                 }
-                if (Properties.Settings.Default.TunerListModeTreeWidth > 0)
-                    splitContainerListMode.SplitterDistance = Properties.Settings.Default.TunerListModeTreeWidth;
+                if (UniversalPatcher.Properties.Settings.Default.TunerListModeTreeWidth > 0)
+                    splitContainerListMode.SplitterDistance = UniversalPatcher.Properties.Settings.Default.TunerListModeTreeWidth;
 
             }
 
@@ -114,7 +116,7 @@ namespace UniversalPatcher
                 menuItem.Click += new EventHandler(columnSelection_Click);
 
             }
-            string tunerCols = Properties.Settings.Default.TunerModeColumns;
+            string tunerCols = UniversalPatcher.Properties.Settings.Default.TunerModeColumns;
             if (!tunerCols.Contains("Address"))
                 tunerCols = tunerCols.Trim(',') + ",Address";
             string[] sortStrs = tunerCols.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -132,6 +134,9 @@ namespace UniversalPatcher
             labelTableName.Text = "";
             //lastSelectedId = -1;
             lastSelectTd = null;
+            filteredTableDatas = new BindingList<TableData>(PCM.tableDatas);
+            bindingsource = new BindingSource(typeof(BindingList<TableData>), null);
+            bindingsource.DataSource = filteredTableDatas;
             dataGridView1.DataSource = bindingsource;
             dataGridView1.AllowUserToAddRows = false;
             FilterTables();
@@ -203,26 +208,26 @@ namespace UniversalPatcher
 
         private void frmTuner_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (Properties.Settings.Default.MainWindowPersistence)
+            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
             {
-                Properties.Settings.Default.TunerWindowState = this.WindowState;
+                UniversalPatcher.Properties.Settings.Default.TunerWindowState = this.WindowState;
                 if (this.WindowState == FormWindowState.Normal)
                 {
-                    Properties.Settings.Default.TunerWindowLocation = this.Location;
-                    Properties.Settings.Default.TunerWindowSize = this.Size;
+                    UniversalPatcher.Properties.Settings.Default.TunerWindowLocation = this.Location;
+                    UniversalPatcher.Properties.Settings.Default.TunerWindowSize = this.Size;
                 }
                 else
                 {
-                    Properties.Settings.Default.TunerWindowLocation = this.RestoreBounds.Location;
-                    Properties.Settings.Default.TunerWindowSize = this.RestoreBounds.Size;
+                    UniversalPatcher.Properties.Settings.Default.TunerWindowLocation = this.RestoreBounds.Location;
+                    UniversalPatcher.Properties.Settings.Default.TunerWindowSize = this.RestoreBounds.Size;
                 }
                 Size logSize = new Size();
                 logSize.Width = this.splitContainer2.SplitterDistance;
                 logSize.Height = this.splitContainer1.SplitterDistance;
-                Properties.Settings.Default.TunerLogWindowSize = logSize;
-                Properties.Settings.Default.TunerListModeTreeWidth = splitContainerListMode.SplitterDistance;
+                UniversalPatcher.Properties.Settings.Default.TunerLogWindowSize = logSize;
+                UniversalPatcher.Properties.Settings.Default.TunerListModeTreeWidth = splitContainerListMode.SplitterDistance;
             }
-            Properties.Settings.Default.Save();
+            UniversalPatcher.Properties.Settings.Default.Save();
             if (PCM.BufModified())
             {
                 DialogResult res = MessageBox.Show("File modified.\n\rSave modifications before closing?", "Save changes?", MessageBoxButtons.YesNoCancel);
@@ -266,7 +271,6 @@ namespace UniversalPatcher
                     tinyTunerDBV6OnlyToolStripMenuItem.Enabled = true;
                 else
                     tinyTunerDBV6OnlyToolStripMenuItem.Enabled = false;
-                FilterTables();
                 foreach (ToolStripMenuItem mi in currentFileToolStripMenuItem.DropDownItems)
                     mi.Checked = false;
                 foreach (ToolStripMenuItem mi in findDifferencesToolStripMenuItem.DropDownItems)
@@ -306,7 +310,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (!Properties.Settings.Default.disableTunerAutoloadSettings)
+                if (!UniversalPatcher.Properties.Settings.Default.disableTunerAutoloadSettings)
                 {
                     newPCM.AutoLoadTunerConfig();
                     if (newPCM.tunerFile.Length == 0)
@@ -498,7 +502,7 @@ namespace UniversalPatcher
 
         public void RefreshFast()
         {
-            bindingsource.DataSource = filteredTableDatas;
+            //bindingsource = filteredTableDatas;
             dataGridView1.Update();
             dataGridView1.Refresh();
         }
@@ -581,17 +585,17 @@ namespace UniversalPatcher
         {
             try
             {
-                string[] tunerColumns = Properties.Settings.Default.TunerModeColumns.ToLower().Split(',');
-                string[] configColumns = Properties.Settings.Default.ConfigModeColumnOrder.ToLower().Split(',');
-                string[] configWidth = Properties.Settings.Default.ConfigModeColumnWidth.Split(',');
-                string[] tunerWidth = Properties.Settings.Default.TunerModeColumnWidth.Split(',');
-                Debug.WriteLine("Tuner order: " + Properties.Settings.Default.TunerModeColumns);
-                Debug.WriteLine("Config order: " + Properties.Settings.Default.ConfigModeColumnOrder);
+                string[] tunerColumns = UniversalPatcher.Properties.Settings.Default.TunerModeColumns.ToLower().Split(',');
+                string[] configColumns = UniversalPatcher.Properties.Settings.Default.ConfigModeColumnOrder.ToLower().Split(',');
+                string[] configWidth = UniversalPatcher.Properties.Settings.Default.ConfigModeColumnWidth.Split(',');
+                string[] tunerWidth = UniversalPatcher.Properties.Settings.Default.TunerModeColumnWidth.Split(',');
+                Debug.WriteLine("Tuner order: " + UniversalPatcher.Properties.Settings.Default.TunerModeColumns);
+                Debug.WriteLine("Config order: " + UniversalPatcher.Properties.Settings.Default.ConfigModeColumnOrder);
 
                 int invisibleIndex = tunerColumns.Length;
                 for (int c = 0; c < dataGridView1.Columns.Count && c < configWidth.Length; c++)
                 {
-                    if (Properties.Settings.Default.WorkingMode == 2) //advanced
+                    if (UniversalPatcher.Properties.Settings.Default.WorkingMode == 2) //advanced
                     {
                         dataGridView1.Columns[c].ReadOnly = false;
                         dataGridView1.Columns[c].Visible = true;
@@ -660,16 +664,16 @@ namespace UniversalPatcher
 
 
                 List<TableData> compareList = PCM.tableDatas;
-                if (!Properties.Settings.Default.TunerShowUnitsUndefined || !Properties.Settings.Default.TunerShowUnitsMetric || !Properties.Settings.Default.TunerShowUnitsImperial)
+                if (!UniversalPatcher.Properties.Settings.Default.TunerShowUnitsUndefined || !UniversalPatcher.Properties.Settings.Default.TunerShowUnitsMetric || !UniversalPatcher.Properties.Settings.Default.TunerShowUnitsImperial)
                 {
                     List<TableData> newTDList = new List<TableData>();
-                    if (Properties.Settings.Default.TunerShowUnitsUndefined)
+                    if (UniversalPatcher.Properties.Settings.Default.TunerShowUnitsUndefined)
                         foreach (TableData tmpTd in PCM.tableDatas.Where(x => x.DispUnits == DisplayUnits.Undefined))
                             newTDList.Add(tmpTd);
-                    if (Properties.Settings.Default.TunerShowUnitsImperial)
+                    if (UniversalPatcher.Properties.Settings.Default.TunerShowUnitsImperial)
                         foreach (TableData tmpTd in PCM.tableDatas.Where(x => x.DispUnits == DisplayUnits.Imperial))
                             newTDList.Add(tmpTd);
-                    if (Properties.Settings.Default.TunerShowUnitsMetric)
+                    if (UniversalPatcher.Properties.Settings.Default.TunerShowUnitsMetric)
                         foreach (TableData tmpTd in PCM.tableDatas.Where(x => x.DispUnits == DisplayUnits.Metric))
                             newTDList.Add(tmpTd);
                     compareList = newTDList;
@@ -941,7 +945,8 @@ namespace UniversalPatcher
                 }
 
                 filteredTableDatas = new BindingList<TableData>(results.ToList());
-                bindingsource.DataSource = filteredTableDatas;
+                dataGridView1.DataSource = filteredTableDatas;
+                //bindingsource = filteredTableDatas;
                 ReorderColumns();
                 txtDescription.Text = "";
                 FilterTree();
@@ -1136,7 +1141,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (Properties.Settings.Default.WorkingMode > 0 && dataGridView1.SelectedCells.Count > 0 && e.Button == MouseButtons.Right)
+                if (UniversalPatcher.Properties.Settings.Default.WorkingMode > 0 && dataGridView1.SelectedCells.Count > 0 && e.Button == MouseButtons.Right)
                 {
                     lastSelectTd = (TableData)dataGridView1.CurrentRow.DataBoundItem;
                     contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
@@ -1581,7 +1586,7 @@ namespace UniversalPatcher
                 strSortOrder = GetSortOrder(sortIndex);
                 FilterTables();
             }
-            else if (Properties.Settings.Default.WorkingMode != 2)
+            else if (UniversalPatcher.Properties.Settings.Default.WorkingMode != 2)
             {
                 contextMenuStrip2.Show(Cursor.Position.X, Cursor.Position.Y);
             }
@@ -1640,7 +1645,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (Properties.Settings.Default.WorkingMode != 2)
+                if (UniversalPatcher.Properties.Settings.Default.WorkingMode != 2)
                 {
                     e.Cancel = true;
                     return;
@@ -1937,13 +1942,13 @@ namespace UniversalPatcher
         private void tunerModeColumnsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             frmData frmd = new frmData();
-            frmd.txtData.Text = Properties.Settings.Default.TunerModeColumns;
+            frmd.txtData.Text = UniversalPatcher.Properties.Settings.Default.TunerModeColumns;
             frmd.Text = "Columns visible in tuner mode:";
             if (frmd.ShowDialog() == DialogResult.OK)
             {
-                Properties.Settings.Default.TunerModeColumns = frmd.txtData.Text;
+                UniversalPatcher.Properties.Settings.Default.TunerModeColumns = frmd.txtData.Text;
             }
-            Properties.Settings.Default.Save();
+            UniversalPatcher.Properties.Settings.Default.Save();
             frmd.Dispose();
             FilterTables();
         }
@@ -2171,19 +2176,19 @@ namespace UniversalPatcher
                 }
                 Debug.WriteLine("Display order: " + order.ToString());
                 Debug.WriteLine("Column width: " + columnWidth);
-                if (Properties.Settings.Default.WorkingMode == 2)
+                if (UniversalPatcher.Properties.Settings.Default.WorkingMode == 2)
                 {
                     //Advanced mode
-                    Properties.Settings.Default.ConfigModeColumnOrder = order.ToString().Trim(',');
-                    Properties.Settings.Default.ConfigModeColumnWidth = columnWidth.ToString().Trim(',');
+                    UniversalPatcher.Properties.Settings.Default.ConfigModeColumnOrder = order.ToString().Trim(',');
+                    UniversalPatcher.Properties.Settings.Default.ConfigModeColumnWidth = columnWidth.ToString().Trim(',');
                 }
                 else
                 {
                     //Tuner mode
-                    Properties.Settings.Default.TunerModeColumns = order.ToString().Trim(',');
-                    Properties.Settings.Default.TunerModeColumnWidth = columnWidth.ToString().Trim(',');
+                    UniversalPatcher.Properties.Settings.Default.TunerModeColumns = order.ToString().Trim(',');
+                    UniversalPatcher.Properties.Settings.Default.TunerModeColumnWidth = columnWidth.ToString().Trim(',');
                 }
-                Properties.Settings.Default.Save();
+                UniversalPatcher.Properties.Settings.Default.Save();
                 columnsModified = false;
             }
             catch (Exception ex)
@@ -2200,7 +2205,7 @@ namespace UniversalPatcher
 
         void Cms_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            string[] tunerModCols = Properties.Settings.Default.TunerModeColumns.Split(',');
+            string[] tunerModCols = UniversalPatcher.Properties.Settings.Default.TunerModeColumns.Split(',');
 
             //Mark checked all visible columns
             foreach (ToolStripMenuItem menuItem in contextMenuStrip2.Items)
@@ -2224,7 +2229,7 @@ namespace UniversalPatcher
             Debug.WriteLine(menuItem.Name);
             dataGridView1.Columns[menuItem.Name].Visible = menuItem.Checked;
             columnsModified = true;
-            if (Properties.Settings.Default.WorkingMode != 2)
+            if (UniversalPatcher.Properties.Settings.Default.WorkingMode != 2)
             {
                 dataGridView1.Update();
                 dataGridView1.Refresh();
@@ -2234,9 +2239,9 @@ namespace UniversalPatcher
 
         private void resetTunerModeColumnsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Properties.Settings.Default.TunerModeColumns = "id,TableName,Category,Units,Columns,Rows,TableDescription";
-            Properties.Settings.Default.TunerModeColumnWidth = "35,100,237,135,100,100,100,100,100,114,100,100,100,100,60,46,100,100,100,100,100,493,100,";
-            Properties.Settings.Default.Save();
+            UniversalPatcher.Properties.Settings.Default.TunerModeColumns = "id,TableName,Category,Units,Columns,Rows,TableDescription";
+            UniversalPatcher.Properties.Settings.Default.TunerModeColumnWidth = "35,100,237,135,100,100,100,100,100,114,100,100,100,100,60,46,100,100,100,100,100,493,100,";
+            UniversalPatcher.Properties.Settings.Default.Save();
             dataGridView1.Update();
             dataGridView1.Refresh();
             //FilterTables();
@@ -2694,6 +2699,8 @@ namespace UniversalPatcher
                 frmTdEditor fte = new frmTdEditor();
                 fte.td = newTd;
                 fte.LoadTd();
+                int c = dataGridView1.CurrentCell.ColumnIndex;
+                int r = dataGridView1.CurrentCell.RowIndex;
                 if (fte.ShowDialog() == DialogResult.OK)
                 {
                     for (int id = 0; id < PCM.tableDatas.Count; id++)
@@ -2701,9 +2708,9 @@ namespace UniversalPatcher
                         if (PCM.tableDatas[id].guid == lastSelectTd.guid)
                         {
                             PCM.tableDatas.Insert(id, fte.td);
-                            dataGridView1.Update();
-                            dataGridView1.Refresh();
-                            //FilterTables();
+                            FilterTables();
+                            dataGridView1.ClearSelection();
+                            dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[c];
                             break;
                         }
                     }
@@ -2729,6 +2736,8 @@ namespace UniversalPatcher
                 frmTdEditor fte = new frmTdEditor();
                 fte.td = newTd;
                 fte.LoadTd();
+                int c = dataGridView1.CurrentCell.ColumnIndex;
+                int r = dataGridView1.CurrentCell.RowIndex;
                 if (fte.ShowDialog() == DialogResult.OK)
                 {
                     lastSelectTd = fte.td;
@@ -2737,9 +2746,11 @@ namespace UniversalPatcher
                         if (PCM.tableDatas[id].guid == lastSelectTd.guid)
                         {
                             PCM.tableDatas[id] = fte.td;
-                            dataGridView1.Update();
-                            dataGridView1.Refresh();
-                            //FilterTables();
+                            //PCM.tableDatas.RemoveAt(id);
+                            //PCM.tableDatas.Insert(id,fte.td);
+                            FilterTables();
+                            dataGridView1.ClearSelection();
+                            dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[c];
                             break;
                         }
                     }
@@ -2871,8 +2882,8 @@ namespace UniversalPatcher
         {
             disableConfigAutoloadToolStripMenuItem.Checked = !disableConfigAutoloadToolStripMenuItem.Checked;
 
-            Properties.Settings.Default.disableTunerAutoloadSettings = disableConfigAutoloadToolStripMenuItem.Checked;
-            Properties.Settings.Default.Save();
+            UniversalPatcher.Properties.Settings.Default.disableTunerAutoloadSettings = disableConfigAutoloadToolStripMenuItem.Checked;
+            UniversalPatcher.Properties.Settings.Default.Save();
 
         }
 
@@ -3024,7 +3035,7 @@ namespace UniversalPatcher
         private void timerFilter_Tick(object sender, EventArgs e)
         {
             keyDelayCounter++;
-            if (keyDelayCounter > Properties.Settings.Default.keyPressWait100ms)
+            if (keyDelayCounter > UniversalPatcher.Properties.Settings.Default.keyPressWait100ms)
             {
                 timerFilter.Enabled = false;
                 keyDelayCounter = 0;
@@ -3292,7 +3303,7 @@ namespace UniversalPatcher
 
         private void SetWorkingMode()
         {
-            int workingMode = Properties.Settings.Default.WorkingMode;
+            int workingMode = UniversalPatcher.Properties.Settings.Default.WorkingMode;
             if (workingMode == 0)   //Tourist mode
             {
                 settingsToolStripMenuItem.Visible = false;
@@ -3482,7 +3493,7 @@ namespace UniversalPatcher
                 splitTree.Visible = false;
             splitContainerListMode.Visible = true;
             dataGridView1.Visible = true;
-            dataGridView1.DataSource = bindingsource;
+            dataGridView1.DataSource = filteredTableDatas;
             treeView1.Visible = true;
             if (treeView1.Nodes.Count == 0)
             {
@@ -3551,7 +3562,7 @@ namespace UniversalPatcher
                     treeView1.ContextMenuStrip = contextMenuStripPatch;
                     return;
                 }
-                dataGridView1.DataSource = bindingsource;
+                dataGridView1.DataSource = filteredTableDatas;
                 treeView1.ContextMenuStrip = contextMenuStripListTree;
                 FilterTables();
                 if (e.Node.Nodes.Count == 0 && e.Node.Name != "All" && e.Node.Parent != null)
@@ -3761,7 +3772,7 @@ namespace UniversalPatcher
 
         private void TabSettings_Leave(object sender, EventArgs e)
         {
-            Properties.Settings.Default.Save();
+            UniversalPatcher.Properties.Settings.Default.Save();
             SetIconSize();
         }
 
@@ -3799,29 +3810,29 @@ namespace UniversalPatcher
                 {
                     treeDimensions.ItemHeight = iconSize + 2;
                     treeDimensions.Indent = iconSize + 4;
-                    treeDimensions.Font = Properties.Settings.Default.TableExplorerFont;
+                    treeDimensions.Font = UniversalPatcher.Properties.Settings.Default.TableExplorerFont;
                 }
                 if (treeCategory != null)
                 {
                     treeCategory.ItemHeight = iconSize + 2;
                     treeCategory.Indent = iconSize + 4;
-                    treeCategory.Font = Properties.Settings.Default.TableExplorerFont;
+                    treeCategory.Font = UniversalPatcher.Properties.Settings.Default.TableExplorerFont;
                 }
                 if (treeSegments != null)
                 {
                     treeSegments.ItemHeight = iconSize + 2;
                     treeSegments.Indent = iconSize + 4;
-                    treeSegments.Font = Properties.Settings.Default.TableExplorerFont;
+                    treeSegments.Font = UniversalPatcher.Properties.Settings.Default.TableExplorerFont;
                 }
                 if (treeValueType != null)
                 {
                     treeValueType.ItemHeight = iconSize + 2;
                     treeValueType.Indent = iconSize + 4;
-                    treeValueType.Font = Properties.Settings.Default.TableExplorerFont;
+                    treeValueType.Font = UniversalPatcher.Properties.Settings.Default.TableExplorerFont;
                 }
                 treeView1.ItemHeight = iconSize + 2;
                 treeView1.Indent = iconSize + 4;
-                treeView1.Font = Properties.Settings.Default.TableExplorerFont;
+                treeView1.Font = UniversalPatcher.Properties.Settings.Default.TableExplorerFont;
             }
             catch (Exception ex)
             {
@@ -3921,7 +3932,7 @@ namespace UniversalPatcher
                                 break;
                         }
 
-                        if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
+                        if (!UniversalPatcher.Properties.Settings.Default.TableExplorerUseCategorySubfolder)
                         {
                             treeDimensions.Nodes[nodeKey].Nodes.Add(tnChild);
                         }
@@ -4023,7 +4034,7 @@ namespace UniversalPatcher
                         else
                             nodeKey = "number";
 
-                        if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
+                        if (!UniversalPatcher.Properties.Settings.Default.TableExplorerUseCategorySubfolder)
                         {
                             treeValueType.Nodes[nodeKey].Nodes.Add(tnChild);
                         }
@@ -4261,7 +4272,7 @@ namespace UniversalPatcher
                         int seg = PCM.GetSegmentNumber(filteredTableDatas[i].addrInt);
                         if (seg > -1)
                         {
-                            if (!Properties.Settings.Default.TableExplorerUseCategorySubfolder)
+                            if (!UniversalPatcher.Properties.Settings.Default.TableExplorerUseCategorySubfolder)
                             {
                                 treeSegments.Nodes[seg].Nodes.Add(tnChild);
                             }
@@ -4336,8 +4347,8 @@ namespace UniversalPatcher
                     SelectTreemode();
                 else
                     SelectListMode();
-                Properties.Settings.Default.TunerTreeMode = radioTreeMode.Checked;
-                Properties.Settings.Default.Save();
+                UniversalPatcher.Properties.Settings.Default.TunerTreeMode = radioTreeMode.Checked;
+                UniversalPatcher.Properties.Settings.Default.Save();
                 FilterTables();
             }
             catch (Exception ex)
@@ -4362,8 +4373,8 @@ namespace UniversalPatcher
 
         private void chkShowCategorySubfolder_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.TableExplorerUseCategorySubfolder = chkShowCategorySubfolder.Checked;
-            Properties.Settings.Default.Save();
+            UniversalPatcher.Properties.Settings.Default.TableExplorerUseCategorySubfolder = chkShowCategorySubfolder.Checked;
+            UniversalPatcher.Properties.Settings.Default.Save();
             FilterTree();
         }
 
@@ -4375,7 +4386,7 @@ namespace UniversalPatcher
 
         private void chkAutoMulti1d_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.TunerAutomulti1d = chkAutoMulti1d.Checked;
+            UniversalPatcher.Properties.Settings.Default.TunerAutomulti1d = chkAutoMulti1d.Checked;
         }
 
         private void SelectDiffFile(bool hexMode)
@@ -4565,7 +4576,7 @@ namespace UniversalPatcher
 
                 frmImportFile fif = new frmImportFile();
                 fif.ImportSGM(fileName);
-                if (fif.ShowDialog() == DialogResult.OK && Properties.Settings.Default.AutomaticOpenImportedFile)
+                if (fif.ShowDialog() == DialogResult.OK && UniversalPatcher.Properties.Settings.Default.AutomaticOpenImportedFile)
                 {
                     List<string> fList = new List<string>();
                     fList.Add(fif.outFileName);
@@ -4638,7 +4649,7 @@ namespace UniversalPatcher
                 Logger("Saving to file: " + fileName, false);
                 WriteBinToFile(fileName, binbuf);
                 Logger(" [OK]");
-                if (Properties.Settings.Default.AutomaticOpenImportedFile)
+                if (UniversalPatcher.Properties.Settings.Default.AutomaticOpenImportedFile)
                 {
                     List<string> fList = new List<string>();
                     fList.Add(fileName);
@@ -4662,7 +4673,7 @@ namespace UniversalPatcher
                 Logger("Importing file: " + fileName);
                 frmImportFile fif = new frmImportFile();
                 fif.ImportIntel(fileName);
-                if (fif.ShowDialog() == DialogResult.OK && Properties.Settings.Default.AutomaticOpenImportedFile)
+                if (fif.ShowDialog() == DialogResult.OK && UniversalPatcher.Properties.Settings.Default.AutomaticOpenImportedFile)
                 {
                     List<string> fList = new List<string>();
                     fList.Add(fif.outFileName);
@@ -4691,7 +4702,7 @@ namespace UniversalPatcher
 
                 frmImportFile fif = new frmImportFile();
                 fif.ImportMotorola(fileName);
-                if (fif.ShowDialog() == DialogResult.OK && Properties.Settings.Default.AutomaticOpenImportedFile)
+                if (fif.ShowDialog() == DialogResult.OK && UniversalPatcher.Properties.Settings.Default.AutomaticOpenImportedFile)
                 {
                     List<string> fList = new List<string>();
                     fList.Add(fif.outFileName);
@@ -4731,6 +4742,8 @@ namespace UniversalPatcher
                 frmTdEditor fte = new frmTdEditor();
                 fte.td = newTd;
                 fte.LoadTd();
+                int c = dataGridView1.CurrentCell.ColumnIndex;
+                int r = dataGridView1.CurrentCell.RowIndex;
                 if (fte.ShowDialog() == DialogResult.OK)
                 {
                     lastSelectTd = fte.td;
@@ -4740,6 +4753,8 @@ namespace UniversalPatcher
                         {
                             PCM.tableDatas[id] = fte.td;
                             FilterTables();
+                            dataGridView1.ClearSelection();
+                            dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[c];
                             break;
                         }
                     }
@@ -4786,6 +4801,8 @@ namespace UniversalPatcher
                 frmTdEditor fte = new frmTdEditor();
                 fte.td = newTd;
                 fte.LoadTd();
+                int c = dataGridView1.CurrentCell.ColumnIndex;
+                int r = dataGridView1.CurrentCell.RowIndex;
                 if (fte.ShowDialog() == DialogResult.OK)
                 {
                     for (int id = 0; id < PCM.tableDatas.Count; id++)
@@ -4794,6 +4811,8 @@ namespace UniversalPatcher
                         {
                             PCM.tableDatas[id] = fte.td;
                             FilterTables();
+                            dataGridView1.ClearSelection();
+                            dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[c];
                             break;
                         }
                     }
@@ -4865,22 +4884,22 @@ namespace UniversalPatcher
 
         private void touristToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Properties.Settings.Default.WorkingMode = 0;
-            Properties.Settings.Default.Save();
+            UniversalPatcher.Properties.Settings.Default.WorkingMode = 0;
+            UniversalPatcher.Properties.Settings.Default.Save();
             SetWorkingMode();
         }
 
         private void basicToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Properties.Settings.Default.WorkingMode = 1;
-            Properties.Settings.Default.Save();
+            UniversalPatcher.Properties.Settings.Default.WorkingMode = 1;
+            UniversalPatcher.Properties.Settings.Default.Save();
             SetWorkingMode();
         }
 
         private void advancedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Properties.Settings.Default.WorkingMode = 2;
-            Properties.Settings.Default.Save();
+            UniversalPatcher.Properties.Settings.Default.WorkingMode = 2;
+            UniversalPatcher.Properties.Settings.Default.Save();
             SetWorkingMode();
         }
 
@@ -5319,10 +5338,14 @@ namespace UniversalPatcher
                 frmTdEditor fte = new frmTdEditor();
                 fte.td = newTd;
                 fte.LoadTd();
+                int c = dataGridView1.CurrentCell.ColumnIndex;
+                int r = dataGridView1.CurrentCell.RowIndex;
                 if (fte.ShowDialog() == DialogResult.OK)
                 {
                     PCM.tableDatas.Add(fte.td);
                     FilterTables();
+                    dataGridView1.ClearSelection();
+                    dataGridView1.CurrentCell = dataGridView1.Rows[r].Cells[c];
                 }
                 fte.Dispose();
             }
@@ -5381,6 +5404,11 @@ namespace UniversalPatcher
         {
             mirrorSegmentsFromCompareToolStripMenuItem.Checked = !mirrorSegmentsFromCompareToolStripMenuItem.Checked;
             FilterTables();
+        }
+
+        private void contextMenuStrip2_Opening(object sender, CancelEventArgs e)
+        {
+
         }
     }
 }

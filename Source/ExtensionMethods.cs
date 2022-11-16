@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using static Upatcher;
 
 namespace UniversalPatcher
 {
@@ -115,10 +116,10 @@ namespace UniversalPatcher
             {
                 rtb.Font = fontDlg.Font;
                 if (rtb.Name == "txtResult")
-                    Properties.Settings.Default.PatcherLogFont = fontDlg.Font;
+                    UniversalPatcher.Properties.Settings.Default.PatcherLogFont = fontDlg.Font;
                 else
-                    Properties.Settings.Default.DebugFont = fontDlg.Font;
-                Properties.Settings.Default.Save();
+                    UniversalPatcher.Properties.Settings.Default.DebugFont = fontDlg.Font;
+                UniversalPatcher.Properties.Settings.Default.Save();
             }
             fontDlg.Dispose();
         }

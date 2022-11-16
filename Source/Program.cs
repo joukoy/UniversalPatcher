@@ -22,25 +22,7 @@ namespace UniversalPatcher
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-                if (args.Length > 0)
-                {
-                    if (args[0] == "-") ;
-                        //Remember previous
-                    else if (args[0].ToLower().Contains("tourist"))
-                        Properties.Settings.Default.WorkingMode = 0;
-                    else if (args[0].ToLower().Contains("basic"))
-                        Properties.Settings.Default.WorkingMode = 1;
-                    else if (args[0].ToLower().Contains("advanced"))
-                        Properties.Settings.Default.WorkingMode = 2;
-                    else
-                    {
-                        throw new Exception("Usage: " + Path.GetFileName(Application.ExecutablePath) + " [tourist | basic | advanced] [launcher | tuner]");
-                    }
-                    Properties.Settings.Default.Save();
-                }
-
-                Upatcher.StartupSettings();
-
+                Upatcher.StartupSettings(args);
 
                 if (args.Length > 1)
                 {

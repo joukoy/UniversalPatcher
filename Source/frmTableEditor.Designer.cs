@@ -83,6 +83,7 @@ namespace UniversalPatcher
             this.radioMultiplier = new System.Windows.Forms.RadioButton();
             this.radioAbsolute = new System.Windows.Forms.RadioButton();
             this.chkRawHex = new System.Windows.Forms.CheckBox();
+            this.rememberCompareSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -152,7 +153,7 @@ namespace UniversalPatcher
             this.copyFromCompareToolStripMenuItem,
             this.copyTableFromCompareToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 202);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 180);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // cutToolStripMenuItem
@@ -271,7 +272,8 @@ namespace UniversalPatcher
             this.swapXyToolStripMenuItem,
             this.showRawHEXValuesToolStripMenuItem,
             this.disableTooltipsToolStripMenuItem,
-            this.dataFontToolStripMenuItem});
+            this.dataFontToolStripMenuItem,
+            this.rememberCompareSelectionToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "Settings";
@@ -279,35 +281,35 @@ namespace UniversalPatcher
             // autoResizeToolStripMenuItem
             // 
             this.autoResizeToolStripMenuItem.Name = "autoResizeToolStripMenuItem";
-            this.autoResizeToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.autoResizeToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.autoResizeToolStripMenuItem.Text = "Auto Resize";
             this.autoResizeToolStripMenuItem.Click += new System.EventHandler(this.autoResizeToolStripMenuItem_Click);
             // 
             // swapXyToolStripMenuItem
             // 
             this.swapXyToolStripMenuItem.Name = "swapXyToolStripMenuItem";
-            this.swapXyToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.swapXyToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.swapXyToolStripMenuItem.Text = "Swap x/y";
             this.swapXyToolStripMenuItem.Click += new System.EventHandler(this.swapXyToolStripMenuItem_Click);
             // 
             // showRawHEXValuesToolStripMenuItem
             // 
             this.showRawHEXValuesToolStripMenuItem.Name = "showRawHEXValuesToolStripMenuItem";
-            this.showRawHEXValuesToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.showRawHEXValuesToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.showRawHEXValuesToolStripMenuItem.Text = "Show Raw HEX values";
             this.showRawHEXValuesToolStripMenuItem.Click += new System.EventHandler(this.showRawHEXValuesToolStripMenuItem_Click);
             // 
             // disableTooltipsToolStripMenuItem
             // 
             this.disableTooltipsToolStripMenuItem.Name = "disableTooltipsToolStripMenuItem";
-            this.disableTooltipsToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.disableTooltipsToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.disableTooltipsToolStripMenuItem.Text = "Disable Tooltips";
             this.disableTooltipsToolStripMenuItem.Click += new System.EventHandler(this.disableTooltipsToolStripMenuItem_Click);
             // 
             // dataFontToolStripMenuItem
             // 
             this.dataFontToolStripMenuItem.Name = "dataFontToolStripMenuItem";
-            this.dataFontToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.dataFontToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             this.dataFontToolStripMenuItem.Text = "Data font...";
             this.dataFontToolStripMenuItem.Click += new System.EventHandler(this.dataFontToolStripMenuItem_Click);
             // 
@@ -324,21 +326,21 @@ namespace UniversalPatcher
             // showGraphicToolStripMenuItem
             // 
             this.showGraphicToolStripMenuItem.Name = "showGraphicToolStripMenuItem";
-            this.showGraphicToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showGraphicToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.showGraphicToolStripMenuItem.Text = "Show graphic";
             this.showGraphicToolStripMenuItem.Click += new System.EventHandler(this.showGraphicToolStripMenuItem_Click);
             // 
             // showTableVisualizationToolStripMenuItem
             // 
             this.showTableVisualizationToolStripMenuItem.Name = "showTableVisualizationToolStripMenuItem";
-            this.showTableVisualizationToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showTableVisualizationToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.showTableVisualizationToolStripMenuItem.Text = "Table visualizer";
             this.showTableVisualizationToolStripMenuItem.Click += new System.EventHandler(this.showTableVisualizationToolStripMenuItem_Click);
             // 
             // offsetVisualizerToolStripMenuItem
             // 
             this.offsetVisualizerToolStripMenuItem.Name = "offsetVisualizerToolStripMenuItem";
-            this.offsetVisualizerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.offsetVisualizerToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.offsetVisualizerToolStripMenuItem.Text = "Offset visualizer";
             this.offsetVisualizerToolStripMenuItem.Click += new System.EventHandler(this.offsetVisualizerToolStripMenuItem_Click);
             // 
@@ -615,6 +617,13 @@ namespace UniversalPatcher
             this.chkRawHex.UseVisualStyleBackColor = true;
             this.chkRawHex.CheckedChanged += new System.EventHandler(this.chkRawHex_CheckedChanged);
             // 
+            // rememberCompareSelectionToolStripMenuItem
+            // 
+            this.rememberCompareSelectionToolStripMenuItem.Name = "rememberCompareSelectionToolStripMenuItem";
+            this.rememberCompareSelectionToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.rememberCompareSelectionToolStripMenuItem.Text = "Remember compare selection";
+            this.rememberCompareSelectionToolStripMenuItem.Click += new System.EventHandler(this.rememberCompareSelectionToolStripMenuItem_Click);
+            // 
             // frmTableEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -710,5 +719,6 @@ namespace UniversalPatcher
         private ToolStripMenuItem showTableVisualizationToolStripMenuItem;
         private ToolStripMenuItem showHistogramToolStripMenuItem;
         private ToolStripMenuItem offsetVisualizerToolStripMenuItem;
+        private ToolStripMenuItem rememberCompareSelectionToolStripMenuItem;
     }
 }

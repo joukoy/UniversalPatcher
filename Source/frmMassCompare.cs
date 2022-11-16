@@ -36,41 +36,41 @@ namespace UniversalPatcher
         private List<DgvRow> tableDgvRows = new List<DgvRow>();
         private void frmMassCompare_Load(object sender, EventArgs e)
         {
-            if (Properties.Settings.Default.MainWindowPersistence)
+            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
             {
-                if (Properties.Settings.Default.MassCompareWindowSize.Width > 0 || Properties.Settings.Default.MassCompareWindowSize.Height > 0)
+                if (UniversalPatcher.Properties.Settings.Default.MassCompareWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.MassCompareWindowSize.Height > 0)
                 {
-                    this.WindowState = Properties.Settings.Default.MassCompareWindowState;
+                    this.WindowState = UniversalPatcher.Properties.Settings.Default.MassCompareWindowState;
                     if (this.WindowState == FormWindowState.Minimized)
                     {
                         this.WindowState = FormWindowState.Normal;
                     }
-                    this.Location = Properties.Settings.Default.MassCompareWindowLocation;
-                    this.Size = Properties.Settings.Default.MassCompareWindowSize;
+                    this.Location = UniversalPatcher.Properties.Settings.Default.MassCompareWindowLocation;
+                    this.Size = UniversalPatcher.Properties.Settings.Default.MassCompareWindowSize;
                 }
-                if (Properties.Settings.Default.MassCompareSplitWidth > 0)
-                    splitContainer1.SplitterDistance = Properties.Settings.Default.MassCompareSplitWidth;
+                if (UniversalPatcher.Properties.Settings.Default.MassCompareSplitWidth > 0)
+                    splitContainer1.SplitterDistance = UniversalPatcher.Properties.Settings.Default.MassCompareSplitWidth;
             }
 
             SetupDataGrid();
         }
         private void FrmMassCompare_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
         {
-            if (Properties.Settings.Default.MainWindowPersistence)
+            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
             {
-                Properties.Settings.Default.MassCompareWindowState = this.WindowState;
+                UniversalPatcher.Properties.Settings.Default.MassCompareWindowState = this.WindowState;
                 if (this.WindowState == FormWindowState.Normal)
                 {
-                    Properties.Settings.Default.MassCompareWindowLocation = this.Location;
-                    Properties.Settings.Default.MassCompareWindowSize = this.Size;
+                    UniversalPatcher.Properties.Settings.Default.MassCompareWindowLocation = this.Location;
+                    UniversalPatcher.Properties.Settings.Default.MassCompareWindowSize = this.Size;
                 }
                 else
                 {
-                    Properties.Settings.Default.MassCompareWindowLocation = this.RestoreBounds.Location;
-                    Properties.Settings.Default.MassCompareWindowSize = this.RestoreBounds.Size;
+                    UniversalPatcher.Properties.Settings.Default.MassCompareWindowLocation = this.RestoreBounds.Location;
+                    UniversalPatcher.Properties.Settings.Default.MassCompareWindowSize = this.RestoreBounds.Size;
                 }
                 if (!compareAll)
-                    Properties.Settings.Default.MassCompareSplitWidth = splitContainer1.SplitterDistance;
+                    UniversalPatcher.Properties.Settings.Default.MassCompareSplitWidth = splitContainer1.SplitterDistance;
             }
 
         }
@@ -278,7 +278,7 @@ namespace UniversalPatcher
 
         private void LoadConfigforPCM(PcmFile cmpPCM)
         {
-            if (!Properties.Settings.Default.disableTunerAutoloadSettings)
+            if (!UniversalPatcher.Properties.Settings.Default.disableTunerAutoloadSettings)
             {
                 cmpPCM.AutoLoadTunerConfig();
                 if (cmpPCM.tunerFile.Length > 0)

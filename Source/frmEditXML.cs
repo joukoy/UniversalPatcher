@@ -44,17 +44,17 @@ namespace UniversalPatcher
 
         private void frmEditXML_Load(object sender, EventArgs e)
         {
-            if (Properties.Settings.Default.MainWindowPersistence)
+            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
             {
-                if (Properties.Settings.Default.EditXMLWindowSize.Width > 0 || Properties.Settings.Default.EditXMLWindowSize.Height > 0)
+                if (UniversalPatcher.Properties.Settings.Default.EditXMLWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.EditXMLWindowSize.Height > 0)
                 {
-                    this.WindowState = Properties.Settings.Default.EditXMLWindowState;
+                    this.WindowState = UniversalPatcher.Properties.Settings.Default.EditXMLWindowState;
                     if (this.WindowState == FormWindowState.Minimized)
                     {
                         this.WindowState = FormWindowState.Normal;
                     }
-                    this.Location = Properties.Settings.Default.EditXMLWindowLocation;
-                    this.Size = Properties.Settings.Default.EditXMLWindowSize;
+                    this.Location = UniversalPatcher.Properties.Settings.Default.EditXMLWindowLocation;
+                    this.Size = UniversalPatcher.Properties.Settings.Default.EditXMLWindowSize;
                 }
             }
             dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
@@ -76,20 +76,20 @@ namespace UniversalPatcher
 
         private void frmEditXML_FormClosing(object sender, EventArgs e)
         {
-            if (Properties.Settings.Default.MainWindowPersistence)
+            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
             {
-                Properties.Settings.Default.EditXMLWindowState = this.WindowState;
+                UniversalPatcher.Properties.Settings.Default.EditXMLWindowState = this.WindowState;
                 if (this.WindowState == FormWindowState.Normal)
                 {
-                    Properties.Settings.Default.EditXMLWindowLocation = this.Location;
-                    Properties.Settings.Default.EditXMLWindowSize = this.Size;
+                    UniversalPatcher.Properties.Settings.Default.EditXMLWindowLocation = this.Location;
+                    UniversalPatcher.Properties.Settings.Default.EditXMLWindowSize = this.Size;
                 }
                 else
                 {
-                    Properties.Settings.Default.EditXMLWindowLocation = this.RestoreBounds.Location;
-                    Properties.Settings.Default.EditXMLWindowSize = this.RestoreBounds.Size;
+                    UniversalPatcher.Properties.Settings.Default.EditXMLWindowLocation = this.RestoreBounds.Location;
+                    UniversalPatcher.Properties.Settings.Default.EditXMLWindowSize = this.RestoreBounds.Size;
                 }
-                Properties.Settings.Default.Save();
+                UniversalPatcher.Properties.Settings.Default.Save();
             }
         }
 

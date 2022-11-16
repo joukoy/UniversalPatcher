@@ -199,7 +199,7 @@ namespace UniversalPatcher
             try
             {
                 Logger("Writing to logfile: " + path);
-                logseparator = Properties.Settings.Default.LoggerLogSeparator;
+                logseparator = UniversalPatcher.Properties.Settings.Default.LoggerLogSeparator;
                 LogFileQueue.Clear();
                 if (logwriter != null && logwriter.BaseStream != null)
                 {
@@ -259,7 +259,7 @@ namespace UniversalPatcher
                 if (logwriter != null && writelog)
                 {
                     string CultureDecim = Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-                    string Decim = Properties.Settings.Default.LoggerDecimalSeparator;
+                    string Decim = UniversalPatcher.Properties.Settings.Default.LoggerDecimalSeparator;
                     StringBuilder sb = new StringBuilder(timestamp + logseparator + DateTime.Now.Subtract(LogStartTime).ToString() + logseparator);
                     for (int c = 0; c < logvalues.Length; c++)
                     {
@@ -317,7 +317,7 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    string tStamp = new DateTime((long)ld.SysTimeStamp).ToString(Properties.Settings.Default.LoggerTimestampFormat);
+                    string tStamp = new DateTime((long)ld.SysTimeStamp).ToString(UniversalPatcher.Properties.Settings.Default.LoggerTimestampFormat);
                     //tStamp += " [" + ld.TimeStamp.ToString() + "]";
                     WriteLog(slothandler.CalculatePidValues(ld.Values), tStamp );
                 }
@@ -337,8 +337,8 @@ namespace UniversalPatcher
                 System.IO.StreamReader file = new System.IO.StreamReader(FileName);
                 PidProfile = (List<PidConfig>)reader.Deserialize(file);
                 file.Close();
-                Properties.Settings.Default.LoggerLastProfile = FileName;
-                Properties.Settings.Default.Save();
+                UniversalPatcher.Properties.Settings.Default.LoggerLastProfile = FileName;
+                UniversalPatcher.Properties.Settings.Default.Save();
             }
             catch (Exception ex)
             {
@@ -359,7 +359,7 @@ namespace UniversalPatcher
                 StreamReader sr = new StreamReader(FileName);
                 string hdrLine = sr.ReadLine();
                 sr.Close();
-                string[] hdrArray = hdrLine.Split(new string[] { Properties.Settings.Default.LoggerLogSeparator }, StringSplitOptions.None);
+                string[] hdrArray = hdrLine.Split(new string[] { UniversalPatcher.Properties.Settings.Default.LoggerLogSeparator }, StringSplitOptions.None);
                 for (int i = 0; i < hdrArray.Length; i++)
                 {
                     if (hdrArray[i].ToLower().Contains("time"))
@@ -405,8 +405,8 @@ namespace UniversalPatcher
                     writer.Serialize(stream, PidProfile);
                     stream.Close();
                 }
-                Properties.Settings.Default.LoggerLastProfile = FileName;
-                Properties.Settings.Default.Save();
+                UniversalPatcher.Properties.Settings.Default.LoggerLastProfile = FileName;
+                UniversalPatcher.Properties.Settings.Default.Save();
             }
             catch (Exception ex)
             {
@@ -1446,7 +1446,7 @@ namespace UniversalPatcher
                 string logLine = sr.ReadLine();
                 int tStamps = LoadProfileFromCsv(LogFile);
                 int elapsedIndex = -1;
-                string[] hdrArray = logLine.Split(new string[] { Properties.Settings.Default.LoggerLogSeparator }, StringSplitOptions.None);
+                string[] hdrArray = logLine.Split(new string[] { UniversalPatcher.Properties.Settings.Default.LoggerLogSeparator }, StringSplitOptions.None);
                 for (int x = 0; x < hdrArray.Length; x++)
                 {
                     if (hdrArray[x].ToLower().Contains("elapsed time"))
@@ -1459,7 +1459,7 @@ namespace UniversalPatcher
                 int row = 0;
                 while ((logLine = sr.ReadLine()) != null)
                 {
-                    string[] lParts = logLine.Split(new string[] { Properties.Settings.Default.LoggerLogSeparator }, StringSplitOptions.None);
+                    string[] lParts = logLine.Split(new string[] { UniversalPatcher.Properties.Settings.Default.LoggerLogSeparator }, StringSplitOptions.None);
                     if (row < 2 && lParts.Length != hdrArray.Length)
                     {
                         throw new Exception(Environment.NewLine + "Column count don't match header. Check Log separator!");

@@ -21,35 +21,35 @@ namespace UniversalPatcher
         public TableData td;
         private void frmTdEditor_Load(object sender, EventArgs e)
         {
-            if (Properties.Settings.Default.MainWindowPersistence)
+            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
             {
-                if (Properties.Settings.Default.frmTdWindowSize.Width > 0 || Properties.Settings.Default.frmTdWindowSize.Height > 0)
+                if (UniversalPatcher.Properties.Settings.Default.frmTdWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.frmTdWindowSize.Height > 0)
                 {
-                    this.WindowState = Properties.Settings.Default.frmTdWindowState;
+                    this.WindowState = UniversalPatcher.Properties.Settings.Default.frmTdWindowState;
                     if (this.WindowState == FormWindowState.Minimized)
                     {
                         this.WindowState = FormWindowState.Normal;
                     }
-                    this.Location = Properties.Settings.Default.frmTdWindowLocaction;
-                    this.Size = Properties.Settings.Default.frmTdWindowSize;
+                    this.Location = UniversalPatcher.Properties.Settings.Default.frmTdWindowLocaction;
+                    this.Size = UniversalPatcher.Properties.Settings.Default.frmTdWindowSize;
                 }
             }
             this.ResizeEnd += FrmTdEditor_ResizeEnd;
         }
         private void FrmTdEditor_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
         {
-            if (Properties.Settings.Default.MainWindowPersistence)
+            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
             {
-                Properties.Settings.Default.frmTdWindowState = this.WindowState;
+                UniversalPatcher.Properties.Settings.Default.frmTdWindowState = this.WindowState;
                 if (this.WindowState == FormWindowState.Normal)
                 {
-                    Properties.Settings.Default.frmTdWindowLocaction = this.Location;
-                    Properties.Settings.Default.frmTdWindowSize = this.Size;
+                    UniversalPatcher.Properties.Settings.Default.frmTdWindowLocaction = this.Location;
+                    UniversalPatcher.Properties.Settings.Default.frmTdWindowSize = this.Size;
                 }
                 else
                 {
-                    Properties.Settings.Default.frmTdWindowLocaction = this.RestoreBounds.Location;
-                    Properties.Settings.Default.frmTdWindowSize = this.RestoreBounds.Size;
+                    UniversalPatcher.Properties.Settings.Default.frmTdWindowLocaction = this.RestoreBounds.Location;
+                    UniversalPatcher.Properties.Settings.Default.frmTdWindowSize = this.RestoreBounds.Size;
                 }
             }
         }
