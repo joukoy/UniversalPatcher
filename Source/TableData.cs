@@ -223,7 +223,7 @@ namespace UniversalPatcher
             {
                 for (int i=0;i< tdList.Count;i++)
                 {
-                    if (tdList[i].TableName.StartsWith("DTC"))
+                    if (tdList[i].TableName.StartsWith("DTC.") && tdList[i].Category == "DTC")
                     {
                         Debug.WriteLine("DTC table already defined");
                         return;

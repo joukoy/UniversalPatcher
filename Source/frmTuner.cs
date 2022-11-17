@@ -320,8 +320,6 @@ namespace UniversalPatcher
                             ImportTinyTunerDB(ref newPCM);
                     }
                     ImportDTC(ref newPCM);
-
-                    RefreshTablelist();
                 }
             }
             catch (Exception ex)
@@ -552,7 +550,6 @@ namespace UniversalPatcher
             Logger("Importing tableseek...", false);
             Application.DoEvents();
             _PCM.ImportSeekTables();
-            RefreshTablelist();
             Logger(" [OK]");
         }
 
@@ -1022,13 +1019,13 @@ namespace UniversalPatcher
             TinyTuner tt = new TinyTuner();
             Logger("Reading TinyTuner DB...", false);
             Logger(tt.ReadTinyDBtoTableData(_PCM, _PCM.tableDatas));
-            RefreshTablelist();
 
         }
 
         private void btnReadTinyTunerDB_Click(object sender, EventArgs e)
         {
             ImportTinyTunerDB(ref PCM);
+            RefreshTablelist();
         }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -2283,6 +2280,7 @@ namespace UniversalPatcher
             Stopwatch timer = new Stopwatch();
             timer.Start();
             OpenNewBinFile(false);
+            RefreshTablelist();
             timer.Stop();
             Debug.WriteLine("Open new file time Taken: " + timer.Elapsed.TotalMilliseconds.ToString("#,##0.00 'milliseconds'"));
         }
@@ -2624,11 +2622,13 @@ namespace UniversalPatcher
         private void dTCToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImportDTC(ref PCM);
+            RefreshTablelist();
         }
 
         private void tableSeekToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImportTableSeek(ref PCM);
+            RefreshTablelist();
         }
 
         private void ImportXDF()
@@ -2639,16 +2639,17 @@ namespace UniversalPatcher
             //LoggerBold("Note: Only basic XDF conversions are supported, check Math and SavingMath values");
             RefreshTablelist();
             comboTableCategory.Text = "_All";
-
         }
         private void xDFToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             ImportXDF();
+            RefreshTablelist();
         }
 
         private void tinyTunerDBV6OnlyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImportTinyTunerDB(ref PCM);
+            RefreshTablelist();
         }
 
 
@@ -2864,6 +2865,7 @@ namespace UniversalPatcher
                         LoadConfigforPCM(ref PCM);
                     }
                     SelectPCM();
+                    RefreshTablelist();
                 }
             }
             catch (Exception ex)

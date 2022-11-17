@@ -546,3 +546,5 @@
 - Tuner: Update tablelist automatically after editing table config
 - TableEditor: Remember compare selection, if enabled in Settings
 
+0.21.10
+- Tuner: Import dtcsearch -tables also in case DTC -tables are imported from TinyTuner DB
