@@ -557,6 +557,6 @@
 - Tuner: Fixed bugs: select visible columns by right-click in basic-mode
 - Tuner: Remember selected tree-node after filtering, or switching between Treemode & Listmode
 - Tuner: arrange the categories in alphabetical order
-- Tuner: Fixed bug: screen flickering when switchin between tables in tree-mode
+- Tuner: Fixed bug: screen flickering when switching between tables in tree-mode
 - Application settings saved to "universalpatcher.xml" in application startupfolder, instead of appdata folder in user profile
 - Logger: VPW Console: Selection for logging to File and/or Display
