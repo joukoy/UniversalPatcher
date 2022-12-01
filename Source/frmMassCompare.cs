@@ -36,41 +36,41 @@ namespace UniversalPatcher
         private List<DgvRow> tableDgvRows = new List<DgvRow>();
         private void frmMassCompare_Load(object sender, EventArgs e)
         {
-            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+            if (AppSettings.MainWindowPersistence)
             {
-                if (UniversalPatcher.Properties.Settings.Default.MassCompareWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.MassCompareWindowSize.Height > 0)
+                if (AppSettings.MassCompareWindowSize.Width > 0 || AppSettings.MassCompareWindowSize.Height > 0)
                 {
-                    this.WindowState = UniversalPatcher.Properties.Settings.Default.MassCompareWindowState;
+                    this.WindowState = AppSettings.MassCompareWindowState;
                     if (this.WindowState == FormWindowState.Minimized)
                     {
                         this.WindowState = FormWindowState.Normal;
                     }
-                    this.Location = UniversalPatcher.Properties.Settings.Default.MassCompareWindowLocation;
-                    this.Size = UniversalPatcher.Properties.Settings.Default.MassCompareWindowSize;
+                    this.Location = AppSettings.MassCompareWindowLocation;
+                    this.Size = AppSettings.MassCompareWindowSize;
                 }
-                if (UniversalPatcher.Properties.Settings.Default.MassCompareSplitWidth > 0)
-                    splitContainer1.SplitterDistance = UniversalPatcher.Properties.Settings.Default.MassCompareSplitWidth;
+                if (AppSettings.MassCompareSplitWidth > 0)
+                    splitContainer1.SplitterDistance = AppSettings.MassCompareSplitWidth;
             }
 
             SetupDataGrid();
         }
         private void FrmMassCompare_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
         {
-            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+            if (AppSettings.MainWindowPersistence)
             {
-                UniversalPatcher.Properties.Settings.Default.MassCompareWindowState = this.WindowState;
+                AppSettings.MassCompareWindowState = this.WindowState;
                 if (this.WindowState == FormWindowState.Normal)
                 {
-                    UniversalPatcher.Properties.Settings.Default.MassCompareWindowLocation = this.Location;
-                    UniversalPatcher.Properties.Settings.Default.MassCompareWindowSize = this.Size;
+                    AppSettings.MassCompareWindowLocation = this.Location;
+                    AppSettings.MassCompareWindowSize = this.Size;
                 }
                 else
                 {
-                    UniversalPatcher.Properties.Settings.Default.MassCompareWindowLocation = this.RestoreBounds.Location;
-                    UniversalPatcher.Properties.Settings.Default.MassCompareWindowSize = this.RestoreBounds.Size;
+                    AppSettings.MassCompareWindowLocation = this.RestoreBounds.Location;
+                    AppSettings.MassCompareWindowSize = this.RestoreBounds.Size;
                 }
                 if (!compareAll)
-                    UniversalPatcher.Properties.Settings.Default.MassCompareSplitWidth = splitContainer1.SplitterDistance;
+                    AppSettings.MassCompareSplitWidth = splitContainer1.SplitterDistance;
             }
 
         }
@@ -278,7 +278,7 @@ namespace UniversalPatcher
 
         private void LoadConfigforPCM(PcmFile cmpPCM)
         {
-            if (!UniversalPatcher.Properties.Settings.Default.disableTunerAutoloadSettings)
+            if (!AppSettings.disableTunerAutoloadSettings)
             {
                 cmpPCM.AutoLoadTunerConfig();
                 if (cmpPCM.tunerFile.Length > 0)
@@ -410,7 +410,7 @@ namespace UniversalPatcher
                 frmFileSelection frmF = new frmFileSelection();
                 frmF.btnOK.Text = "Compare files";
                 frmF.Text = "Search and Compare: " + td.TableName;
-                frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+                frmF.LoadFiles(AppSettings.LastBINfolder);
                 if (frmF.ShowDialog(this) == DialogResult.OK)
                 {
                     if (compareAll)

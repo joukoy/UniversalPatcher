@@ -28,9 +28,9 @@ namespace UniversalPatcher
 
         private void frmSplashScreen_Load(object sender, EventArgs e)
         {
-            if (UniversalPatcher.Properties.Settings.Default.SplashShowTime > 0)
+            if (AppSettings.SplashShowTime > 0)
             {
-                timer1.Interval = UniversalPatcher.Properties.Settings.Default.SplashShowTime * 1000;
+                timer1.Interval = AppSettings.SplashShowTime * 1000;
                 timer1.Enabled = true;
             }
             else

@@ -145,6 +145,9 @@ namespace UniversalPatcher
             this.ChkEmulatorResponseMode = new System.Windows.Forms.CheckBox();
             this.txtSendBus = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.chkVpwToFile = new System.Windows.Forms.CheckBox();
+            this.chkVpwToScreen = new System.Windows.Forms.CheckBox();
             this.btnStopScript = new System.Windows.Forms.Button();
             this.btnConsoleRefresh = new System.Windows.Forms.Button();
             this.btnConnect = new System.Windows.Forms.Button();
@@ -309,6 +312,7 @@ namespace UniversalPatcher
             this.tabVPWConsole.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBox9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numConsoleScriptDelay)).BeginInit();
             this.tabJConsole.SuspendLayout();
             this.groupBox8.SuspendLayout();
@@ -1517,6 +1521,7 @@ namespace UniversalPatcher
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.groupBox9);
             this.groupBox3.Controls.Add(this.btnStopScript);
             this.groupBox3.Controls.Add(this.btnConsoleRefresh);
             this.groupBox3.Controls.Add(this.btnConnect);
@@ -1534,6 +1539,40 @@ namespace UniversalPatcher
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "VPW Console";
             this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
+            // 
+            // groupBox9
+            // 
+            this.groupBox9.Controls.Add(this.chkVpwToFile);
+            this.groupBox9.Controls.Add(this.chkVpwToScreen);
+            this.groupBox9.Location = new System.Drawing.Point(7, 239);
+            this.groupBox9.Name = "groupBox9";
+            this.groupBox9.Size = new System.Drawing.Size(128, 44);
+            this.groupBox9.TabIndex = 54;
+            this.groupBox9.TabStop = false;
+            this.groupBox9.Text = "Destination";
+            // 
+            // chkVpwToFile
+            // 
+            this.chkVpwToFile.AutoSize = true;
+            this.chkVpwToFile.Location = new System.Drawing.Point(76, 16);
+            this.chkVpwToFile.Name = "chkVpwToFile";
+            this.chkVpwToFile.Size = new System.Drawing.Size(42, 17);
+            this.chkVpwToFile.TabIndex = 1;
+            this.chkVpwToFile.Text = "File";
+            this.chkVpwToFile.UseVisualStyleBackColor = true;
+            this.chkVpwToFile.CheckedChanged += new System.EventHandler(this.chkVpwToFile_CheckedChanged);
+            // 
+            // chkVpwToScreen
+            // 
+            this.chkVpwToScreen.AutoSize = true;
+            this.chkVpwToScreen.Checked = true;
+            this.chkVpwToScreen.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkVpwToScreen.Location = new System.Drawing.Point(11, 16);
+            this.chkVpwToScreen.Name = "chkVpwToScreen";
+            this.chkVpwToScreen.Size = new System.Drawing.Size(60, 17);
+            this.chkVpwToScreen.TabIndex = 0;
+            this.chkVpwToScreen.Text = "Screen";
+            this.chkVpwToScreen.UseVisualStyleBackColor = true;
             // 
             // btnStopScript
             // 
@@ -2722,40 +2761,40 @@ namespace UniversalPatcher
             // loadProfileToolStripMenuItem
             // 
             this.loadProfileToolStripMenuItem.Name = "loadProfileToolStripMenuItem";
-            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.loadProfileToolStripMenuItem.Text = "Load profile";
             this.loadProfileToolStripMenuItem.Click += new System.EventHandler(this.loadProfileToolStripMenuItem_Click);
             // 
             // saveProfileToolStripMenuItem
             // 
             this.saveProfileToolStripMenuItem.Name = "saveProfileToolStripMenuItem";
-            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.saveProfileToolStripMenuItem.Text = "Save profile";
             this.saveProfileToolStripMenuItem.Click += new System.EventHandler(this.saveProfileToolStripMenuItem_Click);
             // 
             // saveProfileAsToolStripMenuItem
             // 
             this.saveProfileAsToolStripMenuItem.Name = "saveProfileAsToolStripMenuItem";
-            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveProfileAsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.saveProfileAsToolStripMenuItem.Text = "Save profile as...";
             this.saveProfileAsToolStripMenuItem.Click += new System.EventHandler(this.saveProfileAsToolStripMenuItem_Click);
             // 
             // newProfileToolStripMenuItem
             // 
             this.newProfileToolStripMenuItem.Name = "newProfileToolStripMenuItem";
-            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newProfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.newProfileToolStripMenuItem.Text = "New profile";
             this.newProfileToolStripMenuItem.Click += new System.EventHandler(this.newProfileToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(155, 6);
             // 
             // playbackLogfileToolStripMenuItem
             // 
             this.playbackLogfileToolStripMenuItem.Name = "playbackLogfileToolStripMenuItem";
-            this.playbackLogfileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.playbackLogfileToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.playbackLogfileToolStripMenuItem.Text = "Playback logfile";
             this.playbackLogfileToolStripMenuItem.Click += new System.EventHandler(this.playbackLogfileToolStripMenuItem_Click);
             // 
@@ -2957,6 +2996,8 @@ namespace UniversalPatcher
             this.groupBox6.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBox9.ResumeLayout(false);
+            this.groupBox9.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numConsoleScriptDelay)).EndInit();
             this.tabJConsole.ResumeLayout(false);
             this.tabJConsole.PerformLayout();
@@ -3229,6 +3270,9 @@ namespace UniversalPatcher
         private System.Windows.Forms.Button btnPlay;
         private System.Windows.Forms.Button btnPause;
         private System.Windows.Forms.Timer timerPlayback;
+        private System.Windows.Forms.GroupBox groupBox9;
+        private System.Windows.Forms.CheckBox chkVpwToFile;
+        private System.Windows.Forms.CheckBox chkVpwToScreen;
     }
 }
 

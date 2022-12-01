@@ -403,6 +403,8 @@ public class Upatcher
         Unknown = 99
     }
 
+    public static UpatcherSettings AppSettings = new UpatcherSettings();
+
     public static bool J2534FunctionsIsLoaded = false;
     public static List<DetectRule> DetectRules;
     public static List<XmlPatch> PatchList;
@@ -499,21 +501,22 @@ public class Upatcher
     {
         try
         {
+            LoadAppSettings();
             if (args.Length > 0)
             {
                 if (args[0] == "-")
                     Debug.WriteLine("Remember previous settings");
                 else if (args[0].ToLower().Contains("tourist"))
-                    UniversalPatcher.Properties.Settings.Default.WorkingMode = 0;
+                    AppSettings.WorkingMode = 0;
                 else if (args[0].ToLower().Contains("basic"))
-                    UniversalPatcher.Properties.Settings.Default.WorkingMode = 1;
+                    AppSettings.WorkingMode = 1;
                 else if (args[0].ToLower().Contains("advanced"))
-                    UniversalPatcher.Properties.Settings.Default.WorkingMode = 2;
+                    AppSettings.WorkingMode = 2;
                 else
                 {
                     throw new Exception("Usage: " + Path.GetFileName(Application.ExecutablePath) + " [tourist | basic | advanced] [launcher | tuner]");
                 }
-                UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.Save();
             }
 
             LogReceivers = new List<RichTextBox>();
@@ -542,12 +545,12 @@ public class Upatcher
             if (!Directory.Exists(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles")))
                 Directory.CreateDirectory(Path.Combine(Application.StartupPath, "Logger", "J2534Profiles"));
 
-            if (UniversalPatcher.Properties.Settings.Default.LastXMLfolder == "")
-                UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
-            if (UniversalPatcher.Properties.Settings.Default.LastPATCHfolder == "")
-                UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
+            if (AppSettings.LastXMLfolder == "")
+                AppSettings.LastXMLfolder = Path.Combine(Application.StartupPath, "XML");
+            if (AppSettings.LastPATCHfolder == "")
+                AppSettings.LastPATCHfolder = Path.Combine(Application.StartupPath, "Patches");
 
-            if (UniversalPatcher.Properties.Settings.Default.SplashShowTime > 0)
+            if (AppSettings.SplashShowTime > 0)
                 frmSplash.Show();
             //System.Drawing.Point xy = new Point((int)(this.Location.X + 300), (int)(this.Location.Y + 150));
             Screen myScreen = Screen.FromPoint(Control.MousePosition);
@@ -576,6 +579,35 @@ public class Upatcher
             frmSplash.labelProgress.Text += Environment.NewLine;
     }
 
+    private static void LoadAppSettings()
+    {
+        try
+        {
+            string appSettingsFile = Path.Combine(Application.StartupPath, "universalpatcher.xml");
+            if (File.Exists(appSettingsFile))
+            {
+                Debug.WriteLine("Loading universalpatcher.xml");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(UpatcherSettings));
+                System.IO.StreamReader file = new System.IO.StreamReader(appSettingsFile);
+                AppSettings = (UpatcherSettings)reader.Deserialize(file);
+                file.Close();
+            }
+            else
+            {
+                AppSettings = new UpatcherSettings();
+            }
+        }
+        catch (Exception ex)
+        {
+            AppSettings = new UpatcherSettings();
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(st.FrameCount - 1);
+            // Get the line number from the stack frame
+            var line = frame.GetFileLineNumber();
+            Debug.WriteLine("Patcherfunctions error, line " + line + ": " + ex.Message);
+        }
+    }
     private static void LoadSettingFiles()
     {
         DetectRules = new List<DetectRule>();
@@ -2058,7 +2090,7 @@ public class Upatcher
 
             for (int r = 0; r < res.Length; r++)
             {
-                if (UniversalPatcher.Properties.Settings.Default.RequireValidVerForStock)
+                if (AppSettings.RequireValidVerForStock)
                     if (Ver.Contains("?"))
                     {
                         Logger("No valid version");
@@ -2356,7 +2388,7 @@ public class Upatcher
             }
         }
         //Not found (exact match) maybe close enough?
-        int required = UniversalPatcher.Properties.Settings.Default.TunerMinTableEquivalency;
+        int required = AppSettings.TunerMinTableEquivalency;
         if (required == 100)
             return -1;  //already searched for 100% match
         for (int t = 0; t < tdList.Count; t++)
@@ -2394,7 +2426,7 @@ public class Upatcher
             }
         }
         //Not found (exact match) maybe close enough?
-        int required = UniversalPatcher.Properties.Settings.Default.TunerMinTableEquivalency;
+        int required = AppSettings.TunerMinTableEquivalency;
         if (required == 100)
             return null;  //already searched for 100% match
         for (int t = 0; t < tdList.Count; t++)
@@ -2512,7 +2544,7 @@ public class Upatcher
     {
         try
         {
-            if (UniversalPatcher.Properties.Settings.Default.LoggerUseIntegrated)
+            if (AppSettings.LoggerUseIntegrated)
             {
                 frmLogger fl = new frmLogger();
                 fl.Show();
@@ -2521,10 +2553,10 @@ public class Upatcher
                     fl.FilterPidsByBin(PCM);
                 }
             }
-            else if (string.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerExternalApp))
+            else if (string.IsNullOrEmpty(AppSettings.LoggerExternalApp))
             {
                 ProcessStartInfo psi = new ProcessStartInfo();
-                psi.FileName = UniversalPatcher.Properties.Settings.Default.LoggerExternalApp;
+                psi.FileName = AppSettings.LoggerExternalApp;
                 Logger("Executing command: \"" + psi.FileName);
                 Process.Start(psi);
             }
@@ -2543,13 +2575,13 @@ public class Upatcher
     {
         try
         {
-            if (UniversalPatcher.Properties.Settings.Default.FlashApp.Length == 0)
+            if (AppSettings.FlashApp.Length == 0)
             {
                 Logger("No flash application configured");
                 return;
             }
             ProcessStartInfo psi = new ProcessStartInfo();
-            psi.FileName = UniversalPatcher.Properties.Settings.Default.FlashApp;
+            psi.FileName = AppSettings.FlashApp;
             if (WriteCalibration)
             {
                 if (PCM == null || !File.Exists(PCM.FileName))
@@ -2557,7 +2589,7 @@ public class Upatcher
                     LoggerBold("No file loaded");
                     return;
                 }
-                psi.Arguments = UniversalPatcher.Properties.Settings.Default.FLashParams.Replace("$file", "\"" + PCM.FileName + "\"");
+                psi.Arguments = AppSettings.FLashParams.Replace("$file", "\"" + PCM.FileName + "\"");
                 if (PCM.BufModified())
                 {
                     DialogResult res = MessageBox.Show("File modified.\n\rSave before flashing?", "Save changes?", MessageBoxButtons.YesNoCancel);

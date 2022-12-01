@@ -20,45 +20,45 @@ namespace UniversalPatcher
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            UniversalPatcher.Properties.Settings.Default.TunerMinTableEquivalency = (int)numTunerTableMinEquivalency.Value;
-            UniversalPatcher.Properties.Settings.Default.keyPressWait100ms = (int)numKeypressWait.Value;
-            UniversalPatcher.Properties.Settings.Default.TableEditorMinOtherEquivalency = (int)numTunerMinEqOther.Value;
-            UniversalPatcher.Properties.Settings.Default.MulitableChars = txtMultitableChars.Text;
-            UniversalPatcher.Properties.Settings.Default.DisableAutoFixChecksum = chkDisableAutoCS.Checked;
-            UniversalPatcher.Properties.Settings.Default.RequireValidVerForStock = chkRequireValidVerForStock.Checked;
-            UniversalPatcher.Properties.Settings.Default.AutomaticOpenImportedFile = chkAutoOpenImportedFile.Checked;
-            UniversalPatcher.Properties.Settings.Default.TunerShowUnitsImperial = chkDisplayImperial.Checked;
-            UniversalPatcher.Properties.Settings.Default.TunerShowUnitsMetric = chkDisplayMetric.Checked;
-            UniversalPatcher.Properties.Settings.Default.TunerShowUnitsUndefined = chkDisplayUndefined.Checked;
-            UniversalPatcher.Properties.Settings.Default.SplashShowTime = (int)numSplashTime.Value;
-            UniversalPatcher.Properties.Settings.Default.xdfImportUseTableName = chkXdfUseTableName.Checked;
-            UniversalPatcher.Properties.Settings.Default.FlashApp = txtFlashApp.Text;
-            UniversalPatcher.Properties.Settings.Default.FLashParams = txtFlashParams.Text;
-            UniversalPatcher.Properties.Settings.Default.LoggerUseIntegrated = chkUseIntegratedLogger.Checked;
-            UniversalPatcher.Properties.Settings.Default.LoggerExternalApp = txtExternalLogger.Text;
-            //UniversalPatcher.Properties.Settings.Default.startPatcher = chkStartPatcher.Checked;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.TunerMinTableEquivalency = (int)numTunerTableMinEquivalency.Value;
+            AppSettings.keyPressWait100ms = (int)numKeypressWait.Value;
+            AppSettings.TableEditorMinOtherEquivalency = (int)numTunerMinEqOther.Value;
+            AppSettings.MulitableChars = txtMultitableChars.Text;
+            AppSettings.DisableAutoFixChecksum = chkDisableAutoCS.Checked;
+            AppSettings.RequireValidVerForStock = chkRequireValidVerForStock.Checked;
+            AppSettings.AutomaticOpenImportedFile = chkAutoOpenImportedFile.Checked;
+            AppSettings.TunerShowUnitsImperial = chkDisplayImperial.Checked;
+            AppSettings.TunerShowUnitsMetric = chkDisplayMetric.Checked;
+            AppSettings.TunerShowUnitsUndefined = chkDisplayUndefined.Checked;
+            AppSettings.SplashShowTime = (int)numSplashTime.Value;
+            AppSettings.xdfImportUseTableName = chkXdfUseTableName.Checked;
+            AppSettings.FlashApp = txtFlashApp.Text;
+            AppSettings.FLashParams = txtFlashParams.Text;
+            AppSettings.LoggerUseIntegrated = chkUseIntegratedLogger.Checked;
+            AppSettings.LoggerExternalApp = txtExternalLogger.Text;
+            //AppSettings.startPatcher = chkStartPatcher.Checked;
+            AppSettings.Save();
             this.Close();
         }
 
         private void frmTunerSettings_Load(object sender, EventArgs e)
         {
-            numTunerTableMinEquivalency.Value = UniversalPatcher.Properties.Settings.Default.TunerMinTableEquivalency;
-            numKeypressWait.Value = UniversalPatcher.Properties.Settings.Default.keyPressWait100ms;
-            numTunerMinEqOther.Value = UniversalPatcher.Properties.Settings.Default.TableEditorMinOtherEquivalency;
-            txtMultitableChars.Text = UniversalPatcher.Properties.Settings.Default.MulitableChars;
-            chkDisableAutoCS.Checked = UniversalPatcher.Properties.Settings.Default.DisableAutoFixChecksum;
-            chkRequireValidVerForStock.Checked = UniversalPatcher.Properties.Settings.Default.RequireValidVerForStock;
-            chkAutoOpenImportedFile.Checked = UniversalPatcher.Properties.Settings.Default.AutomaticOpenImportedFile;
-            chkDisplayImperial.Checked = UniversalPatcher.Properties.Settings.Default.TunerShowUnitsImperial;
-            chkDisplayMetric.Checked = UniversalPatcher.Properties.Settings.Default.TunerShowUnitsMetric;
-            chkDisplayUndefined.Checked = UniversalPatcher.Properties.Settings.Default.TunerShowUnitsUndefined;
-            numSplashTime.Value = UniversalPatcher.Properties.Settings.Default.SplashShowTime;
-            chkXdfUseTableName.Checked = UniversalPatcher.Properties.Settings.Default.xdfImportUseTableName;
-            txtFlashApp.Text = UniversalPatcher.Properties.Settings.Default.FlashApp;
-            txtFlashParams.Text = UniversalPatcher.Properties.Settings.Default.FLashParams;
-            txtExternalLogger.Text = UniversalPatcher.Properties.Settings.Default.LoggerExternalApp;
-            //chkStartPatcher.Checked = UniversalPatcher.Properties.Settings.Default.startPatcher;
+            numTunerTableMinEquivalency.Value = AppSettings.TunerMinTableEquivalency;
+            numKeypressWait.Value = AppSettings.keyPressWait100ms;
+            numTunerMinEqOther.Value = AppSettings.TableEditorMinOtherEquivalency;
+            txtMultitableChars.Text = AppSettings.MulitableChars;
+            chkDisableAutoCS.Checked = AppSettings.DisableAutoFixChecksum;
+            chkRequireValidVerForStock.Checked = AppSettings.RequireValidVerForStock;
+            chkAutoOpenImportedFile.Checked = AppSettings.AutomaticOpenImportedFile;
+            chkDisplayImperial.Checked = AppSettings.TunerShowUnitsImperial;
+            chkDisplayMetric.Checked = AppSettings.TunerShowUnitsMetric;
+            chkDisplayUndefined.Checked = AppSettings.TunerShowUnitsUndefined;
+            numSplashTime.Value = AppSettings.SplashShowTime;
+            chkXdfUseTableName.Checked = AppSettings.xdfImportUseTableName;
+            txtFlashApp.Text = AppSettings.FlashApp;
+            txtFlashParams.Text = AppSettings.FLashParams;
+            txtExternalLogger.Text = AppSettings.LoggerExternalApp;
+            //chkStartPatcher.Checked = AppSettings.startPatcher;
         }
 
 

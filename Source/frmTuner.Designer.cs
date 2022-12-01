@@ -66,6 +66,7 @@ namespace UniversalPatcher
             this.appendToPreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.appendFocusToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mirrorSegmentsFromCompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.currentFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -133,9 +134,10 @@ namespace UniversalPatcher
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.editRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.insertRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.addressRelativeDiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteRowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.duplicateTableConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.addressRelativeDiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addTablesToExistingPatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createPatchToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -154,11 +156,14 @@ namespace UniversalPatcher
             this.txtDescription = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabMultiTree = new System.Windows.Forms.TabPage();
             this.tabDimensions = new System.Windows.Forms.TabPage();
             this.tabValueType = new System.Windows.Forms.TabPage();
             this.tabCategory = new System.Windows.Forms.TabPage();
             this.tabSegments = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.btnExplorerFont = new System.Windows.Forms.Button();
+            this.chkShowTableCount = new System.Windows.Forms.CheckBox();
             this.chkAutoMulti1d = new System.Windows.Forms.CheckBox();
             this.chkShowCategorySubfolder = new System.Windows.Forms.CheckBox();
             this.labelIconSize = new System.Windows.Forms.Label();
@@ -168,7 +173,6 @@ namespace UniversalPatcher
             this.tabControlFileInfo = new System.Windows.Forms.TabControl();
             this.imageList3 = new System.Windows.Forms.ImageList(this.components);
             this.splitContainerListMode = new System.Windows.Forms.SplitContainer();
-            this.treeView1 = new UniversalPatcher.TreeViewMS();
             this.contextMenuStripListTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expand2LevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -202,6 +206,8 @@ namespace UniversalPatcher
             this.numExtraOffset = new System.Windows.Forms.NumericUpDown();
             this.btnExtraOffsetPrev = new System.Windows.Forms.Button();
             this.btnExtraOffsetNext = new System.Windows.Forms.Button();
+            this.treeView1 = new UniversalPatcher.TreeViewMS();
+            this.treeviewSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -420,9 +426,11 @@ namespace UniversalPatcher
             this.resetTunerModeColumnsToolStripMenuItem,
             this.disableConfigAutoloadToolStripMenuItem,
             this.caseSensitiveFilteringToolStripMenuItem,
-            this.moreSettingsToolStripMenuItem,
             this.extraOffsetToolStripMenuItem,
-            this.mirrorSegmentsFromCompareToolStripMenuItem});
+            this.mirrorSegmentsFromCompareToolStripMenuItem,
+            this.fontToolStripMenuItem,
+            this.treeviewSettingsToolStripMenuItem,
+            this.moreSettingsToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "&Settings";
@@ -515,6 +523,13 @@ namespace UniversalPatcher
             this.mirrorSegmentsFromCompareToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.mirrorSegmentsFromCompareToolStripMenuItem.Text = "Mirror segments from compare";
             this.mirrorSegmentsFromCompareToolStripMenuItem.Click += new System.EventHandler(this.mirrorSegmentsFromCompareToolStripMenuItem_Click);
+            // 
+            // fontToolStripMenuItem
+            // 
+            this.fontToolStripMenuItem.Name = "fontToolStripMenuItem";
+            this.fontToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.fontToolStripMenuItem.Text = "Font";
+            this.fontToolStripMenuItem.Click += new System.EventHandler(this.fontToolStripMenuItem_Click);
             // 
             // currentFileToolStripMenuItem
             // 
@@ -882,16 +897,17 @@ namespace UniversalPatcher
             this.toolStripSeparator1,
             this.editRowToolStripMenuItem,
             this.insertRowToolStripMenuItem,
-            this.addressRelativeDiffToolStripMenuItem,
             this.deleteRowToolStripMenuItem,
             this.duplicateTableConfigToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.addressRelativeDiffToolStripMenuItem,
             this.createPatchToolStripMenuItem,
             this.addTablesToExistingPatchToolStripMenuItem,
             this.createPatchToolStripMenuItem1,
             this.toolStripSeparator2,
             this.axistablesToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 478);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(231, 484);
             // 
             // cutToolStripMenuItem
             // 
@@ -1049,12 +1065,6 @@ namespace UniversalPatcher
             this.insertRowToolStripMenuItem.Text = "Insert table config";
             this.insertRowToolStripMenuItem.Click += new System.EventHandler(this.insertRowToolStripMenuItem_Click);
             // 
-            // addressRelativeDiffToolStripMenuItem
-            // 
-            this.addressRelativeDiffToolStripMenuItem.Name = "addressRelativeDiffToolStripMenuItem";
-            this.addressRelativeDiffToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.addressRelativeDiffToolStripMenuItem.Text = "Address relative diff";
-            // 
             // deleteRowToolStripMenuItem
             // 
             this.deleteRowToolStripMenuItem.Enabled = false;
@@ -1070,6 +1080,17 @@ namespace UniversalPatcher
             this.duplicateTableConfigToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.duplicateTableConfigToolStripMenuItem.Text = "Duplicate table config";
             this.duplicateTableConfigToolStripMenuItem.Click += new System.EventHandler(this.duplicateTableConfigToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(227, 6);
+            // 
+            // addressRelativeDiffToolStripMenuItem
+            // 
+            this.addressRelativeDiffToolStripMenuItem.Name = "addressRelativeDiffToolStripMenuItem";
+            this.addressRelativeDiffToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.addressRelativeDiffToolStripMenuItem.Text = "Address relative diff";
             // 
             // createPatchToolStripMenuItem
             // 
@@ -1236,6 +1257,7 @@ namespace UniversalPatcher
             // 
             // tabControl1
             // 
+            this.tabControl1.Controls.Add(this.tabMultiTree);
             this.tabControl1.Controls.Add(this.tabDimensions);
             this.tabControl1.Controls.Add(this.tabValueType);
             this.tabControl1.Controls.Add(this.tabCategory);
@@ -1250,6 +1272,15 @@ namespace UniversalPatcher
             this.tabControl1.Size = new System.Drawing.Size(449, 281);
             this.tabControl1.TabIndex = 1;
             this.tabControl1.Visible = false;
+            // 
+            // tabMultiTree
+            // 
+            this.tabMultiTree.ImageKey = "listmode.ico";
+            this.tabMultiTree.Location = new System.Drawing.Point(4, 31);
+            this.tabMultiTree.Name = "tabMultiTree";
+            this.tabMultiTree.Size = new System.Drawing.Size(441, 246);
+            this.tabMultiTree.TabIndex = 7;
+            this.tabMultiTree.UseVisualStyleBackColor = true;
             // 
             // tabDimensions
             // 
@@ -1291,6 +1322,8 @@ namespace UniversalPatcher
             // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.btnExplorerFont);
+            this.tabSettings.Controls.Add(this.chkShowTableCount);
             this.tabSettings.Controls.Add(this.chkAutoMulti1d);
             this.tabSettings.Controls.Add(this.chkShowCategorySubfolder);
             this.tabSettings.Controls.Add(this.labelIconSize);
@@ -1301,6 +1334,26 @@ namespace UniversalPatcher
             this.tabSettings.Size = new System.Drawing.Size(441, 246);
             this.tabSettings.TabIndex = 5;
             this.tabSettings.UseVisualStyleBackColor = true;
+            // 
+            // btnExplorerFont
+            // 
+            this.btnExplorerFont.Location = new System.Drawing.Point(12, 101);
+            this.btnExplorerFont.Name = "btnExplorerFont";
+            this.btnExplorerFont.Size = new System.Drawing.Size(75, 23);
+            this.btnExplorerFont.TabIndex = 30;
+            this.btnExplorerFont.Text = "Font...";
+            this.btnExplorerFont.UseVisualStyleBackColor = true;
+            this.btnExplorerFont.Click += new System.EventHandler(this.btnExplorerFont_Click);
+            // 
+            // chkShowTableCount
+            // 
+            this.chkShowTableCount.AutoSize = true;
+            this.chkShowTableCount.Location = new System.Drawing.Point(9, 75);
+            this.chkShowTableCount.Name = "chkShowTableCount";
+            this.chkShowTableCount.Size = new System.Drawing.Size(109, 17);
+            this.chkShowTableCount.TabIndex = 29;
+            this.chkShowTableCount.Text = "Show table count";
+            this.chkShowTableCount.UseVisualStyleBackColor = true;
             // 
             // chkAutoMulti1d
             // 
@@ -1386,15 +1439,56 @@ namespace UniversalPatcher
             // 
             this.imageList3.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList3.ImageStream")));
             this.imageList3.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList3.Images.SetKeyName(0, "Dimensions.ico");
-            this.imageList3.Images.SetKeyName(1, "patch.ico");
-            this.imageList3.Images.SetKeyName(2, "segments.ico");
-            this.imageList3.Images.SetKeyName(3, "valuetype.ico");
-            this.imageList3.Images.SetKeyName(4, "listmode.ico");
-            this.imageList3.Images.SetKeyName(5, "category.ico");
-            this.imageList3.Images.SetKeyName(6, "modify.ico");
-            this.imageList3.Images.SetKeyName(7, "info.ico");
-            this.imageList3.Images.SetKeyName(8, "flash.ico");
+            this.imageList3.Images.SetKeyName(0, "1d.ico");
+            this.imageList3.Images.SetKeyName(1, "2d.ico");
+            this.imageList3.Images.SetKeyName(2, "3d.ico");
+            this.imageList3.Images.SetKeyName(3, "bitmask.ico");
+            this.imageList3.Images.SetKeyName(4, "boolean.ico");
+            this.imageList3.Images.SetKeyName(5, "boot.ico");
+            this.imageList3.Images.SetKeyName(6, "category.ico");
+            this.imageList3.Images.SetKeyName(7, "Category_bad.ico");
+            this.imageList3.Images.SetKeyName(8, "Category_old.ico");
+            this.imageList3.Images.SetKeyName(9, "Category2.ico");
+            this.imageList3.Images.SetKeyName(10, "category3.ico");
+            this.imageList3.Images.SetKeyName(11, "collapse.ico");
+            this.imageList3.Images.SetKeyName(12, "Dimensions.ico");
+            this.imageList3.Images.SetKeyName(13, "DTC.ico");
+            this.imageList3.Images.SetKeyName(14, "eeprom.ico");
+            this.imageList3.Images.SetKeyName(15, "engine.ico");
+            this.imageList3.Images.SetKeyName(16, "enginediag.ico");
+            this.imageList3.Images.SetKeyName(17, "enum.ico");
+            this.imageList3.Images.SetKeyName(18, "enum1d.ico");
+            this.imageList3.Images.SetKeyName(19, "enum2d.ico");
+            this.imageList3.Images.SetKeyName(20, "enum3d.ico");
+            this.imageList3.Images.SetKeyName(21, "expand.ico");
+            this.imageList3.Images.SetKeyName(22, "explorer.ico");
+            this.imageList3.Images.SetKeyName(23, "flag1d.ico");
+            this.imageList3.Images.SetKeyName(24, "flag2d.ico");
+            this.imageList3.Images.SetKeyName(25, "flag3d.ico");
+            this.imageList3.Images.SetKeyName(26, "flash.ico");
+            this.imageList3.Images.SetKeyName(27, "fuel.ico");
+            this.imageList3.Images.SetKeyName(28, "Histogram.ico");
+            this.imageList3.Images.SetKeyName(29, "info.ico");
+            this.imageList3.Images.SetKeyName(30, "listmode.ico");
+            this.imageList3.Images.SetKeyName(31, "mask1d.ico");
+            this.imageList3.Images.SetKeyName(32, "mask2d.ico");
+            this.imageList3.Images.SetKeyName(33, "mask3d.ico");
+            this.imageList3.Images.SetKeyName(34, "number.ico");
+            this.imageList3.Images.SetKeyName(35, "os.ico");
+            this.imageList3.Images.SetKeyName(36, "patch.ico");
+            this.imageList3.Images.SetKeyName(37, "pieces.ico");
+            this.imageList3.Images.SetKeyName(38, "segments.ico");
+            this.imageList3.Images.SetKeyName(39, "selection.ico");
+            this.imageList3.Images.SetKeyName(40, "selection1d.ico");
+            this.imageList3.Images.SetKeyName(41, "selection2d.ico");
+            this.imageList3.Images.SetKeyName(42, "selection3d.ico");
+            this.imageList3.Images.SetKeyName(43, "speedo.ico");
+            this.imageList3.Images.SetKeyName(44, "stapler.ico");
+            this.imageList3.Images.SetKeyName(45, "system.ico");
+            this.imageList3.Images.SetKeyName(46, "trans.ico");
+            this.imageList3.Images.SetKeyName(47, "transdiag.ico");
+            this.imageList3.Images.SetKeyName(48, "valuetype.ico");
+            this.imageList3.Images.SetKeyName(49, "Modify.ico");
             // 
             // splitContainerListMode
             // 
@@ -1412,22 +1506,6 @@ namespace UniversalPatcher
             this.splitContainerListMode.Size = new System.Drawing.Size(1021, 409);
             this.splitContainerListMode.SplitterDistance = 340;
             this.splitContainerListMode.TabIndex = 3;
-            // 
-            // treeView1
-            // 
-            this.treeView1.ContextMenuStrip = this.contextMenuStripListTree;
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.HideSelection = false;
-            this.treeView1.ImageIndex = 0;
-            this.treeView1.ImageList = this.imageList1;
-            this.treeView1.Indent = 20;
-            this.treeView1.ItemHeight = 18;
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.SelectedImageIndex = 0;
-            this.treeView1.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("treeView1.SelectedNodes")));
-            this.treeView1.Size = new System.Drawing.Size(340, 409);
-            this.treeView1.TabIndex = 2;
             // 
             // contextMenuStripListTree
             // 
@@ -1471,46 +1549,61 @@ namespace UniversalPatcher
             // 
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "explorer.ico");
-            this.imageList1.Images.SetKeyName(1, "1d.ico");
-            this.imageList1.Images.SetKeyName(2, "2d.ico");
-            this.imageList1.Images.SetKeyName(3, "3d.ico");
-            this.imageList1.Images.SetKeyName(4, "enum.ico");
-            this.imageList1.Images.SetKeyName(5, "enum1d.ico");
-            this.imageList1.Images.SetKeyName(6, "enum2d.ico");
-            this.imageList1.Images.SetKeyName(7, "enum3d.ico");
-            this.imageList1.Images.SetKeyName(8, "flag.ico");
-            this.imageList1.Images.SetKeyName(9, "flag1d.ico");
-            this.imageList1.Images.SetKeyName(10, "flag2d.ico");
-            this.imageList1.Images.SetKeyName(11, "flag3d.ico");
-            this.imageList1.Images.SetKeyName(12, "mask1d.ico");
-            this.imageList1.Images.SetKeyName(13, "mask2d.ico");
-            this.imageList1.Images.SetKeyName(14, "mask3d.ico");
-            this.imageList1.Images.SetKeyName(15, "num.ico");
-            this.imageList1.Images.SetKeyName(16, "number.ico");
-            this.imageList1.Images.SetKeyName(17, "Dimensions.ico");
-            this.imageList1.Images.SetKeyName(18, "valuetype.ico");
-            this.imageList1.Images.SetKeyName(19, "segments.ico");
-            this.imageList1.Images.SetKeyName(20, "category.ico");
-            this.imageList1.Images.SetKeyName(21, "eeprom.ico");
-            this.imageList1.Images.SetKeyName(22, "engine.ico");
-            this.imageList1.Images.SetKeyName(23, "fuel.ico");
-            this.imageList1.Images.SetKeyName(24, "os.ico");
-            this.imageList1.Images.SetKeyName(25, "speedo.ico");
-            this.imageList1.Images.SetKeyName(26, "system.ico");
-            this.imageList1.Images.SetKeyName(27, "trans.ico");
-            this.imageList1.Images.SetKeyName(28, "enginediag.ico");
-            this.imageList1.Images.SetKeyName(29, "transdiag.ico");
-            this.imageList1.Images.SetKeyName(30, "patch.ico");
-            this.imageList1.Images.SetKeyName(31, "boolean.ico");
-            this.imageList1.Images.SetKeyName(32, "bitmask.ico");
-            this.imageList1.Images.SetKeyName(33, "flash.ico");
+            this.imageList1.Images.SetKeyName(0, "1d.ico");
+            this.imageList1.Images.SetKeyName(1, "2d.ico");
+            this.imageList1.Images.SetKeyName(2, "3d.ico");
+            this.imageList1.Images.SetKeyName(3, "bitmask.ico");
+            this.imageList1.Images.SetKeyName(4, "boolean.ico");
+            this.imageList1.Images.SetKeyName(5, "boot.ico");
+            this.imageList1.Images.SetKeyName(6, "category.ico");
+            this.imageList1.Images.SetKeyName(7, "Category_bad.ico");
+            this.imageList1.Images.SetKeyName(8, "Category_old.ico");
+            this.imageList1.Images.SetKeyName(9, "Category2.ico");
+            this.imageList1.Images.SetKeyName(10, "category3.ico");
+            this.imageList1.Images.SetKeyName(11, "collapse.ico");
+            this.imageList1.Images.SetKeyName(12, "Dimensions.ico");
+            this.imageList1.Images.SetKeyName(13, "DTC.ico");
+            this.imageList1.Images.SetKeyName(14, "eeprom.ico");
+            this.imageList1.Images.SetKeyName(15, "engine.ico");
+            this.imageList1.Images.SetKeyName(16, "enginediag.ico");
+            this.imageList1.Images.SetKeyName(17, "enum.ico");
+            this.imageList1.Images.SetKeyName(18, "enum1d.ico");
+            this.imageList1.Images.SetKeyName(19, "enum2d.ico");
+            this.imageList1.Images.SetKeyName(20, "enum3d.ico");
+            this.imageList1.Images.SetKeyName(21, "expand.ico");
+            this.imageList1.Images.SetKeyName(22, "explorer.ico");
+            this.imageList1.Images.SetKeyName(23, "flag1d.ico");
+            this.imageList1.Images.SetKeyName(24, "flag2d.ico");
+            this.imageList1.Images.SetKeyName(25, "flag3d.ico");
+            this.imageList1.Images.SetKeyName(26, "flash.ico");
+            this.imageList1.Images.SetKeyName(27, "fuel.ico");
+            this.imageList1.Images.SetKeyName(28, "Histogram.ico");
+            this.imageList1.Images.SetKeyName(29, "info.ico");
+            this.imageList1.Images.SetKeyName(30, "listmode.ico");
+            this.imageList1.Images.SetKeyName(31, "mask1d.ico");
+            this.imageList1.Images.SetKeyName(32, "mask2d.ico");
+            this.imageList1.Images.SetKeyName(33, "mask3d.ico");
+            this.imageList1.Images.SetKeyName(34, "number.ico");
+            this.imageList1.Images.SetKeyName(35, "os.ico");
+            this.imageList1.Images.SetKeyName(36, "patch.ico");
+            this.imageList1.Images.SetKeyName(37, "pieces.ico");
+            this.imageList1.Images.SetKeyName(38, "segments.ico");
+            this.imageList1.Images.SetKeyName(39, "selection.ico");
+            this.imageList1.Images.SetKeyName(40, "selection1d.ico");
+            this.imageList1.Images.SetKeyName(41, "selection2d.ico");
+            this.imageList1.Images.SetKeyName(42, "selection3d.ico");
+            this.imageList1.Images.SetKeyName(43, "speedo.ico");
+            this.imageList1.Images.SetKeyName(44, "stapler.ico");
+            this.imageList1.Images.SetKeyName(45, "system.ico");
+            this.imageList1.Images.SetKeyName(46, "trans.ico");
+            this.imageList1.Images.SetKeyName(47, "transdiag.ico");
+            this.imageList1.Images.SetKeyName(48, "valuetype.ico");
             // 
             // contextMenuStrip2
             // 
             this.contextMenuStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(181, 26);
+            this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
             this.contextMenuStrip2.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip2_Opening);
             // 
             // timerFilter
@@ -1521,16 +1614,55 @@ namespace UniversalPatcher
             // 
             this.imageList2.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList2.ImageStream")));
             this.imageList2.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList2.Images.SetKeyName(0, "collapse.ico");
-            this.imageList2.Images.SetKeyName(1, "expand.ico");
-            this.imageList2.Images.SetKeyName(2, "Dimensions.ico");
-            this.imageList2.Images.SetKeyName(3, "segments.ico");
-            this.imageList2.Images.SetKeyName(4, "valuetype.ico");
-            this.imageList2.Images.SetKeyName(5, "patch.ico");
-            this.imageList2.Images.SetKeyName(6, "listmode.ico");
-            this.imageList2.Images.SetKeyName(7, "Category.ico");
-            this.imageList2.Images.SetKeyName(8, "pieces.ico");
-            this.imageList2.Images.SetKeyName(9, "stapler.ico");
+            this.imageList2.Images.SetKeyName(0, "1d.ico");
+            this.imageList2.Images.SetKeyName(1, "2d.ico");
+            this.imageList2.Images.SetKeyName(2, "3d.ico");
+            this.imageList2.Images.SetKeyName(3, "bitmask.ico");
+            this.imageList2.Images.SetKeyName(4, "boolean.ico");
+            this.imageList2.Images.SetKeyName(5, "boot.ico");
+            this.imageList2.Images.SetKeyName(6, "category.ico");
+            this.imageList2.Images.SetKeyName(7, "Category_bad.ico");
+            this.imageList2.Images.SetKeyName(8, "Category_old.ico");
+            this.imageList2.Images.SetKeyName(9, "Category2.ico");
+            this.imageList2.Images.SetKeyName(10, "category3.ico");
+            this.imageList2.Images.SetKeyName(11, "collapse.ico");
+            this.imageList2.Images.SetKeyName(12, "Dimensions.ico");
+            this.imageList2.Images.SetKeyName(13, "DTC.ico");
+            this.imageList2.Images.SetKeyName(14, "eeprom.ico");
+            this.imageList2.Images.SetKeyName(15, "engine.ico");
+            this.imageList2.Images.SetKeyName(16, "enginediag.ico");
+            this.imageList2.Images.SetKeyName(17, "enum.ico");
+            this.imageList2.Images.SetKeyName(18, "enum1d.ico");
+            this.imageList2.Images.SetKeyName(19, "enum2d.ico");
+            this.imageList2.Images.SetKeyName(20, "enum3d.ico");
+            this.imageList2.Images.SetKeyName(21, "expand.ico");
+            this.imageList2.Images.SetKeyName(22, "explorer.ico");
+            this.imageList2.Images.SetKeyName(23, "flag1d.ico");
+            this.imageList2.Images.SetKeyName(24, "flag2d.ico");
+            this.imageList2.Images.SetKeyName(25, "flag3d.ico");
+            this.imageList2.Images.SetKeyName(26, "flash.ico");
+            this.imageList2.Images.SetKeyName(27, "fuel.ico");
+            this.imageList2.Images.SetKeyName(28, "Histogram.ico");
+            this.imageList2.Images.SetKeyName(29, "info.ico");
+            this.imageList2.Images.SetKeyName(30, "listmode.ico");
+            this.imageList2.Images.SetKeyName(31, "mask1d.ico");
+            this.imageList2.Images.SetKeyName(32, "mask2d.ico");
+            this.imageList2.Images.SetKeyName(33, "mask3d.ico");
+            this.imageList2.Images.SetKeyName(34, "number.ico");
+            this.imageList2.Images.SetKeyName(35, "os.ico");
+            this.imageList2.Images.SetKeyName(36, "patch.ico");
+            this.imageList2.Images.SetKeyName(37, "pieces.ico");
+            this.imageList2.Images.SetKeyName(38, "segments.ico");
+            this.imageList2.Images.SetKeyName(39, "selection.ico");
+            this.imageList2.Images.SetKeyName(40, "selection1d.ico");
+            this.imageList2.Images.SetKeyName(41, "selection2d.ico");
+            this.imageList2.Images.SetKeyName(42, "selection3d.ico");
+            this.imageList2.Images.SetKeyName(43, "speedo.ico");
+            this.imageList2.Images.SetKeyName(44, "stapler.ico");
+            this.imageList2.Images.SetKeyName(45, "system.ico");
+            this.imageList2.Images.SetKeyName(46, "trans.ico");
+            this.imageList2.Images.SetKeyName(47, "transdiag.ico");
+            this.imageList2.Images.SetKeyName(48, "valuetype.ico");
             // 
             // imageList4
             // 
@@ -1543,38 +1675,48 @@ namespace UniversalPatcher
             this.imageList4.Images.SetKeyName(4, "boolean.ico");
             this.imageList4.Images.SetKeyName(5, "boot.ico");
             this.imageList4.Images.SetKeyName(6, "category.ico");
-            this.imageList4.Images.SetKeyName(7, "Category_old.ico");
-            this.imageList4.Images.SetKeyName(8, "Category2.ico");
-            this.imageList4.Images.SetKeyName(9, "category3.ico");
-            this.imageList4.Images.SetKeyName(10, "collapse.ico");
-            this.imageList4.Images.SetKeyName(11, "Dimensions.ico");
-            this.imageList4.Images.SetKeyName(12, "DTC.ico");
-            this.imageList4.Images.SetKeyName(13, "eeprom.ico");
-            this.imageList4.Images.SetKeyName(14, "engine.ico");
-            this.imageList4.Images.SetKeyName(15, "enginediag.ico");
-            this.imageList4.Images.SetKeyName(16, "enum.ico");
-            this.imageList4.Images.SetKeyName(17, "enum1d.ico");
-            this.imageList4.Images.SetKeyName(18, "enum2d.ico");
-            this.imageList4.Images.SetKeyName(19, "enum3d.ico");
-            this.imageList4.Images.SetKeyName(20, "expand.ico");
-            this.imageList4.Images.SetKeyName(21, "explorer.ico");
-            this.imageList4.Images.SetKeyName(22, "flag1d.ico");
-            this.imageList4.Images.SetKeyName(23, "flag2d.ico");
-            this.imageList4.Images.SetKeyName(24, "flag3d.ico");
-            this.imageList4.Images.SetKeyName(25, "fuel.ico");
-            this.imageList4.Images.SetKeyName(26, "mask1d.ico");
-            this.imageList4.Images.SetKeyName(27, "mask2d.ico");
-            this.imageList4.Images.SetKeyName(28, "mask3d.ico");
-            this.imageList4.Images.SetKeyName(29, "number.ico");
-            this.imageList4.Images.SetKeyName(30, "os.ico");
-            this.imageList4.Images.SetKeyName(31, "patch.ico");
-            this.imageList4.Images.SetKeyName(32, "segments.ico");
-            this.imageList4.Images.SetKeyName(33, "speedo.ico");
-            this.imageList4.Images.SetKeyName(34, "system.ico");
-            this.imageList4.Images.SetKeyName(35, "trans.ico");
-            this.imageList4.Images.SetKeyName(36, "transdiag.ico");
-            this.imageList4.Images.SetKeyName(37, "valuetype.ico");
-            this.imageList4.Images.SetKeyName(38, "listmode.ico");
+            this.imageList4.Images.SetKeyName(7, "Category_bad.ico");
+            this.imageList4.Images.SetKeyName(8, "Category_old.ico");
+            this.imageList4.Images.SetKeyName(9, "Category2.ico");
+            this.imageList4.Images.SetKeyName(10, "category3.ico");
+            this.imageList4.Images.SetKeyName(11, "collapse.ico");
+            this.imageList4.Images.SetKeyName(12, "Dimensions.ico");
+            this.imageList4.Images.SetKeyName(13, "DTC.ico");
+            this.imageList4.Images.SetKeyName(14, "eeprom.ico");
+            this.imageList4.Images.SetKeyName(15, "engine.ico");
+            this.imageList4.Images.SetKeyName(16, "enginediag.ico");
+            this.imageList4.Images.SetKeyName(17, "enum.ico");
+            this.imageList4.Images.SetKeyName(18, "enum1d.ico");
+            this.imageList4.Images.SetKeyName(19, "enum2d.ico");
+            this.imageList4.Images.SetKeyName(20, "enum3d.ico");
+            this.imageList4.Images.SetKeyName(21, "expand.ico");
+            this.imageList4.Images.SetKeyName(22, "explorer.ico");
+            this.imageList4.Images.SetKeyName(23, "flag1d.ico");
+            this.imageList4.Images.SetKeyName(24, "flag2d.ico");
+            this.imageList4.Images.SetKeyName(25, "flag3d.ico");
+            this.imageList4.Images.SetKeyName(26, "flash.ico");
+            this.imageList4.Images.SetKeyName(27, "fuel.ico");
+            this.imageList4.Images.SetKeyName(28, "Histogram.ico");
+            this.imageList4.Images.SetKeyName(29, "info.ico");
+            this.imageList4.Images.SetKeyName(30, "listmode.ico");
+            this.imageList4.Images.SetKeyName(31, "mask1d.ico");
+            this.imageList4.Images.SetKeyName(32, "mask2d.ico");
+            this.imageList4.Images.SetKeyName(33, "mask3d.ico");
+            this.imageList4.Images.SetKeyName(34, "number.ico");
+            this.imageList4.Images.SetKeyName(35, "os.ico");
+            this.imageList4.Images.SetKeyName(36, "patch.ico");
+            this.imageList4.Images.SetKeyName(37, "pieces.ico");
+            this.imageList4.Images.SetKeyName(38, "segments.ico");
+            this.imageList4.Images.SetKeyName(39, "selection.ico");
+            this.imageList4.Images.SetKeyName(40, "selection1d.ico");
+            this.imageList4.Images.SetKeyName(41, "selection2d.ico");
+            this.imageList4.Images.SetKeyName(42, "selection3d.ico");
+            this.imageList4.Images.SetKeyName(43, "speedo.ico");
+            this.imageList4.Images.SetKeyName(44, "stapler.ico");
+            this.imageList4.Images.SetKeyName(45, "system.ico");
+            this.imageList4.Images.SetKeyName(46, "trans.ico");
+            this.imageList4.Images.SetKeyName(47, "transdiag.ico");
+            this.imageList4.Images.SetKeyName(48, "valuetype.ico");
             // 
             // label2
             // 
@@ -1822,6 +1964,29 @@ namespace UniversalPatcher
             this.btnExtraOffsetNext.UseVisualStyleBackColor = true;
             this.btnExtraOffsetNext.Click += new System.EventHandler(this.btnExtraOffsetNext_Click);
             // 
+            // treeView1
+            // 
+            this.treeView1.ContextMenuStrip = this.contextMenuStripListTree;
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.HideSelection = false;
+            this.treeView1.ImageIndex = 0;
+            this.treeView1.ImageList = this.imageList1;
+            this.treeView1.Indent = 20;
+            this.treeView1.ItemHeight = 18;
+            this.treeView1.Location = new System.Drawing.Point(0, 0);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.SelectedImageIndex = 0;
+            this.treeView1.SelectedNodes = ((System.Collections.ArrayList)(resources.GetObject("treeView1.SelectedNodes")));
+            this.treeView1.Size = new System.Drawing.Size(340, 409);
+            this.treeView1.TabIndex = 2;
+            // 
+            // treeviewSettingsToolStripMenuItem
+            // 
+            this.treeviewSettingsToolStripMenuItem.Name = "treeviewSettingsToolStripMenuItem";
+            this.treeviewSettingsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.treeviewSettingsToolStripMenuItem.Text = "Treeview settings";
+            this.treeviewSettingsToolStripMenuItem.Click += new System.EventHandler(this.treeviewSettingsToolStripMenuItem_Click);
+            // 
             // FrmTuner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2053,5 +2218,11 @@ namespace UniversalPatcher
         private ToolStripMenuItem addNewTableToolStripMenuItem;
         private ToolStripMenuItem showOffsetVisualizerToolStripMenuItem;
         private ToolStripMenuItem mirrorSegmentsFromCompareToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator3;
+        private TabPage tabMultiTree;
+        private ToolStripMenuItem fontToolStripMenuItem;
+        private CheckBox chkShowTableCount;
+        private Button btnExplorerFont;
+        private ToolStripMenuItem treeviewSettingsToolStripMenuItem;
     }
 }

@@ -92,7 +92,39 @@ namespace UniversalPatcher
         public List<DtcCode> dtcCodes;
         public List<DtcCode> dtcCodes2;
         public Dictionary<byte, string> dtcValues;
-        public List<string> tableCategories;
+/*        public List<string> SelectedNodeCategory;
+        public List<string> SelectedNodeDimension;
+        public List<string> SelectedNodeMulti;
+        public List<string> SelectedNodeSegment;
+        public List<string> SelectedNodeValueType;
+        public List<string> SelectedNodeList;
+*/
+        public Dictionary<string, List<String>> SelectedNode = new Dictionary<string, List<string>>();
+
+        public List<string> tableCategories
+        {
+            get 
+            {
+                List<string> cats = new List<string>();
+                cats.Add("_All");
+                if (segmentinfos != null)
+                {
+                    for (int c = 0; c < segmentinfos.Length; c++)
+                    {
+                        if (!Segments[c].Missing)
+                            cats.Add("Seg-" + segmentinfos[c].Name);
+                    }
+                }
+                for (int t=0; t<tableDatas.Count; t++)
+                {
+                    if (!cats.Contains(tableDatas[t].Category))
+                    {
+                        cats.Add(tableDatas[t].Category);
+                    }
+                }
+                return cats;
+            }
+        }
         public List<TableData> tableDatas;
         public bool dtcCombined = false;
         //public TableData selectedTable; //Required for Tuner/Compare
@@ -241,7 +273,7 @@ namespace UniversalPatcher
             tableDatas = new List<TableData>();
             foundTables = new List<FoundTable>();
             foundSegments = new List<FoundSegment>();
-            tableCategories = new List<string>();
+            //tableCategories = new List<string>();
             altTableDatas = new List<AltTableData>();
             tunerFileList = new List<string>();
             currentTableDatasList = 0;
@@ -343,8 +375,8 @@ namespace UniversalPatcher
                     tableData.ImportFoundTable(i, this);
                     tableDatas.Add(tableData);
                 }
-                if (!tableCategories.Contains("DTC"))
-                    tableCategories.Add("DTC");
+                //if (!tableCategories.Contains("DTC"))
+                  //  tableCategories.Add("DTC");
                 seekTablesImported = true;
             }
             catch (Exception ex)
@@ -383,7 +415,7 @@ namespace UniversalPatcher
 
         public void AutoLoadTunerConfig()
         {
-            if (!UniversalPatcher.Properties.Settings.Default.disableTunerAutoloadSettings)
+            if (!AppSettings.disableTunerAutoloadSettings)
             {
                 DirectoryInfo d = new DirectoryInfo(Path.Combine(Application.StartupPath, "Tuner"));
                // FileInfo[] Files = d.GetFiles("*.*", SearchOption.AllDirectories);
@@ -478,12 +510,16 @@ namespace UniversalPatcher
                 {
                     tmpTableDatas[t].Origin = "xml";
                     tableDatas.Add(tmpTableDatas[t]);
-                    string category = tableDatas[t].Category;
-                    if (!tableCategories.Contains(category))
-                        tableCategories.Add(category);
+/*                    for (int c = 0; c < tableDatas[t].Categories.Count; c++)
+                    {
+                        string category = tableDatas[t].Categories[c];
+                        if (!tableCategories.Contains(category))
+                            tableCategories.Add(category);
+                    }
+*/
                 }
-                if (!tableCategories.Contains("DTC"))
-                    tableCategories.Add("DTC");
+                //if (!tableCategories.Contains("DTC"))
+                  //  tableCategories.Add("DTC");
 
                 Logger(" [OK]");
                 Application.DoEvents();
@@ -620,7 +656,7 @@ namespace UniversalPatcher
         {
             try
             {
-                if (UniversalPatcher.Properties.Settings.Default.DisableAutoFixChecksum)
+                if (AppSettings.DisableAutoFixChecksum)
                     LoggerBold("Warning! Automatic checksum fix is disabled");
                 else
                     FixCheckSums();

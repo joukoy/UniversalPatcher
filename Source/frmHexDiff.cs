@@ -133,7 +133,7 @@ namespace UniversalPatcher
                 dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
                 FilterTables();
                 tree1.SelectedNodes.Clear();
-                TreeParts.AddNodes(tree1.Nodes, pcm1);
+                TreeParts.AddNodes(tree1.Nodes, pcm1,filteredTableDatas.ToList(),false);
                 tree1.AfterSelect += Tree1_AfterSelect;
                 tree1.ContextMenuStrip = contextMenuStrip1;
             }

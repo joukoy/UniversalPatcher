@@ -24,37 +24,37 @@ namespace UniversalPatcher
 
         private void frmGraphics_Load(object sender, EventArgs e)
         {
-            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+            if (AppSettings.MainWindowPersistence)
             {
-                if (UniversalPatcher.Properties.Settings.Default.frmGraphicsWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.frmGraphicsWindowSize.Height > 0)
+                if (AppSettings.frmGraphicsWindowSize.Width > 0 || AppSettings.frmGraphicsWindowSize.Height > 0)
                 {
-                    this.WindowState = UniversalPatcher.Properties.Settings.Default.frmGraphicsWindowState;
+                    this.WindowState = AppSettings.frmGraphicsWindowState;
                     if (this.WindowState == FormWindowState.Minimized)
                     {
                         this.WindowState = FormWindowState.Normal;
                     }
-                    this.Location = UniversalPatcher.Properties.Settings.Default.frmGraphicsWindowLocation;
-                    this.Size = UniversalPatcher.Properties.Settings.Default.frmGraphicsWindowSize;
+                    this.Location = AppSettings.frmGraphicsWindowLocation;
+                    this.Size = AppSettings.frmGraphicsWindowSize;
                 }
             }
 
         }
         private void frmGraphics_FormClosing(object sender, EventArgs e)
         {
-            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+            if (AppSettings.MainWindowPersistence)
             {
-                UniversalPatcher.Properties.Settings.Default.frmGraphicsWindowState = this.WindowState;
+                AppSettings.frmGraphicsWindowState = this.WindowState;
                 if (this.WindowState == FormWindowState.Normal)
                 {
-                    UniversalPatcher.Properties.Settings.Default.frmGraphicsWindowLocation = this.Location;
-                    UniversalPatcher.Properties.Settings.Default.frmGraphicsWindowSize = this.Size;
+                    AppSettings.frmGraphicsWindowLocation = this.Location;
+                    AppSettings.frmGraphicsWindowSize = this.Size;
                 }
                 else
                 {
-                    UniversalPatcher.Properties.Settings.Default.frmGraphicsWindowLocation = this.RestoreBounds.Location;
-                    UniversalPatcher.Properties.Settings.Default.frmGraphicsWindowSize = this.RestoreBounds.Size;
+                    AppSettings.frmGraphicsWindowLocation = this.RestoreBounds.Location;
+                    AppSettings.frmGraphicsWindowSize = this.RestoreBounds.Size;
                 }
-                UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.Save();
             }
         }
     }

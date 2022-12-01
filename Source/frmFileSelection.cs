@@ -121,17 +121,17 @@ namespace UniversalPatcher
 
         private void frmFileSelection_Load(object sender, EventArgs e)
         {
-            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+            if (AppSettings.MainWindowPersistence)
             {
-                if (UniversalPatcher.Properties.Settings.Default.FileSelectionWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.FileSelectionWindowSize.Height > 0)
+                if (AppSettings.FileSelectionWindowSize.Width > 0 || AppSettings.FileSelectionWindowSize.Height > 0)
                 {
-                    this.WindowState = UniversalPatcher.Properties.Settings.Default.FileSelectionWindowState;
+                    this.WindowState = AppSettings.FileSelectionWindowState;
                     if (this.WindowState == FormWindowState.Minimized)
                     {
                         this.WindowState = FormWindowState.Normal;
                     }
-                    this.Location = UniversalPatcher.Properties.Settings.Default.FileSelectionWindowLocation;
-                    this.Size = UniversalPatcher.Properties.Settings.Default.FileSelectionWindowSize;
+                    this.Location = AppSettings.FileSelectionWindowLocation;
+                    this.Size = AppSettings.FileSelectionWindowSize;
                 }
             }
             listFiles.ColumnClick += ListFiles_ColumnClick;
@@ -165,20 +165,20 @@ namespace UniversalPatcher
 
         private void frmFileSelection_FormClosing(object sender, EventArgs e)
         {
-            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+            if (AppSettings.MainWindowPersistence)
             {
-                UniversalPatcher.Properties.Settings.Default.FileSelectionWindowState = this.WindowState;
+                AppSettings.FileSelectionWindowState = this.WindowState;
                 if (this.WindowState == FormWindowState.Normal)
                 {
-                    UniversalPatcher.Properties.Settings.Default.FileSelectionWindowLocation = this.Location;
-                    UniversalPatcher.Properties.Settings.Default.FileSelectionWindowSize = this.Size;
+                    AppSettings.FileSelectionWindowLocation = this.Location;
+                    AppSettings.FileSelectionWindowSize = this.Size;
                 }
                 else
                 {
-                    UniversalPatcher.Properties.Settings.Default.FileSelectionWindowLocation = this.RestoreBounds.Location;
-                    UniversalPatcher.Properties.Settings.Default.FileSelectionWindowSize = this.RestoreBounds.Size;
+                    AppSettings.FileSelectionWindowLocation = this.RestoreBounds.Location;
+                    AppSettings.FileSelectionWindowSize = this.RestoreBounds.Size;
                 }
-                UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.Save();
             }
         }
 

@@ -30,7 +30,7 @@ namespace UniversalPatcher
         Device device;
         MessageReceiver receiver;
         ushort key = 0xFFFF;
-        int globaldelay = UniversalPatcher.Properties.Settings.Default.LoggerScriptDelay;
+        int globaldelay = AppSettings.LoggerScriptDelay;
         int breakvalue = -1;
         int breaknotvalue = -1;
         int breakposition = -1;

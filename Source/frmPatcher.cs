@@ -69,21 +69,21 @@ namespace UniversalPatcher
             basefile = new PcmFile();
             uPLogger.UpLogUpdated += UPLogger_UpLogUpdated;
             //LogReceivers.Add(txtResult);
-            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+            if (AppSettings.MainWindowPersistence)
             {
                 rememberWindowSizeToolStripMenuItem.Checked = true;
-                if (UniversalPatcher.Properties.Settings.Default.MainWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.MainWindowSize.Height > 0)
+                if (AppSettings.MainWindowSize.Width > 0 || AppSettings.MainWindowSize.Height > 0)
                 {
-                    this.WindowState = UniversalPatcher.Properties.Settings.Default.MainWindowState;
+                    this.WindowState = AppSettings.MainWindowState;
                     if (this.WindowState == FormWindowState.Minimized)
                     {
                         this.WindowState = FormWindowState.Normal;
                     }
-                    this.Location = UniversalPatcher.Properties.Settings.Default.MainWindowLocation;
-                    this.Size = UniversalPatcher.Properties.Settings.Default.MainWindowSize;
+                    this.Location = AppSettings.MainWindowLocation;
+                    this.Size = AppSettings.MainWindowSize;
                 }
-                if (UniversalPatcher.Properties.Settings.Default.PatcherSplitterDistance > 0)
-                    splitPatcher.SplitterDistance = UniversalPatcher.Properties.Settings.Default.PatcherSplitterDistance;
+                if (AppSettings.PatcherSplitterDistance > 0)
+                    splitPatcher.SplitterDistance = AppSettings.PatcherSplitterDistance;
                 else
                     splitPatcher.SplitterDistance = 138;
             }
@@ -94,47 +94,47 @@ namespace UniversalPatcher
 
             //Set default values for Tuner datagrid, if not set previously:
             TableData tdTmp = new TableData();
-            if (UniversalPatcher.Properties.Settings.Default.ConfigModeColumnOrder == null || UniversalPatcher.Properties.Settings.Default.ConfigModeColumnOrder.Length == 0)
+            if (AppSettings.ConfigModeColumnOrder == null || AppSettings.ConfigModeColumnOrder.Length == 0)
             {
                 string cOrder = "";
                 foreach (var prop in tdTmp.GetType().GetProperties())
                 {
                     cOrder += prop.Name + ",";
                 }
-                UniversalPatcher.Properties.Settings.Default.ConfigModeColumnOrder = cOrder.Trim(',');
+                AppSettings.ConfigModeColumnOrder = cOrder.Trim(',');
             }
 
-            if (UniversalPatcher.Properties.Settings.Default.TunerModeColumns == null || UniversalPatcher.Properties.Settings.Default.TunerModeColumns.Length == 0)
+            if (AppSettings.TunerModeColumns == null || AppSettings.TunerModeColumns.Length == 0)
             {
-                UniversalPatcher.Properties.Settings.Default.TunerModeColumns = "TableName,Category,Units,Columns,Rows,TableDescription";
+                AppSettings.TunerModeColumns = "TableName,Category,Units,Columns,Rows,TableDescription";
             }
 
-            if (UniversalPatcher.Properties.Settings.Default.ConfigModeColumnWidth == null || UniversalPatcher.Properties.Settings.Default.ConfigModeColumnWidth.Length == 0)
+            if (AppSettings.ConfigModeColumnWidth == null || AppSettings.ConfigModeColumnWidth.Length == 0)
             {
-                UniversalPatcher.Properties.Settings.Default.ConfigModeColumnWidth = "180,114,32,63,86,71,48,81,100,50,78,49,69,60,54,43,58,64,43,78,100,100,243,100,100";
+                AppSettings.ConfigModeColumnWidth = "180,114,32,63,86,71,48,81,100,50,78,49,69,60,54,43,58,64,43,78,100,100,243,100,100";
             }
-            if (UniversalPatcher.Properties.Settings.Default.TunerModeColumnWidth == null || UniversalPatcher.Properties.Settings.Default.TunerModeColumnWidth.Length == 0)
+            if (AppSettings.TunerModeColumnWidth == null || AppSettings.TunerModeColumnWidth.Length == 0)
             {
-                UniversalPatcher.Properties.Settings.Default.TunerModeColumnWidth = "192,110,100,100,100,100,100,100,100,72,100,100,100,100,60,46,100,100,100,100,100,100,197,100,100";
+                AppSettings.TunerModeColumnWidth = "192,110,100,100,100,100,100,100,100,72,100,100,100,100,60,46,100,100,100,100,100,100,197,100,100";
 
             }
 
-            if (UniversalPatcher.Properties.Settings.Default.PatcherLogFont != null)
-                txtResult.Font = UniversalPatcher.Properties.Settings.Default.PatcherLogFont;
-            if (UniversalPatcher.Properties.Settings.Default.DebugFont != null)
-                txtDebug.Font = UniversalPatcher.Properties.Settings.Default.DebugFont;
+            if (AppSettings.PatcherLogFont != null)
+                txtResult.Font = AppSettings.PatcherLogFont.ToFont();
+            if (AppSettings.DebugFont != null)
+                txtDebug.Font = AppSettings.DebugFont.ToFont();
 
             Application.DoEvents();
 
             AddCheckBoxes();
-            numSuppress.Value = UniversalPatcher.Properties.Settings.Default.SuppressAfter;
+            numSuppress.Value = AppSettings.SuppressAfter;
             if (numSuppress.Value == 0)
                 numSuppress.Value = 10;
 
-            chkDebug.Checked = UniversalPatcher.Properties.Settings.Default.DebugOn;
-            checkAutorefreshCVNlist.Checked = UniversalPatcher.Properties.Settings.Default.AutorefreshCVNlist;
-            checkAutorefreshFileinfo.Checked = UniversalPatcher.Properties.Settings.Default.AutorefreshFileinfo;
-            disableTunerAutloadConfigToolStripMenuItem.Checked = UniversalPatcher.Properties.Settings.Default.disableTunerAutoloadSettings;
+            chkDebug.Checked = AppSettings.DebugOn;
+            checkAutorefreshCVNlist.Checked = AppSettings.AutorefreshCVNlist;
+            checkAutorefreshFileinfo.Checked = AppSettings.AutorefreshFileinfo;
+            disableTunerAutloadConfigToolStripMenuItem.Checked = AppSettings.disableTunerAutoloadSettings;
 
             listCSAddresses.Enabled = true;
             listCSAddresses.Clear();
@@ -199,7 +199,7 @@ namespace UniversalPatcher
 
         private void TabFakeCvn_Enter(object sender, EventArgs e)
         {
-            if (!UniversalPatcher.Properties.Settings.Default.CvnPopupAccepted)
+            if (!AppSettings.CvnPopupAccepted)
             {
                 string msg = "Avoiding emission checks can be illegal at some areas." + Environment.NewLine;
                 msg += "Use for educational and research purposes only, solely at your own risk." + Environment.NewLine;
@@ -214,8 +214,8 @@ namespace UniversalPatcher
                 }
                 else
                 {
-                    UniversalPatcher.Properties.Settings.Default.CvnPopupAccepted = true;
-                    UniversalPatcher.Properties.Settings.Default.Save();
+                    AppSettings.CvnPopupAccepted = true;
+                    AppSettings.Save();
                 }
             }
         }
@@ -262,7 +262,12 @@ namespace UniversalPatcher
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, frmTuner , line " + line + ": " + ex.Message);
             }
             return SortOrder.Ascending;
         }
@@ -271,7 +276,7 @@ namespace UniversalPatcher
         {
             try
             {
-                int patcherMode = UniversalPatcher.Properties.Settings.Default.WorkingMode;
+                int patcherMode = AppSettings.WorkingMode;
                 switch (patcherMode)
                 {
                     case 0:
@@ -488,8 +493,8 @@ namespace UniversalPatcher
             //dataGridTableSeek.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             comboTableCategory.DataSource = null;
             categoryBindingSource.DataSource = null;
-            basefile.tableCategories.Sort();
-            categoryBindingSource.DataSource = basefile.tableCategories;
+            //basefile.tableCategories.Sort();
+            categoryBindingSource.DataSource = basefile.tableCategories.OrderBy(x=>x);
             comboTableCategory.DataSource = categoryBindingSource;
             dataGridTableSeek.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
         }
@@ -501,21 +506,21 @@ namespace UniversalPatcher
                 chkLogtoFile.Checked = false;
                 Application.DoEvents();
             }
-            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+            if (AppSettings.MainWindowPersistence)
             {
-                UniversalPatcher.Properties.Settings.Default.MainWindowState = this.WindowState;
+                AppSettings.MainWindowState = this.WindowState;
                 if (this.WindowState == FormWindowState.Normal)
                 {
-                    UniversalPatcher.Properties.Settings.Default.MainWindowLocation = this.Location;
-                    UniversalPatcher.Properties.Settings.Default.MainWindowSize = this.Size;
+                    AppSettings.MainWindowLocation = this.Location;
+                    AppSettings.MainWindowSize = this.Size;
                 }
                 else
                 {
-                    UniversalPatcher.Properties.Settings.Default.MainWindowLocation = this.RestoreBounds.Location;
-                    UniversalPatcher.Properties.Settings.Default.MainWindowSize = this.RestoreBounds.Size;
+                    AppSettings.MainWindowLocation = this.RestoreBounds.Location;
+                    AppSettings.MainWindowSize = this.RestoreBounds.Size;
                 }
-                UniversalPatcher.Properties.Settings.Default.PatcherSplitterDistance = splitPatcher.SplitterDistance;
-                UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.PatcherSplitterDistance = splitPatcher.SplitterDistance;
+                AppSettings.Save();
             }
             if (basefile.BufModified())
             {
@@ -867,7 +872,7 @@ namespace UniversalPatcher
                     fileName = SelectFile();
                 if (fileName.Length > 1)
                 {
-                    basefile.tableCategories = new List<string>(); //Clear list
+                    //basefile.tableCategories = new List<string>(); //Clear list
                     txtBaseFile.Text = fileName;
                     basefile = new PcmFile(fileName, chkAutodetect.Checked, basefile.configFileFullName);
                     labelBinSize.Text = basefile.fsize.ToString();
@@ -1074,8 +1079,8 @@ namespace UniversalPatcher
         }
         private void btnCompare_Click(object sender, EventArgs e)
         {
-            UniversalPatcher.Properties.Settings.Default.SuppressAfter = (uint)numSuppress.Value;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.SuppressAfter = (uint)numSuppress.Value;
+            AppSettings.Save();
             if (txtBaseFile.Text.Length == 0 || txtModifierFile.Text.Length == 0)
                 return;
             if (basefile.Segments != null && basefile.Segments.Count > 0)
@@ -1179,7 +1184,7 @@ namespace UniversalPatcher
             {
                 frmFileSelection frmF = new frmFileSelection();
                 frmF.btnOK.Text = "OK";
-                frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+                frmF.LoadFiles(AppSettings.LastBINfolder);
                 if (frmF.ShowDialog(this) == DialogResult.OK)
                 {
                     if (!chkLogtodisplay.Checked)
@@ -1445,8 +1450,8 @@ namespace UniversalPatcher
 
         private void chkDebug_CheckedChanged(object sender, EventArgs e)
         {
-            UniversalPatcher.Properties.Settings.Default.DebugOn = chkDebug.Checked;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.DebugOn = chkDebug.Checked;
+            AppSettings.Save();
             timerDebug.Enabled = chkDebug.Checked;
             if (chkDebug.Checked)
             {
@@ -2082,7 +2087,7 @@ namespace UniversalPatcher
             try
             {
                 frmExtractSegments frmES = new frmExtractSegments();
-                frmES.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+                frmES.LoadFiles(AppSettings.LastBINfolder);
                 if (frmES.ShowDialog(this) == DialogResult.OK)
                 {
                     if (!chkLogtodisplay.Checked)
@@ -2184,7 +2189,7 @@ namespace UniversalPatcher
         private void btnFixFilesChecksum_Click(object sender, EventArgs e)
         {
             frmFileSelection frmF = new frmFileSelection();
-            frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+            frmF.LoadFiles(AppSettings.LastBINfolder);
             if (frmF.ShowDialog(this) == DialogResult.OK)
             {
                 if (!chkLogtodisplay.Checked)
@@ -2213,14 +2218,14 @@ namespace UniversalPatcher
 
         private void checkAutorefreshFileinfo_CheckedChanged(object sender, EventArgs e)
         {
-            UniversalPatcher.Properties.Settings.Default.AutorefreshFileinfo = checkAutorefreshFileinfo.Checked;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.AutorefreshFileinfo = checkAutorefreshFileinfo.Checked;
+            AppSettings.Save();
         }
 
         private void checkAutorefreshCVNlist_CheckedChanged(object sender, EventArgs e)
         {
-            UniversalPatcher.Properties.Settings.Default.AutorefreshCVNlist = checkAutorefreshCVNlist.Checked;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.AutorefreshCVNlist = checkAutorefreshCVNlist.Checked;
+            AppSettings.Save();
         }
 
          private void chkLogtoFile_CheckedChanged(object sender, EventArgs e)
@@ -3033,14 +3038,14 @@ namespace UniversalPatcher
             if (rememberWindowSizeToolStripMenuItem.Checked)
             {
                 rememberWindowSizeToolStripMenuItem.Checked = false;
-                UniversalPatcher.Properties.Settings.Default.MainWindowPersistence = false;
-                UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.MainWindowPersistence = false;
+                AppSettings.Save();
             }
             else
             {
                 rememberWindowSizeToolStripMenuItem.Checked = true;
-                UniversalPatcher.Properties.Settings.Default.MainWindowPersistence = true;
-                UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.MainWindowPersistence = true;
+                AppSettings.Save();
             }
         }
 
@@ -3150,8 +3155,8 @@ namespace UniversalPatcher
         private void disableTunerAutoloadConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
             disableTunerAutloadConfigToolStripMenuItem.Checked = !disableTunerAutloadConfigToolStripMenuItem.Checked;
-            UniversalPatcher.Properties.Settings.Default.disableTunerAutoloadSettings = disableTunerAutloadConfigToolStripMenuItem.Checked;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.disableTunerAutoloadSettings = disableTunerAutloadConfigToolStripMenuItem.Checked;
+            AppSettings.Save();
         }
 
         private void moreSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3450,22 +3455,22 @@ namespace UniversalPatcher
 
         private void touristToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            UniversalPatcher.Properties.Settings.Default.WorkingMode = 0;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.WorkingMode = 0;
+            AppSettings.Save();
             SetWorkingMode();
         }
 
         private void basicToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            UniversalPatcher.Properties.Settings.Default.WorkingMode = 1;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.WorkingMode = 1;
+            AppSettings.Save();
             SetWorkingMode();
         }
 
         private void advancedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            UniversalPatcher.Properties.Settings.Default.WorkingMode = 2;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.WorkingMode = 2;
+            AppSettings.Save();
             SetWorkingMode();
         }
 
@@ -4297,8 +4302,8 @@ namespace UniversalPatcher
             if (fontDlg.ShowDialog() != DialogResult.Cancel)
             {
                 txtResult.Font = fontDlg.Font;
-                UniversalPatcher.Properties.Settings.Default.PatcherLogFont = fontDlg.Font;
-                UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.PatcherLogFont = SerializableFont.FromFont(fontDlg.Font);
+                AppSettings.Save();
             }
             fontDlg.Dispose();
 
@@ -4315,8 +4320,8 @@ namespace UniversalPatcher
             if (fontDlg.ShowDialog() != DialogResult.Cancel)
             {
                 txtResult.Font = fontDlg.Font;
-                UniversalPatcher.Properties.Settings.Default.DebugFont = fontDlg.Font;
-                UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.DebugFont = SerializableFont.FromFont(fontDlg.Font);
+                AppSettings.Save();
             }
             fontDlg.Dispose();
 
@@ -4329,11 +4334,11 @@ namespace UniversalPatcher
 
                 frmFileSelection frmF = new frmFileSelection();
                 frmF.btnOK.Text = "OK";
-                frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+                frmF.LoadFiles(AppSettings.LastBINfolder);
                 if (frmF.ShowDialog(this) == DialogResult.OK)
                 {
-                    UniversalPatcher.Properties.Settings.Default.LastBINfolder = frmF.txtFolder.Text;
-                    UniversalPatcher.Properties.Settings.Default.Save();
+                    AppSettings.LastBINfolder = frmF.txtFolder.Text;
+                    AppSettings.Save();
                     string dstFldr = frmF.labelCustomdst.Text;
                     if (dstFldr.Length == 0)
                     {

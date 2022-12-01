@@ -84,20 +84,20 @@ namespace UniversalPatcher
 
         private void frmMassModifyTableData_Load(object sender, EventArgs e)
         {
-            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+            if (AppSettings.MainWindowPersistence)
             {
-                if (UniversalPatcher.Properties.Settings.Default.MassModifyTableDataWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.MassModifyTableDataWindowSize.Height > 0)
+                if (AppSettings.MassModifyTableDataWindowSize.Width > 0 || AppSettings.MassModifyTableDataWindowSize.Height > 0)
                 {
-                    this.WindowState = UniversalPatcher.Properties.Settings.Default.MassModifyTableDataWindowState;
+                    this.WindowState = AppSettings.MassModifyTableDataWindowState;
                     if (this.WindowState == FormWindowState.Minimized)
                     {
                         this.WindowState = FormWindowState.Normal;
                     }
-                    this.Location = UniversalPatcher.Properties.Settings.Default.MassModifyTableDataWindowLocation;
-                    this.Size = UniversalPatcher.Properties.Settings.Default.MassModifyTableDataWindowSize;
+                    this.Location = AppSettings.MassModifyTableDataWindowLocation;
+                    this.Size = AppSettings.MassModifyTableDataWindowSize;
                 }
-                if (UniversalPatcher.Properties.Settings.Default.MassModifyTableDataWindowSplitterDistance > 0)
-                    splitContainer1.SplitterDistance = UniversalPatcher.Properties.Settings.Default.MassModifyTableDataWindowSplitterDistance;
+                if (AppSettings.MassModifyTableDataWindowSplitterDistance > 0)
+                    splitContainer1.SplitterDistance = AppSettings.MassModifyTableDataWindowSplitterDistance;
             }
             this.FormClosing += FrmMassModifyTableData_FormClosing;
             dataGridView1.CellMouseClick += DataGridView1_CellMouseClick;
@@ -137,20 +137,20 @@ namespace UniversalPatcher
                     SaveFiles();
                 }
             }
-            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+            if (AppSettings.MainWindowPersistence)
             {
-                UniversalPatcher.Properties.Settings.Default.MassModifyTableDataWindowState = this.WindowState;
+                AppSettings.MassModifyTableDataWindowState = this.WindowState;
                 if (this.WindowState == FormWindowState.Normal)
                 {
-                    UniversalPatcher.Properties.Settings.Default.MassModifyTableDataWindowLocation = this.Location;
-                    UniversalPatcher.Properties.Settings.Default.MassModifyTableDataWindowSize = this.Size;
+                    AppSettings.MassModifyTableDataWindowLocation = this.Location;
+                    AppSettings.MassModifyTableDataWindowSize = this.Size;
                 }
                 else
                 {
-                    UniversalPatcher.Properties.Settings.Default.MassModifyTableDataWindowLocation = this.RestoreBounds.Location;
-                    UniversalPatcher.Properties.Settings.Default.MassModifyTableDataWindowSize = this.RestoreBounds.Size;
+                    AppSettings.MassModifyTableDataWindowLocation = this.RestoreBounds.Location;
+                    AppSettings.MassModifyTableDataWindowSize = this.RestoreBounds.Size;
                 }
-                UniversalPatcher.Properties.Settings.Default.MassModifyTableDataWindowSplitterDistance = splitContainer1.SplitterDistance;
+                AppSettings.MassModifyTableDataWindowSplitterDistance = splitContainer1.SplitterDistance;
             }
         }
 
@@ -749,7 +749,7 @@ namespace UniversalPatcher
                         if (prop.PropertyType == typeof(string))
                         {
                             double percentage = ComputeSimilarity.CalculateSimilarity((string)prop.GetValue(tunerFiles[tf].tableDatas[t], null), myCriteria[mc].Value);
-                            if ((percentage * 100) < (double)UniversalPatcher.Properties.Settings.Default.TableEditorMinOtherEquivalency)
+                            if ((percentage * 100) < (double)AppSettings.TableEditorMinOtherEquivalency)
                             {
                                 match = false;
                                 break;
@@ -1004,7 +1004,7 @@ namespace UniversalPatcher
         private void timerFilter_Tick(object sender, EventArgs e)
         {
             keyDelayCounter++;
-            if (keyDelayCounter > UniversalPatcher.Properties.Settings.Default.keyPressWait100ms)
+            if (keyDelayCounter > AppSettings.keyPressWait100ms)
             {
                 timerFilter.Enabled = false;
                 keyDelayCounter = 0;

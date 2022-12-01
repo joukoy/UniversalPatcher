@@ -548,3 +548,15 @@
 
 0.21.10
 - Tuner: Import dtcsearch -tables also in case DTC -tables are imported from TinyTuner DB
+
+0.21.11
+- Tuner: Filter tables which differ between files, for example: %difference:A:B
+- TableEditor: Don't try to use remembered compare settings, if table missing
+- TableEditor: Remember "Show HEX" and "Swap X/Y" settings
+- Tuner: Split Categories & Extracategories by " - " to multiple categories
+- Tuner: Fixed bugs: select visible columns by right-click in basic-mode
+- Tuner: Remember selected tree-node after filtering, or switching between Treemode & Listmode
+- Tuner: arrange the categories in alphabetical order
+- Tuner: Fixed bug: screen flickering when switchin between tables in tree-mode
+- Application settings saved to "universalpatcher.xml" in application startupfolder, instead of appdata folder in user profile
+- Logger: VPW Console: Selection for logging to File and/or Display

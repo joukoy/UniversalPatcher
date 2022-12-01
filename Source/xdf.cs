@@ -21,6 +21,7 @@ namespace UniversalPatcher
         }
         private PcmFile PCM;
         private List<TableData> tdList;
+        private List<string> Categories;
 
         private string ConvertMath(string math)
         {
@@ -483,9 +484,7 @@ namespace UniversalPatcher
                             Debug.WriteLine(catid);
                             if (categories.ContainsKey(catid - 1))
                             {
-                                if (xdf.Category.Length > 0)
-                                    xdf.Category += " - ";
-                                xdf.Category += categories[catid - 1];
+                                xdf.AddCategory(categories[catid - 1]);
                             }
                         }
                     }
@@ -577,9 +576,10 @@ namespace UniversalPatcher
                             catid = Convert.ToInt16(catEle.Attribute("category").Value);
                             if (categories.ContainsKey(catid - 1))
                             {
-                                if (xdf.Category.Length > 0)
-                                    xdf.Category += " - ";
-                                xdf.Category += categories[catid - 1];
+                                //if (xdf.Category.Length > 0)
+                                  //  xdf.Category += " - ";
+                                //xdf.Category += categories[catid - 1];
+                                xdf.AddCategory(categories[catid - 1]);
                             }
                         }
                     }
@@ -627,9 +627,7 @@ namespace UniversalPatcher
                             catid = Convert.ToInt16(catEle.Attribute("category").Value);
                             if (categories.ContainsKey(catid - 1))
                             {
-                                if (xdf.Category.Length > 0)
-                                    xdf.Category += " - ";
-                                xdf.Category += categories[catid - 1];
+                                xdf.AddCategory(categories[catid - 1]);
                             }
                         }
                     }
@@ -637,8 +635,6 @@ namespace UniversalPatcher
                         xdf.TableDescription = element.Element("description").Value;
                     xdf.DataType = ConvertToDataType(elementSize, false, false);
                     tdList.Add(xdf);
-
-
                 }
 
                 foreach (XElement element in doc.Elements("XDFFORMAT").Elements("XDFPATCH"))
@@ -661,9 +657,7 @@ namespace UniversalPatcher
                             catid = Convert.ToInt16(catEle.Attribute("category").Value);
                             if (categories.ContainsKey(catid - 1))
                             {
-                                if (patchTd.Category.Length > 0)
-                                    patchTd.Category += " - ";
-                                patchTd.Category += categories[catid - 1];
+                                patchTd.AddCategory(categories[catid - 1]);
                             }
                         }
                     }
@@ -699,8 +693,12 @@ namespace UniversalPatcher
                 for (int i=0; i< tdList.Count; i++)
                 {
                     TableData td = tdList[i];
-                    if (!PCM.tableCategories.Contains(td.Category))
-                        PCM.tableCategories.Add(td.Category);
+/*                    for (int c = 0; c < td.Categories.Count; c++)
+                    {
+                        if (!PCM.tableCategories.Contains(td.Categories[c]))
+                            PCM.tableCategories.Add(td.Categories[c]);
+                    }
+*/
                     if (td.ColumnHeaders.StartsWith("TunerPro:"))
                     {
                         string id = td.ColumnHeaders.Replace("TunerPro: ", "").Trim();
@@ -710,7 +708,7 @@ namespace UniversalPatcher
                             {
                                 if (tdList[t].guid == TpIdGuid[id])
                                 {
-                                    if (UniversalPatcher.Properties.Settings.Default.xdfImportUseTableName)
+                                    if (AppSettings.xdfImportUseTableName)
                                         td.ColumnHeaders = td.ColumnHeaders.Replace("TunerPro: ", "Table: ").Replace(id, tdList[t].TableName);
                                     else
                                         td.ColumnHeaders = td.ColumnHeaders.Replace("TunerPro: ", "guid: ").Replace(id, tdList[t].guid.ToString());
@@ -728,7 +726,7 @@ namespace UniversalPatcher
                             {
                                 if (tdList[t].guid == TpIdGuid[id])
                                 {
-                                    if (UniversalPatcher.Properties.Settings.Default.xdfImportUseTableName)
+                                    if (AppSettings.xdfImportUseTableName)
                                         td.RowHeaders = td.RowHeaders.Replace("TunerPro: ", "Table: ").Replace(id, tdList[t].TableName);
                                     else
                                         td.RowHeaders = td.RowHeaders.Replace("TunerPro: ", "guid: ").Replace(id, tdList[t].guid.ToString());
@@ -857,6 +855,34 @@ namespace UniversalPatcher
             return retVal;
         }
 
+        private string CreateCategoryRows(TableData td, int lastCategory)
+        {
+            int s = PCM.GetSegmentNumber(td.addrInt);
+            if (s == -1) s = lastCategory;
+            string cats = "";
+            //<CATEGORYMEM index="0" category="5" />
+            List<string> tdCats = new List<string>();
+            tdCats.Add(td.Category);
+            tdCats.AddRange(td.SubCategories());
+            for (int c = 0; c < tdCats.Count; c++)
+            {
+                string cat = tdCats[c];
+                for (int x = 1; x < Categories.Count; x++)
+                {
+                    if (Categories[x] == cat)
+                    {
+                        cats += "    <CATEGORYMEM index=\"" + c.ToString() + "\" category=\"" + x.ToString() + "\" />" + Environment.NewLine;
+                        break;
+                    }
+                }
+            }
+            if (string.IsNullOrEmpty(cats))
+            {
+                cats = "    <CATEGORYMEM index=\"0\" category=\"" + s.ToString() + "\" />" + Environment.NewLine;
+            }
+            return cats;
+        }
+
         public string ExportXdf(PcmFile basefile, List<TableData> tdList1)
         {
             PCM = basefile;
@@ -877,6 +903,8 @@ namespace UniversalPatcher
 
             try
             {
+                Categories = new List<string>();
+                Categories.AddRange(PCM.tableCategories);
                 //Reserve TunerPro ID for all tables and add to dictionaries:
                 for (int nr =0; nr < tdList.Count;nr++)
                 {
@@ -894,9 +922,9 @@ namespace UniversalPatcher
                 xdfText.Replace("REPLACE-TIMESTAMP", DateTime.Today.ToString("MM/dd/yyyy H:mm"));
                 xdfText.Replace("REPLACE-OSID", basefile.OS);
                 xdfText.Replace("REPLACE-BINSIZE", basefile.fsize.ToString("X"));
-                for (int s = 1; s < basefile.tableCategories.Count; s++)
+                for (int s = 1; s < Categories.Count; s++)
                 {
-                    tableText.Append( "     <CATEGORY index = \"0x" + (s - 1).ToString("X") + "\" name = \"" + basefile.tableCategories[s].Replace("&","+") + "\" />" + Environment.NewLine);
+                    tableText.Append( "     <CATEGORY index = \"0x" + (s - 1).ToString("X") + "\" name = \"" + Categories[s].Replace("&","+") + "\" />" + Environment.NewLine);
                     lastCategory = s;
                 }
                 dtcCategory = lastCategory + 1;
@@ -932,7 +960,9 @@ namespace UniversalPatcher
                     tableText.Replace("REPLACE-MINVALUE", basefile.OS);
                     tableText.Replace("REPLACE-MAXVALUE", basefile.OS);
                     tableText.Replace("REPLACE-TABLEADDRESS", basefile.segmentAddressDatas[basefile.OSSegment].PNaddr.Address.ToString("X"));
-                    tableText.Replace("REPLACE-CATEGORY", (basefile.OSSegment + 1).ToString("X"));
+                    //tableText.Replace("REPLACE-CATEGORY", (basefile.OSSegment + 1).ToString("X"));
+                    string cat = "    <CATEGORYMEM index=\"0\" category=" + (basefile.OSSegment + 1).ToString("X") + " />" + Environment.NewLine;
+                    tableText.Replace("REPLACE-CATEGORIES", cat);
                     xdfText.Append(tableText);
                 }
                 fName = Path.Combine(Application.StartupPath, "Templates", "xdfconstant.txt");
@@ -947,13 +977,9 @@ namespace UniversalPatcher
                         if (td.TableName == null || td.TableName.Length == 0)
                             tableName = td.Address;
                         tableText = new StringBuilder(templateTxt.Replace("REPLACE-TABLETITLE", tableName));
-                        int s = basefile.GetSegmentNumber(td.addrInt);
-                        if (s == -1) s = lastCategory;
-                        tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
+                        string cat = CreateCategoryRows(td, lastCategory);
+                        tableText.Replace("REPLACE-CATEGORIES", cat);
                         tableText.Replace("REPLACE-TABLEID", tableGuidTPid[td.guid.ToString()]);
-                        //uniqIds.Add(uniqId);
-                        //tableNames.Add(td.TableName.ToLower());
-                        //uniqId++;
 
                         string linkTxt = "";
                         string mathTxt = td.Math.ToLower();
@@ -993,23 +1019,8 @@ namespace UniversalPatcher
                         if (td.TableName == null || td.TableName.Length == 0)
                             tableName = td.Address;
                         tableText = new StringBuilder(templateTxt.Replace("REPLACE-TABLETITLE", tableName));
-                        int s = basefile.GetSegmentNumber(td.addrInt);
-                        if (s == -1) s = lastCategory;
-                        if (td.Category != null && td.Category != "")
-                        {
-                            for (int c = 1; c < PCM.tableCategories.Count; c++)
-                            {
-                                if (PCM.tableCategories[c] == td.Category)
-                                {
-                                    tableText = tableText.Replace("REPLACE-CATEGORY", c.ToString());
-                                    break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            tableText.Replace("REPLACE-CATEGORY", s.ToString());
-                        }
+                        string cat = CreateCategoryRows(td, lastCategory);
+                        tableText.Replace("REPLACE-CATEGORIES", cat);
                         /*if (td.Values.StartsWith("Enum: ") && !descr.ToLower().Contains("enum"))
                         {
                             string[] hParts = td.Values.Substring(6).Split(',');
@@ -1142,9 +1153,8 @@ namespace UniversalPatcher
                         if (td.TableName == null || td.TableName.Length == 0)
                             tableName = td.Address;
                         tableText = new StringBuilder(templateTxt.Replace("REPLACE-TABLETITLE", tableName));
-                        int s = basefile.GetSegmentNumber(td.addrInt);
-                        if (s == -1) s = lastCategory;
-                        tableText.Replace("REPLACE-CATEGORY", (s + 1).ToString("X"));
+                        string cat = CreateCategoryRows(td, lastCategory);
+                        tableText.Replace("REPLACE-CATEGORIES", cat);
                         tableText.Replace("REPLACE-TABLEID", tableGuidTPid[td.guid.ToString()]);
                         tableText.Replace("REPLACE-TABLEADDRESS", ((uint)(td.addrInt + td.Offset + td.ExtraOffset)).ToString("X"));
                         tableText.Replace("REPLACE-TABLEDESCRIPTION", "");

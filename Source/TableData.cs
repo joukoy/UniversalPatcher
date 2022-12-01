@@ -48,6 +48,7 @@ namespace UniversalPatcher
         public string TableName { get; set; }
         public string ExtraTableName { get; set; }
         public string Category { get; set; }
+
         private Guid _guid;
         public Guid guid
         {
@@ -135,6 +136,52 @@ namespace UniversalPatcher
             }
         }
 
+        public List<string> SubCategories()
+        {
+            List<string> cats = new List<string>();
+            if (!string.IsNullOrEmpty(ExtraCategories))
+            {
+                string[] parts = ExtraCategories.Split(new string[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string cat in parts)
+                {
+                    cats.Add(cat.Trim());
+                }
+            }
+            return cats;
+        }
+
+        public List<string> MainCategories()
+        {
+            List<string> cats = new List<string>();
+            if (!string.IsNullOrEmpty(Category))
+            {
+                string[] parts = Category.Split(new string[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string cat in parts)
+                {
+                    cats.Add(cat.Trim());
+                }
+            }
+            return cats;
+        }
+
+        public void AddCategory(string cat)
+        {
+            if (string.IsNullOrEmpty(Category))
+            {
+                Category = cat;
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(ExtraCategories))
+                {
+                    ExtraCategories = cat;                    
+                }
+                else
+                {
+                    ExtraCategories += " - " + cat;
+                }
+            }
+        }
         public int Dimensions ()
         {
             if (Rows < 2 && Columns < 2)
@@ -213,8 +260,8 @@ namespace UniversalPatcher
             ExtraDescription = tSeek.ExtraDescription;
             ExtraTableName = tSeek.ExtraTableName;
 
-            if (!PCM.tableCategories.Contains(Category))
-                PCM.tableCategories.Add(Category);
+            //if (!PCM.tableCategories.Contains(Category))
+              //  PCM.tableCategories.Add(Category);
         }
 
         public void ImportDTC(PcmFile PCM, ref List<TableData> tdList, bool primary)
@@ -369,8 +416,8 @@ namespace UniversalPatcher
 
                 }
 
-                if (!PCM.tableCategories.Contains("DTC"))
-                    PCM.tableCategories.Add("DTC");
+                //if (!PCM.tableCategories.Contains("DTC"))
+                  //  PCM.tableCategories.Add("DTC");
 
             }
             catch (Exception ex)

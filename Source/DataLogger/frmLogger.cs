@@ -20,6 +20,7 @@ using System.Management;
 using J2534DotNet;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Globalization;
+using static UniversalPatcher.ExtensionMethods;
 
 //using FTD2XX_NET;
 //using SAE.J2534;
@@ -31,6 +32,8 @@ namespace UniversalPatcher
         public frmLogger()
         {
             InitializeComponent();
+            DrawingControl.SetDoubleBuffered(richVPWmessages);
+            DrawingControl.SetDoubleBuffered(richJConsole);
         }
 
         private BindingSource bsLogProfile = new BindingSource();
@@ -54,11 +57,12 @@ namespace UniversalPatcher
         OBDScript oscript;
         OBDScript joscript;
         ObdEmu oresp;
-        private string jConsoleLogFile;
+        //private string jConsoleLogFile;
         StreamWriter jConsoleStream;
+        StreamWriter vpwConsoleStream;
         int prevSlotCount = 0;
         int failCount = 0;
-        int CANqueryCounter;
+        //int CANqueryCounter;
         int canQuietResponses;
         int canDeviceResponses;
         DateTime lastResponseTime;
@@ -223,16 +227,25 @@ namespace UniversalPatcher
                 this.Invoke((MethodInvoker)delegate ()
                 {
                     richVPWmessages.SelectionColor = Color.DarkGreen;
+                    StringBuilder sMsg = new StringBuilder();
                     if (chkConsoleTimestamps.Checked)
                     {
-                        string tStamp = "[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ";
+                        sMsg.Append("[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ");
                         if (chkConsoleUseJ2534Timestamps.Checked)
                         {
-                            tStamp += "[" + e.Msg.TimeStamp.ToString() + "] ";
+                            sMsg.Append("[" + e.Msg.TimeStamp.ToString() + "] ");
                         }
-                        richVPWmessages.AppendText(tStamp);
                     }
-                    richVPWmessages.AppendText(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
+                    sMsg.Append(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
+
+                    if (chkVpwToScreen.Checked)
+                    {
+                        richVPWmessages.AppendText(sMsg.ToString());
+                    }
+                    if (chkVpwToFile.Checked && vpwConsoleStream != null)
+                    {
+                        vpwConsoleStream.WriteLine("\\cf1 " + sMsg.ToString() + "\\par");
+                    }
 
                     if (e.Msg.Length > 3 && ( serialRadioButton.Checked || comboJ2534Protocol.Text.Contains("VPW")))
                     {
@@ -275,16 +288,16 @@ namespace UniversalPatcher
             {
                 this.Invoke((MethodInvoker)delegate ()
                 {
-                    string logTxt = "";
+                    StringBuilder logTxt = new StringBuilder();
                     if (chkJConsoleTimestamps.Checked)
                     {
-                        logTxt = "[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ";
+                        logTxt.Append("[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ");
                     }
                     if (chkConsoleUseJ2534Timestamps.Checked)
                     {
-                        logTxt += "[" + e.Msg.TimeStamp.ToString() + "] ";
+                        logTxt.Append("[" + e.Msg.TimeStamp.ToString() + "] ");
                     }
-                    logTxt += BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine;
+                    logTxt.Append(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
                     if (chkJconsoleToScreen.Checked)
                     {
                         if (e.Msg.SecondaryProtocol)
@@ -295,17 +308,17 @@ namespace UniversalPatcher
                         {
                             richJConsole.SelectionColor = Color.DarkGreen;
                         }
-                        richJConsole.AppendText(logTxt);
+                        richJConsole.AppendText(logTxt.ToString());
                     }
-                    if (chkJConsoleToFile.Checked)
+                    if (chkJConsoleToFile.Checked && jConsoleStream != null)
                     {
                         if (e.Msg.SecondaryProtocol)
                         {
-                            jConsoleStream.WriteLine("\\cf1 " + logTxt +"\\par");
+                            jConsoleStream.WriteLine("\\cf1 " + logTxt.ToString() +"\\par");
                         }
                         else
                         {
-                            jConsoleStream.WriteLine("\\cf2 " + logTxt + "\\par");
+                            jConsoleStream.WriteLine("\\cf2 " + logTxt.ToString() + "\\par");
                         }
                     }
                     if (e.Msg.Length > 3 &&  comboJ2534Protocol.Text.Contains("VPW"))
@@ -367,16 +380,24 @@ namespace UniversalPatcher
             {
             this.Invoke((MethodInvoker)delegate () {
                 richVPWmessages.SelectionColor = Color.Red;
+                StringBuilder logTxt = new StringBuilder();
                 if (chkConsoleTimestamps.Checked)
                 {
-                    string tStamp = "[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ";
+                    logTxt.Append("[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ");
                     if (chkConsoleUseJ2534Timestamps.Checked)
                     {
-                        tStamp += "[" + e.Msg.TimeStamp.ToString() + "] ";
+                        logTxt.Append("[" + e.Msg.TimeStamp.ToString() + "] ");
                     }
-                    richVPWmessages.AppendText(tStamp);
                 }
-                richVPWmessages.AppendText(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
+                logTxt.Append(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
+                if (chkVpwToScreen.Checked && vpwConsoleStream != null)
+                {
+                    richVPWmessages.AppendText(logTxt.ToString());
+                }
+                if (chkVpwToFile.Checked)
+                {
+                    vpwConsoleStream.WriteLine("\\cf3 " + logTxt.ToString() + "\\par");
+                }
             });
             }
             catch (Exception ex)
@@ -390,16 +411,16 @@ namespace UniversalPatcher
             try
             {
                 this.Invoke((MethodInvoker)delegate () {
-                    string logTxt = "";
+                    StringBuilder logTxt = new StringBuilder();
                     if (chkJConsoleTimestamps.Checked)
                     {
-                        logTxt = "[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ";
+                        logTxt.Append( "[" + new DateTime((long)e.Msg.SysTimeStamp).ToString("HH:mm:ss.fff") + "] ");
                     }
                     if (chkConsoleUseJ2534Timestamps.Checked)
                     {
-                        logTxt += "[" + e.Msg.TimeStamp.ToString() + "] ";
+                        logTxt.Append( "[" + e.Msg.TimeStamp.ToString() + "] ");
                     }
-                    logTxt += BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine;
+                    logTxt.Append(BitConverter.ToString(e.Msg.GetBytes()).Replace("-", " ") + Environment.NewLine);
                     if (chkJconsoleToScreen.Checked)
                     {
                         if (e.Msg.SecondaryProtocol)
@@ -410,17 +431,17 @@ namespace UniversalPatcher
                         {
                             richJConsole.SelectionColor = Color.Red;
                         }
-                        richJConsole.AppendText(logTxt);
+                        richJConsole.AppendText(logTxt.ToString());
                     }
-                    if (chkJConsoleToFile.Checked)
+                    if (chkJConsoleToFile.Checked && jConsoleStream != null)
                     {
                         if (e.Msg.SecondaryProtocol)
                         {
-                            jConsoleStream.WriteLine("\\cf4 " + logTxt + "\\par");
+                            jConsoleStream.WriteLine("\\cf4 " + logTxt.ToString() + "\\par");
                         }
                         else
                         {
-                            jConsoleStream.WriteLine("\\cf3 " + logTxt + "\\par");
+                            jConsoleStream.WriteLine("\\cf3 " + logTxt.ToString() + "\\par");
                         }
                     }
 
@@ -585,8 +606,8 @@ namespace UniversalPatcher
                     if (ftdiDevs.Length > 0)
                     {
                         comboSerialPort.Items.AddRange(ftdiDevs);
-                        if (LoadDefaults && !string.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerFTDIPort) && comboSerialPort.Items.Contains(UniversalPatcher.Properties.Settings.Default.LoggerFTDIPort))
-                            comboSerialPort.Text = UniversalPatcher.Properties.Settings.Default.LoggerFTDIPort;
+                        if (LoadDefaults && !string.IsNullOrEmpty(AppSettings.LoggerFTDIPort) && comboSerialPort.Items.Contains(AppSettings.LoggerFTDIPort))
+                            comboSerialPort.Text = AppSettings.LoggerFTDIPort;
                         else
                             comboSerialPort.Text = comboSerialPort.Items[0].ToString();
                     }
@@ -614,8 +635,8 @@ namespace UniversalPatcher
                             }
                             if (LoadDefaults)
                             {
-                                if (!string.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerComPort) && comboSerialPort.Items.Contains(UniversalPatcher.Properties.Settings.Default.LoggerComPort))
-                                    comboSerialPort.Text = UniversalPatcher.Properties.Settings.Default.LoggerComPort;
+                                if (!string.IsNullOrEmpty(AppSettings.LoggerComPort) && comboSerialPort.Items.Contains(AppSettings.LoggerComPort))
+                                    comboSerialPort.Text = AppSettings.LoggerComPort;
                                 else
                                     comboSerialPort.Text = comboSerialPort.Items[0].ToString();
                             }
@@ -644,17 +665,17 @@ namespace UniversalPatcher
                 }
                 if (LoadDefaults)
                 {
-                    if (!string.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerJ2534Device))
+                    if (!string.IsNullOrEmpty(AppSettings.LoggerJ2534Device))
                     {
-                        j2534DeviceList.Text = UniversalPatcher.Properties.Settings.Default.LoggerJ2534Device;
-                        comboJ2534DLL.Text = UniversalPatcher.Properties.Settings.Default.LoggerJ2534Device;
+                        j2534DeviceList.Text = AppSettings.LoggerJ2534Device;
+                        comboJ2534DLL.Text = AppSettings.LoggerJ2534Device;
                     }
                     else if (jDevList.Count > 0)
                     {
                         j2534DeviceList.Text = jDevList.FirstOrDefault().Name;
                         comboJ2534DLL.Text = jDevList.FirstOrDefault().Name;
                     }
-                    j2534RadioButton.Checked = UniversalPatcher.Properties.Settings.Default.LoggerUseJ2534;
+                    j2534RadioButton.Checked = AppSettings.LoggerUseJ2534;
                 }
                 LoadJ2534Protocols();
                 //comboJ2534Connectflag.DataSource = Enum.GetValues(typeof(J2534DotNet.ConnectFlag));
@@ -666,14 +687,14 @@ namespace UniversalPatcher
                     comboJ2534Connectflag2.Items.Add(item);
                 }
                 //comboJ2534Connectflag.SelectedIndex = 0;
-                if (!String.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile))
+                if (!String.IsNullOrEmpty(AppSettings.LoggerJ2534SettingsFile))
                 {
-                    J2534InitParameters JSettings = LoadJ2534Settings(UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile);
+                    J2534InitParameters JSettings = LoadJ2534Settings(AppSettings.LoggerJ2534SettingsFile);
                     LoadJ2534InitParameters(JSettings);
                 }
-                if (!String.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile2))
+                if (!String.IsNullOrEmpty(AppSettings.LoggerJ2534SettingsFile2))
                 {
-                    J2534InitParameters JSettings = LoadJ2534Settings(UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile2);
+                    J2534InitParameters JSettings = LoadJ2534Settings(AppSettings.LoggerJ2534SettingsFile2);
                     LoadJ2534InitParameters2(JSettings);
                 }
             }
@@ -790,51 +811,51 @@ namespace UniversalPatcher
         {
             try
             {
-                if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+                if (AppSettings.MainWindowPersistence)
                 {
-                    if (UniversalPatcher.Properties.Settings.Default.LoggerWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.LoggerWindowSize.Height > 0)
+                    if (AppSettings.LoggerWindowSize.Width > 0 || AppSettings.LoggerWindowSize.Height > 0)
                     {
-                        this.WindowState = UniversalPatcher.Properties.Settings.Default.LoggerWindowState;
+                        this.WindowState = AppSettings.LoggerWindowState;
                         if (this.WindowState == FormWindowState.Minimized)
                         {
                             this.WindowState = FormWindowState.Normal;
                         }
-                        this.Location = UniversalPatcher.Properties.Settings.Default.LoggerWindowPosition;
-                        this.Size = UniversalPatcher.Properties.Settings.Default.LoggerWindowSize;
+                        this.Location = AppSettings.LoggerWindowPosition;
+                        this.Size = AppSettings.LoggerWindowSize;
                     }
 
                 }
 
-                txtTstampFormat.Text = UniversalPatcher.Properties.Settings.Default.LoggerTimestampFormat;
-                chkFTDI.Checked = UniversalPatcher.Properties.Settings.Default.LoggerUseFTDI;
+                txtTstampFormat.Text = AppSettings.LoggerTimestampFormat;
+                chkFTDI.Checked = AppSettings.LoggerUseFTDI;
                 comboSerialDeviceType.Items.Add(AvtDevice.DeviceType);
                 //comboSerialDeviceType.Items.Add(AvtLegacyDevice.DeviceType);
                 comboSerialDeviceType.Items.Add(ElmDevice.DeviceType);
                 //comboSerialDeviceType.Items.Add(LegacyElmDeviceImplementation.DeviceType);
                 comboSerialDeviceType.Items.Add(OBDXProDevice.DeviceType);
-                comboSerialDeviceType.Text = UniversalPatcher.Properties.Settings.Default.LoggerSerialDeviceType;
+                comboSerialDeviceType.Text = AppSettings.LoggerSerialDeviceType;
 
                 LoadPorts(true);
 
-                //chkAdvanced.Checked = UniversalPatcher.Properties.Settings.Default.LoggerShowAdvanced;
-                chkVPWFilters.Checked = UniversalPatcher.Properties.Settings.Default.LoggerUseFilters;
-                chkEnableConsole.Checked = UniversalPatcher.Properties.Settings.Default.LoggerEnableConsole;
-                chkConsoleTimestamps.Checked = UniversalPatcher.Properties.Settings.Default.LoggerConsoleTimestamps;
-                chkConsoleUseJ2534Timestamps.Checked = UniversalPatcher.Properties.Settings.Default.LoggerConsoleJ2534Timestamps;
-                chkJConsoleTimestamps.Checked = UniversalPatcher.Properties.Settings.Default.JConsoleTimestamps;
-                chkJConsole4x.Checked = UniversalPatcher.Properties.Settings.Default.JConsole4x;
-                chkConsole4x.Checked = UniversalPatcher.Properties.Settings.Default.LoggerConsole4x;
-                comboJ2534DLL.Text = UniversalPatcher.Properties.Settings.Default.JConsoleDevice;
-                numConsoleScriptDelay.Value = UniversalPatcher.Properties.Settings.Default.LoggerScriptDelay;
+                //chkAdvanced.Checked = AppSettings.LoggerShowAdvanced;
+                chkVPWFilters.Checked = AppSettings.LoggerUseFilters;
+                chkEnableConsole.Checked = AppSettings.LoggerEnableConsole;
+                chkConsoleTimestamps.Checked = AppSettings.LoggerConsoleTimestamps;
+                chkConsoleUseJ2534Timestamps.Checked = AppSettings.LoggerConsoleJ2534Timestamps;
+                chkJConsoleTimestamps.Checked = AppSettings.JConsoleTimestamps;
+                chkJConsole4x.Checked = AppSettings.JConsole4x;
+                chkConsole4x.Checked = AppSettings.LoggerConsole4x;
+                comboJ2534DLL.Text = AppSettings.JConsoleDevice;
+                numConsoleScriptDelay.Value = AppSettings.LoggerScriptDelay;
 
-                if (UniversalPatcher.Properties.Settings.Default.LoggerConsoleFont != null)
+                if (AppSettings.LoggerConsoleFont != null)
                 {
-                    richVPWmessages.Font = UniversalPatcher.Properties.Settings.Default.LoggerConsoleFont;
+                    richVPWmessages.Font = AppSettings.LoggerConsoleFont.ToFont();
                 }
 
-                if (!string.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerLogFolder))
+                if (!string.IsNullOrEmpty(AppSettings.LoggerLogFolder))
                 {
-                    txtLogFolder.Text = UniversalPatcher.Properties.Settings.Default.LoggerLogFolder;
+                    txtLogFolder.Text = AppSettings.LoggerLogFolder;
                 }
                 else
                 {
@@ -843,26 +864,26 @@ namespace UniversalPatcher
 
                 comboResponseMode.DataSource = Enum.GetValues(typeof(ResponseTypes));
 
-                if (!string.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerLogSeparator))
-                    txtLogSeparator.Text = UniversalPatcher.Properties.Settings.Default.LoggerLogSeparator;
+                if (!string.IsNullOrEmpty(AppSettings.LoggerLogSeparator))
+                    txtLogSeparator.Text = AppSettings.LoggerLogSeparator;
                 else
                     txtLogSeparator.Text = ",";
-                if (!string.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerDecimalSeparator))
-                    txtDecimalSeparator.Text = UniversalPatcher.Properties.Settings.Default.LoggerDecimalSeparator;
+                if (!string.IsNullOrEmpty(AppSettings.LoggerDecimalSeparator))
+                    txtDecimalSeparator.Text = AppSettings.LoggerDecimalSeparator;
                 else
                     txtDecimalSeparator.Text = Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-                if (!string.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerResponseMode))
+                if (!string.IsNullOrEmpty(AppSettings.LoggerResponseMode))
                 {
-                    comboResponseMode.Text = UniversalPatcher.Properties.Settings.Default.LoggerResponseMode;
+                    comboResponseMode.Text = AppSettings.LoggerResponseMode;
                 }
-                chkPriority.Checked = UniversalPatcher.Properties.Settings.Default.LoggerUsePriority;
-                comboBaudRate.Text = UniversalPatcher.Properties.Settings.Default.LoggerBaudRate.ToString();
+                chkPriority.Checked = AppSettings.LoggerUsePriority;
+                comboBaudRate.Text = AppSettings.LoggerBaudRate.ToString();
 
 
                 datalogger.PidProfile = new List<LoggerUtils.PidConfig>();
-                if (!string.IsNullOrEmpty(UniversalPatcher.Properties.Settings.Default.LoggerLastProfile) && File.Exists(UniversalPatcher.Properties.Settings.Default.LoggerLastProfile))
+                if (!string.IsNullOrEmpty(AppSettings.LoggerLastProfile) && File.Exists(AppSettings.LoggerLastProfile))
                 {
-                    profileFile = UniversalPatcher.Properties.Settings.Default.LoggerLastProfile;
+                    profileFile = AppSettings.LoggerLastProfile;
                     datalogger.LoadProfile(profileFile);
                     this.Text = "Logger - " + profileFile;
                     CheckMaxPids();
@@ -1292,20 +1313,20 @@ namespace UniversalPatcher
                         SelectSaveProfile();
                     }
                 }
-                if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+                if (AppSettings.MainWindowPersistence)
                 {
-                    UniversalPatcher.Properties.Settings.Default.LoggerWindowState = this.WindowState;
+                    AppSettings.LoggerWindowState = this.WindowState;
                     if (this.WindowState == FormWindowState.Normal)
                     {
-                        UniversalPatcher.Properties.Settings.Default.LoggerWindowPosition = this.Location;
-                        UniversalPatcher.Properties.Settings.Default.LoggerWindowSize = this.Size;
+                        AppSettings.LoggerWindowPosition = this.Location;
+                        AppSettings.LoggerWindowSize = this.Size;
                     }
                     else
                     {
-                        UniversalPatcher.Properties.Settings.Default.LoggerWindowPosition = this.RestoreBounds.Location;
-                        UniversalPatcher.Properties.Settings.Default.LoggerWindowSize = this.RestoreBounds.Size;
+                        AppSettings.LoggerWindowPosition = this.RestoreBounds.Location;
+                        AppSettings.LoggerWindowSize = this.RestoreBounds.Size;
                     }
-                    UniversalPatcher.Properties.Settings.Default.Save();
+                    AppSettings.Save();
                 }
 
                 Thread.Sleep(100);
@@ -1530,35 +1551,35 @@ namespace UniversalPatcher
         private void SaveSettings()
         {
             if (chkFTDI.Checked)
-                UniversalPatcher.Properties.Settings.Default.LoggerFTDIPort = comboSerialPort.Text;
+                AppSettings.LoggerFTDIPort = comboSerialPort.Text;
             else
-                UniversalPatcher.Properties.Settings.Default.LoggerComPort = comboSerialPort.Text;
-            UniversalPatcher.Properties.Settings.Default.LoggerUseJ2534 = j2534RadioButton.Checked;
-            UniversalPatcher.Properties.Settings.Default.LoggerJ2534Device = j2534DeviceList.Text;
-            UniversalPatcher.Properties.Settings.Default.LoggerSerialDeviceType = comboSerialDeviceType.Text;
-            UniversalPatcher.Properties.Settings.Default.LoggerBaudRate = Convert.ToInt32(comboBaudRate.Text);
+                AppSettings.LoggerComPort = comboSerialPort.Text;
+            AppSettings.LoggerUseJ2534 = j2534RadioButton.Checked;
+            AppSettings.LoggerJ2534Device = j2534DeviceList.Text;
+            AppSettings.LoggerSerialDeviceType = comboSerialDeviceType.Text;
+            AppSettings.LoggerBaudRate = Convert.ToInt32(comboBaudRate.Text);
 
             if (txtLogFolder.Text.Length > 0)
             {
-                UniversalPatcher.Properties.Settings.Default.LoggerLogFolder = txtLogFolder.Text;
-                UniversalPatcher.Properties.Settings.Default.LoggerLogSeparator = txtLogSeparator.Text;
+                AppSettings.LoggerLogFolder = txtLogFolder.Text;
+                AppSettings.LoggerLogSeparator = txtLogSeparator.Text;
             }
-            UniversalPatcher.Properties.Settings.Default.LoggerLastProfile = profileFile;
-            UniversalPatcher.Properties.Settings.Default.LoggerResponseMode = comboResponseMode.Text;
-            UniversalPatcher.Properties.Settings.Default.LoggerUseFTDI = chkFTDI.Checked;
-            //UniversalPatcher.Properties.Settings.Default.LoggerShowAdvanced = chkAdvanced.Checked;
-            UniversalPatcher.Properties.Settings.Default.LoggerUsePriority = chkPriority.Checked;
-            UniversalPatcher.Properties.Settings.Default.LoggerUseFilters = chkVPWFilters.Checked;
-            UniversalPatcher.Properties.Settings.Default.LoggerEnableConsole = chkEnableConsole.Checked;
-            UniversalPatcher.Properties.Settings.Default.LoggerConsoleTimestamps = chkConsoleTimestamps.Checked;
-            UniversalPatcher.Properties.Settings.Default.LoggerConsoleJ2534Timestamps = chkConsoleUseJ2534Timestamps.Checked;
-            UniversalPatcher.Properties.Settings.Default.LoggerConsoleFont = richVPWmessages.Font;
-            UniversalPatcher.Properties.Settings.Default.LoggerScriptDelay = (int) numConsoleScriptDelay.Value;
-            UniversalPatcher.Properties.Settings.Default.LoggerConsole4x = chkConsole4x.Checked;
-            UniversalPatcher.Properties.Settings.Default.JConsole4x = chkJConsole4x.Checked;
-            UniversalPatcher.Properties.Settings.Default.JConsoleTimestamps = chkJConsoleTimestamps.Checked;
-            UniversalPatcher.Properties.Settings.Default.JConsoleDevice = comboJ2534DLL.Text;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.LoggerLastProfile = profileFile;
+            AppSettings.LoggerResponseMode = comboResponseMode.Text;
+            AppSettings.LoggerUseFTDI = chkFTDI.Checked;
+            //AppSettings.LoggerShowAdvanced = chkAdvanced.Checked;
+            AppSettings.LoggerUsePriority = chkPriority.Checked;
+            AppSettings.LoggerUseFilters = chkVPWFilters.Checked;
+            AppSettings.LoggerEnableConsole = chkEnableConsole.Checked;
+            AppSettings.LoggerConsoleTimestamps = chkConsoleTimestamps.Checked;
+            AppSettings.LoggerConsoleJ2534Timestamps = chkConsoleUseJ2534Timestamps.Checked;
+            AppSettings.LoggerConsoleFont = SerializableFont.FromFont(richVPWmessages.Font);
+            AppSettings.LoggerScriptDelay = (int) numConsoleScriptDelay.Value;
+            AppSettings.LoggerConsole4x = chkConsole4x.Checked;
+            AppSettings.JConsole4x = chkJConsole4x.Checked;
+            AppSettings.JConsoleTimestamps = chkJConsoleTimestamps.Checked;
+            AppSettings.JConsoleDevice = comboJ2534DLL.Text;
+            AppSettings.Save();
 
         }
 
@@ -1830,10 +1851,10 @@ namespace UniversalPatcher
         {
             try
             {
-                UniversalPatcher.Properties.Settings.Default.LoggerTimestampFormat = txtTstampFormat.Text;
-                UniversalPatcher.Properties.Settings.Default.LoggerDecimalSeparator = txtDecimalSeparator.Text;
-                UniversalPatcher.Properties.Settings.Default.LoggerLogSeparator = txtLogSeparator.Text;
-                UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.LoggerTimestampFormat = txtTstampFormat.Text;
+                AppSettings.LoggerDecimalSeparator = txtDecimalSeparator.Text;
+                AppSettings.LoggerLogSeparator = txtLogSeparator.Text;
+                AppSettings.Save();
                 labelProgress.Text = "";
                 if (datalogger.PidProfile.Count == 0 || datalogger.PidProfile[0].addr == 0xffffff)
                 {
@@ -1861,8 +1882,8 @@ namespace UniversalPatcher
                     {
                         datalogger.LogStartTime = DateTime.Now;
                         logfilename = Path.Combine(txtLogFolder.Text, "log-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm.ss") + ".csv");
-                        UniversalPatcher.Properties.Settings.Default.LoggerLastLogfile = logfilename;
-                        UniversalPatcher.Properties.Settings.Default.Save();
+                        AppSettings.LoggerLastLogfile = logfilename;
+                        AppSettings.Save();
                     }
                     if (!datalogger.CreateLog(logfilename))
                     {
@@ -2397,6 +2418,7 @@ namespace UniversalPatcher
 
         private void Disconnect()
         {
+            chkVpwToFile.Checked = false;
             oscript.stopscript = true;
             datalogger.LogDevice.MsgReceived -= LogDevice_MsgReceived;
             datalogger.LogDevice.MsgReceived -= LogDevice_DTC_MsgReceived;
@@ -2628,7 +2650,7 @@ namespace UniversalPatcher
         private void timerSearchParams_Tick(object sender, EventArgs e)
         {
             keyDelayCounter++;
-            if (keyDelayCounter > UniversalPatcher.Properties.Settings.Default.keyPressWait100ms)
+            if (keyDelayCounter > AppSettings.keyPressWait100ms)
             {
                 timerSearchParams.Enabled = false;
                 LoadParameters();
@@ -2879,8 +2901,8 @@ namespace UniversalPatcher
             Logger("Saving file: " + FileName);
             J2534InitParameters JSettings = CreateJ2534InitParameters();
             LoggerUtils.SaveJ2534Settings(FileName, JSettings);
-            UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile = FileName;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.LoggerJ2534SettingsFile = FileName;
+            AppSettings.Save();
             Logger("[OK]");
         }
 
@@ -2893,8 +2915,8 @@ namespace UniversalPatcher
             Logger("Loading file: " + FileName);
             J2534InitParameters JSettings = LoadJ2534Settings(FileName);
             LoadJ2534InitParameters(JSettings);
-            UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile = FileName;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.LoggerJ2534SettingsFile = FileName;
+            AppSettings.Save();
             Logger("[OK]");
         }
 
@@ -2940,12 +2962,12 @@ namespace UniversalPatcher
 
         private void numJConsoleScriptDelay_ValueChanged(object sender, EventArgs e)
         {
-            UniversalPatcher.Properties.Settings.Default.LoggerScriptDelay = (int)numConsoleScriptDelay.Value;
+            AppSettings.LoggerScriptDelay = (int)numConsoleScriptDelay.Value;
         }
 
         private void numConsoleScriptDelay_ValueChanged(object sender, EventArgs e)
         {
-            UniversalPatcher.Properties.Settings.Default.LoggerScriptDelay = (int)numConsoleScriptDelay.Value;
+            AppSettings.LoggerScriptDelay = (int)numConsoleScriptDelay.Value;
         }
 
         private void btnStopJScript_Click(object sender, EventArgs e)
@@ -3198,8 +3220,8 @@ namespace UniversalPatcher
             Logger("Saving file: " + FileName);
             J2534InitParameters JSettings = CreateJ2534InitParameters2();
             LoggerUtils.SaveJ2534Settings(FileName, JSettings);
-            UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile2 = FileName;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.LoggerJ2534SettingsFile2 = FileName;
+            AppSettings.Save();
             Logger("[OK]");
         }
 
@@ -3212,8 +3234,8 @@ namespace UniversalPatcher
             Logger("Loading file: " + FileName);
             J2534InitParameters JSettings = LoadJ2534Settings(FileName);
             LoadJ2534InitParameters2(JSettings);
-            UniversalPatcher.Properties.Settings.Default.LoggerJ2534SettingsFile2 = FileName;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.LoggerJ2534SettingsFile2 = FileName;
+            AppSettings.Save();
             Logger("[OK]");
         }
 
@@ -3308,7 +3330,7 @@ namespace UniversalPatcher
                     chkJConsoleToFile.Checked = false;
                     return;
                 }
-                jConsoleLogFile = fName;
+                //jConsoleLogFile = fName;
                 jConsoleStream = new StreamWriter(fName);
                 jConsoleStream.WriteLine("{\\rtf1\\ansi\\ansicpg1252\\deff0\\deflang1035{\\fonttbl{\\f0\\fnil\\fcharset0 Courier New;}}");
                 jConsoleStream.WriteLine("{\\colortbl ;\\red127\\green255\\blue212;\\red0\\green100\\blue0;\\red255\\green0\\blue0;\\red128\\green0\\blue128;}");
@@ -3377,7 +3399,7 @@ namespace UniversalPatcher
 
         private void queryCANDevicesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CANqueryCounter = 0;
+            //CANqueryCounter = 0;
             canQuietResponses = 0;
             canDeviceResponses = -1;
             lastResponseTime = DateTime.Now;
@@ -3475,10 +3497,10 @@ namespace UniversalPatcher
                 string fName = SelectFile("Select Log file", CsvFilter);
                 if (string.IsNullOrEmpty(fName))
                     return;
-                UniversalPatcher.Properties.Settings.Default.LoggerTimestampFormat = txtTstampFormat.Text;
-                UniversalPatcher.Properties.Settings.Default.LoggerDecimalSeparator = txtDecimalSeparator.Text;
-                UniversalPatcher.Properties.Settings.Default.LoggerLogSeparator = txtLogSeparator.Text;
-                UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.LoggerTimestampFormat = txtTstampFormat.Text;
+                AppSettings.LoggerDecimalSeparator = txtDecimalSeparator.Text;
+                AppSettings.LoggerLogSeparator = txtLogSeparator.Text;
+                AppSettings.Save();
                 datalogger.LoadLogFile(fName);
                 SetupLogDataGrid();
                 hScrollPlayback.Maximum = datalogger.LogDataBuffer.Count;
@@ -3616,6 +3638,40 @@ namespace UniversalPatcher
         private void numPlaybackSpeed_ValueChanged(object sender, EventArgs e)
         {
             SetPlaybackSpeed();
+        }
+
+        private void chkVpwToFile_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!chkVpwToFile.Checked)
+                {
+                    if (vpwConsoleStream != null)
+                    {
+                        vpwConsoleStream.WriteLine("}");
+                        vpwConsoleStream.Close();
+                        vpwConsoleStream = null;
+                    }
+                    return;
+                }
+                string fName = SelectSaveFile(RtfFilter);
+                if (fName.Length == 0)
+                {
+                    chkVpwToFile.Checked = false;
+                    return;
+                }
+                //jConsoleLogFile = fName;
+                vpwConsoleStream = new StreamWriter(fName);
+                vpwConsoleStream.WriteLine("{\\rtf1\\ansi\\ansicpg1252\\deff0\\deflang1035{\\fonttbl{\\f0\\fnil\\fcharset0 Courier New;}}");
+                vpwConsoleStream.WriteLine("{\\colortbl ;\\red127\\green255\\blue212;\\red0\\green100\\blue0;\\red255\\green0\\blue0;\\red128\\green0\\blue128;}");
+                //jConsoleStream.WriteLine("viewkind4\\uc1\\pard\\f0\\fs17");
+                Logger("Writing to file: " + fName);
+            }
+            catch (Exception ex)
+            {
+                LoggerBold(ex.Message);
+            }
+
         }
     }
 }

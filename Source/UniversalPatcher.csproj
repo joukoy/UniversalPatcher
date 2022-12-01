@@ -495,6 +495,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Units.cs" />
+    <Compile Include="UpatcherSettings.cs" />
     <Compile Include="UPLogger.cs" />
     <Compile Include="VerticalProgressBar.cs">
       <SubType>Component</SubType>

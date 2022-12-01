@@ -58,7 +58,7 @@ namespace UniversalPatcher
         {
             try
             {
-                switch(UniversalPatcher.Properties.Settings.Default.WorkingMode)
+                switch(AppSettings.WorkingMode)
                 {
                     case 1:
                         radioBasic.Checked = true;
@@ -112,13 +112,13 @@ namespace UniversalPatcher
         private void setWorkingMode()
         {
             if (radioTourist.Checked)
-                UniversalPatcher.Properties.Settings.Default.WorkingMode = 0;
+                AppSettings.WorkingMode = 0;
             else if (radioBasic.Checked)
-                UniversalPatcher.Properties.Settings.Default.WorkingMode = 1;
+                AppSettings.WorkingMode = 1;
             else
-                UniversalPatcher.Properties.Settings.Default.WorkingMode = 2;
+                AppSettings.WorkingMode = 2;
 
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.Save();
         }
         private void radioTourist_CheckedChanged(object sender, EventArgs e)
         {

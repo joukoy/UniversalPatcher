@@ -47,45 +47,45 @@ namespace UniversalPatcher
         private void frmMassCopyTables_Load(object sender, EventArgs e)
         {
             bindingSource = new BindingSource();
-            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+            if (AppSettings.MainWindowPersistence)
             {
-                if (UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowSize.Height > 0)
+                if (AppSettings.MassCopyTableWindowSize.Width > 0 || AppSettings.MassCopyTableWindowSize.Height > 0)
                 {
-                    this.WindowState = UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowState;
+                    this.WindowState = AppSettings.MassCopyTableWindowState;
                     if (this.WindowState == FormWindowState.Minimized)
                     {
                         this.WindowState = FormWindowState.Normal;
                     }
-                    this.Location = UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowLocation;
-                    this.Size = UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowSize;
+                    this.Location = AppSettings.MassCopyTableWindowLocation;
+                    this.Size = AppSettings.MassCopyTableWindowSize;
                 }
-                if (UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowSize.Height > 0)
+                if (AppSettings.MassCopyTableWindowSize.Width > 0 || AppSettings.MassCopyTableWindowSize.Height > 0)
                 {
-                    this.splitContainer1.SplitterDistance = UniversalPatcher.Properties.Settings.Default.MassCopyTableSplitHeight;
+                    this.splitContainer1.SplitterDistance = AppSettings.MassCopyTableSplitHeight;
                 }
             }
-            txtFnameExtension.Text = UniversalPatcher.Properties.Settings.Default.MassCopyTableFilenameExtra;
+            txtFnameExtension.Text = AppSettings.MassCopyTableFilenameExtra;
             this.FormClosing += FrmMassCopyTables_FormClosing;
         }
 
         private void FrmMassCopyTables_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+            if (AppSettings.MainWindowPersistence)
             {
-                UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowState = this.WindowState;
+                AppSettings.MassCopyTableWindowState = this.WindowState;
                 if (this.WindowState == FormWindowState.Normal)
                 {
-                    UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowLocation = this.Location;
-                    UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowSize = this.Size;
+                    AppSettings.MassCopyTableWindowLocation = this.Location;
+                    AppSettings.MassCopyTableWindowSize = this.Size;
                 }
                 else
                 {
-                    UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowLocation = this.RestoreBounds.Location;
-                    UniversalPatcher.Properties.Settings.Default.MassCopyTableWindowSize = this.RestoreBounds.Size;
+                    AppSettings.MassCopyTableWindowLocation = this.RestoreBounds.Location;
+                    AppSettings.MassCopyTableWindowSize = this.RestoreBounds.Size;
                 }
-                UniversalPatcher.Properties.Settings.Default.MassCopyTableSplitHeight = this.splitContainer1.SplitterDistance;
+                AppSettings.MassCopyTableSplitHeight = this.splitContainer1.SplitterDistance;
             }
-            UniversalPatcher.Properties.Settings.Default.MassCopyTableFilenameExtra = txtFnameExtension.Text;
+            AppSettings.MassCopyTableFilenameExtra = txtFnameExtension.Text;
         }
 
         private void btnOK_Click(object sender, EventArgs e)
@@ -222,7 +222,7 @@ namespace UniversalPatcher
                 frmFileSelection frmF = new frmFileSelection();
                 frmF.btnOK.Text = "Select files";
                 frmF.Text = "Select target for tables";
-                frmF.LoadFiles(UniversalPatcher.Properties.Settings.Default.LastBINfolder);
+                frmF.LoadFiles(AppSettings.LastBINfolder);
                 if (frmF.ShowDialog(this) == DialogResult.OK)
                 {
                     pcmList = new List<SelectPCM>();

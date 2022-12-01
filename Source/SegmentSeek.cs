@@ -302,10 +302,9 @@ namespace UniversalPatcher
             return sSeeks;
         }
 
-        public string SeekSegments(PcmFile PCM1)
+        public void SeekSegments(PcmFile PCM1)
         {
             PCM = PCM1;
-            string retVal = "";
             try
             {
 
@@ -320,7 +319,7 @@ namespace UniversalPatcher
                 else
                 {
                     Debug.WriteLine("Configuration not found: " + Path.GetFileName(fileName));
-                    return retVal;
+                    return;
                 }
 
                 startBytes = new List<byte>();
@@ -504,10 +503,9 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                return "Segment seek, line " + line + ": " + ex.Message;
+                LoggerBold ("Segment seek, line " + line + ": " + ex.Message);
             }
-            retVal += "Done";
-            return retVal;
+            return;
         }
     }
 

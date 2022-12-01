@@ -25,19 +25,19 @@ namespace UniversalPatcher
         private void btnOK_Click(object sender, EventArgs e)
         {
             if (radioAdd.Checked)
-                UniversalPatcher.Properties.Settings.Default.PasteSpecialMode = 0;
+                AppSettings.PasteSpecialMode = 0;
             else if (radioMultiply.Checked)
-                UniversalPatcher.Properties.Settings.Default.PasteSpecialMode = 1;
+                AppSettings.PasteSpecialMode = 1;
             else if (radioPercent.Checked)
-                UniversalPatcher.Properties.Settings.Default.PasteSpecialMode = 2;
+                AppSettings.PasteSpecialMode = 2;
             else if (radioTarget.Checked)
-                UniversalPatcher.Properties.Settings.Default.PasteSpecialMode = 3;
+                AppSettings.PasteSpecialMode = 3;
             else if (radioCustom.Checked)
-                UniversalPatcher.Properties.Settings.Default.PasteSpecialMode = 4;
-            UniversalPatcher.Properties.Settings.Default.PasteSpecialPositiveFormula = txtCustomPositive.Text;
-            UniversalPatcher.Properties.Settings.Default.PasteSpecialNegativeFormula = txtCustomNegative.Text;
-            UniversalPatcher.Properties.Settings.Default.PasteSpecialTarget = txtTarget.Text;
-            UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.PasteSpecialMode = 4;
+            AppSettings.PasteSpecialPositiveFormula = txtCustomPositive.Text;
+            AppSettings.PasteSpecialNegativeFormula = txtCustomNegative.Text;
+            AppSettings.PasteSpecialTarget = txtTarget.Text;
+            AppSettings.Save();
 
             this.DialogResult = DialogResult.OK;
             this.Close();
@@ -45,7 +45,7 @@ namespace UniversalPatcher
 
         private void frmPasteSpecial_Load(object sender, EventArgs e)
         {
-            switch(UniversalPatcher.Properties.Settings.Default.PasteSpecialMode)
+            switch(AppSettings.PasteSpecialMode)
             {
                 case 0:
                     radioAdd.Checked = true;
@@ -63,9 +63,9 @@ namespace UniversalPatcher
                     radioCustom.Checked = true;
                     break;
             }
-            txtCustomPositive.Text = UniversalPatcher.Properties.Settings.Default.PasteSpecialPositiveFormula;
-            txtCustomNegative.Text = UniversalPatcher.Properties.Settings.Default.PasteSpecialNegativeFormula;
-            txtTarget.Text = UniversalPatcher.Properties.Settings.Default.PasteSpecialTarget;
+            txtCustomPositive.Text = AppSettings.PasteSpecialPositiveFormula;
+            txtCustomNegative.Text = AppSettings.PasteSpecialNegativeFormula;
+            txtTarget.Text = AppSettings.PasteSpecialTarget;
         }
     }
 

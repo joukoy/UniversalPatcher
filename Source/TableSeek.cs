@@ -60,6 +60,7 @@ namespace UniversalPatcher
         public string Range { get; set; }
         public string Segments { get; set; }
         public string ValidationSearchStr { get; set; }
+        public List<string> Categories;
         public string Category { get; set; }
         public string Units { get; set; }
         public string Values { get; set; }
@@ -346,8 +347,8 @@ namespace UniversalPatcher
 
                 PCM.foundTables = new List<FoundTable>();
 
-                PCM.tableCategories = new List<string>();
-                PCM.tableCategories.Add("_All");
+                //PCM.tableCategories = new List<string>();
+                //PCM.tableCategories.Add("_All");
                 if (PCM.segmentinfos == null)
                     return "";
                 for (int c = 0; c < PCM.segmentinfos.Length; c++)
@@ -365,7 +366,7 @@ namespace UniversalPatcher
                 {
                     if (PCM.Segments[0].CS1Address.StartsWith("GM-V6"))
                     {
-                        if (!PCM.tableCategories.Contains("Fuel")) PCM.tableCategories.Add("Fuel");
+                        //if (!PCM.tableCategories.Contains("Fuel")) PCM.tableCategories.Add("Fuel");
                         tableSeeks = new List<TableSeek>();
                         TableSeek ts = new TableSeek();
                         FoundTable ft = new FoundTable(PCM);
@@ -449,10 +450,11 @@ namespace UniversalPatcher
                 starters = new List<Starter>();
                 for (int s = 0; s < tableSeeks.Count; s++)
                 {
-                    if (tableSeeks[s].SearchStr != null && tableSeeks[s].SearchStr.Length > 0)
+                    TableSeek ts = tableSeeks[s];
+                    if (ts.SearchStr != null && ts.SearchStr.Length > 0)
                     {
                         byte b = 0;
-                        string modStr = Regex.Replace(tableSeeks[s].SearchStr, @"[kxy@#*]", "");
+                        string modStr = Regex.Replace(ts.SearchStr, @"[kxy@#*]", "");
                         modStr = modStr.Trim();
 
                         string[] bytelist = modStr.Split(' ');
@@ -468,9 +470,9 @@ namespace UniversalPatcher
                             }
                         }
                     }
-                    if (tableSeeks[s].ValidationSearchStr != null && tableSeeks[s].ValidationSearchStr.Length > 0)
+                    if (ts.ValidationSearchStr != null && ts.ValidationSearchStr.Length > 0)
                     {
-                        string[] valStrings = tableSeeks[s].ValidationSearchStr.Split(',');
+                        string[] valStrings = ts.ValidationSearchStr.Split(',');
                         foreach (string valStr in valStrings)
                         {
                             byte b = 0;
@@ -504,13 +506,16 @@ namespace UniversalPatcher
 
                 for (int s = 0; s < tableSeeks.Count; s++)
                 {
-                    //Logger(".", false);
+                    TableSeek ts = tableSeeks[s];
                     Application.DoEvents();
-                    Debug.WriteLine(tableSeeks[s].Name + " Usehit: " + tableSeeks[s].UseHit);
-                    if (tableSeeks[s].SearchStr.Length == 0)
+                    Debug.WriteLine(ts.Name + " Usehit: " + ts.UseHit);
+                    if (ts.SearchStr.Length == 0)
                         continue;   //Can't search if string is empty!
-                    if (tableSeeks[s].Category != null && !PCM.tableCategories.Contains(tableSeeks[s].Category)) 
-                        PCM.tableCategories.Add(tableSeeks[s].Category);
+                    for (int c = 0; c < ts.Categories.Count; c++)
+                    {
+                        //if (!PCM.tableCategories.Contains(ts.Categories[c]))
+                          //  PCM.tableCategories.Add(ts.Categories[c]);
+                    }
                     uint startAddr = 0;
                     uint endAddr = PCM.fsize;
                     List<Block> addrList = new List<Block>();
@@ -519,9 +524,9 @@ namespace UniversalPatcher
                     sAddr.Rows = 0;
                     sAddr.Columns = 0;
                     Block block = new Block();
-                    if (tableSeeks[s].Range != null && tableSeeks[s].Range.Length > 0)
+                    if (ts.Range != null && ts.Range.Length > 0)
                     {
-                        string[] rangeS = tableSeeks[s].Range.Split(',');
+                        string[] rangeS = ts.Range.Split(',');
                         for (int r=0; r<rangeS.Length; r++)
                         {
                             string[] range = rangeS[r].Split('-');
@@ -531,9 +536,9 @@ namespace UniversalPatcher
                             addrList.Add(block);
                         }
                     }
-                    else if (tableSeeks[s].Segments != null && tableSeeks[s].Segments.Length > 0)
+                    else if (ts.Segments != null && ts.Segments.Length > 0)
                     {
-                        string[] segStrings = tableSeeks[s].Segments.Split(',');
+                        string[] segStrings = ts.Segments.Split(',');
                         for (int y=0; y< segStrings.Length; y++)
                         {
                             int segNr = 0;
@@ -551,7 +556,7 @@ namespace UniversalPatcher
                     int hit = 0;
                     ushort wantedHit = 1;
                     List<ushort> wantedHitList = new List<ushort>();
-                    string[] hParts = tableSeeks[s].UseHit.Split(',');
+                    string[] hParts = ts.UseHit.Split(',');
                     for (int h=0; h< hParts.Length; h++)
                     {
                         if (hParts[h].Contains("-"))
@@ -584,14 +589,14 @@ namespace UniversalPatcher
                         {
                             wantedHit = wantedHitList[wHit];
                             char splitChr = '+';
-                            if (!tableSeeks[s].SearchStr.Contains("+") && tableSeeks[s].SearchStr.Contains("-"))
+                            if (!ts.SearchStr.Contains("+") && ts.SearchStr.Contains("-"))
                             {
                                 splitChr = '-';
                             }
-                            string[] ssParts = tableSeeks[s].SearchStr.Split(splitChr);     //At end of string can be +D4 +1W6 etc, for reading next address from found addr
-                            Debug.WriteLine("TableSeek: Searching: " + tableSeeks[s].SearchStr + ", Start: " + startAddr.ToString("X") + ", end: " + endAddr.ToString("X"));                            
-                            sAddr = SearchAddrBySearchString(PCM, ssParts[0], ref startAddr, endAddr, tableSeeks[s]);
-                            for (int jump = 1; jump < ssParts.Length && (sAddr.Addr + tableSeeks[s].Offset) < PCM.fsize; jump++)
+                            string[] ssParts = ts.SearchStr.Split(splitChr);     //At end of string can be +D4 +1W6 etc, for reading next address from found addr
+                            Debug.WriteLine("TableSeek: Searching: " + ts.SearchStr + ", Start: " + startAddr.ToString("X") + ", end: " + endAddr.ToString("X"));                            
+                            sAddr = SearchAddrBySearchString(PCM, ssParts[0], ref startAddr, endAddr, ts);
+                            for (int jump = 1; jump < ssParts.Length && (sAddr.Addr + ts.Offset) < PCM.fsize; jump++)
                             {
                                 //Read table address from address we found by searchstring
                                 string numOnly = ssParts[jump].Replace("+", "").Replace("D", "").Replace("W", "");
@@ -609,33 +614,33 @@ namespace UniversalPatcher
                                 Debug.WriteLine("seekTables: New address:" + sAddr.Addr.ToString("X"));
                             }
 
-                            if ((sAddr.Addr + tableSeeks[s].Offset) < PCM.fsize)
+                            if ((sAddr.Addr + ts.Offset) < PCM.fsize)
                             {
                                 hit++;
                                 Debug.WriteLine("Found: " + sAddr.Addr.ToString("X") + ", Hit: " + hit.ToString() + " of " + wantedHit);
                             }
-                            if (hit == wantedHit && (sAddr.Addr + tableSeeks[s].Offset) < PCM.fsize)
+                            if (hit == wantedHit && (sAddr.Addr + ts.Offset) < PCM.fsize)
                             {
                                 FoundTable ft = new FoundTable(PCM);
                                 ft.configId = s;
-                                ft.Name = tableSeeks[s].Name.Replace("£", (wHit +1).ToString());
-                                ft.Description = tableSeeks[s].Description.Replace("£", (wHit + 1).ToString());
-                                ft.addrInt = (uint)(sAddr.Addr + tableSeeks[s].Offset);
-                                if (tableSeeks[s].Category != null && tableSeeks[s].Category != "")
+                                ft.Name = ts.Name.Replace("£", (wHit +1).ToString());
+                                ft.Description = ts.Description.Replace("£", (wHit + 1).ToString());
+                                ft.addrInt = (uint)(sAddr.Addr + ts.Offset);
+                                if (ts.Category != null && ts.Category != "")
                                 {
-                                    ft.Category = tableSeeks[s].Category;
+                                    ft.Category = ts.Category;
                                 }
                                 else
                                 {
                                     ft.Category = "Seg-" + PCM.GetSegmentName(ft.addrInt);
                                 }
                                 ft.Address = ft.addrInt.ToString("X8");
-                                if (tableSeeks[s].Rows > 0)
-                                    ft.Rows = tableSeeks[s].Rows;
+                                if (ts.Rows > 0)
+                                    ft.Rows = ts.Rows;
                                 else
                                     ft.Rows = sAddr.Rows;
-                                if (tableSeeks[s].Columns > 0)
-                                    ft.Columns = tableSeeks[s].Columns;
+                                if (ts.Columns > 0)
+                                    ft.Columns = ts.Columns;
                                 else
                                     ft.Columns = sAddr.Columns;
                                 PCM.foundTables.Add(ft);

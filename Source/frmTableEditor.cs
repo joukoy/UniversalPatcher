@@ -49,7 +49,7 @@ namespace UniversalPatcher
             public MultiTableName(string fullName, int columnPos)
             {
                 RowName = "";
-                string[] separators = UniversalPatcher.Properties.Settings.Default.MulitableChars.Split(' ');
+                string[] separators = AppSettings.MulitableChars.Split(' ');
                 string[] nParts = fullName.Split(separators, StringSplitOptions.RemoveEmptyEntries);
                 //string[] nParts = fullName.Split(new char[] { ']', '[', '.' }, StringSplitOptions.RemoveEmptyEntries);
                 TableName = nParts[0];
@@ -76,18 +76,11 @@ namespace UniversalPatcher
             public string RowName { get; set; }
         }
 
-/*        public struct TableId
-        {
-            public int id;
-            public int cmpId;
-        }*/
-
 
         //List of loaded files (for compare) File 0 is always "master" or A
         public List<CompareFile> compareFiles = new List<CompareFile>();
 
         public string tableName = "";
-        private bool disableSaving = false;
         Font dataFont;
 
         private bool only1d = false;    //Show multiple 1D tables as one multirow table
@@ -118,70 +111,77 @@ namespace UniversalPatcher
         private void frmTableEditor_Load(object sender, EventArgs e)
         {
             dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            if (UniversalPatcher.Properties.Settings.Default.TableEditorFont == null)
+            if (AppSettings.TableEditorFont == null)
                 dataFont = new Font("Consolas", 9);
             else
-                dataFont = UniversalPatcher.Properties.Settings.Default.TableEditorFont;
+                dataFont = AppSettings.TableEditorFont.ToFont();
 
             numTuneValue.Tag = numTuneValue.Value;
-            autoResizeToolStripMenuItem.Checked = UniversalPatcher.Properties.Settings.Default.TableEditorAutoResize;
-            if (UniversalPatcher.Properties.Settings.Default.TableEditorAutoResize)
+            autoResizeToolStripMenuItem.Checked = AppSettings.TableEditorAutoResize;
+            if (AppSettings.TableEditorAutoResize)
             {
                 AutoResize();
             }
-            else if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+            else if (AppSettings.MainWindowPersistence)
             {
-                if (UniversalPatcher.Properties.Settings.Default.TableEditorWindowSize.Width > 0 || UniversalPatcher.Properties.Settings.Default.TableEditorWindowSize.Height > 0)
+                if (AppSettings.TableEditorWindowSize.Width > 0 || AppSettings.TableEditorWindowSize.Height > 0)
                 {
-                    this.WindowState = UniversalPatcher.Properties.Settings.Default.TableEditorWindowState;
+                    this.WindowState = AppSettings.TableEditorWindowState;
                     if (this.WindowState == FormWindowState.Minimized)
                     {
                         this.WindowState = FormWindowState.Normal;
                     }
-                    this.Location = UniversalPatcher.Properties.Settings.Default.TableEditorWindowLocation;
-                    this.Size = UniversalPatcher.Properties.Settings.Default.TableEditorWindowSize;
+                    this.Location = AppSettings.TableEditorWindowLocation;
+                    this.Size = AppSettings.TableEditorWindowSize;
                 }
             }
             disableTooltipsToolStripMenuItem.Checked = false;
-            rememberCompareSelectionToolStripMenuItem.Checked = UniversalPatcher.Properties.Settings.Default.TableEditorRememberCompare;
-            if (UniversalPatcher.Properties.Settings.Default.TableEditorRememberCompare)
+            rememberCompareSelectionToolStripMenuItem.Checked = AppSettings.TableEditorRememberCompare;
+            if (AppSettings.TableEditorRememberCompare)
             {
-                switch(tuner.CompareSelection)
+                swapXyToolStripMenuItem.Checked = tuner.SwapXy;
+                chkSwapXY.Checked = tuner.SwapXy;
+                showRawHEXValuesToolStripMenuItem.Checked = tuner.ShowAsHex;
+                chkRawHex.Checked = tuner.ShowAsHex;
+                if (groupSelectCompare.Enabled)
                 {
-                    case 0:
-                        radioOriginal.Checked = true;
-                        break;
-                    case 1:
-                        radioCompareFile.Checked = true;
-                        break;
-                    case 2:
-                        radioSideBySide.Checked = true;
-                        break;
-                    case 3:
-                        radioSideBySideText.Checked = true;
-                        break;
-                    case 4:
-                        radioCompareAll.Checked = true;
-                        break;
-                    case 5:
-                        radioDifference.Checked = true;
-                        break;
-                    case 6:
-                        radioDifference2.Checked = true;
-                        break;
+                    switch (tuner.CompareSelection)
+                    {
+                        case 0:
+                            radioOriginal.Checked = true;
+                            break;
+                        case 1:
+                            radioCompareFile.Checked = true;
+                            break;
+                        case 2:
+                            radioSideBySide.Checked = true;
+                            break;
+                        case 3:
+                            radioSideBySideText.Checked = true;
+                            break;
+                        case 4:
+                            radioCompareAll.Checked = true;
+                            break;
+                        case 5:
+                            radioDifference.Checked = true;
+                            break;
+                        case 6:
+                            radioDifference2.Checked = true;
+                            break;
 
-                }
-                switch (tuner.CompareType)
-                {
-                    case 0:
-                        radioAbsolute.Checked = true;
-                        break;
-                    case 1:
-                        radioMultiplier.Checked = true;
-                        break;
-                    case 2:
-                        radioPercent.Checked = true;
-                        break;
+                    }
+                    switch (tuner.CompareType)
+                    {
+                        case 0:
+                            radioAbsolute.Checked = true;
+                            break;
+                        case 1:
+                            radioMultiplier.Checked = true;
+                            break;
+                        case 2:
+                            radioPercent.Checked = true;
+                            break;
+                    }
                 }
             }
             dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
@@ -194,21 +194,21 @@ namespace UniversalPatcher
         {
             try
             {
-                if (UniversalPatcher.Properties.Settings.Default.MainWindowPersistence)
+                if (AppSettings.MainWindowPersistence)
                 {
-                    UniversalPatcher.Properties.Settings.Default.TableEditorWindowState = this.WindowState;
+                    AppSettings.TableEditorWindowState = this.WindowState;
                     if (this.WindowState == FormWindowState.Normal)
                     {
-                        UniversalPatcher.Properties.Settings.Default.TableEditorWindowLocation = this.Location;
-                        UniversalPatcher.Properties.Settings.Default.TableEditorWindowSize = this.Size;
+                        AppSettings.TableEditorWindowLocation = this.Location;
+                        AppSettings.TableEditorWindowSize = this.Size;
                     }
                     else
                     {
-                        UniversalPatcher.Properties.Settings.Default.TableEditorWindowLocation = this.RestoreBounds.Location;
-                        UniversalPatcher.Properties.Settings.Default.TableEditorWindowSize = this.RestoreBounds.Size;
+                        AppSettings.TableEditorWindowLocation = this.RestoreBounds.Location;
+                        AppSettings.TableEditorWindowSize = this.RestoreBounds.Size;
                     }
                 }
-                UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.Save();
 
                 bool tableModified = false;
                 uint addr = compareFiles[0].tableBufferOffset;
@@ -246,6 +246,22 @@ namespace UniversalPatcher
                 var line = frame.GetFileLineNumber();
                 LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
+        }
+
+        //Set default values before opening new table
+        //Required for tree/docked mode tuner
+        private  void CleanUp()
+        {
+            compareToolStripMenuItem.DropDownItems.Clear();
+            compareFiles = new List<CompareFile>();
+
+            tableName = "";
+            only1d = false;    //Show multiple 1D tables as one multirow table
+            multiSelect = false;    //Manually selected multiple files
+            duplicateTableName = false;    // Multiple tables wit equal name, but some other setting may differ
+            currentFile = 0;
+            currentCmpFile = 1;
+            lastTable = "";
         }
 
         private void ShowCellInfo()
@@ -526,6 +542,7 @@ namespace UniversalPatcher
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
 
+                CleanUp();
                 TableInfo tInfo = new TableInfo(pcm, td);
                 CompareFile orgFile = new CompareFile(pcm);
                 orgFile.fileLetter = fileLetter;
@@ -559,7 +576,7 @@ namespace UniversalPatcher
                             }
                         }
                     }
-                    string[] separators = UniversalPatcher.Properties.Settings.Default.MulitableChars.Split(' ');
+                    string[] separators = AppSettings.MulitableChars.Split(' ');
                     //if (td.TableName.Contains("[") || td.TableName.Contains("."))
                     if (separators.Any(td.TableName.Contains))
                     {
@@ -1759,18 +1776,13 @@ namespace UniversalPatcher
                 var frame = st.GetFrame(st.FrameCount - 1);
                 // Get the line number from the stack frame
                 var line = frame.GetFileLineNumber();
-                MessageBox.Show("Error, frmTableEditor line " + line + ": " + ex.Message, "Error");
+                LoggerBold("Error, frmTableEditor line " + line + ": " + ex.Message);
             }
 
         }
 
         private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            if (disableSaving)
-            {
-                e.Cancel = true;
-                return;
-            }
         }
 
 
@@ -1971,6 +1983,11 @@ namespace UniversalPatcher
         {
             try
             {
+                if (this.ParentForm != null)
+                {
+                    //No resize if docked to tuner panel
+                    return;
+                }
                 int dgv_width = dataGridView1.Columns.GetColumnsWidth(DataGridViewElementStates.Visible) + dataGridView1.RowHeadersWidth;
                 if (dgv_width < 550) dgv_width = 550;
                 int dgv_height = dataGridView1.Rows.GetRowsHeight(DataGridViewElementStates.Visible) + dataGridView1.ColumnHeadersHeight;
@@ -1998,8 +2015,8 @@ namespace UniversalPatcher
 
         private void chkAutoResize_CheckedChanged(object sender, EventArgs e)
         {
-            UniversalPatcher.Properties.Settings.Default.TableEditorAutoResize = autoResizeToolStripMenuItem.Checked;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.TableEditorAutoResize = autoResizeToolStripMenuItem.Checked;
+            AppSettings.Save();
             if (autoResizeToolStripMenuItem.Checked)
             {
                 AutoResize();
@@ -2210,8 +2227,8 @@ namespace UniversalPatcher
                 autoResizeToolStripMenuItem.Checked = false;
             else
                 autoResizeToolStripMenuItem.Checked = true;
-            UniversalPatcher.Properties.Settings.Default.TableEditorAutoResize = autoResizeToolStripMenuItem.Checked;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.TableEditorAutoResize = autoResizeToolStripMenuItem.Checked;
+            AppSettings.Save();
             if (autoResizeToolStripMenuItem.Checked)
             {
                 AutoResize();
@@ -2226,13 +2243,14 @@ namespace UniversalPatcher
             else
                 swapXyToolStripMenuItem.Checked = true;
             chkSwapXY.Checked = swapXyToolStripMenuItem.Checked;
+            tuner.SwapXy = swapXyToolStripMenuItem.Checked;
             LoadTable();
-
         }
 
         private void chkSwapXY_CheckedChanged(object sender, EventArgs e)
         {
             swapXyToolStripMenuItem.Checked = chkSwapXY.Checked;
+            tuner.SwapXy = chkSwapXY.Checked;
             LoadTable();
         }
 
@@ -2240,6 +2258,7 @@ namespace UniversalPatcher
         {
             showRawHEXValuesToolStripMenuItem.Checked = !showRawHEXValuesToolStripMenuItem.Checked;
             chkRawHex.Checked = showRawHEXValuesToolStripMenuItem.Checked;
+            tuner.ShowAsHex = showRawHEXValuesToolStripMenuItem.Checked;
             LoadTable();
         }
 
@@ -2383,7 +2402,6 @@ namespace UniversalPatcher
             {
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
-                disableSaving = false;
                 SetMyText();
                 groupDifference.Visible = true;
                 if (radioMultiplier.Checked)
@@ -2427,7 +2445,6 @@ namespace UniversalPatcher
                 showMode = ShowMode.normal;
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Gray;
-                disableSaving = false;
                 SetMyText();
                 LoadTable();
             }
@@ -2473,8 +2490,8 @@ namespace UniversalPatcher
             if (fontDlg.ShowDialog() != DialogResult.Cancel)
             {
                 dataFont = fontDlg.Font;
-                UniversalPatcher.Properties.Settings.Default.TableEditorFont = dataFont;
-                UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.TableEditorFont = SerializableFont.FromFont(dataFont);
+                AppSettings.Save();
             }
             fontDlg.Dispose();
             LoadTable();
@@ -2656,7 +2673,6 @@ namespace UniversalPatcher
             if (radioAbsolute.Checked)
             {
                 tuner.CompareType = 0;
-                disableSaving = false;
                 LoadTable();
             }
         }
@@ -2667,7 +2683,6 @@ namespace UniversalPatcher
             {
                 tuner.CompareType = 1;
                 numDecimals.Value = multiplierDecimals;
-                disableSaving = false;
                 LoadTable();
             }
             else
@@ -2698,7 +2713,6 @@ namespace UniversalPatcher
             {
                 currentFile = 0;
                 dataGridView1.BackgroundColor = Color.Red;
-                disableSaving = false;
                 SetMyText();
                 groupDifference.Visible = true;
                 if (radioMultiplier.Checked)
@@ -2753,6 +2767,7 @@ namespace UniversalPatcher
         private void chkRawHex_CheckedChanged(object sender, EventArgs e)
         {
             showRawHEXValuesToolStripMenuItem.Checked = chkRawHex.Checked;
+            tuner.ShowAsHex = chkRawHex.Checked;
             LoadTable();
         }
 
@@ -2931,8 +2946,8 @@ namespace UniversalPatcher
         private void rememberCompareSelectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             rememberCompareSelectionToolStripMenuItem.Checked = !rememberCompareSelectionToolStripMenuItem.Checked;
-            UniversalPatcher.Properties.Settings.Default.TableEditorRememberCompare = rememberCompareSelectionToolStripMenuItem.Checked;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.TableEditorRememberCompare = rememberCompareSelectionToolStripMenuItem.Checked;
+            AppSettings.Save();
         }
     }
 }

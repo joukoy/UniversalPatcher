@@ -13,6 +13,8 @@ using static Upatcher;
 
 public static class Helpers
 {
+    public static string ExtraCategories = "* * * * Extra categories * * * *";
+    public static string EmptyCategories = "(Empty)";
     public static string BinFilter = "BIN files (*.bin)|*.bin|All files (*.*)|*.*";
     public static string CsvFilter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
     public static string XmlFilter = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
@@ -115,7 +117,7 @@ public static class Helpers
         OpenFileDialog fdlg = new OpenFileDialog();
         if (Filter.Contains("BIN"))
         {
-            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
+            fdlg.InitialDirectory = AppSettings.LastBINfolder;
             Filter = "BIN files (*.bin)|*.bin";
             for (int f = 0; f < fileTypeList.Count; f++)
             {
@@ -137,9 +139,9 @@ public static class Helpers
         else
         {
             if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
+                fdlg.InitialDirectory = AppSettings.LastXMLfolder;
             if (Filter.Contains("PATCH") || Filter.Contains("TXT"))
-                fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
+                fdlg.InitialDirectory = AppSettings.LastPATCHfolder;
         }
 
         fdlg.Title = Title;
@@ -150,12 +152,12 @@ public static class Helpers
         if (fdlg.ShowDialog() == DialogResult.OK)
         {
             if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
+                AppSettings.LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
             else if (Filter.Contains("BIN"))
-                UniversalPatcher.Properties.Settings.Default.LastBINfolder = Path.GetDirectoryName(fdlg.FileName);
+                AppSettings.LastBINfolder = Path.GetDirectoryName(fdlg.FileName);
             else if (Filter.Contains("PATCH"))
-                UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.GetDirectoryName(fdlg.FileName);
-            UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.LastPATCHfolder = Path.GetDirectoryName(fdlg.FileName);
+            AppSettings.Save();
             foreach (string fName in fdlg.FileNames)
                 fileList.Add(fName);
         }
@@ -193,7 +195,7 @@ public static class Helpers
         OpenFileDialog fdlg = new OpenFileDialog();
         if (Filter.Contains("BIN"))
         {
-            fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
+            fdlg.InitialDirectory = AppSettings.LastBINfolder;
             Filter = GenerateFilter();
         }
         else if (Filter.ToLower().Contains("xdf"))
@@ -209,9 +211,9 @@ public static class Helpers
         else
         {
             if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
+                fdlg.InitialDirectory = AppSettings.LastXMLfolder;
             if (Filter.Contains("PATCH") )
-                fdlg.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
+                fdlg.InitialDirectory = AppSettings.LastPATCHfolder;
         }
 
         fdlg.Title = Title;
@@ -222,12 +224,12 @@ public static class Helpers
         if (fdlg.ShowDialog() == DialogResult.OK)
         {
             if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
+                AppSettings.LastXMLfolder = Path.GetDirectoryName(fdlg.FileName);
             else if (Filter.Contains("BIN"))
-                UniversalPatcher.Properties.Settings.Default.LastBINfolder = Path.GetDirectoryName(fdlg.FileName);
+                AppSettings.LastBINfolder = Path.GetDirectoryName(fdlg.FileName);
             else if (Filter.Contains("PATCH"))
-                UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.GetDirectoryName(fdlg.FileName);
-            UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.LastPATCHfolder = Path.GetDirectoryName(fdlg.FileName);
+            AppSettings.Save();
             return fdlg.FileName;
         }
         return "";
@@ -256,11 +258,11 @@ public static class Helpers
         else
         {
             if (Filter.Contains("PATCH"))
-                saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastPATCHfolder;
+                saveFileDialog.InitialDirectory = AppSettings.LastPATCHfolder;
             if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastXMLfolder;
+                saveFileDialog.InitialDirectory = AppSettings.LastXMLfolder;
             else if (Filter.Contains("BIN"))
-                saveFileDialog.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
+                saveFileDialog.InitialDirectory = AppSettings.LastBINfolder;
             else if (Filter.Contains("XDF"))
                 saveFileDialog.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Tunerpro Files", "Bin Definitions");
         }
@@ -268,12 +270,12 @@ public static class Helpers
         if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {
             if (Filter.Contains("XML") && !Filter.Contains("PATCH"))
-                UniversalPatcher.Properties.Settings.Default.LastXMLfolder = Path.GetDirectoryName(saveFileDialog.FileName);
+                AppSettings.LastXMLfolder = Path.GetDirectoryName(saveFileDialog.FileName);
             else if (Filter.Contains("BIN"))
-                UniversalPatcher.Properties.Settings.Default.LastBINfolder = Path.GetDirectoryName(saveFileDialog.FileName);
+                AppSettings.LastBINfolder = Path.GetDirectoryName(saveFileDialog.FileName);
             else if (Filter.Contains("PATCH"))
-                UniversalPatcher.Properties.Settings.Default.LastPATCHfolder = Path.GetDirectoryName(saveFileDialog.FileName);
-            UniversalPatcher.Properties.Settings.Default.Save();
+                AppSettings.LastPATCHfolder = Path.GetDirectoryName(saveFileDialog.FileName);
+            AppSettings.Save();
             return saveFileDialog.FileName;
         }
         else
@@ -292,15 +294,15 @@ public static class Helpers
         if (defaultFolder.Length > 0)
             folderBrowser.InitialDirectory = defaultFolder;
         else
-            folderBrowser.InitialDirectory = UniversalPatcher.Properties.Settings.Default.LastBINfolder;
+            folderBrowser.InitialDirectory = AppSettings.LastBINfolder;
         // Always default to Folder Selection.
         folderBrowser.Title = Title;
         folderBrowser.FileName = "Folder Selection";
         if (folderBrowser.ShowDialog() == DialogResult.OK)
         {
             folderPath = Path.GetDirectoryName(folderBrowser.FileName);
-            UniversalPatcher.Properties.Settings.Default.LastBINfolder = folderPath;
-            UniversalPatcher.Properties.Settings.Default.Save();
+            AppSettings.LastBINfolder = folderPath;
+            AppSettings.Save();
         }
         return folderPath;
     }

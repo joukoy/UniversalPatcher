@@ -92,8 +92,8 @@ namespace UniversalPatcher
                 adapter.SelectCommand = selectCommand;
                 adapter.Fill(table);
 
-                if (PCM.tableCategories == null) PCM.tableCategories = new List<string>();
-                foreach (DataRow row in table.Rows)
+                //if (PCM.tableCategories == null) PCM.tableCategories = new List<string>();
+/*                foreach (DataRow row in table.Rows)
                 {
                     string cat = row["Category"].ToString();
                     if (!PCM.tableCategories.Contains(cat))
@@ -101,7 +101,7 @@ namespace UniversalPatcher
                         PCM.tableCategories.Add(cat);
                     }
                 }
-
+*/
                 query = "select * from TableData where MapNumber=" + mapNr + " order by TableName";
                 selectCommand = new OleDbCommand(query, cnn);
                 table = new DataTable();
@@ -205,8 +205,8 @@ namespace UniversalPatcher
                 adapter.SelectCommand = selectCommand;
                 adapter.Fill(table);
 
-                if (PCM.tableCategories == null) PCM.tableCategories = new List<string>();
-                foreach (DataRow row in table.Rows)
+                //if (PCM.tableCategories == null) PCM.tableCategories = new List<string>();
+/*                foreach (DataRow row in table.Rows)
                 {
                     string cat = row["Category"].ToString();
                     if (!PCM.tableCategories.Contains(cat))
@@ -214,7 +214,7 @@ namespace UniversalPatcher
                         PCM.tableCategories.Add(cat);
                     }
                 }
-
+*/
                 query = "select * from TableData where MapNumber=" + mapNr + " order by TableName";
                 selectCommand = new OleDbCommand(query, cnn);
                 table = new DataTable();
@@ -261,8 +261,8 @@ namespace UniversalPatcher
                     //else
                         //td.SavingMath = "X/1";
                     td.Category = row["MainCategory"].ToString();
-                    if (!PCM.tableCategories.Contains(td.Category))
-                        PCM.tableCategories.Add(td.Category);
+                    //if (!PCM.tableCategories.Contains(td.Category))
+                      //  PCM.tableCategories.Add(td.Category);
                     td.Units = row["Units"].ToString();
                     td.RowMajor = false;
                     tdList.Add(td);

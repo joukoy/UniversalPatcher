@@ -116,10 +116,10 @@ namespace UniversalPatcher
             {
                 rtb.Font = fontDlg.Font;
                 if (rtb.Name == "txtResult")
-                    UniversalPatcher.Properties.Settings.Default.PatcherLogFont = fontDlg.Font;
+                    AppSettings.PatcherLogFont = SerializableFont.FromFont(fontDlg.Font);
                 else
-                    UniversalPatcher.Properties.Settings.Default.DebugFont = fontDlg.Font;
-                UniversalPatcher.Properties.Settings.Default.Save();
+                    AppSettings.DebugFont = SerializableFont.FromFont(fontDlg.Font);
+                AppSettings.Save();
             }
             fontDlg.Dispose();
         }

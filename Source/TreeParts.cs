@@ -12,24 +12,93 @@ namespace UniversalPatcher
 {
     public static class TreeParts
     {
-        private static bool IncludesCollection(TreeNode node, string nodeName, bool parentCheck)
+        public class Tnode
         {
-            if (!parentCheck)
+            public Tnode(string NodeText, string NodeName, NType NodeType, string ico) 
             {
-                foreach (TreeNode childTn in node.Nodes)
-                    if (childTn.Name == nodeName)
-                        return true;
+                filteredTds = new List<TableData>();
+                Node = new TreeNode(NodeText);
+                Node.Tag = this;
+                Node.Name = NodeName;
+                Node.ImageKey = ico;
+                Node.SelectedImageKey = ico;
+                this.NodeType = NodeType;
+                ExtraCategory = false;
             }
-            if (node.Name == nodeName)
-                return true;
-            if (node.Parent == null)
-                return false;   //Root-node
-            if (node.Parent.Name == nodeName)
-                return true;
-            return IncludesCollection(node.Parent, nodeName, true);
+            public Tnode(string NodeText,string NodeName, NType NodeType, string ico, TreeNode Parent) 
+            {
+                filteredTds = new List<TableData>();
+                Node = new TreeNode(NodeText);
+                Node.Tag = this;
+                Node.Name = NodeName;
+                Node.ImageKey = ico;
+                Node.SelectedImageKey = ico;
+                Parent.Nodes.Add(Node);
+                this.NodeType = NodeType;
+                ParentTnode = (Tnode)Parent.Tag;
+                ExtraCategory = false;
+                //ParentNodeTypes.AddRange(ParentTnode.ParentNodeTypes);
+                //ParentNodeTypes.Add(ParentTnode.NodeType);
+            }
+            public List<TableData> filteredTds { get; set; }
+            public NType NodeType { get; set; }
+            public Tnode ParentTnode { get; set; }
+            //public List<NType> ParentNodeTypes { get; set; }
+            public TreeNode Node { get; set; }
+            //public int patchindex { get; set; }
+            public Patch Patch { get; set; }
+            public TableData Td { get; set; }
+            public bool ExtraCategory { get; set; }
+            public bool Isroot { get; set; }
         }
 
-        private static Patch LoadPatch(string fileName, PcmFile pcm)
+        public enum NType
+        {
+            Valuetype,
+            Dimensions,
+            Category,
+            Segment,
+            Patch,
+            Table,
+            Root
+        }
+
+        public static bool IncludesCollection(TreeNode node, NType NodeType, bool parentCheck)
+        {
+            try
+            {
+                Tnode tnode = (Tnode)node.Tag;
+                if (!parentCheck)
+                {
+                    foreach (TreeNode childTn in node.Nodes)
+                    {
+                        Tnode child = (Tnode)childTn.Tag;
+                        if (child.NodeType == NodeType)
+                            return true;
+                    }
+                }
+                if (tnode.NodeType == NodeType)
+                    return true;
+                if (node.Parent == null)
+                    return false;   //Root-node
+                if (tnode.ParentTnode != null && tnode.ParentTnode.NodeType == NodeType)
+                    return true;
+                return IncludesCollection(node.Parent, NodeType, true);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, TreeParts line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, TreeParts line " + line + ": " + ex.Message);
+            }
+            return false;
+        }
+
+        public static Patch LoadPatch(string fileName, PcmFile pcm)
         {
             try
             {
@@ -40,7 +109,8 @@ namespace UniversalPatcher
                 patch.patches = (List<XmlPatch>)reader.Deserialize(file);
                 file.Close();
                 string CompOS = "";
-                patch.Name = patch.patches[0].Name;
+                patch.Name = Path.GetFileName(fileName);
+
                 if (patch.patches.Count > 0)
                 {
                     string[] OsList = patch.patches[0].CompatibleOS.Split(',');
@@ -72,394 +142,616 @@ namespace UniversalPatcher
 
         public static void AddPatchNodes(TreeNode node, PcmFile pcm)
         {
-            if (patches.Count == 0)
+            try
             {
-                string folder = Path.Combine(Application.StartupPath, "Patches");
-                DirectoryInfo d = new DirectoryInfo(folder);
-                FileInfo[] Files = d.GetFiles("*.*", SearchOption.AllDirectories);
-
-                foreach (FileInfo file in Files)
+                if (patches.Count == 0)
                 {
-                    Patch patch = LoadPatch(file.FullName, pcm);
-                    if (patch != null)
+                    Logger("Loading patches...");
+                    Application.DoEvents();
+                    string folder = Path.Combine(Application.StartupPath, "Patches");
+                    DirectoryInfo d = new DirectoryInfo(folder);
+                    FileInfo[] Files = d.GetFiles("*.*", SearchOption.AllDirectories);
+
+                    foreach (FileInfo file in Files)
                     {
-                        patches.Add(patch);
+                        Patch patch = LoadPatch(file.FullName, pcm);
+                        if (patch != null)
+                        {
+                            patches.Add(patch);
+                        }
                     }
+                    Logger("Done");
+                }
+                int ind = 0;
+                foreach (Patch patch in patches)
+                {
+                    if (!node.Nodes.ContainsKey(patch.Name))
+                    {
+                        Tnode tn = new Tnode(patch.Name, patch.Name, NType.Patch, "patch.ico", node);
+                        Debug.WriteLine("Patch: " + patch.Name);
+                        tn.Patch = patch;
+                    }
+                    ind++;
                 }
             }
-            int ind = 0;
-            foreach (Patch patch in patches)
+            catch (Exception ex)
             {
-                TreeNode tn = new TreeNode(patch.Name);
-                tn.Name = patch.Name;
-                tn.Tag = ind;
-                node.Nodes.Add(tn);
-                ind++;
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, TreeParts line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, TreeParts line " + line + ": " + ex.Message);
             }
         }
 
         public static void AddChildNodes(TreeNode node, PcmFile pcm)
         {
-            if (node.Name == "Dimensions" || node.Name == "ValueTypes" || node.Name == "Categories" || node.Name == "Segments")
+            try
             {
-                foreach (TreeNode childTn in node.Nodes)
-                    AddChildNodes(childTn, pcm);
-                return;
-            }
-
-            List<TableData> filteredTableDatas = FilterTD(node, pcm);
-            if (!IncludesCollection(node, "Dimensions",false))
-                TreeParts.AddDimensions(node.Nodes,filteredTableDatas);
-            if (!IncludesCollection(node, "ValueTypes", false))
-                TreeParts.AddValueTypes(node.Nodes,filteredTableDatas);
-            if (!IncludesCollection(node, "Categories", false))
-                TreeParts.AddCategories(node.Nodes, pcm, filteredTableDatas);
-            if (!IncludesCollection(node, "Segments", false))
-                TreeParts.AddSegments(node.Nodes, pcm, filteredTableDatas);
-
-        }
-
-        public static void AddNodes(TreeNodeCollection parent, PcmFile pcm1)
-        {
-            parent.Clear();
-
-            TreeNode tn = new TreeNode("All");
-            tn.Name = "All";
-            tn.ImageKey = "explorer.ico";
-            tn.SelectedImageKey = "explorer.ico";
-            parent.Add(tn);
-
-            AddDimensions(parent,pcm1.tableDatas);
-            AddValueTypes(parent, pcm1.tableDatas);
-            AddCategories(parent, pcm1, pcm1.tableDatas);
-            AddSegments(parent, pcm1, pcm1.tableDatas);
-
-            
-            TreeNode tnP = new TreeNode();
-            tnP.Name = "Patches";
-            tnP.ImageKey = "patch.ico";
-            tnP.SelectedImageKey = "patch.ico";
-            parent.Add(tnP);
-            
-        }
-
-        public static void AddDimensions(TreeNodeCollection parent, List<TableData> filteredTableDatas)
-        {
-
-            TreeNode tnD = new TreeNode();
-            tnD.Name = "Dimensions";
-            tnD.ImageKey = "dimensions.ico";
-            tnD.SelectedImageKey = "dimensions.ico";
-
-            List<int> usedDimension = new List<int>();
-
-            for (int i=0; i< filteredTableDatas.Count; i++)
-            {
-                int d = filteredTableDatas[i].Dimensions();
-                if (!usedDimension.Contains(d))
-                    usedDimension.Add(d);
-                if (usedDimension.Count == 3)
-                    break;
-            }
-
-            if (usedDimension.Contains(1))
-            {
-                TreeNode tn1 = new TreeNode();
-                tn1.Name = "1D";
-                tn1.ImageKey = "1d.ico";
-                tn1.SelectedImageKey = "1d.ico";
-                tnD.Nodes.Add(tn1);
-            }
-
-            if (usedDimension.Contains(2))
-            {
-                TreeNode tn2 = new TreeNode();
-                tn2.Name = "2D";
-                tn2.ImageKey = "2d.ico";
-                tn2.SelectedImageKey = "2d.ico";
-                tnD.Nodes.Add(tn2);
-            }
-
-            if (usedDimension.Contains(3))
-            {
-                TreeNode tn3 = new TreeNode();
-                tn3.Name = "3D";
-                tn3.ImageKey = "3d.ico";
-                tn3.SelectedImageKey = "3d.ico";
-                tnD.Nodes.Add(tn3);
-            }
-
-            if (tnD.Nodes.Count > 0)
-                parent.Add(tnD);
-
-        }
-        public static void AddValueTypes(TreeNodeCollection parent, List<TableData> filteredTableDatas)
-        {
-
-            TreeNode tnT = new TreeNode();
-            tnT.Name = "ValueTypes";
-            tnT.ImageKey = "valuetype.ico";
-            tnT.SelectedImageKey = "valuetype.ico";
-
-            List<string> usedValueTypes = new List<string>();
-            for (int i = 0; i < filteredTableDatas.Count; i++)
-            {
-                string vt = GetTableValueType(filteredTableDatas[i]).ToString();
-                if (!usedValueTypes.Contains(vt))
-                    usedValueTypes.Add(vt);
-                if (usedValueTypes.Count == 4)
-                    break;  //all types collected
-            }
-
-            if (usedValueTypes.Contains("boolean"))
-            {
-                TreeNode tnB = new TreeNode();
-                tnB.Name = "boolean";
-                tnB.ImageKey = "boolean.ico";
-                tnB.SelectedImageKey = "boolean.ico";
-                tnT.Nodes.Add(tnB);
-            }
-
-            if (usedValueTypes.Contains("bitmask"))
-            { 
-                TreeNode tnM = new TreeNode();
-                tnM.Name = "bitmask";
-                tnM.ImageKey = "bitmask.ico";
-                tnM.SelectedImageKey = "bitmask.ico";
-                tnT.Nodes.Add(tnM);
-            }
-
-            if (usedValueTypes.Contains("selection"))
-            {
-                TreeNode tnE = new TreeNode();
-                tnE.Name = "selection";
-                tnE.ImageKey = "enum.ico";
-                tnE.SelectedImageKey = "enum.ico";
-                tnT.Nodes.Add(tnE);
-            }
-
-            if (usedValueTypes.Contains("number"))
-            {
-                TreeNode tnN = new TreeNode();
-                tnN.Name = "number";
-                tnN.ImageKey = "number.ico";
-                tnN.SelectedImageKey = "number.ico";
-                tnT.Nodes.Add(tnN);
-            }
-
-            if (usedValueTypes.Contains("patch"))
-            {
-                TreeNode tnN = new TreeNode();
-                tnN.Name = "patch";
-                tnN.ImageKey = "patch.ico";
-                tnN.SelectedImageKey = "patch.ico";
-                tnT.Nodes.Add(tnN);
-            }
-
-            if (tnT.Nodes.Count > 0)
-                parent.Add(tnT);
-
-        }
-        public static void AddSegments(TreeNodeCollection parent, PcmFile PCM, List<TableData> filteredTableDatas)
-        {
-            string iconFolder = Path.Combine(Application.StartupPath, "Icons");
-            string[] GalleryArray = System.IO.Directory.GetFiles(iconFolder);
-
-            TreeNode tnS = new TreeNode();
-            tnS.Name = "Segments";
-            tnS.ImageKey = "segments.ico";
-            tnS.SelectedImageKey = "segments.ico";
-
-            List<string> usedSegments = new List<string>();
-            for (int i=0; i< filteredTableDatas.Count; i++)
-            {
-                string seg = PCM.GetSegmentName(filteredTableDatas[i].addrInt);
-                if (seg.Length > 0 && !usedSegments.Contains(seg))
-                        usedSegments.Add(seg);
-            }
-
-            TreeNode segTn;
-            for (int i = 0; i < usedSegments.Count; i++)
-            {
-                segTn = new TreeNode(usedSegments[i]);
-                segTn.Name = usedSegments[i];
-                segTn.ImageKey = "segments.ico";
-                segTn.SelectedImageKey = "segments.ico";
-
-                bool found = false;
-                foreach (string icofile in GalleryArray)
+                if (node.Name == "Dimensions" || node.Name == "ValueTypes" || node.Name == "Categories" || node.Name == "Segments")
                 {
-                    double percentage = ComputeSimilarity.CalculateSimilarity(Path.GetFileNameWithoutExtension(icofile).ToLower(), segTn.Name.ToLower());
-                    if ((int)(percentage * 100) >= 80)
+                    foreach (TreeNode childTn in node.Nodes)
+                        AddChildNodes(childTn, pcm);
+                    return;
+                }
+                Tnode tnode = (Tnode)node.Tag;
+                if (!IncludesCollection(node, NType.Dimensions, false))
+                    TreeParts.AddDimensions(node.Nodes, tnode.filteredTds,true);
+                if (!IncludesCollection(node, NType.Valuetype, false))
+                    TreeParts.AddValueTypes(node.Nodes, tnode.filteredTds,true);
+                if (!IncludesCollection(node, NType.Category, false))
+                    TreeParts.AddCategories(node.Nodes, tnode.filteredTds,true);
+                if (!IncludesCollection(node, NType.Segment, false))
+                    TreeParts.AddSegments(node.Nodes, pcm, tnode.filteredTds,true);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, TreeParts line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, TreeParts line " + line + ": " + ex.Message);
+            }
+        }
+
+        public static void AddNodes(TreeNodeCollection parent,PcmFile pcm1, List<TableData>filteredtables, bool AddRoot)
+        {
+            try
+            {
+                parent.Clear();
+
+                string txt = "All";
+                if (AppSettings.TunerShowTableCount)
+                    txt += " [" + filteredtables.Count.ToString() + "]";
+                Tnode tn = new Tnode(txt, "All", NType.Root, "explorer.ico");
+                tn.Isroot = true; 
+                tn.Node.ImageKey = "explorer.ico";
+                tn.Node.SelectedImageKey = "explorer.ico";
+                parent.Add(tn.Node);
+
+                AddDimensions(parent, filteredtables, AddRoot);
+                AddValueTypes(parent, filteredtables, AddRoot);
+                AddCategories(parent, filteredtables, AddRoot);
+                AddSegments(parent, pcm1, filteredtables, AddRoot);
+
+
+                Tnode tnP = new Tnode("", "Patches", NType.Patch, "patch.ico");
+                tnP.Isroot = true;
+                parent.Add(tnP.Node);
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, TreeParts line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, TreeParts line " + line + ": " + ex.Message);
+            }
+
+        }
+
+        public static void AddDimensions(TreeNodeCollection parent, List<TableData> filteredTableDatas, bool AddRoot)
+        {
+            try
+            {
+                if (filteredTableDatas == null)
+                    return;
+
+                Tnode tnD = new Tnode("", "Dimensions", NType.Dimensions, "dimensions.ico");
+                tnD.Isroot = true;
+
+                Dictionary<int, List<TableData>> dimensiontables = new Dictionary<int, List<TableData>>();
+                for (int i=1; i<=3;i++)
+                {
+                    dimensiontables.Add(i, new List<TableData>());
+                }
+
+                for (int t = 0; t < filteredTableDatas.Count; t++)
+                {
+                    int d = filteredTableDatas[t].Dimensions();
+                    dimensiontables[d].Add(filteredTableDatas[t]);
+                }
+
+                for (int i=1; i<=3; i++)
+                {
+                    if (dimensiontables[i].Count > 0)
                     {
-                        segTn.ImageKey = Path.GetFileName(icofile);
-                        segTn.SelectedImageKey = Path.GetFileName(icofile);
-                        found = true;
-                        break;
+                        string txt = "";
+                        if (AppSettings.TunerShowTableCount)
+                            txt = " [" + dimensiontables[i].Count.ToString() + "]";
+                        Tnode tnode = new Tnode(txt, i.ToString() + "D", NType.Dimensions, i.ToString() + "d.ico", tnD.Node);
+                        tnode.filteredTds = dimensiontables[i];
                     }
                 }
-                if (!found)
+
+                if (tnD.Node.Nodes.Count > 0)
                 {
+                    if (!AddRoot)
+                    {
+                        foreach (TreeNode node in tnD.Node.Nodes)
+                        {
+                            parent.Add(node);
+                        }
+                    }
+                    else
+                    {
+                        parent.Add(tnD.Node);
+                    }
+/*                    for (int i = 0; i < filteredTableDatas.Count; i++)
+                    {
+                        int d = filteredTableDatas[i].Dimensions();
+                        string dStr = d.ToString() + "D";
+                        Tnode tnode = (Tnode)tnD.Node.Nodes[dStr].Tag;
+                        tnode.filteredTds.Add(filteredTableDatas[i]);
+                    }
+*/
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, TreeParts line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, TreeParts line " + line + ": " + ex.Message);
+            }
+        }
+
+        public static void AddValueTypes(TreeNodeCollection parent, List<TableData> filteredTableDatas, bool AddRoot)
+        {
+            try
+            {
+                if (filteredTableDatas == null)
+                    return;
+
+                Tnode tnT = new Tnode("", "ValueTypes", NType.Valuetype, "valuetype.ico");
+                tnT.Isroot = true;
+
+                List<string> usedValueTypes = new List<string>();
+                Dictionary<string, List<TableData>> valueTypeTables = new Dictionary<string, List<TableData>>();
+
+                for (int t = 0; t < filteredTableDatas.Count; t++)
+                {
+                    string vt = GetTableValueType(filteredTableDatas[t]).ToString();
+                    if (!valueTypeTables.ContainsKey(vt))
+                    {
+                        valueTypeTables.Add(vt, new List<TableData>());
+                        usedValueTypes.Add(vt);
+                    }
+                    valueTypeTables[vt].Add(filteredTableDatas[t]);
+                }
+
+                foreach (string tabletype in usedValueTypes)
+                {
+                    string txt = "";
+                    if (AppSettings.TunerShowTableCount)
+                        txt += "[" + valueTypeTables[tabletype].Count.ToString() + "]";
+                    Tnode tnode = new Tnode(txt, tabletype, NType.Valuetype, tabletype + ".ico", tnT.Node);
+                    tnode.filteredTds = valueTypeTables[tabletype];
+                }
+
+                if (tnT.Node.Nodes.Count > 0)
+                {
+                    if (!AddRoot)
+                    {
+                        foreach (TreeNode node in tnT.Node.Nodes)
+                        {
+                            parent.Add(node);
+                        }
+                    }
+                    else
+                    {
+                        parent.Add(tnT.Node);
+                    }
+/*                    for (int i = 0; i < filteredTableDatas.Count; i++)
+                    {
+                        string vt = GetTableValueType(filteredTableDatas[i]).ToString();
+                        Tnode tnode = (Tnode)tnT.Node.Nodes[vt].Tag;
+                        tnode.filteredTds.Add(filteredTableDatas[i]);
+                    }
+*/
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, TreeParts line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, TreeParts line " + line + ": " + ex.Message);
+            }
+        }
+
+        public static void AddSegments(TreeNodeCollection parent, PcmFile PCM, List<TableData> filteredTableDatas, bool AddRoot)
+        {
+            try
+            {
+                if (filteredTableDatas == null)
+                    return;
+
+                string iconFolder = Path.Combine(Application.StartupPath, "Icons");
+                string[] GalleryArray = System.IO.Directory.GetFiles(iconFolder);
+
+                Tnode tnS = new Tnode("", "Segments", NType.Segment, "segments.ico");
+                tnS.Isroot = true;
+                List<string> usedSegments = new List<string>();
+                Dictionary<string, List<TableData>> segTables = new Dictionary<string, List<TableData>>();
+                for (int t = 0; t < filteredTableDatas.Count; t++)
+                {
+                    string seg = PCM.GetSegmentName(filteredTableDatas[t].addrInt);
+                    if (string.IsNullOrEmpty(seg))
+                        seg = "Unknown";
+                    if (!usedSegments.Contains(seg))
+                    {
+                        usedSegments.Add(seg);
+                        segTables.Add(seg, new List<TableData>());
+                    }
+                    segTables[seg].Add(filteredTableDatas[t]);
+                }
+
+                usedSegments.Sort();
+
+                Tnode segTn;
+                for (int i = 0; i < usedSegments.Count; i++)
+                {
+                    string txt = usedSegments[i];
+                    if (AppSettings.TunerShowTableCount)
+                        txt += " [" + segTables[usedSegments[i]].Count.ToString() + "]";
+                    segTn = new Tnode(txt, usedSegments[i], NType.Segment, "segments.ico", tnS.Node);
+                    segTn.filteredTds = segTables[usedSegments[i]];
+
+                    bool found = false;
                     foreach (string icofile in GalleryArray)
                     {
-                        if (segTn.Name.ToLower().Contains(Path.GetFileNameWithoutExtension(icofile)))
+                        double percentage = ComputeSimilarity.CalculateSimilarity(Path.GetFileNameWithoutExtension(icofile).ToLower(), segTn.Node.Name.ToLower());
+                        if ((int)(percentage * 100) >= 80)
                         {
-                            segTn.ImageKey = Path.GetFileName(icofile);
-                            segTn.SelectedImageKey = Path.GetFileName(icofile);
+                            segTn.Node.ImageKey = Path.GetFileName(icofile);
+                            segTn.Node.SelectedImageKey = Path.GetFileName(icofile);
                             found = true;
                             break;
                         }
                     }
-                }
-                tnS.Nodes.Add(segTn);
-            }
-            if (tnS.Nodes.Count > 0)
-                parent.Add(tnS);
-
-        }
-        public static void AddCategories(TreeNodeCollection parent, PcmFile PCM, List<TableData> filteredTableDatas)
-        {
-            TreeNode tnC = new TreeNode();
-            tnC.Name = "Categories";
-            tnC.ImageKey = "category.ico";
-            tnC.SelectedImageKey = "category.ico";
-
-            List<string> usedCategories = new List<string>();
-            for (int i=0; i< filteredTableDatas.Count; i++)
-            {
-                if (!usedCategories.Contains(filteredTableDatas[i].Category))
-                    usedCategories.Add(filteredTableDatas[i].Category);
-            }
-            for (int c = 0; c < usedCategories.Count; c++)
-            {
-                string cat = usedCategories[c];
-                if (cat != "_All")
-                {
-                    TreeNode cTnChild = new TreeNode(cat);
-                    cTnChild.Name = cat;
-                    cTnChild.ImageKey = "category.ico";
-                    cTnChild.SelectedImageKey = "category.ico";
-                    tnC.Nodes.Add(cTnChild);
-                }
-            }
-            if (tnC.Nodes.Count > 0)
-                parent.Add(tnC);
-
-        }
-
-        private static List<TableData> FilterTD(TreeNode tn, PcmFile PCM)
-        {
-            List<string> selectedSegs = new List<string>();
-            List<string> selectedCats = new List<string>();
-            List<string> selectedValTypes = new List<string>();
-            List<string> selectedDimensions = new List<string>();
-
-            switch (tn.Parent.Name)
-            {
-                case "Segments":
-                    selectedSegs.Add(tn.Name);
-                    break;
-                case "Categories":
-                    selectedCats.Add(tn.Name);
-                    break;
-                case "Dimensions":
-                    selectedDimensions.Add(tn.Name);
-                    break;
-                case "ValueTypes":
-                    selectedValTypes.Add(tn.Name);
-                    break;
-            }
-            TreeNode tnParent = tn.Parent;
-            while (tnParent.Parent != null)
-            {
-                switch (tnParent.Parent.Name)
-                {
-                    case "Segments":
-                        selectedSegs.Add(tnParent.Name);
-                        break;
-                    case "Categories":
-                        selectedCats.Add(tnParent.Name);
-                        break;
-                    case "Dimensions":
-                        selectedDimensions.Add(tnParent.Name);
-                        break;
-                    case "ValueTypes":
-                        selectedValTypes.Add(tnParent.Name);
-                        break;
-                }
-                tnParent = tnParent.Parent;
-            }
-
-            List<TableData> results = PCM.tableDatas;
-            if (selectedSegs.Count > 0)
-            {
-                List<TableData> newTDList = new List<TableData>();
-                foreach (string seg in selectedSegs)
-                {
-                    int segNr = 0;
-                    for (int s = 0; s < PCM.segmentinfos.Length; s++)
-                        if (PCM.segmentinfos[s].Name == seg)
-                            segNr = s;
-                    uint addrStart = PCM.segmentAddressDatas[segNr].SegmentBlocks[0].Start;
-                    uint addrEnd = PCM.segmentAddressDatas[segNr].SegmentBlocks[PCM.segmentAddressDatas[segNr].SegmentBlocks.Count - 1].End;
-                    var newResults = results.Where(t => t.addrInt >= addrStart && t.addrInt <= addrEnd);
-                    foreach (TableData nTd in newResults)
-                        newTDList.Add(nTd);
-                }
-                results = newTDList;
-            }
-
-            if (selectedCats.Count > 0)
-            {
-                List<TableData> newTDList = new List<TableData>();
-                foreach (TableData td in results)
-                {
-                    if (selectedCats.Contains(td.Category))
-                        newTDList.Add(td);
-                }
-                results = newTDList;
-            }
-
-            if (selectedValTypes.Count > 0)
-            {
-                List<TableData> newTDList = new List<TableData>();
-                foreach (string valT in selectedValTypes)
-                {
-                    if (valT == "mask")
+                    if (!found)
                     {
-                        foreach (TableData td in results)
+                        foreach (string icofile in GalleryArray)
                         {
-                            if (td.BitMask != null && td.BitMask.Length > 0)
-                                newTDList.Add(td);
+                            if (segTn.Node.Name.ToLower().Contains(Path.GetFileNameWithoutExtension(icofile)))
+                            {
+                                segTn.Node.ImageKey = Path.GetFileName(icofile);
+                                segTn.Node.SelectedImageKey = Path.GetFileName(icofile);
+                                found = true;
+                                break;
+                            }
                         }
-
+                    }
+                }
+                if (tnS.Node.Nodes.Count > 0)
+                {
+                    if (!AddRoot)
+                    {
+                        foreach (TreeNode node in tnS.Node.Nodes)
+                        {
+                            parent.Add(node);
+                        }
                     }
                     else
                     {
-                        foreach (TableData td in results)
+                        parent.Add(tnS.Node);
+                    }
+
+/*                    for (int i = 0; i < filteredTableDatas.Count; i++)
+                    {
+                        string seg = PCM.GetSegmentName(filteredTableDatas[i].addrInt);
+                        if (!tnS.Node.Nodes.ContainsKey(seg))
+                            seg = "Unknown";
+                        Tnode tnode = (Tnode)tnS.Node.Nodes[seg].Tag;
+                        tnode.filteredTds.Add(filteredTableDatas[i]);
+                    }
+*/
+                }
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, TreeParts line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, TreeParts line " + line + ": " + ex.Message);
+            }
+        }
+
+
+        public static void AddCategories(TreeNodeCollection parent, List<TableData> TableDatas, bool AddRoot)
+        {
+            try
+            {
+                if (TableDatas == null)
+                    return;
+
+                Tnode tnC = new Tnode("", "Categories",NType.Category, "category.ico");
+                tnC.Isroot = true;
+
+                //Main categories
+                List<TableData> filteredTableDatas = TableDatas.OrderBy(x => x.Category).ToList();
+
+                for (int i = 0; i < filteredTableDatas.Count; i++)
+                {
+                    //string cat = filteredTableDatas[i].Category;
+                    string cat = "";
+                    string[] mainCats = filteredTableDatas[i].MainCategories().ToArray();
+                    if (string.IsNullOrEmpty(filteredTableDatas[i].Category))
+                    {
+                        cat = EmptyCategories;
+                    }
+                    else
+                    {
+                        cat = mainCats[0];
+                    }
+                    if (!tnC.Node.Nodes.ContainsKey(cat))
+                    {
+                        _ = new Tnode(cat,cat,NType.Category, "category.ico", tnC.Node);
+                    }
+                    Tnode subTn = (Tnode)tnC.Node.Nodes[cat].Tag;
+                    subTn.filteredTds.Add(filteredTableDatas[i]);
+                    if (AppSettings.TunerShowTableCount)
+                        subTn.Node.Text = cat + " [" + subTn.filteredTds.Count.ToString() + "]";
+                    StringBuilder sb = new StringBuilder(cat);
+                    for (int c = 1; c < mainCats.Length; c++)
+                    {
+                        sb.Append(" - " + mainCats[c]);
+                        if (!subTn.Node.Nodes.ContainsKey(sb.ToString())) //&& !subTn.Nodes.ContainsKey(filteredTableDatas[i].ExtraCategories))
                         {
-                            string tdValT = GetTableValueType(td).ToString();
-                            if (tdValT == valT)
-                                newTDList.Add(td);
+                            _ = new Tnode(mainCats[c], sb.ToString(), NType.Category, "category.ico", subTn.Node);
+
+                        }
+                        subTn = (Tnode)subTn.Node.Nodes[sb.ToString()].Tag;
+                        subTn.filteredTds.Add(filteredTableDatas[i]);
+                        if (AppSettings.TunerShowTableCount)
+                            subTn.Node.Text = cat + " [" + subTn.filteredTds.Count.ToString() + "]";
+                    }
+                }
+
+                //Extra categories
+                filteredTableDatas = TableDatas.OrderBy(x => x.ExtraCategories).ToList();
+
+                Tnode tnC2;
+                if (AppSettings.TunerTreeMode)
+                {
+                    tnC2 = new Tnode("", "Categories2", NType.Category, "category3.ico");
+                }
+                else
+                {
+                    tnC2 = tnC; //Disable second root. 
+                }
+                for (int i = 0; i < filteredTableDatas.Count; i++)
+                {
+                    if (string.IsNullOrEmpty(filteredTableDatas[i].ExtraCategories))
+                    {
+                        if (!tnC2.Node.Nodes.ContainsKey(ExtraCategories))
+                            _ = new Tnode(ExtraCategories, ExtraCategories, NType.Category, "category3.ico", tnC2.Node);
+                        if (!tnC2.Node.Nodes.ContainsKey(EmptyCategories))
+                            _ = new Tnode(EmptyCategories, EmptyCategories, NType.Category, "category3.ico", tnC2.Node);
+                        Tnode subTn = (Tnode)tnC2.Node.Nodes[EmptyCategories].Tag;
+                        subTn.ExtraCategory = true;
+                        subTn.filteredTds.Add(filteredTableDatas[i]);
+                        if (AppSettings.TunerShowTableCount)
+                            subTn.Node.Text = EmptyCategories + " [" + subTn.filteredTds.Count.ToString() + "]";
+                    }
+                    else
+                    {
+                        if (!tnC2.Node.Nodes.ContainsKey(ExtraCategories))
+                            _ = new Tnode(ExtraCategories, ExtraCategories, NType.Category, "category3.ico", tnC2.Node);
+
+                        string[] subCats = filteredTableDatas[i].SubCategories().ToArray();
+                        if (!tnC2.Node.Nodes.ContainsKey(subCats[0]))
+                        {
+                            _ = new Tnode(subCats[0], subCats[0], NType.Category, "category3.ico", tnC2.Node);
+                        }
+                        Tnode subTn = (Tnode)tnC2.Node.Nodes[subCats[0]].Tag;
+                        subTn.ExtraCategory = true;
+                        subTn.filteredTds.Add(filteredTableDatas[i]);
+                        if (AppSettings.TunerShowTableCount)
+                            subTn.Node.Text = subCats[0] + " [" + subTn.filteredTds.Count.ToString() + "]";
+                        StringBuilder sb = new StringBuilder(subCats[0]);
+                        for (int c = 1; c < subCats.Length; c++)
+                        {
+                            sb.Append(" - " + subCats[c]);
+                            if (!subTn.Node.Nodes.ContainsKey(sb.ToString())) //&& !subTn.Nodes.ContainsKey(filteredTableDatas[i].ExtraCategories))
+                            {
+                                _ = new Tnode(subCats[c], sb.ToString(), NType.Category, "category3.ico", subTn.Node);
+                            }
+                            subTn = (Tnode)subTn.Node.Nodes[sb.ToString()].Tag;
+                            subTn.ExtraCategory = true;
+                            subTn.filteredTds.Add(filteredTableDatas[i]);
+                            if (AppSettings.TunerShowTableCount)
+                                subTn.Node.Text = subCats[c] + " [" + subTn.filteredTds.Count.ToString() + "]";
                         }
                     }
                 }
-                results = newTDList;
-            }
-
-            if (selectedDimensions.Count > 0)
-            {
-                List<TableData> newTDList = new List<TableData>();
-                foreach (TableData td in results)
+                if (tnC.Node.Nodes.Count > 0)
                 {
-                    if (selectedDimensions.Contains(td.Dimensions().ToString() + "D"))
-                        newTDList.Add(td);
+                    parent.Add(tnC.Node);
                 }
-                results = newTDList;
+                if (AppSettings.TunerTreeMode && tnC2.Node.Nodes.Count > 0)
+                {
+                    parent.Add(tnC2.Node);
+                }
             }
-            return results;
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, TreeParts line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, TreeParts line " + line + ": " + ex.Message);
+            }
+        }
+
+        public static List<string> GetCurrentNodePath(TreeViewMS tv)
+        {
+            try
+            {
+                if (tv == null || tv.SelectedNodes.Count == 0)
+                    return null;
+                List<string> path = new List<string>();
+                TreeNode node = tv.SelectedNode;
+                path.Add(node.Name);
+                while (node.Parent != null)
+                {
+                    node = node.Parent;
+                    path.Add(node.Name);
+                }
+                StringBuilder dbgStr = new StringBuilder("Saved " + tv.Name + ": ");
+                for (int i = 0; i < path.Count; i++)
+                {
+                    dbgStr.Append(path[i] + ", ");
+                }
+                Debug.WriteLine(dbgStr.ToString());
+                return path;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                Debug.WriteLine("Error, TreeParts line " + line + ": " + ex.Message);
+            }
+            return null;
+        }
+
+        public static void AddTablesToTree(TreeNode Node)
+        {
+            Tnode tnode1 = (Tnode)Node.Tag;
+            foreach (TreeNode t in Node.Nodes)
+            {
+                Tnode tx = (Tnode)t.Tag;
+                if (tx.NodeType == NType.Table)
+                {
+                    return; //Files loaded already
+                }
+            }
+            if (tnode1.NodeType == NType.Category)
+            {
+                for (int i = 0; i < tnode1.filteredTds.Count; i++)
+                {
+                    TableData td = tnode1.filteredTds[i];
+                    string ico = GetTableValueType(td).ToString().Replace("number", "") + td.Dimensions().ToString() + "d.ico";
+                    string cat = td.Category;
+                    if (tnode1.ExtraCategory)
+                    {
+                        cat = td.ExtraCategories;
+                    }
+                    if (string.IsNullOrEmpty(cat))
+                    {
+                        cat = EmptyCategories;
+                    }
+                    if (cat == tnode1.Node.Name)
+                    {
+                        Tnode tTd = new Tnode(td.TableName, td.TableName, NType.Table, ico, Node);
+                        tTd.Td = td;
+                    }
+                }
+            }
+            else if (!AppSettings.TableExplorerUseCategorySubfolder || tnode1.Isroot )
+            {
+                for (int i = 0; i < tnode1.filteredTds.Count; i++)
+                {
+                    TableData td = tnode1.filteredTds[i];
+                    string ico = GetTableValueType(td).ToString().Replace("number", "") + td.Dimensions().ToString()+ "d.ico";
+                    Tnode tTd = new Tnode(td.TableName, td.TableName, NType.Table, ico, Node);
+                    tTd.Td = td;
+                }
+            }
 
         }
 
+        public static void RestoreNodePath(TreeViewMS tv, List<string> path, PcmFile PCM)
+        {
+            try
+            {
+                StringBuilder dbgStr = new StringBuilder("Restoring " + tv.Name +": ");
+                for (int i = 0; i < path.Count; i++)
+                {
+                    dbgStr.Append(path[i] + ", ");
+                }
+                Debug.WriteLine(dbgStr.ToString());
+                if (!tv.Nodes.ContainsKey(path.Last()))
+                    return;
+                TreeNode node = tv.Nodes[path.Last()];
+                for (int i = path.Count - 2; i >= 0; i--)
+                {
+                    Tnode tnode1 = (Tnode)node.Tag;
+                    if (tv.Name == "treeView1")
+                    {
+                        if (node.Name != "All" && node.Parent != null)
+                            TreeParts.AddChildNodes(node, PCM);
+                    }
+                    else
+                    {
+                        if (AppSettings.TableExplorerUseCategorySubfolder &&
+                            (node.Parent == null || tnode1.ParentTnode == null || tnode1.ParentTnode.Isroot))
+                        {
+                            if (!IncludesCollection(node, NType.Category, false))
+                                AddCategories(node.Nodes, tnode1.filteredTds, false);
+                        }
+                        AddTablesToTree(node);
+                    }
+                    if (!node.Nodes.ContainsKey(path[i]))
+                    {
+                        Debug.WriteLine("Node " + node.Name + " not contains key: " + path[i]);
+                        break;
+                    }
+                    node = node.Nodes[path[i]];
+                }
+                tv.SelectedNode = node;
+            }
+            catch (Exception ex)
+            {
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(st.FrameCount - 1);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                LoggerBold("Error, TreeParts line " + line + ": " + ex.Message);
+                Debug.WriteLine("Error, TreeParts line " + line + ": " + ex.Message);
+            }
+        }
     }
 }
